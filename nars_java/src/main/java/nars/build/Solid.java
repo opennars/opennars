@@ -260,7 +260,7 @@ public class Solid extends Default {
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
-        Bag<Sentence, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
+        Bag<String, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
 
         return new Concept(b, t, taskLinks, termLinks, m);

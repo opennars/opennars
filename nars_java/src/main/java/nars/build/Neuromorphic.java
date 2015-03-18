@@ -60,7 +60,7 @@ public class Neuromorphic extends Curve {
     public Concept newConcept(BudgetValue b, final Term t, final Memory m) {
 
         if (fairdelaybag) {
-            DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(
+            DelayBag<String, TaskLink> taskLinks = new FairDelayBag(
                     param.taskLinkForgetDurations, getConceptTaskLinks());
             taskLinks.setMemory(m);
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(

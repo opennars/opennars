@@ -479,6 +479,17 @@ public class BudgetValue implements Cloneable {
         return set(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
+    public boolean isNew() {
+        return this.lastForgetTime==-1;
+    }
+
+    /** call this after an item has been used (ex: fired) to distinguish it from being
+        new. this allows new items to remain unforgotten until they are first used.  */
+    public void setUsed(long now) {
+        if (isNew())
+            setLastForgetTime(now);
+    }
+
 
     /** indicates an implementation has, or is associated with a specific BudgetValue */
     public interface Budgetable {

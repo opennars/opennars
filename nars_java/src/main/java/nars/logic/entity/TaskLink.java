@@ -36,15 +36,14 @@ import java.util.Iterator;
  * 
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, Sentenced {
+public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sentenced {
 
     /**
      * The Task linked
      */
     public final Task targetTask;
 
-    private final int recordLength;
-
+    private String name;
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
@@ -66,10 +65,14 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
         public void setTime(long t) {
             this.time = t;
         }
-        
+
+        @Override
+        public String toString() {
+            return link + "@" + time;
+        }
     }
     
-    final Deque<Recording> records;
+    Deque<Recording> records;
     
 
     
@@ -80,41 +83,41 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
     public final short[] index;
 
 
-    public TaskLink(final Task t, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final BudgetValue v) {
         super(v);
         this.type = TermLink.SELF;
         this.index = null;
 
         this.targetTask = t;
 
-        this.recordLength = recordLength;
-        this.records = new ArrayDeque(recordLength);
+        this.name = null;
     }
 
     /**
      * Constructor
      * <p>
-     * only called in Memory.continuedProcess
      *
      * @param t The target Task
      * @param template The TermLink template
      * @param v The budget
      */
-    public TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v, int recordLength) {
+    public TaskLink(final Task t, final TermLinkTemplate template, final BudgetValue v) {
         super(v);
         this.type = template.type;
         this.index = template.index;
         
         this.targetTask = t;
         
-        this.recordLength = recordLength;
-        this.records = new ArrayDeque(recordLength);
+        this.name = null;
     }
 
 
     @Override
-    public Sentence name() {
-        return targetTask.sentence;
+    public String name() {
+        if (name == null) {
+            this.name = TermLinkTemplate.prefix(type, index, false) + targetTask.sentence.toString();
+        }
+        return name;
     }
 
     @Override
@@ -122,6 +125,9 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
         return name().hashCode();
     }
 
+    public Deque<Recording> getRecords() {
+        return records;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -158,13 +164,21 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
      * @param currentTime The current time
      * @return Whether they are novel to each other
      */
-    public boolean novel(final TermLink termLink, final long currentTime, int noveltyHorizon) {
+    public boolean novel(final TermLink termLink, final long currentTime, int noveltyHorizon, int recordLength) {
+
+
         final Term bTerm = termLink.target;
         if (bTerm.equals(targetTask.sentence.term)) {            
             return false;
         }
 
         if (noveltyHorizon == 0) return true;
+
+        if (records==null) {
+            records = new ArrayDeque(recordLength);
+        }
+
+        //TODO remove old entries from records if recordLength < records.size()  -- for dynamic adjusting of novelty parameters
 
         //iterating the FIFO deque from oldest (first) to newest (last)
         Iterator<Recording> ir = records.iterator();
@@ -200,12 +214,9 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
 
     @Override
     public String toString() {
-        return super.toString() + " " + name().stamp;
+        return name().toString();
     }
     
-    public String toStringBrief() {
-        return super.toString();
-    }
 
     /**
     * Get the target Task
@@ -220,7 +231,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termable, S
 
     @Override
     public void end() {
-        records.clear();
+        if (records !=null) {
+            records.clear();
+            records = null;
+        }
     }
 
     @Override

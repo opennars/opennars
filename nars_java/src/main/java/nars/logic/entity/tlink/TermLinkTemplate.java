@@ -84,13 +84,18 @@ public class TermLinkTemplate implements Terms.Termable {
         if (!incoming) {
             t--; //point to component
         }
+        if (!incoming && type == TermLink.SELF && (index == null || index.length ==0))
+            return ""; //empty, avoids constructing useless prefix in this case
 
         //CharSequence otherName = other.name();
         StringBuilder sb = new StringBuilder(16);
         //use compact 1-char representation for type and each index component
-        sb.append((char)('A' + t));
-        for (short s : index) {
-            sb.append((char)('a' + s));
+        sb.append((char) ('A' + t));
+
+        if (index!=null) {
+            for (short s : index) {
+                sb.append((char) ('a' + s));
+            }
         }
         return sb.toString();
     }

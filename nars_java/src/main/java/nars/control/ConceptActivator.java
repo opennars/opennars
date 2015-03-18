@@ -61,9 +61,6 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
             Concept concept = getSubConcepts().take(getKey());
             if (concept!=null) {
 
-                //reset the forgetting period to zero so that its time while forgotten will not continue to penalize it during next forgetting iteration
-                concept.budget.setLastForgetTime(now);
-
                 getMemory().emit(Events.ConceptRemember.class, concept);
 
                 return concept;

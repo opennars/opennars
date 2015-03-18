@@ -20,7 +20,7 @@ abstract public class ConceptFireTask extends LogicRule<ConceptProcess> implemen
     @Override
     public void accept(Event<ConceptProcess> o) {
         ConceptProcess f = o.getData();
-        if (f!=null && f.getCurrentBeliefLink()==null) {
+        if (f!=null && f.getCurrentTermLink()==null) {
             boolean result = apply(f, f.getCurrentTaskLink());
             if (!result) {
                 o.setData(null);

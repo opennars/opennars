@@ -59,7 +59,7 @@ public class Concept extends Item<Term> implements Termable {
     /**
      * Task links for indirect processing
      */
-    public final Bag<Sentence, TaskLink> taskLinks;
+    public final Bag<String, TaskLink> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
@@ -113,6 +113,7 @@ public class Concept extends Item<Term> implements Termable {
     private boolean linkPendingEveryCycle = false;
 
 
+
     /** remaining unspent budget from previous cycle can be accumulated */
     /*float taskBudgetBalance = 0;
     float termBudgetBalance = 0;*/
@@ -130,7 +131,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final BudgetValue b, final Term term, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
+    public Concept(final BudgetValue b, final Term term, final Bag<String, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;
@@ -505,9 +506,9 @@ public class Concept extends Item<Term> implements Termable {
      */
     public boolean linkTask(final Task task) {
         BudgetValue taskBudget = task.budget;
+        taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
 
-        taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setBudget(taskBudget);
         activateTaskLink(taskLinkBuilder);  // tlink type: SELF
 
@@ -1006,57 +1007,26 @@ public class Concept extends Item<Term> implements Termable {
         return termLinkBuilder.templates();
     }
 
-    static final class TermLinkNovel implements Predicate<TermLink>    {
+    public static final class TermLinkNovel implements Predicate<TermLink>    {
 
         TaskLink taskLink;
         private long now;
         private int noveltyHorizon;
+        private int recordLength;
 
-        public void set(TaskLink t, long now, int noveltyHorizon) {
+        public void set(TaskLink t, long now, int noveltyHorizon, int recordLength) {
             this.taskLink = t;
             this.now = now;
             this.noveltyHorizon = noveltyHorizon;
+            this.recordLength = recordLength;
         }
 
         @Override
         public boolean apply(TermLink termLink) {
-            return taskLink.novel(termLink, now, noveltyHorizon);
+            return taskLink.novel(termLink, now, noveltyHorizon, recordLength);
         }
     }
 
-    final TermLinkNovel termLinkNovel = new TermLinkNovel();
-
-    /**
-     * Replace default to prevent repeated logic, by checking TaskLink
-     *
-     * @param taskLink The selected TaskLink
-     * @param time The current time
-     * @return The selected TermLink
-     */
-    public TermLink nextTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
-
-        int toMatch = memory.param.termLinkMaxMatched.get();
-
-        //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
-        if (termLinks.size() == 1) toMatch = 1;
-
-        termLinkNovel.set(taskLink, time, noveltyHorizon);
-
-        for (int i = 0; (i < toMatch); i++) {
-
-            final TermLink termLink = termLinks.forgetNext(memory.param.termLinkForgetDurations, memory);
-
-            if (termLink == null)
-                return null;
-
-            if (termLinkNovel.apply(termLink)) {
-                return termLink;
-            }
-
-        }
-
-        return null;
-    }
 
 
     /**

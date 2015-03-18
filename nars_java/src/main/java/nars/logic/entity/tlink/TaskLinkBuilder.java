@@ -1,13 +1,13 @@
 package nars.logic.entity.tlink;
 
 import nars.core.Memory;
-import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.TaskLink;
+import nars.logic.entity.TermLink;
 import nars.util.bag.select.BagActivator;
 
 /** adjusts budget of items in a Bag. ex: merge */
-public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
+public class TaskLinkBuilder extends BagActivator<String,TaskLink> {
 
     TermLinkTemplate template;
     private Task task;
@@ -21,7 +21,10 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
     public void setTask(Task t) {
         this.task = t;
-        setKey(t.sentence);
+        if (template == null)
+            setKey(TermLinkTemplate.prefix(TermLink.SELF, null, false) + t.sentence);
+        else
+            setKey(TermLinkTemplate.prefix(template.type, template.index, false) + t.sentence);
     }
 
     public Task getTask() {
@@ -34,11 +37,10 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
     @Override
     public TaskLink newItem() {
-        int recordLength = memory.param.termLinkRecordLength.get();
         if (template == null)
-            return new TaskLink(getTask(), getBudgetRef(), recordLength);
+            return new TaskLink(getTask(), getBudgetRef());
         else
-            return new TaskLink(getTask(), template, getBudgetRef(), recordLength);
+            return new TaskLink(getTask(), template, getBudgetRef());
     }
 
 

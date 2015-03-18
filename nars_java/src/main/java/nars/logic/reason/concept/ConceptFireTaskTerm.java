@@ -19,8 +19,8 @@ abstract public class ConceptFireTaskTerm extends LogicRule<ConceptProcess> impl
     @Override
     public void accept(Event<ConceptProcess> o) {
         ConceptProcess f = o.getData();
-        if (f!=null && f.getCurrentBeliefLink()!=null) {
-            boolean result = apply(f, f.getCurrentTaskLink(), f.getCurrentBeliefLink());
+        if (f!=null && f.getCurrentTermLink()!=null) {
+            boolean result = apply(f, f.getCurrentTaskLink(), f.getCurrentTermLink());
             if (!result) {
                 o.recycle();
             }

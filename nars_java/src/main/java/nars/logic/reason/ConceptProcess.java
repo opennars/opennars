@@ -21,9 +21,10 @@ public class ConceptProcess extends NAL {
     protected final TaskLink currentTaskLink;
     protected final Concept currentConcept;
 
-    protected TermLink currentBeliefLink;
+    protected TermLink currentTermLink;
     private Concept currentBeliefConcept;
-    private int termLinkCount;
+    private int termLinksToFire;
+    private int termlinkMatches;
 
 
     public ConceptProcess(Concept concept, TaskLink taskLink) {
@@ -36,7 +37,7 @@ public class ConceptProcess extends NAL {
         this.currentConcept = concept;
         this.currentTerm = concept.getTerm();
 
-        this.termLinkCount = termLinkCount;
+        this.termLinksToFire = termLinkCount;
     }
 
 
@@ -69,7 +70,10 @@ public class ConceptProcess extends NAL {
 
 
     protected void processTask() {
-        setCurrentBeliefLink(null);
+
+        currentTaskLink.budget.setUsed(memory.time());
+
+        setCurrentTermLink(null);
         reasoner.fire(this);
     }
 
@@ -77,30 +81,73 @@ public class ConceptProcess extends NAL {
 
         final int noveltyHorizon = memory.param.noveltyHorizon.get();
 
-        int termLinkSelectionAttempts = termLinkCount;
+        int termLinkSelectionAttempts = termLinksToFire;
 
         //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
-        //int numTermLinks = getCurrentConcept().termLinks.size();
+        int numTermLinks = getCurrentConcept().termLinks.size();
 
         currentConcept.updateTermLinks();
 
+        int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
 
             int numAddedTasksBefore = newTasksCount();
 
-            final TermLink bLink = currentConcept.nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
-            if (bLink == null)
-                break;  //no novel termlinks available
+            final TermLink bLink = nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+            if (bLink != null) {
+                //novel termlink available
 
-            processTerm(bLink);
+                processTerm(bLink);
 
-            int numAddedTasksAfter = newTasksCount();
+                termLinksSelected++;
 
-            emit(Events.TermLinkSelected.class, bLink, this, numAddedTasksBefore, numAddedTasksAfter);
-            memory.logic.TERM_LINK_SELECT.hit();
+                int numAddedTasksAfter = newTasksCount();
+
+                emit(Events.TermLinkSelected.class, bLink, this, numAddedTasksBefore, numAddedTasksAfter);
+                memory.logic.TERM_LINK_SELECT.hit();
+            }
 
         }
+        /*
+        System.out.println(termLinksSelected + "/" + termLinksToFire + " took " +  termlinkMatches + " matches over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords());
+        currentConcept.taskLinks.printAll(System.out);*/
     }
+
+    final Concept.TermLinkNovel termLinkNovel = new Concept.TermLinkNovel();
+
+    /**
+     * Replace default to prevent repeated logic, by checking TaskLink
+     *
+     * @param taskLink The selected TaskLink
+     * @param time The current time
+     * @return The selected TermLink
+     */
+    TermLink nextTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
+
+        int toMatch = memory.param.termLinkMaxMatched.get();
+
+        //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
+        if (currentConcept.termLinks.size() == 1) toMatch = 1;
+
+        termLinkNovel.set(taskLink, time, noveltyHorizon, memory.param.termLinkRecordLength.get());
+
+        for (int i = 0; (i < toMatch); i++) {
+
+            final TermLink termLink = currentConcept.termLinks.forgetNext(memory.param.termLinkForgetDurations, memory);
+            termlinkMatches++;
+
+            if (termLink == null)
+                return null;
+
+            if (termLinkNovel.apply(termLink)) {
+                return termLink;
+            }
+
+        }
+
+        return null;
+    }
+
 
     /**
      * Entry point of the logic engine
@@ -109,7 +156,7 @@ public class ConceptProcess extends NAL {
      * @param bLink The selected TermLink, which may provide a belief
      */
     protected void processTerm(TermLink bLink) {
-        setCurrentBeliefLink(bLink);
+        setCurrentTermLink(bLink);
 
         Sentence belief = getCurrentBelief();
 
@@ -122,6 +169,8 @@ public class ConceptProcess extends NAL {
 
     @Override
     protected void process() {
+
+        currentConcept.budget.setUsed(memory.time());
 
         processTask();
 
@@ -141,33 +190,34 @@ public class ConceptProcess extends NAL {
     /**
      * @return the currentBeliefLink
      */
-    public TermLink getCurrentBeliefLink() {
-        return currentBeliefLink;
+    public TermLink getCurrentTermLink() {
+        return currentTermLink;
     }
 
     /**
-     * @param currentBeliefLink the currentBeliefLink to set
+     * @param currentTermLink the currentBeliefLink to set
      */
-    public void setCurrentBeliefLink(TermLink currentBeliefLink) {
+    public void setCurrentTermLink(TermLink currentTermLink) {
 
-        if (this.currentBeliefLink == currentBeliefLink) {
+        if (this.currentTermLink == currentTermLink) {
 
-            if (currentBeliefLink != null)
+            if (currentTermLink != null)
                 throw new RuntimeException("Setting the same current belief link");
 
             return;
         }
 
-        if (currentBeliefLink == null) {
+        if (currentTermLink == null) {
             this.currentBelief = null;
-            this.currentBeliefLink = null;
+            this.currentTermLink = null;
             this.currentBeliefConcept = null;
             return;
         }
 
-        this.currentBeliefLink = currentBeliefLink;
+        this.currentTermLink = currentTermLink;
+        currentTermLink.budget.setUsed(memory.time());
 
-        Term beliefTerm = currentBeliefLink.getTerm();
+        Term beliefTerm = currentTermLink.getTerm();
 
         this.currentBeliefConcept = memory.concept(beliefTerm);
 
@@ -203,7 +253,7 @@ public class ConceptProcess extends NAL {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getClass().getSimpleName());
-        sb.append('[').append(currentConcept).append(',').append(currentTaskLink).append(currentBeliefLink).append(']');
+        sb.append('[').append(currentConcept).append(':').append(currentTaskLink).append(',').append(currentTermLink).append(']');
         return sb.toString();
     }
 

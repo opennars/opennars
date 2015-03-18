@@ -81,7 +81,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             TaskLink tLink = fc.getCurrentTaskLink();
             tLink.decPriority(1f - difT);
             tLink.decDurability(1f - difT);
-            TermLink bLink = fc.getCurrentBeliefLink();
+            TermLink bLink = fc.getCurrentTermLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1f - difB);
             bLink.decDurability(1f - difB);
@@ -228,9 +228,10 @@ public final class BudgetFunctions extends UtilityFunctions {
         return newPri;
     }
 
+
     /** forgetting calculation for real-time timing */
     public static float forgetPeriodic(final BudgetValue budget, final float forgetTime, float minPriorityForgettingCanAffect, final long currentTime) {
-        if (forgetTime <= 0)
+        if (budget.isNew() || (forgetTime <= 0))
             return budget.getPriority();
 
         long forgetDelta = budget.setLastForgetTime(currentTime);
@@ -374,7 +375,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
 
-        TermLink bLink = nal instanceof ConceptProcess ? ((ConceptProcess)nal).getCurrentBeliefLink() : null;
+        TermLink bLink = nal instanceof ConceptProcess ? ((ConceptProcess)nal).getCurrentTermLink() : null;
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());

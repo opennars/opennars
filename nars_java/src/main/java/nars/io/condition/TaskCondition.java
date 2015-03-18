@@ -261,7 +261,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                             final boolean tmatch;
                             switch (tense) {
-                                case Past: tmatch = oc < (-durationWindowNear + creationTime); break;
+                                case Past: tmatch = oc <= (-durationWindowNear + creationTime); break;
                                 case Present: tmatch = oc >= (-durationWindowFar + creationTime) && (oc <= +durationWindowFar + creationTime); break;
                                 case Future: tmatch = oc > (+durationWindowNear + creationTime); break;
                                 default:

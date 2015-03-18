@@ -210,7 +210,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {        
-        Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+        Bag<String, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
         return new Concept(b, t, taskLinks, termLinks, m);        
