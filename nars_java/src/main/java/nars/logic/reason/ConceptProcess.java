@@ -17,7 +17,6 @@ import nars.logic.entity.*;
  * */
 public class ConceptProcess extends NAL {
 
-    protected final Term currentTerm;
     protected final TaskLink currentTaskLink;
     protected final Concept currentConcept;
 
@@ -35,7 +34,6 @@ public class ConceptProcess extends NAL {
         super(concept.memory, taskLink.getTask());
         this.currentTaskLink = taskLink;
         this.currentConcept = concept;
-        this.currentTerm = concept.getTerm();
 
         this.termLinksToFire = termLinkCount;
     }
@@ -228,7 +226,7 @@ public class ConceptProcess extends NAL {
      * @return the currentTerm
      */
     public Term getCurrentTerm() {
-        return currentTerm;
+        return currentConcept.getTerm();
     }
 
     /**

@@ -49,7 +49,7 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                7,
+                57,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {

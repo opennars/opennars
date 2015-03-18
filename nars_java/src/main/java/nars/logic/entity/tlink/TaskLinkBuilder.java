@@ -1,6 +1,7 @@
 package nars.logic.entity.tlink;
 
 import nars.core.Memory;
+import nars.io.Symbols;
 import nars.logic.entity.Task;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
@@ -22,9 +23,9 @@ public class TaskLinkBuilder extends BagActivator<String,TaskLink> {
     public void setTask(Task t) {
         this.task = t;
         if (template == null)
-            setKey(TermLinkTemplate.prefix(TermLink.SELF, null, false) + t.sentence);
+            setKey(TermLinkTemplate.prefix(TermLink.SELF, null, false) + Symbols.TLinkSeparator + t.sentence);
         else
-            setKey(TermLinkTemplate.prefix(template.type, template.index, false) + t.sentence);
+            setKey(TermLinkTemplate.prefix(template.type, template.index, false) + Symbols.TLinkSeparator + t.sentence);
     }
 
     public Task getTask() {

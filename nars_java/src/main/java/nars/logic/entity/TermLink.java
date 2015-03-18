@@ -143,7 +143,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return getPrefix() + ':' + getTarget();
+        return getPrefix() + Symbols.TLinkSeparator + getTarget();
     }
 
     public String getPrefix() { return prefix; }
@@ -184,7 +184,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
         }
         return n.append(at2);//.append(targetName);
     }
-    
+
     /**
      * Get one index by level
      * @param i The index level

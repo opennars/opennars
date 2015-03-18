@@ -20,9 +20,10 @@ public class NAL4Test extends JavaNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
+                {new Default().level(6)},
                 {new Default().setInternalExperience(null) },
                 //{new DefaultBuffered().setInternalExperience(null) },
-                {new Default().level(6)},
+
                 {new Curve().setInternalExperience(null)}
 
         });
@@ -44,7 +45,7 @@ public class NAL4Test extends JavaNALTest {
         ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.26%')
         */
 
-        long time = 3000;
+        long time = 5000;
 
         float minConf = 0.12f; ///0.26f;
         nar.believe("<0 --> num>", 1.0f, 0.9f);
@@ -72,15 +73,13 @@ public class NAL4Test extends JavaNALTest {
 
      */
         long time;
-        float finalConf;
+        final float finalConf = 0.73f;
 
         if (nar.nal() <= 6) {
-            time = 20;
-            finalConf = 0.73f;
+            time = 75; //less time for the nal6 config
         }
         else {
             time = 800;
-            finalConf = 0.29f;
         }
 
         nar.believe(" <0 --> n>", 1.0f, 0.9f);

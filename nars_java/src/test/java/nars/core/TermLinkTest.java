@@ -1,6 +1,7 @@
 package nars.core;
 
 import nars.build.Default;
+import nars.io.Symbols;
 import nars.logic.entity.Concept;
 import nars.logic.entity.TermLink;
 import nars.logic.entity.tlink.TermLinkKey;
@@ -21,8 +22,8 @@ public class TermLinkTest {
     public void testConjunctionTermLinks() {
 
         Bag<TermLinkKey, TermLink> cj0 = getTermLinks("(&&,a,b)");
-        assertTrue(cj0.keySet().toString().contains("Ba:a"));
-        assertTrue(cj0.keySet().toString().contains("Bb:b"));
+        assertTrue(cj0.keySet().toString().contains("Ba" + Symbols.TLinkSeparator + "a"));
+        assertTrue(cj0.keySet().toString().contains("Bb" + Symbols.TLinkSeparator + "b"));
         assertEquals(2, cj0.size());
 
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");

@@ -114,6 +114,10 @@ public class Symbols {
     public static final Term DEFAULT_SELF = Term.get("SELF");
 
 
+    /** separates prefix from the term in a termlink or tasklink */
+    final public static char TLinkSeparator = ':';
+
+
     public static NALOperator getOperator(final char c) {
         return charToOperator.get(c);
     }
