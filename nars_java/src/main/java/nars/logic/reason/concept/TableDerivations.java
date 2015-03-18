@@ -15,11 +15,11 @@ import static nars.io.Symbols.VAR_INDEPENDENT;
 public class TableDerivations extends ConceptFireTaskTerm {
 
     @Override
-    public boolean apply(ConceptProcess f, TaskLink tLink, TermLink bLink) {
+    public boolean apply(final ConceptProcess f, final TaskLink tLink, final TermLink bLink) {
 
-        Sentence taskSentence = tLink.getSentence();
+        final Sentence taskSentence = tLink.getSentence();
         final Term taskTerm = tLink.getTerm();
-        Sentence belief = f.getCurrentBelief();
+        final Sentence belief = f.getCurrentBelief();
         final Term beliefTerm = bLink.getTerm();
 
         final short tIndex = tLink.getIndex(0);

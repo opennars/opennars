@@ -24,9 +24,8 @@ package nars.core;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.logic.entity.stamp.Stamp;
 import nars.logic.entity.Task;
-import nars.util.data.CuckooMap;
+import nars.logic.entity.stamp.Stamp;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -82,7 +81,7 @@ public class Parameters {
      *  other values may be used, for example, 0.02 for 50, 0.10 for 10, etc.
      *  Change at your own risk
      */
-    public static final float TRUTH_EPSILON = 0.01f;
+    public static final float TRUTH_EPSILON = 0.02f;
     public static final float TRUTH_PRECISION = 1.0f / TRUTH_EPSILON;
     public static float MAX_CONFIDENCE = 1.0f - TRUTH_EPSILON;
 
@@ -94,7 +93,7 @@ public class Parameters {
      *   budgets are propagated or otherwise measured, which can result
      *   in a performance gain.
      * */
-    public static final float BUDGET_THRESHOLD = 0.02f;
+    public static final float BUDGET_THRESHOLD = 0.01f;
 
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */
@@ -142,7 +141,7 @@ public class Parameters {
     /** Maximum length of the Derivation Chain of the stamp */
     public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 8;
     
-    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 3;
+    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1;
     
 
     /**
@@ -184,7 +183,7 @@ public class Parameters {
      * 
      * Optimal value to be determined.
      */
-    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
+    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 128;
     
     /** max number of interval to combine in sequence to approximate a time period (cycles) */
     public static int TEMPORAL_INTERVAL_PRECISION = 1;
@@ -232,7 +231,7 @@ public class Parameters {
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
     public static final float TERMLINK_FORGETTING_ACCURACY = 0.15f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.15f;
-
+    public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
 
 
     public static <X> List<X> newArrayList() {
@@ -244,6 +243,7 @@ public class Parameters {
         //return new FastMap<>(); //javolution http://javolution.org/apidocs/javolution/util/FastMap.html
         return new UnifiedMap<K,V>(capacity);
         //return new HashMap<>(capacity);
+        //return new LinkedHashMap(capacity);
     }
 
     public static <X> List<X> newArrayList(int capacity) {
@@ -255,6 +255,7 @@ public class Parameters {
         return new UnifiedSet(capacity);
         //return new SimpleHashSet(capacity);
         //return new HashSet(capacity);
+        //return new LinkedHashSet(capacity);
     }
 
     public static <X> Set<X> newHashSet(Collection<X> values) {
@@ -267,10 +268,6 @@ public class Parameters {
         return newHashMap(0);
     }
 
-
-    public static <K,V> Map<K, V> newCuckoHashMap(int capacity) {
-        return new CuckooMap<K,V>(capacity, 0.6f);
-    }
 
     public static Reference<Task> reference(Task t) {
         return new SoftReference(t);

@@ -900,8 +900,7 @@ public class Concept extends Item<Term> implements Termable {
         for (int i = 0; i < b; i++) {
             Sentence belief = beliefs.get(i);
 
-            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
-
+            if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
             Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
             if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {

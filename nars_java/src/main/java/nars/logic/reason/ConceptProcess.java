@@ -197,29 +197,28 @@ public class ConceptProcess extends NAL {
      */
     public void setCurrentTermLink(TermLink currentTermLink) {
 
-        if (this.currentTermLink == currentTermLink) {
-
-            if (currentTermLink != null)
-                throw new RuntimeException("Setting the same current belief link");
-
-            return;
-        }
-
         if (currentTermLink == null) {
             this.currentBelief = null;
             this.currentTermLink = null;
             this.currentBeliefConcept = null;
-            return;
+
         }
+        else {
 
-        this.currentTermLink = currentTermLink;
-        currentTermLink.budget.setUsed(memory.time());
+            this.currentTermLink = currentTermLink;
+            currentTermLink.budget.setUsed(memory.time());
 
-        Term beliefTerm = currentTermLink.getTerm();
+            Term beliefTerm = currentTermLink.getTerm();
 
-        this.currentBeliefConcept = memory.concept(beliefTerm);
-
-        this.currentBelief = (currentBeliefConcept != null) ? currentBeliefConcept.getBelief(this, getCurrentTask()) : null;
+            this.currentBeliefConcept = memory.concept(beliefTerm);
+            if (this.currentBeliefConcept!=null) {
+                this.currentBelief = currentBeliefConcept.getBelief(this, getCurrentTask());
+            }
+            else {
+                //this.currentBelief = currentTask.sentence;
+                this.currentBelief = null;
+            }
+        }
     }
 
     /**

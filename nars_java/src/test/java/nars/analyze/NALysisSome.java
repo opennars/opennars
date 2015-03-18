@@ -33,10 +33,10 @@ public class NALysisSome extends NALysis {
         showTrace = false;
 
         //String test = "./nal/test6/nal6.27.nal";
-        //String test = "./nal/test5/depr/nal5.19.nal";
+        String test = "./nal/test5/depr/nal5.19.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
-        String test = "./nal/test6/nal6.22.nal";
+        //String test = "./nal/test6/nal6.22.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
 

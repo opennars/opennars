@@ -20,6 +20,8 @@
  */
 package nars.logic.entity;
 
+import nars.core.Parameters;
+import nars.io.Symbols;
 import nars.logic.Terms.Termable;
 import nars.logic.entity.Sentence.Sentenced;
 import nars.logic.entity.tlink.TermLinkTemplate;
@@ -44,6 +46,13 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     public final Task targetTask;
 
     private String name;
+
+    public static String key(short type, short[] index, Task task) {
+        if (Parameters.TASK_LINK_UNIQUE_BY_INDEX)
+            return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
+        else
+            return task.sentence.name();
+    }
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
@@ -115,7 +124,7 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     @Override
     public String name() {
         if (name == null) {
-            this.name = TermLinkTemplate.prefix(type, index, false) + targetTask.sentence.toString();
+            this.name = key(type, index, targetTask);
         }
         return name;
     }
