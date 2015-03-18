@@ -461,9 +461,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
     public void addSolution(final Task currentTask, final BudgetValue budget, final Sentence sentence, final Task parentBeliefTask) {
         Sentence candidateBelief = parentBeliefTask.getParentBelief();
 
-        addNewTask(new Task(sentence, budget, currentTask, sentence, candidateBelief),
+        addNewTask(
+                new Task(sentence, budget, currentTask, sentence, candidateBelief)
+                        .addHistory(currentTask.getHistory()),
                 "Activated",
-                true, false, false, sentence, parentBeliefTask);
+                true, false, false, sentence, currentTask);
     }
 
     /**

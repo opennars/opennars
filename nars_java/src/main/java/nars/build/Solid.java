@@ -186,7 +186,7 @@ public class Solid extends Default {
                     if (!task.aboveThreshold()) continue; //need to check again because it seems that Task proirity can be modified even after it is in the task queue
 
                     new DirectProcess(getMemory(), task).run();
-                    if (t++ == maxTasks) break;
+                    if (t++ >= maxTasks) break;
                 }
                 tasks.clear();
 
@@ -195,8 +195,9 @@ public class Solid extends Default {
 
                     float p = c.getPriority();
                     int fires = num(p, minTaskLink, maxTaskLink);
+                    if (fires < 1) continue;
                     int termFires = num(p, minTermLink, maxTermLink);
-                    if (termFires == 0) continue;
+                    if (termFires < 1) continue;
 
                     //System.out.println("  firing " + c + " x " + fires);
 
@@ -206,6 +207,8 @@ public class Solid extends Default {
                         new ConceptProcess(c, tl, termFires).run();
                     }
                 }
+
+                memory.runNextTasks();
             }
 
             @Override

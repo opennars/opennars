@@ -27,6 +27,7 @@ import nars.logic.entity.stamp.Stamp;
 import nars.logic.entity.stamp.Stamped;
 
 import java.lang.ref.Reference;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -503,5 +504,16 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
     @Override
     public Stamp getStamp() {
         return sentence.stamp;
+    }
+
+    public Task addHistory(List<String> historyToCopy) {
+        if (!Parameters.TASK_HISTORY)
+            return this;
+
+        if (historyToCopy!=null) {
+            if (this.history==null) this.history = new ArrayList(historyToCopy.size());
+            history.addAll(historyToCopy);
+        }
+        return this;
     }
 }
