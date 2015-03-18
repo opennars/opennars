@@ -299,21 +299,25 @@ public final class SyllogisticRules {
 
         final boolean temporalReasoning = nal.nal(7);
 
-        long occurTime = Stamp.ETERNAL;
+        NAL.StampBuilder st = null;
         if (temporalReasoning) {
-            final long now = nal.time();
             int order = statement.getTemporalOrder();
             if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() && (!taskSentence.isQuestion()))) {
                 long baseTime = subSentence.getOccurrenceTime();
                 if (baseTime == Stamp.ETERNAL) {
-                    baseTime = now;
+                    baseTime = nal.time();
                 }
-                long inc = order * nal.memory.param.duration.get();
-                occurTime = (side == 0) ? baseTime + inc : baseTime - inc;
+                long inc = order * nal.memory.duration();
+                long occurTime = (side == 0) ? baseTime + inc : baseTime - inc;
+                st = nal.newStamp(mainSentence, subSentence, occurTime);
             }
         }
 
-        
+        if (st == null) {
+            //new stamp, inferring occurence time from the sentences
+            st = nal.newStamp(mainSentence, subSentence);
+        }
+
         TruthValue beliefTruth = beliefSentence.truth;
         TruthValue truth1 = mainSentence.truth;
         TruthValue truth2 = subSentence.truth;
@@ -357,7 +361,7 @@ public final class SyllogisticRules {
         }
         if(!Variables.indepVarUsedInvalid(content)) {
             nal.doublePremiseTask(content, truth, budget,
-                    nal.newStamp(mainSentence, subSentence, occurTime),
+                    st,
                     false);
         }
     }
