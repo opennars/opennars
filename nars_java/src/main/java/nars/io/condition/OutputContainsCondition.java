@@ -63,7 +63,18 @@ public class OutputContainsCondition extends OutputCondition {
         
     }
     
-    
+
+    public static class InputContainsCondition extends OutputContainsCondition {
+
+        public InputContainsCondition(NAR nar, String containing) {
+            super(nar, containing, Events.IN.class);
+        }
+
+        @Override
+        protected boolean validChannel(Class channel) {
+            return channel == Events.IN.class;
+        }
+    }
     
     final String containing;
 
@@ -85,6 +96,13 @@ public class OutputContainsCondition extends OutputCondition {
         this.containing = containing;
         this.maxSimilars = maxSimilars;
         this.saveSimilar = maxSimilars != -1;
+    }
+
+    public OutputContainsCondition(NAR nar, String containing, Class... events) {
+        super(nar, events);
+        this.containing = containing;
+        this.maxSimilars = 4;
+        this.saveSimilar = true;
     }
 
     @Override

@@ -7,6 +7,7 @@ package nars.logic.nal7;
 import nars.build.Curve;
 import nars.build.Default;
 import nars.core.NewNAR;
+import nars.io.TextOutput;
 import nars.io.condition.OutputContainsCondition;
 import nars.logic.JavaNALTest;
 import org.junit.Test;
@@ -36,12 +37,14 @@ public class TemporalOrderTest extends JavaNALTest {
     public void testFutureQuestion() {
 
 
-        //TextOutput.out(nar);
+        TextOutput.out(nar);
 
         nar.input("<e --> f>. :/:");
         nar.input("<c --> d>. :|:");
-        nar.requires.add(new OutputContainsCondition(nar, "<e --> f>. :/:", 5));
-        nar.requires.add(new OutputContainsCondition(nar, "<c --> d>. :\\:", 5));
+        nar.input("<a --> b>. :\\:");
+        nar.requires.add(new OutputContainsCondition.InputContainsCondition(nar, "<e --> f>. :/: %1.00;0.90%"));
+        nar.requires.add(new OutputContainsCondition.InputContainsCondition(nar, "<c --> d>. :|: %1.00;0.90%"));
+        nar.requires.add(new OutputContainsCondition.InputContainsCondition(nar, "<a --> b>. :\\: %1.00;0.90%"));
 
 
         //assertTrue(!futureQuestion.isTrue());
