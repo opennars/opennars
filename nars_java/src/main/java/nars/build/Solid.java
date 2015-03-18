@@ -6,16 +6,14 @@ import nars.control.ConceptActivator;
 import nars.core.Core;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.io.TextOutput;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
-import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.reason.ConceptProcess;
 import nars.logic.reason.DirectProcess;
-import nars.util.bag.Bag;
 import nars.util.bag.impl.CacheBag;
 import nars.util.bag.impl.CurveBag;
-import nars.util.bag.impl.experimental.ChainBag;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -260,21 +258,24 @@ public class Solid extends Default {
 
     @Override
     public Concept newConcept(BudgetValue b, Term t, Memory m) {
-        Bag<String, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
+        //Bag<String, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
+        //Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
 
-        return new Concept(b, t, taskLinks, termLinks, m);
+        //return new Concept(b, t, taskLinks, termLinks, m);
+        return super.newConcept(b, t, m);
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Solid s = new Solid(1, 1024, 0, 9, 0, 3);
+        Parameters.DEBUG = true;
+
+        Solid s = new Solid(1, 64, 0, 9, 0, 3);
         NAR n = new NAR(s);
         n.input(new File("/tmp/h.nal"));
 
         TextOutput.out(n).setPriorityMin(1.0f);
-        n.step(24);
+        n.step(1544);
 
     }
 

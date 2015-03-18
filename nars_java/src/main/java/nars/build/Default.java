@@ -80,18 +80,18 @@ public class Default extends NewNAR implements ConceptBuilder {
                 level >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
 
 
-        setConceptBagSize(512);
+        setConceptBagSize(1024);
         setSubconceptBagSize(256);
         setConceptBagLevels(64);
         
-        setTaskLinkBagSize(64);
-        setTaskLinkBagLevels(32);
+        setTaskLinkBagSize(32);
+        setTaskLinkBagLevels(16);
 
-        setTermLinkBagSize(48);
+        setTermLinkBagSize(96);
         setTermLinkBagLevels(32);
         
-        setNovelTaskBagSize(96);
-        setNovelTaskBagLevels(32);
+        setNovelTaskBagSize(32);
+        setNovelTaskBagLevels(16);
 
 
 
@@ -115,7 +115,7 @@ public class Default extends NewNAR implements ConceptBuilder {
 
         //param.budgetThreshold.set(0.01f);
 
-        param.conceptBeliefsMax.set(11);
+        param.conceptBeliefsMax.set(7);
         param.conceptGoalsMax.set(7);
         param.conceptQuestionsMax.set(5);
 
@@ -123,9 +123,9 @@ public class Default extends NewNAR implements ConceptBuilder {
         param.conceptsFiredPerCycle.set(1);
         
         param.termLinkMaxReasoned.set(3);
-        param.termLinkMaxMatched.set(8);
-        param.termLinkRecordLength.set(7);
-        param.noveltyHorizon.set(6); //probably should not exceed termLinkRecordLength
+        param.termLinkMaxMatched.set(10);
+        param.termLinkRecordLength.set(10);
+        param.noveltyHorizon.set(10);
         
         param.setForgetting(Forgetting.Periodic);
         param.setTiming(Timing.Iterative);
