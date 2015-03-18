@@ -402,9 +402,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         return occurrenceTime;
     }
 
-    public void setOccurrenceTime(long l) {
+    @Deprecated public Stamp setOccurrenceTime(long l) {
         this.occurrenceTime = l;
         this.hash = 0;
+        return this;
     }
 
     public void setEternal() {

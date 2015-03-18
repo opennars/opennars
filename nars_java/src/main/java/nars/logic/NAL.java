@@ -554,13 +554,17 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
     }
 
     public interface StampBuilder<C> {
+
+        /** doesnt need to produce a new clone, but this will affect the next build()'s */
+        @Deprecated public StampBuilder<C> setOccurrenceTime(long occurrenceTime);
+
         public Stamp build();
     }
 
     public static class LazyStampBuilder<C> implements StampBuilder<C> {
 
         public final Stamp a, b;
-        public final long creationTime, occurrenceTime;
+        protected long creationTime, occurrenceTime;
         protected Stamp stamp = null;
 
         public LazyStampBuilder(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
@@ -568,6 +572,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             this.b = b;
             this.creationTime = creationTime;
             this.occurrenceTime = occurrenceTime;
+        }
+
+        @Deprecated public LazyStampBuilder<C> setOccurrenceTime(long occurrenceTime) {
+            this.occurrenceTime = occurrenceTime;
+            return this;
         }
 
         @Override

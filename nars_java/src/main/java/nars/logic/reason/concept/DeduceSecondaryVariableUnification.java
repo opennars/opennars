@@ -263,7 +263,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
     private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, final NAL.StampBuilder s, ArrayList<Term> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
 
-        NAL.StampBuilder sx = null;
+
 
         final Sentence taskSentence = task.sentence;
 
@@ -292,13 +292,13 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             if (budget.aboveThreshold()) {
 
-                if (sx == null)
-                    sx = nal.newStamp(taskSentence.stamp, s.build());
-                    //sx = s.build(); // nal.newStamp(taskSentence.stamp, s.build());
 
-                Sentence newSentence = new Sentence(result, mark, truth, sx);
 
-                Task newTask = new Task(newSentence, budget, task, null);
+                Sentence newSentence = new Sentence(result, mark, truth,
+                        s.setOccurrenceTime(taskSentence.stamp.getOccurrenceTime()).build()
+                );
+
+                Task newTask = new Task(newSentence, budget, task, second_belief);
                 Task dummy = new Task(second_belief, budget, task, null);
 
                 if (nal.deriveTask(newTask, false, false, second_belief, dummy, false)) {
