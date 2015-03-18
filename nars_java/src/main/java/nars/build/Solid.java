@@ -268,14 +268,14 @@ public class Solid extends Default {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Parameters.DEBUG = true;
+        Parameters.DEBUG = false;
 
-        Solid s = new Solid(1, 64, 0, 9, 0, 3);
+        Solid s = new Solid(1, 1024, 0, 9, 0, 3);
         NAR n = new NAR(s);
         n.input(new File("/tmp/h.nal"));
 
-        TextOutput.out(n).setPriorityMin(1.0f);
-        n.step(1544);
+        TextOutput.out(n).setPriorityMin(0.1f);
+        n.step(64);
 
     }
 

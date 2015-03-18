@@ -100,7 +100,7 @@ public abstract class OutputCondition extends AbstractReaction {
 
                 String match = s.substring(expectOutContains.length(), s.length() - 2); //remove ') suffix:
 
-                Task t = n.narsese.parseTask(match);
+                Task t = n.narsese.parseTask(match, false);
                 if (t!=null)
                     conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle));
                 else

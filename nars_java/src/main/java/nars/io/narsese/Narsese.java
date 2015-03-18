@@ -108,7 +108,12 @@ public class Narsese {
 //        }
 //        return new Sentence(content, punc, truth, null);
 //    }
-    
+
+
+    public Task parseTask(String s) throws InvalidInputException {
+        return parseTask(s, true);
+    }
+
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
      * locally.
@@ -118,13 +123,13 @@ public class Narsese {
      * @param time The current time
      * @return An experienced task
      */    
-    public Task parseTask(String s) throws InvalidInputException {
+    public Task parseTask(String s, boolean newStamp) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(Texts.escape(s));
 
         String budgetString = getBudgetString(buffer);
 
 
-        Sentence sentence = parseSentence(buffer);
+        Sentence sentence = parseSentence(buffer, newStamp);
 
         BudgetValue budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
         Task task = new Task(sentence, budget);
@@ -133,6 +138,10 @@ public class Narsese {
     }
 
     public Sentence parseSentence(StringBuilder buffer) {
+        return parseSentence(buffer, true);
+    }
+
+    public Sentence parseSentence(StringBuilder buffer, boolean newStamp) {
         String truthString = getTruthString(buffer);
         Tense tense = parseTense(buffer);
         String str = buffer.toString().trim();
@@ -140,7 +149,9 @@ public class Narsese {
         char punc = str.charAt(last);
 
         /* if -1, will be set right before the Task is input */
-        Stamp stamp = new Stamp(memory, Stamp.UNPERCEIVED, tense);
+        Stamp stamp = new Stamp(
+                newStamp ? new long[] { memory.newStampSerial() } : new long[] { /* blank */ },
+                memory, Stamp.UNPERCEIVED, tense);
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));

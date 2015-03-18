@@ -634,7 +634,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
      * true if equal operator and all terms contained
      */
     public boolean containsAllTermsOf(final Term t) {
-        if (operator() == t.operator()) {
+        if (getClass() == t.getClass()) {
             return Terms.containsAll(term, ((CompoundTerm) t).term);
         } else {
             return Terms.contains(term, t);
@@ -652,7 +652,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
 
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
-        if (t != null && (operator() != t.operator()) && (term[index].equals(t)))
+        if (t != null && (getClass() != t.getClass()) && (term[index].equals(t)))
             return this;
 
         List<Term> list = asTermList();//Deep();
@@ -660,7 +660,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         list.remove(index);
 
         if (t != null) {
-            if (operator() != t.operator()) {
+            if (getClass() != t.getClass()) {
                 list.add(index, t);
             } else {
                 //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
@@ -913,7 +913,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
      * compare subterms where any variables matched are not compared
      */
     public boolean equalsVariablesAsWildcards(final CompoundTerm c) {
-        if (operator() != c.operator()) return false;
+        if (getClass() != c.getClass()) return false;
         if (size() != c.size()) return false;
         for (int i = 0; i < size(); i++) {
             Term a = term[i];

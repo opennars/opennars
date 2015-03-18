@@ -193,7 +193,9 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     public Stamp(final Memory memory, long creationTime, final Tense tense) {
         this(memory, creationTime, getOccurrenceTime(creationTime, tense, memory.duration()));
     }
-
+    public Stamp(final long[] evidence, Memory memory, long creationTime, final Tense tense) {
+        this(evidence, creationTime,  getOccurrenceTime(creationTime, tense, memory.duration()), memory.duration());
+    }
 
     public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
 

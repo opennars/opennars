@@ -30,7 +30,7 @@ public class NALysisSome extends NALysis {
         Parameters.DEBUG_DERIVATION_STACKTRACES = true;
         showInput = true;
         showOutput = true;
-        showTrace = true;
+        showTrace = false;
 
         //String test = "./nal/test6/nal6.27.nal";
         String test = "./nal/test5/depr/nal5.19.nal";
@@ -43,12 +43,13 @@ public class NALysisSome extends NALysis {
 
         NewNAR build = new Default().setInternalExperience(null);
 
+        //NewNAR build = new Solid(1, 256, 0, 9, 0, 3);
         //NewNAR build = new Default();
 
         TestNAR n = analyze(
                 build,
                 test,
-                32,
+                7,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {

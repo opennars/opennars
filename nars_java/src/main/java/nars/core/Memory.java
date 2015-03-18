@@ -187,7 +187,7 @@ public class Memory implements Serializable {
     /* InnateOperator registry. Containing all registered operators of the system */
     public final HashMap<CharSequence, Operator> operators;
 
-    private long currentStampSerial = 0;
+    private long currentStampSerial = 1;
 
 
 
