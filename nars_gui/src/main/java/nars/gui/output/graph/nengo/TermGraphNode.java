@@ -29,7 +29,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
 
 
-    private final ConceptReaction conceptReaction;
+    private ConceptReaction conceptReaction;
     private final Memory memory;
 
     //float simTimePerCycle = 1f;
@@ -200,7 +200,14 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
         this.memory = m;
 
-        this.conceptReaction = new ConceptReaction(m) {
+        addStepListener(layoutCycle);
+    }
+
+    public void start() {
+
+        stop();
+
+        this.conceptReaction = new ConceptReaction(memory) {
 
             @Override
             public void onFiredConcept(Concept c) {
@@ -218,9 +225,14 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             }
         };
 
-        addStepListener(layoutCycle);
     }
 
+    public void stop() {
+        if (conceptReaction!=null) {
+            conceptReaction.off();
+            conceptReaction = null;
+        }
+    }
 
     void updateCoordinates(Collection<UIVertex> vertices) {
         long now = System.currentTimeMillis();

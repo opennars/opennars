@@ -131,18 +131,29 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
 
     public boolean deriveTask(final Task task, final boolean revised, final boolean single) {
-        return deriveTask(task, revised, single, null, null);
+        return deriveTask(task, revised, single, null, null, false);
     }
 
     /**
      * iived task comes from the logic rules.
      *
      * @param task the derived task
+     * @param allowOverlap
      */
-    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Sentence currentBelief, Task currentTask) {
+    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Sentence currentBelief, Task currentTask, boolean allowOverlap) {
 
         if (task.getParentTask() == null) {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
+        }
+
+        //its revision, of course its cyclic, apply evidental base policy
+
+        if(Parameters.DEBUG && !allowOverlap) { //TODO cleanup for 1.6.3, revised variable wont be needed anymore I guess.
+            if (task.getStamp().isCyclic()) {
+                //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
+                //re.printStackTrace();
+                return false;
+            }
         }
 
         if (addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask)) {
@@ -253,7 +264,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         boolean derived = deriveTask(new Task(
                 new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask);
+                newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, false);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
@@ -265,7 +276,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                                     TruthFunctions.eternalize(newTruth),
                                     newStamp.cloneEternal()),
                             newBudget, subbedTask, subbedBelief),
-                    false, false, subbedBelief, subbedTask);
+                    false, false, subbedBelief, subbedTask, false);
         }
 
         return derived;

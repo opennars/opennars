@@ -222,7 +222,7 @@ public class InternalExperience extends AbstractPlugin  {
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
-                nal.deriveTask(newTask, false, false, null, null);
+                nal.deriveTask(newTask, false, false, null, null, false);
             }
         }
 
@@ -268,7 +268,7 @@ public class InternalExperience extends AbstractPlugin  {
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
-                    nal.deriveTask(newTask, false, false, null, null);
+                    nal.deriveTask(newTask, false, false, null, null, false);
                 }
             }
         }

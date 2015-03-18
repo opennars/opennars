@@ -98,7 +98,7 @@ public class LocalRules {
                 t.sentence.punctuation,
                 truth,
                 stamp), budget, t, subbedBelief),
-                true, false, subbedBelief, t)) {
+                true, false, subbedBelief, t, false)) {
 
             nal.memory.logic.BELIEF_REVISION.hit();
             return true;

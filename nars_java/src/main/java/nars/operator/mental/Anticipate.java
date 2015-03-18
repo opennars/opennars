@@ -168,7 +168,7 @@ public class Anticipate extends AbstractPlugin implements Mental {
         if (debug)
             System.err.println("Anticipation Negated " + task);
 
-        nal.deriveTask(task, false, true, null, null);
+        nal.deriveTask(task, false, true, null, null, false);
 
         //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         task.setParticipateInTemporalInduction(true);

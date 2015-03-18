@@ -40,6 +40,7 @@ import nars.logic.reason.DirectProcess;
 import nars.util.bag.Bag;
 import nars.util.data.CuckooMap;
 
+import java.io.PrintStream;
 import java.util.*;
 
 import static nars.logic.BudgetFunctions.divide;
@@ -1006,6 +1007,7 @@ public class Concept extends Item<Term> implements Termable {
         return termLinkBuilder.templates();
     }
 
+
     public static final class TermLinkNovel implements Predicate<TermLink>    {
 
         TaskLink taskLink;
@@ -1123,5 +1125,24 @@ public class Concept extends Item<Term> implements Termable {
 //            sb.append(s.toString()).append('\n');
 //        return sb;
 //    }
+
+    /** prints a summary of all termlink, tasklink, etc.. */
+    public void print(PrintStream out) {
+        final String indent = "\t";
+        out.println(term);
+        out.println("TermLinks");
+        for (TLink t : termLinks) {
+            out.print(indent);
+            TLink.print(t, out);
+            out.println();
+        }
+        out.println("TaskLinks");
+        for (TLink t : taskLinks) {
+            out.print(indent);
+            TLink.print(t, out);
+            out.println();
+        }
+        out.println();
+    }
 
 }

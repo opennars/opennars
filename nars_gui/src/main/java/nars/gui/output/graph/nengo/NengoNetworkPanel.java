@@ -84,12 +84,21 @@ public class NengoNetworkPanel extends Nengrow {
 
 
 
-
-
-
     }
 
-//
+    @Override
+    protected void start() {
+        super.start();
+        graphNode.start();
+    }
+
+    @Override
+    protected void stop() {
+        super.stop();
+        graphNode.stop();
+    }
+
+    //
 //    @Override
 //    protected NodeContainer getRoot() {
 //        //return super.getRoot();

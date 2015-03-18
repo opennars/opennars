@@ -30,18 +30,19 @@ public class NALysisSome extends NALysis {
         Parameters.DEBUG_DERIVATION_STACKTRACES = true;
         showInput = true;
         showOutput = true;
-        showTrace = false;
+        showTrace = true;
 
         //String test = "./nal/test6/nal6.27.nal";
-        //String test = "./nal/test5/depr/nal5.19.nal";
+        String test = "./nal/test5/depr/nal5.19.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
         //String test = "./nal/test6/nal6.22.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
-        String test = "./nal/test7/nal7.2.nal";
+        //String test = "./nal/test7/nal7.2.nal";
 
         NewNAR build = new Default().setInternalExperience(null);
+
 
         //NewNAR build = new Solid(1, 256, 0, 9, 0, 3);
         //NewNAR build = new Default();
@@ -71,6 +72,9 @@ public class NALysisSome extends NALysis {
         //results.printARFF(new PrintStream(dataOut));
         //results.printCSV(new PrintStream(System.out));
 
+        /*n.concept("(&&,<robin --> swimmer>,<robin --> [flying]>)").print(System.out);
+        n.concept("<robin --> swimmer>").print(System.out);
+        n.concept("<robin --> [flying]>").print(System.out);*/
     }
 
 

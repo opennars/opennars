@@ -239,7 +239,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     Task newTask = new Task(newSentence, budget, task, null);
                     Task dummy = new Task(second_belief, budget, task, null);
 
-                    if (nal.deriveTask(newTask, false, false, second_belief, dummy)) {
+                    if (nal.deriveTask(newTask, false, false, second_belief, dummy, true /* allow overlap */)) {
 
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
                         nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
@@ -301,7 +301,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 Task newTask = new Task(newSentence, budget, task, null);
                 Task dummy = new Task(second_belief, budget, task, null);
 
-                if (nal.deriveTask(newTask, false, false, second_belief, dummy)) {
+                if (nal.deriveTask(newTask, false, false, second_belief, dummy, false)) {
 
                     nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
