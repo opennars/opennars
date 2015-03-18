@@ -71,6 +71,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         this.complexity = -1;
         this.term = components;
 
+
     }
 
     /**
@@ -184,6 +185,11 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     @Override
     public abstract Term clone();
 
+    @Override
+    public Term normalized() {
+        return cloneNormalized();
+    }
+
     /**
      * for normalizing terms that contain variables which need to be finalized for use in a Sentence
      */
@@ -236,7 +242,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
         }
 
-        c.setNormalizedSubTerms(true);
+        c.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
 
         return c;
 
@@ -262,7 +268,6 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
     public void invalidateName() {
         if (hasVar()) {
-            setNormalized(false);
             this.name = null; //invalidate name so it will be (re-)created lazily
             for (final Term t : term) {
                 if (t instanceof CompoundTerm)
@@ -899,15 +904,15 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         this.normalized = b;
     }
 
-    /** recursively sets all subterms normalization */
-    protected void setNormalizedSubTerms(boolean b) {
-        setNormalized(b);
-
-        //recursively set subterms as normalized
-        for (final Term t : term)
-            if (t instanceof CompoundTerm)
-                ((CompoundTerm)t).setNormalizedSubTerms(b);
-    }
+//    /** recursively sets all subterms normalization */
+//    protected void setNormalizedSubTerms(boolean b) {
+//        setNormalized(b);
+//
+//        //recursively set subterms as normalized
+//        for (final Term t : term)
+//            if (t instanceof CompoundTerm)
+//                ((CompoundTerm)t).setNormalizedSubTerms(b);
+//    }
 
     /**
      * compare subterms where any variables matched are not compared

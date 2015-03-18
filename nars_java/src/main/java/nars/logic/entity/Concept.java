@@ -1091,6 +1091,9 @@ public class Concept extends Item<Term> implements Termable {
 
 
     public Term getTerm() {
+        if (Parameters.DEBUG) {
+            term.ensureNormalized("Concept term");
+        }
         return term;
     }
 

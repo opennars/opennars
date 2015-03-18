@@ -2,6 +2,8 @@ package nars.core;
 
 import nars.build.Default;
 import nars.io.Symbols;
+import nars.io.narsese.Narsese;
+import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.TermLink;
 import nars.logic.entity.tlink.TermLinkKey;
@@ -27,6 +29,7 @@ public class TermLinkTest {
         assertEquals(2, cj0.size());
 
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
+        System.out.println(cj1.keySet());
         assertEquals(5, cj1.size());
 
     }
@@ -70,8 +73,11 @@ public class TermLinkTest {
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {
         NAR n = nn(term);
-        Concept c = n.concept(term);
+        //Concept c = n.conceptualize(term);
+        Concept c = n.memory.conceptualize(new BudgetValue(1f,1f,1f),
+                new Narsese(n).parseTerm(term));
         assertNotNull(c);
+        n.run(2);
 
         return c.termLinks;
     }

@@ -71,6 +71,7 @@ public class NAR implements Runnable {
     }
 
 
+
     /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
     public class PluggedIn implements Serializable {
         final public Plugin plugin;
@@ -203,9 +204,10 @@ public class NAR implements Runnable {
         return memory.concept(term);
     }
     /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(String concept) throws InvalidInputException {
-        return concept(new Narsese(this).parseTerm(concept));
+    public Concept concept(String conceptTerm) throws InvalidInputException {
+        return concept(new Narsese(this).parseTerm(conceptTerm));
     }
+
 
 
     public Task goal(String goalTerm, float freq, float conf) {

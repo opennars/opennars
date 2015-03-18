@@ -158,6 +158,8 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
             }
         }
 
+        this.term.ensureNormalized("Sentence term");
+
         this.hash = 0;
 
     }

@@ -93,11 +93,10 @@ public class Negation extends CompoundTerm {
         return make(argument[0]);
     }
 
-    //????
-//    @Override
-//    public boolean isCommutative() {
-//        return true;
-//    }
+    @Override
+    public boolean isCommutative() {
+        throw new RuntimeException("Commutative should not be tested on a Negation: " + this);
+    }
 
     /**
      * Get the operator of the term.

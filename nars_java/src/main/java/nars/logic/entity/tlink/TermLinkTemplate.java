@@ -33,9 +33,13 @@ public class TermLinkTemplate implements Terms.Termable {
      * @param type Link type
      * @param indices Component indices in compound, may be 1 to 4
      */
-    public TermLinkTemplate(final Concept host, final Term target, final short type, final short... indices) {
+    public TermLinkTemplate(final Concept host, Term target, final short type, final short... indices) {
         super();
+
         this.concept = host.getTerm();
+
+        target.ensureNormalized("TermLink template");
+
         this.target = target;
         this.type = type;
         if (type % 2 != 0)

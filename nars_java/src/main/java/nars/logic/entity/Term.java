@@ -57,6 +57,13 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
         return true;
     }
 
+    public void ensureNormalized(String role) {
+        if (hasVar() && !isNormalized()) {
+            System.err.println(this + " is not normalized but as " + role + " should have already been");
+            System.exit(1);
+        }
+    }
+
 
     public interface TermVisitor {
         public void visit(Term t, Term superterm);
@@ -137,7 +144,14 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
         t.name = name();
         return t;
     }
-    
+
+    /** attempts to return cloneNormalize result, if it's necessary and possible.
+     *  does not modify this term
+     * */
+    public Term normalized() {
+        return this;
+    }
+
     public Term cloneDeep() {
         return clone();
     }

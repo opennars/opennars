@@ -395,10 +395,13 @@ public class Memory implements Serializable {
      * @param term indicating the concept
      * @return an existing Concept, or a new one, or null
      */
-    public Concept conceptualize(final BudgetValue budget, final Term term) {
+    public Concept conceptualize(final BudgetValue budget, Term term) {
 
         if ((term instanceof Variable) || (term instanceof Interval))
             return null;
+
+        if (!term.isNormalized() && term.hasVar())
+            term = ((CompoundTerm)term).cloneNormalized();
 
         /*Concept c = concept(term);
          if (c!=null)

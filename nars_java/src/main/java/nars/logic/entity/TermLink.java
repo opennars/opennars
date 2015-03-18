@@ -91,6 +91,9 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
     public TermLink(boolean incoming, Term host, TermLinkTemplate template, String name, BudgetValue v) {
         super(v);
 
+        host.ensureNormalized("Host term in TermLink");
+        template.target.ensureNormalized("Template target in " + template);
+
         if (incoming) {
             this.source = template.target;
             this.target = host;
@@ -218,6 +221,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable
 
     @Override
     public Term getTerm() {
+        target.ensureNormalized("Template target");
         return target;
     }
 

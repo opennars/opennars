@@ -44,6 +44,7 @@ public class Solid extends Default {
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
+        param.duration.set(1);
     }
 
     @Override
@@ -199,7 +200,7 @@ public class Solid extends Default {
                     int termFires = num(p, minTermLink, maxTermLink);
                     if (termFires < 1) continue;
 
-                    //System.out.println("  firing " + c + " x " + fires);
+                    System.out.println("  firing " + c.budget + " " + c + " x " + fires);
 
                     for (int i = 0; i < fires; i++) {
                         TaskLink tl = c.taskLinks.forgetNext(param.taskLinkForgetDurations, getMemory());
@@ -273,12 +274,12 @@ public class Solid extends Default {
 
         Parameters.DEBUG = false;
 
-        Solid s = new Solid(1, 1024, 0, 9, 0, 3);
+        Solid s = new Solid(4, 256, 0, 9, 0, 3);
         NAR n = new NAR(s);
         n.input(new File("/tmp/h.nal"));
 
         TextOutput.out(n).setPriorityMin(0.1f);
-        n.step(64);
+        n.step(8);
 
     }
 
