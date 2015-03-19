@@ -1,4 +1,4 @@
-package ca.nengo.test.depr;
+package ca.nengo.test;
 
 
 import automenta.vivisect.Video;
@@ -10,10 +10,9 @@ import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
-import ca.nengo.ui.model.plot.*;
-import ca.nengo.ui.model.plot.Cursor;
+import ca.nengo.ui.model.plot.AbstractWidget;
+import ca.nengo.ui.model.plot.MeshCursor;
 import ca.nengo.util.ScriptGenException;
-import com.mxgraph.analysis.StructuralException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
 
@@ -136,18 +135,21 @@ public class TestCharMesh {
 
     public static class CharMesh extends AbstractMapNetwork<Long, Node> implements UIBuilder {
 
-        int cx=0, cy=2; //TODO replace with cursor
 
         private double charWidth;
         private double charHeight;
         private DefaultUINetwork ui;
         private KeyboardHandler keyHandler;
-        private ca.nengo.ui.model.plot.Cursor cursor;
+        private MeshCursor cursor;
 
         public CharMesh(String name, double charWidth, double charHeight){
             super(name);
             scaleChar(charWidth, charHeight);
-            cursor = new Cursor("blinky thingy", (int)charWidth/8, (int)charHeight, this);
+
+            cursor = new MeshCursor(name + '.' + "cursor", (int)charWidth/8, (int)charHeight, this);
+            cursor(0, 3);
+
+
             try {
                 addNode(cursor);
             }catch (ca.nengo.model.StructuralException e)
@@ -155,12 +157,23 @@ public class TestCharMesh {
                 //cant throw that shit around here
             }
 
+            updateCursor();
 
 
         }
 
+        protected MeshCursor cursor(int x, int y) {
+            cursor.set(x, y);
+            updateCursor();
+            return cursor;
+        }
+        protected void updateCursor() {
+            updateBounds(cursor.getX(), cursor.getY(), cursor);
+            cursor.ui.getPNode().raiseToTop();
+        }
+
         public long index() {
-            return index(cx, cy);
+            return index(cursor.getX(), cursor.getY());
         }
 
         public static long index(int x, int y) {
@@ -241,6 +254,9 @@ public class TestCharMesh {
 
         public void goToSide(int by)
         {
+            int cx = cursor.getX();
+            int cy = cursor.getY();
+
             cx += by;
             if (cx < 0) {
                 long index = lastNonblank();
@@ -248,14 +264,18 @@ public class TestCharMesh {
                 cy = yCoord(index);
             }
 
+            cursor(cx, cy);
         }
 
         public void keyPressed(PInputEvent event) {
             char in = event.getKeyChar();
 
-            String debug = String.valueOf((int) in) + "   "+String.valueOf((int) cx) + "     ";
-            System.out.println(debug);
+            String debug = String.valueOf((int) in) + " "+cursor + " ";
+            System.out.println("press: "+ debug);
             set(0, 0, debug);
+
+            int cx = cursor.getX();
+            int cy = cursor.getY();
 
             if (in == '\n') {
                 cx = 0;
@@ -269,8 +289,10 @@ public class TestCharMesh {
                 set(cx, cy, in);
                 cx++;
             }
-            cursor.move(charPosX(cx), charPosY(cy));
+            cursor(cx, cy);
         }
+
+
         public void keyReleased(PInputEvent event) {
 
         }
@@ -303,11 +325,13 @@ public class TestCharMesh {
         }
 
 
-        private void updateBounds(int x, int y, SmartChar n) {
-            //n.ui.setOffset(x * charWidth, y * charHeight);
+        private void updateBounds(int x, int y, AbstractWidget n) {
             n.setBounds(0, 0, charWidth, charHeight);
-            n.lockPosition(false);
             n.move(charPosX(x), charPosY(y));
+        }
+        private void updateBounds(int x, int y, SmartChar n) {
+            n.lockPosition(false);
+            updateBounds(x, y, ((AbstractWidget)n));
             n.lockPosition(true);
         }
 

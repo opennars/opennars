@@ -1,6 +1,6 @@
 package ca.nengo.test;
 
-import ca.nengo.ui.model.plot.Cursor;
+import ca.nengo.ui.model.plot.MeshCursor;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
@@ -13,7 +13,7 @@ public class TestCursor extends NengrowPanel {
     public static NetworkImpl newDemo() throws StructuralException {
         NetworkImpl network = new DefaultNetwork<>();
 
-        Cursor c = new Cursor("cursor, baby!", 16, 64, network);
+        MeshCursor c = new MeshCursor("cursor, baby!", 16, 64, network);
 
         network.addNode(c);
 

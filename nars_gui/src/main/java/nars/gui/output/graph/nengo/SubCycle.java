@@ -28,6 +28,9 @@ abstract public class SubCycle implements StepListener {
         //System.out.println(this + " run: " + time + " waiting since " + lastStep);
     }
 
+    /** last millisecond-resolution step time */
+    public long getLastStepRealMS() { return lastStepReal; }
+
     abstract public double getTimePerCycle();
 
     abstract public void run(int count, float endTime, long deltaMS);
