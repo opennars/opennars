@@ -10,8 +10,10 @@ import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
-import ca.nengo.ui.model.plot.AbstractWidget;
+import ca.nengo.ui.model.plot.*;
+import ca.nengo.ui.model.plot.Cursor;
 import ca.nengo.util.ScriptGenException;
+import com.mxgraph.analysis.StructuralException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
 
@@ -28,7 +30,7 @@ public class TestCharMesh {
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {
+            public void run(){
                 CharMesh mesh = new CharMesh("grid", 60, 80);
                 new NengrowPanel(mesh).newWindow(800, 600);
 
@@ -40,7 +42,6 @@ public class TestCharMesh {
 
                 System.out.println(mesh.nodes());
                 System.out.println(mesh.ui.getBounds());
-
             }
         });
 
@@ -141,15 +142,26 @@ public class TestCharMesh {
         private double charHeight;
         private DefaultUINetwork ui;
         private KeyboardHandler keyHandler;
+        private ca.nengo.ui.model.plot.Cursor cursor;
 
-
-        public CharMesh(String name, double charWidth, double charHeight) {
+        public CharMesh(String name, double charWidth, double charHeight){
             super(name);
             scaleChar(charWidth, charHeight);
+            cursor = new Cursor("blinky thingy", (int)charWidth/8, (int)charHeight, this);
+            try {
+                addNode(cursor);
+            }catch (ca.nengo.model.StructuralException e)
+            {
+                //cant throw that shit around here
+            }
+
 
 
         }
 
+        public long index() {
+            return index(cx, cy);
+        }
 
         public static long index(int x, int y) {
             return (((long) y) << 32) | (x & 0xffffffffL);
@@ -184,6 +196,9 @@ public class TestCharMesh {
                 removeNode(l);
                 return null;
             } else {
+                if (getNode(l) != null){
+                    removeNode(l); //?
+                }
                 Node n;
                 setNode(l, n = newChar(x, y, c));
                 return n;
@@ -210,9 +225,51 @@ public class TestCharMesh {
             }
         }
 
+        public long lastNonblank()
+        {
+            long i = index();
+            while (xCoord(i) != 0){
+                Node n = nodeMap.get(i);
+                if(n != null)
+                {
+                    return i;
+                }
+                i-=1;
+            }
+            return i;
+        }
+
+        public void goToSide(int by)
+        {
+            cx += by;
+            if (cx < 0) {
+                long index = lastNonblank();
+                cx = xCoord(index);
+                cy = yCoord(index);
+            }
+
+        }
+
         public void keyPressed(PInputEvent event) {
-            set(cx, cy, event.getKeyChar());
-            cx++;
+            char in = event.getKeyChar();
+
+            String debug = String.valueOf((int) in) + "   "+String.valueOf((int) cx) + "     ";
+            System.out.println(debug);
+            set(0, 0, debug);
+
+            if (in == '\n') {
+                cx = 0;
+                cy += 1;
+            }
+            else if (in == 8){
+                goToSide(-1);
+                set(cx, cy, ' ');
+            }
+            else {
+                set(cx, cy, in);
+                cx++;
+            }
+            cursor.move(charPosX(cx), charPosY(cy));
         }
         public void keyReleased(PInputEvent event) {
 
@@ -250,8 +307,18 @@ public class TestCharMesh {
             //n.ui.setOffset(x * charWidth, y * charHeight);
             n.setBounds(0, 0, charWidth, charHeight);
             n.lockPosition(false);
-            n.move(x * charWidth, y * charHeight);
+            n.move(charPosX(x), charPosY(y));
             n.lockPosition(true);
+        }
+
+        private int charPosX(int x)
+        {
+            return x * (int)charWidth;
+        }
+
+        private int charPosY(int y)
+        {
+            return y * (int)charHeight;
         }
 
         @Override
