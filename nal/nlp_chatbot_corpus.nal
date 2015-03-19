@@ -1,0 +1,85 @@
+<<(*,$1) --> sentence> =|> <$1 --> word>>.
+<<(*,$1,$2) --> sentence> =|> (&|,<$1 --> word>,<$2 --> word>)>.
+<<(*,$1,$2,$3) --> sentence> =|> (&|,<$1 --> word>,<$2 --> word>,<$3 --> word>)>.
+<<(*,$1,$2,$3,$4) --> sentence> =|> (&|,<$1 --> word>,<$2 --> word>,<$3 --> word>,<$4 --> word>)>.
+<<(*,$1,$2,$3,$4,$5) --> sentence> =|> (&|,<$1 --> word>,<$2 --> word>,<$3 --> word>,<$4 --> word>,<$5 --> word>)>.
+<<(*,$1,$2,$3,$4,$5,$6) --> sentence> =|> (&|,<$1 --> word>,<$2 --> word>,<$3 --> word>,<$4 --> word>,<$5 --> word>,<$6 --> word>)>.
+
+//if something is a sentence, and NARS tell it, then NARS is active
+<(&/,<$1 --> sentence>,say($1)) =|> <SELF --> [active]>>.
+//if something is a sentence and NARS tells thanks for telling then NARS is active
+<(&/,<$1 --> sentence>,say(thank,you,for,telling,me,$1)) =|> <nars --> [active]>>.
+//if tell,me,something,about is told, then it is a sign for curiosity
+<(&/,<$1 --> word>,say(tell,me,something,about,$1)) =|> <SELF --> [curious]>>.
+<(&/,<$1 --> word>,say(why,$1)) =|> <SELF --> [curious]>>.
+
+//if there is no talking going on,
+//then it is fine to desire to request knowledge
+<(--,<SELF --> [active]>) =|> <SELF --> [curious]>>!
+
+//the things which are said are sentences and vice versa
+<say($1) <|> <$1 --> sentence>>.
+
+//some grammar evidence:
+<<$1 --> sentence>,<$2 --> sentence> =|> <(*,$1,and,$2) --> sentence>>.
+
+//basic motivations:
+<SELF --> [curious]>!
+<SELF --> [curious]>!
+<SELF --> [curious]>!
+<SELF --> [active]>!
+<SELF --> [active]>!
+
+//some words
+<{earth} --> word>.
+<{goldengatebridge} --> word>.
+<{cardhouse1} --> word>.
+
+
+//i dont recommend using 'discussionworthy' but relevant instead
+<relevant <-> discussionworthy>.
+<interesting <-> relevant>.
+
+<<(&/,i,dont,know) --> sentence> <-> UNSURE>.
+
+'partial IEML meta-ontology
+<{energy, act, change, concept} --> event>.
+
+<{thought,language,memory,society,affect,world,truth,life,space} --> concept>.
+
+<life_stage --> (*,energy,energy)>.
+<behavior --> (*,energy,act)>.
+<governance --> (*,energy,change)>.
+<cause --> (*,energy,concept)>.
+
+<empowerment --> (*,act,energy)>.
+<performance --> (*,act,act)>.
+<production --> (*,act,change)>.
+<obstacle --> (*,act,concept)>.
+
+<impermanent --> (*,change,energy)>.
+<condition --> (*,change,act)>.
+<transformation --> (*,change,change)>.
+<trial --> (*,change,concept)>.
+<curious <-> trial>.
+
+<inner_meaning --> (*,concept,energy)>.
+<development --> (*,concept,act)>.
+<creation --> (*,concept,change)>.
+<nature --> (*,concept,concept)>.
+
+<truth <-> TRUE>.
+(--,<truth <-> FALSE>).
+<(*,thought,affect,behavior) --> sentence>.
+<(*,memory,affect,language) --> sentence>.
+<(*,thought,cause,language) --> sentence>.
+<{act} --> behavior>.
+<sentence --> language>.
+
+<{ me, i, you, we, they, us, them} <-> agent>.
+<{ thought, memory, behavior } --> agent>.
+'earth is ship. space is ocean. earth in space.
+'nars on planet earth.
+'future nars in outerspace.
+
+

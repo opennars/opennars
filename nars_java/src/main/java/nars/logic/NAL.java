@@ -140,7 +140,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param task the derived task
      * @param allowOverlap
      */
-    public boolean deriveTask(final Task task, final boolean revised, final boolean single, Sentence currentBelief, Task currentTask, boolean allowOverlap) {
+    public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Sentence currentBelief, Task currentTask, boolean allowOverlap) {
 
         if (task.getParentTask() == null) {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
@@ -276,7 +276,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                 newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, allowOverlap);
 
         //"Since in principle it is always valid to eternalize a tensed belief"
-        if (temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
+        if (derived && temporalAdd && nal(7) && Parameters.IMMEDIATE_ETERNALIZATION) {
             //temporal induction generated ones get eternalized directly
             derived |= deriveTask(
                     new Task(

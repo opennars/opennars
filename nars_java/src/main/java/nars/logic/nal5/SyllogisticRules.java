@@ -302,7 +302,7 @@ public final class SyllogisticRules {
         NAL.StampBuilder st = null;
         if (temporalReasoning) {
             int order = statement.getTemporalOrder();
-            if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() && (!taskSentence.isQuestion()))) {
+            if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() /*&& (!taskSentence.isQuestion()*/)) {
                 long baseTime = subSentence.getOccurrenceTime();
                 if (baseTime == Stamp.ETERNAL) {
                     baseTime = nal.time();

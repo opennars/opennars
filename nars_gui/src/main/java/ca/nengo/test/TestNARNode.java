@@ -2,14 +2,13 @@ package ca.nengo.test;
 
 import automenta.vivisect.Video;
 import ca.nengo.model.AgentNode;
-import ca.nengo.model.Node;
+import ca.nengo.model.Network;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.ui.Nengrow;
+import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
@@ -29,9 +28,6 @@ import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 import nars.logic.nal8.TermFunction;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -40,16 +36,15 @@ import java.util.Set;
 /**
  * Created by me on 3/3/15.
  */
-public class TestNARNode extends Nengrow {
+public class TestNARNode  {
 
 
-    float time = 0;
 
-    public static void main(String[] args) {
-        new TestNARNode().newWindow(800, 600);
+    public static void main(String[] args) throws StructuralException {
+        new NengrowPanel(newAgentNodeDemo()).newWindow(800, 600);
     }
 
-    public Node newAgentNodeDemo() throws StructuralException {
+    public static Network newAgentNodeDemo() throws StructuralException {
         NetworkImpl network = new DefaultNetwork<>();
 
         NAR nar = new NAR(new Default());
@@ -280,31 +275,31 @@ public class TestNARNode extends Nengrow {
 
 
     }
-
-    @Override
-    public void init() throws Exception {
-
-
-        UINetwork networkUI = (UINetwork) addNodeModel(newAgentNodeDemo());
-        networkUI.doubleClicked();
-
-
-        new Timer(100, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    float dt = getSimulationDT();
-                    networkUI.node().run(time, time + dt);
-                    time += dt;
-
-                } catch (SimulationException e1) {
-                    e1.printStackTrace();
-                }
-                //cycle();
-            }
-        }).start();
-
-    }
+//
+//    @Override
+//    public void init() throws Exception {
+//
+//
+//        UINetwork networkUI = (UINetwork) addNodeModel(newAgentNodeDemo());
+//        networkUI.doubleClicked();
+//
+//
+//        new Timer(100, new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    float dt = getSimulationDT();
+//                    networkUI.node().run(time, time + dt);
+//                    time += dt;
+//
+//                } catch (SimulationException e1) {
+//                    e1.printStackTrace();
+//                }
+//                //cycle();
+//            }
+//        }).start();
+//
+//    }
 
 }

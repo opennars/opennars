@@ -6,13 +6,14 @@ import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.NengrowPanel;
+import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 
 /** example agent node in nengrow panel */
-public class TestAgentNode extends NengrowPanel {
+public class TestAgentNode  {
 
 
     public static NetworkImpl newAgentNodeDemo() throws StructuralException {
@@ -48,12 +49,8 @@ public class TestAgentNode extends NengrowPanel {
 
 
 
-    public static void main(String[] args) throws ContainerException, StructuralException {
-        new TestAgentNode().newWindow(900, 800);
-    }
-
-    public TestAgentNode() throws StructuralException, ContainerException {
-        super(newAgentNodeDemo());
+    public static void main(String[] args) throws NodeContainer.ContainerException, StructuralException {
+        new NengrowPanel(newAgentNodeDemo()).newWindow(900, 800);
     }
 
 }

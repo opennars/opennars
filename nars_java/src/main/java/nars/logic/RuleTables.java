@@ -350,8 +350,9 @@ public class RuleTables {
         if(originalMainSentence==null)
             return;
 
-//        if (!(originalMainSentence.term instanceof Statement))
-//            return;
+        if (!(originalMainSentence.term instanceof Statement)) {
+            return;
+        }
 
         Sentence mainSentence = originalMainSentence;   // for substitution
 
