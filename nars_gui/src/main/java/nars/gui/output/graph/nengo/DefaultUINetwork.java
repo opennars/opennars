@@ -1,5 +1,6 @@
 package nars.gui.output.graph.nengo;
 
+import ca.nengo.model.Network;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.node.UINetwork;
@@ -9,12 +10,12 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 /**
 * Created by me on 3/12/15.
 */
-public class UINARGraph extends UINetwork {
+public class DefaultUINetwork<N extends Network> extends UINetwork {
 
 
-    private final TermGraphNode nargraph;
+    private final N nargraph;
 
-    public UINARGraph(TermGraphNode n) {
+    public DefaultUINetwork(N n) {
         super(n);
         this.nargraph = n;
     }
@@ -35,6 +36,9 @@ public class UINARGraph extends UINetwork {
 
     }
 
+
+
+
     class UINARGraphGround extends WorldGroundImpl /*ElasticGround*/ {
 
         @Override
@@ -42,10 +46,12 @@ public class UINARGraph extends UINetwork {
 
         }
 
+
+
     }
 
     final private class UINARGraphViewer extends NetworkViewer {
-        public UINARGraphViewer(UINARGraph g) {
+        public UINARGraphViewer(DefaultUINetwork g) {
             super(g, new UINARGraphGround());
         }
 
@@ -57,6 +63,16 @@ public class UINARGraph extends UINetwork {
         @Override
         public void layoutChildren() {
 
+        }
+
+        @Override
+        public void applyDefaultLayout() {
+            System.out.println("no default layout");
+        }
+
+        @Override
+        public void applySortLayout(SortMode sortMode) {
+            System.out.println("no sort layout");
         }
     }
 }

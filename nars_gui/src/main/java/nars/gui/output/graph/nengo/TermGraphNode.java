@@ -152,7 +152,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 //            return "nar";
 //        }
 //    };
-    private UINARGraph ui;
+    private DefaultUINetwork ui;
     private int numVertices = 0;
     SubCycle layoutCycle = new SubCycle() {
         @Override
@@ -309,8 +309,8 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
 
     @Override
-    public UINARGraph newUI(double width, double height) {
-        return this.ui = new UINARGraph(this);
+    public DefaultUINetwork newUI(double width, double height) {
+        return this.ui = new DefaultUINetwork(this);
     }
 
     /**
