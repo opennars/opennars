@@ -7,11 +7,13 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.lib.world.PaintContext;
+import ca.nengo.ui.lib.world.handler.KeyboardHandler;
 import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
+import org.piccolo2d.event.PInputEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,6 +124,7 @@ public class TestCharMesh {
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
 
+
         }
 
         @Override
@@ -132,15 +135,18 @@ public class TestCharMesh {
 
     public static class CharMesh extends AbstractMapNetwork<Long, Node> implements UIBuilder {
 
+        int cx=0, cy=2; //TODO replace with cursor
 
         private double charWidth;
         private double charHeight;
         private DefaultUINetwork ui;
+        private KeyboardHandler keyHandler;
 
 
         public CharMesh(String name, double charWidth, double charHeight) {
             super(name);
             scaleChar(charWidth, charHeight);
+
 
         }
 
@@ -184,11 +190,50 @@ public class TestCharMesh {
             }
         }
 
+        @Override
+        public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
+            super.run(startTime, endTime, stepsPerCycle);
+            if (keyHandler==null) {
+                keyHandler = new KeyboardHandler() {
+
+                    @Override
+                    public void keyReleased(PInputEvent event) {
+                        CharMesh.this.keyReleased(event);
+                    }
+
+                    @Override
+                    public void keyPressed(PInputEvent event) {
+                        CharMesh.this.keyPressed(event);
+                    }
+                };
+                ui.getViewer().getSky().addInputEventListener(keyHandler);
+            }
+        }
+
+        public void keyPressed(PInputEvent event) {
+            set(cx, cy, event.getKeyChar());
+            cx++;
+        }
+        public void keyReleased(PInputEvent event) {
+
+        }
 
         @Override
         public UINeoNode newUI(double width, double height) {
             if (ui == null) {
-                ui = new DefaultUINetwork<>(this);
+                ui = new DefaultUINetwork(this) {
+
+
+                    @Override
+                    public void layoutChildren() {
+
+
+                    }
+
+                };
+
+
+
             }
             return ui;
         }

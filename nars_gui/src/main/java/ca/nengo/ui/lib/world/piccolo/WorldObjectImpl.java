@@ -199,7 +199,7 @@ public class WorldObjectImpl implements WorldObject {
      * @param name
      *            Name of this Object
      */
-    private void init(String name) {
+    protected void init(String name) {
         setSelectable(false);
         this.myName = name;
     }

@@ -2,7 +2,6 @@ package ca.nengo.ui.lib.world.handler;
 
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.Destroyable;
-import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
 
@@ -14,7 +13,7 @@ import org.piccolo2d.event.PInputEvent;
  */
 public class KeyboardHandler extends PBasicInputEventHandler implements Destroyable {
 
-	public KeyboardHandler(WorldImpl world) {
+	public KeyboardHandler() {
 		super();
 	}
 

@@ -179,7 +179,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		 * Create handlers
 		 */
 		panHandler = new PanEventHandler();
-		keyboardHandler = new KeyboardHandler(this);
+		keyboardHandler = new KeyboardHandler();
 		mySky.getCamera().addInputEventListener(keyboardHandler);
 		mySky.getCamera().addInputEventListener(new TooltipPickHandler(this, 1000, 0));
 		mySky.getCamera().addInputEventListener(new MouseHandler(this));
@@ -191,7 +191,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 		selectionEventHandler.setMarqueePaintTransparency(0.1f);
 
 
-        getPNode().addInputEventListener(new EventConsumer());
+        //getPNode().addInputEventListener(new EventConsumer());
 		setStatusBarHandler(new RootWorldStatusHandler(this));
 
 		/*
