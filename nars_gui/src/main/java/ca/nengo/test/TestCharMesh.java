@@ -4,7 +4,8 @@ package ca.nengo.test;
 import automenta.vivisect.Video;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
-import ca.nengo.model.impl.AbstractMapNetwork;
+import ca.nengo.model.StructuralException;
+import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;
@@ -30,7 +31,7 @@ public class TestCharMesh {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run(){
-                CharMesh mesh = new CharMesh("grid", 60, 80);
+                CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80);
                 new NengrowPanel(mesh).newWindow(800, 600);
 
 
@@ -131,36 +132,53 @@ public class TestCharMesh {
         public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
             return null;
         }
+
+
     }
 
-    public static class CharMesh extends AbstractMapNetwork<Long, Node> implements UIBuilder {
+    public static class CharMeshEdit extends DefaultNetwork implements UIBuilder {
 
-
-        private double charWidth;
-        private double charHeight;
-        private DefaultUINetwork ui;
-        private KeyboardHandler keyHandler;
         private MeshCursor cursor;
+        private final CharMesh mesh;
+        private KeyboardHandler keyHandler;
+        private DefaultUINetwork ui;
 
-        public CharMesh(String name, double charWidth, double charHeight){
+        public CharMeshEdit(String name, double charWidth, double charHeight) {
             super(name);
-            scaleChar(charWidth, charHeight);
+            this.mesh = new CharMesh(charWidth, charHeight) {
+
+                @Override
+                protected void remove(long l) {
+                    Node x = CharMeshEdit.this.remove(l);
+
+                    //TODO make this automatic as part of remove()
+                    if (x instanceof AbstractWidget) {
+                        ((AbstractWidget)x).ui.destroy();
+                    }
+                }
+
+                @Override
+                protected void set(long l, Node node) {
+                    setNode(l,node);
+                }
+
+                @Override
+                public Node get(long i) {
+                    return getNode(i);
+                }
+            };
 
             cursor = new MeshCursor(name + '.' + "cursor", (int)charWidth/8, (int)charHeight, this);
             cursor(0, 3);
-
+            updateCursor();
 
             try {
                 addNode(cursor);
-            }catch (ca.nengo.model.StructuralException e)
-            {
-                //cant throw that shit around here
+            } catch (StructuralException e) {
+
             }
-
-            updateCursor();
-
-
         }
+
 
         protected MeshCursor cursor(int x, int y) {
             cursor.set(x, y);
@@ -168,23 +186,138 @@ public class TestCharMesh {
             return cursor;
         }
         protected void updateCursor() {
-            updateBounds(cursor.getX(), cursor.getY(), cursor);
+            mesh.updateBounds(cursor.getX(), cursor.getY(), cursor);
             cursor.ui.getPNode().raiseToTop();
         }
 
         public long index() {
-            return index(cursor.getX(), cursor.getY());
+            return mesh.index(cursor.getX(), cursor.getY());
+        }
+        @Override
+        public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
+            super.run(startTime, endTime, stepsPerCycle);
+            if (keyHandler==null) {
+                keyHandler = new KeyboardHandler() {
+
+                    @Override
+                    public void keyReleased(PInputEvent event) {
+                        CharMeshEdit.this.keyReleased(event);
+                    }
+
+                    @Override
+                    public void keyPressed(PInputEvent event) {
+                        CharMeshEdit.this.keyPressed(event);
+                    }
+                };
+                ui.getViewer().getSky().addInputEventListener(keyHandler);
+            }
+        }
+
+        public long lastNonblank()
+        {
+            long i = index();
+            while (mesh.x(i) != 0){
+                Node n = mesh.get(i);
+                if(n != null)
+                {
+                    return i;
+                }
+                i-=1;
+            }
+            return i;
+        }
+
+        public void goToSide(int by)
+        {
+            int cx = cursor.getX();
+            int cy = cursor.getY();
+
+            cx += by;
+            if (cx < 0) {
+                long index = lastNonblank();
+                cx = mesh.x(index);
+                cy = mesh.y(index);
+            }
+
+            cursor(cx, cy);
+        }
+
+        public void keyPressed(PInputEvent event) {
+            char in = event.getKeyChar();
+
+            String debug = String.valueOf((int) in) + " "+cursor + " ";
+            System.out.println(event + " " + event.isActionKey() + " " + cursor);
+            mesh.set(0, 0, debug);
+            System.out.println(nodeMap);
+
+            int cx = cursor.getX();
+            int cy = cursor.getY();
+
+            if (in == '\n') {
+                cursor(0, ++cy);
+            }
+            else if (in == 8){
+                //goToSide(-1);
+                mesh.set(--cx, cy, ' ');
+                cursor(cx, cy);
+            }
+            else {
+                if (in!=0) {
+                    insert(in);
+                }
+            }
+
+        }
+
+        public void keyReleased(PInputEvent event) {
+
+        }
+
+        public void insert(char c) {
+            int cx = cursor.getX();
+            int cy = cursor.getY();
+            mesh.set(cx++, cy, c);
+            cursor(cx, cy);
+        }
+
+
+        @Override
+        public UINeoNode newUI(double width, double height) {
+            if (ui == null) {
+                ui = new DefaultUINetwork(this);
+            }
+            return ui;
+        }
+
+
+        public void set(int x, int y, char c) {
+            mesh.set(x, y, c);
+        }
+        public void set(int x, int y, String s) {
+            mesh.set(x, y, s);
+        }
+    }
+
+    abstract public static class CharMesh  {
+
+        private double charWidth;
+        private double charHeight;
+
+
+        public CharMesh(double charWidth, double charHeight){
+
+            scaleChar(charWidth, charHeight);
         }
 
         public static long index(int x, int y) {
             return (((long) y) << 32) | (x & 0xffffffffL);
         }
 
-        public static int yCoord(long l) {
+        public static int y(long l) {
             return (int) (l >> 32);
         }
 
-        public static int xCoord(long l) {
+        public static int x(long l) {
             return (int) (l);
         }
 
@@ -205,121 +338,35 @@ public class TestCharMesh {
 
         public Node set(int x, int y, char c) {
             long l = index(x, y);
-            if ((c == ' ') || (c == 0)) {
-                removeNode(l);
+
+            if (c == ' ') {
+                remove(l);
                 return null;
-            } else {
-                if (getNode(l) != null){
-                    removeNode(l); //?
-                }
-                Node n;
-                setNode(l, n = newChar(x, y, c));
-                return n;
             }
+
+            Node n;
+            set(l, n = newChar(x, y, c));
+            return n;
         }
 
-        @Override
-        public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
-            super.run(startTime, endTime, stepsPerCycle);
-            if (keyHandler==null) {
-                keyHandler = new KeyboardHandler() {
-
-                    @Override
-                    public void keyReleased(PInputEvent event) {
-                        CharMesh.this.keyReleased(event);
-                    }
-
-                    @Override
-                    public void keyPressed(PInputEvent event) {
-                        CharMesh.this.keyPressed(event);
-                    }
-                };
-                ui.getViewer().getSky().addInputEventListener(keyHandler);
-            }
-        }
-
-        public long lastNonblank()
-        {
-            long i = index();
-            while (xCoord(i) != 0){
-                Node n = nodeMap.get(i);
-                if(n != null)
-                {
-                    return i;
-                }
-                i-=1;
-            }
-            return i;
-        }
-
-        public void goToSide(int by)
-        {
-            int cx = cursor.getX();
-            int cy = cursor.getY();
-
-            cx += by;
-            if (cx < 0) {
-                long index = lastNonblank();
-                cx = xCoord(index);
-                cy = yCoord(index);
-            }
-
-            cursor(cx, cy);
-        }
-
-        public void keyPressed(PInputEvent event) {
-            char in = event.getKeyChar();
-
-            String debug = String.valueOf((int) in) + " "+cursor + " ";
-            System.out.println("press: "+ debug);
-            set(0, 0, debug);
-
-            int cx = cursor.getX();
-            int cy = cursor.getY();
-
-            if (in == '\n') {
-                cx = 0;
-                cy += 1;
-            }
-            else if (in == 8){
-                goToSide(-1);
-                set(cx, cy, ' ');
-            }
-            else {
-                set(cx, cy, in);
-                cx++;
-            }
-            cursor(cx, cy);
-        }
-
-
-        public void keyReleased(PInputEvent event) {
-
-        }
-
-        @Override
-        public UINeoNode newUI(double width, double height) {
-            if (ui == null) {
-                ui = new DefaultUINetwork(this) {
-
-
-                    @Override
-                    public void layoutChildren() {
-
-
-                    }
-
-                };
+        protected abstract void remove(long l);
+        protected abstract void set(long l, Node node);
+        public abstract Node get(long i);
 
 
 
-            }
-            return ui;
-        }
+//        @Override
+//        public UINeoNode newUI(double width, double height) {
+//            if (ui == null) {
+//                //ui = new DefaultUINetwork(this);
+//            }
+//            return ui;
+//        }
 
 
+        int charSerial = 0;
         private Node newChar(int x, int y, char c) {
-            SmartChar n = new SmartChar(name() + x + ',' + y, c);
+            SmartChar n = new SmartChar(String.valueOf(charSerial++), c);
             updateBounds(x, y, n);
             return n;
         }
@@ -345,10 +392,6 @@ public class TestCharMesh {
             return y * (int)charHeight;
         }
 
-        @Override
-        public Long name(Node node) {
-            return null;
-        }
 
 
     }

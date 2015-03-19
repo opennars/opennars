@@ -470,10 +470,12 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
 
 
 
+
         VisiblyChangesUtils.nodeRemoved(this, node, myListeners);
 
         getSimulator().update(this);
         fireVisibleChangeEvent();
+
 
         return node;
     }

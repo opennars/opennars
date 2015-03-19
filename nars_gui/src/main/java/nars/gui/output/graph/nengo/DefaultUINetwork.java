@@ -38,8 +38,7 @@ public class DefaultUINetwork<N extends Network> extends UINetwork {
 
 
 
-
-    class UINARGraphGround extends WorldGroundImpl /*ElasticGround*/ {
+    public static class UINARGraphGround extends WorldGroundImpl /*ElasticGround*/ {
 
         @Override
         public void layoutChildren() {
@@ -50,7 +49,7 @@ public class DefaultUINetwork<N extends Network> extends UINetwork {
 
     }
 
-    final private class UINARGraphViewer extends NetworkViewer {
+    final public static class UINARGraphViewer extends NetworkViewer {
         public UINARGraphViewer(DefaultUINetwork g) {
             super(g, new UINARGraphGround());
         }
