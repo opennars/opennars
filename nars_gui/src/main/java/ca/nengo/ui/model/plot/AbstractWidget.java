@@ -118,6 +118,11 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         }
 
         @Override
+        public boolean isDraggable() {
+            return AbstractWidget.this.isDraggable();
+        }
+
+        @Override
         public void dragOffset(double dx, double dy) {
             super.dragOffset(dx, dy);
             draggedTo(getOffset().getX(), getOffset().getY());
@@ -149,6 +154,10 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         public ModelIcon getIcon() {
             return (ModelIcon) super.getIcon();
         }
+    }
+
+    public boolean isDraggable() {
+        return true;
     }
 
     public void move(double x, double y) {

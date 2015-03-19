@@ -13,26 +13,60 @@ import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
-public class TestCharMesh  {
+public class TestCharMesh {
 
+
+    public static void main(String[] args) {
+
+
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                CharMesh mesh = new CharMesh("grid", 60, 80);
+                new NengrowPanel(mesh).newWindow(800, 600);
+
+
+                mesh.set(0, 0, 'a');
+                mesh.set(1, 0, 'b');
+                mesh.set(2, 0, 'c');
+                mesh.set(0, 1, "TEXT SYSTEM");
+
+                System.out.println(mesh.nodes());
+                System.out.println(mesh.ui.getBounds());
+
+            }
+        });
+
+    }
 
     public static class SmartChar extends AbstractWidget {
 
-        private char c;
-        Color textcolor = Color.WHITE;
-        Color borderColor = Color.DARK_GRAY;
-        Color bgColor = Color.BLUE;
-        Font f = Video.monofont.deriveFont(16f);
-
         public static final Stroke border = new BasicStroke(1);
         public static final Stroke noStroke = new BasicStroke(0);
+        Color textcolor = Color.WHITE;
+        Color borderColor = new Color(70,70,70);
+        Color bgColor = new Color(40,40,40);
+        Font f = Video.monofont.deriveFont(64f);
+        private char c;
+        private boolean lockPos;
 
         public SmartChar(String name, char c) {
             super(name);
             this.c = c;
+        }
+
+        public void lockPosition(boolean l) {
+            this.lockPos = l;
+        }
+
+        @Override
+        public boolean isDraggable() {
+            return !lockPos;
         }
 
         @Override
@@ -45,33 +79,35 @@ public class TestCharMesh  {
             Graphics2D g = paintContext.getGraphics();
 
 
-
             //border and background
-            final int iw = (int)width;
-            final int ih = (int)height;
-            if (bgColor!=null || borderColor!=null) {
-                if (bgColor!=null) {
+            final int iw = (int) width;
+            final int ih = (int) height;
+            if (bgColor != null || borderColor != null) {
+                if (bgColor != null) {
                     //g.setStroke(noStroke);
                     g.setPaint(bgColor);
-                    g.fillRect(0,0, iw, ih);
+                    g.fillRect(0, 0, iw, ih);
                 }
-                if (borderColor!=null) {
+                if (borderColor != null) {
                     g.setStroke(border);
                     g.setPaint(borderColor);
-                    g.drawRect(0,0,iw,ih);
+                    g.drawRect(0, 0, iw, ih);
                 }
 
             }
 
             //draw glyph
-            if (textcolor!=null) {
+            if (textcolor != null) {
                 g.setColor(textcolor);
                 g.setFont(f);
-                double x = ui.getX();
-                double y = height / 2 - ui.getY() / 2;
+                final int fs = f.getSize()/2;
+                double x = width/2  - ui.getX()/2 - fs/2;
+                double y = height / 2 - ui.getY() / 2 + fs/2;
                 g.drawString(String.valueOf(c), (int) x, (int) y);
             }
         }
+
+
 
         public void setTextColor(Color textcolor) {
             this.textcolor = textcolor;
@@ -94,28 +130,31 @@ public class TestCharMesh  {
         }
     }
 
-    public static class CharMesh extends AbstractMapNetwork<Long,Node> implements UIBuilder {
+    public static class CharMesh extends AbstractMapNetwork<Long, Node> implements UIBuilder {
 
 
         private double charWidth;
         private double charHeight;
         private DefaultUINetwork ui;
 
-        public static long index(int x, int y) {
-            return (((long) y) << 32) | (x & 0xffffffffL);
-        }
-        public static int yCoord(long l) {
-            return (int) (l >> 32);
-        }
-        public static int xCoord(long l) {
-            return (int) (l);
-        }
-
 
         public CharMesh(String name, double charWidth, double charHeight) {
             super(name);
             scaleChar(charWidth, charHeight);
-            set(0,0,'?');
+
+        }
+
+
+        public static long index(int x, int y) {
+            return (((long) y) << 32) | (x & 0xffffffffL);
+        }
+
+        public static int yCoord(long l) {
+            return (int) (l >> 32);
+        }
+
+        public static int xCoord(long l) {
+            return (int) (l);
         }
 
         private void scaleChar(double charWidth, double charHeight) {
@@ -124,24 +163,34 @@ public class TestCharMesh  {
 
         }
 
+
+        /** horizontal print */
+        public void set(int x, int y, CharSequence word) {
+            for (int i = 0; i < word.length(); i++) {
+                char c = word.charAt(i);
+                set(x + i, y, c);
+            }
+        }
+
         public Node set(int x, int y, char c) {
             long l = index(x, y);
             if ((c == ' ') || (c == 0)) {
-                remove(l);
-            }
-            else {
+                removeNode(l);
+                return null;
+            } else {
                 Node n;
-                if (add(l, n = newChar(x, y, c))) {
-                    return n;
-                }
+                setNode(l, n = newChar(x, y, c));
+                return n;
             }
-            return null;
         }
 
 
         @Override
         public UINeoNode newUI(double width, double height) {
-            return new DefaultUINetwork<>(this);
+            if (ui == null) {
+                ui = new DefaultUINetwork<>(this);
+            }
+            return ui;
         }
 
 
@@ -155,8 +204,9 @@ public class TestCharMesh  {
         private void updateBounds(int x, int y, SmartChar n) {
             //n.ui.setOffset(x * charWidth, y * charHeight);
             n.setBounds(0, 0, charWidth, charHeight);
+            n.lockPosition(false);
             n.move(x * charWidth, y * charHeight);
-            n.ui.repaint();
+            n.lockPosition(true);
         }
 
         @Override
@@ -165,15 +215,5 @@ public class TestCharMesh  {
         }
 
 
-
-    }
-
-    public static void main(String[] args) {
-
-        CharMesh mesh = new CharMesh("grid", 20,40);
-        mesh.set(0, 0, 'a');
-        mesh.set(1, 0, 'b');
-        mesh.set(2, 0, 'c');
-        new NengrowPanel(mesh).newWindow(800, 600);
     }
 }
