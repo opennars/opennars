@@ -228,18 +228,15 @@ public class NAR implements Runnable {
         return believe(termString, 1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
     }
 
-    
+
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
-        return ask(termString, null);
+        return ask(termString, '?');
     }
 
     public Task quest(String questString) throws InvalidInputException {
-        return ask(questString, null, Symbols.QUEST);
-    }
-    public Task ask(String termString, Answered answered) throws InvalidInputException {
-        return ask(termString, answered, Symbols.QUESTION);
+        return ask(questString, Symbols.QUEST);
     }
 
     public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
@@ -276,7 +273,7 @@ public class NAR implements Runnable {
         return t;
     }
 
-    public Task ask(String termString, Answered answered, char questionOrQuest) throws InvalidInputException {
+    public Task ask(String termString, char questionOrQuest) throws InvalidInputException {
 
 
         final Task t;
@@ -292,12 +289,11 @@ public class NAR implements Runnable {
                                 Parameters.DEFAULT_QUESTION_DURABILITY,
                                 1))
         );
-        
-        if (answered!=null) {
-            answered.start(t, this);
-        }
+
         return t;
-        
+
+        //ex: return new Answered(this, t);
+
     }
     
     public NAR input(final Sentence sentence) {

@@ -6,8 +6,6 @@ import nars.control.ConceptActivator;
 import nars.core.Core;
 import nars.core.Memory;
 import nars.core.NAR;
-import nars.core.Parameters;
-import nars.io.TextOutput;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
 import nars.logic.reason.ConceptProcess;
@@ -15,8 +13,6 @@ import nars.logic.reason.DirectProcess;
 import nars.util.bag.impl.CacheBag;
 import nars.util.bag.impl.CurveBag;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -277,26 +273,6 @@ public class Solid extends Default {
         return super.newConcept(b, t, m);
     }
 
-
-    public static void main(String[] args) throws FileNotFoundException {
-
-        Parameters.DEBUG = false;
-
-        Solid s = new Solid(3, 512, 1, 10, 1, 8);
-        NAR n = new NAR(s);
-        n.input(new File("/tmp/h.nal"));
-
-        TextOutput.out(n).setOutputPriorityMin(1.0f);
-        n.step(45);
-
-    }
-
-        /*
-        n.input("<a --> b>. %1.00;0.90%\n" +
-                "<b --> c>. %1.00;0.90%\n"+
-                "<c --> d>. %1.00;0.90%\n" +
-                "<a --> d>?");*/
-    //''outputMustContain('<a --> d>. %1.00;0.27%')
 
 
 }

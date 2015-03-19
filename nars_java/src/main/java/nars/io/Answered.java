@@ -6,7 +6,8 @@ package nars.io;
 
 import nars.core.Events.Answer;
 import nars.core.NAR;
-import nars.event.Reaction;
+import nars.event.AbstractReaction;
+import nars.io.narsese.InvalidInputException;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
@@ -16,7 +17,7 @@ import reactor.event.registry.Registration;
  *
  * @author me
  */
-public abstract class Answered implements Reaction {
+public abstract class Answered extends AbstractReaction {
     
     private Task question;
     private NAR nar;
@@ -24,26 +25,34 @@ public abstract class Answered implements Reaction {
     final static Class[] events = new Class[] { Answer.class
  };
     private Registration answering;
-    
-    public void start(Task question, NAR n) {
-        this.nar = n;
-        this.question = question;
-                
-        answering = nar.memory.event.on(Answer.class, this);
-        
-        reportExistingSolutions();
-    }
-    
-    public void off() {
-        answering.cancel();
+
+    /** reacts to all questions */
+    public Answered(NAR n) {
+        this(n, (Task)null);
     }
 
+    public Answered(NAR n, String questionTask) throws InvalidInputException {
+        this(n, n.ask(questionTask));
+    }
+
+    /** reacts to a specific question */
+    public Answered(NAR n, Task question) {
+        super(n, Answer.class);
+
+        this.nar = n;
+        this.question = question;
+        reportExistingSolutions();
+    }
+
+
     protected void reportExistingSolutions() {
-        Concept c = nar.memory.concept( question.getTerm() );
-        if (c == null) return;        
-        
-        for (Sentence s : c.beliefs)
-            onSolution(s);
+        if (question != null) {
+            Concept c = nar.memory.concept(question.getTerm());
+            if (c == null) return;
+
+            for (Sentence s : c.beliefs)
+                onSolution(s);
+        }
 
     }
     
@@ -53,7 +62,8 @@ public abstract class Answered implements Reaction {
         if (event == Answer.class) {
             Task task = (Task)args[0];
             Sentence belief = (Sentence)args[1];
-            if (task.equals(question)) {
+
+            if ((question == null) || task.equals(question)) {
                 onSolution(belief);
             }
             else if (task.hasParent(question)) {
@@ -66,7 +76,9 @@ public abstract class Answered implements Reaction {
     abstract public void onSolution(Sentence belief);
     
     /** called when a subtask of the question has been solved */
-    abstract public void onChildSolution(Task child, Sentence belief);
+    public void onChildSolution(Task child, Sentence belief) {
+
+    }
     
     
 }

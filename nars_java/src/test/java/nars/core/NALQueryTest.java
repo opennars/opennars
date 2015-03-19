@@ -50,7 +50,7 @@ public class NALQueryTest {
 
         n.run(cyclesBeforeQuestion);
 
-        n.ask(question, new Answered() {
+        new Answered(n, question) {
 
             @Override
             public void onSolution(Sentence belief) {
@@ -64,7 +64,7 @@ public class NALQueryTest {
                 //System.out.println("  child: " +
                 //child + " solution: " + belief);
             }
-        });
+        };
 
         n.run(cyclesAfterQuestion);
 
