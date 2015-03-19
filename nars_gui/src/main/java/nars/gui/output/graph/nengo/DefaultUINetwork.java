@@ -26,7 +26,7 @@ public class DefaultUINetwork<N extends Network> extends UINetwork {
     }
 
     @Override
-    public NodeViewer createViewerInstance() {
+    public NodeViewer newViewer() {
         return new UINARGraphViewer(this);
     }
 

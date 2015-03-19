@@ -41,6 +41,7 @@ import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyChanges.Event;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * UI Wrapper for a Network
@@ -121,8 +122,21 @@ public class UINetwork extends UINodeViewable {
     }
 
     @Override
-    public NodeViewer createViewerInstance() {
+    public NodeViewer newViewer() {
         return new NetworkViewer(this);
+    }
+
+    /** if gridBG == null, removes grid */
+    public NodeViewer newViewer(Color gridBg, Color gridColor, float gridTransparency) {
+        NetworkViewer nv = new NetworkViewer(this);
+        if (gridBg == null)
+            nv.getGridLayer().removeFromParent();
+        else {
+            nv.getGridLayer().setBgColor(gridBg);
+            nv.getGridLayer().setGridColor(gridColor);
+            nv.getGridLayer().setTransparency(gridTransparency);
+        }
+        return nv;
     }
 
     @Override

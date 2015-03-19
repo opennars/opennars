@@ -98,7 +98,7 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 	/**
 	 * Layer attached to the camera which shows the zoomable grid
 	 */
-	private final PXLayer gridLayer;
+	private final PXGrid gridLayer;
 
 	/**
 	 * If true, then selection mode. If false, then navigation mode.
@@ -222,7 +222,11 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 
 	}
 
-	private PRoot getPRoot() {
+    public PXGrid getGridLayer() {
+        return gridLayer;
+    }
+
+    private PRoot getPRoot() {
 		/*
 		 * This world's root is always to top-level root associated with the
 		 * canvas
@@ -232,8 +236,8 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 
 	private void initSelectionMode() {
 		isSelectionMode = false;
-		mySky.getCamera().addInputEventListener(panHandler);
-		mySky.getCamera().addInputEventListener(selectionEventHandler);
+        mySky.getCamera().addInputEventListener(panHandler);
+        mySky.getCamera().addInputEventListener(selectionEventHandler);
 	}
 
 	/**

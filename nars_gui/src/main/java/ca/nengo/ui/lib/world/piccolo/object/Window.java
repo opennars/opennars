@@ -90,8 +90,9 @@ public class Window extends WorldObjectImpl implements Interactable {
 		myClippingRectangle = new PClip();
         myClippingRectangle.addChild(content.getPNode());
 		myClippingRectangle.setPaint(NengoStyle.COLOR_BACKGROUND);
-
         getPNode().addChild(myClippingRectangle);
+
+
         myBorder = new Border(this, NengoStyle.COLOR_FOREGROUND);
         addChild(myContent);
 		addChild(menubar);
@@ -110,6 +111,7 @@ public class Window extends WorldObjectImpl implements Interactable {
 				}
 			}
 		});
+
 
 
 	}
@@ -265,7 +267,8 @@ public class Window extends WorldObjectImpl implements Interactable {
 		myContent.setBounds(0, 0, getWidth() - 4, getHeight() - 4 - MENU_BAR_HEIGHT);
 		myContent.setOffset(0, 0 + MENU_BAR_HEIGHT);
 
-        myClippingRectangle.setBounds((float) getX(), (float) getY(), (float) getWidth(), (float) getHeight());
+        if (myClippingRectangle!=null)
+            myClippingRectangle.setBounds((float) getX(), (float) getY(), (float) getWidth(), (float) getHeight());
 
 	}
 
@@ -321,15 +324,18 @@ public class Window extends WorldObjectImpl implements Interactable {
 	class MenuBarHandler extends PBasicInputEventHandler {
 		@Override
 		public void mouseEntered(PInputEvent arg0) {
-			menubar.setHighlighted(true);
+
+            menubar.setHighlighted(true);
 		}
 
 		@Override
 		public void mouseExited(PInputEvent arg0) {
-			menubar.setHighlighted(false);
+
+            menubar.setHighlighted(false);
 		}
 
 	}
+
 
 }
 
@@ -342,8 +348,9 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 	private ShapeObject rectangle;
 
 	private Text title;
+    private boolean highlighted;
 
-	public MenuBar(Window window, boolean title, boolean minMaxButton, boolean closeButton) {
+    public MenuBar(Window window, boolean title, boolean minMaxButton, boolean closeButton) {
 		super();
 		this.myWindow = window;
 
@@ -444,9 +451,14 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 		if (type == MouseEvent.MOUSE_CLICKED && canMinMaxNormal() && event.getClickCount() == 2) {
 			myWindow.cycleVisibleWindowState();
 		}
+        //System.out.println(event.getPickedNode());
+            //event.setHandled(true);
+        //}
+        //if (highlighted) event.setHandled(true);
 	}
 
 	public void setHighlighted(boolean bool) {
+        highlighted = bool;
 		if (bool || myWindow.getWindowState() == Window.WindowState.MAXIMIZED) {
 			rectangle.setTransparency(1f);
 			buttonHolder.setTransparency(1f);
@@ -475,4 +487,7 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 
 	}
 
+    public boolean isHighlighted() {
+        return highlighted;
+    }
 }

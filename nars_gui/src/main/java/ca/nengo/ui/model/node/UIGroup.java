@@ -69,7 +69,7 @@ public class UIGroup extends UINodeViewable {
 	}
 
 	@Override
-	protected NodeViewer createViewerInstance() {
+	protected NodeViewer newViewer() {
 		return new GroupViewer(this);
 	}
 

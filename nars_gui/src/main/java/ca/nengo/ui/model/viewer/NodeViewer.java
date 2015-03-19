@@ -81,7 +81,7 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
      *            UI Object containing the Node model
      */
     public NodeViewer(UINodeViewable nodeContainer, WorldGroundImpl ground) {
-        super(nodeContainer.name() + " (" + nodeContainer.getTypeName() + " Viewer)", ground);
+        super(nodeContainer.name() + ":", ground);
         this.parentOfViewer = nodeContainer;
         this.justOpened = false;
 
@@ -177,7 +177,7 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
 
         setStatusBarHandler(new NodeViewerStatus(this));
 
-        TrackedStatusMsg msg = new TrackedStatusMsg("Building nodes in Viewer");
+        TrackedStatusMsg msg = new TrackedStatusMsg("Building..");
 
         updateViewFromModel(true);
 

@@ -29,10 +29,10 @@ public class PXGrid extends PXLayer {
 
 	private static final long serialVersionUID = 1L;
 
-	public static PXLayer createGrid(PCamera camera, PRoot root,
+	public static PXGrid createGrid(PCamera camera, PRoot root,
 			Color gridPaint, double gridSpacing) {
 
-		PXLayer gridLayer = new PXGrid(gridPaint, gridSpacing);
+        PXGrid gridLayer = new PXGrid(gridPaint, gridSpacing);
 		gridLayer.setBounds(camera.getViewBounds());
 
 		root.addChild(gridLayer);
@@ -61,11 +61,12 @@ public class PXGrid extends PXLayer {
 			UIEnvironment.getInstance().getWorld().repaint();
 	}
 
-	private final Color gridPaint;
+	private Color gridPaint;
+    private Color bgColor = null;
 
 	private final double gridSpacing;
 
-	public PXGrid(Color gridPaint, double gridSpacing) {
+	protected PXGrid(Color gridPaint, double gridSpacing) {
 		super();
 		this.gridPaint = gridPaint;
 		this.gridSpacing = gridSpacing;
@@ -73,38 +74,57 @@ public class PXGrid extends PXLayer {
 		setChildrenPickable(false);
 	}
 
-	@Override
+    public void setBgColor(Color bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    @Override
 	protected void paint(PPaintContext paintContext) {
-		if (!isGridVisible())
-			return;
+
+        Graphics2D g2 = paintContext.getGraphics();
+
+        double x = getX();
+        double y = getY();
+        final double ww = getWidth();
+        final double hh = getHeight();
+
+        if (bgColor!=null) {
+            g2.setPaint(bgColor);
+
+            g2.fillRect((int)x, (int)y, (int)ww, (int)hh);
+        }
 
 		// make sure grid gets drawn on snap to grid boundaries. And
 		// expand a little to make sure that entire view is filled.
-		double bx = (getX() - (getX() % gridSpacing)) - gridSpacing;
-		double by = (getY() - (getY() % gridSpacing)) - gridSpacing;
-		double rightBorder = getX() + getWidth() + gridSpacing;
-		double bottomBorder = getY() + getHeight() + gridSpacing;
 
-		Graphics2D g2 = paintContext.getGraphics();
+        double bx = (x - (x % gridSpacing)) - gridSpacing;
+		double by = (y - (y % gridSpacing)) - gridSpacing;
+		double rightBorder = x + ww + gridSpacing;
+		double bottomBorder = y + hh + gridSpacing;
+
 		Rectangle2D clip = paintContext.getLocalClip();
 
 		g2.setStroke(gridStroke);
 		g2.setPaint(gridPaint);
 
-		for (double x = bx; x < rightBorder; x += gridSpacing) {
-			gridLine.setLine(x, by, x, bottomBorder);
+		for (double cx = bx; cx < rightBorder; cx += gridSpacing) {
+			gridLine.setLine(cx, by, cx, bottomBorder);
 			if (clip.intersectsLine(gridLine)) {
 				g2.draw(gridLine);
 			}
 		}
 
-		for (double y = by; y < bottomBorder; y += gridSpacing) {
-			gridLine.setLine(bx, y, rightBorder, y);
+		for (double cy = by; cy < bottomBorder; cy += gridSpacing) {
+			gridLine.setLine(bx, cy, rightBorder, cy);
 			if (clip.intersectsLine(gridLine)) {
 				g2.draw(gridLine);
 			}
 		}
 	}
+
+    public void setGridColor(Color gridColor) {
+        this.gridPaint = gridColor;
+    }
 }
 
 class CameraPropertyChangeListener implements PropertyChangeListener {
@@ -119,6 +139,6 @@ class CameraPropertyChangeListener implements PropertyChangeListener {
 	}
 
 	public void propertyChange(PropertyChangeEvent evt) {
-		gridLayer.setBounds(camera.getViewBounds());
+        gridLayer.setBounds(camera.getViewBounds());
 	}
 }

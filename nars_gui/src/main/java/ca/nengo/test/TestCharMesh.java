@@ -15,6 +15,7 @@ import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.ui.model.plot.MeshCursor;
+import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.util.ScriptGenException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
@@ -33,18 +34,29 @@ public class TestCharMesh {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run(){
-                CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80);
+
+
                 NengrowPanel panel = new NengrowPanel();
+
+                {
+                    CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80);
+                    mesh.set(0, 0, 'a');
+                    mesh.set(1, 0, 'b');
+                    mesh.set(2, 0, 'c');
+                    mesh.set(0, 1, "TEXT SYSTEM");
+
+                    panel.add(mesh.newUIWindow(600, 400, true, false, true));
+                }
+                {
+                    CharMeshEdit mesh = new CharMeshEdit("grid2", 60, 80);
+                    mesh.set(0, 0, 'x');
+                    mesh.set(1, 0, 'y');
+                    mesh.set(2, 0, 'z');
+
+                    panel.add(mesh.newUIWindow(600, 400, true, false, true));
+                }
+
                 panel.newWindow(800, 600);
-
-
-                //panel.add(mesh.newUI(400,400));
-                panel.add(mesh.newUIWindow(600, 400, true, false, true));
-
-                mesh.set(0, 0, 'a');
-                mesh.set(1, 0, 'b');
-                mesh.set(2, 0, 'c');
-                mesh.set(0, 1, "TEXT SYSTEM");
 
 
             }
@@ -309,7 +321,9 @@ public class TestCharMesh {
             //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
             UINetwork iconUI = ((UINetwork) newUI(1, 1));
 
-            ca.nengo.ui.lib.world.piccolo.object.Window x = new Window(iconUI, iconUI.createViewerInstance(), title, minMax, close);
+            NodeViewer viewer = iconUI.newViewer(new Color(25,50,25), new Color(128,128,128), 0.1f);
+
+            ca.nengo.ui.lib.world.piccolo.object.Window x = new Window(iconUI, viewer, title, minMax, close);
             x.setSize(w, h);
             return x;
         }

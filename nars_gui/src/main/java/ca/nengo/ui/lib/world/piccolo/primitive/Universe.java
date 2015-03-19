@@ -49,8 +49,9 @@ public class Universe extends PCanvas implements Destroyable {
 	private final Collection<WorldImpl> worlds;
 
 	public Universe() {
-
 		super();
+
+        setBackground(NengoStyle.COLOR_UNIVERSE_BACKGROUND);
 		setZoomEventHandler(null);
 		setPanEventHandler(null);
 

@@ -30,8 +30,10 @@ public class PanEventHandler extends PPanEventHandler {
 	 * Do auto panning even when the mouse is not moving.
 	 */
 	protected void dragActivityStep(PInputEvent aEvent) {
-		if (!getAutopan())
+        if (!getAutopan())
 			return;
+
+        aEvent.setHandled(true);
 
 		PCamera c = aEvent.getCamera();
 		PBounds b = c.getBoundsReference();
@@ -74,7 +76,6 @@ public class PanEventHandler extends PPanEventHandler {
 			node.dragOffset(delta.getWidth(), delta.getHeight());
 		}
 
-        aEvent.setHandled(true);
     }
 
 	public void setInverted(boolean isInverted) {
