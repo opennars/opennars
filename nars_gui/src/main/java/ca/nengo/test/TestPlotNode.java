@@ -1,8 +1,6 @@
 package ca.nengo.test;
 
 import ca.nengo.math.impl.GaussianPDF;
-import ca.nengo.model.Node;
-import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.Units;
 import ca.nengo.model.impl.DefaultNetwork;
@@ -11,22 +9,16 @@ import ca.nengo.model.impl.NoiseFactory;
 import ca.nengo.neural.neuron.impl.LIFSpikeGenerator;
 import ca.nengo.neural.neuron.impl.LinearSynapticIntegrator;
 import ca.nengo.neural.neuron.impl.SpikingNeuron;
-import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.model.plot.LinePlot;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-
-public class TestPlotNode extends Nengrow {
+public class TestPlotNode  {
     public static final float RESOLUTION_SEC = .001f;
 
     //https://github.com/nengo/nengo_1.4/blob/master/simulator-ui/docs/simplenodes.rst
 
-    public static Node newPlotNodeDemo() throws StructuralException {
+    public static NetworkImpl newPlotNodeDemo() throws StructuralException {
         NetworkImpl network = new DefaultNetwork();
 
         SpikingNeuron sn = new SpikingNeuron(
@@ -39,48 +31,49 @@ public class TestPlotNode extends Nengrow {
 
         return network;
     }
+    public static void main(String[] args) throws StructuralException {
 
-
-    @Override
-    public void init() throws Exception {
-
-
-
-        UINetwork networkUI = (UINetwork) addNodeModel(newPlotNodeDemo());
-        networkUI.doubleClicked();
-
-        new Timer(25, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    float dt = getSimulationDT();
-                    networkUI.node().run(time, time + dt);
-                    time += dt;
-                } catch (SimulationException e1) {
-                    e1.printStackTrace();
-                }
-                //cycle();
-            }
-        }).start();
-
+        new NengrowPanel(newPlotNodeDemo()).newWindow(800, 800);
     }
 
-    float time = 0;
-
-
-    public void cycle() {
-
-
-        for (WorldObject x : this.getNengoWorld().getChildren()) {
-                    //System.out.println( x.getChildren() );
-            //x.run(time, time+1);
-        }
-    }
-
-    public static void main(String[] args) {
-        new TestPlotNode();
-    }
-
+//
+//    @Override
+//    public void init() throws Exception {
+//
+//
+//
+//        UINetwork networkUI = (UINetwork) addNodeModel(newPlotNodeDemo());
+//        networkUI.doubleClicked();
+//
+//        new Timer(25, new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    float dt = getSimulationDT();
+//                    networkUI.node().run(time, time + dt);
+//                    time += dt;
+//                } catch (SimulationException e1) {
+//                    e1.printStackTrace();
+//                }
+//                //cycle();
+//            }
+//        }).start();
+//
+//    }
+//
+//    float time = 0;
+//
+//
+//    public void cycle() {
+//
+//
+//        for (WorldObject x : this.getNengoWorld().getChildren()) {
+//                    //System.out.println( x.getChildren() );
+//            //x.run(time, time+1);
+//        }
+//    }
+//
+//
 
 }

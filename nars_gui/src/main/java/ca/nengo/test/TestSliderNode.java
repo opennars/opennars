@@ -59,6 +59,6 @@ public class TestSliderNode extends Nengrow {
 
 
     public static void main(String[] args) {
-        new TestSliderNode();
+        new TestSliderNode().newWindow(600, 600);
     }
 }

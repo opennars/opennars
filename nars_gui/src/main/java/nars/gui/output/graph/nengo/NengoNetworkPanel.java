@@ -7,7 +7,6 @@ import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import nars.build.Default;
 import nars.core.NAR;
-import org.piccolo2d.util.PPaintContext;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -43,7 +42,7 @@ public class NengoNetworkPanel extends Nengrow {
         nar.input("<b-->c>.");
         nar.input("<c-->d>.");
         nar.run(16);
-        new NengoNetworkPanel(nar).window(800, 600);
+        new NengoNetworkPanel(nar).newWindow(800, 600);
     }
 
     public NengoNetworkPanel(NAR n) {
@@ -54,9 +53,6 @@ public class NengoNetworkPanel extends Nengrow {
         super();
 
 
-        getUniverse().setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
-        getUniverse().setAnimatingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
-        getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
 
         this.graphNode = graph;
 

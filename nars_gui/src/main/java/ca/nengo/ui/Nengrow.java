@@ -4,6 +4,7 @@ package ca.nengo.ui;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
+import org.piccolo2d.util.PPaintContext;
 import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.DefaultApplication;
 
@@ -19,13 +20,20 @@ abstract public class Nengrow extends AbstractNengo {
 
     public Nengrow() {
         this(new DefaultApplication());
+
+
+        //default: low quality
+        getUniverse().setDefaultRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+        getUniverse().setAnimatingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+        getUniverse().setInteractingRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+
     }
     public Nengrow(Application app) {
         super();
         setApplication(app);
     }
 
-    public NWindow window(int w, int h) {
+    public NWindow newWindow(int w, int h) {
         return new NWindow("", this).show(w, h, true);
     }
 
@@ -56,7 +64,7 @@ abstract public class Nengrow extends AbstractNengo {
         //nothing
     }
 
-    protected void setSimulationDT(float newDT) {
+    @Deprecated protected void setSimulationDT(float newDT) {
         this.simulationDT = newDT;
     }
 
@@ -91,7 +99,7 @@ abstract public class Nengrow extends AbstractNengo {
         new Nengrow();
     }*/
 
-    /** each cycle, this is called */
+    /** each cycle while running, this is called */
     public void run() {
 
     }

@@ -46,7 +46,7 @@ public class TestNARNode extends Nengrow {
     float time = 0;
 
     public static void main(String[] args) {
-        new TestNARNode().window(800,600);
+        new TestNARNode().newWindow(800, 600);
     }
 
     public Node newAgentNodeDemo() throws StructuralException {

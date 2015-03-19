@@ -10,6 +10,7 @@ import ca.nengo.model.impl.ObjectTarget;
 import ca.nengo.neural.SpikeOutput;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.PaintContext;
+import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.util.ScriptGenException;
 
 import java.awt.*;
@@ -91,10 +92,15 @@ public class LinePlot extends AbstractWidget {
 
 
     public LinePlot(String name) {
-        super(name);
+        super(name, 64, 64);
 
         input = new ObjectTarget(this, "_input", Object.class);
-        setInputs(input);
+        //setInputs(input);
+
+
+        ui.addWidget(UITarget.createTerminationUI(ui, input));
+
+
 
 
     }

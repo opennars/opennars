@@ -1,32 +1,21 @@
 package ca.nengo.test;
 
 import ca.nengo.model.AgentNode;
-import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
-import ca.nengo.ui.Nengrow;
-import ca.nengo.ui.model.node.UINetwork;
+import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 
-/**
- * Created by me on 3/3/15.
- */
-public class TestAgentNode extends Nengrow {
+/** example agent node in nengrow panel */
+public class TestAgentNode extends NengrowPanel {
 
 
-    float time = 0;
-    private UINetwork networkUI;
-
-    public static void main(String[] args) {
-        new TestAgentNode().window(900,800);
-    }
-
-    public static Node newAgentNodeDemo() throws StructuralException {
+    public static NetworkImpl newAgentNodeDemo() throws StructuralException {
         NetworkImpl network = new DefaultNetwork<>();
 
         AgentNode an = new AgentNode("NARBot1") {
@@ -57,27 +46,14 @@ public class TestAgentNode extends Nengrow {
         return network;
     }
 
-    @Override
-    public void init() throws Exception {
 
 
-        networkUI = (UINetwork) addNodeModel(newAgentNodeDemo());
-        networkUI.doubleClicked();
-
+    public static void main(String[] args) throws ContainerException, StructuralException {
+        new TestAgentNode().newWindow(900, 800);
     }
 
-
-
-    @Override
-    public void run() {
-        try {
-            float dt = 0.01f;
-            networkUI.node().run(time, time + dt, 1);
-            time += dt;
-
-        } catch (SimulationException e1) {
-            e1.printStackTrace();
-        }
-
+    public TestAgentNode() throws StructuralException, ContainerException {
+        super(newAgentNodeDemo());
     }
+
 }
