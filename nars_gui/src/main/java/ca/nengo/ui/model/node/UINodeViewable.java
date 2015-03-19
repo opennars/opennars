@@ -49,7 +49,7 @@ public abstract class UINodeViewable extends UINeoNode {
     /**
      * Weak reference to the viewer window
      */
-    private WeakReference<Window> viewerWindowRef;
+    protected WeakReference<Window> viewerWindowRef;
 
     public UINodeViewable(Node model) {
         super(model);

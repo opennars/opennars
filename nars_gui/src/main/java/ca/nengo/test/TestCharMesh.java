@@ -178,7 +178,13 @@ public class TestCharMesh {
 
                 @Override
                 protected void set(long l, Node node) {
+
                     setNode(l,node);
+                    /*if (ui!=null)
+                        ui.repaint();
+                    if (viewer!=null)
+                        viewer.repaint();*/
+
                 }
 
                 @Override
@@ -194,7 +200,7 @@ public class TestCharMesh {
             try {
                 addNode(cursor);
             } catch (StructuralException e) {
-
+                e.printStackTrace();
             }
         }
 
@@ -353,6 +359,8 @@ public class TestCharMesh {
             viewer = inviisbleIconUI.newViewer(new Color(25,50,25), new Color(128,128,128), 0.1f);
 
             ca.nengo.ui.lib.world.piccolo.object.Window x = new Window(inviisbleIconUI, viewer, title, minMax, close);     x.setSize(w, h);
+            ui.setWindow(x);
+
             return x;
         }
     }
@@ -410,6 +418,7 @@ public class TestCharMesh {
 
             Node n;
             set(l, n = newChar(x, y, c));
+
             return n;
         }
 

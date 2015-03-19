@@ -50,7 +50,7 @@ public class DefaultUINetwork<N extends Network> extends UINetwork {
     }
 
     final public static class UINARGraphViewer extends NetworkViewer {
-        public UINARGraphViewer(DefaultUINetwork g) {
+        public UINARGraphViewer(UINetwork g) {
             super(g, new UINARGraphGround());
         }
 

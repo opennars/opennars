@@ -32,6 +32,7 @@ import ca.nengo.sim.Simulator;
 import ca.nengo.ui.action.RunSimulatorAction;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
 import ca.nengo.ui.lib.world.WorldObject;
+import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.NetworkIcon;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
@@ -39,9 +40,11 @@ import ca.nengo.ui.model.viewer.NetworkViewer;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyChanges.Event;
+import nars.gui.output.graph.nengo.DefaultUINetwork;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.ref.WeakReference;
 
 /**
  * UI Wrapper for a Network
@@ -49,6 +52,9 @@ import java.awt.*;
  * @author Shu Wu
  */
 public class UINetwork extends UINodeViewable {
+
+
+
     private class MySimulatorListener implements VisiblyChanges.Listener {
         private boolean simulatorUpdatePending = false;
 
@@ -128,7 +134,8 @@ public class UINetwork extends UINodeViewable {
 
     /** if gridBG == null, removes grid */
     public NodeViewer newViewer(Color gridBg, Color gridColor, float gridTransparency) {
-        NetworkViewer nv = new NetworkViewer(this);
+        NetworkViewer nv = new DefaultUINetwork.UINARGraphViewer(this);
+
         if (gridBg == null)
             nv.getGridLayer().removeFromParent();
         else {
@@ -267,4 +274,7 @@ public class UINetwork extends UINodeViewable {
         }
     }
 
+    public void setWindow(Window x) {
+        viewerWindowRef = new WeakReference<Window>(x);
+    }
 }
