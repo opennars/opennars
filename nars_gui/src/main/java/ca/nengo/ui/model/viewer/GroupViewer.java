@@ -43,7 +43,6 @@ import ca.nengo.ui.model.node.UINodeViewable;
 import ca.nengo.util.Probe;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,13 +91,14 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
         /*HashMap<Node, UINeoNode> currentNodes = new HashMap<Node, UINeoNode>(
                 getGround().getChildrenCount());*/
 
-        List<UINeoNode> toAdd = null;
+        //List<UINeoNode> toAdd = null;
         Iterator<Map.Entry<Node, UINeoNode>> it = neoNodesChildren.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<Node, UINeoNode> e = it.next();
-            Node node = e.getKey();
+            //Node node = e.getKey();
             UINeoNode nodeUI = e.getValue();
             if (nodeUI ==null || nodeUI.isDestroyed()) {
+                getGround().removeChild(nodeUI);
                 it.remove();
             }
         }
@@ -195,6 +195,7 @@ public class GroupViewer<N extends Group, G extends UINodeViewable> extends Node
         applyDefaultLayout();
     }
     protected UINeoNode createUINode(Node node, boolean isFirstUpdate) {
+
         if (node instanceof Neuron) {
             Neuron neuron = (Neuron) node;
 

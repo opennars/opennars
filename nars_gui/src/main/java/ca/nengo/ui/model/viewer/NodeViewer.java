@@ -43,7 +43,7 @@ import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.model.ModelsContextMenu;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINodeViewable;
-import nars.core.Parameters;
+import javolution.util.FastMap;
 import org.piccolo2d.activities.PActivity;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
@@ -71,7 +71,7 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
     /**
      * Children of NEO nodes
      */
-    protected final Map<Node, UINeoNode> neoNodesChildren = Parameters.newHashMap();
+    protected final Map<Node, UINeoNode> neoNodesChildren = new FastMap().atomic(); //Parameters.newHashMap();
 
     public NodeViewer(UINodeViewable nodeContainer) {
         this(nodeContainer, new ElasticGround());
@@ -81,7 +81,7 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
      *            UI Object containing the Node model
      */
     public NodeViewer(UINodeViewable nodeContainer, WorldGroundImpl ground) {
-        super(nodeContainer.getName() + " (" + nodeContainer.getTypeName() + " Viewer)", ground);
+        super(nodeContainer.name() + " (" + nodeContainer.getTypeName() + " Viewer)", ground);
         this.parentOfViewer = nodeContainer;
         this.justOpened = false;
 
@@ -105,6 +105,10 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
                 }
             }
         });
+    }
+
+    public Iterator<Node> getNodeModels() {
+        return neoNodesChildren.keySet().iterator();
     }
 
     public Boolean getJustOpened() {
@@ -202,14 +206,14 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
     public void applySortLayout(SortMode sortMode) {
         //getGround().setElasticEnabled(false);
 
-        List<UINeoNode> nodes = getUINodes();
+        List<UINeoNode> nodes = new ArrayList(getUINodes());
 
         switch (sortMode) {
         case BY_NAME:
             Collections.sort(nodes, new Comparator<UINeoNode>() {
 
                 public int compare(UINeoNode o1, UINeoNode o2) {
-                    return (o1.getName().compareToIgnoreCase(o2.getName()));
+                    return (o1.name().compareToIgnoreCase(o2.name()));
 
                 }
 
@@ -225,7 +229,7 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
                         return o1.getClass().getSimpleName().compareToIgnoreCase(
                                 o2.getClass().getSimpleName());
                     } else {
-                        return (o1.getName().compareToIgnoreCase(o2.getName()));
+                        return (o1.name().compareToIgnoreCase(o2.name()));
                     }
 
                 }
@@ -309,8 +313,9 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
     /**
      * @return A collection of NEO Nodes contained in this viewer
      */
-    public List<UINeoNode> getUINodes() {
-    	return new ArrayList<UINeoNode>(neoNodesChildren.values());
+    public Collection<UINeoNode> getUINodes() {
+    	//return new ArrayList<UINeoNode>(neoNodesChildren.values());
+        return neoNodesChildren.values();
     }
 
     public UINeoNode getUINode(Node node) {

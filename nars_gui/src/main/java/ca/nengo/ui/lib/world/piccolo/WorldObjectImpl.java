@@ -504,7 +504,7 @@ public class WorldObjectImpl implements WorldObject {
      * 
      * @see ca.shu.ui.lib.world.impl.IWorldObject#getName()
      */
-    public String getName() {
+    public String name() {
         return myName;
     }
 
@@ -975,7 +975,7 @@ public class WorldObjectImpl implements WorldObject {
     }
 
     public String toString() {
-        return getName();
+        return name();
     }
 
     public void translate(double dx, double dy) {

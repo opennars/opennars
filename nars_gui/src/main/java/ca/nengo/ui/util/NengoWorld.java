@@ -6,8 +6,11 @@ import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.model.NodeContainer;
 import ca.nengo.ui.model.UINeoNode;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
 
 import java.awt.geom.Point2D;
+import java.util.Iterator;
 
 public class NengoWorld extends WorldImpl implements NodeContainer {
 
@@ -58,14 +61,19 @@ public class NengoWorld extends WorldImpl implements NodeContainer {
 
     }
 
+    @Override
+    public Iterator<Node> getNodeModels() {
+        return Iterators.transform(
+                Iterators.filter(getGround().getChildren().iterator(), UINeoNode.class),
+                nodeOfneoNode);
+    }
 
-
-	public Node getNodeModel(String name) {
+    public Node getNodeModel(String name) {
 		for (WorldObject wo : getGround().getChildren()) {
 			if (wo instanceof UINeoNode) {
 				UINeoNode nodeUI = (UINeoNode) wo;
 
-				if (nodeUI.getName().equals(name)) {
+				if (nodeUI.name().equals(name)) {
 					return nodeUI.node();
 				}
 			}
@@ -82,4 +90,11 @@ public class NengoWorld extends WorldImpl implements NodeContainer {
     public void removeChildren() {
         pnode.removeAllChildren();
     }
+
+    public final Function<UINeoNode,Node> nodeOfneoNode = new Function<UINeoNode,Node>() {
+        @Override
+        public Node apply(UINeoNode input) {
+            return input.node();
+        }
+    };
 }

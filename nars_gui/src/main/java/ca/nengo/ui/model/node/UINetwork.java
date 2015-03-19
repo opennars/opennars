@@ -68,7 +68,7 @@ public class UINetwork extends UINodeViewable {
 
     public static void constructSimulatorMenu(PopupMenuBuilder menu, UINetwork network) {
         menu.addSection("Run");
-        menu.addAction(new RunSimulatorAction("Simulate " + network.getName(), network));
+        menu.addAction(new RunSimulatorAction("Simulate " + network.name(), network));
         //menu.addAction(new RunInteractivePlotsAction(network));
     }
 
@@ -142,9 +142,9 @@ public class UINetwork extends UINodeViewable {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         if (node() == null) {
-            return super.getName();
+            return super.name();
         } else {
             return node().name();
         }

@@ -82,7 +82,7 @@ public class SaveNodeAction extends StandardAction {
      *            sure the save has finished before leaving Nengo.
      */
     public SaveNodeAction(UINeoNode nodeUI, boolean isBlocking) {
-        super("Save " + nodeUI.getName());
+        super("Save " + nodeUI.name());
 
         this.nodeUI = nodeUI;
 

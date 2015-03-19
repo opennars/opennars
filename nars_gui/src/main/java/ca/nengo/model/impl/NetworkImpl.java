@@ -598,6 +598,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
     @Deprecated public void run(float startTime, float endTime) throws SimulationException {
         getSimulator().run(startTime, endTime, myStepSize);
     }
+
     public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
         getSimulator().run(startTime, endTime, myStepSize = ((endTime-startTime)/stepsPerCycle)) ;
     }
@@ -610,7 +611,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      * @param topLevel  true if the network being run is the top level network, false if it is a subnetwork
      * @throws SimulationException if there's an error in the simulation
      */
-    public void run(float startTime, float endTime, boolean topLevel) throws SimulationException {
+    @Deprecated public void run(float startTime, float endTime, boolean topLevel) throws SimulationException {
         getSimulator().run(startTime, endTime, myStepSize, topLevel);
     }
 

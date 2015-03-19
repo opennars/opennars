@@ -68,19 +68,23 @@ public class Window extends WorldObjectImpl implements Interactable {
 
 	private WindowState savedWindowState = WINDOW_STATE_DEFAULT;
 
+    public Window(WorldObjectImpl source, WorldObjectImpl content) {
+        this(source, content, true, true, true);
+    }
+
 	/**
 	 * @param source
 	 *            parent Node to attach this Window to
 	 * @param content
 	 *            Node containing the contents of this Window
 	 */
-	public Window(WorldObjectImpl source, WorldObjectImpl content) {
+	public Window(WorldObjectImpl source, WorldObjectImpl content, boolean title, boolean minMaxNormalButton, boolean closeButton) {
 		super();
 		mySourceRef = new WeakReference<WorldObjectImpl>(source);
 		setSelectable(true);
 		this.myContent = content;
 
-		menubar = new MenuBar(this);
+		menubar = new MenuBar(this, title, minMaxNormalButton, closeButton);
 
 
 		myClippingRectangle = new PClip();
@@ -237,8 +241,8 @@ public class Window extends WorldObjectImpl implements Interactable {
 	}
 
 	@Override
-	public String getName() {
-		return myContent.getName();
+	public String name() {
+		return myContent.name();
 	}
 
 	/**
@@ -339,9 +343,41 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 
 	private Text title;
 
-	public MenuBar(Window window) {
+	public MenuBar(Window window, boolean title, boolean minMaxButton, boolean closeButton) {
 		super();
 		this.myWindow = window;
+
+        if (title) {
+            this.title = new Text(myWindow.name());
+        }
+        if (minMaxButton) {
+            normalButton = new Button(new RestoreIcon(Window.BUTTON_SIZE), new Runnable() {
+                public void run() {
+                    myWindow.setWindowState(Window.WindowState.NORMAL);
+                }
+            });
+
+            maximizeButton = new Button(new MaximizeIcon(Window.BUTTON_SIZE), new Runnable() {
+                public void run() {
+                    myWindow.setWindowState(Window.WindowState.MAXIMIZED);
+                }
+            });
+
+            minimizeButton = new Button(new MinimizeIcon(Window.BUTTON_SIZE), new Runnable() {
+                public void run() {
+                    myWindow.setWindowState(Window.WindowState.MINIMIZED);
+                }
+            });
+        }
+        if (closeButton) {
+            this.closeButton = new Button(new CloseIcon(Window.BUTTON_SIZE), new Runnable() {
+                public void run() {
+                    myWindow.close();
+                }
+            });
+        }
+
+
 		init();
 	}
 
@@ -352,60 +388,60 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 
 		addChild(rectangle);
 
-		title = new Text(myWindow.getName());
-		title.setFont(NengoStyle.FONT_LARGE);
-		addChild(title);
+        buttonHolder = new WorldObjectImpl();
+        addChild(buttonHolder);
 
-		normalButton = new Button(new RestoreIcon(Window.BUTTON_SIZE), new Runnable() {
-			public void run() {
-				myWindow.setWindowState(Window.WindowState.NORMAL);
-			}
-		});
+        if (title!=null) {
+            title.setFont(NengoStyle.FONT_LARGE);
+            addChild(title);
+        }
 
-		maximizeButton = new Button(new MaximizeIcon(Window.BUTTON_SIZE), new Runnable() {
-			public void run() {
-				myWindow.setWindowState(Window.WindowState.MAXIMIZED);
-			}
-		});
+        if (canMinMaxNormal()) {
+            buttonHolder.addChild(maximizeButton);
+            buttonHolder.addChild(normalButton);
+            buttonHolder.addChild(minimizeButton);
+        }
 
-		minimizeButton = new Button(new MinimizeIcon(Window.BUTTON_SIZE), new Runnable() {
-			public void run() {
-				myWindow.setWindowState(Window.WindowState.MINIMIZED);
-			}
-		});
+        if (closeButton!=null) {
+            buttonHolder.addChild(closeButton);
+        }
 
-		closeButton = new Button(new CloseIcon(Window.BUTTON_SIZE), new Runnable() {
-			public void run() {
-				myWindow.close();
-			}
-		});
-		buttonHolder = new WorldObjectImpl();
-		addChild(buttonHolder);
-		buttonHolder.addChild(maximizeButton);
-		buttonHolder.addChild(normalButton);
-		buttonHolder.addChild(minimizeButton);
-		buttonHolder.addChild(closeButton);
 
 		setHighlighted(false);
 	}
 
-	@Override
+    private boolean canMinMaxNormal() {
+        return normalButton!=null;
+    }
+
+    @Override
 	public void layoutChildren() {
 		super.layoutChildren();
-		title.setBounds(3, 3, getWidth(), getHeight());
 
-		double buttonX = getWidth() - closeButton.getWidth();
-		closeButton.setOffset(buttonX, 0);
-		buttonX -= closeButton.getWidth();
-		maximizeButton.setOffset(buttonX, 0);
-		normalButton.setOffset(buttonX, 0);
-		buttonX -= minimizeButton.getWidth();
-		minimizeButton.setOffset(buttonX, 0);
-		rectangle.setBounds(getBounds());
+        if (title!=null)
+		    title.setBounds(3, 3, getWidth(), getHeight());
+
+        double buttonX= getWidth();
+        if (closeButton!=null) {
+            buttonX -= closeButton.getWidth();
+            closeButton.setOffset(buttonX, 0);
+        }
+        if (canMinMaxNormal()) {
+            buttonX -= maximizeButton.getWidth();
+            maximizeButton.setOffset(buttonX, 0);
+
+            buttonX -= normalButton.getWidth();
+            normalButton.setOffset(buttonX, 0);
+
+            buttonX -= minimizeButton.getWidth();
+            minimizeButton.setOffset(buttonX, 0);
+        }
+
+        rectangle.setBounds(getBounds());
 	}
 
 	public void processEvent(PInputEvent event, int type) {
-		if (type == MouseEvent.MOUSE_CLICKED && event.getClickCount() == 2) {
+		if (type == MouseEvent.MOUSE_CLICKED && canMinMaxNormal() && event.getClickCount() == 2) {
 			myWindow.cycleVisibleWindowState();
 		}
 	}
@@ -414,24 +450,28 @@ class MenuBar extends WorldObjectImpl implements PInputEventListener {
 		if (bool || myWindow.getWindowState() == Window.WindowState.MAXIMIZED) {
 			rectangle.setTransparency(1f);
 			buttonHolder.setTransparency(1f);
-			title.setTransparency(1f);
+            if (title!=null)
+                title.setTransparency(1f);
 		} else {
 			rectangle.setTransparency(0.2f);
 			buttonHolder.setTransparency(0.4f);
-			title.setTransparency(0.6f);
+            if (title!=null)
+			    title.setTransparency(0.6f);
 		}
 	}
 
 	public void updateButtons() {
-		boolean isWindowMaximized = (myWindow.getWindowState() == Window.WindowState.MAXIMIZED);
+        if (canMinMaxNormal()) {
+            boolean isWindowMaximized = (myWindow.getWindowState() == Window.WindowState.MAXIMIZED);
 
-		if (isWindowMaximized) {
-			maximizeButton.removeFromParent();
-			buttonHolder.addChild(normalButton);
-		} else {
-			normalButton.removeFromParent();
-			buttonHolder.addChild(maximizeButton);
-		}
+            if (isWindowMaximized) {
+                maximizeButton.removeFromParent();
+                buttonHolder.addChild(normalButton);
+            } else {
+                normalButton.removeFromParent();
+                buttonHolder.addChild(maximizeButton);
+            }
+        }
 
 	}
 

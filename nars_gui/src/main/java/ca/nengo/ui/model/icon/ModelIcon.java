@@ -30,7 +30,6 @@ import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.WorldObject.Listener;
 import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.lib.world.piccolo.primitive.Text;
-import org.piccolo2d.extras.nodes.PNodeCache;
 
 /**
  * An Icon which has a representation and an label. It is used to represent NEO
@@ -164,7 +163,7 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 * @return the name of the label
 	 */
 	@Override
-	public String getName() {
+	public String name() {
 		return label.getText();
 	}
 
@@ -189,15 +188,15 @@ public class ModelIcon extends WorldObjectImpl implements Listener {
 	 */
 	public void updateLabel() {
 		if (showTypeInLabel) {
-			if (parent.getName().isEmpty())
+			if (parent.name().isEmpty())
 				label.setText("unnamed " + parent.getTypeName());
 			else
-				label.setText(parent.getName() + " (" + parent.getTypeName() + ')');
+				label.setText(parent.name() + " (" + parent.getTypeName() + ')');
 		} else {
-			if (parent.getName().isEmpty())
+			if (parent.name().isEmpty())
 				label.setText("unnamed");
 			else
-				label.setText(parent.getName());
+				label.setText(parent.name());
 		}
 	}
 

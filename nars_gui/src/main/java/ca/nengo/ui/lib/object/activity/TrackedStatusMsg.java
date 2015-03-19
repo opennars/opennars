@@ -27,7 +27,7 @@ public class TrackedStatusMsg {
 			taskText.setOffset(0, -taskText.getHeight());
 			wo.addChild(taskText);
 
-			setTaskName(wo.getName() + ": " + taskName);
+			setTaskName(wo.name() + ": " + taskName);
 		} else {
 			setTaskName(taskName);
 		}

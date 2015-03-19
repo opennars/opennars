@@ -40,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -204,10 +205,6 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
                 "Data Viewer", AuxillarySplitPane.Orientation.Left);
     }
 
-    protected NengoWorld getNengoWorld() {
-        return (NengoWorld) getWorld();
-    }
-
     @Override
     protected void constructShortcutKeys(List<ShortcutKey> shortcuts) {
         super.constructShortcutKeys(shortcuts);
@@ -336,7 +333,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             if (node instanceof UINetwork) {
                 UINetwork network = (UINetwork) node;
 
-                simulateAction = new RunSimulatorAction("Simulate " + network.getName(), network);
+                simulateAction = new RunSimulatorAction("Simulate " + network.name(), network);
                 //interactivePlotsAction = new RunInteractivePlotsAction(network);
             }
             else {
@@ -373,7 +370,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             // Delegate to the top Node Container in the Application
             return nodeContainer.addNodeModel(node, posX, posY);
         } else if (nodeContainer == this) {
-            UINeoNode nodeUI = getNengoWorld().addNodeModel(node, posX, posY);
+            UINeoNode nodeUI = ((NengoWorld) getWorld()).addNodeModel(node, posX, posY);
             try {
                 DragAction.dropNode(nodeUI);
             } catch (UserCancelledException e) {
@@ -388,7 +385,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
     @Override
     public WorldObject addNodeModel(WorldObject obj, Double posX, Double posY) throws ContainerException {
-        getNengoWorld().addNodeModel(obj, posX, posY);
+        ((NengoWorld) getWorld()).addNodeModel(obj, posX, posY);
         return obj;
     }
 
@@ -465,16 +462,24 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     }
 
     public Node getNodeModel(String name) {
+        return getRootContainer().getNodeModel(name);
+    }
+
+    protected NodeContainer getRootContainer() {
         NodeContainer nodeContainer = getRoot();
         if (nodeContainer != this && nodeContainer != null) {
             // Delegate to the top Node Container in the Application
-            return nodeContainer.getNodeModel(name);
+            return nodeContainer;
         } else if (nodeContainer == this) {
-            return getNengoWorld().getNodeModel(name);
+            return getWorld();
         }
         return null;
     }
 
+    @Override
+    public Iterator<Node> getNodeModels() {
+        return getRootContainer().getNodeModels();
+    }
 
     public ProgressIndicator getProgressIndicator() {
         return progressIndicator;
@@ -509,7 +514,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
 
     public Point2D localToView(Point2D localPoint) {
-        return getNengoWorld().localToView(localPoint);
+        return ((NengoWorld) getWorld()).localToView(localPoint);
     }
 
     /**

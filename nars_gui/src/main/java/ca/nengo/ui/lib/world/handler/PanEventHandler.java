@@ -73,7 +73,9 @@ public class PanEventHandler extends PPanEventHandler {
 			node.localToParent(node.globalToLocal(delta));
 			node.dragOffset(delta.getWidth(), delta.getHeight());
 		}
-	}
+
+        aEvent.setHandled(true);
+    }
 
 	public void setInverted(boolean isInverted) {
 		this.isInverted = isInverted;

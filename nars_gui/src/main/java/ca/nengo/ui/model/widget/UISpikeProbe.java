@@ -35,7 +35,7 @@ public class UISpikeProbe extends UIProbe {
 	public UISpikeProbe(UIGroup nodeAttachedTo) {
 		super(nodeAttachedTo, nodeAttachedTo.node());
 
-		getProbeParent().showPopupMessage("Collecting spikes on " + getProbeParent().getName());
+		getProbeParent().showPopupMessage("Collecting spikes on " + getProbeParent().name());
 		node().collectSpikes(true);
 
 		// setProbeColor(ProbeIcon.SPIKE_PROBE_COLOR);
@@ -76,7 +76,7 @@ public class UISpikeProbe extends UIProbe {
 		node().collectSpikes(false);
 
 		getProbeParent().showPopupMessage(
-				"Spike collection stopped on " + getProbeParent().getName());
+				"Spike collection stopped on " + getProbeParent().name());
 
 		super.prepareToDestroyModel();
 	}

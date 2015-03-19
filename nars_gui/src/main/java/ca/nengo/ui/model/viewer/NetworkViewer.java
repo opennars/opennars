@@ -85,7 +85,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
     public NetworkViewer(UINetwork pNetwork, WorldGroundImpl g) {
         super(pNetwork, g);
-        String layoutFileName = "layouts/" + pNetwork.getName() + ".layout";
+        String layoutFileName = "layouts/" + pNetwork.name() + ".layout";
         this.layoutFile = new File(layoutFileName);
         this.backupLayoutFile = new File(layoutFileName + ".bak");
     }
@@ -234,7 +234,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
             projectionUI.destroy();
             if (!isFirstUpdate) {
                 terminationUI.showPopupMessage("REMOVED Projection to "
-                        + terminationUI.getNodeParent().getName() + '.' + terminationUI.getName());
+                        + terminationUI.getNodeParent().name() + '.' + terminationUI.name());
             }
         }
 
@@ -255,8 +255,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
 
                 originUI.connectTo(termUI, false);
                 if (!isFirstUpdate) {
-                    termUI.showPopupMessage("Connected to " + termUI.getName() + '.'
-                            + getName());
+                    termUI.showPopupMessage("Connected to " + termUI.name() + '.'
+                            + name());
                 }
             } else {
                 if (nodeOrigin == null) {

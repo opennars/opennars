@@ -70,7 +70,7 @@ public class UIStateProbe extends UIProbe {
 				UINodeViewable ensemble = groupViewer.getViewerParent();
 				Network network = ensemble.getNetworkParent().node();
 
-				probe = network.getSimulator().addProbe(ensemble.getName(),
+				probe = network.getSimulator().addProbe(ensemble.name(),
 						(Probeable) node,
 						state,
 						true);
@@ -110,7 +110,7 @@ public class UIStateProbe extends UIProbe {
 		MenuBuilder plotMenu = menu.addSubMenu("plot");
 
 		Collection<StandardAction> actions = ProbePlotHelper.getInstance().getPlotActions(node().getData(),
-				getName());
+				name());
 
 		for (StandardAction action : actions) {
 			plotMenu.addAction(action);
@@ -123,7 +123,7 @@ public class UIStateProbe extends UIProbe {
 
 	@Override
 	public void doubleClicked() {
-		ProbePlotHelper.getInstance().getDefaultAction(node(), getName()).doAction();
+		ProbePlotHelper.getInstance().getDefaultAction(node(), name()).doAction();
 	}
 
 	@Override

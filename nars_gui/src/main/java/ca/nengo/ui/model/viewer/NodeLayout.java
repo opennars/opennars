@@ -31,6 +31,7 @@ import ca.nengo.ui.model.UINeoNode;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -55,7 +56,7 @@ public class NodeLayout implements Serializable {
 	/**
 	 * Node positions referenced by name
 	 */
-	private final Hashtable<String, PointSerializable> nodePositions;
+	private final HashMap<String, PointSerializable> nodePositions;
 
 	/**
 	 * Saved view bounds
@@ -73,7 +74,7 @@ public class NodeLayout implements Serializable {
 		this.layoutName = layoutName;
 		this.elasticMode = elasticMode;
 
-		nodePositions = new Hashtable<String, PointSerializable>(world.getUINodes().size());
+		nodePositions = new HashMap(world.getUINodes().size());
 
 		for (UINeoNode object : world.getUINodes()) {
 			addPosition(object, object.getOffset());

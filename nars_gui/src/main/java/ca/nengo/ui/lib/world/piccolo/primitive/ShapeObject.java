@@ -71,6 +71,6 @@ public class ShapeObject extends WorldObjectImpl {
 
     @Override
     public String toString() {
-        return getName() + ":Path[" + pnode + ']';
+        return name() + ":Path[" + pnode + ']';
     }
 }

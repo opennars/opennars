@@ -58,7 +58,7 @@ public class UIFunctionInput extends UINeoNode {
 		// MenuBuilder plotMenu = menu.createSubMenu("Plot");
 		menu.addSection("Function");
 
-		menu.addAction(new PlotFunctionNodeAction(getName(), "Plot function", node()));
+		menu.addAction(new PlotFunctionNodeAction(name(), "Plot function", node()));
 	}
 
 	@Override

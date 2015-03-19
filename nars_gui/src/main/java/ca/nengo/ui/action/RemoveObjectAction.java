@@ -45,7 +45,7 @@ public class RemoveObjectAction extends StandardAction {
      * @param objectToRemove TODO
      */
     public RemoveObjectAction(String actionName, WorldObject objectToRemove) {
-        super("Remove " + objectToRemove.getName(), actionName);
+        super("Remove " + objectToRemove.name(), actionName);
         this.objectToRemove = objectToRemove;
     }
 

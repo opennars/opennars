@@ -144,10 +144,10 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		for (WorldObject wo : getChildren()) {
 			if (type != null) {
-				if (type.isInstance(wo) && (wo.getName().compareTo(name) == 0)) {
+				if (type.isInstance(wo) && (wo.name().compareTo(name) == 0)) {
 					return wo;
 				}
-			} else if ((wo.getName().compareTo(name) == 0)) {
+			} else if ((wo.name().compareTo(name) == 0)) {
 				return wo;
 			}
 		}
@@ -202,7 +202,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		@Override
 		protected void action() throws ActionException {
 			try {
-				String newName = UserDialogs.showDialogString("Enter name", getName());
+				String newName = UserDialogs.showDialogString("Enter name", name());
 
 				node().setName(newName);
 			} catch (ConfigException e) {
@@ -335,13 +335,13 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 				if (model instanceof NTarget) {
 					if (!modelTargetSet.remove(model)) {
 						wo.destroy();
-						this.showPopupMessage("Termination removed: " + wo.getName());
+						this.showPopupMessage("Termination removed: " + wo.name());
 					}
 				}
 				if (wo instanceof NSource) {
 					if (!modelSourceSet.remove(model)) {
 						wo.destroy();
-						this.showPopupMessage("Origin removed: " + wo.getName());
+						this.showPopupMessage("Origin removed: " + wo.name());
 					}
 				}
 			}
@@ -385,7 +385,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 
 		NSource source = null;
 		try {
-			source = node().getSource(probeUI.getName());
+			source = node().getSource(probeUI.name());
 
 		} catch (StructuralException e1) {
             e1.printStackTrace();
@@ -396,7 +396,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		} else if (source == null) {
 			NTarget term = null;
 			try {
-				term = node().getTarget(probeUI.getName());
+				term = node().getTarget(probeUI.name());
 
 			} catch (StructuralException e) {
                 e.printStackTrace();
@@ -506,7 +506,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	 * @return The default file name for this node
 	 */
 	public String getFileName() {
-		return this.getName() + '.' + AbstractNengo.NEONODE_FILE_EXTENSION;
+		return this.name() + '.' + AbstractNengo.NEONODE_FILE_EXTENSION;
 	}
 
 
@@ -516,7 +516,7 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 	}
 
 	@Override
-	public String getName() {
+	public String name() {
 		if (node() != null) {
 			return node().name();
 		} else {

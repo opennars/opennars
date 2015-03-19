@@ -233,7 +233,7 @@ public abstract class ModelObject<M> extends ElasticObject implements Interactab
 	}
 
 	public String getFullName() {
-		return getName() + " (" + getTypeName() + ')';
+		return name() + " (" + getTypeName() + ')';
 	}
 
 	/**

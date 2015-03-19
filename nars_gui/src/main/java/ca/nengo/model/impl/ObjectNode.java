@@ -58,7 +58,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
         commonIn = new PolygonIcon(ui,4,1f,Color.GRAY) {
             @Override
-            public String getName() {
+            public String name() {
                 return "inputs";
             }
 
@@ -67,7 +67,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
         commonOut = new PolygonIcon(ui,4,1f,Color.GRAY) {
             @Override
-            public String getName() {
+            public String name() {
                 return "outputs";
             }
         };
@@ -75,8 +75,8 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
         bodyGraph = new DefaultDirectedGraph(String.class);
         bodyGraph.addVertex(name());
-        bodyGraph.addVertex(commonIn.getName());
-        bodyGraph.addVertex(commonOut.getName());
+        bodyGraph.addVertex(commonIn.name());
+        bodyGraph.addVertex(commonOut.name());
 
 
 
@@ -142,13 +142,13 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
                 object = pb.getName();
                 inputs.add(pb);
                 bodyGraph.addVertex(object);
-                bodyGraph.addEdge(object, commonIn.getName(), object + ".in");
+                bodyGraph.addEdge(object, commonIn.name(), object + ".in");
             } else {
                 ProducerPushButton pb = new ProducerPushButton(this, m, obj);
                 object = pb.getName();
                 returnType = m.getReturnType().getName();
                 bodyGraph.addVertex(object);
-                bodyGraph.addEdge(commonOut.getName(), object,  object + ".out");
+                bodyGraph.addEdge(commonOut.name(), object,  object + ".out");
                 outputs.add(pb);
             }
         } else if (m.getParameterCount() == 1) {
@@ -156,7 +156,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
             object = pb.getName();
             firstParameterType = pb.getRequiredType().getName();
             bodyGraph.addVertex(object);
-            bodyGraph.addEdge(object, commonIn.getName(), object + ".in");
+            bodyGraph.addEdge(object, commonIn.name(), object + ".in");
             inputs.add(pb);
         } else {
             //create a sub-node for this multi-arg method
@@ -312,7 +312,7 @@ public class ObjectNode<O> extends AbstractNode implements UIBuilder {
 
                 PolygonIcon p = new PolygonIcon(ui, 3, 1f, Color.WHITE) {
                     @Override
-                    public String getName() {
+                    public String name() {
                         return c;
                     }
                 };

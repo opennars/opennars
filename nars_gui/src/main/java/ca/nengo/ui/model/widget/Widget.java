@@ -107,7 +107,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 	@Override
 	protected void constructTooltips(TooltipBuilder tooltips) {
 		super.constructTooltips(tooltips);
-		tooltips.addProperty("Attached to", parent.getName());
+		tooltips.addProperty("Attached to", parent.name());
 		if (getExposedName() != null) {
 			tooltips.addProperty("Exposed as", getExposedName());
 		}
@@ -136,8 +136,8 @@ public abstract class Widget<M> extends UINeoModel<M> {
 		if (networkUI != null) {
 			exposeModel(networkUI, exposedName);
 
-			showPopupMessage(this.getName() + " is exposed as " + exposedName + " on Network: "
-					+ networkUI.getName());
+			showPopupMessage(this.name() + " is exposed as " + exposedName + " on Network: "
+					+ networkUI.name());
 
 		} else {
 			UserMessages.showWarning("Cannot expose because no external network is available");
@@ -169,7 +169,7 @@ public abstract class Widget<M> extends UINeoModel<M> {
 		Network network = networkUI.node();
 		if (network != null) {
 			unExpose(network);
-			showPopupMessage(getName() + " is UN-exposed on Network: " + network.name());
+			showPopupMessage(name() + " is UN-exposed on Network: " + network.name());
 		} else {
 			UserMessages.showWarning("Cannot expose because no external network is available");
 		}

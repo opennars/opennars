@@ -31,6 +31,7 @@ import ca.nengo.ui.lib.UIException;
 import ca.nengo.ui.lib.world.WorldObject;
 
 import java.awt.geom.Point2D;
+import java.util.Iterator;
 
 /**
  * A Container of PNeoNode
@@ -63,6 +64,7 @@ public interface NodeContainer {
 	public Point2D localToView(Point2D localPoint);
 
 	public Node getNodeModel(String name);
+    public Iterator<Node> getNodeModels();
 
 	public static class ContainerException extends UIException {
 		private static final long serialVersionUID = 1L;

@@ -174,7 +174,7 @@ public class TestNARNode  {
 
                     for (WorldObject w : intersects) {
                         if (w == NARNode.this.ui) continue;
-                        String ww = w.getName().trim();
+                        String ww = w.name().trim();
                         if (ww.isEmpty()) {
                             if (Parameters.DEBUG)
                                 System.err.println("Warning: " + w + " (" + w.getClass() + ") has empty name");

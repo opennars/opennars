@@ -158,7 +158,7 @@ public interface WorldObject extends NamedObject, Destroyable {
     /**
      * @return
      */
-    public String getName();
+    public String name();
 
     /**
      * @param name New name for this object

@@ -318,14 +318,14 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 	 * @see ca.shu.ui.lib.handlers.Interactable#showContextMenu(edu.umd.cs.piccolo.event.PInputEvent)
 	 */
 	public JPopupMenu getContextMenu() {
-		PopupMenuBuilder menu = new PopupMenuBuilder(getName());
+		PopupMenuBuilder menu = new PopupMenuBuilder(name());
 		constructMenu(menu, null, null);
 
 		return menu.toJPopupMenu();
 	}
 	
 	public JPopupMenu getContextMenu(double posX, double posY) {
-		PopupMenuBuilder menu = new PopupMenuBuilder(getName());
+		PopupMenuBuilder menu = new PopupMenuBuilder(name());
 		constructMenu(menu, posX, posY);
 
 		return menu.toJPopupMenu();

@@ -71,7 +71,7 @@ public class GeneratePythonScriptAction extends StandardAction {
      *            Node to be saved
      */
     public GeneratePythonScriptAction(UINeoNode nodeUI, boolean isBlocking) {
-        super("Generate script for " + nodeUI.getName());
+        super("Generate script for " + nodeUI.name());
 
         this.nodeUI = nodeUI;
     }

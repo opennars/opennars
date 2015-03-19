@@ -129,7 +129,7 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
                     getNodeParent().getNetworkParent().node().addProjection(source.node(),
                             node());
                     getNodeParent().showPopupMessage(
-                            "Connected to " + getNodeParent().getName() + '.' + getName());
+                            "Connected to " + getNodeParent().name() + '.' + name());
                     successful = true;
                 }
 			} catch (StructuralException e) {
@@ -214,7 +214,7 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
 			try {
 				getNodeParent().getNetworkParent().node().removeProjection(node());
 				getNodeParent().showPopupMessage(
-						"REMOVED Projection to " + getNodeParent().getName() + '.' + getName());
+						"REMOVED Projection to " + getNodeParent().name() + '.' + name());
 
 				getConnector().destroy();
 			} catch (StructuralException e) {

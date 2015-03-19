@@ -10,5 +10,5 @@ public interface NamedObject {
 	/**
 	 * @return Name of object
 	 */
-	public String getName();
+	public String name();
 }
