@@ -3,7 +3,6 @@ package nars.gui.output.graph.nengo;
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
 import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import automenta.vivisect.dimensionalize.IterativeLayout;
-import ca.nengo.model.StepListener;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.ui.model.UIBuilder;
@@ -440,34 +439,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
     public Rectangle2D getLayoutBounds() {
         return layoutBounds;
-    }
-
-    abstract public class SubCycle implements StepListener {
-
-        float lastStep = 0;
-        long lastStepReal = System.currentTimeMillis();
-
-        @Override
-        public void stepStarted(float time) {
-            double interval = getTimePerCycle();
-            float dt = time - lastStep;
-            int numCycles = (int) (Math.floor(dt / interval));
-
-            if (numCycles > 0) {
-
-                long now = System.currentTimeMillis();
-                run(numCycles, time, now - lastStepReal);
-
-                lastStep = time;
-                lastStepReal = now;
-            }
-
-            //System.out.println(this + " run: " + time + " waiting since " + lastStep);
-        }
-
-        abstract public double getTimePerCycle();
-
-        abstract public void run(int count, float endTime, long deltaMS);
     }
 
     private class MyGrapher extends DefaultGrapher {
