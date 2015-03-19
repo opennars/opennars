@@ -27,8 +27,8 @@ a recipient may use your version of this file under either the MPL or the GPL Li
 package ca.nengo.ui.model;
 
 import ca.nengo.ui.action.PropertiesAction;
-import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.lib.menu.PopupMenuBuilder;
+import ca.nengo.ui.lib.object.model.ModelObject;
 
 /**
  * UI Wrapper for a NEO Node Model

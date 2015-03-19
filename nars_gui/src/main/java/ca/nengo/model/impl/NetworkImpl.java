@@ -195,6 +195,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
 
     /** returns pre-existing */
     public N setNode(K key, N node) {
+        //TODO check if setting the current node to avoid add/remove
         N existing = removeNode(key);
 
         if (!add(key, node)) {

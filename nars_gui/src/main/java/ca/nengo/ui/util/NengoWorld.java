@@ -42,7 +42,9 @@ public class NengoWorld extends WorldImpl implements NodeContainer {
 		}*/
 
 		UINeoNode nodeUI = UINeoNode.createNodeUI(node);
-        addNodeModel(nodeUI, posX, posY);
+        if (nodeUI!=null) {
+            addNodeModel(nodeUI, posX, posY);
+        }
         return nodeUI;
 	}
 
@@ -59,6 +61,11 @@ public class NengoWorld extends WorldImpl implements NodeContainer {
 
         return nodeUI;
 
+    }
+
+    @Override
+    public Iterable<WorldObject> getWorldObjects() {
+        return getGround().getChildren();
     }
 
     @Override

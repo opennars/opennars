@@ -798,6 +798,8 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         }
     }
 
+
+
     public UINeoNode addNodeModel(Node node) throws ContainerException {
         return addNodeModel(node, null, null);
     }

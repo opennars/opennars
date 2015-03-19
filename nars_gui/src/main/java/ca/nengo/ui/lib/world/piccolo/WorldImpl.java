@@ -236,8 +236,8 @@ public class WorldImpl extends WorldObjectImpl implements World, Interactable {
 
 	private void initSelectionMode() {
 		isSelectionMode = false;
-        mySky.getCamera().addInputEventListener(panHandler);
         mySky.getCamera().addInputEventListener(selectionEventHandler);
+        mySky.getCamera().addInputEventListener(panHandler);
 	}
 
 	/**

@@ -66,7 +66,7 @@ public class Universe extends PCanvas implements Destroyable {
 	 */
 	private void initStatusPanel() {
 		statusTextBackground = ShapeObject.createRectangle(0, 0, 1, 1);
-		statusTextBackground.setPaint(NengoStyle.COLOR_BACKGROUND);
+		statusTextBackground.setPaint(NengoStyle.COLOR_TRANSPARENT);
 		statusTextBackground.setTransparency(0.7f);
 
 		statusMessageLabel = new Text("Welcome to " + UIEnvironment.getInstance().getAppName());

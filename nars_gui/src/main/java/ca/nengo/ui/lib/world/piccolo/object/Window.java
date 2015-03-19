@@ -72,6 +72,7 @@ public class Window extends WorldObjectImpl implements Interactable {
         this(source, content, true, true, true);
     }
 
+
 	/**
 	 * @param source
 	 *            parent Node to attach this Window to
@@ -89,7 +90,7 @@ public class Window extends WorldObjectImpl implements Interactable {
 
 		myClippingRectangle = new PClip();
         myClippingRectangle.addChild(content.getPNode());
-		myClippingRectangle.setPaint(NengoStyle.COLOR_BACKGROUND);
+		//myClippingRectangle.setPaint(NengoStyle.COLOR_BACKGROUND);
         getPNode().addChild(myClippingRectangle);
 
 

@@ -370,12 +370,14 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
             // Delegate to the top Node Container in the Application
             return nodeContainer.addNodeModel(node, posX, posY);
         } else if (nodeContainer == this) {
-            UINeoNode nodeUI = ((NengoWorld) getWorld()).addNodeModel(node, posX, posY);
-            try {
-                DragAction.dropNode(nodeUI);
-            } catch (UserCancelledException e) {
-                // the user should not be given a chance to do this
-                throw new ContainerException("Unexpected cancellation of action by user");
+            UINeoNode nodeUI = getWorld().addNodeModel(node, posX, posY);
+            if (nodeUI!=null) {
+                try {
+                    DragAction.dropNode(nodeUI);
+                } catch (UserCancelledException e) {
+                    // the user should not be given a chance to do this
+                    throw new ContainerException("Unexpected cancellation of action by user");
+                }
             }
             return nodeUI;
         } else {
@@ -463,6 +465,11 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
 
     public Node getNodeModel(String name) {
         return getRootContainer().getNodeModel(name);
+    }
+
+    @Override
+    public Iterable<? extends WorldObject> getWorldObjects() {
+        return getRootContainer().getWorldObjects();
     }
 
     protected NodeContainer getRootContainer() {

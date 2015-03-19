@@ -20,7 +20,6 @@ import ca.nengo.util.ScriptGenException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
@@ -31,10 +30,9 @@ public class TestCharMesh {
 
 
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run(){
-
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run(){
 
                 NengrowPanel panel = new NengrowPanel();
 
@@ -45,22 +43,22 @@ public class TestCharMesh {
                     mesh.set(2, 0, 'c');
                     mesh.set(0, 1, "TEXT SYSTEM");
 
-                    panel.add(mesh.newUIWindow(600, 400, true, false, true));
+                    panel.add(mesh);
                 }
-                {
+                /*{
                     CharMeshEdit mesh = new CharMeshEdit("grid2", 60, 80);
                     mesh.set(0, 0, 'x');
                     mesh.set(1, 0, 'y');
                     mesh.set(2, 0, 'z');
 
-                    panel.add(mesh.newUIWindow(600, 400, true, false, true));
-                }
+                    panel.add(mesh);
+                    Window w2 = mesh.newUIWindow(600, 400, true, false, true);
+                    panel.add(w2);
+                }*/
 
                 panel.newWindow(800, 600);
-
-
-            }
-        });
+//            }
+//        });
 
     }
 
@@ -151,6 +149,9 @@ public class TestCharMesh {
         }
 
 
+        public char getChar() {
+            return c;
+        }
     }
 
     public static class CharMeshEdit extends DefaultNetwork implements UIBuilder {
@@ -158,7 +159,8 @@ public class TestCharMesh {
         private MeshCursor cursor;
         private final CharMesh mesh;
         private KeyboardHandler keyHandler;
-        private DefaultUINetwork ui;
+        private UINetwork ui;
+        private NodeViewer viewer;
 
         public CharMeshEdit(String name, double charWidth, double charHeight) {
             super(name);
@@ -210,10 +212,28 @@ public class TestCharMesh {
         public long index() {
             return mesh.index(cursor.getX(), cursor.getY());
         }
+
+//        @Override
+//        public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
+//            super.run(startTime, endTime, stepsPerCycle);
+//
+//        }
+
         @Override
-        public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {
-            super.run(startTime, endTime, stepsPerCycle);
-            if (keyHandler==null) {
+        public void run(float startTime, float endTime) throws SimulationException {
+            enableInput();
+
+            super.run(startTime, endTime);
+
+        }
+
+//        @Override
+//        public void run(float startTime, float endTime, boolean topLevel) throws SimulationException {
+//            super.run(startTime, endTime, topLevel);
+//        }
+
+        protected void enableInput() {
+            if ((keyHandler==null) && (viewer!=null)) {
                 keyHandler = new KeyboardHandler() {
 
                     @Override
@@ -226,9 +246,14 @@ public class TestCharMesh {
                         CharMeshEdit.this.keyPressed(event);
                     }
                 };
-                ui.getViewer().getSky().addInputEventListener(keyHandler);
+                //ui.getPNode().getRoot().addInputEventListener(keyHandler);
+                //ui.getViewer().getSky().addInputEventListener(keyHandler);
+                viewer.getSky().addInputEventListener(keyHandler);
+                //viewer.getSky().addInputEventListener(keyHandler);
+
             }
         }
+
 
         public long lastNonblank()
         {
@@ -300,13 +325,15 @@ public class TestCharMesh {
 
         @Override
         public UINeoNode newUI(double width, double height) {
-            if (ui == null) {
-                ui = new DefaultUINetwork(this);
-                /*ui = new ca.nengo.ui.lib.world.piccolo.object.Window(
-                        new DefaultUINetwork(this).,
-                        ui.createViewerInstance());*/
-            }
-            return ui;
+//            if (ui == null) {
+//                ui = new DefaultUINetwork(this);
+//                /*ui = new ca.nengo.ui.lib.world.piccolo.object.Window(
+//                        new DefaultUINetwork(this).,
+//                        ui.createViewerInstance());*/
+//            }
+            return null; //ui;
+
+            //return newUIWindow(400, 400, true, false, true);
         }
 
 
@@ -319,12 +346,13 @@ public class TestCharMesh {
 
         public ca.nengo.ui.lib.world.piccolo.object.Window newUIWindow(double w, double h, boolean title, boolean minMax, boolean close) {
             //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
-            UINetwork iconUI = ((UINetwork) newUI(1, 1));
+            UINetwork inviisbleIconUI = new DefaultUINetwork(this); //((UINetwork) newUI(1, 1));
 
-            NodeViewer viewer = iconUI.newViewer(new Color(25,50,25), new Color(128,128,128), 0.1f);
+            this.ui = inviisbleIconUI;
 
-            ca.nengo.ui.lib.world.piccolo.object.Window x = new Window(iconUI, viewer, title, minMax, close);
-            x.setSize(w, h);
+            viewer = inviisbleIconUI.newViewer(new Color(25,50,25), new Color(128,128,128), 0.1f);
+
+            ca.nengo.ui.lib.world.piccolo.object.Window x = new Window(inviisbleIconUI, viewer, title, minMax, close);     x.setSize(w, h);
             return x;
         }
     }
@@ -374,6 +402,11 @@ public class TestCharMesh {
                 remove(l);
                 return null;
             }
+
+            Node existing = get(l);
+            if (existing!=null && existing instanceof SmartChar && (((SmartChar)existing).getChar() == c) )
+                return existing;
+
 
             Node n;
             set(l, n = newChar(x, y, c));

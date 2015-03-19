@@ -111,6 +111,9 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
         return neoNodesChildren.keySet().iterator();
     }
 
+    public Iterable<? extends WorldObject> getWorldObjects() {
+        return neoNodesChildren.values();
+    }
     public Boolean getJustOpened() {
         return justOpened;
     }

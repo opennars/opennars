@@ -6,7 +6,7 @@ import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.Interactable;
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.activity.Pulsator;
-import ca.nengo.ui.lib.world.elastic.ElasticObject;
+import ca.nengo.ui.lib.world.piccolo.WorldObjectImpl;
 import ca.nengo.ui.model.tooltip.Tooltip;
 import ca.nengo.ui.model.tooltip.TooltipBuilder;
 
@@ -23,7 +23,7 @@ import java.util.LinkedHashSet;
 /**
  * @author User
  */
-public abstract class ModelObject<M> extends ElasticObject implements Interactable {
+public abstract class ModelObject<M> extends WorldObjectImpl implements Interactable {
 
 	/**
 	 * The property name that identifies a change in this node's Model

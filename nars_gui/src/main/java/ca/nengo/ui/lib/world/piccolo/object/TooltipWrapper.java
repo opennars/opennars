@@ -41,7 +41,7 @@ public class TooltipWrapper extends WorldObjectImpl implements Listener {
 		addChild(tooltip);
 		setPickable(true);
 		setChildrenPickable(false);
-		setPaint(NengoStyle.COLOR_BACKGROUND);
+		setPaint(NengoStyle.COLOR_TRANSPARENT);
 
 		addChild(new Border(this, NengoStyle.COLOR_TOOLTIP_BORDER));
 

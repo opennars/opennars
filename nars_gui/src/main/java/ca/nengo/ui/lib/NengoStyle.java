@@ -18,12 +18,13 @@ public class NengoStyle {
 	/*public static final boolean GTK = UIManager.getSystemLookAndFeelClassName().
 		equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");*/
 	
-	public static final int ANIMATION_DROP_IN_WORLD_MS = 200;
+	//public static final int ANIMATION_DROP_IN_WORLD_MS = 200;
+
 	/*
 	 * Colors
 	 */
     public static final Color COLOR_UNIVERSE_BACKGROUND = new Color(0,0,0);
-	public static final Color COLOR_BACKGROUND = new Color(0,0,0,0);
+	public static final Color COLOR_TRANSPARENT = new Color(0,0,0,0);
 	public static final Color COLOR_FOREGROUND = new Color(128,128,128,192);//Color.lightGray;
 	public static final Color COLOR_BACKGROUND2 = Color.darkGray;
 	public static final Color COLOR_FOREGROUND2 = Color.gray;
@@ -120,12 +121,12 @@ public class NengoStyle {
 	}
 
 	public static void applyStyle(Container item) {
-		item.setBackground(NengoStyle.COLOR_BACKGROUND);
+		item.setBackground(NengoStyle.COLOR_TRANSPARENT);
 		item.setForeground(NengoStyle.COLOR_FOREGROUND);
 	}
 
 	public static void applyStyle(DefaultTreeCellRenderer cellRenderer) {
-		cellRenderer.setBackgroundNonSelectionColor(NengoStyle.COLOR_BACKGROUND);
+		cellRenderer.setBackgroundNonSelectionColor(NengoStyle.COLOR_TRANSPARENT);
 		cellRenderer.setBackgroundSelectionColor(NengoStyle.COLOR_BACKGROUND2);
 		cellRenderer.setTextNonSelectionColor(NengoStyle.COLOR_FOREGROUND);
 		cellRenderer.setTextSelectionColor(NengoStyle.COLOR_FOREGROUND);
@@ -135,7 +136,7 @@ public class NengoStyle {
 	public static void applyMenuStyle(JComponent item, boolean isTitle) {
 		item.setOpaque(true);
 		// item.setBorder(null);
-		item.setBackground(NengoStyle.COLOR_BACKGROUND);
+		item.setBackground(NengoStyle.COLOR_TRANSPARENT);
 		item.setForeground(NengoStyle.COLOR_FOREGROUND);
 		if (isTitle) {
 			item.setFont(NengoStyle.FONT_MENU_TITLE);

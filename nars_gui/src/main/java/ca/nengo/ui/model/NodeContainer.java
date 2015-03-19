@@ -64,6 +64,9 @@ public interface NodeContainer {
 	public Point2D localToView(Point2D localPoint);
 
 	public Node getNodeModel(String name);
+
+    public Iterable<? extends WorldObject> getWorldObjects();
+
     public Iterator<Node> getNodeModels();
 
 	public static class ContainerException extends UIException {
