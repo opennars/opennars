@@ -1,6 +1,8 @@
 package nars.irc;
 
 
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.ReflectPanel;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -33,6 +35,9 @@ public class IRCBot {
     private final NAR nar;
     private BufferedWriter writer = null;
 
+    public void setOutputting(boolean outputting) {
+        this.outputting = outputting;
+    }
 
     public static void main(String[] args) throws Exception {
         Parameters.DEBUG = true;
@@ -40,11 +45,11 @@ public class IRCBot {
 
         Default d = new Default();
         //Default d = new Solid(4, 64, 0,5, 0,3);
-
-        d.param.decisionThreshold.set(0.2);
+        d.setConceptBagSize(2048);
+        d.param.decisionThreshold.set(0.7);
         d.param.temporalRelationsMax.set(2);
-        d.param.shortTermMemoryHistory.set(3);
-        d.param.duration.set(5);
+        d.param.shortTermMemoryHistory.set(4);
+        d.param.duration.set(200);
         d.param.termLinkMaxReasoned.set(6);
         d.param.conceptsFiredPerCycle.set(3);
 
@@ -76,7 +81,9 @@ public class IRCBot {
         i.loop(corpus, 200);
 
         String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/worstward.txt"))).split("\\. ");
-        i.read(book, 1000, 0.5f);
+        i.read(book, 1200, 0.5f);
+        String[] book2 = String.join(" ", Files.readAllLines(Paths.get("/home/me/meta.txt"))).split("\\. ");
+        i.read(book2, 1300, 0.25f);
 
     }
 
@@ -231,10 +238,13 @@ public class IRCBot {
 
     public IRCBot(NAR n) throws Exception {
 
+        new NWindow("Say", new ReflectPanel(this)).show(500,300);
+
         this.nar = n;
         new AbstractReaction(nar, Say.class) {
 
-            private String lastMessage = "";
+            public String last = "";
+
 
             int minSpokenWords = 2;
 
@@ -244,7 +254,24 @@ public class IRCBot {
                     //Operator.ExecutionResult er = (Operator.ExecutionResult)args[0];
 
                     Term a = (Term)args[0]; //er.getOperation().getArguments().term;
-                    say(a.toString());
+
+                    String s = a.toString();
+                    s = s.replace("{\"", "");
+                    s = s.replace("\"}", "");
+                    s = s.trim();
+                    if (s.length() == 1) {
+                        if (s.equals("¸")) s = "."; //hotfix for the period
+                        if (s.equals(last))
+                            return; //dont repeat punctuation
+                    }
+                    else {
+
+                    }
+
+                    if (!s.isEmpty()) {
+                        say(s);
+                        last = s;
+                    }
 
 //                    if (a.length >= minSpokenWords)  {
 //                        String m = "";
@@ -353,12 +380,16 @@ public class IRCBot {
     int outputBufferLength = 100;
 
     public synchronized void say(String s) {
-        s = s.replace("{\"", "");
-        s = s.replace("\"}", "");
+
         System.out.println("say: " + s);
         buffer += " " + s;
 
         if (buffer.length() > outputBufferLength) {
+
+
+            buffer = buffer.trim();
+            buffer = buffer.replace(" .", ". ");
+
             System.out.println("SAY: " + buffer);
             if ((writer!=null) && (outputting)) {
                 try {
