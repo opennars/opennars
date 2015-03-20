@@ -130,6 +130,7 @@ public class Narsese {
 
 
         Sentence sentence = parseSentence(buffer, newStamp);
+        if (sentence == null) return null;
 
         BudgetValue budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
         Task task = new Task(sentence, budget);
@@ -149,6 +150,7 @@ public class Narsese {
         String truthString = getTruthString(buffer);
         Tense tense = parseTense(buffer);
         String str = buffer.toString().trim();
+        if (str.isEmpty()) return null;
         int last = str.length() - 1;
         char punc = str.charAt(last);
 
@@ -207,7 +209,7 @@ public class Narsese {
      */
     private static String getTruthString(final StringBuilder s) throws InvalidInputException {
         final int last = s.length() - 1;
-        if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
+        if (last==-1 || s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;
         }
         final int first = s.indexOf(valueOf(TRUTH_VALUE_MARK));    // looking for the beginning
@@ -305,7 +307,7 @@ public class Narsese {
         int i = s.indexOf(Symbols.TENSE_MARK);
         String t = "";
         if (i > 0) {
-            t = s.substring(i, i+3).trim();
+            t = s.substring(i).trim();
             s.delete(i, s.length());
         }
         return Tense.tense(t);

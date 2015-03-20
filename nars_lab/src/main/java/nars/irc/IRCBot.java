@@ -5,19 +5,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.build.Default;
-import nars.core.Events;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.event.AbstractReaction;
 import nars.io.Texts;
 import nars.io.nlp.Twokenize;
-import nars.logic.entity.Sentence;
 import nars.logic.entity.Term;
-import nars.logic.entity.TruthValue;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal7.Tense;
-import nars.logic.nal8.Operator;
+import nars.operator.io.Say;
 
 import java.io.*;
 import java.net.Socket;
@@ -35,7 +29,7 @@ public class IRCBot {
     String login = "narchy";
 
     // The channel which the bot will join.
-    String channel = "#netention";
+    String channel = "#nars";
     private final NAR nar;
     private BufferedWriter writer = null;
 
@@ -45,14 +39,14 @@ public class IRCBot {
 
 
         Default d = new Default();
-        //Default d = new Solid(1024, 0,5, 0,3);
+        //Default d = new Solid(4, 64, 0,5, 0,3);
 
-        d.param.decisionThreshold.set(0.1);
+        d.param.decisionThreshold.set(0.2);
         d.param.temporalRelationsMax.set(2);
-        d.param.shortTermMemoryHistory.set(2);
-        d.param.duration.set(1);
-        d.param.termLinkMaxReasoned.set(4);
-        d.param.conceptsFiredPerCycle.set(2);
+        d.param.shortTermMemoryHistory.set(3);
+        d.param.duration.set(5);
+        d.param.termLinkMaxReasoned.set(6);
+        d.param.conceptsFiredPerCycle.set(3);
 
 
 
@@ -70,7 +64,7 @@ public class IRCBot {
         }
         System.out.println("ok");
 
-        n.start(1, 1);
+        n.start(0, 1);
 
         /*
         Video.themeInvert();
@@ -79,10 +73,10 @@ public class IRCBot {
 
         IRCBot i = new IRCBot(n);
 
-        i.loop(corpus, 100);
+        i.loop(corpus, 200);
 
         String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/worstward.txt"))).split("\\. ");
-        i.read(book, 5000);
+        i.read(book, 1000, 0.5f);
 
     }
 
@@ -120,7 +114,7 @@ public class IRCBot {
 
     }
 
-    private void read(String[] sentences, int delayMS) {
+    private void read(String[] sentences, int delayMS, float priority) {
         new Thread(new Runnable() {
 
             @Override
@@ -131,7 +125,7 @@ public class IRCBot {
                     if (s.length() < 2) continue;
 
                     if (!s.endsWith(".")  && !s.endsWith("?") && !s.endsWith("!")) s=s+'.';
-                    if (hear("book", s) == 0) continue;
+                    if (hear("book", s, priority) == 0) continue;
 
                     try {
                         Thread.sleep(delayMS);
@@ -144,8 +138,8 @@ public class IRCBot {
     }
 
 
-    public int hear(String channel, String m) {
-        final int delay = 200 /*ms */, endDelay = 1000, tokenMax = 7, tokenMin = 2;
+    public int hear(String channel, String m, float priority) {
+        final int delay = 25 /*cycles */, endDelay = 1000, tokenMax = 16, tokenMin = 1;
         List<Twokenize.Span> tokens = Twokenize.twokenize(m);
         int nonPunc = Iterables.size(Iterables.filter(tokens, new Predicate<Twokenize.Span>() {
 
@@ -162,7 +156,7 @@ public class IRCBot {
 
         //String i = "<language --> hear>. :|: \n " + delay + "\n";
 
-        String c= String.join(",", Iterables.transform(tokens, new Function<Twokenize.Span, String>() {
+        Iterable<String> s = Iterables.transform(tokens, new Function<Twokenize.Span, String>() {
 
             @Override
             public String apply(Twokenize.Span input) {
@@ -179,7 +173,7 @@ public class IRCBot {
                     String b = Texts.escapeLiteral(input.content).toString();
                     wordTerm = Term.text(b);
 
-                    a = "\"" + input.content + "\"";
+                    a = input.content;
                     pattern = "word";
                 }
                 else {
@@ -189,40 +183,48 @@ public class IRCBot {
                   //  a = "\"" + input.content.toLowerCase() + "\"";
                 //String r = "<" + a + " --> " + pattern + ">. :|:\n";
 
-                Term tt = Inheritance.make(wordTerm, Term.get(pattern));
-                char punc = '.';
+                //Term tt = Inheritance.make(wordTerm, Term.get(pattern));
+                //char punc = '.';
 
                 //Term tt = Operation.make(nar.memory.operator("^say"), new Term[] {wordTerm});
                 //char punc = '!';
 
-                nar.input(new Sentence(tt, punc, new TruthValue(1.0f, 0.9f), new Stamp(nar.memory, Tense.Present)));
+                //nar.input(new Sentence(tt, punc, new TruthValue(1.0f, 0.9f), new Stamp(nar.memory, Tense.Present)));
                 //nar.think(delay);
                 //r += "say(" + a + ")!\n";
                 //r += delay + "\n";
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (a.isEmpty()) return "<\"..\"-->word>";
-                return "<" + a + "-->word>";
+//                try {
+//                    Thread.sleep(delay);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+                if (a.isEmpty()) return "";
+                //return "<{\"" + a + "\"}-->WORD>.";
+                return "say(\"" + a + "\")!";
             }
-        }));
+        });
+        String xs = "say()!\n" + delay + "\n"; //clear the buffer before
+        for (String w : s) {
+            xs += "$" + Texts.n2(priority) + "$ " + w + "\n";
+            xs += delay + "\n";
 
-
-        System.out.println(nar.time() + " HEAR: " + tokens);
-        //System.out.println("HEAR: " + i);
-
-        String i = "<(*," + c + ") --> sentence>.";
-        nar.input(i);
-        String j = "<(&/," + c + ") --> sentence>. :|:";
-        nar.input(j);
-
-        try {
-            Thread.sleep(endDelay);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+        //System.err.println(xs);
+        nar.input(xs);
+//
+//        System.out.println(nar.time() + " HEAR: " + tokens);
+//        //System.out.println("HEAR: " + i);
+//
+//        String i = "<(*," + c + ") --> PHRASE>.";
+//        nar.input(i);
+//        String j = "<(&/," + c + ") --> PHRASE>. :|:";
+//        nar.input(j);
+//
+//        try {
+//            Thread.sleep(endDelay);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         return tokens.size();
     }
@@ -230,7 +232,7 @@ public class IRCBot {
     public IRCBot(NAR n) throws Exception {
 
         this.nar = n;
-        new AbstractReaction(nar, Events.EXE.class) {
+        new AbstractReaction(nar, Say.class) {
 
             private String lastMessage = "";
 
@@ -238,30 +240,32 @@ public class IRCBot {
 
             @Override
             public void event(Class event, Object[] args) {
-                if (event == Events.EXE.class) {
-                    Operator.ExecutionResult er = (Operator.ExecutionResult)args[0];
-                    Term[] a = er.getOperation().getArguments().term;
+                if (event == Say.class) {
+                    //Operator.ExecutionResult er = (Operator.ExecutionResult)args[0];
 
-                    if (a.length >= minSpokenWords)  {
-                        String m = "";
-                        int n = 0;
-                        for (int i = 0; i < a.length; i++) {
-                            Term x = a[i];
-                            if (x.equals(nar.memory.getSelf()))
-                                continue;
-                            m += x.toString().replace("\"", "").trim() + " ";
-                        }
-                        m = m.trim();
+                    Term a = (Term)args[0]; //er.getOperation().getArguments().term;
+                    say(a.toString());
 
-                        if (!m.equals(lastMessage))
-                            say(m);
-
-                        lastMessage = m;
-                    }
-                    else {
-                        //System.out.println("not SAY: " + Arrays.toString(a));
-
-                    }
+//                    if (a.length >= minSpokenWords)  {
+//                        String m = "";
+//                        int n = 0;
+//                        for (int i = 0; i < a.length; i++) {
+//                            Term x = a[i];
+//                            if (x.equals(nar.memory.getSelf()))
+//                                continue;
+//                            m += x.toString().replace("\"", "").trim() + " ";
+//                        }
+//                        m = m.trim();
+//
+//                        if (!m.equals(lastMessage))
+//                            say(m);
+//
+//                        lastMessage = m;
+//                    }
+//                    else {
+//                        //System.out.println("not SAY: " + Arrays.toString(a));
+//
+//                    }
                 }
             }
         };
@@ -277,7 +281,7 @@ public class IRCBot {
         */
 
 
-        //new TextOutput(nar, System.out).setShowErrors(true).setPriorityMin(0.95f);
+        //new TextOutput(nar, System.out).setShowErrors(true).setOutputPriorityMin(0.95f);
 
         // Connect directly to the IRC server.
         Socket socket = new Socket(server, 6667);
@@ -328,8 +332,10 @@ public class IRCBot {
                             if (line.contains(" PRIVMSG " )) {
                                 String part = "PRIVMSG " + channel;
                                 int s = line.indexOf(part);
-                                if (s!=-1)
-                                    hear(channel, line.substring(s + part.length() + 2));
+                                if (s!=-1) {
+                                    String msg = line.substring(s + part.length() + 2);
+                                    hear(channel, msg, 0.8f);
+                                }
 
                             }
                         }
@@ -343,15 +349,27 @@ public class IRCBot {
         }).start();
     }
 
-    public void say(String s) {
-        System.out.println("SAY: " + s);
-        if ((writer!=null) && (outputting)) {
-            try {
-                writer.write("PRIVMSG " + channel + " :" + s + "\r\n");
-                writer.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+    String buffer = "";
+    int outputBufferLength = 100;
+
+    public synchronized void say(String s) {
+        s = s.replace("{\"", "");
+        s = s.replace("\"}", "");
+        System.out.println("say: " + s);
+        buffer += " " + s;
+
+        if (buffer.length() > outputBufferLength) {
+            System.out.println("SAY: " + buffer);
+            if ((writer!=null) && (outputting)) {
+                try {
+                    writer.write("PRIVMSG " + channel + " :" + buffer + "\r\n");
+                    writer.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            buffer = "";
         }
+
     }
 }

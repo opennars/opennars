@@ -211,7 +211,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
         public VariableNormalization(CompoundTerm target) {
             this.result = target.cloneVariablesDeep();
-            this.result.transformVariableTermsDeep(this);
+            if (this.result!=null)
+                this.result.transformVariableTermsDeep(this);
         }
 
         public Variable apply(CompoundTerm ct, Variable v) {
@@ -254,6 +255,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
         VariableNormalization vn = new VariableNormalization(this);
         CompoundTerm result = vn.getResult();
+        if (result == null) return null;
+
         if (vn.hasRenamed()) {
             result.invalidateName();
         }

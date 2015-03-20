@@ -23,7 +23,10 @@ package nars.operator.io;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import nars.core.Events;
 import nars.core.Memory;
+import nars.core.NAR;
+import nars.event.AbstractReaction;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
@@ -40,6 +43,7 @@ import java.util.*;
 public class Say extends Operator {
     private Memory memory;
     private Operation currentOperation;
+    private AbstractReaction reaction;
 
 //    boolean rejectEmpty = true;
 //    boolean rejectHasVariables = true;    
@@ -55,6 +59,20 @@ public class Say extends Operator {
     final Term SAID = Term.get("SAID");
     //NOISY
 
+    long lastEmit = 0;
+    long emitPeriod = 50; //cycles between which buffer is auto-flush
+
+    @Override
+    public boolean setEnabled(NAR n, boolean enabled) {
+        if (!enabled) {
+            if (reaction!=null) {
+                reaction.off();
+                reaction = null;
+            }
+        }
+
+        return super.setEnabled(n, enabled);
+    }
 
     @Override
     protected synchronized List<Task> execute(Operation operation, Term[] args, Memory memory) {
@@ -62,6 +80,19 @@ public class Say extends Operator {
         this.memory = memory;
         this.currentOperation = operation;
 
+        if (this.reaction == null) {
+            reaction = new AbstractReaction(memory, Events.CycleEnd.class) {
+
+                @Override
+                public void event(Class event, Object[] args) {
+                    long now = nar.time();
+                    if (buffer.getUniqueCount() > 0 && now - lastEmit > emitPeriod) {
+                        nar.input("say()!");
+                        lastEmit = now;
+                    }
+                }
+            };
+        }
 //        if (rejectEmpty && args.length == 1) {
 //            //SELF argument by itself is not worth speaking
 //            throw NegativeFeedback.ignore("Said nothing");
@@ -142,11 +173,9 @@ public class Say extends Operator {
     }
 
     private List<Task> flush() {
-        memory.emit(Say.class, buffer.toString());
+        lastEmit = memory.time();
 
-        System.out.println(buffer.toString());
 
-        List<Task> l = new ArrayList(2);
 
         int num = buffer.getUniqueCount();
         double thresh = 1.0 / num;
@@ -182,6 +211,7 @@ public class Say extends Operator {
     }
 
     private List<Task> isSpoken(Term t) {
+        memory.emit(Say.class, t);
         return Arrays.asList( memory.newTask(
                 Inheritance.make(
                         Product.make(t, memory.getSelf()),
