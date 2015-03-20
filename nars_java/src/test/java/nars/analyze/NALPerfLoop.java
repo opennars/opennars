@@ -1,6 +1,6 @@
 package nars.analyze;
 
-import nars.build.Discretinuous;
+import nars.build.Default;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.ExampleFileInput;
@@ -20,16 +20,17 @@ public class NALPerfLoop {
        
         int repeats = 3;
         int warmups = 1;
-        int maxConcepts = 2048;
-        int extraCycles = 8192;
+        int maxConcepts = 1024;
+        int extraCycles = 2048;
         int randomExtraCycles = 512;
         Parameters.THREADS = 1;
+        Parameters.EXIT_ON_EXCEPTION = false;
           
-        //NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
+        NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         
-        NAR n = new NAR(new Discretinuous().setConceptBagSize(2048));
+        //NAR n = new NAR(new Discretinuous().setConceptBagSize(2048));
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         

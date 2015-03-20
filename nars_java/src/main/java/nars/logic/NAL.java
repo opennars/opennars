@@ -156,7 +156,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                 if (task.getStamp().isCyclic()) {
                     //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                     //re.printStackTrace();
-                    memory.taskRemoved(task, "Cyclic: " + task.getStamp().toString());
+                    memory.taskRemoved(task, "Cyclic");
                     return false;
                 }
             }

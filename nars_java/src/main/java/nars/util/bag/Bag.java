@@ -238,13 +238,15 @@ public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer
      * this is a way to apply the forgetting process applied in putBack.
      */
     public void forgetNext(final float forgetCycles, final float accuracy, final Memory m) {
-        int conceptsToForget = (int)Math.ceil(size() * accuracy);
-        /*synchronized (forgetNext)*/ {
-            forgetNext.set(forgetCycles, m);
-            for (int i = 0; i < conceptsToForget; i++) {
-                update(forgetNext);
-            }
+        int conceptsToForget = (int)Math.round(size() * accuracy);
+        if (conceptsToForget == 0) return;
+
+        forgetNext.set(forgetCycles, m);
+
+        for (int i = 0; i < conceptsToForget; i++) {
+            update(forgetNext);
         }
+
     }
 
     public void forgetNext(AtomicDouble forgetDurations, final float accuracy, final Memory m) {

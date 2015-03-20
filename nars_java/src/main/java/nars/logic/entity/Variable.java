@@ -125,9 +125,9 @@ public class Variable extends Term {
                 
         Variable v = (Variable)that;
         if (!name().equals(v.name())) return false;
-        if (getScope() == this) {
+        /*if (getScope() == this) {
             if (v.getScope()!=v) return false;
-        }
+        }*/
         return (v.getScope().name().equals(getScope().name()));
     }
     

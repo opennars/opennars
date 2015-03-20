@@ -190,8 +190,21 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         return cloneNormalized();
     }
 
+    /** extracts a subterm provided by the index tuple
+     *  returns null if specified subterm does not exist
+     * */
+    public <X extends Term> X subterm(int... index) {
+        Term ptr = this;
+        for (int i : index) {
+            if (ptr instanceof CompoundTerm) {
+                ptr = ((CompoundTerm)ptr).term[i];
+            }
+        }
+        return (X) ptr;
+    }
+
     public static class VariableNormalization  {
-        Map<CharSequence, CharSequence> rename = Parameters.newHashMap();
+        Map<CharSequence, Variable> rename = Parameters.newHashMap();
 
         final CompoundTerm result;
         boolean renamed = false;
@@ -206,16 +219,19 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
             if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
                 vname = vname.toString() + v.getScope().name();
 
-            CharSequence n = rename.get(vname);
+            Variable vv = rename.get(vname);
 
-            if (n == null) {
+            if (vv == null) {
                 //type + id
-                rename.put(vname, n = Variable.getName(v.getType(), rename.size() + 1));
+                CharSequence n = Variable.getName(v.getType(), rename.size() + 1);
+                vv = new Variable(n, result);
+                rename.put(vname, vv);
                 if (!n.equals(v.name()))
                     renamed = true;
             }
 
-            return new Variable(n, result);
+            //also use the instance of the previously normalized variable
+            return vv;
         }
 
         public boolean hasRenamed() {

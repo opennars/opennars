@@ -18,7 +18,7 @@ public class SolidTest {
     @Test
     public void testDetective() throws FileNotFoundException {
 
-        int time = 6; //should solve the example in few cycles
+        int time = 8; //should solve the example in few cycles
 
         Parameters.DEBUG = true;
 
