@@ -477,8 +477,8 @@ public final class SyllogisticRules {
         if ((content == null) || (!(content instanceof CompoundTerm)))
             return false;
 
-        long occurTime = nal.time();
 
+        NAL.StampBuilder sb;
         if (nal.nal(7) && (delta != 0)) {
             final long now = nal.time();
             long baseTime = (belief.term instanceof Implication) ?
@@ -494,7 +494,11 @@ public final class SyllogisticRules {
 
             baseTime += delta;
 
-            occurTime = baseTime;
+            long occurTime = baseTime;
+            sb = nal.newStamp(taskSentence, belief, occurTime); //     //TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
+        }
+        else {
+            sb = nal.newStamp(taskSentence, belief, Stamp.ETERNAL);
         }
         
         TruthValue truth1 = taskSentence.truth;
@@ -525,8 +529,7 @@ public final class SyllogisticRules {
         }
 
         return nal.doublePremiseTask((CompoundTerm)content, truth, budget,
-                nal.newStamp(taskSentence, belief, TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
-                false, deduction);
+                sb, false, deduction);
     }
 
     /**

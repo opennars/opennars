@@ -102,7 +102,7 @@ public abstract class OutputCondition extends AbstractReaction {
 
                 Task t = n.narsese.parseTask(match, false);
                 if (t!=null)
-                    conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle));
+                    conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle, false));
                 else
                     conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
             }
@@ -112,7 +112,7 @@ public abstract class OutputCondition extends AbstractReaction {
 
                 Task t = n.narsese.parseTask(match);
                 if (t!=null)
-                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle));
+                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle, false));
                 else
                     throw new RuntimeException("API upgrade incomplete"); //conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
 

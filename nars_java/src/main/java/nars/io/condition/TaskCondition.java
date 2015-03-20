@@ -40,6 +40,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Expose
     public final long cycleEnd;  //-1 for not compared
 
+    private final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
+
     @Expose
     private long creationTime;
 
@@ -56,15 +58,16 @@ public class TaskCondition extends OutputCondition implements Serializable {
     final int maxRemovals = 2;
 
     //enable true for more precise temporality constraints; this may be necessary or not
-    private boolean strictDurationWindow = false;
+    private boolean strictDurationWindow = true;
 
 
-    public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset)  {
+    public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
         super(n, Events.OUT.class, Events.TaskRemove.class, channel);
 
         //TODO verify that channel is included in the listened events
 
         this.channel = channel;
+        this.relativeToCondition = relativeToCondition;
 
         if (t.sentence.isEternal()) {
             setEternal();
@@ -96,6 +99,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         super(n, channel);
+
+        this.relativeToCondition = false;
+
         if (freqMax < freqMin) throw new RuntimeException("freqMax < freqMin");
         if (confMax < confMin) throw new RuntimeException("confMax < confMin");
 
@@ -259,11 +265,13 @@ public class TaskCondition extends OutputCondition implements Serializable {
                             final int durationWindowFar = strictDurationWindow ? durationWindowNear : durationWindow;
 
 
+                            long at = relativeToCondition ? creationTime : task.getCreationTime();
+
                             final boolean tmatch;
                             switch (tense) {
-                                case Past: tmatch = oc <= (-durationWindowNear + creationTime); break;
-                                case Present: tmatch = oc >= (-durationWindowFar + creationTime) && (oc <= +durationWindowFar + creationTime); break;
-                                case Future: tmatch = oc > (+durationWindowNear + creationTime); break;
+                                case Past: tmatch = oc <= (-durationWindowNear + at); break;
+                                case Present: tmatch = oc >= (-durationWindowFar + at) && (oc <= +durationWindowFar + at); break;
+                                case Future: tmatch = oc > (+durationWindowNear + at); break;
                                 default:
                                     throw new RuntimeException("Invalid tense for non-eternal TaskCondition: " + this);
                             }
