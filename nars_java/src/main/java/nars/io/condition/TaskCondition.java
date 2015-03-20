@@ -69,6 +69,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.channel = channel;
         this.relativeToCondition = relativeToCondition;
 
+
+
         if (t.sentence.isEternal()) {
             setEternal();
             t.getStamp().setTime(creationTimeOffset, Stamp.ETERNAL);

@@ -142,6 +142,10 @@ public class Narsese {
     }
 
     public Sentence parseSentence(StringBuilder buffer, boolean newStamp) {
+        return parseSentence(buffer, newStamp, Stamp.UNPERCEIVED);
+    }
+
+    public Sentence parseSentence(StringBuilder buffer, boolean newStamp, long creationTime) {
         String truthString = getTruthString(buffer);
         Tense tense = parseTense(buffer);
         String str = buffer.toString().trim();
@@ -151,7 +155,7 @@ public class Narsese {
         /* if -1, will be set right before the Task is input */
         Stamp stamp = new Stamp(
                 newStamp ? new long[] { memory.newStampSerial() } : new long[] { /* blank */ },
-                memory, Stamp.UNPERCEIVED, tense);
+                memory, creationTime, tense);
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
@@ -301,7 +305,7 @@ public class Narsese {
         int i = s.indexOf(Symbols.TENSE_MARK);
         String t = "";
         if (i > 0) {
-            t = s.substring(i).trim();
+            t = s.substring(i, i+3).trim();
             s.delete(i, s.length());
         }
         return Tense.tense(t);

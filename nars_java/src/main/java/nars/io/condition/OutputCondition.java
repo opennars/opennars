@@ -98,11 +98,16 @@ public abstract class OutputCondition extends AbstractReaction {
 
             if (s.indexOf(expectOutContains)==0) {
 
+                if (!s.endsWith("')"))
+                    throw new RuntimeException("invalid " + expectOutContains + " syntax: missing ending: \')");
+
                 String match = s.substring(expectOutContains.length(), s.length() - 2); //remove ') suffix:
 
                 Task t = n.narsese.parseTask(match, false);
                 if (t!=null)
-                    conditions.add(new TaskCondition(n, Events.OUT.class, t, cycle, false));
+                    conditions.add(new TaskCondition(n, Events.OUT.class,t,
+                            -Stamp.UNPERCEIVED, /* to cancel it */
+                            false));
                 else
                     conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
             }
