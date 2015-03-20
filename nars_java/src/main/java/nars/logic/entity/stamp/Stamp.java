@@ -81,7 +81,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     transient private int evidentialHash; //hash which includes only evidentialSet, not creation/occurenceTimes
 
 
-    protected Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
+    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
         super();
         this.creationTime = creationTime;
         this.occurrenceTime = occurenceTime;
@@ -116,6 +116,8 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     public Stamp(final Stamp parent, final long creationTime, final long occurenceTime) {
         this(parent.evidentialBase, creationTime, occurenceTime, parent.duration);
     }
+
+
 
 
     /**
