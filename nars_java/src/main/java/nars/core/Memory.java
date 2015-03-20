@@ -184,7 +184,7 @@ public class Memory implements Serializable {
     public final EventEmitter event;
 
     /* InnateOperator registry. Containing all registered operators of the system */
-    public final HashMap<CharSequence, Operator> operators;
+    public final Map<CharSequence, Operator> operators;
 
     private long currentStampSerial = 1;
 
@@ -231,7 +231,7 @@ public class Memory implements Serializable {
 
         this.self = Symbols.DEFAULT_SELF; //default value
 
-        this.operators = new HashMap<>();
+        this.operators = Parameters.newHashMap();
 
         this.resource = new ResourceMeter();
         this.logic = new LogicMeter();

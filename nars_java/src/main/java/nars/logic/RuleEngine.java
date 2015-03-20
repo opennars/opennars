@@ -1,39 +1,22 @@
 package nars.logic;
 
 
-import nars.event.EventEmitter;
-import reactor.event.registry.Registration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Applies a set of Rules to inputs, executing appropriate outputs
  */
 public class RuleEngine<X> {
 
-    EventEmitter base;
+    final List<LogicRule<X>> logicrules = new ArrayList();
 
     public RuleEngine() {
         super();
-        base = new EventEmitter();
     }
 
     public boolean add(LogicRule l) {
-
-        if (l.getRegistration()!=null) {
-            /** already added somewhere */
-            return false;
-        }
-
-        Registration reg = base.on(l.condition(), l);
-        l.setRegistration(reg);
-
-        return true;
+        return logicrules.add(l);
     }
-
-    /*public void fire(X x) {
-        base.notify(x);
-    }*/
-
-    //void remove(LogicRule l) { ..
-
 
 }

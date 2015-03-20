@@ -21,8 +21,9 @@ public class PanEventHandler extends PPanEventHandler {
 
 	private boolean isInverted = false;
 	private SelectionHandler selectionHandler = null;
+    private PInputEvent lastEvent;
 
-	public PanEventHandler() {
+    public PanEventHandler() {
 		super();
 	}
 
@@ -33,7 +34,10 @@ public class PanEventHandler extends PPanEventHandler {
         if (!getAutopan())
 			return;
 
-        aEvent.setHandled(true);
+        //if (aEvent == lastEvent) return; //avoid duplicate events
+        //lastEvent = aEvent;
+
+        //aEvent.setHandled(true);
 
 		PCamera c = aEvent.getCamera();
 		PBounds b = c.getBoundsReference();
@@ -59,6 +63,7 @@ public class PanEventHandler extends PPanEventHandler {
 
 		c.localToView(delta);
 
+
 		if (delta.width != 0 || delta.height != 0) {
 			if (isInverted) {
 				c.translateView(-1 * delta.width, -1 * delta.height);
@@ -66,8 +71,10 @@ public class PanEventHandler extends PPanEventHandler {
 				c.translateView(delta.width, delta.height);
 			}
 		}
-		
-		// Loop through selected objects, compensate for camera panning
+
+
+
+        // Loop through selected objects, compensate for camera panning
 		// so that objects will remain stationary relative to cursor
 		Iterator<WorldObject> selectionEn = selectionHandler.getSelection().iterator();
 		while (selectionEn.hasNext()) {

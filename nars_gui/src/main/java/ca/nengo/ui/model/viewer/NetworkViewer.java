@@ -35,7 +35,6 @@ import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.util.UserMessages;
 import ca.nengo.ui.lib.util.Util;
 import ca.nengo.ui.lib.world.WorldObject;
-import ca.nengo.ui.lib.world.elastic.ElasticGround;
 import ca.nengo.ui.lib.world.piccolo.WorldGroundImpl;
 import ca.nengo.ui.lib.world.piccolo.icon.LoadIcon;
 import ca.nengo.ui.lib.world.piccolo.icon.SaveIcon;
@@ -80,7 +79,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
      *            Parent Network UI wrapper
      */
     public NetworkViewer(UINetwork pNetwork) {
-        this(pNetwork, new ElasticGround());
+        this(pNetwork, new WorldGroundImpl());
     }
 
     public NetworkViewer(UINetwork pNetwork, WorldGroundImpl g) {

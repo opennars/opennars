@@ -353,6 +353,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
                         }
                     }
 
+                    pie.setHandled(true);
                     pressNode = wo;
                     return;
                 }
@@ -380,6 +381,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
                 select(pressNode);
             }
         }
+        pie.setHandled(true);
     }
 
     protected void startStandardSelection(PInputEvent pie) {
@@ -391,6 +393,7 @@ public class SelectionHandler extends PDragSequenceEventHandler {
                 select(pressNode);
             }
         }
+        pie.setHandled(true);
     }
 
     public boolean isOptionSelection(PInputEvent pie) {

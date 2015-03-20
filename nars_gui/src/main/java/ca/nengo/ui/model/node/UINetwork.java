@@ -129,7 +129,9 @@ public class UINetwork extends UINodeViewable {
 
     @Override
     public NodeViewer newViewer() {
-        return new NetworkViewer(this);
+        NodeViewer v = new DefaultUINetwork.UINARGraphViewer(this);
+        v.getGridLayer().setBgColor(Color.BLACK);
+        return v;
     }
 
     /** if gridBG == null, removes grid */

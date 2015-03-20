@@ -9,6 +9,7 @@ import nars.build.Default;
 import nars.core.NAR;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -60,6 +61,7 @@ public class NengoNetworkPanel extends Nengrow {
         try {
             networkUI = (UINetwork) addNodeModel(graphNode);
             window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
+            window.getGridLayer().setBgColor(Color.BLACK);
         } catch (ContainerException e) {
             e.printStackTrace();
         }

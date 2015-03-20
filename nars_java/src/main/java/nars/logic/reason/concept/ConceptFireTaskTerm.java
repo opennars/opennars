@@ -4,27 +4,20 @@ import nars.logic.LogicRule;
 import nars.logic.entity.TaskLink;
 import nars.logic.entity.TermLink;
 import nars.logic.reason.ConceptProcess;
-import reactor.event.Event;
-import reactor.function.Consumer;
 
 /** when a concept fires a tasklink that fires a termlink */
-abstract public class ConceptFireTaskTerm extends LogicRule<ConceptProcess> implements Consumer<Event<ConceptProcess>> {
+abstract public class ConceptFireTaskTerm extends LogicRule<ConceptProcess>  {
 
-    public ConceptFireTaskTerm() {
-        super(ConceptProcess.class, null);
-    }
 
     abstract public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink);
 
     @Override
-    public void accept(Event<ConceptProcess> o) {
-        ConceptProcess f = o.getData();
+    public boolean accept(ConceptProcess f) {
         if (f!=null && f.getCurrentTermLink()!=null) {
-            boolean result = apply(f, f.getCurrentTaskLink(), f.getCurrentTermLink());
-            if (!result) {
-                o.recycle();
-            }
+            if (!apply(f, f.getCurrentTaskLink(), f.getCurrentTermLink()))
+                return false;
         }
+        return true;
     }
 
 }

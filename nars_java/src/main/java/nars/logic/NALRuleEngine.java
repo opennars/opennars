@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * General class which has all NAL Rules
  */
-public class NALRuleEngine extends RuleEngine {
+public class NALRuleEngine extends RuleEngine<NAL> {
 
     private List<NAL.DerivationFilter> derivationFilters = new ArrayList();
 
@@ -59,7 +59,12 @@ public class NALRuleEngine extends RuleEngine {
     }
 
     public void fire(ConceptProcess fireConcept) {
-        base.fire(ConceptProcess.class, fireConcept);
+        int n = logicrules.size();
+        for (int l = 0; l < n; l++) {
+            LogicRule<NAL> r = logicrules.get(l);
+            if (!r.accept(fireConcept))
+                break;
+        }
     }
 
     public List<NAL.DerivationFilter> getDerivationFilters() {
@@ -67,7 +72,7 @@ public class NALRuleEngine extends RuleEngine {
     }
 
     /** tests validity of a derived task; if valid returns null, else returns a String reason explaining why it is invalid */
-    public String isRejected(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    public String derivationRejected(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
         List<NAL.DerivationFilter> derivationFilters = getDerivationFilters();
 

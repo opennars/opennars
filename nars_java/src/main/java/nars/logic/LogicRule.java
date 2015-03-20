@@ -1,37 +1,13 @@
 package nars.logic;
 
 
-import reactor.event.Event;
-import reactor.event.registry.Registration;
-import reactor.event.selector.ClassSelector;
-import reactor.event.selector.PredicateSelector;
-import reactor.event.selector.Selector;
-import reactor.function.Consumer;
-import reactor.function.Predicate;
-
-
 /**
  * Base class for NARS logical reasoner / inference rules
  */
-abstract public class LogicRule<X> implements Consumer<Event<X>> {
+abstract public class LogicRule<X>  {
 
-    private final Selector condition;
-    private final Consumer<Event<X>> action;
-    private Registration registration;
-
-    public LogicRule(Selector condition, Consumer<Event<X>> action) {
-        super();
-        this.condition = condition;
-        this.action = action != null ? action : this;
-    }
-
-    public LogicRule(Predicate<Object> p, Consumer<Event<X>> action) {
-        this(new PredicateSelector(p), action);
-    }
-
-    public LogicRule(Class<? extends X> x, Consumer<Event<X>> action) {
-        this(new ClassSelector(x), action);
-    }
+    /** return false to discontinue subsequent rules for this object; true to continue */
+    abstract public boolean accept(X x);
 
 //    public LogicRule setAction(Consumer<Event<X>> action) {
 //        this.action = action;
@@ -48,7 +24,6 @@ abstract public class LogicRule<X> implements Consumer<Event<X>> {
 //    }
 
 
-    public Selector condition() { return condition; }
 //
 //    @Override
 //    public void accept(Event<X> e) {
@@ -59,11 +34,4 @@ abstract public class LogicRule<X> implements Consumer<Event<X>> {
 //    }
 
 
-    void setRegistration(Registration reg) {
-        this.registration = reg;
-    }
-
-    public Registration getRegistration() {
-        return registration;
-    }
 }

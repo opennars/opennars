@@ -210,7 +210,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             currentTask = getCurrentTask();
 
 
-        String rejectionReason = reasoner.isRejected(this, task, solution, revised, single, currentBelief, currentTask);
+        String rejectionReason = reasoner.derivationRejected(this, task, solution, revised, single, currentBelief, currentTask);
         if (rejectionReason != null) {
             memory.taskRemoved(task, rejectionReason);
             return false;
