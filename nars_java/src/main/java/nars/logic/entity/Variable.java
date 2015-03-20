@@ -23,6 +23,8 @@ package nars.logic.entity;
 
 import nars.io.Texts;
 
+import java.util.Objects;
+
 import static nars.io.Symbols.*;
 
 /**
@@ -119,16 +121,18 @@ public class Variable extends Term {
 
 
 
+    /** tests equal name and scope. if either or both are unscoped, the instances are not equal. */
     @Override public boolean equals(final Object that) {
         if (this == that) return true;
         if (!(that instanceof Variable)) return false;
-                
+        if (!hasScope()) return false;
+
         Variable v = (Variable)that;
         if (!name().equals(v.name())) return false;
         /*if (getScope() == this) {
             if (v.getScope()!=v) return false;
         }*/
-        return (v.getScope().name().equals(getScope().name()));
+        return (v.getScope().equals(getScope()));
     }
     
     public boolean equalsTerm(Object that) {
@@ -156,14 +160,14 @@ public class Variable extends Term {
             //until then, we'll use the name for comparison because it wont 
             //invoke infinite recursion
 
-            return scope.name().equals(v.scope.name());       
+            return scope.equals(v.scope);
         }
     }
 
     @Override
     public int hashCode() {
         if (hash == 0) {
-            if (scope!=this)
+            if (hasScope())
                 this.hash = 31 * name.hashCode() + scope.hashCode();            
             else
                 this.hash = name.hashCode();

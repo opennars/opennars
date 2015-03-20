@@ -33,7 +33,7 @@ public class NALysisSome extends NALysis {
         showOutput = true;
         showTrace = true;
 
-        String test = "./nal/test6/nal6.22.nal";
+        String test = "./nal/test7/nal7.2.nal";
         //String test = "./nal/test5/depr/nal5.19.nal";
         //String test = "./nal/test4/depr/nal4.recursion.small.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
@@ -52,7 +52,7 @@ public class NALysisSome extends NALysis {
         TestNAR n = analyze(
                 build,
                 test,
-                2000,
+                10,
                 1
         );
         n.on(Events.TaskDerive.class, new Reaction() {

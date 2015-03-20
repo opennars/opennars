@@ -373,6 +373,7 @@ public class Memory implements Serializable {
     public Concept concept(Term t) {
         if (!t.isNormalized()) {
             t = ((CompoundTerm)t).cloneNormalized();
+            if (t == null) return null;
         }
         return concepts.concept(t);
     }
@@ -399,8 +400,11 @@ public class Memory implements Serializable {
         if ((term instanceof Variable) || (term instanceof Interval))
             return null;
 
-        if (!term.isNormalized() && term.hasVar())
-            term = ((CompoundTerm)term).cloneNormalized();
+        if (!term.isNormalized() && term.hasVar()) {
+            term = ((CompoundTerm) term).cloneNormalized();
+            if (term == null) return null;
+        }
+
 
         /*Concept c = concept(term);
          if (c!=null)

@@ -15,7 +15,7 @@ abstract public class ConceptFireTask extends LogicRule<ConceptProcess> {
 
     @Override
     public boolean accept(ConceptProcess f) {
-        if (f!=null && f.getCurrentTermLink()==null) {
+        if (f.getCurrentTermLink()==null) {
             boolean result = apply(f, f.getCurrentTaskLink());
             if (!result) {
                 return false;

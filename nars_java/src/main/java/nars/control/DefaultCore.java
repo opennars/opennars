@@ -61,6 +61,7 @@ public class DefaultCore extends UniCore {
     @Override
     public void cycle() {
 
+        //inputs
         memory.perceiveNext(memory.param.inputsMaxPerCycle.get());
 
         //all new tasks
@@ -74,25 +75,20 @@ public class DefaultCore extends UniCore {
                 break;
         }
 
-        //all novel tasks
-        /*if (memory.newTasks.isEmpty())*/ {
-            int numNovelTasks = novelTasks.size();
+        //1 novel tasks if numNewTasks empty
+        if (newTasks.isEmpty()) {
+            int numNovelTasks = 1;
             for (int i = 0; i < numNovelTasks; i++) {
                 Runnable novel = nextNovelTask();
                 if (novel != null) novel.run();
                 else
                     break;
             }
-
-            //1 noveltask if no newtasks
-            //Runnable novel = memory.nextNovelTask();
-            //if (novel != null) novel.run();
         }
 
-        //1 concept
-        /*if (memory.newTasks.isEmpty())*/
-        int conceptsToFire = memory.param.conceptsFiredPerCycle.get();
 
+        //1 concept if (memory.newTasks.isEmpty())*/
+        int conceptsToFire = newTasks.isEmpty() ? memory.param.conceptsFiredPerCycle.get() : 0;
         for (int i = 0; i < conceptsToFire; i++) {
             ConceptProcess f = nextTaskLink(nextConceptToProcess());
             if (f != null) {

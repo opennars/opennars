@@ -186,7 +186,7 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     public abstract Term clone();
 
     @Override
-    public Term normalized() {
+    public CompoundTerm normalized() {
         return cloneNormalized();
     }
 
@@ -244,7 +244,8 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     }
 
     /**
-     * for normalizing terms that contain variables which need to be finalized for use in a Sentence
+     * Normalizes if contain variables which need to be finalized for use in a Sentence
+     * May return null if the resulting compound term is invalid
      */
     public <T extends CompoundTerm> T cloneNormalized() {
         if (!hasVar()) return (T) this;
@@ -259,13 +260,14 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
 
         result.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
 
-        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-            if (!Term.valid(result)) {
-                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
-                ntc.printStackTrace();
-                throw ntc;
-            }
+
+        if (!Term.valid(result)) {
+//                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
+//                ntc.printStackTrace();
+//                throw ntc;
+            return null;
         }
+
 
         return (T)result;
 
@@ -310,11 +312,10 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
     @Override
     public CompoundTerm cloneDeep() {
         Term c = clone(cloneTermsDeep());
-        if (c == null)
-            throw new UnableToCloneException("Unable to cloneDeep: " + this);
+        if (c == null) return null;
 
         if (c.operator() != operator()) {
-            throw new UnableToCloneException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
+            throw new RuntimeException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
         }
 
 
@@ -1005,24 +1006,24 @@ public abstract class CompoundTerm extends Term implements Iterable<Term>, IPair
         }
     }
 
-    public static class UnableToCloneException extends RuntimeException {
-
-        public UnableToCloneException(String message) {
-            super(message);
-        }
-
-        @Override
-        public synchronized Throwable fillInStackTrace() {
-            if (Parameters.DEBUG) {
-                return super.fillInStackTrace();
-            } else {
-                //avoid recording stack trace for efficiency reasons
-                return this;
-            }
-        }
-
-
-    }
+//    @Deprecated public static class UnableToCloneException extends RuntimeException {
+//
+//        public UnableToCloneException(String message) {
+//            super(message);
+//        }
+//
+//        @Override
+//        public synchronized Throwable fillInStackTrace() {
+//            /*if (Parameters.DEBUG) {
+//                return super.fillInStackTrace();
+//            } else {*/
+//                //avoid recording stack trace for efficiency reasons
+//                return this;
+//            //}
+//        }
+//
+//
+//    }
 
 
 }

@@ -145,7 +145,8 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
         return t;
     }
 
-    /** attempts to return cloneNormalize result, if it's necessary and possible.
+    /** attempts to return cloneNormalize result,
+     * if it's necessary and possible.
      *  does not modify this term
      * */
     public Term normalized() {

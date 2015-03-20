@@ -144,19 +144,14 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
         this.term = normalize ? seedTerm.cloneNormalized() : seedTerm;
+        if (term == null)
+            throw new RuntimeException("Term for a new Sentence not valid or could not be normalized: " + seedTerm);
 
         if (Parameters.DEBUG) {
             if (invalidSentenceTerm(term))
-                throw new RuntimeException("Invalid sentence content term: " + seedTerm + ", seedTerm=" + seedTerm);
+                throw new RuntimeException("Invalid sentence content term: " + term + ", seedTerm=" + seedTerm);
         }
 
-        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
-            if (!Term.valid(term)) {
-                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + term);
-                ntc.printStackTrace();
-                throw ntc;
-            }
-        }
 
         this.term.ensureNormalized("Sentence term");
 

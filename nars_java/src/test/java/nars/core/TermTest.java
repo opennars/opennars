@@ -21,10 +21,7 @@ import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.logic.NALOperator;
-import nars.logic.entity.CompoundTerm;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Statement;
-import nars.logic.entity.Term;
+import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
 import nars.logic.nal3.DifferenceExt;
 import nars.logic.nal3.DifferenceInt;
@@ -35,6 +32,7 @@ import org.junit.Test;
 
 import java.util.TreeSet;
 
+import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -43,7 +41,9 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class TermTest {
-    
+    static {
+        Parameters.DEBUG = true;
+    }
     NAR n = new NAR(new Default());
     Narsese np = new Narsese(n);
     
@@ -237,9 +237,9 @@ public class TermTest {
         Narsese p = new Narsese(n);
         
         try {
-            p.parseNarsese(new StringBuilder(t + "."));
-            assertTrue(false);
-        } catch (InvalidInputException ex) {
+            Task x = p.parseNarsese(new StringBuilder(t + "."));
+            assertNull(t + " is invalid compound term", x);
+        } catch (Throwable tt) {
             assertTrue(true);
         }
         
@@ -250,15 +250,15 @@ public class TermTest {
             
             assertTrue(true);
             
-        } catch (InvalidInputException ex) {
+        } catch (Throwable ex) {
             assertTrue(false);
         }
         
             
-        Statement s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0);
+        Term s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0).normalized();
         assertEquals(null, s);
 
-        Inheritance i = Inheritance.make(subj, pred);
+        Term i = Inheritance.make(subj, pred).normalized();
         assertEquals(null, i);
 
 
@@ -272,11 +272,11 @@ public class TermTest {
             
             assertEquals(t, forced.toString());
             
-            Term cloned = forced.clone();
+            Term cloned = forced.clone().normalized();
             assertEquals(null, cloned);
             
             
-        } catch (InvalidInputException ex) {
+        } catch (Throwable ex) {
             assertTrue(false);
         }
     }

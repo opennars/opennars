@@ -253,8 +253,11 @@ public final class SyllogisticRules {
             }            
             budget = BudgetFunctions.forward(truth, nal);
         }
-        
-        return nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,
+
+        CompoundTerm nst = Statement.make(st, term1, term2, order).normalized();
+        if (nst == null) return false;
+
+        return nal.doublePremiseTask( nst, truth, budget,
                 nal.newStamp(belief, sentence),
                 false, true );
 

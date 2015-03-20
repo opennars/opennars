@@ -450,8 +450,8 @@ public class Default extends NewNAR implements ConceptBuilder {
 
             param.termLinkMaxReasoned.set(3);
             param.termLinkMaxMatched.set(5);
-            param.termLinkRecordLength.set(1);
-            param.noveltyHorizon.set(1);
+            param.termLinkRecordLength.set(3);
+            param.noveltyHorizon.set(3);
 
             param.setForgetting(Forgetting.Periodic);
             param.setTiming(Timing.Iterative);

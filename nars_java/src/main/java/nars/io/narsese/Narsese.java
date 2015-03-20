@@ -158,6 +158,9 @@ public class Narsese {
         if (content == null) throw new InvalidInputException("Content term missing");
         if (!(content instanceof CompoundTerm)) throw new InvalidInputException("Content term is not compound");
 
+        content = ((CompoundTerm) content).cloneNormalized();
+        if (content == null) return null;
+
         return new Sentence((CompoundTerm)content, punc, truth, stamp);
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);

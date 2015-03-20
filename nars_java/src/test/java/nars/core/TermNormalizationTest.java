@@ -15,19 +15,23 @@ import static org.junit.Assert.assertTrue;
  */
 public class TermNormalizationTest {
 
-    @Test
-    public void reuseVariableTermsDuringNormalization() {
+    public void test(String term, int[] v1Index, int[] v2Index) {
         //test for re-use of variable instances during normalization
         NAR n = new NAR(new Default());
-        Task t = n.inputTask("<<$1 --> x> ==> <$1 --> y>>.");
+        Task t = n.inputTask(term + ".");
         CompoundTerm ct = t.sentence.term;
-        //Variable a = ((CompoundTerm)ct.term[0]).term[0];
-        Variable a = ct.subterm(0,0);
+        Variable a = ct.subterm(v1Index);
         assertNotNull(a);
-        Variable b = ct.subterm(1,0);
+        Variable b = ct.subterm(v2Index);
         assertNotNull(b);
         assertEquals(a, (b));
         assertTrue("successfully re-used the variable instance", a==b);
+    }
 
+    @Test
+    public void reuseVariableTermsDuringNormalization() {
+        test("<<$1 --> x> ==> <$1 --> y>>", new int[] { 0, 0 }, new int[] { 1, 0 });
+        test("<<#1 --> x> ==> <#1 --> y>>", new int[] { 0, 0 }, new int[] { 1, 0 });
+        test("<<?x --> x> ==> <?x --> y>>", new int[] { 0, 0 }, new int[] { 1, 0 });
     }
 }
