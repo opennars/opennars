@@ -32,6 +32,9 @@ public class NewTask<T extends CompoundTerm> {
         return this;
     }
 
+    public NewTask<T> truth(boolean freqAsBoolean, float conf) {
+        return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
+    }
 
     public NewTask<T> truth(float freq, float conf) {
         this.truth = new TruthValue(freq, conf);

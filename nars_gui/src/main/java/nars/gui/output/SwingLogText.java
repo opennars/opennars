@@ -196,7 +196,8 @@ public class SwingLogText extends SwingText {
             sb.append(text);
 
         if (sb.charAt(sb.length() - 1) == '\n') {
-            throw new RuntimeException(sb + " should not end in newline char");
+            sb = sb.delete(sb.length()-1, sb.length());
+            //throw new RuntimeException(sb + " should not end in newline char");
         }
 
 

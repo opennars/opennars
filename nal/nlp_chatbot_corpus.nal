@@ -37,7 +37,6 @@
 
 
 //i dont recommend using 'discussionworthy' but relevant instead
-<relevant <-> discussionworthy>.
 <interesting <-> relevant>.
 
 <<(&/,i,dont,know) --> sentence> <-> UNSURE>.
