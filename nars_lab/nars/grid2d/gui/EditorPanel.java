@@ -280,6 +280,8 @@ public class EditorPanel extends JPanel {
                                 String[] objs=allText.split("OBJECTS")[1].split(";");
                                 ArrayList<GridObject> newobj=new ArrayList<>(); //new ArrayList we have to fill
                                 for(String obj : objs) {
+                                    if(obj.equals("\n"))
+                                        continue;
                                     String[] val=obj.split(",");
                                     if(val.length==0) {
                                         continue;
