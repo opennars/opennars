@@ -25,6 +25,7 @@
 package vnc.viewer.cli;
 
 import vnc.utils.Strings;
+import vnc.viewer.swing.gui.ConnectionsHistory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -34,10 +35,15 @@ import java.util.Map;
 /**
  * Command line interface parameters parser
  */
-public class Parser {
+@Deprecated public class VNCProperties {
 	private final Map<String, Option> options = new LinkedHashMap<>();
 	private final List<String> plainOptions = new ArrayList<>();
 	private boolean isSetPlainOptions = false;
+
+    public VNCProperties(String host, int port) {
+        addOption(ConnectionsHistory.NODE_HOST_NAME, host, "");
+        addOption(ConnectionsHistory.NODE_PORT_NUMBER, Integer.toString(port), "");
+    }
 
 	public void addOption(String opName, String defaultValue, String desc) {
 		Option op = new Option(opName, defaultValue, desc);

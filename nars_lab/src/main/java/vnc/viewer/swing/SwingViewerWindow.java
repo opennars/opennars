@@ -124,7 +124,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
         }
 	}
 
-	private void createContainer(final Surface surface, boolean isApplet, JApplet appletWindow) {
+	private void createContainer(final Surface surface, boolean isApplet, JComponent appletWindow) {
 		outerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
 			@Override
 			public Dimension getSize() {

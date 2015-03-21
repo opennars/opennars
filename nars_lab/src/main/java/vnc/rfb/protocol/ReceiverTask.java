@@ -24,6 +24,7 @@
 
 package vnc.rfb.protocol;
 
+import vnc.OCR;
 import vnc.drawing.Renderer;
 import vnc.exceptions.CommonException;
 import vnc.exceptions.ProtocolException;
@@ -159,11 +160,16 @@ public class ReceiverTask implements Runnable {
 			FramebufferUpdateRectangle rect = new FramebufferUpdateRectangle();
 			rect.fill(reader);
 
+
 			Decoder decoder = decoders.getDecoderByType(rect.getEncodingType());
 			logger.finest(rect.toString() + (0 == numberOfRectangles ? "\n---" : ""));
 			if (decoder != null) {
 				decoder.decode(reader, renderer, rect);
 				repaintController.repaintBitmap(rect);
+
+
+                OCR.queue(renderer.getImage(), rect);
+
 			} else if (rect.getEncodingType() == EncodingType.RICH_CURSOR) {
 				RichCursorDecoder.getInstance().decode(reader, renderer, rect);
 				repaintController.repaintCursor();

@@ -39,7 +39,9 @@ import java.util.concurrent.TimeoutException;
 
 public class RendererImpl extends Renderer implements ImageObserver {
     final CyclicBarrier barrier = new CyclicBarrier(2);
-    private final Image offscreanImage;
+
+    private final BufferedImage offscreanImage;
+
 	public RendererImpl(Reader reader, int width, int height, PixelFormat pixelFormat) {
 		if (0 == width) width = 1;
 		if (0 == height) height = 1;
@@ -100,7 +102,7 @@ public class RendererImpl extends Renderer implements ImageObserver {
 	}
 
 	/* Swing specific interface */
-	public Image getOffscreenImage() {
+	@Override public BufferedImage getImage() {
 		return offscreanImage;
 	}
 

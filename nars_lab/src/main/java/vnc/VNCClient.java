@@ -24,11 +24,11 @@
 
 package vnc;
 
+import automenta.vivisect.swing.NWindow;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.viewer.ConnectionPresenter;
 import vnc.viewer.UiSettings;
-import vnc.viewer.cli.Parser;
-import vnc.viewer.mvp.View;
+import vnc.viewer.cli.VNCProperties;
 import vnc.viewer.swing.ConnectionParams;
 import vnc.viewer.swing.ParametersHandler;
 import vnc.viewer.swing.SwingConnectionWorkerFactory;
@@ -43,10 +43,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
-public class VNCClient extends JApplet implements Runnable, WindowListener {
+public abstract class VNCClient extends JPanel implements WindowListener {
 
 	private final Logger logger;
     private int paramsMask;
@@ -62,7 +65,10 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
     private ConnectionPresenter connectionPresenter;
 
     public static void main(String... args) {
-		Parser parser = new Parser();
+
+        //TODO use parameters
+        VNCProperties parser = new VNCProperties("localhost",5091);
+
 		ParametersHandler.completeParserOptions(parser);
 
 		parser.parse(args);
@@ -70,8 +76,19 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
 			printUsage(parser.optionsUsage());
 			System.exit(0);
 		}
-		VNCClient viewer = new VNCClient(parser);
-		SwingUtilities.invokeLater(viewer);
+		VNCClient viewer = new VNCClient(parser) {
+
+            @Override
+            public String getParameter(String p) {
+                //TODO
+                return null;
+            }
+        };
+        NWindow w = new NWindow("VNC", viewer);
+        w.show(800,600,true);
+
+
+
 	}
 
     public static void printUsage(String additional) {
@@ -82,17 +99,23 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
 				"Where Options are:\n" + additional +
 				"\nOptions format: -optionName=optionValue. Ex. -host=localhost -port=5900 -viewonly=yes\n" +
 				"Both option name and option value are case insensitive.");
-	}
 
+    }
+
+    public VNCClient(String host, int port) {
+        this(new VNCProperties(host, port));
+    }
 	public VNCClient() {
         logger = Logger.getLogger(getClass().getName());
 		connectionParams = new ConnectionParams();
 		settings = ProtocolSettings.getDefaultSettings();
 		uiSettings = new UiSettings();
+        init();
 	}
 
-	private VNCClient(Parser parser) {
+	private VNCClient(VNCProperties parser) {
 		this();
+
         setLoggingLevel(parser.isSet(ParametersHandler.ARG_VERBOSE) ? Level.FINE :
                 parser.isSet(ParametersHandler.ARG_VERBOSE_MORE) ? Level.FINER :
                         Level.INFO);
@@ -143,12 +166,12 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
             logger.info("Connections cancelled.");
         }
         if (isApplet) {
-            if ( ! isAppletStopped) {
-                logger.severe("Applet is stopped.");
-                isAppletStopped  = true;
-                repaint();
-                stop();
-            }
+//            if ( ! isAppletStopped) {
+//                logger.severe("Applet is stopped.");
+//                isAppletStopped  = true;
+//                repaint();
+//                stop();
+//            }
 		} else {
 			System.exit(0);
 		}
@@ -159,38 +182,56 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
 		if ( ! isAppletStopped) {
 			super.paint(g);
 		} else {
-			getContentPane().removeAll();
+			removeAll();
 			g.clearRect(0, 0, getWidth(), getHeight());
 			g.drawString("Disconnected", 10, 20);
 		}
 	}
 
-	@Override
-	public void destroy() {
-		closeApp();
-		super.destroy();
-	}
 
-	@Override
+    abstract public String getParameter(String p);
+
+
 	public void init() {
-		paramsMask = ParametersHandler.completeSettingsFromApplet(this, connectionParams, settings, uiSettings);
+		//paramsMask = ParametersHandler.completeSettingsFromApplet(this, connectionParams, settings, uiSettings);
 		isSeparateFrame = ParametersHandler.isSeparateFrame;
 		passwordFromParams = getParameter(ParametersHandler.ARG_PASSWORD);
 		isApplet = true;
         allowAppletInteractiveConnections = ParametersHandler.allowAppletInteractiveConnections;
 		repaint();
 
-        try {
-            SwingUtilities.invokeAndWait(this);
-        } catch (Exception e) {
-            logger.severe(e.getMessage());
-        }
+
+
+        final boolean hasJsch = checkJsch();
+        final boolean allowInteractive = allowAppletInteractiveConnections || ! isApplet;
+        connectionPresenter = new ConnectionPresenter(hasJsch, allowInteractive);
+        connectionPresenter.addModel("ConnectionParamsModel", connectionParams);
+        final ConnectionView connectionView = new ConnectionView(
+                VNCClient.this, // appWindowListener
+                connectionPresenter, hasJsch);
+        connectionPresenter.addView(ConnectionPresenter.CONNECTION_VIEW, connectionView);
+//        if (isApplet) {
+//            connectionPresenter.addView("AppletStatusStringView", new View() {
+//                @Override
+//                public void showView() { /*nop*/ }
+//                @Override
+//                public void closeView() { /*nop*/ }
+//                @SuppressWarnings("UnusedDeclaration")
+//                public void setMessage(String message) {
+//                    VNCClient.this.getAppletContext().showStatus(message);
+//                }
+//            });
+//        }
+
+        SwingViewerWindowFactory viewerWindowFactory = new SwingViewerWindowFactory(isSeparateFrame, isApplet, this);
+
+        connectionPresenter.setConnectionWorkerFactory(
+                new SwingConnectionWorkerFactory(connectionView.getFrame(), passwordFromParams, connectionPresenter, viewerWindowFactory));
+
+        connectionPresenter.startConnection(settings, uiSettings, paramsMask);
+
     }
 
-	@Override
-	public void start() {
-		super.start();
-	}
 
     private static boolean checkJsch() {
         try {
@@ -201,37 +242,6 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
         }
     }
 
-    @Override
-	public void run() {
-
-        final boolean hasJsch = checkJsch();
-        final boolean allowInteractive = allowAppletInteractiveConnections || ! isApplet;
-        connectionPresenter = new ConnectionPresenter(hasJsch, allowInteractive);
-        connectionPresenter.addModel("ConnectionParamsModel", connectionParams);
-        final ConnectionView connectionView = new ConnectionView(
-                VNCClient.this, // appWindowListener
-                connectionPresenter, hasJsch);
-        connectionPresenter.addView(ConnectionPresenter.CONNECTION_VIEW, connectionView);
-        if (isApplet) {
-            connectionPresenter.addView("AppletStatusStringView", new View() {
-                @Override
-                public void showView() { /*nop*/ }
-                @Override
-                public void closeView() { /*nop*/ }
-                @SuppressWarnings("UnusedDeclaration")
-                public void setMessage(String message) {
-                    VNCClient.this.getAppletContext().showStatus(message);
-                }
-            });
-        }
-
-        SwingViewerWindowFactory viewerWindowFactory = new SwingViewerWindowFactory(isSeparateFrame, isApplet, this);
-
-        connectionPresenter.setConnectionWorkerFactory(
-                new SwingConnectionWorkerFactory(connectionView.getFrame(), passwordFromParams, connectionPresenter, viewerWindowFactory));
-
-        connectionPresenter.startConnection(settings, uiSettings, paramsMask);
-	}
 
 	@Override
 	public void windowOpened(WindowEvent e) { /* nop */ }

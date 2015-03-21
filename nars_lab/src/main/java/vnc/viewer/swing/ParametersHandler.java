@@ -29,9 +29,7 @@ import vnc.rfb.protocol.LocalPointer;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.utils.Strings;
 import vnc.viewer.UiSettings;
-import vnc.viewer.cli.Parser;
-
-import javax.swing.*;
+import vnc.viewer.cli.VNCProperties;
 
 public class ParametersHandler {
 	public static final String ARG_LOCAL_POINTER = "LocalPointer";
@@ -67,7 +65,7 @@ public class ParametersHandler {
 	public static boolean isSeparateFrame;
     public static boolean allowAppletInteractiveConnections;
 
-    public static void completeParserOptions(Parser parser) {
+    public static void completeParserOptions(VNCProperties parser) {
 		parser.addOption(ARG_HELP, null, "Print this help.");
 		parser.addOption(ARG_HOST, "", "Server host name.");
 		parser.addOption(ARG_PORT, "0", "Port number.");
@@ -122,7 +120,7 @@ public class ParametersHandler {
         parser.addOption(ARG_VERBOSE_MORE, null, "More verbose console output.");
     }
 
-	public static int completeSettingsFromCLI(final Parser parser, ConnectionParams connectionParams, ProtocolSettings rfbSettings, UiSettings uiSettings) {
+	public static int completeSettingsFromCLI(final VNCProperties parser, ConnectionParams connectionParams, ProtocolSettings rfbSettings, UiSettings uiSettings) {
 		int mask = completeSettings(
 				new ParamsRetriever() {
 					@Override
@@ -312,22 +310,22 @@ public class ParametersHandler {
 				"yes".equalsIgnoreCase(param) || "true".equalsIgnoreCase(param);
 	}
 
-	public static int completeSettingsFromApplet(final JApplet applet,
-			ConnectionParams connectionParams, ProtocolSettings rfbSettings, UiSettings uiSettings) {
-        isSeparateFrame = parseBooleanOrDefault(applet.getParameter(ARG_OPEN_NEW_WINDOW), true);
-        final int paramsMask = completeSettings(
-                new ParamsRetriever() {
-                    @Override
-                    public String getParamByName(String name) {
-                        return applet.getParameter(name);
-                    }
-                },
-                connectionParams, rfbSettings, uiSettings);
-        if ( ! allowAppletInteractiveConnections && connectionParams.isHostNameEmpty()) {
-            connectionParams.hostName = applet.getCodeBase().getHost();
-        }
-        return paramsMask;
-	}
+//	public static int completeSettingsFromApplet(final JApplet applet,
+//			ConnectionParams connectionParams, ProtocolSettings rfbSettings, UiSettings uiSettings) {
+//        isSeparateFrame = parseBooleanOrDefault(applet.getParameter(ARG_OPEN_NEW_WINDOW), true);
+//        final int paramsMask = completeSettings(
+//                new ParamsRetriever() {
+//                    @Override
+//                    public String getParamByName(String name) {
+//                        return applet.getParameter(name);
+//                    }
+//                },
+//                connectionParams, rfbSettings, uiSettings);
+//        if ( ! allowAppletInteractiveConnections && connectionParams.isHostNameEmpty()) {
+//            connectionParams.hostName = applet.getCodeBase().getHost();
+//        }
+//        return paramsMask;
+//	}
 
 
 }

@@ -28,6 +28,8 @@ import vnc.exceptions.TransportException;
 import vnc.rfb.encoding.EncodingType;
 import vnc.transport.Reader;
 
+import java.awt.*;
+
 /**
  * Header for framebuffer-update-rectangle header server message
  * 2 - U16 - x-position
@@ -74,4 +76,7 @@ public class FramebufferUpdateRectangle {
                 ']';
 	}
 
+    public Rectangle newRectangle() {
+        return new Rectangle(x, y, width, height);
+    }
 }

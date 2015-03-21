@@ -29,6 +29,7 @@ import vnc.rfb.encoding.PixelFormat;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.transport.Reader;
 
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 /**
@@ -84,11 +85,14 @@ public abstract class Renderer {
      */
     public void drawBytes(byte[] bytes, int x, int y, int width, int height) {
         int i = 0;
+        final int bpp = colorDecoder.bytesPerPixel;
+        final int w = this.width;
+        final int[] p = this.pixels;
         for (int ly = y; ly < y + height; ++ly) {
-            int end = ly * this.width + x + width;
-            for (int pixelsOffset = ly * this.width + x; pixelsOffset < end; ++pixelsOffset) {
-                pixels[pixelsOffset] = getPixelColor(bytes, i);
-                i += colorDecoder.bytesPerPixel;
+            int end = ly * w + x + width;
+            for (int pixelsOffset = ly * w + x; pixelsOffset < end; ++pixelsOffset) {
+                p[pixelsOffset] = getPixelColor(bytes, i);
+                i += bpp;
             }
         }
     }
@@ -99,11 +103,14 @@ public abstract class Renderer {
     public int drawCompactBytes(byte[] bytes, int offset, int x, int y, int width, int height) {
         synchronized (lock) {
             int i = offset;
+            final int[] p = this.pixels;
+            final int bpc = colorDecoder.bytesPerCPixel;
+            final int w = this.width;
             for (int ly = y; ly < y + height; ++ly) {
-                int end = ly * this.width + x + width;
-                for (int pixelsOffset = ly * this.width + x; pixelsOffset < end; ++pixelsOffset) {
-                    pixels[pixelsOffset] = getCompactPixelColor(bytes, i);
-                    i += colorDecoder.bytesPerCPixel;
+                int end = ly * w + x + width;
+                for (int pixelsOffset = ly * w + x; pixelsOffset < end; ++pixelsOffset) {
+                    p[pixelsOffset] = getCompactPixelColor(bytes, i);
+                    i += bpc;
                 }
             }
             return i - offset;
@@ -116,10 +123,12 @@ public abstract class Renderer {
     public void drawColoredBitmap(int[] colors, int x, int y, int width, int height) {
         synchronized (lock) {
             int i = 0;
+            final int w = this.width;
+            final int[] p = this.pixels;
             for (int ly = y; ly < y + height; ++ly) {
-                int end = ly * this.width + x + width;
-                for (int pixelsOffset = ly * this.width + x; pixelsOffset < end; ++pixelsOffset) {
-                    pixels[pixelsOffset] = colors[i++];
+                int end = ly * w + x + width;
+                for (int pixelsOffset = ly * w + x; pixelsOffset < end; ++pixelsOffset) {
+                    p[pixelsOffset] = colors[i++];
                 }
             }
         }
@@ -355,4 +364,7 @@ public abstract class Renderer {
     public Object getLock() {
         return lock;
     }
+
+    /* Swing specific interface */
+    public abstract BufferedImage getImage();
 }

@@ -32,7 +32,7 @@ import vnc.viewer.mvp.Model;
 */
 public class ConnectionParams implements Model {
 	public static final int DEFAULT_SSH_PORT = 22;
-	private static final int DEFAULT_RFB_PORT = 5900;
+	private static final int DEFAULT_RFB_PORT = 5901;
 
 	public String hostName;
 	private int portNumber;
