@@ -13,7 +13,7 @@ knowledge=""""""
 
 def init_proc():
     global proc
-    proc = subprocess.Popen(["./java","-cp","OpenNARS_GUI.jar","nars.core.NARRun"], stdin=subprocess.PIPE, stdout=subprocess.PIPE) 
+    proc = subprocess.Popen(["java","-cp","OpenNARS_GUI.jar","nars.core.NARRun"], stdin=subprocess.PIPE, stdout=subprocess.PIPE) 
 
 NLPonlyMode=True
 server = "irc.freenode.net"

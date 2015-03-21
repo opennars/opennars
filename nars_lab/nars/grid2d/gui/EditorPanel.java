@@ -580,12 +580,12 @@ public class EditorPanel extends JPanel {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
-                            s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
                         }
                         if (obi instanceof Pizza) {
-                            s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
@@ -593,12 +593,12 @@ public class EditorPanel extends JPanel {
                 for (int i = 0; i < s.cells.w; i++) {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
-                            s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            s.nar.addInput("<(^activate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
-                            s.nar.addInput("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
