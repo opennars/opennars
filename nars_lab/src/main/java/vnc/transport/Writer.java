@@ -89,7 +89,7 @@ public class Writer {
 		}
 	}
 
-	public void write(byte[] b) throws TransportException {
+	public void write(byte... b) throws TransportException {
 		write(b, 0, b.length);
 	}
 

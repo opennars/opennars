@@ -25,7 +25,7 @@
 package vnc.utils;
 
 public class Strings {
-	public static String toString(byte[] byteArray) {
+	public static String toString(byte... byteArray) {
 		StringBuilder sb = new StringBuilder("[");
 		boolean notFirst = false;
 		for (byte b : byteArray) {
@@ -36,7 +36,7 @@ public class Strings {
 			}
 			sb.append(b);
 		}
-		return sb.append("]").toString();
+		return sb.append(']').toString();
 	}
 
 	public static boolean isTrimmedEmpty(String s) {

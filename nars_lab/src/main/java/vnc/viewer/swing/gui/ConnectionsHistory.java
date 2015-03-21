@@ -18,7 +18,7 @@ import java.util.prefs.Preferences;
  * @author dime at tightvnc.com
  */
 public class ConnectionsHistory implements Model {
-	private static int MAX_ITEMS = 32;
+	private static final int MAX_ITEMS = 32;
     public static final String CONNECTIONS_HISTORY_ROOT_NODE = "com/glavsoft/viewer/connectionsHistory";
     public static final String NODE_HOST_NAME = "hostName";
     public static final String NODE_PORT_NUMBER = "portNumber";
@@ -45,9 +45,9 @@ public class ConnectionsHistory implements Model {
     }
 
     private void init() {
-        protocolSettingsMap = new HashMap<ConnectionParams, ProtocolSettings>();
-        uiSettingsDataMap = new HashMap<ConnectionParams, UiSettingsData>();
-        connections = new LinkedList<ConnectionParams>();
+        protocolSettingsMap = new HashMap<>();
+        uiSettingsDataMap = new HashMap<>();
+        connections = new LinkedList<>();
     }
 
     private void retrieve() {
@@ -60,8 +60,8 @@ public class ConnectionsHistory implements Model {
         try {
             final String[] orderNums;
 			orderNums = connectionsHistoryNode.childrenNames();
-			SortedMap<Integer, ConnectionParams> conns = new TreeMap<Integer, ConnectionParams>();
-            HashSet<ConnectionParams> uniques = new HashSet<ConnectionParams>();
+			SortedMap<Integer, ConnectionParams> conns = new TreeMap<>();
+            HashSet<ConnectionParams> uniques = new HashSet<>();
 			for (String orderNum : orderNums) {
                 int num = 0;
                 try {
@@ -248,7 +248,7 @@ public class ConnectionsHistory implements Model {
 
     private void reorder(ConnectionParams connectionParams, ProtocolSettings protocolSettings, UiSettingsData uiSettingsData) {
         while (connections.remove(connectionParams)) {/*empty - remove all occurrences (if any)*/}
-		LinkedList<ConnectionParams> cpList = new LinkedList<ConnectionParams>();
+		LinkedList<ConnectionParams> cpList = new LinkedList<>();
 		cpList.addAll(connections);
 
 		connections.clear();

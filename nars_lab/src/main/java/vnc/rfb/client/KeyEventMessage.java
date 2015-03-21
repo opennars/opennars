@@ -61,7 +61,7 @@ public class KeyEventMessage implements ClientToServerMessage {
 
 	@Override
 	public String toString() {
-		return "[KeyEventMessage: [down-flag: "+downFlag + ", key: " + key +"("+Integer.toHexString(key)+")]";
+		return "[KeyEventMessage: [down-flag: "+downFlag + ", key: " + key + '(' +Integer.toHexString(key)+")]";
 	}
 
 }

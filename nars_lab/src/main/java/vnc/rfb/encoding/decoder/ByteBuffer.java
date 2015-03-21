@@ -29,7 +29,7 @@ package vnc.rfb.encoding.decoder;
  * Singleton for share among decoders.
  */
 public class ByteBuffer {
-	private static ByteBuffer instance = new ByteBuffer();
+	private static final ByteBuffer instance = new ByteBuffer();
 	private byte [] buffer = new byte[0];
 
 	private ByteBuffer() { /*empty*/ }

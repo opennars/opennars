@@ -28,7 +28,7 @@ package vnc.rfb;
  * Interface for handling clipboard texts
  */
 public interface ClipboardController extends IChangeSettingsListener {
-	void updateSystemClipboard(byte[] bytes);
+	void updateSystemClipboard(byte... bytes);
 
 	/**
 	 * Get text clipboard contens when needed send to remote, or null vise versa

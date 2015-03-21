@@ -62,7 +62,7 @@ public class VncAuthentication extends AuthHandler {
 	 * @return encripted bytes
 	 * @throws vnc.exceptions.CryptoException on problem with DES algorithm support or smth about
 	 */
-	public byte[] encrypt(byte[] challenge, byte[] key) throws CryptoException {
+	public byte[] encrypt(byte[] challenge, byte... key) throws CryptoException {
 		try {
 		    DESKeySpec desKeySpec = new DESKeySpec(mirrorBits(key));
 		    SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
@@ -70,22 +70,12 @@ public class VncAuthentication extends AuthHandler {
 		    Cipher desCipher = Cipher.getInstance("DES/ECB/NoPadding");
 		    desCipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return desCipher.doFinal(challenge);
-		} catch (NoSuchAlgorithmException e) {
-			throw new CryptoException("Cannot encrypt challenge", e);
-		} catch (NoSuchPaddingException e) {
-			throw new CryptoException("Cannot encrypt challenge", e);
-		} catch (IllegalBlockSizeException e) {
-			throw new CryptoException("Cannot encrypt challenge", e);
-		} catch (BadPaddingException e) {
-			throw new CryptoException("Cannot encrypt challenge", e);
-		} catch (InvalidKeyException e) {
-			throw new CryptoException("Cannot encrypt challenge", e);
-		} catch (InvalidKeySpecException e) {
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e) {
 			throw new CryptoException("Cannot encrypt challenge", e);
 		}
-	}
+    }
 
-	private byte[] mirrorBits(byte[] k) {
+	private static byte[] mirrorBits(byte... k) {
 		byte[] key = new byte[8];
 		for (int i = 0; i < 8; i++) {
 			byte s = k[i];

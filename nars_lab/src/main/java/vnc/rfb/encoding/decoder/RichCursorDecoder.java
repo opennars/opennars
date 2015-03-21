@@ -32,7 +32,7 @@ import vnc.transport.Reader;
  * Decoder for RichCursor pseudo encoding
  */
 public class RichCursorDecoder extends Decoder {
-	private static RichCursorDecoder instance = new RichCursorDecoder();
+	private static final RichCursorDecoder instance = new RichCursorDecoder();
 
 	private RichCursorDecoder() { /*empty*/ }
 
@@ -52,7 +52,7 @@ public class RichCursorDecoder extends Decoder {
 
 		StringBuilder sb = new StringBuilder(" ");
 		for (int i=0; i<length; ++i) {
-			sb.append(Integer.toHexString(buffer[i]&0xff)).append(" ");
+			sb.append(Integer.toHexString(buffer[i]&0xff)).append(' ');
 		}
 		int scanLine = (int) Math.floor((rect.width + 7) / 8);
 		byte[] bitmask = new byte[scanLine * rect.height];
@@ -60,7 +60,7 @@ public class RichCursorDecoder extends Decoder {
 
 		sb = new StringBuilder(" ");
 		for (int i=0; i<bitmask.length; ++i) {
-			sb.append(Integer.toHexString(bitmask[i]&0xff)).append(" ");
+			sb.append(Integer.toHexString(bitmask[i]&0xff)).append(' ');
 		}
 		int[] cursorPixels = new int[rect.width * rect.height];
 		for (int y = 0; y < rect.height; ++y) {
@@ -74,7 +74,7 @@ public class RichCursorDecoder extends Decoder {
 		renderer.createCursor(cursorPixels, rect);
 	}
 
-	private boolean isBitSet(byte aByte, int index) {
+	private static boolean isBitSet(byte aByte, int index) {
 		return (aByte & 1 << 7 - index) > 0;
 	}
 

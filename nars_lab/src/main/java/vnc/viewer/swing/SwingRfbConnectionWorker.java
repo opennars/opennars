@@ -49,11 +49,11 @@ import java.util.logging.Logger;
 */
 public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implements RfbConnectionWorker, IRfbSessionListener {
 
-    private String predefinedPassword;
-    private ConnectionPresenter presenter;
-    private JFrame parentWindow;
-    private SwingViewerWindowFactory viewerWindowFactory;
-    private Logger logger;
+    private final String predefinedPassword;
+    private final ConnectionPresenter presenter;
+    private final JFrame parentWindow;
+    private final SwingViewerWindowFactory viewerWindowFactory;
+    private final Logger logger;
     private volatile boolean isStoppingProcess;
     private SwingViewerWindow viewerWindow;
     protected String connectionString;
@@ -139,20 +139,12 @@ public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implemen
                 errorMessage = e.getMessage();
                 logger.severe(errorMessage);
                 presenter.clearPredefinedPassword();
-            } catch (TransportException e) {
+            } catch (TransportException | FatalException | IOException e) {
 //            if ( ! isAppletStopped) {
                 errorTitle = "Connection Error";
                 errorMessage = "Connection Error: " + e.getMessage();
                 logger.severe(errorMessage);
 //            }
-            } catch (IOException e) {
-                errorTitle = "Connection Error";
-                errorMessage = "Connection Error: " + e.getMessage();
-                logger.severe(errorMessage);
-            } catch (FatalException e) {
-                errorTitle = "Connection Error";
-                errorMessage = "Connection Error: " + e.getMessage();
-                logger.severe(errorMessage);
             } catch (Throwable e) {
                 errorTitle = "Error";
                 errorMessage = "Error: " + e.getMessage();
@@ -231,7 +223,7 @@ public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implemen
      */
     private class PasswordChooser implements IPasswordRetriever {
         PasswordDialog passwordDialog;
-        private String connectionString;
+        private final String connectionString;
         private final JFrame owner;
         private final ConnectionWorker onCancel;
 
@@ -261,9 +253,7 @@ public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implemen
                         passwordDialog.setVisible(true);
                     }
                 });
-            } catch (InterruptedException e) {
-                //nop
-            } catch (InvocationTargetException e) {
+            } catch (InterruptedException | InvocationTargetException e) {
                 //nop
             }
             return passwordDialog.getPassword();

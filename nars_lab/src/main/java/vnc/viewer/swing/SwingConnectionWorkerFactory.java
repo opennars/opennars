@@ -36,7 +36,7 @@ import javax.swing.*;
  */
 public class SwingConnectionWorkerFactory extends AbstractConnectionWorkerFactory {
 
-    private JFrame parentWindow;
+    private final JFrame parentWindow;
     private String predefinedPassword;
     private final ConnectionPresenter presenter;
     private final SwingViewerWindowFactory viewerWindowFactory;

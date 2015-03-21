@@ -72,7 +72,7 @@ public class ClipboardControllerImpl implements ClipboardController, Runnable {
 	}
 
 	@Override
-	public void updateSystemClipboard(byte[] bytes) {
+	public void updateSystemClipboard(byte... bytes) {
 		if (clipboard != null) {
 			StringSelection stringSelection = new StringSelection(new String(bytes, charset));
 			if (isEnabled) {
@@ -90,12 +90,10 @@ public class ClipboardControllerImpl implements ClipboardController, Runnable {
 		if (clipboard != null && clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
 			try {
 				clipboardText = (String)clipboard.getData(DataFlavor.stringFlavor);
-			} catch (UnsupportedFlavorException e) {
-				// ignore
-			} catch (IOException e) {
+			} catch (UnsupportedFlavorException | IOException e) {
 				// ignore
 			}
-		} else {
+        } else {
 			clipboardText = null;
 		}
 	}

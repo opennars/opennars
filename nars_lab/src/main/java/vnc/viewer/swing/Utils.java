@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class Utils {
 		if (icons != null) {
 			return icons;
 		}
-		icons = new LinkedList<Image>();
+		icons = new LinkedList<>();
 		URL resource = Utils.class.getResource("/com/glavsoft/viewer/images/tightvnc-logo-16x16.png");
 		Image image = resource != null ?
 				Toolkit.getDefaultToolkit().getImage(resource) :
@@ -68,7 +68,7 @@ public class Utils {
 		return resource != null ? new ImageIcon(resource) : null;
 	}
 
-    private static Map<LocalMouseCursorShape, Cursor> cursorCash = new HashMap<LocalMouseCursorShape, Cursor>();
+    private static final Map<LocalMouseCursorShape, Cursor> cursorCash = new EnumMap(LocalMouseCursorShape.class);
     public static Cursor getCursor(LocalMouseCursorShape cursorShape) {
         Cursor cursor = cursorCash.get(cursorShape);
         if (cursor != null) return cursor;

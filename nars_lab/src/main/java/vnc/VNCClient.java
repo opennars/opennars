@@ -48,7 +48,7 @@ import java.util.logging.*;
 @SuppressWarnings("serial")
 public class VNCClient extends JApplet implements Runnable, WindowListener {
 
-	private Logger logger;
+	private final Logger logger;
     private int paramsMask;
     private boolean allowAppletInteractiveConnections;
 
@@ -61,7 +61,7 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
     private volatile boolean isAppletStopped = false;
     private ConnectionPresenter connectionPresenter;
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
 		Parser parser = new Parser();
 		ParametersHandler.completeParserOptions(parser);
 
@@ -103,7 +103,7 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
 		isApplet = false;
 	}
 
-    private void setLoggingLevel(Level levelToSet) {
+    private static void setLoggingLevel(Level levelToSet) {
         final Logger appLogger = Logger.getLogger("com.glavsoft");
         appLogger.setLevel(levelToSet);
         ConsoleHandler ch = null;
@@ -192,7 +192,7 @@ public class VNCClient extends JApplet implements Runnable, WindowListener {
 		super.start();
 	}
 
-    private boolean checkJsch() {
+    private static boolean checkJsch() {
         try {
             Class.forName("com.jcraft.jsch.JSch");
             return true;

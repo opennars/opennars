@@ -38,12 +38,12 @@ import java.util.logging.Logger;
 public class Presenter {
     private final Map<String, View> registeredViews;
     private final Map<String, Model> registeredModels;
-    static private Logger logger = Logger.getLogger(Presenter.class.getName());
+    static private final Logger logger = Logger.getLogger(Presenter.class.getName());
     private Throwable savedInvocationTargetException;
 
     public Presenter() {
-        registeredViews = new HashMap<String, View>();
-        registeredModels = new HashMap<String, Model>();
+        registeredViews = new HashMap<>();
+        registeredModels = new HashMap<>();
     }
 
     public void addView(String name, View view) {
@@ -120,13 +120,11 @@ public class Presenter {
                         final Object viewProperty = getViewProperty(propertyName);
                         m.invoke(model, viewProperty);
                         logger.finest("Save: " + modelName + ".set" + propertyName + "( " + viewProperty + " )");
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException | PropertyNotFoundException e) {
                         // nop
                     } catch (InvocationTargetException e) {
                         savedInvocationTargetException = e.getCause();
                         break;
-                    } catch (PropertyNotFoundException e) {
-                        // nop
                     }
                 }
             }
@@ -148,18 +146,16 @@ public class Presenter {
             String viewName = entry.getKey();
             View view = entry.getValue();
             try {
-                Method getter = view.getClass().getMethod("get" + propertyName, new Class[0]);
+                Method getter = view.getClass().getMethod("get" + propertyName);
                 final Object res = getter.invoke(view);
                 logger.finest("----from view: " + viewName + ".get" + propertyName + "() # +> " + res);
                 return res;
                 // oops, only first getter will be found TODO?
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | IllegalAccessException e) {
                 // nop
             } catch (InvocationTargetException e) {
                 savedInvocationTargetException = e.getCause();
                 break;
-            } catch (IllegalAccessException e) {
-                // nop
             }
         }
         throw new PropertyNotFoundException(propertyName);
@@ -171,18 +167,16 @@ public class Presenter {
         for (String modelName : registeredModels.keySet()) {
             Model model = registeredModels.get(modelName);
             try {
-                Method getter = model.getClass().getMethod("get" + propertyName, new Class[0]);
+                Method getter = model.getClass().getMethod("get" + propertyName);
                 final Object res = getter.invoke(model);
                 logger.finest("----from model: " + modelName + ".get" + propertyName + "() # +> " + res);
                 return res;
                 // oops, only first getter will be found TODO?
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | IllegalAccessException e) {
                 // nop
             } catch (InvocationTargetException e) {
                 savedInvocationTargetException = e.getCause();
                 break;
-            } catch (IllegalAccessException e) {
-                // nop
             }
         }
 //        savedInvocationTargetException = new PropertyNotFoundException(propertyName);
@@ -203,14 +197,12 @@ public class Presenter {
                 Method setter = view.getClass().getMethod("set" + propertyName, valueType);
                 setter.invoke(view, newValue);
                 logger.finest("----to view: " + viewName + ".set" + propertyName + "( " + newValue + " )");
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | IllegalAccessException e) {
                 // nop
             } catch (InvocationTargetException e) {
                 e.getCause().printStackTrace();
                 savedInvocationTargetException = e.getCause();
                 break;
-            } catch (IllegalAccessException e) {
-                // nop
             }
         }
     }
@@ -226,7 +218,7 @@ public class Presenter {
         return registeredViews.get(name);
     }
 
-    protected class PropertyNotFoundException extends CommonException {
+    protected static class PropertyNotFoundException extends CommonException {
         public PropertyNotFoundException(String message) {
             super(message);
         }
@@ -246,13 +238,11 @@ public class Presenter {
                 Method method = model.getClass().getMethod("set" + propertyName, valueType);
                 method.invoke(model, newValue);
                 logger.finest("----for model: " + modelName);
-            } catch (NoSuchMethodException e) {
+            } catch (NoSuchMethodException | IllegalAccessException e) {
                 // nop
             } catch (InvocationTargetException e) {
                 savedInvocationTargetException = e.getCause();
                 break;
-            } catch (IllegalAccessException e) {
-                // nop
             }
         }
     }

@@ -95,7 +95,7 @@ public class ZRLEDecoder extends ZlibDecoder {
 				rlength += bytes[index] & 0x0ff;
 			} while ((bytes[index++] & 0x0ff) == 255);
 			assert rlength <= decodedEnd - decodedOffset;
-			renderer.fillColorBitmapWithColor(decodedBitmap, decodedOffset, rlength, color);
+			Renderer.fillColorBitmapWithColor(decodedBitmap, decodedOffset, rlength, color);
 			decodedOffset += rlength;
 		}
 		renderer.drawColoredBitmap(decodedBitmap, tileX, tileY, tileWidth, tileHeight);
@@ -117,7 +117,7 @@ public class ZRLEDecoder extends ZlibDecoder {
 				} while (bytes[index++] == (byte) 255);
 			}
 			assert rlength <= decodedEnd - decodedOffset;
-			renderer.fillColorBitmapWithColor(decodedBitmap, decodedOffset, rlength, color);
+			Renderer.fillColorBitmapWithColor(decodedBitmap, decodedOffset, rlength, color);
 			decodedOffset += rlength;
 		}
 		renderer.drawColoredBitmap(decodedBitmap, tileX, tileY, tileWidth, tileHeight);
@@ -143,7 +143,7 @@ public class ZRLEDecoder extends ZlibDecoder {
 				bitsRemain -= bitsPerPalletedPixel;
 				int index = byteProcessed >> bitsRemain & (1 << bitsPerPalletedPixel) - 1 & 127;
 				int color = palette[index];
-				renderer.fillColorBitmapWithColor(decodedBitmap, decodedOffset, 1, color);
+				Renderer.fillColorBitmapWithColor(decodedBitmap, decodedOffset, 1, color);
 				++decodedOffset;
 			}
 		}
@@ -151,8 +151,8 @@ public class ZRLEDecoder extends ZlibDecoder {
 		return packedOffset - offset;
 	}
 
-	private int decodeRaw(byte[] bytes, int offset, Renderer renderer,
-			int tileX, int tileY, int tileWidth, int tileHeight) throws TransportException {
+	private static int decodeRaw(byte[] bytes, int offset, Renderer renderer,
+                                 int tileX, int tileY, int tileWidth, int tileHeight) throws TransportException {
 		return renderer.drawCompactBytes(bytes, offset, tileX, tileY, tileWidth, tileHeight);
 	}
 

@@ -24,8 +24,6 @@
 
 package vnc.rfb.protocol.auth;
 
-import java.util.logging.Logger;
-
 import vnc.exceptions.FatalException;
 import vnc.exceptions.TransportException;
 import vnc.exceptions.UnsupportedSecurityTypeException;
@@ -35,6 +33,8 @@ import vnc.rfb.RfbCapabilityInfo;
 import vnc.rfb.protocol.state.SecurityTypeState;
 import vnc.transport.Reader;
 import vnc.transport.Writer;
+
+import java.util.logging.Logger;
 
 /**
  *
@@ -85,7 +85,7 @@ public class TightAuthentication extends AuthHandler {
 	 * #define sig_rfbNoTunneling "NOTUNNEL"
 	 *
 	 */
-	private void initTunnelling(Reader reader, Writer writer)
+	private static void initTunnelling(Reader reader, Writer writer)
 			throws TransportException {
 		long tunnelsCount;
 		tunnelsCount = reader.readUInt32();
@@ -122,8 +122,8 @@ public class TightAuthentication extends AuthHandler {
 	 * @throws TransportException
 	 * @throws FatalException
 	 */
-	private void initAuthorization(Reader reader, Writer writer,
-			CapabilityContainer authCaps, IPasswordRetriever passwordRetriever)
+	private static void initAuthorization(Reader reader, Writer writer,
+                                          CapabilityContainer authCaps, IPasswordRetriever passwordRetriever)
 	throws UnsupportedSecurityTypeException, TransportException, FatalException {
 		int authCount;
 		authCount = reader.readInt32();

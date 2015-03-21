@@ -47,7 +47,7 @@ public class UiSettings {
     public static final int CHANGED_MOUSE_CURSOR_SHAPE = 1 << 1;
     public static final int CHANGED_FULL_SCREEN = 1 << 2;
 
-    private final List<IChangeSettingsListener> listeners = new LinkedList<IChangeSettingsListener>();
+    private final List<IChangeSettingsListener> listeners = new LinkedList<>();
     private int changedSettingsMask = 0;
 
     private final UiSettingsData uiSettingsData;

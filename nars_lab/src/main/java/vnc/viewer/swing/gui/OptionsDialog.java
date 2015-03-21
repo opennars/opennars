@@ -396,8 +396,8 @@ public class OptionsDialog extends JDialog {
 		localCursorShapePanel.add(localCursorShapeBox);
 
         ButtonGroup mouseCursorShapeTrackGroup = new ButtonGroup();
-        mouseCursorShapeSelected = new RadioButtonSelectedState<LocalMouseCursorShape>();
-        mouseCursorShapeMap = new HashMap<LocalMouseCursorShape, JRadioButton>();
+        mouseCursorShapeSelected = new RadioButtonSelectedState<>();
+        mouseCursorShapeMap = new HashMap<>();
 
         addRadioButton("Dot cursor", LocalMouseCursorShape.DOT,
                 mouseCursorShapeSelected, mouseCursorShapeMap, localCursorShapeBox,
@@ -428,8 +428,8 @@ public class OptionsDialog extends JDialog {
 
 		ButtonGroup mouseCursorTrackGroup = new ButtonGroup();
 
-		mouseCursorTrackSelected = new RadioButtonSelectedState<LocalPointer>();
-		mouseCursorTrackMap = new HashMap<LocalPointer, JRadioButton>();
+		mouseCursorTrackSelected = new RadioButtonSelectedState<>();
+		mouseCursorTrackMap = new HashMap<>();
 
 		addRadioButton("Track remote cursor locally", LocalPointer.ON,
 				mouseCursorTrackSelected, mouseCursorTrackMap, mouseCursorBox,

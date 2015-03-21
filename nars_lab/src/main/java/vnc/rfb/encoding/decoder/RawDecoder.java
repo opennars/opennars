@@ -29,7 +29,7 @@ import vnc.exceptions.TransportException;
 import vnc.transport.Reader;
 
 public class RawDecoder extends Decoder {
-	private static RawDecoder instance = new RawDecoder();
+	private static final RawDecoder instance = new RawDecoder();
 	public static RawDecoder getInstance() {
 		return instance;
 	}
@@ -41,8 +41,8 @@ public class RawDecoder extends Decoder {
 		decode(reader, renderer, rect.x, rect.y, rect.width, rect.height);
 	}
 
-	public void decode(Reader reader, Renderer renderer, int x, int y,
-			int width, int height) throws TransportException {
+	public static void decode(Reader reader, Renderer renderer, int x, int y,
+                              int width, int height) throws TransportException {
 		int length = width * height * renderer.getBytesPerPixel();
 		byte [] bytes = ByteBuffer.getInstance().getBuffer(length);
 		reader.readBytes(bytes, 0, length);

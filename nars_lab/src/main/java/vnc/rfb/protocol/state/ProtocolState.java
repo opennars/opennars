@@ -30,9 +30,9 @@ import vnc.transport.Reader;
 import vnc.transport.Writer;
 
 abstract public class ProtocolState {
-	protected ProtocolContext context;
-	protected Reader reader;
-	protected Writer writer;
+	protected final ProtocolContext context;
+	protected final Reader reader;
+	protected final Writer writer;
 
 	public ProtocolState(ProtocolContext context) {
 		this.context = context;

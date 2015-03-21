@@ -77,7 +77,7 @@ public class SenderTask implements Runnable {
 				PrintWriter pw = new PrintWriter(sw);
 				te.printStackTrace(pw);
 				if (isRunning) {
-					protocolContext.cleanUpSession(te.getMessage() + "\n" + sw.toString());
+					protocolContext.cleanUpSession(te.getMessage() + '\n' + sw.toString());
 				}
 				stopTask();
 			}

@@ -51,7 +51,7 @@ public class ReceiverTask implements Runnable {
 	private static final byte SERVER_CUT_TEXT = 3;
 
 
-	private static Logger logger = Logger.getLogger("ReceiverTask");
+	private static final Logger logger = Logger.getLogger("ReceiverTask");
 	private final Reader reader;
 	private volatile boolean isRunning = false;
 	private Renderer renderer;
@@ -127,7 +127,7 @@ public class ReceiverTask implements Runnable {
 				PrintWriter pw = new PrintWriter(sw);
 				te.printStackTrace(pw);
 				if (isRunning) {
-					context.cleanUpSession(te.getMessage() + "\n" + sw.toString());
+					context.cleanUpSession(te.getMessage() + '\n' + sw.toString());
 				}
 				stopTask();
 			}
@@ -182,14 +182,14 @@ public class ReceiverTask implements Runnable {
 			} else
 				throw new CommonException("Unprocessed encoding: " + rect.toString());
 		}
-		synchronized (this) {
+		synchronized (reader) {
 			if (needSendPixelFormat) {
 				needSendPixelFormat = false;
 				context.setPixelFormat(pixelFormat);
 				context.sendMessage(new SetPixelFormatMessage(pixelFormat));
-				logger.fine("sent: "+pixelFormat);
+				//logger.fine("sent: "+pixelFormat);
 				context.sendRefreshMessage();
-				logger.fine("sent: nonincremental fb update");
+				//logger.fine("sent: nonincremental fb update");
 			} else {
 				context.sendMessage(fullscreenFbUpdateIncrementalRequest);
 			}

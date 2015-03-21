@@ -41,7 +41,7 @@ import vnc.transport.Writer;
 public class ClientCutTextMessage implements ClientToServerMessage {
 	private final byte [] bytes;
 
-	public ClientCutTextMessage(byte[] bytes) {
+	public ClientCutTextMessage(byte... bytes) {
 		this.bytes = bytes;
 	}
 

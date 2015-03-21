@@ -47,7 +47,7 @@ public class ConnectionView extends JPanel implements View {
     public static final int COLUMNS_PORT_USER_FIELD = 13;
     public static final String CLOSE = "Close";
     public static final String CANCEL = "Cancel";
-    private WindowListener appWindowListener;
+    private final WindowListener appWindowListener;
 	private final boolean hasSshSupport;
     private final JTextField serverPortField;
 	private JCheckBox useSshTunnelingCheckbox;
@@ -426,7 +426,7 @@ public class ConnectionView extends JPanel implements View {
 
 class StatusBar extends JPanel {
 
-    private JLabel messageLabel;
+    private final JLabel messageLabel;
 
     public StatusBar() {
         setLayout(new BorderLayout());

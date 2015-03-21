@@ -35,8 +35,8 @@ import java.util.Map;
  * Command line interface parameters parser
  */
 public class Parser {
-	private final Map<String, Option> options = new LinkedHashMap<String, Option>();
-	private final List<String> plainOptions = new ArrayList<String>();
+	private final Map<String, Option> options = new LinkedHashMap<>();
+	private final List<String> plainOptions = new ArrayList<>();
 	private boolean isSetPlainOptions = false;
 
 	public void addOption(String opName, String defaultValue, String desc) {
@@ -44,7 +44,7 @@ public class Parser {
 		options.put(opName.toLowerCase(), op);
 	}
 
-	public void parse(String [] args) {
+	public void parse(String... args) {
 		for (String p : args) {
 			if (p.startsWith("-")) {
 				int skipMinuses = p.startsWith("--") ? 2 : 1;
@@ -89,7 +89,10 @@ public class Parser {
 	 * Command line interface option
 	 */
 	private static class Option {
-		protected String opName, defaultValue, desc, value;
+		protected final String opName;
+        protected final String defaultValue;
+        protected final String desc;
+        protected String value;
 		protected boolean isSet = false;
 		public Option(String opName, String defaultValue, String desc) {
 			this.opName = opName;

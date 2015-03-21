@@ -141,7 +141,8 @@ public class KeyboardConvertor {
 	}
 
 	private static class CodePair {
-		public int code, codeShifted;
+		public final int code;
+        public final int codeShifted;
 		public CodePair(int code, int codeShifted) {
 			this.code = code;
 			this.codeShifted = codeShifted;

@@ -29,20 +29,20 @@ import vnc.rfb.encoding.PixelFormat;
 import vnc.transport.Reader;
 
 public class ColorDecoder {
-    protected byte redShift;
-	protected byte greenShift;
-	protected byte blueShift;
-	public short redMax;
-	public short greenMax;
-	public short blueMax;
+    protected final byte redShift;
+	protected final byte greenShift;
+	protected final byte blueShift;
+	public final short redMax;
+	public final short greenMax;
+	public final short blueMax;
 	public final int bytesPerPixel;
 	public final int bytesPerCPixel;
     public final int bytesPerPixelTight;
 	private final byte[] buff;
 
-	private int startShift;
-	private int startShiftCompact;
-	private int addShiftItem;
+	private final int startShift;
+	private final int startShiftCompact;
+	private final int addShiftItem;
 	private final boolean isTightSpecific;
 
     public ColorDecoder(PixelFormat pf) {
@@ -87,13 +87,13 @@ public class ColorDecoder {
 		return getTightColor(reader.readBytes(buff, 0, bytesPerPixelTight), 0);
 	}
 
-	protected int convertColor(int rawColor) {
+	protected int convertColor(final int rawColor) {
 		return  255 * (rawColor >> redShift & redMax) / redMax << 16 |
 				255 * (rawColor >> greenShift & greenMax) / greenMax << 8 |
 				255 * (rawColor >> blueShift & blueMax) / blueMax;
 	}
 
-	public void fillRawComponents(byte[] comp, byte[] bytes, int offset) {
+	public void fillRawComponents(final byte[] comp, final byte[] bytes, final int offset) {
 		int rawColor = getRawTightColor(bytes, offset);
 		comp[0] = (byte) (rawColor >> redShift & redMax);
 		comp[1] = (byte) (rawColor >> greenShift & greenMax);

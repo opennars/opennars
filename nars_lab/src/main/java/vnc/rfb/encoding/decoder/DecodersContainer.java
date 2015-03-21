@@ -28,7 +28,7 @@ package vnc.rfb.encoding.decoder;
 import vnc.rfb.encoding.EncodingType;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -36,8 +36,8 @@ import java.util.logging.Logger;
  * Decoders container class
  */
 public class DecodersContainer {
-	private static Map<EncodingType, Class<? extends Decoder>> knownDecoders =
-		new HashMap<EncodingType, Class<? extends Decoder>>();
+	private static final Map<EncodingType, Class<? extends Decoder>> knownDecoders =
+		new EnumMap<>(EncodingType.class);
 	static {
 		knownDecoders.put(EncodingType.TIGHT, TightDecoder.class);
 		knownDecoders.put(EncodingType.HEXTILE, HextileDecoder.class);
@@ -48,7 +48,7 @@ public class DecodersContainer {
 //		knownDecoders.put(EncodingType.RAW_ENCODING, RawDecoder.class);
 	}
 	private final Map<EncodingType, Decoder> decoders =
-		new HashMap<EncodingType, Decoder>();
+		new EnumMap<>(EncodingType.class);
 
 	public DecodersContainer() {
 		decoders.put(EncodingType.RAW_ENCODING, RawDecoder.getInstance());
@@ -64,12 +64,10 @@ public class DecodersContainer {
 			if (EncodingType.ordinaryEncodings.contains(enc) && ! decoders.containsKey(enc)) {
 				try {
 					decoders.put(enc, knownDecoders.get(enc).newInstance());
-				} catch (InstantiationException e) {
-					logError(enc, e);
-				} catch (IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException e) {
 					logError(enc, e);
 				}
-			}
+            }
 		}
 	}
 

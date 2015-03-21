@@ -71,7 +71,7 @@ public class FramebufferUpdateRectangle {
 		return "FramebufferUpdateRect: [x: " + x + ", y: " + y +
 			", width: " + width + ", height: " + height +
 			", encodingType: " + encodingType +
-			"]";
+                ']';
 	}
 
 }

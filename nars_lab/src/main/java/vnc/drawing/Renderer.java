@@ -41,15 +41,21 @@ public abstract class Renderer {
     protected Reader reader;
     private final Object lock = new Object();
 
+    protected abstract SoftCursor newCursor();
+
     public abstract void drawJpegImage(byte[] bytes, int offset,
                                        int jpegBufferLength, FramebufferUpdateRectangle rect);
 
     protected int width;
     protected int height;
     protected int[] pixels;
-    protected SoftCursor cursor;
+    protected final SoftCursor cursor;
     public PixelFormat pixelFormat;
     protected ColorDecoder colorDecoder;
+
+    public Renderer() {
+        cursor = newCursor();
+    }
 
     protected void init(Reader reader, int width, int height, PixelFormat pixelFormat) {
         this.reader = reader;
@@ -187,9 +193,10 @@ public abstract class Renderer {
             } else {
                 // 3..255 colors (assuming bytesPixel == 4).
                 int i = 0;
+                final int twidth = this.width;
                 for (int ly = rect.y; ly < rect.y + rect.height; ++ly) {
                     for (int lx = rect.x; lx < rect.x + rect.width; ++lx) {
-                        int pixelsOffset = ly * this.width + lx;
+                        int pixelsOffset = ly * twidth + lx;
                         pixels[pixelsOffset] = palette[buffer[i++] & 0xFF];
                     }
                 }
@@ -218,9 +225,11 @@ public abstract class Renderer {
             deltaY = -1;
         }
         synchronized (lock) {
+            final int w = width;
+            int[] p = this.pixels;
             for (int y = startSrcY; y != endSrcY; y += deltaY) {
-                System.arraycopy(pixels, y * width + srcX,
-                        pixels, dstY * width + dstRect.x, dstRect.width);
+                System.arraycopy(p, y * w + srcX,
+                        p, dstY * w + dstRect.x, dstRect.width);
                 dstY += deltaY;
             }
         }
@@ -247,9 +256,10 @@ public abstract class Renderer {
      */
     public void fillRect(int color, int x, int y, int width, int height) {
         synchronized (lock) {
-            int sy = y * this.width + x;
-            int ey = sy + height * this.width;
-            for (int i = sy; i < ey; i += this.width) {
+            final int w = this.width;
+            int sy = y * w + x;
+            int ey = sy + height * w;
+            for (int i = sy; i < ey; i += w) {
                 Arrays.fill(pixels, i, i + width, color);
             }
         }
@@ -293,10 +303,11 @@ public abstract class Renderer {
         return colorDecoder.bytesPerPixelTight;
     }
 
-    public void fillColorBitmapWithColor(int[] bitmapData, int decodedOffset, int rlength, int color) {
-        while (rlength-- > 0) {
-            bitmapData[decodedOffset++] = color;
-        }
+    public static void fillColorBitmapWithColor(final int[] bitmapData, final int decodedOffset, final int rlength, final int color) {
+        Arrays.fill(bitmapData, decodedOffset, rlength, color );
+//        while (rlength-- > 0) {
+//            bitmapData[decodedOffset++] = color;
+//        }
     }
 
     /**

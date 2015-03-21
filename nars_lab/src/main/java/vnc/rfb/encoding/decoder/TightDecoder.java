@@ -37,7 +37,7 @@ import java.util.zip.Inflater;
  * Tight protocol extention decoder
  */
 public class TightDecoder extends Decoder {
-	private static Logger logger = Logger.getLogger("com.glavsoft.rfb.encoding.decoder");
+	private static final Logger logger = Logger.getLogger("com.glavsoft.rfb.encoding.decoder");
 
     private static final int FILL_TYPE = 0x08;
     private static final int JPEG_TYPE = 0x09;
@@ -257,7 +257,7 @@ public class TightDecoder extends Decoder {
 	 * @return int value
 	 * @throws TransportException
 	 */
-	private int readCompactSize(Reader reader) throws TransportException {
+	private static int readCompactSize(Reader reader) throws TransportException {
 		int b = reader.readUInt8();
 		int size = b & 0x7F;
 		if ((b & 0x80) != 0) {

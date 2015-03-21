@@ -105,7 +105,7 @@ public class Keymap {
 	public static final int K_KP_8 = 0xFFB8;
 	public static final int K_KP_9 = 0xFFB9;
 
-	private static Map<Integer, Integer> keyMap = toMap(new int[][] {
+	private static final Map<Integer, Integer> keyMap = toMap(new int[][] {
 		// X      Unicode
 		{ 0x01a1, 0x0104 }, /*                     Aogonek  LATIN CAPITAL LETTER A WITH OGONEK */
 		{ 0x01a2, 0x02d8 }, /*                       breve  BREVE */
@@ -883,7 +883,7 @@ public class Keymap {
 	});
 
 	private static Map<Integer, Integer> toMap(int[][] keys) {
-		Map<Integer, Integer> keyMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> keyMap = new HashMap<>();
 		for (int[] km: keys) {
 			keyMap.put(km[1], km[0]);
 		}

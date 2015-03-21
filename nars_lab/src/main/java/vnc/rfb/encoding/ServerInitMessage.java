@@ -75,6 +75,6 @@ public class ServerInitMessage {
     	", framebuffer-width: " + String.valueOf(frameBufferWidth) +
     	", framebuffer-height: " + String.valueOf(frameBufferHeight) +
     	", server-pixel-format: " + pixelFormat +
-    	"]";
+                ']';
     }
 }

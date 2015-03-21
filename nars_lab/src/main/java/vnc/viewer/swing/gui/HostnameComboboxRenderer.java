@@ -28,7 +28,7 @@ public class HostnameComboboxRenderer extends DefaultListCellRenderer {
     public String renderListItem(ConnectionParams cp) {
         String s = "<html><b>" +cp.hostName + "</b>:" + cp.getPortNumber();
         if (cp.useSsh()) {
-            s += " <i>(via ssh://" + cp.sshUserName + "@" + cp.sshHostName + ":" + cp.getSshPortNumber() + ")</i>";
+            s += " <i>(via ssh://" + cp.sshUserName + '@' + cp.sshHostName + ':' + cp.getSshPortNumber() + ")</i>";
         }
         return s + "</html>";
     }

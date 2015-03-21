@@ -59,16 +59,16 @@ public class HextileDecoder extends Decoder {
 
 	}
 
-	private void decodeHextileSubrectangle(Reader reader,
-			Renderer renderer, int[] colors,
-			int tileX, int tileY, int tileWidth, int tileHeight)
+	private static void decodeHextileSubrectangle(Reader reader,
+                                                  Renderer renderer, int[] colors,
+                                                  int tileX, int tileY, int tileWidth, int tileHeight)
 			throws TransportException {
 
 		int subencoding = reader.readUInt8();
 
 		if ((subencoding & RAW_MASK) != 0) {
-			RawDecoder.getInstance().decode(reader, renderer,
-					tileX, tileY, tileWidth, tileHeight);
+			RawDecoder.decode(reader, renderer,
+                    tileX, tileY, tileWidth, tileHeight);
 			return;
 		}
 

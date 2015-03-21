@@ -9,7 +9,7 @@ public enum LocalMouseCursorShape {
     SYSTEM_DEFAULT("default"),
     NO_CURSOR("nocursor");
 
-    private String cursorName;
+    private final String cursorName;
 
     LocalMouseCursorShape(String name) {
         this.cursorName = name;

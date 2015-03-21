@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> implements NetworkConnectionWorker {
     public static final int MAX_HOSTNAME_LENGTH_FOR_MESSAGES = 40;
     private final JFrame parentWindow;
-    private Logger logger;
+    private final Logger logger;
     private boolean hasSshSupport;
     private ConnectionParams connectionParams;
     private ConnectionPresenter presenter;
@@ -59,7 +59,7 @@ public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> im
     public Socket doInBackground() throws Exception {
         String s = "<b>" +connectionParams.hostName + "</b>:" + connectionParams.getPortNumber();
         if (connectionParams.useSsh()) {
-            s += " <i>(via ssh://" + connectionParams.sshUserName + "@" + connectionParams.sshHostName + ":" + connectionParams.getSshPortNumber() + ")</i>";
+            s += " <i>(via ssh://" + connectionParams.sshUserName + '@' + connectionParams.sshHostName + ':' + connectionParams.getSshPortNumber() + ")</i>";
         }
 
         String message = "<html>Trying to connect to " + s + "</html>";
@@ -88,14 +88,14 @@ public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> im
             port = connectionParams.getPortNumber();
         }
 
-        message = "Connecting to host " + host + ":" + port + (connectionParams.useSsh() ? " (tunneled)" : "");
+        message = "Connecting to host " + host + ':' + port + (connectionParams.useSsh() ? " (tunneled)" : "");
         logger.info(message);
         publish(message);
 
         return new Socket(host, port);
     }
 
-    private String formatHostString(String hostName) {
+    private static String formatHostString(String hostName) {
         if (hostName.length() <= MAX_HOSTNAME_LENGTH_FOR_MESSAGES) {
             return  hostName;
         } else {
@@ -128,34 +128,34 @@ public class SwingNetworkConnectionWorker extends SwingWorker<Socket, String> im
                 throw e.getCause();
             } catch (UnknownHostException uhe) {
                 logger.severe("Unknown host: " + connectionParams.hostName);
-                errorMessage = "Unknown host: '" + formatHostString(connectionParams.hostName) + "'";
+                errorMessage = "Unknown host: '" + formatHostString(connectionParams.hostName) + '\'';
             } catch (IOException ioe) {
                 logger.severe("Couldn't connect to '" + connectionParams.hostName +
-                        ":" + connectionParams.getPortNumber() + "':\n" + "IOException\n" + ioe.getMessage());
+                        ':' + connectionParams.getPortNumber() + "':\n" + "IOException\n" + ioe.getMessage());
                 logger.log(Level.FINEST, "Couldn't connect to '" + connectionParams.hostName +
-                        ":" + connectionParams.getPortNumber() + "':\n" + "IOException\n" + ioe.getMessage(), ioe);
+                        ':' + connectionParams.getPortNumber() + "':\n" + "IOException\n" + ioe.getMessage(), ioe);
                 errorMessage = "Couldn't connect to '" + formatHostString(connectionParams.hostName) +
-                        ":" + connectionParams.getPortNumber() + "':\n" + "IOException\n" + ioe.getMessage();
+                        ':' + connectionParams.getPortNumber() + "':\n" + "IOException\n" + ioe.getMessage();
             } catch (CancelConnectionException cce) {
                 logger.severe("Cancelled: " + cce.getMessage());
             } catch (AccessControlException ace) {
                 logger.severe("Couldn't connect to: " +
-                        connectionParams.hostName + ":" + connectionParams.getPortNumber() +
+                        connectionParams.hostName + ':' + connectionParams.getPortNumber() +
                         ": " + "AccessControlException\n" + ace.getMessage());
                 logger.log(Level.FINEST, "Couldn't connect to: " +
-                        connectionParams.hostName + ":" + connectionParams.getPortNumber() +
+                        connectionParams.hostName + ':' + connectionParams.getPortNumber() +
                         ": " + "AccessControlException\n" + ace.getMessage(), ace);
                 errorMessage = "Access control error";
             } catch (ConnectionErrorException cee) {
                 logger.severe(cee.getMessage() + " host: " +
-                        connectionParams.hostName + ":" + connectionParams.getPortNumber());
+                        connectionParams.hostName + ':' + connectionParams.getPortNumber());
                 errorMessage = cee.getMessage() + "\nHost: " +
-                    formatHostString(connectionParams.hostName) + ":" + connectionParams.getPortNumber();
+                    formatHostString(connectionParams.hostName) + ':' + connectionParams.getPortNumber();
             } catch (Throwable throwable) {
                 logger.log(Level.FINEST, "Couldn't connect to '" + formatHostString(connectionParams.hostName) +
-                        ":" + connectionParams.getPortNumber() + "':\n" + "Caught a throwable\n" + throwable.getMessage(), throwable);
+                        ':' + connectionParams.getPortNumber() + "':\n" + "Caught a throwable\n" + throwable.getMessage(), throwable);
                 errorMessage = "Couldn't connect to '" + formatHostString(connectionParams.hostName) +
-                        ":" + connectionParams.getPortNumber() + "':\n" + "Caught a throwable\n" + throwable + "\n" + throwable.getMessage();
+                        ':' + connectionParams.getPortNumber() + "':\n" + "Caught a throwable\n" + throwable + '\n' + throwable.getMessage();
                 throwable.printStackTrace();
                 //throw new Exception("Some other Error", throwable);
             }

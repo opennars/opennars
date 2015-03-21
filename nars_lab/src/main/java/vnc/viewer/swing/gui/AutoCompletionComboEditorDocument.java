@@ -17,11 +17,11 @@ import java.awt.event.FocusEvent;
  */
 public class AutoCompletionComboEditorDocument extends PlainDocument {
 
-	private ComboBoxModel model;
+	private final ComboBoxModel model;
 	private boolean selecting;
-	private JComboBox comboBox;
+	private final JComboBox comboBox;
 	private final boolean hidePopupOnFocusLoss;
-	private JTextComponent editor;
+	private final JTextComponent editor;
 
 	public AutoCompletionComboEditorDocument(final JComboBox comboBox) {
 		this.comboBox = comboBox;

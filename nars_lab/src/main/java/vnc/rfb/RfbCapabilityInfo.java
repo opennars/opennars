@@ -117,6 +117,6 @@ public class RfbCapabilityInfo {
 		return "RfbCapabilityInfo: [code: " + code +
 		", vendor: " + vendorSignature +
 		", name: " + nameSignature +
-		"]";
+                ']';
 	}
 }

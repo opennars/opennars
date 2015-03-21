@@ -182,6 +182,6 @@ public class PixelFormat {
     	", red-shift: " + String.valueOf(0xff & redShift) +
     	", green-shift: " + String.valueOf(0xff & greenShift) +
     	", blue-shift: " + String.valueOf(0xff & blueShift) +
-    	"]";
+                ']';
     }
 }

@@ -50,7 +50,7 @@ public class PointerEventMessage implements ClientToServerMessage {
 	@Override
 	public String toString() {
 		return "PointerEventMessage: [x: "+ x +", y: "+ y + ", button-mask: " +
-		buttonMask +"]";
+		buttonMask + ']';
 	}
 
 }

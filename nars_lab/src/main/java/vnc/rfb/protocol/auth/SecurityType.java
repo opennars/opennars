@@ -42,7 +42,7 @@ public enum SecurityType {
 //	int TLS_AUTHENTICATION = 18;
 //	int VENCRYPT_AUTHENTICATION = 19;
 
-	private int id;
+	private final int id;
 	private SecurityType(int id) {
 		this.id = id;
 	}
@@ -53,7 +53,7 @@ public enum SecurityType {
 
 	@SuppressWarnings("serial")
 	public
-	static Map<Integer, AuthHandler> implementedSecurityTypes =
+	static final Map<Integer, AuthHandler> implementedSecurityTypes =
 		new LinkedHashMap<Integer, AuthHandler>() {{
 			put(TIGHT_AUTHENTICATION.getId(), new TightAuthentication());
 			put(VNC_AUTHENTICATION.getId(), new VncAuthentication());

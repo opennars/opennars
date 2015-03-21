@@ -59,7 +59,7 @@ public class FramebufferUpdateRequestMessage implements ClientToServerMessage {
 	public String toString() {
 		return "FramebufferUpdateRequestMessage: [x: " + x + " y: " + y
 		+ " width: " + width + " height: " + height +
-		" incremental: " + incremental + "]";
+		" incremental: " + incremental + ']';
 	}
 
 }

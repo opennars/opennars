@@ -25,6 +25,7 @@
 package vnc.viewer.swing;
 
 import vnc.drawing.Renderer;
+import vnc.drawing.SoftCursor;
 import vnc.rfb.encoding.PixelFormat;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.transport.Reader;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class RendererImpl extends Renderer implements ImageObserver {
-    CyclicBarrier barrier = new CyclicBarrier(2);
+    final CyclicBarrier barrier = new CyclicBarrier(2);
     private final Image offscreanImage;
 	public RendererImpl(Reader reader, int width, int height, PixelFormat pixelFormat) {
 		if (0 == width) width = 1;
@@ -51,10 +52,17 @@ public class RendererImpl extends Renderer implements ImageObserver {
 		WritableRaster raster = Raster.createWritableRaster(sampleModel,
 				dataBuffer, null);
 		offscreanImage = new BufferedImage(colorModel, raster, false, null);
-		cursor = new SoftCursorImpl(0, 0, 0, 0);
+
+
 	}
 
-	/**
+    @Override
+    protected SoftCursor newCursor() {
+        return new SoftCursorImpl(0, 0, 0, 0);
+    }
+
+
+    /**
 	 * Draw jpeg image data
 	 *
 	 * @param bytes jpeg image data array
@@ -70,14 +78,10 @@ public class RendererImpl extends Renderer implements ImageObserver {
 		Toolkit.getDefaultToolkit().prepareImage(jpegImage, -1, -1, this);
 		try {
 			barrier.await(3, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			// nop
-		} catch (BrokenBarrierException e) {
-			// nop
-		} catch (TimeoutException e) {
+		} catch (InterruptedException | TimeoutException | BrokenBarrierException e) {
 			// nop
 		}
-		Graphics graphics = offscreanImage.getGraphics();
+        Graphics graphics = offscreanImage.getGraphics();
 		graphics.drawImage(jpegImage, rect.x, rect.y, rect.width, rect.height, this);
 	}
 
@@ -88,12 +92,10 @@ public class RendererImpl extends Renderer implements ImageObserver {
 		if (isReady) {
 			try {
 				barrier.await();
-			} catch (InterruptedException e) {
-				// nop
-			} catch (BrokenBarrierException e) {
+			} catch (InterruptedException | BrokenBarrierException e) {
 				// nop
 			}
-		}
+        }
 		return ! isReady;
 	}
 

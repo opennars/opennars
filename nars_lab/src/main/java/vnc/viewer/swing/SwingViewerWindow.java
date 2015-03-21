@@ -62,21 +62,21 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 	private JFrame frame;
 	private boolean forceResizable = true;
 	private ButtonsBar buttonsBar;
-	private Surface surface;
-	private boolean isSeparateFrame;
+	private final Surface surface;
+	private final boolean isSeparateFrame;
     private final boolean isApplet;
-    private VNCClient viewer;
-    private String connectionString;
-    private ConnectionPresenter presenter;
+    private final VNCClient viewer;
+    private final String connectionString;
+    private final ConnectionPresenter presenter;
     private Rectangle oldContainerBounds;
 	private volatile boolean isFullScreen;
 	private Border oldScrollerBorder;
 	private JLayeredPane lpane;
 	private EmptyButtonsBarMouseAdapter buttonsBarMouseAdapter;
     private String remoteDesktopName;
-    private ProtocolSettings rfbSettings;
-    private UiSettings uiSettings;
-    private Protocol workingProtocol;
+    private final ProtocolSettings rfbSettings;
+    private final UiSettings uiSettings;
+    private final Protocol workingProtocol;
 
     private boolean isZoomToFitSelected;
     private List<JComponent> kbdButtons;
@@ -502,7 +502,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 
     public static class ButtonsBar {
 		private static final Insets BUTTONS_MARGIN = new Insets(2, 2, 2, 2);
-		private JPanel bar;
+		private final JPanel bar;
 		private boolean isVisible;
 
 		public ButtonsBar() {
@@ -558,8 +558,9 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 
 	private class FullscreenBorderDetectionThread extends Thread {
 		public static final int SHOW_HIDE_BUTTONS_BAR_DELAY_IN_MILLS = 700;
-		private final JFrame frame;
-		private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        public static final int MILLIS = 100;
+        private final JFrame frame;
+		private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 		private ScheduledFuture<?> futureForShow;
 		private ScheduledFuture<?> futureForHide;
 		private Point mousePoint, oldMousePoint;
@@ -570,7 +571,8 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 			this.frame = frame;
 		}
 
-		public void run() {
+		@Override
+        public void run() {
 			setPriority(Thread.MIN_PRIORITY);
 			while(isFullScreen) {
 				mousePoint = MouseInfo.getPointerInfo().getLocation();
@@ -587,7 +589,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 					makeScrolling(viewPosition);
 				}
 				try {
-                    Thread.sleep(100);
+                    Thread.sleep(MILLIS);
                 } catch (Exception e) {
 					// nop
 				}
@@ -750,7 +752,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 
         addZoomButtons();
 
-        kbdButtons = new LinkedList<JComponent>();
+        kbdButtons = new LinkedList<>();
 
         buttonsBar.createStrut();
 
@@ -827,7 +829,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
         setButtonsBarVisible(true, container);
     }
 
-    private void sendCtrlAltDel(ProtocolContext context) {
+    private static void sendCtrlAltDel(ProtocolContext context) {
         context.sendMessage(new KeyEventMessage(Keymap.K_CTRL_LEFT, true));
         context.sendMessage(new KeyEventMessage(Keymap.K_ALT_LEFT, true));
         context.sendMessage(new KeyEventMessage(Keymap.K_DELETE, true));
@@ -836,7 +838,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
         context.sendMessage(new KeyEventMessage(Keymap.K_CTRL_LEFT, false));
     }
 
-    private void sendWinKey(ProtocolContext context) {
+    private static void sendWinKey(ProtocolContext context) {
         context.sendMessage(new KeyEventMessage(Keymap.K_CTRL_LEFT, true));
         context.sendMessage(new KeyEventMessage(Keymap.K_ESCAPE, true));
         context.sendMessage(new KeyEventMessage(Keymap.K_ESCAPE, false));
@@ -869,13 +871,13 @@ public class SwingViewerWindow implements IChangeSettingsListener {
     private void showConnectionInfoMessage() {
         StringBuilder message = new StringBuilder();
         message.append("TightVNC Viewer v.").append(VNCClient.ver()).append("\n\n");
-        message.append("Connected to: ").append(remoteDesktopName).append("\n");
+        message.append("Connected to: ").append(remoteDesktopName).append('\n');
         message.append("Host: ").append(connectionString).append("\n\n");
 
         message.append("Desktop geometry: ")
                 .append(String.valueOf(surface.getWidth()))
                 .append(" \u00D7 ") // multiplication sign
-                .append(String.valueOf(surface.getHeight())).append("\n");
+                .append(String.valueOf(surface.getHeight())).append('\n');
         message.append("Color format: ")
                 .append(String.valueOf(Math.round(Math.pow(2, workingProtocol.getPixelFormat().depth))))
                 .append(" colors (")
@@ -886,7 +888,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
         if (workingProtocol.isTight()) {
             message.append("tight");
         }
-        message.append("\n");
+        message.append('\n');
 
         JOptionPane infoPane = new JOptionPane(message.toString(), JOptionPane.INFORMATION_MESSAGE);
         final JDialog infoDialog = infoPane.createDialog(frame, "VNC connection info");

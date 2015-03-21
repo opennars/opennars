@@ -88,12 +88,12 @@ public class ProtocolSettings implements Serializable {
 	public transient LinkedHashSet<EncodingType> encodings;
 	private transient final List<IChangeSettingsListener> listeners;
 
-    public transient CapabilityContainer
-		tunnelingCapabilities,
-		authCapabilities,
-		serverMessagesCapabilities,
-		clientMessagesCapabilities,
-		encodingTypesCapabilities;
+    public final transient CapabilityContainer
+		tunnelingCapabilities;
+    public final transient CapabilityContainer authCapabilities;
+    public final transient CapabilityContainer serverMessagesCapabilities;
+    public final transient CapabilityContainer clientMessagesCapabilities;
+    public final transient CapabilityContainer encodingTypesCapabilities;
 	private transient String remoteCharsetName;
 
 	public static ProtocolSettings getDefaultSettings() {
@@ -117,7 +117,7 @@ public class ProtocolSettings implements Serializable {
         colorDepth = COLOR_DEPTH_SERVER_SETTINGS;
         refine();
 
-        listeners = new LinkedList<IChangeSettingsListener>();
+        listeners = new LinkedList<>();
 		tunnelingCapabilities = new CapabilityContainer();
 		authCapabilities = new CapabilityContainer();
 		serverMessagesCapabilities = new CapabilityContainer();
@@ -251,7 +251,7 @@ public class ProtocolSettings implements Serializable {
 	}
 
 	public void refine() {
-		LinkedHashSet<EncodingType> encodings = new LinkedHashSet<EncodingType>();
+		LinkedHashSet<EncodingType> encodings = new LinkedHashSet<>();
 		if (EncodingType.RAW_ENCODING == preferredEncoding) {
 			// when RAW selected send no ordinary encodings so only default RAW encoding will be enabled
 		} else {

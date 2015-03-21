@@ -69,7 +69,7 @@ public class HandshakeState extends ProtocolState {
 		if (major < MIN_SUPPORTED_VERSION_MAJOR ||
 				MIN_SUPPORTED_VERSION_MAJOR == major && minor <MIN_SUPPORTED_VERSION_MINOR)
 			throw new UnsupportedProtocolVersionException(
-					"Unsupported protocol version: " + major + "." + minor);
+					"Unsupported protocol version: " + major + '.' + minor);
 		if (major > MAX_SUPPORTED_VERSION_MAJOR) {
 			major = MAX_SUPPORTED_VERSION_MAJOR;
 			minor = MAX_SUPPORTED_VERSION_MINOR;
@@ -90,7 +90,7 @@ public class HandshakeState extends ProtocolState {
 		} else
 			throw new UnsupportedProtocolVersionException(
 					"Unsupported protocol version: " + protocolString);
-		writer.write(("RFB 00" + major + ".00" + minor + "\n").getBytes());
+		writer.write(("RFB 00" + major + ".00" + minor + '\n').getBytes());
         Logger.getLogger(getClass().getName()).info("Set protocol version to: " + context.getProtocolVersion());
 	}
 

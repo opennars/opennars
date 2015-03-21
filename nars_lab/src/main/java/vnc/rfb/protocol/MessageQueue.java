@@ -37,7 +37,7 @@ public class MessageQueue {
 	private final BlockingQueue<ClientToServerMessage> queue;
 
 	public MessageQueue() {
-		queue = new LinkedBlockingQueue<ClientToServerMessage>();
+		queue = new LinkedBlockingQueue<>();
 	}
 
 	public void put(ClientToServerMessage message) {

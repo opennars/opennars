@@ -24,15 +24,15 @@
 
 package vnc.rfb;
 
+import vnc.exceptions.TransportException;
+import vnc.rfb.encoding.EncodingType;
+import vnc.transport.Reader;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import vnc.exceptions.TransportException;
-import vnc.rfb.encoding.EncodingType;
-import vnc.transport.Reader;
 
 /**
  * Container for Tight extention protocol capabilities
@@ -43,7 +43,7 @@ import vnc.transport.Reader;
 public class CapabilityContainer {
 	public CapabilityContainer() { }
 
-	private final Map<Integer, RfbCapabilityInfo> caps = new HashMap<Integer, RfbCapabilityInfo>();
+	private final Map<Integer, RfbCapabilityInfo> caps = new HashMap<>();
 
 	public void add(RfbCapabilityInfo capabilityInfo) {
 		caps.put(capabilityInfo.getCode(), capabilityInfo);
@@ -73,7 +73,7 @@ public class CapabilityContainer {
 	}
 
 	public Collection<EncodingType> getEnabledEncodingTypes() {
-		Collection<EncodingType> types = new LinkedList<EncodingType>();
+		Collection<EncodingType> types = new LinkedList<>();
 		for (RfbCapabilityInfo c : caps.values()) {
 			if (c.isEnabled()) {
 				types.add(EncodingType.byId(c.getCode()));
