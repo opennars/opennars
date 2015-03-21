@@ -33,14 +33,16 @@ import vnc.rfb.client.SetEncodingsMessage;
 import vnc.rfb.client.SetPixelFormatMessage;
 import vnc.rfb.encoding.PixelFormat;
 import vnc.rfb.encoding.decoder.DecodersContainer;
+import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.state.HandshakeState;
 import vnc.rfb.protocol.state.ProtocolState;
 import vnc.transport.Reader;
 import vnc.transport.Writer;
 
+import java.awt.image.BufferedImage;
 import java.util.logging.Logger;
 
-public class Protocol implements ProtocolContext, IChangeSettingsListener {
+abstract public class Protocol implements ProtocolContext, IChangeSettingsListener {
 	private ProtocolState state;
 	private final Logger logger;
 	private final IPasswordRetriever passwordRetriever;
@@ -188,10 +190,17 @@ public class Protocol implements ProtocolContext, IChangeSettingsListener {
 		receiverTask = new ReceiverTask(
 				reader, repaintController,
 				clipboardController,
-				decoders, this);
+				decoders, this) {
+            @Override
+            protected void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+                Protocol.this.frameBufferUpdate(image, rect);
+            }
+        };
 		receiverThread = new Thread(receiverTask, "RfbReceiverTask");
 		receiverThread.start();
 	}
+
+    protected abstract void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect);
 
     private void correctServerPixelFormat() {
         // correct true color flag - we don't support color maps, so always set it up

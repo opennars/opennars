@@ -27,6 +27,7 @@ package vnc.viewer.swing;
 import vnc.core.SettingsChangedEvent;
 import vnc.rfb.IChangeSettingsListener;
 import vnc.rfb.IRepaintController;
+import vnc.rfb.client.KeyEventMessage;
 import vnc.rfb.encoding.PixelFormat;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolContext;
@@ -43,9 +44,9 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 	private int width;
 	private int height;
 	private SoftCursorImpl cursor;
-	private RendererImpl renderer;
-	private MouseEventListener mouseEventListener;
-	private KeyEventListener keyEventListener;
+	RendererImpl renderer;
+	public final MouseEventListener mouse;
+	public final KeyEventListener key;
 	private boolean showCursor;
 	private ModifierButtonEventListener modifierButtonListener;
 	private boolean isUserInputEnabled = false;
@@ -54,7 +55,12 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
     private double scaleFactor;
 	public Dimension oldSize;
 
-	@Override
+
+    public RendererImpl getRenderer() {
+        return renderer;
+    }
+
+    @Override
 	public boolean isDoubleBuffered() {
 		// TODO returning false in some reason may speed ups drawing, but may
 		// not. Needed in challenging.
@@ -62,17 +68,32 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 	}
 
 	public Surface(ProtocolContext context, double scaleFactor, LocalMouseCursorShape mouseCursorShape) {
-		this.context = context;
-		this.scaleFactor = scaleFactor;
-		init(context.getFbWidth(), context.getFbHeight());
-		oldSize = getPreferredSize();
+        key = new KeyEventListener(context) {
+            @Override
+            protected void onKeyEvent(KeyEventMessage ee) {
+                Surface.this.onKeyEvent(ee);
+            }
+        };
+        mouse = new MouseEventListener(this, context, scaleFactor);
 
-		if ( ! context.getSettings().isViewOnly()) {
-			setUserInputEnabled(true, context.getSettings().isConvertToAscii());
-		}
-		showCursor = context.getSettings().isShowRemoteCursor();
+        this.context = context;
+        this.scaleFactor = scaleFactor;
+        init(context.getFbWidth(), context.getFbHeight());
+        oldSize = getPreferredSize();
+
+        if (!context.getSettings().isViewOnly()) {
+            setUserInputEnabled(true, context.getSettings().isConvertToAscii());
+        }
+        showCursor = context.getSettings().isShowRemoteCursor();
         setLocalCursorShape(mouseCursorShape);
-	}
+
+    }
+
+    protected void onKeyEvent(KeyEventMessage ee) {
+        /* for overriding */
+
+    }
+
 
     // TODO Extract abstract/interface ViewerWindow from SwingViewerWindow
     public void setViewerWindow(SwingViewerWindow viewerWindow) {
@@ -83,28 +104,24 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 		if (enable == isUserInputEnabled) return;
 		isUserInputEnabled = enable;
 		if (enable) {
-			if (null == mouseEventListener) {
-				mouseEventListener = new MouseEventListener(this, context, scaleFactor);
-			}
-			addMouseListener(mouseEventListener);
-			addMouseMotionListener(mouseEventListener);
-			addMouseWheelListener(mouseEventListener);
+			addMouseListener(mouse);
+			addMouseMotionListener(mouse);
+			addMouseWheelListener(mouse);
 
 			setFocusTraversalKeysEnabled(false);
-			if (null == keyEventListener) {
-				keyEventListener = new KeyEventListener(context);
+			if (null == key) {
 				if (modifierButtonListener != null) {
-					keyEventListener.addModifierListener(modifierButtonListener);
+					key.addModifierListener(modifierButtonListener);
 				}
 			}
-			keyEventListener.setConvertToAscii(convertToAscii);
-			addKeyListener(keyEventListener);
+			key.setConvertToAscii(convertToAscii);
+			addKeyListener(key);
 			enableInputMethods(false);
 		} else {
-			removeMouseListener(mouseEventListener);
-			removeMouseMotionListener(mouseEventListener);
-			removeMouseWheelListener(mouseEventListener);
-			removeKeyListener(keyEventListener);
+			removeMouseListener(mouse);
+			removeMouseMotionListener(mouse);
+			removeMouseWheelListener(mouse);
+			removeKeyListener(key);
 		}
 	}
 
@@ -210,8 +227,8 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
 	public void addModifierListener(ModifierButtonEventListener modifierButtonListener) {
 		this.modifierButtonListener = modifierButtonListener;
-		if (keyEventListener != null) {
-			keyEventListener.addModifierListener(modifierButtonListener);
+		if (key != null) {
+			key.addModifierListener(modifierButtonListener);
 		}
 	}
 
@@ -229,7 +246,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
                 setLocalCursorShape(uiSettings.getMouseCursorShape());
             }
 		}
-		mouseEventListener.setScaleFactor(scaleFactor);
+		mouse.setScaleFactor(scaleFactor);
 		updateFrameSize();
 	}
 

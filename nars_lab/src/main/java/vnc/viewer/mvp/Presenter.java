@@ -218,6 +218,8 @@ public class Presenter {
         return registeredViews.get(name);
     }
 
+
+
     protected static class PropertyNotFoundException extends CommonException {
         public PropertyNotFoundException(String message) {
             super(message);

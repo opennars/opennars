@@ -51,21 +51,32 @@ public class OCR {
     }
 
 
+    static final int minWidth = 5;
+    static final int minHeight = 5;
+
     public static Future<String> queue(BufferedImage image, FramebufferUpdateRectangle rect) {
 
+        if ((rect.width < minWidth) || (rect.height < minHeight))
+            return null;
 
-        final long start = System.currentTimeMillis();
+        final long queued = System.currentTimeMillis();
 
         return ocr.submit(new Callable<String>() {
 
             @Override
             public String call() throws Exception {
+
+                final long start = System.currentTimeMillis();
+
                 String x = null;
                 try {
                     x = t.doOCR(image, rect.newRectangle());
+                    t.setOcrEngineMode(0);
+                    t.setHocr(false);
                     final long end = System.currentTimeMillis();
-                    long delay = end - start;
-                    System.out.println(x + "( " + delay + " ms)");
+                    long waiting =start - queued;
+                    long processing = end - start;
+                    System.out.println(x + "(" + waiting + " waiting ms, " + processing + " processing ms)");
                 } catch (TesseractException e) {
                     e.printStackTrace();
                 }

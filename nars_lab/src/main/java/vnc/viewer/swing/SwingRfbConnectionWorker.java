@@ -27,6 +27,7 @@ package vnc.viewer.swing;
 import vnc.exceptions.*;
 import vnc.rfb.IPasswordRetriever;
 import vnc.rfb.IRfbSessionListener;
+import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.Protocol;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.transport.Reader;
@@ -36,6 +37,7 @@ import vnc.viewer.*;
 import vnc.viewer.swing.gui.PasswordDialog;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
@@ -47,7 +49,7 @@ import java.util.logging.Logger;
 /**
 * @author dime at tightvnc.com
 */
-public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implements RfbConnectionWorker, IRfbSessionListener {
+abstract public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implements RfbConnectionWorker, IRfbSessionListener {
 
     private final String predefinedPassword;
     private final ConnectionPresenter presenter;
@@ -62,6 +64,12 @@ public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implemen
     protected ProtocolSettings rfbSettings;
     protected UiSettings uiSettings;
 
+
+    public SwingViewerWindow getWindow() {
+        return viewerWindow;
+    }
+
+
     @Override
     public Void doInBackground() throws Exception {
         if (null == workingSocket) throw new ConnectionErrorException("Null socket");
@@ -71,7 +79,13 @@ public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implemen
 
         workingProtocol = new Protocol(reader, writer,
                 new PasswordChooser(connectionString, parentWindow, this),
-                rfbSettings);
+                rfbSettings) {
+
+            @Override
+            protected void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+                SwingRfbConnectionWorker.this.frameBufferUpdate(image, rect);
+            }
+        };
         String message = "Handshaking with remote host";
         logger.info(message);
         publish(message);
@@ -80,6 +94,10 @@ public class SwingRfbConnectionWorker extends SwingWorker<Void, String> implemen
 //      tryAgain = false;
         return null;
     }
+
+    public Surface getSurface() { return getWindow().getSurface(); }
+
+    protected abstract void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect);
 
     public SwingRfbConnectionWorker(String predefinedPassword, ConnectionPresenter presenter, JFrame parentWindow,
                                     SwingViewerWindowFactory viewerWindowFactory) {

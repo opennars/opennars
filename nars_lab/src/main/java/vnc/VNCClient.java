@@ -25,20 +25,22 @@
 package vnc;
 
 import automenta.vivisect.swing.NWindow;
+import vnc.rfb.client.KeyEventMessage;
+import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.viewer.ConnectionPresenter;
 import vnc.viewer.UiSettings;
 import vnc.viewer.cli.VNCProperties;
-import vnc.viewer.swing.ConnectionParams;
-import vnc.viewer.swing.ParametersHandler;
-import vnc.viewer.swing.SwingConnectionWorkerFactory;
-import vnc.viewer.swing.SwingViewerWindowFactory;
+import vnc.viewer.swing.*;
 import vnc.viewer.swing.gui.ConnectionView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Attributes;
@@ -67,29 +69,26 @@ public abstract class VNCClient extends JPanel implements WindowListener {
     public static void main(String... args) {
 
         //TODO use parameters
-        VNCProperties parser = new VNCProperties("localhost",5091);
+        VNCProperties param = new VNCProperties("localhost",5091);
 
-		ParametersHandler.completeParserOptions(parser);
+		ParametersHandler.completeParserOptions(param);
 
-		parser.parse(args);
-		if (parser.isSet(ParametersHandler.ARG_HELP)) {
-			printUsage(parser.optionsUsage());
+		param.parse(args);
+		if (param.isSet(ParametersHandler.ARG_HELP)) {
+			printUsage(param.optionsUsage());
 			System.exit(0);
 		}
-		VNCClient viewer = new VNCClient(parser) {
 
-            @Override
-            public String getParameter(String p) {
-                //TODO
+        VNCClient vnc;
+        NWindow w = new NWindow("VNC", vnc = new VNCClient(param) {
+            @Override public String getParameter(String p) {
                 return null;
             }
-        };
-        NWindow w = new NWindow("VNC", viewer);
-        w.show(800,600,true);
+        }).show(800,600,true);
 
 
 
-	}
+    }
 
     public static void printUsage(String additional) {
 		System.out.println("Usage: java -jar (progfilename) [hostname [port_number]] [Options]\n" +
@@ -113,7 +112,7 @@ public abstract class VNCClient extends JPanel implements WindowListener {
         init();
 	}
 
-	private VNCClient(VNCProperties parser) {
+	public VNCClient(VNCProperties parser) {
 		this();
 
         setLoggingLevel(parser.isSet(ParametersHandler.ARG_VERBOSE) ? Level.FINE :
@@ -204,7 +203,18 @@ public abstract class VNCClient extends JPanel implements WindowListener {
 
         final boolean hasJsch = checkJsch();
         final boolean allowInteractive = allowAppletInteractiveConnections || ! isApplet;
-        connectionPresenter = new ConnectionPresenter(hasJsch, allowInteractive);
+        connectionPresenter = new ConnectionPresenter(hasJsch, allowInteractive) {
+            @Override public void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+                VNCClient.this.onFrameBufferUpdate(image, rect);
+            }
+
+            @Override
+            public void successfulRfbConnection() {
+                super.successfulRfbConnection();
+                onConnected();
+            }
+        };
+
         connectionPresenter.addModel("ConnectionParamsModel", connectionParams);
         final ConnectionView connectionView = new ConnectionView(
                 VNCClient.this, // appWindowListener
@@ -223,13 +233,63 @@ public abstract class VNCClient extends JPanel implements WindowListener {
 //            });
 //        }
 
-        SwingViewerWindowFactory viewerWindowFactory = new SwingViewerWindowFactory(isSeparateFrame, isApplet, this);
 
         connectionPresenter.setConnectionWorkerFactory(
-                new SwingConnectionWorkerFactory(connectionView.getFrame(), passwordFromParams, connectionPresenter, viewerWindowFactory));
+                new SwingConnectionWorkerFactory(connectionView.getFrame(), passwordFromParams, connectionPresenter,
+                        new SwingViewerWindowFactory(isSeparateFrame, isApplet, this)
+                ));
 
         connectionPresenter.startConnection(settings, uiSettings, paramsMask);
 
+
+    }
+
+    private void onConnected() {
+
+        //Ex3:
+        getSurface().key.setProxy(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                System.out.println("typed: " + e);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println("press: " + e);
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                System.out.println("release: " + e);
+            }
+        });
+
+    }
+
+    public Surface getSurface() {
+        return connectionPresenter.getSurface();
+    }
+
+    public void inputKey(char chr, boolean press) {
+        //TODO
+    }
+
+    public void onInputKey(KeyEventMessage ee) {
+        //TODO
+    }
+
+    public void inputKey(char chr) {
+        getSurface().key.keyTyped( chr, this );
+
+    }
+
+    protected void onFrameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+        //EX1:
+        //OCR.queue(image, rect);
+
+        //EX2:
+        //inputKey((char)('a' + (Math.random() * 25) ));
     }
 
 

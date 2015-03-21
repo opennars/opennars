@@ -24,21 +24,24 @@
 
 package vnc.viewer;
 
+import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.utils.Strings;
 import vnc.viewer.mvp.Presenter;
 import vnc.viewer.swing.ConnectionParams;
+import vnc.viewer.swing.Surface;
 import vnc.viewer.swing.WrongParameterException;
 import vnc.viewer.swing.gui.ConnectionView;
 import vnc.viewer.swing.gui.ConnectionsHistory;
 
+import java.awt.image.BufferedImage;
 import java.net.Socket;
 import java.util.logging.Logger;
 
 /**
  * @author dime at tightvnc.com
  */
-public class ConnectionPresenter extends Presenter {
+public abstract class ConnectionPresenter extends Presenter {
     public static final String PROPERTY_HOST_NAME = "HostName";
     public static final String PROPERTY_RFB_PORT_NUMBER = "PortNumber";
     public static final String PROPERTY_USE_SSH = "UseSsh";
@@ -65,6 +68,14 @@ public class ConnectionPresenter extends Presenter {
     private NetworkConnectionWorker networkConnectionWorker;
     private boolean needReconnection = true;
 
+    public RfbConnectionWorker getRfbConnectionWorker() {
+        return rfbConnectionWorker;
+    }
+
+    public NetworkConnectionWorker getNetworkConnectionWorker() {
+        return networkConnectionWorker;
+    }
+
     public ConnectionPresenter(boolean hasSshSupport, boolean allowInteractive) {
         this.hasSshSupport = hasSshSupport;
         this.allowInteractive = allowInteractive;
@@ -88,6 +99,8 @@ public class ConnectionPresenter extends Presenter {
             connect();
         }
     }
+
+
 
     public void setUseSsh(boolean useSsh) {
         setModelProperty(PROPERTY_USE_SSH, useSsh, boolean.class);
@@ -289,5 +302,12 @@ public class ConnectionPresenter extends Presenter {
 
     public boolean allowInteractive() {
         return allowInteractive;
+    }
+
+
+    abstract public void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect);
+
+    public Surface getSurface() {
+        return getRfbConnectionWorker().getSurface();
     }
 }

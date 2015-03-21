@@ -44,4 +44,5 @@ public interface ConnectionWorker<T> {
      * @return true if cancelled successful, false if not (ex. worker is already cancelled)
      */
     boolean cancel();
+
 }

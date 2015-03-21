@@ -28,11 +28,13 @@ import vnc.rfb.client.KeyEventMessage;
 import vnc.rfb.protocol.ProtocolContext;
 import vnc.utils.Keymap;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyEventListener implements KeyListener {
 
+    private KeyListener proxy = null;
 
 	private ModifierButtonEventListener modifierButtonListener;
 	private boolean convertToAscii;
@@ -44,7 +46,12 @@ public class KeyEventListener implements KeyListener {
 		this.convertToAscii = false;
 	}
 
-	private void processKeyEvent(KeyEvent e) {
+    public KeyListener setProxy(KeyListener proxy) {
+        this.proxy = proxy;
+        return proxy;
+    }
+
+    private void processKeyEvent(KeyEvent e) {
 		if (processModifierKeys(e)) return;
 		if (processSpecialKeys(e)) return;
 		if (processActionKey(e)) return;
@@ -73,7 +80,7 @@ public class KeyEventListener implements KeyListener {
 			keyChar = Keymap.unicode2keysym(keyChar);
 		}
 
-		sendKeyEvent(keyChar, e);
+		onKeyEvent(keyChar, e);
 	}
 
 
@@ -83,8 +90,8 @@ public class KeyEventListener implements KeyListener {
 	private boolean processSpecialKeys(KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		if (KeyEvent.VK_ALT_GRAPH == keyCode) {
-			sendKeyEvent(Keymap.K_CTRL_LEFT, e);
-			sendKeyEvent(Keymap.K_ALT_LEFT, e);
+			onKeyEvent(Keymap.K_CTRL_LEFT, e);
+			onKeyEvent(Keymap.K_ALT_LEFT, e);
 			return true;
 		}
 		switch (keyCode) {
@@ -108,7 +115,7 @@ public class KeyEventListener implements KeyListener {
 
 		default: return false;
 		}
-		sendKeyEvent(keyCode, e);
+		onKeyEvent(keyCode, e);
 		return true;
 	}
 
@@ -146,7 +153,7 @@ public class KeyEventListener implements KeyListener {
 
 			default: return false; // ignore other 'action' keys
 			}
-			sendKeyEvent(keyCode, e);
+			onKeyEvent(keyCode, e);
 			return true;
 		}
 		return false;
@@ -167,30 +174,47 @@ public class KeyEventListener implements KeyListener {
 		if (modifierButtonListener != null) {
 			modifierButtonListener.fireEvent(e);
 		}
-		sendKeyEvent(keyCode +
-				(e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT ? 1 : 0), // "Right" Ctrl/Alt/Shift/Meta deffers frim "Left" ones by +1
-				e);
+		onKeyEvent(keyCode +
+                        (e.getKeyLocation() == KeyEvent.KEY_LOCATION_RIGHT ? 1 : 0), // "Right" Ctrl/Alt/Shift/Meta deffers frim "Left" ones by +1
+                e);
 		return true;
 	}
 
-	private void sendKeyEvent(int keyChar, KeyEvent e) {
-		context.sendMessage(new KeyEventMessage(keyChar, e.getID() == KeyEvent.KEY_PRESSED));
+	private KeyEventMessage onKeyEvent(int keyChar, KeyEvent e) {
+        KeyEventMessage ee;
+		context.sendMessage(ee = new KeyEventMessage(keyChar, e.getID() == KeyEvent.KEY_PRESSED));
+        onKeyEvent(ee);
+
+        return ee;
 	}
 
-	@Override
+    protected void onKeyEvent(KeyEventMessage ee) {
+        /** for overriding in subclasses */
+    }
+
+    @Override
 	public void keyTyped(KeyEvent e) {
+        if (this.proxy!=null) {
+            proxy.keyTyped(e);
+        }
 		e.consume();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		processKeyEvent(e);
+        if (this.proxy!=null) {
+            proxy.keyPressed(e);
+        }
 		e.consume();
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		processKeyEvent(e);
+        if (this.proxy!=null) {
+            proxy.keyReleased(e);
+        }
 		e.consume();
 	}
 
@@ -205,4 +229,14 @@ public class KeyEventListener implements KeyListener {
 		}
 	}
 
+    public synchronized void keyTyped(char c, boolean press, Component source) {
+        KeyEvent ke = new KeyEvent(source, press ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, KeyEvent.getExtendedKeyCodeForChar(c), c,
+                KeyEvent.KEY_LOCATION_UNKNOWN);
+        processKeyEvent(ke);
+    }
+
+    public synchronized void keyTyped(char c, Component source) {
+        keyTyped(c, true, source);
+        keyTyped(c, false, source);
+    }
 }

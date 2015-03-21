@@ -24,12 +24,14 @@
 
 package vnc.viewer.swing;
 
+import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.viewer.AbstractConnectionWorkerFactory;
 import vnc.viewer.ConnectionPresenter;
 import vnc.viewer.NetworkConnectionWorker;
 import vnc.viewer.RfbConnectionWorker;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 
 /**
  * @author dime at tightvnc.com
@@ -56,8 +58,18 @@ public class SwingConnectionWorkerFactory extends AbstractConnectionWorkerFactor
 
     @Override
     public RfbConnectionWorker createRfbConnectionWorker() {
-        return new SwingRfbConnectionWorker(predefinedPassword, presenter, parentWindow, viewerWindowFactory);
+        SwingRfbConnectionWorker w = new SwingRfbConnectionWorker(predefinedPassword, presenter, parentWindow, viewerWindowFactory) {
+            @Override
+            protected void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+                presenter.frameBufferUpdate(image, rect);
+            }
+
+        };
+        return w;
     }
+
+
+
 
     @Override
     public void setPredefinedPassword(String predefinedPassword) {

@@ -62,7 +62,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 	private JFrame frame;
 	private boolean forceResizable = true;
 	private ButtonsBar buttonsBar;
-	private final Surface surface;
+	final Surface surface;
 	private final boolean isSeparateFrame;
     private final boolean isApplet;
     private final VNCClient viewer;
@@ -123,6 +123,8 @@ public class SwingViewerWindow implements IChangeSettingsListener {
             }).start();
         }
 	}
+
+
 
 	private void createContainer(final Surface surface, boolean isApplet, JComponent appletWindow) {
 		outerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
@@ -511,6 +513,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 
 		public JButton createButton(String iconId, String tooltipText, ActionListener actionListener) {
 			JButton button = new JButton(Utils.getButtonIcon(iconId));
+            button.setText(iconId);
 			button.setToolTipText(tooltipText);
 			button.setMargin(BUTTONS_MARGIN);
 			bar.add(button);

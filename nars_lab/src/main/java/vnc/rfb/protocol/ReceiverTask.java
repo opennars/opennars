@@ -24,7 +24,6 @@
 
 package vnc.rfb.protocol;
 
-import vnc.OCR;
 import vnc.drawing.Renderer;
 import vnc.exceptions.CommonException;
 import vnc.exceptions.ProtocolException;
@@ -41,11 +40,12 @@ import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.encoding.decoder.RichCursorDecoder;
 import vnc.transport.Reader;
 
+import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
 
-public class ReceiverTask implements Runnable {
+abstract public class ReceiverTask implements Runnable {
 	private static final byte FRAMEBUFFER_UPDATE = 0;
 	private static final byte SET_COLOR_MAP_ENTRIES = 1;
 	private static final byte BELL = 2;
@@ -157,37 +157,41 @@ public class ReceiverTask implements Runnable {
 		reader.readByte(); // padding
 		int numberOfRectangles = reader.readUInt16();
 		while (numberOfRectangles-- > 0) {
-			FramebufferUpdateRectangle rect = new FramebufferUpdateRectangle();
-			rect.fill(reader);
+            FramebufferUpdateRectangle rect = new FramebufferUpdateRectangle();
+            rect.fill(reader);
 
 
-			Decoder decoder = decoders.getDecoderByType(rect.getEncodingType());
-			logger.finest(rect.toString() + (0 == numberOfRectangles ? "\n---" : ""));
-			if (decoder != null) {
-				decoder.decode(reader, renderer, rect);
-				repaintController.repaintBitmap(rect);
-
-
-                OCR.queue(renderer.getImage(), rect);
-
-			} else if (rect.getEncodingType() == EncodingType.RICH_CURSOR) {
-				RichCursorDecoder.getInstance().decode(reader, renderer, rect);
-				repaintController.repaintCursor();
-			} else if (rect.getEncodingType() == EncodingType.CURSOR_POS) {
-				renderer.decodeCursorPosition(rect);
-				repaintController.repaintCursor();
-			} else if (rect.getEncodingType() == EncodingType.DESKTOP_SIZE) {
-				fullscreenFbUpdateIncrementalRequest =
-					new FramebufferUpdateRequestMessage(0, 0, rect.width, rect.height, true);
-				synchronized (renderer.getLock()) {
-					renderer = repaintController.createRenderer(reader, rect.width, rect.height,
-							context.getPixelFormat());
-				}
-				context.sendMessage(new FramebufferUpdateRequestMessage(0, 0, rect.width, rect.height, false));
+            Decoder decoder = decoders.getDecoderByType(rect.getEncodingType());
+            logger.finest(rect.toString() + (0 == numberOfRectangles ? "\n---" : ""));
+            if (decoder != null) {
+                decoder.decode(reader, renderer, rect);
+                repaintController.repaintBitmap(rect);
+            } else if (rect.getEncodingType() == EncodingType.RICH_CURSOR) {
+                RichCursorDecoder.getInstance().decode(reader, renderer, rect);
+                repaintController.repaintCursor();
+            } else if (rect.getEncodingType() == EncodingType.CURSOR_POS) {
+                renderer.decodeCursorPosition(rect);
+                repaintController.repaintCursor();
+            } else if (rect.getEncodingType() == EncodingType.DESKTOP_SIZE) {
+                fullscreenFbUpdateIncrementalRequest =
+                        new FramebufferUpdateRequestMessage(0, 0, rect.width, rect.height, true);
+                synchronized (renderer.getLock()) {
+                    renderer = repaintController.createRenderer(reader, rect.width, rect.height,
+                            context.getPixelFormat());
+                }
+                context.sendMessage(new FramebufferUpdateRequestMessage(0, 0, rect.width, rect.height, false));
 //				repaintController.repaintCursor();
-			} else
-				throw new CommonException("Unprocessed encoding: " + rect.toString());
-		}
+            } else
+                throw new CommonException("Unprocessed encoding: " + rect.toString());
+
+            frameBufferUpdate(renderer.getImage(), rect);
+        }
+
+
+
+
+
+
 		synchronized (reader) {
 			if (needSendPixelFormat) {
 				needSendPixelFormat = false;
@@ -201,6 +205,9 @@ public class ReceiverTask implements Runnable {
 			}
 		}
 	}
+
+
+    abstract protected void frameBufferUpdate (BufferedImage image, FramebufferUpdateRectangle rect);
 
 	public synchronized void queueUpdatePixelFormat(PixelFormat pf) {
 		pixelFormat = pf;

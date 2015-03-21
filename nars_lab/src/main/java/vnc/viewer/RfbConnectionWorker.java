@@ -25,6 +25,7 @@
 package vnc.viewer;
 
 import vnc.rfb.protocol.ProtocolSettings;
+import vnc.viewer.swing.Surface;
 
 import java.net.Socket;
 
@@ -40,5 +41,7 @@ public interface RfbConnectionWorker extends ConnectionWorker<Void> {
     void setUiSettings(UiSettings uiSettings);
 
     void setConnectionString(String connectionString);
+
+    Surface getSurface();
 
 }
