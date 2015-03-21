@@ -6,7 +6,8 @@ import java.awt.event.ActionListener;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 abstract public class TimeControl extends NPanel implements ActionListener {
-    protected final int GUIUpdatePeriodMS = 75;
+
+    protected int GUIUpdatePeriodMS = 75;
     protected final char FA_StopCharacter = '\uf04c';
     protected final char FA_FocusCharacter = '\uf11e';
     protected final char FA_ControlCharacter = '\uf085';

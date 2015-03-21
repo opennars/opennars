@@ -67,6 +67,7 @@ public class NARControls extends TimeControl implements Reaction {
      * Reference to the experience writer
      */
     private final TextOutput experienceWriter;
+    private final MeterVis.MeterVisPanel meters;
 
 
     /**
@@ -400,8 +401,9 @@ public class NARControls extends TimeControl implements Reaction {
         add(top, NORTH);
 
         if (addCharts)
-            add(new MeterVis(nar, this.metrics.getMetrics()).newPanel(), CENTER);
-        
+            add(meters = new MeterVis(nar, this.metrics.getMetrics()).newPanel(), CENTER);
+        else
+            meters = null;
         
         init();
         volumeSlider.setValue(nar.param.noiseLevel.get());
@@ -443,6 +445,7 @@ public class NARControls extends TimeControl implements Reaction {
     public void init() {
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
+        setFrameRate(25);
         updateGUI();
         nar.memory.event.on(FrameEnd.class, this);
     }
@@ -483,7 +486,12 @@ public class NARControls extends TimeControl implements Reaction {
         }
     }
 
-    
+    public void setFrameRate(float fps) {
+        this.GUIUpdatePeriodMS = (int)(1000.0/fps);
+        if (meters!=null)
+            meters.setFrameRate(fps);
+    }
+
     /**
      * Handling button click
      *
@@ -600,6 +608,13 @@ public class NARControls extends TimeControl implements Reaction {
     @Override
     public void setSpeed(float nextSpeed) {
         final float maxPeriodMS = 1024.0f;
+
+        if (nextSpeed == -1) {
+            //disable speed change
+            speedSlider.setEnabled(false);
+            stopButton.setEnabled(false);
+            walkButton.setEnabled(false);
+        }
 
         if (nextSpeed == 0) {
             if (currentSpeed == 0) {

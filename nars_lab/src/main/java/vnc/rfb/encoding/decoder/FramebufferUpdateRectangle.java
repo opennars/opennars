@@ -45,12 +45,14 @@ public class FramebufferUpdateRectangle {
 	public int width;
 	public int height;
     private EncodingType encodingType;
+    public final long createdAt;
 
-	public FramebufferUpdateRectangle() {
-		// nop
+    public FramebufferUpdateRectangle() {
+		this.createdAt = System.currentTimeMillis();
 	}
 
 	public FramebufferUpdateRectangle(int x, int y, int w, int h) {
+        this();
 		this.x = x; this.y = y;
 		width = w; height = h;
 	}

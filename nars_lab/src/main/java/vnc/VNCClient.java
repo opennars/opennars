@@ -25,7 +25,6 @@
 package vnc;
 
 import automenta.vivisect.swing.NWindow;
-import vnc.rfb.client.KeyEventMessage;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.viewer.ConnectionPresenter;
@@ -51,7 +50,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @SuppressWarnings("serial")
-public abstract class VNCClient extends JPanel implements WindowListener {
+public abstract class VNCClient extends JPanel implements WindowListener, KeyListener {
 
 	private final Logger logger;
     private int paramsMask;
@@ -79,8 +78,8 @@ public abstract class VNCClient extends JPanel implements WindowListener {
 			System.exit(0);
 		}
 
-        VNCClient vnc;
-        NWindow w = new NWindow("VNC", vnc = new VNCClient(param) {
+
+        NWindow w = new NWindow("VNC",  new VNCClient(param) {
             @Override public String getParameter(String p) {
                 return null;
             }
@@ -205,7 +204,7 @@ public abstract class VNCClient extends JPanel implements WindowListener {
         final boolean allowInteractive = allowAppletInteractiveConnections || ! isApplet;
         connectionPresenter = new ConnectionPresenter(hasJsch, allowInteractive) {
             @Override public void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
-                VNCClient.this.onFrameBufferUpdate(image, rect);
+                VNCClient.this.videoUpdate(image, rect);
             }
 
             @Override
@@ -247,23 +246,7 @@ public abstract class VNCClient extends JPanel implements WindowListener {
     private void onConnected() {
 
         //Ex3:
-        getSurface().key.setProxy(new KeyListener() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                System.out.println("typed: " + e);
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println("press: " + e);
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                System.out.println("release: " + e);
-            }
-        });
+        getSurface().key.setProxy(this);
 
     }
 
@@ -271,25 +254,18 @@ public abstract class VNCClient extends JPanel implements WindowListener {
         return connectionPresenter.getSurface();
     }
 
-    public void inputKey(char chr, boolean press) {
+    //public void inputKey(char chr, boolean press) {
         //TODO
-    }
+    //}
 
-    public void onInputKey(KeyEventMessage ee) {
-        //TODO
-    }
 
+    /** inject keypress to event stream, to remote VNC host */
     public void inputKey(char chr) {
         getSurface().key.keyTyped( chr, this );
-
     }
 
-    protected void onFrameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
-        //EX1:
-        //OCR.queue(image, rect);
-
-        //EX2:
-        //inputKey((char)('a' + (Math.random() * 25) ));
+    /** when received a new video frame buffer update */
+    protected void videoUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
     }
 
 
@@ -332,5 +308,20 @@ public abstract class VNCClient extends JPanel implements WindowListener {
 			return "-2";
 		}
 	}
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        //System.out.println("typed: " + e);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        //System.out.println("press: " + e);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        //System.out.println("release: " + e);
+    }
 
 }

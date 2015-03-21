@@ -173,7 +173,9 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
                     for(int i=0;i<c.term.length-1;i++) {
                         term2[i]=c.term[i];
                     }
-                    T u = (T) Conjunction.make(term2, c.getTemporalOrder());
+                    Term x = Conjunction.make(term2, c.getTemporalOrder());
+                    if (!(x instanceof CompoundTerm)) return null;
+                    T u = (T)x;
 
                     //if the resulting term is valid for a sentence, adjust the stamp and return the new term
                     if ((u = termOrNull(u)) != null) {
