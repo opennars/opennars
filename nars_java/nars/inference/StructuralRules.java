@@ -620,10 +620,10 @@ public final class StructuralRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        if (content instanceof CompoundTerm)
-            return nal.singlePremiseTask((CompoundTerm)content, truth, budget);
-        else
-            return false;
+        //if (content instanceof CompoundTerm)
+            return nal.singlePremiseTask(content, truth, budget);
+       // else
+       //     return false;
     }
 
     /* --------------- Negation related rules --------------- */
