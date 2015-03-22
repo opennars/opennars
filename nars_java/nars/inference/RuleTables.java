@@ -382,7 +382,7 @@ public class RuleTables {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
                         } else {
-                            if(taskTerm instanceof Implication || taskTerm instanceof Equivalence) { //<a =/> b>? |- a!
+                            if(task.sentence.punctuation==Symbols.QUESTION_MARK && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
                                 Term goalterm=null;
                                 if(taskTerm instanceof Implication) {
                                     Implication imp=(Implication)taskTerm;
