@@ -86,6 +86,32 @@ public class RuleTables {
         final Term taskTerm = taskSentence.term;         // cloning for substitution
         final Term beliefTerm = bLink.target;       // cloning for substitution
         
+        //micropsi inspired strive for knowledge
+        if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && task.sentence.getTruth().getConfidence()<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+            if(task.sentence.term instanceof Equivalence || task.sentence.term instanceof Implication) {
+                boolean valid=false;
+                if(task.sentence.term instanceof Equivalence) {
+                    Equivalence equ=(Equivalence) task.sentence.term;
+                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+                        valid=true;
+                    }
+                }
+                if(task.sentence.term instanceof Implication) {
+                    Implication equ=(Implication) task.sentence.term;
+                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+                        valid=true;
+                    }
+                }
+                if(valid) {
+                    Sentence t2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),memory.time()));
+                    BudgetValue budg=task.budget.clone();
+                    budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
+                    budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
+                    nal.singlePremiseTask(t2, task.budget.clone());
+                }
+            }
+        }
+        
         //CONTRAPOSITION //TODO: put into rule table
         if ((taskTerm instanceof Implication) && taskSentence.isJudgment()) {
             Concept d=memory.sampleNextConceptNovel(task.sentence);
