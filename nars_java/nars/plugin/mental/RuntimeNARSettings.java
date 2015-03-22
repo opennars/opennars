@@ -106,4 +106,11 @@ public class RuntimeNARSettings implements Plugin {
     public void setCuriosityDesireDurability(double val) {
         Parameters.CURIOSITY_DESIRE_DURABILITY=(float) val;
     }
+    
+    public boolean isCuriosityForOperatorOnly() {
+        return Parameters.CURIOSITY_FOR_OPERATOR_ONLY;
+    }
+    public void setCuriosityForOperatorOnly(boolean val) {
+        Parameters.CURIOSITY_FOR_OPERATOR_ONLY=val;
+    }
 }

@@ -21,15 +21,15 @@
 package nars.inference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.HashMap;
 import nars.core.Events;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
-import nars.core.control.NAL;
 import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.TLink;
@@ -57,6 +57,7 @@ import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
 import nars.language.Variables;
+import nars.operator.Operation;
 import nars.plugin.input.PerceptionAccel;
 
 /**
@@ -384,26 +385,42 @@ public class RuleTables {
                         } else {
                             if(task.sentence.punctuation==Symbols.QUESTION_MARK && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
                                 Term goalterm=null;
+                                Term goalterm2=null;
                                 if(taskTerm instanceof Implication) {
                                     Implication imp=(Implication)taskTerm;
                                     if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                                        goalterm=imp.getSubject();
+                                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
+                                            goalterm=imp.getSubject();
+                                        }
                                     } 
                                     else
                                     if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
-                                        goalterm=imp.getPredicate();
+                                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
+                                            goalterm=imp.getPredicate();
+                                        }
                                     }
                                 }
                                 else
                                 if(taskTerm instanceof Equivalence) {
                                     Equivalence qu=(Equivalence)taskTerm;
                                     if(qu.getTemporalOrder()==TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
-                                        goalterm=qu.getSubject();
+                                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
+                                            goalterm=qu.getSubject();
+                                        }
+                                        if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
+                                            goalterm2=qu.getPredicate();
+                                        }
                                     }
                                 }
                                 TruthValue truth=new TruthValue(1.0f,Parameters.CURIOSITY_DESIRE_CONFIDENCE);
-                                Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
-                                nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                                if(goalterm!=null) {
+                                    Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
+                                    nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                                }
+                                if(goalterm2!=null) {
+                                    Sentence sent=new Sentence(goalterm2,Symbols.GOAL_MARK,truth.clone(),new Stamp(task.sentence.stamp,nal.memory.time()));
+                                    nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                                }
                             }
                         }
                         break;
