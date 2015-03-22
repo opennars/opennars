@@ -680,7 +680,7 @@ public class Memory implements Serializable {
     }
 
     /** executes one complete memory cycle (if not disabled) */
-    public /*synchronized*/ void cycle() {
+    public /*synchronized*/ void cycle(boolean newFrame) {
 
         if (!isEnabled()) {
             return;
@@ -692,9 +692,15 @@ public class Memory implements Serializable {
 
         event.emit(Events.CycleEnd.class);
 
+        if (newFrame) {
+            logic.commit(this);
+        }
+
         timeUpdate();
 
     }
+
+
 
     /**
      * automatically called each cycle

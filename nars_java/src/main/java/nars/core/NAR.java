@@ -215,6 +215,10 @@ public class NAR implements Runnable {
     }
 
 
+    public Task believe(String termString, long when, float freq, float conf, float priority) throws InvalidInputException {
+        return believe(priority, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, when, freq, conf);
+    }
+
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
     }
@@ -255,8 +259,12 @@ public class NAR implements Runnable {
         );
         return t;
     }
+    //getOccurrenceTime(creationTime, tense, memory.duration())
 
     public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+        return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
+    }
+    public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         final Task t;
         final TruthValue tv;
         input(
@@ -265,7 +273,7 @@ public class NAR implements Runnable {
                                 narsese.parseCompoundTerm(beliefTerm),
                                 Symbols.JUDGMENT,
                                 tv = new TruthValue(freq, conf),
-                                new Stamp(memory, Stamp.UNPERCEIVED, tense)),
+                                new Stamp(memory, time(), occurrenceTime)),
                         new BudgetValue(
                                 pri,
                                 dur, BudgetFunctions.truthToQuality(tv)))
@@ -573,7 +581,7 @@ public class NAR implements Runnable {
 
         try {
             for (int i = 0; i < cycles; i++)
-                memory.cycle();
+                memory.cycle(i==0);
         }
         catch (Throwable e) {
             Throwable c = e.getCause();

@@ -7,7 +7,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.gui.NARSwing;
-import nars.io.Texts;
+import nars.logic.entity.Task;
 import nars.logic.nal8.NullOperator;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
@@ -29,9 +29,23 @@ abstract public class VNCControl extends VNCClient {
         super(host, port);
         this.nar = nar;
 
+
+        addAxioms();
         addOperators();
     }
 
+    protected void addAxioms() {
+        //vertical
+        nar.input("<{D,c,U} --> VERTICAL>.");
+        //horizontal
+        nar.input("<{L,C,R} --> HORIZONTAL>.");
+        //center
+        nar.input("<{c,C} --> CENTER>.");
+
+        nar.input("<<#x --> ON> ==> <#y --> SEE>>?");
+
+
+    }
     private void addOperators() {
         nar.on(new NullOperator("^keyboard"));
         nar.on(new NullOperator("^mouse"));
@@ -52,7 +66,7 @@ abstract public class VNCControl extends VNCClient {
 
         NAR nar = new NAR(new Default());
         nar.param.setTiming(Memory.Timing.Real);
-        nar.param.duration.set(750); //ms
+        nar.param.duration.set(1250); //ms
         nar.param.noiseLevel.set(12);
 
         Video.themeInvert();
@@ -76,7 +90,7 @@ abstract public class VNCControl extends VNCClient {
     @Override
     protected void videoUpdate(Renderer image, FramebufferUpdateRectangle rect) {
         super.videoUpdate(image, rect);
-        OCR.queue(image, rect, ocrHandler);
+        OCR.queue(image, rect, ocrHandler, nar.time());
     }
 
     boolean mousePressed = false;
@@ -99,19 +113,19 @@ abstract public class VNCControl extends VNCClient {
 
             if (input) {
                 String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight());
-                String ii = "<(*," + "B" + pe.buttonMask  + ",(*," + loc  + ")) --> ON>. :|: " +
+                String ii = "<(*," + loc + ", B" + pe.buttonMask  + ") --> ON>. :|: " +
                         (mousePressed ? "%1.00;0.90%" : "%0.00;0.90%");
 
                 nar.input(
                         ii
                 );
-                System.out.println(ii);
+                System.out.println(nar.time() + ": "  +ii);
             }
         }
     }
 
     private OCR.OCRResultHandler ocrHandler = new OCR.OCRResultHandler() {
-        final int MAX_TEXT_LEN = 256;
+        final int MAX_TEXT_LEN = 1024;
         final int MIN_WORD_LENGTH = 1;
 
         @Override
@@ -143,7 +157,7 @@ abstract public class VNCControl extends VNCClient {
 
                     words.add('\"' + s + '\"');
                 }
-                ii = ii + "(*,(*," + location + "),";
+                ii = ii + "(*," + location + ",";
                 if (words.size() == 0) {
                     return;
                 }
@@ -153,11 +167,14 @@ abstract public class VNCControl extends VNCClient {
                 else {
                     ii = ii + "(&/," + String.join(",", words) + ")";
                 }
-                ii = "<" + ii + ") --> SEE>. :|: \n";
-                ii = "$" + Texts.n2(pri) + "$ " + ii;
-                nar.input(ii);
+                //TODO use creationTime of when the image was recieved, not processed
 
-                System.out.print(ii);
+                ii = "<" + ii + ") --> SEE>";
+                //ii = "$" + Texts.n2(pri) + "$ " + ii;
+                //nar.input(ii + "\n");
+                Task t = nar.believe(ii, u.getInputTime(), 1.0f, 0.9f, pri);
+
+                System.out.print(nar.time() + ": " + ii + "\t" + u.getWaitingTime() + " wait, " + u.getProcessingTime() + " proc ms\n");
             }
         }
     };
@@ -166,7 +183,7 @@ abstract public class VNCControl extends VNCClient {
         String ii = "<{K" + e.getKeyCode() + "} --> ON>. :|: " +
                 (press ? "%1.00;0.90%" : "%0.00;0.90%");
         nar.input(ii);
-        System.out.println(ii);
+        System.out.println(nar.time() + ": " + ii);
     }
 
     @Override

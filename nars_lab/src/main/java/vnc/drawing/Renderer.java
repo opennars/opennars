@@ -104,7 +104,7 @@ public abstract class Renderer {
      * Draw byte array bitmap data (for ZRLE)
      */
     public int drawCompactBytes(byte[] bytes, int offset, int x, int y, int width, int height) {
-        synchronized (lock) {
+        //synchronized (lock) {
             int i = offset;
             final int[] p = this.pixels;
             final int bpc = colorDecoder.bytesPerCPixel;
@@ -117,48 +117,55 @@ public abstract class Renderer {
                 }
             }
             return i - offset;
-        }
+        //}
     }
 
     /**
      * Draw int (colors) array bitmap data (for ZRLE)
      */
     public void drawColoredBitmap(int[] colors, int x, int y, int width, int height) {
-        synchronized (lock) {
+        //synchronized (lock) {
             int i = 0;
             final int w = this.width;
             final int[] p = this.pixels;
             for (int ly = y; ly < y + height; ++ly) {
                 int end = ly * w + x + width;
-                for (int pixelsOffset = ly * w + x; pixelsOffset < end; ++pixelsOffset) {
-                    p[pixelsOffset] = colors[i++];
+                for (int pixelsOffset = ly * w + x; pixelsOffset < end;) {
+                    p[pixelsOffset++] = colors[i++];
                 }
             }
-        }
+        //}
     }
 
     /**
      * Draw byte array bitmap data (for Tight)
      */
-    public int drawTightBytes(byte[] bytes, int offset, int x, int y, int width, int height) {
-        synchronized (lock) {
+    public int drawTightBytes(final byte[] bytes, final int offset, final int x, final int y, final int width, final int height) {
+        final int w = this.width;
+        final ColorDecoder decoder = this.colorDecoder;
+        final int bpttt = colorDecoder.bytesPerPixelTight;
+        final int[] p = pixels;
+
+        //synchronized (lock) {
             int i = offset;
             for (int ly = y; ly < y + height; ++ly) {
-                int end = ly * this.width + x + width;
-                for (int pixelsOffset = ly * this.width + x; pixelsOffset < end; ++pixelsOffset) {
-                    pixels[pixelsOffset] = colorDecoder.getTightColor(bytes, i);
-                    i += colorDecoder.bytesPerPixelTight;
+                int end = ly * w + x + width;
+                for (int pixelsOffset = ly * w + x; pixelsOffset < end; ++pixelsOffset) {
+
+                    p[pixelsOffset] = decoder.getTightColor(bytes, i);
+
+                    i += bpttt;
                 }
             }
             return i - offset;
-        }
+        //}
     }
 
     /**
      * Draw byte array bitmap data (from array with plain RGB color components. Assumed: rrrrrrrr gggggggg bbbbbbbb)
      */
     public void drawUncaliberedRGBLine(byte[] bytes, int x, int y, int width) {
-        synchronized (lock) {
+        //synchronized (lock) {
             int end = y * this.width + x + width;
             for (int i = 3, pixelsOffset = y * this.width + x; pixelsOffset < end; ++pixelsOffset) {
                 pixels[pixelsOffset] =
@@ -169,7 +176,7 @@ public abstract class Renderer {
                                 (0xff & 255 * (colorDecoder.greenMax & bytes[i++]) / colorDecoder.greenMax) << 8 |
                                 0xff & 255 * (colorDecoder.blueMax & bytes[i++]) / colorDecoder.blueMax;
             }
-        }
+        //}
     }
 
     /**
@@ -182,7 +189,7 @@ public abstract class Renderer {
      */
     public void drawBytesWithPalette(byte[] buffer, FramebufferUpdateRectangle rect,
                                      int[] palette, int paletteSize) {
-        synchronized (lock) {
+        //synchronized (lock) {
             // 2 colors
             if (2 == paletteSize) {
                 int dx, dy, n;
@@ -213,7 +220,7 @@ public abstract class Renderer {
                     }
                 }
             }
-        }
+        //}
     }
 
     /**
@@ -236,7 +243,7 @@ public abstract class Renderer {
             dstY = dstRect.y + dstRect.height - 1;
             deltaY = -1;
         }
-        synchronized (lock) {
+        //synchronized (lock) {
             final int w = width;
             int[] p = this.pixels;
             for (int y = startSrcY; y != endSrcY; y += deltaY) {
@@ -244,7 +251,7 @@ public abstract class Renderer {
                         p, dstY * w + dstRect.x, dstRect.width);
                 dstY += deltaY;
             }
-        }
+        //}
     }
 
     /**
@@ -267,14 +274,14 @@ public abstract class Renderer {
      * @param height rectangle height
      */
     public void fillRect(int color, int x, int y, int width, int height) {
-        synchronized (lock) {
+        //synchronized (lock) {
             final int w = this.width;
             int sy = y * w + x;
             int ey = sy + height * w;
             for (int i = sy; i < ey; i += w) {
                 Arrays.fill(pixels, i, i + width, color);
             }
-        }
+        //}
     }
 
     /**
@@ -359,9 +366,9 @@ public abstract class Renderer {
      * @param rect cursor position
      */
     public void decodeCursorPosition(FramebufferUpdateRectangle rect) {
-        synchronized (cursor.getLock()) {
+        //synchronized (cursor.getLock()) {
             cursor.updatePosition(rect.x, rect.y);
-        }
+        //}
     }
 
     public Object getLock() {

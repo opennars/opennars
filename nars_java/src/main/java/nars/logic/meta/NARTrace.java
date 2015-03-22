@@ -162,7 +162,6 @@ public class NARTrace extends MemoryObserver {
 
     @Override
     public void onCycleEnd(long time) {
-        nar.memory.logic.commit(nar.memory);
     }
 
     @Override
