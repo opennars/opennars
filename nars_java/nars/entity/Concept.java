@@ -395,9 +395,13 @@ public class Concept extends Item<Term> implements Termable {
                     qu[1]=imp2;
                 }
                 for(Term q : qu) {
-                    Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp,nal.memory.time()));
-                    BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                    nal.singlePremiseTask(s, budget);
+                    if(q!=null) {
+                        Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp,nal.memory.time()));
+                        if(s!=null) {
+                            BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                            nal.singlePremiseTask(s, budget);
+                        }
+                    }
                 }
                 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
