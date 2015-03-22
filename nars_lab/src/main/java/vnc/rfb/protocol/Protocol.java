@@ -25,6 +25,7 @@
 package vnc.rfb.protocol;
 
 import vnc.core.SettingsChangedEvent;
+import vnc.drawing.Renderer;
 import vnc.exceptions.*;
 import vnc.rfb.*;
 import vnc.rfb.client.ClientToServerMessage;
@@ -39,7 +40,6 @@ import vnc.rfb.protocol.state.ProtocolState;
 import vnc.transport.Reader;
 import vnc.transport.Writer;
 
-import java.awt.image.BufferedImage;
 import java.util.logging.Logger;
 
 abstract public class Protocol implements ProtocolContext, IChangeSettingsListener {
@@ -192,15 +192,15 @@ abstract public class Protocol implements ProtocolContext, IChangeSettingsListen
 				clipboardController,
 				decoders, this) {
             @Override
-            protected void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
-                Protocol.this.frameBufferUpdate(image, rect);
+            protected void frameBufferUpdate(Renderer renderer, FramebufferUpdateRectangle rect) {
+                Protocol.this.frameBufferUpdate(renderer, rect);
             }
         };
 		receiverThread = new Thread(receiverTask, "RfbReceiverTask");
 		receiverThread.start();
 	}
 
-    protected abstract void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect);
+    protected abstract void frameBufferUpdate(Renderer renderer, FramebufferUpdateRectangle rect);
 
     private void correctServerPixelFormat() {
         // correct true color flag - we don't support color maps, so always set it up

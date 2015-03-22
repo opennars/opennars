@@ -32,6 +32,7 @@ import vnc.transport.Reader;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.nio.IntBuffer;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
@@ -40,23 +41,45 @@ import java.util.concurrent.TimeoutException;
 public class RendererImpl extends Renderer implements ImageObserver {
     final CyclicBarrier barrier = new CyclicBarrier(2);
 
-    private final BufferedImage offscreanImage;
+    private BufferedImage frame;
 
-	public RendererImpl(Reader reader, int width, int height, PixelFormat pixelFormat) {
+    public RendererImpl(Reader reader, int width, int height, PixelFormat pixelFormat) {
+        super();
 		if (0 == width) width = 1;
 		if (0 == height) height = 1;
 		init(reader, width, height, pixelFormat);
-		ColorModel colorModel = new DirectColorModel(24, 0xff0000, 0xff00, 0xff);
-		SampleModel sampleModel = colorModel.createCompatibleSampleModel(width,
-				height);
 
-		DataBuffer dataBuffer = new DataBufferInt(pixels, width * height);
-		WritableRaster raster = Raster.createWritableRaster(sampleModel,
-				dataBuffer, null);
-		offscreanImage = new BufferedImage(colorModel, raster, false, null);
+
+
 
 
 	}
+
+    @Override
+    protected void init(Reader reader, int width, int height, PixelFormat pixelFormat) {
+        super.init(reader, width, height, pixelFormat);
+
+        DirectColorModel colorModel = new DirectColorModel(24, 0xff0000, 0xff00, 0xff);
+        SampleModel sampleModel = colorModel.createCompatibleSampleModel(width,
+                height);
+
+        IntBuffer b = IntBuffer.allocate(width * height * 4);
+
+        pixels = b.array();
+
+
+
+        //DataBuffer d = new DataBufferByte(b.array(), frameBytes.length);
+
+
+
+        DataBuffer dataBuffer = new DataBufferInt(pixels, width * height);
+        WritableRaster raster = Raster.createWritableRaster(sampleModel,
+                dataBuffer, null);
+
+
+        frame = new BufferedImage(colorModel, raster, false, null);
+    }
 
     @Override
     protected SoftCursor newCursor() {
@@ -83,7 +106,7 @@ public class RendererImpl extends Renderer implements ImageObserver {
 		} catch (InterruptedException | TimeoutException | BrokenBarrierException e) {
 			// nop
 		}
-        Graphics graphics = offscreanImage.getGraphics();
+        Graphics graphics = frame.getGraphics();
 		graphics.drawImage(jpegImage, rect.x, rect.y, rect.width, rect.height, this);
 	}
 
@@ -102,8 +125,8 @@ public class RendererImpl extends Renderer implements ImageObserver {
 	}
 
 	/* Swing specific interface */
-	@Override public BufferedImage getImage() {
-		return offscreanImage;
+	@Override public BufferedImage getFrame() {
+		return frame;
 	}
 
 	public SoftCursorImpl getCursor() {

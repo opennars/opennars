@@ -2,14 +2,13 @@ package vnc;
 
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import vnc.drawing.Renderer;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
+import vnc.viewer.swing.Surface;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.NavigableSet;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,6 +20,7 @@ public class OCR {
     final static Tesseract t = Tesseract.getInstance();
     static {
         t.setDatapath("/usr/share/tessdata");
+        t.setTessVariable("language_model_penalty_non_dict_word","0.35f"); //default=0.15
     }
 
     private static ExecutorService tasks = Executors.newSingleThreadExecutor();
@@ -53,8 +53,9 @@ public class OCR {
     }
 
 
-    static final int minWidth = 6;
-    static final int minHeight = 10;
+    static final int minWidth = 16;
+    static final int minHeight = 16;
+    static final int minPixels = minWidth * minHeight * 3;
 
 
     static long now = System.currentTimeMillis();
@@ -78,13 +79,13 @@ public class OCR {
             while (size()+1 >= bufferSize) {
                 BufferUpdate least = last();
                 if (least.priority(now) > op) {
-                    System.out.println("discard " + o + " " + o.priority() );
+                    //System.out.println("discard " + o + " " + o.priority() );
                     return false; //too low input
                 }
-                System.out.println("remove " + least + " " + least.priority() );
+                //System.out.println("discard " + least + " " + least.priority() );
                 remove(least);
             }
-            System.out.println("add " + o + " " + o.priority() + " size=" + size() );
+            //System.out.println("add " + o + " " + o.priority() + " size=" + size() );
             return super.add(o);
         }
     });
@@ -101,21 +102,19 @@ public class OCR {
 //    }
 
     public static class BufferUpdate {
-        public final BufferedImage image;
         private OCRResultHandler callback;
         public final FramebufferUpdateRectangle rect;
         private boolean processed;
         private String text;
 
-        public BufferUpdate(FramebufferUpdateRectangle rect, BufferedImage image, OCRResultHandler callback) {
+        public BufferUpdate(FramebufferUpdateRectangle rect, OCRResultHandler callback) {
 
             this.rect = rect;
-            this.image = image;
             this.callback = callback;
         }
 
         public float priority(long now) {
-            float size = image.getWidth() * image.getHeight();
+            float size = rect.width * rect.height;
             float age = now - rect.createdAt;
 
             double seconds = 5;
@@ -146,6 +145,55 @@ public class OCR {
         public String toString() {
             return rect + " " + priority();
         }
+
+
+        protected static char loccharx(int x) {
+            switch(x) {
+                case -1: return 'L';
+                case 0: return 'C';
+                case 1: return 'R';
+            }
+            return 0;
+        }
+        protected static char locchary(int x) {
+            switch(x) {
+                case -1: return 'U';
+                case 0: return 'c'; //lowercase
+                case 1: return 'D';
+            }
+            return 0;
+        }
+
+        public String getLocation(Surface surface) {
+            BufferedImage frame = surface.getRenderer().getFrame();
+            int dx = frame.getWidth()/3, dy = frame.getHeight()/3;
+            int cx = 0, cy = 0;
+            int tx = rect.x, ty = rect.y;
+            List<String> loc = new ArrayList();
+            while (dx > minWidth) {
+                int ux, uy;
+                if (tx > cx + dx * 2)
+                    { ux = 1; cx += (dx*2); }
+                else if (tx > cx + dx)
+                    { ux = 0; cx += dx; }
+                else
+                    ux = -1;
+                if (ty > cy + dy * 2)
+                    { uy = 1; cy += dy*2; }
+                else if (ty > cy + dy)
+                    { uy = 0; cy += dy; }
+                else
+                    uy = -1;
+                String p = "{" + loccharx(ux) + "," + locchary(uy) + "}";
+                loc.add(p);
+
+                dx /= 3;
+                dy /= 3;
+                if ((dx < minWidth) || (dy < minHeight))
+                    break;
+            }
+            return String.join(",", loc);
+        }
     }
 
     interface OCRResultHandler {
@@ -153,18 +201,50 @@ public class OCR {
     }
 
 
-    public static boolean queue(BufferedImage image, FramebufferUpdateRectangle rect, OCRResultHandler callback) {
+    public static boolean queue(Renderer renderer, FramebufferUpdateRectangle rect, OCRResultHandler callback) {
 
-        if ((rect.width < minWidth) || (rect.height < minHeight))
+        if ((rect.width < minWidth) || (rect.height < minHeight) || (rect.width*rect.height < minPixels))
             return false;
 
-        BufferUpdate bu = new BufferUpdate(rect, image, callback);
+        BufferUpdate bu = new BufferUpdate(rect, callback);
 
 
-        return exe(bu, false);
+        return exe(renderer, bu, false);
     }
+//    public static BufferedImage getGrayscaleSubImage(BufferedImage image, int x, int y, int width, int height) {
+//        BufferedImage tmp = new BufferedImage(width, height, 10);
+//        Graphics2D g2 = tmp.createGraphics();
+//        g2.drawImage(image.getSubimage(x, y, width, height), 0, 0, (ImageObserver)null);
+//        g2.dispose();
+//        return tmp;
+//    }
+//    public static ByteBuffer convertImageData(BufferedImage bi, Rectangle r) {
+//        DataBuffer buff = bi.getRaster().getDataBuffer();
+//
+//        if(!(buff instanceof DataBufferByte)) {
+//            bi = ImageHelper.convertImageToGrayscale(bi.getSubimage(r.x, r.y, r.width, r.height));
+//            //bi = getGrayscaleSubImage(bi, r.x, r.y, r.width, r.height);
+//            //bi = ImageHelper.convertImageToBinary(bi.getSubimage(r.x, r.y, r.width, r.height));
+//            buff = bi.getRaster().getDataBuffer();
+//        }
+//        else {
+//            bi = bi.getSubimage(r.x, r.y, r.width, r.height);
+//            buff = bi.getRaster().getDataBuffer();
+//        }
+//
+//        r.x = 0;
+//        r.y = 0;
+//
+//        byte[] pixelData = ((DataBufferByte)buff).getData();
+//        ByteBuffer buf = ByteBuffer.allocateDirect(r.width * r.height * 1);
+//        buf.order(ByteOrder.nativeOrder());
+//        buf.put(pixelData);
+//        buf.flip();
+//        return buf;
+//    }
+    private static boolean exe(Renderer renderer, BufferUpdate bu, boolean continueNext) {
 
-    private static boolean exe(BufferUpdate bu, boolean continueNext) {
+
 
         Runnable rr = new Runnable() {
             final long queued = System.currentTimeMillis();
@@ -178,13 +258,31 @@ public class OCR {
 
                 String x = null;
                 try {
-                    x = t.doOCR(bu.image, bu.rect.newRectangle());
+
                     t.setOcrEngineMode(0);
-                    t.setHocr(false);
+
+
+                    FramebufferUpdateRectangle r = bu.rect;
+                    BufferedImage frame = renderer.getFrame();
+
+
+
+
+
+
+                    x = t.doOCR(frame, bu.rect.newRectangle());
+
+
+                    /*
+                    Rectangle rr = r.newRectangle();
+                    ByteBuffer ci = convertImageData(frame, rr);
+                    x = t.doOCR(rr.width,rr.height, ci, rr, frame.getColorModel().getPixelSize());
+                    */
+
                     final long end = System.currentTimeMillis();
                     long waiting = start - queued;
                     long processing = end - start;
-                    System.out.println(bu + " " + x + "(" + waiting + " waiting ms, " + processing + " processing ms, " + buffers.size() + " behind)");
+                    //System.out.println(bu + " " + x + "(" + waiting + " waiting ms, " + processing + " processing ms, " + buffers.size() + " behind)");
                     //TODO add this timing information to 'bu' result class
                 } catch (TesseractException e) {
                     e.printStackTrace();

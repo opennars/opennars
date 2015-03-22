@@ -24,6 +24,7 @@
 
 package vnc.viewer.swing;
 
+import vnc.drawing.Renderer;
 import vnc.exceptions.*;
 import vnc.rfb.IPasswordRetriever;
 import vnc.rfb.IRfbSessionListener;
@@ -37,7 +38,6 @@ import vnc.viewer.*;
 import vnc.viewer.swing.gui.PasswordDialog;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
@@ -80,11 +80,11 @@ abstract public class SwingRfbConnectionWorker extends SwingWorker<Void, String>
         workingProtocol = new Protocol(reader, writer,
                 new PasswordChooser(connectionString, parentWindow, this),
                 rfbSettings) {
-
             @Override
-            protected void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
-                SwingRfbConnectionWorker.this.frameBufferUpdate(image, rect);
+            protected void frameBufferUpdate(vnc.drawing.Renderer renderer, FramebufferUpdateRectangle rect) {
+                SwingRfbConnectionWorker.this.frameBufferUpdate(renderer, rect);
             }
+
         };
         String message = "Handshaking with remote host";
         logger.info(message);
@@ -97,7 +97,7 @@ abstract public class SwingRfbConnectionWorker extends SwingWorker<Void, String>
 
     public Surface getSurface() { return getWindow().getSurface(); }
 
-    protected abstract void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect);
+    protected abstract void frameBufferUpdate(Renderer renderer, FramebufferUpdateRectangle rect);
 
     public SwingRfbConnectionWorker(String predefinedPassword, ConnectionPresenter presenter, JFrame parentWindow,
                                     SwingViewerWindowFactory viewerWindowFactory) {

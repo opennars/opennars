@@ -6,16 +6,15 @@ import nars.build.Default;
 import nars.core.Memory;
 import nars.core.NAR;
 import nars.gui.NARSwing;
-import nars.io.Texts;
 import nars.logic.entity.Term;
 import nars.logic.nal8.TermFunction;
+import vnc.drawing.Renderer;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
-import vnc.viewer.cli.VNCProperties;
-import vnc.viewer.swing.ParametersHandler;
 
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 abstract public class VNCControl extends VNCClient {
@@ -24,8 +23,8 @@ abstract public class VNCControl extends VNCClient {
 
 
 
-    public VNCControl(NAR nar, VNCProperties param) {
-        super(param);
+    public VNCControl(NAR nar, String host, int port) {
+        super(host, port);
         this.nar = nar;
 
         addOperators();
@@ -45,16 +44,6 @@ abstract public class VNCControl extends VNCClient {
     public static void main(String[] args) {
 
 
-        VNCProperties param = new VNCProperties("localhost",5091);
-
-        ParametersHandler.completeParserOptions(param);
-
-        param.parse(args);
-        if (param.isSet(ParametersHandler.ARG_HELP)) {
-            printUsage(param.optionsUsage());
-            System.exit(0);
-        }
-
         NAR nar = new NAR(new Default());
         nar.param.setTiming(Memory.Timing.Real);
         nar.param.duration.set(1000); //ms
@@ -67,7 +56,7 @@ abstract public class VNCControl extends VNCClient {
         swing.controls.setFrameRate(2f);
 
         NWindow w = new NWindow("VNC",
-                new VNCControl(nar, param) {
+                new VNCControl(nar, "localhost",5901) {
             @Override public String getParameter(String p) {
                 return null;
             }
@@ -79,13 +68,14 @@ abstract public class VNCControl extends VNCClient {
     }
 
     @Override
-    protected void videoUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+    protected void videoUpdate(Renderer image, FramebufferUpdateRectangle rect) {
         super.videoUpdate(image, rect);
         OCR.queue(image, rect, ocrHandler);
     }
 
     private OCR.OCRResultHandler ocrHandler = new OCR.OCRResultHandler() {
-        final int MAX_TEXT_LEN = 32;
+        final int MAX_TEXT_LEN = 256;
+        final int MIN_WORD_LENGTH = 1;
 
         @Override
         public void next(OCR.BufferUpdate u) {
@@ -97,15 +87,36 @@ abstract public class VNCControl extends VNCClient {
                 //TODO tokenize better
                 String[] t2 = text.split("[^a-zA-Z0-9]+");
 
+                //u.getLocation()
+                String ii = "<(*,";
+                String location = u.getLocation(getSurface());
+
+                List<String> words = new ArrayList();
                 for (String s : t2) {
-                    s = s.toLowerCase();
+                    s = s.trim().toLowerCase();
+                    if (s.length() < MIN_WORD_LENGTH)
+                        continue;
 
-                    float pri = 0.5f + (0.1f * s.length() / text.length());
+                    //float pri = 0.5f + (0.1f * s.length() / text.length());
 
-                    nar.input(
-                            "$" + Texts.n2(pri) + "$ <\"" + s + "\" --> READ>. :|:"
-                    );
+                    //String ii = "$" + Texts.n2(pri) + "$ <\"" + s + "\" --> SEE>. :|:";
+
+
+                    words.add('\"' + s + '\"');
                 }
+                ii = ii + location;
+                if (words.size() == 0) {
+                    return;
+                }
+                else if (words.size() == 1) {
+                    ii += "\"" + words.get(0) + "\"";
+                }
+                else {
+                    ii = ii + ",(&/," + String.join(",", words) + ")";
+                }
+                ii = ii + ") --> SEE>. :|: \n";
+                nar.input(ii);
+                System.out.print(ii);
             }
         }
     };

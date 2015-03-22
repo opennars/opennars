@@ -42,6 +42,7 @@ public abstract class Renderer {
     protected Reader reader;
     private final Object lock = new Object();
 
+
     protected abstract SoftCursor newCursor();
 
     public abstract void drawJpegImage(byte[] bytes, int offset,
@@ -49,7 +50,10 @@ public abstract class Renderer {
 
     protected int width;
     protected int height;
+
+    //these are meant to point to the same location in memory, just different views:
     protected int[] pixels;
+
     protected final SoftCursor cursor;
     public PixelFormat pixelFormat;
     protected ColorDecoder colorDecoder;
@@ -63,8 +67,7 @@ public abstract class Renderer {
         this.width = width;
         this.height = height;
         initPixelFormat(pixelFormat);
-        pixels = new int[width * height];
-        Arrays.fill(pixels, 0);
+
     }
 
     public void initPixelFormat(PixelFormat pixelFormat) {
@@ -366,5 +369,5 @@ public abstract class Renderer {
     }
 
     /* Swing specific interface */
-    public abstract BufferedImage getImage();
+    public abstract BufferedImage getFrame();
 }

@@ -40,7 +40,6 @@ import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.encoding.decoder.RichCursorDecoder;
 import vnc.transport.Reader;
 
-import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
@@ -162,7 +161,8 @@ abstract public class ReceiverTask implements Runnable {
 
 
             Decoder decoder = decoders.getDecoderByType(rect.getEncodingType());
-            logger.finest(rect.toString() + (0 == numberOfRectangles ? "\n---" : ""));
+            //logger.finest(rect.toString() + (0 == numberOfRectangles ? "\n---" : ""));
+
             if (decoder != null) {
                 decoder.decode(reader, renderer, rect);
                 repaintController.repaintBitmap(rect);
@@ -184,7 +184,7 @@ abstract public class ReceiverTask implements Runnable {
             } else
                 throw new CommonException("Unprocessed encoding: " + rect.toString());
 
-            frameBufferUpdate(renderer.getImage(), rect);
+            frameBufferUpdate(renderer, rect);
         }
 
 
@@ -207,12 +207,12 @@ abstract public class ReceiverTask implements Runnable {
 	}
 
 
-    abstract protected void frameBufferUpdate (BufferedImage image, FramebufferUpdateRectangle rect);
+    abstract protected void frameBufferUpdate (Renderer renderer, FramebufferUpdateRectangle rect);
 
 	public synchronized void queueUpdatePixelFormat(PixelFormat pf) {
 		pixelFormat = pf;
 		needSendPixelFormat = true;
-//		context.sendMessage(new FramebufferUpdateRequestMessage(0, 0, 1, 1, false));
+		context.sendMessage(new FramebufferUpdateRequestMessage(0, 0, 1, 1, false));
 	}
 
 	public void stopTask() {

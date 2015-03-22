@@ -39,7 +39,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.jar.Attributes;
@@ -101,8 +100,15 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
     }
 
     public VNCClient(String host, int port) {
-        this(new VNCProperties(host, port));
+        logger = Logger.getLogger(getClass().getName());
+        connectionParams = new ConnectionParams();
+        connectionParams.setHostName(host);
+        connectionParams.setPortNumber(port);
+        settings = ProtocolSettings.getDefaultSettings();
+        uiSettings = new UiSettings();
+        init();
     }
+
 	public VNCClient() {
         logger = Logger.getLogger(getClass().getName());
 		connectionParams = new ConnectionParams();
@@ -203,8 +209,8 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
         final boolean hasJsch = checkJsch();
         final boolean allowInteractive = allowAppletInteractiveConnections || ! isApplet;
         connectionPresenter = new ConnectionPresenter(hasJsch, allowInteractive) {
-            @Override public void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
-                VNCClient.this.videoUpdate(image, rect);
+            @Override public void frameBufferUpdate(vnc.drawing.Renderer renderer, FramebufferUpdateRectangle rect) {
+                VNCClient.this.videoUpdate(renderer, rect);
             }
 
             @Override
@@ -265,7 +271,7 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
     }
 
     /** when received a new video frame buffer update */
-    protected void videoUpdate(BufferedImage image, FramebufferUpdateRectangle rect) {
+    protected void videoUpdate(vnc.drawing.Renderer image, FramebufferUpdateRectangle rect) {
     }
 
 

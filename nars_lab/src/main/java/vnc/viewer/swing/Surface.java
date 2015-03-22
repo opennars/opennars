@@ -154,7 +154,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 		((Graphics2D)g).scale(scaleFactor, scaleFactor);
 		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 		synchronized (renderer.getLock()) {
-			Image offscreenImage = renderer.getImage();
+			Image offscreenImage = renderer.getFrame();
 			if (offscreenImage != null) {
 				g.drawImage(offscreenImage, 0, 0, null);
 			}

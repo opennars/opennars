@@ -72,10 +72,9 @@ public class FramebufferUpdateRectangle {
 
 	@Override
 	public String toString() {
-		return "FramebufferUpdateRect: [x: " + x + ", y: " + y +
-			", width: " + width + ", height: " + height +
-			", encodingType: " + encodingType +
-                ']';
+		return encodingType + "[x=" + x + ", y=" + y +
+			", w=" + width + ", h=" + height +
+			"]";
 	}
 
     public Rectangle newRectangle() {

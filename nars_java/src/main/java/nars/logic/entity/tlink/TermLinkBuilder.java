@@ -71,8 +71,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
         for (short i = 0; i < t.term.length; ) {
-            Term ti = t.term[i].normalized();
-            if (ti == null) continue;
+            Term ti = t.term[i];
 
             if (ti.isConstant()) {
                 addTemplate(new TermLinkTemplate(concept, type, ti, i));
@@ -88,8 +87,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                 final short tiSize = (short)cti.term.length;
                 for (short j = 0; j < tiSize; ) {
-                    Term tj = cti.term[j].normalized();
-                    if (tj == null) continue;
+                    Term tj = cti.term[j];
 
                     if (tj.isConstant()) {
                         TermLinkTemplate a;
@@ -111,8 +109,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
                         final short tjSize = (short) ctj.term.length;
                         for (short k = 0; k < tjSize; ) {
-                            final Term tk = ctj.term[k].normalized();
-                            if (tk == null) continue;
+                            final Term tk = ctj.term[k];
 
                             if (tk.isConstant()) {
                                 TermLinkTemplate b;

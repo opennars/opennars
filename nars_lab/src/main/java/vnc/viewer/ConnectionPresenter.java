@@ -24,6 +24,7 @@
 
 package vnc.viewer;
 
+import vnc.drawing.Renderer;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.utils.Strings;
@@ -34,7 +35,6 @@ import vnc.viewer.swing.WrongParameterException;
 import vnc.viewer.swing.gui.ConnectionView;
 import vnc.viewer.swing.gui.ConnectionsHistory;
 
-import java.awt.image.BufferedImage;
 import java.net.Socket;
 import java.util.logging.Logger;
 
@@ -305,7 +305,7 @@ public abstract class ConnectionPresenter extends Presenter {
     }
 
 
-    abstract public void frameBufferUpdate(BufferedImage image, FramebufferUpdateRectangle rect);
+    abstract public void frameBufferUpdate(Renderer renderer, FramebufferUpdateRectangle rect);
 
     public Surface getSurface() {
         return getRfbConnectionWorker().getSurface();
