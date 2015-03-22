@@ -88,7 +88,7 @@ public class EmotionMeter implements Serializable {
                         op[1]=op_consider; //means it has good chance to be considered after
                         for(Operation o : op) {
                             TruthValue truth3=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                            Sentence s3=new Sentence(o,Symbols.JUDGEMENT_MARK,truth3,new Stamp(nal.memory));
+                            Sentence s3=new Sentence(o,Symbols.JUDGMENT_MARK,truth3,new Stamp(nal.memory));
                             s3.stamp.setOccurrenceTime(nal.memory.time());
                             
                             //INTERNAL_EXPERIENCE_DURABILITY_MUL
