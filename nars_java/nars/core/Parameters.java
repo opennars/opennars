@@ -207,5 +207,6 @@ public class Parameters {
     /*public static float BUSY_EVENT_HIGHER_THRESHOLD=0.75f; //1.6.4, step by step^, there is already enough new things ^^
     public static float BUSY_EVENT_LOWER_THRESHOLD=0.25f; */
     public static boolean REFLECT_META_HAPPY_GOAL=true;
+    public static boolean CONSIDER_REMIND=true;
 }
 

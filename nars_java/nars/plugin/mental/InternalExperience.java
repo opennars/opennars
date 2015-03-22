@@ -73,14 +73,18 @@ public class InternalExperience implements Plugin, EventObserver {
         return false;
     }
     
-    @Override public boolean setEnabled(NAR n, boolean enabled) {        
+    public static boolean enabled=false;
+    
+    @Override public boolean setEnabled(NAR n, boolean enable) {        
         memory = n.memory;
         
-        memory.event.set(this, enabled, Events.ConceptDirectProcessedTask.class);
+        memory.event.set(this, enable, Events.ConceptDirectProcessedTask.class);
         
         if (isFull())
-            memory.event.set(this, enabled, Events.BeliefReason.class);
-                
+            memory.event.set(this, enable, Events.BeliefReason.class);
+        
+        enabled=enable;
+        
         return true;
     }
     
