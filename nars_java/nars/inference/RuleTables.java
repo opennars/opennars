@@ -401,9 +401,9 @@ public class RuleTables {
                                         goalterm=qu.getSubject();
                                     }
                                 }
-                                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
+                                TruthValue truth=new TruthValue(1.0f,Parameters.CURIOSITY_DESIRE_CONFIDENCE);
                                 Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
-                                nal.singlePremiseTask(sent, new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY,Parameters.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                                nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
                             }
                         }
                         break;

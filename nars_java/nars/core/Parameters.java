@@ -197,5 +197,9 @@ public class Parameters {
     
     public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
+    public static float CURIOSITY_DESIRE_CONFIDENCE=0.9f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
+    public static float CURIOSITY_DESIRE_PRIORITY=0.9f; //how much priority should curiosity have?
+    public static float CURIOSITY_DESIRE_DURABILITY=0.9f; //how much durability should curiosity have?
+    
 }
 
