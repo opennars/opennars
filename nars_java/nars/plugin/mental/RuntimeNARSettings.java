@@ -86,24 +86,24 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.TEMPORAL_INDUCTION_SAMPLES=(int) val;
     }
     
-    public double getCuriosityDesireConfidence() {
-        return Parameters.CURIOSITY_DESIRE_CONFIDENCE;
+    public double getCuriosityDesireConfidenceMul() {
+        return Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL;
     }
-    public void setCuriosityDesireConfidence(double val) {
-        Parameters.CURIOSITY_DESIRE_CONFIDENCE=(float) val;
+    public void setCuriosityDesireConfidenceMul(double val) {
+        Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL=(float) val;
     }
     
-    public double getCuriosityDesirePriority() {
+    public double getCuriosityDesirePriorityMul() {
         return Parameters.CURIOSITY_DESIRE_PRIORITY_MUL;
     }
-    public void setCuriosityDesirePriority(double val) {
+    public void setCuriosityDesirePriorityMul(double val) {
         Parameters.CURIOSITY_DESIRE_PRIORITY_MUL=(float)val;
     }
     
-    public double getCuriosityDesireDurability() {
+    public double getCuriosityDesireDurabilityMul() {
         return Parameters.CURIOSITY_DESIRE_DURABILITY_MUL;
     }
-    public void setCuriosityDesireDurability(double val) {
+    public void setCuriosityDesireDurabilityMul(double val) {
         Parameters.CURIOSITY_DESIRE_DURABILITY_MUL=(float) val;
     }
     

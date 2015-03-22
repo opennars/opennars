@@ -419,7 +419,7 @@ public class RuleTables {
                                         }
                                     }
                                 }
-                                TruthValue truth=new TruthValue(1.0f,Parameters.CURIOSITY_DESIRE_CONFIDENCE);
+                                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
                                 if(goalterm!=null && !(goalterm instanceof Variable) && !goalterm.hasVarIndep()) {
                                     Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
                                     if(sent!=null)
