@@ -202,5 +202,10 @@ public class Parameters {
     public static float CURIOSITY_DESIRE_DURABILITY=0.9f; //how much durability should curiosity have?
     public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
     
+    public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
+    public static float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
+    /*public static float BUSY_EVENT_HIGHER_THRESHOLD=0.75f; //1.6.4, step by step^, there is already enough new things ^^
+    public static float BUSY_EVENT_LOWER_THRESHOLD=0.25f; */
+    public static boolean REFLECT_META_HAPPY_GOAL=true;
 }
 

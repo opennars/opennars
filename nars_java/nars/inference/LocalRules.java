@@ -148,7 +148,7 @@ public class LocalRules {
             float oldQ = TemporalRules.solutionQuality(problem, oldBest, memory);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
-                    memory.emotion.adjustHappy(oldQ, task.getPriority());
+                    memory.emotion.adjustHappy(oldQ, task.getPriority(),nal);
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
                 memory.emit(Unsolved.class, task, belief, "Lower quality");               
@@ -178,7 +178,7 @@ public class LocalRules {
         memory.logic.SOLUTION_BEST.commit(task.getPriority());
 
         if (problem.isGoal()) {
-            memory.emotion.adjustHappy(newQ, task.getPriority());
+            memory.emotion.adjustHappy(newQ, task.getPriority(), nal);
         }
         
         BudgetValue budget = TemporalRules.solutionEval(problem, belief, task, nal);

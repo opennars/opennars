@@ -113,4 +113,40 @@ public class RuntimeNARSettings implements Plugin {
     public void setCuriosityForOperatorOnly(boolean val) {
         Parameters.CURIOSITY_FOR_OPERATOR_ONLY=val;
     }
+    
+    
+    public double getHappyEventHigherThreshold() {
+        return Parameters.HAPPY_EVENT_HIGHER_THRESHOLD;
+    }
+    public void setHappyEventHigherThreshold(double val) {
+        Parameters.HAPPY_EVENT_HIGHER_THRESHOLD=(float) val;
+    }
+    
+    public double getHappyEventLowerThreshold() {
+        return Parameters.HAPPY_EVENT_LOWER_THRESHOLD;
+    }
+    public void setHappyEventLowerThreshold(double val) {
+        Parameters.HAPPY_EVENT_LOWER_THRESHOLD=(float) val;
+    }
+    
+    /*  public double getBusyEventHigherThreshold() {
+        return Parameters.BUSY_EVENT_HIGHER_THRESHOLD;
+    }
+    public void setBusyEventHigherThreshold(double val) {
+        Parameters.BUSY_EVENT_HIGHER_THRESHOLD=(float) val;
+    }
+    
+   public double getBusyEventLowerThreshold() {
+        return Parameters.BUSY_EVENT_LOWER_THRESHOLD;
+    }
+    public void setBusyEventLowerThreshold(double val) {
+        Parameters.BUSY_EVENT_LOWER_THRESHOLD=(float) val;
+    }*/
+    
+    public boolean isReflectMetaHappyGoal() {
+        return Parameters.REFLECT_META_HAPPY_GOAL;
+    }
+    public void setReflectMetaHappyGoal(boolean val) {
+        Parameters.REFLECT_META_HAPPY_GOAL=val;
+    }
 }
