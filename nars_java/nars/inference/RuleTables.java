@@ -393,11 +393,17 @@ public class RuleTables {
                                         if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
                                             goalterm=imp.getSubject();
                                         }
+                                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
+                                            goalterm=imp.getPredicate(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
+                                        }
                                     } 
                                     else
                                     if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
                                         if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
                                             goalterm=imp.getPredicate();
+                                        }
+                                        if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
+                                            goalterm=imp.getSubject(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
                                         }
                                     }
                                 }
@@ -416,11 +422,11 @@ public class RuleTables {
                                 TruthValue truth=new TruthValue(1.0f,Parameters.CURIOSITY_DESIRE_CONFIDENCE);
                                 if(goalterm!=null && !(goalterm instanceof Variable)) {
                                     Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
-                                    nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                                    nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
                                 }
                                 if(goalterm2!=null && !(goalterm2 instanceof Variable)) {
                                     Sentence sent=new Sentence(goalterm2,Symbols.GOAL_MARK,truth.clone(),new Stamp(task.sentence.stamp,nal.memory.time()));
-                                    nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                                    nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
                                 }
                             }
                         }

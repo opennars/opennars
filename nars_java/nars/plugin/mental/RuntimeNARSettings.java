@@ -94,17 +94,17 @@ public class RuntimeNARSettings implements Plugin {
     }
     
     public double getCuriosityDesirePriority() {
-        return Parameters.CURIOSITY_DESIRE_PRIORITY;
+        return Parameters.CURIOSITY_DESIRE_PRIORITY_MUL;
     }
     public void setCuriosityDesirePriority(double val) {
-        Parameters.CURIOSITY_DESIRE_PRIORITY=(float)val;
+        Parameters.CURIOSITY_DESIRE_PRIORITY_MUL=(float)val;
     }
     
     public double getCuriosityDesireDurability() {
-        return Parameters.CURIOSITY_DESIRE_DURABILITY;
+        return Parameters.CURIOSITY_DESIRE_DURABILITY_MUL;
     }
     public void setCuriosityDesireDurability(double val) {
-        Parameters.CURIOSITY_DESIRE_DURABILITY=(float) val;
+        Parameters.CURIOSITY_DESIRE_DURABILITY_MUL=(float) val;
     }
     
     public boolean isCuriosityForOperatorOnly() {
