@@ -34,7 +34,7 @@ public class Symbols {
     public static final char QUESTION_MARK = '?';
     public static final char GOAL_MARK = '!';
     public static final char QUEST_MARK = '@';
-
+    public static final char TERM_NORMALIZING_WORKAROUND_MARK = 'T';
     
     
     
