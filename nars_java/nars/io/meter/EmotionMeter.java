@@ -12,6 +12,7 @@ import nars.inference.BudgetFunctions;
 import nars.io.Symbols;
 import nars.language.Inheritance;
 import nars.language.SetExt;
+import nars.language.SetInt;
 import nars.language.Term;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
@@ -57,17 +58,19 @@ public class EmotionMeter implements Serializable {
                 frequency=0.0f;
             }
             if(frequency!=-1) { //ok lets add an event now
-                Term predicate=SetExt.make(new Term("satisfied"));
+                Term predicate=SetInt.make(new Term("satisfied"));
                 Term subject=new Term("SELF");
                 Inheritance inh=Inheritance.make(subject, predicate);
                 TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
                 Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
+                s.stamp.setOccurrenceTime(nal.memory.time());
                 Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
                 nal.addTask(t, "emotion");
                 if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
                     TruthValue truth2=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
                     Sentence s2=new Sentence(inh,Symbols.GOAL_MARK,truth2,new Stamp(nal.memory));
-                    Task t2=new Task(s,new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY,Parameters.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                    s2.stamp.setOccurrenceTime(nal.memory.time());
+                    Task t2=new Task(s2,new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY,Parameters.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth)));
                     nal.addTask(t2, "metagoal");
                 }
             }
