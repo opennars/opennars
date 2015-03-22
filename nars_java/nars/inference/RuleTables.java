@@ -56,6 +56,7 @@ import nars.language.Similarity;
 import nars.language.Statement;
 import nars.language.Term;
 import static nars.language.Terms.equalSubTermsInRespectToImageAndProduct;
+import nars.language.Variable;
 import nars.language.Variables;
 import nars.operator.Operation;
 import nars.plugin.input.PerceptionAccel;
@@ -413,11 +414,11 @@ public class RuleTables {
                                     }
                                 }
                                 TruthValue truth=new TruthValue(1.0f,Parameters.CURIOSITY_DESIRE_CONFIDENCE);
-                                if(goalterm!=null) {
+                                if(goalterm!=null && !(goalterm instanceof Variable)) {
                                     Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
                                     nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
                                 }
-                                if(goalterm2!=null) {
+                                if(goalterm2!=null && !(goalterm2 instanceof Variable)) {
                                     Sentence sent=new Sentence(goalterm2,Symbols.GOAL_MARK,truth.clone(),new Stamp(task.sentence.stamp,nal.memory.time()));
                                     nal.singlePremiseTask(sent, new BudgetValue(Parameters.CURIOSITY_DESIRE_PRIORITY,Parameters.CURIOSITY_DESIRE_DURABILITY,BudgetFunctions.truthToQuality(truth)));
                                 }
