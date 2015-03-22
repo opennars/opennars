@@ -25,6 +25,7 @@
 package vnc;
 
 import automenta.vivisect.swing.NWindow;
+import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.viewer.ConnectionPresenter;
@@ -214,6 +215,11 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
             }
 
             @Override
+            public void onMessageSend(ClientToServerMessage message) {
+                VNCClient.this.onMessageSend(message);
+            }
+
+            @Override
             public void successfulRfbConnection() {
                 super.successfulRfbConnection();
                 onConnected();
@@ -246,6 +252,10 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
 
         connectionPresenter.startConnection(settings, uiSettings, paramsMask);
 
+
+    }
+
+    protected void onMessageSend(ClientToServerMessage message) {
 
     }
 

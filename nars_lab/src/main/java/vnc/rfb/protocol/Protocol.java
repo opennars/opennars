@@ -226,7 +226,7 @@ abstract public class Protocol implements ProtocolContext, IChangeSettingsListen
 		decoders.instantiateDecodersWhenNeeded(settings.encodings);
 		SetEncodingsMessage encodingsMessage = new SetEncodingsMessage(settings.encodings);
 		sendMessage(encodingsMessage);
-		logger.fine("sent: " + encodingsMessage.toString());
+		//logger.fine("sent: " + encodingsMessage.toString());
 	}
 
 	/**

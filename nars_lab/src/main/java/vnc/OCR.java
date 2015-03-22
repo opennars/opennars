@@ -20,7 +20,14 @@ public class OCR {
     final static Tesseract t = Tesseract.getInstance();
     static {
         t.setDatapath("/usr/share/tessdata");
-        t.setTessVariable("language_model_penalty_non_dict_word","0.35f"); //default=0.15
+
+        /*
+        For tesseract-ocr >= 3.01 try increasing the variables
+            language_model_penalty_non_freq_dict_word (0.1 default)
+            language_model_penalty_non_dict_word (0.15 default)
+         */
+        t.setTessVariable("language_model_penalty_non_freq_dict_word","0.4f"); //default=0.15
+        t.setTessVariable("language_model_penalty_non_dict_word","0.6f"); //default=0.15
     }
 
     private static ExecutorService tasks = Executors.newSingleThreadExecutor();
@@ -53,14 +60,14 @@ public class OCR {
     }
 
 
-    static final int minWidth = 16;
-    static final int minHeight = 16;
-    static final int minPixels = minWidth * minHeight * 3;
+    static final int minWidth = 12;
+    static final int minHeight = 12;
+    static final int minPixels = minWidth * minHeight * 2;
 
 
     static long now = System.currentTimeMillis();
 
-    final static int bufferSize = 8;
+    final static int bufferSize = 16;
     public static final NavigableSet<BufferUpdate> buffers = Collections.synchronizedNavigableSet(new TreeSet<BufferUpdate>(new Comparator<BufferUpdate>() {
 
         @Override public int compare(BufferUpdate o1, BufferUpdate o2) {
@@ -100,6 +107,89 @@ public class OCR {
 //        //buffers.remove(top);
 //        return top;
 //    }
+
+    public static char loccharx(int x) {
+        switch(x) {
+            case -1: return 'L';
+            case 0: return 'C';
+            case 1: return 'R';
+        }
+        return 0;
+    }
+    public static char locchary(int x) {
+        switch(x) {
+            case -1: return 'U';
+            case 0: return 'c'; //lowercase
+            case 1: return 'D';
+        }
+        return 0;
+    }
+    public static String get3x3CoordsFlat(int tx, int ty, int height, int width) {
+
+        int dx = width/3, dy = height/3;
+        int cx = 0, cy = 0;
+        List<String> loc = new ArrayList();
+        while (dx > minWidth) {
+            int ux, uy;
+            if (tx > cx + dx * 2)
+            { ux = 1; cx += (dx*2); }
+            else if (tx > cx + dx)
+            { ux = 0; cx += dx; }
+            else
+                ux = -1;
+            if (ty > cy + dy * 2)
+            { uy = 1; cy += dy*2; }
+            else if (ty > cy + dy)
+            { uy = 0; cy += dy; }
+            else
+                uy = -1;
+            String p = "{" + loccharx(ux) + "," + locchary(uy) + "}";
+            loc.add(p);
+
+            dx /= 3;
+            dy /= 3;
+            if ((dx < minWidth) || (dy < minHeight))
+                break;
+        }
+        return String.join(",", loc);
+
+    }
+    public static String get3x3CoordsTree(int tx, int ty, int height, int width) {
+
+        int dx = width/3, dy = height/3;
+        int cx = 0, cy = 0;
+        String j = "";
+        int count = 0;
+        while (dx > minWidth) {
+            int ux, uy;
+            if (tx > cx + dx * 2)
+            { ux = 1; cx += (dx*2); }
+            else if (tx > cx + dx)
+            { ux = 0; cx += dx; }
+            else
+                ux = -1;
+            if (ty > cy + dy * 2)
+            { uy = 1; cy += dy*2; }
+            else if (ty > cy + dy)
+            { uy = 0; cy += dy; }
+            else
+                uy = -1;
+            String p = ",{" + loccharx(ux) + "," + locchary(uy);
+            j += p;
+            count++;
+
+            dx /= 3;
+            dy /= 3;
+            if ((dx < minWidth) || (dy < minHeight))
+                break;
+        }
+        if (j.isEmpty()) return "";
+        for (int i = 0; i < count; i++)
+            j += "}";
+        j = j.substring(1, j.length()); //remove leading comma
+        return j;
+
+    }
 
     public static class BufferUpdate {
         private OCRResultHandler callback;
@@ -147,52 +237,18 @@ public class OCR {
         }
 
 
-        protected static char loccharx(int x) {
-            switch(x) {
-                case -1: return 'L';
-                case 0: return 'C';
-                case 1: return 'R';
-            }
-            return 0;
-        }
-        protected static char locchary(int x) {
-            switch(x) {
-                case -1: return 'U';
-                case 0: return 'c'; //lowercase
-                case 1: return 'D';
-            }
-            return 0;
-        }
 
         public String getLocation(Surface surface) {
-            BufferedImage frame = surface.getRenderer().getFrame();
-            int dx = frame.getWidth()/3, dy = frame.getHeight()/3;
-            int cx = 0, cy = 0;
-            int tx = rect.x, ty = rect.y;
-            List<String> loc = new ArrayList();
-            while (dx > minWidth) {
-                int ux, uy;
-                if (tx > cx + dx * 2)
-                    { ux = 1; cx += (dx*2); }
-                else if (tx > cx + dx)
-                    { ux = 0; cx += dx; }
-                else
-                    ux = -1;
-                if (ty > cy + dy * 2)
-                    { uy = 1; cy += dy*2; }
-                else if (ty > cy + dy)
-                    { uy = 0; cy += dy; }
-                else
-                    uy = -1;
-                String p = "{" + loccharx(ux) + "," + locchary(uy) + "}";
-                loc.add(p);
 
-                dx /= 3;
-                dy /= 3;
-                if ((dx < minWidth) || (dy < minHeight))
-                    break;
-            }
-            return String.join(",", loc);
+            BufferedImage frame = surface.getRenderer().getFrame();
+
+            return get3x3CoordsTree(rect.x + rect.width / 2, rect.y + rect.height / 2, surface.getWidth(), surface.getHeight());
+        }
+
+
+
+        public float getScreenFraction(Surface surface) {
+            return ((float)(rect.width * rect.height)) / ((float)((surface.getWidth() * surface.getHeight())));
         }
     }
 

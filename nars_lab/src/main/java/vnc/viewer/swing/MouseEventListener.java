@@ -90,9 +90,14 @@ implements MouseWheelListener {
 			context.sendMessage(new PointerEventMessage((byte) (buttonMask | wheelMask), x, y));
 		}
 		context.sendMessage(new PointerEventMessage(buttonMask, x, y));
+        onMouseEvent(mouseEvent, mouseWheelEvent, moved);
 	}
 
-	@Override
+    protected void onMouseEvent(MouseEvent mouseEvent, MouseWheelEvent mouseWheelEvent, boolean moved) {
+        /** for overriding in subclasses */
+    }
+
+    @Override
 	public void mousePressed(MouseEvent mouseEvent) {
 		processMouseEvent(mouseEvent, null, false);
 	}

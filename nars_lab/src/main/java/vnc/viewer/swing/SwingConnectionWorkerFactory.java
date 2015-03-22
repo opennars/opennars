@@ -24,6 +24,7 @@
 
 package vnc.viewer.swing;
 
+import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.viewer.AbstractConnectionWorkerFactory;
 import vnc.viewer.ConnectionPresenter;
@@ -62,6 +63,11 @@ public class SwingConnectionWorkerFactory extends AbstractConnectionWorkerFactor
             @Override
             protected void frameBufferUpdate(vnc.drawing.Renderer renderer, FramebufferUpdateRectangle rect) {
                 presenter.frameBufferUpdate(renderer, rect);
+            }
+
+            @Override
+            public void onMessageSend(ClientToServerMessage message) {
+                presenter.onMessageSend(message);
             }
         };
         return w;

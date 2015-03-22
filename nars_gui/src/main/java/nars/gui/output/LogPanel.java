@@ -257,20 +257,20 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     
     abstract void limitBuffer(int incomingDataSize);
 
-
-    public static Color getChannelColor(Class c) {
-        
-        switch (c.getSimpleName()) {
-            case "OUT":                
-                return Color.GREEN;
-            case "IN":
-                return Color.YELLOW;
-            case "ERR":
-                return Color.ORANGE;
-        }
-        
-        return Color.GRAY;
-    }
+//
+//    public static Color getChannelColor(Class c) {
+//
+//        switch (c.getSimpleName()) {
+//            case "OUT":
+//                return Color.GREEN;
+//            case "IN":
+//                return Color.YELLOW;
+//            case "ERR":
+//                return Color.ORANGE;
+//        }
+//
+//        return Color.GRAY;
+//    }
 
     final static Color getPriorityColor(final float priority) {
         return new Color(priority, priority, priority);

@@ -236,7 +236,7 @@ public class TextOutput extends Output {
                 if (signals != null)
                     buffer.append(Arrays.toString(signals));
                 else
-                    buffer.append(signals);
+                    buffer.append(signal);
             }
 
         } else if ((channel == Answer.class) && (signals != null)) {

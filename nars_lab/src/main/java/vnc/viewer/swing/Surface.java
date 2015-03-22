@@ -37,6 +37,8 @@ import vnc.viewer.UiSettings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 
 @SuppressWarnings("serial")
 public class Surface extends JPanel implements IRepaintController, IChangeSettingsListener {
@@ -74,7 +76,12 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
                 Surface.this.onKeyEvent(ee);
             }
         };
-        mouse = new MouseEventListener(this, context, scaleFactor);
+        mouse = new MouseEventListener(this, context, scaleFactor) {
+            @Override
+            protected void onMouseEvent(MouseEvent mouseEvent, MouseWheelEvent mouseWheelEvent, boolean moved) {
+                Surface.this.onMouseEvent(mouseEvent, mouseWheelEvent, moved);
+            }
+        };
 
         this.context = context;
         this.scaleFactor = scaleFactor;
@@ -89,9 +96,12 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
     }
 
+    private void onMouseEvent(MouseEvent mouseEvent, MouseWheelEvent mouseWheelEvent, boolean moved) {
+        /* for overriding */
+    }
+
     protected void onKeyEvent(KeyEventMessage ee) {
         /* for overriding */
-
     }
 
 

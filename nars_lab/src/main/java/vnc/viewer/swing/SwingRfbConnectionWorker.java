@@ -28,6 +28,7 @@ import vnc.drawing.Renderer;
 import vnc.exceptions.*;
 import vnc.rfb.IPasswordRetriever;
 import vnc.rfb.IRfbSessionListener;
+import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.Protocol;
 import vnc.rfb.protocol.ProtocolSettings;
@@ -85,6 +86,11 @@ abstract public class SwingRfbConnectionWorker extends SwingWorker<Void, String>
                 SwingRfbConnectionWorker.this.frameBufferUpdate(renderer, rect);
             }
 
+            @Override
+            public void sendMessage(ClientToServerMessage message) {
+                super.sendMessage(message);
+                SwingRfbConnectionWorker.this.onMessageSend(message);
+            }
         };
         String message = "Handshaking with remote host";
         logger.info(message);

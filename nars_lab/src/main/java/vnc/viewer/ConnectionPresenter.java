@@ -25,6 +25,7 @@
 package vnc.viewer;
 
 import vnc.drawing.Renderer;
+import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.rfb.protocol.ProtocolSettings;
 import vnc.utils.Strings;
@@ -310,4 +311,6 @@ public abstract class ConnectionPresenter extends Presenter {
     public Surface getSurface() {
         return getRfbConnectionWorker().getSurface();
     }
+
+    public abstract void onMessageSend(ClientToServerMessage message);
 }

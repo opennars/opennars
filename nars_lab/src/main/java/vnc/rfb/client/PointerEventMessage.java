@@ -28,9 +28,9 @@ import vnc.exceptions.TransportException;
 import vnc.transport.Writer;
 
 public class PointerEventMessage implements ClientToServerMessage {
-	private final byte buttonMask;
-	private final short x;
-	private final short y;
+    public final byte buttonMask;
+	public final short x;
+    public final short y;
 
 	public PointerEventMessage(byte buttonMask, short x, short y) {
 		this.buttonMask = buttonMask;
