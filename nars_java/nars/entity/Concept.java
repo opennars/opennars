@@ -377,6 +377,8 @@ public class Concept extends Item<Term> implements Termable {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
+                //ok, how can we achieve it? add a question of whether it is fullfilled
+                
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 //task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()
                 //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
