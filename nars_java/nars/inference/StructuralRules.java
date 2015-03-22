@@ -582,9 +582,9 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
-        /*if (component.hasVar()) {
+        if (component.hasVarIndep()) {
             return false;
-        }*/
+        }
         
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
             return false;
