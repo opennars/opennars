@@ -149,4 +149,26 @@ public class RuntimeNARSettings implements Plugin {
     public void setReflectMetaHappyGoal(boolean val) {
         Parameters.REFLECT_META_HAPPY_GOAL=val;
     }
+
+    public boolean isCuriosityAlsoOnLowConfidentHighPriorityBelief() {
+        return Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF;
+    }
+    public void setCuriosityAlsoOnLowConfidentHighPriorityBelief(boolean val) {
+        Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=val;
+    }
+    
+    public double getCuriosityPriorityThreshold() {
+        return Parameters.CURIOSITY_PRIORITY_THRESHOLD;
+    }
+    public void setCuriosityPriorityThreshold(double val) {
+        Parameters.CURIOSITY_PRIORITY_THRESHOLD=(float) val;
+    }
+    
+    public double getCuriosityConfidenceThreshold() {
+        return Parameters.CURIOSITY_CONFIDENCE_THRESHOLD;
+    }
+    public void setCuriosityConfidenceThreshold(double val) {
+        Parameters.CURIOSITY_CONFIDENCE_THRESHOLD=(float) val;
+    }
+
 }

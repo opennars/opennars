@@ -197,10 +197,13 @@ public class Parameters {
     
     public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
+    public static float CURIOSITY_PRIORITY_THRESHOLD=0.7f;
+    public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.7f;
     public static float CURIOSITY_DESIRE_CONFIDENCE=0.9f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
     public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.9f; //how much priority should curiosity have?
     public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.9f; //how much durability should curiosity have?
     public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
+    public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
     
     public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
     public static float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
