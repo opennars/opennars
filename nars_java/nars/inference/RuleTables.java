@@ -381,6 +381,30 @@ public class RuleTables {
                             if (taskTerm instanceof Statement) {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
+                        } else {
+                            if(taskTerm instanceof Implication || taskTerm instanceof Equivalence) { //<a =/> b>? |- a!
+                                Term goalterm=null;
+                                if(taskTerm instanceof Implication) {
+                                    Implication imp=(Implication)taskTerm;
+                                    if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                                        goalterm=imp.getSubject();
+                                    } 
+                                    else
+                                    if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
+                                        goalterm=imp.getPredicate();
+                                    }
+                                }
+                                else
+                                if(taskTerm instanceof Equivalence) {
+                                    Equivalence qu=(Equivalence)taskTerm;
+                                    if(qu.getTemporalOrder()==TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                                        goalterm=qu.getSubject();
+                                    }
+                                }
+                                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
+                                Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
+                                nal.singlePremiseTask(sent, new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY,Parameters.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                            }
                         }
                         break;
                     case TermLink.COMPOUND_STATEMENT:
