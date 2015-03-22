@@ -120,7 +120,7 @@ public abstract class Operator extends Term implements Plugin {
 //            }
 //        }
         catch (Exception e) {                        
-            reportExecution(operation, args, e, memory);            
+            //reportExecution(operation, args, e, memory);            
         }
         return false;
         

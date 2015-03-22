@@ -58,8 +58,10 @@ public abstract class SynchronousFunctionOperator extends Operator {
         boolean variable = lastTerm instanceof Variable;
         
         if(!variable) {
-            return null;
+            throw new RuntimeException("output can not be specified");
         }
+        
+        
         
         int numParam = numArgs-1;
         Term[] x = new Term[numParam];
