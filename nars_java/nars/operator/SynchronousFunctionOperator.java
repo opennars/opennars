@@ -8,6 +8,8 @@ import nars.entity.Task;
 import nars.inference.TemporalRules;
 import nars.io.Symbols;
 import nars.language.CompoundTerm;
+import nars.language.ImageExt;
+import nars.language.ImageInt;
 import nars.language.Implication;
 import nars.language.Inheritance;
 import nars.language.Product;
@@ -75,30 +77,24 @@ public abstract class SynchronousFunctionOperator extends Operator {
             throw e;
         }*/
           
-        //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
-        //which wont happen on temporal induction with dependent variable for good reason,
-        //because in general the two dependent variables of event1 and event2
-        //can not be assumed to be related, but here we have to assume
-        //it if we don't want to use the "resultof"-relation.
         Variable var=new Variable("$1");
-        Term actual_part = Similarity.make(var, y);
-        Variable vardep=new Variable("#1");
-        Term actual_dep_part = Similarity.make(vardep, y);
+      //  Term actual_part = Similarity.make(var, y);
+      //  Variable vardep=new Variable("#1");
+        //Term actual_dep_part = Similarity.make(vardep, y);
         operation=(Operation) operation.setComponent(0, 
                 ((CompoundTerm)operation.getSubject()).setComponent(
-                        numArgs-1, var, m), m); 
+                        numArgs-1, y, m), m); 
         
-        Term actual=Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
+        //<3 --> (/,^add,1,2,_,SELF)>.
+        //transform to image for perception variable introduction rule (is more efficient representation
+        ImageExt ing=(ImageExt) ImageExt.make((Product)operation.getSubject(),operation.getPredicate(), (short)(numArgs-1));
+        Inheritance inh=Inheritance.make(y, ing);
+        Term actual=inh; //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
 
         float confidence = 0.99f;
         if (variable) {
             return Lists.newArrayList( 
                     m.newTask(actual, Symbols.JUDGMENT_MARK, 
-                            1f, confidence, 
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY, 
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
-            ),
-                    m.newTask(actual_dep_part, Symbols.JUDGMENT_MARK, 
                             1f, confidence, 
                             Parameters.DEFAULT_JUDGMENT_PRIORITY, 
                             Parameters.DEFAULT_JUDGMENT_DURABILITY, operation.getTask()
