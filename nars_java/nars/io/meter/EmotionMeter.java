@@ -14,6 +14,9 @@ import nars.language.Inheritance;
 import nars.language.SetExt;
 import nars.language.SetInt;
 import nars.language.Term;
+import nars.operator.Operation;
+import nars.operator.Operator;
+import nars.plugin.mental.InternalExperience;
 
 /** emotional value; self-felt internal mental states; variables used to record emotional values */
 public class EmotionMeter implements Serializable {
@@ -70,8 +73,32 @@ public class EmotionMeter implements Serializable {
                     TruthValue truth2=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
                     Sentence s2=new Sentence(inh,Symbols.GOAL_MARK,truth2,new Stamp(nal.memory));
                     s2.stamp.setOccurrenceTime(nal.memory.time());
-                    Task t2=new Task(s2,new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY,Parameters.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                    Task t2=new Task(s2,new BudgetValue(Parameters.DEFAULT_GOAL_PRIORITY,Parameters.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)));
                     nal.addTask(t2, "metagoal");
+                    //this is a good candidate for innate belief for consider and remind:
+                    Operator consider=nal.memory.getOperator("^consider");
+                    Operator remind=nal.memory.getOperator("^remind");
+                    Term[] arg=new Term[1];
+                    arg[0]=inh;
+                    if(InternalExperience.enabled && Parameters.CONSIDER_REMIND) {
+                        Operation op_consider=Operation.make(consider, arg, true);
+                        Operation op_remind=Operation.make(remind, arg, true);
+                        Operation[] op=new Operation[2];
+                        op[0]=op_remind; //order important because usually reminding something
+                        op[1]=op_consider; //means it has good chance to be considered after
+                        for(Operation o : op) {
+                            TruthValue truth3=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                            Sentence s3=new Sentence(o,Symbols.JUDGEMENT_MARK,truth3,new Stamp(nal.memory));
+                            s3.stamp.setOccurrenceTime(nal.memory.time());
+                            
+                            //INTERNAL_EXPERIENCE_DURABILITY_MUL
+                            BudgetValue budget=new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth3));
+                            budget.setPriority(budget.getPriority()*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL);
+                            budget.setDurability(budget.getPriority()*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL);
+                            Task t3=new Task(s3,budget);
+                            nal.addTask(t3, "internal experience for consider and remind");
+                        }
+                    }
                 }
             }
         }
