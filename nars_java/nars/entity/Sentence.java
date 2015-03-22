@@ -126,24 +126,24 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         this.punctuation = punctuation;
         
-        if (_content instanceof Interval)
+        if (_content instanceof Interval && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK)
         {
             truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
             if(Parameters.DEBUG)
                 throw new RuntimeException("Sentence content must not be Interval: " + _content + punctuation + " " + stamp);
         }
         
-        if ( (!isQuestion() && !isQuest()) && (truth == null) ) {            
+        if ( (!isQuestion() && !isQuest()) && (truth == null) && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {            
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
         
-        if(_content.subjectOrPredicateIsIndependentVar()) {
+        if(_content.subjectOrPredicateIsIndependentVar() && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
             truth.setConfidence(0.0f); //do it that way for now, because else further inference is interrupted.
             if(Parameters.DEBUG)
                 throw new RuntimeException("A statement sentence is not allowed to have a independent variable as subj or pred");
         }
         
-        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES) {
+        if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
             if (!Term.valid(_content)) {
                 CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
                 ntc.printStackTrace();
@@ -152,7 +152,7 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         }
         
         
-        if ((isQuestion() || isQuest()) && !stamp.isEternal()) {
+        if ((isQuestion() || isQuest()) && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK && !stamp.isEternal()) {
             stamp.setEternal();
             //throw new RuntimeException("Questions and Quests require eternal tense");
         }
