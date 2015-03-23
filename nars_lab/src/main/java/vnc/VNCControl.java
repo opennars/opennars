@@ -2,7 +2,7 @@ package vnc;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import javolution.util.FastMap;
+import ca.nengo.ui.lib.NengoStyle;
 import nars.build.Default;
 import nars.core.Events;
 import nars.core.Memory;
@@ -28,13 +28,20 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 abstract public class VNCControl extends VNCClient {
 
     private final NAR nar;
 
-
+    Map<Concept,ActivityRectangle> positions = new LinkedHashMap();
+    int rx = 600; //sky resolution pixels
+    int ry = 40;
+    List<Concept> incoming = new CopyOnWriteArrayList();
+    Deque<OCR.BufferUpdate> ocrResults = new ConcurrentLinkedDeque<>();
+    private SkyActivity skyActivity;
 
     public VNCControl(NAR nar, String host, int port) {
         super(host, port);
@@ -100,166 +107,214 @@ abstract public class VNCControl extends VNCClient {
 
     public void initNAR() {
 
-        nar.start(100,50);
+        nar.start(10,50);
+
+        skyActivity = new SkyActivity(nar);
 
 
-        Set<String> seeds = new LinkedHashSet();
-        //level 1
-        for (double i = 0; i < 3; i++) {
-            for (double j = 0; j < 3; j++) {
-                seeds.add(OCR.get3x3CoordsTree(i/3.0, j/3.0, 1.0, 1.0, 1));
-            }
-        }
-        //level 2
-        for (double i = 0; i < 9; i++) {
-            for (double j = 0; j < 9; j++) {
-                seeds.add(OCR.get3x3CoordsTree(i / 9.0, j / 9.0, 1.0, 1.0, 2));
-            }
-        }
-
-        System.out.println(seeds);
+        //System.out.println(seeds);
 
 
-        ConceptMap c = new ConceptMap(nar) {
 
-            Map<Concept,ActivityRectangle> positions = new FastMap().atomic();
-
-            int rx = 100;
-            int ry = 100;
-
-            BufferedImage bi = new BufferedImage(rx,ry,BufferedImage.TYPE_4BYTE_ABGR);
-
-            final public PImage n = new PImage(bi);
-
-            public boolean pendingReset = true;
-            //final ColorArray ca = new ColorArray(50, new Color(0.5f,0,0,0), new Color(0.75f, 0, 0.25f, 0.5f));
-            //int framesPerConceptRefresh = 100;
-
-
-            protected void render() {
-
-                Graphics2D g = (Graphics2D) bi.getGraphics();
-
-                for (Map.Entry<Concept, ActivityRectangle> e : positions.entrySet()) {
-                    Concept c = e.getKey();
-                    ActivityRectangle r = e.getValue();
-                    float priority = c.getPriority();
-                    float dp = r.prev - priority;
-                    float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
-                    float opacity = 0.1f;
-
-                    Color color = new Color(1f,
-                            dp > 0 ? 1f-ap : 1f,
-                            dp < 0 ? 1f-ap : 1f,
-                            opacity
-                    );
-
-                    float ww = g.getDeviceConfiguration().getBounds().width;
-                    float hh = g.getDeviceConfiguration().getBounds().height;
-
-                    //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
-
-                    float cellScale = 0.9f;
-
-                    g.setPaint(color);
-                    g.fillRect( (int)((r.getX()+0.5)*ww),
-                            (int)((r.getY()+0.5)*hh),
-                            (int)(r.getWidth()*ww*cellScale),
-                            (int)(r.getHeight()*hh*cellScale));
-
-                    r.prev = priority;
-                }
-
-                n.setPaintInvalid(true);
-                n.setImage(bi);
-
-                getSurface().repaint();
-            }
-
-
-            @Override
-            public void reset() {
-
-                pendingReset = false;
-
-                if (getSurface()==null) return;
-                PLayer sky = VNCControl.this.getSurface().getSkyLayer();
-
-                if (sky == null) return;
-
-
-                getSurface().getSky().getCamera().setBounds(0,0,rx,ry);
-
-                //if (n!=null) sky.removeChild(n);
-
-                sky.addChild(n);
-            }
-
-            @Override
-            protected void onConceptForget(Concept c) {
-                positions.remove(c);
-            }
-
-            @Override
-            protected void onConceptNew(Concept c) {
-                SetExt s = (SetExt)c.getTerm();
-                float wx = 1f;
-                float wy = 1f;
-                float cx = 0f;
-                float cy = 0f;
-                while (s!=null) {
-                    wx/=3;
-                    wy/=3;
-                    SetExt next = null;
-
-                    int dx = 1, dy = 1;
-                    for (Term t : s) {
-                        if (t instanceof SetExt) next = (SetExt) t;
-                        else if (t.getClass() == Term.class) {
-                            switch(t.toString()) {
-                                case "L": dx = 0; break;
-                                case "R": dx = 2; break;
-                                case "U": dy = 0; break;
-                                case "D": dy = 2; break;
-                            }
-                        }
-                    }
-                    cx += dx * wx - wx/2;
-                    cy += dy * wy - wy/2;
-                    s = next;
-                }
-                ActivityRectangle r = new ActivityRectangle(cx-wx/2, cy-wy/2, wx, wy);
-                r.current = c.getPriority();
-                positions.put(c, r);
-
-                render();
-
-            }
-
-            @Override
-            public boolean contains(Concept c) {
-                String s = c.getTerm().toString();
-                return seeds.contains(s);
-            }
-
-            @Override
-            protected void onFrame() {
-
-                if (getSurface() == null) return;
-                else if (pendingReset) reset();
-
-                if (!positions.isEmpty()) {
-                    render();
-                }
-
-            }
-
-        };
 
         addAxioms();
         addOperators();
 
     }
+
+
+    static final Set<String> seeds = new LinkedHashSet();
+    static {
+        //level 1
+        for (double i = 0; i < 3; i++) {
+            for (double j = 0; j < 3; j++) {
+                seeds.add(OCR.get3x3CoordsTree(i / 3.0, j / 3.0, 1.0, 1.0, 1));
+            }
+        }
+        //level 2
+
+        for (double i = 0; i < 9; i++) {
+            for (double j = 0; j < 9; j++) {
+                seeds.add(OCR.get3x3CoordsTree(i / 9.0, j / 9.0, 1.0, 1.0, 2));
+            }
+        }
+    }
+
+    public class SkyActivity extends ConceptMap {
+
+
+
+        final public PImage node = new PImage();
+
+        public boolean pendingReset = true;
+
+        public SkyActivity(NAR nar) {
+            super(nar);
+        }
+
+        //final ColorArray ca = new ColorArray(50, new Color(0.5f,0,0,0), new Color(0.75f, 0, 0.25f, 0.5f));
+        //int framesPerConceptRefresh = 100;
+
+
+
+
+        @Override
+        public void reset() {
+
+            pendingReset = false;
+
+            if (getSurface()==null) return;
+            PLayer sky = VNCControl.this.getSurface().getSkyLayer();
+
+            if (sky == null) return;
+
+
+            getSurface().getSky().getCamera().setBounds(0,0,rx,ry);
+
+            //if (n!=null) sky.removeChild(n);
+
+            sky.addChild(node);
+        }
+
+        public void register(Concept c) {
+            SetExt s = (SetExt)c.getTerm();
+            float wx = 1f;
+            float wy = 1f;
+            float cx = 0f;
+            float cy = 0f;
+            while (s!=null) {
+                wx/=3;
+                wy/=3;
+                SetExt next = null;
+
+                int dx = 1, dy = 1;
+                for (Term t : s) {
+                    if (t instanceof SetExt) next = (SetExt) t;
+                    else if (t.getClass() == Term.class) {
+                        switch(t.toString()) {
+                            case "L": dx = 0; break;
+                            case "R": dx = 2; break;
+                            case "U": dy = 2; break;
+                            case "D": dy = 0; break;
+                        }
+                    }
+                }
+                cx += dx * wx/2;
+                cy += dy * wy/2;
+                s = next;
+            }
+
+            ActivityRectangle r = new ActivityRectangle(cx, cy, wx, wy);
+            r.current = c.getPriority();
+            positions.put(c, r);
+
+        }
+        @Override
+        protected void onConceptForget(Concept c) {
+            ActivityRectangle r = positions.remove(c);
+            if (r!=null)
+                r.current = -1;
+            renderSky();
+        }
+
+        @Override
+        protected void onConceptNew(Concept c) {
+
+            incoming.add(c);
+
+            //SwingUtilities.invokeLater(this::render);
+            renderSky();
+
+        }
+
+        @Override
+        public boolean contains(Concept c) {
+            String s = c.getTerm().toString();
+            return seeds.contains(s);
+        }
+
+        @Override
+        protected void onFrame() {
+
+            if (getSurface() == null) return;
+            else if (pendingReset) reset();
+
+            renderSky();
+
+        }
+
+    };
+
+    protected synchronized void renderSky() {
+
+        if (getSurface() == null) return;
+        if (getSurface().getSky() == null) return;
+
+        BufferedImage bi = new BufferedImage(rx,ry,BufferedImage.TYPE_4BYTE_ABGR);
+
+        if (!incoming.isEmpty()) {
+            Concept[] c = incoming.toArray(new Concept[incoming.size()]);
+            incoming.clear();
+            for (Concept x : c)
+                skyActivity.register(x);
+        }
+
+        Graphics2D g = (Graphics2D) bi.getGraphics();
+
+        g.setBackground(NengoStyle.COLOR_TRANSPARENT);
+        g.setColor(NengoStyle.COLOR_TRANSPARENT);
+        g.fillRect(0,0,rx, ry);
+
+
+
+        for (Map.Entry<Concept, ActivityRectangle> e : positions.entrySet()) {
+
+            Concept c = e.getKey();
+            ActivityRectangle r = e.getValue();
+
+            if (r.current == -1)
+                continue; //has been de-activated, so no need to repaint
+
+            float priority = c.getPriority();
+            float dp = r.prev - priority;
+            float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
+            float opacity = 0.5f; //each layer applies more, so set to << 1
+
+            Color color = new Color(0f,
+                    dp > 0 ? ap : 0f,
+                    dp < 0 ? ap : 0f,
+                    ap * opacity
+            );
+
+            float ww = rx; //g.getDeviceConfiguration().getBounds().width;
+            float hh = ry; //g.getDeviceConfiguration().getBounds().height;
+
+            //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
+
+            float cellScale = 1.0f;
+
+            g.setPaint(color);
+            g.fillRect( (int)( (r.getX())*ww),
+                    (int)( ( r.getY())*hh),
+                    (int)(r.getWidth()*ww*cellScale),
+                    (int)(r.getHeight()*hh*cellScale));
+
+            r.prev = priority;
+        }
+
+        g.dispose();
+
+
+        //n.setImage((Image)null);
+        skyActivity.node.setImage(bi);
+        skyActivity.node.repaint();
+
+
+
+        getSurface().renderSky(nar.time(), ocrResults);
+        repaint();
+    }
+
 
     protected void addAxioms() {
         //vertical
@@ -417,6 +472,7 @@ abstract public class VNCControl extends VNCClient {
                 Task t = nar.believe(ii, u.getInputTime(), 1.0f, ocrConf, pri);
 
                 System.out.print(nar.time() + ": " + Texts.n2(pri) + "," + Texts.n2(ocrConf) + " " + ii + "\t" + u.getWaitingTime() + " wait, " + u.getProcessingTime() + " proc ms\n");
+                ocrResults.push(u);
             }
         }
     };

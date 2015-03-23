@@ -282,7 +282,12 @@ public class OCR {
                     (ImageObserver) null);
             g2.dispose();
 
-            frameBitmap.setImage(tmp);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override public void run() {
+                    frameBitmap.setImage(tmp);
+                }
+            });
+
 
             //bi = ImageHelper.convertImageToGrayscale(bi.getSubimage(r.x, r.y, r.width, r.height));
             //bi = getGrayscaleSubImage(bi, r.x, r.y, r.width, r.height);

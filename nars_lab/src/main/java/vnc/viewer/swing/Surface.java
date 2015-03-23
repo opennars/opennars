@@ -24,9 +24,10 @@
 
 package vnc.viewer.swing;
 
+import ca.nengo.ui.lib.NengoStyle;
 import org.piccolo2d.PLayer;
 import org.piccolo2d.POffscreenCanvas;
-import org.piccolo2d.util.PPaintContext;
+import vnc.OCR;
 import vnc.core.SettingsChangedEvent;
 import vnc.rfb.IChangeSettingsListener;
 import vnc.rfb.IRepaintController;
@@ -44,6 +45,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.util.Deque;
+import java.util.Iterator;
 
 @SuppressWarnings("serial")
 public class Surface extends JPanel implements IRepaintController, IChangeSettingsListener {
@@ -63,6 +66,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
     private double scaleFactor;
 	public Dimension oldSize;
     private BufferedImage skyImage;
+    //private BufferedImage skyImage;
 
 
     public RendererImpl getRenderer() {
@@ -187,6 +191,80 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
         super.setSize(d);
     }
 
+
+    public synchronized void renderSky(long now, Deque<OCR.BufferUpdate> ocrResults) {
+        if (sky == null) return;
+
+
+        //if (skyImage==null) {
+        BufferedImage skyImage = new BufferedImage((int) sky.getCamera().getWidth(), (int) sky.getCamera().getHeight(), BufferedImage.TYPE_INT_ARGB);
+            sky.setOpaque(false);
+
+            //sky.setBackground(NengoStyle.COLOR_TRANSPARENT);
+            //sky.setRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+            //sky.getCamera().validateFullPaint();
+
+
+
+        Graphics2D g = (Graphics2D) skyImage.getGraphics();
+
+
+
+        if (Math.random() < 1) {
+            sky.setBackground(null);
+            getSky().render(g);
+
+        }
+
+        else {
+            sky.setBackground(NengoStyle.COLOR_TRANSPARENT);
+
+            //((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+
+            //
+            //        g.setPaint(NengoStyle.COLOR_TRANSPARENT);
+            //        g.fillRect(0,0,(int)sky.getCamera().getWidth(), (int)sky.getCamera().getHeight());
+
+
+            g.setStroke(new BasicStroke(4));
+
+            if (!ocrResults.isEmpty()) {
+
+
+                float sx = 1;
+                float sy = 1;
+
+                Iterator<OCR.BufferUpdate> ib = ocrResults.iterator();
+
+                while (ib.hasNext()) {
+                    OCR.BufferUpdate bu = ib.next();
+
+                    float text = Math.min(bu.getText().length(), 10) / 10.0f;
+                    float opacity = 0.5f;
+                    g.setPaint(new Color(bu.getConfidence(), text, 0, bu.getConfidence() * opacity));
+
+                    g.drawRect(
+                            (int) (bu.rect.x * sx),
+                            (int) (bu.rect.y * sy),
+                            (int) (bu.rect.width * sx),
+                            (int) (bu.rect.height * sy));
+                    final int maxAge = 5000;
+
+                    if (now - bu.getInputTime() > maxAge)
+                        ib.remove();
+                }
+
+
+            }
+
+        }
+
+        g.dispose();
+
+        this.skyImage = skyImage;
+
+    }
+
     @Override
 	public void paintComponent(Graphics g) {
 
@@ -196,40 +274,31 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
             ((Graphics2D) g).scale(scaleFactor, scaleFactor);
             //((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            /*((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);*/
-            /*synchronized (renderer.getLock())*/ {
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+            synchronized (renderer.getLock()) {
                 Image offscreenImage = renderer.getFrame();
 
 
-                if (skyImage==null) {
-                    skyImage = new BufferedImage((int)sky.getCamera().getWidth(), (int)sky.getCamera().getHeight(), BufferedImage.TYPE_INT_ARGB);
-                    sky.setOpaque(false);
-                    sky.setBackground(new Color(0,0,0,0));
-                    //sky.getCamera().validateFullPaint();
-                }
+
                 if (offscreenImage != null) {
                     g.drawImage(offscreenImage, 0, 0, null);
                 }
 
-                sky.setRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
 
-                sky.getCamera().repaint();
-
-                sky.render((Graphics2D) skyImage.getGraphics());
+                //sky.getCamera().repaint();
 
 
-                // Get and install an AlphaComposite to do transparent drawing
-                ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 
-                System.out.println((int)sky.getCamera().getWidth() + " " + (int)sky.getCamera().getHeight());
-                g.drawImage(skyImage,0,0,(int)renderer.getWidth(), (int)renderer.getHeight(),
-                        0,0,(int)sky.getCamera().getWidth(),(int)sky.getCamera().getHeight(), (ImageObserver)null);
+
+
+
+
 
 
             }
-            /*synchronized (cursor.getLock())*/ {
+            synchronized (cursor.getLock()) {
 
                 Image cursorImage = cursor.getImage();
                 if (showCursor && cursorImage != null &&
@@ -238,8 +307,21 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
                     g.drawImage(cursorImage, cursor.rX, cursor.rY, null);
                 }
 
+                if (skyImage!=null) {
+                    // Get and install an AlphaComposite to do transparent drawing
+                    ((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+
+                    double skyScale = 0.5f;
+                    g.drawImage(skyImage, 0, 0, (int) (renderer.getWidth() * skyScale), (int)( renderer.getHeight() * skyScale),
+                            0, 0, (int) sky.getCamera().getWidth(), (int) sky.getCamera().getHeight(), (ImageObserver) null);
+
+                    //((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
+
+                }
+
             }
         }
+
 
 
     }
