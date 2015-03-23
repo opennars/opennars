@@ -11,7 +11,9 @@ import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
 import nars.logic.nal1.Inheritance;
+import nars.logic.nal1.Negation;
 import nars.logic.nal3.Intersect;
+import nars.logic.nal3.IntersectionExt;
 import nars.logic.nal3.IntersectionInt;
 import nars.logic.nal4.Product;
 import nars.logic.nal7.Interval;
@@ -192,6 +194,14 @@ public class NarseseParserTest {
         taskEqualsOldParser("-- negated!");
         taskEqualsOldParser("--negated!");
 
+
+
+        Negation nab = term("--(a & b)");
+        assertTrue(nab instanceof Negation);
+        IntersectionExt ab = (IntersectionExt) nab.negated();
+        assertTrue(ab instanceof IntersectionExt);
+
+
     }
 
     protected void testBelieveAB(Operation t) {
@@ -237,6 +247,7 @@ public class NarseseParserTest {
         assertNotNull(term("((a,b)-->c)")); //intermediate
         assertNotNull(term("((a,b) --> c)")); //intermediate
         assertNotNull(term("<(a,b) --> c>")); //intermediate
+        assertNotNull(term("<a --> (c,d)>")); //intermediate
         assertNotNull(term("<a-->(c,d)>")); //intermediate
         assertNotNull(term("(a-->(c,d))")); //intermediate
         assertNotNull(term("(a --> (c,d))")); //intermediate

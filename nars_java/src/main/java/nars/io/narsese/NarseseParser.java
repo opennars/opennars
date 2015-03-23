@@ -10,6 +10,7 @@ import nars.logic.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal1.Inheritance;
+import nars.logic.nal1.Negation;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
@@ -293,9 +294,7 @@ public class NarseseParser extends BaseParser<Object> {
         //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
         return firstOf(
                 CompoundOperator(),
-                sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
-
-                sequence(s(), push(NALOperator.PRODUCT)) //DEFAULT
+                push(NALOperator.PRODUCT) //DEFAULT
                 //Term()
         );
     }
@@ -370,6 +369,33 @@ public class NarseseParser extends BaseParser<Object> {
 
     //}
 
+    Rule AnyOperator() {
+        return sequence(firstOf(
+                        INHERITANCE.symbol,
+
+                        NEGATION.symbol,
+
+                        SIMILARITY.symbol, PROPERTY.symbol, INSTANCE.symbol, INSTANCE_PROPERTY.symbol,
+                        IMPLICATION.symbol,
+                        EQUIVALENCE.symbol,
+                        IMPLICATION_AFTER.symbol, IMPLICATION_BEFORE.symbol, IMPLICATION_WHEN.symbol,
+                        EQUIVALENCE_AFTER.symbol, EQUIVALENCE_WHEN.symbol,
+                        DISJUNCTION.symbol,
+                        CONJUNCTION.symbol,
+                        SEQUENCE.symbol,
+                        PARALLEL.symbol,
+                        DIFFERENCE_EXT.symbol,
+                        DIFFERENCE_INT.symbol,
+                        INTERSECTION_EXT.symbol,
+                        INTERSECTION_INT.symbol,
+                        PRODUCT.symbol,
+                        IMAGE_EXT.symbol,
+                        IMAGE_INT.symbol,
+                        OPERATION.ch
+                ),
+                push(Symbols.getOperator(match()))
+        );
+    }
     Rule CompoundOperator() {
         return sequence(
                 firstOf(
@@ -394,7 +420,6 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator2() {
         return sequence(
                 firstOf(
-                        //order the smaller ones last, because they are less specific
                         NALOperator.DISJUNCTION.symbol,
                         NALOperator.CONJUNCTION.symbol,
                         NALOperator.SEQUENCE.symbol,
@@ -412,7 +437,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    Rule ArgumentSep() {
+    Rule ArgSep() {
         return firstOf(
                 //check the ' , ' comma separated first, it is more complex
                 sequence(s(), String.valueOf(Symbols.ARGUMENT_SEPARATOR), s()),
@@ -427,23 +452,21 @@ public class NarseseParser extends BaseParser<Object> {
     /** list of terms prefixed by a particular compound term operator */
     Rule MultiArgTerm(NALOperator open, NALOperator close, Rule head) {
         return sequence(
-                open!=null ? open.ch : s(),
-                push(open),
 
-                s(),
+                open!=null ? sequence(open.ch, s(), push(open)) : s(),
 
-                firstOf(head, this.CompoundOperator()),
+
+                firstOf(head, AnyOperator()),
 
                 zeroOrMore(
                         sequence(
-                                ArgumentSep(),
-                                Term()
+                                ArgSep(),
+                                firstOf(sequence(AnyOperator(), ArgSep(), Term()),
+                                        Term())
                         )
                 ),
 
-                s(),
-
-                close!=null ? close.ch : s(),
+                close!=null ? sequence(s(), close.ch) : s(),
 
                 push(nextTermVector())
         );
@@ -489,8 +512,9 @@ public class NarseseParser extends BaseParser<Object> {
         List<Term> vectorterms = Parameters.newArrayList();
 
         NALOperator op = null;
+        boolean negated = false;
 
-        System.err.println(getContext().getValueStack());
+        //System.err.println(getContext().getValueStack());
         while ( !getContext().getValueStack().isEmpty() ) {
             Object p = pop();
 
@@ -508,20 +532,43 @@ public class NarseseParser extends BaseParser<Object> {
             }
             else if ((p instanceof NALOperator) && (p!=NALOperator.COMPOUND_TERM_OPENER) /* ignore the compound term opener */) {
 
-                if ((op!=null) && (op!=(/*(NALOperator)*/p)))
-                    throw new InvalidInputException("CompoundTerm must use only one type of operator; " + p + " contradicts " + op + "; " + getContext().getValueStack() +  ":" + vectorterms);
-                op = (NALOperator)p;
+                //if ((op!=null) && (op!=(/*(NALOperator)*/p)))
+                  //  throw new InvalidInputException("CompoundTerm must use only one type of operator; " + p + " contradicts " + op + "; " + getContext().getValueStack() +  ":" + vectorterms);
+                NALOperator nextOp = (NALOperator)p;
+                if ((op!=null) && ((op!=nextOp) && nextOp!=NEGATION))
+                    throw new InvalidInputException("Too many operators involved: " + getContext().getValueStack() +  ":" + vectorterms);
+
+                if (!negated && nextOp == NEGATION)
+                    negated = true;
+                else
+                    op = nextOp;
             }
         }
-        System.err.println("  " + op + vectorterms);
+
+
+
 
         if (vectorterms.isEmpty()) return null;
 
 //        if ((vectorterms.size() == 1) && (op == null))
 //            return vectorterms.get(0);
 
+        int v = vectorterms.size();
+        if (vectorterms.get(v-1).equals(NEGATION)) {
+            //HACK fix this
+            negated = true;
+            vectorterms.remove(v-1);
+        }
+
+        //System.err.println("  " + (negated ? "--" : "") + op + vectorterms);
+
         Collections.reverse(vectorterms);
 
+
+        if (negated && vectorterms.size() == 1) {
+            //HACK fix this
+            return Negation.make(vectorterms.get(0));
+        }
 
         if ((op == null) || (op == COMPOUND_TERM_OPENER)) {
             //product without '*,' prefix
@@ -533,7 +580,11 @@ public class NarseseParser extends BaseParser<Object> {
         if (op == OPERATION)
             return Operation.make(memory, va);
 
-        return Memory.term(op, va);
+        Term t = Memory.term(op, va);
+        if (negated) {
+            return Negation.make(t);
+        }
+        return t;
     }
 
     Rule Number() {
