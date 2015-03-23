@@ -1,8 +1,8 @@
 package vnc;
 
 import automenta.vivisect.Video;
-import automenta.vivisect.swing.ColorArray;
 import automenta.vivisect.swing.NWindow;
+import javolution.util.FastMap;
 import nars.build.Default;
 import nars.core.Events;
 import nars.core.Memory;
@@ -13,19 +13,20 @@ import nars.gui.NARSwing;
 import nars.io.Texts;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
+import nars.logic.entity.Term;
+import nars.logic.nal3.SetExt;
 import nars.logic.nal8.NullOperator;
 import org.piccolo2d.PLayer;
-import org.piccolo2d.PNode;
-import org.piccolo2d.nodes.PPath;
+import org.piccolo2d.nodes.PImage;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.client.PointerEventMessage;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.util.*;
 import java.util.List;
 
 
@@ -43,155 +44,216 @@ abstract public class VNCControl extends VNCClient {
 
     }
 
+    abstract public static class ConceptMap extends AbstractReaction {
+
+        int frame = -1;
+
+        public int frame() { return frame; }
+
+        abstract public void reset();
+
+        public ConceptMap(NAR nar) {
+            super(nar, Events.ConceptNew.class, Events.ConceptForget.class, Events.FrameEnd.class, Events.ResetStart.class);
+        }
+        abstract protected void onFrame();
+
+
+        abstract public boolean contains(Concept c);
+
+        @Override
+        public void event(Class event, Object[] args) {
+            if (event == Events.FrameEnd.class) {
+                frame++;
+                onFrame();
+            }
+            if (event == Events.ResetStart.class) {
+                frame = 0;
+                reset();
+            }
+            else if (event == Events.ConceptNew.class) {
+                Concept c = (Concept)args[0];
+                if (contains(c))
+                    onConceptNew(c);
+            }
+            else if (event == Events.ConceptForget.class) {
+                Concept c = (Concept) args[0];
+                if (contains(c))
+                    onConceptForget(c);
+            }
+
+        }
+
+        protected abstract void onConceptForget(Concept c);
+
+        protected abstract void onConceptNew(Concept c);
+
+    }
+
+    public static class ActivityRectangle extends Rectangle.Double {
+        public float current = 0;
+        public float prev = 0;
+
+        public ActivityRectangle(float x, float y, float wx, float wy) {
+            super(x, y, wx, wy);
+        }
+    }
 
     public void initNAR() {
 
         nar.start(100,50);
 
-        new AbstractReaction(nar, Events.FrameEnd.class, Events.ResetStart.class) {
 
-            public boolean pendingRender = false;
-            public float[][] trinode0Prev = new float[3][3];
-            final Concept triconcept[][] = new Concept[3][3];
-            final PNode trinode0[][]  = new PNode[3][3];
-            boolean needsReset = true;
-            final ColorArray ca = new ColorArray(50, new Color(0.5f,0,0,0), new Color(0.75f, 0, 0.25f, 0.5f));
-            int frame = -1;
-            int framesPerConceptRefresh = 100;
-
-            protected void reset() {
-                needsReset = true;
+        Set<String> seeds = new LinkedHashSet();
+        //level 1
+        for (double i = 0; i < 3; i++) {
+            for (double j = 0; j < 3; j++) {
+                seeds.add(OCR.get3x3CoordsTree(i/3.0, j/3.0, 1.0, 1.0, 1));
             }
-
-
-            protected void onFrame() {
-                frame++;
-
-                if (getSurface()==null) return;
-
-                PLayer sky = VNCControl.this.getSurface().getSkyLayer();
-                if (sky == null) return;
-
-                int ww = getSurface().getRenderer().getWidth();
-                float w3x = ww / 3f;
-                int hh = getSurface().getRenderer().getHeight();
-                float w3y = hh / 3f;
-                if (needsReset) {
-
-                    synchronized(triconcept) {
-
-                        if (needsReset) {
-
-                            for (int i = 0; i < 3; i++) {
-                                for (int j = 0; j < 3; j++) {
-
-                                    final PPath n = PPath.createRectangle(0, 0, 1, 1);
-                                    n.setStroke(null);
-
-                                    sky.addChild(n);
-
-                                    trinode0[i][j] = n;
-                                    trinode0Prev[i][j] = 0;
-                                    frame = 0;
-
-                                }
-                            }
-                        }
-
-                        needsReset = false;
-
-                    }
-
-                }
-                if (frame % framesPerConceptRefresh == 0) {
-                    for (int i = 0; i < 3; i++) {
-                        for (int j = 0; j < 3; j++) {
-
-                            float x = w3x * i;
-                            float y = w3y * j;
-                            float cx = x + w3x/2;
-                            float cy = y + w3y/2;
-
-                            if (triconcept[i][j] == null) {
-                                String pos = OCR.get3x3CoordsTree((int) cx, (int) cy, (int) ww, (int) hh, 1);
-                                Concept c = nar.concept(pos);
-                                if (c!=null)
-                                    triconcept[i][j] = c;
-                                else
-                                    triconcept[i][j] = null;
-                            }
-
-                        }
-                    }
-                }
-
-                if (!pendingRender) {
-                    pendingRender = true;
-                    SwingUtilities.invokeLater(this::render);
-                }
-
+        }
+        //level 2
+        for (double i = 0; i < 9; i++) {
+            for (double j = 0; j < 9; j++) {
+                seeds.add(OCR.get3x3CoordsTree(i / 9.0, j / 9.0, 1.0, 1.0, 2));
             }
+        }
+
+        System.out.println(seeds);
+
+
+        ConceptMap c = new ConceptMap(nar) {
+
+            Map<Concept,ActivityRectangle> positions = new FastMap().atomic();
+
+            int rx = 100;
+            int ry = 100;
+
+            BufferedImage bi = new BufferedImage(rx,ry,BufferedImage.TYPE_4BYTE_ABGR);
+
+            final public PImage n = new PImage(bi);
+
+            public boolean pendingReset = true;
+            //final ColorArray ca = new ColorArray(50, new Color(0.5f,0,0,0), new Color(0.75f, 0, 0.25f, 0.5f));
+            //int framesPerConceptRefresh = 100;
 
 
             protected void render() {
-                pendingRender = false;
 
-                int ww = getSurface().getRenderer().getWidth();
-                float w3x = ww / 3f;
-                int hh = getSurface().getRenderer().getHeight();
-                float w3y = hh / 3f;
+                Graphics2D g = (Graphics2D) bi.getGraphics();
 
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        float x = w3x * i;
-                        float y = w3y * j;
+                for (Map.Entry<Concept, ActivityRectangle> e : positions.entrySet()) {
+                    Concept c = e.getKey();
+                    ActivityRectangle r = e.getValue();
+                    float priority = c.getPriority();
+                    float dp = r.prev - priority;
+                    float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
+                    float opacity = 0.1f;
 
-                        trinode0[i][j].setBounds(x, y, (int) w3x, (int) w3y);
+                    Color color = new Color(1f,
+                            dp > 0 ? 1f-ap : 1f,
+                            dp < 0 ? 1f-ap : 1f,
+                            opacity
+                    );
 
-                        Concept c = triconcept[i][j];
+                    float ww = g.getDeviceConfiguration().getBounds().width;
+                    float hh = g.getDeviceConfiguration().getBounds().height;
+
+                    //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
+
+                    float cellScale = 0.9f;
+
+                    g.setPaint(color);
+                    g.fillRect( (int)((r.getX()+0.5)*ww),
+                            (int)((r.getY()+0.5)*hh),
+                            (int)(r.getWidth()*ww*cellScale),
+                            (int)(r.getHeight()*hh*cellScale));
+
+                    r.prev = priority;
+                }
+
+                n.setPaintInvalid(true);
+                n.setImage(bi);
+
+                getSurface().repaint();
+            }
 
 
-                        if (c!=null) {
+            @Override
+            public void reset() {
 
-                            float priority = c.getPriority();
-                            float dp = trinode0Prev[i][j] - priority;
-                            float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
-                            float opacity = 0.1f;
-                            trinode0[i][j].setPaint(
-                                    new Color(1f,
-                                            dp > 0 ? 1f-ap : 1f,
-                                            dp < 0 ? 1f-ap : 1f,
-                                            opacity
-                                    )
-                            );
-                            trinode0[i][j].setVisible(true);
-                            trinode0Prev[i][j] = priority;
+                pendingReset = false;
+
+                if (getSurface()==null) return;
+                PLayer sky = VNCControl.this.getSurface().getSkyLayer();
+
+                if (sky == null) return;
+
+
+                getSurface().getSky().getCamera().setBounds(0,0,rx,ry);
+
+                //if (n!=null) sky.removeChild(n);
+
+                sky.addChild(n);
+            }
+
+            @Override
+            protected void onConceptForget(Concept c) {
+                positions.remove(c);
+            }
+
+            @Override
+            protected void onConceptNew(Concept c) {
+                SetExt s = (SetExt)c.getTerm();
+                float wx = 1f;
+                float wy = 1f;
+                float cx = 0f;
+                float cy = 0f;
+                while (s!=null) {
+                    wx/=3;
+                    wy/=3;
+                    SetExt next = null;
+
+                    int dx = 1, dy = 1;
+                    for (Term t : s) {
+                        if (t instanceof SetExt) next = (SetExt) t;
+                        else if (t.getClass() == Term.class) {
+                            switch(t.toString()) {
+                                case "L": dx = 0; break;
+                                case "R": dx = 2; break;
+                                case "U": dy = 0; break;
+                                case "D": dy = 2; break;
+                            }
                         }
-                        else {
-                            trinode0[i][j].setVisible(false);
-                        }
-
-
-
-
-
-
-
                     }
+                    cx += dx * wx - wx/2;
+                    cy += dy * wy - wy/2;
+                    s = next;
                 }
+                ActivityRectangle r = new ActivityRectangle(cx-wx/2, cy-wy/2, wx, wy);
+                r.current = c.getPriority();
+                positions.put(c, r);
 
-                //getSurface().getSky().getCamera().getLayer(0).setBounds(0,0,getWidth(),getHeight());
+                render();
 
-                repaint();
             }
 
-            @Override public void event(Class event, Object[] args) {
-                if (event == Events.FrameEnd.class)
-                    onFrame();
-                else if (event == Events.ResetStart.class) {
-                    reset();
-                }
+            @Override
+            public boolean contains(Concept c) {
+                String s = c.getTerm().toString();
+                return seeds.contains(s);
             }
+
+            @Override
+            protected void onFrame() {
+
+                if (getSurface() == null) return;
+                else if (pendingReset) reset();
+
+                if (!positions.isEmpty()) {
+                    render();
+                }
+
+            }
+
         };
 
         addAxioms();

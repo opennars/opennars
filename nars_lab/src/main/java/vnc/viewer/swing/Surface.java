@@ -43,6 +43,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 
 @SuppressWarnings("serial")
 public class Surface extends JPanel implements IRepaintController, IChangeSettingsListener {
@@ -194,14 +195,17 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
 
             ((Graphics2D) g).scale(scaleFactor, scaleFactor);
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            synchronized (renderer.getLock()) {
+            //((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            /*((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);*/
+            /*synchronized (renderer.getLock())*/ {
                 Image offscreenImage = renderer.getFrame();
 
 
-                if ((skyImage==null || skyImage.getWidth()!=renderer.getWidth() || skyImage.getHeight()!=renderer.getHeight())) {
-                    skyImage = new BufferedImage(renderer.getWidth(), renderer.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                    //sky.setOpaque(false);
+                if (skyImage==null) {
+                    skyImage = new BufferedImage((int)sky.getCamera().getWidth(), (int)sky.getCamera().getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    sky.setOpaque(false);
                     sky.setBackground(new Color(0,0,0,0));
                     //sky.getCamera().validateFullPaint();
                 }
@@ -211,20 +215,21 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
                 sky.setRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
 
+                sky.getCamera().repaint();
 
-                //sky.repaint(new PBounds(0, 0, renderer.getWidth(), renderer.getHeight()));
                 sky.render((Graphics2D) skyImage.getGraphics());
 
 
                 // Get and install an AlphaComposite to do transparent drawing
                 ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 
-
-                g.drawImage(skyImage,0,0,null);
+                System.out.println((int)sky.getCamera().getWidth() + " " + (int)sky.getCamera().getHeight());
+                g.drawImage(skyImage,0,0,(int)renderer.getWidth(), (int)renderer.getHeight(),
+                        0,0,(int)sky.getCamera().getWidth(),(int)sky.getCamera().getHeight(), (ImageObserver)null);
 
 
             }
-            synchronized (cursor.getLock()) {
+            /*synchronized (cursor.getLock())*/ {
 
                 Image cursorImage = cursor.getImage();
                 if (showCursor && cursorImage != null &&

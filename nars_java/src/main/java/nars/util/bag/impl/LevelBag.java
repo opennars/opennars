@@ -515,7 +515,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** removes from existing level and adds to new one */
-    protected /* synchronized */ DD<E> relevel(final DD<E> x, final E newValue) {
+    protected synchronized  DD<E> relevel(final DD<E> x, final E newValue) {
         final int prevLevel = x.owner();
         final int nextLevel = getLevel(newValue);
 
@@ -570,7 +570,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     @Override
-    public E put(final E newItem) {
+    public synchronized E put(final E newItem) {
         if (newItem==null)
             throw new RuntimeException("PUT item muts be non-null");
 

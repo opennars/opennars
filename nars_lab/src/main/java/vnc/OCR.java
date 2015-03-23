@@ -34,7 +34,11 @@ public class OCR {
 
     public static final BufferUpdateFastSortedSet<BufferUpdate> ocrPending = new BufferUpdateFastSortedSet<BufferUpdate>();
     final static int bufferSize = 64;
-    private static long inputBufferDelay = 100; //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers
+
+    //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers.
+    // time to allow small frame buffer updates to coagulate into a larger
+    private static long inputBufferDelay = 100;
+
     static double halflifeSeconds = 2;
 
     //limits for peforming OCR after exiting queue
@@ -125,8 +129,9 @@ public class OCR {
 //        System.out.println(result);
     }
 
-    public static char loccharx(int x) {
-        switch (x) {
+    public static char loccharx(double x) {
+        int ix = (int)Math.round(x);
+        switch (ix) {
             case -1:
                 return 'L';
             case 0:
@@ -184,17 +189,17 @@ public class OCR {
 
     }
 
-    public static String get3x3CoordsTree(int tx, int ty, int height, int width) {
-        return get3x3CoordsTree(tx, ty, height, width, 1);
+    public static String get3x3CoordsTree(double tx, double ty, double width, double height) {
+        return get3x3CoordsTree(tx, ty, width, height, 1);
     }
     //TODO a double version?
-    public static String get3x3CoordsTree(int tx, int ty, int height, int width, int levels) {
+    public static String get3x3CoordsTree(double tx, double ty, double width, double height, int levels) {
 
-        int dx = width / 3, dy = height / 3;
-        int cx = 0, cy = 0;
+        double dx = width / 3, dy = height / 3;
+        double cx = 0, cy = 0;
         String j = "";
         int count = 0;
-        while ((dx > minWidth) && (levels>0)) {
+        while (/*(width * minWidthFactor) && */ (levels>0)) {
             levels--;
             int ux, uy;
             if (tx > cx + dx * 2) {
@@ -205,6 +210,7 @@ public class OCR {
                 cx += dx;
             } else
                 ux = -1;
+
             if (ty > cy + dy * 2) {
                 uy = 1;
                 cy += dy * 2;
@@ -213,14 +219,14 @@ public class OCR {
                 cy += dy;
             } else
                 uy = -1;
+
             String p = ",{" + loccharx(ux) + "," + locchary(uy);
             j += p;
             count++;
 
             dx /= 3;
             dy /= 3;
-            if ((dx < minWidth) || (dy < minHeight))
-                break;
+
         }
         if (j.isEmpty()) return "";
         for (int i = 0; i < count; i++)
@@ -464,7 +470,7 @@ public class OCR {
 
             BufferedImage frame = surface.getRenderer().getFrame();
 
-            return get3x3CoordsTree(rect.x + rect.width / 2, rect.y + rect.height / 2, surface.getWidth(), surface.getHeight());
+            return get3x3CoordsTree(rect.x + rect.width / 2, rect.y + rect.height / 2, surface.getWidth(), surface.getHeight(), 3);
         }
 
 

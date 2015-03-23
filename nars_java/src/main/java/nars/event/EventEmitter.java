@@ -92,14 +92,14 @@ public class EventEmitter<E>  {
 
     public void notify(Class channel, Object arg) {
         final Event e;
-        if ((Parameters.THREADS == 1) && (theEvent != null)) {
-            e = theEvent;
-            theEvent = null;
-            e.setData(arg);
-        }
-        else {
+//        if ((Parameters.THREADS == 1) && (theEvent != null)) {
+//            e = theEvent;
+//            theEvent = null;
+//            e.setData(arg);
+//        }
+//        else {
             e = Event.wrap(arg);
-        }
+        //}
 
         r.notify(channel, e);
 
