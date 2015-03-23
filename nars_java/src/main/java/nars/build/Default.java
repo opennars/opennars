@@ -4,6 +4,8 @@ import nars.control.DefaultCore;
 import nars.core.*;
 import nars.core.Memory.Forgetting;
 import nars.core.Memory.Timing;
+import nars.event.AbstractExecutive;
+import nars.event.exe.DesireThresholdExecutive;
 import nars.logic.entity.*;
 import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.nal8.Operator;
@@ -149,6 +151,10 @@ public class Default extends NewNAR implements ConceptBuilder {
 
     }
 
+    public AbstractExecutive getExecutive() {
+        return new DesireThresholdExecutive();
+    }
+
     @Override
     public String toString() {
         return getClass().getSimpleName()+ '[' + level +
@@ -183,8 +189,9 @@ public class Default extends NewNAR implements ConceptBuilder {
         }
 
         if (level >= 8) {
+            n.on(getExecutive());
 
-            //n.addPlugin(new Anticipate());      // expect an event
+            //n.on(new Anticipate());      // expect an event
 
             if (internalExperience == Minimal) {
                 n.on(new InternalExperience());

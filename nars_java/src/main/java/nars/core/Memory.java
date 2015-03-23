@@ -46,7 +46,6 @@ import nars.logic.nal5.Implication;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.TemporalRules;
 import nars.logic.nal8.Operator;
-import nars.operator.app.plan.MultipleExecutionManager;
 import reactor.function.Supplier;
 
 import java.io.Serializable;
@@ -67,9 +66,7 @@ import java.util.concurrent.Executors;
  */
 public class Memory implements Serializable {
 
-    @Deprecated
-    public final MultipleExecutionManager executive; //used for implication graph and for planner plugin, todo 
-    //get it out to plugin somehow
+
 
     private boolean enabled = true;
 
@@ -135,6 +132,14 @@ public class Memory implements Serializable {
     }
 
 
+    /**
+     * Entry point for all potentially executable tasks.
+     * Enters a task and determine if there is a decision to execute.
+     * Returns true if the Task has a Term which can be executed
+     */
+    public void decide(Concept c, Task executableOperationTask) {
+        emit(Events.DecideExecution.class, c, executableOperationTask);
+    }
 
     @Deprecated public static enum Forgetting {
         @Deprecated Iterative,
@@ -238,8 +243,6 @@ public class Memory implements Serializable {
 
         this.event = new EventEmitter();
 
-
-        this.executive = new MultipleExecutionManager(this);
 
         //after this line begins actual logic, now that the essential data strucures are allocated
         //------------------------------------ 

@@ -18,7 +18,6 @@
 package nars.operator.app.plan;
 
 import nars.core.Events.NewTaskExecution;
-import nars.core.Events.UnexecutableGoal;
 import nars.core.Events.UnexecutableOperation;
 import nars.core.NAR;
 import nars.core.Plugin;
@@ -44,10 +43,10 @@ import java.util.TreeSet;
 import static nars.operator.app.plan.MultipleExecutionManager.isPlanTerm;
 
 /**
- *
+ * PROBABLY BROKEN TEMPORARILY DUE TO UnexecutableGoal event being in construction
  * @author tc
  */
-public class TemporalParticlePlanner implements Plugin, Reaction {
+@Deprecated public class TemporalParticlePlanner implements Plugin, Reaction {
     
     /**
      * global plan search parameters
@@ -111,13 +110,13 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
         
     @Override
     public void event(Class event, Object[] a) {
-        if (event == UnexecutableGoal.class) {
+        /*if (event == UnexecutableGoal.class) {
             Task t = (Task)a[0];
             Concept c = (Concept)a[1];
             NAL n = (NAL)a[2];
             decisionPlanning(n, t, c);            
         }
-        else if (event == UnexecutableOperation.class) {
+        else*/ if (event == UnexecutableOperation.class) {
 
             Execution executing = (Execution)a[0];
             Task task = executing.t;
@@ -269,11 +268,11 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
     }
     
     @Override public boolean setEnabled(NAR n, boolean enabled) {
-        this.executive = n.memory.executive;
+        this.executive = null; //n.memory.executive;
         this.graph = executive.graph;
         
         n.memory.event.set(this, enabled, 
-                UnexecutableGoal.class, 
+                //UnexecutableGoal.class,
                 UnexecutableOperation.class);
 
         return true;

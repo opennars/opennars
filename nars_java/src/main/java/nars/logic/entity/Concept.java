@@ -35,8 +35,6 @@ import nars.logic.entity.tlink.TaskLinkBuilder;
 import nars.logic.entity.tlink.TermLinkBuilder;
 import nars.logic.entity.tlink.TermLinkKey;
 import nars.logic.entity.tlink.TermLinkTemplate;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
 import nars.logic.reason.DirectProcess;
 import nars.util.bag.Bag;
 import nars.util.data.CuckooMap;
@@ -353,33 +351,18 @@ public class Concept extends Item<Term> implements Termable {
      * whether a concept's desire exceeds decision threshold
      */
     public boolean isDesired() {
+        return isDesired(memory.param.decisionThreshold.floatValue());
+    }
+
+    public boolean isDesired(float threshold) {
         TruthValue desire=this.getDesire();
         if(desire==null) {
             return false;
         }
-        return desire.getExpectation() > memory.param.decisionThreshold.get();
+        return desire.getExpectation() > threshold;
     }
 
-    /**
-     * Entry point for all potentially executable tasks.
-     * Returns true if the Task has a Term which can be executed
-     */
-    public boolean executeDecision(final Task t) {
 
-        if ((term instanceof Operation) && (isDesired())) {
-
-            Operation op=(Operation)term;
-            Operator oper = op.getOperator();
-
-            op.setTask(t);
-            if(!oper.execute(op, memory)) {
-                return false;
-            }
-
-            return true;
-        }
-        return false;
-    }
     
     /**
      * To accept a new goal, and check for revisions and realization, then
@@ -436,12 +419,7 @@ public class Concept extends Item<Term> implements Termable {
 
         addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
 
-        //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) { see: https://github.com/opennars/opennars/commit/9f9581aa677e74c0fb85aae67495d55d02803af1
-            if(!executeDecision(task)) {
-                memory.emit(UnexecutableGoal.class, task, this, nal);
-            }
-        //}
-
+        memory.decide(this, task);
         return true;
     }
 

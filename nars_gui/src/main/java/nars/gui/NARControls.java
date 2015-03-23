@@ -20,9 +20,10 @@
  */
 package nars.gui;
 
-import automenta.vivisect.dimensionalize.FastOrganicLayout;
-import automenta.vivisect.graph.AnimatingGraphVis;
-import automenta.vivisect.swing.*;
+import automenta.vivisect.swing.AwesomeButton;
+import automenta.vivisect.swing.NSlider;
+import automenta.vivisect.swing.NWindow;
+import automenta.vivisect.swing.TimeControl;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
 import nars.core.Memory;
@@ -31,7 +32,6 @@ import nars.event.Reaction;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
-import nars.gui.output.graph.NARGraphDisplay;
 import nars.gui.output.graph.nengo.NengoNetworkPanel;
 import nars.io.TextOutput;
 import nars.logic.meta.NARMetrics;
@@ -208,21 +208,25 @@ public class NARControls extends TimeControl implements Reaction {
             m.add(al); */
 
 
-            JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
-            imv.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
-                    new NWindow("Implication Graph", 
-                            new PCanvas( 
-                                    new AnimatingGraphVis(
-                                            nar.memory.executive.graph.implication,
-                                            new NARGraphDisplay(nar),
-                                            new FastOrganicLayout()
-                                    ))).show(500, 500);
-                }
-            });
-            m.add(imv); 
+//            JMenuItem imv = new JMenuItem("+ Eternalized Implications Graph");
+//            imv.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    //new Window("Implication Graph", new SentenceGraphPanel(nar, nar.memory.executive.graph.implication)).show(500, 500);
+//                    new NWindow("Implication Graph",
+//                            new PCanvas(
+//                                    new AnimatingGraphVis(
+//                                            nar.memory.executive.graph.implication,
+//                                            new NARGraphDisplay(nar),
+//                                            new FastOrganicLayout()
+//                                    ))).show(500, 500);
+//                }
+//            });
+//            m.add(imv);
+
+
+
+
 //
 //            JMenuItem sg = new JMenuItem("+ Inheritance / Similarity Graph");
 //            sg.addActionListener(new ActionListener() {
