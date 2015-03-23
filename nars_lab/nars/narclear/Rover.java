@@ -306,17 +306,29 @@ public class Rover extends PhysicsModel {
                 Rover.do_sth_importance+=decrease_of_importance_step; //increase
                 //System.out.println("choosing random "+String.valueOf(Math.random()));
                 ArrayList<String> candids=new ArrayList<>();
-                candids.add("(^motor,left)! :|:");
-                candids.add("(^motor,right)! :|:");
+                candids.add("(^motor,left). :|:");
+                candids.add("(^motor,right). :|:");
                 //candids.add("(^motor,backward). :|:");
-                candids.add("(^motor,forward)! :|:");
-                candids.add("(^motor,forward)! :|:");
+                candids.add("(^motor,forward). :|:");
+               // candids.add("(^motor,forward). :|:");
                 int candid=(int)(Math.random()*candids.size()-0.001);
                 nar.addInput(candids.get(candid));
                 
+                
+                switch(candids.get(candid)) {
+                    case "(^motor,left). :|:":
+                            rover.rotate(rotationSpeed);
+                            break;
+                    case "(^motor,right). :|:":
+                            rover.rotate(-rotationSpeed);
+                            break;
+                    case "(^motor,forward). :|:":
+                            rover.thrust(0, linearSpeed);
+                            break;
+                }
                 //nar.addInput("(^motor,random)!");
-            }
             
+            }
             if(feel_motion) {
                 feelMotion();
             }
@@ -519,7 +531,7 @@ public class Rover extends PhysicsModel {
     public static float rotationSpeed = 100f;
     public static float linearSpeed = 5000f;
                 
-    public static boolean allow_imitate=true; //allow rover to desire user way
+    public static boolean allow_imitate=false; //allow rover to desire user way
     
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
