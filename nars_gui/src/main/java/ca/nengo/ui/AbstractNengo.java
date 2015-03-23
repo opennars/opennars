@@ -93,8 +93,8 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     }
 
     public void setApplication(Application application) {
-        application.addApplicationListener(this);
-        application.setEnabledPreferencesMenu(false);
+        //application.addApplicationListener(this);
+        //application.setEnabledPreferencesMenu(false);
         /*
         BufferedImage icon = new BufferedImage(256,256,BufferedImage.TYPE_INT_ARGB);
         try {

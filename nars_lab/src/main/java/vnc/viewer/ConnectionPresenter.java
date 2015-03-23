@@ -92,12 +92,13 @@ public abstract class ConnectionPresenter extends Presenter {
         }
         connectionsHistory = new ConnectionsHistory();
         addModel(CONNECTIONS_HISTORY_MODEL, connectionsHistory);
-        syncModels(paramSettingsMask);
-        if (allowInteractive) {
-            show();
-            populate();
-        } else {
-            connect();
+        if (syncModels(paramSettingsMask)) {
+            if (allowInteractive) {
+                show();
+                populate();
+            } else {
+                connect();
+            }
         }
     }
 
@@ -224,9 +225,14 @@ public abstract class ConnectionPresenter extends Presenter {
         }
 	}
 
-    private void syncModels(int paramSettingsMask) {
+    private boolean syncModels(int paramSettingsMask) {
+
         final ConnectionParams cp = (ConnectionParams) getModel(CONNECTION_PARAMS_MODEL);
+        if (cp==null) return false;
+
         final ConnectionParams mostSuitableConnection = connectionsHistory.getMostSuitableConnection(cp);
+        if (mostSuitableConnection==null) return false;
+
         cp.completeEmptyFieldsFrom(mostSuitableConnection);
         rfbSettings.copyDataFrom(connectionsHistory.getProtocolSettings(mostSuitableConnection), paramSettingsMask & 0xffff);
         uiSettings.copyDataFrom(connectionsHistory.getUiSettingsData(mostSuitableConnection), (paramSettingsMask >> 16) & 0xffff);
@@ -234,6 +240,7 @@ public abstract class ConnectionPresenter extends Presenter {
             connectionsHistory.reorder(cp, rfbSettings, uiSettings);
         }
 
+        return true;
 //        protocolSettings.addListener(connectionsHistory);
 //        uiSettings.addListener(connectionsHistory);
     }

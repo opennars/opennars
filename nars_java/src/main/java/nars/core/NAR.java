@@ -433,15 +433,11 @@ public class NAR implements Runnable {
         return step(1);
     }
 
-    /** Execute a fixed number of frames.  cyclesPerFrame determines how many cycles each frame consists of
-     * may execute more than requested cycles if cyclesPerFrame > 1
+    /** Runs multiple frames, unless already running (then it return -1).
      * @return total time in seconds elapsed in realtime
      * */
     public double step(final int frames) {
-        /*if (thread!=null) {
-            memory.stepLater(cycles);
-            return;
-        }*/
+        if (thread!=null) return -1; //avoid anything if already threading
         
         final boolean wasRunning = running;
         running = true;
@@ -459,6 +455,8 @@ public class NAR implements Runnable {
      * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
      * */
     public NAR run(long minCycles, long maxCycles) {
+
+
         if (maxCycles <= 0) return this;
         if (minCycles > maxCycles)
             throw new RuntimeException("minCycles " + minCycles + " required <= maxCycles " + maxCycles);
@@ -574,6 +572,7 @@ public class NAR implements Runnable {
      * A frame, consisting of one or more NAR memory cycles
      */
     public double frame(final int cycles) {
+
 
         memory.resource.FRAME_DURATION.start();
 

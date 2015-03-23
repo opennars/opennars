@@ -24,6 +24,7 @@
 
 package vnc.viewer.swing;
 
+import vnc.VNCClient;
 import vnc.core.SettingsChangedEvent;
 import vnc.rfb.IChangeSettingsListener;
 import vnc.rfb.client.KeyEventMessage;
@@ -33,7 +34,6 @@ import vnc.rfb.protocol.ProtocolSettings;
 import vnc.utils.Keymap;
 import vnc.viewer.ConnectionPresenter;
 import vnc.viewer.UiSettings;
-import vnc.VNCClient;
 import vnc.viewer.swing.gui.OptionsDialog;
 
 import javax.swing.*;
@@ -50,14 +50,17 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-public class SwingViewerWindow implements IChangeSettingsListener {
+public class SwingViewerWindow extends JPanel implements IChangeSettingsListener {
 	public static final int FS_SCROLLING_ACTIVE_BORDER = 20;
 	private JToggleButton zoomFitButton;
 	private JToggleButton zoomFullScreenButton;
 	private JButton zoomInButton;
 	private JButton zoomOutButton;
 	private JButton zoomAsIsButton;
-	private JPanel outerPanel;
+
+    /** main panel to which everything is attached */
+    JPanel panel;
+
 	private JScrollPane scroller;
 	private JFrame frame;
 	private boolean forceResizable = true;
@@ -95,6 +98,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
         this.presenter = presenter;
         createContainer(surface, isApplet, viewer);
 
+
         if (uiSettings.showControls) {
             createButtonsPanel(workingProtocol, isSeparateFrame? frame: viewer);
             if (isSeparateFrame) registerResizeListener(frame);
@@ -127,17 +131,18 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 
 
 	private void createContainer(final Surface surface, boolean isApplet, JComponent appletWindow) {
-		outerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
-			@Override
-			public Dimension getSize() {
-				return surface.getPreferredSize();
-			}
-			@Override
-			public Dimension getPreferredSize() {
-				return surface.getPreferredSize();
-			}
-		};
-        outerPanel.setBackground(Color.DARK_GRAY);
+        panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)) {
+            @Override
+            public Dimension getSize() {
+                return surface.getPreferredSize();
+            }
+            @Override
+            public Dimension getPreferredSize() {
+                return surface.getPreferredSize();
+            }
+        };
+
+        panel.setBackground(Color.DARK_GRAY);
 		lpane = new JLayeredPane() {
 			@Override
 			public Dimension getSize() {
@@ -150,9 +155,9 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 		};
 		lpane.setPreferredSize(surface.getPreferredSize());
 		lpane.add(surface, JLayeredPane.DEFAULT_LAYER, 0);
-		outerPanel.add(lpane);
+		panel.add(lpane);
 
-		scroller = new JScrollPane(outerPanel);
+		scroller = new JScrollPane(panel);
 		if (isSeparateFrame) {
 			frame = new JFrame();
 			if ( ! isApplet) {
@@ -164,7 +169,7 @@ public class SwingViewerWindow implements IChangeSettingsListener {
             frame.add(scroller, BorderLayout.CENTER);
 
 //			frame.pack();
-            outerPanel.setSize(surface.getPreferredSize());
+            panel.setSize(surface.getPreferredSize());
             internalPack(null);
             frame.setVisible(true);
             frame.validate();
@@ -176,8 +181,8 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 	}
 
 	public void pack() {
-		final Dimension outerPanelOldSize = outerPanel.getSize();
-		outerPanel.setSize(surface.getPreferredSize());
+		final Dimension outerPanelOldSize = panel.getSize();
+		panel.setSize(surface.getPreferredSize());
 		if (isSeparateFrame && ! isZoomToFitSelected()) {
 			internalPack(outerPanelOldSize);
 		}
@@ -611,12 +616,12 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 			} else if (mousePoint.x > (frame.getWidth() - FS_SCROLLING_ACTIVE_BORDER)) {
 				final Rectangle viewRect = scroller.getViewport().getViewRect();
 				final int right = viewRect.width + viewRect.x;
-				if (right < outerPanel.getSize().width) {
+				if (right < panel.getSize().width) {
 					int delta = FS_SCROLLING_ACTIVE_BORDER - (frame.getWidth() - mousePoint.x);
 					if (mousePoint.y != oldMousePoint.y) delta *= 2; // speedify scrolling on mouse moving
 					viewPosition.x += delta;
-					if (viewPosition.x + viewRect.width > outerPanel.getSize().width) viewPosition.x =
-							outerPanel.getSize().width - viewRect.width;
+					if (viewPosition.x + viewRect.width > panel.getSize().width) viewPosition.x =
+							panel.getSize().width - viewRect.width;
 					return true;
 				}
 			}
@@ -635,12 +640,12 @@ public class SwingViewerWindow implements IChangeSettingsListener {
 			} else if (mousePoint.y > (frame.getHeight() - FS_SCROLLING_ACTIVE_BORDER)) {
 				final Rectangle viewRect = scroller.getViewport().getViewRect();
 				final int bottom = viewRect.height + viewRect.y;
-				if (bottom < outerPanel.getSize().height) {
+				if (bottom < panel.getSize().height) {
 					int delta = FS_SCROLLING_ACTIVE_BORDER - (frame.getHeight() - mousePoint.y);
 					if (mousePoint.x != oldMousePoint.x) delta *= 2; // speedify scrolling on mouse moving
 					viewPosition.y += delta;
-					if (viewPosition.y + viewRect.height > outerPanel.getSize().height) viewPosition.y =
-							outerPanel.getSize().height - viewRect.height;
+					if (viewPosition.y + viewRect.height > panel.getSize().height) viewPosition.y =
+							panel.getSize().height - viewRect.height;
 					return true;
 				}
 			}

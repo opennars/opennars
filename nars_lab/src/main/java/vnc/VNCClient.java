@@ -101,24 +101,29 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
     }
 
     public VNCClient(String host, int port) {
+        super();
         logger = Logger.getLogger(getClass().getName());
         connectionParams = new ConnectionParams();
         connectionParams.setHostName(host);
         connectionParams.setPortNumber(port);
         settings = ProtocolSettings.getDefaultSettings();
         uiSettings = new UiSettings();
-        init();
+        initVNC();
     }
 
 	public VNCClient() {
+        super();
         logger = Logger.getLogger(getClass().getName());
 		connectionParams = new ConnectionParams();
 		settings = ProtocolSettings.getDefaultSettings();
 		uiSettings = new UiSettings();
-        init();
+        initVNC();
+
 	}
 
-	public VNCClient(VNCProperties parser) {
+
+
+    public VNCClient(VNCProperties parser) {
 		this();
 
         setLoggingLevel(parser.isSet(ParametersHandler.ARG_VERBOSE) ? Level.FINE :
@@ -184,20 +189,20 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
 
 	@Override
 	public void paint(Graphics g) {
-		if ( ! isAppletStopped) {
-			super.paint(g);
-		} else {
-			removeAll();
+			/*removeAll();
 			g.clearRect(0, 0, getWidth(), getHeight());
 			g.drawString("Disconnected", 10, 20);
-		}
+*/
+        super.paint(g);
+
 	}
 
 
     abstract public String getParameter(String p);
 
 
-	public void init() {
+	public void initVNC() {
+
 		//paramsMask = ParametersHandler.completeSettingsFromApplet(this, connectionParams, settings, uiSettings);
 		isSeparateFrame = ParametersHandler.isSeparateFrame;
 		passwordFromParams = getParameter(ParametersHandler.ARG_PASSWORD);

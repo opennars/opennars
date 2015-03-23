@@ -24,6 +24,7 @@
 
 package vnc.viewer.swing;
 
+import org.piccolo2d.POffscreenCanvas;
 import vnc.core.SettingsChangedEvent;
 import vnc.rfb.IChangeSettingsListener;
 import vnc.rfb.IRepaintController;
@@ -39,10 +40,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferedImage;
 
 @SuppressWarnings("serial")
 public class Surface extends JPanel implements IRepaintController, IChangeSettingsListener {
 
+    private POffscreenCanvas sky;
 	private int width;
 	private int height;
 	private SoftCursorImpl cursor;
@@ -56,6 +59,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
     private SwingViewerWindow viewerWindow;
     private double scaleFactor;
 	public Dimension oldSize;
+    private BufferedImage skyImage;
 
 
     public RendererImpl getRenderer() {
@@ -70,6 +74,14 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 	}
 
 	public Surface(ProtocolContext context, double scaleFactor, LocalMouseCursorShape mouseCursorShape) {
+        super();
+
+        setIgnoreRepaint(true);
+        setOpaque(false);
+
+
+
+
         key = new KeyEventListener(context) {
             @Override
             protected void onKeyEvent(KeyEventMessage ee) {
@@ -143,10 +155,18 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 		}
 		init(renderer.getWidth(), renderer.getHeight());
 		updateFrameSize();
+
+        sky = new POffscreenCanvas(renderer.getWidth(), renderer.getHeight());
+        sky.setInteracting(false);
+
 		return renderer;
 	}
 
-	private void init(int width, int height) {
+    public POffscreenCanvas getSky() {
+        return sky;
+    }
+
+    private void init(int width, int height) {
 		this.width = width;
 		this.height = height;
 		setSize(getPreferredSize());
@@ -160,26 +180,55 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
 	@Override
 	public void paintComponent(Graphics g) {
-        if (null == renderer) return;
-		((Graphics2D)g).scale(scaleFactor, scaleFactor);
-		((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-		synchronized (renderer.getLock()) {
-			Image offscreenImage = renderer.getFrame();
-			if (offscreenImage != null) {
-				g.drawImage(offscreenImage, 0, 0, null);
-			}
-		}
-		synchronized (cursor.getLock()) {
-			Image cursorImage = cursor.getImage();
-			if (showCursor && cursorImage != null &&
-					(scaleFactor != 1 ||
-							g.getClipBounds().intersects(cursor.rX, cursor.rY, cursor.width, cursor.height))) {
-				g.drawImage(cursorImage, cursor.rX, cursor.rY, null);
-			}
-		}
-	}
 
-	@Override
+
+        if (null != renderer) {
+
+
+            ((Graphics2D) g).scale(scaleFactor, scaleFactor);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            synchronized (renderer.getLock()) {
+                Image offscreenImage = renderer.getFrame();
+
+
+                if ((skyImage==null || skyImage.getWidth()!=renderer.getWidth() || skyImage.getHeight()!=renderer.getHeight())) {
+                    skyImage = new BufferedImage(renderer.getWidth(), renderer.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                }
+                if (offscreenImage != null) {
+                    g.drawImage(offscreenImage, 0, 0, null);
+                }
+
+                //sky.setOpaque(false);
+                //sky.setBackground(new Color(0,0,0,0));
+                sky.getCamera().validateFullPaint();
+                sky.render((Graphics2D) skyImage.getGraphics());
+
+
+                // Get and install an AlphaComposite to do transparent drawing
+                ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+
+
+                g.drawImage(skyImage,0,0,null);
+
+
+            }
+            synchronized (cursor.getLock()) {
+
+                Image cursorImage = cursor.getImage();
+                if (showCursor && cursorImage != null &&
+                        (scaleFactor != 1 ||
+                                g.getClipBounds().intersects(cursor.rX, cursor.rY, cursor.width, cursor.height))) {
+                    g.drawImage(cursorImage, cursor.rX, cursor.rY, null);
+                }
+
+            }
+        }
+
+
+    }
+
+
+    @Override
 	public Dimension getPreferredSize() {
 		return new Dimension((int)(this.width * scaleFactor), (int)(this.height * scaleFactor));
 	}
