@@ -77,7 +77,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                 s(),
 
-                Term(),
+                firstOf(Term(), ExposedTerm()),
                 term.set((Term) pop()),
 
                 s(),
@@ -262,25 +262,15 @@ public class NarseseParser extends BaseParser<Object> {
                         sequence(
                                 Atom(),
                                 push(NALOperator.OPERATION),
-                                VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER)
+                                MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, Term())
                         ),
 
 
-                        VectorTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER),
-                        VectorTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER),
-                        VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER), //NAL4
+                        MultiArgTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER, Term()),
+                        MultiArgTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER, Term()),
+                        MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, Term()),
 
-                        MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER,
-                                //special handling to allow (-- x) , without the comma
-                                //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
-                                firstOf(
-                                        CompoundOperator(),
-                                        sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
-
-                                        sequence(s(), push(NALOperator.PRODUCT)) //DEFAULT
-                                        //Term()
-                                )
-                        ),
+                        MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, InnerCompound() ),
 
                         MultiArgTerm(NALOperator.STATEMENT_OPENER, NALOperator.STATEMENT_CLOSER,
                                 s()
@@ -293,9 +283,20 @@ public class NarseseParser extends BaseParser<Object> {
                         NamespacedAtom(),
                         Atom()
 
-
                 ),
                 push(Term.get(pop()))
+        );
+    }
+
+    Rule InnerCompound() {
+        //special handling to allow (-- x) , without the comma
+        //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
+        return firstOf(
+                CompoundOperator(),
+                sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
+
+                sequence(s(), push(NALOperator.PRODUCT)) //DEFAULT
+                //Term()
         );
     }
 
@@ -410,28 +411,6 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    /** a list of terms enclosed by an opener/closer pair, which may compose a set or product */
-    Rule VectorTerm(NALOperator opener, NALOperator closer) {
-        return sequence(
-            opener.ch,
-            push(opener),
-
-            s(),
-            Term(),
-
-            zeroOrMore(
-
-                    //TODO merge this with the similar construct in MultiArgTerm, maybe use a common Rule
-                    sequence(
-                            ArgumentSep(),
-                            Term()
-                    )
-
-            ),
-            s(), closer.ch,
-            push( nextTermVector() )
-        );
-    }
 
     Rule ArgumentSep() {
         return firstOf(
@@ -448,14 +427,14 @@ public class NarseseParser extends BaseParser<Object> {
     /** list of terms prefixed by a particular compound term operator */
     Rule MultiArgTerm(NALOperator open, NALOperator close, Rule head) {
         return sequence(
-                open.ch,
+                open!=null ? open.ch : s(),
                 push(open),
 
                 s(),
 
-                head,
+                firstOf(head, this.CompoundOperator()),
 
-                oneOrMore(
+                zeroOrMore(
                         sequence(
                                 ArgumentSep(),
                                 Term()
@@ -464,13 +443,17 @@ public class NarseseParser extends BaseParser<Object> {
 
                 s(),
 
-                close.ch,
+                close!=null ? close.ch : s(),
 
                 push(nextTermVector())
         );
     }
 
 
+    /** term without outer parenthes, only applicable when top-level in a task. */
+    Rule ExposedTerm() {
+        return MultiArgTerm(null, null, InnerCompound() );
+    }
 
     /** two or more terms separated by a compound term operator.
      * if > 2 terms, each instance of the infix'd operator must be equal,
@@ -507,7 +490,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         NALOperator op = null;
 
-        //System.err.println(getContext().getValueStack());
+        System.err.println(getContext().getValueStack());
         while ( !getContext().getValueStack().isEmpty() ) {
             Object p = pop();
 
@@ -530,6 +513,7 @@ public class NarseseParser extends BaseParser<Object> {
                 op = (NALOperator)p;
             }
         }
+        System.err.println("  " + op + vectorterms);
 
         if (vectorterms.isEmpty()) return null;
 

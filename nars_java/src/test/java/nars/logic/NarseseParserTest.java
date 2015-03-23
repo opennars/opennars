@@ -178,6 +178,20 @@ public class NarseseParserTest {
 
     @Test public void testNegation() throws InvalidInputException {
 
+        taskEqualsOldParser("(--,negated).");
+        taskEqualsOldParser("(--, negated).");
+        taskEqualsOldParser("(-- negated)!");
+
+
+        try {
+            task("(-- negated illegal_extra_term)!");
+            assertTrue(false);
+        }
+        catch (Exception e) { }
+
+        taskEqualsOldParser("-- negated!");
+        taskEqualsOldParser("--negated!");
+
     }
 
     protected void testBelieveAB(Operation t) {
