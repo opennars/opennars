@@ -212,6 +212,15 @@ public class NarseseParserTest {
 
     }
 
+    @Test public void testCompoundTermOpenerCloserStatements() {
+        Term a = term("<a --> b>");
+        Term x = term("(a --> b)");
+        Term y = term("(a-->b)");
+        assertEquals(NALOperator.INHERITANCE, x.operator());
+        assertEquals(x, a);
+        assertEquals(x, y);
+    }
+
     protected Variable testVar(char prefix) {
         Term x = term(prefix + "x");
         assertNotNull(x);
@@ -231,6 +240,29 @@ public class NarseseParserTest {
 
         v = testVar(Symbols.VAR_QUERY);
         assertTrue(v.hasVarQuery());
+    }
+
+    @Test public void testSet() {
+        Compound xInt = term("[x]");
+        assertEquals(NALOperator.SET_INT_OPENER, xInt.operator());
+        assertEquals(1, xInt.size());
+        assertEquals("x", xInt.term[0].toString());
+
+        Compound xExt = term("{x}");
+        assertEquals(NALOperator.SET_EXT_OPENER, xExt.operator());
+        assertEquals(1, xExt.size());
+        assertEquals("x", xExt.term[0].toString());
+
+        Compound abInt = term("[a,b]");
+        assertEquals(2, abInt.size());
+        assertEquals("a", abInt.term[0].toString());
+        assertEquals("b", abInt.term[1].toString());
+
+        assertEquals(abInt, term("[ a,b]"));
+        assertEquals(abInt, term("[a,b ]"));
+        assertEquals(abInt, term("[ a , b ]"));
+
+
     }
 
     @Test public void testTenses() throws InvalidInputException {

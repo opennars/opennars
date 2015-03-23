@@ -26,9 +26,9 @@ public enum NALOperator {
 
 
     /* CompountTerm delimitors, must use 4 different pairs */
-    SET_INT_OPENER("[", 3, false, true),
+    SET_INT_OPENER("[", 3, false, true), //OPENER also functions as the symbol for the entire compound
     SET_INT_CLOSER("]", 3, false, false),
-    SET_EXT_OPENER("{", 3, false, true),
+    SET_EXT_OPENER("{", 3, false, true), //OPENER also functions as the symbol for the entire compound
     SET_EXT_CLOSER("}", 3, false, false),
 
     /* Syntactical, so is neither relation or isNative */

@@ -186,15 +186,20 @@ public class NarseseParser extends BaseParser<Object> {
          */
         //TODO use separate rules for each so a parse can identify them
         return sequence(
-                '<', s(), Term(), s(), CopulaOperator(), s(), Term(), s(), '>',
 
-                push( getTerm( (Term)pop(), (NALOperator)pop(), (Term)pop() ) )
+                firstOf(
+                        sequence(String.valueOf(NALOperator.STATEMENT_OPENER), StatementContent(), String.valueOf(NALOperator.STATEMENT_CLOSER)),
+                        sequence(String.valueOf(NALOperator.COMPOUND_TERM_OPENER), StatementContent(), String.valueOf(NALOperator.COMPOUND_TERM_CLOSER))
+                ),
+
+                push(getTerm((Term) pop(), (NALOperator) pop(), (Term) pop()))
         );
 
     }
 
-
-
+    Rule StatementContent() {
+        return sequence(s(), Term(), s(), CopulaOperator(), s(), Term(), s());
+    }
 
     Rule CopulaOperator() {
         NALOperator[] ops = getCopulas();
@@ -333,10 +338,9 @@ public class NarseseParser extends BaseParser<Object> {
                 VectorTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER),
                 VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER), //NAL4
 
-
-
                 MultiArgTerm(),
                 InfixCompoundTerm()
+
         );
     }
 

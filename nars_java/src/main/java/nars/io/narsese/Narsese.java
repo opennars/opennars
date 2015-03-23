@@ -115,7 +115,16 @@ public class Narsese {
 
     public Task parseTask(String s) throws InvalidInputException {
 
-        Task u = parseTask(s, true), t = null;
+        Task u = null, t = null;
+
+        InvalidInputException uError = null;
+        try {
+            u = parseTask(s, true);
+        }
+        catch (InvalidInputException tt) {
+            uError = tt;
+        }
+
 
         try {
             t = newParser.parseTask(s);
@@ -124,6 +133,12 @@ public class Narsese {
         }
         catch (Throwable e) {
             System.err.println("Task parse error: " + t + " isnt " + u + ": " + Arrays.toString(e.getStackTrace()));
+        }
+
+        if ((u == null) && (t!=null)) return t;
+        else {
+            if (uError!=null)
+                throw uError;
         }
 
         return u;

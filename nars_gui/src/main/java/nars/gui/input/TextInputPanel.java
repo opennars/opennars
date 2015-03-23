@@ -186,8 +186,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
 
     public class NarseseInput implements TextInputMode {
-        //public final NarseseParser p = NarseseParser.newParser();
-        
+
         private String input;
         private NAR nar;
 
@@ -267,7 +266,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
             @Override
             public String run() {
-                nar.step(1);
+                if (!nar.isRunning())
+                    nar.step(1);
                 return input;
             }
 

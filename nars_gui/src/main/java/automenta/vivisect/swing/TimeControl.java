@@ -11,7 +11,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     protected final char FA_StopCharacter = '\uf04c';
     protected final char FA_FocusCharacter = '\uf11e';
     protected final char FA_ControlCharacter = '\uf085';
-    protected final float defaultSpeed = 0.5f;
+    protected final float defaultSpeed = 0; //0.5f;
     //http://astronautweb.co/snippet/font-awesome/
     protected final char FA_PlayCharacter = '\uf04b';
     /**
