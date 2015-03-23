@@ -191,7 +191,7 @@ public class NarseseParserTest {
     @Test public void testOperation() throws InvalidInputException {
         testBelieveAB(term("believe(a,b)"));
         testBelieveAB(term("believe(a,b,SELF)"));
-        testBelieveAB(term("believe(a b)"));
+        //testBelieveAB(term("believe(a b)"));
 
 
         testBelieveAB(term("(^believe,a,b)"));
@@ -219,6 +219,18 @@ public class NarseseParserTest {
         assertEquals(NALOperator.INHERITANCE, x.operator());
         assertEquals(x, a);
         assertEquals(x, y);
+
+        assertNotNull(term("((a,b)-->c)")); //intermediate
+        assertNotNull(term("((a,b) --> c)")); //intermediate
+        assertNotNull(term("<(a,b) --> c>")); //intermediate
+        assertNotNull(term("<a-->(c,d)>")); //intermediate
+        assertNotNull(term("(a-->(c,d))")); //intermediate
+        assertNotNull(term("(a --> (c,d))")); //intermediate
+
+        Term abcd = term("((a,b) --> (c,d))");
+        Term ABCD = term("<(*,a,b) --> (*,c,d)>");
+        assertEquals(NALOperator.INHERITANCE, x.operator());
+        assertEquals(abcd + " != " + ABCD, abcd, ABCD);
     }
 
     protected Variable testVar(char prefix) {
@@ -291,4 +303,25 @@ public class NarseseParserTest {
 
     }
 
+    @Test public void testSimpleTask() {
+        taskEqualsOldParser("(-,mammal,swimmer). %0.00;0.90%");
+
+    }
+    @Test public void testCompleteTask() {
+        taskEqualsOldParser("$0.80;0.50;0.95$ <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90%");
+    }
+
+    private void taskEqualsOldParser(String s) {
+        Task t = task(s);
+        assertNotNull(t);
+        Task u = n.narsese.parseTask(s);
+        assertNotNull(u);
+
+        assertEquals("(term) " + t + " != " + u, t.getTerm(), u.getTerm());
+        assertEquals("(truth) " + t.sentence.truth + " != " + u.sentence.truth, t.sentence.truth, u.sentence.truth);
+        assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), t.getCreationTime(), u.getCreationTime());
+        assertEquals("(occurencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), t.getOccurrenceTime(), u.getOccurrenceTime());
+        //TODO budget:
+        //TODO punctuation:
+    }
 }

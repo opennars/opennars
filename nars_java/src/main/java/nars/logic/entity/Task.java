@@ -222,7 +222,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
         return sentence.stamp.getCreationTime();
     }
 
-    public long getOcurrenceTime() {
+    public long getOccurrenceTime() {
         return sentence.stamp.getOccurrenceTime();
     }
 

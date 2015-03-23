@@ -575,7 +575,7 @@ public class GraphExecutive {
             
             Cause currentEdge = path[path.length-1];
 
-            Stamp stamp = Stamp.zip(goal.sentence.stamp, currentEdge.getStamp(), memory.time(), goal.getOcurrenceTime());
+            Stamp stamp = Stamp.zip(goal.sentence.stamp, currentEdge.getStamp(), memory.time(), goal.getOccurrenceTime());
 
             //add all terms to derivation chain
 //            for(Term T : sequence) {

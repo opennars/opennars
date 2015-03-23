@@ -322,7 +322,7 @@ public class Anticipate extends AbstractPlugin implements Mental {
     }
 
     private void anticipate(Task t) {
-        anticipate(t.getTerm(), t.getOcurrenceTime(), t);
+        anticipate(t.getTerm(), t.getOccurrenceTime(), t);
     }
 
 
@@ -346,7 +346,7 @@ public class Anticipate extends AbstractPlugin implements Mental {
             super();
             this.task = task;
             this.creationTime = task.getCreationTime();
-            this.occurrTime = task.getOcurrenceTime();
+            this.occurrTime = task.getOccurrenceTime();
             this.hash = (int)(31 * creationTime + occurrTime);
 
             //lets say a and <(&/,a,+4) =/> b> leaded to prediction of b with specific occurence time

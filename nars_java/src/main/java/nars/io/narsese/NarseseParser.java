@@ -16,6 +16,7 @@ import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
 import org.parboiled.errors.InvalidInputError;
+import org.parboiled.parserunners.ErrorReportingParseRunner;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
@@ -42,7 +43,8 @@ public class NarseseParser extends BaseParser<Object> {
     //These should be set to something like RecoveringParseRunner for performance
     public final ParseRunner inputParser = new RecoveringParseRunner(Input());
     public final ParseRunner singleTaskParser = new RecoveringParseRunner(Task());
-    public final ParseRunner singleTermParser = new RecoveringParseRunner(Term());
+
+    public final ParseRunner singleTermParser = new ErrorReportingParseRunner(Term(),0); //new RecoveringParseRunner(Term());
 
     public Memory memory;
 
@@ -165,6 +167,7 @@ public class NarseseParser extends BaseParser<Object> {
         return anyOf(".?!@");
     }
 
+    /** copula, statement, relation */
     Rule Copula() {
             /*<copula> ::= "-->"                              // inheritance
                         | "<->"                              // similarity
@@ -185,20 +188,17 @@ public class NarseseParser extends BaseParser<Object> {
          *   -: (reverse apply)
          */
         //TODO use separate rules for each so a parse can identify them
-        return sequence(
-
-                firstOf(
-                        sequence(String.valueOf(NALOperator.STATEMENT_OPENER), StatementContent(), String.valueOf(NALOperator.STATEMENT_CLOSER)),
-                        sequence(String.valueOf(NALOperator.COMPOUND_TERM_OPENER), StatementContent(), String.valueOf(NALOperator.COMPOUND_TERM_CLOSER))
-                ),
-
-                push(getTerm((Term) pop(), (NALOperator) pop(), (Term) pop()))
+        return firstOf(
+                sequence(String.valueOf(NALOperator.STATEMENT_OPENER), StatementContent(), String.valueOf(NALOperator.STATEMENT_CLOSER)),
+                sequence(String.valueOf(NALOperator.COMPOUND_TERM_OPENER), StatementContent(), String.valueOf(NALOperator.COMPOUND_TERM_CLOSER))
         );
 
     }
 
     Rule StatementContent() {
-        return sequence(s(), Term(), s(), CopulaOperator(), s(), Term(), s());
+        return sequence(s(), Term(), s(), CopulaOperator(), s(), Term(), s(),
+                push(getTerm((Term) pop(), (NALOperator) pop(), (Term) pop()))
+        );
     }
 
     Rule CopulaOperator() {
@@ -250,8 +250,8 @@ public class NarseseParser extends BaseParser<Object> {
 
         return sequence(
                 firstOf(
-                        CompoundTerm(),
                         Copula(),
+                        CompoundTerm(),
                         Interval(),
                         Variable(),
                         QuotedLiteral(),
@@ -397,14 +397,23 @@ public class NarseseParser extends BaseParser<Object> {
 
                     //TODO merge this with the similar construct in MultiArgTerm, maybe use a common Rule
                     sequence(
-                        s(),
-                        optional(sequence(Symbols.ARGUMENT_SEPARATOR, s())),
+                        ArgumentSep(),
                         Term()
                     )
 
             ),
             s(), closer.ch,
             push( nextTermVector() )
+        );
+    }
+
+    Rule ArgumentSep() {
+        return firstOf(
+                //check the ' , ' comma separated first, it is more complex
+                sequence(s(), String.valueOf(Symbols.ARGUMENT_SEPARATOR), s()),
+
+                //then allow plain whitespace to function as a term separator?
+                s()
         );
     }
 
@@ -418,7 +427,7 @@ public class NarseseParser extends BaseParser<Object> {
                 //special handling to allow (-- x) , without the comma
                 //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
                 firstOf(
-                    sequence( CompoundOperator(), s(), optional(Symbols.ARGUMENT_SEPARATOR)),
+                    sequence( CompoundOperator(), s(), ArgumentSep()),
                     sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
                     Term()
                 ),
@@ -573,13 +582,15 @@ public class NarseseParser extends BaseParser<Object> {
     public <T extends Term> T parseTerm(String input) throws InvalidInputException {
         ParsingResult r = singleTermParser.run(input);
 
-        Object x = r.getValueStack().iterator().next();
-        if (x != null) {
-            try {
-                return (T) x;
-            }
-            catch (ClassCastException cce) {
-                throw new InvalidInputException("Term type mismatch: " + x.getClass(), cce);
+        if (!r.getValueStack().isEmpty()) {
+
+            Object x = r.getValueStack().iterator().next();
+            if (x != null) {
+                try {
+                    return (T) x;
+                } catch (ClassCastException cce) {
+                    throw new InvalidInputException("Term type mismatch: " + x.getClass(), cce);
+                }
             }
         }
 

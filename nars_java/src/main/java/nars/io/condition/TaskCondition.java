@@ -76,7 +76,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
             t.getStamp().setTime(creationTimeOffset, Stamp.ETERNAL);
         }
         else {
-            long oc = t.getOcurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
+            long oc = t.getOccurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
             setRelativeOccurrenceTime(oc, n.memory.duration());
             t.getStamp().setTime(creationTimeOffset, oc);
         }
@@ -259,7 +259,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                     }
                     else {
 
-                            final long oc = task.getOcurrenceTime();
+                            final long oc = task.getOccurrenceTime();
 
                             final int durationWindow = task.sentence.getStamp().getDuration();
 
