@@ -7,6 +7,7 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.gui.NARSwing;
+import nars.io.Texts;
 import nars.logic.entity.Task;
 import nars.logic.nal8.NullOperator;
 import vnc.drawing.Renderer;
@@ -113,7 +114,7 @@ abstract public class VNCControl extends VNCClient {
 
             if (input) {
                 String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight());
-                String ii = "<(*," + loc + ", B" + pe.buttonMask  + ") --> ON>. :|: " +
+                String ii = "<(*,B" + pe.buttonMask + ", " + loc  + ") --> ON>. :|: " +
                         (mousePressed ? "%1.00;0.90%" : "%0.00;0.90%");
 
                 nar.input(
@@ -155,7 +156,7 @@ abstract public class VNCControl extends VNCClient {
                     //String ii = "$" + Texts.n2(pri) + "$ <\"" + s + "\" --> SEE>. :|:";
 
 
-                    words.add('\"' + s + '\"');
+                    words.add("{\"" + s + "\"}");
                 }
                 ii = ii + "(*," + location + ",";
                 if (words.size() == 0) {
@@ -172,9 +173,12 @@ abstract public class VNCControl extends VNCClient {
                 ii = "<" + ii + ") --> SEE>";
                 //ii = "$" + Texts.n2(pri) + "$ " + ii;
                 //nar.input(ii + "\n");
-                Task t = nar.believe(ii, u.getInputTime(), 1.0f, 0.9f, pri);
 
-                System.out.print(nar.time() + ": " + ii + "\t" + u.getWaitingTime() + " wait, " + u.getProcessingTime() + " proc ms\n");
+                float ocrConf = u.getConfidence();
+
+                Task t = nar.believe(ii, u.getInputTime(), 1.0f, ocrConf, pri);
+
+                System.out.print(nar.time() + ": " + Texts.n2(pri) + "," + Texts.n2(ocrConf) + " " + ii + "\t" + u.getWaitingTime() + " wait, " + u.getProcessingTime() + " proc ms\n");
             }
         }
     };

@@ -6,7 +6,6 @@ import com.sun.jna.ptr.PointerByReference;
 import nars.gui.output.BitmapPanel;
 import net.sourceforge.tess4j.ITessAPI;
 import net.sourceforge.tess4j.TessAPI;
-import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.LoadLibs;
 import vnc.drawing.Renderer;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
@@ -35,7 +35,7 @@ public class OCR {
     public static final BufferUpdateFastSortedSet<BufferUpdate> ocrPending = new BufferUpdateFastSortedSet<BufferUpdate>();
     final static int bufferSize = 64;
     private static long inputBufferDelay = 100; //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers
-    static double halflifeSeconds = 4;
+    static double halflifeSeconds = 2;
 
     //limits for peforming OCR after exiting queue
     static final int minOCRWidth = 12;
@@ -45,18 +45,15 @@ public class OCR {
     static final int minWidth = minOCRWidth/2;
     static final int minHeight = minOCRHeight;
     static final int minPixels = minWidth * minHeight * 1;
-    static int equalEdgeThresh = 2; //in pixels
+    static int equalEdgeThresh = 4; //in pixels
+    static String language = "eng";
+    static int ocrEngineMode = TessAPI.TessOcrEngineMode.OEM_TESSERACT_CUBE_COMBINED;
+    static String datapath = ("/usr/share/tessdata");
 
     static TessAPI api = LoadLibs.getTessAPIInstance();
-    final static Tesseract t = null;
     private static final ITessAPI.TessBaseAPI apiHandle;
 
     static {
-        String datapath = ("/usr/share/tessdata");
-
-        String language = "eng";
-        int ocrEngineMode = 0;
-
         apiHandle = api.TessBaseAPICreate();
         StringArray sarray = new StringArray(new String[] {});//(String[])this.configList.toArray(new String[0]));
         List<String> configList = new ArrayList();
@@ -306,6 +303,7 @@ public class OCR {
 
                 String x = null;
                 long end = 0;
+                float conf = 0;
 
                 if ((bu.rect.width >= minOCRWidth) && (bu.rect.height >= minOCRHeight)) {
 
@@ -326,6 +324,7 @@ public class OCR {
                         int subBPP = 8; //image.getColorModel().getPixelSize()
                         //x = t.doOCR(subFrame.width, subFrame.height, ci, subFrame, subBPP);
 
+
                         try {
                             int bytespp = subBPP / 8;
                             int xsize = subFrame.width;
@@ -336,9 +335,17 @@ public class OCR {
                             api.TessBaseAPISetRectangle(apiHandle, subFrame.x, subFrame.y, subFrame.width, subFrame.height);
 
 
+
+
+
+
+
                             Pointer utf8Text = api.TessBaseAPIGetUTF8Text(apiHandle);
+                            conf = api.TessBaseAPIMeanTextConf(apiHandle) / 100f;
+
                             String str = utf8Text.getString(0L);
                             api.TessDeleteText(utf8Text);
+
 
                             x = str;
 
@@ -357,6 +364,7 @@ public class OCR {
 
                     bu.setProcessed();
                     bu.setText(x, inputTime, waiting, processing);
+                    bu.setConfidence(conf);
                     bu.callback.next(bu);
                 }
             }
@@ -376,6 +384,7 @@ public class OCR {
         private boolean processed;
         private String text;
         private long inputTime, waitingTime, processingTime;
+        private float confidence = 0;
 
         public BufferUpdate(FramebufferUpdateRectangle rect, OCRResultHandler callback) {
 
@@ -516,7 +525,7 @@ public class OCR {
             bx = Math.max(rect.x + rect.width, o.rect.x + o.rect.width);
             by = Math.max(rect.y + rect.height, o.rect.y + o.rect.height);
 
-            System.out.print("grow " + rect + " with " + o.rect);
+            //System.out.print("grow " + rect + " with " + o.rect);
 
             rect.x = ax;
             rect.y = ay;
@@ -526,6 +535,14 @@ public class OCR {
 
             System.out.println(" to " + rect + " " + ocrPending.size());
 
+        }
+
+        public void setConfidence(float conf) {
+            this.confidence = conf;
+        }
+
+        public float getConfidence() {
+            return confidence;
         }
     }
 
@@ -558,16 +575,18 @@ public class OCR {
         public boolean add(E o) {
 
             synchronized (this) {
-                for (E prev : this) {
-                    if (prev.equals(o)) {
+                Iterator<E> e = iterator();
+                while (e.hasNext()) {
+                    E prev = e.next();
 
+                    if (prev.equals(o)) {
                         return false;
                     }
                     if (prev != null && !prev.isProcessed()) { //TODO combine into an atomic operation: ifNotProcessedThenTryToGrow(..)
-                        //TODO combine into one method with a boolean vector
                         if (prev.commonEdges(o)) {
-                            prev.grow(o);
-                            return false;
+                            e.remove();
+                            o.grow(prev);
+                            break;
                         }
 
                     }

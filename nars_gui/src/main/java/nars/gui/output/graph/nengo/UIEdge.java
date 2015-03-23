@@ -30,6 +30,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
     boolean halfQuad = true; //use triangle of half a quad, to show different non-overlapping bidirectional edges
     private double lastTX = Double.NaN;
     private double lastTY = Double.NaN;
+    private double pscale;
 
     public UIEdge(V s, V t) {
         super();
@@ -58,6 +59,8 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
 
     public void render() {
 
+        if (pscale == 0) return;
+
         UIVertex source = (UIVertex) getSource();
         if (source == null || !source.ui.getVisible()) {
             setVisible(false);
@@ -71,7 +74,6 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         }
 
 
-        double pscale = getPNode().getParent().getParent().getScale(); //parent of the parent because nodes are collected in a container node of the vertex, which is beneath the icon
         double tx = (target.getX()-source.getX())/pscale;
         double ty = (target.getY()-source.getY())/pscale;
 
@@ -121,6 +123,11 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
 
     public void update() {
 
+        pscale = 0;
+        if (getPNode()==null) return;
+        if (getPNode().getParent()==null) return;
+        if (getPNode().getParent().getParent()==null) return;
+        pscale = getPNode().getParent().getParent().getScale(); //parent of the parent because nodes are collected in a container node of the vertex, which is beneath the icon
 
 
         tasklinkPriority = termlinkPriority = priority = 0;

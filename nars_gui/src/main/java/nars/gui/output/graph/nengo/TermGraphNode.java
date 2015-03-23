@@ -241,7 +241,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             for (UIVertex v : vertices) {
                 v.getActualCoordinates(dt);
                 if (v.isDependent() && v.degree() == 0) {
-                    System.err.println("late removing " + v);
+                    //System.err.println("late removing " + v);
                     remove(v);
                 }
 
@@ -408,7 +408,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             UIVertex vv = ((UIVertex) existing);
             existing = vv = vv.remove(v);
             if (existing == null) return null;
-            vv.destroy();
+            SwingUtilities.invokeLater(vv::destroy);
 
 
             List<UIEdge> toRemove = new ArrayList(vv.incoming.size() + vv.outgoing.size());
@@ -418,6 +418,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                 remove(e);
             }
 
+            ArrayList a;
         }
 
 

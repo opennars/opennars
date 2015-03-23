@@ -10,6 +10,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.piccolo2d.PNode;
 import org.piccolo2d.util.PAffineTransform;
 
+import javax.swing.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -49,7 +50,7 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     protected void destroy() {
         //System.out.println("before destroy " + this);
         destroyed = true;
-        setBounds(0,0,0,0);
+        //setBounds(0,0,0,0);
     }
 
     @Override
@@ -137,8 +138,11 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
         if (destroyed) return false;
         if (getEdgeSet(in).add(v)) {
             if (!in) {
-                //ui.addChild(v);
-                links.addChild(v.getPNode());
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        links.addChild(v.getPNode());
+                    }
+                });
             }
             return true;
         }
@@ -149,8 +153,11 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
         if (destroyed) return false;
         if (getEdgeSet(in).remove(v)) {
             if (!in) {
-                //ui.removeChild(v);
-                links.removeChild(v.getPNode());
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override public void run() {
+                        links.removeChild(v.getPNode());
+                    }
+                });
             }
             return true;
         }
