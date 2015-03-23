@@ -8,7 +8,6 @@ import nars.core.Parameters;
 import nars.event.Reaction;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
@@ -32,7 +31,6 @@ public class BooleanChallenge {
 
     final float freqThresh = 0.20f;
     private final NAR nar;
-    private final Narsese parser;
     int bits = 0;
     boolean failOnError = false; //exit on the first logical error
     double negationProb = 0;
@@ -50,8 +48,6 @@ public class BooleanChallenge {
     public BooleanChallenge(NAR n) {
 
         this.nar = n;
-        this.parser = new Narsese(n);
-
         n.on(OUT.class, new Reaction() {
 
             protected boolean evalAnd(int[] t) {
@@ -345,7 +341,7 @@ public class BooleanChallenge {
         String term = getTerm(a, b, op, y);
         Term t;
         try {
-            t = parser.parseTerm(term);
+            t = nar.term(term);
         } catch (InvalidInputException ex) {
             Logger.getLogger(BooleanChallenge.class.getName()).log(Level.SEVERE, null, ex);
             return;

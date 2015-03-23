@@ -2,7 +2,6 @@ package nars.core;
 
 import nars.build.Default;
 import nars.io.Symbols;
-import nars.io.narsese.Narsese;
 import nars.logic.entity.BudgetValue;
 import nars.logic.entity.Concept;
 import nars.logic.entity.TermLink;
@@ -75,7 +74,7 @@ public class TermLinkTest {
         NAR n = nn(term);
         //Concept c = n.conceptualize(term);
         Concept c = n.memory.conceptualize(new BudgetValue(1f,1f,1f),
-                new Narsese(n).parseTerm(term));
+                n.term(term));
         assertNotNull(c);
         n.run(2);
 

@@ -8,6 +8,7 @@ import nars.event.Reaction;
 import nars.io.*;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
+import nars.io.narsese.NarseseParser;
 import nars.logic.BudgetFunctions;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
@@ -47,6 +48,7 @@ public class NAR implements Runnable {
             + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
               "    Github website:  http://github.com/opennars/ \n" + 
             "    IRC:  http://webchat.freenode.net/?channels=nars \n";
+    private final NarseseParser narseseParser;
 
 
     private Thread thread = null;
@@ -63,7 +65,7 @@ public class NAR implements Runnable {
     public final Param param;
     
 
-    public final Narsese narsese;
+    @Deprecated public final Narsese narsese;
     public TextPerception textPerception;
 
     public void think(int delay) {
@@ -121,10 +123,11 @@ public class NAR implements Runnable {
     protected NAR(final Memory m) {
         this.memory = m;        
         this.param = m.param;
-        
 
-        this.narsese = new Narsese(this);
-        this.textPerception = new TextPerception(this, narsese);
+
+        this.narseseParser = NarseseParser.newParser(this);
+        this.narsese = new Narsese(this, narseseParser);
+        this.textPerception = new TextPerception(this, narsese, narseseParser);
 
         m.event.on(Events.ResetStart.class, togglePluginOnReset);
     }
@@ -175,9 +178,9 @@ public class NAR implements Runnable {
     }
 
     /** inputs a task, only if the parsed text is valid; returns null if invalid */
-    public Task inputTask(final String text) {
+    public Task inputTask(final String taskText) {
         try {
-            Task t = narsese.parseTask(text);
+            Task t = task(taskText);
             input(t);
             return t;
         }
@@ -185,6 +188,12 @@ public class NAR implements Runnable {
             return null;
         }
     }
+
+    /** parses and forms a Task from a string but doesnt input it */
+    public Task task(String taskText) {
+        return narsese.parseTask(taskText);
+    }
+
 
     public TextInput input(final String text) {
         final TextInput i = new TextInput(textPerception, text);
@@ -205,7 +214,7 @@ public class NAR implements Runnable {
     }
     /** gets a concept if it exists, or returns null if it does not */
     public Concept concept(String conceptTerm) throws InvalidInputException {
-        return concept(new Narsese(this).parseTerm(conceptTerm));
+        return concept(narsese.parseTerm(conceptTerm));
     }
 
 
@@ -312,7 +321,7 @@ public class NAR implements Runnable {
     
     public NAR input(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
         
-        Task t = new Narsese(this).parseTask(taskText);        
+        Task t = narsese.parseTask(taskText);
         if (frequency!=-1)
             t.sentence.truth.setFrequency(frequency);
         if (confidence!=-1)

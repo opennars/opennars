@@ -2,7 +2,6 @@ package nars.core;
 
 import nars.build.Default;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import org.junit.Test;
@@ -17,20 +16,19 @@ import static org.junit.Assert.assertTrue;
 public class ApplySubstituteTest {
     
     NAR n = new NAR(new Default());
-    Narsese np = new Narsese(n);
-    
+
     @Test
     public void testApplySubstitute() throws InvalidInputException {
             
         String abS ="<a --> b>";
-        Compound ab = (Compound)np.parseTerm(abS);
+        Compound ab = (Compound)n.term(abS);
         int originalComplexity = ab.getComplexity();
         
         String xyS ="<x --> y>";
-        Term xy = np.parseTerm(xyS);
+        Term xy = n.term(xyS);
         
         Map<Term,Term> h = new HashMap();
-        h.put(np.parseTerm("b"), xy);
+        h.put(n.term("b"), xy);
         Compound c = ab.applySubstituteToCompound(h);
                 
         assertTrue(c.getComplexity() > originalComplexity);
@@ -48,8 +46,8 @@ public class ApplySubstituteTest {
         NAR n = new NAR(new Default());
             
         Map<Term,Term> h = new HashMap();
-        h.put(np.parseTerm("$1"), np.parseTerm("0"));        
-        Compound c = ((Compound)np.parseTerm("<(*,$1) --> num>")).applySubstituteToCompound(h);
+        h.put(n.term("$1"), n.term("0"));        
+        Compound c = ((Compound)n.term("<(*,$1) --> num>")).applySubstituteToCompound(h);
         
         assertTrue(c!=null);
     }

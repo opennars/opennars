@@ -4,14 +4,13 @@
  */
 package nars.logic;
 
-import nars.event.AbstractReaction;
-import nars.core.NewNAR;
-import nars.core.Events.Answer;
-import nars.core.NAR;
 import nars.build.Default;
+import nars.core.Events.Answer;
 import nars.core.Events.OUT;
+import nars.core.NAR;
+import nars.core.NewNAR;
+import nars.event.AbstractReaction;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -32,7 +31,7 @@ public class TuneTuffy {
         public SolutionMonitor(NAR n, String term) throws InvalidInputException {
             super(n, true, OUT.class, Answer.class);
             
-            Term t = new Narsese(n).parseTerm(term);
+            Term t = n.term(term);
             this.term = t;
             
             n.input(t.toString() + "?");

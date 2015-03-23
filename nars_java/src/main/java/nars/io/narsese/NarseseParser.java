@@ -40,9 +40,9 @@ public class NarseseParser extends BaseParser<Object> {
     private final int level;
 
     //These should be set to something like RecoveringParseRunner for performance
-    ParseRunner inputParser = new RecoveringParseRunner(Input());
-    ParseRunner singleTaskParser = new RecoveringParseRunner(Task());
-    ParseRunner singleTermParser = new RecoveringParseRunner(Term());
+    public final ParseRunner inputParser = new RecoveringParseRunner(Input());
+    public final ParseRunner singleTaskParser = new RecoveringParseRunner(Task());
+    public final ParseRunner singleTermParser = new RecoveringParseRunner(Term());
 
     public Memory memory;
 
@@ -50,8 +50,8 @@ public class NarseseParser extends BaseParser<Object> {
         this(8);
     }
 
-    protected NarseseParser(int level) {
-        this.level = level;
+    protected NarseseParser(int minNALLevel) {
+        this.level = minNALLevel;
     }
 
     public boolean nal(int n) { return n >= level; }
@@ -250,6 +250,7 @@ public class NarseseParser extends BaseParser<Object> {
                         Interval(),
                         Variable(),
                         QuotedLiteral(),
+                        ImageIndex(),
                         Atom()
                 ),
                 push(Term.get(pop()))
@@ -264,7 +265,13 @@ public class NarseseParser extends BaseParser<Object> {
                 push(match())
         );
     }
-    
+
+    static class ImageIndexTerm extends Term { ImageIndexTerm() { super("_"); } }
+
+    Rule ImageIndex() {
+        return sequence( "_", push( new ImageIndexTerm() ));
+    }
+
     Rule QuotedLiteral() {
         return sequence("\"", AnyString(), "\"", push(Texts.escapeLiteral(match())));
     }
@@ -482,7 +489,7 @@ public class NarseseParser extends BaseParser<Object> {
             else if ((p instanceof NALOperator) && (p!=NALOperator.COMPOUND_TERM_OPENER) /* ignore the compound term opener */) {
 
                 if ((op!=null) && (op!=(/*(NALOperator)*/p)))
-                    throw new InvalidInputException("CompoundTerm must use only one type of operator; " + p + " contradicts " + op);
+                    throw new InvalidInputException("CompoundTerm must use only one type of operator; " + p + " contradicts " + op + "; " + getContext().getValueStack() +  ":" + vectorterms);
                 op = (NALOperator)p;
             }
         }

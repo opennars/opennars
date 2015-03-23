@@ -16,6 +16,7 @@ import nars.logic.nal8.Operation;
 import nars.logic.nal8.Operator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
@@ -33,12 +34,14 @@ import static nars.logic.nal8.Operation.make;
 public class Narsese {
     
     public final Memory memory;
+    private final NarseseParser newParser;
     private Term self;
 
 
-    public Narsese(NAR n) {
+    public Narsese(NAR n, NarseseParser newParser) {
 
         this.memory = n.memory;
+        this.newParser = newParser;
     }
     
 
@@ -111,7 +114,20 @@ public class Narsese {
 
 
     public Task parseTask(String s) throws InvalidInputException {
-        return parseTask(s, true);
+
+        Task u = parseTask(s, true), t = null;
+
+        try {
+            t = newParser.parseTask(s);
+            if (t.equals(u))
+                return t;
+        }
+        catch (Throwable e) {
+            System.err.println("Task parse error: " + t + " isnt " + u + ": " + Arrays.toString(e.getStackTrace()));
+        }
+
+        return u;
+
     }
 
     /**

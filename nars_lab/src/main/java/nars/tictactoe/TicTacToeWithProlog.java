@@ -277,7 +277,7 @@ public class TicTacToeWithProlog extends JPanel {
             
         }
 
-        Narsese parser = new Narsese(nar);
+
 
         private List<Task> inputSuccess(boolean succes, String... reason) {
 
@@ -286,9 +286,9 @@ public class TicTacToeWithProlog extends JPanel {
             Task t = null;
             try {
                 for (String r : reason)
-                    l.add(parser.parseTask(r));
+                    l.add(nar.task(r));
                 String truth = (succes ? "%1.00;" : "%0.00;") + "0.95%";
-                t = parser.parseTask("<input --> succeeded>. :|: " + truth);
+                t = nar.task("<input --> succeeded>. :|: " + truth);
                 l.add(t);
             } catch (InvalidInputException e) {
                 e.printStackTrace();

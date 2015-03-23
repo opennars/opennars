@@ -19,7 +19,6 @@ package nars.core;
 import nars.build.Default;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import nars.logic.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.nal1.Inheritance;
@@ -45,14 +44,13 @@ public class TermTest {
         Parameters.DEBUG = true;
     }
     NAR n = new NAR(new Default());
-    Narsese np = new Narsese(n);
-    
+
     protected void assertEquivalent(String term1String, String term2String) {
         try {
             NAR n = new NAR(new Default());
 
-            Term term1 = np.parseTerm(term1String);
-            Term term2 = np.parseTerm(term2String);
+            Term term1 = n.term(term1String);
+            Term term2 = n.term(term2String);
 
             assertTrue(term1 instanceof Compound);
             assertTrue(term2 instanceof Compound);
@@ -79,10 +77,9 @@ public class TermTest {
     public void testTermSort() throws Exception {
         NAR n = new NAR(new Default());
         
-        Narsese m = new Narsese(n);
-        Term a = m.parseTerm("a");
-        Term b = m.parseTerm("b");
-        Term c = m.parseTerm("c");
+        Term a = n.term("a");
+        Term b = n.term("b");
+        Term c = n.term("c");
 
         assertEquals(3, Term.toSortedSetArray(a, b, c).length);
         assertEquals(2, Term.toSortedSetArray(a, b, b).length);
@@ -99,13 +96,13 @@ public class TermTest {
             
         //these 2 representations are equal, after natural ordering
         String term1String =    "<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-        Term term1 = np.parseTerm(term1String);        
+        Term term1 = n.term(term1String);
         String term1Alternate = "<#1 --> (&,(/,taller_than,{Tom},_),boy)>";
-        Term term1a = np.parseTerm(term1Alternate);
+        Term term1a = n.term(term1Alternate);
         
 
         // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
-        Term term2 = np.parseTerm("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
+        Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
 
         assertTrue(term1.toString().equals( term1a.toString() ));
         assertTrue(term1.getComplexity() > 1);
@@ -153,8 +150,8 @@ public class TermTest {
         NAR n = new NAR(new Default());
         
        String term1String ="<a --> b>";
-       Term term1 = np.parseTerm(term1String);
-       Term term2 = np.parseTerm(term1String);
+       Term term1 = n.term(term1String);
+       Term term2 = n.term(term1String);
        
        assertTrue(term1.equals(term2));
        assertTrue(term1.hashCode() == term2.hashCode());
@@ -173,9 +170,9 @@ public class TermTest {
         
        String statement1 = "<a --> b>.";
        
-       Term a = np.parseTerm("a");
+       Term a = n.term("a");
        assertTrue(a!=null);
-       Term a1 = np.parseTerm("a");
+       Term a1 = n.term("a");
        assertTrue(a.equals(a1));
        
        n.input(statement1);
@@ -190,10 +187,10 @@ public class TermTest {
        n.input(statement2);
        n.step(4);
        
-       Term a2 = np.parseTerm("a");
+       Term a2 = n.term("a");
        assertTrue(a2!=null);
                      
-       Concept ca = n.memory.concept(a2);
+       Concept ca = n.concept(a2);
        assertTrue(ca!=null);
        
        assertEquals(true, n.memory.concepts.iterator().hasNext());
@@ -234,10 +231,10 @@ public class TermTest {
         
         String t = "<$1 --> (~,{place4},$1)>";
         NAR n = new NAR(new Default());
-        Narsese p = new Narsese(n);
+
         
         try {
-            Task x = p.parseNarsese(new StringBuilder(t + "."));
+            Task x = n.inputTask(new StringBuilder(t + ".").toString());
             assertNull(t + " is invalid compound term", x);
         } catch (Throwable tt) {
             assertTrue(true);
@@ -245,9 +242,9 @@ public class TermTest {
         
         Term subj = null, pred = null;
         try {
-            subj = p.parseTerm("$1");
-            pred = p.parseTerm("(~,{place4},$1)");
-            
+            subj = n.term("$1");
+            pred = n.term("(~,{place4},$1)");
+
             assertTrue(true);
             
         } catch (Throwable ex) {
@@ -263,7 +260,7 @@ public class TermTest {
 
 
         try {
-            Compound forced = (Compound) p.parseTerm("<a --> b>");
+            Compound forced = (Compound) n.term("<a --> b>");
             assertTrue(true);
             
             forced.term[0] = subj;
@@ -286,10 +283,9 @@ public class TermTest {
         Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
         NAR n = new NAR(new Default());
-        Narsese p = new Narsese(n);
-        
+
         try {
-            Term x = p.parseTerm("wonder(a,b)");
+            Term x = n.term("wonder(a,b)");
             assertEquals(Operation.class, x.getClass());
             assertEquals("(^wonder,a,b,SELF)", x.toString());
             

@@ -10,7 +10,6 @@ import nars.core.Memory;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +67,7 @@ public class DelayBagTest {
         assertEquals(6, numConcepts(n) );
         
         ((AntCore)n.memory.concepts).concepts.remove(
-                new Narsese(n).parseTerm("<a --> b>"));
+                n.term("<a --> b>"));
         
         assertEquals(5, numConcepts(n) );
         n.run(10);

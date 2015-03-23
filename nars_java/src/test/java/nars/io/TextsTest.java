@@ -3,7 +3,6 @@ package nars.io;
 import nars.build.Default;
 import nars.core.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
 import nars.logic.nal7.Tense;
@@ -79,10 +78,9 @@ public class TextsTest {
     @Test
     public void testRope() throws InvalidInputException {
         NAR n = new NAR(new Default());
-        Narsese np = new Narsese(n);
-        
+
         String term1String ="<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
-        Term term1 = np.parseTerm(term1String);
+        Term term1 = n.term(term1String);
 
         Rope tr = (Rope)toString(term1);
         
