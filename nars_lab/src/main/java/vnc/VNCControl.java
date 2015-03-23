@@ -2,7 +2,6 @@ package vnc;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import ca.nengo.ui.lib.NengoStyle;
 import nars.build.Default;
 import nars.core.Events;
 import nars.core.Memory;
@@ -16,8 +15,6 @@ import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal8.NullOperator;
-import org.piccolo2d.PLayer;
-import org.piccolo2d.nodes.PImage;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.client.PointerEventMessage;
@@ -25,7 +22,6 @@ import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -37,8 +33,8 @@ abstract public class VNCControl extends VNCClient {
     private final NAR nar;
 
     Map<Concept,ActivityRectangle> positions = new LinkedHashMap();
-    int rx = 600; //sky resolution pixels
-    int ry = 40;
+//    int rx = 600; //sky resolution pixels
+//    int ry = 40;
     List<Concept> incoming = new CopyOnWriteArrayList();
     Deque<OCR.BufferUpdate> ocrResults = new ConcurrentLinkedDeque<>();
     private SkyActivity skyActivity;
@@ -144,7 +140,7 @@ abstract public class VNCControl extends VNCClient {
 
 
 
-        final public PImage node = new PImage();
+        //final public PImage node = new PImage();
 
         public boolean pendingReset = true;
 
@@ -164,16 +160,7 @@ abstract public class VNCControl extends VNCClient {
             pendingReset = false;
 
             if (getSurface()==null) return;
-            PLayer sky = VNCControl.this.getSurface().getSkyLayer();
 
-            if (sky == null) return;
-
-
-            getSurface().getSky().getCamera().setBounds(0,0,rx,ry);
-
-            //if (n!=null) sky.removeChild(n);
-
-            sky.addChild(node);
         }
 
         public void register(Concept c) {
@@ -248,9 +235,6 @@ abstract public class VNCControl extends VNCClient {
     protected synchronized void renderSky() {
 
         if (getSurface() == null) return;
-        if (getSurface().getSky() == null) return;
-
-        BufferedImage bi = new BufferedImage(rx,ry,BufferedImage.TYPE_4BYTE_ABGR);
 
         if (!incoming.isEmpty()) {
             Concept[] c = incoming.toArray(new Concept[incoming.size()]);
@@ -259,59 +243,7 @@ abstract public class VNCControl extends VNCClient {
                 skyActivity.register(x);
         }
 
-        Graphics2D g = (Graphics2D) bi.getGraphics();
-
-        g.setBackground(NengoStyle.COLOR_TRANSPARENT);
-        g.setColor(NengoStyle.COLOR_TRANSPARENT);
-        g.fillRect(0,0,rx, ry);
-
-
-
-        for (Map.Entry<Concept, ActivityRectangle> e : positions.entrySet()) {
-
-            Concept c = e.getKey();
-            ActivityRectangle r = e.getValue();
-
-            if (r.current == -1)
-                continue; //has been de-activated, so no need to repaint
-
-            float priority = c.getPriority();
-            float dp = r.prev - priority;
-            float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
-            float opacity = 0.5f; //each layer applies more, so set to << 1
-
-            Color color = new Color(0f,
-                    dp > 0 ? ap : 0f,
-                    dp < 0 ? ap : 0f,
-                    ap * opacity
-            );
-
-            float ww = rx; //g.getDeviceConfiguration().getBounds().width;
-            float hh = ry; //g.getDeviceConfiguration().getBounds().height;
-
-            //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
-
-            float cellScale = 1.0f;
-
-            g.setPaint(color);
-            g.fillRect( (int)( (r.getX())*ww),
-                    (int)( ( r.getY())*hh),
-                    (int)(r.getWidth()*ww*cellScale),
-                    (int)(r.getHeight()*hh*cellScale));
-
-            r.prev = priority;
-        }
-
-        g.dispose();
-
-
-        //n.setImage((Image)null);
-        skyActivity.node.setImage(bi);
-        skyActivity.node.repaint();
-
-
-
-        getSurface().renderSky(nar.time(), ocrResults);
+        getSurface().renderSky(nar.time(), positions, ocrResults);
         repaint();
     }
 
