@@ -80,7 +80,7 @@ abstract public class VNCControl extends VNCClient {
             @Override public String getParameter(String p) {
                 return null;
             }
-        }).show(800,600,true);
+        }).show(1024,768,true);
 
 
         nar.start(5,10);

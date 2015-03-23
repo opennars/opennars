@@ -39,13 +39,26 @@ import java.awt.*;
  * 4 - S32 - encoding-type
  * and then follows the pixel data in the specified encoding
  */
+//TODO extend Rectangle
 public class FramebufferUpdateRectangle {
-	public int x;
+    public int x;
 	public int y;
 	public int width;
 	public int height;
     private EncodingType encodingType;
     public final long createdAt;
+
+    //only tests the bounds, not encoding or time
+    @Override public boolean equals(Object obj) {
+        if (this == obj) return true;
+        FramebufferUpdateRectangle f = (FramebufferUpdateRectangle)obj;
+        return (f.x == x) && (f.y == y) && (f.width == width) && (f.height == height);
+    }
+
+    @Override
+    public int hashCode() {
+        return 15 * x + y * width + 31 * height; //TODO use a real hash function
+    }
 
     public FramebufferUpdateRectangle() {
 		this.createdAt = System.currentTimeMillis();
@@ -54,8 +67,11 @@ public class FramebufferUpdateRectangle {
 	public FramebufferUpdateRectangle(int x, int y, int w, int h) {
         this();
 		this.x = x; this.y = y;
+
 		width = w; height = h;
 	}
+
+
 
 	public void fill(Reader reader) throws TransportException {
     	x = reader.readUInt16();

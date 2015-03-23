@@ -1,8 +1,14 @@
 package vnc;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
+import com.sun.jna.ptr.PointerByReference;
 import nars.gui.output.BitmapPanel;
+import net.sourceforge.tess4j.ITessAPI;
+import net.sourceforge.tess4j.TessAPI;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import net.sourceforge.tess4j.util.LoadLibs;
 import vnc.drawing.Renderer;
 import vnc.rfb.encoding.decoder.FramebufferUpdateRectangle;
 import vnc.viewer.swing.Surface;
@@ -18,7 +24,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by me on 3/20/15.
@@ -27,29 +36,46 @@ public class OCR {
 
     public static final BufferUpdateFastSortedSet<BufferUpdate> ocrPending = new BufferUpdateFastSortedSet<BufferUpdate>();
     final static int bufferSize = 64;
-    private static long inputBufferDelay = 50; //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers
+    private static long inputBufferDelay = 100; //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers
 
     //limits for peforming OCR after exiting queue
-    static final int minOCRWidth = 6;
-    static final int minOCRHeight = 6;
+    static final int minOCRWidth = 12;
+    static final int minOCRHeight = 12;
 
     //limits for what is allowing into input queue
-    static final int minWidth = 1;
+    static final int minWidth = 4;
     static final int minHeight = minOCRHeight;
     static final int minPixels = minWidth * minHeight * 1;
 
 
-    final static Tesseract t = Tesseract.getInstance();
+    static TessAPI api = LoadLibs.getTessAPIInstance();
+    final static Tesseract t = null;
+    private static final ITessAPI.TessBaseAPI apiHandle;
+
     static {
-        t.setDatapath("/usr/share/tessdata");
+        String datapath = ("/usr/share/tessdata");
+
+        String language = "eng";
+        int ocrEngineMode = 0;
+
+        apiHandle = api.TessBaseAPICreate();
+        StringArray sarray = new StringArray(new String[] {});//(String[])this.configList.toArray(new String[0]));
+        List<String> configList = new ArrayList();
+        PointerByReference configs = new PointerByReference();
+        configs.setPointer(sarray);
+        api.TessBaseAPIInit1(apiHandle, datapath, language, ocrEngineMode, configs, configList.size());
+        //if(this.psm > -1) {
+            //api.TessBaseAPISetPageSegMode(this.handle, this.psm);
+        //}
+
 
         /*
         For tesseract-ocr >= 3.01 try increasing the variables
             language_model_penalty_non_freq_dict_word (0.1 default)
             language_model_penalty_non_dict_word (0.15 default)
          */
-        t.setTessVariable("language_model_penalty_non_freq_dict_word", "0.4f"); //default=0.15
-        t.setTessVariable("language_model_penalty_non_dict_word", "0.6f"); //default=0.15
+        //t.setTessVariable("language_model_penalty_non_freq_dict_word", "0.4f"); //default=0.15
+        //t.setTessVariable("language_model_penalty_non_dict_word", "0.6f"); //default=0.15
     }
     static final JFrame frame = new JFrame("OCR");
     private static final BitmapPanel frameBitmap;
@@ -283,9 +309,9 @@ public class OCR {
                 long end = 0;
 
                 if ((bu.rect.width >= minOCRWidth) && (bu.rect.height >= minOCRHeight)) {
-                    try {
 
-                        t.setOcrEngineMode(0);
+
+                        //t.setOcrEngineMode(0);
 
 
                         FramebufferUpdateRectangle r = bu.rect;
@@ -299,15 +325,34 @@ public class OCR {
                         ByteBuffer ci = convertImageData(frame, rr);
                         Rectangle subFrame = new Rectangle(0, 0, rr.width, rr.height);
                         int subBPP = 8; //image.getColorModel().getPixelSize()
-                        x = t.doOCR(subFrame.width, subFrame.height, ci, subFrame, subBPP);
+                        //x = t.doOCR(subFrame.width, subFrame.height, ci, subFrame, subBPP);
+
+                        try {
+                            int bytespp = subBPP / 8;
+                            int xsize = subFrame.width;
+                            int ysize = subFrame.height;
+                            int bytespl = (int)Math.ceil((double)(xsize * subBPP) / 8.0D);
+                            api.TessBaseAPISetImage(apiHandle, ci, xsize, ysize, bytespp, bytespl);
+
+                            api.TessBaseAPISetRectangle(apiHandle, subFrame.x, subFrame.y, subFrame.width, subFrame.height);
+
+
+                            Pointer utf8Text = api.TessBaseAPIGetUTF8Text(apiHandle);
+                            String str = utf8Text.getString(0L);
+                            api.TessDeleteText(utf8Text);
+
+                            x = str;
+
+                        } catch (Exception var12) {
+                            //logger.log(Level.SEVERE, var12.getMessage(), var12);
+                            var12.printStackTrace();
+                        }
 
 
                         end = System.currentTimeMillis();
                         //System.out.println(bu + " " + x + "(" + waiting + " waiting ms, " + processing + " processing ms, " + buffers.size() + " behind)");
                         //TODO add this timing information to 'bu' result class
-                    } catch (TesseractException e) {
-                        e.printStackTrace();
-                    }
+
 
                     long processing = end - start;
 
@@ -340,14 +385,29 @@ public class OCR {
 
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            BufferUpdate bu = (BufferUpdate)obj;
+            return rect.equals(bu.rect);
+        }
+
+        @Override
+        public int hashCode() {
+            return rect.hashCode();
+        }
+
         public float priority(long now) {
+            if (processed) return -1;
+
             float size = rect.width * rect.height;
             float age = now - rect.createdAt;
+            age-= inputBufferDelay; //dont penalize items still in the initial delay period
             if (age < 0) age = 0;
 
             double seconds = 5;
 
-            float pri = (float) (0.1 * size / (1 + age / (seconds * 1000.0)));
+            float pri = (float) (size / (1f + age / (seconds * 1000.0f)));
 
             //System.out.println(age + " " + rect.width + " " + rect.height + " = " + pri);
 
@@ -408,6 +468,24 @@ public class OCR {
             return inputTime;
         }
 
+        public boolean commonEdges(BufferUpdate o) {
+            //common right (this) | left (o) coords
+            int minXDist = 4;
+            if (Math.abs((rect.x) - (o.rect.x)) > minXDist)
+                return false;
+            if (Math.abs((rect.x + rect.width) - (o.rect.x + o.rect.width)) > minXDist)
+                return false;
+
+            //common top and bottom coord
+            int minYDist = 4;
+            if (Math.abs((rect.y) - (o.rect.y)) > minYDist)
+                return false;
+            if (Math.abs((rect.y + rect.height) - (o.rect.y + o.rect.height)) > minYDist)
+                return false;
+
+            return true;
+        }
+
         public boolean commonRightEdge(BufferUpdate o) {
             //common right (this) | left (o) coords
             int minXDist = 4;
@@ -461,7 +539,7 @@ public class OCR {
 
                 @Override
                 public int compare(BufferUpdate o1, BufferUpdate o2) {
-                    if (o1 == o2) return 0;
+                    if (o1.equals(o2)) return 0;
                     int fc = Float.compare(o1.priority(OCR.now), o2.priority(OCR.now));
                     if (fc != 0) return fc;
                     else
@@ -476,8 +554,13 @@ public class OCR {
 
             synchronized (this) {
                 for (E prev : this) {
+                    if (prev.equals(o)) {
+
+                        return false;
+                    }
                     if (prev != null && !prev.isProcessed()) { //TODO combine into an atomic operation: ifNotProcessedThenTryToGrow(..)
-                        if (prev.commonRightEdge(o)) {
+                        //TODO combine into one method with a boolean vector
+                        if (prev.commonEdges(o) || prev.commonRightEdge(o)) {
                             prev.grow(o);
                             return false;
                         }
@@ -485,6 +568,7 @@ public class OCR {
                     }
 
                 }
+
             }
 
             /*System.out.println();
@@ -495,7 +579,8 @@ public class OCR {
 
             now = System.currentTimeMillis();
             final float op = o.priority(now);
-            while (size() + 1 >= bufferSize) {
+            final int s = size();
+            if (s+1 >= bufferSize) {
 
                 E least = last();
                 if (least.priority(now) > op) {
