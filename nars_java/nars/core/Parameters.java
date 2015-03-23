@@ -211,5 +211,7 @@ public class Parameters {
     public static float BUSY_EVENT_LOWER_THRESHOLD=0.25f; */
     public static boolean REFLECT_META_HAPPY_GOAL=false;
     public static boolean CONSIDER_REMIND=false;
+    
+    public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
 }
 
