@@ -23,8 +23,6 @@ package nars.logic.entity;
 
 import nars.io.Texts;
 
-import java.util.Objects;
-
 import static nars.io.Symbols.*;
 
 /**
@@ -79,7 +77,7 @@ public class Variable extends Term {
         return new Variable(name(), scope == this ? null : scope);
     }
 
-    public Variable clone(CompoundTerm newScope) {
+    public Variable clone(Compound newScope) {
         return new Variable(name(), newScope);
     }
 

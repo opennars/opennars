@@ -23,7 +23,7 @@ package nars.logic.nal5;
 import nars.core.Parameters;
 import nars.logic.NALOperator;
 import nars.logic.Terms;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 
 import java.util.Collections;
@@ -72,12 +72,12 @@ public class Disjunction extends Junction {
     public static Term make(Term term1, Term term2) {
 
         if (term1 instanceof Disjunction) {
-            CompoundTerm ct1 = ((CompoundTerm) term1);
+            Compound ct1 = ((Compound) term1);
             List<Term> l = Parameters.newArrayList(ct1.size());
-            Collections.addAll(l, ((CompoundTerm)term1).term);
+            Collections.addAll(l, ((Compound)term1).term);
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                Collections.addAll(l, ((CompoundTerm)term2).term);
+                Collections.addAll(l, ((Compound)term2).term);
             }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -85,7 +85,7 @@ public class Disjunction extends Junction {
             }
             return make(l);
         } else if (term2 instanceof Disjunction) {
-            CompoundTerm ct2 = ((CompoundTerm) term2);
+            Compound ct2 = ((Compound) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
             List<Term> l = Parameters.newArrayList(ct2.size());
             Collections.addAll(l, ct2.term);

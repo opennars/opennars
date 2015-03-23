@@ -3,7 +3,7 @@ package nars.logic;
 import nars.core.Memory;
 import nars.core.Parameters;
 import nars.io.Symbols;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
 import nars.logic.nal1.Inheritance;
@@ -87,9 +87,9 @@ public class Variables {
                 }
                 return true;
             }
-        } else if ((term1HasVar || term2HasVar) && (term1 instanceof CompoundTerm) && (term1.getClass() == term2.getClass())) {
-            final CompoundTerm cTerm1 = (CompoundTerm) term1;
-            final CompoundTerm cTerm2 = (CompoundTerm) term2;
+        } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && (term1.getClass() == term2.getClass())) {
+            final Compound cTerm1 = (Compound) term1;
+            final Compound cTerm2 = (Compound) term2;
             if (cTerm1.size() != cTerm2.size()) {
                 return false;
             }
@@ -99,7 +99,7 @@ public class Variables {
             }
             Term[] list = cTerm1.cloneTerms();
             if (cTerm1.isCommutative()) {
-                CompoundTerm.shuffle(list, Memory.randomNumber);
+                Compound.shuffle(list, Memory.randomNumber);
             }
             for (int i = 0; i < cTerm1.size(); i++) {
                 Term t1 = list[i];
@@ -170,10 +170,10 @@ public class Variables {
         
         final boolean hasSubs = findSubstitute(type, t1, t2, map);
         if (hasSubs) {
-            final Term a = applySubstituteAndRenameVariables(((CompoundTerm)compound[0]), map[0]);
+            final Term a = applySubstituteAndRenameVariables(((Compound)compound[0]), map[0]);
             if (a == null) return false;
 
-            final Term b = applySubstituteAndRenameVariables(((CompoundTerm)compound[1]), map[1]);
+            final Term b = applySubstituteAndRenameVariables(((Compound)compound[1]), map[1]);
             if (b == null) return false;
 
             //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
@@ -186,7 +186,7 @@ public class Variables {
 
     /** appliesSubstitute and renameVariables, resulting in a cloned object, 
      *  will not change this instance  */
-    private static Term applySubstituteAndRenameVariables(final CompoundTerm t, final Map<Term, Term> subs) {
+    private static Term applySubstituteAndRenameVariables(final Compound t, final Map<Term, Term> subs) {
         if ((subs == null) || (subs.isEmpty())) {
             //no change needed
             return t;

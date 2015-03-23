@@ -115,7 +115,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
             boolean centerFree = true;
             if (operatorPanel!=null) {
                 if (idea.getArity() == 2) {
-                    Term[] t = ((CompoundTerm)idea.getSampleTerm()).term;
+                    Term[] t = ((Compound)idea.getSampleTerm()).term;
 
             
                     JPanel f = new JPanel(new FlowLayout(FlowLayout.LEFT));

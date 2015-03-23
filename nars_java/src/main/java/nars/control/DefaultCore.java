@@ -20,7 +20,7 @@ public class DefaultCore extends UniCore {
     /**
      * New tasks with novel composed terms, for delayed and selective processing
      */
-    public final Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks;
+    public final Bag<Sentence<Compound>, Task<Compound>> novelTasks;
 
     /* ---------- Short-term workspace for a single cycle ------- */
     /**
@@ -30,7 +30,7 @@ public class DefaultCore extends UniCore {
     public final Deque<Task> newTasks;
 
 
-    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder, Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> novelTasks) {
+    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
         super(concepts, subcon, conceptBuilder);
 
 

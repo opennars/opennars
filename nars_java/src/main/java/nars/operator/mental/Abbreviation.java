@@ -19,7 +19,7 @@ import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static nars.logic.entity.CompoundTerm.termArray;
+import static nars.logic.entity.Compound.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.
@@ -117,7 +117,7 @@ public class Abbreviation extends AbstractPlugin {
 
             operation.setTask(task);
 
-            abbreviate.call(operation, memory);
+            abbreviate.execute(operation, memory);
         }
     }
 

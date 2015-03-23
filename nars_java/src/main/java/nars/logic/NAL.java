@@ -253,11 +253,11 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
         return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentBelief(), getCurrentTask(), allowOverlap);
     }
 
-    public boolean doublePremiseTask(CompoundTerm newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder stamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final BudgetValue newBudget, StampBuilder stamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask, boolean allowOverlap) {
         if (!Parameters.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
             if (!newBudget.aboveThreshold()) {
                 //early exit test for below budget
@@ -300,7 +300,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public boolean singlePremiseTask(CompoundTerm newContent, TruthValue newTruth, BudgetValue newBudget) {
+    public boolean singlePremiseTask(Compound newContent, TruthValue newTruth, BudgetValue newBudget) {
         return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
@@ -313,7 +313,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public boolean singlePremiseTask(final CompoundTerm newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
+    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final TruthValue newTruth, final BudgetValue newBudget) {
 
 
         Task parentTask = getCurrentTask().getParentTask();

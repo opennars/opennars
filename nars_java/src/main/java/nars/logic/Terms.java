@@ -2,7 +2,7 @@ package nars.logic;
 
 import nars.core.Memory;
 import nars.core.Parameters;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
@@ -34,7 +34,7 @@ public class Terms {
         if (a == null || b == null) {
             return false;
         }
-        if (!((a instanceof CompoundTerm) && (b instanceof CompoundTerm))) {
+        if (!((a instanceof Compound) && (b instanceof Compound))) {
             return a.equals(b);
         }
         if (a instanceof Inheritance && b instanceof Inheritance) {
@@ -43,8 +43,8 @@ public class Terms {
         if (a instanceof Similarity && b instanceof Similarity) {
             return equalSubjectPredicateInRespectToImageAndProduct(a, b) || equalSubjectPredicateInRespectToImageAndProduct(b, a);
         }
-        Term[] A = ((CompoundTerm) a).term;
-        Term[] B = ((CompoundTerm) b).term;
+        Term[] A = ((Compound) a).term;
+        Term[] B = ((Compound) b).term;
         if (A.length != B.length)
             return false;
 
@@ -72,15 +72,15 @@ public class Terms {
         return true;
     }
 
-    public static Term reduceUntilLayer2(final CompoundTerm _itself, Term replacement, Memory memory) {
+    public static Term reduceUntilLayer2(final Compound _itself, Term replacement, Memory memory) {
         if (_itself == null)
             return null;
         
         Term reduced = reduceComponentOneLayer(_itself, replacement, memory);
-        if (!(reduced instanceof CompoundTerm))
+        if (!(reduced instanceof Compound))
             return null;
         
-        CompoundTerm itself = (CompoundTerm)reduced;
+        Compound itself = (Compound)reduced;
         int j = 0;
         for (Term t : itself.term) {
             Term t2 = unwrapNegation(t);
@@ -88,7 +88,7 @@ public class Terms {
                 j++;
                 continue;
             }
-            Term ret2 = reduceComponentOneLayer((CompoundTerm) t2, replacement, memory);
+            Term ret2 = reduceComponentOneLayer((Compound) t2, replacement, memory);
             
             //CompoundTerm itselfCompound = itself;
             Term replaced = null;
@@ -96,8 +96,8 @@ public class Terms {
                 replaced = itself.setComponent(j, ret2);
             
             if (replaced != null) {
-                if (replaced instanceof CompoundTerm)
-                    itself = (CompoundTerm)replaced;
+                if (replaced instanceof Compound)
+                    itself = (Compound)replaced;
                 else
                     return replaced;
             }
@@ -162,10 +162,10 @@ public class Terms {
      * @param memory Reference to the memory
      * @return The new compound
      */
-    public static Term reduceComponents(final CompoundTerm t1, final Term t2, final Memory memory) {
+    public static Term reduceComponents(final Compound t1, final Term t2, final Memory memory) {
         final Term[] list;
         if (t1.getClass() == t2.getClass())  {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+            list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, new Term[] { t2 });
         }
@@ -182,10 +182,10 @@ public class Terms {
         return null;
     }
 
-    public static Term reduceComponentOneLayer(CompoundTerm t1, Term t2, Memory memory) {
+    public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
         Term[] list;
         if (t1.getClass() == t2.getClass()) {
-            list = t1.cloneTermsExcept(true, ((CompoundTerm) t2).term);
+            list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, new Term[] { t2 });
         }
@@ -202,7 +202,7 @@ public class Terms {
 
     public static Term unwrapNegation(final Term T) {
         if (T != null && T instanceof Negation) {
-            return ((CompoundTerm) T).term[0];
+            return ((Compound) T).term[0];
         }
         return T;
     }
@@ -275,8 +275,8 @@ public class Terms {
         if (ta==null)
             return false;
 
-        Term[] sat = ((CompoundTerm)sa).term;
-        Term[] sbt = ((CompoundTerm)sb).term;
+        Term[] sat = ((Compound)sa).term;
+        Term[] sbt = ((Compound)sb).term;
 
         //original code did not check relation index equality
         //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/language/CompoundTerm.java
@@ -360,8 +360,8 @@ public class Terms {
                 return true;
         }
         for (final Term ax : a) {
-            if (ax instanceof CompoundTerm)
-                if (containsAny(((CompoundTerm)ax).term, b))
+            if (ax instanceof Compound)
+                if (containsAny(((Compound)ax).term, b))
                     return true;
         }
         
@@ -422,12 +422,12 @@ public class Terms {
      * ex: (&&,<a --> b>,<b --> c>) also contains <a --> #1>
      */
     public static boolean containsVariablesAsWildcard(final Term[] term, final Term b) {
-        CompoundTerm bCompound = (b instanceof CompoundTerm) ? ((CompoundTerm)b) : null;
+        Compound bCompound = (b instanceof Compound) ? ((Compound)b) : null;
         for (Term a : term) {
             if (a.equals(b)) return true;
             
-            if ((a instanceof CompoundTerm) && (bCompound!=null))  {
-                if (((CompoundTerm)a).equalsVariablesAsWildcards(bCompound))
+            if ((a instanceof Compound) && (bCompound!=null))  {
+                if (((Compound)a).equalsVariablesAsWildcards(bCompound))
                         return true;
             }
         }
@@ -451,8 +451,8 @@ public class Terms {
             if (nal < minLevel)
                 return false;
         }
-        if (t instanceof CompoundTerm) {
-            for (Term sub : ((CompoundTerm)t).term) {
+        if (t instanceof Compound) {
+            for (Term sub : ((Compound)t).term) {
                 if (!levelValid(sub, nal))
                     return false;
             }
@@ -511,8 +511,8 @@ public class Terms {
         return null;
     }
 
-    public static CompoundTerm compoundOrNull(Term t) {
-        if (t instanceof CompoundTerm) return (CompoundTerm)t;
+    public static Compound compoundOrNull(Term t) {
+        if (t instanceof Compound) return (Compound)t;
         return null;
     }
 

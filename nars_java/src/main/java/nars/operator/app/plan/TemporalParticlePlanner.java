@@ -26,7 +26,7 @@ import nars.event.Reaction;
 import nars.logic.NAL;
 import nars.logic.NALOperator;
 import nars.logic.TruthFunctions;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -142,8 +142,8 @@ public class TemporalParticlePlanner implements Plugin, Reaction {
                     } else if (it.getSubject() instanceof Operation) {
                         executive.execute(executing, (Operation) it.getSubject(), task); //directly execute
                         return;
-                    } else if (term instanceof CompoundTerm) {
-                        executive.inputGoal((CompoundTerm)term);
+                    } else if (term instanceof Compound) {
+                        executive.inputGoal((Compound)term);
                         return;
                     }
                 }

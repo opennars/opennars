@@ -4,7 +4,7 @@ import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Concept;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Term;
@@ -231,8 +231,8 @@ abstract public class ProcessingGraphPanel2<V,E> extends NPanel {
             if (s instanceof Sentence) {
                 Term t = ((Sentence)s).term;
                 include.add(t);
-                if (t instanceof CompoundTerm) {
-                    CompoundTerm ct = (CompoundTerm)t;
+                if (t instanceof Compound) {
+                    Compound ct = (Compound)t;
                     include.addAll(ct.getContainedTerms());
                 }                        
             }

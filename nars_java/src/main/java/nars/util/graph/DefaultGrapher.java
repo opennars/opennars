@@ -154,15 +154,15 @@ public class DefaultGrapher implements NARGraph.Grapher {
         }
     }
 
-    void recurseTermComponents(NARGraph g, CompoundTerm c, int level) {
+    void recurseTermComponents(NARGraph g, Compound c, int level) {
         for (Term b : c.term) {
             //addVertex(g,b);
 
             if (!includeTermContent) {
                 addEdge(g,c, b, new NARGraph.TermContent());
             }
-            if ((level > 1) && (b instanceof CompoundTerm)) {
-                recurseTermComponents(g, (CompoundTerm) b, level - 1);
+            if ((level > 1) && (b instanceof Compound)) {
+                recurseTermComponents(g, (Compound) b, level - 1);
             }
         }
 

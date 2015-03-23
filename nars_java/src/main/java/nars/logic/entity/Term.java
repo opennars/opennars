@@ -201,8 +201,8 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
 
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
-        if (this instanceof CompoundTerm) {
-            for (Term t : ((CompoundTerm)this).term) {
+        if (this instanceof Compound) {
+            for (Term t : ((Compound)this).term) {
                 t.recurseTerms(v, this);
             }
         }
@@ -218,8 +218,8 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
     public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
         if (!hasVar()) return;
         v.visit(this, parent);
-        if (this instanceof CompoundTerm) {
-            for (Term t : ((CompoundTerm)this).term) {
+        if (this instanceof Compound) {
+            for (Term t : ((Compound)this).term) {
                 t.recurseSubtermsContainingVariables(v, this);
             }
         }

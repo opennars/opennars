@@ -2,7 +2,7 @@ package nars.util.graph;
 
 import nars.core.NAR;
 import nars.logic.NALOperator;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 
 /** Maintains a directed grpah of Inheritance and Similiarty statements */
 public class InheritanceGraph extends StatementGraph {
@@ -19,7 +19,7 @@ public class InheritanceGraph extends StatementGraph {
 
 
     @Override
-    public boolean allow(final CompoundTerm st) {
+    public boolean allow(final Compound st) {
         NALOperator o = st.operator();
         
         

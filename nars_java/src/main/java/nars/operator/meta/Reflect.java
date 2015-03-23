@@ -4,7 +4,7 @@
  */
 package nars.operator.meta;
 
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal1.Inheritance;
@@ -61,10 +61,10 @@ public class Reflect extends TermFunction {
     }
     
     public static Term getMetaTerm(Term node) {
-        if (!(node instanceof CompoundTerm)) {
+        if (!(node instanceof Compound)) {
             return node;
         }
-        CompoundTerm t = (CompoundTerm)node;
+        Compound t = (Compound)node;
         switch (t.operator()) {
             case INHERITANCE: return sop((Inheritance)t, "inheritance");
             case SIMILARITY:  return sop((Similarity)t, "similarity");

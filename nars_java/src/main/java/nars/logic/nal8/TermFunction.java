@@ -35,7 +35,7 @@ public abstract class TermFunction extends Operator implements TermEval {
 
 
 
-    protected static CompoundTerm[] executeTerm(Operation operation) {
+    protected static Compound[] executeTerm(Operation operation) {
         TermFunction op = (TermFunction) operation.getOperator();
 
         Term[] rawArgs = operation.getArguments().term;
@@ -65,7 +65,7 @@ public abstract class TermFunction extends Operator implements TermEval {
         //it if we don't want to use the "resultof"-relation.
 
 
-        return new CompoundTerm[] {
+        return new Compound[] {
 
                 Implication.make(
                             operation.cloneWithArguments(x0, var),
@@ -81,9 +81,9 @@ public abstract class TermFunction extends Operator implements TermEval {
 
 
 
-        CompoundTerm[] e = executeTerm(operation);
-        CompoundTerm actual = e[0];
-        CompoundTerm actual_dep_part = e[1];
+        Compound[] e = executeTerm(operation);
+        Compound actual = e[0];
+        Compound actual_dep_part = e[1];
         if (actual == null) return null;
 
 

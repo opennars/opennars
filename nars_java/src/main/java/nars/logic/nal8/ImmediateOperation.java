@@ -2,7 +2,7 @@ package nars.logic.nal8;
 
 
 import nars.core.Memory;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Task;
 
 /** an operation that executes immediately, and without logical consequences;
@@ -28,7 +28,7 @@ abstract public class ImmediateOperation extends Operation {
         }
 
         @Override
-        public CompoundTerm getTerm() {
+        public Compound getTerm() {
             return imm;
         }
 

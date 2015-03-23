@@ -312,7 +312,7 @@ public class MultipleExecutionManager extends AbstractReaction {
     public void execute(final Operation op, final Task task) {
         Operator oper = op.getOperator();
         op.setTask(task);
-        oper.call(op, memory);
+        oper.execute(op, memory);
     }
     
     /**
@@ -424,10 +424,10 @@ public class MultipleExecutionManager extends AbstractReaction {
             Interval ui = (Interval) currentTerm;
             task.delayUntil = memory.time() + Interval.cycles(ui.magnitude, memory.param.duration);
             s++;
-        } else if (currentTerm instanceof CompoundTerm) {
+        } else if (currentTerm instanceof Compound) {
             /*System.err.println("Non-executable term in sequence: " + currentTerm + " in " + c + " from task " + task.t);*/
             //removeExecution(task); //was never executed, dont remove
-            inputGoal((CompoundTerm)currentTerm);
+            inputGoal((Compound)currentTerm);
             s++;
         }
         else {
@@ -451,7 +451,7 @@ public class MultipleExecutionManager extends AbstractReaction {
         }
     }
 
-    public boolean inputGoal(CompoundTerm currentTerm) {
+    public boolean inputGoal(Compound currentTerm) {
         try {
             memory.taskInput(memory.newTask(currentTerm).goal().present().truth(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE).get());
             return true;

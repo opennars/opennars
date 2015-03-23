@@ -43,7 +43,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements Termable,BudgetValue.Budgetable, Stamped {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termable,BudgetValue.Budgetable, Stamped {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -542,7 +542,7 @@ public class Task<T extends CompoundTerm> extends Item<Sentence<T>> implements T
                 if (sentence!=null && getPunctuation()!= Symbols.GOAL)
                     throw new RuntimeException("ImmediateOperator call " + o + " was not specified with goal punctuation");
 
-                o.getOperator().call(o, memory);
+                o.getOperator().execute(o, memory);
                 return true;
             }
         }

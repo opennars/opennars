@@ -23,7 +23,7 @@ public class Discretinuous extends Default {
 
     
     @Override
-    public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
+    public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
         return new ChainBag(getNovelTaskBagSize());
     }
 

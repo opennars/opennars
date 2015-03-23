@@ -8,7 +8,7 @@ import nars.logic.nal7.Tense;
 /** utility method for creating new tasks following a fluent builder pattern
  *  warning: does not correctly support parent stamps, use .stamp() to specify one
  * */
-public class NewTask<T extends CompoundTerm> {
+public class NewTask<T extends Compound> {
 
     private final T term;
     private final Memory memory;

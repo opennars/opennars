@@ -34,8 +34,8 @@ public class Idea implements Iterable<Concept> {
 
     public static CharSequence getKey(Termable tt) {
         Term t = tt.getTerm();
-        if (t instanceof CompoundTerm) {
-            CompoundTerm ct = (CompoundTerm)t;
+        if (t instanceof Compound) {
+            Compound ct = (Compound)t;
             
             //TODO use an array -> strong conversion that eliminates the ' ' after comma, saving 1 char each term
             
@@ -93,8 +93,8 @@ public class Idea implements Iterable<Concept> {
     /** # of terms, which will be equal in all Concept terms */
     public int getArity() {        
         Term sampleTerm = getSampleTerm();
-        if (sampleTerm instanceof CompoundTerm) {
-            return ((CompoundTerm)sampleTerm).term.length;
+        if (sampleTerm instanceof Compound) {
+            return ((Compound)sampleTerm).term.length;
         }
         return 1;
     }

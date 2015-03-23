@@ -372,7 +372,7 @@ public class Concept extends Item<Term> implements Termable {
             Operator oper = op.getOperator();
 
             op.setTask(t);
-            if(!oper.call(op, memory)) {
+            if(!oper.execute(op, memory)) {
                 return false;
             }
 
@@ -777,7 +777,7 @@ public class Concept extends Item<Term> implements Termable {
             queueActivation(template, b);
         }
 
-        if (otherTerm instanceof CompoundTerm) {
+        if (otherTerm instanceof Compound) {
             otherConcept.linkTerms(termLinkBuilder.getBudgetRef(), false);
         }
 

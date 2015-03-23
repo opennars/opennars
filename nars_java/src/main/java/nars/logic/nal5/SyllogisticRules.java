@@ -187,7 +187,7 @@ public final class SyllogisticRules {
         TruthValue truth = null;
         BudgetValue budget;
         Sentence sentence = nal.getCurrentTask().sentence;
-        CompoundTerm taskTerm = sentence.term;
+        Compound taskTerm = sentence.term;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
                 if(asym.truth==null) { //a question for example
@@ -254,7 +254,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        CompoundTerm nst = Statement.make(st, term1, term2, order).normalized();
+        Compound nst = Statement.make(st, term1, term2, order).normalized();
         if (nst == null) return false;
 
         return nal.doublePremiseTask( nst, truth, budget,
@@ -283,7 +283,7 @@ public final class SyllogisticRules {
         Term predicate = statement.getPredicate();
         Term term = subSentence.term;
 
-        final CompoundTerm content;
+        final Compound content;
         if ((side == 0) && term.equals(subject)) {
             content = Terms.compoundOrNull(predicate);
         } else if ((side == 1) && term.equals(predicate)) {
@@ -418,7 +418,7 @@ public final class SyllogisticRules {
             
             if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
             
-                CompoundTerm compoundCommonComponent = ((CompoundTerm) commonComponent);
+                Compound compoundCommonComponent = ((Compound) commonComponent);
                 
                 if ((oldCondition.term.length > index) && (compoundCommonComponent.term.length > index)) { // assumption: { was missing
                     u = new Term[] { premise1, premise2 };
@@ -461,10 +461,10 @@ public final class SyllogisticRules {
              if (newCondition instanceof Interval) {
                  content = premise1.getPredicate();
                  delta = ((Interval) newCondition).cycles(duration);
-             } else if ((newCondition instanceof Conjunction) && (((CompoundTerm) newCondition).term[0] instanceof Interval)) {
-                 Interval interval = (Interval) ((CompoundTerm) newCondition).term[0];
+             } else if ((newCondition instanceof Conjunction) && (((Compound) newCondition).term[0] instanceof Interval)) {
+                 Interval interval = (Interval) ((Compound) newCondition).term[0];
                  delta = interval.cycles(duration);
-                 newCondition = ((CompoundTerm)newCondition).setComponent(0, null);
+                 newCondition = ((Compound)newCondition).setComponent(0, null);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              } else {
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
@@ -474,7 +474,7 @@ public final class SyllogisticRules {
             content = premise1.getPredicate();
         }
         
-        if ((content == null) || (!(content instanceof CompoundTerm)))
+        if ((content == null) || (!(content instanceof Compound)))
             return false;
 
 
@@ -528,7 +528,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        return nal.doublePremiseTask((CompoundTerm)content, truth, budget,
+        return nal.doublePremiseTask((Compound)content, truth, budget,
                 sb, false, deduction);
     }
 
@@ -573,7 +573,7 @@ public final class SyllogisticRules {
         
         if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
             u = new Term[] { premise1, premise2 };
-            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((CompoundTerm) commonComponent).term[index], u);
+            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u);
             premise1 = (Equivalence) u[0]; premise2 = u[1];
         }
         if (!match) {
@@ -597,13 +597,13 @@ public final class SyllogisticRules {
         } else {
             newCondition = oldCondition.setComponent(index, newComponent);
         }
-        CompoundTerm content;
+        Compound content;
         if (newCondition != null) {
             content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
         } else {
             Term p = premise1.getPredicate();
-            if (p instanceof CompoundTerm)
-                content = (CompoundTerm)p;
+            if (p instanceof Compound)
+                content = (Compound)p;
             else
                 return false;
         }
@@ -661,12 +661,12 @@ public final class SyllogisticRules {
         Term term1 = null;
         //        if ((cond1 instanceof Conjunction) && !Variable.containVarDep(cond1.getName())) {
         if (cond1 instanceof Conjunction) {
-            term1 = reduceComponents((CompoundTerm) cond1, cond2, nal.memory);
+            term1 = reduceComponents((Compound) cond1, cond2, nal.memory);
         }
 //        if ((cond2 instanceof Conjunction) && !Variable.containVarDep(cond2.getName())) {
         Term term2 = null;
         if (cond2 instanceof Conjunction) {
-            term2 = reduceComponents((CompoundTerm) cond2, cond1, nal.memory);
+            term2 = reduceComponents((Compound) cond2, cond1, nal.memory);
         }
         if ((term1 == null) && (term2 == null)) {
             return false;
@@ -695,7 +695,7 @@ public final class SyllogisticRules {
                     return false;
                 }
             }
-            if (content instanceof CompoundTerm) {
+            if (content instanceof Compound) {
 
                 if (sentence.isQuestion() || sentence.isQuest()) {
                     budget = BudgetFunctions.backwardWeak(value2, nal);
@@ -712,7 +712,7 @@ public final class SyllogisticRules {
                     budget = BudgetFunctions.forward(truth, nal);
                 }
 
-                nal.doublePremiseTask((CompoundTerm) content, truth, budget, nal.newStamp(sentence, belief), false, false);
+                nal.doublePremiseTask((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
             }
         }
         
@@ -725,7 +725,7 @@ public final class SyllogisticRules {
                     return false;
                 }
             }
-            if (content instanceof CompoundTerm) {
+            if (content instanceof Compound) {
                 if (sentence.isQuestion() || sentence.isQuest()) {
 
                     budget = BudgetFunctions.backwardWeak(value2, nal);
@@ -741,7 +741,7 @@ public final class SyllogisticRules {
                     }
                     budget = BudgetFunctions.forward(truth, nal);
                 }
-                nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false, false);
+                nal.doublePremiseTask((Compound)content, truth, budget, nal.newStamp(sentence, belief), false, false);
             }
         }
         
@@ -756,9 +756,9 @@ public final class SyllogisticRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    public static void elimiVarDep(CompoundTerm compound, Term component, boolean compoundTask, NAL nal) {
+    public static void elimiVarDep(Compound compound, Term component, boolean compoundTask, NAL nal) {
         Term content = reduceComponents(compound, component, nal.memory);
-        if ((content == null) || (!(content instanceof CompoundTerm)) || ((content instanceof Statement) && ((Statement) content).invalid())) {
+        if ((content == null) || (!(content instanceof Compound)) || ((content instanceof Statement) && ((Statement) content).invalid())) {
             return;
         }
         Task task = nal.getCurrentTask();
@@ -780,6 +780,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask((CompoundTerm)content, truth, budget, nal.newStamp(sentence, belief), false, false);
+        nal.doublePremiseTask((Compound)content, truth, budget, nal.newStamp(sentence, belief), false, false);
     }
 }

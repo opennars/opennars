@@ -22,7 +22,7 @@ package nars.logic.nal1;
 
 import nars.core.Parameters;
 import nars.logic.NALOperator;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Statement;
 import nars.logic.entity.Term;
 import nars.logic.nal4.Product;
@@ -97,7 +97,7 @@ public class Inheritance extends Statement {
         }
 
         if (subjectProduct && predicateOperator) {
-            return Operation.make((Operator) predicate, ((CompoundTerm) subject).term);
+            return Operation.make((Operator) predicate, ((Compound) subject).term);
         } else {            
             return new Inheritance(subject, predicate);
         }

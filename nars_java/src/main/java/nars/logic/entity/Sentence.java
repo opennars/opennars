@@ -46,11 +46,11 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String>, Termable, Truthable, Stamped {
+public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termable, Truthable, Stamped {
 
 
 
-    public static interface Sentenced<T2 extends CompoundTerm> extends Termable {
+    public static interface Sentenced<T2 extends Compound> extends Termable {
         public Sentence<T2> getSentence();
     }
 
@@ -174,7 +174,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
                         term2[i]=c.term[i];
                     }
                     Term x = Conjunction.make(term2, c.getTemporalOrder());
-                    if (!(x instanceof CompoundTerm)) return null;
+                    if (!(x instanceof Compound)) return null;
                     T u = (T)x;
 
                     //if the resulting term is valid for a sentence, adjust the stamp and return the new term
@@ -282,14 +282,14 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
     }
 
     /** returns a valid sentence CompoundTerm, or throws an exception */
-    public static CompoundTerm termOrException(Term t) {
+    public static Compound termOrException(Term t) {
         if (invalidSentenceTerm(t))
             throw new RuntimeException(t + " not valid sentence content");
-        return ((CompoundTerm)t);
+        return ((Compound)t);
     }
 
     /** returns a valid sentence CompoundTerm, or returns null */
-    public static <X extends CompoundTerm> X termOrNull(Term t) {
+    public static <X extends Compound> X termOrNull(Term t) {
         if (invalidSentenceTerm(t))
             return null;
         return (X)t;
@@ -306,7 +306,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
     }
 
 
-    public final <X extends CompoundTerm> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
+    public final <X extends Compound> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
         X ct = termOrNull(t);
         if (ct == null) return null;
 
@@ -321,7 +321,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
     }
 
     /** Clone with a different Term */
-    public <X extends CompoundTerm> Sentence<? extends X> clone(Term t) {
+    public <X extends Compound> Sentence<? extends X> clone(Term t) {
         X ct = termOrNull(t);
         if (ct == null) return null;
 
@@ -333,7 +333,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
         return clone_(ct);
     }
 
-    protected <X extends CompoundTerm> Sentence<X> clone_(X t) {
+    protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
                 truth!=null ? new TruthValue(truth) : null,
                 stamp.clone());
@@ -647,7 +647,7 @@ public class Sentence<T extends CompoundTerm> implements Cloneable, Named<String
      * returns true if the term is invalid for use as sentence content term
      * */
     public static final boolean invalidSentenceTerm(final Term t) {
-        if ((t == null) || (!(t instanceof CompoundTerm))) { //(t instanceof Interval) || (t instanceof Variable)
+        if ((t == null) || (!(t instanceof Compound))) { //(t instanceof Interval) || (t instanceof Variable)
             return true;
         }
 

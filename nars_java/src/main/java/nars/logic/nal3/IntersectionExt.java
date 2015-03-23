@@ -24,7 +24,7 @@ import com.google.common.collect.ObjectArrays;
 import nars.core.Parameters;
 import nars.logic.NALOperator;
 import nars.logic.Terms;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 
 import java.util.ArrayList;
@@ -77,15 +77,15 @@ public class IntersectionExt extends Intersect {
         if ((term1 instanceof SetInt) && (term2 instanceof SetInt)) {
             // set union
             Term[] both = ObjectArrays.concat(
-                    ((CompoundTerm) term1).term, 
-                    ((CompoundTerm) term2).term, Term.class);
+                    ((Compound) term1).term,
+                    ((Compound) term2).term, Term.class);
             return SetInt.make(both);
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set intersection
-            TreeSet<Term> set = Term.toSortedSet(((CompoundTerm) term1).term);
+            TreeSet<Term> set = Term.toSortedSet(((Compound) term1).term);
             
-            set.retainAll(((CompoundTerm) term2).asTermList());     
+            set.retainAll(((Compound) term2).asTermList());
             
             //technically this can be used directly if it can be converted to array
             //but wait until we can verify that TreeSet.toarray does it or write a helper function like existed previously
@@ -93,10 +93,10 @@ public class IntersectionExt extends Intersect {
         }
         List<Term> se = new ArrayList();
         if (term1 instanceof IntersectionExt) {
-            ((CompoundTerm) term1).addTermsTo(se);
+            ((Compound) term1).addTermsTo(se);
             if (term2 instanceof IntersectionExt) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)                
-                ((CompoundTerm) term2).addTermsTo(se);
+                ((Compound) term2).addTermsTo(se);
             }               
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -104,7 +104,7 @@ public class IntersectionExt extends Intersect {
             }               
         } else if (term2 instanceof IntersectionExt) {
             // (&,R,(&,P,Q)) = (&,P,Q,R)
-            ((CompoundTerm) term2).addTermsTo(se);
+            ((Compound) term2).addTermsTo(se);
             se.add(term1);
         } else {
             se.add(term1);

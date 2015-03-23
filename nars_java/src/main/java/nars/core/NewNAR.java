@@ -1,6 +1,6 @@
 package nars.core;
 
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.util.bag.Bag;
@@ -15,7 +15,7 @@ abstract public class NewNAR extends Parameters  {
     public final Param param = new Param();
     protected int level;
 
-    abstract public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag();
+    abstract public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag();
     abstract public Core newCore();
 
     public NewNAR() {

@@ -1,7 +1,7 @@
 package nars.core;
 
 import nars.build.Default;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Task;
 import nars.logic.entity.Variable;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class TermNormalizationTest {
         //test for re-use of variable instances during normalization
         NAR n = new NAR(new Default());
         Task t = n.inputTask(term + ".");
-        CompoundTerm ct = t.sentence.term;
+        Compound ct = t.sentence.term;
         Variable a = ct.subterm(v1Index);
         assertNotNull(a);
         Variable b = ct.subterm(v2Index);

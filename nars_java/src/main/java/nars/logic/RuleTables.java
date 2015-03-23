@@ -398,10 +398,10 @@ public class RuleTables {
      */
     public static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, NAL nal) {
         
-        if (!(conditional.getSubject() instanceof CompoundTerm))
+        if (!(conditional.getSubject() instanceof Compound))
             return;
         
-        CompoundTerm condition = (CompoundTerm) conditional.getSubject();        
+        Compound condition = (Compound) conditional.getSubject();
         
         Term component = condition.term[index];
         Term component2 = null;
@@ -435,7 +435,7 @@ public class RuleTables {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-     public static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+     public static void compoundAndSelf(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (compound instanceof Junction) {
             if (nal.getCurrentBelief() != null) {
                 CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
@@ -445,8 +445,8 @@ public class RuleTables {
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                if (compound.term[0] instanceof CompoundTerm)
-                    StructuralRules.transformNegation((CompoundTerm)compound.term[0], nal);
+                if (compound.term[0] instanceof Compound)
+                    StructuralRules.transformNegation((Compound)compound.term[0], nal);
             } else {
                 StructuralRules.transformNegation(compound, nal);
             }
@@ -460,7 +460,7 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param nal Reference to the memory
      */
-    public static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, NAL nal) {
+    public static void compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
         if (taskTerm.getClass() == beliefTerm.getClass()) {
             if (taskTerm.size() > beliefTerm.size()) {
                 compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
@@ -480,7 +480,7 @@ public class RuleTables {
      * @param beliefTerm The content of the belief
      * @param nal Reference to the memory
      */
-    public static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {
+    public static void compoundAndStatement(Compound compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {
         
         if(index>=compound.term.length) {
             throw new RuntimeException(index + " index out of bounds for compound " + compound + "( " + compound.getClass() + " = " + Arrays.toString(compound.term) + ") in compoundAndStatement with statement=" + statement);
@@ -492,7 +492,7 @@ public class RuleTables {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 Term[] u = new Term[] { compound, statement };
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {
-                    compound = (CompoundTerm) u[0];
+                    compound = (Compound) u[0];
                     statement = (Statement) u[1];
                     SyllogisticRules.elimiVarDep(compound, component, 
                             statement.equals(beliefTerm),
@@ -500,7 +500,7 @@ public class RuleTables {
                 } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, nal);
                 } else if (Variables.unify(VAR_QUERY, component, statement, u)) {
-                    compound = (CompoundTerm) u[0];
+                    compound = (Compound) u[0];
                     //statement = (Statement) u[1];
                     CompositionalRules.decomposeStatement(compound, component, true, index, nal);                    
                 }
@@ -528,7 +528,7 @@ public class RuleTables {
      * @param side The location of the current term in the statement
      * @param nal Reference to the memory
      */
-    public static void componentAndStatement(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
+    public static void componentAndStatement(Compound compound, short index, Statement statement, short side, NAL nal) {
         if (statement instanceof Inheritance) {
             StructuralRules.structuralDecompose1(compound, index, statement, nal);
             if (compound instanceof SetTensional) {

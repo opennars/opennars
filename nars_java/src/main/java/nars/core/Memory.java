@@ -372,7 +372,7 @@ public class Memory implements Serializable {
      */
     public Concept concept(Term t) {
         if (!t.isNormalized()) {
-            t = ((CompoundTerm)t).cloneNormalized();
+            t = ((Compound)t).cloneNormalized();
             if (t == null) return null;
         }
         return concepts.concept(t);
@@ -401,7 +401,7 @@ public class Memory implements Serializable {
             return null;
 
         if (!term.isNormalized() && term.hasVar()) {
-            term = ((CompoundTerm) term).cloneNormalized();
+            term = ((Compound) term).cloneNormalized();
             if (term == null) return null;
         }
 
@@ -433,7 +433,7 @@ public class Memory implements Serializable {
      * @param components The term
      * @return A compound term or null
      */
-    public static Term term(final CompoundTerm compound, final Term[] components) {
+    public static Term term(final Compound compound, final Term[] components) {
         if (compound instanceof ImageExt) {
             return new ImageExt(components, ((Image) compound).relationIndex);
         } else if (compound instanceof ImageInt) {
@@ -443,7 +443,7 @@ public class Memory implements Serializable {
         }
     }
 
-    public static Term term(final CompoundTerm compound, Collection<Term> components) {
+    public static Term term(final Compound compound, Collection<Term> components) {
         Term[] c = components.toArray(new Term[components.size()]);
         return term(compound, c);
     }
@@ -820,10 +820,10 @@ public class Memory implements Serializable {
         return t;
     }
 
-    public <T extends CompoundTerm> NewTask<T> newTask(T t) {
+    public <T extends Compound> NewTask<T> newTask(T t) {
         return new NewTask(this, t);
     }
-    public <T extends CompoundTerm> NewTask<T> newTask(Sentence<T> s) {
+    public <T extends Compound> NewTask<T> newTask(Sentence<T> s) {
         return new NewTask(this, s);
     }
 

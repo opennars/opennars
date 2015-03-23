@@ -168,8 +168,8 @@ public class TemporalRules {
             Operation o= (Operation)t;
             if (o.getOperator() instanceof Mental) return true;
         }
-        if ((recurse) && (t instanceof CompoundTerm)) {
-            for (Term s : ((CompoundTerm)t)) {
+        if ((recurse) && (t instanceof Compound)) {
+            for (Term s : ((Compound)t)) {
                 if (containsMentalOperator(s, true)) return true;
             }
         }

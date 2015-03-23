@@ -28,7 +28,7 @@ public class TransformTask extends ConceptFireTask {
         if (t.type == TermLink.TRANSFORM) {
 
             // to turn this into structural logic as below?
-            CompoundTerm content = f.getCurrentTask().getTerm();
+            Compound content = f.getCurrentTask().getTerm();
             short[] indices = t.index;
             Term inh = null;
 
@@ -40,7 +40,7 @@ public class TransformTask extends ConceptFireTask {
                 Term component = content.term[indices[0]];
                 if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
 
-                    Term[] cterms = ((CompoundTerm) component).term;
+                    Term[] cterms = ((Compound) component).term;
                     if (indices[1] < cterms.length-1)
                         inh = cterms[indices[1]];
                     else
@@ -75,15 +75,15 @@ public class TransformTask extends ConceptFireTask {
      * @param oldContent The whole content
      * @param indices The indices of the TaskLink
      */
-    public static void transformProductImage(Inheritance inh, CompoundTerm oldContent, short[] indices, NAL nal) {
+    public static void transformProductImage(Inheritance inh, Compound oldContent, short[] indices, NAL nal) {
         Term subject = inh.getSubject();
         Term predicate = inh.getPredicate();
         if (inh.equals(oldContent)) {
-            if (subject instanceof CompoundTerm) {
-                transformSubjectPI((CompoundTerm) subject, predicate, nal);
+            if (subject instanceof Compound) {
+                transformSubjectPI((Compound) subject, predicate, nal);
             }
-            if (predicate instanceof CompoundTerm) {
-                transformPredicatePI(subject, (CompoundTerm) predicate, nal);
+            if (predicate instanceof Compound) {
+                transformPredicatePI(subject, (Compound) predicate, nal);
             }
             return;
         }
@@ -91,9 +91,9 @@ public class TransformTask extends ConceptFireTask {
         short side = indices[indices.length - 2];
 
         Term compT = inh.term[side];
-        if (!(compT instanceof CompoundTerm))
+        if (!(compT instanceof Compound))
             return;
-        CompoundTerm comp = (CompoundTerm)compT;
+        Compound comp = (Compound)compT;
 
         if (comp instanceof Product) {
             if (side == 0) {
@@ -127,7 +127,7 @@ public class TransformTask extends ConceptFireTask {
         if (newInh == null)
             return;
 
-        CompoundTerm content = null;
+        Compound content = null;
         if (indices.length == 2) {
             content = newInh;
         } else if ((oldContent instanceof Statement) && (indices[0] == 1)) {
@@ -136,9 +136,9 @@ public class TransformTask extends ConceptFireTask {
             Term[] componentList;
             Term condition = oldContent.term[0];
             if (((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) && (condition instanceof Conjunction)) {
-                componentList = ((CompoundTerm) condition).cloneVariableTermsDeep(); //cloneTerms();
+                componentList = ((Compound) condition).cloneVariableTermsDeep(); //cloneTerms();
                 componentList[indices[1]] = newInh;
-                Term newCond = Memory.term((CompoundTerm) condition, componentList);
+                Term newCond = Memory.term((Compound) condition, componentList);
                 content = Statement.make((Statement) oldContent, newCond, ((Statement) oldContent).getPredicate(), oldContent.getTemporalOrder());
             } else {
 
@@ -146,9 +146,9 @@ public class TransformTask extends ConceptFireTask {
                 componentList[indices[0]] = newInh;
                 if (oldContent instanceof Conjunction) {
                     Term newContent = Memory.term(oldContent, componentList);
-                    if (!(newContent instanceof CompoundTerm))
+                    if (!(newContent instanceof Compound))
                         return;
-                    content = (CompoundTerm)newContent;
+                    content = (Compound)newContent;
                 } else if ((oldContent instanceof Implication) || (oldContent instanceof Equivalence)) {
                     content = Statement.make((Statement) oldContent, componentList[0], componentList[1], oldContent.getTemporalOrder());
                 }
@@ -180,7 +180,7 @@ public class TransformTask extends ConceptFireTask {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformSubjectPI(CompoundTerm subject, Term predicate, NAL nal) {
+    private static void transformSubjectPI(Compound subject, Term predicate, NAL nal) {
         TruthValue truth = nal.getCurrentTask().sentence.truth;
         BudgetValue budget;
         Inheritance inheritance;
@@ -235,7 +235,7 @@ public class TransformTask extends ConceptFireTask {
      * @param predicate The predicate term
      * @param nal Reference to the memory
      */
-    private static void transformPredicatePI(Term subject, CompoundTerm predicate, NAL nal) {
+    private static void transformPredicatePI(Term subject, Compound predicate, NAL nal) {
         TruthValue truth = nal.getCurrentTask().sentence.truth;
         BudgetValue budget;
         Inheritance inheritance;

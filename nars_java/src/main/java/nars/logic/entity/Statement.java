@@ -41,7 +41,7 @@ import static nars.logic.NALOperator.STATEMENT_OPENER;
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-public abstract class Statement extends CompoundTerm {
+public abstract class Statement extends Compound {
     
     /**
      * Constructor with partial values, called by make
@@ -226,13 +226,13 @@ public abstract class Statement extends CompoundTerm {
      * @return Whether they cannot be related in a statement
      */
     private static boolean invalidReflexive(final Term t1, final Term t2) {
-        if (!(t1 instanceof CompoundTerm)) {
+        if (!(t1 instanceof Compound)) {
             return false;
         }
         if ((t1 instanceof Image /*Ext) || (t1 instanceof ImageInt*/)) {
             return false;
         }
-        final CompoundTerm ct1 = (CompoundTerm) t1;
+        final Compound ct1 = (Compound) t1;
         return ct1.containsTerm(t2);
     }
 

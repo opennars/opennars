@@ -20,7 +20,7 @@ import nars.core.Memory;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.io.nlp.Twokenize.Span;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Sentence;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
@@ -132,7 +132,7 @@ public class Twenglish {
         if (inputProduct) {
             Term p = 
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
-            CompoundTerm q = Sentence.termOrNull( Instance.make( p, Term.get(sentenceType) ) );
+            Compound q = Sentence.termOrNull( Instance.make( p, Term.get(sentenceType) ) );
             if (q != null) {
                 throw new RuntimeException("API Upgrade not finished here:");
                 /*tt.add(
@@ -151,7 +151,7 @@ public class Twenglish {
             }
             cont.removeLast(); //remove trailnig interval term
 
-            CompoundTerm con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD));
+            Compound con = Sentence.termOrNull(Conjunction.make(cont.toArray(new Term[cont.size()]), TemporalRules.ORDER_FORWARD));
             if (con!=null) {
                 throw new RuntimeException("API Upgrade not finished here:");
                 /*tt.add(

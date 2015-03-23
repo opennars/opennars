@@ -28,10 +28,10 @@ public class TableDerivations extends ConceptFireTaskTerm {
             case TermLink.SELF:
                 switch (bLink.type) {
                     case TermLink.COMPONENT:
-                        RuleTables.compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex, f);
+                        RuleTables.compoundAndSelf((Compound) taskTerm, beliefTerm, true, bIndex, f);
                         break;
                     case TermLink.COMPOUND:
-                        RuleTables.compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, f);
+                        RuleTables.compoundAndSelf((Compound) beliefTerm, taskTerm, false, bIndex, f);
                         break;
                     case TermLink.COMPONENT_STATEMENT:
                         if (belief != null) {
@@ -62,10 +62,10 @@ public class TableDerivations extends ConceptFireTaskTerm {
             case TermLink.COMPOUND:
                 switch (bLink.type) {
                     case TermLink.COMPOUND:
-                        RuleTables.compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, bIndex, f);
+                        RuleTables.compoundAndCompound((Compound) taskTerm, (Compound) beliefTerm, bIndex, f);
                         break;
                     case TermLink.COMPOUND_STATEMENT:
-                        RuleTables.compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, f);
+                        RuleTables.compoundAndStatement((Compound) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, f);
                         break;
                     case TermLink.COMPOUND_CONDITION:
                         if (belief != null) {
@@ -90,12 +90,12 @@ public class TableDerivations extends ConceptFireTaskTerm {
                 switch (bLink.type) {
                     case TermLink.COMPONENT:
                         if (taskTerm instanceof Statement) {
-                            RuleTables.componentAndStatement((CompoundTerm) f.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, f);
+                            RuleTables.componentAndStatement((Compound) f.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, f);
                         }
                         break;
                     case TermLink.COMPOUND:
                         if (taskTerm instanceof Statement) {
-                            RuleTables.compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, f);
+                            RuleTables.compoundAndStatement((Compound) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, f);
                         }
                         break;
                     case TermLink.COMPOUND_STATEMENT:
@@ -129,9 +129,9 @@ public class TableDerivations extends ConceptFireTaskTerm {
                                 Term subj = ((Statement) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
                                     if (taskSentence.isJudgment()) {
-                                        RuleTables.componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, f);
+                                        RuleTables.componentAndStatement((Compound) subj, bIndex, (Statement) taskTerm, tIndex, f);
                                     } else {
-                                        RuleTables.componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, f);
+                                        RuleTables.componentAndStatement((Compound) subj, tIndex, (Statement) beliefTerm, bIndex, f);
                                     }
                                 } else {
                                     RuleTables.conditionalDedIndWithVar((Implication) taskTerm, tIndex, (Statement) beliefTerm, bIndex, f);

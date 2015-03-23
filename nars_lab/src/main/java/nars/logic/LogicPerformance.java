@@ -57,7 +57,7 @@ public class LogicPerformance {
             explain(t, maxLevels, Collections.EMPTY_LIST);
         }
 
-        public <T extends CompoundTerm> void explain(Task<T> t, int maxLevels, List<Task> generated) {
+        public <T extends Compound> void explain(Task<T> t, int maxLevels, List<Task> generated) {
             //String x = toString() + "\n";
             Term cause = t.getCause();
             Sentence bestSolution = t.getBestSolution();            

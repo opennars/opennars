@@ -236,7 +236,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
     }
     
     @Override
-    public boolean add(final Sentence s, final CompoundTerm ct, final Item c) {
+    public boolean add(final Sentence s, final Compound ct, final Item c) {
 
         if(s.truth!=null && s.truth.getExpectation()<0.5) {
             return false;
@@ -421,7 +421,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
 
 
     @Override
-    public boolean allow(final CompoundTerm st) {
+    public boolean allow(final Compound st) {
         NALOperator o = st.operator();
         if ((o == NALOperator.IMPLICATION_WHEN) || (o == NALOperator.IMPLICATION_BEFORE) || (o == NALOperator.IMPLICATION_AFTER)) {
             return true;

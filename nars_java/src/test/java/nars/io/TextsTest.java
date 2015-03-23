@@ -59,8 +59,8 @@ public class TextsTest {
                 toString(s.getPredicate())
             ));
         }
-        else if (term instanceof CompoundTerm) {
-            CompoundTerm ct = (CompoundTerm)term;
+        else if (term instanceof Compound) {
+            Compound ct = (Compound)term;
             
             Rope[] tt = new Rope[ct.term.length];
             int i = 0;

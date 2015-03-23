@@ -346,7 +346,7 @@ public class Derivations extends DirectedMultigraph {
         else if (t instanceof Variable) {
             return t.toString();
         }
-        else if (t instanceof CompoundTerm) {
+        else if (t instanceof Compound) {
             return genericLiteral(t, unique);
         }
         else if (t instanceof Interval) {

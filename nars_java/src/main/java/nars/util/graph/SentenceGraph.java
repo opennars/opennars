@@ -161,7 +161,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
         
     abstract public boolean allow(Sentence s);
     
-    abstract public boolean allow(CompoundTerm st);    
+    abstract public boolean allow(Compound st);
     
     public boolean remove(final E s) {
         if (!containsEdge(s))
@@ -197,7 +197,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
         if (!allow(s))
             return false;               
         
-            CompoundTerm cs = s.term;
+            Compound cs = s.term;
         
             if (cs instanceof Statement) {
 
@@ -218,7 +218,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
     }    
     
     /** default behavior, may override in subclass */
-    abstract public boolean add(final Sentence s, final CompoundTerm ct, final Item c);
+    abstract public boolean add(final Sentence s, final Compound ct, final Item c);
 
 
     private static class NullEdgeFactory implements EdgeFactory {

@@ -225,8 +225,8 @@ public class Operation extends Inheritance {
             }
         }
 
-        if (x instanceof CompoundTerm) {
-            CompoundTerm ct = (CompoundTerm)x;
+        if (x instanceof Compound) {
+            Compound ct = (Compound)x;
             Term[] r = new Term[ct.size()];
             boolean modified = false;
             int j = 0;

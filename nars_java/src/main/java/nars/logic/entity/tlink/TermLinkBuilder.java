@@ -34,7 +34,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         setBudget(null);
 
         Term host = c.getTerm();
-        if (host instanceof CompoundTerm) {
+        if (host instanceof Compound) {
 
 
             int complexity = host.getComplexity();
@@ -42,7 +42,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             template = Parameters.newArrayList(complexity + 1);
             nonTransforms = 0;
 
-            prepareComponentLinks((CompoundTerm)host);
+            prepareComponentLinks((Compound)host);
         }
         else {
         }
@@ -51,7 +51,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         setKey(this);
     }
 
-    void prepareComponentLinks(CompoundTerm ct) {
+    void prepareComponentLinks(Compound ct) {
         short type = (ct instanceof Statement) ? TermLink.COMPOUND_STATEMENT : TermLink.COMPOUND;   // default
         prepareComponentLinks(type, ct);
     }
@@ -64,7 +64,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
      * @param type The type of TermLink to be built
      * @param t The CompoundTerm for which to build links
      */
-    void prepareComponentLinks(final short type, final CompoundTerm t) {
+    void prepareComponentLinks(final short type, final Compound t) {
 
         boolean tEquivalence = (t instanceof Equivalence);
         boolean tImplication = (t instanceof Implication);
@@ -78,10 +78,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             }
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
-                prepareComponentLinks(TermLink.COMPOUND_CONDITION, (CompoundTerm) ti);
+                prepareComponentLinks(TermLink.COMPOUND_CONDITION, (Compound) ti);
 
-            } else if (ti instanceof CompoundTerm) {
-                final CompoundTerm cti = (CompoundTerm)ti;
+            } else if (ti instanceof Compound) {
+                final Compound cti = (Compound)ti;
 
                 boolean t1ProductOrImage = (ti instanceof Product) || (ti instanceof Image);
 
@@ -105,7 +105,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                     }
 
                     if ((tj instanceof Product) || (tj instanceof Image)) {
-                        CompoundTerm ctj = (CompoundTerm)tj;
+                        Compound ctj = (Compound)tj;
 
                         final short tjSize = (short) ctj.term.length;
                         for (short k = 0; k < tjSize; ) {

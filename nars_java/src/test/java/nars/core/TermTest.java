@@ -54,8 +54,8 @@ public class TermTest {
             Term term1 = np.parseTerm(term1String);
             Term term2 = np.parseTerm(term2String);
 
-            assertTrue(term1 instanceof CompoundTerm);
-            assertTrue(term2 instanceof CompoundTerm);
+            assertTrue(term1 instanceof Compound);
+            assertTrue(term2 instanceof Compound);
             assert(!term1String.equals(term2String));
 
             assert(term1.hashCode() == term2.hashCode());
@@ -159,8 +159,8 @@ public class TermTest {
        assertTrue(term1.equals(term2));
        assertTrue(term1.hashCode() == term2.hashCode());
        
-       CompoundTerm cterm1 = ((CompoundTerm)term1);
-       CompoundTerm cterm2 = ((CompoundTerm)term2);
+       Compound cterm1 = ((Compound)term1);
+       Compound cterm2 = ((Compound)term2);
 
        //test subterms
        assertTrue(cterm1.term[0].equals(cterm2.term[0])); //'a'
@@ -263,7 +263,7 @@ public class TermTest {
 
 
         try {
-            CompoundTerm forced = (CompoundTerm) p.parseTerm("<a --> b>");
+            Compound forced = (Compound) p.parseTerm("<a --> b>");
             assertTrue(true);
             
             forced.term[0] = subj;

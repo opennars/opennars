@@ -17,7 +17,7 @@
 
 package nars.operator.math;
 
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetExt;
 import nars.logic.nal3.SetInt;
@@ -60,7 +60,7 @@ public class Count extends TermFunction implements Mental {
             throw new RuntimeException(requireMessage);
         }       
         
-        int n = ((CompoundTerm) content).size();
+        int n = ((Compound) content).size();
         return Term.get(n);
     }
 

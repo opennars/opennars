@@ -185,7 +185,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((CompoundTerm) first).term;
+            Term[] components_level1 = ((Compound) first).term;
             Term secterm_unwrap = unwrapNegation(secterm);
 
             for (final Term T1 : components_level1) {
@@ -196,7 +196,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
 
-                    CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                    Compound ctaskterm_subs = (Compound) first;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                     Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -208,7 +208,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 smap.clear();
 
                 if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
-                    CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                    Compound ctaskterm_subs = (Compound) first;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                     Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -221,8 +221,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     continue;
                 }
 
-                if (T1_unwrap instanceof CompoundTerm) {
-                    Term[] components_level2 = ((CompoundTerm) T1_unwrap).term;
+                if (T1_unwrap instanceof Compound) {
+                    Term[] components_level2 = ((Compound) T1_unwrap).term;
 
                     for (final Term T2 : components_level2) {
                         Term T2_unwrap = unwrapNegation(T2);
@@ -232,7 +232,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                         if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                            Compound ctaskterm_subs = (Compound) first;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                             Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
@@ -245,7 +245,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                         if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            CompoundTerm ctaskterm_subs = (CompoundTerm) first;
+                            Compound ctaskterm_subs = (Compound) first;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                             Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {

@@ -23,7 +23,7 @@ package nars.logic.nal5;
 import nars.core.Parameters;
 import nars.logic.NALOperator;
 import nars.logic.Terms;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import nars.logic.nal7.TemporalRules;
 
@@ -241,12 +241,12 @@ public class Conjunction extends Junction {
             //return null;
         } else {
             if (term1 instanceof Conjunction) {
-                CompoundTerm ct1 = ((CompoundTerm) term1);
+                Compound ct1 = ((Compound) term1);
                 final List<Term> set = Parameters.newArrayList(ct1.size() + 1);
                 Collections.addAll(set, ct1.term);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
-                    Collections.addAll(set, ((CompoundTerm) term2).term);
+                    Collections.addAll(set, ((Compound) term2).term);
                 }
                 else {
                     // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -254,7 +254,7 @@ public class Conjunction extends Junction {
                 }                          
                 return make(set, temporalOrder);
             } else if (term2 instanceof Conjunction) {
-                CompoundTerm ct2 = ((CompoundTerm) term2);
+                Compound ct2 = ((Compound) term2);
                 final List<Term> set = Parameters.newArrayList(ct2.size() + 1);
                 Collections.addAll(set, ct2.term);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
@@ -272,14 +272,14 @@ public class Conjunction extends Junction {
 
         if ((term1 instanceof Conjunction) && (term1.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
 
-            CompoundTerm cterm1 = (CompoundTerm) term1;
+            Compound cterm1 = (Compound) term1;
 
             ArrayList<Term> list = new ArrayList<>(cterm1.size());
             cterm1.addTermsTo(list);
 
             if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
                 // (&/,(&/,P,Q),(&/,R,S)) = (&/,P,Q,R,S)
-                ((CompoundTerm) term2).addTermsTo(list);
+                ((Compound) term2).addTermsTo(list);
             }
             else {
                 // (&,(&,P,Q),R) = (&,P,Q,R)
@@ -289,8 +289,8 @@ public class Conjunction extends Junction {
             components = list.toArray(new Term[list.size()]);
 
         } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-            CompoundTerm cterm2 = (CompoundTerm) term2;
-            components = new Term[((CompoundTerm) term2).size() + 1];
+            Compound cterm2 = (Compound) term2;
+            components = new Term[((Compound) term2).size() + 1];
             components[0] = term1;
             arraycopy(cterm2.term, 0, components, 1, cterm2.size());
         } else {

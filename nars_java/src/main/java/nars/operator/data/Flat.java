@@ -1,6 +1,6 @@
 package nars.operator.data;
 
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import nars.logic.nal3.SetTensional;
 import nars.logic.nal4.Product;
@@ -34,7 +34,7 @@ abstract public class Flat extends TermFunction {
     public static List<Term> collect(Term[] x, List<Term> l) {
         for (Term a : x) {
             if ((a instanceof Product) || (a instanceof SetTensional) || (a instanceof Conjunction)) {
-                collect( ((CompoundTerm)a).term, l);
+                collect( ((Compound)a).term, l);
             }
             else
                 l.add(a);

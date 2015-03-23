@@ -2,7 +2,7 @@ package nars.logic.nal4;
 
 import nars.io.Symbols;
 import nars.logic.NALOperator;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 
 import static nars.logic.NALOperator.COMPOUND_TERM_CLOSER;
@@ -14,7 +14,7 @@ import static nars.logic.NALOperator.COMPOUND_TERM_OPENER;
  */
 
 
-abstract public class Image extends CompoundTerm {
+abstract public class Image extends Compound {
     /** The index of relation in the component list */
     public final short relationIndex;
 

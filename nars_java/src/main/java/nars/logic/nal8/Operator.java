@@ -144,7 +144,7 @@ public abstract class Operator extends Term implements Plugin {
      * @param memory The memory on which the operation is executed
      * @return true if successful, false if an error occurred
      */
-    public final boolean call(final Operation op, final Memory memory) {
+    public final boolean execute(final Operation op, final Memory memory) {
 
         if(!op.isExecutable(memory)) {
             return false;

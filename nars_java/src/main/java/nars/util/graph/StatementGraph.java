@@ -18,7 +18,7 @@ public abstract class StatementGraph extends SentenceGraph {
     }
 
     @Override
-    public boolean add(Sentence s, CompoundTerm ct, Item c) {
+    public boolean add(Sentence s, Compound ct, Item c) {
         if (ct instanceof Statement) {
             Statement st = (Statement)ct;
             Term subject = st.getSubject();

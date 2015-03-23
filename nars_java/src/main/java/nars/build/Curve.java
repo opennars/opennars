@@ -29,7 +29,7 @@ public class Curve extends Default {
     
 
     @Override
-    public Bag<Sentence<CompoundTerm>, Task<CompoundTerm>> newNovelTaskBag() {
+    public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
         return new CurveBag(getNovelTaskBagSize(), curve, randomRemoval);
     }
 

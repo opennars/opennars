@@ -217,7 +217,7 @@ public class NARPrologMirror extends AbstractMirror {
 
         variableContext = s.term.hashCode();
 
-        if (!(s.term instanceof CompoundTerm))
+        if (!(s.term instanceof Compound))
             return;        
 
         if (!validTemporal(s))
@@ -455,7 +455,7 @@ public class NARPrologMirror extends AbstractMirror {
                 return new Struct(predicate, subj, obj);
         }
         else if ((term instanceof SetTensional) || (term instanceof Product) /* conjunction */) {
-            CompoundTerm s = (CompoundTerm)term;
+            Compound s = (Compound)term;
             String predicate = classPredicate(s.getClass());
             nars.prolog.Term[] args = pterms(s.term);
             if (args!=null)
@@ -474,7 +474,7 @@ public class NARPrologMirror extends AbstractMirror {
         else if (term.getClass().equals(Term.class)) {
             return new Struct(pescape(term.name().toString()));
         }
-        else if (term instanceof CompoundTerm) {
+        else if (term instanceof Compound) {
             //unhandled type of compound term, store as an atomic string            
             //NOT ready yet
             if (allTerms) {

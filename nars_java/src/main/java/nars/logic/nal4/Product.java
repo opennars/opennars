@@ -22,7 +22,7 @@
 package nars.logic.nal4;
 
 import nars.logic.NALOperator;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * A Product is a sequence of 1 or more terms.
  */
-public class Product extends CompoundTerm {
+public class Product extends Compound {
     
     /**
      * Constructor with partial values, called by make
@@ -71,7 +71,7 @@ public class Product extends CompoundTerm {
     }
 
     @Override
-    public CompoundTerm clone(Term[] replaced) {
+    public Compound clone(Term[] replaced) {
         return new Product(replaced);
     }
 
@@ -85,7 +85,7 @@ public class Product extends CompoundTerm {
      * @param index The index of the place-holder in the new Image -- optional parameter
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(final CompoundTerm image, final Term component, final int index) {
+    public static Term make(final Compound image, final Term component, final int index) {
         Term[] argument = image.cloneTerms();
         argument[index] = component;
         return new Product(argument);

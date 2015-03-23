@@ -106,7 +106,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
                     }
                 }
 
-                CompoundTerm conj = Sentence.termOrNull(Conjunction.make(term1, term2));
+                Compound conj = Sentence.termOrNull(Conjunction.make(term1, term2));
                 if (conj == null) return;
 
             /*

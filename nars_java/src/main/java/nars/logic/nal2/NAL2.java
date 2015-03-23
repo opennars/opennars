@@ -23,7 +23,7 @@ public class NAL2 {
         Statement s1 = (Statement) judgment1.term;
         Term t1 = s1.getSubject();
         Term t2 = s1.getPredicate();
-        CompoundTerm content;
+        Compound content;
         if (s1 instanceof Inheritance) {
             content = Similarity.make(t1, t2);
         } else {

@@ -6,7 +6,7 @@ import nars.core.Parameters;
 import nars.io.Symbols;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.NarseseParser;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Task;
 import nars.logic.entity.Term;
 import nars.logic.entity.Variable;
@@ -167,7 +167,7 @@ public class NarseseParserTest {
         assertEquals(NALOperator.PRODUCT, b.operator());
         assertEquals(2, b.size());
 
-        CompoundTerm c = term("(<a -->b> && y)");
+        Compound c = term("(<a -->b> && y)");
         assertEquals(NALOperator.CONJUNCTION, c.operator());
         assertEquals(2, c.size());
         assertEquals(5, c.getComplexity());

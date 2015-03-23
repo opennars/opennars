@@ -21,13 +21,13 @@
 package nars.logic.nal1;
 
 import nars.logic.NALOperator;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 
 /**
  * A negation of a statement.
  */
-public class Negation extends CompoundTerm {
+public class Negation extends Compound {
 
 
 

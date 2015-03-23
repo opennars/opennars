@@ -52,7 +52,7 @@ public final class StructuralRules {
      * @param side The location of the indicated term in the premise
      * @param nal Reference to the memory
      */
-    static void structuralCompose2(CompoundTerm compound, short index, Statement statement, short side, NAL nal) {
+    static void structuralCompose2(Compound compound, short index, Statement statement, short side, NAL nal) {
         //final Memory mem = nal.memory;
         
         if (compound.equals(statement.term[side])) {
@@ -118,8 +118,8 @@ public final class StructuralRules {
             return; // no abduction on other compounds for now, but may change in the future
         }
         
-        CompoundTerm sub = (CompoundTerm) subj;
-        CompoundTerm pre = (CompoundTerm) pred;
+        Compound sub = (Compound) subj;
+        Compound pre = (Compound) pred;
         if (sub.size() != pre.size() || sub.size() <= index) {
             return;
         }
@@ -156,7 +156,7 @@ public final class StructuralRules {
      * @param index The location of focus in the compound
      * @return Whether the direction of inheritance should be revised
      */
-    private static boolean switchOrder(CompoundTerm compound, short index) {
+    private static boolean switchOrder(Compound compound, short index) {
         return (((compound instanceof Difference)) && (index == 1))
                 || ((compound instanceof Image) && (index != ((Image) compound).relationIndex));
     }
@@ -169,7 +169,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralCompose1(CompoundTerm compound, short index, Statement statement, NAL nal) {
+    static void structuralCompose1(Compound compound, short index, Statement statement, NAL nal) {
         if (!nal.getCurrentTask().sentence.isJudgment()) {
             return;     // forward logic only
         }
@@ -221,7 +221,7 @@ public final class StructuralRules {
      * @param statement The premise
      * @param nal Reference to the memory
      */
-    static void structuralDecompose1(CompoundTerm compound, short index, Statement statement, NAL nal) {
+    static void structuralDecompose1(Compound compound, short index, Statement statement, NAL nal) {
 //        if (!memory.getCurrentTask().sentence.isJudgment()) {
 //            return;
 //        }
@@ -299,7 +299,7 @@ public final class StructuralRules {
      * @param side The location of the indicated term in the premise
      * @param nal Reference to the memory
      */
-    static void transformSetRelation(CompoundTerm compound, Statement statement, short side, NAL nal) {
+    static void transformSetRelation(Compound compound, Statement statement, short side, NAL nal) {
         if (compound.size() > 1) {
             return;
         }
@@ -348,7 +348,7 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    static boolean structuralCompound(CompoundTerm compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static boolean structuralCompound(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (component.hasVar()) {
             return false;
         }
@@ -395,8 +395,8 @@ public final class StructuralRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        if (content instanceof CompoundTerm)
-            return nal.singlePremiseTask((CompoundTerm)content, truth, budget);
+        if (content instanceof Compound)
+            return nal.singlePremiseTask((Compound)content, truth, budget);
         else
             return false;
     }
@@ -408,7 +408,7 @@ public final class StructuralRules {
      * @param content The premise
      * @param nal Reference to the memory
      */
-    public static void transformNegation(CompoundTerm content, NAL nal) {
+    public static void transformNegation(Compound content, NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;

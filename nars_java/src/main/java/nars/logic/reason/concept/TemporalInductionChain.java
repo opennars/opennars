@@ -129,8 +129,8 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
                 final Term ti = term[i];
-                if (ti instanceof CompoundTerm) {
-                    Term ts = ((CompoundTerm)ti).applySubstitute(res1);
+                if (ti instanceof Compound) {
+                    Term ts = ((Compound)ti).applySubstitute(res1);
                     if(ts!=null)
                         term[i] = ts;
                 }

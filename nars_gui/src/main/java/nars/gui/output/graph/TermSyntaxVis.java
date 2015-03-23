@@ -7,7 +7,7 @@ package nars.gui.output.graph;
 import automenta.vivisect.dimensionalize.AbegoTreeLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
 import nars.core.NAR;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.UniqueEdge;
@@ -37,8 +37,8 @@ public class TermSyntaxVis extends AnimatingGraphVis {
         
     
     public static Term addSyntax(NARGraph g, Term t) {
-        if (t instanceof CompoundTerm) {
-            CompoundTerm ct = (CompoundTerm)t;
+        if (t instanceof Compound) {
+            Compound ct = (Compound)t;
             g.addVertex(ct);
             int n = 0;
             for (Term s : ct.term) {

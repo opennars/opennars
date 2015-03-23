@@ -162,12 +162,12 @@ public class Narsese {
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));
         if (content == null) throw new InvalidInputException("Content term missing");
-        if (!(content instanceof CompoundTerm)) throw new InvalidInputException("Content term is not compound");
+        if (!(content instanceof Compound)) throw new InvalidInputException("Content term is not compound");
 
-        content = ((CompoundTerm) content).cloneNormalized();
+        content = ((Compound) content).cloneNormalized();
         if (content == null) return null;
 
-        return new Sentence((CompoundTerm)content, punc, truth, stamp);
+        return new Sentence((Compound)content, punc, truth, stamp);
         //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
         //    sentence.setRevisible(false);
         //}
@@ -478,9 +478,9 @@ public class Narsese {
     }
 
 
-    public CompoundTerm parseCompoundTerm(String s) throws InvalidInputException {
+    public Compound parseCompoundTerm(String s) throws InvalidInputException {
         Term t = parseTerm(s);
-        if (t instanceof CompoundTerm) return ((CompoundTerm)t);
+        if (t instanceof Compound) return ((Compound)t);
         throw new InvalidInputException(s + " is not a CompoundTerm");
     }
 

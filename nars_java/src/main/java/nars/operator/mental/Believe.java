@@ -52,7 +52,7 @@ public class Believe extends Operator implements Mental {
     @Override
     protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
 
-        CompoundTerm content = Sentence.termOrException(args[0]);
+        Compound content = Sentence.termOrException(args[0]);
 
         TruthValue truth = new TruthValue(1, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, memory, Tense.Present));

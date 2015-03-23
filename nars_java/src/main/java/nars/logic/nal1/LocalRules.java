@@ -285,7 +285,7 @@ public class LocalRules {
      */
     private static void convertRelation(final NAL nal) {
         TruthValue truth = nal.getCurrentBelief().truth;
-        if (((CompoundTerm) nal.getCurrentTask().getTerm()).isCommutative()) {
+        if (((Compound) nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);

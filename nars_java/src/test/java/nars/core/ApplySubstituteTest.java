@@ -3,7 +3,7 @@ package nars.core;
 import nars.build.Default;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
-import nars.logic.entity.CompoundTerm;
+import nars.logic.entity.Compound;
 import nars.logic.entity.Term;
 import org.junit.Test;
 
@@ -23,7 +23,7 @@ public class ApplySubstituteTest {
     public void testApplySubstitute() throws InvalidInputException {
             
         String abS ="<a --> b>";
-        CompoundTerm ab = (CompoundTerm )np.parseTerm(abS);
+        Compound ab = (Compound)np.parseTerm(abS);
         int originalComplexity = ab.getComplexity();
         
         String xyS ="<x --> y>";
@@ -31,7 +31,7 @@ public class ApplySubstituteTest {
         
         Map<Term,Term> h = new HashMap();
         h.put(np.parseTerm("b"), xy);
-        CompoundTerm c = ab.applySubstituteToCompound(h);
+        Compound c = ab.applySubstituteToCompound(h);
                 
         assertTrue(c.getComplexity() > originalComplexity);
         
@@ -49,7 +49,7 @@ public class ApplySubstituteTest {
             
         Map<Term,Term> h = new HashMap();
         h.put(np.parseTerm("$1"), np.parseTerm("0"));        
-        CompoundTerm c = ((CompoundTerm)np.parseTerm("<(*,$1) --> num>")).applySubstituteToCompound(h);
+        Compound c = ((Compound)np.parseTerm("<(*,$1) --> num>")).applySubstituteToCompound(h);
         
         assertTrue(c!=null);
     }
