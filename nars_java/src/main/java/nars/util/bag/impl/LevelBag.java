@@ -541,7 +541,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** removal of the bagged item from its level and the index */
-    public /* synchronized */  E extract(DD<E> node) {
+    public synchronized   E extract(DD<E> node) {
         if (node == null)
             throw new RuntimeException("OUT must not be null");
         int lev = node.owner();
@@ -555,7 +555,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** addition of the item to its level and the index */
-    protected /* synchronized */ DD<E> insert(E newItem, int inLevel) {
+    protected synchronized  DD<E> insert(E newItem, int inLevel) {
         if (newItem == null)
             throw new RuntimeException("IN must not be null");
         addMass(newItem);

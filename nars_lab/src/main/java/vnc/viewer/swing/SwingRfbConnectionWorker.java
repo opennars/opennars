@@ -101,7 +101,10 @@ abstract public class SwingRfbConnectionWorker extends SwingWorker<Void, String>
         return null;
     }
 
-    public Surface getSurface() { return getWindow().getSurface(); }
+    public Surface getSurface() {
+        if (getWindow() == null) return null;
+        return getWindow().getSurface();
+    }
 
     protected abstract void frameBufferUpdate(Renderer renderer, FramebufferUpdateRectangle rect);
 

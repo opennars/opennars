@@ -24,7 +24,9 @@
 
 package vnc.viewer.swing;
 
+import org.piccolo2d.PLayer;
 import org.piccolo2d.POffscreenCanvas;
+import org.piccolo2d.util.PPaintContext;
 import vnc.core.SettingsChangedEvent;
 import vnc.rfb.IChangeSettingsListener;
 import vnc.rfb.IRepaintController;
@@ -159,6 +161,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
         sky = new POffscreenCanvas(renderer.getWidth(), renderer.getHeight());
         sky.setInteracting(false);
 
+
 		return renderer;
 	}
 
@@ -178,7 +181,12 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 		requestFocus();
 	}
 
-	@Override
+    @Override
+    public void setSize(Dimension d) {
+        super.setSize(d);
+    }
+
+    @Override
 	public void paintComponent(Graphics g) {
 
 
@@ -193,14 +201,18 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
                 if ((skyImage==null || skyImage.getWidth()!=renderer.getWidth() || skyImage.getHeight()!=renderer.getHeight())) {
                     skyImage = new BufferedImage(renderer.getWidth(), renderer.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    //sky.setOpaque(false);
+                    sky.setBackground(new Color(0,0,0,0));
+                    //sky.getCamera().validateFullPaint();
                 }
                 if (offscreenImage != null) {
                     g.drawImage(offscreenImage, 0, 0, null);
                 }
 
-                //sky.setOpaque(false);
-                //sky.setBackground(new Color(0,0,0,0));
-                sky.getCamera().validateFullPaint();
+                sky.setRenderQuality(PPaintContext.LOW_QUALITY_RENDERING);
+
+
+                //sky.repaint(new PBounds(0, 0, renderer.getWidth(), renderer.getHeight()));
                 sky.render((Graphics2D) skyImage.getGraphics());
 
 
@@ -324,4 +336,8 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 		}
 	}
 
+    public PLayer getSkyLayer() {
+        if (getSky()==null) return null;
+        return getSky().getCamera().getLayer(0);
+    }
 }

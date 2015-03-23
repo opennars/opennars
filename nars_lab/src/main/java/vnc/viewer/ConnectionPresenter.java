@@ -316,6 +316,7 @@ public abstract class ConnectionPresenter extends Presenter {
     abstract public void frameBufferUpdate(Renderer renderer, FramebufferUpdateRectangle rect);
 
     public Surface getSurface() {
+        if (getRfbConnectionWorker()==null) return null;
         return getRfbConnectionWorker().getSurface();
     }
 

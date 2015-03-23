@@ -185,12 +185,17 @@ public class OCR {
     }
 
     public static String get3x3CoordsTree(int tx, int ty, int height, int width) {
+        return get3x3CoordsTree(tx, ty, height, width, 1);
+    }
+    //TODO a double version?
+    public static String get3x3CoordsTree(int tx, int ty, int height, int width, int levels) {
 
         int dx = width / 3, dy = height / 3;
         int cx = 0, cy = 0;
         String j = "";
         int count = 0;
-        while (dx > minWidth) {
+        while ((dx > minWidth) && (levels>0)) {
+            levels--;
             int ux, uy;
             if (tx > cx + dx * 2) {
                 ux = 1;

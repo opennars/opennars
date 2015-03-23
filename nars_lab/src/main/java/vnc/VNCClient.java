@@ -272,6 +272,7 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
     }
 
     public Surface getSurface() {
+        if (connectionPresenter==null) return null;
         return connectionPresenter.getSurface();
     }
 

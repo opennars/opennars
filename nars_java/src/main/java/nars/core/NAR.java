@@ -396,11 +396,11 @@ public class NAR implements Runnable {
     @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
         this.minFramePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = cyclesPerFrame;
+        running = true;
         if (thread == null) {
             thread = new Thread(this, this.toString() + "_reasoner");
             thread.start();
         }
-        running = true;        
     }
     
     /**
@@ -437,7 +437,6 @@ public class NAR implements Runnable {
      * @return total time in seconds elapsed in realtime
      * */
     public double step(final int frames) {
-        if (thread!=null) return -1; //avoid anything if already threading
         
         final boolean wasRunning = running;
         running = true;
@@ -521,7 +520,8 @@ public class NAR implements Runnable {
     /** Main loop executed by the Thread.  Should not be called directly. */    
     @Override public void run() {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
-        
+
+        running = true;
         stopped = false;
         
         while (running && !stopped) {      
