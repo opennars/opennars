@@ -324,4 +324,20 @@ public class NarseseParserTest {
         //TODO budget:
         //TODO punctuation:
     }
+
+    @Test public void testNamespaceTerms() {
+        Inheritance t = term("namespace.named");
+        assertEquals(t.operator(), NALOperator.INHERITANCE);
+        assertEquals("namespace", t.getPredicate().toString());
+        assertEquals("named", t.getSubject().toString());
+
+
+        Compound u = term("<a.b <-> c.d>");
+        assertEquals("<<b --> a> <-> <d --> c>>", u.toString());
+
+        Task ut = task("<a.b <-> c.d>.");
+        assertNotNull(ut);
+        assertEquals(ut.getTerm(), u);
+
+    }
 }

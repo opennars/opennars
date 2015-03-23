@@ -36,4 +36,6 @@ abstract public class AbstractExecutive extends AbstractPlugin {
 
     /** returns boolean for chaining executives together */
     abstract protected boolean decide(Concept c, Task executableTask);
+
+
 }

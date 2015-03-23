@@ -290,6 +290,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                         InfixCompoundTerm(),
 
+                        NamespacedAtom(),
                         Atom()
 
 
@@ -309,7 +310,7 @@ public class NarseseParser extends BaseParser<Object> {
 
     /**  MACRO: namespace.x    becomes    <x --> namespace> */
     Rule NamespacedAtom() {
-        return sequence(Atom(),'.',Atom(), swap(), push(Inheritance.make(Term.get(pop()), Term.get(pop()) ) ));
+        return sequence(Atom(),'.',Atom(), push(Inheritance.make(Term.get(pop()), Term.get(pop()) ) ));
     }
 
     static class ImageIndexTerm extends Term { ImageIndexTerm() { super("_"); } }

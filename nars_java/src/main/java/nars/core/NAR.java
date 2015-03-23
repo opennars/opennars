@@ -104,6 +104,7 @@ public class NAR implements Runnable {
             NAR.this.off(this);
         }
 
+        public Memory getMemory() { return NAR.this.memory; }
     }
     
     protected final List<PluggedIn> plugins = new CopyOnWriteArrayList<>();
