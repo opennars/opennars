@@ -9,6 +9,7 @@ import nars.io.Texts;
 import nars.logic.NALOperator;
 import nars.logic.entity.*;
 import nars.logic.entity.stamp.Stamp;
+import nars.logic.nal1.Inheritance;
 import nars.logic.nal7.Interval;
 import nars.logic.nal7.Tense;
 import nars.logic.nal8.Operation;
@@ -188,16 +189,14 @@ public class NarseseParser extends BaseParser<Object> {
          *   -: (reverse apply)
          */
         //TODO use separate rules for each so a parse can identify them
-        return firstOf(
-                sequence(String.valueOf(NALOperator.STATEMENT_OPENER), StatementContent(), String.valueOf(NALOperator.STATEMENT_CLOSER)),
-                sequence(String.valueOf(NALOperator.COMPOUND_TERM_OPENER), StatementContent(), String.valueOf(NALOperator.COMPOUND_TERM_CLOSER))
-        );
-
+        return sequence(String.valueOf(NALOperator.STATEMENT_OPENER), StatementContent(), String.valueOf(NALOperator.STATEMENT_CLOSER));
     }
 
+
     Rule StatementContent() {
-        return sequence(s(), Term(), s(), CopulaOperator(), s(), Term(), s(),
+        return sequence(sequence(s(), Term(), s(), CopulaOperator(), s(), Term(), s()),
                 push(getTerm((Term) pop(), (NALOperator) pop(), (Term) pop()))
+                //push(nextTermVector()) //((Term) pop(), (NALOperator) pop(), (Term) pop()))
         );
     }
 
@@ -250,13 +249,35 @@ public class NarseseParser extends BaseParser<Object> {
 
         return sequence(
                 firstOf(
-                        Copula(),
-                        CompoundTerm(),
                         Interval(),
                         Variable(),
                         QuotedLiteral(),
                         ImageIndex(),
+
+                        Copula(),
+                        //VectorTerm(NALOperator.STATEMENT_OPENER, NALOperator.STATEMENT_CLOSER), //replace copula?
+
+                        //TODO move to FunctionalOperationTerm() reason
+                        //Functional form of an Operation, ex: operator(p1,p2)
+                        sequence(
+                                Atom(),
+                                push(NALOperator.OPERATION),
+                                VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER)
+                        ),
+
+
+                        VectorTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER),
+                        VectorTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER),
+                        VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER), //NAL4
+
+                        MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER.ch, NALOperator.COMPOUND_TERM_CLOSER.ch),
+                        MultiArgTerm(NALOperator.STATEMENT_OPENER.ch, NALOperator.STATEMENT_CLOSER.ch),
+
+                        InfixCompoundTerm(),
+
                         Atom()
+
+
                 ),
                 push(Term.get(pop()))
         );
@@ -269,6 +290,11 @@ public class NarseseParser extends BaseParser<Object> {
                 oneOrMore(noneOf(" ,.!?^" + Symbols.INTERVAL_PREFIX + "<>-=*|&()<>[]{}%#$@\'\"\t\n")),
                 push(match())
         );
+    }
+
+    /**  MACRO: namespace.x    becomes    <x --> namespace> */
+    Rule NamespacedAtom() {
+        return sequence(Atom(),'.',Atom(), swap(), push(Inheritance.make(Term.get(pop()), Term.get(pop()) ) ));
     }
 
     static class ImageIndexTerm extends Term { ImageIndexTerm() { super("_"); } }
@@ -306,7 +332,7 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
     
-    Rule CompoundTerm() {
+    //Rule CompoundTerm() {
         /*
          <compound-term> ::= "{" <term> {","<term>} "}"         // extensional set
                         | "[" <term> {","<term>} "]"         // intensional set
@@ -324,25 +350,8 @@ public class NarseseParser extends BaseParser<Object> {
                         | "(~," <term> "," <term> ")"        // intensional difference
         
         */
-        return firstOf(
 
-                //TODO move to FunctionalOperationTerm() reason
-                //Functional form of an Operation, ex: operator(p1,p2)
-                sequence(
-                        Atom(),
-                        push(NALOperator.OPERATION),
-                        VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER)
-                ),
-
-                VectorTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER),
-                VectorTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER),
-                VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER), //NAL4
-
-                MultiArgTerm(),
-                InfixCompoundTerm()
-
-        );
-    }
+    //}
 
     Rule CompoundOperator() {
         return sequence(
@@ -389,16 +398,17 @@ public class NarseseParser extends BaseParser<Object> {
     Rule VectorTerm(NALOperator opener, NALOperator closer) {
         return sequence(
             opener.ch,
-            s(),
             push(opener),
+
             s(),
             Term(),
-            zeroOrMore(
+
+            oneOrMore(
 
                     //TODO merge this with the similar construct in MultiArgTerm, maybe use a common Rule
                     sequence(
-                        ArgumentSep(),
-                        Term()
+                            ArgumentSep(),
+                            Term()
                     )
 
             ),
@@ -417,10 +427,12 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
+
+
     /** list of terms prefixed by a particular compound term operator */
-    Rule MultiArgTerm() {
+    Rule MultiArgTerm(char open, char close) {
         return sequence(
-                NALOperator.COMPOUND_TERM_OPENER.ch,
+                open,
 
                 s(),
 
@@ -434,19 +446,20 @@ public class NarseseParser extends BaseParser<Object> {
 
                 zeroOrMore(
                         sequence(
-                                s(),
-                                optional(sequence(Symbols.ARGUMENT_SEPARATOR, s())),
+                                ArgumentSep(),
                                 Term()
                         )
                 ),
 
                 s(),
 
-                NALOperator.COMPOUND_TERM_CLOSER.ch,
+                close,
 
-                push( nextTermVector() )
+                push(nextTermVector())
         );
     }
+
+
 
     /** two or more terms separated by a compound term operator.
      * if > 2 terms, each instance of the infix'd operator must be equal,
@@ -509,7 +522,11 @@ public class NarseseParser extends BaseParser<Object> {
 
         if (vectorterms.isEmpty()) return null;
 
+//        if ((vectorterms.size() == 1) && (op == null))
+//            return vectorterms.get(0);
+
         Collections.reverse(vectorterms);
+
 
         if ((op == null) || (op == COMPOUND_TERM_OPENER)) {
             //product without '*,' prefix
@@ -581,6 +598,7 @@ public class NarseseParser extends BaseParser<Object> {
     /** parse one term */
     public <T extends Term> T parseTerm(String input) throws InvalidInputException {
         ParsingResult r = singleTermParser.run(input);
+
 
         if (!r.getValueStack().isEmpty()) {
 
