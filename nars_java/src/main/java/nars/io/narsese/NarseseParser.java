@@ -270,8 +270,23 @@ public class NarseseParser extends BaseParser<Object> {
                         VectorTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER),
                         VectorTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER), //NAL4
 
-                        MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER.ch, NALOperator.COMPOUND_TERM_CLOSER.ch),
-                        MultiArgTerm(NALOperator.STATEMENT_OPENER.ch, NALOperator.STATEMENT_CLOSER.ch),
+                        MultiArgTerm(NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER,
+                                //special handling to allow (-- x) , without the comma
+                                //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
+                                firstOf(
+                                        CompoundOperator(),
+                                        sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
+
+                                        sequence(s(), push(NALOperator.PRODUCT)) //DEFAULT
+                                        //Term()
+                                )
+                        ),
+
+                        MultiArgTerm(NALOperator.STATEMENT_OPENER, NALOperator.STATEMENT_CLOSER,
+                                s()
+                        ),
+
+
 
                         InfixCompoundTerm(),
 
@@ -403,7 +418,7 @@ public class NarseseParser extends BaseParser<Object> {
             s(),
             Term(),
 
-            oneOrMore(
+            zeroOrMore(
 
                     //TODO merge this with the similar construct in MultiArgTerm, maybe use a common Rule
                     sequence(
@@ -430,21 +445,16 @@ public class NarseseParser extends BaseParser<Object> {
 
 
     /** list of terms prefixed by a particular compound term operator */
-    Rule MultiArgTerm(char open, char close) {
+    Rule MultiArgTerm(NALOperator open, NALOperator close, Rule head) {
         return sequence(
-                open,
+                open.ch,
+                push(open),
 
                 s(),
 
-                //special handling to allow (-- x) , without the comma
-                //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
-                firstOf(
-                    sequence( CompoundOperator(), s(), ArgumentSep()),
-                    sequence(NALOperator.NEGATION.symbol, push(NALOperator.NEGATION)),
-                    Term()
-                ),
+                head,
 
-                zeroOrMore(
+                oneOrMore(
                         sequence(
                                 ArgumentSep(),
                                 Term()
@@ -453,7 +463,7 @@ public class NarseseParser extends BaseParser<Object> {
 
                 s(),
 
-                close,
+                close.ch,
 
                 push(nextTermVector())
         );
