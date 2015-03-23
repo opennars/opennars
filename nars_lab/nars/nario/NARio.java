@@ -143,7 +143,7 @@ public class NARio extends Run {
     protected void setKey(int k, boolean pressed) {
         if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")! :|:");
+        nar.addInput("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
