@@ -40,13 +40,9 @@ import java.awt.*;
  * and then follows the pixel data in the specified encoding
  */
 //TODO extend Rectangle
-public class FramebufferUpdateRectangle {
-    public int x;
-	public int y;
-	public int width;
-	public int height;
+public class FramebufferUpdateRectangle extends Rectangle {
     private EncodingType encodingType;
-    public final long createdAt;
+    public long createdAt;
 
     //only tests the bounds, not encoding or time
     @Override public boolean equals(Object obj) {

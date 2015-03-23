@@ -29,24 +29,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by me on 3/20/15.
- */
+
 public class OCR {
 
     public static final BufferUpdateFastSortedSet<BufferUpdate> ocrPending = new BufferUpdateFastSortedSet<BufferUpdate>();
     final static int bufferSize = 64;
     private static long inputBufferDelay = 100; //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers
+    static double halflifeSeconds = 4;
 
     //limits for peforming OCR after exiting queue
     static final int minOCRWidth = 12;
     static final int minOCRHeight = 12;
 
     //limits for what is allowing into input queue
-    static final int minWidth = 4;
+    static final int minWidth = minOCRWidth/2;
     static final int minHeight = minOCRHeight;
     static final int minPixels = minWidth * minHeight * 1;
-
+    static int equalEdgeThresh = 2; //in pixels
 
     static TessAPI api = LoadLibs.getTessAPIInstance();
     final static Tesseract t = null;
@@ -405,9 +404,11 @@ public class OCR {
             age-= inputBufferDelay; //dont penalize items still in the initial delay period
             if (age < 0) age = 0;
 
-            double seconds = 5;
+            age/=1000f; //to seconds
 
-            float pri = (float) (size / (1f + age / (seconds * 1000.0f)));
+
+
+            float pri = (float) (size / (1f + (age) / (halflifeSeconds )));
 
             //System.out.println(age + " " + rect.width + " " + rect.height + " = " + pri);
 
@@ -469,38 +470,41 @@ public class OCR {
         }
 
         public boolean commonEdges(BufferUpdate o) {
-            //common right (this) | left (o) coords
-            int minXDist = 4;
-            if (Math.abs((rect.x) - (o.rect.x)) > minXDist)
-                return false;
-            if (Math.abs((rect.x + rect.width) - (o.rect.x + o.rect.width)) > minXDist)
-                return false;
+            //common left (this) | left (o) coords
 
-            //common top and bottom coord
-            int minYDist = 4;
-            if (Math.abs((rect.y) - (o.rect.y)) > minYDist)
-                return false;
-            if (Math.abs((rect.y + rect.height) - (o.rect.y + o.rect.height)) > minYDist)
-                return false;
 
-            return true;
+            //this inside that
+            if (rect.contains(o.rect))
+                return true;
+            //that inside this
+            else if (o.rect.contains(rect))
+                return true;
+
+            //common edges
+            boolean cLeft = Math.abs((rect.x) - (o.rect.x)) <= equalEdgeThresh;
+            boolean cRight = Math.abs((rect.x + rect.width) - (o.rect.x + o.rect.width)) <= equalEdgeThresh;
+            boolean cTop = Math.abs((rect.y) - (o.rect.y)) <= equalEdgeThresh;
+            boolean cBottom = Math.abs((rect.y + rect.height) - (o.rect.y + o.rect.height)) <= equalEdgeThresh;
+
+            //all edges match
+            if (cLeft && cRight && cTop && cBottom) return true;
+
+            if (cTop && cBottom) {
+                //left/right vertical edge match?
+
+                boolean thisRightThatLeft = Math.abs((rect.x + rect.width) - (o.rect.x)) <= equalEdgeThresh;
+                if (thisRightThatLeft) return true;
+
+                boolean thisLeftThatRight = Math.abs((rect.x) - (o.rect.x + o.rect.width)) <= equalEdgeThresh;
+                if (thisLeftThatRight) return true;
+            }
+
+            //TODO up/down edges
+
+            return false;
         }
 
-        public boolean commonRightEdge(BufferUpdate o) {
-            //common right (this) | left (o) coords
-            int minXDist = 4;
-            if (Math.abs((rect.x + rect.width) - (o.rect.x)) > minXDist)
-                return false;
 
-            //common top and bottom coord
-            int minYDist = 4;
-            if (Math.abs((rect.y) - (o.rect.y)) > minYDist)
-                return false;
-            if (Math.abs((rect.y + rect.height) - (o.rect.y + o.rect.height)) > minYDist)
-                return false;
-
-            return true;
-        }
 
         /**
          * grow the area to include another
@@ -518,8 +522,9 @@ public class OCR {
             rect.y = ay;
             rect.width = (bx - ax);
             rect.height = (by - ay);
+            rect.createdAt = Math.max(rect.createdAt, o.rect.createdAt); //update with newer of the two's
 
-            System.out.println(" to " + rect);
+            System.out.println(" to " + rect + " " + ocrPending.size());
 
         }
     }
@@ -560,7 +565,7 @@ public class OCR {
                     }
                     if (prev != null && !prev.isProcessed()) { //TODO combine into an atomic operation: ifNotProcessedThenTryToGrow(..)
                         //TODO combine into one method with a boolean vector
-                        if (prev.commonEdges(o) || prev.commonRightEdge(o)) {
+                        if (prev.commonEdges(o)) {
                             prev.grow(o);
                             return false;
                         }

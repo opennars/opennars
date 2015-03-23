@@ -7,6 +7,7 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
 import nars.core.Events;
 import nars.core.Events.FrameEnd;
@@ -165,9 +166,17 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 NengoNetworkPanel nengo;
                 add(nengo = new NengoNetworkPanel(new TermGraphNode(c.memory) {
 
+                    Set<Term> neighbors = new LinkedHashSet();
+
                     @Override
                     public boolean includeTerm(Term t) {
-                        return t.equals(concept.getTerm());
+
+                        if (t.equals(concept.getTerm())) return true;
+
+                        if (neighbors.contains(t)) return true;
+
+                        return false;
+
                     }
 
                     @Override
@@ -175,6 +184,17 @@ public class ConceptPanelBuilder extends AbstractReaction {
                         return true;
                     }
 
+
+                    @Override
+                    public void refresh(Object x) {
+                        if (x == concept) {
+                            neighbors.clear();
+                            Iterator<Term> neighborTerms = concept.adjacentTerms(true, true);
+                            Iterators.addAll(neighbors, neighborTerms);
+                        }
+
+                        super.refresh(x);
+                    }
 
                     @Override
                     public String name() {

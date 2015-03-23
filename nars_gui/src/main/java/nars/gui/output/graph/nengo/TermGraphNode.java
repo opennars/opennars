@@ -91,11 +91,11 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                 @Override
                 public void pre(Collection<UIVertex> vertices) {
 
-                    setScale(96);
-                    setRepulsiveWeakness(2);
-                    setAttractionStrength(2.0);
-                    setEquilibriumDistance(2);
-                    setMaxRepulsionDistance(7500);
+                    setScale(48);
+                    setRepulsiveWeakness(3);
+                    setAttractionStrength(2.2);
+                    setEquilibriumDistance(4);
+                    setMaxRepulsionDistance(1000);
                     updateCoordinates(vertices);
                 }
 
@@ -288,10 +288,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
         else if ((x instanceof Term) && allowTermNodes) {
             v = new TermNode(this, (Term)x);
         }
-
-
-        if (v == null)
-            System.out.println(x + " == " + v);
 
 
 

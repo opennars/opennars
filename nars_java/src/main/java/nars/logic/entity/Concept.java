@@ -20,6 +20,7 @@
  */
 package nars.logic.entity;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import nars.core.Events.*;
 import nars.core.Memory;
@@ -41,8 +42,12 @@ import nars.util.bag.Bag;
 import nars.util.data.CuckooMap;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import static com.google.common.collect.Iterators.*;
 import static nars.logic.BudgetFunctions.divide;
 import static nars.logic.BudgetFunctions.rankBelief;
 import static nars.logic.UtilityFunctions.or;
@@ -1005,6 +1010,41 @@ public class Concept extends Item<Term> implements Termable {
 
     public List<TermLinkTemplate> getTermLinkTempltes() {
         return termLinkBuilder.templates();
+    }
+
+
+    public Iterator<? extends Termable> adjacentTermables(boolean termLinks, boolean taskLinks) {
+        if (termLinks && taskLinks) {
+            return concat(
+                    this.termLinks.iterator(), this.taskLinks.iterator()
+            );
+        }
+        else if (termLinks) {
+            return this.termLinks.iterator();
+        }
+        else if (taskLinks) {
+            return this.taskLinks.iterator();
+        }
+
+        return null;
+    }
+    public Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
+        return transform(adjacentTermables(termLinks, taskLinks), new Function<Termable, Term>() {
+            @Override
+            public Term apply(final Termable term) {
+                return term.getTerm();
+            }
+        });
+    }
+
+    public Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
+        final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termable, Concept>() {
+            @Override
+            public Concept apply(final Termable term) {
+                return memory.concept(term.getTerm());
+            }
+        });
+        return filter(termToConcept, Concept.class); //should remove null's (unless they never get included anyway), TODO Check that)
     }
 
 

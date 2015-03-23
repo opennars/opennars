@@ -267,7 +267,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         float priority = (float) e.getPriorityMean();
         float termlinkPriority = (float) e.getTermlinkPriority();
         float tasklinkPriority = (float) e.getTasklinkPriority();
-
+        // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
 
         return new Color(0.25f + 0.75f * termlinkPriority, 0.25f, 0.25f + 0.75f * tasklinkPriority, 0.25f + 0.75f * priority);
 
