@@ -65,10 +65,11 @@ abstract public class VNCControl extends VNCClient {
 
         Parameters.DEBUG = true;
 
-        NAR nar = new NAR(new Default());
+        NAR nar = new NAR(new Default(4000, 1, 3));
         nar.param.setTiming(Memory.Timing.Real);
-        nar.param.duration.set(1250); //ms
+        nar.param.duration.set(50); //ms
         nar.param.noiseLevel.set(12);
+
 
         Video.themeInvert();
         NARSwing swing = new NARSwing(nar);

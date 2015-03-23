@@ -50,6 +50,11 @@ public class NengoNetworkPanel extends Nengrow {
         this(newGraph(n));
     }
 
+    public NengoNetworkPanel(TermGraphNode graph, float fps) {
+        this(graph);
+        setFPS(fps);
+    }
+
     public NengoNetworkPanel(TermGraphNode graph) {
         super();
 

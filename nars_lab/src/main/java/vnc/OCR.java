@@ -277,6 +277,7 @@ public class OCR {
             //bi = getGrayscaleSubImage(bi, r.x, r.y, r.width, r.height);
             //bi = ImageHelper.convertImageToBinary(bi.getSubimage(r.x, r.y, r.width, r.height));
             buff = tmp.getRaster().getDataBuffer();
+            
             return ByteBuffer.wrap(((DataBufferByte) buff).getData());
 
         } else {
@@ -353,6 +354,7 @@ public class OCR {
                             //logger.log(Level.SEVERE, var12.getMessage(), var12);
                             var12.printStackTrace();
                         }
+
 
 
                         end = System.currentTimeMillis();
@@ -533,7 +535,7 @@ public class OCR {
             rect.height = (by - ay);
             rect.createdAt = Math.max(rect.createdAt, o.rect.createdAt); //update with newer of the two's
 
-            System.out.println(" to " + rect + " " + ocrPending.size());
+            //System.out.println(" to " + rect + " " + ocrPending.size());
 
         }
 

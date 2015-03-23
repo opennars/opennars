@@ -43,6 +43,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
     private final NAR nar;
     private final Multimap<Concept, ConceptPanel> concept = HashMultimap.create();
+    static float conceptGraphFPS = 4; //default update frames per second
+
 
     public ConceptPanelBuilder(NAR n) {
         super(n, Events.FrameEnd.class
@@ -164,6 +166,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             if (full) {
                 NengoNetworkPanel nengo;
+
+
                 add(nengo = new NengoNetworkPanel(new TermGraphNode(c.memory) {
 
                     Set<Term> neighbors = new LinkedHashSet();
@@ -201,7 +205,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
                         return concept.term.toString();
                     }
 
-                }), BorderLayout.CENTER);
+                }, conceptGraphFPS), BorderLayout.CENTER);
 
 
                 FlowLayout fl = new FlowLayout(FlowLayout.RIGHT);

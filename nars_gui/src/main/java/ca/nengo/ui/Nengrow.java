@@ -117,6 +117,7 @@ abstract public class Nengrow extends AbstractNengo {
         stop();
 
         double fps = getFPS();
+        System.out.println("FPS=" + fps);
         if (fps > 0) {
             timer = new java.util.Timer("", false);
             timer.scheduleAtFixedRate(new TimerTask() {
