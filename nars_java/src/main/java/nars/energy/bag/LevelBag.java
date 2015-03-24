@@ -27,7 +27,7 @@ import nars.Global;
 import nars.energy.Budget;
 import nars.nal.entity.Item;
 import nars.energy.Bag;
-import nars.energy.BagSelector;
+import nars.energy.BagTransaction;
 import nars.util.data.CuckooMap;
 import nars.util.data.ReversibleRecyclableArrayIterator;
 import nars.util.data.linkedlist.DD;
@@ -402,7 +402,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E update(final BagSelector<K, E> selector) {
+    public E update(final BagTransaction<K, E> selector) {
 
         final K key = selector.name();
         final DD<E> bx;

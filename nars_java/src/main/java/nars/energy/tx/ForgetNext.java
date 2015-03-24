@@ -5,12 +5,12 @@ import nars.Global;
 import nars.energy.Budget;
 import nars.nal.entity.Item;
 import nars.energy.Bag;
-import nars.energy.BagSelector;
+import nars.energy.BagTransaction;
 
 /**
 * Created by me on 2/4/15.
 */
-public class ForgetNext<K, V extends Item<K>> implements BagSelector<K,V> {
+public class ForgetNext<K, V extends Item<K>> implements BagTransaction<K,V> {
 
     private final Bag<K, V> bag;
     private float forgetCycles;

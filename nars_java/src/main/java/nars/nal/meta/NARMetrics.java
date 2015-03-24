@@ -33,6 +33,7 @@ public class NARMetrics extends AbstractReaction {
         metrics.addMeter(new FirstOrderDifference(metrics, n.memory.resource.CYCLE_RAM_USED.id()));
 
         metrics.addMeters(n.memory.logic);
+
     }
 
     @Override

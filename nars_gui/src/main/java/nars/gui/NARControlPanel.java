@@ -49,7 +49,7 @@ import static nars.Memory.Timing.Real;
 import static nars.Memory.Timing.Simulation;
 
 
-public class NARControls extends TimeControl implements Reaction {
+public class NARControlPanel extends TimeControl implements Reaction {
 
     //final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
@@ -67,7 +67,7 @@ public class NARControls extends TimeControl implements Reaction {
      * Reference to the experience writer
      */
     private final TextOutput experienceWriter;
-    private final MeterVis.MeterVisPanel meters;
+    private final MeterVis meters;
 
 
     /**
@@ -81,11 +81,11 @@ public class NARControls extends TimeControl implements Reaction {
 
     private final NARMetrics metrics;
 
-    public NARControls(final NAR nar) {
+    public NARControlPanel(final NAR nar) {
         this(nar, null, true);
     }
     
-    public NARControls(final NAR nar, final NARMetrics metrics, boolean addCharts) {
+    public NARControlPanel(final NAR nar, final NARMetrics metrics, boolean addCharts) {
         super(new BorderLayout());
         
         this.nar = nar;
@@ -405,7 +405,7 @@ public class NARControls extends TimeControl implements Reaction {
         add(top, NORTH);
 
         if (addCharts)
-            add(meters = new MeterVis(nar, this.metrics.getMetrics()).newPanel(), CENTER);
+            add(meters = new MeterVis(nar, this.metrics.getMetrics()), CENTER);
         else
             meters = null;
         
@@ -492,8 +492,6 @@ public class NARControls extends TimeControl implements Reaction {
 
     public void setFrameRate(float fps) {
         this.GUIUpdatePeriodMS = (int)(1000.0/fps);
-        if (meters!=null)
-            meters.setFrameRate(fps);
     }
 
     /**
@@ -804,7 +802,7 @@ public class NARControls extends TimeControl implements Reaction {
 
 
     @Override
-    protected void onShowing(boolean showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
 
     }
 

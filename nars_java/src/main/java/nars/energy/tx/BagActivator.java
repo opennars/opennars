@@ -2,12 +2,12 @@ package nars.energy.tx;
 
 import nars.energy.Budget;
 import nars.nal.entity.Item;
-import nars.energy.BagSelector;
+import nars.energy.BagTransaction;
 
 /**
 * Created by me on 1/19/15.
 */
-abstract public class BagActivator<K,V extends Item<K>> implements BagSelector<K,V> {
+abstract public class BagActivator<K,V extends Item<K>> implements BagTransaction<K,V> {
 
     protected Budget budget;
 

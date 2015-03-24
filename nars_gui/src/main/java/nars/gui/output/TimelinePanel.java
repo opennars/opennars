@@ -12,7 +12,7 @@ import nars.event.Reaction;
 public class TimelinePanel extends NPanel implements Reaction {
 
     @Override
-    protected void onShowing(boolean showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

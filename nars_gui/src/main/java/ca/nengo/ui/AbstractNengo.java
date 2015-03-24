@@ -108,7 +108,7 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
 
     }
 

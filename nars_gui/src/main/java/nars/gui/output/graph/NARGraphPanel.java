@@ -109,7 +109,7 @@ public class NARGraphPanel extends NPanel {
     }
 
 
-    @Override  protected void onShowing(boolean showing) {
+    @Override  protected void visibility(boolean appearedOrDisappeared) {
         canvas.predraw();
     }
     

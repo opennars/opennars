@@ -23,8 +23,8 @@ abstract public class ReactionPanel extends NPanel implements Reaction {
 
 
     @Override
-    protected void onShowing(boolean showing) {
-        if (showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
+        if (appearedOrDisappeared) {
             if (reg==null)
                 reg = nar.memory.event.on(this, getEvents());
         }

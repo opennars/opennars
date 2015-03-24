@@ -45,10 +45,10 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
 
     }
     @Override
-    protected void onShowing(boolean showing) {
-        ideas.enable(showing);
+    protected void visibility(boolean appearedOrDisappeared) {
+        ideas.enable(appearedOrDisappeared);
         //nar.memory.event.set(this, showing, Output.DefaultOutputEvents);
-        nar.memory.event.set(this, showing, 
+        nar.memory.event.set(this, appearedOrDisappeared,
                 ConceptNew.class, ConceptForget.class, 
                 ConceptBeliefAdd.class,
                 ConceptBeliefRemove.class,

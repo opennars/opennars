@@ -71,9 +71,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
         ConceptPanel cp = new ConceptPanel(c, label, full, chartSize){
 
             @Override
-            protected void onShowing(final boolean showing) {
+            protected void visibility(final boolean appearedOrDisappeared) {
 
-                    if (showing) {
+                    if (appearedOrDisappeared) {
                         //concept.put(c, this);
                     } else {
                         this.closed = true;
@@ -332,7 +332,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         }
 
         @Override
-        protected void onShowing(boolean showing) {
+        protected void visibility(boolean appearedOrDisappeared) {
             validate();
         }
 

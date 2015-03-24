@@ -1,10 +1,10 @@
 package nars.guifx;
 
+import automenta.vivisect.Video;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import nars.prototype.Default;
 import nars.NAR;
-import nars.gui.NARSwing;
+import nars.prototype.Default;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class NARfx extends Application {
 
     static {
-        NARSwing.themeInvert();
+        Video.themeInvert();
     }
 
     /** NAR instances -> GUI windows */

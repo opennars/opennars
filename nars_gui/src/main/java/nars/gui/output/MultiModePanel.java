@@ -125,8 +125,8 @@ public class MultiModePanel extends NPanel implements Reaction {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
-        nar.event().set(this, showing, Output.DefaultOutputEvents);
+    protected void visibility(boolean appearedOrDisappeared) {
+        nar.event().set(this, appearedOrDisappeared, Output.DefaultOutputEvents);
     }
 
     @Override

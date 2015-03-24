@@ -120,9 +120,9 @@ public class HumanoidFacePanel extends NPanel {
     }
     
     @Override
-    public void onShowing(boolean showing) {
+    public void visibility(boolean appearedOrDisappeared) {
         
-        if (showing) {
+        if (appearedOrDisappeared) {
             face.start();
         }
         else {

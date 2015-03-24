@@ -41,7 +41,7 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
     }
 
     @Override
-    protected void onShowing(boolean showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
         
     }
 

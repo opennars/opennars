@@ -42,8 +42,8 @@ public class MixerPanel extends NPanel implements Runnable, SoundListener {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
-        if (showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
+        if (appearedOrDisappeared) {
             running = true;
             new Thread(this).start();
         }

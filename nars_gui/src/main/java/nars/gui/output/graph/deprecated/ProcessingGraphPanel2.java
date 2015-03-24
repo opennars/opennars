@@ -201,8 +201,8 @@ abstract public class ProcessingGraphPanel2<V,E> extends NPanel {
     abstract public float edgeWeight(E edge);
     abstract public int vertexColor(V vertex);
 
-    @Override protected void onShowing(boolean showing) {
-        if (!showing) {
+    @Override protected void visibility(boolean appearedOrDisappeared) {
+        if (!appearedOrDisappeared) {
             //app.stop();
             //app = null;
         }

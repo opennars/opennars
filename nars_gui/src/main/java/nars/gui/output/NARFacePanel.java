@@ -14,8 +14,8 @@ public class NARFacePanel extends HumanoidFacePanel  {
     }
     
     @Override
-    public void onShowing(boolean showing) {
-        super.onShowing(showing);
+    public void visibility(boolean appearedOrDisappeared) {
+        super.visibility(appearedOrDisappeared);
         
 //        if (showing) {
 //            nar.addOutput(this);

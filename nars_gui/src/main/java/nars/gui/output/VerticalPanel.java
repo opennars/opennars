@@ -48,7 +48,7 @@ public class VerticalPanel extends NPanel {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
     
     }
     

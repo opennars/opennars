@@ -128,8 +128,8 @@ abstract public class GridButtonPanel extends NPanel implements Reaction {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
-        nar.memory.event.set(this, showing, FrameEnd.class);
+    protected void visibility(boolean appearedOrDisappeared) {
+        nar.memory.event.set(this, appearedOrDisappeared, FrameEnd.class);
     }
     
     @Override

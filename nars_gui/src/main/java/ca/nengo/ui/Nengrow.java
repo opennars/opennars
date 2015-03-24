@@ -137,8 +137,8 @@ abstract public class Nengrow extends AbstractNengo {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
-        if (showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
+        if (appearedOrDisappeared) {
             start();
         }
         else {

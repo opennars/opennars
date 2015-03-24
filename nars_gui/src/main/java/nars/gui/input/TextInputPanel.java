@@ -646,8 +646,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
-        if (showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
+        if (appearedOrDisappeared) {
 
         } else {
 

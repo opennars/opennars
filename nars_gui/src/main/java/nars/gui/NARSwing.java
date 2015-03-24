@@ -37,24 +37,23 @@ import java.lang.management.ManagementFactory;
 /**
  * The main Swing GUI class of the open-nars project.  
  * Creates default Swing GUI windows to operate a NAR.
+ * May need to first call Video.themeInvert() to display controls correctly
  */
-public class NARSwing extends Video {
+public class NARSwing extends NARControlPanel {
 
-    public final NAR nar;
     public final NWindow mainWindow;
-    public final NARControls controls;
+    public final NARControlPanel controls;
 
     public NARSwing(NAR nar) {
         this(nar, true);
     }
 
     public NARSwing(NAR nar, boolean logPanel) {
-        super();
+        super(nar);
                 
-        this.nar = nar;
         Global.DEBUG = true;
         
-        controls = new NARControls(nar);        
+        controls = this;
         mainWindow = new NWindow(NAR.VERSION, controls);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(10, 10, 270, 650);
@@ -115,15 +114,11 @@ public class NARSwing extends Video {
  --silence <integer>
      */
     public static void main(String args[]) {
-        themeInvert();
-          
-        NAR nar = new NAR(new CommandLineNARBuilder(args));
-        
-        
-        
-        NARSwing swing = new NARSwing(nar);
 
-        
+        Video.themeInvert();
+        NAR nar = new NAR(new CommandLineNARBuilder(args));
+
+        NARSwing swing = new NARSwing(nar);
         
 //        if (args.length > 0
 //                && CommandLineNARBuilder.isReallyFile(args[0])) {

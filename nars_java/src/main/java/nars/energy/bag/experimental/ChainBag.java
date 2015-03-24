@@ -4,7 +4,7 @@ import nars.Memory;
 import nars.Global;
 import nars.nal.entity.Item;
 import nars.energy.Bag;
-import nars.energy.BagSelector;
+import nars.energy.BagTransaction;
 import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
@@ -104,7 +104,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     @Override
-    public V update(BagSelector<K, V> selector) {
+    public V update(BagTransaction<K, V> selector) {
 
         final K key = selector.name();
         final DD<V> bx;

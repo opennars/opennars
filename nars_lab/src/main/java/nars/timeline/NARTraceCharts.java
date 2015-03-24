@@ -19,7 +19,7 @@ package nars.timeline;
 import automenta.vivisect.swing.NWindow;
 import nars.prototype.Default;
 import nars.NAR;
-import nars.gui.output.chart.MeterVis;
+import nars.gui.output.chart.MeterVisOld;
 import nars.nal.meta.NARMetrics;
 
 /**
@@ -47,7 +47,7 @@ public class NARTraceCharts extends TimelineExample {
         
         
         new NWindow("_", 
-                new MeterVis(nar, t.getMetrics()).newPanel()).show(800, 800, true);
+                new MeterVisOld(nar, t.getMetrics()).newPanel()).show(800, 800, true);
 
     }
 

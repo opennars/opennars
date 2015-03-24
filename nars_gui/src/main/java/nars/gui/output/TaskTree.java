@@ -279,10 +279,10 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
     }
 
     @Override
-    protected void onShowing(boolean showing) {
-        super.onShowing(showing);
-        cpBuilder.setActive(showing);
-        if (!showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
+        super.visibility(appearedOrDisappeared);
+        cpBuilder.setActive(appearedOrDisappeared);
+        if (!appearedOrDisappeared) {
             reset();
         }
     }

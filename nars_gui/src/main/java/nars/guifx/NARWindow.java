@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.gui.NARControls;
+import nars.gui.NARControlPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -246,7 +246,7 @@ public class NARWindow extends Stage {
 
         SwingNode mn = new SwingNode();
         JPanel jp = new JPanel(new BorderLayout());
-        jp.add(new NARControls(nar, null, false));
+        jp.add(new NARControlPanel(nar, null, false));
         mn.setContent(jp);
         tp1.setContent(mn);
 

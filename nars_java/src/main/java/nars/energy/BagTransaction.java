@@ -4,7 +4,7 @@ import nars.nal.entity.Item;
 
 /** transaction interface for lazily constructing bag items, and efficiently updating existing items.
   * this avoids construction when only updating the budget of an item already in the bag  */
-public interface BagSelector<K,V extends Item<K>> extends Budget.Budgetable {
+public interface BagTransaction<K,V extends Item<K>> extends Budget.Budgetable {
     //TODO make a version which accepts an array or list of keys to select in batch
 
     ////TODO called before anything, including name().  return false to cancel the process before anything else happens */

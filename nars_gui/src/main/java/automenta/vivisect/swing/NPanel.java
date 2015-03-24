@@ -1,7 +1,5 @@
 package automenta.vivisect.swing;
 
-import automenta.vivisect.Video;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.HierarchyEvent;
@@ -44,11 +42,12 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
     public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
             boolean showing = isShowing();
-            onShowing(showing);
+            visibility(showing);
         }
     }    
-    
-    abstract protected void onShowing(boolean showing);
+
+    /** called when visibility changes */
+    abstract protected void visibility(boolean appearedOrDisappeared);
 
 
 }

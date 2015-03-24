@@ -162,8 +162,8 @@ public class PluginPanel extends VerticalPanel {
     
 
     @Override
-    public void onShowing(boolean b) {
-        observer.setActive(b);
+    public void visibility(boolean appearedOrDisappeared) {
+        observer.setActive(appearedOrDisappeared);
     }
 
     private JMenuItem newAddPluginItem(Class c) {

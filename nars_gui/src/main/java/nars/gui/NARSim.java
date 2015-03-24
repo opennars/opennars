@@ -1,6 +1,7 @@
 package nars.gui;
 
 
+import automenta.vivisect.Video;
 import ca.nengo.model.SimulationException;
 import ca.nengo.test.TestAgentNode;
 import ca.nengo.ui.Nengrow;
@@ -26,7 +27,7 @@ public class NARSim extends Application {
 
 
         static {
-            NARSwing.themeInvert();
+            Video.themeInvert();
         }
 
         /** NAR instances -> GUI windows */

@@ -214,9 +214,9 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     abstract protected void clearLog();
 
     @Override
-    protected void onShowing(boolean showing) {
+    protected void visibility(boolean appearedOrDisappeared) {
 
-        if (showing) {
+        if (appearedOrDisappeared) {
             out.setActive(true);
         } else {
             out.setActive(false);

@@ -40,8 +40,8 @@ public abstract class TablePanel extends NPanel  {
     abstract public void output(Class c, Object s);
     
     @Override
-    protected void onShowing(boolean showing) {
-        out.setActive(showing);
+    protected void visibility(boolean appearedOrDisappeared) {
+        out.setActive(appearedOrDisappeared);
     }
 
     protected List<Object> getSelectedRows(int column) {
