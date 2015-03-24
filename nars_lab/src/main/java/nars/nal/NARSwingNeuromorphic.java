@@ -4,9 +4,10 @@
  */
 package nars.nal;
 
-import nars.prototype.Solid;
+import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
+import nars.prototype.Solid;
 
 import java.io.File;
 
@@ -26,7 +27,7 @@ public class NARSwingNeuromorphic {
 
         n.input(new File("/tmp/h.nal"));
         
-        NARSwing.themeInvert();
+        Video.themeInvert();
         
         NARSwing s = new NARSwing(n);
         

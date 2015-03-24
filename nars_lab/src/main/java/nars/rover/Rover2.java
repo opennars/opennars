@@ -1,16 +1,16 @@
 package nars.rover;
 
-import nars.NARPrologMirror;
-import nars.prototype.Default;
-import nars.prototype.Neuromorphic;
+import automenta.vivisect.Video;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
-import nars.gui.NARSwing;
+import nars.NARPrologMirror;
 import nars.nal.entity.Task;
 import nars.nal.entity.Term;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
+import nars.prototype.Default;
+import nars.prototype.Neuromorphic;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
@@ -51,7 +51,7 @@ public class Rover2 extends PhysicsModel {
         Global.DEBUG = false;
         boolean multithread = false;
 
-        NARSwing.themeInvert();
+        Video.themeInvert();
 
         NAR nar;
         if (multithread) {

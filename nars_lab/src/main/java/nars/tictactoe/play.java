@@ -17,14 +17,15 @@
 
 package nars.tictactoe;
 
+import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
-import nars.prototype.Default;
 import nars.gui.NARSwing;
 import nars.nal.entity.Task;
 import nars.nal.entity.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.prototype.Default;
 
 import javax.swing.*;
 import java.util.List;
@@ -56,7 +57,7 @@ class play extends javax.swing.JFrame {
         } catch (InterruptedException ex) {
             Logger.getLogger(play.class.getName()).log(Level.SEVERE, null, ex);
         }
-        NARSwing.themeInvert();
+        Video.themeInvert();
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
@@ -638,7 +639,7 @@ class play extends javax.swing.JFrame {
     public static void _main(String args[]) {
         
         /* Set the Nimbus look and feel */
-        NARSwing.themeInvert();
+        Video.themeInvert();
         nar = new NAR(new Default());
         
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

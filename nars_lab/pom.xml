@@ -164,8 +164,31 @@
         </dependency>
 
 
+                <dependency>
+                    <groupId>processing</groupId>
+                    <artifactId>core</artifactId>
+                    <version>3.0</version>
+
+                </dependency>
+
+
     </dependencies>
     <repositories>
+
+        <repository>
+        <id>core</id>
+        <name>processing.org</name>
+        <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+        </releases>
+        <snapshots>
+        <enabled>false</enabled>
+        </snapshots>
+        <url>file://${project.basedir}/lib</url>
+        </repository>
+
+
         <repository>
             <id>snapshots-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>

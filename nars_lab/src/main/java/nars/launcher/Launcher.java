@@ -17,10 +17,11 @@
 
 package nars.launcher;
 
+import automenta.vivisect.Video;
 import nars.NAR;
-import nars.prototype.Default;
 import nars.gui.NARSwing;
 import nars.nario.NARio;
+import nars.prototype.Default;
 import nars.web.NARServer;
 
 import javax.imageio.ImageIO;
@@ -417,7 +418,7 @@ public class Launcher extends javax.swing.JFrame {
 //        }
         //</editor-fold>
 
-        NARSwing.themeInvert();
+        Video.themeInvert();
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

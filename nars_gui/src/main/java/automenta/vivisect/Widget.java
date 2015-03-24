@@ -9,6 +9,6 @@ package automenta.vivisect;
  *
  * @author me
  */
-abstract public class Widget implements Vis {
+abstract public class Widget {
     
 }

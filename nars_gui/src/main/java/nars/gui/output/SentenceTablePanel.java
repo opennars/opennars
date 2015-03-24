@@ -1,12 +1,8 @@
 package nars.gui.output;
 
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.PCanvas;
 import nars.NAR;
-import nars.gui.output.graph.TermSyntaxVis;
 import nars.nal.entity.Sentence;
 import nars.nal.entity.Task;
-import nars.nal.entity.Term;
 import nars.nal.entity.TruthValue;
 
 import javax.swing.*;
@@ -20,7 +16,6 @@ import java.awt.event.ActionListener;
 public class SentenceTablePanel extends TablePanel {
 
     private final JButton syntaxGraphButton;
-    private PCanvas syntaxPanel=null;
 
     public SentenceTablePanel(NAR nar) {
         super(nar);
@@ -84,19 +79,25 @@ public class SentenceTablePanel extends TablePanel {
     }
 
     public void newSelectedGraphPanel() {
-        Term[] sel=new Term[table.getSelectedRows().length];
-        int k=0;
-        for(int i: table.getSelectedRows()) {
-            Sentence w=(Sentence) table.getValueAt(i, 1);
-            sel[k]=w.term;
-            k++;
-        }
-        TermSyntaxVis tt = new TermSyntaxVis(nar, sel);
-        syntaxPanel = new PCanvas(tt);
-        syntaxPanel.setZoom(10f);
-        NWindow w = new NWindow("", syntaxPanel);
-        w.setSize(400, 400);
-        w.setVisible(true);
+//        Term[] sel=new Term[table.getSelectedRows().length];
+//        int k=0;
+//        for(int i: table.getSelectedRows()) {
+//            Sentence w=(Sentence) table.getValueAt(i, 1);
+//            sel[k]=w.term;
+//            k++;
+//        }
+//        TermSyntaxVis tt = new TermSyntaxVis(nar, sel);
+//        syntaxPanel = new PCanvas(tt);
+//        syntaxPanel.setZoom(10f);
+//        NWindow w = new NWindow("", syntaxPanel);
+//        w.setSize(400, 400);
+//        w.setVisible(true);
+
+
+
+
+
+        //EVEN OLDER:
 //        ProcessingGraphPanel2 pgp = new ProcessingGraphPanel2(getSelectedRows(1)) {
 //
 //            @Override

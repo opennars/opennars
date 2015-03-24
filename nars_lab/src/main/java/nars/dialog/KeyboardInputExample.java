@@ -4,11 +4,12 @@
  */
 package nars.dialog;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
-import nars.prototype.Default;
 import nars.gui.NARSwing;
 import nars.gui.input.KeyboardInputPanel;
+import nars.prototype.Default;
 
 /**
  *
@@ -22,10 +23,10 @@ public class KeyboardInputExample {
         //n.param.duration.set(100);
         
         NAR n = new NAR(new Default());
-        
-        
-                
-        new NARSwing(n).themeInvert();
+
+
+        Video.themeInvert();
+        new NARSwing(n);
 
         new NWindow("Direct Keyboard Perceive", new KeyboardInputPanel(n)).show(300, 100, false);
         

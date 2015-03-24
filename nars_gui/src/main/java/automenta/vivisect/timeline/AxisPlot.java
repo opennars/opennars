@@ -51,12 +51,7 @@ public abstract class AxisPlot {
         this.overlayEnable = overlayEnable;
     }
     
-    //called during NAR thread
-    public void update(TimelineVis l) {
-    }
 
-    //called during Swing thread
-    public abstract void draw(TimelineVis l);
 
     public float getHeight() {
         return plotHeight;

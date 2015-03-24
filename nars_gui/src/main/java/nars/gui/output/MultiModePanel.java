@@ -4,14 +4,10 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
-import nars.event.Reaction;
 import nars.NAR;
-import nars.gui.output.graph.deprecated.ProcessingGraphPanel2;
+import nars.event.Reaction;
 import nars.io.Output;
 import nars.nal.entity.Task;
-import nars.util.graph.DefaultGrapher;
-import nars.util.graph.NARGraph;
-import org.jgrapht.graph.DirectedMultigraph;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,65 +53,6 @@ public class MultiModePanel extends NPanel implements Reaction {
         
     }
 
-    
-    public class GraphView extends ProcessingGraphPanel2 implements MultiViewMode, Runnable {
-
-        @Override
-        public DirectedMultigraph getGraph() {
-            //TODO udpate this
-            return new NARGraph().add(nar, NARGraph.IncludeEverything,
-                    new DefaultGrapher(true,true,true,true,0,false, false)
-            );
-        }
-
-        
-        
-        @Override
-        public void setFontSize(float newSize) {
-        }
-
-        @Override
-        public void output(Class channel, Object signal) {
-            addItem(signal);
-            
-            update();
-            
-            /*if (!needsUpdate)*/ {
-                needsUpdate = true;
-                SwingUtilities.invokeLater(this);            
-            }
-        }
-        
-        boolean needsUpdate = false;
-        
-        @Override
-        public void run() {
-            needsUpdate = false;
-            redraw();
-        }
-
-        
-        //TODO ------------
-        
-        @Override
-        public int edgeColor(Object edge) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public float edgeWeight(Object edge) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public int vertexColor(Object vertex) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        
-        
-        
-    }
     
     public class GraphView2 {
         /*         Window w = new Window("Edit",new JGraphXGraphPanel(nar));
@@ -184,13 +121,13 @@ public class MultiModePanel extends NPanel implements Reaction {
             }            
         });
 
-        JMenuItem conceptNetwork;
-        m.add(conceptNetwork = new JMenuItem("Concepts Network"));
-        conceptNetwork.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                setMode(new GraphView());
-            }            
-        });
+//        JMenuItem conceptNetwork;
+//        m.add(conceptNetwork = new JMenuItem("Concepts Network"));
+//        conceptNetwork.addActionListener(new ActionListener() {
+//            @Override public void actionPerformed(ActionEvent e) {
+//                setMode(new GraphView());
+//            }
+//        });
         
         
         m.add(new JMenuItem("Concept List"));

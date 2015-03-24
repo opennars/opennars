@@ -409,7 +409,7 @@ public class TicTacToe extends JPanel {
     public static void main(String args[]) {
 
         /* Set the Nimbus look and feel */
-        NARSwing.themeInvert();
+        Video.themeInvert();
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
