@@ -20,14 +20,14 @@
  */
 package nars.io;
 
-import nars.core.Events.ConceptNew;
-import nars.core.Events.TaskAdd;
-import nars.core.Events.TaskRemove;
-import nars.core.Memory.Timing;
-import nars.core.NAR;
-import nars.logic.MemoryObserver;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
+import nars.Events.ConceptNew;
+import nars.Events.TaskAdd;
+import nars.Events.TaskRemove;
+import nars.Memory.Timing;
+import nars.NAR;
+import nars.nal.MemoryObserver;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
 
 import java.io.PrintStream;
 import java.util.Arrays;

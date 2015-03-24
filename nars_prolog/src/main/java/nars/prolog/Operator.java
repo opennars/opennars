@@ -19,7 +19,7 @@ package nars.prolog;
 import java.io.Serializable;
 
 /**
- * This class defines a tuProlog operator, in terms of a name,
+ * This class defines a tuProlog operate, in terms of a name,
  * a type, and a  priority.
  *
  */
@@ -27,7 +27,7 @@ import java.io.Serializable;
 final public class Operator implements Serializable {
     
     /**
-	 * operator name
+	 * operate name
 	 */
     public String name;
     

@@ -16,17 +16,19 @@
  */
 package nars.core;
 
-import nars.build.Default;
+import nars.NAR;
+import nars.Global;
+import nars.prototype.Default;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.NALOperator;
-import nars.logic.entity.*;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal3.DifferenceExt;
-import nars.logic.nal3.DifferenceInt;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal3.SetInt;
-import nars.logic.nal8.Operation;
+import nars.nal.NALOperator;
+import nars.nal.entity.*;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.DifferenceExt;
+import nars.nal.nal3.DifferenceInt;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal8.Operation;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -41,7 +43,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class TermTest {
     static {
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
     }
     NAR n = new NAR(new Default());
 
@@ -280,7 +282,7 @@ public class TermTest {
     
     
     @Test public void testParseOperationInFunctionalForm() {
-        Parameters.FUNCTIONAL_OPERATIONAL_FORMAT = true;
+        Global.FUNCTIONAL_OPERATIONAL_FORMAT = true;
         
         NAR n = new NAR(new Default());
 

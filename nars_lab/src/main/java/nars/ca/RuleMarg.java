@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 public class RuleMarg {
 	public static final int TYPE_MS = 1; // Simple Margolus
 	public int iClo; // count of states, not used yet
-	public int iTyp; // Margolus reason type, 1-simple
+	public int iTyp; // Margolus rule type, 1-simple
 	public boolean isHist; // with history?  not used yet
 	public int swapArray[] = new int[16];
 
@@ -28,7 +28,7 @@ public class RuleMarg {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the reason string
+	// Parse the rule string
 	// Example: "MS,D0;8;4;3;2;5;9;7;1;6;10;11;12;13;14;15"
 	public void InitFromString(String sStr) {
 		String sTok, sSwaps;
@@ -40,7 +40,7 @@ public class RuleMarg {
 		st = new StringTokenizer(sStr, ",", true);
 		while (st.hasMoreTokens()) {
 			sTok = st.nextToken();
-			if (sTok.startsWith("M")) // Margholus reason type
+			if (sTok.startsWith("M")) // Margholus rule type
 			{
 				iTyp = TYPE_MS; // simple - the only one available now
 			} else if (sTok.startsWith("D")) // definition
@@ -71,7 +71,7 @@ public class RuleMarg {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the reason string
+	// Create the rule string
 	// Example: 'MS,D0;8;4;3;2;5;9;7;1;6;10;11;12;13;14;15'
 	public String GetAsString() {
 		// correct parameters first
@@ -102,7 +102,7 @@ public class RuleMarg {
 	}
 
 	// ----------------------------------------------------------------
-	// swap four cells according to the reason
+	// swap four cells according to the rule
 	private void SwapMargCells(int mgCells[]) {
 		int iCnt, iNewCnt;
 
@@ -140,7 +140,7 @@ public class RuleMarg {
 	}
 
     // ----------------------------------------------------------------
-	// Perform one pass of the reason
+	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		int modCnt = 0;
@@ -178,7 +178,7 @@ public class RuleMarg {
 
 				if ((mgCells[0] + mgCells[1] + mgCells[2] + mgCells[3] > 0)
 						|| (swapArray[0] > 0)) {
-					SwapMargCells(mgCells); // apply the reason
+					SwapMargCells(mgCells); // apply the rule
 
 					for (ic = 0; ic <= 3; ic++) // check if any of 4 cells was modified
 					{

@@ -1,18 +1,18 @@
 package nars.analyze.meter;
 
-import nars.core.AbstractPlugin;
-import nars.core.Events;
-import nars.core.NAR;
+import nars.operate.AbstractOperator;
+import nars.Events;
+import nars.NAR;
 import nars.io.condition.OutputCondition;
 import nars.io.meter.Metrics;
 import nars.io.meter.event.HitMeter;
-import nars.logic.entity.Task;
+import nars.nal.entity.Task;
 import nars.util.data.CuckooMap;
 
 import java.util.*;
 
 
-public class CountDerivationCondition extends AbstractPlugin {
+public class CountDerivationCondition extends AbstractOperator {
 
     //SM = success method
     final static String methodInvolvedInSuccessfulDerivation_Prefix = "D";
@@ -61,7 +61,7 @@ public class CountDerivationCondition extends AbstractPlugin {
         }
         else if (event == Events.CycleEnd.class) {
 
-            /** usually true reason tasks should only be one, because
+            /** usually true rule tasks should only be one, because
              * this event will be triggered only the first time it has
              * become successful. */
             for (OutputCondition o : successesThisCycle) {
@@ -142,9 +142,9 @@ public class CountDerivationCondition extends AbstractPlugin {
                 //Termination conditions
                 if (className.contains("ConceptFireTask") && methodName.equals("accept"))
                     break;
-                if (className.contains("ImmediateProcess") && methodName.equals("reason"))
+                if (className.contains("ImmediateProcess") && methodName.equals("rule"))
                     break;
-                if (className.contains("ConceptFire") && methodName.equals("reason"))
+                if (className.contains("ConceptFire") && methodName.equals("rule"))
                     break;
             }
             else if (className.endsWith(".NAL") && methodName.equals("deriveTask")) {

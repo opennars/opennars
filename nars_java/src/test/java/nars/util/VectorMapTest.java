@@ -1,8 +1,8 @@
 package nars.util;
 
-import nars.build.Default;
-import nars.core.Events.CycleStart;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.Events.CycleStart;
+import nars.NAR;
 import nars.event.Reaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;

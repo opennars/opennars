@@ -44,7 +44,7 @@ public class SecurityType33State extends SecurityType37State {
 		int type = reader.readInt32();
 		Logger.getLogger(getClass().getName()).info("Type received: " + type);
 		if (0 == type)
-			// throw exception with reason
+			// throw exception with rule
 			throw new UnsupportedSecurityTypeException(reader.readString());
 		AuthHandler typeSelected = selectAuthHandler(new byte[] {(byte) (0xff & type)},
 					context.getSettings().authCapabilities);

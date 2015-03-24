@@ -17,7 +17,7 @@ public class PermissionException extends BuiltinException {
     public String operation;
 
     /*
-      permissionType ::= binary_stream | flag | operator | past_end_of_stream
+      permissionType ::= binary_stream | flag | operate | past_end_of_stream
                          private_procedure | static_procedure | source_sink
 			 stream | text_stream
     */

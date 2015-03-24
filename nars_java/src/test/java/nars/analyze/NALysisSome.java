@@ -1,12 +1,12 @@
 package nars.analyze;
 
-import nars.build.Default;
-import nars.core.Events;
-import nars.core.NewNAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events;
+import nars.ProtoNAR;
+import nars.Global;
 import nars.event.Reaction;
 import nars.io.test.TestNAR;
-import nars.logic.entity.Task;
+import nars.nal.entity.Task;
 import org.junit.Ignore;
 
 import java.io.FileNotFoundException;
@@ -19,16 +19,16 @@ public class NALysisSome extends NALysis {
 
 
 
-    public NALysisSome(NewNAR b) {
+    public NALysisSome(ProtoNAR b) {
         super(b);
     }
 
 
     public static void main(String[] args) throws FileNotFoundException {
 
-        Parameters.DEBUG = true;
-        Parameters.DEBUG_DERIVATION_STACKTRACES = true;
-        Parameters.TASK_HISTORY = true;
+        Global.DEBUG = true;
+        Global.DEBUG_DERIVATION_STACKTRACES = true;
+        Global.TASK_HISTORY = true;
         showInput = true;
         showOutput = true;
         showTrace = true;
@@ -44,7 +44,7 @@ public class NALysisSome extends NALysis {
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test7/nal7.2.nal";
 
-        NewNAR build = new Default().setInternalExperience(null);
+        ProtoNAR build = new Default().setInternalExperience(null);
 
 
         //NewNAR build = new Solid(1, 256, 0, 9, 0, 3);

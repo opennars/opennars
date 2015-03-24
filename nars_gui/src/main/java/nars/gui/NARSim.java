@@ -12,7 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import nars.core.NAR;
+import nars.NAR;
 import nars.guifx.NARWindow;
 
 import javax.swing.*;

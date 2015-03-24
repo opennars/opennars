@@ -4,9 +4,9 @@
  */
 package nars.util;
 
-import nars.build.Default;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.NAR;
+import nars.Global;
 import nars.util.graph.experimental.Idea.IdeaSet;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class IdeaTest {
     private NAR n;
     
     @Before public void setup() {
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
         
         n = new NAR(new Default());
         i = new IdeaSet(n);        

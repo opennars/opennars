@@ -4,7 +4,7 @@
  */
 package nars.rover;
 
-import nars.core.Memory;
+import nars.Memory;
 import nars.grid2d.*;
 import nars.grid2d.map.Maze;
 import nars.rover.jbox2d.j2d.DrawPhy2D;

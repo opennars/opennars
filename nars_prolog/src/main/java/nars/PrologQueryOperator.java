@@ -1,14 +1,13 @@
 package nars;
 
-import nars.core.Memory;
 import nars.io.Texts;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.entity.Variable;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal4.Product;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.entity.Variable;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.prolog.*;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class PrologQueryOperator extends Operator {
         
         public String variableName; // only valid if it is not bound
         
-        // is the variable bound to a value? if false then it is a asked value which the operator should fill in
+        // is the variable bound to a value? if false then it is a asked value which the operate should fill in
         public boolean isBound() {
             return boundValue != null;
         }

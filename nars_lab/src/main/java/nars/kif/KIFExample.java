@@ -17,8 +17,8 @@
 
 package nars.kif;
 
-import nars.build.Curve;
-import nars.core.NAR;
+import nars.prototype.Curve;
+import nars.NAR;
 
 /**
  *

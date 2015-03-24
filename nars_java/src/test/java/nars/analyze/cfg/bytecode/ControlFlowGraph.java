@@ -2,7 +2,7 @@ package nars.analyze.cfg.bytecode;
 
 
 import com.google.common.collect.Maps;
-import nars.core.Parameters;
+import nars.Global;
 import org.objectweb.asm.tree.*;
 import org.objectweb.asm.tree.analysis.Analyzer;
 import org.objectweb.asm.tree.analysis.AnalyzerException;
@@ -288,7 +288,7 @@ public class ControlFlowGraph {
     private static int sNextId = 1;
     private static String getId(Object object) {
         if (sIds == null) {
-            sIds = Parameters.newHashMap(1000);// Maps.newHashMap();
+            sIds = Global.newHashMap(1000);// Maps.newHashMap();
         }
         String id = sIds.get(object);
         if (id == null) {

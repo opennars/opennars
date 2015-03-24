@@ -1,17 +1,17 @@
 package nars.util.graph;
 
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.logic.NALOperator;
-import nars.logic.entity.*;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal1.Negation;
-import nars.logic.nal5.Conjunction;
-import nars.logic.nal5.Implication;
-import nars.logic.nal7.Interval;
-import nars.logic.nal7.TemporalRules;
-import nars.logic.nal8.Operation;
-import nars.operator.app.plan.MultipleExecutionManager;
+import nars.Memory;
+import nars.NAR;
+import nars.nal.NALOperator;
+import nars.nal.entity.*;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal1.Negation;
+import nars.nal.nal5.Conjunction;
+import nars.nal.nal5.Implication;
+import nars.nal.nal7.Interval;
+import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.Operation;
+import nars.operate.app.plan.MultipleExecutionManager;
 import nars.util.graph.ImplicationGraph.Cause;
 
 import java.util.Objects;

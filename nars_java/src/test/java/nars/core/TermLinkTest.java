@@ -1,13 +1,14 @@
 package nars.core;
 
-import nars.build.Default;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.io.Symbols;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.TermLink;
-import nars.logic.entity.tlink.TermLinkKey;
-import nars.logic.entity.tlink.TermLinkTemplate;
-import nars.util.bag.Bag;
+import nars.energy.Budget;
+import nars.nal.entity.Concept;
+import nars.nal.entity.TermLink;
+import nars.nal.entity.tlink.TermLinkKey;
+import nars.nal.entity.tlink.TermLinkTemplate;
+import nars.energy.Bag;
 import org.junit.Test;
 
 import java.util.List;
@@ -73,7 +74,7 @@ public class TermLinkTest {
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {
         NAR n = nn(term);
         //Concept c = n.conceptualize(term);
-        Concept c = n.memory.conceptualize(new BudgetValue(1f,1f,1f),
+        Concept c = n.memory.conceptualize(new Budget(1f,1f,1f),
                 n.term(term));
         assertNotNull(c);
         n.run(2);

@@ -1,9 +1,9 @@
 package nars.io.meter;
 
-import nars.core.Memory;
+import nars.Memory;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
-import nars.logic.entity.Concept;
+import nars.nal.entity.Concept;
 
 /**
  * Logic/reasoning sensors
@@ -30,7 +30,7 @@ public class LogicMeter {
      * triggered for each StructuralRules.contraposition().
      * counts invocation and records complexity of statement parameter
      */
-    public final HitMeter CONTRAPOSITION = new HitMeter("reason.contraposition");
+    public final HitMeter CONTRAPOSITION = new HitMeter("rule.contraposition");
 
 
     public final HitMeter TASK_ADD_NEW = new HitMeter("task.new.add");
@@ -45,14 +45,14 @@ public class LogicMeter {
     public final HitMeter QUESTION_PROCESS = new HitMeter("question.process");
 
 
-    public final HitMeter BELIEF_REVISION = new HitMeter("reason.belief.revised");
-    public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS = new HitMeter("reason.ded2ndunifterms");
-    public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION = new HitMeter("reason.ded2ndunif");
-    public final HitMeter DED_CONJUNCTION_BY_QUESTION = new HitMeter("reason.dedconjbyquestion");
-    public final HitMeter ANALOGY = new HitMeter("reason.analogy");
+    public final HitMeter BELIEF_REVISION = new HitMeter("rule.belief.revised");
+    public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS = new HitMeter("rule.ded2ndunifterms");
+    public final HitMeter DED_SECOND_LAYER_VARIABLE_UNIFICATION = new HitMeter("rule.ded2ndunif");
+    public final HitMeter DED_CONJUNCTION_BY_QUESTION = new HitMeter("rule.dedconjbyquestion");
+    public final HitMeter ANALOGY = new HitMeter("rule.analogy");
 
 
-    //public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("reason.derivation.latency");
+    //public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("rule.derivation.latency");
     public final DoubleMeter SOLUTION_BEST = new DoubleMeter("task.solution.best");
 
     public final DoubleMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new DoubleMeter("plan.graph.add#delay_magnitude");
@@ -151,14 +151,14 @@ public class LogicMeter {
 //
 //        
 //        {
-//            //DataSet reason = TASKLINK_REASON.get();
-//            put("reason.fire.tasklink.pri.mean", TASKLINK_FIRE.mean());
-//            put("reason.fire.tasklinks", TASKLINK_FIRE.getHits());
+//            //DataSet rule = TASKLINK_REASON.get();
+//            put("rule.fire.tasklink.pri.mean", TASKLINK_FIRE.mean());
+//            put("rule.fire.tasklinks", TASKLINK_FIRE.getHits());
 //            
 //            putHits(TERM_LINK_SELECT);
 //            
 //            //only makes commit as a mean, since it occurs multiple times during a cycle
-//            put("reason.tasktermlink.pri.mean", TERM_LINK_SELECT.mean());
+//            put("rule.tasktermlink.pri.mean", TERM_LINK_SELECT.mean());
 //        }
 //        {
 //            putValue(TASK_INPUT);
@@ -166,12 +166,12 @@ public class LogicMeter {
 //        {            
 //            putHits(CONTRAPOSITION);
 //            
-//            //put("reason.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
+//            //put("rule.contrapositions.complexity.mean", CONTRAPOSITION.get().mean());
 //            
 //            putHits(BELIEF_REVISION);
-//            put("reason.ded_2nd_layer_variable_unification_terms", DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.getHits());
-//            put("reason.ded_2nd_layer_variable_unification", DED_SECOND_LAYER_VARIABLE_UNIFICATION.getHits());
-//            put("reason.ded_conjunction_by_question", DED_CONJUNCTION_BY_QUESTION.getHits());
+//            put("rule.ded_2nd_layer_variable_unification_terms", DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.getHits());
+//            put("rule.ded_2nd_layer_variable_unification", DED_SECOND_LAYER_VARIABLE_UNIFICATION.getHits());
+//            put("rule.ded_conjunction_by_question", DED_CONJUNCTION_BY_QUESTION.getHits());
 //            
 //            putHits(ANALOGY);
 //        }

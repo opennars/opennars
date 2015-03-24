@@ -2,11 +2,11 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import nars.core.Events;
-import nars.core.Events.OUT;
-import nars.core.NAR;
+import nars.Events;
+import nars.Events.OUT;
+import nars.NAR;
 import nars.io.TextOutput;
-import nars.logic.entity.*;
+import nars.nal.entity.*;
 
 import javax.swing.*;
 import java.awt.*;

@@ -12,12 +12,12 @@ import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
-import nars.build.Default;
+import nars.prototype.Default;
 import nars.control.DefaultCore;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Output;
-import nars.logic.entity.Item;
-import nars.util.bag.Bag;
+import nars.nal.entity.Item;
+import nars.energy.Bag;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

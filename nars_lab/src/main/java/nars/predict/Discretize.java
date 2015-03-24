@@ -4,15 +4,15 @@
  */
 package nars.predict;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal2.Instance;
-import nars.logic.nal7.Tense;
-import nars.logic.reason.DirectProcess;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal2.Instance;
+import nars.nal.nal7.Tense;
+import nars.nal.rule.DirectProcess;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

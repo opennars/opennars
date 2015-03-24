@@ -1,10 +1,10 @@
 package nars.io;
 
 
-import nars.build.Default;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events;
+import nars.NAR;
+import nars.Global;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.junit.Test;
 
@@ -19,8 +19,8 @@ public class BufferedOutputTest {
     @Test
     public void testBufferedOutput1() {
 
-        Parameters.DEBUG = true;
-        Parameters.EXIT_ON_EXCEPTION = true;
+        Global.DEBUG = true;
+        Global.EXIT_ON_EXCEPTION = true;
 
         final int maxBufferCost = 10;
         final int minOutputInterval = 5;

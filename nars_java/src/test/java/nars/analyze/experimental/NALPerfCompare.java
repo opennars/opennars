@@ -1,10 +1,10 @@
 package nars.analyze.experimental;
 
-import nars.build.Curve;
-import nars.build.Default;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.logic.NALTest;
+import nars.prototype.Curve;
+import nars.prototype.Default;
+import nars.NAR;
+import nars.Global;
+import nars.nal.NALTest;
 
 import java.util.Collection;
 
@@ -21,12 +21,12 @@ public class NALPerfCompare {
     public static void compareRope(String examplePath) {
         
         for (int r = 0; r < 96; r+=12) {
-            Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = r;            
+            Global.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = r;
             System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD " + r + ":\t");
             perfNAL(new NAR(new Default()), examplePath,extraCycles,repeats,warmups,true);
         }
         
-        Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = -1;
+        Global.ROPE_TERMLINK_TERM_SIZE_THRESHOLD = -1;
         System.out.print("ROPE_TERMLINK_TERM_SIZE_THRESHOLD NO:\t");
         perfNAL(new NAR(new Default()), examplePath,extraCycles,repeats,warmups,true);
         

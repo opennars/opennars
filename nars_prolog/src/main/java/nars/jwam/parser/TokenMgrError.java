@@ -38,7 +38,7 @@ public class TokenMgrError extends Error {
     static final int LOOP_DETECTED = 3;
 
     /**
-     * Indicates the reason why the exception is thrown. It will have one of the
+     * Indicates the rule why the exception is thrown. It will have one of the
      * above 4 values.
      */
     int errorCode;
@@ -133,7 +133,7 @@ public class TokenMgrError extends Error {
     }
 
     /**
-     * Constructor with message and reason.
+     * Constructor with message and rule.
      */
     public TokenMgrError(String message, int reason) {
         super(message);

@@ -1,7 +1,7 @@
 package nars.xml;
 
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
 import nars.util.data.PrintWriterInput;

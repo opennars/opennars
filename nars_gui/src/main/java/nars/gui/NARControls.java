@@ -24,17 +24,17 @@ import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.TimeControl;
-import nars.core.Events;
-import nars.core.Events.FrameEnd;
-import nars.core.Memory;
-import nars.core.NAR;
+import nars.Events;
+import nars.Events.FrameEnd;
+import nars.Memory;
+import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterVis;
 import nars.gui.output.graph.nengo.NengoNetworkPanel;
 import nars.io.TextOutput;
-import nars.logic.meta.NARMetrics;
+import nars.nal.meta.NARMetrics;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,8 +45,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
-import static nars.core.Memory.Timing.Real;
-import static nars.core.Memory.Timing.Simulation;
+import static nars.Memory.Timing.Real;
+import static nars.Memory.Timing.Simulation;
 
 
 public class NARControls extends TimeControl implements Reaction {

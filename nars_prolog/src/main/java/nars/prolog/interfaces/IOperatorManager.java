@@ -2,7 +2,7 @@ package nars.prolog.interfaces;
 public interface IOperatorManager {
 	
 	/**
-	 * Creates a new operator. If the operator is already provided,
+	 * Creates a new operate. If the operate is already provided,
 	 * it replaces it with the new one
 	 */
 	void opNew(String name, String type, int prio);

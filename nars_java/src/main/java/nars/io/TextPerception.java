@@ -1,23 +1,23 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.NarseseParser;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.nal8.ImmediateOperation;
-import nars.operator.io.Echo;
-import nars.operator.io.PauseInput;
-import nars.operator.io.Reset;
-import nars.operator.io.SetVolume;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
+import nars.nal.nal8.ImmediateOperation;
+import nars.operate.io.Echo;
+import nars.operate.io.PauseInput;
+import nars.operate.io.Reset;
+import nars.operate.io.SetVolume;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -291,7 +291,7 @@ public class TextPerception {
             error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + ']');
         }
         catch (Exception e) {
-            if (Parameters.DEBUG)
+            if (Global.DEBUG)
                 throw e;
             error = e;
         }

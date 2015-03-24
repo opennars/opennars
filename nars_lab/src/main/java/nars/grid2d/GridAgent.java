@@ -1,6 +1,6 @@
 package nars.grid2d;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Action.Turn;
 

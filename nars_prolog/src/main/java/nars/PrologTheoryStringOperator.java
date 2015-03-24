@@ -1,10 +1,9 @@
 package nars;
 
-import nars.core.Memory;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.Prolog;
 import nars.prolog.Theory;

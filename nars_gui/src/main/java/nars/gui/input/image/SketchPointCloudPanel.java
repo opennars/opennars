@@ -1,7 +1,7 @@
 package nars.gui.input.image;
 
 import automenta.vivisect.swing.NWindow;
-import nars.core.NAR;
+import nars.NAR;
 
 import java.awt.*;
 import java.awt.event.*;

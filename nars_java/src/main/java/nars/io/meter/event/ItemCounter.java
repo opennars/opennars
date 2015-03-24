@@ -2,7 +2,7 @@ package nars.io.meter.event;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import nars.core.NAR;
+import nars.NAR;
 import nars.event.AbstractReaction;
 
 import java.io.PrintStream;

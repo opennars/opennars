@@ -59,7 +59,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
-import nars.logic.entity.Term;
+import nars.nal.entity.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import static javafx.application.Application.launch;

@@ -17,7 +17,7 @@
 package nars.io;
 
 import com.google.gson.*;
-import nars.core.NAR;
+import nars.NAR;
 
 import java.io.PrintStream;
 

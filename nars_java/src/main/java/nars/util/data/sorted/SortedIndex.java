@@ -1,6 +1,6 @@
 package nars.util.data.sorted;
 
-import nars.logic.entity.Item;
+import nars.nal.entity.Item;
 
 import java.util.Collection;
 import java.util.Iterator;

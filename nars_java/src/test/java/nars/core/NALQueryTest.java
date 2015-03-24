@@ -4,16 +4,17 @@
  */
 package nars.core;
 
-import nars.build.Default;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.io.Answered;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static nars.logic.nal7.Tense.Eternal;
+import static nars.nal.nal7.Tense.Eternal;
 import static org.junit.Assert.assertTrue;
 
 /**

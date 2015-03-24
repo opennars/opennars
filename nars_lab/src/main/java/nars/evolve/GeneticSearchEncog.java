@@ -4,11 +4,11 @@
  */
 package nars.evolve;
 
-import nars.build.Curve;
-import nars.build.Default;
-import nars.build.Neuromorphic;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Curve;
+import nars.prototype.Default;
+import nars.prototype.Neuromorphic;
+import nars.NAR;
+import nars.Global;
 import nars.util.data.MultiOutputStream;
 import org.encog.ml.CalculateScore;
 import org.encog.ml.MLEncodable;
@@ -299,7 +299,7 @@ public class GeneticSearchEncog {
         }
 
         public static synchronized double score(int maxCycles, NAR n) {
-            Parameters.DEBUG = false;
+            Global.DEBUG = false;
             //return NALTestScore.score(n, maxCycles);
             return 0;
         }
@@ -323,7 +323,7 @@ public class GeneticSearchEncog {
 
                 return s;
             } catch (Throwable e) {
-                if (Parameters.DEBUG) {
+                if (Global.DEBUG) {
                     e.printStackTrace();
                 }
                 return 0;
@@ -347,7 +347,7 @@ public class GeneticSearchEncog {
 
     public GeneticSearchEncog() throws Exception {
 
-        Parameters.DEBUG = false;
+        Global.DEBUG = false;
 
         File file = new File("/home/me/Downloads/default_nar_param_genetic." + new Date().toString() + ".txt");
 

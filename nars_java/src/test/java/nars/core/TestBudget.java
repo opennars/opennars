@@ -1,8 +1,8 @@
 package nars.core;
 
 
-import nars.logic.BudgetFunctions;
-import nars.logic.entity.BudgetValue;
+import nars.nal.BudgetFunctions;
+import nars.energy.Budget;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class TestBudget {
         float quality = 0.5f;
         float budgetThreshold = 0.1f;
 
-        BudgetValue b = new BudgetValue(initPriority, durability, quality);
+        Budget b = new Budget(initPriority, durability, quality);
 
         for (int t = 0; t < maxTime; t++) {
             BudgetFunctions.forgetPeriodic(b, forgetCycles, budgetThreshold, t);

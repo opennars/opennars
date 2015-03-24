@@ -5,23 +5,23 @@
 package nars.util.graph.experimental;
 
 import com.google.common.base.Objects;
-import nars.core.Events;
-import nars.core.Events.ConceptForget;
-import nars.core.Events.ConceptNew;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Events;
+import nars.Events.ConceptForget;
+import nars.Events.ConceptNew;
+import nars.NAR;
+import nars.Global;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.logic.NALOperator;
-import nars.logic.Terms.Termable;
-import nars.logic.entity.*;
-import nars.logic.nal4.Image;
+import nars.nal.NALOperator;
+import nars.nal.Terms.Termable;
+import nars.nal.entity.*;
+import nars.nal.nal4.Image;
 
 import java.util.*;
 
 /**
  *each of those rows can be a representation of something like a 'multiconcept' or 'aggregated concept' which combines concept data from related concepts
-and tasks where the only differ by the top-level operator, tense, freq, conf,etc
+and tasks where the only differ by the top-level operate, tense, freq, conf,etc
  EXPERIMENTAL
  */
 public class Idea implements Iterable<Concept> {
@@ -166,14 +166,14 @@ public class Idea implements Iterable<Concept> {
 //    public Collection<Sentence> getSentences(SentenceType o) {
 //        List<Sentence> s = new ArrayList();
 //        for (Concept c : this) {
-//            if (c.term.operator() == o.op) {
+//            if (c.term.operate() == o.op) {
 //                s.addAll(c.getSentences(o.punc));
 //            }
 //        }
 //        return s;
 //    }
 //
-    /** returns the set of all operator+punctuation concatenations */
+    /** returns the set of all operate+punctuation concatenations */
     public Set<SentenceType> getSentenceTypes() {
         return feature;
     }
@@ -183,7 +183,7 @@ public class Idea implements Iterable<Concept> {
      * concept again since they are stored as Set
      */
     public boolean add(Concept c) {
-        if (Parameters.DEBUG)
+        if (Global.DEBUG)
             ensureMatchingConcept(c);
   
         boolean b = concepts.add(c);
@@ -217,7 +217,7 @@ public class Idea implements Iterable<Concept> {
     }
     
     public boolean remove(Concept c) {
-        if (Parameters.DEBUG)
+        if (Global.DEBUG)
             ensureMatchingConcept(c);
         
         boolean b = concepts.remove(c);

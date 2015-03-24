@@ -4,12 +4,12 @@
  */
 package nars.analyze.experimental;
 
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.event.Reaction;
-import nars.logic.NALTest;
+import nars.nal.NALTest;
 import org.junit.Ignore;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ public class NALTestScore extends NALTest {
     }
     
     public static double score(NAR nn, int maxCycles/* randomseed, etc. */) {
-        Parameters.THREADS = 1;
+        Global.THREADS = 1;
         
         nextNAR = nn;
           

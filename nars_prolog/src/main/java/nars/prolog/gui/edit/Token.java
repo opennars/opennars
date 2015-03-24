@@ -77,7 +77,7 @@ public class Token
 
     /**
      * Operator token id. This can be used to mark an
-     * operator. (eg, SQL mode marks +, -, etc with this
+     * operate. (eg, SQL mode marks +, -, etc with this
      * token type)
      */
     public static final byte OPERATOR = 9;

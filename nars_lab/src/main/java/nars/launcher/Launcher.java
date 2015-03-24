@@ -17,8 +17,8 @@
 
 package nars.launcher;
 
-import nars.core.NAR;
-import nars.build.Default;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.gui.NARSwing;
 import nars.nario.NARio;
 import nars.web.NARServer;

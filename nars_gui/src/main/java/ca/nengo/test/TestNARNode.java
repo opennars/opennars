@@ -13,20 +13,20 @@ import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
-import nars.build.Default;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.gui.NARSwing;
 import nars.io.Output;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
-import nars.logic.nal8.TermFunction;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
+import nars.nal.nal8.TermFunction;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -176,7 +176,7 @@ public class TestNARNode  {
                         if (w == NARNode.this.ui) continue;
                         String ww = w.name().trim();
                         if (ww.isEmpty()) {
-                            if (Parameters.DEBUG)
+                            if (Global.DEBUG)
                                 System.err.println("Warning: " + w + " (" + w.getClass() + ") has empty name");
                             continue;
                         }

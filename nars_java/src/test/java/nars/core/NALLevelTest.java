@@ -1,7 +1,9 @@
 package nars.core;
 
 
-import nars.build.Default;
+import nars.NAR;
+import nars.Global;
+import nars.prototype.Default;
 import nars.io.TextOutput;
 import nars.io.condition.OutputCount;
 import org.junit.Test;
@@ -15,10 +17,10 @@ public class NALLevelTest {
 
     @Test
     public void testLevel1vs8() {
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
 
         NAR nDefault = new NAR(new Default());
-        assertEquals(Parameters.DEFAULT_NAL_LEVEL, nDefault.nal());
+        assertEquals(Global.DEFAULT_NAL_LEVEL, nDefault.nal());
 
         NAR n1 = new NAR(new Default().level(1));
         OutputCount n1Count = new OutputCount(n1);

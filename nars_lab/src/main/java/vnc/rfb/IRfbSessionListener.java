@@ -32,7 +32,7 @@ public interface IRfbSessionListener {
 	/**
 	 * Fired after rfb session closed (threads stopped, other resources fried).
 	 * Note: this event may be fired from unpredictable thread.
-	 * @param reason reason to show why session closed
+	 * @param reason rule to show why session closed
 	 */
 	void rfbSessionStopped(String reason);
 

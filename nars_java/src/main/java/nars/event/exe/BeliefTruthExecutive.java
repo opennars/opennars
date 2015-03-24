@@ -1,14 +1,14 @@
 package nars.event.exe;
 
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
 import nars.event.AbstractExecutive;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 
 import java.util.HashMap;
 import java.util.List;

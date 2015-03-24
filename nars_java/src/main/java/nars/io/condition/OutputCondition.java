@@ -4,11 +4,11 @@
  */
 package nars.io.condition;
 
-import nars.core.Events;
-import nars.core.NAR;
+import nars.Events;
+import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.entity.Task;
-import nars.logic.entity.stamp.Stamp;
+import nars.nal.entity.Task;
+import nars.nal.entity.stamp.Stamp;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -167,7 +167,7 @@ public abstract class OutputCondition extends AbstractReaction {
         return Collections.EMPTY_LIST;
     }
     
-    /** if false, a reported reason why this condition is false */
+    /** if false, a reported rule why this condition is false */
     public abstract String getFalseReason();
 
     /** if true, when it became true */

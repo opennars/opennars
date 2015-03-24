@@ -101,8 +101,8 @@
 //            graph.addVertex(t);
 //
 //
-//            if (t.operator()!=null)
-//                graph.addEdge(getNativeOperator(t.operator()), t);
+//            if (t.operate()!=null)
+//                graph.addEdge(getNativeOperator(t.operate()), t);
 //
 //            //add subcomponents
 //            if (t instanceof CompoundTerm) {

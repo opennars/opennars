@@ -1,7 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Output;
 
 import javax.swing.*;

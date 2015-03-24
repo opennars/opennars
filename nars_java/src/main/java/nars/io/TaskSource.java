@@ -1,6 +1,6 @@
 package nars.io;
 
-import nars.logic.entity.Task;
+import nars.nal.entity.Task;
 import reactor.function.Supplier;
 
 /** input port for external, ex: sensory events */

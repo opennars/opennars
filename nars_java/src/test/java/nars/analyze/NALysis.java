@@ -1,16 +1,16 @@
 package nars.analyze;
 
 
-import nars.build.Curve;
-import nars.build.Default;
-import nars.core.Memory;
-import nars.core.NewNAR;
+import nars.prototype.Curve;
+import nars.prototype.Default;
+import nars.Memory;
+import nars.ProtoNAR;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
 import nars.io.test.TestNAR;
-import nars.logic.AbstractNALTest;
+import nars.nal.AbstractNALTest;
 import org.junit.Ignore;
 
 import java.util.Collection;
@@ -27,7 +27,7 @@ public class NALysis extends AbstractNALTest {
     static boolean showOutput = false;
     static boolean showTrace = false;
 
-    public NALysis(NewNAR b) {
+    public NALysis(ProtoNAR b) {
         super(b);
     }
 
@@ -49,7 +49,7 @@ public class NALysis extends AbstractNALTest {
 
 
     /** run the test using the returned TestNAR's .run() method */
-    public static TestNAR analyze(NewNAR build, String path, int maxCycles, long seed) {
+    public static TestNAR analyze(ProtoNAR build, String path, int maxCycles, long seed) {
 
         String testName = path + "_" + build;
 
@@ -142,16 +142,16 @@ public class NALysis extends AbstractNALTest {
 
 
 
-    public static void runDir(String dirPath, int maxCycles, long seed, NewNAR... builds) {
+    public static void runDir(String dirPath, int maxCycles, long seed, ProtoNAR... builds) {
         Collection<String> paths = getPaths(dirPath);
 
         for (String p : paths) {
-            for (NewNAR b : builds)
+            for (ProtoNAR b : builds)
                 analyze(b, p, maxCycles, seed).run();
         }
     }
 
-    public static void nal(String dirPath, String filter, NewNAR build, int maxCycles) {
+    public static void nal(String dirPath, String filter, ProtoNAR build, int maxCycles) {
         Collection<String> paths = getPaths(dirPath);
 
         for (String p : paths) {

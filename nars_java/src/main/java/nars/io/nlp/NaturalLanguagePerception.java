@@ -2,7 +2,7 @@ package nars.io.nlp;
 
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
-import nars.logic.entity.Task;
+import nars.nal.entity.Task;
 
 import java.util.ArrayList;
 import java.util.List;

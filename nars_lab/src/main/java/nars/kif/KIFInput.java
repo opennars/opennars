@@ -100,7 +100,7 @@ public class KIFInput extends PrintWriterInput implements Runnable {
                     break;
                 }
 
-                String root = f.car(); //root operator
+                String root = f.car(); //root operate
 
                 List<String> a = f.argumentsToArrayList(1);
 

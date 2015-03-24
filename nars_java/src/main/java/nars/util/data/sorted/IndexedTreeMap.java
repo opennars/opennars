@@ -915,7 +915,7 @@ public class IndexedTreeMap<K, V>
     /**
      * Fields initialized to contain an instance of the entry set view
      * the first time this view is requested.  Views are stateless, so
-     * there's no reason to create more than one.
+     * there's no rule to create more than one.
      */
     private transient EntrySet entrySet = null;
     private transient KeySet<K> navigableKeySet = null;

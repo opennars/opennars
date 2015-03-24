@@ -16,7 +16,7 @@
  */
 package nars.io.signal;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Texts;
 
 import java.text.NumberFormat;

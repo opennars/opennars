@@ -1688,7 +1688,7 @@ public class Formula implements Comparable {
 
     /**
      * ***************************************************************
-     * Test whether this Formula is a reason
+     * Test whether this Formula is a rule
      */
     private boolean isRule() {
         boolean ans = false;
@@ -1727,7 +1727,7 @@ public class Formula implements Comparable {
      *
      * @param obj Any object, but should be a String.
      *
-     * @return true if obj is a SUO-KIF commutative logical operator, else
+     * @return true if obj is a SUO-KIF commutative logical operate, else
      * false.
      *
      */
@@ -1740,7 +1740,7 @@ public class Formula implements Comparable {
 
     /**
      * ***************************************************************
-     * Test whether a predicate is a logical operator
+     * Test whether a predicate is a logical operate
      */
     public static boolean isLogicalOperator(String pred) {
 
@@ -2855,7 +2855,7 @@ public class Formula implements Comparable {
                         System.out.println("WARNING in Formula.preProcess()");
                         System.out.println("  REJECTING " + theNewFormula);
                         KBmanager.getMgr().setError(KBmanager.getMgr().getError()
-                                + "\n<br/>Formula rejected for logic:<br/>"
+                                + "\n<br/>Formula rejected for nal:<br/>"
                                 + fnew.htmlFormat(kb)
                                 + "<br/>\n");
                     }
@@ -3260,7 +3260,7 @@ public class Formula implements Comparable {
      * ***************************************************************
      * @param st is the StreamTokenizer_s that contains the current token for
      * which the arity is desired
-     * @return the integer arity of the given logical operator
+     * @return the integer arity of the given logical operate
      */
     private static int operatorArity(StreamTokenizer_s st) {
 
@@ -3367,8 +3367,8 @@ public class Formula implements Comparable {
                                 + st.sval + " at " + tptpFormula);
                         return (null);
                     }
-                    //----This is the start of a new term - put in the infix operator if not the
-                    //----first term for this operator
+                    //----This is the start of a new term - put in the infix operate if not the
+                    //----first term for this operate
                     if ((Integer) (countStack.peek()) > 0) {
                         tptpFormula.append((String) operatorStack.peek());
                     }
@@ -3376,21 +3376,21 @@ public class Formula implements Comparable {
                     if (inHOL && inHOLCount == 1) {
                         tptpFormula.append("'");
                     }
-                    //----()s around all operator expressions
+                    //----()s around all operate expressions
                     tptpFormula.append("(");
                     //----Output unary as prefix
                     if (arity == 1) {
                         tptpFormula.append(translateWord(st, false));
-                        //----Note the new operator (dummy) with 0 operands so far
+                        //----Note the new operate (dummy) with 0 operands so far
                         countStack.push(new Integer(0));
                         operatorStack.push(",");
                         //----Check if the next thing will be the quantified variables
                         if (st.sval.equals("forall") || st.sval.equals("exists")) {
                             inQuantifierVars = true;
                         }
-                        //----Binary operator
+                        //----Binary operate
                     } else if (arity == 2) {
-                        //----Note the new operator with 0 operands so far
+                        //----Note the new operate with 0 operands so far
                         countStack.push(new Integer(0));
                         operatorStack.push(translateWord(st, false));
                     }
@@ -3416,8 +3416,8 @@ public class Formula implements Comparable {
                             incrementTOS(countStack);
                             //----Predicate
                         } else {
-                            //----This is the start of a new term - put in the infix operator if not the
-                            //----first term for this operator
+                            //----This is the start of a new term - put in the infix operate if not the
+                            //----first term for this operate
                             if ((Integer) (countStack.peek()) > 0) {
                                 tptpFormula.append((String) operatorStack.peek());
                             }
@@ -3434,8 +3434,8 @@ public class Formula implements Comparable {
                         }
                         //----Argument or quantified variable
                     } else {
-                        //----This is the start of a new term - put in the infix operator if not the
-                        //----first term for this operator
+                        //----This is the start of a new term - put in the infix operate if not the
+                        //----first term for this operate
                         if ((Integer) (countStack.peek()) > 0) {
                             tptpFormula.append((String) operatorStack.peek());
                         }
@@ -3462,12 +3462,12 @@ public class Formula implements Comparable {
                     //----End of quantified variable list
                     if (inQuantifierVars) {
                         //----Fake restarting the argument list because the quantified variable list
-                        //----does not use the operator from the surrounding expression
+                        //----does not use the operate from the surrounding expression
                         countStack.pop();
                         countStack.push(0);
                         tptpFormula.append("] : ");
                         inQuantifierVars = false;
-                        //----End of predicate or operator list
+                        //----End of predicate or operate list
                     } else {
                         //----Pop off the stacks to reveal the next outer layer
                         countStack.pop();

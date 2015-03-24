@@ -4,13 +4,13 @@
  */
 package nars.io.condition;
 
-import nars.core.Events;
-import nars.core.NAR;
+import nars.Events;
+import nars.NAR;
 import nars.io.TextOutput;
 import nars.io.Texts;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.nal8.Operator.ExecutionResult;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
+import nars.nal.nal8.Operator.ExecutionResult;
 
 import java.util.ArrayList;
 import java.util.Collection;

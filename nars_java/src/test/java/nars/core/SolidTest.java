@@ -1,9 +1,10 @@
 package nars.core;
 
-import nars.build.Solid;
+import nars.Global;
+import nars.prototype.Solid;
 import nars.io.Answered;
 import nars.io.test.TestNAR;
-import nars.logic.entity.Sentence;
+import nars.nal.entity.Sentence;
 import org.junit.Test;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public class SolidTest {
 
         int time = 12; //should solve the example in few cycles
 
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
 
         Solid s = new Solid(3, 164, 1, 10, 1, 4);
         s.param.duration.set(3);

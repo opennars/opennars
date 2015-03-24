@@ -1,8 +1,8 @@
 package nars.util.graph;
 
-import nars.core.NAR;
-import nars.logic.NALOperator;
-import nars.logic.entity.Compound;
+import nars.NAR;
+import nars.nal.NALOperator;
+import nars.nal.entity.Compound;
 
 /** Maintains a directed grpah of Inheritance and Similiarty statements */
 public class ImplicationGraph2 extends StatementGraph {

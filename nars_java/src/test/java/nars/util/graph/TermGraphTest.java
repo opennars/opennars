@@ -1,7 +1,7 @@
 package nars.util.graph;
 
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 
 
 public class TermGraphTest {

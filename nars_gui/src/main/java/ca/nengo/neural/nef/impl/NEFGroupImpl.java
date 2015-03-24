@@ -1190,7 +1190,7 @@ public class NEFGroupImpl extends DecodableGroupImpl implements NEFGroup {
 
 	/**
 	 * TODO: figure out why I have to add these so that it will show up in the Configure menu
-	 *     (nodeCount doens't appear for some reason)
+	 *     (nodeCount doens't appear for some rule)
 	 * @param count number of desired neurons
 	 * @throws StructuralException if factory doesn't exist or can't add that many
 	 */

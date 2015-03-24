@@ -4,7 +4,7 @@
  */
 package nars.io.condition;
 
-import nars.core.NAR;
+import nars.NAR;
 
 /**
  *

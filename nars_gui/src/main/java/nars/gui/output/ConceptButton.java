@@ -4,9 +4,9 @@
  */
 package nars.gui.output;
 
-import nars.core.NAR;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Term;
+import nars.NAR;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Term;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

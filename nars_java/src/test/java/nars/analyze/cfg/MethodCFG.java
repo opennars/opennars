@@ -13,13 +13,13 @@ public class MethodCFG {
 
 
         MethodCallGraph g = new MethodCallGraph()
-                .addClasses("nars.logic", true)
-                .addClasses("nars.logic.reason", true)
-                .addClasses("nars.logic.reason.concept", true)
-                .addClass("nars.logic.reason.ConceptFire")
-                .addClass("nars.logic.reason.concept.ConceptFireTask")
-                .addClass("nars.logic.reason.concept.ConceptFireTaskTerm")
-                .addClass("nars.logic.NAL")
+                .addClasses("nars.nal", true)
+                .addClasses("nars.nal.rule", true)
+                .addClasses("nars.nal.rule.concept", true)
+                .addClass("nars.nal.rule.ConceptFire")
+                .addClass("nars.nal.rule.concept.ConceptFireTask")
+                .addClass("nars.nal.rule.concept.ConceptFireTaskTerm")
+                .addClass("nars.nal.NAL")
                 ;
 
         System.out.println(g.vertexSet().size() + " vert , "  + g.edgeSet().size() + " edge");
@@ -36,8 +36,8 @@ public class MethodCFG {
         list("\tEXITMETHOD ", g.getExitPoints());*/
 
 
-        CGMethod fireConcept = g.method("nars.logic.reason.ConceptFire#reason([])");
-        CGMethod derivedTask = g.method("nars.logic.NAL#deriveTask([nars.logic.entity.Task, boolean, boolean, nars.logic.entity.Task, nars.logic.entity.Sentence, nars.logic.entity.Sentence, nars.logic.entity.Task])");
+        CGMethod fireConcept = g.method("nars.nal.rule.ConceptFire#rule([])");
+        CGMethod derivedTask = g.method("nars.nal.NAL#deriveTask([nars.nal.entity.Task, boolean, boolean, nars.nal.entity.Task, nars.nal.entity.Sentence, nars.nal.entity.Sentence, nars.nal.entity.Task])");
         //CGMethod addTask = g.method("nars.logic.NAL#addTask([nars.logic.entity.Task, java.lang.String])");
 
         KShortestPaths fromFireConcept = new KShortestPaths(g, fireConcept, 500, 500);

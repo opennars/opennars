@@ -14,7 +14,7 @@ import java.util.HashMap;
  * This whole class is dedicated to step one of converting heaps to
  * instructions: assigning argument registers and scanning variables for their
  * properties. Initially this class was one method, but for readability I
- * rewrote it into this class. The main thing that happens is that the fact/reason
+ * rewrote it into this class. The main thing that happens is that the fact/rule
  * is traversed in breadth-first order per body part (and the head, with which
  * it starts). The first rounds - the arguments of the body parts - get the
  * argument registers. Variables which are permanent also get their registers
@@ -79,7 +79,7 @@ public class ClausePreprocessor {
      * Main functionality of the scanner: go through the variables and scan them
      * for their properties such as permanence.
      *
-     * @param heap Entry heap of a reason/fact.
+     * @param heap Entry heap of a rule/fact.
      * @param tokens Tokens for each of the heap cells.
      * @param isQuery Whether a query is being compiled. For queries we do not
      * take the head and first body part together when determining permanent
@@ -238,7 +238,7 @@ public class ClausePreprocessor {
     private void detect_anonymous_variables() {
         for (Integer key : occurrences.keySet()) // For clauses like: below(P,point(X,Y)):- Y < P. Here X should be anonymous which speeds up execution a bit.
         {
-            if (occurrences.get(key).size() == 1) // Only one occurrence in the entire reason, so it is anonymous
+            if (occurrences.get(key).size() == 1) // Only one occurrence in the entire rule, so it is anonymous
             {
                 heap[occurrences.get(key).get(0).index] = WAM.newCell(WAM.REF, 0); 	// Make it anonymous  
             }
@@ -261,7 +261,7 @@ public class ClausePreprocessor {
                     (part > start_of_parts + 1) || // Part is number 2 or beyond
                     (part == start_of_parts && start_of_parts == end_of_parts)) {					// Part is one and only of the clause (i.e. fact)
                 x = Compiler.numberOfArgs(heap, part) + 1;								// Initiate x beyond the argument registers
-            } else if (part == start_of_parts && start_of_parts != end_of_parts) // Part is head of a reason
+            } else if (part == start_of_parts && start_of_parts != end_of_parts) // Part is head of a rule
             {
                 x = Math.max(Compiler.numberOfArgs(heap, part), Compiler.numberOfArgs(heap, part + 1)) + 2; // Max of head and first body part
             }

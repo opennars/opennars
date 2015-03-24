@@ -1,9 +1,9 @@
 package nars.io;
 
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.logic.entity.Task;
+import nars.Events;
+import nars.NAR;
+import nars.Global;
+import nars.nal.entity.Task;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;
@@ -114,7 +114,7 @@ abstract public class BufferedOutput extends Output {
 
         //1. prevent subsequent duplicates of existing content but decrease its cost as a way of making it more important to ensure it will be output
         if (buffer.contains(o)) {
-            if (Parameters.DEBUG) {
+            if (Global.DEBUG) {
                 boolean found = false;
                 for (OutputItem e : buffer) {
                     if (e.channel.equals(event) && e.object.equals(o)) {
@@ -221,7 +221,7 @@ abstract public class BufferedOutput extends Output {
     public String toString(Collection<OutputItem> l, int charLimit) {
         StringBuilder sb = new StringBuilder();
 
-        Set<String> strings = Parameters.newHashSet(l.size());
+        Set<String> strings = Global.newHashSet(l.size());
 
         StringBuilder buffer = new StringBuilder();
 

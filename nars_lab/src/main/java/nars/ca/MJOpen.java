@@ -14,7 +14,7 @@ public class MJOpen {
 	private List<String> m_vDiv; // diversities
 
 	private String m_sGame; // family of rules
-	private String m_sRules; // the reason
+	private String m_sRules; // the rule
 	private int m_rectMinX, m_rectMaxX, m_rectMinY, m_rectMaxY;
 	private int m_Speed; // game speed
 	private int m_BSizeX, m_BSizeY; // board size
@@ -369,7 +369,7 @@ public class MJOpen {
 		}
 
 		// analyze all lines
-		m_sRules = ""; // no default reason
+		m_sRules = ""; // no default rule
 		for (i = 0; i < vLines.size(); i++) {
 			bff = (String) vLines.elementAt(i);
 			if (ProcessOneMCLLine(bff))
@@ -395,9 +395,9 @@ public class MJOpen {
 			if (bff.startsWith("#RULE")) // specific rules
 			{
 				sTok = bff.substring(5);
-				// long reason can be splitted into several lines
+				// long rule can be splitted into several lines
 				m_sRules = m_sRules + sTok.trim(); // set rules
-				fOk = true; // reason defined
+				fOk = true; // rule defined
 			} else if (bff.startsWith("#GAME")) // game
 			{
 				m_sGame = bff.substring(5).trim();
@@ -578,7 +578,7 @@ public class MJOpen {
 // Y size
                                     iRow = -(Math.abs(Integer.parseInt(tokenValue)) / 2);
                                     break;
-                                case "reason":
+                                case "rule":
                                 case "rules":
                                     m_sRules = tokenValue;
                                     break;

@@ -4,13 +4,13 @@
  */
 package nars.io;
 
-import nars.core.Events.Answer;
-import nars.core.NAR;
+import nars.Events.Answer;
+import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
 import reactor.event.registry.Registration;
 
 /**

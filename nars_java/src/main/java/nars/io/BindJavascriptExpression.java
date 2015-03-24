@@ -4,19 +4,19 @@
  */
 package nars.io;
 
-import nars.core.Events;
-import nars.core.Events.ERR;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Events;
+import nars.Events.ERR;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Term;
-import nars.logic.nal8.ImmediateOperation;
-import nars.logic.nal8.Operator;
-import nars.logic.nal8.SynchronousSentenceFunction;
-import nars.logic.nal8.TermFunction;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Term;
+import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchronousSentenceFunction;
+import nars.nal.nal8.TermFunction;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -109,7 +109,7 @@ public class BindJavascriptExpression implements TextReaction {
                                         return Collections.singleton(narsese.parseSentence(new StringBuilder(result.toString())));
                                     } catch (InvalidInputException ex) {
                                         memory.emit(ERR.class, ex.toString());
-                                        if (Parameters.DEBUG)
+                                        if (Global.DEBUG)
                                             ex.printStackTrace();
                                     }
 
@@ -132,7 +132,7 @@ public class BindJavascriptExpression implements TextReaction {
                                         return narsese.parseTerm(result.toString());
                                     } catch (InvalidInputException ex) {
                                         getMemory().emit(ERR.class, ex.toString());
-                                        if (Parameters.DEBUG)
+                                        if (Global.DEBUG)
                                             ex.printStackTrace();
                                     }
 

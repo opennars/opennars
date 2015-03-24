@@ -4,9 +4,9 @@
  */
 package nars.evolve;
 
-import nars.build.Default;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.NAR;
+import nars.Global;
 import nars.util.data.MultiOutputStream;
 import org.apache.commons.math3.genetics.*;
 import org.encog.ml.CalculateScore;
@@ -160,7 +160,7 @@ public class GeneticSearchApache {
         }
 
         public static synchronized double score(int maxCycles, NAR n) {
-            Parameters.DEBUG = false;
+            Global.DEBUG = false;
             //return NALTestScore.score(n, maxCycles);
             return 0;
         }
@@ -184,7 +184,7 @@ public class GeneticSearchApache {
 
                 return s;
             } catch (Throwable e) {
-                if (Parameters.DEBUG) {
+                if (Global.DEBUG) {
                     e.printStackTrace();
                 }
                 return 0;

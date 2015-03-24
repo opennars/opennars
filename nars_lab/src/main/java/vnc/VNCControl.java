@@ -2,19 +2,19 @@ package vnc;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import nars.build.Default;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal8.NullOperator;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal8.NullOperator;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.client.PointerEventMessage;
@@ -280,7 +280,7 @@ abstract public class VNCControl extends VNCClient {
     public static void main(String[] args) {
 
 
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
 
         NAR nar = new NAR(new Default(4000, 1, 3)) {
 
@@ -349,7 +349,7 @@ abstract public class VNCControl extends VNCClient {
                 nar.input(
                         ii
                 );
-                System.out.println(nar.time() + ": "  +ii);
+                //System.out.println(nar.time() + ": "  +ii);
             }
         }
     }
@@ -361,6 +361,7 @@ abstract public class VNCControl extends VNCClient {
         @Override
         public void next(OCR.BufferUpdate u) {
             if (!u.isProcessed()) return;
+            ocrResults.push(u);
 
             String text = u.getText();
             if (text!=null && !text.isEmpty() && text.length() < MAX_TEXT_LEN) {
@@ -408,7 +409,6 @@ abstract public class VNCControl extends VNCClient {
                 Task t = nar.believe(ii, u.getInputTime(), 1.0f, ocrConf, pri);
 
                 System.out.print(nar.time() + ": " + Texts.n2(pri) + "," + Texts.n2(ocrConf) + " " + ii + "\t" + u.getWaitingTime() + " wait, " + u.getProcessingTime() + " proc ms\n");
-                ocrResults.push(u);
             }
         }
     };
@@ -417,7 +417,7 @@ abstract public class VNCControl extends VNCClient {
         String ii = "<{K" + e.getKeyCode() + "} --> ON>. :|: " +
                 (press ? "%1.00;0.90%" : "%0.00;0.90%");
         nar.input(ii);
-        System.out.println(nar.time() + ": " + ii);
+        //System.out.println(nar.time() + ": " + ii);
     }
 
     @Override

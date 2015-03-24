@@ -10,7 +10,7 @@ import automenta.vivisect.graph.GraphDisplay.Shape;
 import automenta.vivisect.swing.PCanvas;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.MutableClassToInstanceMap;
-import nars.logic.entity.Item;
+import nars.nal.entity.Item;
 import processing.core.PGraphics;
 
 import java.util.ArrayList;

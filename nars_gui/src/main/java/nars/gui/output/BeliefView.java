@@ -1,8 +1,8 @@
 package nars.gui.output;
 
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Term;
-import nars.logic.entity.TruthValue;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Term;
+import nars.nal.entity.TruthValue;
 
 import java.util.HashMap;
 import java.util.Map;

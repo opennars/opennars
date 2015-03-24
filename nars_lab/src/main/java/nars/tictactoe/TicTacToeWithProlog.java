@@ -24,22 +24,21 @@ package nars.tictactoe;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NARPrologMirror;
-import nars.build.Default;
-import nars.core.Events.FrameEnd;
-import nars.core.Events.OUT;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events.FrameEnd;
+import nars.Events.OUT;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.energy.Budget;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,7 +56,7 @@ import static java.awt.BorderLayout.SOUTH;
  */
 public class TicTacToeWithProlog extends JPanel {
 
-    static { Parameters.DEBUG =true; }
+    static { Global.DEBUG =true; }
 
     final boolean HUMAN = false;
     final boolean COMPUTER = true;
@@ -142,7 +141,7 @@ public class TicTacToeWithProlog extends JPanel {
             public Concept initTerm(int x, int y) {
                 Term t = new Term( Integer.toString(y * 3 + x) );
                 fieldTerms.add(t);
-                return nar.memory.conceptualize(new BudgetValue(0.5f, 0.5f, 0.5f), t);
+                return nar.memory.conceptualize(new Budget(0.5f, 0.5f, 0.5f), t);
             }
 
             @Override

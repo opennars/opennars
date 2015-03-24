@@ -1,7 +1,7 @@
 package nars.grid2d;
 
 import automenta.vivisect.swing.NWindow;
-import nars.core.NAR;
+import nars.NAR;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.gui.EditorPanel;

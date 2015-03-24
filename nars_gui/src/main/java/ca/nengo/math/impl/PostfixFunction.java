@@ -40,7 +40,7 @@ import java.util.Stack;
  * <p>A Function based on a mathematical expression and on other functions. The expression
  * must be given as a list of list of operators, literal operands, and operand placeholders.</p>
  *
- * <p>An operator can be any Function. A literal operand must be a Float.</p>
+ * <p>An operate can be any Function. A literal operand must be a Float.</p>
  *
  * <p>An operand placeholder is an Integer, which points to the dimension of the input vector
  * from which the corresponding operand is to be drawn. For example the expression for a

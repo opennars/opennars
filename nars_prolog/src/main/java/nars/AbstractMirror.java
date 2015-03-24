@@ -5,12 +5,11 @@
  */
 package nars;
 
-import nars.core.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.reason.DirectProcess;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
+import nars.nal.rule.DirectProcess;
+import nars.energy.Budget;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
 
 /**
  * Interface with which to implement a "mirror" - a mental prosthetic which
@@ -49,7 +48,7 @@ abstract public class AbstractMirror extends AbstractReaction {
         }
         else if ((mode == InputMode.InputTask)|| (mode == InputMode.ImmediateProcess)) {
 
-            Task t = new Task(s, BudgetValue.newDefault(s, nar.memory), parent  );
+            Task t = new Task(s, Budget.newDefault(s, nar.memory), parent  );
 
             //System.err.println("  " + t);
 

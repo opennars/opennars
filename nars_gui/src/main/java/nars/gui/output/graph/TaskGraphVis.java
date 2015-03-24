@@ -7,8 +7,8 @@ import automenta.vivisect.graph.EdgeVis;
 import automenta.vivisect.graph.GraphDisplay;
 import automenta.vivisect.graph.VertexVis;
 import automenta.vivisect.swing.NWindow;
-import nars.core.NAR;
-import nars.logic.entity.Task;
+import nars.NAR;
+import nars.nal.entity.Task;
 import nars.util.graph.TaskGraph;
 
 

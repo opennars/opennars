@@ -4,10 +4,11 @@
  */
 package nars.gui.output;
 
+import nars.energy.Budget;
 import nars.event.Reaction;
-import nars.core.Events.*;
-import nars.core.NAR;
-import nars.logic.entity.*;
+import nars.Events.*;
+import nars.NAR;
+import nars.nal.entity.*;
 import nars.util.graph.experimental.Idea;
 import nars.util.graph.experimental.Idea.IdeaSet;
 import nars.util.graph.experimental.Idea.SentenceType;
@@ -218,7 +219,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
         update(i, t.budget);
     }
 
-    protected void update(Idea i, BudgetValue currentTaskBudget) {
+    protected void update(Idea i, Budget currentTaskBudget) {
         IdeaSummary p = getPanel(i);
         if (p == null)
             return;

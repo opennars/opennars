@@ -4,8 +4,8 @@
  */
 package nars.io;
 
-import nars.core.NAR;
-import nars.core.NewNAR;
+import nars.NAR;
+import nars.ProtoNAR;
 import nars.io.condition.OutputCondition;
 
 import java.io.BufferedReader;
@@ -138,17 +138,17 @@ public class ExampleFileInput extends TextInput {
         return t;
     }
 
-    public static Collection getParams(String directories, NewNAR... builds) {
+    public static Collection getParams(String directories, ProtoNAR... builds) {
         return getParams(new String[] { directories }, builds);
     }
 
     //@Parameterized.Parameters(name="{1} {0}")
-    public static Collection getParams(String[] directories, NewNAR... builds) {
+    public static Collection getParams(String[] directories, ProtoNAR... builds) {
         Collection<String> t = getPaths(directories);
 
         Collection<Object[]> params = new ArrayList(t.size() * builds.length);
         for (String script : t) {
-            for (NewNAR b : builds) {
+            for (ProtoNAR b : builds) {
                 params.add(new Object[] { b, script });
             }
         }

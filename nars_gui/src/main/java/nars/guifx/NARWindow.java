@@ -19,8 +19,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import nars.core.Events;
-import nars.core.NAR;
+import nars.Events;
+import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARControls;
 

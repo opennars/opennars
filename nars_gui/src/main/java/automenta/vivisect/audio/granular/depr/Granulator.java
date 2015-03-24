@@ -1,6 +1,6 @@
 package automenta.vivisect.audio.granular.depr;
 
-import nars.core.Memory;
+import nars.Memory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

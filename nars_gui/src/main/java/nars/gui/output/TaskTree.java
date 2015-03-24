@@ -2,17 +2,17 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NSlider;
-import nars.core.Events;
-import nars.core.Events.FrameEnd;
-import nars.core.Events.TaskAdd;
-import nars.core.Events.TaskRemove;
-import nars.core.NAR;
+import nars.Events;
+import nars.Events.FrameEnd;
+import nars.Events.TaskAdd;
+import nars.Events.TaskRemove;
+import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
-import nars.logic.entity.TruthValue;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
+import nars.nal.entity.TruthValue;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;

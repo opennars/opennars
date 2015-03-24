@@ -36,7 +36,7 @@ package ca.nengo.dynamics;
  * 
  * <p>The distinction between linear and non-linear dynamical systems is 
  * important, because many assumptions that hold for linear systems do not hold 
- * in general. For this reason, only linear systems can be used in some situations, 
+ * in general. For this rule, only linear systems can be used in some situations,
  * and we need this interface to enforce their use.</p>
  *  
  * @author Bryan Tripp

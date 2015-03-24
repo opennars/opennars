@@ -22,7 +22,7 @@ import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
 import nars.core.Param;
-import nars.build.Default;
+import nars.prototype.Default;
 import nars.util.NARTrace;
 
 public class NARCompare1 extends TimelineExample {

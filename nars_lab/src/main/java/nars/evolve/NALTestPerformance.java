@@ -1,8 +1,8 @@
 package nars.evolve;
 
-import nars.build.Default;
-import nars.core.Memory;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.Memory;
+import nars.NAR;
 import nars.io.ExampleFileInput;
 import nars.io.condition.OutputCondition;
 import nars.util.data.XORShiftRandom;
@@ -406,7 +406,7 @@ public class NALTestPerformance {
         int maxIterations = 300;
         int historySize = 6;
         
-/*[emotion.happy0, task.derived1, task.executed.priority.mean2, reason.contrapositions.complexity.mean3, cycle.cpu_time.mean4, emotion.busy5, cycle.frequency.hz6, concepts.count7, goal.process8, reason.contrapositions9, judgment.process10, task.add_new.priority.mean11, io.to_memory.ratio12, reason.fire.tasklink.priority.mean13, concepts.beliefs.sum14, task.add_new15, reason.tasktermlinks16, concepts.priority.mean17, concept.new18, concept.new.complexity.mean19, concepts.questions.sum20, task.derived.priority.mean21, question.process22, cycle.frequency_potential.mean.hz23, task.link_to24, task.executed25, reason.fire.tasklinks.delta26, reason.tasktermlink.priority.mean27, cycle.ram_use.delta_Kb.sampled28, memory.noveltasks.total29, id30, time31, absTime32, successes33, error34]
+/*[emotion.happy0, task.derived1, task.executed.priority.mean2, rule.contrapositions.complexity.mean3, cycle.cpu_time.mean4, emotion.busy5, cycle.frequency.hz6, concepts.count7, goal.process8, rule.contrapositions9, judgment.process10, task.add_new.priority.mean11, io.to_memory.ratio12, rule.fire.tasklink.priority.mean13, concepts.beliefs.sum14, task.add_new15, rule.tasktermlinks16, concepts.priority.mean17, concept.new18, concept.new.complexity.mean19, concepts.questions.sum20, task.derived.priority.mean21, question.process22, cycle.frequency_potential.mean.hz23, task.link_to24, task.executed25, rule.fire.tasklinks.delta26, rule.tasktermlink.priority.mean27, cycle.ram_use.delta_Kb.sampled28, memory.noveltasks.total29, id30, time31, absTime32, successes33, error34]
 */
         //int[] ins = new int[] { 1, 8, 9, 22, 10, 15 };
         int[] ins = new int[] { 1, 17, 11, 13 };
@@ -495,7 +495,7 @@ public class NALTestPerformance {
         int maxIterations = 5250;
         int historySize = 6;
         
-/*[emotion.happy0, task.derived1, task.executed.priority.mean2, reason.contrapositions.complexity.mean3, cycle.cpu_time.mean4, emotion.busy5, cycle.frequency.hz6, concepts.count7, goal.process8, reason.contrapositions9, judgment.process10, task.add_new.priority.mean11, io.to_memory.ratio12, reason.fire.tasklink.priority.mean13, concepts.beliefs.sum14, task.add_new15, reason.tasktermlinks16, concepts.priority.mean17, concept.new18, reason.fire.tasklinks19, concept.new.complexity.mean20, concepts.questions.sum21, task.derived.priority.mean22, question.process23, cycle.frequency_potential.mean.hz24, task.link_to25, task.executed26, reason.tasktermlink.priority.mean27, cycle.ram_use.delta_Kb.sampled28, memory.noveltasks.total29, id30, time31, absTime32, successes33, error34]
+/*[emotion.happy0, task.derived1, task.executed.priority.mean2, rule.contrapositions.complexity.mean3, cycle.cpu_time.mean4, emotion.busy5, cycle.frequency.hz6, concepts.count7, goal.process8, rule.contrapositions9, judgment.process10, task.add_new.priority.mean11, io.to_memory.ratio12, rule.fire.tasklink.priority.mean13, concepts.beliefs.sum14, task.add_new15, rule.tasktermlinks16, concepts.priority.mean17, concept.new18, rule.fire.tasklinks19, concept.new.complexity.mean20, concepts.questions.sum21, task.derived.priority.mean22, question.process23, cycle.frequency_potential.mean.hz24, task.link_to25, task.executed26, rule.tasktermlink.priority.mean27, cycle.ram_use.delta_Kb.sampled28, memory.noveltasks.total29, id30, time31, absTime32, successes33, error34]
 */
         //int[] ins = new int[] { 1, 8, 9, 22, 10, 15 };
         int[] ins = new int[] { 23, 10, 19 };

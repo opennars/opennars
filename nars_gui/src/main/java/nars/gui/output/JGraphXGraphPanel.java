@@ -3,7 +3,7 @@ package nars.gui.output;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
-import nars.core.NAR;
+import nars.NAR;
 import nars.util.graph.DefaultGrapher;
 import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;

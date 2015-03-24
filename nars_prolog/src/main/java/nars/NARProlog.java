@@ -1,6 +1,5 @@
 package nars;
 
-import nars.core.NAR;
 import nars.prolog.InvalidTheoryException;
 import nars.prolog.SolveInfo;
 import nars.prolog.Term;

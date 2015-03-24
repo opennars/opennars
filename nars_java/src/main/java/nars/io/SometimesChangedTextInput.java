@@ -5,7 +5,7 @@
  */
 package nars.io;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.util.data.XORShiftRandom;
 
 /**

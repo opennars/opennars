@@ -99,7 +99,7 @@ public class ClauseInfo {
     /**
      * Gets the string representation
      * recognizing operators stored by
-     * the operator manager
+     * the operate manager
      */
     public String toString(OperatorManager op) {
         int p;
@@ -204,7 +204,7 @@ public class ClauseInfo {
     
     
     /**
-     * Gets the string representation with default operator representation
+     * Gets the string representation with default operate representation
      */
     public String toString() {
         // default prio: xfx

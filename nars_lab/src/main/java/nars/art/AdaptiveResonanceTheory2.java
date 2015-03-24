@@ -169,7 +169,7 @@ public class AdaptiveResonanceTheory2
     /** 
              * Returns a prototype with highest similarity (score) -- which was not used yet.
              * The score is counted for a particular instance Ek and all the prototypes.
-             * If it is returned empty prototype -- was not possible (for some reason) to find the best
+             * If it is returned empty prototype -- was not possible (for some rule) to find the best
              * @param inst example Ek
              * @param prot set of prototypes
              * @param used set of already tested prototypes

@@ -17,10 +17,10 @@
 package nars.timeline;
 
 import automenta.vivisect.swing.NWindow;
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 import nars.gui.output.chart.MeterVis;
-import nars.logic.meta.NARMetrics;
+import nars.nal.meta.NARMetrics;
 
 /**
  *

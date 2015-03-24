@@ -1,14 +1,14 @@
 package nars.event;
 
-import nars.core.AbstractPlugin;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
+import nars.operate.AbstractOperator;
+import nars.Events;
+import nars.NAR;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
 
 /**
 */
-abstract public class AbstractExecutive extends AbstractPlugin {
+abstract public class AbstractExecutive extends AbstractOperator {
 
 
     @Override

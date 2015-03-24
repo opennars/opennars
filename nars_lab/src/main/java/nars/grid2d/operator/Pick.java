@@ -20,12 +20,12 @@
  */
 package nars.grid2d.operator;
 
-import nars.core.Memory;
+import nars.Memory;
 import nars.grid2d.TestChamber;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 
 import java.util.List;
 

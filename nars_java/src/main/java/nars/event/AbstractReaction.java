@@ -1,7 +1,7 @@
 package nars.event;
 
-import nars.core.Memory;
-import nars.core.NAR;
+import nars.Memory;
+import nars.NAR;
 
 /**
  * Class whch manages the registration and unregistration of event handlers

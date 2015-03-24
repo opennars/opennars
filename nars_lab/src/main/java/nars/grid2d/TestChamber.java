@@ -1,11 +1,11 @@
 package nars.grid2d;
 
-import nars.core.NewNAR;
+import nars.ProtoNAR;
 import nars.event.Reaction;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.build.Default;
+import nars.Events;
+import nars.NAR;
+import nars.Global;
+import nars.prototype.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.map.Maze;
@@ -15,9 +15,9 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
-import nars.operator.app.plan.TemporalParticlePlanner;
-import nars.operator.mental.FullInternalExperience;
-import nars.operator.mental.InternalExperience;
+import nars.operate.app.plan.TemporalParticlePlanner;
+import nars.operate.mental.FullInternalExperience;
+import nars.operate.mental.InternalExperience;
 import processing.core.PVector;
 
 import java.util.List;
@@ -39,16 +39,16 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        NewNAR builder = new Default();
+        ProtoNAR builder = new Default();
         
         //set NAR architecture parameters:
         //builder...
-        Parameters.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
+        Global.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
         NAR nar = new NAR(builder);
         //set NAR runtime parmeters:  
 
         for(NAR.PluggedIn pluginstate : nar.getPlugins()) {
-            if(pluginstate.plugin instanceof InternalExperience || pluginstate.plugin instanceof FullInternalExperience) {
+            if(pluginstate.IOperator instanceof InternalExperience || pluginstate.IOperator instanceof FullInternalExperience) {
                 pluginstate.off();
             }
         }

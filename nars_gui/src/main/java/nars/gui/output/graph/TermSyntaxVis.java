@@ -6,9 +6,9 @@ package nars.gui.output.graph;
 
 import automenta.vivisect.dimensionalize.AbegoTreeLayout;
 import automenta.vivisect.graph.AnimatingGraphVis;
-import nars.core.NAR;
-import nars.logic.entity.Compound;
-import nars.logic.entity.Term;
+import nars.NAR;
+import nars.nal.entity.Compound;
+import nars.nal.entity.Term;
 import nars.util.graph.NARGraph;
 import nars.util.graph.NARGraph.UniqueEdge;
 import org.jgrapht.Graph;

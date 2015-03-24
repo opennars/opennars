@@ -16,7 +16,7 @@ import java.awt.*;
  * 1.25, 04.07.2000
  *  - Rules definitions were extracted from the compiled applet
  *    and are now specified in an external text file. It's no longer necessary to
- *    recompile the applet just in order to add a new reason.
+ *    recompile the applet just in order to add a new rule.
  *  - New rules:
  *    Generations: Burst, BurstII, Circuit_Genesis, BelZhab Sediment,
  *    FlamingStarbows, Glisserati, Rake, Snake Cyclic CA: Cubism, LavaLamp,
@@ -37,7 +37,7 @@ import java.awt.*;
  *    - activate the next state (shortcut '['),
  *    - activate the previous state (shortcut ']').
  *  - "Active state/states count" display in the left panel
- *  - New reason WireWorld, with many patterns.
+ *  - New rule WireWorld, with many patterns.
  *  - New command-line parameters:
  *    ButtonLabel, ViewPanelControls, ViewPanelSeeding, Family, Rule, Pattern
  *  - User rules dialog got a '?' shortcut.
@@ -52,7 +52,7 @@ import java.awt.*;
  * 1.00, 25.02.2000
  *  - Library of patterns for all rules.
  *  - Descriptions of patterns.
- *  - Possibility to define own rules in all reason families.
+ *  - Possibility to define own rules in all rule families.
  *  - Possibility to define any board size.
  *  - New rules family - 1D binary, with 38 rules.
  *  - New rules family - Larger than Life, with 6 rules.
@@ -122,7 +122,7 @@ public class MJCell extends Applet {
 			if (sFamily != null)
 				mjcUI.sInitGame = sFamily;
 
-			// reason
+			// rule
 			String sRule = getParameter("Rule");
 			if (sRule != null)
 				mjcUI.sInitRule = sRule;

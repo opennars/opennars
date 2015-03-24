@@ -293,7 +293,7 @@ public abstract class AbstractMap<K, V> implements Map<K, V> {
     /**
      * Each of these fields are initialized to contain an instance of the
      * appropriate view the first time this view is requested.  The views are
-     * stateless, so there's no reason to create more than one of each.
+     * stateless, so there's no rule to create more than one of each.
      */
     transient volatile Set<K> keySet = null;
     transient volatile Collection<V> values = null;

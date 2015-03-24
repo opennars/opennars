@@ -42,7 +42,7 @@ import ca.nengo.util.Probe;
  * However NEFEnsemble makes some assumptions that can be relaxed by using DecodableEnsemble instead:
  * <ol><li>It assumes that its Nodes can run in the SimulationMode CONSTANT_RATE</li>
  * <li>It assumes that activity arises from cosine-tuning to preferred input vectors (all Nodes must be
- * NEFNodes for this reason).</li></ol>
+ * NEFNodes for this rule).</li></ol>
  * </p>
  *
  * @author Bryan Tripp

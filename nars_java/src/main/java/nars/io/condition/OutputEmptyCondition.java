@@ -4,8 +4,8 @@
  */
 package nars.io.condition;
 
-import nars.core.Events;
-import nars.core.NAR;
+import nars.Events;
+import nars.NAR;
 
 import java.util.LinkedList;
 import java.util.List;

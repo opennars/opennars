@@ -1,9 +1,9 @@
 package nars.rover;
 
 import nars.event.Reaction;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
 import nars.gui.NARSwing;
 
 /**

@@ -3,7 +3,7 @@ package nars.guifx;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import nars.core.NAR;
+import nars.NAR;
 
 /** displays a tree representation of NARS components, including:
  *          Tasks

@@ -3,9 +3,9 @@ package nars.gui.output;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.NARControls;
-import nars.logic.entity.Task;
+import nars.nal.entity.Task;
 
 import javax.swing.*;
 import java.awt.*;

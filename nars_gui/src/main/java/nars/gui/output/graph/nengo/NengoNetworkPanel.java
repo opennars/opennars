@@ -5,8 +5,8 @@ import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 
 import javax.swing.*;
 import java.awt.*;

@@ -6,14 +6,14 @@ import automenta.vivisect.swing.ReflectPanel;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import nars.build.Default;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.NAR;
+import nars.Global;
 import nars.event.AbstractReaction;
 import nars.io.Texts;
 import nars.io.nlp.Twokenize;
-import nars.logic.entity.Term;
-import nars.operator.io.Say;
+import nars.nal.entity.Term;
+import nars.operate.io.Say;
 
 import java.io.*;
 import java.net.Socket;
@@ -40,7 +40,7 @@ public class IRCBot {
     }
 
     public static void main(String[] args) throws Exception {
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
 
 
         Default d = new Default();
@@ -193,7 +193,7 @@ public class IRCBot {
                 //Term tt = Inheritance.make(wordTerm, Term.get(pattern));
                 //char punc = '.';
 
-                //Term tt = Operation.make(nar.memory.operator("^say"), new Term[] {wordTerm});
+                //Term tt = Operation.make(nar.memory.operate("^say"), new Term[] {wordTerm});
                 //char punc = '!';
 
                 //nar.input(new Sentence(tt, punc, new TruthValue(1.0f, 0.9f), new Stamp(nar.memory, Tense.Present)));

@@ -8,7 +8,7 @@ import automenta.vivisect.graph.AnimatingGraphVis;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.PCanvas;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.WrapLayout;
 
 import javax.swing.*;

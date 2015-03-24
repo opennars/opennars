@@ -1,8 +1,8 @@
 package nars.analyze.meter;
 
-import nars.core.AbstractPlugin;
-import nars.core.Events;
-import nars.core.NAR;
+import nars.operate.AbstractOperator;
+import nars.Events;
+import nars.NAR;
 import nars.io.meter.Metrics;
 import nars.io.meter.event.HitMeter;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
 * Created by me on 2/10/15.
 */
-public class CountOutputEvents extends AbstractPlugin {
+public class CountOutputEvents extends AbstractOperator {
 
 //        public static final DoubleMeter numIn = new DoubleMeter("IN");
 //        public static final DoubleMeter numOut = new DoubleMeter("OUT");

@@ -89,7 +89,7 @@ public class NoiseFactory {
 	}
 
 	/**
-	 * Note: there are no public setters here for the same reason as in NoiseImplPDF.
+	 * Note: there are no public setters here for the same rule as in NoiseImplPDF.
 	 *
 	 * @author Bryan Tripp
 	 *

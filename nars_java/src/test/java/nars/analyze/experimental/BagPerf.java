@@ -18,15 +18,15 @@
 package nars.analyze.experimental;
 
 import com.google.common.collect.Lists;
-import nars.build.Default;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Item;
-import nars.util.bag.Bag;
-import nars.util.bag.impl.CurveBag;
-import nars.util.bag.impl.LevelBag;
+import nars.prototype.Default;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
+import nars.energy.Budget;
+import nars.nal.entity.Item;
+import nars.energy.Bag;
+import nars.energy.bag.CurveBag;
+import nars.energy.bag.LevelBag;
 import nars.util.data.sorted.ArraySortedIndex;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
@@ -102,16 +102,16 @@ public class BagPerf {
         public String key;
     
         public NullItem() {
-            this(Memory.randomNumber.nextFloat() * (1.0f - Parameters.TRUTH_EPSILON));
+            this(Memory.randomNumber.nextFloat() * (1.0f - Global.TRUTH_EPSILON));
         }
 
         public NullItem(float priority, String key) {
-            super(new BudgetValue(priority, priority, priority));
+            super(new Budget(priority, priority, priority));
             this.key = key;
         }
 
         public NullItem(float priority) {
-            super(new BudgetValue(priority, priority, priority));
+            super(new Budget(priority, priority, priority));
             this.key = "" + (itemID++);
         }
 

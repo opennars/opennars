@@ -1,18 +1,16 @@
 package nars;
 
-import nars.build.Default;
-import nars.core.Events.CycleEnd;
-import nars.core.Events.OUT;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events.CycleEnd;
+import nars.Events.OUT;
 import nars.event.Reaction;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal4.Product;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal4.Product;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -199,7 +197,7 @@ public class BooleanChallenge {
     }
 
     public static void main(String[] args) {
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
         NAR n = new NAR(new Default().setInternalExperience(null));
         //NAR n = new NAR(new Discretinuous());
         //new NARPrologMirror(n, 0.9f, true, true, false);
@@ -253,7 +251,7 @@ public class BooleanChallenge {
 
     void inputAxioms() {
 
-        nar.believe("<{or,xor,and} --> operator>", inputConf);
+        nar.believe("<{or,xor,and} --> operate>", inputConf);
 
         String a = "<{";
         for (int i = 1; i < (1 << bits); i++)

@@ -77,7 +77,7 @@ public class MJPatternsList extends Dialog implements ActionListener {
 	}
 
 	// ----------------------------------------------------------------
-	// Fill the list with patterns only from the current reason
+	// Fill the list with patterns only from the current rule
 	public void InitList() {
 		int i, iGame;
 		sRuleName = mjUI.cmbRules.getSelectedItem();

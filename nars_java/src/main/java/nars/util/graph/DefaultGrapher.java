@@ -2,8 +2,8 @@ package nars.util.graph;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import nars.logic.Terms;
-import nars.logic.entity.*;
+import nars.nal.Terms;
+import nars.nal.entity.*;
 import nars.util.data.CuckooMap;
 
 import java.util.ArrayList;
@@ -175,8 +175,8 @@ public class DefaultGrapher implements NARGraph.Grapher {
 //            for (final Term a : terms.keySet()) {
 //                if (a instanceof CompoundTerm) {
 //                    CompoundTerm c = (CompoundTerm) a;
-//                    addVertex(g,c.operator());
-//                    addEdge(g,c.operator(), c, new NARGraph.TermType());
+//                    addVertex(g,c.operate());
+//                    addEdge(g,c.operate(), c, new NARGraph.TermType());
 //                    if (includeSyntax - 1 > 0) {
 //                        recurseTermComponents(g, c, includeSyntax - 1);
 //                    }

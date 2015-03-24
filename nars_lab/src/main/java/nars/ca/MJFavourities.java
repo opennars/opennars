@@ -43,7 +43,7 @@ public class MJFavourities extends Dialog implements ActionListener {
 	}
 
 	// ----------------------------------------------------------------
-	// Fill the list with patterns from the current reason
+	// Fill the list with patterns from the current rule
 	public void InitList() {
 		MJTools mjT;
 		Vector vLines;

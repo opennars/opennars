@@ -5,11 +5,12 @@
 package nars.control.experimental;
 
 import javolution.context.ConcurrentContext;
-import nars.core.Memory;
-import nars.core.Parameters;
-import nars.logic.Terms.Termable;
-import nars.logic.entity.*;
-import nars.logic.reason.DirectProcess;
+import nars.Memory;
+import nars.Global;
+import nars.energy.Budget;
+import nars.nal.Terms.Termable;
+import nars.nal.entity.*;
+import nars.nal.rule.DirectProcess;
 
 import java.util.*;
 
@@ -86,12 +87,12 @@ public class AntCore extends ConceptWaveCore {
 
         if (run.isEmpty()) return;
 
-        if (Parameters.THREADS == 1) {
+        if (Global.THREADS == 1) {
             for (Runnable r : run) r.run();
         }
         else {
             final ConcurrentContext ctx = ConcurrentContext.enter();
-            ctx.setConcurrency(Parameters.THREADS);
+            ctx.setConcurrency(Global.THREADS);
             try {
                 for (Runnable r : run) ctx.execute(r);
             } finally {
@@ -104,7 +105,7 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
         Concept c = super.conceptualize(budget, term, createIfMissing);
         /*if (c!=null) {
             immediate.add(c);
@@ -114,7 +115,7 @@ public class AntCore extends ConceptWaveCore {
 
     public boolean ensureAntsOccupyUniqueConcepts() {
         int numConcepts = occupied.size();
-        int uniqueOccupants = Parameters.newHashSet(occupied.values()).size();
+        int uniqueOccupants = Global.newHashSet(occupied.values()).size();
         boolean fair = numConcepts == uniqueOccupants;
         if (!fair) {
             System.err.println("occupied concepts = " + numConcepts + ", unique registered ants = " + uniqueOccupants + ", total ants = " + ants.size());
@@ -367,7 +368,7 @@ public class AntCore extends ConceptWaveCore {
                 link = viaLink;
                 Termable target = viaLink.getTarget();
                 viaLink = null;
-                if (goNextConcept(target, new BudgetValue(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
+                if (goNextConcept(target, new Budget(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
                     return;
 
                 onLink(link, eta, queue);
@@ -381,7 +382,7 @@ public class AntCore extends ConceptWaveCore {
             return (float)(speed * conceptVisitDelivery);
         }                
         
-        protected synchronized Concept goNextConcept(Termable x, BudgetValue delivery) {
+        protected synchronized Concept goNextConcept(Termable x, Budget delivery) {
 
             Term ct = x.getTerm();
             if (concept!=null)

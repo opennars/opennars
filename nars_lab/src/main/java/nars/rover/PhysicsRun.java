@@ -25,7 +25,7 @@
  */
 package nars.rover;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.rover.jbox2d.PhysicsController;
 import nars.rover.jbox2d.PhysicsController.MouseBehavior;
 import nars.rover.jbox2d.PhysicsController.UpdateBehavior;

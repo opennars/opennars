@@ -1,7 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.output.SwingLogText.LogLine;
 
 import javax.swing.*;

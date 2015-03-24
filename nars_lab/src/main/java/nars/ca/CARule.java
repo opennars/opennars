@@ -1,7 +1,7 @@
 package nars.ca;// Mirek's Java Cellebration
 // http://www.mirekw.com
 //
-// The single reason class
+// The single rule class
 
 public class CARule {
 	String name;

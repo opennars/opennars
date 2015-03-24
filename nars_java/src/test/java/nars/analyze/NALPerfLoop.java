@@ -1,10 +1,10 @@
 package nars.analyze;
 
-import nars.build.Default;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.NAR;
+import nars.Global;
 import nars.io.ExampleFileInput;
-import nars.logic.NALTest;
+import nars.nal.NALTest;
 
 import java.util.Collection;
 
@@ -23,8 +23,8 @@ public class NALPerfLoop {
         int maxConcepts = 1024;
         int extraCycles = 2048;
         int randomExtraCycles = 512;
-        Parameters.THREADS = 1;
-        Parameters.EXIT_ON_EXCEPTION = false;
+        Global.THREADS = 1;
+        Global.EXIT_ON_EXCEPTION = false;
           
         NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
@@ -41,7 +41,7 @@ public class NALPerfLoop {
             for (Object o : c) {
                 Object x = o;
                 String examplePath = (x instanceof Object[]) ? (String)(((Object[])x)[1]) : (String)x;
-                Parameters.DEBUG = false;
+                Global.DEBUG = false;
 
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,false);

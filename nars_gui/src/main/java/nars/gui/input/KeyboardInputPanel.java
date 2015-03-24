@@ -5,7 +5,7 @@
 package nars.gui.input;
 
 import automenta.vivisect.swing.NPanel;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.Texts;
 
 import javax.swing.*;

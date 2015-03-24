@@ -1,10 +1,11 @@
 package nars.util.graph;
 
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.logic.Terms.Termable;
-import nars.logic.entity.*;
-import nars.logic.entity.BudgetValue.Budgetable;
+import nars.NAR;
+import nars.Global;
+import nars.energy.Budget;
+import nars.nal.Terms.Termable;
+import nars.nal.entity.*;
+import nars.energy.Budget.Budgetable;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
@@ -21,7 +22,7 @@ import java.util.Set;
 public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
 
     public <X> Set<X> vertices(Class<? extends X> type) {
-        Set<X> s = Parameters.newHashSet(vertexSet().size());
+        Set<X> s = Global.newHashSet(vertexSet().size());
         for (Object o : vertexSet()) {
             if (type.isInstance(o))
                 s.add((X)o);
@@ -200,7 +201,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public BudgetValue getBudget() {
+        public Budget getBudget() {
             return this.getObject().getBudget();
         }
 
@@ -228,7 +229,7 @@ public class NARGraph<V,E> extends DirectedMultigraph<V,E> {
         }
 
         @Override
-        public BudgetValue getBudget() {
+        public Budget getBudget() {
             return this.getObject().getBudget();
         }
 

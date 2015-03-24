@@ -177,7 +177,7 @@
                         <param>nars.event.**</param>
                         <param>nars.io.**</param>
                         <param>nars.logic.**</param>
-                        <param>nars.operator.**</param>
+                        <param>nars.operate**</param>
                         <param>nars.util.**</param>
                     </targetClasses>
                     <targetTests>

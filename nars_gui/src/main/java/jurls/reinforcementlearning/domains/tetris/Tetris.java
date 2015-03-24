@@ -129,7 +129,7 @@ public class Tetris implements RLDomain {
 //        theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, boardSize));
 //        //Now the binary features to tell what piece is falling
 //        theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, numPieces));
-//        //Now the actual board size in the observation. The reason this was here is/was because
+//        //Now the actual board size in the observation. The rule this was here is/was because
 //        //there was no way to add meta-data to the task spec before.
 //        //First height
 //        theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getHeight(), gameState.getHeight()));

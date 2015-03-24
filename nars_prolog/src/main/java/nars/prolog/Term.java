@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import nars.logic.entity.AbstractTerm;
+import nars.nal.entity.AbstractTerm;
 import nars.prolog.util.OneWayList;
 
 import java.io.Serializable;
@@ -266,9 +266,9 @@ public abstract class Term implements AbstractTerm, Serializable {
 
     /**
      * Static service to create a Term from a string, providing an
-     * external operator manager.
+     * external operate manager.
      * @param st the string representation of the term
-     * @param op the operator manager used to build the term
+     * @param op the operate manager used to build the term
      * @return the term represented by the string
      * @throws InvalidTermException if the string does not represent a valid term
      */
@@ -290,7 +290,7 @@ public abstract class Term implements AbstractTerm, Serializable {
     
     /**
      * Gets the string representation of this term
-     * as an X argument of an operator, considering the associative property.
+     * as an X argument of an operate, considering the associative property.
      */
     String toStringAsArgX(OperatorManager op,int prio) {
         return toStringAsArg(op,prio,true);
@@ -298,7 +298,7 @@ public abstract class Term implements AbstractTerm, Serializable {
     
     /**
      * Gets the string representation of this term
-     * as an Y argument of an operator, considering the associative property.
+     * as an Y argument of an operate, considering the associative property.
      */
     String toStringAsArgY(OperatorManager op,int prio) {
         return toStringAsArg(op,prio,false);
@@ -306,7 +306,7 @@ public abstract class Term implements AbstractTerm, Serializable {
     
     /**
      * Gets the string representation of this term
-     * as an argument of an operator, considering the associative property.
+     * as an argument of an operate, considering the associative property.
      *
      *  If the boolean argument is true, then the term must be considered
      *  as X arg, otherwise as Y arg (referring to prolog associative rules)

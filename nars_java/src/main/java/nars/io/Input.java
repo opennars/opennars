@@ -19,7 +19,7 @@
 
 package nars.io;
 
-import nars.logic.entity.Task;
+import nars.nal.entity.Task;
 import reactor.function.Supplier;
 
 import java.util.ArrayDeque;

@@ -6,7 +6,7 @@
 
 package nars.web;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.TextOutput;
 import nars.io.TextOutput.LineOutput;
 

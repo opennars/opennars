@@ -1,6 +1,6 @@
 package nars;
 
-import nars.logic.entity.Term;
+import nars.nal.entity.Term;
 import nars.prolog.InvalidLibraryException;
 import nars.prolog.Prolog;
 import nars.prolog.lib.BasicLibrary;

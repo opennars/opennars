@@ -1,13 +1,13 @@
 package nars.rover;
 
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.build.Default;
+import nars.Memory;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.io.ChangedTextInput;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.NullOperator;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.NullOperator;
 import org.jbox2d.common.MathUtils;
 
 import java.util.List;

@@ -36,7 +36,7 @@ public class RuleLgtL {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the reason string
+	// Parse the rule string
 	// Example: "R3,C0,M1,S34..58,B34..45,NM"
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -115,7 +115,7 @@ public class RuleLgtL {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the reason string
+	// Create the rule string
 	// Example: "R3,C0,M1,S34..58,B34..45,NM"
 	public String GetAsString() {
 		String sBff;
@@ -200,7 +200,7 @@ public class RuleLgtL {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the reason
+	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

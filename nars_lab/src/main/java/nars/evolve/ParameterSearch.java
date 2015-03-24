@@ -1,7 +1,7 @@
 package nars.evolve;
 
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 import org.encog.ml.data.MLDataPair;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class ParameterSearch {
         int additionalCycles = 0;
         int maxCyclesPerTest = 500;
         
-/*[emotion.happy0, task.derived1, task.executed.priority.mean2, cycle.cpu_time.mean3, emotion.busy4, reason.ded_2nd_layer_variable_unification5, concept.priority.mean6, cycle.frequency.hz7, reason.ded_2nd_layer_variable_unification_terms8, task.judgment.process9, concept.count10, concept.questions.mean11, task.add_new.priority.mean12, task.immediate_processed13, io.to_memory.ratio14, reason.fire.tasklink.priority.mean15, task.add_new16, reason.tasktermlinks17, reason.contraposition18, concept.new19, reason.fire.tasklinks20, concept.new.complexity.mean21, reason.analogy22, task.derived.priority.mean23, task.question.process24, cycle.frequency_potential.mean.hz25, task.link_to26, task.executed27, concept.beliefs.mean28, task.goal.process29, reason.tasktermlink.priority.mean30, cycle.ram_use.delta_Kb.sampled31, reason.ded_conjunction_by_question32, memory.noveltasks.total33, reason.belief_revision34, id35, time36, absTime37, successes38, error39]
+/*[emotion.happy0, task.derived1, task.executed.priority.mean2, cycle.cpu_time.mean3, emotion.busy4, rule.ded_2nd_layer_variable_unification5, concept.priority.mean6, cycle.frequency.hz7, rule.ded_2nd_layer_variable_unification_terms8, task.judgment.process9, concept.count10, concept.questions.mean11, task.add_new.priority.mean12, task.immediate_processed13, io.to_memory.ratio14, rule.fire.tasklink.priority.mean15, task.add_new16, rule.tasktermlinks17, rule.contraposition18, concept.new19, rule.fire.tasklinks20, concept.new.complexity.mean21, rule.analogy22, task.derived.priority.mean23, task.question.process24, cycle.frequency_potential.mean.hz25, task.link_to26, task.executed27, concept.beliefs.mean28, task.goal.process29, rule.tasktermlink.priority.mean30, cycle.ram_use.delta_Kb.sampled31, rule.ded_conjunction_by_question32, memory.noveltasks.total33, rule.belief_revision34, id35, time36, absTime37, successes38, error39]
 */
         //int[] ins = new int[] { 1, 8, 9, 22, 10, 15 };
         int[] ins = new int[] { 38, 35 };

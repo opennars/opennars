@@ -6,9 +6,9 @@ package nars.tictactoe;
 
 import automenta.vivisect.swing.NPanel;
 import nars.event.Reaction;
-import nars.core.Events.FrameEnd;
-import nars.core.NAR;
-import nars.logic.entity.Concept;
+import nars.Events.FrameEnd;
+import nars.NAR;
+import nars.nal.entity.Concept;
 
 import javax.swing.*;
 import java.awt.*;

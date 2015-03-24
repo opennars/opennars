@@ -4,16 +4,16 @@
  */
 package nars.control.experimental;
 
-import nars.core.Core;
-import nars.core.Memory;
-import nars.core.Memory.MemoryAware;
-import nars.logic.BudgetFunctions;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.ConceptBuilder;
-import nars.logic.entity.Term;
-import nars.util.bag.impl.experimental.DelayBag;
-import nars.util.bag.impl.experimental.FairDelayBag;
+import nars.Core;
+import nars.Memory;
+import nars.Memory.MemoryAware;
+import nars.nal.BudgetFunctions;
+import nars.energy.Budget;
+import nars.nal.entity.Concept;
+import nars.nal.entity.ConceptBuilder;
+import nars.nal.entity.Term;
+import nars.energy.bag.experimental.DelayBag;
+import nars.energy.bag.experimental.FairDelayBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,7 +65,7 @@ abstract public class ConceptWaveCore implements Core {
     }
 
     @Override
-    public Concept conceptualize(BudgetValue budget, Term term, boolean createIfMissing) {
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
         Concept c = concept(term);
         if (c!=null) {
             //existing
@@ -82,7 +82,7 @@ abstract public class ConceptWaveCore implements Core {
     }
 
     @Override
-    public void activate(Concept c, BudgetValue b, BudgetFunctions.Activating mode) {
+    public void activate(Concept c, Budget b, BudgetFunctions.Activating mode) {
         conceptualize(b, c.term, false);
     }
 

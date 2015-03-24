@@ -1,20 +1,20 @@
 package nars.nario;
 
 import nars.event.Reaction;
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.build.Default;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.logic.nal8.NullOperator;
-import nars.operator.app.plan.TemporalParticlePlanner;
+import nars.nal.nal8.NullOperator;
+import nars.operate.app.plan.TemporalParticlePlanner;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;

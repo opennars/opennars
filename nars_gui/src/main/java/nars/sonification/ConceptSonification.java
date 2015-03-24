@@ -5,11 +5,11 @@ import automenta.vivisect.Video;
 import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.granular.Granulize;
 import automenta.vivisect.audio.synth.SineWave;
-import nars.core.Events;
-import nars.core.NAR;
+import nars.Events;
+import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.logic.reason.ConceptProcess;
-import nars.logic.entity.Concept;
+import nars.nal.rule.ConceptProcess;
+import nars.nal.entity.Concept;
 
 import java.io.IOException;
 import java.nio.file.Files;

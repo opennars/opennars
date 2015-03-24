@@ -4,13 +4,11 @@
  */
 package nars;
 
-import nars.core.NAR;
-import nars.core.Parameters;
-import nars.build.Default;
+import nars.prototype.Default;
 import nars.io.ExampleFileInput;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
 import nars.io.NALPerformance;
 import org.junit.Test;
 
@@ -30,7 +28,7 @@ public class NARPrologMirrorTest {
     public void testMultistep() throws Exception {
         boolean prolog = true;
         //boolean showOutput = false;
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
 
         NAR nar = new NAR( new Default().setInternalExperience(null) );
 

@@ -1,11 +1,7 @@
 package nars.gui.output.audio;
 
 import automenta.vivisect.Audio;
-import automenta.vivisect.audio.SoundListener;
-import automenta.vivisect.audio.brainwave.BinauralTones;
-import automenta.vivisect.audio.granular.Granulize;
-import automenta.vivisect.audio.sample.SampleLoader;
-import nars.core.NAR;
+import nars.NAR;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;

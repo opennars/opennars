@@ -461,7 +461,7 @@ public class LanguageFormatter {
      * @param isNegMode is the expression negated?
      * @param words the expression as an ArrayList of tokens
      * @return the natural language paraphrase as a String, or null if the
-     * predicate was not a logical operator.
+     * predicate was not a logical operate.
      */
     private static String paraphraseLogicalOperator(String stmt,
             boolean isNegMode,
@@ -720,7 +720,7 @@ public class LanguageFormatter {
     /**
      * ***************************************************************
      * Create a natural language paraphrase of a logical statement, where the
-     * predicate is not a logical operator. Use a printf-like format string to
+     * predicate is not a logical operate. Use a printf-like format string to
      * generate the paraphrase.
      *
      * @param stmt the statement to format

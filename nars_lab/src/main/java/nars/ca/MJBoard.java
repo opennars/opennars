@@ -23,8 +23,8 @@ class MJBoard extends Panel implements Runnable {
 	public int RefreshStep = 1; // refresh every 1 cycle
 	public int CrrGame; // current rules family, LIFE, GENE, etc.
 	public int GameType = MJRules.GAMTYP_2D; // 1D or 2D
-	public String RuleName; // current reason name
-	public String RuleDef; // current reason definition
+	public String RuleName; // current rule name
+	public String RuleDef; // current rule definition
 	public int Cycle; // cycle number
 	public int StatesCount = 2; // count of states, 0..n
 	public int Population; // count of alive cells
@@ -890,7 +890,7 @@ class MJBoard extends Panel implements Runnable {
 	}
 
 	// ----------------------------------------------------------------
-	// Interprete and apply the reason definition
+	// Interprete and apply the rule definition
 	public void SetRule(int iGame, String sRuleNam, String sRuleDef) {
 		sRuleDef = sRuleDef.trim();
 		if (sRuleDef.length() == 0)
@@ -1000,8 +1000,8 @@ class MJBoard extends Panel implements Runnable {
 			SetStatesCount(RUser.iClo);
 			break;
 		}
-		RuleName = sRuleNam; // store current reason name
-		RuleDef = sRuleDef; // store current reason definition
+		RuleName = sRuleNam; // store current rule name
+		RuleDef = sRuleDef; // store current rule definition
 		mjUI.UpdateColorsUI();
 	} // SetRule()
 

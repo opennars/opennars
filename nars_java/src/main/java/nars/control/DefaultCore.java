@@ -1,11 +1,11 @@
 package nars.control;
 
-import nars.core.Parameters;
-import nars.logic.entity.*;
-import nars.logic.reason.ConceptProcess;
-import nars.logic.reason.DirectProcess;
-import nars.util.bag.Bag;
-import nars.util.bag.impl.CacheBag;
+import nars.Global;
+import nars.nal.entity.*;
+import nars.nal.rule.ConceptProcess;
+import nars.nal.rule.DirectProcess;
+import nars.energy.Bag;
+import nars.energy.bag.CacheBag;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultCore extends UniCore {
+public class DefaultCore extends SequentialCore {
 
     /**
      * New tasks with novel composed terms, for delayed and selective processing
@@ -39,7 +39,7 @@ public class DefaultCore extends UniCore {
             ((CoreAware) novelTasks).setCore(this);
         }
 
-        this.newTasks = (Parameters.THREADS > 1)
+        this.newTasks = (Global.THREADS > 1)
                 ? new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
 
 
@@ -100,7 +100,7 @@ public class DefaultCore extends UniCore {
 
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,
-                Parameters.CONCEPT_FORGETTING_ACCURACY,
+                Global.CONCEPT_FORGETTING_ACCURACY,
                 memory);
 
         memory.runNextTasks();
@@ -146,7 +146,7 @@ public class DefaultCore extends UniCore {
             //if (s.isJudgment() || s.isGoal()) {
 
             final double exp = s.truth.getExpectation();
-            if (exp > Parameters.DEFAULT_CREATION_EXPECTATION) {
+            if (exp > Global.DEFAULT_CREATION_EXPECTATION) {
 
                 // new concept formation
                 Task overflow = novelTasks.put(task);

@@ -1499,7 +1499,7 @@ public class KB {
      * @param fname A String denoting the pathname of the target file.
      * @return A long value indicating the number of bytes in the file after the
      * formula has been written. A value of 0L means that the file does not
-     * exist, and so could not be written for some reason. A value of -1
+     * exist, and so could not be written for some rule. A value of -1
      * probably means that some error occurred.
      */
     private long writeUserAssertion(String formula, String fname) throws IOException {
@@ -2889,7 +2889,7 @@ public class KB {
 //     *
 //     * @param obj Presumably, a String.
 //     *
-//     * @return true if obj is a SUO-KIF commutative logical operator,
+//     * @return true if obj is a SUO-KIF commutative logical operate,
 //     * else false.
 //     *
 //     */

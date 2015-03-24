@@ -1,7 +1,7 @@
 package nars.io.condition;
 
-import nars.core.Events;
-import nars.core.NAR;
+import nars.Events;
+import nars.NAR;
 import nars.io.Output;
 
 /**

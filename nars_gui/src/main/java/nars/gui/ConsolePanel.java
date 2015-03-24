@@ -1,6 +1,6 @@
 package nars.gui;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.LogPanel;
 import nars.gui.output.SwingLogPanel;

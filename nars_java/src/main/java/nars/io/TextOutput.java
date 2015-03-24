@@ -21,14 +21,14 @@
  */
 package nars.io;
 
-import nars.core.Events;
-import nars.core.Events.Answer;
-import nars.core.NAR;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.entity.TruthValue;
-import nars.operator.io.Echo;
+import nars.Events;
+import nars.Events.Answer;
+import nars.NAR;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
+import nars.nal.entity.TruthValue;
+import nars.operate.io.Echo;
 
 import java.io.*;
 import java.util.Arrays;

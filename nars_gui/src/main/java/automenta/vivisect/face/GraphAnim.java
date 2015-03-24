@@ -851,7 +851,7 @@ package automenta.vivisect.face;
 //    }
 //
 //    public boolean handleEvent(Event e) {
-//	// for some reason, a standard Button click generates this code
+//	// for some rule, a standard Button click generates this code
 //	if(e.id == 1001) {
 //	    if(e.target == loadBut || e.target == loadList) {
 //		int num = loadList.getSelectedIndex();

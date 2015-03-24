@@ -2,12 +2,12 @@ package nars.util.graph.experimental;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.logic.NALOperator;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Term;
-import nars.logic.entity.TermLink;
+import nars.Memory;
+import nars.NAR;
+import nars.nal.NALOperator;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Term;
+import nars.nal.entity.TermLink;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.util.ArrayUnenforcedSet;

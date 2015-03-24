@@ -2,8 +2,8 @@ package nars.guifx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 import nars.gui.NARSwing;
 
 import java.util.HashMap;

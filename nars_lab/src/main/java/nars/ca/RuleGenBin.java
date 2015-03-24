@@ -29,7 +29,7 @@ public class RuleGenBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Expand the compressed reason string to a string like 0011101001000
+	// Expand the compressed rule string to a string like 0011101001000
 	private String ExpandIt(String sStr) {
 		int i, j, iNum;
 		String sRetString = "";
@@ -59,7 +59,7 @@ public class RuleGenBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the reason string
+	// Parse the rule string
 	// Example: "C0,NN,S3babbabbabba3b,B7ab3aba3b"
 	public void InitFromString(String sStr) {
 		int i, iTmp;
@@ -155,7 +155,7 @@ public class RuleGenBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the General binary reason string
+	// Create the General binary rule string
 	// Example: C0,NN,S3babbabbabba3b,B7ab3aba3b
 	public String GetAsString() {
 		String sBff, sTmp;
@@ -207,7 +207,7 @@ public class RuleGenBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Check the validity of the Neumann binary reason parameters, correct
+	// Check the validity of the Neumann binary rule parameters, correct
 	// them if necessary.
 	public void Validate() {
 		if (iClo < 2)
@@ -220,7 +220,7 @@ public class RuleGenBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the reason
+	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		int modCnt = 0;

@@ -1,8 +1,8 @@
 package nars.util.data.sorted;
 
 import com.google.common.collect.Lists;
-import nars.core.Parameters;
-import nars.logic.entity.Item;
+import nars.Global;
+import nars.nal.entity.Item;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,13 +21,13 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
     
     public static <E> List<E> bestList(int capacity) {
         return capacity < 50 ?
-                Parameters.newArrayList() :
-                Parameters.newArrayList(); // : new FastSortedTable();
+                Global.newArrayList() :
+                Global.newArrayList(); // : new FastSortedTable();
     }
 
     public ArraySortedIndex(int capacity) {
         this(capacity, 
-                Parameters.THREADS == 1 ? bestList(capacity) :
+                Global.THREADS == 1 ? bestList(capacity) :
                         Collections.synchronizedList(bestList(capacity))
         );
     }

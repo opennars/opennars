@@ -121,7 +121,7 @@ public abstract class UITarget<T extends NTarget> extends Widget<T> implements I
 
                 T target = node();
                 if (!target.applies(source.node().get())) {
-                    getNodeParent().showPopupMessage("Invalid connection"); //TODO show reason
+                    getNodeParent().showPopupMessage("Invalid connection"); //TODO show rule
                     successful = false;
                 }
                 else {

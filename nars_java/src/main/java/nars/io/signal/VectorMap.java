@@ -1,6 +1,6 @@
 package nars.io.signal;
 
-import nars.core.NAR;
+import nars.NAR;
 
 /**
  *

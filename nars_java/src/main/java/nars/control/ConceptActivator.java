@@ -1,22 +1,22 @@
 package nars.control;
 
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.Parameters;
-import nars.logic.BudgetFunctions;
-import nars.logic.entity.BudgetValue;
-import nars.logic.entity.Concept;
-import nars.logic.entity.ConceptBuilder;
-import nars.logic.entity.Term;
-import nars.util.bag.impl.CacheBag;
-import nars.util.bag.select.BagActivator;
+import nars.Events;
+import nars.Memory;
+import nars.Global;
+import nars.nal.BudgetFunctions;
+import nars.energy.Budget;
+import nars.nal.entity.Concept;
+import nars.nal.entity.ConceptBuilder;
+import nars.nal.entity.Term;
+import nars.energy.bag.CacheBag;
+import nars.energy.tx.BagActivator;
 
 /**
 * Created by me on 3/15/15.
 */
 abstract public class ConceptActivator extends BagActivator<Term,Concept> {
 
-    final float relativeThreshold = Parameters.FORGET_QUALITY_RELATIVE;
+    final float relativeThreshold = Global.FORGET_QUALITY_RELATIVE;
 
     private boolean createIfMissing;
     private long now;
@@ -33,7 +33,7 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         getMemory().forget(c, cyclesSinceLastForgotten, relativeThreshold);
 
         if (budget!=null) {
-            BudgetValue cb = c.budget;
+            Budget cb = c.budget;
 
             final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
             BudgetFunctions.activate(cb, getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
@@ -42,7 +42,7 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         return c;
     }
 
-    public ConceptActivator set(Term t, BudgetValue b, boolean createIfMissing, long now) {
+    public ConceptActivator set(Term t, Budget b, boolean createIfMissing, long now) {
         setKey(t);
         setBudget(b);
         this.createIfMissing = createIfMissing;

@@ -77,7 +77,7 @@ public class ToHeap {
             for (int i = 0; i < args.size(); i++) {
                 heap.add(args.get(i)); 						// Add the arguments in consecutive order
             }
-            if (argrefs.isEmpty()) // Returned to reason level
+            if (argrefs.isEmpty()) // Returned to rule level
             {
                 heap.add(WAM.newCell(WAM.STR, index)); 		// So store the start of the action in the heap itself 
             } else // Otherwise store the STR cell in the parent's arguments
@@ -152,20 +152,20 @@ public class ToHeap {
     }
 
     /**
-     * Announce the start of a reason. Will clear the heap, variable
+     * Announce the start of a rule. Will clear the heap, variable
      * administration and argument references.
      */
     public void startRule() {
-        heap.clear(); 												// Make room for the next reason
+        heap.clear(); 												// Make room for the next rule
         var_ids.clear();
         var_ids.put("_", 0); 										// Reserve anonymous variable
         argrefs.clear();											// Clear the argument references
     }
 
     /**
-     * Announce the end of a reason. Will add the reason to the reason base. If the
-     * reason has a body, then it will look on the stack like
-     * ":-(head,bodypt1,...,bodyptn)". The functor under which the reason will
+     * Announce the end of a rule. Will add the rule to the rule base. If the
+     * rule has a body, then it will look on the stack like
+     * ":-(head,bodypt1,...,bodyptn)". The functor under which the rule will
      * then be stored is the functor of the head (first argument).
      */
     public void finishRule() {
@@ -176,7 +176,7 @@ public class ToHeap {
             int functor_address = WAM.cell_value(functor_cell);		// So get that address
             functor_cell = heap.get(functor_address); 			// Go to PN cell
             functor_int = WAM.cell_value(functor_cell);				// Grab the real functor integer
-            if (strings.get(functor_int).startsWith(":-/")) { 	// If it was a body reason
+            if (strings.get(functor_int).startsWith(":-/")) { 	// If it was a body rule
                 functor_cell = heap.get(functor_address + 1); 	// Go to the head and get its functor number
                 if (WAM.cell_tag(functor_cell) == WAM.CON) // Again mind the CON or STR situation
                 {
@@ -186,21 +186,21 @@ public class ToHeap {
                 }
             }
         }
-        rules.addHeap(functor_int, Arrays.copyOf(heap.data, heap.size()), false); // Finally add the heap to the reason base
+        rules.addHeap(functor_int, Arrays.copyOf(heap.data, heap.size()), false); // Finally add the heap to the rule base
     }
 
     /**
-     * Announce the end of a query. Will store the heap in the reason database
+     * Announce the end of a query. Will store the heap in the rule database
      * (overwrites the last query).
      */
     public void startQuery() {
         rules.getQueryVars().clear();								 // Make space for variables
         isQuery = true;
-        startRule(); 												 // Also start a new reason
+        startRule(); 												 // Also start a new rule
     }
 
     /**
-     * Announce the end of a query. Will store the heap in the reason database
+     * Announce the end of a query. Will store the heap in the rule database
      * (overwrites the last query).
      */
     public void finishQuery() {

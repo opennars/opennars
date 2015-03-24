@@ -2,16 +2,16 @@ package nars.io.condition;
 
 import com.google.gson.*;
 import com.google.gson.annotations.Expose;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Events;
+import nars.NAR;
+import nars.Global;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.entity.TruthValue;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal7.Tense;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.entity.TruthValue;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal7.Tense;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -86,7 +86,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         if (t.sentence.truth!=null) {
             float f = t.sentence.truth.getFrequency();
             float c = t.sentence.truth.getConfidence();
-            float e = Parameters.TESTS_TRUTH_ERROR_TOLERANCE/2f; //error tolerance epsilon
+            float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/2f; //error tolerance epsilon
             this.freqMin = f - e;
             this.freqMax = f + e;
             this.confMin = c - e;
@@ -204,7 +204,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public void event(Class channel, Object... args) {
         if (!succeeded && (channel == Events.TaskRemove.class)) {
             Task task = (Task)args[0];
-            //String reason = (String)args[1];
+            //String rule = (String)args[1];
 
             if (matches(task)) {
                 removals.addLast(task);

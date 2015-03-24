@@ -6,7 +6,7 @@
 package nars.io;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.condition.OutputCondition;
 
 import java.io.PrintStream;

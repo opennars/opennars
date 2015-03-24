@@ -35,7 +35,7 @@ public class Rule1DTotal {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the reason string
+	// Parse the rule string
 	// Example: "R6,C25,M1,S1,S4,S7,S8,B0,B3,B5"
 	public void InitFromString(String sStr) {
 		StringTokenizer st;
@@ -93,7 +93,7 @@ public class Rule1DTotal {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the reason string
+	// Create the rule string
 	// Example: "R6,C25,M1,S1,S4,S7,S8,B0,B3,B5"
 	public String GetAsString() {
 		String sBff;
@@ -148,7 +148,7 @@ public class Rule1DTotal {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the reason
+	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][], MJBoard mjb) {
 		short bOldVal, bNewVal;

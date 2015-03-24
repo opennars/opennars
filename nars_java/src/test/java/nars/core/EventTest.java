@@ -5,6 +5,7 @@
  */
 package nars.core;
 
+import nars.Events;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import org.junit.Test;

@@ -2,10 +2,10 @@ package nars.gui.output;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.ReflectPanel;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.NAR.PluggedIn;
-import nars.core.Plugin;
+import nars.Events;
+import nars.NAR;
+import nars.NAR.PluggedIn;
+import nars.operate.IOperator;
 import nars.event.AbstractReaction;
 import nars.util.data.PackageUtility;
 
@@ -64,9 +64,9 @@ public class PluginPanel extends VerticalPanel {
                     return o1.getSimpleName().compareTo(o2.getSimpleName());
                 }                
             });
-            plugins.addAll(PackageUtility.getClasses("nars.operator", false));
+            plugins.addAll(PackageUtility.getClasses("nars.operate", false));
             for (Class c : plugins) {
-                if (!Plugin.class.isAssignableFrom(c))
+                if (!IOperator.class.isAssignableFrom(c))
                     continue;
                 
                 String[] p = c.getPackage().getName().split("\\.");
@@ -97,7 +97,7 @@ public class PluginPanel extends VerticalPanel {
             super(new BorderLayout());
             
             this.plugin = p;
-            final JLabel j = new JLabel(p.plugin.name().toString());
+            final JLabel j = new JLabel(p.IOperator.name().toString());
             j.setFont(Video.monofont);            
             add(j, BorderLayout.NORTH);
             
@@ -132,7 +132,7 @@ public class PluginPanel extends VerticalPanel {
             buttons.add(removeButton);            
             
             
-            add(new ReflectPanel(p.plugin), BorderLayout.CENTER);
+            add(new ReflectPanel(p.IOperator), BorderLayout.CENTER);
         }    
         
     }
@@ -184,7 +184,7 @@ public class PluginPanel extends VerticalPanel {
     
     protected void addPlugin(Class c) {
         try {
-            Plugin p = (Plugin)c.newInstance();
+            IOperator p = (IOperator)c.newInstance();
             nar.on(p);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.toString());

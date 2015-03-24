@@ -1,6 +1,6 @@
 package nars.analyze;
 
-import nars.core.NewNAR;
+import nars.ProtoNAR;
 import org.junit.Ignore;
 
 import java.io.FileNotFoundException;
@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 @Ignore
 public class NALysisDefault extends NALysis {
 
-    public NALysisDefault(NewNAR b) {        super(b);    }
+    public NALysisDefault(ProtoNAR b) {        super(b);    }
 
     public static void main(String[] args) throws FileNotFoundException {
 

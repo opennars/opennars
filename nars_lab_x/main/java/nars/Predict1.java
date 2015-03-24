@@ -15,12 +15,12 @@ import nars.core.Events;
 import nars.core.Events.FrameStart;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.build.Default;
+import nars.prototype.Default;
 import nars.io.ChangedTextInput;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Task;
-import nars.logic.language.Inheritance;
-import nars.logic.language.Term;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Task;
+import nars.nal.language.Inheritance;
+import nars.nal.language.Term;
 import nars.util.TreeMLData;
 
 import java.awt.*;

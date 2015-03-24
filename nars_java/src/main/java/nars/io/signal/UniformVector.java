@@ -1,7 +1,7 @@
 package nars.io.signal;
 
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.NAR;
+import nars.Global;
 
 import java.util.Arrays;
 
@@ -16,7 +16,7 @@ public class UniformVector  {
     public final double[] data;
     private final String prefix;
     private final NAR nar;
-    private float priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
+    private float priority = Global.DEFAULT_JUDGMENT_PRIORITY;
 
     public UniformVector(NAR n, String prefix, double[] data) {
         this.nar = n;
@@ -60,7 +60,7 @@ public class UniformVector  {
     }
 
     public boolean different(final double a, final double b) {
-        return Math.abs(a - b) >= Parameters.TRUTH_EPSILON;
+        return Math.abs(a - b) >= Global.TRUTH_EPSILON;
     }
     
     public UniformVector setPriority(float p) {

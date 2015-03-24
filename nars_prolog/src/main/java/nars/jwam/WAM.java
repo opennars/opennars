@@ -67,7 +67,7 @@ public class WAM {
 // Can compile Prolog to heaps or WAM instructions
     private Compiler compiler = null;												
     
-    // Can edit the reason base
+    // Can edit the rule base
     private RuleHeap rules = null;			
     
     /** execute without time limit */
@@ -754,7 +754,7 @@ public class WAM {
     ///////////////////////////////
     //// Choice instructions allow the execution process to try out alternative rules for a predicate if they are present. These 
     //// instructions place and manipulate choice points which protect environments. A choice point stores the computational state of 
-    //// the WAM right before a reason was tried.
+    //// the WAM right before a rule was tried.
     // The try_me_else instruction is for initiating a choice point. Assumes that the next instruction is part of the first alternative.
     private void try_me_else(int arg) {
         int l = (arg & 1) > 0 ? -(arg >>> 1) : (arg >>> 1);						// Get the pointer modifier (first bit declares negative number)
@@ -777,7 +777,7 @@ public class WAM {
     }
 
     // Used by try instructions to create choice points. Stores the computational state of the WAM prior to choosing an alternative
-    // for a reason. Variation differ in the next instruction if the alternative is backtracked and in the next instruction after the try.
+    // for a rule. Variation differ in the next instruction if the alternative is backtracked and in the next instruction after the try.
     public void meta_try(int stored_p, int delta_p) {
         int newB = e > b ? e + instruction_arg(areas.get(cca)[cp - 2]) + 3 : // Reclaim stack space of unused permanent variables
                 b + storage[b] + 10; 										// Or if a choice point is at the top, then start after it 
@@ -940,10 +940,10 @@ public class WAM {
     ////////////////////////////
     ///// CUT INSTRUCTIONS /////
     ////////////////////////////
-    //// Prolog allows for cuts. A cut removes the choice points between the latest point when the reason with the cut is tried and the
-    //// latest point when the cut is reached as a subgoal of the reason.
+    //// Prolog allows for cuts. A cut removes the choice points between the latest point when the rule with the cut is tried and the
+    //// latest point when the cut is reached as a subgoal of the rule.
     // A neck cut: a:-!... can be executed immediately. If there is a call/execute then b0 is set to b. So if b is bigger then b0 then
-    // for the reason that contains the neck cut we have a choice point which now can be omitted (because try/retry/trust edit b).
+    // for the rule that contains the neck cut we have a choice point which now can be omitted (because try/retry/trust edit b).
     private void neck_cut() {
         if (b > b0) { 												// There is a choice point to delete
             b = b0;													// Remove the choice point (i.e. allow it to be overwritten)

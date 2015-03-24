@@ -4,7 +4,10 @@
  */
 package nars.core;
 
-import nars.build.Default;
+import nars.NAR;
+import nars.Param;
+import nars.ProtoNAR;
+import nars.prototype.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -40,7 +43,7 @@ public class TestParamJSON {
     @Test 
     public void testReserializeGenome() {
         
-        NewNAR p = new Default();
+        ProtoNAR p = new Default();
 
         String j = p.toString();
         

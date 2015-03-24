@@ -1,19 +1,20 @@
 package nars.io.narsese;
 
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
+import nars.energy.Budget;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.logic.NALOperator;
-import nars.logic.entity.*;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal3.SetInt;
-import nars.logic.nal7.Interval;
-import nars.logic.nal7.Tense;
-import nars.logic.nal8.Operation;
-import nars.logic.nal8.Operator;
+import nars.nal.NALOperator;
+import nars.nal.entity.*;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal7.Interval;
+import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,10 +22,10 @@ import java.util.Arrays;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.io.Symbols.*;
-import static nars.logic.BudgetFunctions.truthToQuality;
-import static nars.logic.NALOperator.*;
-import static nars.logic.Variables.containVar;
-import static nars.logic.nal8.Operation.make;
+import static nars.nal.BudgetFunctions.truthToQuality;
+import static nars.nal.NALOperator.*;
+import static nars.nal.Variables.containVar;
+import static nars.nal.nal8.Operation.make;
 
 /**
  * Utility methods for working and reacting to Narsese input.
@@ -163,7 +164,7 @@ public class Narsese {
         Sentence sentence = parseSentence(buffer, newStamp);
         if (sentence == null) return null;
 
-        BudgetValue budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
+        Budget budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
         Task task = new Task(sentence, budget);
         return task;
 
@@ -268,7 +269,7 @@ public class Narsese {
             return null;
         }
         float frequency = 1.0f;
-        float confidence = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
+        float confidence = Global.DEFAULT_JUDGMENT_CONFIDENCE;
         if (s != null) {
             int i = s.indexOf(VALUE_SEPARATOR);
             if (i < 0) {
@@ -291,24 +292,24 @@ public class Narsese {
      * @throws nars.io.StringParser.InvalidInputException If the String cannot
      * be parsed into a BudgetValue
      */
-    private static BudgetValue parseBudget(String s, char punctuation, TruthValue truth) throws InvalidInputException {
+    private static Budget parseBudget(String s, char punctuation, TruthValue truth) throws InvalidInputException {
         float priority, durability;
         switch (punctuation) {
             case JUDGMENT:
-                priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
-                durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
+                priority = Global.DEFAULT_JUDGMENT_PRIORITY;
+                durability = Global.DEFAULT_JUDGMENT_DURABILITY;
                 break;
             case QUESTION:
-                priority = Parameters.DEFAULT_QUESTION_PRIORITY;
-                durability = Parameters.DEFAULT_QUESTION_DURABILITY;
+                priority = Global.DEFAULT_QUESTION_PRIORITY;
+                durability = Global.DEFAULT_QUESTION_DURABILITY;
                 break;
             case GOAL:
-                priority = Parameters.DEFAULT_GOAL_PRIORITY;
-                durability = Parameters.DEFAULT_GOAL_DURABILITY;
+                priority = Global.DEFAULT_GOAL_PRIORITY;
+                durability = Global.DEFAULT_GOAL_DURABILITY;
                 break;
             case QUEST:
-                priority = Parameters.DEFAULT_QUEST_PRIORITY;
-                durability = Parameters.DEFAULT_QUEST_DURABILITY;
+                priority = Global.DEFAULT_QUEST_PRIORITY;
+                durability = Global.DEFAULT_QUEST_DURABILITY;
                 break;                
             default:
                 throw new InvalidInputException("unknown punctuation: '" + punctuation + "'");
@@ -326,7 +327,7 @@ public class Narsese {
             }
         }
         float quality = (truth == null) ? 1 : truthToQuality(truth);
-        return new BudgetValue(priority, durability, quality);
+        return new Budget(priority, durability, quality);
     }
 
     /**
@@ -399,7 +400,7 @@ public class Narsese {
                     }
             }
         }
-        else if (Parameters.FUNCTIONAL_OPERATIONAL_FORMAT) {
+        else if (Global.FUNCTIONAL_OPERATIONAL_FORMAT) {
             
             //parse functional operation:
             //  function()
@@ -417,7 +418,7 @@ public class Narsese {
                 
                 if (operator == null) {
                     //???
-                    throw new InvalidInputException("Unknown operator: " + operatorString);
+                    throw new InvalidInputException("Unknown operate: " + operatorString);
                 }
                 
                 String argString = s.substring(pOpen+1, pClose+1);               
@@ -538,7 +539,7 @@ public class Narsese {
         Operator oRegistered = memory.operator(op);
         
         if ((oRegistered==null) && (oNative == null)) {
-            throw new InvalidInputException("Unknown operator: " + op);
+            throw new InvalidInputException("Unknown operate: " + op);
         }
 
         ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)

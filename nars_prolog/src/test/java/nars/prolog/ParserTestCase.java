@@ -19,7 +19,7 @@ public class ParserTestCase extends TestCase {
 		Parser p = new Parser("n(+100).\n");
         // SICStus Prolog interprets "n(+100)" as "n(100)"
 		// GNU Prolog interprets "n(+100)" as "n(+(100))"
-		// The ISO Standard says + is not a unary operator
+		// The ISO Standard says + is not a unary operate
 		try {
 			assertNotNull(p.nextTerm(true));
 			fail();

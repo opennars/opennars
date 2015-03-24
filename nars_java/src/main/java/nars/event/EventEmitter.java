@@ -1,8 +1,8 @@
 
 package nars.event;
 
-import nars.core.Events;
-import nars.core.Parameters;
+import nars.Events;
+import nars.Global;
 import reactor.core.Environment;
 import reactor.core.Reactor;
 import reactor.core.spec.Reactors;
@@ -28,7 +28,7 @@ public class EventEmitter<E>  {
     public EventEmitter(Reactor r) {
         this.r = r;
 
-        if (Parameters.DEBUG_TRACE_EVENTS) {
+        if (Global.DEBUG_TRACE_EVENTS) {
             /*
             System.out.println(r);
             System.out.println(r.getDispatcher());
@@ -137,7 +137,7 @@ public class EventEmitter<E>  {
                     obs.event(channel, (Object[]) o);
                 }
                 catch (Throwable t) {
-                    if (Parameters.DEBUG) {
+                    if (Global.DEBUG) {
                         t.printStackTrace();
                     }
                     emit(Events.ERR.class, t);

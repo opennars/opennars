@@ -1,17 +1,17 @@
 package nars.io.test;
 
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.NewNAR;
-import nars.core.Parameters;
+import nars.Events;
+import nars.NAR;
+import nars.ProtoNAR;
+import nars.Global;
 import nars.event.AbstractReaction;
 import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
 import nars.io.condition.TaskCondition;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Task;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal7.Tense;
+import nars.nal.entity.Task;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal7.Tense;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class TestNAR extends NAR {
     private boolean exitOnAllSuccess = true;
 
 
-    public TestNAR(NewNAR b) {
+    public TestNAR(ProtoNAR b) {
         super(b);
 
         if (exitOnAllSuccess) {
@@ -87,7 +87,7 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
-        float h = (freqMin!=-1) ? Parameters.TRUTH_EPSILON/2f : 0;
+        float h = (freqMin!=-1) ? Global.TRUTH_EPSILON/2f : 0;
 
         TaskCondition tc = new TaskCondition(this, c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         if (ocRelative!= Stamp.ETERNAL) {

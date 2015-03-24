@@ -272,7 +272,7 @@ public class Parser implements ParserConstants {
         toHeap.finishStructure(nameToPL);
     }
 
-// Get the used operator.
+// Get the used operate.
     final public Token Operator() throws ParseException {
         Token t;
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
@@ -409,7 +409,7 @@ public class Parser implements ParserConstants {
         throw new Error("Missing return statement in function");
     }
 
-// Possible body parts of a reason.
+// Possible body parts of a rule.
     final public void Bodypart() throws ParseException {
         if (jj_2_4(2147483647)) {
             Infix();
@@ -471,7 +471,7 @@ public class Parser implements ParserConstants {
         }
     }
 
-// An infix operator is stored as a prefix predicate. E.g. "1 + 2" = "+(1,2)". Uses left hand preference:
+// An infix operate is stored as a prefix predicate. E.g. "1 + 2" = "+(1,2)". Uses left hand preference:
 // "1 + 2 + 3" = "+(1,+(2,3))".
     final public void Infix() throws ParseException {
         Token name;
@@ -672,7 +672,7 @@ public class Parser implements ParserConstants {
         toHeap.addVar(name.image);
     }
 
-// A reason. These are stored on the heap as :-(head,bodypt1,bodypt2...) if there is a body involved.
+// A rule. These are stored on the heap as :-(head,bodypt1,bodypt2...) if there is a body involved.
     final public void Rule() throws ParseException {
         toHeap.startRule();
         if (jj_2_8(2147483647)) {

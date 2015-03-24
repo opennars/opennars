@@ -43,7 +43,7 @@ public class NARServer extends PathHandler {
 //        }
 //
 //        @Override
-//        public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+//        public void onClose(WebSocket conn, int code, String rule, boolean remote) {
 //            if (WEBSOCKET_DEBUG) System.out.println(conn + " disconnected");
 //
 //            NARConnection n = socketSession.get(conn);

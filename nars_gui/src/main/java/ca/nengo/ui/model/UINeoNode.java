@@ -59,7 +59,7 @@ import ca.nengo.ui.model.widget.*;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
 import ca.nengo.util.VisiblyChanges.Event;
-import nars.core.Parameters;
+import nars.Global;
 
 import javax.swing.*;
 import java.awt.geom.Point2D;
@@ -321,11 +321,11 @@ public abstract class UINeoNode<N extends Node> extends UINeoModel<N> implements
 		super.modelUpdated();
 
 		NSource[] modelSources = node().getSources();
-		Set<NSource> modelSourceSet = Parameters.newHashSet(modelSources.length);
+		Set<NSource> modelSourceSet = Global.newHashSet(modelSources.length);
         Collections.addAll(modelSourceSet, modelSources);
 
 		NTarget[] modelTargets = node().getTargets();
-		Set<NTarget> modelTargetSet = Parameters.newHashSet(modelTargets.length);
+		Set<NTarget> modelTargetSet = Global.newHashSet(modelTargets.length);
         Collections.addAll(modelTargetSet, modelTargets);
 
 		for (WorldObject wo : getChildren()) {

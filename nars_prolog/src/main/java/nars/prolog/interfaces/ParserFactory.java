@@ -9,14 +9,14 @@ import java.util.HashMap;
 public class ParserFactory {
 	
 	/**
-     * Creating a parser with default operator interpretation
+     * Creating a parser with default operate interpretation
      */
 	public static IParser createParser(String theory) {
 		return new Parser(theory);
 	}
 	
 	/**
-     * creating a parser with default operator interpretation
+     * creating a parser with default operate interpretation
      */
     public static IParser createParser(String theory, HashMap<Term, Integer> mapping) {
     	return new Parser(theory, mapping);

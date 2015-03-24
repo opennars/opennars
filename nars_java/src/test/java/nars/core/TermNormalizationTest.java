@@ -1,9 +1,10 @@
 package nars.core;
 
-import nars.build.Default;
-import nars.logic.entity.Compound;
-import nars.logic.entity.Task;
-import nars.logic.entity.Variable;
+import nars.NAR;
+import nars.prototype.Default;
+import nars.nal.entity.Compound;
+import nars.nal.entity.Task;
+import nars.nal.entity.Variable;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

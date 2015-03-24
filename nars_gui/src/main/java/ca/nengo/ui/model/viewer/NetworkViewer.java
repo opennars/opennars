@@ -46,7 +46,7 @@ import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.widget.*;
 import ca.nengo.util.Probe;
-import nars.core.Parameters;
+import nars.Global;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
@@ -190,7 +190,7 @@ public class NetworkViewer extends GroupViewer<Network,UINetwork> implements Nod
         HashSet<Projection> projectionsToAdd = new HashSet<Projection>();
         Collections.addAll(projectionsToAdd, getModel().getProjections());
 
-        Map<NTarget, Projection> projectionMap = Parameters.newHashMap(projections.length);
+        Map<NTarget, Projection> projectionMap = Global.newHashMap(projections.length);
 
         for (final Projection projection : projectionsToAdd) {
             Projection existing = projectionMap.put(projection.getTarget(), projection);

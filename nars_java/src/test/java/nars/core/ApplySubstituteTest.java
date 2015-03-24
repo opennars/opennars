@@ -1,9 +1,10 @@
 package nars.core;
 
-import nars.build.Default;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.Compound;
-import nars.logic.entity.Term;
+import nars.nal.entity.Compound;
+import nars.nal.entity.Term;
 import org.junit.Test;
 
 import java.util.HashMap;

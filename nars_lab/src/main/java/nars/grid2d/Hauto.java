@@ -1,6 +1,6 @@
 package nars.grid2d;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;

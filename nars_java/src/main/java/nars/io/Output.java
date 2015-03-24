@@ -1,14 +1,14 @@
 package nars.io;
 
-import nars.core.Events;
-import nars.core.Events.Answer;
-import nars.core.Memory;
-import nars.core.NAR;
+import nars.Events;
+import nars.Events.Answer;
+import nars.Memory;
+import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.event.EventEmitter;
-import nars.logic.nal8.ImmediateOperation;
-import nars.operator.io.Echo;
-import nars.operator.io.Say;
+import nars.nal.nal8.ImmediateOperation;
+import nars.operate.io.Echo;
+import nars.operate.io.Say;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels

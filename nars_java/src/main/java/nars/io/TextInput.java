@@ -21,10 +21,10 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import nars.core.Events;
-import nars.core.Parameters;
-import nars.logic.entity.Task;
-import nars.operator.io.Echo;
+import nars.Events;
+import nars.Global;
+import nars.nal.entity.Task;
+import nars.operate.io.Echo;
 
 import java.io.*;
 import java.net.URL;
@@ -108,7 +108,7 @@ public class TextInput extends Input.BufferedInput {
                         input.close();
                     } catch (IOException ex1) { }
                 }
-                if (Parameters.DEBUG) {
+                if (Global.DEBUG) {
                     e.printStackTrace();
                 }
                 return Iterators.singletonIterator( new Echo(Events.IN.class, e.toString()).newTask() );

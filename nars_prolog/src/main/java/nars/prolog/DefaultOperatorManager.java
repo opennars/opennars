@@ -18,7 +18,7 @@
 package nars.prolog;
 
 /**
- *  This class defines an operator manager with
+ *  This class defines an operate manager with
  *  some standard operators defined
  *
  */

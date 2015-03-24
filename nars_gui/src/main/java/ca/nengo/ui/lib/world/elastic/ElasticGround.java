@@ -12,7 +12,7 @@ import edu.uci.ics.jung.graph.impl.SparseGraph;
 import edu.uci.ics.jung.graph.impl.UndirectedSparseEdge;
 import edu.uci.ics.jung.utils.UserData;
 import edu.uci.ics.jung.visualization.Layout;
-import nars.core.Parameters;
+import nars.Global;
 import org.piccolo2d.PNode;
 import org.piccolo2d.util.PBounds;
 
@@ -31,11 +31,11 @@ import java.util.*;
 
 	private ElasticLayoutRunner elasticLayoutThread;
 
-	private final Map<PXEdge, AbstractSparseEdge> myEdgeMap = Parameters.newHashMap();
+	private final Map<PXEdge, AbstractSparseEdge> myEdgeMap = Global.newHashMap();
 
 	private SparseGraph myGraph;
 
-	private final Map<ElasticObject, ElasticVertex> myVertexMap = Parameters.newHashMap();
+	private final Map<ElasticObject, ElasticVertex> myVertexMap = Global.newHashMap();
 
 	public ElasticGround() {
 		super();

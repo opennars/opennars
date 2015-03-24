@@ -1,11 +1,11 @@
 package nars.event;
 
 
-import nars.core.Events;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.logic.entity.Concept;
-import nars.logic.reason.ConceptProcess;
+import nars.Events;
+import nars.Memory;
+import nars.NAR;
+import nars.nal.entity.Concept;
+import nars.nal.rule.ConceptProcess;
 
 import java.util.function.Consumer;
 

@@ -4,14 +4,13 @@
  */
 package nars.rover;
 
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
-import nars.logic.entity.Concept;
+import nars.nal.entity.Concept;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
 import nars.rover.jbox2d.j2d.DrawPhy2D.LayerDraw;
-import org.apache.commons.math3.util.FastMath;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;

@@ -26,7 +26,7 @@ public class RuleNeumBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Parse the reason string
+	// Parse the rule string
 	public void InitFromString(String sStr) {
 		int iPos = 0;
 		int iStt;
@@ -67,7 +67,7 @@ public class RuleNeumBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Create the Neumann binary reason string
+	// Create the Neumann binary rule string
 	// Example: '30010202100...'
 	public String GetAsString() {
 		String sBff;
@@ -89,7 +89,7 @@ public class RuleNeumBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Check the validity of the Neumann binary reason parameters, correct
+	// Check the validity of the Neumann binary rule parameters, correct
 	// them if necessary.
 	public void Validate() {
 		int i, iMax;
@@ -101,7 +101,7 @@ public class RuleNeumBin {
 	}
 
 	// ----------------------------------------------------------------
-	// Perform one pass of the reason
+	// Perform one pass of the rule
 	public int OnePass(int sizX, int sizY, boolean isWrap, int ColoringMethod,
 			short crrState[][], short tmpState[][]) {
 		short bOldVal, bNewVal;

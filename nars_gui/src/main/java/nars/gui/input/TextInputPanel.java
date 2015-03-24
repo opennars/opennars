@@ -23,10 +23,10 @@ package nars.gui.input;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NWindow;
-import nars.core.NAR;
+import nars.NAR;
 import nars.gui.FileTreeModel;
 import nars.gui.output.SwingText;
-import nars.core.Events.OUT;
+import nars.Events.OUT;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
@@ -177,7 +177,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             if (input.length() > 0) {
                 actionsCollected.add(clear);
                 //TODO concept search
-                //TODO operator search
+                //TODO operate search
                 
             }
             actionsCollected.add(library);

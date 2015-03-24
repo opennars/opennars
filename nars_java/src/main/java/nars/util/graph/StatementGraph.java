@@ -1,7 +1,7 @@
 package nars.util.graph;
 
-import nars.core.Memory;
-import nars.logic.entity.*;
+import nars.Memory;
+import nars.nal.entity.*;
 
 
 public abstract class StatementGraph extends SentenceGraph {

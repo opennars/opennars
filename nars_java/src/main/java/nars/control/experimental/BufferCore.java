@@ -80,7 +80,7 @@
 //        }
 //
 //        @Override
-//        public void reason() {
+//        public void rule() {
 //            Concept c = null;
 //            for (Task t : tasks) {
 //

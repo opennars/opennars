@@ -1,7 +1,6 @@
 package nars;
 
-import nars.core.NAR;
-import nars.build.Default;
+import nars.prototype.Default;
 import nars.io.TextOutput;
 import nars.prolog.*;
 import nars.prolog.event.*;
@@ -104,7 +103,7 @@ public class NARTuprolog extends NARProlog implements OutputListener, WarningLis
 
         NARTuprolog prolog = new NARTuprolog(nar);
         prolog.prolog.solve("revision([inheritance(bird, swimmer), [1, 0.8]], [inheritance(bird, swimmer), [0, 0.5]], R).");
-        prolog.prolog.solve("logic([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
+        prolog.prolog.solve("nal([inheritance(swan, bird), [0.9, 0.8]], [inheritance(bird, swan), T]).");
 
     }
 

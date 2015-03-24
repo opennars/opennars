@@ -141,7 +141,7 @@ public class DefaultFunctionInterpreter implements FunctionInterpreter {
 
 		StringTokenizer tok = new StringTokenizer(expression, myTokens, true);
 		Stack<Serializable> stack = new Stack<Serializable>();
-		List<Serializable> result = new ArrayList<Serializable>(100); //postfix operand & operator list
+		List<Serializable> result = new ArrayList<Serializable>(100); //postfix operand & operate list
 
 		boolean negativeUnary = true; //contextual flag to indicate that "-" should be treated as unary
 
@@ -236,8 +236,8 @@ public class DefaultFunctionInterpreter implements FunctionInterpreter {
 
 		/**
 		 * @param dimension Dimension of the space that the Function maps from
-		 * @param rightAssociative Evaluated from the right (eg exponent operator)
-		 * @param precedence A code indicating operator precedence relative to other operators
+		 * @param rightAssociative Evaluated from the right (eg exponent operate)
+		 * @param precedence A code indicating operate precedence relative to other operators
 		 */
 		public AbstractOperator(int dimension, boolean rightAssociative, int precedence) {
 			myDimension = dimension;
@@ -253,14 +253,14 @@ public class DefaultFunctionInterpreter implements FunctionInterpreter {
 		}
 
 		/**
-		 * @return True if right-associative (evaluated from the right; eg exponent operator)
+		 * @return True if right-associative (evaluated from the right; eg exponent operate)
 		 */
 		public boolean isRightAssociative() {
 			return myRightAssociative;
 		}
 
 		/**
-		 * @return A code indicating operator precedence relative to other operators
+		 * @return A code indicating operate precedence relative to other operators
 		 */
 		public int getPrecedence() {
 			return myPrecendence;

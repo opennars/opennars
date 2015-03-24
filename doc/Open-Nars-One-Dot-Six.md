@@ -13,9 +13,9 @@ Open-NARS 1.6.x is different from 1.5.x in the following major aspects:
 
 Beside [http://www.worldscientific.com/worldscibooks/10.1142/8665 Non-Axiomatic Logic: A Model of Intelligent Reasoning](GUIRequest])), temporal reasoning in NARS is also discussed in [Issues in Temporal and Causal Inference](http://www.cis.temple.edu/~pwang/Publication/temporal-causal.pdf). A previous implementation exists as version 1.3.3, with [working examples](https://code.google.com/p/open-nars/source/browse/trunk/nars-dist/Examples-1.3.3/Example-NAL7-abridged.txt).
 
-In package nars.logic.language, the following three classes representing compound terms will be given an optional temporal order among its components: *Implication*, *Equivalence*, and *Conjunction*. This order can be represented either as subclasses, or as an attribute that takes three possible values: -1 for backward, +1 for forward, and 0 for concurrent. The plain text forms of the term connectors are listed in [[Input Output Format]].
+In package nars.nal.language, the following three classes representing compound terms will be given an optional temporal order among its components: *Implication*, *Equivalence*, and *Conjunction*. This order can be represented either as subclasses, or as an attribute that takes three possible values: -1 for backward, +1 for forward, and 0 for concurrent. The plain text forms of the term connectors are listed in [[Input Output Format]].
 
-In class nars.logic.entity.Stamp, an occurrenceTime records the (observed, remembered or estimated) occurrence time of the event, together with its creation time. Different from the description in the book, the "tense" of a sentence is not stored with a sentence, but is only used at the interface. When a sentence is an input or output, the internal occurrenceTime will be translated to/from the external sense that is explicitly expressed in Narsese, as listed in [[Input Output Format]].
+In class nars.nal.entity.Stamp, an occurrenceTime records the (observed, remembered or estimated) occurrence time of the event, together with its creation time. Different from the description in the book, the "tense" of a sentence is not stored with a sentence, but is only used at the interface. When a sentence is an input or output, the internal occurrenceTime will be translated to/from the external sense that is explicitly expressed in Narsese, as listed in [[Input Output Format]].
 
 The class nars.io.StringParser will be modified to support this temporal version of Narsese, as specified in the Grammar Rules of NAL-7 (Table 11.1) in the book, as well as implemented as [[Input Output Format]].
 
@@ -44,7 +44,7 @@ The conclusion does not always has the same occurrenceTime as a premise. For ins
 
 Beside [http://www.worldscientific.com/worldscibooks/10.1142/8665 Non-Axiomatic Logic: A Model of Intelligent Reasoning](0,1].), procedural reasoning in NARS is also discussed in [Solving a Problem With or Without a Program](http://www.degruyter.com/view/j/jagi.2012.3.issue-3/v10229-011-0021-5/v10229-011-0021-5.xml?format=INT). A previous implementation exists as version 1.3.3, with [working examples in several files](https://code.google.com/p/open-nars/source/browse/trunk/nars-dist/Examples-1.3.3/), as well as descriptions in [[Procedural Inference]], [[Procedural Examples]], and [[Procedural Learning]].
 
-In nars.logic.entity.Sentence, add a "desire" value, which is truth-value interpreted differently. Furthermore, add "Goal" and "Query" as two types of Sentence, and process them like "Judgment" and "Question", but using desire-value, rather than truth-value.
+In nars.nal.entity.Sentence, add a "desire" value, which is truth-value interpreted differently. Furthermore, add "Goal" and "Query" as two types of Sentence, and process them like "Judgment" and "Question", but using desire-value, rather than truth-value.
 
 In all the inference rules, "Query/Goal" and "Judgment/Question" are processed in parallel. Most of the code for this already exist in 1.3.3, and only need to be revised.
 

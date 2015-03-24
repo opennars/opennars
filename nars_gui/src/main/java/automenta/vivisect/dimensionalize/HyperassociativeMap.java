@@ -15,7 +15,7 @@
 package automenta.vivisect.dimensionalize;
 
 import com.google.common.collect.Iterators;
-import nars.core.Parameters;
+import nars.Global;
 import nars.gui.output.graph.nengo.UIEdge;
 import nars.gui.output.graph.nengo.UIVertex;
 import nars.util.data.XORShiftRandom;
@@ -350,7 +350,7 @@ abstract public class HyperassociativeMap<N extends UIVertex, E extends UIEdge<N
     
     void getNeighbors(final N nodeToQuery, Map<N, Double> neighbors) {
         if (neighbors == null)
-            neighbors = Parameters.newHashMap(vertices.size());
+            neighbors = Global.newHashMap(vertices.size());
         else
             neighbors.clear();
         

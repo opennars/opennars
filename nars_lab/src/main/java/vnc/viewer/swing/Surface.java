@@ -24,7 +24,7 @@
 
 package vnc.viewer.swing;
 
-import nars.logic.entity.Concept;
+import nars.nal.entity.Concept;
 import vnc.OCR;
 import vnc.VNCControl;
 import vnc.core.SettingsChangedEvent;
@@ -74,7 +74,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
     @Override
 	public boolean isDoubleBuffered() {
-		// TODO returning false in some reason may speed ups drawing, but may
+		// TODO returning false in some rule may speed ups drawing, but may
 		// not. Needed in challenging.
 		return false;
 	}

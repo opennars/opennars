@@ -1,6 +1,6 @@
 package nars.rover;
 
-import nars.core.NAR;
+import nars.NAR;
 
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Future;

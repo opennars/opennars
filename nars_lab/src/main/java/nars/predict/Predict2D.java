@@ -1,15 +1,15 @@
 package nars.predict;
 
 import automenta.vivisect.swing.NWindow;
-import nars.build.Default;
-import nars.core.Events;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.Events;
+import nars.NAR;
+import nars.Global;
 import nars.event.AbstractReaction;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Sentence;
-import nars.logic.entity.Term;
-import nars.logic.nal1.Inheritance;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Sentence;
+import nars.nal.entity.Term;
+import nars.nal.nal1.Inheritance;
 
 import javax.swing.*;
 import java.awt.*;
@@ -278,7 +278,7 @@ public class Predict2D extends JPanel {
 
     public Predict2D() throws InterruptedException {
         super();
-        Parameters.IMMEDIATE_ETERNALIZATION = false;
+        Global.IMMEDIATE_ETERNALIZATION = false;
 
         NAR n = new NAR(new Default().setInternalExperience(null).simulationTime());
         n.param.shortTermMemoryHistory.set(5);
@@ -294,7 +294,7 @@ public class Predict2D extends JPanel {
 
         Point target, belief;
 
-        Parameters.DEBUG = true;
+        Global.DEBUG = true;
 
         DiscretizedInput ix = new DiscretizedInput(n, "x", levels, -1f, 1f);
         DiscretizedInput iy = new DiscretizedInput(n, "y", levels, -1f, 1f);

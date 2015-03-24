@@ -342,7 +342,7 @@ public class SocketUDPNode implements Node<Node>, Resettable {
 		//       a deadlock situation.
 		if (isSender() && (startTime + myUpdateInterval / 2.0) >= myNextUpdate) {
 			if (mySocket == null)
-				// If for some reason the socket hasn't been initialized, then initialize it.
+				// If for some rule the socket hasn't been initialized, then initialize it.
 				initialize();
 			if (myTerminations.isEmpty())
 				throw new SimulationException("SocketUDPNode is sender, but has no terminations to get data from.");

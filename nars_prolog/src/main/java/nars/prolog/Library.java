@@ -51,7 +51,7 @@ public abstract class Library implements Serializable, IPrimitives {
     protected Prolog engine;
     
     /**
-	 * operator mapping
+	 * operate mapping
 	 */
     private String[][] opMappingCached;
     

@@ -97,7 +97,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
 
     /*Castagna 06/2011*/
     /**
-     * creating a parser with default operator interpretation
+     * creating a parser with default operate interpretation
      */
     public Parser(String theoryText, HashMap<Term, Integer> mapping) {
         tokenizer = new Tokenizer(theoryText);
@@ -106,7 +106,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     /**/
 
     /**
-     * creating a parser with default operator interpretation
+     * creating a parser with default operate interpretation
      */
     public Parser(String theoryText) {
         tokenizer = new Tokenizer(theoryText);
@@ -116,7 +116,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
     /**
-     * creating a parser with default operator interpretation
+     * creating a parser with default operate interpretation
      */
     public Parser(InputStream theoryText) {
         tokenizer = new Tokenizer(new BufferedReader(new InputStreamReader(theoryText)));
@@ -180,7 +180,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
 
     /**
      * Static service to get a term from its string representation, providing a
-     * specific operator manager
+     * specific operate manager
      */
     public static Term parseSingleTerm(String st, OperatorManager op) throws InvalidTermException {
         try {
@@ -270,7 +270,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             int XFY = opManager.opPrio(operator.seq, "xfy");
             int XF = opManager.opPrio(operator.seq, "xf");
 
-			//check that no operator has a priority higher than permitted
+			//check that no operate has a priority higher than permitted
             //or a lower priority than the left side expression
             if (XFX > maxPriority || XFX < OperatorManager.OP_LOW) {
                 XFX = -1;
@@ -288,7 +288,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 IdentifiedTerm found = exprA(XFX - 1, commaIsEndMarker);
                 if (found != null) {
                     /*Castagna 06/2011*/
-					//Struct xfx = new Struct(operator.seq, left.result, found.result);
+					//Struct xfx = new Struct(operate.seq, left.result, found.result);
                     //left = new IdentifiedTerm(XFX, xfx);
                     left = identifyTerm(XFX, new Struct(operator.seq, left.result, found.result), tokenStart);
                     /**/
@@ -302,7 +302,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 IdentifiedTerm found = exprA(XFY, commaIsEndMarker);
                 if (found != null) {
                     /*Castagna 06/2011*/
-					//Struct xfy = new Struct(operator.seq, left.result, found.result);
+					//Struct xfy = new Struct(operate.seq, left.result, found.result);
                     //left = new IdentifiedTerm(XFY, xfy);
                     left = identifyTerm(XFY, new Struct(operator.seq, left.result, found.result), tokenStart);
                     /**/
@@ -311,7 +311,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             }
             //XF
             if (XF >= left.priority) //XF has priority, or XFX and/or XFY has failed
-            /*Castagna 06/2011*/ //return new IdentifiedTerm(XF, new Struct(operator.seq, left.result));
+            /*Castagna 06/2011*/ //return new IdentifiedTerm(XF, new Struct(operate.seq, left.result));
             {
                 return identifyTerm(XF, new Struct(operator.seq, left.result), tokenStart);
             }
@@ -322,7 +322,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 IdentifiedTerm found = exprA(XFX - 1, commaIsEndMarker);
                 if (found != null) {
                     /*Castagna 06/2011*/
-					//Struct xfx = new Struct(operator.seq, left.result, found.result);
+					//Struct xfx = new Struct(operate.seq, left.result, found.result);
                     //left = new IdentifiedTerm(XFX, xfx);
                     left = identifyTerm(XFX, new Struct(operator.seq, left.result, found.result), tokenStart);
                     /**/
@@ -345,7 +345,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * @param maxPriority operators with a higher priority than this will
      * effectivly end the expression
      * @return a wrapper of: 1. term correctly structured and 2. the priority of
-     * its root operator
+     * its root operate
      * @throws InvalidTermException
      */
     private IdentifiedTerm parseLeftSide(boolean commaIsEndMarker, int maxPriority) throws InvalidTermException, IOException {
@@ -365,7 +365,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 }
             }
 
-            //check that no operator has a priority higher than permitted
+            //check that no operate has a priority higher than permitted
             if (FY > maxPriority) {
                 FY = -1;
             }

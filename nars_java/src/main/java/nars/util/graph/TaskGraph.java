@@ -1,9 +1,9 @@
 package nars.util.graph;
 
-import nars.core.NAR;
-import nars.logic.MemoryObserver;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Task;
+import nars.NAR;
+import nars.nal.MemoryObserver;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Task;
 import nars.util.data.CuckooMap;
 import org.jgrapht.graph.DefaultEdge;
 

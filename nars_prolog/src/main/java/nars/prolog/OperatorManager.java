@@ -36,14 +36,14 @@ import java.util.*;
 	 */
     private OperatorRegister operatorList = new OperatorRegister();
     
-    /** lowest operator priority */
+    /** lowest operate priority */
     public static final int OP_LOW = 1;
     
-    /** highest operator priority */
+    /** highest operate priority */
     public static final int OP_HIGH = 1200;
     
     /**
-     * Creates a new operator. If the operator is already provided,
+     * Creates a new operate. If the operate is already provided,
      * it replaces it with the new one
      */
     public synchronized void opNew(String name,String type,int prio) {
@@ -53,7 +53,7 @@ import java.util.*;
     }
     
     /**
-     * Returns the priority of an operator (0 if the operator is not defined).
+     * Returns the priority of an operate (0 if the operate is not defined).
      */
     public synchronized int opPrio(CharSequence name,CharSequence type) {
         Operator o = operatorList.getOperator(name, type);
@@ -61,7 +61,7 @@ import java.util.*;
     }
     
     /**
-     * Returns the priority nearest (lower) to the priority of a defined operator
+     * Returns the priority nearest (lower) to the priority of a defined operate
      */
     public synchronized int opNext(int prio) {
         int n = 0;
@@ -95,7 +95,7 @@ import java.util.*;
 /**/    
     /**
      * Register for operators
-     * Cashes operator by name+type description.
+     * Cashes operate by name+type description.
      * Retains insertion order as LinkedHashSet.
      * <p/>
      * todo Not 100% sure if 'insertion-order-priority' should be completely replaced
@@ -106,7 +106,7 @@ import java.util.*;
     private static class OperatorRegister extends LinkedHashSet<Operator> /*Castagna 06/2011*/implements Cloneable/**/
     {
         //map of operators by name and type
-        //key is the nameType of an operator (for example ":-xfx") - value is an Operator
+        //key is the nameType of an operate (for example ":-xfx") - value is an Operator
         //private HashMap<CharSequence,Operator> nameTypeToKey = new HashMap<>();
         private HashBasedTable<CharSequence,CharSequence,Operator> nameTypeToKey = HashBasedTable.create();
         
@@ -114,7 +114,7 @@ import java.util.*;
             Operator existing = nameTypeToKey.put(op.name, op.type, op);
             if (existing != null)
                 super.remove(existing);       //removes found match from the main list
-            return super.add(op);               //adds new operator to the main list
+            return super.add(op);               //adds new operate to the main list
         }
         
         public final Operator getOperator(final CharSequence name, final CharSequence type) {         

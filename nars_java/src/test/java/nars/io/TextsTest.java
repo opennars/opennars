@@ -1,18 +1,18 @@
 package nars.io;
 
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
+import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.logic.entity.*;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal7.Tense;
+import nars.nal.entity.*;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal7.Tense;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;
 import nars.util.data.rope.impl.PrePostCharRope;
 import org.junit.Test;
 
 import static java.lang.String.valueOf;
-import static nars.logic.NALOperator.*;
+import static nars.nal.NALOperator.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +44,7 @@ public class TextsTest {
                 valueOf(STATEMENT_OPENER.ch),
                 toString(s.getSubject()),
                 valueOf(' '),
-                s.operator().toString(),
+                s.operate().toString(),
                 valueOf(' '),
                 toString(s.getPredicate()),
                 valueOf(STATEMENT_CLOSER.ch));

@@ -1,19 +1,20 @@
 package nars.io.narsese;
 
-import nars.build.Default;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.energy.Budget;
+import nars.prototype.Default;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.logic.NALOperator;
-import nars.logic.entity.*;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal1.Negation;
-import nars.logic.nal7.Interval;
-import nars.logic.nal7.Tense;
-import nars.logic.nal8.Operation;
+import nars.nal.NALOperator;
+import nars.nal.entity.*;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
+import nars.nal.nal7.Interval;
+import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import static nars.logic.NALOperator.*;
+import static nars.nal.NALOperator.*;
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
 /**
@@ -109,8 +110,8 @@ public class NarseseParser extends BaseParser<Object> {
         float[] b = budget.get();
         if (b!=null && ((b.length == 0) || (Float.isNaN(b[0]))))
             b = null;
-        BudgetValue B = (b == null) ? new BudgetValue(p, t) :
-                b.length == 1 ? new BudgetValue(b[0], p, t) : new BudgetValue(b[0], b[1], t);
+        Budget B = (b == null) ? new Budget(p, t) :
+                b.length == 1 ? new Budget(b[0], p, t) : new Budget(b[0], b[1], t);
 
         Term content = term.get();
 
@@ -258,8 +259,8 @@ public class NarseseParser extends BaseParser<Object> {
                         Copula(),
                         //VectorTerm(NALOperator.STATEMENT_OPENER, NALOperator.STATEMENT_CLOSER), //replace copula?
 
-                        //TODO move to FunctionalOperationTerm() reason
-                        //Functional form of an Operation, ex: operator(p1,p2)
+                        //TODO move to FunctionalOperationTerm() rule
+                        //Functional form of an Operation, ex: operate(p1,p2)
                         sequence(
                                 Atom(),
                                 push(NALOperator.OPERATION),
@@ -291,7 +292,7 @@ public class NarseseParser extends BaseParser<Object> {
 
     Rule InnerCompound() {
         //special handling to allow (-- x) , without the comma
-        //TODO move the (-- x) case to a separate reason to prevent suggesting invalid completions like (-- x y)
+        //TODO move the (-- x) case to a separate rule to prevent suggesting invalid completions like (-- x y)
         return firstOf(
                 CompoundOperator(),
                 push(NALOperator.PRODUCT) //DEFAULT
@@ -449,7 +450,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 
-    /** list of terms prefixed by a particular compound term operator */
+    /** list of terms prefixed by a particular compound term operate */
     Rule MultiArgTerm(NALOperator open, NALOperator close, Rule head) {
         return sequence(
 
@@ -478,8 +479,8 @@ public class NarseseParser extends BaseParser<Object> {
         return MultiArgTerm(null, null, InnerCompound() );
     }
 
-    /** two or more terms separated by a compound term operator.
-     * if > 2 terms, each instance of the infix'd operator must be equal,
+    /** two or more terms separated by a compound term operate.
+     * if > 2 terms, each instance of the infix'd operate must be equal,
      * ex: does not support different operators (a * b & c) */
     Rule InfixCompoundTerm() {
         return sequence(
@@ -509,7 +510,7 @@ public class NarseseParser extends BaseParser<Object> {
     /** produce a term from the terms (& <=1 NALOperator's) on the value stack */
     Term nextTermVector() {
 
-        List<Term> vectorterms = Parameters.newArrayList();
+        List<Term> vectorterms = Global.newArrayList();
 
         NALOperator op = null;
         boolean negated = false;
@@ -533,7 +534,7 @@ public class NarseseParser extends BaseParser<Object> {
             else if ((p instanceof NALOperator) && (p!=NALOperator.COMPOUND_TERM_OPENER) /* ignore the compound term opener */) {
 
                 //if ((op!=null) && (op!=(/*(NALOperator)*/p)))
-                  //  throw new InvalidInputException("CompoundTerm must use only one type of operator; " + p + " contradicts " + op + "; " + getContext().getValueStack() +  ":" + vectorterms);
+                  //  throw new InvalidInputException("CompoundTerm must use only one type of operate; " + p + " contradicts " + op + "; " + getContext().getValueStack() +  ":" + vectorterms);
                 NALOperator nextOp = (NALOperator)p;
                 if ((op!=null) && ((op!=nextOp) && nextOp!=NEGATION))
                     throw new InvalidInputException("Too many operators involved: " + getContext().getValueStack() +  ":" + vectorterms);

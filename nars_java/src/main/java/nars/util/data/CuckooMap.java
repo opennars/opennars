@@ -22,8 +22,8 @@ package nars.util.data;
 
 
 import com.google.common.collect.Sets;
-import nars.core.Memory;
-import nars.core.Parameters;
+import nars.Memory;
+import nars.Global;
 
 import java.util.*;
 
@@ -452,7 +452,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public Set<K> keySet() {
-        Set<K> s =Parameters.newHashSet(size());
+        Set<K> s = Global.newHashSet(size());
         for (K k : keyTable)
             if (k!=null) s.add(k);
         return s;

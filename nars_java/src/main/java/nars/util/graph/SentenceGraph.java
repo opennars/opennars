@@ -1,9 +1,9 @@
 package nars.util.graph;
 
-import nars.core.Events;
-import nars.core.Memory;
+import nars.Events;
+import nars.Memory;
 import nars.event.AbstractReaction;
-import nars.logic.entity.*;
+import nars.nal.entity.*;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
 

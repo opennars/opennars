@@ -411,7 +411,7 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
 //                        t.seq = "-" + t.seq;                   //add minus to value
 //                        return t;                             //return token
 //                    }
-//                }                                             //ps. the reason why the number isn't returned right away, but through nextToken(), is because the number might be for instance a float
+//                }                                             //ps. the rule why the number isn't returned right away, but through nextToken(), is because the number might be for instance a float
 //            } catch (NumberFormatException e) {
 //            }
             return new Token(symbols.toString(), Tokenizer.OPERATOR);

@@ -1,17 +1,17 @@
 package nars.rover;
 
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.build.Default;
+import nars.Memory;
+import nars.NAR;
+import nars.prototype.Default;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.Operation;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.Operation;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
-import nars.logic.nal8.NullOperator;
-import nars.operator.app.plan.TemporalParticlePlanner;
+import nars.nal.nal8.NullOperator;
+import nars.operate.app.plan.TemporalParticlePlanner;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;

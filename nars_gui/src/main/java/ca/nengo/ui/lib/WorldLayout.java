@@ -2,7 +2,7 @@ package ca.nengo.ui.lib;
 
 import ca.nengo.ui.lib.world.World;
 import ca.nengo.ui.lib.world.WorldObject;
-import nars.core.Parameters;
+import nars.Global;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -52,7 +52,7 @@ public class WorldLayout implements Serializable {
 
 
 
-		nodePositions = Parameters.newHashMap();
+		nodePositions = Global.newHashMap();
 
 		for (WorldObject object : world.getGround().getChildren()) {
 			addPosition(object, object.getOffset());

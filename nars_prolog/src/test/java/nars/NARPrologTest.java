@@ -1,7 +1,6 @@
 package nars;
 
-import nars.build.Default;
-import nars.core.NAR;
+import nars.prototype.Default;
 import nars.io.TextOutput;
 import org.junit.Test;
 

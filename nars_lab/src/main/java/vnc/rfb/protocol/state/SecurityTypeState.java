@@ -51,7 +51,7 @@ public class SecurityTypeState extends ProtocolState {
 			UnsupportedSecurityTypeException {
 		int secTypesNum = reader.readUInt8();
 		if (0 == secTypesNum)
-			// throw exception with reason
+			// throw exception with rule
 			throw new UnsupportedSecurityTypeException(reader.readString());
 		byte[] secTypes = reader.readBytes(secTypesNum);
         Logger.getLogger(getClass().getName()).info("Security Types received (" + secTypesNum + "): "

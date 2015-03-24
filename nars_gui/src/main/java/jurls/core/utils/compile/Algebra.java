@@ -23,8 +23,8 @@
 //
 ///**
 // * Represents an arithmetic expression in a binary tree structure. Each internal
-// * node represents an operator, and its subtrees represent operands. All
-// * operators are binary, so every operator has both a left and a right operand.
+// * node represents an operate, and its subtrees represent operands. All
+// * operators are binary, so every operate has both a left and a right operand.
 // * Leaf nodes represent either integers or variables.
 // *
 // * @see Node from:
@@ -90,7 +90,7 @@
 //            
 //            if (i == pieces.length) break;
 //            
-//            r.append(op + '('); //add the operator again but this time without the bracket
+//            r.append(op + '('); //add the operate again but this time without the bracket
 //            //find the matching ending bracket
 //            String p = pieces[i++];
 //            boolean closerFound = false;

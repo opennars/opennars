@@ -5,10 +5,10 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.icon.NodeIcon;
-import nars.logic.entity.Concept;
-import nars.logic.entity.Named;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
+import nars.nal.entity.Concept;
+import nars.nal.entity.Named;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

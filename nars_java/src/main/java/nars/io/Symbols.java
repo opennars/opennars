@@ -21,9 +21,9 @@
 package nars.io;
 
 
-import nars.core.Events;
-import nars.logic.NALOperator;
-import nars.logic.entity.Term;
+import nars.Events;
+import nars.nal.NALOperator;
+import nars.nal.entity.Term;
 
 import java.util.Collections;
 import java.util.HashMap;

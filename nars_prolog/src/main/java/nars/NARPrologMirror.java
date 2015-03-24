@@ -1,24 +1,21 @@
 package nars;
 
-import nars.core.Events;
-import nars.core.Events.*;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.Events.*;
 import nars.io.Texts;
-import nars.logic.entity.*;
-import nars.logic.entity.Term;
-import nars.logic.entity.stamp.Stamp;
-import nars.logic.nal1.Inheritance;
-import nars.logic.nal1.Negation;
-import nars.logic.nal2.Similarity;
-import nars.logic.nal3.SetExt;
-import nars.logic.nal3.SetInt;
-import nars.logic.nal3.SetTensional;
-import nars.logic.nal4.Product;
-import nars.logic.nal5.Equivalence;
-import nars.logic.nal5.Implication;
-import nars.logic.nal7.TemporalRules;
-import nars.logic.nal7.Tense;
+import nars.nal.entity.*;
+import nars.nal.entity.Term;
+import nars.nal.entity.stamp.Stamp;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
+import nars.nal.nal2.Similarity;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal3.SetTensional;
+import nars.nal.nal4.Product;
+import nars.nal.nal5.Equivalence;
+import nars.nal.nal5.Implication;
+import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Tense;
 import nars.prolog.*;
 
 import java.util.HashMap;
@@ -575,9 +572,9 @@ public class NARPrologMirror extends AbstractMirror {
 
     public Sentence getBeliefSentence(Sentence question, Term belief, Task parentTask) {
         float freq = 1.0f;
-        float conf = Parameters.DEFAULT_JUDGMENT_CONFIDENCE;
-        float priority = Parameters.DEFAULT_JUDGMENT_PRIORITY;
-        float durability = Parameters.DEFAULT_JUDGMENT_DURABILITY;
+        float conf = Global.DEFAULT_JUDGMENT_CONFIDENCE;
+        float priority = Global.DEFAULT_JUDGMENT_PRIORITY;
+        float durability = Global.DEFAULT_JUDGMENT_DURABILITY;
         Tense tense = question.isEternal() ? Tense.Eternal : Tense.Present;
 
         //TODO use derivation of prolog result to create a correct stamp

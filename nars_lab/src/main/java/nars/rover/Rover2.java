@@ -1,16 +1,16 @@
 package nars.rover;
 
 import nars.NARPrologMirror;
-import nars.build.Default;
-import nars.build.Neuromorphic;
-import nars.core.Memory;
-import nars.core.NAR;
-import nars.core.Parameters;
+import nars.prototype.Default;
+import nars.prototype.Neuromorphic;
+import nars.Memory;
+import nars.NAR;
+import nars.Global;
 import nars.gui.NARSwing;
-import nars.logic.entity.Task;
-import nars.logic.entity.Term;
-import nars.logic.nal8.NullOperator;
-import nars.logic.nal8.Operation;
+import nars.nal.entity.Task;
+import nars.nal.entity.Term;
+import nars.nal.nal8.NullOperator;
+import nars.nal.nal8.Operation;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
@@ -48,14 +48,14 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        Parameters.DEBUG = false;
+        Global.DEBUG = false;
         boolean multithread = false;
 
         NARSwing.themeInvert();
 
         NAR nar;
         if (multithread) {
-            Parameters.THREADS = 4;
+            Global.THREADS = 4;
             nar = new NAR(new Neuromorphic(16).simulationTime()
                     .setConceptBagSize(1500).setSubconceptBagSize(4000)
                     .setNovelTaskBagSize(512)
@@ -65,7 +65,7 @@ public class Rover2 extends PhysicsModel {
             nar.setCyclesPerFrame(128);
         }
         else {
-            Parameters.THREADS = 1;
+            Global.THREADS = 1;
             nar = new NAR(new Default().simulationTime().
                     setConceptBagSize(1500).
                     setSubconceptBagSize(12000).

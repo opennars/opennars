@@ -1274,7 +1274,7 @@ public class JavaLibrary extends Library {
 
     /**
      *
-     * parsing 'as' operator, which makes it possible to define the specific
+     * parsing 'as' operate, which makes it possible to define the specific
      * class of an argument
      *
      */
