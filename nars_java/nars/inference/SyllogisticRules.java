@@ -186,10 +186,10 @@ public final class SyllogisticRules {
                 Statement.make(NativeOperator.INHERITANCE,taskContent, term1, term2), 
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
-                    Statement.make(NativeOperator.INHERITANCE,taskContent, term2, term1), 
+                Statement.make(NativeOperator.INHERITANCE,taskContent, term2, term1), 
                     truth2, budget2.clone(),false, false);
             nal.doublePremiseTask(
-                    Statement.make(NativeOperator.SIMILARITY,taskContent, term1, term2), 
+                Statement.make(NativeOperator.SIMILARITY,taskContent, term1, term2), 
                     truth3, budget3.clone(),false, false);
         }
     }
