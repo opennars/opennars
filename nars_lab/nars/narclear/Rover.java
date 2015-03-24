@@ -262,7 +262,7 @@ public class Rover extends PhysicsModel {
                     
                     if(n%1000==0) {
                         nar.addInput("<goal --> reached>. %0.00;0.90%"); //dont remember
-                        nar.addInput("<goal --> reached>!"); //also remember on goal
+                        nar.addInput("<goal --> reached>! %1.00;0.99%"); //also remember on goal
                     }
                     if(di <= 0.2f) {
                         float x = (float) Math.random() * sz - sz / 2f;

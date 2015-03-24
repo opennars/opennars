@@ -540,7 +540,8 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 if(www%200==0) {
-                     nar.addInput("<right --> moved>!");
+                    nar.addInput("<right --> moved>. %0.00;0.90%"); //dont remember
+                    nar.addInput("<right --> moved>! %1.00;0.99%");
                      //nar.addInput("<up --> moved>!");
                      //nar.addInput("<up --> moved>!");
                      /* nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
