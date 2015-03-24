@@ -20,6 +20,7 @@
  */
 package nars.inference;
 
+import nars.core.Parameters;
 import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Sentence;
@@ -36,6 +37,7 @@ import static nars.inference.TemporalRules.dedExeOrder;
 import static nars.inference.TemporalRules.resemblanceOrder;
 import static nars.inference.TemporalRules.reverseOrder;
 import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
 import nars.language.Conjunction;
 import nars.language.Equivalence;
@@ -173,7 +175,26 @@ public final class SyllogisticRules {
                 Statement.makeSym(taskContent, term1, term2, order), 
                     truth3, budget3,false, false);
         
+        if(Parameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement()) { //
+            if(truth1!=null) 
+                truth1=truth1.clone();
+            if(truth2!=null) 
+                truth2=truth2.clone();
+            if(truth3!=null) 
+                truth3=truth3.clone();
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE,taskContent, term1, term2), 
+                    truth1, budget1.clone(),false, false);
+            nal.doublePremiseTask(
+                    Statement.make(NativeOperator.INHERITANCE,taskContent, term2, term1), 
+                    truth2, budget2.clone(),false, false);
+            nal.doublePremiseTask(
+                    Statement.make(NativeOperator.SIMILARITY,taskContent, term1, term2), 
+                    truth3, budget3.clone(),false, false);
+        }
     }
+    
+    
 
     /**
      * {<S ==> P>, <M <=> P>} |- <S ==> P>

@@ -24,6 +24,7 @@ import java.nio.CharBuffer;
 import java.util.Arrays;
 import nars.core.Parameters;
 import nars.inference.TemporalRules;
+import static nars.inference.TemporalRules.ORDER_NONE;
 import nars.io.Symbols.NativeOperator;
 import static nars.io.Symbols.NativeOperator.STATEMENT_CLOSER;
 import static nars.io.Symbols.NativeOperator.STATEMENT_OPENER;
@@ -141,6 +142,16 @@ public abstract class Statement extends CompoundTerm {
 //    public static Statement make(final Statement statement, final Term subj, final Term pred, final Memory memory) {
 //        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
 //    }
+    
+    final public static Statement make(NativeOperator op,final Statement statement, final Term subj, final Term pred) {
+
+        return make(op, subj, pred, true, ORDER_NONE);
+    }
+    
+    public boolean isHigherOrderStatement() { //==> <=>
+        return (this instanceof Equivalence) || (this instanceof Implication);
+    }
+    
     //++ TODO
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
