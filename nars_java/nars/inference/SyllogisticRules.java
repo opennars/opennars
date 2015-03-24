@@ -176,6 +176,14 @@ public final class SyllogisticRules {
                     truth3, budget3,false, false);
         
         if(Parameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement()) { //
+            /*
+            <a ==> c>.
+            <b ==> c>.
+            |-
+            <a <-> b>. %F_cmp%
+            <a --> b>. %F_abd%
+            <b --> a>. %F_abd%
+            */
             if(truth1!=null) 
                 truth1=truth1.clone();
             if(truth2!=null) 
@@ -183,13 +191,13 @@ public final class SyllogisticRules {
             if(truth3!=null) 
                 truth3=truth3.clone();
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.INHERITANCE,taskContent, term1, term2), 
+                Statement.make(NativeOperator.INHERITANCE, term1, term2), 
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.INHERITANCE,taskContent, term2, term1), 
+                Statement.make(NativeOperator.INHERITANCE, term2, term1), 
                     truth2, budget2.clone(),false, false);
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.SIMILARITY,taskContent, term1, term2), 
+                Statement.make(NativeOperator.SIMILARITY, term1, term2), 
                     truth3, budget3.clone(),false, false);
         }
     }
@@ -288,6 +296,55 @@ public final class SyllogisticRules {
         }
         
         nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
+        
+       if(Parameters.BREAK_NAL_HOL_BOUNDARY && (st instanceof Equivalence) && order1==order2) {
+           
+            BudgetValue budget1=null, budget2=null, budget3=null;
+            TruthValue truth1=null, truth2=null, truth3=null;
+            TruthValue value1 = sentence.truth;
+            TruthValue value2 = belief.truth;
+            
+            if (sentence.isQuestion()) {
+                budget1 = BudgetFunctions.backward(value2, nal);
+                budget2 = BudgetFunctions.backwardWeak(value2, nal);
+                budget3 = BudgetFunctions.backward(value2, nal);
+            } else if (sentence.isQuest()) {
+                budget1 = BudgetFunctions.backwardWeak(value2, nal);
+                budget2 = BudgetFunctions.backward(value2, nal);
+                budget3 = BudgetFunctions.backwardWeak(value2, nal);            
+            } else {
+                if (sentence.isGoal()) {
+                    truth1 = TruthFunctions.desireStrong(value1, value2);
+                    truth2 = TruthFunctions.desireWeak(value2, value1);
+                    truth3 = TruthFunctions.desireStrong(value1, value2);
+                } else { 
+                    // isJudgment
+                    truth1 = TruthFunctions.abduction(value1, value2);
+                    truth2 = TruthFunctions.abduction(value2, value1);
+                    truth3 = TruthFunctions.comparison(value1, value2);
+                }
+
+                budget1 = BudgetFunctions.forward(truth1, nal);
+                budget2 = BudgetFunctions.forward(truth2, nal);
+                budget3 = BudgetFunctions.forward(truth3, nal);
+            }
+           
+            /* Bridge
+            <b <=> k>.
+            <b <=> c>.
+            |-
+            <k <-> c>. %F_cmp%
+            */
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2), 
+                    truth1, budget1.clone(),false, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term2, term1), 
+                    truth2, budget2.clone(),false, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.SIMILARITY, term1, term2), 
+                    truth3, budget3.clone(),false, false);
+        }
     }
 
     /* --------------- rules used only in conditional inference --------------- */

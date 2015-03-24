@@ -564,9 +564,9 @@ public class RuleTables {
             } else {
                 detachmentWithVar(belief, taskSentence, bLink.getIndex(0), nal);
                 if(beliefTerm instanceof Implication) {
-                    //HOL-FOL-BRIDGE:
+                    //Bridge to higher order statements:
                 } else if (beliefTerm instanceof Equivalence) {
-                    //HOL-FOL-BRIDGE:
+                    //Bridge to higher order statements:
                 }
             }
         } else if (taskTerm instanceof Similarity) {
@@ -577,10 +577,10 @@ public class RuleTables {
                 figure = indexToFigure(bLink, tLink);
                 symmetricSymmetric(belief, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Implication) {
-                //HOL-FOL-BRIDGE:
+                //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
             } else if (beliefTerm instanceof Equivalence) {
-                //HOL-FOL-BRIDGE:
+                //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
             }
         } else if (taskTerm instanceof Implication) {
@@ -592,10 +592,10 @@ public class RuleTables {
                 asymmetricSymmetric(taskSentence, belief, figure, nal);
             } else if (beliefTerm instanceof Inheritance) {
                 detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
-                //HOL-FOL-BRIDGE:
+                //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
             } else if (beliefTerm instanceof Similarity) {
-                //HOL-FOL-BRIDGE:
+                //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
             }
         } else if (taskTerm instanceof Equivalence) {
@@ -607,10 +607,10 @@ public class RuleTables {
                 symmetricSymmetric(belief, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Inheritance) {
                 detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
-                //HOL-FOL-BRIDGE:
+                //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
             } else if (beliefTerm instanceof Similarity) {
-                //HOL-FOL-BRIDGE:
+                //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
             }
         }
