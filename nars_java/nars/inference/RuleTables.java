@@ -565,8 +565,12 @@ public class RuleTables {
                 detachmentWithVar(belief, taskSentence, bLink.getIndex(0), nal);
                 if(beliefTerm instanceof Implication) {
                     //Bridge to higher order statements:
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricAsymmetric(taskSentence, belief, figure, nal);
                 } else if (beliefTerm instanceof Equivalence) {
                     //Bridge to higher order statements:
+                    figure = indexToFigure(tLink, bLink);
+                    asymmetricSymmetric(taskSentence, belief, figure, nal);
                 }
             }
         } else if (taskTerm instanceof Similarity) {
@@ -579,9 +583,11 @@ public class RuleTables {
             } else if (beliefTerm instanceof Implication) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
+                asymmetricSymmetric(belief, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
+                symmetricSymmetric(belief, taskSentence, figure, nal);
             }
         } else if (taskTerm instanceof Implication) {
             if (beliefTerm instanceof Implication) {
@@ -594,9 +600,11 @@ public class RuleTables {
                 detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
+                asymmetricAsymmetric(taskSentence, belief, figure, nal);
             } else if (beliefTerm instanceof Similarity) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
+                asymmetricSymmetric(taskSentence, belief, figure, nal);
             }
         } else if (taskTerm instanceof Equivalence) {
             if (beliefTerm instanceof Implication) {
@@ -609,9 +617,11 @@ public class RuleTables {
                 detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
+                asymmetricSymmetric(belief, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Similarity) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
+                symmetricSymmetric(belief, taskSentence, figure, nal);
             }
         }
     }
