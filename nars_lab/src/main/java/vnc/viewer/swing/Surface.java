@@ -185,8 +185,8 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
     }
 
 
-    final static int overlayX = 400;
-    final static int overlayY = 300;
+    final static int overlayX = 600;
+    final static int overlayY = 400;
     public synchronized void renderSky(long now, Map<Concept, VNCControl.ActivityRectangle> positions, Deque<OCR.BufferUpdate> ocrResults) {
 
 
@@ -216,18 +216,18 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
                     ap * opacity
             );
 
-            float ww = overlayX;
-            float hh = overlayX;
+            float ww = (float) (overlayX/scaleFactor);
+            float hh = (float) (overlayY/scaleFactor);
 
-            //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
+            System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
 
-            float cellScale = 1.0f;
+
 
             g.setPaint(color);
             g.fillRect( (int)( (r.getX())*ww),
                     (int)( ( r.getY())*hh),
-                    (int)(r.getWidth()*ww*cellScale),
-                    (int)(r.getHeight()*hh*cellScale));
+                    (int)(r.getWidth()*ww),
+                    (int)(r.getHeight()*hh));
 
             r.prev = priority;
         }
@@ -280,7 +280,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
         if (null != renderer) {
 
 
-            //((Graphics2D) g).scale(scaleFactor, scaleFactor);
+            ((Graphics2D) g).scale(scaleFactor, scaleFactor);
             //((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
@@ -311,7 +311,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
                     double skyScale = 1f;
                     g.drawImage(skyImage, 0, 0, (int) (renderer.getWidth() * skyScale), (int)( renderer.getHeight() * skyScale),
-                            0, 0, overlayX, overlayY, (ImageObserver) null);
+                            0, 0, skyImage.getWidth(), skyImage.getHeight(), (ImageObserver) null);
 
                     //((Graphics2D) g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC));
 

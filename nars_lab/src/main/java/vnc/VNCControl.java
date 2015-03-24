@@ -124,14 +124,14 @@ abstract public class VNCControl extends VNCClient {
         //level 1
         for (double i = 0; i < 3; i++) {
             for (double j = 0; j < 3; j++) {
-                seeds.add(OCR.get3x3CoordsTree(i / 3.0, j / 3.0, 1.0, 1.0, 1));
+                seeds.add(OCR.get3x3CoordsTree(i / 3.0 + i/6.0f, j / 3.0 + j/6.0f, 1.0, 1.0, 1));
             }
         }
         //level 2
 
         for (double i = 0; i < 9; i++) {
             for (double j = 0; j < 9; j++) {
-                seeds.add(OCR.get3x3CoordsTree(i / 9.0, j / 9.0, 1.0, 1.0, 2));
+                seeds.add(OCR.get3x3CoordsTree(i / 9.0 + i/18.0, j / 9.0 + i/18.0, 1.0, 1.0, 2));
             }
         }
     }
@@ -174,24 +174,28 @@ abstract public class VNCControl extends VNCClient {
                 wy/=3;
                 SetExt next = null;
 
-                int dx = 1, dy = 1;
+                int dx = 0, dy = 0;
                 for (Term t : s) {
                     if (t instanceof SetExt) next = (SetExt) t;
                     else if (t.getClass() == Term.class) {
                         switch(t.toString()) {
-                            case "L": dx = 0; break;
-                            case "R": dx = 2; break;
-                            case "U": dy = 2; break;
-                            case "D": dy = 0; break;
+                            case "L": dx = -1; break;
+                            case "R": dx = 1; break;
+                            case "U": dy = 1; break;
+                            case "D": dy = -1; break;
                         }
                     }
                 }
-                cx += dx * wx/2;
-                cy += dy * wy/2;
+                cx += wx * dx;
+                cy += wy * dy;
                 s = next;
             }
 
-            ActivityRectangle r = new ActivityRectangle(cx, cy, wx, wy);
+
+            ActivityRectangle r = new ActivityRectangle(cx, cy + 0.5f, wx, wy);
+
+            System.out.println(c + " " + r);
+
             r.current = c.getPriority();
             positions.put(c, r);
 
