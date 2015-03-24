@@ -149,7 +149,21 @@ public class RuntimeNARSettings implements Plugin {
     public void setReflectMetaHappyGoal(boolean val) {
         Parameters.REFLECT_META_HAPPY_GOAL=val;
     }
-
+    
+    public boolean isUsingConsiderRemind() {
+        return Parameters.CONSIDER_REMIND;
+    }
+    public void setUsingConsiderRemind(boolean val) {
+        Parameters.CONSIDER_REMIND=val;
+    }
+    
+    public boolean isQuestionGenerationOnDecisionMaking() {
+        return Parameters.QUESTION_GENERATION_ON_DECISION_MAKING;
+    }
+    public void setQuestionGenerationOnDecisionMaking(boolean val) {
+        Parameters.QUESTION_GENERATION_ON_DECISION_MAKING=val;
+    }
+    
     public boolean isCuriosityAlsoOnLowConfidentHighPriorityBelief() {
         return Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF;
     }
