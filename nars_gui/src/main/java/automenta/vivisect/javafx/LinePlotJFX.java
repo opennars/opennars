@@ -17,7 +17,7 @@ import javafx.stage.Stage;
  * @author me
  */
 
-public class LinePlot extends Application {
+public class LinePlotJFX extends Application {
  
     @Override public void start(Stage stage) {
         stage.setTitle("Line Chart Sample");

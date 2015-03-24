@@ -69,7 +69,9 @@ public interface NodeContainer {
 
     public Iterator<Node> getNodeModels();
 
-	public static class ContainerException extends UIException {
+
+
+    public static class ContainerException extends UIException {
 		private static final long serialVersionUID = 1L;
 
 		public ContainerException() {

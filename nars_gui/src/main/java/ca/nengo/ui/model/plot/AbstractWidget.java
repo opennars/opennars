@@ -89,8 +89,9 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
                 BoundsHandle.addBoundsHandlesTo(this);
 
 
-
-            setIcon(newIcon(this));
+            ModelIcon ni = newIcon(this);
+            ni.setSize(width, height);
+            setIcon(ni);
 
 
             setSize(getIcon().getWidth(), getIcon().getHeight());

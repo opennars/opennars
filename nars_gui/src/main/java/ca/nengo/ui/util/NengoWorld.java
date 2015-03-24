@@ -51,12 +51,13 @@ public class NengoWorld extends WorldImpl implements NodeContainer {
     public WorldObject addNodeModel(WorldObject nodeUI, Double posX, Double posY) throws ContainerException {
         if (posX != null && posY != null) {
             nodeUI.setOffset(posX, posY);
-
-            getGround().addChild(nodeUI);
-        } else {
-            getGround().addChildFancy(nodeUI);
+        }
+        else {
+            nodeUI.setOffset(0,0);
         }
 
+
+        getGround().addChild(nodeUI);
 
 
         return nodeUI;

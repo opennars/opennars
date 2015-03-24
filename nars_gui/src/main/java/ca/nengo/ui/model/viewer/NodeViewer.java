@@ -43,6 +43,7 @@ import ca.nengo.ui.lib.world.piccolo.WorldImpl;
 import ca.nengo.ui.model.ModelsContextMenu;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINodeViewable;
+import com.google.common.collect.Iterables;
 import javolution.util.FastMap;
 import org.piccolo2d.activities.PActivity;
 import org.piccolo2d.event.PInputEvent;
@@ -207,39 +208,46 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
      *            Type of sort layout to use
      */
     public void applySortLayout(SortMode sortMode) {
+        NodeViewer.this.sortLayout(this, sortMode);
+
+    }
+
+    public static void sortLayout(WorldImpl nodeViewer, SortMode sortMode) {
         //getGround().setElasticEnabled(false);
 
-        List<UINeoNode> nodes = new ArrayList(getUINodes());
+        List<WorldObject> nodes = new ArrayList();
+        Iterables.addAll(nodes, nodeViewer.getChildren());
+
 
         switch (sortMode) {
-        case BY_NAME:
-            Collections.sort(nodes, new Comparator<UINeoNode>() {
+            case BY_NAME:
+                Collections.sort(nodes, new Comparator<WorldObject>() {
 
-                public int compare(UINeoNode o1, UINeoNode o2) {
-                    return (o1.name().compareToIgnoreCase(o2.name()));
-
-                }
-
-            });
-
-            break;
-        case BY_TYPE:
-            Collections.sort(nodes, new Comparator<UINeoNode>() {
-
-                public int compare(UINeoNode o1, UINeoNode o2) {
-                    if (o1.getClass() != o2.getClass()) {
-
-                        return o1.getClass().getSimpleName().compareToIgnoreCase(
-                                o2.getClass().getSimpleName());
-                    } else {
+                    public int compare(WorldObject o1, WorldObject o2) {
                         return (o1.name().compareToIgnoreCase(o2.name()));
+
                     }
 
-                }
+                });
 
-            });
+                break;
+            case BY_TYPE:
+                Collections.sort(nodes, new Comparator<WorldObject>() {
 
-            break;
+                    public int compare(WorldObject o1, WorldObject o2) {
+                        if (o1.getClass() != o2.getClass()) {
+
+                            return o1.getClass().getSimpleName().compareToIgnoreCase(
+                                    o2.getClass().getSimpleName());
+                        } else {
+                            return (o1.name().compareToIgnoreCase(o2.name()));
+                        }
+
+                    }
+
+                });
+
+                break;
         }
 
         /*
@@ -258,7 +266,8 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
         double endY = Double.MIN_VALUE;
 
         if (nodes.size() > 0) {
-            for (UINeoNode node : nodes) {
+            for (WorldObject node : nodes) {
+
 
                 node.animateToPosition(x, y, 1000);
 
@@ -291,8 +300,10 @@ public abstract class NodeViewer extends WorldImpl implements Interactable {
 
         }
 
+
         PBounds fullBounds = new PBounds(startX, startY, endX - startX, endY - startY);
-        zoomToBounds(fullBounds);
+        nodeViewer.zoomToBounds(fullBounds);
+
 
     }
 

@@ -17,6 +17,10 @@ import ca.nengo.ui.model.viewer.NodeViewer;
  */
 public class NengrowPanel extends Nengrow {
 
+    //TODO make final
+    public UINetwork networkUI;
+    public NodeViewer window;
+
     /** simulation timestep */
     protected float dt = 0.01f;
 
@@ -29,23 +33,19 @@ public class NengrowPanel extends Nengrow {
     public NengrowPanel(Network view) {
         super();
 
-        UINetwork networkUIx;
-        NodeViewer windowx;
         try {
-            networkUIx = (UINetwork) addNodeModel(view);
-            windowx = networkUIx.openViewer(Window.WindowState.MAXIMIZED);
+            networkUI = (UINetwork) addNodeModel(view);
+            window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
         } catch (ContainerException e) {
             //TODO display error message in the nengo view or statusbar
             e.printStackTrace();
+
         }
 
-
-        //networkUI = networkUIx;
-
     }
+
     public NengrowPanel() {
         super();
-
     }
 
     public void add(Object... x) {
@@ -67,7 +67,7 @@ public class NengrowPanel extends Nengrow {
                 }
             } else if (n instanceof WorldObject) {
                 try {
-                    addNodeModel((WorldObject) n, 0d, 0d);
+                    addNodeModel((WorldObject) n);
                 } catch (ContainerException e) {
                     e.printStackTrace();
                 }

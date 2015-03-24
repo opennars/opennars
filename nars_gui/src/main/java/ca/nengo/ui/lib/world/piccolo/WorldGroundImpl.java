@@ -16,6 +16,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.security.InvalidParameterException;
 import java.util.Collection;
+import java.util.Set;
 
 
 /**
@@ -29,7 +30,7 @@ public class WorldGroundImpl extends WorldLayerImpl implements WorldLayer {
     /*
          * Convenient storage of all children
          */
-    private final ObjectSet<WorldObject> children = new ObjectSet<WorldObject>();
+    private final Set<WorldObject> children = new ObjectSet<WorldObject>().atomic();
 
     private final GroundNode myLayerNode;
 

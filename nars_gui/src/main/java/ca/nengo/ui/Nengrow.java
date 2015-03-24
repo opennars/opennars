@@ -55,7 +55,7 @@ abstract public class Nengrow extends AbstractNengo {
         }
     }
 
-    protected void init(Universe universe) {
+    final protected void init(Universe universe) {
         add(universe, BorderLayout.CENTER);
     }
 

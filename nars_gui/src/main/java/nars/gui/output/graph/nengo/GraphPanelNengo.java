@@ -14,7 +14,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 
-public class NengoNetworkPanel extends Nengrow {
+public class GraphPanelNengo extends Nengrow {
 
     private NodeViewer networkUIViewer;
     private NodeViewer window;
@@ -43,19 +43,19 @@ public class NengoNetworkPanel extends Nengrow {
         nar.input("<b-->c>.");
         nar.input("<c-->d>.");
         nar.run(16);
-        new NengoNetworkPanel(nar).newWindow(800, 600);
+        new GraphPanelNengo(nar).newWindow(800, 600);
     }
 
-    public NengoNetworkPanel(NAR n) {
+    public GraphPanelNengo(NAR n) {
         this(newGraph(n));
     }
 
-    public NengoNetworkPanel(TermGraphNode graph, float fps) {
+    public GraphPanelNengo(TermGraphNode graph, float fps) {
         this(graph);
         setFPS(fps);
     }
 
-    public NengoNetworkPanel(TermGraphNode graph) {
+    public GraphPanelNengo(TermGraphNode graph) {
         super();
 
 

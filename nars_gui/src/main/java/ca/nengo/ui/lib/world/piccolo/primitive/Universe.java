@@ -69,7 +69,7 @@ public class Universe extends PCanvas implements Destroyable {
 		statusTextBackground.setPaint(NengoStyle.COLOR_TRANSPARENT);
 		statusTextBackground.setTransparency(0.7f);
 
-		statusMessageLabel = new Text("Welcome to " + UIEnvironment.getInstance().getAppName());
+		statusMessageLabel = new Text( UIEnvironment.getInstance().getAppName());
 
 		taskMessagesLabel = new Text();
 		taskMessagesLabel.setTextPaint(NengoStyle.COLOR_LIGHT_BLUE);
@@ -129,16 +129,17 @@ public class Universe extends PCanvas implements Destroyable {
 	static final double TEXT_PADDING = 2;
 
 	protected void layoutText() {
-		double posY = textHolder.getHeight() - TEXT_PADDING;
+		//double posY = textHolder.getHeight() - TEXT_PADDING;
+        double posY = TEXT_PADDING; //topleft
 		double width = textHolder.getWidth() - TEXT_PADDING;
 
 		interactionModeLabel.setOffset(width - interactionModeLabel.getWidth(), posY
 				- interactionModeLabel.getHeight());
 
-		posY -= statusMessageLabel.getHeight();
+		posY += statusMessageLabel.getHeight();
 		statusMessageLabel.setOffset(TEXT_PADDING, posY);
 
-		posY -= taskMessagesLabel.getHeight();
+		posY += taskMessagesLabel.getHeight();
 		taskMessagesLabel.setOffset(TEXT_PADDING, posY);
 
 		statusTextBackground.setBounds(0, posY, textHolder.getWidth(), textHolder.getHeight()

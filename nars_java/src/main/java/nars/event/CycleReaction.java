@@ -11,7 +11,7 @@ abstract public class CycleReaction extends AbstractReaction {
     }
 
     @Override public void event(Class event, Object[] args) {
-        if (event == Events.CycleStart.class) {
+        if (event == Events.CycleEnd.class) {
             onCycle();
         }
     }

@@ -305,6 +305,7 @@ public class WorldObjectImpl implements WorldObject {
      * @see ca.shu.ui.lib.world.impl.IWorldObject#animateToPosition(double,
      *      double, long)
      */
+    @Override
     public void animateToPosition(double x, double y, long duration) {
         pnode.animateToPositionScaleRotation(x, y, pnode.getScale(), pnode.getRotation(),
                 duration);

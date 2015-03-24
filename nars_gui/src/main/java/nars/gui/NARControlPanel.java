@@ -24,6 +24,7 @@ import automenta.vivisect.swing.AwesomeButton;
 import automenta.vivisect.swing.NSlider;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.TimeControl;
+import ca.nengo.ui.NengrowPanel;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.Memory;
@@ -31,8 +32,8 @@ import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
-import nars.gui.output.chart.MeterVis;
-import nars.gui.output.graph.nengo.NengoNetworkPanel;
+import nars.gui.output.chart.MeterNode;
+import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.io.TextOutput;
 import nars.nal.meta.NARMetrics;
 
@@ -67,7 +68,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
      * Reference to the experience writer
      */
     private final TextOutput experienceWriter;
-    private final MeterVis meters;
+    private final MeterNode meters;
 
 
     /**
@@ -156,7 +157,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new NWindow("Concepts",
-                            new NengoNetworkPanel(nar) ).show(800, 800, false);
+                            new GraphPanelNengo(nar) ).show(800, 800, false);
                 }
             });
             m.add(mv);
@@ -404,8 +405,13 @@ public class NARControlPanel extends TimeControl implements Reaction {
         
         add(top, NORTH);
 
-        if (addCharts)
-            add(meters = new MeterVis(nar, this.metrics.getMetrics()), CENTER);
+        if (addCharts) {
+            meters = new MeterNode(nar, this.metrics.getMetrics());
+            NengrowPanel np = new NengrowPanel(meters);
+
+
+            add(np, CENTER);
+        }
         else
             meters = null;
         

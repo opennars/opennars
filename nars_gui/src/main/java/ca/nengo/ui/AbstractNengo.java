@@ -385,9 +385,13 @@ public class AbstractNengo extends AppFrame implements NodeContainer {
         }
     }
 
+    public WorldObject addNodeModel(WorldObject obj) throws ContainerException {
+        getWorld().addNodeModel((WorldObject) obj, null, null);
+        return obj;
+    }
     @Override
     public WorldObject addNodeModel(WorldObject obj, Double posX, Double posY) throws ContainerException {
-        ((NengoWorld) getWorld()).addNodeModel(obj, posX, posY);
+        getWorld().addNodeModel((WorldObject) obj, posX, posY);
         return obj;
     }
 

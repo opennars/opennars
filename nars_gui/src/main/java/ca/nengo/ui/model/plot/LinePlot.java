@@ -82,17 +82,22 @@ public class LinePlot extends AbstractWidget {
             }
         }
 
-        g.setFont(NengoStyle.FONT_NORMAL);
+        g.setFont(NengoStyle.FONT_BOLD);
         g.setColor(Color.WHITE);
-        g.drawString(label, 10, 10);
+        g.drawString(name(), 10, 10);
+        g.setFont(NengoStyle.FONT_NORMAL);
+        g.drawString(label, 10, 30);
 
     }
 
 
 
-
     public LinePlot(String name) {
-        super(name, 64, 64);
+        this(name, 64, 64);
+    }
+
+    public LinePlot(String name, double width, double height) {
+        super(name, width, height);
 
         input = new ObjectTarget(this, "_input", Object.class);
         //setInputs(input);
@@ -153,7 +158,7 @@ public class LinePlot extends AbstractWidget {
     }
 
 
-    protected void push(double f) {
+    public void push(double f) {
         history.addLast(f);
         if (history.size() == maxHistory)
             history.removeFirst();
@@ -171,4 +176,5 @@ public class LinePlot extends AbstractWidget {
         history.clear();
 
     }
+
 }

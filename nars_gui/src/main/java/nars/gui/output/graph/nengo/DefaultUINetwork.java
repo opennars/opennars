@@ -69,9 +69,6 @@ public class DefaultUINetwork<N extends Network> extends UINetwork {
             //System.out.println("no default layout");
         }
 
-        @Override
-        public void applySortLayout(SortMode sortMode) {
-            //System.out.println("no sort layout");
-        }
+
     }
 }
