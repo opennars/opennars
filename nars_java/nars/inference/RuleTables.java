@@ -563,6 +563,11 @@ public class RuleTables {
                 asymmetricSymmetric(taskSentence, belief, figure, nal);
             } else {
                 detachmentWithVar(belief, taskSentence, bLink.getIndex(0), nal);
+                if(beliefTerm instanceof Implication) {
+                    //HOL-FOL-BRIDGE:
+                } else if (beliefTerm instanceof Equivalence) {
+                    //HOL-FOL-BRIDGE:
+                }
             }
         } else if (taskTerm instanceof Similarity) {
             if (beliefTerm instanceof Inheritance) {
@@ -571,6 +576,12 @@ public class RuleTables {
             } else if (beliefTerm instanceof Similarity) {
                 figure = indexToFigure(bLink, tLink);
                 symmetricSymmetric(belief, taskSentence, figure, nal);
+            } else if (beliefTerm instanceof Implication) {
+                //HOL-FOL-BRIDGE:
+                figure = indexToFigure(tLink, bLink);
+            } else if (beliefTerm instanceof Equivalence) {
+                //HOL-FOL-BRIDGE:
+                figure = indexToFigure(tLink, bLink);
             }
         } else if (taskTerm instanceof Implication) {
             if (beliefTerm instanceof Implication) {
@@ -581,6 +592,11 @@ public class RuleTables {
                 asymmetricSymmetric(taskSentence, belief, figure, nal);
             } else if (beliefTerm instanceof Inheritance) {
                 detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
+                //HOL-FOL-BRIDGE:
+                figure = indexToFigure(tLink, bLink);
+            } else if (beliefTerm instanceof Similarity) {
+                //HOL-FOL-BRIDGE:
+                figure = indexToFigure(tLink, bLink);
             }
         } else if (taskTerm instanceof Equivalence) {
             if (beliefTerm instanceof Implication) {
@@ -591,6 +607,11 @@ public class RuleTables {
                 symmetricSymmetric(belief, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Inheritance) {
                 detachmentWithVar(taskSentence, belief, tLink.getIndex(0), nal);
+                //HOL-FOL-BRIDGE:
+                figure = indexToFigure(tLink, bLink);
+            } else if (beliefTerm instanceof Similarity) {
+                //HOL-FOL-BRIDGE:
+                figure = indexToFigure(tLink, bLink);
             }
         }
     }
