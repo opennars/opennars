@@ -176,7 +176,7 @@ public final class SyllogisticRules {
                     truth3, budget3,false, false);
         
         if(Parameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement()) { //
-            /*
+            /* Bridge to higher order statements:
             <a ==> c>.
             <b ==> c>.
             |-
@@ -329,7 +329,7 @@ public final class SyllogisticRules {
                 budget3 = BudgetFunctions.forward(truth3, nal);
             }
            
-            /* Bridge
+            /* Bridge to higher order statements:
             <b <=> k>.
             <b <=> c>.
             |-
