@@ -185,10 +185,11 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
     }
 
 
-    final static int overlayX = 600;
-    final static int overlayY = 400;
     public synchronized void renderSky(long now, Map<Concept, VNCControl.ActivityRectangle> positions, Deque<OCR.BufferUpdate> ocrResults) {
 
+
+        int overlayX = getRenderer().getWidth();
+        int overlayY = getRenderer().getHeight();
 
         BufferedImage skyImage = new BufferedImage(overlayX, overlayY, BufferedImage.TYPE_INT_ARGB);
 
@@ -216,10 +217,10 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
                     ap * opacity
             );
 
-            float ww = (float) (overlayX/scaleFactor);
-            float hh = (float) (overlayY/scaleFactor);
+            float ww = (float) (overlayX);
+            float hh = (float) (overlayY);
 
-            System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
+            //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
 
 
 
@@ -239,8 +240,8 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
             if (!ocrResults.isEmpty()) {
 
 
-                float sx = 0.5f;
-                float sy = 0.5f;
+                float sx = 1f;
+                float sy = 1f;
 
                 Iterator<OCR.BufferUpdate> ib = ocrResults.iterator();
 

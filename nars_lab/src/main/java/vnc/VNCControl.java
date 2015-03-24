@@ -192,9 +192,9 @@ abstract public class VNCControl extends VNCClient {
             }
 
 
-            ActivityRectangle r = new ActivityRectangle(cx, cy + 0.5f, wx, wy);
+            ActivityRectangle r = new ActivityRectangle(cx + 1/3.0f, cy + 1/3.0f, wx, wy);
 
-            System.out.println(c + " " + r);
+            //System.out.println(c + " " + r);
 
             r.current = c.getPriority();
             positions.put(c, r);
