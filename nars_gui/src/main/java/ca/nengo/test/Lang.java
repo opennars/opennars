@@ -6,16 +6,14 @@ import nars.io.narsese.NarseseParser;
 import nars.nal.entity.Term;
 import nars.prototype.Default;
 import org.parboiled.Node;
-import org.parboiled.Parboiled;
-import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-
 
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
@@ -29,23 +27,21 @@ now, to try displaing this. Would be nice to keep this core independent of nengo
  */
 
 //i need @BuildParseTree, but grappa wont play with this class, because its not a top level class?
-@BuildParseTree
-public class Parser extends NarseseParser {
-    protected Parser(){super();}
-};
+
+
+
 
 
 public class Lang {
 
 
     public NAR nar = new NAR(new Default());
-    public Parser p;// = Parser.newParser(nar);
+    public NarseseParser p;// = Parser.newParser(nar);
     int debugIndent = 0;
 
 
     public Lang(){
-        p = Parboiled.createParser(Parser.class);
-        p.memory = nar.memory;
+        p = NarseseParser.newParser(nar);
     }
 
     private void debug(String s)

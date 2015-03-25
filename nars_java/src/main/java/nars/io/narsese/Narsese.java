@@ -15,6 +15,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import org.parboiled.annotations.BuildParseTree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import static nars.nal.nal8.Operation.make;
  * This will eventually be integrated with NarseseParser for systematic
  * parsing and prediction of input.
  */
+@BuildParseTree
 public class Narsese {
     
     public final Memory memory;
