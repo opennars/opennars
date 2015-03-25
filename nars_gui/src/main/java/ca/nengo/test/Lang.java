@@ -1,5 +1,6 @@
 package ca.nengo.test;
 
+
 import nars.NAR;
 import nars.io.narsese.NarseseParser;
 import nars.nal.entity.Term;
@@ -12,9 +13,9 @@ import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+
 
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
@@ -27,17 +28,25 @@ now, to try displaing this. Would be nice to keep this core independent of nengo
  multiple inheritance, what now?
  */
 
+//i need @BuildParseTree, but grappa wont play with this class, because its not a top level class?
+@BuildParseTree
+public class Parser extends NarseseParser {
+    protected Parser(){super();}
+};
+
+
 public class Lang {
 
-    //i need @BuildParseTree, but grappa wont play with this class, because its not a top level class?
-    @BuildParseTree
-    public class Parser extends NarseseParser {
-        protected Parser(){super();}
-    };
 
     public NAR nar = new NAR(new Default());
-    public NarseseParser p;// = Parser.newParser(nar);
+    public Parser p;// = Parser.newParser(nar);
     int debugIndent = 0;
+
+
+    public Lang(){
+        p = Parboiled.createParser(Parser.class);
+        p.memory = nar.memory;
+    }
 
     private void debug(String s)
     {
@@ -47,9 +56,9 @@ public class Lang {
     }
 
 
-    public class Widget{
+    public class Match {
         public Node node;
-        public Widget(Node n){
+        public Match(Node n){
             this.node = n;
             debug(" new " + this);
         }
@@ -57,7 +66,7 @@ public class Lang {
             debug(""+this);
         }
 
-        public Widget node2widget(Node n) {
+        public Match node2widget(Node n) {
             Object v = n.getValue();
             if (v == null)
                 return null;
@@ -76,9 +85,9 @@ public class Lang {
             else if (n.getMatcher().getLabel() == "EOI")
                 return null;
             else if (n.getMatcher().getLabel() == "zeroOrMore")
-                return new ListWidget(n);
+                return new ListMatch(n);
             else if (n.getMatcher().getLabel() == "oneOrMore")
-                return new ListWidget(n);
+                return new ListMatch(n);
             else if (n.getMatcher().getLabel() == "sequence")
                 return children2one(n);
             else if (n.getMatcher().getLabel() == "firstOf")
@@ -87,9 +96,9 @@ public class Lang {
                 return new Syntaxed(n);
         }
 
-        public Widget children2one(Node n)
+        public Match children2one(Node n)
         {
-            ArrayList<Widget> items = children2list(n);
+            ArrayList<Match> items = children2list(n);
             if(items.size()==1)
                 return items.get(0);
             else if(items.size()==0)
@@ -98,14 +107,14 @@ public class Lang {
                 throw new RuntimeException("ewwww " + n + ", " + items.size() + ", " +n.getChildren());
         }
 
-        public ArrayList<Widget> children2list(Node n) {
-            ArrayList<Widget> items = new ArrayList<Widget>();
+        public ArrayList<Match> children2list(Node n) {
+            ArrayList<Match> items = new ArrayList<Match>();
             debugIndent++;
             for (Object o : n.getChildren()) {
 
                 Node i = (Node) o;
                 debug(" doing " + i);
-                Widget w = (Widget) node2widget(i);
+                Match w = (Match) node2widget(i);
                 debug(" done " + i);
                 debug(" continuing with " + this);
                 if (w != null)
@@ -117,17 +126,17 @@ public class Lang {
 
 
     };
-    public class CompoundWidget extends Widget{
-        public ArrayList<Widget> items;// = new ArrayList<Widget>();
+    public class MatchWithChildren extends Match {
+        public ArrayList<Match> items;// = new ArrayList<Match>();
 
-        public CompoundWidget(Node n){
+        public MatchWithChildren(Node n){
             super(n);
             items = children2list(n);
         }
         public void print(){
             debug(""+this+" with items: ");
             debugIndent++;
-            for (Widget w:items)
+            for (Match w:items)
                 w.print();
 
             debugIndent--;
@@ -135,73 +144,26 @@ public class Lang {
 
     }
 
-    public class ListWidget extends CompoundWidget{
-        public ListWidget(Node n){
+    public class ListMatch extends MatchWithChildren {
+        public ListMatch(Node n){
             super(n);
         }
     };
 
-    public class Syntaxed extends CompoundWidget{
+    public class Syntaxed extends MatchWithChildren {
         public Syntaxed(Node n){
             super(n);
         }
     };
-    public class Word extends Widget{
+    public class Word extends Match {
         public Word(Node n){super(n);}
     };
-    public class Number extends Widget{
+    public class Number extends Match {
         public Number(Node n){super(n);}
         public float getValue(){
             return (float)node.getValue();
         }
     };
-
-
-    //ELEMENTS OF A GRAMMAR RULE (OF ONE CHOICE), BESIDES STRING:
-    /*
-    private static class Sym {
-        public static enum Param {LIST_ELEM_TYPE, SRSTR};
-        public static class Params extends HashMap<Param, Object>{};
-        public static Params newParams(){
-            return new Params();
-        }
-
-        Map<Param, Object> params; // like the type of items of a List or min/max items
-        Type type;
-        public Sym(Class type, String name, Map<Param, Object> params){
-            this.type = type;
-        }
-    };
-
-    private Object some(Object sym){
-        Sym.Params params = Sym.newParams();
-        params.put(Sym.Param.LIST_ELEM_TYPE, sym);
-        return new Sym(ListWidget.class, "", params);
-
-    }
-    */
-
-
-    public Lang(){
-        p = Parboiled.createParser(NarseseParser.class);
-        p.memory = nar.memory;
-    }
-        /*
-    //private class Sequence extends ImmutableList<Object> {}; // can contain String, Sym,
-    private class Choices extends ArrayList<ImmutableList<Object>> {};
-    private class Grammar extends HashMap<Object, Choices> {};
-    private Grammar g;
-    public Lang(){
-        g = new Grammar();
-        g.put(Task.class, new Choices());
-        g.get(Task.class).add(l().add(
-                BudgetValue.class).add(
-                Sentence.class).build());
-    }
-    private ImmutableList.Builder<Object> l(){
-        return new ImmutableList.Builder<Object>();
-    }
-        */
 
 
 
@@ -263,11 +225,55 @@ public class Lang {
         System.out.println();
         System.out.println(" " + root);
         System.out.println();
-        Widget w = new ListWidget((Node)root.getChildren().get(1));
+        Match w = new ListMatch((Node)root.getChildren().get(1));
         System.out.println();
         System.out.println(" " + root);
         System.out.println();
         w.print();
     }
 }
-// PS.: fix the parser, but try to avoid hacky ways ;)
+
+
+
+
+//lets not do this now
+    /*
+    private static class Sym {
+        public static enum Param {LIST_ELEM_TYPE, SRSTR};
+        public static class Params extends HashMap<Param, Object>{};
+        public static Params newParams(){
+            return new Params();
+        }
+
+        Map<Param, Object> params; // like the type of items of a List or min/max items
+        Type type;
+        public Sym(Class type, String name, Map<Param, Object> params){
+            this.type = type;
+        }
+    };
+
+    private Object some(Object sym){
+        Sym.Params params = Sym.newParams();
+        params.put(Sym.Param.LIST_ELEM_TYPE, sym);
+        return new Sym(ListMatch.class, "", params);
+
+    }
+    */
+
+
+        /*
+    //private class Sequence extends ImmutableList<Object> {}; // can contain String, Sym,
+    private class Choices extends ArrayList<ImmutableList<Object>> {};
+    private class Grammar extends HashMap<Object, Choices> {};
+    private Grammar g;
+    public Lang(){
+        g = new Grammar();
+        g.put(Task.class, new Choices());
+        g.get(Task.class).add(l().add(
+                BudgetValue.class).add(
+                Sentence.class).build());
+    }
+    private ImmutableList.Builder<Object> l(){
+        return new ImmutableList.Builder<Object>();
+    }
+        */
