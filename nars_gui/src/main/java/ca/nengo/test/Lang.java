@@ -1,25 +1,20 @@
 package ca.nengo.test;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.google.common.collect.ImmutableList;
-import nars.build.Default;
-import nars.core.NAR;
+import nars.NAR;
 import nars.io.narsese.NarseseParser;
-import nars.logic.entity.*;
+import nars.nal.entity.Term;
+import nars.prototype.Default;
 import org.parboiled.Node;
 import org.parboiled.Parboiled;
-import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
-import sun.tracing.NullProviderFactory;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 

@@ -778,6 +778,20 @@ public class NARControlPanel extends TimeControl implements Reaction {
         return p;
     }
 
+    protected void updateFrequencies() {
+        //relative to base freq:
+        //  input x
+        memory.param.inputsMaxPerCycle.set( 0);
+        //  concept x
+        memory.param.conceptsFiredPerCycle.set( 0 );
+        //  term x
+        memory.param.termLinkForgetDurations.set( 0 );
+        //  task x
+        memory.param.taskLinkForgetDurations.set( 0 );
+        //  novelty x
+        memory.param.novelTaskForgetDurations.set( 0 );
+    }
+
     private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {
         final NSlider s = new NSlider(x.intValue(), min, max) {
 
