@@ -273,9 +273,17 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         final Stamp newStamp = stamp.build();
 
-        boolean derived = deriveTask(new Task(
-                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, allowOverlap);
+        boolean derived = false;
+
+        try {
+            derived = deriveTask(new Task(
+                    new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
+                    newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, allowOverlap);
+        } catch (RuntimeException e) {
+            if (Global.DEBUG) throw e;
+            System.err.println(e);
+            return false;
+        }
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (derived && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {

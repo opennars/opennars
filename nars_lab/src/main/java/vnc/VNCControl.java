@@ -342,7 +342,7 @@ abstract public class VNCControl extends VNCClient {
             }
 
             if (input) {
-                String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight());
+                String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight(),3);
                 String ii = "<(*,B" + pe.buttonMask + ", " + loc  + ") --> ON>. :|: " +
                         (mousePressed ? "%1.00;0.90%" : "%0.00;0.90%");
 

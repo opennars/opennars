@@ -747,10 +747,11 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
         JPanel pg = new JPanel(new GridLayout(0, 2));
         {
-            pg.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation Factor", 0.0f, 1.0f), c);
-            pg.add(new NSlider(memory.param.conceptFireThreshold, "Concept Fire Threshold", 0.0f, 1.0f), c);
+            pg.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation xr", 0.0f, 1.0f), c);
 
-            pg.add(new NSlider(memory.param.decisionThreshold, "Decision Threshold", 0.0f, 1.0f), c);
+            pg.add(new NSlider(memory.param.conceptFireThreshold, "Concepts >", 0.0f, 1.0f), c);
+            pg.add(new NSlider(memory.param.decisionThreshold, "Decisions >", 0.0f, 1.0f), c);
+
             pg.add(new NSlider(memory.param.taskLinkForgetDurations, "TaskLink Durations", 0.5f, 20), c);
             pg.add(new NSlider(memory.param.termLinkForgetDurations, "TermLink Durations", 0.5f, 20), c);
             pg.add(new NSlider(memory.param.conceptForgetDurations, "Concept Durations", 0.5f, 20), c);

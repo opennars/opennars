@@ -186,7 +186,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
 
     public synchronized void renderSky(long now, Map<Concept, VNCControl.ActivityRectangle> positions, Deque<OCR.BufferUpdate> ocrResults) {
-
+        if (getRenderer() == null) return;
 
         int overlayX = getRenderer().getWidth();
         int overlayY = getRenderer().getHeight();

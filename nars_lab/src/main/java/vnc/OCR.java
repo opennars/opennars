@@ -42,14 +42,14 @@ public class OCR {
     static double halflifeSeconds = 2;
 
     //limits for peforming OCR after exiting queue
-    static final int minOCRWidth = 12;
-    static final int minOCRHeight = 12;
+    static final int minOCRWidth = 8;
+    static final int minOCRHeight = 8;
 
     //limits for what is allowing into input queue
     static final int minWidth = minOCRWidth/2;
     static final int minHeight = minOCRHeight;
     static final int minPixels = minWidth * minHeight * 1;
-    static int equalEdgeThresh = 4; //in pixels
+    static int equalEdgeThresh = 6; //in pixels
     static String language = "eng";
     static int ocrEngineMode = TessAPI.TessOcrEngineMode.OEM_TESSERACT_CUBE_COMBINED;
     static String datapath = ("/usr/share/tessdata");
@@ -434,8 +434,9 @@ public class OCR {
             age/=1000f; //to seconds
 
 
+            double pixPerSecond = 100; //aproximate rate factor to relate pixels to seconds
 
-            float pri = (float) (size / (1f + (age) / (halflifeSeconds )));
+            float pri = (float) ( (Math.sqrt(size)/pixPerSecond) / (1f + (age) / (halflifeSeconds )));
 
             //System.out.println(age + " " + rect.width + " " + rect.height + " = " + pri);
 

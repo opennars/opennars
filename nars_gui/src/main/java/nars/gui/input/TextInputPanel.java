@@ -299,7 +299,8 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
         public void evaluateSeq(String input) {
             //TODO make sequential evaluation
             nar.input(input);
-            nar.step(1);
+            if (!nar.isRunning())
+                nar.step(1);
         }
 
         

@@ -318,7 +318,7 @@
         <dependency>
             <groupId>com.github.parboiled1</groupId>
             <artifactId>grappa</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.4-sonar</version>
         </dependency>
 
         <dependency>

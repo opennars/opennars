@@ -1,8 +1,8 @@
 package nars.io.narsese;
 
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
 import nars.energy.Budget;
 import nars.io.Symbols;
 import nars.io.Texts;
@@ -133,7 +133,8 @@ public class Narsese {
                 return t;
         }
         catch (Throwable e) {
-            System.err.println("Task parse error: " + t + " isnt " + u + ": " + Arrays.toString(e.getStackTrace()));
+            if (Global.DEBUG)
+                System.err.println("Task parse error: " + t + " isnt " + u + ": " + Arrays.toString(e.getStackTrace()));
         }
 
         if ((u == null) && (t!=null)) return t;

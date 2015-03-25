@@ -6,6 +6,7 @@ import automenta.vivisect.swing.ReflectPanel;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import nars.Memory;
 import nars.prototype.Default;
 import nars.NAR;
 import nars.Global;
@@ -31,7 +32,7 @@ public class IRCBot {
     String login = "narchy";
 
     // The channel which the bot will join.
-    String channel = "#nars";
+    String channel = "#fukushima";
     private final NAR nar;
     private BufferedWriter writer = null;
 
@@ -40,7 +41,7 @@ public class IRCBot {
     }
 
     public static void main(String[] args) throws Exception {
-        Global.DEBUG = true;
+        Global.DEBUG = false;
 
 
         Default d = new Default();
@@ -52,7 +53,7 @@ public class IRCBot {
         d.param.duration.set(200);
         d.param.termLinkMaxReasoned.set(6);
         d.param.conceptsFiredPerCycle.set(3);
-
+        d.param.setTiming(Memory.Timing.Real);
 
 
         //d.temporalPlanner(16f,8,8,2);
@@ -80,8 +81,8 @@ public class IRCBot {
 
         i.loop(corpus, 200);
 
-        String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/worstward.txt"))).split("\\. ");
-        i.read(book, 1200, 0.5f);
+        /*String[] book = String.join(" ", Files.readAllLines(Paths.get("/home/me/battle.txt"))).split("\\. ");
+        i.read(book, 1200, 0.5f);*/
         String[] book2 = String.join(" ", Files.readAllLines(Paths.get("/home/me/meta.txt"))).split("\\. ");
         i.read(book2, 1300, 0.25f);
 

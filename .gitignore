@@ -29,3 +29,5 @@ opennars.iml
 /dev/netbeans/nbproject/private/
 /dev/netbeans/build/
 /dev/netbeans/dist/
+hs_err_pid*
+
