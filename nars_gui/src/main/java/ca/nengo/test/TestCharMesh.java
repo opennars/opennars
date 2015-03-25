@@ -21,6 +21,7 @@ import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestCharMesh {
@@ -37,13 +38,17 @@ public class TestCharMesh {
                 NengrowPanel panel = new NengrowPanel();
 
                 {
-                    CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80);
+                    Lang lang = new Lang();
+
+                    CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80, lang);
                     mesh.set(0, 0, 'a');
                     mesh.set(1, 0, 'b');
                     mesh.set(2, 0, 'c');
                     mesh.set(0, 1, "TEXT SYSTEM");
 
                     panel.add(mesh);
+
+
                 }
                 /*{
                     CharMeshEdit mesh = new CharMeshEdit("grid2", 60, 80);
@@ -161,9 +166,11 @@ public class TestCharMesh {
         private KeyboardHandler keyHandler;
         private UINetwork ui;
         private NodeViewer viewer;
+        private Lang lang;
 
-        public CharMeshEdit(String name, double charWidth, double charHeight) {
+        public CharMeshEdit(String name, double charWidth, double charHeight, Lang lang) {
             super(name);
+            this.lang = lang;
             this.mesh = new CharMesh(charWidth, charHeight) {
 
                 @Override
@@ -312,6 +319,7 @@ public class TestCharMesh {
             else {
                 if (in!=0) {
                     insert(in);
+                    lang.update(mesh);
                 }
             }
 
@@ -466,6 +474,13 @@ public class TestCharMesh {
         }
 
 
-
+        public String asString(){
+            StringBuilder result = new StringBuilder();
+            long i = 0;
+            for (Node n = get(i); n != null; i++) {
+                result.append(((SmartChar)n).getChar());
+            }
+            return result.toString();
+        }
     }
 }

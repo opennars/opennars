@@ -1,6 +1,10 @@
 package ca.nengo.test;
 
 
+import ca.nengo.model.SimulationException;
+import ca.nengo.ui.lib.world.*;
+import ca.nengo.ui.model.plot.AbstractWidget;
+import ca.nengo.util.ScriptGenException;
 import nars.NAR;
 import nars.io.narsese.NarseseParser;
 import nars.nal.entity.Term;
@@ -11,9 +15,12 @@ import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
+import org.piccolo2d.util.PBounds;
 
+import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
@@ -38,10 +45,19 @@ public class Lang {
     public NAR nar = new NAR(new Default());
     public NarseseParser p;// = Parser.newParser(nar);
     int debugIndent = 0;
-
+    public Match root;
+    TestCharMesh.CharMesh mesh;
 
     public Lang(){
         p = NarseseParser.newParser(nar);
+    }
+
+    public void update(TestCharMesh.CharMesh mesh)
+    {
+        this.mesh = mesh;
+        //delete root;
+        root = text2match(mesh.asString());
+        //add root to the panel
     }
 
     private void debug(String s)
@@ -52,12 +68,47 @@ public class Lang {
     }
 
 
-    public class Match {
+    public class Match extends AbstractWidget{
         public Node node;
+
+        Color bgColor = new Color(0,40,40);
+
+        @Override
+        protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double width, double height) {
+            Graphics2D g = paintContext.getGraphics();
+
+            final int iw = (int) width;
+            final int ih = (int) height;
+            g.setPaint(bgColor);
+            g.fillRect(0, 0, iw, ih);
+         }
+
+        @Override
+        public void run(float startTime, float endTime) throws SimulationException {
+        }
+
+        @Override
+        public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
+            return null;
+        }
+
+
         public Match(Node n){
+            super("match", 1,1);
             this.node = n;
             debug(" new " + this);
+            int margin = 5;
+            PBounds startBounds = ((TestCharMesh.SmartChar)mesh.get(node.getStartIndex())).getBounds();
+            PBounds endBounds   = ((TestCharMesh.SmartChar)mesh.get(node.getEndIndex())).getBounds();
+            double x = startBounds.getX() - margin;
+            double y = startBounds.getY() - margin;
+            double w = endBounds.getWidth() +  endBounds.getX() - x + margin * 2;
+            double h = startBounds.getHeight() + margin * 2;
+
+            setBounds(0,0,w,h);
+            move(x, y);
         }
+
         public void print(){
             debug(""+this);
         }
@@ -162,7 +213,6 @@ public class Lang {
     };
 
 
-
     public static void main(String[] args) {
         String input;
         //input = "<<(*,$a,$b,$c) --> Nadd> ==> <(*,$c,$a) --> NbiggerOrEqual>>.";
@@ -172,10 +222,10 @@ public class Lang {
         input = "<neutralization --> reaction>. <neutralization --> reaction>?";
 
         Lang l = new Lang();
-        l.text2widget(input);
+        l.text2match(input);
     }
 
-    public void text2widget(String text)
+    public Match text2match(String text)
     {
 
         ParseRunner rpr = new RecoveringParseRunner(p.Input());
@@ -226,6 +276,7 @@ public class Lang {
         System.out.println(" " + root);
         System.out.println();
         w.print();
+        return w;
     }
 }
 

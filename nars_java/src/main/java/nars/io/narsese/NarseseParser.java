@@ -18,6 +18,7 @@ import nars.nal.nal8.Operation;
 import org.parboiled.BaseParser;
 import org.parboiled.Parboiled;
 import org.parboiled.Rule;
+import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ErrorReportingParseRunner;
 import org.parboiled.parserunners.ParseRunner;
@@ -39,6 +40,7 @@ import static org.parboiled.support.ParseTreeUtils.printNodeTree;
  * NARese, syntax and language for interacting with a NAR in NARS.
  * https://code.google.com/p/open-nars/wiki/InputOutputFormat
  */
+@BuildParseTree
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
