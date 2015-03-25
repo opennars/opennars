@@ -684,31 +684,37 @@ public class NarseseParser extends BaseParser<Object> {
 
             ParsingResult r = rpr.run(input);
 
-            System.out.println("valid? " + (r.matched && (r.parseErrors.isEmpty())) );
-            r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + ' ' + x));
-
-            for (Object e : r.parseErrors) {
-                if (e instanceof InvalidInputError) {
-                    InvalidInputError iie = (InvalidInputError) e;
-                    System.err.println(e);
-                    if (iie.getErrorMessage()!=null)
-                        System.err.println(iie.getErrorMessage());
-                    for (MatcherPath m : iie.getFailedMatchers()) {                        
-                        System.err.println("  ?-> " + m);
-                    }
-                    System.err.println(" at: " + iie.getStartIndex() + " to " + iie.getEndIndex());
-                }
-                else {
-                    System.err.println(e);
-                }
-                
-            }
-
-            System.out.println(printNodeTree(r));
-
+            p.printDebugResultInfo(r);
             input = null;
         }
         
+    }
+
+    public void printDebugResultInfo(ParsingResult r){
+
+        System.out.println("valid? " + (r.isSuccess() && (r.getParseErrors().isEmpty())) );
+        r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + ' ' + x));
+
+        for (Object e : r.getParseErrors()) {
+            if (e instanceof InvalidInputError) {
+                InvalidInputError iie = (InvalidInputError) e;
+                System.err.println(e);
+                if (iie.getErrorMessage()!=null)
+                    System.err.println(iie.getErrorMessage());
+                for (MatcherPath m : iie.getFailedMatchers()) {
+                    System.err.println("  ?-> " + m);
+                }
+                System.err.println(" at: " + iie.getStartIndex() + " to " + iie.getEndIndex());
+            }
+            else {
+                System.err.println(e);
+            }
+
+        }
+
+        System.out.println(printNodeTree(r));
+
+
     }
 
 
