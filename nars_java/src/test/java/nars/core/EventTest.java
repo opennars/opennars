@@ -29,9 +29,14 @@ public class EventTest {
 
         AtomicBoolean b = new AtomicBoolean();
 
-        e.on(T(Events.CycleEnd.class), x -> {
-            //System.err.println("EVENT: " + x);
-            b.set(true);
+
+        e.on(T(Events.CycleEnd.class),new Reaction() {
+
+            @Override
+            public void event(Class event, Object[] args) {
+                if (event == Events.CycleEnd.class)
+                    b.set(true);
+            }
         });
 
         e.notify(Events.CycleEnd.class, Event.wrap(true));
