@@ -459,8 +459,22 @@ public class TemporalRules {
                     double conf=task.sentence.truth.getConfidence();
                     Concept C=nal.memory.concept(task.sentence.term);
                     if(C!=null && C.beliefs!=null && C.beliefs.size()>0) {
-                        TruthValue cur=C.beliefs.get(0).truth;
+                        Sentence bel=C.beliefs.get(0);
+                        TruthValue cur=bel.truth;
                         conf=Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
+                        //if there is no overlapping evidental base, use revision:
+                        boolean revisable=true;
+                        for(long l: bel.stamp.evidentialBase) {
+                            for(long h: task.sentence.stamp.evidentialBase) {
+                                if(l==h) {
+                                    revisable=false;
+                                    break;
+                                }
+                            }
+                        }
+                        if(revisable) {
+                            conf=TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
+                        }
                     }
                     
                     if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
