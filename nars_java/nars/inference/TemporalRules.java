@@ -452,27 +452,6 @@ public class TemporalRules {
             Task t=nal.doublePremiseTask(statement2, truth2, budget2,true, false);
                  if(t!=null) {
                     success.add(t);
-                    
-                    Task task=t;
-                    //micropsi inspired strive for knowledge
-                    if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && task.sentence.getTruth().getConfidence()<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
-                        if(task.sentence.term instanceof Implication) {
-                            boolean valid=false;
-                            if(task.sentence.term instanceof Implication) {
-                                Implication equ=(Implication) task.sentence.term;
-                                if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-                                    valid=true;
-                                }
-                            }
-                            if(valid) {
-                                Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
-                                BudgetValue budg=task.budget.clone();
-                                budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
-                                budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
-                                nal.singlePremiseTask(tt2, task.budget.clone());
-                            }
-                        }
-                    }
                 }
             }
         if(!tooMuchTemporalStatements(statement3)) {

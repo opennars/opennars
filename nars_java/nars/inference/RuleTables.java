@@ -81,6 +81,17 @@ public class RuleTables {
                         
         
         final Task task = nal.getCurrentTask();
+        
+        //micropsi inspired strive for knowledge
+        if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && task.sentence.getTruth().getConfidence()<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+            Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
+            BudgetValue budg=task.budget.clone();
+            budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
+            budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
+            nal.singlePremiseTask(tt2, task.budget.clone());
+        }
+        
+        
         final Sentence taskSentence = task.sentence;
         
         final Term taskTerm = taskSentence.term;         // cloning for substitution

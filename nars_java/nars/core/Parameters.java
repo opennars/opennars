@@ -197,8 +197,8 @@ public class Parameters {
     
     public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
-    public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f;
-    public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
+    public static float CURIOSITY_PRIORITY_THRESHOLD=0.4f;
+    public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.4f;
     public static float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.4f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
     public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.5f; //how much priority should curiosity have?
     public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
