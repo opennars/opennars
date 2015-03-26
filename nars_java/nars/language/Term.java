@@ -55,6 +55,10 @@ public class Term implements AbstractTerm, Termable {
         return NativeOperator.ATOM;
     }
     
+    public boolean isHigherOrderStatement() { //==> <=>
+        return (this instanceof Equivalence) || (this instanceof Implication);
+    }
+    
     public boolean isExecutable(Memory mem) {
         //don't allow ^want and ^believe to be active/have an effect, 
         //which means its only used as monitor

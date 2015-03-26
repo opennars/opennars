@@ -130,9 +130,7 @@ public final class SyllogisticRules {
         int order1 = sentence1.term.getTemporalOrder();
         int order2 = sentence2.term.getTemporalOrder();
         int order = abdIndComOrder(order1, order2);
-        if (order == ORDER_INVALID) {
-            return;
-        }
+        
         Statement taskContent = (Statement) sentence1.term;
         TruthValue truth1 = null;
         TruthValue truth2 = null;
@@ -164,18 +162,18 @@ public final class SyllogisticRules {
             budget2 = BudgetFunctions.forward(truth2, nal);
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
-                
-        nal.doublePremiseTask(
-                Statement.make(taskContent, term1, term2, order), 
-                    truth1, budget1,false, false);
-        nal.doublePremiseTask(
-                Statement.make(taskContent, term2, term1, reverseOrder(order)), 
-                    truth2, budget2,false, false);
-        nal.doublePremiseTask(
-                Statement.makeSym(taskContent, term1, term2, order), 
-                    truth3, budget3,false, false);
-        
-        if(Parameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement()) { //
+        if (order != ORDER_INVALID) {
+            nal.doublePremiseTask(
+                    Statement.make(taskContent, term1, term2, order), 
+                        truth1, budget1,false, false);
+            nal.doublePremiseTask(
+                    Statement.make(taskContent, term2, term1, reverseOrder(order)), 
+                        truth2, budget2,false, false);
+            nal.doublePremiseTask(
+                    Statement.makeSym(taskContent, term1, term2, order), 
+                        truth3, budget3,false, false);
+        }
+        if(Parameters.BREAK_NAL_HOL_BOUNDARY && order1==order2 && taskContent.isHigherOrderStatement() && sentence2.term.isHigherOrderStatement()) { //
             /* Bridge to higher order statements:
             <a ==> c>.
             <b ==> c>.
@@ -184,20 +182,20 @@ public final class SyllogisticRules {
             <a --> b>. %F_abd%
             <b --> a>. %F_abd%
             */
-            if(truth1!=null) 
+          /*  if(truth1!=null) 
                 truth1=truth1.clone();
             if(truth2!=null) 
-                truth2=truth2.clone();
+                truth2=truth2.clone();*/
             if(truth3!=null) 
                 truth3=truth3.clone();
-            nal.doublePremiseTask(
+           /* nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term1, term2), 
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1), 
-                    truth2, budget2.clone(),false, false);
+                    truth2, budget2.clone(),false, false);*/
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.SIMILARITY, term1, term2), 
+                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
                     truth3, budget3.clone(),false, false);
         }
     }
@@ -294,10 +292,11 @@ public final class SyllogisticRules {
             }            
             budget = BudgetFunctions.forward(truth, nal);
         }
+        Statement s=Statement.make((belief.term.isHigherOrderStatement() || sentence.term.isHigherOrderStatement()) ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
+        nal.doublePremiseTask( s, truth, budget,false, true );
+        // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
         
-        nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
-        
-       if(Parameters.BREAK_NAL_HOL_BOUNDARY && (st instanceof Equivalence) && order1==order2) {
+       if(Parameters.BREAK_NAL_HOL_BOUNDARY && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
            
             BudgetValue budget1=null, budget2=null, budget3=null;
             TruthValue truth1=null, truth2=null, truth3=null;
@@ -305,27 +304,27 @@ public final class SyllogisticRules {
             TruthValue value2 = belief.truth;
             
             if (sentence.isQuestion()) {
-                budget1 = BudgetFunctions.backward(value2, nal);
-                budget2 = BudgetFunctions.backwardWeak(value2, nal);
+               /* budget1 = BudgetFunctions.backward(value2, nal);
+                budget2 = BudgetFunctions.backwardWeak(value2, nal);*/
                 budget3 = BudgetFunctions.backward(value2, nal);
             } else if (sentence.isQuest()) {
-                budget1 = BudgetFunctions.backwardWeak(value2, nal);
-                budget2 = BudgetFunctions.backward(value2, nal);
+               /* budget1 = BudgetFunctions.backwardWeak(value2, nal);
+                budget2 = BudgetFunctions.backward(value2, nal);*/
                 budget3 = BudgetFunctions.backwardWeak(value2, nal);            
             } else {
                 if (sentence.isGoal()) {
-                    truth1 = TruthFunctions.desireStrong(value1, value2);
-                    truth2 = TruthFunctions.desireWeak(value2, value1);
+                  /*  truth1 = TruthFunctions.desireStrong(value1, value2);
+                    truth2 = TruthFunctions.desireWeak(value2, value1);*/
                     truth3 = TruthFunctions.desireStrong(value1, value2);
                 } else { 
                     // isJudgment
-                    truth1 = TruthFunctions.abduction(value1, value2);
-                    truth2 = TruthFunctions.abduction(value2, value1);
+                   /* truth1 = TruthFunctions.abduction(value1, value2);
+                    truth2 = TruthFunctions.abduction(value2, value1);*/
                     truth3 = TruthFunctions.comparison(value1, value2);
                 }
 
-                budget1 = BudgetFunctions.forward(truth1, nal);
-                budget2 = BudgetFunctions.forward(truth2, nal);
+                /*budget1 = BudgetFunctions.forward(truth1, nal);
+                budget2 = BudgetFunctions.forward(truth2, nal);*/
                 budget3 = BudgetFunctions.forward(truth3, nal);
             }
            
@@ -335,14 +334,14 @@ public final class SyllogisticRules {
             |-
             <k <-> c>. %F_cmp%
             */
-            nal.doublePremiseTask(
+           /* nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term1, term2), 
                     truth1, budget1.clone(),false, false);
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1), 
-                    truth2, budget2.clone(),false, false);
+                    truth2, budget2.clone(),false, false);*/
             nal.doublePremiseTask(
-                Statement.make(NativeOperator.SIMILARITY, term1, term2), 
+                Statement.make(NativeOperator.SIMILARITY, term1, term2, TemporalRules.ORDER_NONE), 
                     truth3, budget3.clone(),false, false);
         }
     }
