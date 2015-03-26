@@ -455,7 +455,15 @@ public class TemporalRules {
                     
                     Task task=t;
                     //micropsi inspired strive for knowledge
-                    if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && task.sentence.getTruth().getConfidence()<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+                    //get strongest belief of that concept and use the revison truth, if there is no, use this truth
+                    double conf=task.sentence.truth.getConfidence();
+                    Concept C=nal.memory.concept(task.sentence.term);
+                    if(C!=null && C.beliefs!=null && C.beliefs.size()>0) {
+                        TruthValue cur=C.beliefs.get(0).truth;
+                        conf=Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
+                    }
+                    
+                    if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
                         if(task.sentence.term instanceof Implication) {
                             boolean valid=false;
                             if(task.sentence.term instanceof Implication) {
