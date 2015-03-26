@@ -84,9 +84,13 @@ public class Lang {
 
 
         public Match(Node n){
-            super("match", 1,1);
+            super("match", 666,666);
             this.node = n;
             debug(" new " + this);
+        }
+
+        public Match collapsed(){
+            return this;
         }
 
         private void updateBounds() {
@@ -102,7 +106,7 @@ public class Lang {
         }
 
         public void print(){
-            debug(""+this + " " + this.node.getValue());
+            debug(this.node.getStartIndex() + "," + this.node.getEndIndex() + " "+this.getClass().getSimpleName() + ", value: " + this.node.getValue() + ", matcher: " + this.node.getMatcher());
         }
 
         public Match node2widget(Node n) {
@@ -111,12 +115,10 @@ public class Lang {
                 return null;
             Type t = v.getClass();
             debug(" " + n.getMatcher().getLabel() + "  " + t);
-            if (t == Term.class)
-                return new Word(n);
-            else if (t == Float.class)
+            if (t == Float.class)
                 return new Number(n);
             else if (t == String.class)
-                return null;
+                return new Word(n);
             else if (t == Character.class)
                 return null;
             else if (n.getMatcher().getLabel() == "s")
@@ -127,8 +129,8 @@ public class Lang {
                 return new ListMatch(n);
             else if (n.getMatcher().getLabel() == "oneOrMore")
                 return new ListMatch(n);
-            else if (n.getMatcher().getLabel() == "sequence")
-                return children2one(n);
+            //else if (n.getMatcher().getLabel() == "sequence")
+              //  return children2one(n);
             else if (n.getMatcher().getLabel() == "firstOf")
                 return children2one(n);
             else
@@ -143,7 +145,7 @@ public class Lang {
             else if(items.size()==0)
                 return null;
             else
-                throw new RuntimeException("ewwww " + n + ", " + items.size() + ", " +n.getChildren());
+                 throw new RuntimeException("ewwww " + n + ", children:" +n.getChildren() + ", items.size:" + items.size() + ", items: " + items);
         }
 
         public ArrayList<Match> children2list(Node n) {
@@ -166,31 +168,53 @@ public class Lang {
 
     };
     public class MatchWithChildren extends Match {
-        public ArrayList<Match> items;// = new ArrayList<Match>();
+        public ArrayList<Match> items;
 
         public MatchWithChildren(Node n){
             super(n);
             items = children2list(n);
         }
+
+        public Match collapsed(){
+            ArrayList<Match> new_items = new ArrayList<Match>();
+            for (Match i:items) {
+                Match c = i.collapsed();
+                if (i.node.getStartIndex() == this.node.getStartIndex() && i.node.getEndIndex() == this.node.getEndIndex()) {
+                    return c;
+                } else {
+                    if (i.node.getStartIndex() != i.node.getEndIndex())
+                        new_items.add(c);
+                }
+            }
+            return (getClass() == ListMatch.class) ? new ListMatch(node, new_items) : new Syntaxed(node, new_items);
+        }
+
         public void print(){
-            debug(""+this + " " + this.node.getValue() + " with items: ");
+            super.print();
             debugIndent++;
             for (Match w:items)
                 w.print();
-
             debugIndent--;
         }
 
         private void updateBounds() {
-            //super(); o_O
+            super.updateBounds();
             for (Match w:items)
                 w.updateBounds();
         }
+        public MatchWithChildren(Node n, ArrayList<Match> items) {
+            super(n);
+                this.items = items;
+        }
+
     }
 
     public class ListMatch extends MatchWithChildren {
         public ListMatch(Node n){
             super(n);
+        }
+        public ListMatch(Node n, ArrayList<Match> items){
+            super(n, items);
         }
     };
 
@@ -198,13 +222,17 @@ public class Lang {
         public Syntaxed(Node n){
             super(n);
         }
+        public Syntaxed(Node n, ArrayList<Match> items){
+            super(n, items);
+        }
+
     };
     public class Word extends Match {
         public Word(Node n){super(n);}
     };
     public class Number extends Match {
         public Number(Node n){super(n);}
-        public float getValue(){
+        public float getFloat(){
             return (float)node.getValue();
         }
     };
@@ -244,6 +272,13 @@ public class Lang {
         System.out.println();
         System.out.println("Match w: " + w);
         System.out.println();
+        w.print();
+        System.out.println();
+        System.out.println("collapse:");
+        System.out.println();
+        w = w.collapsed();
+        System.out.println();
+        System.out.println("collapsed:");
         w.print();
         return w;
     }
