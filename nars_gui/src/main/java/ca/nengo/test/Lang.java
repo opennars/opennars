@@ -22,21 +22,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.parboiled.support.ParseTreeUtils.printNodeTree;
-
 /**
  * autocompletion and structural editing of narsese
  */
-
-/*
-now, to try displaing this. Would be nice to keep this core independent of nengo stuff, but java lacks
- multiple inheritance, what now?
- */
-
-//i need @BuildParseTree, but grappa wont play with this class, because its not a top level class?
-
-
-
 
 
 public class Lang {
@@ -55,9 +43,11 @@ public class Lang {
     public void update(TestCharMesh.CharMesh mesh)
     {
         this.mesh = mesh;
-        //delete root;
+        //todo:delete root;
+        System.out.print("input string: "+mesh.asString() + "\r\n");
         root = text2match(mesh.asString());
-        //add root to the panel
+        root.updateBounds();
+        //todo:add root to the panel;
     }
 
     private void debug(String s)
@@ -97,6 +87,9 @@ public class Lang {
             super("match", 1,1);
             this.node = n;
             debug(" new " + this);
+        }
+
+        private void updateBounds() {
             int margin = 5;
             PBounds startBounds = ((TestCharMesh.SmartChar)mesh.get(node.getStartIndex())).getBounds();
             PBounds endBounds   = ((TestCharMesh.SmartChar)mesh.get(node.getEndIndex())).getBounds();
@@ -104,13 +97,12 @@ public class Lang {
             double y = startBounds.getY() - margin;
             double w = endBounds.getWidth() +  endBounds.getX() - x + margin * 2;
             double h = startBounds.getHeight() + margin * 2;
-
             setBounds(0,0,w,h);
             move(x, y);
         }
 
         public void print(){
-            debug(""+this);
+            debug(""+this + " " + this.node.getValue());
         }
 
         public Match node2widget(Node n) {
@@ -181,7 +173,7 @@ public class Lang {
             items = children2list(n);
         }
         public void print(){
-            debug(""+this+" with items: ");
+            debug(""+this + " " + this.node.getValue() + " with items: ");
             debugIndent++;
             for (Match w:items)
                 w.print();
@@ -189,6 +181,11 @@ public class Lang {
             debugIndent--;
         }
 
+        private void updateBounds() {
+            //super(); o_O
+            for (Match w:items)
+                w.updateBounds();
+        }
     }
 
     public class ListMatch extends MatchWithChildren {
@@ -237,15 +234,15 @@ public class Lang {
         p.printDebugResultInfo(r);
 
 
-        Node root = r.parseTreeRoot;
+        Node root = r.getParseTree();
         //Object x = root.getValue();
         //System.out.println("  " + x.getClass() + ' ' + x);
         System.out.println();
-        System.out.println(" " + root);
+        System.out.println("getParseTree(): " + root);
         System.out.println();
         Match w = new ListMatch((Node)root.getChildren().get(1));
         System.out.println();
-        System.out.println(" " + root);
+        System.out.println("Match w: " + w);
         System.out.println();
         w.print();
         return w;
@@ -253,46 +250,3 @@ public class Lang {
 }
 
 
-
-
-//lets not do this now
-    /*
-    private static class Sym {
-        public static enum Param {LIST_ELEM_TYPE, SRSTR};
-        public static class Params extends HashMap<Param, Object>{};
-        public static Params newParams(){
-            return new Params();
-        }
-
-        Map<Param, Object> params; // like the type of items of a List or min/max items
-        Type type;
-        public Sym(Class type, String name, Map<Param, Object> params){
-            this.type = type;
-        }
-    };
-
-    private Object some(Object sym){
-        Sym.Params params = Sym.newParams();
-        params.put(Sym.Param.LIST_ELEM_TYPE, sym);
-        return new Sym(ListMatch.class, "", params);
-
-    }
-    */
-
-
-        /*
-    //private class Sequence extends ImmutableList<Object> {}; // can contain String, Sym,
-    private class Choices extends ArrayList<ImmutableList<Object>> {};
-    private class Grammar extends HashMap<Object, Choices> {};
-    private Grammar g;
-    public Lang(){
-        g = new Grammar();
-        g.put(Task.class, new Choices());
-        g.get(Task.class).add(l().add(
-                BudgetValue.class).add(
-                Sentence.class).build());
-    }
-    private ImmutableList.Builder<Object> l(){
-        return new ImmutableList.Builder<Object>();
-    }
-        */

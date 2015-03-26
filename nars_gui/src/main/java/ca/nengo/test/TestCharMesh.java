@@ -301,9 +301,9 @@ public class TestCharMesh {
             char in = event.getKeyChar();
 
             String debug = String.valueOf((int) in) + " "+cursor + " ";
-            System.out.println(event + " " + event.isActionKey() + " " + cursor);
+            System.out.println("event: " + event + "isActionKey: " + event.isActionKey() + "cursor: " + cursor);
             mesh.set(0, 0, debug);
-            System.out.println(nodeMap);
+            System.out.println("nodemap: "+nodeMap);
 
             int cx = cursor.getX();
             int cy = cursor.getY();
@@ -476,9 +476,15 @@ public class TestCharMesh {
 
         public String asString(){
             StringBuilder result = new StringBuilder();
-            long i = 0;
-            for (Node n = get(i); n != null; i++) {
-                result.append(((SmartChar)n).getChar());
+
+            for(int line = 3; line < 33; line++) {
+                for (int column = 0; column < 333; column++) {
+                    Node n = get(index(column, line));
+                    if (n == null) break;
+                    //System.out.println("" + n + " len: "+result.length());
+                    result.append(((SmartChar) n).getChar());
+                }
+                result.append("\n");
             }
             return result.toString();
         }
