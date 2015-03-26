@@ -143,13 +143,9 @@ public abstract class Statement extends CompoundTerm {
 //        return make(statement, subj, pred, TemporalRules.ORDER_NONE, memory);
 //    }
     
-    final public static Statement make(NativeOperator op, final Term subj, final Term pred) {
+    final public static Statement make(NativeOperator op, final Term subj, final Term pred, int order) {
 
-        return make(op, subj, pred, true, ORDER_NONE);
-    }
-    
-    public boolean isHigherOrderStatement() { //==> <=>
-        return (this instanceof Equivalence) || (this instanceof Implication);
+        return make(op, subj, pred, true, order);
     }
     
     //++ TODO
