@@ -111,7 +111,7 @@ public abstract class Statement extends CompoundTerm {
             case INSTANCE_PROPERTY:
                 return InstanceProperty.make(subject, predicate);
             case IMPLICATION:
-                return Implication.make(subject, predicate);
+                return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_NONE);
             case IMPLICATION_AFTER:
                 return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
             case IMPLICATION_BEFORE:
@@ -119,7 +119,7 @@ public abstract class Statement extends CompoundTerm {
             case IMPLICATION_WHEN:
                 return Implication.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
             case EQUIVALENCE:
-                return Equivalence.make(subject, predicate);
+                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_NONE);
             case EQUIVALENCE_AFTER:
                 return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
             case EQUIVALENCE_WHEN:
