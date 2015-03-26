@@ -292,7 +292,18 @@ public final class SyllogisticRules {
             }            
             budget = BudgetFunctions.forward(truth, nal);
         }
-        Statement s=Statement.make((belief.term.isHigherOrderStatement() || sentence.term.isHigherOrderStatement()) ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
+        boolean higherOrder=(belief.term.isHigherOrderStatement() || sentence.term.isHigherOrderStatement());
+        boolean bothHigherOrder=(belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement());
+        if(!bothHigherOrder && higherOrder) {
+            if(belief.term.isHigherOrderStatement()) {
+                order=belief.term.getTemporalOrder();
+            } 
+            else
+            if(sentence.term.isHigherOrderStatement()) {
+                order=sentence.term.getTemporalOrder();
+            }
+        }
+        Statement s=Statement.make(higherOrder ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
         nal.doublePremiseTask( s, truth, budget,false, true );
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
         
