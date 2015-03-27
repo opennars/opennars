@@ -1,21 +1,16 @@
-package ca.nengo.test;
+package ca.nengo.test.lemon;
 
 
 import ca.nengo.model.SimulationException;
-import ca.nengo.ui.lib.world.*;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import nars.NAR;
 import nars.io.narsese.NarseseParser;
-import nars.nal.entity.Term;
 import nars.prototype.Default;
 import org.parboiled.Node;
-import org.parboiled.errors.InvalidInputError;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
-import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
-import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.lang.reflect.Type;
@@ -34,20 +29,10 @@ public class Lang {
     public NarseseParser p;// = Parser.newParser(nar);
     int debugIndent = 0;
     public Match root;
-    TestCharMesh.CharMesh mesh;
+    TestLines.Lines lines;
 
     public Lang(){
         p = NarseseParser.newParser(nar);
-    }
-
-    public void update(TestCharMesh.CharMesh mesh)
-    {
-        this.mesh = mesh;
-        //todo:delete root;
-        System.out.print("input string: "+mesh.asString() + "\r\n");
-        root = text2match(mesh.asString());
-        root.updateBounds();
-        //todo:add root to the panel;
     }
 
     private void debug(String s)
@@ -61,7 +46,7 @@ public class Lang {
     public class Match extends AbstractWidget{
         public Node node;
 
-        Color bgColor = new Color(0,40,40);
+        Color bgColor = new Color(255,0,255);
 
         @Override
         protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double width, double height) {
@@ -93,16 +78,25 @@ public class Lang {
             return this;
         }
 
-        private void updateBounds() {
-            int margin = 5;
-            PBounds startBounds = ((TestCharMesh.SmartChar)mesh.get(node.getStartIndex())).getBounds();
-            PBounds endBounds   = ((TestCharMesh.SmartChar)mesh.get(node.getEndIndex())).getBounds();
+        private void updateBounds(TestLines.Lines lines) {
+            int margin = 10;
+            int si = node.getStartIndex();
+            int ei = node.getEndIndex();
+            /*
+            int nbei = mesh.findNonblank(ei, 3);
+            debug(" " + si + " " + ei + " " + nbei);
+
+
+            PBounds startBounds = ((TestCharMesh.Glyph)mesh.).getBounds();
+            PBounds endBounds   = ((TestCharMesh.Glyph)mesh.findNonblank(ei, 3)).getBounds();
             double x = startBounds.getX() - margin;
             double y = startBounds.getY() - margin;
-            double w = endBounds.getWidth() +  endBounds.getX() - x + margin * 2;
+            double w = endBounds.getWidth() + endBounds.getX() - x + margin * 2;
             double h = startBounds.getHeight() + margin * 2;
             setBounds(0,0,w,h);
             move(x, y);
+            debug("widget " + this + ": " + x + " " + y + " " + w + " " + h);
+            */
         }
 
         public void print(){
@@ -197,10 +191,10 @@ public class Lang {
             debugIndent--;
         }
 
-        private void updateBounds() {
-            super.updateBounds();
+        private void updateBounds(TestLines.Lines l) {
+            super.updateBounds(l);
             for (Match w:items)
-                w.updateBounds();
+                w.updateBounds(l);
         }
         public MatchWithChildren(Node n, ArrayList<Match> items) {
             super(n);

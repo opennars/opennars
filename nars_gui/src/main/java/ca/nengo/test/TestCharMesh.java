@@ -6,6 +6,7 @@ import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
+import ca.nengo.test.lemon.Lang;
 import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;
@@ -21,7 +22,6 @@ import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestCharMesh {
@@ -38,16 +38,13 @@ public class TestCharMesh {
                 NengrowPanel panel = new NengrowPanel();
 
                 {
-                    Lang lang = new Lang();
+                    //Lang lang = new Lang();
 
-                    CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80, lang);
-                    mesh.set(0, 0, 'a');
-                    mesh.set(1, 0, 'b');
-                    mesh.set(2, 0, 'c');
-                    mesh.set(0, 1, "TEXT SYSTEM");
+                    CharMeshEdit mesh = new CharMeshEdit("grid", 60, 80);//, lang);
+                    mesh.set(0, 3, "[TEXT_SYSTEM]");
 
                     panel.add(mesh);
-
+                    //lang.update(mesh);
 
                 }
                 /*{
@@ -162,15 +159,15 @@ public class TestCharMesh {
     public static class CharMeshEdit extends DefaultNetwork implements UIBuilder {
 
         private MeshCursor cursor;
-        private final CharMesh mesh;
+        public final CharMesh mesh;
         private KeyboardHandler keyHandler;
         private UINetwork ui;
         private NodeViewer viewer;
-        private Lang lang;
+        //private Lang lang;
 
-        public CharMeshEdit(String name, double charWidth, double charHeight, Lang lang) {
+        public CharMeshEdit(String name, double charWidth, double charHeight){//, Lang lang) {
             super(name);
-            this.lang = lang;
+            //this.lang = lang;
             this.mesh = new CharMesh(charWidth, charHeight) {
 
                 @Override
@@ -209,6 +206,7 @@ public class TestCharMesh {
             } catch (StructuralException e) {
                 e.printStackTrace();
             }
+
         }
 
 
@@ -268,35 +266,6 @@ public class TestCharMesh {
         }
 
 
-        public long lastNonblank()
-        {
-            long i = index();
-            while (mesh.x(i) != 0){
-                Node n = mesh.get(i);
-                if(n != null)
-                {
-                    return i;
-                }
-                i-=1;
-            }
-            return i;
-        }
-
-        public void goToSide(int by)
-        {
-            int cx = cursor.getX();
-            int cy = cursor.getY();
-
-            cx += by;
-            if (cx < 0) {
-                long index = lastNonblank();
-                cx = mesh.x(index);
-                cy = mesh.y(index);
-            }
-
-            cursor(cx, cy);
-        }
-
         public void keyPressed(PInputEvent event) {
             char in = event.getKeyChar();
 
@@ -319,7 +288,7 @@ public class TestCharMesh {
             else {
                 if (in!=0) {
                     insert(in);
-                    lang.update(mesh);
+                    //lang.update(this);
                 }
             }
 
@@ -459,7 +428,7 @@ public class TestCharMesh {
         }
         private void updateBounds(int x, int y, SmartChar n) {
             n.lockPosition(false);
-            updateBounds(x, y, ((AbstractWidget)n));
+            updateBounds(x, y, ((AbstractWidget) n));
             n.lockPosition(true);
         }
 
@@ -473,18 +442,28 @@ public class TestCharMesh {
             return y * (int)charHeight;
         }
 
+        public int findNonblank(int x, int y)
+        {
+            while (x >= 0){
+                Node n = get(index(x, y));
+                if(n != null)
+                    return x;
+                x-=1;
+            }
+            return 0;
+        }
 
         public String asString(){
             StringBuilder result = new StringBuilder();
 
-            for(int line = 3; line < 33; line++) {
+            for(int line = 3; line < 4; line++) {
                 for (int column = 0; column < 333; column++) {
                     Node n = get(index(column, line));
                     if (n == null) break;
                     //System.out.println("" + n + " len: "+result.length());
                     result.append(((SmartChar) n).getChar());
                 }
-                result.append("\n");
+                //result.append("\n");
             }
             return result.toString();
         }

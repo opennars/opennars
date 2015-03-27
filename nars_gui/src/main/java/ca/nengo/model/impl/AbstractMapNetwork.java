@@ -4,6 +4,7 @@ import ca.nengo.model.*;
 import ca.nengo.util.Probe;
 import ca.nengo.util.VisiblyChanges;
 import javolution.util.FastMap;
+import javolution.util.FastSortedMap;
 
 import java.util.*;
 
@@ -19,6 +20,7 @@ public abstract class AbstractMapNetwork<K, N extends Node> extends NetworkImpl<
         super(s);
         //nodeMap = new LinkedHashMap<>();
         nodeMap = new FastMap<K,N>().atomic();
+        //nodeMap = new FastSortedMap<K,N>().atomic();
         //nodeMap = new FastMap<K,N>().shared();
     }
 
