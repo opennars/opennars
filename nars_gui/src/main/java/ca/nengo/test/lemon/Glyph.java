@@ -19,7 +19,7 @@ public class Glyph extends AbstractWidget {
     Color borderColor = new Color(70,70,70);
     Color bgColor = new Color(40,40,40);
     Font f = Video.monofont.deriveFont(64f);
-    private int c;
+    public int c;
     private boolean lockPos;
 
     public Glyph(int c) {

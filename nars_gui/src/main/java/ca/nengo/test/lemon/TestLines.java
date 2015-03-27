@@ -44,11 +44,17 @@ public class TestLines {
             }
 
             public Line(String s) {
-                //\n?
+                int i = 0;
+                for (char c:s.toCharArray())
+                    setNode(i++, new Glyph(c));
+
             }
 
             public String asString() {
                 StringBuilder result = new StringBuilder();
+                for(Object g: nodeMap.values()){
+                    result.append(((Glyph)g).c);
+                }
                 return result.toString();
             }
 
@@ -183,13 +189,9 @@ public class TestLines {
     */
         public String asString() {
             StringBuilder result = new StringBuilder();
-
-    /*            nodeMap.forEach(
-                        {
-                                result.append(line.asString() + "\n");
-                        }
-                );*/
-
+            for(Object l: nodeMap.values()){
+                result.append(((Line)l).asString() + "\n");
+            }
             return result.toString();
         }
 

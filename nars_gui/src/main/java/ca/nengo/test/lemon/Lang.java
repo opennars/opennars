@@ -192,9 +192,9 @@ public class Lang {
         }
 
         private void updateBounds(TestLines.Lines l) {
-            super.updateBounds(l);
             for (Match w:items)
                 w.updateBounds(l);
+            super.updateBounds(l);
         }
         public MatchWithChildren(Node n, ArrayList<Match> items) {
             super(n);
