@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import nars.core.Memory;
 import nars.core.Parameters;
+import nars.core.control.NAL;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Sentence;
@@ -477,24 +478,7 @@ public class TemporalRules {
                         }
                     }
                     
-                    if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
-                        if(task.sentence.term instanceof Implication) {
-                            boolean valid=false;
-                            if(task.sentence.term instanceof Implication) {
-                                Implication equ=(Implication) task.sentence.term;
-                                if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-                                    valid=true;
-                                }
-                            }
-                            if(valid) {
-                                Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
-                                BudgetValue budg=task.budget.clone();
-                                budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
-                                budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
-                                nal.singlePremiseTask(tt2, task.budget.clone());
-                            }
-                        }
-                    }
+                    questionFromLowConfidenceHighPriorityJudgement(task, conf, nal);
                 }
             }
         if(!tooMuchTemporalStatements(statement3)) {
@@ -504,6 +488,27 @@ public class TemporalRules {
                 }
         }
         return success;
+    }
+
+    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
+        if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+            if(task.sentence.term instanceof Implication) {
+                boolean valid=false;
+                if(task.sentence.term instanceof Implication) {
+                    Implication equ=(Implication) task.sentence.term;
+                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+                        valid=true;
+                    }
+                }
+                if(valid) {
+                    Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
+                    BudgetValue budg=task.budget.clone();
+                    budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
+                    budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
+                    nal.singlePremiseTask(tt2, task.budget.clone());
+                }
+            }
+        }
     }
     
     /**
