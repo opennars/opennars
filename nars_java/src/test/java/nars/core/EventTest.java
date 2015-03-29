@@ -9,12 +9,10 @@ import nars.Events;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import org.junit.Test;
-import reactor.event.Event;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertTrue;
-import static reactor.event.selector.Selectors.T;
 
 /**
  * @author me
@@ -30,7 +28,7 @@ public class EventTest {
         AtomicBoolean b = new AtomicBoolean();
 
 
-        e.on(T(Events.CycleEnd.class),new Reaction() {
+        e.on(Events.CycleEnd.class,new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -39,10 +37,10 @@ public class EventTest {
             }
         });
 
-        e.notify(Events.CycleEnd.class, Event.wrap(true));
+        e.notify(Events.CycleEnd.class, new Object[] { true} );
 
 
-        Thread.sleep(100);
+        //Thread.sleep(100);
 
         e.shutdown();
 

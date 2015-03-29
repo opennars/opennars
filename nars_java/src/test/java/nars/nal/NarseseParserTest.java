@@ -150,8 +150,8 @@ public class NarseseParserTest {
         testProductABC(term("(a , b, c)")); //additional spaces
         testProductABC(term("(a , b , c)")); //additional spaces
         testProductABC(term("(a ,\tb, c)")); //tab
-        testProductABC(term("(a b c)")); //without commas
-        testProductABC(term("(a *  b * c)")); //with multiple (redundant) infix
+        //testProductABC(term("(a b c)")); //without commas
+        //testProductABC(term("(a *  b * c)")); //with multiple (redundant) infix
     }
 
     @Test public void testInfix2() throws InvalidInputException {
@@ -185,12 +185,6 @@ public class NarseseParserTest {
         taskEqualsOldParser("(-- negated)!");
 
 
-        try {
-            task("(-- negated illegal_extra_term)!");
-            assertTrue(false);
-        }
-        catch (Exception e) { }
-
         taskEqualsOldParser("-- negated!");
         taskEqualsOldParser("--negated!");
 
@@ -200,6 +194,12 @@ public class NarseseParserTest {
         assertTrue(nab instanceof Negation);
         IntersectionExt ab = (IntersectionExt) nab.negated();
         assertTrue(ab instanceof IntersectionExt);
+
+        try {
+            task("(-- negated illegal_extra_term)!");
+            assertTrue(false);
+        }
+        catch (Exception e) { }
 
 
     }
@@ -220,9 +220,9 @@ public class NarseseParserTest {
 
         testBelieveAB(term("(^believe,a,b)"));
         testBelieveAB(term("(^believe,a,b,SELF)"));
-        testBelieveAB(term("(^ believe,a,b)"));
-        testBelieveAB(term("(^,believe,a,b)"));
-        testBelieveAB(term("(^ believe a b)"));
+        //testBelieveAB(term("(^ believe,a,b)"));
+        //testBelieveAB(term("(^,believe,a,b)"));
+        //testBelieveAB(term("(^ believe a b)"));
 
     }
 
@@ -339,16 +339,22 @@ public class NarseseParserTest {
         taskEqualsOldParser("$0.80;0.50;0.95$ <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90%");
     }
 
+    @Test public void testImageIndex() {
+        Compound t = term("(/,open,$1,_)");
+        assertEquals("(/,open,$1,_)", t.toString());
+        assertEquals("index psuedo-term should not count toward its size", 2, t.size());
+    }
+
     private void taskEqualsOldParser(String s) {
         Task t = task(s);
         assertNotNull(t);
         Task u = n.narsese.parseTask(s);
         assertNotNull(u);
 
-        assertEquals("(term) " + t + " != " + u, t.getTerm(), u.getTerm());
-        assertEquals("(truth) " + t.sentence.truth + " != " + u.sentence.truth, t.sentence.truth, u.sentence.truth);
-        assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), t.getCreationTime(), u.getCreationTime());
-        assertEquals("(occurencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), t.getOccurrenceTime(), u.getOccurrenceTime());
+        assertEquals("(term) " + t + " != " + u, u.getTerm(), t.getTerm());
+        assertEquals("(truth) " + t.sentence.truth + " != " + u.sentence.truth, u.sentence.truth, t.sentence.truth);
+        assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), u.getCreationTime(), t.getCreationTime());
+        assertEquals("(occurencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), u.getOccurrenceTime(), t.getOccurrenceTime());
         //TODO budget:
         //TODO punctuation:
     }
