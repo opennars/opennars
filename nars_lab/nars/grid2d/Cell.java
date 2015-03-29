@@ -230,14 +230,17 @@ public class Cell {
             s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
             s.rect(0, 0.3f, 1, 0.4f);
         }
-         else
+        else
         if(logic==Logic.WIRE || logic==Logic.BRIDGE || logic==Logic.UNCERTAINBRIDGE) {
             s.fill(state.cr, state.cg, state.cb, state.ca);
             if(logic==Logic.BRIDGE || logic==Logic.UNCERTAINBRIDGE) {
                 s.fill(state.cr+30, state.cg+30, 0, state.ca+30);
+                s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
+                s.rect(0.3f, 0.3f, 0.4f, 0.7f);
+            } else { 
+                s.rect(0.3f, 0, 0.4f, 1);
             }
             s.rect(0, 0.3f, 1, 0.4f);
-            s.rect(0.3f, 0, 0.4f, 1);
         }
          
         s.fill(255,255,255,128);

@@ -146,12 +146,12 @@ public class Hauto {
                 w.value2=down.charge;
         }
         
-        if(!r.chargeFront && r.charge==0 && (((bridge(right.logic) && right.value==1) || (bridge(left.logic) && left.value==1)) || ((bridge(down.logic) && down.value2==1) || (bridge(up.logic) && up.value2==1))))
+        if(!r.chargeFront && r.charge==0 && (((bridge(right.logic) && right.value==1) || (bridge(left.logic) && left.value==1)) || ((bridge(down.logic) && down.value2==1))))
         {
             w.charge=1;
             w.chargeFront=true;
         }
-        if(!r.chargeFront && r.charge==1 && (((bridge(right.logic) && right.value==0) || (bridge(left.logic) && left.value==0)) || ((bridge(down.logic) && down.value2==0) || (bridge(up.logic) && up.value2==0))))
+        if(!r.chargeFront && r.charge==1 && (((bridge(right.logic) && right.value==0) || (bridge(left.logic) && left.value==0)) || ((bridge(down.logic) && down.value2==0))))
         {
             w.charge=0;
             w.chargeFront=true;
