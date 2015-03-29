@@ -385,26 +385,7 @@ public class Concept extends Item<Term> implements Termable {
             // still worth pursuing?
             if (task.aboveThreshold()) {
 
-                if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                    //ok, how can we achieve it? add a question of whether it is fullfilled
-                    Term[] qu=new Term[2];
-                    if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
-                        Variable how=new Variable("?how");
-                        Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
-                        Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                        qu[0]=imp;
-                        qu[1]=imp2;
-                    }
-                    for(Term q : qu) {
-                        if(q!=null) {
-                            Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp,nal.memory.time()));
-                            if(s!=null) {
-                                BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                                nal.singlePremiseTask(s, budget);
-                            }
-                        }
-                    }
-                }
+                questionFromGoal(task, nal);
                 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 //task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()
@@ -413,6 +394,29 @@ public class Concept extends Item<Term> implements Termable {
                         memory.emit(UnexecutableGoal.class, task, this, nal);
                     }
                 //}
+            }
+        }
+    }
+
+    private void questionFromGoal(final Task task, final NAL nal) {
+        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
+            //ok, how can we achieve it? add a question of whether it is fullfilled
+            Term[] qu=new Term[2];
+            if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+                Variable how=new Variable("?how");
+                Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                qu[0]=imp;
+                qu[1]=imp2;
+            }
+            for(Term q : qu) {
+                if(q!=null) {
+                    Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp,nal.memory.time()));
+                    if(s!=null) {
+                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                        nal.singlePremiseTask(s, budget);
+                    }
+                }
             }
         }
     }
