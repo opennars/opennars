@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import nars.core.Memory;
 import nars.core.NAR;
 import nars.grid2d.Cell.Logic;
 import static nars.grid2d.Cell.Logic.AND;
@@ -8,6 +9,7 @@ import static nars.grid2d.Cell.Logic.NOT;
 import static nars.grid2d.Cell.Logic.OFFSWITCH;
 import static nars.grid2d.Cell.Logic.OR;
 import static nars.grid2d.Cell.Logic.SWITCH;
+import static nars.grid2d.Cell.Logic.UNCERTAINBRIDGE;
 import static nars.grid2d.Cell.Logic.WIRE;
 import static nars.grid2d.Cell.Logic.XOR;
 import nars.grid2d.Cell.Machine;
@@ -29,6 +31,13 @@ public class Hauto {
             return -2;
         }
         return Integer.parseInt(c.name.replaceAll("door", "").replaceAll("\\}", "").replaceAll("\\{", ""));
+    }
+    
+    public boolean bridge(Logic c) {
+        if(c==Logic.UNCERTAINBRIDGE || c==Logic.BRIDGE) {
+            return true;
+        }
+        return false;
     }
     
     //put to beginning because we will need this one most often
@@ -122,7 +131,7 @@ public class Hauto {
             w.value=(up.charge==1 ^ down.charge==1) ? 1.0f : 0.0f;  //eval state from input connections
 
         //ADD BIDIRECTIONAL LOGIC BRIDGE TO OVERCOME 2D TOPOLOGY
-        if(r.logic==BRIDGE)
+        if(r.logic==BRIDGE || (r.logic==UNCERTAINBRIDGE && Memory.randomNumber.nextDouble()>0.5))
         {
             if(left.chargeFront && left.logic==WIRE)
                 w.value=left.charge;
@@ -137,12 +146,12 @@ public class Hauto {
                 w.value2=down.charge;
         }
         
-        if(!r.chargeFront && r.charge==0 && (((right.logic==BRIDGE && right.value==1) || (left.logic==BRIDGE && left.value==1)) || ((down.logic==BRIDGE && down.value2==1) || (up.logic==BRIDGE && up.value2==1))))
+        if(!r.chargeFront && r.charge==0 && (((bridge(right.logic) && right.value==1) || (bridge(left.logic) && left.value==1)) || ((bridge(down.logic) && down.value2==1) || (bridge(up.logic) && up.value2==1))))
         {
             w.charge=1;
             w.chargeFront=true;
         }
-        if(!r.chargeFront && r.charge==1 && (((right.logic==BRIDGE && right.value==0) || (left.logic==BRIDGE && left.value==0)) || ((down.logic==BRIDGE && down.value2==0) || (up.logic==BRIDGE && up.value2==0))))
+        if(!r.chargeFront && r.charge==1 && (((bridge(right.logic) && right.value==0) || (bridge(left.logic) && left.value==0)) || ((bridge(down.logic) && down.value2==0) || (bridge(up.logic) && up.value2==0))))
         {
             w.charge=0;
             w.chargeFront=true;
@@ -406,6 +415,10 @@ public class Hauto {
         if("bridge".equals(label))
         {
             selected.setLogic(Cell.Logic.BRIDGE, 0);
+        }
+        if("uncertainbridge".equals(label))
+        {
+            selected.setLogic(Cell.Logic.UNCERTAINBRIDGE, 0);
         }
         if("OnWire".equals(label))
         {
