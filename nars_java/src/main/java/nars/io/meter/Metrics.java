@@ -251,7 +251,7 @@ JsonSerializationContext context) {
     }
     
     /** generate the next row.  key can be a time number, or some other unique-like identifying value */
-    public <R extends RowKey> void update(R key) {
+    public synchronized <R extends RowKey> void update(R key) {
         nextRowKey = key;        
         
         boolean[] extremaToInvalidate = new boolean[ numColumns ];

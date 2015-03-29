@@ -15,7 +15,6 @@ public class Param implements Serializable {
 
 
 
-
     public Param() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
@@ -59,6 +58,9 @@ public class Param implements Serializable {
      * 0.0 means none is.
      */
     public AtomicDouble conceptActivationFactor = new AtomicDouble(1.0);
+
+    /** scaling factor for priority of input tasks */
+    public AtomicDouble inputActivationFactor = new AtomicDouble(1.0);
 
     /**
      * Minimum required priority for a concept

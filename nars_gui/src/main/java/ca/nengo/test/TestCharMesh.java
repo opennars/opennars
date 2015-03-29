@@ -6,7 +6,6 @@ import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
-import ca.nengo.test.lemon.Lang;
 import ca.nengo.ui.NengrowPanel;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;

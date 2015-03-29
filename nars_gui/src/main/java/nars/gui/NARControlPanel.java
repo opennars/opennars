@@ -36,6 +36,7 @@ import nars.gui.output.chart.MeterNode;
 import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.io.TextOutput;
 import nars.nal.meta.NARMetrics;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import javax.swing.*;
 import java.awt.*;
@@ -686,6 +687,10 @@ public class NARControlPanel extends TimeControl implements Reaction {
 //    }
 
 
+    AtomicDouble tasklinkRate = new AtomicDouble(1),
+            termlinkRate = new AtomicDouble(1),
+            novelRate = new AtomicDouble(1);
+
     private JComponent newParameterPanel() {
         JPanel p = new JPanel();
 
@@ -747,14 +752,21 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
         JPanel pg = new JPanel(new GridLayout(0, 2));
         {
-            pg.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation xr", 0.0f, 1.0f), c);
+            pg.add(new NSlider(memory.param.inputActivationFactor, "Input Activation", 0.0f, 1.0f), c);
+            pg.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation", 0.0f, 1.0f), c);
 
             pg.add(new NSlider(memory.param.conceptFireThreshold, "Concepts >", 0.0f, 1.0f), c);
             pg.add(new NSlider(memory.param.decisionThreshold, "Decisions >", 0.0f, 1.0f), c);
 
-            pg.add(new NSlider(memory.param.taskLinkForgetDurations, "TaskLink Durations", 0.5f, 20), c);
-            pg.add(new NSlider(memory.param.termLinkForgetDurations, "TermLink Durations", 0.5f, 20), c);
-            pg.add(new NSlider(memory.param.conceptForgetDurations, "Concept Durations", 0.5f, 20), c);
+            pg.add(new NSlider(memory.param.conceptForgetDurations, "Concept Memory Durations", 0.5f, 20), c);
+
+            tasklinkRate.set(memory.param.taskLinkForgetDurations.get() / memory.param.conceptForgetDurations.get());
+            termlinkRate.set( memory.param.termLinkForgetDurations.get() / memory.param.conceptForgetDurations.get() );
+            novelRate.set( memory.param.novelTaskForgetDurations.get() / memory.param.conceptForgetDurations.get() );
+
+            pg.add(new NCSlider(tasklinkRate, "TaskLink Memory x", 0.1f, 5f), c);
+            pg.add(new NCSlider(termlinkRate, "TermLink Memory x", 0.1f, 5f), c);
+            pg.add(new NCSlider(novelRate, "NovelTask Memory x", 0.1f, 5f), c);
         }
         p.add(pg,c);
         
@@ -778,18 +790,39 @@ public class NARControlPanel extends TimeControl implements Reaction {
         return p;
     }
 
+    class NCSlider extends NSlider {
+
+        public NCSlider(AtomicDouble value, String label, float min, float max) {
+            super(value, label, min, max);
+
+        }
+
+        @Override
+        public void setValue(float v) {
+            super.setValue(v);
+            updateFrequencies();
+        }
+    }
+
+
     protected void updateFrequencies() {
+
         //relative to base freq:
         //  input x
-        memory.param.inputsMaxPerCycle.set( 0);
-        //  concept x
-        memory.param.conceptsFiredPerCycle.set( 0 );
+        memory.param.inputsMaxPerCycle.set( 1 );
+        //  concept #
+        memory.param.conceptsFiredPerCycle.set( 1 );
+        //  term #
+        memory.param.termLinkMaxReasoned.set(1);
+
+        final float conceptRate = memory.param.conceptForgetDurations.floatValue();
+
         //  term x
-        memory.param.termLinkForgetDurations.set( 0 );
+        memory.param.termLinkForgetDurations.set( termlinkRate.get() * conceptRate );
         //  task x
-        memory.param.taskLinkForgetDurations.set( 0 );
+        memory.param.taskLinkForgetDurations.set( tasklinkRate.get() * conceptRate );
         //  novelty x
-        memory.param.novelTaskForgetDurations.set( 0 );
+        memory.param.novelTaskForgetDurations.set( novelRate.get() * conceptRate );
     }
 
     private NSlider newIntSlider(final AtomicInteger x, final String prefix, int min, int max) {

@@ -568,6 +568,10 @@ public class Memory implements Serializable {
             return false;
         }
 
+        float inputPriorityFactor = param.inputActivationFactor.floatValue();
+        if (inputPriorityFactor!=1.0)
+            t.setPriority( t.getPriority() * inputPriorityFactor );
+
         if (!t.budget.aboveThreshold()) {
             taskRemoved(t, "Insufficient budget");
             return false;
@@ -684,7 +688,7 @@ public class Memory implements Serializable {
     }
 
     /** executes one complete memory cycle (if not disabled) */
-    public /*synchronized*/ void cycle(boolean newFrame) {
+    public synchronized void cycle(boolean newFrame) {
 
         if (!isEnabled()) {
             return;

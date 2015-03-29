@@ -406,6 +406,7 @@ public class NAR implements Runnable {
 
     
     @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
+        if (isRunning()) stop();
         this.minFramePeriodMS = minCyclePeriodMS;
         this.cyclesPerFrame = cyclesPerFrame;
         running = true;
