@@ -500,6 +500,12 @@ public class EditorPanel extends JPanel {
                 s.cells.click("bridge", "", "");
             }
         });
+        logicMenu.add(new EditorMode("Uncertain50PercentBridge") {
+            @Override
+            public void run() {
+                s.cells.click("uncertainbridge", "", "");
+            }
+        });
         logicMenu.add(new EditorMode("Off Switch") {
             @Override
             public void run() {
