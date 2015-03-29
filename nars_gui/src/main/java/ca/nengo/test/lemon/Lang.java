@@ -28,8 +28,8 @@ public class Lang {
     public NAR nar = new NAR(new Default());
     public NarseseParser p;// = Parser.newParser(nar);
     int debugIndent = 0;
-    public Match root;
-    TestLines.Lines lines;
+    //public Match root;
+    //TestLines.Lines lines;
 
     public Lang(){
         p = NarseseParser.newParser(nar);
@@ -78,7 +78,7 @@ public class Lang {
             return this;
         }
 
-        private void updateBounds(TestLines.Lines lines) {
+        private void updateBounds(TestLines.Editor.Lines lines) {
             int margin = 10;
             int si = node.getStartIndex();
             int ei = node.getEndIndex();
@@ -191,7 +191,7 @@ public class Lang {
             debugIndent--;
         }
 
-        private void updateBounds(TestLines.Lines l) {
+        private void updateBounds(TestLines.Editor.Lines l) {
             for (Match w:items)
                 w.updateBounds(l);
             super.updateBounds(l);

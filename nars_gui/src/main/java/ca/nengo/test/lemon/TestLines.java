@@ -18,6 +18,7 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 import ca.nengo.util.ScriptGenException;
 import nars.gui.output.graph.nengo.DefaultUINetwork;
 import org.piccolo2d.event.PInputEvent;
+import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class TestLines {
     }
 
 
-    public class Editor extends AbstractWidget{
+    public static class Editor{
         private Lang lang;
         private Lang.Match root;
         private double charWidth;
@@ -50,35 +51,20 @@ public class TestLines {
         private Lines lines;
 
 
-        public Editor(String name, double charWidth, double charHeight, Lang lang){
-
-        }
-
-
-        private void setCharSize(double charWidth, double charHeight) {
-            this.charWidth = charWidth;
-            this.charHeight = charHeight;
-        }
-
-
-
-
-
-
 
         public class Glyph extends AbstractWidget {
 
             public static final Stroke border = new BasicStroke(1);
             public static final Stroke noStroke = new BasicStroke(0);
             Color textcolor = Color.WHITE;
-            Color borderColor = new Color(70,70,70);
-            Color bgColor = new Color(40,40,40);
+            Color borderColor = new Color(70, 70, 70);
+            Color bgColor = new Color(40, 40, 40);
             Font f = Video.monofont.deriveFont(64f);
             public int c;
             private boolean lockPos;
 
             public Glyph(int c) {
-                super("unicode "+c);
+                super("unicode " + c);
                 this.c = c;
 
             }
@@ -123,13 +109,12 @@ public class TestLines {
                 if (textcolor != null) {
                     g.setColor(textcolor);
                     g.setFont(f);
-                    final int fs = f.getSize()/2;
-                    double x = width/2  - ui.getX()/2 - fs/2;
-                    double y = height / 2 - ui.getY() / 2 + fs/2;
-                    g.drawString(String.valueOf((char)c), (int) x, (int) y);
+                    final int fs = f.getSize() / 2;
+                    double x = width / 2 - ui.getX() / 2 - fs / 2;
+                    double y = height / 2 - ui.getY() / 2 + fs / 2;
+                    g.drawString(String.valueOf((char) c), (int) x, (int) y);
                 }
             }
-
 
 
             public void setTextColor(Color textcolor) {
@@ -143,10 +128,7 @@ public class TestLines {
             }
 
             @Override
-            public void run(float startTime, float endTime) throws SimulationException {
-
-
-            }
+            public void run(float startTime, float endTime) throws SimulationException {}
 
             @Override
             public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
@@ -160,26 +142,28 @@ public class TestLines {
         }
 
 
-
-
-
-
-
-        public static class Line extends AbstractMapNetwork<Integer,Glyph> {
+        public static class Line extends AbstractMapNetwork<Integer, Glyph> {
             public Line() {
             }
 
             public Line(String s) {
                 int i = 0;
-                for (char c:s.toCharArray())
+                for (char c : s.toCharArray())
                     setNode(i++, new Glyph(c));
+            }
 
+            public Line lineAbove() {
+
+            }
+
+            public double getH() {
+                return charHeight;
             }
 
             public String asString() {
                 StringBuilder result = new StringBuilder();
-                for(Object g: nodeMap.values()){
-                    result.append(((Glyph)g).c);
+                for (Object g : nodeMap.values()) {
+                    result.append(((Glyph) g).c);
                 }
                 return result.toString();
             }
@@ -193,36 +177,183 @@ public class TestLines {
 
             }
 
-            private void updateBounds(Line above) {
-                int y;
-                if (above != null){
-                    y = above.
+            private void layOut(double y) {
+
+                //    n.setBounds(0, 0, charWidth, charHeight);
+                //  n.move(charPosX(x), charPosY(y));
+            }
+
+
+        }
+
+
+        public class Lines extends AbstractMapNetwork<Integer, Line> {
+
+
+            public Lines() {
+                super();
+            }
+
+
+            @Override
+            public String name(Line node) {
+                return node.name();
+            }
+
+
+            private void newLine() {
+
+            }
+
+            public void insert(int c) {
+                getLine(cursor.r).insert(cursor.c++, new Glyph(c));
+                updateCursorBounds();
+            }
+
+            public Line getLine(int r) {
+                Line l = (Line) getNode(r);
+                if (l == null)
+                    l = new Line();
+                return l;
+            }
+
+            public void setLine(int r, String str) {
+                setNode(r, new Line(str));
+            }
+
+
+            public void keyReleased(PInputEvent event) {
+
+            }
+
+
+            /**
+             * horizontal print
+             */
+            /*
+            public void set(int x, int y, CharSequence word) {
+                for (int i = 0; i < word.length(); i++) {
+                    char c = word.charAt(i);
+                    set(x + i, y, c);
                 }
             }
+            */
+    /*
+            // set one char
+            public Node set(int x, int y, char c) {
+                if (c == ' ') {
+                    remove(l);
+                    return null;
+                }
+
+                Node existing = get(l);
+                if (existing != null && existing instanceof Glyph && (((Glyph) existing).getChar() == c))
+                    return existing;
+
+
+                Node n;
+                set(l, n = newChar(x, y, c));
+
+                return n;
+            }
+    */
+            public String asString() {
+                StringBuilder result = new StringBuilder();
+                for (Object l : nodeMap.values()) {
+                    result.append(((Line) l).asString() + "\n");
+                }
+                return result.toString();
+            }
+
+            public String updateLinesBounds() {
+                Line above = null;
+                Iterator<Map.Entry<Integer, Line>> entries = nodeMap.entrySet().iterator();
+                while (entries.entrySet().hasNext()) {
+                    entries.next().getValue().updateBounds(above);
+                }
+                return result.toString();
+            }
+
+            private void updateBounds(int x, int y, AbstractWidget n) {
                 n.setBounds(0, 0, charWidth, charHeight);
                 n.move(charPosX(x), charPosY(y));
             }
 
+            private void updateBounds(int x, int y, Glyph n) {
+                n.lockPosition(false);
+                updateBounds(x, y, ((AbstractWidget) n));
+                n.lockPosition(true);
+            }
 
+            private int charPosX(int x) {
+                return x * (int) charWidth;
+            }
+
+            private int charPosY(int y) {
+                return y * (int) charHeight;
+            }
+
+
+            @Override
+            public void run(float startTime, float endTime) throws SimulationException {
+                enableInput();
+                super.run(startTime, endTime);
+            }
+
+            protected void enableInput() {
+                if ((keyHandler == null) && (viewer != null)) {
+                    keyHandler = new KeyboardHandler() {
+
+                        @Override
+                        public void keyReleased(PInputEvent event) {
+                            keyReleased(event);
+                        }
+
+                        @Override
+                        public void keyPressed(PInputEvent event) {
+                            keyPressed(event);
+                        }
+                    };
+                    //ui.getPNode().getRoot().addInputEventListener(keyHandler);
+                    //ui.getViewer().getSky().addInputEventListener(keyHandler);
+                    viewer.getSky().addInputEventListener(keyHandler);
+                    //viewer.getSky().addInputEventListener(keyHandler);
+
+                }
+            }
+
+
+            @Override
+            public UINeoNode newUI(double width, double height) {
+                //            if (ui == null) {
+                //                ui = new DefaultUINetwork(this);
+                //                /*ui = new ca.nengo.ui.lib.world.piccolo.object.Window(
+                //                        new DefaultUINetwork(this).,
+                //                        ui.createViewerInstance());*/
+                //            }
+                return null; //ui;
+
+                //return newUIWindow(400, 400, true, false, true);
+            }
+
+
+            public Window newUIWindow(double w, double h, boolean title, boolean minMax, boolean close) {
+                //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
+                UINetwork inviisbleIconUI = new DefaultUINetwork(this); //((UINetwork) newUI(1, 1));
+
+                this.ui = inviisbleIconUI;
+
+                viewer = inviisbleIconUI.newViewer(new Color(25, 50, 25), new Color(128, 128, 128), 0.1f);
+
+                Window x = new Window(inviisbleIconUI, viewer, title, minMax, close);
+                x.setSize(w, h);
+                ui.setWindow(x);
+
+                return x;
+            }
         }
 
-
-
-    public class Lines extends AbstractMapNetwork<Integer,Line> {
-
-
-        public Lines() {
-            super();
-        }
-
-
-        @Override
-        public String name(Lines.Line node) {
-            return node.name();
-        }
-
-
-        public Lines() {
+        public Editor(String name, double charWidth, double charHeight, Lang lang) {
             super(name);
             setCharSize(charWidth, charHeight);
             this.lang = lang;
@@ -234,6 +365,11 @@ public class TestLines {
                 e.printStackTrace();
             }
             cursor.move(0, 2);
+        }
+
+        private void setCharSize(double charWidth, double charHeight) {
+            this.charWidth = charWidth;
+            this.charHeight = charHeight;
         }
 
         public void moveCursor(int c, int r) {
@@ -270,155 +406,7 @@ public class TestLines {
             root = lang.text2match(asString());
         }
 
-        private void newLine() {
-
-        }
-
-        public void insert(int c) {
-            getLine(cursor.r).insert(cursor.c++, new Glyph(c));
-            updateCursorBounds();
-        }
-
-        public Line getLine(int r) {
-            Line l = (Line) getNode(r);
-            if (l == null)
-                l = new Line();
-            return l;
-        }
-
-        public void setLine(int r, String str) {
-            setNode(r, new Line(str));
-        }
 
 
-        public void keyReleased(PInputEvent event) {
-
-        }
-
-
-        /**
-         * horizontal print
-         */
-            /*
-            public void set(int x, int y, CharSequence word) {
-                for (int i = 0; i < word.length(); i++) {
-                    char c = word.charAt(i);
-                    set(x + i, y, c);
-                }
-            }
-            */
-    /*
-            // set one char
-            public Node set(int x, int y, char c) {
-                if (c == ' ') {
-                    remove(l);
-                    return null;
-                }
-
-                Node existing = get(l);
-                if (existing != null && existing instanceof Glyph && (((Glyph) existing).getChar() == c))
-                    return existing;
-
-
-                Node n;
-                set(l, n = newChar(x, y, c));
-
-                return n;
-            }
-    */
-        public String asString() {
-            StringBuilder result = new StringBuilder();
-            for(Object l: nodeMap.values()){
-                result.append(((Line)l).asString() + "\n");
-            }
-            return result.toString();
-        }
-
-        public String updateLinesBounds() {
-            Line above = null;
-            Iterator<Map.Entry<Integer, Line>> entries = nodeMap.entrySet().iterator();
-            while(entries.entrySet().hasNext()){
-                entries.next().getValue().updateBounds(above);
-            }
-            return result.toString();
-        }
-
-        private void updateBounds(int x, int y, AbstractWidget n) {
-            n.setBounds(0, 0, charWidth, charHeight);
-            n.move(charPosX(x), charPosY(y));
-        }
-
-        private void updateBounds(int x, int y, Glyph n) {
-            n.lockPosition(false);
-            updateBounds(x, y, ((AbstractWidget) n));
-            n.lockPosition(true);
-        }
-
-        private int charPosX(int x) {
-            return x * (int) charWidth;
-        }
-
-        private int charPosY(int y) {
-            return y * (int) charHeight;
-        }
-
-
-        @Override
-        public void run(float startTime, float endTime) throws SimulationException {
-            enableInput();
-            super.run(startTime, endTime);
-        }
-
-        protected void enableInput() {
-            if ((keyHandler == null) && (viewer != null)) {
-                keyHandler = new KeyboardHandler() {
-
-                    @Override
-                    public void keyReleased(PInputEvent event) {
-                        keyReleased(event);
-                    }
-
-                    @Override
-                    public void keyPressed(PInputEvent event) {
-                        keyPressed(event);
-                    }
-                };
-                //ui.getPNode().getRoot().addInputEventListener(keyHandler);
-                //ui.getViewer().getSky().addInputEventListener(keyHandler);
-                viewer.getSky().addInputEventListener(keyHandler);
-                //viewer.getSky().addInputEventListener(keyHandler);
-
-            }
-        }
-
-
-        @Override
-        public UINeoNode newUI(double width, double height) {
-            //            if (ui == null) {
-            //                ui = new DefaultUINetwork(this);
-            //                /*ui = new ca.nengo.ui.lib.world.piccolo.object.Window(
-            //                        new DefaultUINetwork(this).,
-            //                        ui.createViewerInstance());*/
-            //            }
-            return null; //ui;
-
-            //return newUIWindow(400, 400, true, false, true);
-        }
-
-
-        public Window newUIWindow(double w, double h, boolean title, boolean minMax, boolean close) {
-            //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
-            UINetwork inviisbleIconUI = new DefaultUINetwork(this); //((UINetwork) newUI(1, 1));
-
-            this.ui = inviisbleIconUI;
-
-            viewer = inviisbleIconUI.newViewer(new Color(25, 50, 25), new Color(128, 128, 128), 0.1f);
-
-            Window x = new Window(inviisbleIconUI, viewer, title, minMax, close);
-            x.setSize(w, h);
-            ui.setWindow(x);
-
-            return x;
-        }
     }
 }
