@@ -1,7 +1,7 @@
 package ca.nengo.test.lemon;
 import ca.nengo.ui.NengrowPanel;
 
-public class TestLines {
+public class TestEditor {
     public static void main(String[] args) {
         NengrowPanel panel = new NengrowPanel();
         {

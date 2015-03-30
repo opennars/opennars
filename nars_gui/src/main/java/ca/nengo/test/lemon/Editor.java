@@ -9,6 +9,7 @@ import ca.nengo.model.impl.AbstractMapNetwork;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;
 import ca.nengo.ui.lib.world.piccolo.object.*;
+import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.plot.AbstractWidget;
@@ -26,7 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-public class Editor extends DefaultNetwork {
+public class Editor extends DefaultNetwork implements UIBuilder {
     public class TextArea extends AbstractWidget {
         public class Glyph {
 
@@ -44,6 +45,7 @@ public class Editor extends DefaultNetwork {
             }
 
             protected void paint(Graphics2D g) {
+                System.out.println("Glyph.paint " + bounds);
                 //border and background
                 final int iw = (int) bounds.width;
                 final int ih = (int) bounds.height;
@@ -124,6 +126,7 @@ public class Editor extends DefaultNetwork {
                 while (size() < r)
                     add(new Line(""));
                 add(new Line(str));
+                layOut();
             }
 
             public String asString() {
@@ -135,28 +138,16 @@ public class Editor extends DefaultNetwork {
             }
 
             public void layOut() {
-                /*
-                Line above = null;
-                Iterator<Map.Entry<Integer, Line>> entries = nodeMap.entrySet().iterator();
-                while (entries.hasNext()) {
-                    //entries.next().getValue().updateBounds(above);
+                for (int l = 0; l < size(); l++){
+                    Line line = get(l);
+                    for (int g = 0; g < line.size(); g++){
+                        line.get(g).bounds = makeBounds(g, l);
+                    }
                 }
-                //return result.toString();
-                return "";
-                */
             }
 
-            private void updateBounds(int x, int y, AbstractWidget n) {
-                n.setBounds(0, 0, charWidth, charHeight);
-                n.move(charPosX(x), charPosY(y));
-            }
-
-            private int charPosX(int x) {
-                return x * (int) charWidth;
-            }
-
-            private int charPosY(int y) {
-                return y * (int) charHeight;
+            private PBounds makeBounds(int x, int y) {
+                return new PBounds(x * charWidth, y * charHeight, charWidth, charHeight);
             }
         }
 
@@ -178,6 +169,7 @@ public class Editor extends DefaultNetwork {
 
         @Override
         protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double ww, double hh) {
+            System.out.println("paintContext = [" + paintContext + "], ww = [" + ww + "], hh = [" + hh + "]");
             Graphics2D g = paintContext.getGraphics();
             Iterator<Line> it = lines.iterator();
             while (it.hasNext()) {
@@ -186,13 +178,16 @@ public class Editor extends DefaultNetwork {
         }
     }
 
-    TextArea area = new TextArea("area");
+    TextArea area;
     int charWidth;
     int charHeight;
     public NodeViewer viewer;
+    private UINetwork ui;
 
     public Editor(String name, int charWidth, int charHeight) {
         super(name);
+        area = new TextArea("area");
+        setNode("area", area);
         setCharSize(charWidth, charHeight);
     }
 
@@ -224,6 +219,26 @@ public class Editor extends DefaultNetwork {
     private void updateLang() {
         //setNode("root", lang.text2match(lines.asString()));
     }
+
+    @Override
+    public UINeoNode newUI(double width, double height) {
+        return null; //ui;
+    }
+    public ca.nengo.ui.lib.world.piccolo.object.Window newUIWindow(double w, double h, boolean title, boolean minMax, boolean close) {
+        //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
+        UINetwork inviisbleIconUI = new DefaultUINetwork(this); //((UINetwork) newUI(1, 1));
+
+        this.ui = inviisbleIconUI;
+
+        viewer = inviisbleIconUI.newViewer(new Color(25,50,25), new Color(128,128,128), 0.1f);
+
+        ca.nengo.ui.lib.world.piccolo.object.Window x = new ca.nengo.ui.lib.world.piccolo.object.Window(inviisbleIconUI, viewer, title, minMax, close);     x.setSize(w, h);
+        ui.setWindow(x);
+
+        return x;
+    }
+
+
 }
 
 
