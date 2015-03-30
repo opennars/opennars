@@ -38,6 +38,7 @@ public class OCR {
     //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers.
     // time to allow small frame buffer updates to coagulate into a larger
     private static long inputBufferDelay = 100;
+    private static long MaxSimultaneousTimeDifferentBuffer = inputBufferDelay/2;
 
     static double halflifeSeconds = 2;
 
@@ -307,7 +308,16 @@ public class OCR {
     private static boolean exe(long inputTime, Renderer renderer, BufferUpdate bu) {
 
 
-        Runnable rr = new Runnable() {
+        //get the image from framebuffer as it is now
+        FramebufferUpdateRectangle r = bu.rect;
+        BufferedImage frame = renderer.getFrame();
+
+        Rectangle rr = r.newRectangle();
+        ByteBuffer ci = convertImageData(frame, rr);
+        Rectangle subFrame = new Rectangle(0, 0, rr.width, rr.height);
+
+
+        Runnable runn = new Runnable() {
             final long queued = System.currentTimeMillis();
 
             @Override
@@ -325,19 +335,6 @@ public class OCR {
                 if ((bu.rect.width >= minOCRWidth) && (bu.rect.height >= minOCRHeight)) {
 
 
-                        //t.setOcrEngineMode(0);
-
-
-                        FramebufferUpdateRectangle r = bu.rect;
-                        BufferedImage frame = renderer.getFrame();
-
-
-                        //x = t.doOCR(frame, bu.rect.newRectangle());
-
-
-                        Rectangle rr = r.newRectangle();
-                        ByteBuffer ci = convertImageData(frame, rr);
-                        Rectangle subFrame = new Rectangle(0, 0, rr.width, rr.height);
                         int subBPP = 8; //image.getColorModel().getPixelSize()
                         //x = t.doOCR(subFrame.width, subFrame.height, ci, subFrame, subBPP);
 
@@ -388,7 +385,7 @@ public class OCR {
             }
         };
 
-        tasks.schedule(rr, inputBufferDelay, TimeUnit.MILLISECONDS);
+        tasks.schedule(runn, inputBufferDelay, TimeUnit.MILLISECONDS);
         return ocrPending.add(bu);
     }
 
@@ -403,6 +400,7 @@ public class OCR {
         private String text;
         private long inputTime, waitingTime, processingTime;
         private float confidence = 0;
+
 
         public BufferUpdate(FramebufferUpdateRectangle rect, OCRResultHandler callback) {
 
@@ -500,6 +498,8 @@ public class OCR {
         public boolean commonEdges(BufferUpdate o) {
             //common left (this) | left (o) coords
 
+            if (Math.abs(getInputTime() - o.getInputTime()) >= MaxSimultaneousTimeDifferentBuffer)
+                return false; //too late
 
             //this inside that
             if (rect.contains(o.rect))
