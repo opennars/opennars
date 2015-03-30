@@ -232,15 +232,8 @@ public class TestCharMesh {
         @Override
         public void run(float startTime, float endTime) throws SimulationException {
             enableInput();
-
             super.run(startTime, endTime);
-
         }
-
-//        @Override
-//        public void run(float startTime, float endTime, boolean topLevel) throws SimulationException {
-//            super.run(startTime, endTime, topLevel);
-//        }
 
         protected void enableInput() {
             if ((keyHandler==null) && (viewer!=null)) {
