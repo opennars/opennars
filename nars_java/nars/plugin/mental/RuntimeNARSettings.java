@@ -129,7 +129,7 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.HAPPY_EVENT_LOWER_THRESHOLD=(float) val;
     }
     
-    /*  public double getBusyEventHigherThreshold() {
+    public double getBusyEventHigherThreshold() {
         return Parameters.BUSY_EVENT_HIGHER_THRESHOLD;
     }
     public void setBusyEventHigherThreshold(double val) {
@@ -141,7 +141,7 @@ public class RuntimeNARSettings implements Plugin {
     }
     public void setBusyEventLowerThreshold(double val) {
         Parameters.BUSY_EVENT_LOWER_THRESHOLD=(float) val;
-    }*/
+    }
     
     public boolean isReflectMetaHappyGoal() {
         return Parameters.REFLECT_META_HAPPY_GOAL;

@@ -106,6 +106,30 @@ public class EmotionMeter implements Serializable {
         //        if (Math.abs(oldV - happyValue) > 0.1) {
         //            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
     }
+    
+    public double lastbusy=-1;
+    public void manageBusy(NAL nal) {
+        if(lastbusy!=-1) {
+            float frequency=-1;
+            if(busy>Parameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Parameters.BUSY_EVENT_HIGHER_THRESHOLD) {
+                frequency=1.0f;
+            }
+            if(busy<Parameters.BUSY_EVENT_LOWER_THRESHOLD && lastbusy>=Parameters.BUSY_EVENT_LOWER_THRESHOLD) {
+                frequency=0.0f;
+            }
+            if(frequency!=-1) { //ok lets add an event now
+                Term predicate=SetInt.make(new Term("busy"));
+                Term subject=new Term("SELF");
+                Inheritance inh=Inheritance.make(subject, predicate);
+                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+                Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
+                s.stamp.setOccurrenceTime(nal.memory.time());
+                Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
+                nal.addTask(t, "emotion");
+            }
+        }
+        lastbusy=busy;
+    }
 
     public void adjustBusy(float newValue, float weight) {
         //        float oldV = busyValue;
