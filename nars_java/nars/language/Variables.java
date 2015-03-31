@@ -53,6 +53,10 @@ public class Variables {
                     map[0].put(var1, CommonVar);
                     map[1].put(term2, CommonVar);
                 } else {
+                    if(term2 instanceof Variable && ((((Variable)term2).getType()==Symbols.VAR_QUERY && ((Variable)term1).getType()!=Symbols.VAR_QUERY) ||
+                                                     (((Variable)term2).getType()!=Symbols.VAR_QUERY && ((Variable)term1).getType()==Symbols.VAR_QUERY))) {
+                        return false;
+                    }
                     map[0].put(var1, term2);
                     if (var1.isCommon()) {
                         map[1].put(var1, term2);
