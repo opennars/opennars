@@ -45,7 +45,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             }
 
             protected void paint(Graphics2D g) {
-                System.out.println("Glyph.paint " + bounds);
+                //System.out.println("Glyph.paint " + bounds);
                 //border and background
                 final int iw = (int) bounds.width;
                 final int ih = (int) bounds.height;
@@ -169,7 +169,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
         @Override
         protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double ww, double hh) {
-            System.out.println("paintContext = [" + paintContext + "], ww = [" + ww + "], hh = [" + hh + "]");
+            //System.out.println("paintContext = [" + paintContext + "], ww = [" + ww + "], hh = [" + hh + "]");
             Graphics2D g = paintContext.getGraphics();
             Iterator<Line> it = lines.iterator();
             while (it.hasNext()) {
@@ -183,6 +183,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
     int charHeight;
     public NodeViewer viewer;
     private UINetwork ui;
+    public Lang lang;
 
     public Editor(String name, int charWidth, int charHeight) {
         super(name);
@@ -217,7 +218,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
     }
 
     private void updateLang() {
-        //setNode("root", lang.text2match(lines.asString()));
+        setNode("root", lang.text2match(area.lines.asString()));
     }
 
     @Override

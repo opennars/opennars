@@ -6,6 +6,7 @@ public class TestEditor {
         NengrowPanel panel = new NengrowPanel();
         {
             Editor editor = new Editor("editor1", 60, 80);
+            editor.lang = new Lang();
             Cursor c = new Cursor("cursor1", editor);
             editor.area.lines.setLine(3, "<[TEXT_SYSTEM] --> [operational]>.");
             panel.add(editor);
