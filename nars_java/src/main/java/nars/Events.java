@@ -46,7 +46,7 @@ public class Events {
 
         @Override
         public void onEnabled(NAR n) {
-            this.volume = n.memory.param.noiseLevel;
+            this.volume = n.memory.param.outputVolume;
             this.nar = n;
         }
 

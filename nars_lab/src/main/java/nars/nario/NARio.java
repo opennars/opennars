@@ -77,7 +77,7 @@ public class NARio extends Run {
         //new TextOutput(nar, System.out).setShowInput(true);
         
         (nar.param).duration.set(memoryCyclesPerFrame); //2 frames seems good
-        (nar.param).noiseLevel.set(0);
+        (nar.param).outputVolume.set(0);
         (nar.param).decisionThreshold.set(0);
         
         float fps = 20f;

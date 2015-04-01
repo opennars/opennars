@@ -260,8 +260,10 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
             }
 
 
-            for (ThreadTask myTask : myTasks) {
-                   myTask.run(startTime, endTime);
+            int t = myTasks.size();
+            for (int i = 0; i < t; i++) {
+                ThreadTask myTask = myTasks.get(i);
+                myTask.run(startTime, endTime);
             }
 
             for (int i = 0; i < myProbes.size(); i++) {

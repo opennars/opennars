@@ -16,7 +16,8 @@ public class NARSwingRT {
 
         ProtoNAR d = new Default();
         d.param.setTiming(Memory.Timing.RealMS);
-        d.param.duration.set(500);
+        d.param.duration.set(200);
+        d.param.outputVolume.set(50);
 
         NAR n = new NAR(d);
 

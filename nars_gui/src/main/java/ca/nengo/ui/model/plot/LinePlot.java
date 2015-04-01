@@ -14,10 +14,10 @@ import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.util.ScriptGenException;
 
 import java.awt.*;
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LinePlot extends AbstractWidget {
 
@@ -27,7 +27,8 @@ public class LinePlot extends AbstractWidget {
 
     private String label = "?";
 
-    Deque<Double> history = new ConcurrentLinkedDeque<>(); //TODO use seomthing more efficient
+    final Deque<Double> history = new ArrayDeque<>(); //TODO use seomthing more efficient
+
     final int maxHistory = 128;
     double[] hv = new double[maxHistory]; //values are cached here for fast access
 
@@ -45,12 +46,14 @@ public class LinePlot extends AbstractWidget {
             minValue = Float.POSITIVE_INFINITY;
             maxValue = Float.NEGATIVE_INFINITY;
             int i = 0;
-            Iterator<Double> x = history.iterator();
-            while (x.hasNext()) {
-                double v = x.next();
-                if (v < minValue) minValue = v;
-                if (v > maxValue) maxValue = v;
-                hv[i++] = v;
+            synchronized(history) {
+                Iterator<Double> x = history.iterator();
+                while (x.hasNext()) {
+                    double v = x.next();
+                    if (v < minValue) minValue = v;
+                    if (v > maxValue) maxValue = v;
+                    hv[i++] = v;
+                }
             }
         }
 
@@ -67,7 +70,8 @@ public class LinePlot extends AbstractWidget {
 
         if (maxValue != minValue) {
             int prevX = -1;
-            for (int i = 0; i < history.size(); i++) {
+            final int histSize = history.size();
+            for (int i = 0; i < histSize; i++) {
                 final double v = hv[i];
                 final double py = (v - minValue) / (maxValue - minValue);
                 double y = py * bh;
@@ -159,10 +163,12 @@ public class LinePlot extends AbstractWidget {
 
 
     public void push(double f) {
-        history.addLast(f);
-        if (history.size() == maxHistory)
-            history.removeFirst();
-        changed = true;
+        synchronized (history) {
+            history.addLast(f);
+            if (history.size() == maxHistory)
+                history.removeFirst();
+            changed = true;
+        }
         ui.repaint();
     }
 
@@ -173,7 +179,9 @@ public class LinePlot extends AbstractWidget {
 
     @Override
     public void reset(boolean randomize) {
-        history.clear();
+        synchronized(history) {
+            history.clear();
+        }
 
     }
 

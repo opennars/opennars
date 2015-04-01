@@ -619,7 +619,7 @@ public class Rover extends PhysicsModel {
         nar.on(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
-        (nar.param).noiseLevel.set(0);
+        (nar.param).outputVolume.set(0);
         (nar.param).duration.set(cyclesPerFrame);
         
        // RoverWorld.world= new RoverWorld(rv, 48, 48);
@@ -676,7 +676,7 @@ public class Rover extends PhysicsModel {
             
         };
         
-        nar.start(((long)(1000f/framesPerSecond)));//, cyclesPerFrame, 1.0f);
+        nar.start(((long) (1000f / framesPerSecond)));//, cyclesPerFrame, 1.0f);
         //setSpeed(1.0f);
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }

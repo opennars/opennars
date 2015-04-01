@@ -34,7 +34,7 @@ public class KIFExample {
                 .setConceptBagSize(16192));
                 
         
-        (n.param).noiseLevel.set(40);
+        (n.param).outputVolume.set(40);
         
         KIFInput k = new KIFInput(n.textPerception, "/home/me/sigma/KBs/Merge.kif");
         k.setIncludeSubclass(true);

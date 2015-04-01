@@ -289,7 +289,7 @@ abstract public class VNCControl extends VNCClient {
 
         nar.param.setTiming(Memory.Timing.RealMS);
         nar.param.duration.set(50); //ms
-        nar.param.noiseLevel.set(12);
+        nar.param.outputVolume.set(12);
 
 
         Video.themeInvert();

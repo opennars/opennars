@@ -56,7 +56,7 @@ public class TestChamber {
         nar.on(new TemporalParticlePlanner());
         
         //(nar.param).duration.set(10);
-        (nar.param).noiseLevel.set(0); 
+        (nar.param).outputVolume.set(0);
         new NARSwing(nar);
 
         new TestChamber(nar);

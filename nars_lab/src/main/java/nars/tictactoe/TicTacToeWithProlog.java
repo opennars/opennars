@@ -95,7 +95,7 @@ public class TicTacToeWithProlog extends JPanel {
 
         nar.on(new AddO("^addO"));
         nar.param.duration.set(5);
-        nar.param.noiseLevel.set(0);
+        nar.param.outputVolume.set(0);
         nar.param.shortTermMemoryHistory.set(8);
         nar.setCyclesPerFrame(64);
         

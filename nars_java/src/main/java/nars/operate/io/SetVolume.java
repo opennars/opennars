@@ -21,6 +21,6 @@ public class SetVolume extends ImmediateOperation {
 
     @Override
     public void execute(Memory m) {
-        m.param.noiseLevel.set(volume);
+        m.param.outputVolume.set(volume);
     }
 }

@@ -88,7 +88,7 @@ public class Rover2 extends PhysicsModel {
         nar.param.shortTermMemoryHistory.set(8);
         nar.param.temporalRelationsMax.set(3);
 
-        (nar.param).noiseLevel.set(3);
+        (nar.param).outputVolume.set(3);
         (nar.param).duration.set(5);
         //nar.param.budgetThreshold.set(0.02);
         nar.param.confidenceThreshold.set(0.02);

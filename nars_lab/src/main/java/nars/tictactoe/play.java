@@ -46,7 +46,7 @@ class play extends javax.swing.JFrame {
 
 
         nar.on(new AddO("^addO"));
-        (nar.param).noiseLevel.set(0);
+        (nar.param).outputVolume.set(0);
         
         initComponents();
         addStartKnowledge();

@@ -75,7 +75,7 @@ public class TestNARNode  {
             super(name);
             this.nar = nar;
             nar.memory.setSelf(Term.get(name));
-            nar.param.noiseLevel.set(25);
+            nar.param.outputVolume.set(25);
             initOperators();
 
             new Output(nar) {

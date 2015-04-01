@@ -16,7 +16,7 @@ public class RealtimeSequenceExperiment {
         NAR n = new NAR(new Default().realTime());
                 
         (n.param).duration.set(durationMS);
-        (n.param).noiseLevel.set(0);
+        (n.param).outputVolume.set(0);
         (n.param).decisionThreshold.set(0.9);
         
 //        new NARSwing(n);

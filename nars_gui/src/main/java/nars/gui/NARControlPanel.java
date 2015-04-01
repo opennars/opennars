@@ -429,7 +429,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
             meters = null;
         
         init();
-        volumeSlider.setValue(nar.param.noiseLevel.get());
+        volumeSlider.setValue(nar.param.outputVolume.get());
         
     }
 
@@ -622,7 +622,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
             @Override
             public void onChange(float v) {
                 int level = (int) v;
-                (nar.param).noiseLevel.set(level);
+                (nar.param).outputVolume.set(level);
             }
 
         };

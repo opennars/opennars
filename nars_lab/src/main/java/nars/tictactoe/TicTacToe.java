@@ -88,7 +88,7 @@ public class TicTacToe extends JPanel {
 
         nar.on(new AddO("^addO"));
         (nar.param).duration.set(1000);
-        (nar.param).noiseLevel.set(0);
+        (nar.param).outputVolume.set(0);
         
         new NARSwing(nar);    
         nar.on(FrameEnd.class, new Reaction() {

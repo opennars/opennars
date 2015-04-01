@@ -21,7 +21,6 @@ import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.operate.app.STMInduction;
-import nars.operate.io.Author;
 import nars.operate.mental.*;
 
 import java.io.File;
@@ -142,7 +141,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         
         param.setForgetting(Forgetting.Periodic);
         param.setTiming(Timing.Cycle);
-        param.noiseLevel.set(100);
+        param.outputVolume.set(100);
 
         param.reliance.set(0.9f);
         
@@ -209,8 +208,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         n.on(new Events.OUT());
 
         n.on(new RuntimeNARSettings());
-
-        n.on(new Author(n.narsese));
 
     }
 
@@ -350,12 +347,12 @@ public class Default extends ProtoNAR implements ConceptBuilder {
                 if ("--silence".equals(arg)) {
                     arg = args[++i];
                     int sl = Integer.parseInt(arg);                
-                    param.noiseLevel.set(100-sl);
+                    param.outputVolume.set(100-sl);
                 }
                 else if ("--noise".equals(arg)) {
                     arg = args[++i];
                     int sl = Integer.parseInt(arg);                
-                    param.noiseLevel.set(sl);
+                    param.outputVolume.set(sl);
                 }    
                 else {
                     filesToLoad.add(arg);
@@ -465,7 +462,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
             param.setForgetting(Forgetting.Periodic);
             param.setTiming(Timing.Cycle);
-            param.noiseLevel.set(100);
+            param.outputVolume.set(100);
 
             param.reliance.set(0.9f);
 

@@ -20,7 +20,7 @@ public class Param implements Serializable {
     /** Silent threshold for task reporting, in [0, 100]. 
      *  Noise level = 100 - silence level; noise 0 = always silent, noise 100 = never silent
      */
-    public final AtomicInteger noiseLevel = new AtomicInteger();
+    public final AtomicInteger outputVolume = new AtomicInteger();
     
     /** 
        Cycles per duration.
