@@ -38,9 +38,9 @@ public class OCR {
     //min wait time before processing a bufferd image, allowing it time to potentially grow with subsequent buffers.
     // time to allow small frame buffer updates to coagulate into a larger
     private static long inputBufferDelay = 100;
-    private static long MaxSimultaneousTimeDifferentBuffer = inputBufferDelay/2;
+    private static long MaxSimultaneousTimeDifferentBuffer = inputBufferDelay*8;
 
-    static double halflifeSeconds = 2;
+    static double halflifeSeconds = inputBufferDelay*16;
 
     //limits for peforming OCR after exiting queue
     static final int minOCRWidth = 8;

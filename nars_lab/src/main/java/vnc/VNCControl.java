@@ -103,7 +103,7 @@ abstract public class VNCControl extends VNCClient {
 
     public void initNAR() {
 
-        nar.start(10,50);
+        nar.start(10,20);
 
         skyActivity = new SkyActivity(nar);
 

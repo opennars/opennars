@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class LinePlot extends AbstractWidget {
 
     //public static final ColorArray grayScale = new ColorArray(16, Color.GRAY, Color.WHITE);
-    public static final ColorArray grayScale = new ColorArray(16, Color.GREEN, Color.RED);
+    public static final ColorArray grayScale = new ColorArray(128, Color.GREEN, Color.RED);
 
 
     private String label = "?";
@@ -66,7 +66,7 @@ public class LinePlot extends AbstractWidget {
         g.setColor(Color.WHITE);
 
         if (maxValue != minValue) {
-            int prevX = 0;
+            int prevX = -1;
             for (int i = 0; i < history.size(); i++) {
                 final double v = hv[i];
                 final double py = (v - minValue) / (maxValue - minValue);
@@ -75,7 +75,7 @@ public class LinePlot extends AbstractWidget {
                 final int iy = (int) y;
 
                 g.setColor(grayScale.get(py));
-                g.fillRect(prevX, ih / 2 - iy / 2, (int) Math.ceil(x - prevX), iy);
+                g.fillRect(prevX+1, (int)(bh / 2f - y / 2), (int) Math.ceil(x - prevX), iy);
 
                 prevX = (int)x;
                 x += dx;
