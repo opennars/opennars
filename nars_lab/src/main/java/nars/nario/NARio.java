@@ -1,20 +1,20 @@
 package nars.nario;
 
-import nars.event.Reaction;
 import nars.Events;
 import nars.Memory;
 import nars.NAR;
-import nars.prototype.Default;
+import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.nal.nal8.NullOperator;
 import nars.operate.app.plan.TemporalParticlePlanner;
+import nars.prototype.Default;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -90,7 +90,7 @@ public class NARio extends Run {
         nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
         
         NARio nario = new NARio(nar);
-        sw.controls.setSpeed(0.95f);
+        sw.setSpeed(0.95f);
     }
 
     ChangedTextInput chg;

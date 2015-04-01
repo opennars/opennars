@@ -1,12 +1,15 @@
 package nars.gui.output.graph.nengo;
 
+import automenta.vivisect.swing.NSlider;
 import ca.nengo.model.SimulationException;
 import ca.nengo.ui.Nengrow;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
-import nars.prototype.Default;
 import nars.NAR;
+import nars.gui.WrapLayout;
+import nars.prototype.Default;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,6 +77,9 @@ public class GraphPanelNengo extends Nengrow {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
+                ((Window) networkUI.getViewerWindow()).setWindowState(Window.WindowState.MAXIMIZED, true);
+
+                /*
                 SwingUtilities.invokeLater(new Runnable() {
 
                     @Override
@@ -81,11 +87,20 @@ public class GraphPanelNengo extends Nengrow {
                         ((Window) networkUI.getViewerWindow()).setWindowState(Window.WindowState.MAXIMIZED, true);
                     }
                 });
-
+                */
             }
         });
 
 
+        JPanel controls = new JPanel(new WrapLayout(FlowLayout.LEFT));
+        controls.setOpaque(false);
+        setBackground(Color.BLACK);
+        controls.add(new NSlider(new AtomicDouble(0.5f), "Concept Pri >", 0f, 1.0f));
+        controls.add(new NSlider(new AtomicDouble(0.5f), "TermLink Pri >", 0f, 1.0f));
+        controls.add(new NSlider(new AtomicDouble(0.5f), "TaskLink Pri >", 0f, 1.0f));
+        controls.add(new NSlider(new AtomicDouble(0.5f), "Task Pri >", 0f, 1.0f));
+
+        add(controls, BorderLayout.SOUTH);
 
     }
 

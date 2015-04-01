@@ -2,19 +2,19 @@ package vnc;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import nars.prototype.Default;
 import nars.Events;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
 import nars.nal.Concept;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.NullOperator;
+import nars.nal.term.Term;
+import nars.prototype.Default;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.client.PointerEventMessage;
@@ -287,7 +287,7 @@ abstract public class VNCControl extends VNCClient {
 
         };
 
-        nar.param.setTiming(Memory.Timing.Real);
+        nar.param.setTiming(Memory.Timing.RealMS);
         nar.param.duration.set(50); //ms
         nar.param.noiseLevel.set(12);
 
@@ -295,8 +295,8 @@ abstract public class VNCControl extends VNCClient {
         Video.themeInvert();
         NARSwing swing = new NARSwing(nar);
 
-        swing.controls.setSpeed(-1);
-        swing.controls.setFrameRate(4f);
+        swing.setSpeed(-1);
+        swing.setFrameRate(4f);
 
 
 

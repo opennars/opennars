@@ -141,7 +141,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         param.noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
         
         param.setForgetting(Forgetting.Periodic);
-        param.setTiming(Timing.Iterative);
+        param.setTiming(Timing.Cycle);
         param.noiseLevel.set(100);
 
         param.reliance.set(0.9f);
@@ -325,7 +325,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     
     public Default realTime() {
-        param.setTiming(Timing.Real);
+        param.setTiming(Timing.RealMS);
         param.setForgetting(Forgetting.Periodic);
         return this;
     }
@@ -464,7 +464,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
             param.noveltyHorizon.set(3);
 
             param.setForgetting(Forgetting.Periodic);
-            param.setTiming(Timing.Iterative);
+            param.setTiming(Timing.Cycle);
             param.noiseLevel.set(100);
 
             param.reliance.set(0.9f);

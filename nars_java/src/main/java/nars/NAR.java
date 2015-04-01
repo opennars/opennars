@@ -606,7 +606,7 @@ public class NAR implements Runnable {
         final double frameTime = memory.resource.FRAME_DURATION.stop();
 
         //in real-time mode, warn if frame consumed more time than reasoner duration
-        if (memory.getTiming() == Timing.Real) {
+        if (memory.getTiming() == Timing.RealMS) {
             final int d = param.duration.get();
 
             if (frameTime > d) {

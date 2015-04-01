@@ -4,6 +4,7 @@
  */
 package nars.gui.input;
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import nars.NAR;
 import nars.io.Texts;
@@ -26,11 +27,19 @@ import static nars.io.Texts.n2;
 public class KeyboardInputPanel extends NPanel implements KeyListener, FocusListener {
     private final NAR nar;
     private final JTextArea text;
+    private final String prefix;
 
     public KeyboardInputPanel(NAR n) {
+        this(n, "keyboard");
+    }
+
+    public KeyboardInputPanel(NAR n, String prefix) {
         super(new BorderLayout());
-        
+
+        this.prefix = prefix;
+
         text = new JTextArea();
+        text.setFont(Video.fontMono(16f).deriveFont(Font.BOLD));
         add(text, CENTER);
         
         this.nar = n;
@@ -47,13 +56,13 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
 
     /** can be adjusted according to how many other windows are active, etc. */
     public void setFocus(float freq, float conf) {
-        nar.input("<{focus} --> kb>. :|: %" + n2(freq) + ";" + n2(conf) + "%");
+        nar.input("<{focus} --> " + prefix + ">. :|: %" + n2(freq) + ";" + n2(conf) + "%");
     }
 
     public void onCharTyped(char c, float priority, float freq, float conf) {        
         String charTerm = "\"" + Texts.escapeLiteral(Character.toString(c)) + "\"";
-        nar.input("$" + n2(priority) + "$ < {" + charTerm + "} --> kb>. :|: %" + n2(freq) + ";" + n2(conf) + "%");
-        nar.input("<(&/, <" + charTerm + " --> kb>, ?dt) =/> <?next --> kb>>?");
+        nar.input("$" + n2(priority) + "$ < {" + charTerm + "} --> " + prefix + "b>. :|: %" + n2(freq) + ";" + n2(conf) + "%");
+        //nar.input("<(&/, <" + charTerm + " --> " + prefix + ">, ?dt) =/> <?next --> \" + prefix + \">>?");
     }
     
     @Override

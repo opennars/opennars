@@ -2,16 +2,16 @@ package nars.rover;
 
 import nars.Memory;
 import nars.NAR;
-import nars.prototype.Default;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Term;
+import nars.operate.app.plan.TemporalParticlePlanner;
+import nars.prototype.Default;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
-import nars.nal.nal8.NullOperator;
-import nars.operate.app.plan.TemporalParticlePlanner;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -677,7 +677,7 @@ public class Rover extends PhysicsModel {
         };
         
         nar.start(((long)(1000f/framesPerSecond)));//, cyclesPerFrame, 1.0f);
-        phys.sw.controls.setSpeed(1.0f);
+        //setSpeed(1.0f);
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
 

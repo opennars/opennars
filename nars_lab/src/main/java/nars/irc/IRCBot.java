@@ -53,7 +53,7 @@ public class IRCBot {
         d.param.duration.set(200);
         d.param.termLinkMaxReasoned.set(6);
         d.param.conceptsFiredPerCycle.set(3);
-        d.param.setTiming(Memory.Timing.Real);
+        d.param.setTiming(Memory.Timing.RealMS);
 
 
         //d.temporalPlanner(16f,8,8,2);

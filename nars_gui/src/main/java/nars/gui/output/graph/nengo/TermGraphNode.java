@@ -91,7 +91,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
                 @Override
                 public void pre(Collection<UIVertex> vertices) {
 
-                    setScale(48);
+                    setScale(96);
                     setRepulsiveWeakness(3);
                     setAttractionStrength(2.2);
                     setEquilibriumDistance(4);

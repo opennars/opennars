@@ -42,7 +42,6 @@ import java.lang.management.ManagementFactory;
 public class NARSwing extends NARControlPanel {
 
     public final NWindow mainWindow;
-    public final NARControlPanel controls;
 
     public NARSwing(NAR nar) {
         this(nar, true);
@@ -53,8 +52,7 @@ public class NARSwing extends NARControlPanel {
                 
         Global.DEBUG = true;
         
-        controls = this;
-        mainWindow = new NWindow(NAR.VERSION, controls);
+        mainWindow = new NWindow(NAR.VERSION, this);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainWindow.setBounds(10, 10, 270, 650);
         mainWindow.setVisible(true);

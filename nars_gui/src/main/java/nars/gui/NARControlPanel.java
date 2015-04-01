@@ -30,6 +30,7 @@ import nars.Events.FrameEnd;
 import nars.Memory;
 import nars.NAR;
 import nars.event.Reaction;
+import nars.gui.input.KeyboardInputPanel;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterNode;
@@ -47,7 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
-import static nars.Memory.Timing.Real;
+import static nars.Memory.Timing.RealMS;
 import static nars.Memory.Timing.Simulation;
 
 
@@ -127,7 +128,18 @@ public class NARControlPanel extends TimeControl implements Reaction {
                 }
             });
             m.add(mv3);
-            
+
+            JMenuItem mu3 = new JMenuItem("+ Keyboard");
+            mu3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    newKeyboardInput();
+                }
+            });
+            m.add(mu3);
+
+
+
             //not really relevant for NARS, Im working on a active approach to detecting such patterns
             //which will work when conditioning works good
            /* JMenuItem cct4 = new JMenuItem("+ Input Drawing");
@@ -419,6 +431,10 @@ public class NARControlPanel extends TimeControl implements Reaction {
         init();
         volumeSlider.setValue(nar.param.noiseLevel.get());
         
+    }
+
+    public NWindow newKeyboardInput() {
+        return new NWindow("Keyboard Input", new KeyboardInputPanel(nar)).show(300, 100, false);
     }
 
     /**
@@ -872,7 +888,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
         sb.append('@');
 
-        if ((tt == Real) || (tt == Simulation)) {
+        if ((tt == RealMS) || (tt == Simulation)) {
             sb.append(memory.time() + "|" + memory.timeCycle());
         }
         else {

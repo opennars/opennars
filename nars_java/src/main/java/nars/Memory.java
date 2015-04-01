@@ -153,18 +153,23 @@ public class Memory implements Serializable {
     public enum Timing {
 
         /**
-         * internal, subjective time (logic steps)
+         * internal, subjective time (1 cycle = 1 time step)
          */
-        Iterative,
+        Cycle,
 
         //TODO absolute realtime - does not cache a value throughout a cycle, but each call to time() yields an actual realtime measurement so that multiple time() calls during cycle may return different (increasing) values
 
+        //RealS, //seconds
+
         /**
-         * actual real-time, uses system clock; time value is cached at beginning of each cycle for the remainder of it
+         * actual millisecond real-time, uses system clock; time value is cached at beginning of each cycle for the remainder of it
          */
-        Real,
+        RealMS,
+
+        //RealNano, //nanoseconds
+
         /**
-         * simulated real-time, uses controlled simulation time
+         * simulated real-time, uses externally controlled simulation time units
          */
         Simulation
     }
@@ -321,9 +326,9 @@ public class Memory implements Serializable {
 
     public long time() {
         switch (timing) {
-            case Iterative:
+            case Cycle:
                 return timeCycle();
-            case Real:
+            case RealMS:
                 return timeReal();
             case Simulation:
                 return timeSimulation();
@@ -719,7 +724,7 @@ public class Memory implements Serializable {
     protected void timeUpdate() {
         timePreviousCycle = time();
         cycle++;
-        if (getTiming()==Timing.Real)
+        if (getTiming()==Timing.RealMS)
             timeRealNow = System.currentTimeMillis();
     }
 
