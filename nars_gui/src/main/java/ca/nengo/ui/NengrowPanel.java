@@ -4,6 +4,8 @@ import ca.nengo.model.Network;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.test.TestCharMesh;
+import ca.nengo.test.lemon.Editor;
+
 import ca.nengo.ui.lib.world.WorldObject;
 import ca.nengo.ui.lib.world.piccolo.object.Window;
 import ca.nengo.ui.model.UINeoNode;
@@ -50,6 +52,15 @@ public class NengrowPanel extends Nengrow {
 
     public void add(Object... x) {
         for (Object n : x) {
+            if (n instanceof Editor) {
+                Editor mesh = (Editor)n; //problem?
+                try {
+                    addNodeModel(mesh.newUIWindow(600, 400, true, false, true), null, null );
+                    addNodeModel(mesh);
+                } catch (ContainerException e) {
+                    e.printStackTrace();
+                }
+            }
             if (n instanceof TestCharMesh.CharMeshEdit) {
                 TestCharMesh.CharMeshEdit mesh = (TestCharMesh.CharMeshEdit)n;
                 try {

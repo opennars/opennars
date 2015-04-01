@@ -6,6 +6,7 @@ import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.lib.world.handler.KeyboardHandler;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
+import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 public class Cursor extends AbstractWidget {
     public int c, r;
     private KeyboardHandler keyHandler;
+    private Editor editor;
 
     //private Boolean on = Boolean.TRUE;
 
@@ -26,8 +28,9 @@ public class Cursor extends AbstractWidget {
         return false;
     }
 
-    public Cursor(String name, NetworkImpl network) {
+    public Cursor(String name, Editor editor) {
         super(name, 666, 666);
+        this.editor = editor;
         reset();
         ui.setTransparency(0.35f);
         ui.setPickable(false);
@@ -60,8 +63,29 @@ public class Cursor extends AbstractWidget {
 
     @Override
     public void run(float startTime, float endTime) throws SimulationException {
+        enableInput();
+    }
 
+    protected void enableInput() {
+        if ((keyHandler == null) && (editor.viewer != null)) {
+            keyHandler = new KeyboardHandler() {
 
+                @Override
+                public void keyReleased(PInputEvent event) {
+                    //editor.keyReleased(event);
+                }
+
+                @Override
+                public void keyPressed(PInputEvent event) {
+                    editor.keyPressed(event, c, r);
+                }
+            };
+            //ui.getPNode().getRoot().addInputEventListener(keyHandler);
+            //ui.getViewer().getSky().addInputEventListener(keyHandler);
+            editor.viewer.getSky().addInputEventListener(keyHandler);
+            //viewer.getSky().addInputEventListener(keyHandler);
+
+        }
     }
 
 
