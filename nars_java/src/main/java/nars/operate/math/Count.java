@@ -17,8 +17,8 @@
 
 package nars.operate.math;
 
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.TermFunction;

@@ -22,11 +22,11 @@ import nars.prototype.Default;
 import nars.Memory;
 import nars.NAR;
 import nars.Global;
-import nars.energy.Budget;
-import nars.nal.entity.Item;
-import nars.energy.Bag;
-import nars.energy.bag.CurveBag;
-import nars.energy.bag.LevelBag;
+import nars.budget.Budget;
+import nars.nal.Item;
+import nars.budget.Bag;
+import nars.budget.bag.CurveBag;
+import nars.budget.bag.LevelBag;
 import nars.util.data.sorted.ArraySortedIndex;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 

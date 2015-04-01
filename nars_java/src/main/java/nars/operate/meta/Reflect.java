@@ -4,9 +4,9 @@
  */
 package nars.operate.meta;
 
-import nars.nal.entity.Compound;
-import nars.nal.entity.Statement;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.Statement;
+import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;

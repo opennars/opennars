@@ -4,7 +4,7 @@ import nars.Global;
 import nars.prototype.Solid;
 import nars.io.Answered;
 import nars.io.test.TestNAR;
-import nars.nal.entity.Sentence;
+import nars.nal.Sentence;
 import org.junit.Test;
 
 import java.io.File;

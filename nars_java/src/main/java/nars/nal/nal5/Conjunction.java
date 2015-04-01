@@ -23,8 +23,8 @@ package nars.nal.nal5;
 import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.nal7.TemporalRules;
 
 import java.util.*;

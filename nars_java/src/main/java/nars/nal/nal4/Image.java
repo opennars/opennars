@@ -3,8 +3,8 @@ package nars.nal.nal4;
 import nars.io.Symbols;
 import nars.io.narsese.NarseseParser;
 import nars.nal.NALOperator;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;

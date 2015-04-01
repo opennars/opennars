@@ -8,8 +8,8 @@ import automenta.vivisect.audio.synth.SineWave;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.nal.rule.ConceptProcess;
-import nars.nal.entity.Concept;
+import nars.nal.ConceptProcess;
+import nars.nal.Concept;
 
 import java.io.IOException;
 import java.nio.file.Files;

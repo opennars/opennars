@@ -21,9 +21,10 @@
 package nars.nal;
 
 import nars.Memory;
-import nars.energy.Budget;
-import nars.nal.entity.*;
-import nars.nal.rule.ConceptProcess;
+import nars.budget.Budget;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.term.Term;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;

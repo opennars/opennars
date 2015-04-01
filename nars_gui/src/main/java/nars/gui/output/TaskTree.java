@@ -10,9 +10,9 @@ import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Task;
-import nars.nal.entity.TruthValue;
+import nars.nal.Concept;
+import nars.nal.Task;
+import nars.nal.TruthValue;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;

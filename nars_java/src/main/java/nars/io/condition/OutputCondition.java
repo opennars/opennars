@@ -7,8 +7,8 @@ package nars.io.condition;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.nal.entity.Task;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.Task;
+import nars.nal.stamp.Stamp;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -3,7 +3,7 @@ package nars.operate.software;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import nars.nal.entity.Term;
+import nars.nal.term.Term;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.TermFunction;
 import nars.operate.software.scheme.DefaultEnvironment;

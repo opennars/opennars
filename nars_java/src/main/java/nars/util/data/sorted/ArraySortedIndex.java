@@ -2,7 +2,7 @@ package nars.util.data.sorted;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.nal.entity.Item;
+import nars.nal.Item;
 
 import java.util.Collection;
 import java.util.Collections;

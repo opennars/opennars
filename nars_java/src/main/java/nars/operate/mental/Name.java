@@ -20,14 +20,17 @@ package nars.operate.mental;
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.Global;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.TruthValue;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 

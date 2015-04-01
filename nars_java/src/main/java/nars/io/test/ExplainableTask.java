@@ -3,9 +3,9 @@ package nars.io.test;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import nars.io.condition.TaskCondition;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.stamp.Stamp;
-import nars.nal.entity.Task;
+import nars.nal.Sentence;
+import nars.nal.stamp.Stamp;
+import nars.nal.Task;
 
 import java.io.PrintStream;
 import java.util.Map;

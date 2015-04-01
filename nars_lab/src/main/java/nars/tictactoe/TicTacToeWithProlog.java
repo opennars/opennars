@@ -33,10 +33,10 @@ import nars.Global;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.narsese.InvalidInputException;
-import nars.energy.Budget;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.Task;
+import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 

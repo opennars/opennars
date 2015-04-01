@@ -24,7 +24,7 @@
 
 package vnc.viewer.swing;
 
-import nars.nal.entity.Concept;
+import nars.nal.Concept;
 import vnc.OCR;
 import vnc.VNCControl;
 import vnc.core.SettingsChangedEvent;

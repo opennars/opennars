@@ -4,8 +4,8 @@
  */
 package nars.util.data.sorted;
 
-import nars.nal.entity.Item;
-import nars.nal.entity.Item.ItemPriorityComparator;
+import nars.nal.Item;
+import nars.nal.Item.ItemPriorityComparator;
 
 /**
  * EXPERIMENTAL not ready yet

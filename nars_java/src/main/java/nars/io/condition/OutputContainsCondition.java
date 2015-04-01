@@ -8,8 +8,8 @@ import nars.Events;
 import nars.NAR;
 import nars.io.TextOutput;
 import nars.io.Texts;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.nal8.Operator.ExecutionResult;
 
 import java.util.ArrayList;

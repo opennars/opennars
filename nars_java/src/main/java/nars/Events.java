@@ -1,11 +1,11 @@
 package nars;
 
 import nars.event.Reaction;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.rule.ConceptProcess;
-import nars.nal.rule.DirectProcess;
+import nars.nal.Concept;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.ConceptProcess;
+import nars.nal.DirectProcess;
 import nars.operate.AbstractOperator;
 
 import java.util.Arrays;

@@ -1,7 +1,7 @@
 package nars.nal.nal5;
 
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 /**
  * Common parent class for Conjunction and Disjunction

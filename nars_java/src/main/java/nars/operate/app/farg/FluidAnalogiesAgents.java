@@ -7,8 +7,8 @@ package nars.operate.app.farg;
 
 import nars.NAR;
 import nars.operate.IOperator;
-import nars.nal.entity.Term;
-import nars.energy.bag.LevelBag;
+import nars.nal.term.Term;
+import nars.budget.bag.LevelBag;
 
 /**
  *

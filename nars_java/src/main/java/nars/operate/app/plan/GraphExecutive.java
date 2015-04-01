@@ -2,18 +2,16 @@ package nars.operate.app.plan;
 
 import nars.Memory;
 import nars.Global;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Texts;
-import nars.nal.BudgetFunctions;
-import nars.nal.NAL;
-import nars.nal.TruthFunctions;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.*;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Term;
 import nars.util.graph.ImplicationGraph;
 import nars.util.graph.ImplicationGraph.Cause;
 import nars.util.graph.ImplicationGraph.PostCondition;
@@ -48,7 +46,7 @@ public class GraphExecutive {
     }
 
     
-    protected void accumulate(final Term t, final Cause[] path) {        
+    protected void accumulate(final Term t, final Cause[] path) {
         for (final Cause s : path)
             s.addActivity(1.0);
     }

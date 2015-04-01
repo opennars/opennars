@@ -21,9 +21,8 @@
 package nars.nal;
 
 import nars.Global;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.entity.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.*;
@@ -35,6 +34,9 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 
 import java.util.Map;
 

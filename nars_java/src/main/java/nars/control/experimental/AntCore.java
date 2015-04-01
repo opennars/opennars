@@ -7,10 +7,13 @@ package nars.control.experimental;
 import javolution.context.ConcurrentContext;
 import nars.Memory;
 import nars.Global;
-import nars.energy.Budget;
+import nars.budget.Budget;
+import nars.nal.*;
 import nars.nal.Terms.Termable;
-import nars.nal.entity.*;
-import nars.nal.rule.DirectProcess;
+import nars.nal.tlink.TLink;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.term.Term;
 
 import java.util.*;
 
@@ -133,7 +136,7 @@ public class AntCore extends ConceptWaveCore {
     /** intelligent visitor */
     public class Ant {
         
-        TLink link = null;        
+        TLink link = null;
         Concept concept = null;
         
         boolean traverseTermLinks = true;

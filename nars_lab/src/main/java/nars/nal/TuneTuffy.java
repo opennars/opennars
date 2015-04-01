@@ -11,9 +11,7 @@ import nars.NAR;
 import nars.ProtoNAR;
 import nars.event.AbstractReaction;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.nal.term.Term;
 
 import java.io.File;
 import java.io.FileNotFoundException;

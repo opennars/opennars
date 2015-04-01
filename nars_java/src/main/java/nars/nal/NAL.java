@@ -5,9 +5,9 @@
 package nars.nal;
 
 import nars.*;
-import nars.energy.Budget;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.budget.Budget;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
 import nars.operate.IOperator;
 import reactor.event.Event;
 import reactor.function.Supplier;

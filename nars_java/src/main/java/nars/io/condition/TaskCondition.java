@@ -7,10 +7,10 @@ import nars.NAR;
 import nars.Global;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
-import nars.nal.entity.TruthValue;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.Task;
+import nars.nal.term.Term;
+import nars.nal.TruthValue;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 
 import java.io.Serializable;

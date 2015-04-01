@@ -1,11 +1,12 @@
 package nars.control;
 
 import nars.Global;
-import nars.nal.entity.*;
-import nars.nal.rule.ConceptProcess;
-import nars.nal.rule.DirectProcess;
-import nars.energy.Bag;
-import nars.energy.bag.CacheBag;
+import nars.nal.*;
+import nars.budget.Bag;
+import nars.budget.bag.CacheBag;
+import nars.nal.tlink.TaskLink;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

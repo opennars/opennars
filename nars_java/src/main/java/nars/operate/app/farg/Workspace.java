@@ -8,8 +8,8 @@ package nars.operate.app.farg;
 import nars.Events.CycleEnd;
 import nars.NAR;
 import nars.event.Reaction;
-import nars.nal.entity.Concept;
-import nars.energy.bag.LevelBag;
+import nars.nal.Concept;
+import nars.budget.bag.LevelBag;
 
 /**
  *

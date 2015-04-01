@@ -6,9 +6,9 @@ package nars;
 
 import nars.prototype.Default;
 import nars.io.ExampleFileInput;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.term.Term;
 import nars.io.NALPerformance;
 import org.junit.Test;
 

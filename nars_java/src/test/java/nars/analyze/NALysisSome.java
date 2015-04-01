@@ -6,7 +6,7 @@ import nars.ProtoNAR;
 import nars.Global;
 import nars.event.Reaction;
 import nars.io.test.TestNAR;
-import nars.nal.entity.Task;
+import nars.nal.Task;
 import org.junit.Ignore;
 
 import java.io.FileNotFoundException;

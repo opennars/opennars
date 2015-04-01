@@ -2,15 +2,19 @@ package nars.util.graph;
 
 import nars.Memory;
 import nars.NAR;
+import nars.nal.Item;
 import nars.nal.NALOperator;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.Sentence;
+import nars.nal.TruthValue;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.operate.app.plan.MultipleExecutionManager;
 import nars.util.graph.ImplicationGraph.Cause;
 

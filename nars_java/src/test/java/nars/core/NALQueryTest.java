@@ -8,8 +8,8 @@ import nars.NAR;
 import nars.prototype.Default;
 import nars.io.Answered;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;

@@ -6,10 +6,10 @@
 package nars;
 
 import nars.event.AbstractReaction;
-import nars.nal.rule.DirectProcess;
-import nars.energy.Budget;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
+import nars.nal.DirectProcess;
+import nars.budget.Budget;
+import nars.nal.Sentence;
+import nars.nal.Task;
 
 /**
  * Interface with which to implement a "mirror" - a mental prosthetic which

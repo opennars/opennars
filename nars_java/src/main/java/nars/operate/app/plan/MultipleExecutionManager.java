@@ -9,13 +9,17 @@ import nars.Memory;
 import nars.Global;
 import nars.event.AbstractReaction;
 import nars.io.Texts;
+import nars.nal.Concept;
 import nars.nal.NALOperator;
-import nars.nal.entity.*;
+import nars.nal.Task;
+import nars.nal.TruthValue;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.operate.mental.Mental;
 
 import java.util.HashSet;

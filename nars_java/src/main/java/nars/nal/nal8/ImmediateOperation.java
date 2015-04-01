@@ -2,8 +2,8 @@ package nars.nal.nal8;
 
 
 import nars.Memory;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Task;
+import nars.nal.term.Compound;
+import nars.nal.Task;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */

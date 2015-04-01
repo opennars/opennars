@@ -19,10 +19,9 @@ package nars.nal.nal7;
 
 import nars.Memory;
 import nars.Global;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.nal.*;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
@@ -30,6 +29,9 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 import nars.operate.mental.Mental;
 
 import java.util.List;

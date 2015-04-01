@@ -20,13 +20,14 @@
  */
 package nars.nal.nal5;
 
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.*;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import static nars.nal.Terms.reduceComponents;
 import static nars.nal.nal7.TemporalRules.*;

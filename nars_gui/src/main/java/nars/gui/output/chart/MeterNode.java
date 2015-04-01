@@ -45,7 +45,6 @@ public class MeterNode extends DefaultNetwork {
             }
 
             l.move(0,y);
-            System.out.println(l);
 
             y+=height+margin;
 

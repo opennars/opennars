@@ -1,9 +1,9 @@
 package nars;
 
 import nars.io.Texts;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
-import nars.nal.entity.Variable;
+import nars.nal.Task;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;

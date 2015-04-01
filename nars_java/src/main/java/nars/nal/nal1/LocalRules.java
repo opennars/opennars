@@ -22,16 +22,14 @@ package nars.nal.nal1;
 
 import nars.Events.Answer;
 import nars.Memory;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Output;
 import nars.io.Symbols;
-import nars.nal.BudgetFunctions;
-import nars.nal.NAL;
-import nars.nal.TruthFunctions;
-import nars.nal.Variables;
-import nars.nal.entity.*;
+import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.Arrays;
 

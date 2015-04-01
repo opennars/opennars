@@ -2,10 +2,13 @@ package nars.nal.nal8;
 
 import nars.Memory;
 import nars.Global;
-import nars.nal.entity.*;
+import nars.nal.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 
 import java.util.ArrayList;
 

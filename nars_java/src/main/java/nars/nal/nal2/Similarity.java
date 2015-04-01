@@ -21,8 +21,8 @@
 package nars.nal.nal2;
 
 import nars.nal.NALOperator;
-import nars.nal.entity.Statement;
-import nars.nal.entity.Term;
+import nars.nal.Statement;
+import nars.nal.term.Term;
 
 /**
  * A Statement about a Similarity relation.

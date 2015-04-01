@@ -1,13 +1,10 @@
 package nars.nal;
 
 import nars.Memory;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.rule.ConceptProcess;
-import nars.nal.rule.concept.*;
-import nars.nal.rule.filter.FilterBelowBudget;
-import nars.nal.rule.filter.FilterBelowConfidence;
-import nars.nal.rule.filter.FilterOperationWithSubjOrPredVariable;
+import nars.nal.rule.*;
+import nars.nal.filter.FilterBelowBudget;
+import nars.nal.filter.FilterBelowConfidence;
+import nars.nal.filter.FilterOperationWithSubjOrPredVariable;
 
 import java.util.ArrayList;
 import java.util.List;

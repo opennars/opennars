@@ -8,12 +8,12 @@ import nars.Core;
 import nars.Memory;
 import nars.Memory.MemoryAware;
 import nars.nal.BudgetFunctions;
-import nars.energy.Budget;
-import nars.nal.entity.Concept;
-import nars.nal.entity.ConceptBuilder;
-import nars.nal.entity.Term;
-import nars.energy.bag.experimental.DelayBag;
-import nars.energy.bag.experimental.FairDelayBag;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.ConceptBuilder;
+import nars.nal.term.Term;
+import nars.budget.bag.experimental.DelayBag;
+import nars.budget.bag.experimental.FairDelayBag;
 
 import java.util.ArrayList;
 import java.util.Iterator;

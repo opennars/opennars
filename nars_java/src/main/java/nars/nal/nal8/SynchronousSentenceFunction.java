@@ -1,10 +1,10 @@
 package nars.nal.nal8;
 
 import nars.Memory;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
-import nars.nal.entity.Variable;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 
 import java.util.ArrayList;
 import java.util.Collection;

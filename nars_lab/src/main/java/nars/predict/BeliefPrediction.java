@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.nal.entity.Concept;
+import nars.nal.Concept;
 
 import java.util.List;
 

@@ -2,9 +2,9 @@ package nars.core;
 
 import nars.NAR;
 import nars.prototype.Default;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Task;
-import nars.nal.entity.Variable;
+import nars.nal.term.Compound;
+import nars.nal.Task;
+import nars.nal.term.Variable;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

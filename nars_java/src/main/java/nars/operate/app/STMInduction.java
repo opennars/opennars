@@ -4,10 +4,10 @@ import nars.operate.AbstractOperator;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.rule.DirectProcess;
+import nars.nal.DirectProcess;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import nars.nal.entity.AbstractTerm;
+import nars.nal.term.AbstractTerm;
 
 import java.util.ArrayList;
 import java.util.List;

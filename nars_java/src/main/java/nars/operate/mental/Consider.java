@@ -18,11 +18,14 @@
 package nars.operate.mental;
 
 import nars.Memory;
-import nars.energy.Budget;
-import nars.nal.entity.*;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.Task;
+import nars.nal.tlink.TaskLink;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nal.rule.ConceptProcess;
+import nars.nal.ConceptProcess;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 

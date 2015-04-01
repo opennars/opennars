@@ -3,7 +3,7 @@ package nars.io.meter;
 import nars.Memory;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
-import nars.nal.entity.Concept;
+import nars.nal.Concept;
 
 /**
  * Logic/reasoning sensors

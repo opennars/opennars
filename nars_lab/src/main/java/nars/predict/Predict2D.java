@@ -6,9 +6,9 @@ import nars.Events;
 import nars.NAR;
 import nars.Global;
 import nars.event.AbstractReaction;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Term;
+import nars.nal.Concept;
+import nars.nal.Sentence;
+import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 
 import javax.swing.*;

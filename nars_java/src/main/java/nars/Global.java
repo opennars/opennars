@@ -24,8 +24,8 @@ package nars;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.nal.entity.Task;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.Task;
+import nars.nal.stamp.Stamp;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;

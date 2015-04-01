@@ -1,6 +1,6 @@
 package nars.nal.nal8;
 
-import nars.nal.entity.Term;
+import nars.nal.term.Term;
 
 /**
  * Able to evaluate a tuple of terms into a term

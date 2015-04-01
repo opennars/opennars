@@ -4,12 +4,12 @@ import nars.Events;
 import nars.Memory;
 import nars.Global;
 import nars.nal.BudgetFunctions;
-import nars.energy.Budget;
-import nars.nal.entity.Concept;
-import nars.nal.entity.ConceptBuilder;
-import nars.nal.entity.Term;
-import nars.energy.bag.CacheBag;
-import nars.energy.tx.BagActivator;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.ConceptBuilder;
+import nars.nal.term.Term;
+import nars.budget.bag.CacheBag;
+import nars.budget.tx.BagActivator;
 
 /**
 * Created by me on 3/15/15.

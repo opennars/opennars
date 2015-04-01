@@ -21,12 +21,16 @@
 package nars.nal.nal8;
 
 import nars.Memory;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.NALOperator;
-import nars.nal.entity.*;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 
 import java.util.Arrays;
 

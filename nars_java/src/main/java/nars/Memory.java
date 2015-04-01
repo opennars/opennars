@@ -23,7 +23,7 @@ package nars;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
@@ -31,7 +31,8 @@ import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMeter;
 import nars.io.meter.ResourceMeter;
 import nars.nal.*;
-import nars.nal.entity.*;
+import nars.nal.term.Variable;
+import nars.nal.tlink.TaskLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -47,6 +48,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import reactor.function.Supplier;
 
 import java.io.Serializable;
@@ -828,11 +831,11 @@ public class Memory implements Serializable {
         return t;
     }
 
-    public <T extends Compound> NewTask<T> newTask(T t) {
-        return new NewTask(this, t);
+    public <T extends Compound> ProtoTask<T> newTask(T t) {
+        return new ProtoTask(this, t);
     }
-    public <T extends Compound> NewTask<T> newTask(Sentence<T> s) {
-        return new NewTask(this, s);
+    public <T extends Compound> ProtoTask<T> newTask(Sentence<T> s) {
+        return new ProtoTask(this, s);
     }
 
 

@@ -9,8 +9,8 @@ import nars.io.TextOutput;
 import nars.io.condition.OutputCondition;
 import nars.io.condition.TaskCondition;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.Task;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.Task;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 
 import java.io.PrintStream;

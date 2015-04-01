@@ -22,8 +22,8 @@ package nars.grid2d.operator;
 
 import nars.Memory;
 import nars.grid2d.TestChamber;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.nal.Task;
+import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 

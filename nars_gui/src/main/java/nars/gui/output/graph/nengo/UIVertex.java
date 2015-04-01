@@ -5,7 +5,7 @@ import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
 import com.google.common.collect.Iterables;
-import nars.nal.entity.Named;
+import nars.nal.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.piccolo2d.PNode;
 import org.piccolo2d.util.PAffineTransform;

@@ -2,10 +2,14 @@ package nars.util.graph;
 
 import nars.NAR;
 import nars.Global;
-import nars.energy.Budget;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.Named;
 import nars.nal.Terms.Termable;
-import nars.nal.entity.*;
-import nars.energy.Budget.Budgetable;
+import nars.budget.Budget.Budgetable;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.term.Term;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;

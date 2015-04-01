@@ -20,13 +20,17 @@
  */
 package nars.nal;
 
-import nars.nal.entity.*;
+import nars.nal.tlink.TLink;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.Arrays;
 

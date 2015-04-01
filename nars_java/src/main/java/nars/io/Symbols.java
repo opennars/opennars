@@ -23,7 +23,7 @@ package nars.io;
 
 import nars.Events;
 import nars.nal.NALOperator;
-import nars.nal.entity.Term;
+import nars.nal.term.Term;
 
 import java.util.Collections;
 import java.util.HashMap;

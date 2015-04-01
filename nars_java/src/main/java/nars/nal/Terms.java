@@ -2,10 +2,8 @@ package nars.nal;
 
 import nars.Memory;
 import nars.Global;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Statement;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;

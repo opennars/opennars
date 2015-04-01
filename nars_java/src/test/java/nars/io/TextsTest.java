@@ -1,10 +1,14 @@
 package nars.io;
 
+import nars.nal.Sentence;
+import nars.nal.Statement;
+import nars.nal.TruthValue;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;

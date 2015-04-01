@@ -4,12 +4,15 @@ import nars.control.experimental.AntCore;
 import nars.Core;
 import nars.Memory;
 import nars.NAR;
-import nars.energy.Budget;
-import nars.nal.entity.*;
-import nars.nal.entity.tlink.TermLinkKey;
-import nars.energy.Bag;
-import nars.energy.bag.experimental.DelayBag;
-import nars.energy.bag.experimental.FairDelayBag;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
+import nars.budget.Bag;
+import nars.budget.bag.experimental.DelayBag;
+import nars.budget.bag.experimental.FairDelayBag;
+import nars.nal.term.Term;
 
 /**
  *

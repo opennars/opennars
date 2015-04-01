@@ -20,8 +20,6 @@
  */
 package nars.nal;
 
-import nars.nal.entity.TruthValue;
-
 import static java.lang.Math.abs;
 
 /**

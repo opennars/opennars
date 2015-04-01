@@ -18,7 +18,7 @@ package nars.io.nlp;
 
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
-import nars.nal.entity.Task;
+import nars.nal.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -21,8 +21,8 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 /**
  * A negation of a statement.

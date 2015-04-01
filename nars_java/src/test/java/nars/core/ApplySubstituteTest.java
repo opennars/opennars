@@ -3,8 +3,8 @@ package nars.core;
 import nars.NAR;
 import nars.prototype.Default;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import org.junit.Test;
 
 import java.util.HashMap;

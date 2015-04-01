@@ -2,7 +2,6 @@ package nars.nal;
 
 import com.google.common.collect.Iterators;
 import nars.io.Source;
-import nars.nal.entity.Task;
 import reactor.function.Consumer;
 import reactor.function.Supplier;
 

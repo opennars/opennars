@@ -1,12 +1,10 @@
 package nars.operate.mental;
 
 import nars.*;
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.BudgetFunctions;
-import nars.nal.NAL;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.*;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
@@ -16,6 +14,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Term;
 import nars.operate.AbstractOperator;
 
 import java.util.Arrays;

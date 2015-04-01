@@ -1,14 +1,20 @@
 package nars.prototype;
 
 import nars.Memory;
-import nars.energy.Budget;
-import nars.nal.entity.*;
-import nars.nal.entity.tlink.TermLinkKey;
-import nars.energy.Bag;
-import nars.energy.bag.LevelBag;
-import nars.energy.bag.experimental.ChainBag;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
+import nars.budget.Bag;
+import nars.budget.bag.LevelBag;
+import nars.budget.bag.experimental.ChainBag;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
-import static nars.energy.bag.LevelBag.NextNonEmptyLevelMode.Fast;
+import static nars.budget.bag.LevelBag.NextNonEmptyLevelMode.Fast;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class Discretinuous extends Default {

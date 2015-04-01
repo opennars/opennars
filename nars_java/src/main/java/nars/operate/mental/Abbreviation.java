@@ -1,7 +1,11 @@
 package nars.operate.mental;
 
 import com.google.common.collect.Lists;
-import nars.energy.Budget;
+import nars.budget.Budget;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.TruthValue;
+import nars.nal.term.Term;
 import nars.operate.AbstractOperator;
 import nars.Events.TaskDerive;
 import nars.Memory;
@@ -9,8 +13,7 @@ import nars.NAR;
 import nars.Global;
 import nars.io.Symbols;
 import nars.nal.BudgetFunctions;
-import nars.nal.entity.*;
-import nars.nal.entity.stamp.Stamp;
+import nars.nal.stamp.Stamp;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -20,7 +23,7 @@ import reactor.jarjar.jsr166e.extra.AtomicDouble;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static nars.nal.entity.Compound.termArray;
+import static nars.nal.term.Compound.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.

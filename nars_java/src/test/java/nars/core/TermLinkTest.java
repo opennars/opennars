@@ -3,12 +3,12 @@ package nars.core;
 import nars.NAR;
 import nars.prototype.Default;
 import nars.io.Symbols;
-import nars.energy.Budget;
-import nars.nal.entity.Concept;
-import nars.nal.entity.TermLink;
-import nars.nal.entity.tlink.TermLinkKey;
-import nars.nal.entity.tlink.TermLinkTemplate;
-import nars.energy.Bag;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
+import nars.nal.tlink.TermLinkTemplate;
+import nars.budget.Bag;
 import org.junit.Test;
 
 import java.util.List;

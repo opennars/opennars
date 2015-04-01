@@ -12,10 +12,14 @@ import nars.NAR;
 import nars.Global;
 import nars.event.Reaction;
 import nars.io.Symbols;
+import nars.nal.Concept;
 import nars.nal.NALOperator;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.Terms.Termable;
-import nars.nal.entity.*;
 import nars.nal.nal4.Image;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.*;
 

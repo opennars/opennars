@@ -18,11 +18,15 @@ package nars.core;
 
 import nars.NAR;
 import nars.Global;
+import nars.nal.Concept;
+import nars.nal.Statement;
+import nars.nal.Task;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.NALOperator;
-import nars.nal.entity.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.DifferenceExt;
 import nars.nal.nal3.DifferenceInt;

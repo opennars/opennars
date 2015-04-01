@@ -21,8 +21,7 @@
 package nars.nal;
 
 import nars.Memory;
-import nars.energy.Budget;
-import nars.nal.entity.*;
+import nars.budget.Budget;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.*;
@@ -31,6 +30,8 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package nars.util.graph;
 
 import nars.NAR;
 import nars.nal.NALOperator;
-import nars.nal.entity.Compound;
+import nars.nal.term.Compound;
 
 /** Maintains a directed grpah of Inheritance and Similiarty statements */
 public class ImplicationGraph2 extends StatementGraph {

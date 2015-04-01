@@ -22,8 +22,8 @@ package nars.nal.nal8;
 
 import nars.Memory;
 import nars.Global;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.nal.Task;
+import nars.nal.term.Term;
 
 import java.util.Arrays;
 import java.util.List;

@@ -17,7 +17,7 @@
  */
 package nars.prolog;
 
-import nars.nal.entity.AbstractTerm;
+import nars.nal.term.AbstractTerm;
 import nars.prolog.net.AbstractSocket;
 
 import java.util.AbstractMap;

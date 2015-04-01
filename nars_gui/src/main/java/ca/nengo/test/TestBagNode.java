@@ -16,8 +16,8 @@ import nars.prototype.Default;
 import nars.control.DefaultCore;
 import nars.NAR;
 import nars.io.Output;
-import nars.nal.entity.Item;
-import nars.energy.Bag;
+import nars.nal.Item;
+import nars.budget.Bag;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

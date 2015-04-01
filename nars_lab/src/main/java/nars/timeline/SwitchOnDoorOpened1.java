@@ -23,7 +23,7 @@ import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
 import nars.io.TextOutput;
-import nars.nal.entity.Task;
+import nars.nal.Task;
 import nars.nal.meta.NARTrace;
 import nars.operate.io.PauseInput;
 

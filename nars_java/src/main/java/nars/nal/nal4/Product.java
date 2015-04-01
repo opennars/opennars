@@ -22,8 +22,8 @@
 package nars.nal.nal4;
 
 import nars.nal.NALOperator;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.List;
 

@@ -2,12 +2,18 @@ package nars.prototype;
 
 import nars.Core;
 import nars.Memory;
-import nars.energy.Budget;
-import nars.nal.entity.*;
-import nars.nal.entity.tlink.TermLinkKey;
-import nars.energy.Bag;
-import nars.energy.bag.CurveBag;
-import nars.energy.bag.CurveBag.FairPriorityProbabilityCurve;
+import nars.budget.Budget;
+import nars.nal.Concept;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
+import nars.budget.Bag;
+import nars.budget.bag.CurveBag;
+import nars.budget.bag.CurveBag.FairPriorityProbabilityCurve;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 
 public class Curve extends Default {

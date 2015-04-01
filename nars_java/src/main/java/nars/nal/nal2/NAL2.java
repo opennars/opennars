@@ -1,12 +1,11 @@
 package nars.nal.nal2;
 
-import nars.energy.Budget;
-import nars.nal.BudgetFunctions;
-import nars.nal.NAL;
-import nars.nal.TruthFunctions;
-import nars.nal.entity.*;
+import nars.budget.Budget;
+import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Equivalence;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 /**
  * Created by me on 1/13/15.

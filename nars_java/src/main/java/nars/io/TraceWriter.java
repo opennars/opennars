@@ -26,8 +26,8 @@ import nars.Events.TaskRemove;
 import nars.Memory.Timing;
 import nars.NAR;
 import nars.nal.MemoryObserver;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Task;
+import nars.nal.Concept;
+import nars.nal.Task;
 
 import java.io.PrintStream;
 import java.util.Arrays;

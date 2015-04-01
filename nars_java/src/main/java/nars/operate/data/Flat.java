@@ -1,7 +1,7 @@
 package nars.operate.data;
 
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;

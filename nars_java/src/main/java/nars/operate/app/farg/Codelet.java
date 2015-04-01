@@ -6,9 +6,9 @@
 package nars.operate.app.farg;
 
 import nars.Memory;
-import nars.energy.Budget;
-import nars.nal.entity.Item;
-import nars.nal.entity.Term;
+import nars.budget.Budget;
+import nars.nal.Item;
+import nars.nal.term.Term;
 
 /**
  *

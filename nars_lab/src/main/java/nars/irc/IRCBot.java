@@ -13,7 +13,7 @@ import nars.Global;
 import nars.event.AbstractReaction;
 import nars.io.Texts;
 import nars.io.nlp.Twokenize;
-import nars.nal.entity.Term;
+import nars.nal.term.Term;
 import nars.operate.io.Say;
 
 import java.io.*;

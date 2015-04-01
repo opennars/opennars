@@ -5,8 +5,8 @@ import nars.Events;
 import nars.NAR;
 import nars.io.Output;
 import nars.io.Texts;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
+import nars.nal.Sentence;
+import nars.nal.Task;
 
 import java.util.Arrays;
 

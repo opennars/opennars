@@ -2,8 +2,11 @@ package nars.util.graph;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import nars.nal.Terms;
-import nars.nal.entity.*;
+import nars.nal.*;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.util.data.CuckooMap;
 
 import java.util.ArrayList;

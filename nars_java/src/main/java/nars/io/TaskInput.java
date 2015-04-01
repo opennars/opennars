@@ -4,7 +4,7 @@
  */
 package nars.io;
 
-import nars.nal.entity.Task;
+import nars.nal.Task;
 
 
 /**

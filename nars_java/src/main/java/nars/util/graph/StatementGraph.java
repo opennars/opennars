@@ -1,7 +1,11 @@
 package nars.util.graph;
 
 import nars.Memory;
-import nars.nal.entity.*;
+import nars.nal.Item;
+import nars.nal.Sentence;
+import nars.nal.Statement;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 
 public abstract class StatementGraph extends SentenceGraph {

@@ -4,11 +4,15 @@
  */
 package nars.gui.output;
 
-import nars.energy.Budget;
+import nars.budget.Budget;
 import nars.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
-import nars.nal.entity.*;
+import nars.nal.Concept;
+import nars.nal.Task;
+import nars.nal.TruthValue;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.util.graph.experimental.Idea;
 import nars.util.graph.experimental.Idea.IdeaSet;
 import nars.util.graph.experimental.Idea.SentenceType;

@@ -22,9 +22,9 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Statement;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.Statement;
+import nars.nal.term.Term;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;

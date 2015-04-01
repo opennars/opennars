@@ -4,9 +4,9 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractExecutive;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.nal.Concept;
+import nars.nal.Task;
+import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 

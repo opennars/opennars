@@ -1,6 +1,6 @@
 package nars;
 
-import nars.nal.entity.Term;
+import nars.nal.term.Term;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.TermFunction;
 import nars.prolog.NoMoreSolutionException;

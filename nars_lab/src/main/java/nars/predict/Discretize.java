@@ -6,13 +6,13 @@ package nars.predict;
 
 import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Task;
-import nars.nal.entity.Term;
+import nars.nal.Concept;
+import nars.nal.Task;
+import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal7.Tense;
-import nars.nal.rule.DirectProcess;
+import nars.nal.DirectProcess;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

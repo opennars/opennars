@@ -24,10 +24,10 @@ package nars.io;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
-import nars.nal.entity.Concept;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.entity.TruthValue;
+import nars.nal.Concept;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.TruthValue;
 import nars.operate.io.Echo;
 
 import java.io.*;

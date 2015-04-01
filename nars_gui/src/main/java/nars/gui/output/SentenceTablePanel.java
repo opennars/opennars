@@ -1,9 +1,9 @@
 package nars.gui.output;
 
 import nars.NAR;
-import nars.nal.entity.Sentence;
-import nars.nal.entity.Task;
-import nars.nal.entity.TruthValue;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.TruthValue;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

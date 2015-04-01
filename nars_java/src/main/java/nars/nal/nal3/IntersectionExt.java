@@ -24,8 +24,8 @@ import com.google.common.collect.ObjectArrays;
 import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
-import nars.nal.entity.Compound;
-import nars.nal.entity.Term;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 import java.util.Collection;
