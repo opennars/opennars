@@ -27,6 +27,7 @@ import automenta.vivisect.swing.TimeControl;
 import ca.nengo.ui.NengrowPanel;
 import nars.Events;
 import nars.Events.FrameEnd;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.Reaction;
@@ -93,7 +94,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
         
         this.nar = nar;
         this.memory = nar.memory;
-        this.metrics = (metrics == null) ? new NARMetrics(nar, 128) : metrics;
+        this.metrics = (metrics == null) ? new NARMetrics(nar, Global.METRICS_HISTORY_LENGTH) : metrics;
 
 
         experienceWriter = new TextOutput(nar);

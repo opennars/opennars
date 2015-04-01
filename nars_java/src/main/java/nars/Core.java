@@ -18,6 +18,7 @@ public interface Core extends Iterable<Concept> /* TODO: implements Plugin */ {
 
     int size();
 
+    public double conceptMass();
 
 
     public interface CoreAware {

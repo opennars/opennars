@@ -44,6 +44,7 @@ import java.util.Set;
 public class Global {
 
 
+
     public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.
@@ -65,10 +66,10 @@ public class Global {
     //              in the lifetime of the system, though different systems may take different
     //              values. For example, to change HORIZON dynamically will cause inconsistency 
     //              in evidence evaluation.
-    
-    
-    
 
+
+
+    public static final int METRICS_HISTORY_LENGTH = 256;
 
     /* ---------- logical parameters ---------- */
     /** Evidential Horizon, the amount of future evidence to be considered. 

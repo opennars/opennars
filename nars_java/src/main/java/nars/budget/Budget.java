@@ -41,7 +41,7 @@ import static nars.nal.UtilityFunctions.*;
  *      some subclasses / adapter classes for statistics,
  * monitoring or event notification on changes
  */
-public class Budget implements Cloneable {
+public class Budget implements Cloneable, BudgetTarget {
 
     /** The character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
@@ -225,11 +225,16 @@ public class Budget implements Cloneable {
     }
 
     /**
-     * Increase priority value by a percentage of the remaining range
+     * Increase priority value by a percentage of the remaining range.
+     * Uses the 'or' function so it is not linear
      * @param v The increasing percent
      */
     public void incPriority(final float v) {
         setPriority( (float) Math.min(1.0, or(priority, v)));
+    }
+
+    public void addPriority(final float v) {
+        setPriority( v + getPriority() );
     }
 
     /** AND's (multiplies) priority with another value */
@@ -511,6 +516,16 @@ public class Budget implements Cloneable {
     public void setUsed(long now) {
         if (isNew())
             setLastForgetTime(now);
+    }
+
+    @Override
+    public double receive(double amount) {
+        float maxReceivable = 1.0f - getPriority();
+
+        double received = Math.min(amount, maxReceivable);
+        addPriority((float) received);
+
+        return amount - received;
     }
 
 

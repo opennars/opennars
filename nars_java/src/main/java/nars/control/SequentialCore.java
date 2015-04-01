@@ -44,6 +44,11 @@ abstract public class SequentialCore implements Core {
 
     }
 
+    @Override
+    public double conceptMass() {
+        return concepts.mass();
+    }
+
     /** for removing a specific concept (if it's not putBack) */
     /*@Deprecated public Concept takeOut(Term t) {
         return concepts.remove(t);

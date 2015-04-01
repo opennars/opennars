@@ -61,7 +61,7 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
 
     public void onCharTyped(char c, float priority, float freq, float conf) {        
         String charTerm = "\"" + Texts.escapeLiteral(Character.toString(c)) + "\"";
-        nar.input("$" + n2(priority) + "$ < {" + charTerm + "} --> " + prefix + "b>. :|: %" + n2(freq) + ";" + n2(conf) + "%");
+        nar.input("$" + n2(priority) + "$ < {" + charTerm + "} --> " + prefix + ">. :|: %" + n2(freq) + ";" + n2(conf) + "%");
         //nar.input("<(&/, <" + charTerm + " --> " + prefix + ">, ?dt) =/> <?next --> \" + prefix + \">>?");
     }
     

@@ -429,11 +429,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         E b = bx.item;
 
+        final float priPrev = b.getPriority();
 
         //allow selector to modify it, then if it returns non-null, reinsert
         E c = selector.update(b);
         if (c!=null) {
+            final float priNow = b.getPriority();
             relevel(bx, c);
+            addMass(priNow - priPrev);
             return c;
         }
         else
@@ -648,12 +651,16 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 //        return selected;
 //    }
 
+    protected void addMass(float x) {
+        mass += x;
+    }
+
     protected void removeMass(E item) {
-        mass -= item.getPriority();
+        addMass(-1 * item.getPriority());
     }
 
     protected void addMass(E item) {
-        mass += item.getPriority();
+        addMass(item.getPriority());
     }
 
 

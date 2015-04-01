@@ -1,9 +1,15 @@
 package nars.io.meter;
 
+import nars.Events;
 import nars.Memory;
+import nars.event.AbstractReaction;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
 import nars.nal.Concept;
+import nars.nal.Task;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
+import java.util.function.Consumer;
 
 /**
  * Logic/reasoning sensors
@@ -13,18 +19,29 @@ import nars.nal.Concept;
  * <p>
  * TODO add the remaining meter types for NARS data structures (ex: Concept metrics)
  */
-public class LogicMeter {
+public class LogicMetrics extends AbstractReaction {
 
+    public final Memory m;
 
     public final HitMeter TASK_IMMEDIATE_PROCESS = new HitMeter("task.immediate_process");
 
     public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
 
     public final DoubleMeter CONCEPT_COUNT = new DoubleMeter("concept.count");
+    public final DoubleMeter CONCEPT_MASS = new DoubleMeter("concept.mass");
+    public final DoubleMeter TERMLINK_MASS_CONCEPT_MEAN = new DoubleMeter("termlink.mass.concept_mean");
+    public final DoubleMeter TERMLINK_MASS_MEAN = new DoubleMeter("termlink.mass.mean");
+    public final DoubleMeter TASKLINK_MASS_CONCEPT_MEAN = new DoubleMeter("tasklink.mass.concept_mean");
+    public final DoubleMeter TASKLINK_MASS_MEAN = new DoubleMeter("tasklink.mass.mean");
+
+
     public final DoubleMeter CONCEPT_BELIEF_COUNT = new DoubleMeter("concept.belief.count");
     public final DoubleMeter CONCEPT_QUESTION_COUNT = new DoubleMeter("concept.question.count");
     public final HitMeter TERM_LINK_SELECT = new HitMeter("concept.termlink.select");
     public final HitMeter TERM_LINK_TRANSFORM = new HitMeter("concept.termlink.transform");
+
+    SummaryStatistics inputPriority = new SummaryStatistics();
+    public final DoubleMeter INPUT_PRIORITY_SUM = new DoubleMeter("input.mass.sum");
 
     /**
      * triggered for each StructuralRules.contraposition().
@@ -68,7 +85,30 @@ public class LogicMeter {
     //private double conceptVariance;
     //private double[] conceptHistogram;
 
-    public void commit(Memory m) {
+
+    public LogicMetrics(Memory m) {
+        super(m, Events.IN.class, Events.FrameEnd.class);
+        this.m = m;
+        reset();
+    }
+
+    @Override
+    public void event(Class event, Object[] args) {
+        if (event == Events.IN.class) {
+            Task t = (Task) args[0];
+            float p = t.getPriority();
+            if (Float.isFinite(p))
+                inputPriority.addValue(p);
+        }
+        else if (event == Events.FrameEnd.class) {
+            commit();
+            reset();
+        }
+
+    }
+
+    public class ConceptMeter implements Consumer<Concept> {
+
         double prioritySum = 0;
         double prioritySumSq = 0;
         int count = 0;
@@ -76,8 +116,25 @@ public class LogicMeter {
         int totalBeliefs = 0;
         int histogramBins = 4;
         double[] histogram = new double[histogramBins];
+        SummaryStatistics
+                termLinkMassPerConcept = new SummaryStatistics(),
+                termLinkMass = new SummaryStatistics(),
+                taskLinkMassPerConcept = new SummaryStatistics(),
+                taskLinkMass = new SummaryStatistics();
 
-        for (final Concept c : m.concepts) {
+        public void reset() {
+            prioritySum = prioritySumSq = 0;
+            count = totalQuestions = totalBeliefs = 0;
+            histogramBins = 4;
+            termLinkMassPerConcept.clear();
+            termLinkMass.clear();
+            taskLinkMassPerConcept.clear();
+            taskLinkMass.clear();
+            inputPriority.clear();
+        }
+
+        @Override
+        public void accept(Concept c) {
             double p = c.getPriority();
             totalQuestions += c.questions.size();
             totalBeliefs += c.beliefs.size();
@@ -97,33 +154,64 @@ public class LogicMeter {
                 histogram[3]++;
             }
 
+            float termLinksMass = c.termLinks.mass();
+            int numTermLinks = c.termLinks.size();
+            float taskLinksMass = c.taskLinks.mass();
+            int numTaskLinks = c.taskLinks.size();
+
+            termLinkMassPerConcept.addValue(termLinksMass);
+            termLinkMass.addValue((numTermLinks > 0) ? termLinksMass / numTermLinks : 0);
+            taskLinkMassPerConcept.addValue(taskLinksMass);
+            taskLinkMass.addValue((numTaskLinks > 0) ? taskLinksMass / numTaskLinks : 0);
+
             count++;
         }
-        double mean, variance;
-        if (count > 0) {
-            mean = prioritySum / count;
 
-            //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-            variance = (prioritySumSq - ((prioritySum * prioritySum) / count)) / (count - 1);
-            for (int i = 0; i < histogram.length; i++) {
-                histogram[i] /= count;
+        public void commit(Memory m) {
+            double mean, variance;
+            if (conceptMeter.count > 0) {
+                mean = prioritySum / count;
+
+                //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+                variance = (prioritySumSq - ((prioritySum * prioritySum) / count)) / (count - 1);
+                for (int i = 0; i < histogram.length; i++) {
+                    histogram[i] /= count;
+                }
+            } else {
+                mean = variance = 0;
             }
-        } else {
-            mean = variance = 0;
+
+            CONCEPT_COUNT.set(count);
+            CONCEPT_MASS.set(m.concepts.conceptMass());
+            TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
+            TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
+            TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());
+            TASKLINK_MASS_MEAN.set(taskLinkMass.getMean());
+            CONCEPT_BELIEF_COUNT.set(totalBeliefs);
+            CONCEPT_QUESTION_COUNT.set(totalQuestions);
+
+            INPUT_PRIORITY_SUM.set(inputPriority.getSum());
+
+
+            //TODO
+            /*
+            setConceptPriorityMean(mean);
+            setConceptPriorityVariance(variance);
+            setConceptPriorityHistogram(histogram);
+            */
         }
+    };
 
-        CONCEPT_COUNT.set(count);
-        CONCEPT_BELIEF_COUNT.set(totalBeliefs);
-        CONCEPT_QUESTION_COUNT.set(totalQuestions);
+    final ConceptMeter conceptMeter = new ConceptMeter();
 
 
-        //TODO
-        /*
-        setConceptPriorityMean(mean);
-        setConceptPriorityVariance(variance);
-        setConceptPriorityHistogram(histogram);
-        */
+    public void reset() {
+        conceptMeter.reset();
+    }
 
+    public void commit() {
+        m.concepts.forEach(conceptMeter);
+        conceptMeter.commit(m);
     }
 
 //    @Override

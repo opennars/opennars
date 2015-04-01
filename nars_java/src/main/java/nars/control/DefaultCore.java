@@ -31,6 +31,8 @@ public class DefaultCore extends SequentialCore {
     public final Deque<Task> newTasks;
 
 
+
+
     public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
         super(concepts, subcon, conceptBuilder);
 

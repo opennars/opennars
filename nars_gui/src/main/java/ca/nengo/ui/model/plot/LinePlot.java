@@ -12,6 +12,8 @@ import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.util.ScriptGenException;
+import nars.Global;
+import nars.io.Texts;
 
 import java.awt.*;
 import java.util.ArrayDeque;
@@ -29,7 +31,7 @@ public class LinePlot extends AbstractWidget {
 
     final Deque<Double> history = new ArrayDeque<>(); //TODO use seomthing more efficient
 
-    final int maxHistory = 128;
+    final int maxHistory = Global.METRICS_HISTORY_LENGTH;
     double[] hv = new double[maxHistory]; //values are cached here for fast access
 
     private boolean changed = true;
@@ -40,6 +42,7 @@ public class LinePlot extends AbstractWidget {
 
     @Override
     protected void paint(PaintContext paintContext, double width, double height) {
+
 
         if (changed) {
             changed = false;
@@ -55,6 +58,7 @@ public class LinePlot extends AbstractWidget {
                     hv[i++] = v;
                 }
             }
+            label = Texts.n4(minValue) + " | " + Texts.n4(maxValue);
         }
 
 
@@ -64,16 +68,21 @@ public class LinePlot extends AbstractWidget {
         double x = 0;
         double dx = (width/ nh);
         final float bh = (float)height;
-        final int ih = (int)bh;
+        final double mv = minValue;
+        final double Mv = maxValue;
+        //final int ih = (int)bh;
 
         g.setColor(Color.WHITE);
 
-        if (maxValue != minValue) {
+        if (mv != Mv) {
             int prevX = -1;
             final int histSize = history.size();
+            final double HV[] = hv;
             for (int i = 0; i < histSize; i++) {
-                final double v = hv[i];
-                final double py = (v - minValue) / (maxValue - minValue);
+                final double v = HV[i];
+
+                double py = (v - mv) / (Mv - mv); if (py < 0) py = 0; if (py > 1.0) py = 1.0;
+
                 double y = py * bh;
 
                 final int iy = (int) y;
@@ -89,8 +98,8 @@ public class LinePlot extends AbstractWidget {
         g.setFont(NengoStyle.FONT_BOLD);
         g.setColor(Color.WHITE);
         g.drawString(name(), 10, 10);
-        g.setFont(NengoStyle.FONT_NORMAL);
-        g.drawString(label, 10, 30);
+        g.setFont(NengoStyle.FONT_SMALL);
+        g.drawString(label, 10, 25);
 
     }
 
@@ -120,7 +129,7 @@ public class LinePlot extends AbstractWidget {
     public void run(float startTime, float endTime) throws SimulationException {
 
 
-        label = "?";
+        //label = "?";
 
         Object i;
         if ((input!=null && (i = input.get())!=null)) {
@@ -133,22 +142,22 @@ public class LinePlot extends AbstractWidget {
                 SpikeOutput so = (SpikeOutput) input.get();
                 boolean[] v = so.getValues();
                 push( v[0]  ? 1f : 0f);
-                label = String.valueOf(v[0]);
+                //label = String.valueOf(v[0]);
             }
             else if (i instanceof RealSource) {
                 float[] v = ((RealSource) input.get()).getValues();
                 push(v[0]);
-                label = String.valueOf(v[0]);
+                //label = String.valueOf(v[0]);
             }
             else if (i instanceof AtomicDoubleSource) {
                 float v;
                 push(v = ((AtomicDoubleSource) input.get()).get().floatValue());
-                label = String.valueOf(v);
+                //label = String.valueOf(v);
             }
             else if (i instanceof Number) {
                 double d = ((Number)i).doubleValue();
                 push(d);
-                label = String.valueOf(d);
+                //label = String.valueOf(d);
             }
             else {
                 System.err.println(this + " can not use " + i + " (" + i.getClass() + ')');

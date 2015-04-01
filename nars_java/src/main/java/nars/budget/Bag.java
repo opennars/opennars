@@ -1,11 +1,11 @@
 package nars.budget;
 
 import com.google.common.base.Predicate;
-import nars.Memory;
 import nars.Global;
+import nars.Memory;
+import nars.budget.tx.ForgetNext;
 import nars.nal.BudgetFunctions;
 import nars.nal.Item;
-import nars.budget.tx.ForgetNext;
 import reactor.function.Consumer;
 import reactor.function.Supplier;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
@@ -21,7 +21,7 @@ import java.util.Set;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Item<K>> implements Iterable<V>, Consumer<V>, Supplier<V> {
+public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V> {
 
     protected final ForgetNext<K, V> forgetNext = new ForgetNext(this);
 

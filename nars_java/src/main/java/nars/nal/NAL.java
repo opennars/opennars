@@ -197,7 +197,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         if (Global.DEBUG) {
             //detect strange occurrence time
-            if (task.sentence != null && task.sentence.stamp.getOccurrenceTime() < -999999 && !task.sentence.isEternal())
+            if (task.sentence != null && task.sentence.stamp.getOccurrenceTime() < -99999999 && !task.sentence.isEternal())
                 throw new RuntimeException("Probably invalid occurence time:\n" + task.getExplanation());
         }
 

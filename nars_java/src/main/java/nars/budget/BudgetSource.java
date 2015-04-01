@@ -7,13 +7,19 @@ import reactor.jarjar.jsr166e.extra.AtomicDouble;
  */
 public interface BudgetSource {
 
-    /** total energy */
+    /** total energy available */
     public double energy();
+
+    /** set the total energy */
     public double energy(double newValue);
+
+    /** add to the total available energy */
     default public double energyAdd(final double newValue) {
         if (newValue == 0) return energy();
         return energy( energy() + newValue );
     }
+
+    /** set total availbale energy to zero */
     default public void energyReset() { energy(0);     }
 
     /** returns any "change" not taken */
@@ -27,17 +33,19 @@ public interface BudgetSource {
         return energyAdd( -(x - r) );
     }
 
-    public static class DefaultEnergyBuffer extends AtomicDouble implements BudgetSource, BudgetTarget {
+    public static class DefaultBudgetBuffer implements BudgetSource, BudgetTarget {
 
+
+        private AtomicDouble energy = new AtomicDouble();
 
         @Override
         public double energy() {
-            return get();
+            return energy.get();
         }
 
         @Override
         public double energy(double newValue) {
-            set(newValue);
+            energy.set(newValue);
             return newValue;
         }
 

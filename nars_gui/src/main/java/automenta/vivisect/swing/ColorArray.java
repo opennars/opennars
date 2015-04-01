@@ -38,6 +38,8 @@ public class ColorArray {
 
     /** p = 0..1.0 */
     public Color get(double p) {
+        if ((p < 0) || (p > 1))
+            throw new RuntimeException("Out of bounds color range: " + p);
         return c[ (int)Math.round(p*(c.length-1)) ];
     }
 }

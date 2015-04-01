@@ -28,7 +28,7 @@ import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMeter;
+import nars.io.meter.LogicMetrics;
 import nars.io.meter.ResourceMeter;
 import nars.nal.*;
 import nars.nal.term.Variable;
@@ -206,7 +206,7 @@ public class Memory implements Serializable {
 
     //public final Term self;
     public final EmotionMeter emotion = new EmotionMeter();
-    public final LogicMeter logic;
+    public final LogicMetrics logic;
     public final ResourceMeter resource;
 
     /**
@@ -246,12 +246,12 @@ public class Memory implements Serializable {
         this.self = Symbols.DEFAULT_SELF; //default value
 
         this.operators = Global.newHashMap();
-
-        this.resource = new ResourceMeter();
-        this.logic = new LogicMeter();
-
         this.event = new EventEmitter();
 
+
+        //optional:
+        this.resource = new ResourceMeter();
+        this.logic = new LogicMetrics(this);
 
         //after this line begins actual logic, now that the essential data strucures are allocated
         //------------------------------------ 
@@ -702,15 +702,13 @@ public class Memory implements Serializable {
             return;
         }
 
+
         event.emit(Events.CycleStart.class);
 
         concepts.cycle();
 
         event.emit(Events.CycleEnd.class);
 
-        if (newFrame) {
-            logic.commit(this);
-        }
 
         timeUpdate();
 

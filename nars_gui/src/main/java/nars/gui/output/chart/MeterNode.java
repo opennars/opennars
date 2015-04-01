@@ -10,7 +10,6 @@ import nars.event.FrameReaction;
 import nars.io.meter.Signal;
 import nars.io.meter.TemporalMetrics;
 
-import javax.swing.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -72,11 +71,14 @@ public class MeterNode extends DefaultNetwork {
 
 
             this.frameHandler = new FrameReaction(nar) {
+
+
                 @Override public void onFrame() {
-                    if (!updatePending) {
+                    /*if (!updatePending) {
                         updatePending = true;
                         SwingUtilities.invokeLater(MeterNode.this::updateMeter);
-                    }
+                    }*/
+                    updateMeter();
                 }
             };
 

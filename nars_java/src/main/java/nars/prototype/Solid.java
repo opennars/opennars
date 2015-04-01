@@ -119,6 +119,10 @@ public class Solid extends Default {
                     }
                 };
 
+                @Override
+                public double conceptMass() {
+                    return concepts.mass();
+                }
 
                 //iterates in reverse, lowest to highest
                 FastSortedSet<Task> tasks = new FastSortedSet(new Equality<Task>() {
