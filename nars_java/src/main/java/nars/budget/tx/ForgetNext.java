@@ -52,7 +52,7 @@ public class ForgetNext<K, V extends Item<K>> implements BagTransaction<K,V> {
 
         this.current = v;
 
-        if (!forgetWillChangeBudget(v.budget)) {
+        if (!forgetWillChangeBudget(v)) {
             return null; //unaffected (null means that the item's budget was not changed, so the bag knows it can avoid any reindexing it)
         }
 

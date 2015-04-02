@@ -273,7 +273,7 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
         int bins = x.length;
         double total = 0;
         for (V e : values()) {
-            float p = e.budget.getPriority();
+            float p = e.getPriority();
             int b = bin(p, bins - 1);
             x[b]++;
             total++;

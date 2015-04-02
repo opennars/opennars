@@ -30,7 +30,7 @@ public interface BagTransaction<K,V extends Item<K>> extends Budget.Budgetable {
         //1. merge the budget, if specified
         Budget b = getBudgetRef();
         if (b!=null) {
-            changed = v.budget.merge(b);
+            changed = v.merge(b);
         }
 
         //2. perform the update defined by implementations

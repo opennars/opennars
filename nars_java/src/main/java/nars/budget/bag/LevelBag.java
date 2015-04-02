@@ -591,9 +591,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         //if (Parameters.DEBUG_BAG) size();
         DD<E> existing = index.get(newItem.name());
         if (existing != null) {
-            Budget prevBudget = existing.item.budget;
+            Budget prevBudget = existing.item;
             existing.item = newItem;
-            if (merge(newItem.budget, prevBudget)) {
+            if (merge(newItem, prevBudget)) {
                 //budget changed, adjust level
                 relevel(existing, newItem);
             }

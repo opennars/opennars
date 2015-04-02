@@ -29,11 +29,11 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     @Override
     public Concept updateItem(Concept c) {
 
-        long cyclesSinceLastForgotten = now - c.budget.getLastForgetTime();
+        long cyclesSinceLastForgotten = now - c.getLastForgetTime();
         getMemory().forget(c, cyclesSinceLastForgotten, relativeThreshold);
 
         if (budget!=null) {
-            Budget cb = c.budget;
+            Budget cb = c;
 
             final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
             BudgetFunctions.activate(cb, getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);

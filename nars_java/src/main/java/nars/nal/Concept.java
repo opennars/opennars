@@ -229,7 +229,7 @@ public class Concept extends Item<Term> implements Termable {
 
     public boolean link(Task t) {
         if (linkTask(t))
-            return linkTerms(t.budget, true);  // recursively insert TermLink
+            return linkTerms(t, true);  // recursively insert TermLink
         return false;
     }
 
@@ -248,9 +248,9 @@ public class Concept extends Item<Term> implements Termable {
         Budget aggregateBudget = null;
         for (Task t : tasks) {
             if (linkTask(t)) {
-                if (aggregateBudget == null) aggregateBudget = new Budget(t.budget);
+                if (aggregateBudget == null) aggregateBudget = new Budget(t);
                 else {
-                    aggregateBudget.merge(t.budget);
+                    aggregateBudget.merge(t);
                 }
             }
         }
@@ -485,7 +485,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be linked
      */
     public boolean linkTask(final Task task) {
-        Budget taskBudget = task.budget;
+        Budget taskBudget = task;
         taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
 
@@ -882,7 +882,7 @@ public class Concept extends Item<Term> implements Termable {
 
             Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
             if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
-                nal.singlePremiseTask(projectedBelief, task.budget);
+                nal.singlePremiseTask(projectedBelief, task);
             }
             
             return projectedBelief;     // return the first satisfying belief

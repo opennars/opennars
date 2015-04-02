@@ -166,7 +166,7 @@ abstract public class SequentialCore implements Core {
 
     @Deprecated @Override public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
         concepts.remove(c.name());
-        BudgetFunctions.activate(c.budget, b, mode);
+        BudgetFunctions.activate(c, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
 

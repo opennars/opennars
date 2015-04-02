@@ -51,7 +51,7 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
     public static final Comparator<Item> priorityComparator = new ItemPriorityComparator<>();
     
     /** The budget of the Item, consisting of 3 numbers */
-    public final Budget budget = this;
+    @Deprecated public final Budget budget = this;
 
 
     protected Item( ) {
