@@ -74,101 +74,10 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
     abstract public K name();
 
 
-//    /**
-//     * Get priority value
-//     * @return Current priority value
-//     */
-//     public float getPriority() {
-//         return budget.getPriority();
-//     }
-
-    /**
-     * Set priority value
-     * @param v Set a new priority value
-     */
-/*    public void setPriority(final float v) {
-        budget.setPriority(v);
-    }*/
-
-//    /**
-//     * Increase priority value
-//     * @param v The amount of increase
-//     */
-//    public void incPriority(final float v) {
-//        budget.incPriority(v);
-//    }
-//
-//    /**
-//     * Decrease priority value
-//     * @param v The amount of decrease
-//     */
-//    public void decPriority(final float v) {
-//        budget.decPriority(v);
-//    }
-
-//    /**
-//     * Get durability value
-//     * @return Current durability value
-//     */
-//    public float getDurability() {
-//        return budget.getDurability();
-//    }
-
-//    /**
-//     * Set durability value
-//     * @param v The new durability value
-//     */
-//    public void setDurability(final float v) {
-//        budget.setDurability(v);
-//    }
-
-//    /**
-//     * Increase durability value
-//     * @param v The amount of increase
-//     */
-//    public void incDurability(final float v) {
-//        budget.incDurability(v);
-//    }
-//
-//    /**
-//     * Decrease durability value
-//     * @param v The amount of decrease
-//     */
-//    public void decDurability(final float v) {
-//        budget.decDurability(v);
-//    }
-//
-//
-
     /** called when the item has been discarded */
     public void end() {
         
     }
-    
-//    /**
-//     * Get quality value
-//     * @return The quality value
-//     */
-//    public float getQuality() {
-//        return budget.getQuality();
-//    }
-
-//    /**
-//     * Set quality value
-//     * @param v The new quality value
-//     */
-//    public void setQuality(final float v) {
-//        budget.setQuality(v);
-//    }
-
-//    /**
-//     * Merge with another Item with identical key
-//     * @param that The Item to be merged
-//     * @return the resulting Item: this or that
-//     */
-//    public boolean merge(final Budgetable that) {
-//        return budget.merge(that.getBudget());
-//    }
 
     /**
      * Return a String representation of the Item

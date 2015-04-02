@@ -434,9 +434,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         //allow selector to modify it, then if it returns non-null, reinsert
         E c = selector.update(b);
         if (c!=null) {
-            final float priNow = b.getPriority();
+
             relevel(bx, c);
-            addMass(priNow - priPrev);
+            if (c==b) {
+                //update the mass as measured before and after selector update, since it is the same instance and the ordinary relevel budget change would not affect it
+                final float priNow = b.getPriority();
+                addMass(priNow - priPrev);
+            }
             return c;
         }
         else
@@ -535,8 +539,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             if (prevLevel != nextLevel) {
                 level[prevLevel].detach(x);
                 x.owner = nextLevel;
-                x.item = newValue;
+                if (x.item!=newValue) {
+                    removeMass(x.item);
+                    x.item = newValue;
+                    addMass(newValue);
+                }
                 ensureLevelExists(nextLevel).add(x);
+
             }
         }
 
@@ -651,13 +660,15 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 //        return selected;
 //    }
 
-    protected synchronized void addMass(float x) {
+    protected synchronized void addMass(final float x) {
         mass += x;
-        if (mass < 0) throw new RuntimeException(this + " mass below zero");
+
+        //-1 because it is the maximum priority which could be applied during an update
+        if (mass < -1 - Global.BUDGET_EPSILON) throw new RuntimeException(this + " mass below -1: " + mass + " during addition " + x);
 
         final int itemsMargin = (x > 0) ? 1 : 0; //allow +1 margin, when an item is being added
-        final float maxMass = (size()+itemsMargin) * 1.0f;
-        if (mass > maxMass) throw new RuntimeException(this + " mass above maximum (size=" + size() + ")");
+        final float maxMass = (size()+itemsMargin) * 1.0f + Global.BUDGET_EPSILON;
+        if (mass > maxMass) throw new RuntimeException(this + " mass above maximum (mass=" + mass + " , size=" + size() + ")");
     }
 
     protected void removeMass(E item) {

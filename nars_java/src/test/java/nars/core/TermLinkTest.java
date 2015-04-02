@@ -30,7 +30,10 @@ public class TermLinkTest {
 
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
         System.out.println(cj1.keySet());
-        assertEquals(5, cj1.size());
+
+        assertEquals(1, cj1.size());
+
+        //NOTE: cj1.size() will equal 5 if termlinks are normalized in TermLinkBuilder
 
     }
 

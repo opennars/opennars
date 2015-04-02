@@ -23,17 +23,17 @@ package nars.nal;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import nars.Events.*;
+import nars.Global;
 import nars.Memory;
 import nars.Memory.MemoryAware;
-import nars.Global;
+import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.Terms.Termable;
 import nars.nal.stamp.Stamp;
-import nars.nal.tlink.*;
-import nars.budget.Bag;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.tlink.*;
 import nars.util.data.CuckooMap;
 
 import java.io.PrintStream;
@@ -45,7 +45,6 @@ import java.util.Map;
 import static com.google.common.collect.Iterators.*;
 import static nars.nal.BudgetFunctions.divide;
 import static nars.nal.BudgetFunctions.rankBelief;
-import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
@@ -842,23 +841,21 @@ public class Concept extends Item<Term> implements Termable {
                 append(' ').append(title).append(':').append(itemString).toString();
     }
 
-    /**
-     * Recalculate the quality of the concept [to be refined to show
-     * extension/intension balance]
-     *
-     * @return The quality value
-     */
-    @Override
-    public float getQuality() {
-        float linkPriority = termLinks.getPriorityMean();
-        float termComplexityFactor = 1.0f / term.getComplexity();
-        float result = or(linkPriority, termComplexityFactor);
-        if (result < 0) {
-            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
-        }
-        return result;
-
-    }
+//    /**
+//     * Recalculate the quality of the concept [to be refined to show
+//     * extension/intension balance]
+//     *
+//     * @return The quality value
+//     */
+//    public float getAggregateQuality() {
+//        float linkPriority = termLinks.getPriorityMean();
+//        float termComplexityFactor = 1.0f / term.getComplexity();
+//        float result = or(linkPriority, termComplexityFactor);
+//        if (result < 0) {
+//            throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
+//        }
+//        return result;
+//    }
 
 
 
