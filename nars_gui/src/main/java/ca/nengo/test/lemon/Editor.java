@@ -37,10 +37,10 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             Color borderColor = new Color(70, 70, 70);
             Color bgColor = new Color(40, 40, 40);
             Font f = Video.monofont.deriveFont(64f);
-            public int c;
+            public char c;
             PBounds bounds;
 
-            public Glyph(int c) {
+            public Glyph(char c) {
                 this.c = c;
             }
 
@@ -83,7 +83,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 this.bgColor = bgColor;
             }
 
-            public int getChar() {
+            public char getChar() {
                 return c;
             }
         }
@@ -93,19 +93,8 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             }
 
             public Line(String s) {
-                int i = 0;
                 for (char c : s.toCharArray())
                     add(new Glyph(c));
-            }
-
-            public String asString() {
-                StringBuilder result = new StringBuilder();
-                Iterator<Glyph> it = iterator();
-                while(it.hasNext()){
-                    Glyph g = it.next();
-                    result.append(((Glyph) g).c);
-                }
-                return result.toString();
             }
 
             protected void paint(Graphics2D g) {
@@ -127,14 +116,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                     add(new Line(""));
                 add(new Line(str));
                 layOut();
-            }
-
-            public String asString() {
-                StringBuilder result = new StringBuilder();
-                /*for (Object l : nodeMap.values()) {
-                    result.append(((Line) l).asString() + "\n");
-                }*/
-                return result.toString();
+                parse();
             }
 
             public void layOut() {
@@ -152,9 +134,34 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         }
 
         public Lines lines = new Lines();
+        public ArrayList<Glyph> text2glyphMap = new ArrayList<Glyph>();
+        public String text;
+        public Lang.Match root;
+        Color astColor = Color.BLUE;
 
-        public TextArea(String name){
+        public void cacheStuff() {
+            text2glyphMap.clear();
+            StringBuilder text = new StringBuilder();
+            Iterator<Line> lines_it = lines.iterator();
+            while (lines_it.hasNext()) {
+                Iterator<Glyph> it = lines_it.next().iterator();
+                while (it.hasNext()) {
+                    Glyph g = it.next();
+                    text.append((char)g.c);
+                    text2glyphMap.add(g);
+                }
+                text.append("\n");
+                text2glyphMap.add(null);
+            }
+           this.text = text.toString();
+        }
+
+
+    public TextArea(String name){
             super(name);
+            //lines.setLine(0, "[\"Hi, are you a bridge?\"]?");
+            //lines.setLine(0, "<[TEXT_SYSTEM] --> [operational]>.");
+            lines.setLine(0, "[TEXT_SYSTEM].");
         }
 
         @Override
@@ -175,7 +182,42 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             while (it.hasNext()) {
                 it.next().paint(g);
             }
+            paintMatches(g);
         }
+
+        private void updateMatchesBounds(){
+            if (root == null) return;
+            root.accept(new Lang.MatchVisitor() {
+                @Override
+                public void visit(Lang.Match m) {
+                    m.bounds = new PBounds();
+                    for (int i = m.node.getStartIndex(); i < m.node.getEndIndex(); i++) {
+                        Glyph g = text2glyphMap.get(i);
+                        if (g != null)
+                            m.bounds.add(g.bounds);
+                    }
+                }
+            });
+        }
+
+        private void paintMatches(Graphics2D g){
+            if (root == null) return;
+            root.accept(new Lang.MatchVisitor() {
+                @Override
+                public void visit(Lang.Match m) {
+                    g.setPaint(astColor);
+                    g.fillRect((int)m.bounds.x, (int)m.bounds.y, (int)m.bounds.width, (int)m.bounds.height);
+                }
+            });
+        }
+
+        private void parse() {
+            cacheStuff();
+            root = lang.text2match(text);
+            updateMatchesBounds();
+        }
+
+
     }
 
     TextArea area;
@@ -185,11 +227,12 @@ public class Editor extends DefaultNetwork implements UIBuilder {
     private UINetwork ui;
     public Lang lang;
 
-    public Editor(String name, int charWidth, int charHeight) {
+    public Editor(String name, int charWidth, int charHeight, Lang lang) {
         super(name);
+        this.lang = lang;
+        setCharSize(charWidth, charHeight);
         area = new TextArea("area");
         setNode("area", area);
-        setCharSize(charWidth, charHeight);
     }
 
     private void setCharSize(int charWidth, int charHeight) {
@@ -215,10 +258,6 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         } else return;
         updateLang();
         */
-    }
-
-    private void updateLang() {
-        setNode("root", lang.text2match(area.lines.asString()));
     }
 
     @Override

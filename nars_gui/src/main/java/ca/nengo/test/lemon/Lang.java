@@ -8,9 +8,11 @@ import nars.NAR;
 import nars.io.narsese.NarseseParser;
 import nars.prototype.Default;
 import org.parboiled.Node;
+import org.parboiled.errors.ParserRuntimeException;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.ParsingResult;
+import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.lang.reflect.Type;
@@ -24,6 +26,9 @@ import java.util.HashMap;
 
 public class Lang {
 
+    public static abstract class MatchVisitor{
+        public abstract void visit(Match m);
+    }
 
     public NAR nar = new NAR(new Default());
     public NarseseParser p;// = Parser.newParser(nar);
@@ -43,33 +48,16 @@ public class Lang {
     }
 
 
-    public class Match extends AbstractWidget{
+    public class Match {
         public Node node;
-
         Color bgColor = new Color(255,0,255);
+        PBounds bounds;
 
-        @Override
-        protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double width, double height) {
-            Graphics2D g = paintContext.getGraphics();
-
-            final int iw = (int) width;
-            final int ih = (int) height;
-            g.setPaint(bgColor);
-            g.fillRect(0, 0, iw, ih);
-         }
-
-        @Override
-        public void run(float startTime, float endTime) throws SimulationException {
+        public void accept(MatchVisitor visitor){
+            visitor.visit(this);
         }
-
-        @Override
-        public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
-            return null;
-        }
-
 
         public Match(Node n){
-            super("match", 666,666);
             this.node = n;
             debug(" new " + this);
         }
@@ -77,29 +65,6 @@ public class Lang {
         public Match collapsed(){
             return this;
         }
-
-        /*
-        private void updateBounds(Editor.Lines lines) {
-            int margin = 10;
-            int si = node.getStartIndex();
-            int ei = node.getEndIndex();
-
-            int nbei = mesh.findNonblank(ei, 3);
-            debug(" " + si + " " + ei + " " + nbei);
-
-
-            PBounds startBounds = ((TestCharMesh.Glyph)mesh.).getBounds();
-            PBounds endBounds   = ((TestCharMesh.Glyph)mesh.findNonblank(ei, 3)).getBounds();
-            double x = startBounds.getX() - margin;
-            double y = startBounds.getY() - margin;
-            double w = endBounds.getWidth() + endBounds.getX() - x + margin * 2;
-            double h = startBounds.getHeight() + margin * 2;
-            setBounds(0,0,w,h);
-            move(x, y);
-            debug("widget " + this + ": " + x + " " + y + " " + w + " " + h);
-
-        }
-        */
 
         public void print(){
             debug(this.node.getStartIndex() + "," + this.node.getEndIndex() + " "+this.getClass().getSimpleName() + ", value: " + this.node.getValue() + ", matcher: " + this.node.getMatcher());
@@ -166,6 +131,13 @@ public class Lang {
     public class MatchWithChildren extends Match {
         public ArrayList<Match> items;
 
+        public void accept(MatchVisitor visitor){
+            super.accept(visitor);
+            for (Match m:items){
+                visitor.visit(m);
+            }
+        }
+
         public MatchWithChildren(Node n){
             super(n);
             items = children2list(n);
@@ -193,16 +165,9 @@ public class Lang {
             debugIndent--;
         }
 
-        /*
-        private void updateBounds(Editor.Lines l) {
-            for (Match w:items)
-                w.updateBounds(l);
-            super.updateBounds(l);
-        }
-        */
         public MatchWithChildren(Node n, ArrayList<Match> items) {
             super(n);
-                this.items = items;
+            this.items = items;
         }
 
     }
@@ -252,32 +217,37 @@ public class Lang {
     {
 
         ParseRunner rpr = new RecoveringParseRunner(p.Input());
-        ParsingResult r = rpr.run(text);
-        /*r.getValueStack().iterator().forEachRemaining(x -> {
-            System.out.println("  " + x.getClass() + ' ' + x)});*/
 
+        System.out.println("parsing:\"" + text + "\"");
 
-        p.printDebugResultInfo(r);
+        Match w = null;
 
+        try {
 
-        Node root = r.getParseTree();
-        //Object x = root.getValue();
-        //System.out.println("  " + x.getClass() + ' ' + x);
-        System.out.println();
-        System.out.println("getParseTree(): " + root);
-        System.out.println();
-        Match w = new ListMatch((Node)root.getChildren().get(1));
-        System.out.println();
-        System.out.println("Match w: " + w);
-        System.out.println();
-        w.print();
-        System.out.println();
-        System.out.println("collapse:");
-        System.out.println();
-        w = w.collapsed();
-        System.out.println();
-        System.out.println("collapsed:");
-        w.print();
+            ParsingResult r = rpr.run(text);
+            p.printDebugResultInfo(r);
+
+            Node root = r.getParseTree();
+            //Object x = root.getValue();
+            //System.out.println("  " + x.getClass() + ' ' + x);
+            System.out.println();
+            System.out.println("getParseTree(): " + root);
+            System.out.println();
+            w = new ListMatch((Node) root.getChildren().get(1));
+            System.out.println();
+            System.out.println("Match w: " + w);
+            System.out.println();
+            w.print();
+            System.out.println();
+            System.out.println("collapse:");
+            System.out.println();
+            w = w.collapsed();
+            System.out.println();
+            System.out.println("collapsed:");
+            w.print();
+        }
+        catch (ParserRuntimeException e){
+            e.printStackTrace();}
         return w;
     }
 }
