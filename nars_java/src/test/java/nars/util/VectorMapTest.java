@@ -67,20 +67,20 @@ public class VectorMapTest {
         
         n.run(16);
         
-        n.on(CycleStart.class, new Reaction() {
+        n.on(new Reaction() {
 
             @Override public void event(Class event, Object[] arguments) {
-                
+
                 long t = n.time();
                 if (t % 100 != 0)  return;
-                
-                
+
+
                 for (int i = 0; i < v.input.data.length; i++)
                     v.input.data[i] = 0.5 * (1.0 + Math.sin((t+i)/20f));
                 v.update();
             }
-            
-        });
+
+        }, CycleStart.class);
         
         v.update();
         

@@ -10,6 +10,7 @@ import nars.Events.ConceptForget;
 import nars.Events.ConceptNew;
 import nars.NAR;
 import nars.Global;
+import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
 import nars.nal.Concept;
@@ -265,6 +266,7 @@ public class Idea implements Iterable<Concept> {
     
     public static class IdeaSet extends HashMap<CharSequence,Idea> implements Reaction {
         private final NAR nar;
+        private EventEmitter.Registrations reg;
 
         public IdeaSet(NAR n) {
             super();
@@ -287,16 +289,21 @@ public class Idea implements Iterable<Concept> {
         
         
         public void enable(boolean enabled) {
-            
-            clear();
-                        
-            nar.memory.event.set(this, enabled, 
-                    ConceptNew.class, ConceptForget.class, Events.TaskImmediateProcessed.class);
-            
+
             if (enabled) {
-                ///add existing
+                clear();
+
+                reg = nar.memory.event.on(this, ConceptNew.class, ConceptForget.class, Events.TaskImmediateProcessed.class);
+
+                //add existing
                 for (Concept c : nar.memory.concepts)
-                    add(c);            
+                    add(c);
+           }
+            else {
+                if (reg!=null) {
+                    reg.off();
+                    reg = null;
+                }
             }
             
         }

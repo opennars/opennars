@@ -11,12 +11,11 @@ import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.io.narsese.NarseseParser;
 import nars.nal.*;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.operate.IOperator;
-import reactor.event.registry.Registration;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -342,11 +341,10 @@ public class NAR implements Runnable {
         return this;
     }
 
-  
-    
-    /** attach event handler */
-    public Registration on(Class c, Reaction o) {
-        return memory.event.on(c, o);
+
+    /** attach event handler to one or more event (classes) */
+    public EventEmitter.Registrations on(Reaction o, Class... c) {
+        return memory.event.on(o, c);
     }
     
 

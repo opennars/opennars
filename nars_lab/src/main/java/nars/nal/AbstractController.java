@@ -2,8 +2,8 @@ package nars.nal;
 
 import nars.Events;
 import nars.NAR;
+import nars.event.EventEmitter;
 import nars.event.Reaction;
-import reactor.event.registry.Registration;
 
 
 public abstract class AbstractController implements Reaction {
@@ -11,7 +11,7 @@ public abstract class AbstractController implements Reaction {
     public final NAR nar;
     /** how many cycles to wait before action, then wait again.. */
     private int period;
-    private Registration reg;
+    private EventEmitter.Registrations reg;
 
     /** how many cycles to wait before action, then wait again.. */
     public AbstractController(NAR n, int period) {
@@ -23,7 +23,7 @@ public abstract class AbstractController implements Reaction {
     /** adjust parameter values */
 
     public void start() {
-        this.reg = nar.on(Events.CycleEnd.class, this);
+        this.reg = nar.on(this, Events.CycleEnd.class);
     }
 
     /** read sensor values as input */
@@ -48,7 +48,7 @@ public abstract class AbstractController implements Reaction {
 
     public void stop() {
         if (reg!=null) {
-            reg.cancel();
+            reg.off();
             reg = null;
         }
     }

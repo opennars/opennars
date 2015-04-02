@@ -39,7 +39,7 @@ abstract public class AbstractOperator implements IOperator, Reaction {
     /** manually cancel this plugin by removing its event registration */
     public boolean cancel() {
         if (regist!=null) {
-            regist.cancel();
+            regist.off();
             regist = null;
             return true;
         }

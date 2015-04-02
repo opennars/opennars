@@ -1,6 +1,5 @@
 package nars.event;
 
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 
@@ -43,7 +42,7 @@ public abstract class AbstractReaction implements Reaction {
             this.active = source.on(this, events);
         }
         else if (!b && (this.active!=null)) {
-            this.active.cancel();
+            this.active.off();
             this.active = null;
         }
 

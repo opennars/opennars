@@ -71,13 +71,13 @@ public class NALTestScore extends NALTest {
             if (maxCycles!=-1) {
                 
                 //TODO extract as TimeLimit plugin
-                n.on(Events.CycleEnd.class, new Reaction() {
+                n.on(new Reaction() {
                     @Override public void event(Class event, Object[] arguments) {
-                        if (n.time() > maxCycles) {                            
+                        if (n.time() > maxCycles) {
                             n.stop();
                         }
-                    }            
-                });                
+                    }
+                }, Events.CycleEnd.class);
             }
                         
             double s = new NALTestScore(examplePath).score();

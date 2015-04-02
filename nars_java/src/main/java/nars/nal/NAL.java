@@ -46,8 +46,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             if (o1 == o2) return 0;
 
             if (o1.sentence.equals(o2.sentence)) {
-                o1.budget.merge(o2.budget);
-                o2.budget.merge(o1.budget);
+                o1.merge(o2);
+                o2.merge(o1);
                 return 0;
             }
 

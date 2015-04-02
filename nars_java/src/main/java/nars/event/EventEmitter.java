@@ -152,7 +152,7 @@ public class EventEmitter<E>  {
             for (Registration r : this)                
                 r.pause();            
         }
-        public void cancel() {
+        public void off() {
             for (Registration r : this)
                 r.cancel();            
         }

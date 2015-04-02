@@ -239,12 +239,12 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
         return parentTask == null;
     }
     
-    public boolean aboveThreshold() {
-        return budget.aboveThreshold();
-    }
-    public boolean aboveThreshold(float additionalPriority) {
+//    public boolean aboveThreshold() {
+//        return budget.aboveThreshold();
+//    }
+/*    public boolean aboveThreshold(float additionalPriority) {
         return budget.aboveThreshold(additionalPriority);
-    }
+    }*/
 
     /**
      * Check if a Task is derived by a StructuralRule
@@ -259,12 +259,11 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
      *
      * @param that The other Task
      */
-    @Override
-    public Item merge(final Budget.Budgetable that) {
+    public boolean merge(final Task that) {
         if (getCreationTime() >= ((Task) that).getCreationTime()) {
-            return super.merge(that);
+            return super.merge(that.budget);
         } else {
-            return ((Task)that).merge(this);
+            return that.merge(this.budget);
         }
     }
 

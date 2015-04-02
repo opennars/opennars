@@ -101,12 +101,19 @@ public class Budget implements Cloneable, BudgetTarget {
         setQuality(q);
     }
 
+    private Budget() {
+        super();
+    }
+
     /**
      * Cloning constructor
      * @param v Budget value to be cloned
      */
     public Budget(final Budget v) {
-        this(v.getPriority(), v.getDurability(), v.getQuality());
+        this();
+        if (v!=null) {
+            set(v);
+        }
     }
 
     /**
@@ -306,7 +313,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * @param that The other Budget
      * @return whether the merge had any effect
      */
-    public final boolean merge(final Budget that) {
+    public boolean merge(final Budget that) {
         return BudgetFunctions.merge(this, that);
     }
 

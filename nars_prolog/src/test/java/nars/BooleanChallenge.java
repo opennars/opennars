@@ -46,7 +46,7 @@ public class BooleanChallenge {
     public BooleanChallenge(NAR n) {
 
         this.nar = n;
-        n.on(OUT.class, new Reaction() {
+        n.on(new Reaction() {
 
             protected boolean evalAnd(int[] t) {
                 return (t[0] & t[1]) == t[2];
@@ -149,10 +149,10 @@ public class BooleanChallenge {
                 }
             }
 
-        });
+        }, OUT.class);
 
 
-        n.on(CycleEnd.class, new Reaction() {
+        n.on(new Reaction() {
 
             @Override
             public void event(Class event, Object[] arguments) {
@@ -168,7 +168,7 @@ public class BooleanChallenge {
 
             }
 
-        });
+        }, CycleEnd.class);
 
     }
 

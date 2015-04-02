@@ -651,8 +651,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 //        return selected;
 //    }
 
-    protected void addMass(float x) {
+    protected synchronized void addMass(float x) {
         mass += x;
+        if (mass < 0) throw new RuntimeException(this + " mass below zero");
+
+        final int itemsMargin = (x > 0) ? 1 : 0; //allow +1 margin, when an item is being added
+        final float maxMass = (size()+itemsMargin) * 1.0f;
+        if (mass > maxMass) throw new RuntimeException(this + " mass above maximum (size=" + size() + ")");
     }
 
     protected void removeMass(E item) {

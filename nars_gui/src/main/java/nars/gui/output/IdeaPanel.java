@@ -5,6 +5,7 @@
 package nars.gui.output;
 
 import nars.budget.Budget;
+import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
@@ -40,6 +41,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
     
     boolean showTasks = true;
     boolean showConcepts = true;
+    private EventEmitter.Registrations reg;
 
     public IdeaPanel(NAR nar) {
         super();
@@ -50,16 +52,23 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
     }
     @Override
     protected void visibility(boolean appearedOrDisappeared) {
+        if (appearedOrDisappeared) {
+            reg = nar.on(this, ConceptNew.class, ConceptForget.class,
+                    ConceptBeliefAdd.class,
+                    ConceptBeliefRemove.class,
+                    ConceptQuestionAdd.class,
+                    ConceptQuestionRemove.class,
+                    ConceptGoalAdd.class,
+                    ConceptGoalRemove.class);
+        }
+        else {
+            if (reg!=null) {
+                reg.off();
+                reg = null;
+            }
+        }
+
         ideas.enable(appearedOrDisappeared);
-        //nar.memory.event.set(this, showing, Output.DefaultOutputEvents);
-        nar.memory.event.set(this, appearedOrDisappeared,
-                ConceptNew.class, ConceptForget.class, 
-                ConceptBeliefAdd.class,
-                ConceptBeliefRemove.class,
-                ConceptQuestionAdd.class,
-                ConceptQuestionRemove.class,
-                ConceptGoalAdd.class,
-                ConceptGoalRemove.class);
     }
 
     @Override

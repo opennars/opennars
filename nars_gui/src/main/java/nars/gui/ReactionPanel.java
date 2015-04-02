@@ -30,7 +30,7 @@ abstract public class ReactionPanel extends NPanel implements Reaction {
         }
         else {
             if (reg!=null)
-                reg.cancel();
+                reg.off();
         }
     }
 

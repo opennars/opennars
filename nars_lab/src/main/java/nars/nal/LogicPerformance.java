@@ -266,20 +266,20 @@ public class LogicPerformance {
         TaskReasonGraph process = new TaskReasonGraph();
         
         
-        n.on(TaskImmediateProcessed.class, new TaskImmediateProcessed() {
+        n.on(new TaskImmediateProcessed() {
             @Override public void onProcessed(Task t, DirectProcess nal, Concept c) {
                 //TODO i broke this
                 //process.explain(t, analysisDepth, nal.produced);
-            }            
-        });
-         n.on(ConceptFired.class, new ConceptFired() {
+            }
+        }, TaskImmediateProcessed.class);
+         n.on(new ConceptFired() {
 
             @Override
             public void onFire(ConceptProcess f) {
-                
+
                 process.explain(n.time(), f);
-            }            
-        });
+            }
+        }, ConceptFired.class);
         
         n.run(1);
         

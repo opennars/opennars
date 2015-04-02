@@ -100,14 +100,14 @@ public class TicTacToeWithProlog extends JPanel {
         nar.setCyclesPerFrame(64);
         
         new NARSwing(nar);    
-        nar.on(FrameEnd.class, new Reaction() {
+        nar.on(new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {
                 nar.memory.timeSimulationAdd(1);
             }
-            
-        });
+
+        }, FrameEnd.class);
         nar.start(40);
 
 

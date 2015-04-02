@@ -25,7 +25,7 @@ public class Workspace {
         this.nar=nar;
         Workspace ws=this;
         farg.coderack=new LevelBag(farg.codelet_level,farg.max_codelets);
-        nar.on(CycleEnd.class, new Reaction() {
+        nar.on(new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -40,7 +40,7 @@ public class Workspace {
                 }
                 controller();
             }
-        });
+        }, CycleEnd.class);
     }
     
     public void controller() { 

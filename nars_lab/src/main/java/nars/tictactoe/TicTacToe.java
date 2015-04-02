@@ -91,14 +91,14 @@ public class TicTacToe extends JPanel {
         (nar.param).outputVolume.set(0);
         
         new NARSwing(nar);    
-        nar.on(FrameEnd.class, new Reaction() {
+        nar.on(new Reaction() {
 
             @Override
             public void event(Class event, Object[] args) {
                 nar.memory.timeSimulationAdd(500);
             }
-            
-        });
+
+        }, FrameEnd.class);
         nar.start(30);
         
         JPanel menu = new JPanel(new FlowLayout());

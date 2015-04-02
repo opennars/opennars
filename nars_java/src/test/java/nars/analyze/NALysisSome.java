@@ -56,18 +56,18 @@ public class NALysisSome extends NALysis {
                 100,
                 1
         );
-        n.on(Events.TaskDerive.class, new Reaction() {
+        n.on(new Reaction() {
             @Override public void event(Class event, Object[] args) {
                 Task t = (Task)args[0];
                 System.out.println("Derived: " + t + " " + t.getHistory());
             }
-        });
-        n.on(Events.TaskRemove.class, new Reaction() {
+        }, Events.TaskDerive.class);
+        n.on(new Reaction() {
             @Override public void event(Class event, Object[] args) {
                 Task t = (Task)args[0];
                 System.out.println("Remove: " + t + " " + t.getHistory());
             }
-        });
+        }, Events.TaskRemove.class);
 
         n.run();
 

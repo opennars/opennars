@@ -31,8 +31,6 @@ import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMetrics;
 import nars.io.meter.ResourceMeter;
 import nars.nal.*;
-import nars.nal.term.Variable;
-import nars.nal.tlink.TaskLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -50,6 +48,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.term.Variable;
 import reactor.function.Supplier;
 
 import java.io.Serializable;
@@ -813,9 +812,7 @@ public class Memory implements Serializable {
 
         if (includeTaskLinks) {
             for (Concept c : concepts) {
-                for (TaskLink tl : c.taskLinks) {
-                    t.add(tl.targetTask);
-                }
+                c.taskLinks.forEach(tl -> { t.add(tl.targetTask); });
             }
         }
 

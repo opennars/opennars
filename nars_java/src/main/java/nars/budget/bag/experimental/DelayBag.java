@@ -378,7 +378,8 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
 
         E item;
         if (existingItemWithSameKey != null) {
-            item = (E)existingItemWithSameKey.merge(newItem);
+            newItem.merge(existingItemWithSameKey);
+            item = newItem;
         }
         else {
             item = newItem;

@@ -32,7 +32,7 @@ import java.util.Comparator;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> implements Budgetable, Named<K> {
+public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
 
     public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 
@@ -51,7 +51,7 @@ public abstract class Item<K> implements Budgetable, Named<K> {
     public static final Comparator<Item> priorityComparator = new ItemPriorityComparator<>();
     
     /** The budget of the Item, consisting of 3 numbers */
-    public final Budget budget;
+    public final Budget budget = this;
 
 
     protected Item( ) {
@@ -60,14 +60,10 @@ public abstract class Item<K> implements Budgetable, Named<K> {
 
     /**
      * Constructor with initial budget
-     * @param key The key value
      * @param budget The initial budget
      */
     protected Item( final Budget budget) {
-        if (budget!=null)
-            this.budget = budget.clone(); // clone, not assignment
-        else
-            this.budget = null;
+        super(budget);
     }
 
 
@@ -78,102 +74,101 @@ public abstract class Item<K> implements Budgetable, Named<K> {
     abstract public K name();
 
 
-    /**
-     * Get priority value
-     * @return Current priority value
-     */
-     public float getPriority() {
-         return budget.getPriority();
-     }
+//    /**
+//     * Get priority value
+//     * @return Current priority value
+//     */
+//     public float getPriority() {
+//         return budget.getPriority();
+//     }
 
     /**
      * Set priority value
      * @param v Set a new priority value
      */
-    public void setPriority(final float v) {
+/*    public void setPriority(final float v) {
         budget.setPriority(v);
-    }
+    }*/
 
-    /**
-     * Increase priority value
-     * @param v The amount of increase
-     */
-    public void incPriority(final float v) {
-        budget.incPriority(v);
-    }
+//    /**
+//     * Increase priority value
+//     * @param v The amount of increase
+//     */
+//    public void incPriority(final float v) {
+//        budget.incPriority(v);
+//    }
+//
+//    /**
+//     * Decrease priority value
+//     * @param v The amount of decrease
+//     */
+//    public void decPriority(final float v) {
+//        budget.decPriority(v);
+//    }
 
-    /**
-     * Decrease priority value
-     * @param v The amount of decrease
-     */
-    public void decPriority(final float v) {
-        budget.decPriority(v);
-    }
+//    /**
+//     * Get durability value
+//     * @return Current durability value
+//     */
+//    public float getDurability() {
+//        return budget.getDurability();
+//    }
 
-    /**
-     * Get durability value
-     * @return Current durability value
-     */
-    public float getDurability() {
-        return budget.getDurability();
-    }
+//    /**
+//     * Set durability value
+//     * @param v The new durability value
+//     */
+//    public void setDurability(final float v) {
+//        budget.setDurability(v);
+//    }
 
-    /**
-     * Set durability value
-     * @param v The new durability value
-     */
-    public void setDurability(final float v) {
-        budget.setDurability(v);
-    }
-
-    /**
-     * Increase durability value
-     * @param v The amount of increase
-     */
-    public void incDurability(final float v) {
-        budget.incDurability(v);
-    }
-
-    /**
-     * Decrease durability value
-     * @param v The amount of decrease
-     */
-    public void decDurability(final float v) {
-        budget.decDurability(v);
-    }
-    
-    
+//    /**
+//     * Increase durability value
+//     * @param v The amount of increase
+//     */
+//    public void incDurability(final float v) {
+//        budget.incDurability(v);
+//    }
+//
+//    /**
+//     * Decrease durability value
+//     * @param v The amount of decrease
+//     */
+//    public void decDurability(final float v) {
+//        budget.decDurability(v);
+//    }
+//
+//
 
     /** called when the item has been discarded */
     public void end() {
         
     }
     
-    /**
-     * Get quality value
-     * @return The quality value
-     */
-    public float getQuality() {
-        return budget.getQuality();
-    }
+//    /**
+//     * Get quality value
+//     * @return The quality value
+//     */
+//    public float getQuality() {
+//        return budget.getQuality();
+//    }
 
-    /**
-     * Set quality value
-     * @param v The new quality value
-     */
-    public void setQuality(final float v) {
-        budget.setQuality(v);
-    }
+//    /**
+//     * Set quality value
+//     * @param v The new quality value
+//     */
+//    public void setQuality(final float v) {
+//        budget.setQuality(v);
+//    }
 
-    /**
-     * Merge with another Item with identical key
-     * @param that The Item to be merged
-     * @return the resulting Item: this or that
-     */
-    public Item merge(final Budgetable that) {
-        budget.merge(that.getBudget());
-        return this;
-    }
+//    /**
+//     * Merge with another Item with identical key
+//     * @param that The Item to be merged
+//     * @return the resulting Item: this or that
+//     */
+//    public boolean merge(final Budgetable that) {
+//        return budget.merge(that.getBudget());
+//    }
 
     /**
      * Return a String representation of the Item
@@ -183,7 +178,7 @@ public abstract class Item<K> implements Budgetable, Named<K> {
     public String toString() {        
         //return budget + " " + key ;
         
-        String budgetStr = budget!=null ? budget.toString() : "";
+        String budgetStr = budget!=null ? super.toString() : "";
         String n = name().toString();
         return new StringBuilder(budgetStr.length()+n.length()+1).append(budgetStr).append(' ').append(n).toString();
     }
@@ -193,7 +188,7 @@ public abstract class Item<K> implements Budgetable, Named<K> {
      * @return A simplified String representation of the content
      */
     public String toStringBudgetSentence() {
-        final String briefBudget = budget.toStringExternal();
+        final String briefBudget = super.toStringExternal();
         String n = name().toString();
         return new StringBuilder(briefBudget.length()+n.length()+1).append(briefBudget).append(' ').append(n).toString();
     }
@@ -203,7 +198,7 @@ public abstract class Item<K> implements Budgetable, Named<K> {
 
     /** similar to toStringExternal but includes budget afterward */
     public String toStringExternal2(boolean includeBudget) {
-        final String briefBudget = budget.toStringExternal();
+        final String briefBudget = super.toStringExternal();
         String n = name().toString();
         StringBuilder sb = new StringBuilder( (includeBudget ? briefBudget.length() : 0) +n.length()+1).append(n);
 
