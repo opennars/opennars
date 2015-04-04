@@ -180,14 +180,20 @@ public class NarseseParserTest {
 
         taskEqualsOldParser("(--,negated).");
         taskEqualsOldParser("(--, negated).");
-        taskEqualsOldParser("(-- negated)!");
 
+
+
+
+    }
+
+    @Test public void testNegation2() throws InvalidInputException {
+        taskEqualsOldParser("(-- negated)!");
 
         taskEqualsOldParser("-- negated!");
         taskEqualsOldParser("--negated!");
+    }
 
-
-
+    @Test public void testNegation3() {
         Negation nab = term("--(a & b)");
         assertTrue(nab instanceof Negation);
         IntersectionExt ab = (IntersectionExt) nab.negated();
@@ -198,8 +204,6 @@ public class NarseseParserTest {
             assertTrue(false);
         }
         catch (Exception e) { }
-
-
     }
 
     protected void testBelieveAB(Operation t) {
@@ -211,10 +215,6 @@ public class NarseseParserTest {
     }
 
     @Test public void testOperation() throws InvalidInputException {
-        testBelieveAB(term("believe(a,b)"));
-        testBelieveAB(term("believe(a,b,SELF)"));
-        //testBelieveAB(term("believe(a b)"));
-
 
         testBelieveAB(term("(^believe,a,b)"));
         testBelieveAB(term("(^believe,a,b,SELF)"));
@@ -224,9 +224,17 @@ public class NarseseParserTest {
 
     }
 
-    @Test public void testOperation2() {
+    @Test public void testOperation2() throws InvalidInputException {
+        testBelieveAB(term("believe(a,b)"));
+        testBelieveAB(term("believe(a,b,SELF)"));
+        //testBelieveAB(term("believe(a b)"));
+
+    }
+
+    @Test public void testOperationTask() {
         taskEqualsOldParser("(^break,{t001},SELF)! %1.00;0.95%");
     }
+
     @Test public void testInterval() throws InvalidInputException {
 
         Term x = term(Symbols.INTERVAL_PREFIX + "2");
