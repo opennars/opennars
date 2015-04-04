@@ -1,7 +1,9 @@
 package ca.nengo.ui.lib.world.handler;
 
+import ca.nengo.ui.lib.AppFrame;
 import ca.nengo.ui.lib.util.UIEnvironment;
 import ca.nengo.ui.lib.world.piccolo.WorldImpl;
+import ca.nengo.ui.lib.world.piccolo.primitive.Universe;
 import org.piccolo2d.event.PBasicInputEventHandler;
 import org.piccolo2d.event.PInputEvent;
 
@@ -41,7 +43,17 @@ public abstract class AbstractStatusHandler extends PBasicInputEventHandler {
 	public void mouseMoved(PInputEvent event) {
 		super.mouseMoved(event);
 
-		UIEnvironment.getInstance().getUniverse().setStatusMessage(getStatusMessage(event));
+		AppFrame env = UIEnvironment.getInstance();
+		if (env!=null) {
+
+			Universe u = env.getUniverse();
+			if (u!=null) {
+				u.setStatusMessage(getStatusMessage(event));
+			}
+
+		}
+
+
 
 	}
 }
