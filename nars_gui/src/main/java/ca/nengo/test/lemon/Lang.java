@@ -12,6 +12,7 @@ import org.parboiled.errors.ParserRuntimeException;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.ParsingResult;
+import org.parboiled.trees.TreeNode;
 import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
@@ -52,12 +53,15 @@ public class Lang {
         public Node node;
         Color bgColor = new Color(255,0,255);
         PBounds bounds;
+        int level;
 
-        public void accept(MatchVisitor visitor){
+        public void accept(MatchVisitor visitor, boolean depth_first){
             visitor.visit(this);
         }
 
         public Match(Node n){
+            for (TreeNode<Node<Object>> p = n; p != null; p = p.getParent())
+                this.level++;
             this.node = n;
             debug(" new " + this);
         }
@@ -131,11 +135,14 @@ public class Lang {
     public class MatchWithChildren extends Match {
         public ArrayList<Match> items;
 
-        public void accept(MatchVisitor visitor){
-            super.accept(visitor);
+        public void accept(MatchVisitor visitor, boolean depth_first){
+            if (!depth_first)
+                super.accept(visitor, depth_first);
             for (Match m:items){
-                visitor.visit(m);
+                m.accept(visitor, depth_first);
             }
+            if (depth_first)
+                super.accept(visitor, depth_first);
         }
 
         public MatchWithChildren(Node n){

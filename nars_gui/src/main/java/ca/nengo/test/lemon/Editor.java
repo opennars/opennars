@@ -21,6 +21,7 @@ import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.awt.Window;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,13 +50,13 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 //border and background
                 final int iw = (int) bounds.width;
                 final int ih = (int) bounds.height;
-                final int ix = (int) bounds.x;
-                final int iy = (int) bounds.y;
+                int ix = (int) bounds.x;
+                int iy = (int) bounds.y;
                 if (bgColor != null || borderColor != null) {
                     if (bgColor != null) {
                         //g.setStroke(noStroke);
-                        g.setPaint(bgColor);
-                        g.fillRect(ix, iy, iw, ih);
+                        //g.setPaint(bgColor);
+                        //g.fillRect(ix, iy, iw, ih);
                     }
                     if (borderColor != null) {
                         g.setStroke(border);
@@ -69,7 +70,9 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 if (textcolor != null) {
                     g.setColor(textcolor);
                     g.setFont(f);
-                    final int fs = f.getSize() / 2;
+                    Rectangle2D mb = f.getMaxCharBounds(g.getFontRenderContext());
+                    ix += mb.getWidth() / 2;
+                    iy += mb.getHeight();
                     g.drawString(String.valueOf((char) c), (int) ix, (int) iy);
                 }
             }
@@ -112,9 +115,13 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             }
 
             public void setLine(int r, String str) {
+
                 while (size() < r)
                     add(new Line(""));
-                add(new Line(str));
+                if (size() == r)
+                    add(new Line(str));
+                else
+                    set(r, new Line(str));
                 layOut();
                 parse();
             }
@@ -158,9 +165,9 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
 
     public TextArea(String name){
-            super(name);
+        super(name);
             //lines.setLine(0, "[\"Hi, are you a bridge?\"]?");
-            //lines.setLine(0, "<[TEXT_SYSTEM] --> [operational]>.");
+            //lines.setLine(0, "<[TEXT_SYSTEM] --> [almost_operational]>.");
             lines.setLine(0, "[TEXT_SYSTEM].");
         }
 
@@ -178,11 +185,19 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double ww, double hh) {
             //System.out.println("paintContext = [" + paintContext + "], ww = [" + ww + "], hh = [" + hh + "]");
             Graphics2D g = paintContext.getGraphics();
+            paintMatches(g);
             Iterator<Line> it = lines.iterator();
             while (it.hasNext()) {
                 it.next().paint(g);
             }
-            paintMatches(g);
+
+        }
+
+        public void grow(PBounds bounds){
+            bounds.x -= margin;
+            bounds.y -= margin;
+            bounds.width += margin * 2;
+            bounds.height += margin * 2;
         }
 
         private void updateMatchesBounds(){
@@ -196,8 +211,13 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                         if (g != null)
                             m.bounds.add(g.bounds);
                     }
+                    if (m instanceof Lang.MatchWithChildren)
+                        for (Lang.Match i : ((Lang.MatchWithChildren)m).items) {
+                            m.bounds.add(i.bounds);
+                        }
+                    grow(m.bounds);
                 }
-            });
+            }, true);
         }
 
         private void paintMatches(Graphics2D g){
@@ -205,10 +225,10 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             root.accept(new Lang.MatchVisitor() {
                 @Override
                 public void visit(Lang.Match m) {
-                    g.setPaint(astColor);
-                    g.fillRect((int)m.bounds.x, (int)m.bounds.y, (int)m.bounds.width, (int)m.bounds.height);
+                    g.setPaint(Color.getHSBColor(m.level / 5.55f, 1, 0.3f));
+                    g.fillRoundRect((int) m.bounds.x, (int) m.bounds.y, (int) m.bounds.width, (int) m.bounds.height, 10, 10);
                 }
-            });
+            }, false);
         }
 
         private void parse() {
@@ -220,6 +240,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
     }
 
+    final double margin = 5;
     TextArea area;
     int charWidth;
     int charHeight;
@@ -245,7 +266,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
         String debug = "//getKeyChar:" + String.valueOf((int) in) +
                 "event: " + event + "isActionKey: " + event.isActionKey() + "";
-        area.lines.setLine(10, debug);
+        area.lines.setLine(5, debug);
         System.out.println(debug);
         //System.out.println("nodemap: " + lines.nodeMap);
         /*
