@@ -294,26 +294,29 @@ public class NarseseParser extends BaseParser<Object> {
                         MultiArgTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER, false, false, false),
                         MultiArgTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER, false, false, false),
 
-                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, true, false, false),
 
-                        //Functional form of an Operation, ex: operate(p1,p2)
-                        //TODO move to FunctionalOperationTerm() rule
+                        //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
                         sequence(
                                 Atom(),
-                                MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, false, false, false)
+                                MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, true)
                         ),
 
-                        //default to product if no operator specified in ( )
-                        MultiArgTerm(NALOperator.PRODUCT, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, false, false, false),
 
-                        MultiArgTerm(null, NALOperator.STATEMENT_OPENER, NALOperator.STATEMENT_CLOSER, false, true, true),
-                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, false, true, true),
+                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, true, false, false, false),
+
+
+
+                        //default to product if no operator specified in ( )
+                        MultiArgTerm(NALOperator.PRODUCT, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, false),
+
+                        MultiArgTerm(null, NALOperator.STATEMENT_OPENER, NALOperator.STATEMENT_CLOSER, false, true, true, false),
+                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, false, true, true, false),
 
                         NamespacedAtom(),
                         Atom()
 
                 ),
-                push(Term.get(pop()))
+                push(term(pop()))
         );
     }
 
@@ -341,7 +344,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
     /**
-     * an atomic term
+     * an atomic term, returns a String because the result may be used as a Variable name
      */
     Rule Atom() {
         return sequence(
@@ -504,16 +507,17 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule MultiArgTerm(NALOperator open, NALOperator close, boolean allowInitialOp, boolean allowInternalOp, boolean allowSpaceToSeparate) {
-        return MultiArgTerm(open, open, close, allowInitialOp, allowInternalOp, allowSpaceToSeparate);
+        return MultiArgTerm(open, open, close, allowInitialOp, allowInternalOp, allowSpaceToSeparate, false);
     }
+
     /**
      * list of terms prefixed by a particular compound term operate
      */
-    Rule MultiArgTerm(NALOperator defaultOp, NALOperator open, NALOperator close, boolean initialOp, boolean allowInternalOp, boolean spaceSeparates) {
+    Rule MultiArgTerm(NALOperator defaultOp, NALOperator open, NALOperator close, boolean initialOp, boolean allowInternalOp, boolean spaceSeparates, boolean operatorPrecedes) {
 
         return sequence(
 
-                push(Compound.class),
+                operatorPrecedes ? pushAll(Compound.class, term("^" + pop())) : push(Compound.class),
 
                 open != null ? sequence(open.ch, s()) : s(),
 
@@ -571,6 +575,20 @@ public class NarseseParser extends BaseParser<Object> {
 //    }
 
 
+    Term term(Object o) {
+        if (o instanceof Term) return ((Term)o);
+        if (o instanceof String) {
+            String s= (String)o;
+            if (s.charAt(0) == NALOperator.OPERATION.ch) {
+                return memory.operator(s);
+            } else {
+                return Term.get(s);
+            }
+        }
+        throw new RuntimeException(o + " is not a term");
+    }
+
+
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
@@ -578,20 +596,15 @@ public class NarseseParser extends BaseParser<Object> {
 
         List<Term> vectorterms = Global.newArrayList();
 
+
         //System.err.println(getContext().getValueStack());
+
         while (!getContext().getValueStack().isEmpty()) {
             Object p = pop();
 
             if (p == Compound.class) break; //beginning of stack frame for this term
 
-            if (p instanceof String) {
-                String s = (String) p;
-                if (s.charAt(0) == NALOperator.OPERATION.ch) {
-                    p = memory.operator(s);
-                } else {
-                    p = Term.get(p);
-                }
-            }
+
 
 
             if (p instanceof Term) {
@@ -623,15 +636,13 @@ public class NarseseParser extends BaseParser<Object> {
 
         Collections.reverse(vectorterms);
 
+        //System.out.println(vectorterms);
 
-        if (op == null) {
-            if (vectorterms.get(0) instanceof Operator) {
-                op = NALOperator.OPERATION;
-            }
-            else {
-                op = NALOperator.PRODUCT;
-            }
+        if ((op == null || op == PRODUCT) && (vectorterms.get(0) instanceof Operator)) {
+            op = NALOperator.OPERATION;
         }
+
+        if (op == null) op = NALOperator.PRODUCT;
 
         Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
 

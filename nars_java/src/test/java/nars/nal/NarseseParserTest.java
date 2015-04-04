@@ -118,7 +118,6 @@ public class NarseseParserTest {
         } catch (InvalidInputException e) {
             String s = e.toString();
             assertTrue(s.contains("&"));
-            assertTrue(s.contains("contradicts"));
             assertTrue(s.contains("*"));
         }
     }

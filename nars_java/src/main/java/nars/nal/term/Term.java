@@ -101,7 +101,9 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
 
     public final static Term get(Object o) {
         if (o instanceof Term) return (Term)o;
-        if (o instanceof CharSequence) return get((CharSequence)o);
+        if (o instanceof CharSequence) {
+            return get((CharSequence) o);
+        }
         return null;
     }
 
