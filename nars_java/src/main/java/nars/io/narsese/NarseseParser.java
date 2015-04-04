@@ -17,6 +17,7 @@ import nars.nal.nal1.Negation;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.prototype.Default;
@@ -508,20 +509,26 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * list of terms prefixed by a particular compound term operate
      */
-    Rule MultiArgTerm(NALOperator defaultOp, NALOperator open, NALOperator close, boolean initialOp, boolean allowInternalOp, boolean allowSpaceToSeparate) {
+    Rule MultiArgTerm(NALOperator defaultOp, NALOperator open, NALOperator close, boolean initialOp, boolean allowInternalOp, boolean spaceSeparates) {
+
         return sequence(
+
+                push(Compound.class),
 
                 open != null ? sequence(open.ch, s()) : s(),
 
-
                 initialOp ? AnyOperator() : Term(),
 
-                zeroOrMore(
-                        sequence(
-                                allowSpaceToSeparate ? (firstOf(s(),ArgSep())) : ArgSep(),
-                                allowInternalOp ? AnyOperatorOrTerm() : Term()
-                        )
-                ),
+                spaceSeparates ?
+
+                        sequence( s(), AnyOperator(), s(), Term() )
+
+                        :
+
+                        zeroOrMore(sequence(
+                            spaceSeparates ? s() : ArgSep(),
+                            allowInternalOp ? AnyOperatorOrTerm() : Term()
+                        )),
 
                 close != null ? sequence(s(), close.ch) : s(),
 
@@ -575,6 +582,7 @@ public class NarseseParser extends BaseParser<Object> {
         while (!getContext().getValueStack().isEmpty()) {
             Object p = pop();
 
+            if (p == Compound.class) break; //beginning of stack frame for this term
 
             if (p instanceof String) {
                 String s = (String) p;
