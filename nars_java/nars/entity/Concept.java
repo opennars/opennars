@@ -360,6 +360,17 @@ public class Concept extends Item<Term> implements Termable {
     ArrayList<Task> deleted=new ArrayList<Task>();
     
     /**
+     * Recall a previously accepted goal, maybe because it is satisfied now, or maybe because it is not desired anymore
+     */
+    public void recallCommitedGoal() {
+        if(commitedGoal!=null) {
+            deleted.add(commitedGoal);
+            commitedGoal=null;
+        }
+    }
+            
+    
+    /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
      *
@@ -379,10 +390,7 @@ public class Concept extends Item<Term> implements Termable {
             if (newStamp.equals(oldStamp,false,true,true,false)) {
                 final Sentence belief = selectCandidate(goal, beliefs);
                 if(isSatisfied(goal,belief)) {
-                    if(commitedGoal!=null) {
-                        deleted.add(commitedGoal);
-                    }
-                    commitedGoal=null;
+                    recallCommitedGoal();
                 }
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
@@ -412,22 +420,16 @@ public class Concept extends Item<Term> implements Termable {
             }
             
             if(isSatisfied(goal,belief)) { //it is satisfied, remove 
-                if(commitedGoal!=null)
-                    deleted.add(commitedGoal);
-                commitedGoal=null;
+                recallCommitedGoal();
                 return;
             }
             
             if(commitedGoal!=null && !isSatisfied(goal,commitedGoal.sentence)) { //desire values don't match, delete commited goal
-                if(commitedGoal!=null)
-                    deleted.add(commitedGoal);
-                commitedGoal=null;
+                recallCommitedGoal();
             }
             
             if(goal.truth.getExpectation()<nal.memory.param.decisionThreshold.get()) {
-                if(commitedGoal!=null)
-                    deleted.add(commitedGoal);
-                commitedGoal=null;
+                recallCommitedGoal();
                 return;
             }
 
