@@ -202,7 +202,7 @@ public class TextPerception {
                             if (task != null) {
                                 return task;
                             }
-                        } catch (InvalidInputException ex) {
+                        } catch (Exception ex) {
                             return ex;
                         }
                     }

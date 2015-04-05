@@ -10,13 +10,13 @@ import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;
-import nars.nal.nal8.Operator;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -208,7 +208,7 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(
                 Symbols.TRUTH_VALUE_MARK, ShortFloat(),
                 optional(Symbols.TRUTH_VALUE_MARK), //tailing '%' is optional
-                swap() && push(new TruthValue((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
+                push(new TruthValue((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
         );
     }
 
@@ -737,7 +737,16 @@ public class NarseseParser extends BaseParser<Object> {
      * parse one task
      */
     public Task parseTask(String input) throws InvalidInputException {
-        ParsingResult r = singleTaskParser.run(input);
+        ParsingResult r = null;
+        try {
+            r = singleTaskParser.run(input);
+        }
+        catch (Throwable ge) {
+            throw new InvalidInputException(ge.toString() + " parsing: " + input);
+        }
+
+        if (r == null)
+            throw new InvalidInputException("null parse: " + input);
 
         Iterator ir = r.getValueStack().iterator();
         if (ir.hasNext()) {
@@ -773,14 +782,14 @@ public class NarseseParser extends BaseParser<Object> {
 
     public static InvalidInputException newParseException(String input, ParsingResult r) {
         if (r.parseErrors.isEmpty())
-            return new InvalidInputException("No result for: " + input);
+            return new InvalidInputException("No parse result for: " + input);
 
         String all = "\n";
         for (Object o : r.getParseErrors()) {
             ParseError pe = (ParseError)o;
             all += pe.getClass().getSimpleName() + ": " + pe.getErrorMessage() + " @ " + pe.getStartIndex() + "\n";
         }
-        return new InvalidInputException(input + ": " + all);
+        return new InvalidInputException(all + " for input: " + input);
     }
 
 

@@ -182,6 +182,9 @@ public class NarseseParserTest {
     }
 
 
+    @Test public void testShortFloat() {
+        taskEqualsOldParser("<{Willy} --> [black]>. %0%");
+    }
 
     @Test public void testNegation() throws InvalidInputException {
         taskEqualsOldParser("(--,negated).");
