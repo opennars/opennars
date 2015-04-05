@@ -57,7 +57,7 @@ public class NAR implements Runnable, TaskSource {
     /**
      * The information about the version and date of the project.
      */
-    public static final String VERSION = "Open-NARS v1.6.3";
+    public static final String VERSION = "Open-NARS v1.6.4";
     
     /**
      * The project web sites.
