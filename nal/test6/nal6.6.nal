@@ -4,10 +4,10 @@
 <(&&,<$x --> flyer>,<(*,$x,worms) --> food>) ==> <$x --> bird>>.
 
 'If something can fly, then it has wings.
-<<$y --> flyer> ==> <$y --> [with-wings]>>.
+<<$y --> flyer> ==> <$y --> [withwings]>>.
 
 ''//4 originally
 13 
 
 'If something has wings and eats worms, then I guess it is a bird.
-''outputMustContain('<(&&,<$1 --> [with-wings]>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.45%')
+''outputMustContain('<(&&,<$1 --> [withwings]>,<(*,$1,worms) --> food>) ==> <$1 --> bird>>. %1.00;0.45%')

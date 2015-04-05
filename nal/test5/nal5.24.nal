@@ -1,7 +1,7 @@
 '********** conditional deduction
 
 'If robin can fly, has wings, and chirps, then robin is a bird
-<(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [with-wings]>) ==> <robin --> bird>>. 
+<(&&,<robin --> [chirping]>,<robin --> [flying]>,<robin --> [withwings]>) ==> <robin --> bird>>.
 
 'robin can fly.
 <robin --> [flying]>. 
@@ -9,4 +9,4 @@
 5
 
 'If robin has wings and chirps then robin is a bird.
-''outputMustContain('<(&&,<robin --> [chirping]>,<robin --> [with-wings]>) ==> <robin --> bird>>. %1.00;0.81%')
+''outputMustContain('<(&&,<robin --> [chirping]>,<robin --> [withwings]>) ==> <robin --> bird>>. %1.00;0.81%')

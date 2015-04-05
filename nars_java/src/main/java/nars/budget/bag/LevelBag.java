@@ -664,11 +664,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         mass += x;
 
         //-1 because it is the maximum priority which could be applied during an update
-        if (mass < -1 - Global.BUDGET_EPSILON) throw new RuntimeException(this + " mass below -1: " + mass + " during addition " + x);
+        if (Global.DEBUG_BAG && Global.DEBUG_BAG_MASS)
+            if (mass < -1 - Global.BUDGET_EPSILON) throw new RuntimeException(this + " mass below -1: " + mass + " during addition " + x);
 
         final int itemsMargin = (x > 0) ? 1 : 0; //allow +1 margin, when an item is being added
         final float maxMass = (size()+itemsMargin) * 1.0f + Global.BUDGET_EPSILON;
-        if (mass > maxMass) throw new RuntimeException(this + " mass above maximum (mass=" + mass + " , size=" + size() + ")");
+
+        if (Global.DEBUG_BAG && Global.DEBUG_BAG_MASS)
+            if (mass > maxMass) throw new RuntimeException(this + " mass above maximum (mass=" + mass + " , size=" + size() + ")");
     }
 
     protected void removeMass(E item) {

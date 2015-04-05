@@ -4,10 +4,10 @@
 <(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>. 
 
 'If something has wings, then it can fly.
-<<$y --> [with-wings]> ==> <$y --> flyer>>. 
+<<$y --> [withwings]> ==> <$y --> flyer>>.
 
 8
 
 'If something can chirp and has wings, then it is a bird.
-''outputMustContain('<(&&,<$1 --> [chirping]>,<$1 --> [with-wings]>) ==> <$1 --> bird>>. %1.00;0.81%')
+''outputMustContain('<(&&,<$1 --> [chirping]>,<$1 --> [withwings]>) ==> <$1 --> bird>>. %1.00;0.81%')
 

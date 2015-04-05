@@ -139,11 +139,20 @@ public class NarseseParser extends BaseParser<Object> {
                                 new Budget(b[0], b[1], b[2]);
 
         Term content = term.get();
+        if (!(content instanceof Compound)) {
+            return null;
+        }
+
+        content = Sentence.termOrNull(content);
+        if (content==null) return null;
+        content = ((Compound) content).cloneNormalized();
+        if (content == null) return null;
 
         Tense te = tense.get();
 
-        return new Task(new Sentence(content, p, t, new Stamp(memory, Stamp.UNPERCEIVED, te)), B);
+        return new Task(new Sentence((Compound)content, p, t, new Stamp(memory, Stamp.UNPERCEIVED, te), false /* already normalized */), B );
     }
+
 
 
 //    Rule Operation() {

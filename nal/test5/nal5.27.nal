@@ -1,10 +1,10 @@
 '********** conditional abduction
 
 'If robin is has wings and chirps, then robin is a bird
-<(&&,<robin --> [with-wings]>,<robin --> [chirping]>) ==> <robin --> bird>>. 
+<(&&,<robin --> [withwings]>,<robin --> [chirping]>) ==> <robin --> bird>>.
 
 'If robin can fly, has wings, and chirps, then robin is a bird
-<(&&,<robin --> [flying]>,<robin --> [with-wings]>,<robin --> [chirping]>) ==> <robin --> bird>>. 
+<(&&,<robin --> [flying]>,<robin --> [withwings]>,<robin --> [chirping]>) ==> <robin --> bird>>.
 
 5
 

@@ -103,7 +103,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    private Sentence(T seedTerm, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
+    public Sentence(T seedTerm, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
         
 
 

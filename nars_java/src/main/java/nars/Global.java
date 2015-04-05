@@ -44,13 +44,13 @@ import java.util.Set;
 public class Global {
 
 
-
     public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.
         it is enabled for unit tests automatically regardless of the value here.    */
     public static boolean DEBUG = false;
     public static boolean DEBUG_BAG = true; // for complete bag debugging
+    public static final boolean DEBUG_BAG_MASS = false;
     public static boolean DEBUG_TRACE_EVENTS = false; //shows all emitted events
     public static boolean DEBUG_DERIVATION_STACKTRACES = false; //includes stack trace in task's derivation rule string
     public static boolean DEBUG_INVALID_SENTENCES = true;
@@ -86,7 +86,7 @@ public class Global {
      *  Change at your own risk
      */
     public static final float TRUTH_EPSILON = 0.01f;
-    public static float MAX_CONFIDENCE = 0.99f;// - TRUTH_EPSILON;
+    public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
 
     /** minimum difference necessary to cause a modifciation in budget components */
     public static final float BUDGET_EPSILON = 0.005f;

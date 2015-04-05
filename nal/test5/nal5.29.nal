@@ -4,9 +4,9 @@
 <(&&,<robin --> [chirping]>,<robin --> [flying]>) ==> <robin --> bird>>. 
 
 'If robin can fly then usually robin has a beak.
-<<robin --> [flying]> ==> <robin --> [with-beak]>>. %0.90%  
+<<robin --> [flying]> ==> <robin --> [withBeak]>>. %0.90%
 
 'I guess that if robin chirps and robin has a beak, then robin is a bird.
-''outputMustContain('<(&&,<robin --> [chirping]>,<robin --> [with-beak]>) ==> <robin --> bird>>. %1.00;0.42%')
+''outputMustContain('<(&&,<robin --> [chirping]>,<robin --> [withBeak]>) ==> <robin --> bird>>. %1.00;0.42%')
 
 18

@@ -1,10 +1,10 @@
 '********** variable elimination
 
 'Tweety has wings.
-<{Tweety} --> [with-wings]>.
+<{Tweety} --> [withwings]>.
 
 'If something can chirp and has wings, then it is a bird.
-<(&&,<$x --> [chirping]>,<$x --> [with-wings]>) ==> <$x --> bird>>.
+<(&&,<$x --> [chirping]>,<$x --> [withwings]>) ==> <$x --> bird>>.
 
 23
 

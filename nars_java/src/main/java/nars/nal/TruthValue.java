@@ -108,7 +108,6 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The frequency value
      */
     public float getFrequency() {
-        //return Math.round(frequency * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return frequency;
     }
 
@@ -118,7 +117,6 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The confidence value
      */
     public float getConfidence() {
-        //return Math.round(confidence * TRUTH_PRECISION) / TRUTH_PRECISION; 
         return confidence;
     }
 
@@ -189,8 +187,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
 
     public static boolean isEqual(final float a, final float b, final float epsilon) {
-        if (a > b) return ((a - b) < epsilon);
-        else if ( a < b) return ((b - a) < epsilon);
+        if (a > b) return ((a - b) < epsilon/2f);
+        else if ( a < b) return ((b - a) < epsilon/2f);
         return true;
     }
     
