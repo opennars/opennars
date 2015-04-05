@@ -449,6 +449,8 @@ public class NarseseParser extends BaseParser<Object> {
 
     Rule AnyOperator() {
         return sequence(firstOf(
+
+
                         INHERITANCE.symbol,
 
 
@@ -457,6 +459,8 @@ public class NarseseParser extends BaseParser<Object> {
                         PROPERTY.symbol,
                         INSTANCE.symbol,
                         INSTANCE_PROPERTY.symbol,
+
+                        NEGATION.symbol,
 
                         IMPLICATION.symbol,
                         EQUIVALENCE.symbol,
@@ -472,9 +476,8 @@ public class NarseseParser extends BaseParser<Object> {
                         INTERSECTION_INT.symbol,
                         PRODUCT.symbol,
                         IMAGE_EXT.symbol,
-                        IMAGE_INT.symbol,
+                        IMAGE_INT.symbol
 
-                        NEGATION.symbol
 
                         //OPERATION.ch
                 ),
