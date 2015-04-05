@@ -77,7 +77,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public Rule Comment() {
-        return sequence("//", zeroOrMore(noneOf("\n")));
+        return sequence("//", zeroOrMore(noneOf("\n")), push(match()));
     }
 
     public Rule Task() {
