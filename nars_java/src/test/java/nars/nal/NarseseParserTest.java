@@ -183,15 +183,13 @@ public class NarseseParserTest {
 
     @Test public void testNegation2() throws InvalidInputException {
 
-        Task t =  task("--negated!");
-        Term tt = t.getTerm();
-        assertTrue(tt instanceof Negation);
-        assertTrue( ((Negation)tt).negated().toString().equals("negated"));
-        assertTrue(t.getPunctuation() == Symbols.GOAL);
-
-        taskEqualsOldParser("-- negated!");
-
-        //taskEqualsOldParser("(-- negated)!");
+        for (String s : new String[] { "--negated!", "-- negated!" }) {
+            Task t = task(s);
+            Term tt = t.getTerm();
+            assertTrue(tt instanceof Negation);
+            assertTrue(((Negation) tt).negated().toString().equals("negated"));
+            assertTrue(t.getPunctuation() == Symbols.GOAL);
+        }
     }
 
     @Test public void testNegation3() {

@@ -119,6 +119,14 @@ public class Narsese {
 
 
     public Task parseTask(String s) throws InvalidInputException {
+        return parseTaskWithNewParser(s);
+    }
+
+    public Task parseTaskWithNewParser(String s) throws InvalidInputException {
+        return newParser.parseTask(s);
+    }
+
+    public Task parseTaskIfEqualToOldParser(String s) throws InvalidInputException {
 
         Task u = null, t = null;
 
