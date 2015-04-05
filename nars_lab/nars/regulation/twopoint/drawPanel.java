@@ -16,6 +16,7 @@ import java.util.Random;
 import javax.swing.JPanel;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
 import nars.gui.NARSwing;
@@ -61,11 +62,11 @@ public class drawPanel extends JPanel {
             }
             return null;
         }
-        
     }
     
     NAR nar;
     public drawPanel() {
+        Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=false;
         nar=new Default().build();
         nar.addPlugin(new move());
         //new NARSwing(nar);
@@ -78,8 +79,8 @@ public class drawPanel extends JPanel {
         }).start();
     }
             
-    int setpoint=150;
-    int x=100;
+    int setpoint=100;
+    int x=160;
     int y=10;
     int k=0;
     private void doDrawing(Graphics g) {
@@ -100,7 +101,7 @@ public class drawPanel extends JPanel {
             System.out.println(x);
             
             if(cond) {
-                nar.addInput("<SELF --> [good]>!");
+                nar.addInput("<SELF --> [good]>! :|:");
             }
             
 

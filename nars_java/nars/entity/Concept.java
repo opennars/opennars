@@ -40,7 +40,6 @@ import nars.core.Memory;
 import nars.core.NARRun;
 import nars.core.Parameters;
 import nars.core.control.NAL;
-import nars.inference.BudgetFunctions;
 import static nars.inference.BudgetFunctions.distributeAmongLinks;
 import static nars.inference.BudgetFunctions.rankBelief;
 import static nars.inference.LocalRules.revisible;
@@ -67,8 +66,6 @@ import nars.storage.Bag.MemoryAware;
 
 public class Concept extends Item<Term> implements Termable {
 
-    
-    public Task commitedGoal=null;
     
     /**
      * The term is the unique ID of the concept
@@ -341,36 +338,6 @@ public class Concept extends Item<Term> implements Termable {
     }
     
     /**
-     * To check whether a goal is satisfied by a certain belief
-     *
-     * @param goal The goal in question
-     * @param belief The task to be processed
-     * @return Whether it is satisfied
-     */
-    public boolean isSatisfied(Sentence goal, Sentence belief) {
-        if(belief==null) {
-            return false;
-        }
-        if(goal.truth.getExpDifAbs(belief.truth)>0.1) {
-            return false; //not worth pursuing anymore
-        }
-        return true;
-    }
-    
-    ArrayList<Task> deleted=new ArrayList<Task>();
-    
-    /**
-     * Recall a previously accepted goal, maybe because it is satisfied now, or maybe because it is not desired anymore
-     */
-    public void recallCommitedGoal() {
-        if(commitedGoal!=null) {
-            deleted.add(commitedGoal);
-            commitedGoal=null;
-        }
-    }
-            
-    
-    /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
      *
@@ -381,17 +348,13 @@ public class Concept extends Item<Term> implements Termable {
     protected void processGoal(final NAL nal, final Task task) {        
         
         final Sentence goal = task.sentence;
-        final Sentence oldGoal = commitedGoal==null ? null : commitedGoal.sentence; // revise with the existing desire value
+        final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
         
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
             if (newStamp.equals(oldStamp,false,true,true,false)) {
-                final Sentence belief = selectCandidate(goal, beliefs);
-                if(isSatisfied(goal,belief)) {
-                    recallCommitedGoal();
-                }
                 return; // duplicate
             } else if (revisible(goal, oldGoal)) {
                 
@@ -399,14 +362,14 @@ public class Concept extends Item<Term> implements Termable {
                 
                 Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
                 if (projectedGoal!=null) {
-                    /*if (projectedGoal.getOccurenceTime()!=oldGoal.getOccurenceTime()) {
-                        nal.singlePremiseTask(projectedGoal, task.budget);
-                    }*/
+                    if (projectedGoal.getOccurenceTime()!=oldGoal.getOccurenceTime()) {
+                       // nal.singlePremiseTask(projectedGoal, task.budget);
+                    }
                     nal.setCurrentBelief(projectedGoal);
                     boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
                     if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
                         return; // with higher/lower desire
-                    }
+                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                 }
             } 
         } 
@@ -414,25 +377,9 @@ public class Concept extends Item<Term> implements Termable {
         if (task.aboveThreshold()) {
 
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
-            
+
             if (belief != null) {
                 trySolution(belief, task, nal); // check if the Goal is already satisfied
-            }
-            
-            if(isSatisfied(goal,belief)) { //it is satisfied, remove 
-                recallCommitedGoal();
-                if(!(goal.term instanceof Operation)) //Operations are allowed to execute
-                    return;
-            }
-            
-            if(commitedGoal!=null && !isSatisfied(goal,commitedGoal.sentence)) { //desire values don't match, delete commited goal
-                recallCommitedGoal();
-                return;
-            }
-            
-            if(goal.truth.getExpectation()<nal.memory.param.decisionThreshold.get()) {
-                recallCommitedGoal();
-                return;
             }
 
             // still worth pursuing?
@@ -440,35 +387,13 @@ public class Concept extends Item<Term> implements Termable {
 
                 questionFromGoal(task, nal);
                 
-                if(commitedGoal==null) {
-                    //commitedGoal=task;
-                    //only add if the task is not a minor evidental base wise of one of the deleted tasks
-                    for(Task t : deleted) {
-                        //is every entry in evidental base of task in the evidental base of t?
-                        boolean wasDeleted=false;
-                        for(long j : task.sentence.stamp.evidentialBase) {
-                            boolean contains=false;
-                            for(long k : t.sentence.stamp.evidentialBase) {
-                                if(j==k) {
-                                    contains=true;
-                                }
-                            }
-                            if(contains) {
-                                wasDeleted=true;
-                                break;
-                            }
-                        }
-                        if(wasDeleted) {
-                            return;
-                        }
-                    }
-                } else {
-                    BudgetFunctions.merge(commitedGoal.budget, task.budget);
-                }
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-                if(!executeDecision(task)) {
-                    memory.emit(UnexecutableGoal.class, task, this, nal);
-                }
+                //task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()
+                //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
+                    if(!executeDecision(task)) {
+                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    }
+                //}
             }
         }
     }
