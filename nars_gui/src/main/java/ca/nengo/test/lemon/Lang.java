@@ -243,7 +243,9 @@ public class Lang {
             System.out.println();
             System.out.println("getParseTree(): " + root);
             System.out.println();
-            w = new ListMatch((Node) root.getChildren().get(1));
+            Node n =  (Node)root.getChildren().get(1);
+            System.out.println("Node n: " + n);
+            w = new ListMatch(n);
             System.out.println();
             System.out.println("Match w: " + w);
             System.out.println();
@@ -255,9 +257,14 @@ public class Lang {
             System.out.println();
             System.out.println("collapsed:");
             w.print();
+            System.out.println();
+            System.out.println("done text2match.");
+            System.out.println();
         }
-        catch (ParserRuntimeException e){
-            e.printStackTrace();}
+        catch (ParserRuntimeException e) {
+            e.printStackTrace();
+            System.out.println("so yeah, that didnt parse.");
+        }
         return w;
     }
 }

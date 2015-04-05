@@ -378,13 +378,3 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
 
 }
-/*
-    public Rule Input() {
-        return sequence(s(), zeroOrMore(sequence(firstOf(Comment(), Task()), s())), EOI);
-    }
-
-    public Rule Comment() {
-        return sequence("//", zeroOrMore(noneOf("\n")));
-    }
-
- */
