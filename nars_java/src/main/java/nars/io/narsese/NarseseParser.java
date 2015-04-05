@@ -288,7 +288,7 @@ public class NarseseParser extends BaseParser<Object> {
                         //Copula(),
 
                         //negation shorthand
-                        sequence(NALOperator.NEGATION.symbol, Term(), push(Negation.make((Term) pop()))),
+                        sequence(NALOperator.NEGATION.symbol, s(), Term(), push(Negation.make(term(pop())))),
 
 
                         MultiArgTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER, false, false, false),
@@ -320,17 +320,17 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    Term[] nextTerms() {
-        //pop a list of terms, fail if not all are terms
-        List<Term> vectorterms = Global.newArrayList();
-
-        while (!getContext().getValueStack().isEmpty()) {
-            Object o = pop();
-            if (!(o instanceof Term)) throw new RuntimeException(o + " (" + o.getClass().getSimpleName() + ") is not a Term for in nextTerms()");
-            vectorterms.add((Term) o);
-        }
-        return vectorterms.toArray(new Term[vectorterms.size()]);
-    }
+//    Term[] nextTerms() {
+//        //pop a list of terms, fail if not all are terms
+//        List<Term> vectorterms = Global.newArrayList();
+//
+//        while (!getContext().getValueStack().isEmpty()) {
+//            Object o = pop();
+//            if (!(o instanceof Term)) throw new RuntimeException(o + " (" + o.getClass().getSimpleName() + ") is not a Term for in nextTerms()");
+//            vectorterms.add((Term) o);
+//        }
+//        return vectorterms.toArray(new Term[vectorterms.size()]);
+//    }
 
 //    Rule InnerCompound() {
 //        //special handling to allow (-- x) , without the comma
@@ -517,7 +517,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         return sequence(
 
-                operatorPrecedes ? pushAll(Compound.class, term("^" + pop())) : push(Compound.class),
+                operatorPrecedes ? pushAll( term("^" + pop()), Compound.class) : push(Compound.class),
 
                 open != null ? sequence(open.ch, s()) : s(),
 

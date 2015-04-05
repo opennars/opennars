@@ -177,20 +177,21 @@ public class NarseseParserTest {
 
 
     @Test public void testNegation() throws InvalidInputException {
-
         taskEqualsOldParser("(--,negated).");
         taskEqualsOldParser("(--, negated).");
-
-
-
-
     }
 
     @Test public void testNegation2() throws InvalidInputException {
-        taskEqualsOldParser("(-- negated)!");
+
+        Task t =  task("--negated!");
+        Term tt = t.getTerm();
+        assertTrue(tt instanceof Negation);
+        assertTrue( ((Negation)tt).negated().toString().equals("negated"));
+        assertTrue(t.getPunctuation() == Symbols.GOAL);
 
         taskEqualsOldParser("-- negated!");
-        taskEqualsOldParser("--negated!");
+
+        //taskEqualsOldParser("(-- negated)!");
     }
 
     @Test public void testNegation3() {
