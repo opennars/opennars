@@ -89,6 +89,8 @@ public class TestNAR extends NAR {
     public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
         float h = (freqMin!=-1) ? Global.TRUTH_EPSILON/2f : 0;
 
+        if (freqMin == -1) freqMin = freqMax;
+
         TaskCondition tc = new TaskCondition(this, c, cycleStart, cycleEnd, sentenceTerm, punc, freqMin-h, freqMax+h, confMin-h, confMax+h);
         if (ocRelative!= Stamp.ETERNAL) {
             /** occurence time measured relative to the beginning */

@@ -86,6 +86,7 @@ public class NarseseParser extends BaseParser<Object> {
         Var<Character> punc = new Var();
         Var<Term> term = new Var();
         Var<TruthValue> truth = new Var();
+        Var<Tense> tense = new Var(Tense.Eternal);
 
         return sequence(
                 s(),
@@ -106,16 +107,22 @@ public class NarseseParser extends BaseParser<Object> {
 
                 s(),
 
-                //optional(Tense())
+                optional(
+                        sequence(Tense(), s(), tense.set((Tense)pop()))
+                ),
 
-                optional(sequence(Truth(), truth.set((TruthValue) pop()))),
+                optional(sequence(
+                        firstOf(Truth(), TruthFreqOnly()),
+                        truth.set((TruthValue) pop())
+                        )
+                ),
 
-                push(getTask(budget, term, punc, truth))
+                push(getTask(budget, term, punc, truth, tense))
 
         );
     }
 
-    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth) {
+    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth, Var<Tense> tense) {
 
         char p = punc.get();
 
@@ -133,9 +140,9 @@ public class NarseseParser extends BaseParser<Object> {
 
         Term content = term.get();
 
-        Tense tense = Tense.Eternal; //TODO support different tense
+        Tense te = tense.get();
 
-        return new Task(new Sentence(content, p, t, new Stamp(memory, Stamp.UNPERCEIVED, tense)), B);
+        return new Task(new Sentence(content, p, t, new Stamp(memory, Stamp.UNPERCEIVED, te)), B);
     }
 
 
@@ -180,12 +187,28 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
+    Rule Tense() {
+        return firstOf(
+            sequence(Symbols.TENSE_PRESENT, push(Tense.Present)),
+            sequence(Symbols.TENSE_PAST, push(Tense.Past)),
+            sequence(Symbols.TENSE_FUTURE, push(Tense.Future))
+        );
+    }
+
     Rule Truth() {
 
         return sequence(
                 Symbols.TRUTH_VALUE_MARK, ShortFloat(), Symbols.VALUE_SEPARATOR, ShortFloat(),
                 optional(Symbols.TRUTH_VALUE_MARK), //tailing '%' is optional
                 swap() && push(new TruthValue((float) pop(), (float) pop()))
+        );
+    }
+    Rule TruthFreqOnly() {
+
+        return sequence(
+                Symbols.TRUTH_VALUE_MARK, ShortFloat(),
+                optional(Symbols.TRUTH_VALUE_MARK), //tailing '%' is optional
+                swap() && push(new TruthValue((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
         );
     }
 
@@ -244,31 +267,31 @@ public class NarseseParser extends BaseParser<Object> {
 //        );
 //    }
 
-    public NALOperator[] getCopulas() {
-        switch (level) {
-            case 1:
-                return new NALOperator[]{
-                        INHERITANCE
-                };
-            case 2:
-                return new NALOperator[]{
-                        INHERITANCE,
-                        SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY
-                };
-
-            //TODO case 5..6.. without temporal equiv &  impl..
-
-            default:
-                return new NALOperator[]{
-                        INHERITANCE,
-                        SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY,
-                        IMPLICATION,
-                        EQUIVALENCE,
-                        IMPLICATION_AFTER, IMPLICATION_BEFORE, IMPLICATION_WHEN,
-                        EQUIVALENCE_AFTER, EQUIVALENCE_WHEN
-                };
-        }
-    }
+//    public NALOperator[] getCopulas() {
+//        switch (level) {
+//            case 1:
+//                return new NALOperator[]{
+//                        INHERITANCE
+//                };
+//            case 2:
+//                return new NALOperator[]{
+//                        INHERITANCE,
+//                        SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY
+//                };
+//
+//            //TODO case 5..6.. without temporal equiv &  impl..
+//
+//            default:
+//                return new NALOperator[]{
+//                        INHERITANCE,
+//                        SIMILARITY, PROPERTY, INSTANCE, INSTANCE_PROPERTY,
+//                        IMPLICATION,
+//                        EQUIVALENCE,
+//                        IMPLICATION_AFTER, IMPLICATION_BEFORE, IMPLICATION_WHEN,
+//                        EQUIVALENCE_AFTER, EQUIVALENCE_WHEN
+//                };
+//        }
+//    }
 
     static Term getTerm(Term predicate, NALOperator op, Term subject) {
         return Memory.term(op, subject, predicate);
@@ -428,9 +451,13 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(firstOf(
                         INHERITANCE.symbol,
 
-                        NEGATION.symbol,
 
-                        SIMILARITY.symbol, PROPERTY.symbol, INSTANCE.symbol, INSTANCE_PROPERTY.symbol,
+                        SIMILARITY.symbol,
+
+                        PROPERTY.symbol,
+                        INSTANCE.symbol,
+                        INSTANCE_PROPERTY.symbol,
+
                         IMPLICATION.symbol,
                         EQUIVALENCE.symbol,
                         IMPLICATION_AFTER.symbol, IMPLICATION_BEFORE.symbol, IMPLICATION_WHEN.symbol,
@@ -445,7 +472,10 @@ public class NarseseParser extends BaseParser<Object> {
                         INTERSECTION_INT.symbol,
                         PRODUCT.symbol,
                         IMAGE_EXT.symbol,
-                        IMAGE_INT.symbol
+                        IMAGE_INT.symbol,
+
+                        NEGATION.symbol
+
                         //OPERATION.ch
                 ),
                 push(Symbols.getOperator(match()))
@@ -713,7 +743,7 @@ public class NarseseParser extends BaseParser<Object> {
                 return (Task) x;
         }
 
-        throw new InvalidInputException(r.parseErrors.toString());
+        throw newParseException(input, r);
     }
 
     /**
@@ -735,17 +765,19 @@ public class NarseseParser extends BaseParser<Object> {
             }
         }
 
+        throw newParseException(input, r);
+    }
+
+    public static InvalidInputException newParseException(String input, ParsingResult r) {
         if (r.parseErrors.isEmpty())
-            throw new InvalidInputException("No result for: " + input);
+            return new InvalidInputException("No result for: " + input);
 
         String all = "\n";
         for (Object o : r.getParseErrors()) {
             ParseError pe = (ParseError)o;
             all += pe.getClass().getSimpleName() + ": " + pe.getErrorMessage() + " @ " + pe.getStartIndex() + "\n";
         }
-        throw new InvalidInputException(input + ": " + all);
-
-
+        return new InvalidInputException(input + ": " + all);
     }
 
 

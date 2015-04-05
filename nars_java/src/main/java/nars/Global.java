@@ -86,8 +86,7 @@ public class Global {
      *  Change at your own risk
      */
     public static final float TRUTH_EPSILON = 0.01f;
-    //public static final float TRUTH_PRECISION = 1.0f / TRUTH_EPSILON;
-    public static float MAX_CONFIDENCE = 1.0f;// - TRUTH_EPSILON;
+    public static float MAX_CONFIDENCE = 0.99f;// - TRUTH_EPSILON;
 
     /** minimum difference necessary to cause a modifciation in budget components */
     public static final float BUDGET_EPSILON = 0.005f;

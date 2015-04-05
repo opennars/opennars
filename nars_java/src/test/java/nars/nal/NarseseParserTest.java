@@ -80,6 +80,13 @@ public class NarseseParserTest {
         assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.sentence.getTruth().getConfidence(), 0.001);
     }
 
+    @Test public void testPropertyInstance() {
+
+        taskEqualsOldParser("<a --] b>.");
+        taskEqualsOldParser("<a {-- b>.");
+        taskEqualsOldParser("<a {-] b>.");
+    }
+
     @Test public void testNoBudget() throws InvalidInputException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
@@ -311,11 +318,13 @@ public class NarseseParserTest {
     }
 
     @Test public void testTenses() throws InvalidInputException {
-
+        taskEqualsOldParser("<a --> b>. :|:");
+        taskEqualsOldParser("<a --> b>. :/:");
+        taskEqualsOldParser("<a --> b>. :\\:");
     }
 
     @Test public void testEscape() throws InvalidInputException {
-        //TODO apply existing escaping tests?
+        //TODO use existing escaping tests?
     }
 
     @Test public void testFuzzyKeywords() throws InvalidInputException {

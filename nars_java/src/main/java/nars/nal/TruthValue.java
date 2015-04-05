@@ -123,14 +123,18 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     }
 
     public TruthValue setFrequency(float f) {
-        if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
+        if (f > 1.0f) f = 1.0f;
+        if (f < 0f) f = 0f;
+        //if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
+
         this.frequency = Math.round( f / TRUTH_EPSILON) * TRUTH_EPSILON;
         return this;
     }
     
     public TruthValue setConfidence(float c) {
-        if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
+        //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
         if (c > Global.MAX_CONFIDENCE)  c = Global.MAX_CONFIDENCE;
+        if (c < 0) c = 0;
         this.confidence = Math.round( c / TRUTH_EPSILON) * TRUTH_EPSILON;
         return this;
     }

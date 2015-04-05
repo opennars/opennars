@@ -33,6 +33,9 @@ import nars.io.meter.ResourceMeter;
 import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
+import nars.nal.nal2.Instance;
+import nars.nal.nal2.InstanceProperty;
+import nars.nal.nal2.Property;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.*;
 import nars.nal.nal4.Image;
@@ -478,6 +481,7 @@ public class Memory implements Serializable {
 
         switch (op) {
 
+
             case SET_EXT_OPENER:
                 return SetExt.make(a);
             case SET_INT_OPENER:
@@ -511,6 +515,13 @@ public class Memory implements Serializable {
                 throw new RuntimeException("Can not use this static method to instantiate an Operation, because a Memory instance is required to provide its Operator");
 
             //STATEMENTS --------------------------
+            case PROPERTY:
+                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]);
+            case INSTANCE:
+                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]);
+            case INSTANCE_PROPERTY:
+                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]);
+
             case INHERITANCE:
                 if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
 
@@ -534,7 +545,7 @@ public class Memory implements Serializable {
                 if (ensureTermLength(2, a)) return Equivalence.make(a[0], a[1], TemporalRules.ORDER_FORWARD); break;
 
             default:
-                throw new RuntimeException("Unknown Term operate: " + op + " (" + op.name() + ')');
+                throw new RuntimeException("Unknown op: " + op + " (" + op.name() + ')');
         }
 
         return null;
