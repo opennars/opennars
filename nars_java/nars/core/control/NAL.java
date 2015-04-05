@@ -357,6 +357,9 @@ public abstract class NAL implements Runnable {
             return false;
         }
         
+        if(newContent instanceof Interval) {
+            return false;
+        }
         Sentence newSentence = new Sentence(newContent, punctuation, newTruth, getTheNewStamp());
         Task newTask = Task.make(newSentence, newBudget, getCurrentTask());
         if (newTask!=null) {
