@@ -21,6 +21,7 @@ import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,6 +108,17 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 }
             }
 
+            public String asString() {
+                StringBuilder text = new StringBuilder();
+                Iterator<Glyph> it = iterator();
+                while (it.hasNext()) {
+                    Glyph g = it.next();
+                    text.append((char) g.c);
+                }
+                return text.toString();
+            }
+
+
         }
 
         public class Lines extends ArrayList<Line> {
@@ -122,8 +134,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                     add(new Line(str));
                 else
                     set(r, new Line(str));
-                layOut();
-                parse();
+                update();
             }
 
             public void layOut() {
@@ -151,7 +162,8 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             StringBuilder text = new StringBuilder();
             Iterator<Line> lines_it = lines.iterator();
             while (lines_it.hasNext()) {
-                Iterator<Glyph> it = lines_it.next().iterator();
+                Line line = lines_it.next();
+                Iterator<Glyph> it = line.iterator();
                 while (it.hasNext()) {
                     Glyph g = it.next();
                     text.append((char)g.c);
@@ -160,15 +172,14 @@ public class Editor extends DefaultNetwork implements UIBuilder {
                 text.append("\n");
                 text2glyphMap.add(null);
             }
-           this.text = text.toString();
+            this.text = text.toString();
         }
 
 
-    public TextArea(String name){
-        super(name);
+        public TextArea(String name){
+            super(name);
             //lines.setLine(0, "[\"Hi, are you a bridge?\"]?");
             //lines.setLine(0, "<[TEXT_SYSTEM] --> [almost_operational]>.");
-            lines.setLine(0, "[TEXT_SYSTEM].");
         }
 
         @Override
@@ -231,12 +242,57 @@ public class Editor extends DefaultNetwork implements UIBuilder {
             }, false);
         }
 
-        private void parse() {
+        private void update() {
+            area.lines.layOut();
             cacheStuff();
             root = lang.text2match(text);
             updateMatchesBounds();
+            if (cursor.c < 0) cursor.c = 0;
+            if (cursor.r < 0) cursor.r = 0;
+            cursor.updateBounds(area.lines.makeBounds(cursor.c, cursor.r));
         }
 
+        public void keyPressed(PInputEvent event) {
+            int c = event.getKeyCode();
+            String debug = "//getKeyCode:" + c +
+                    ", event: " + event + ", isActionKey: " + event.isActionKey() + "";
+            lines.setLine(5, debug);
+            System.out.println(debug);
+            switch (c) {
+                case KeyEvent.VK_UP:
+                    cursor.r -= 1;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    cursor.r += 1;
+                    break;
+                case KeyEvent.VK_LEFT:
+                    cursor.c -= 1;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    cursor.c += 1;
+                    break;
+            }
+            update();
+
+        }
+        public void keyTyped(PInputEvent event) {
+            char in = event.getKeyChar();
+            //event.getKeyCode()
+            String debug = "//getKeyChar: " + String.valueOf((int) in) +
+                    ", event: " + event + ", isActionKey: " + event.isActionKey() + "";
+            lines.setLine(5, debug);
+            System.out.println(debug);
+            if (in == '\n') {
+                lines.add(cursor.r++, new Line());
+                cursor.c = 0;
+            } else if (in == 8) {
+                if (cursor.c > 0 && lines.size() > cursor.r && lines.get(cursor.r).size() >= cursor.c)
+                    lines.get(cursor.r).remove(--cursor.c);
+            } else if (in != 0) {
+                lines.get(cursor.r).add(cursor.c++, new Glyph(in));
+            } else return;
+            update();
+        }
 
     }
 
@@ -247,13 +303,18 @@ public class Editor extends DefaultNetwork implements UIBuilder {
     public NodeViewer viewer;
     private UINetwork ui;
     public Lang lang;
+    private KeyboardHandler keyHandler;
+    Cursor cursor;
 
     public Editor(String name, int charWidth, int charHeight, Lang lang) {
         super(name);
         this.lang = lang;
         setCharSize(charWidth, charHeight);
+        cursor = new Cursor("cursor1");
         area = new TextArea("area");
         setNode("area", area);
+        setNode("cursor", cursor);
+        area.lines.setLine(0, "[TEXT_SYSTEM].");
     }
 
     private void setCharSize(int charWidth, int charHeight) {
@@ -261,30 +322,46 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         this.charHeight = charHeight;
     }
 
-    public void keyPressed(PInputEvent event, int c, int r) {
-        char in = event.getKeyChar();
+    @Override
+    public void run(float startTime, float endTime) throws SimulationException {
+        enableInput();
+    }
 
-        String debug = "//getKeyChar:" + String.valueOf((int) in) +
-                "event: " + event + "isActionKey: " + event.isActionKey() + "";
-        area.lines.setLine(5, debug);
-        System.out.println(debug);
-        //System.out.println("nodemap: " + lines.nodeMap);
-        /*
-        if (in == '\n') {
-            area.lines.insert(r, new Line());
-        } else if (in == 8) {
-            //
-        } else if (in != 0) {
-            lines.getLine(r).insert(c, new Glyph(in));
-        } else return;
-        updateLang();
-        */
+    protected void enableInput() {
+        if ((keyHandler == null) && (viewer != null)) {
+            keyHandler = new KeyboardHandler() {
+
+                @Override
+                public void keyTyped(final PInputEvent event) {
+                    area.keyTyped(event);
+                }
+
+
+                @Override
+                public void keyReleased(PInputEvent event) {
+                    //editor.keyReleased(event);
+                }
+
+                @Override
+                public void keyPressed(PInputEvent event) {
+                    area.keyPressed(event);
+
+
+                }
+            };
+            //ui.getPNode().getRoot().addInputEventListener(keyHandler);
+            //ui.getViewer().getSky().addInputEventListener(keyHandler);
+            viewer.getSky().addInputEventListener(keyHandler);
+            //viewer.getSky().addInputEventListener(keyHandler);
+
+        }
     }
 
     @Override
     public UINeoNode newUI(double width, double height) {
         return null; //ui;
     }
+
     public ca.nengo.ui.lib.world.piccolo.object.Window newUIWindow(double w, double h, boolean title, boolean minMax, boolean close) {
         //ca.nengo.ui.lib.world.piccolo.object.Window x= ((UINetwork)newUI(1,1)).getViewerWindow();
         UINetwork inviisbleIconUI = new DefaultUINetwork(this); //((UINetwork) newUI(1, 1));
@@ -301,36 +378,13 @@ public class Editor extends DefaultNetwork implements UIBuilder {
 
 
 }
+/*
+    public Rule Input() {
+        return sequence(s(), zeroOrMore(sequence(firstOf(Comment(), Task()), s())), EOI);
+    }
 
+    public Rule Comment() {
+        return sequence("//", zeroOrMore(noneOf("\n")));
+    }
 
-
-/**
- * horizontal print
  */
-            /*
-            public void set(int x, int y, CharSequence word) {
-                for (int i = 0; i < word.length(); i++) {
-                    char c = word.charAt(i);
-                    set(x + i, y, c);
-                }
-            }
-            */
-    /*
-            // set one char
-            public Node set(int x, int y, char c) {
-                if (c == ' ') {
-                    remove(l);
-                    return null;
-                }
-
-                Node existing = get(l);
-                if (existing != null && existing instanceof Glyph && (((Glyph) existing).getChar() == c))
-                    return existing;
-
-
-                Node n;
-                set(l, n = newChar(x, y, c));
-
-                return n;
-            }
-    */

@@ -55,7 +55,7 @@ public class NengrowPanel extends Nengrow {
             if (n instanceof Editor) {
                 Editor mesh = (Editor)n; //problem?
                 try {
-                    addNodeModel(mesh.newUIWindow(600, 400, true, false, true), null, null );
+                    addNodeModel(mesh.newUIWindow(1600, 800, true, false, true), null, null );
                     addNodeModel(mesh);
                 } catch (ContainerException e) {
                     e.printStackTrace();

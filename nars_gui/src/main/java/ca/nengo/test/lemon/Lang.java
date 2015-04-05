@@ -119,12 +119,15 @@ public class Lang {
             for (Object o : n.getChildren()) {
 
                 Node i = (Node) o;
-                debug(" doing " + i);
-                Match w = (Match) node2widget(i);
-                debug(" done " + i);
+                debug(" doing " + i + " with m " + i.getMatcher());
+                //if (i.getMatcher().
+                {
+                    Match w = (Match) node2widget(i);
+                    if (w != null)
+                        items.add(w);
+                    debug(" done " + i);
+                }
                 debug(" continuing with " + this);
-                if (w != null)
-                    items.add(w);
             }
             debugIndent--;
             return items;

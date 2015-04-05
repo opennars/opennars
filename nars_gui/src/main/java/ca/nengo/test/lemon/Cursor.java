@@ -18,8 +18,7 @@ import java.util.HashMap;
 
 public class Cursor extends AbstractWidget {
     public int c, r;
-    private KeyboardHandler keyHandler;
-    private Editor editor;
+
 
     //private Boolean on = Boolean.TRUE;
 
@@ -28,9 +27,9 @@ public class Cursor extends AbstractWidget {
         return false;
     }
 
-    public Cursor(String name, Editor editor) {
+    public Cursor(String name) {
         super(name, 666, 666);
-        this.editor = editor;
+        //this.editor = editor;
         reset();
         ui.setTransparency(0.35f);
         ui.setPickable(false);
@@ -39,6 +38,11 @@ public class Cursor extends AbstractWidget {
         //UINeoNode x = ((UINeoNode)ui.getParent()).node();
         //network.addStepListener(subCycle);
 
+    }
+
+    public void updateBounds(PBounds b){
+           setBounds(0, 0, b.width, b.height);
+           move(b.x, b.y);
     }
 
     @Override
@@ -62,35 +66,6 @@ public class Cursor extends AbstractWidget {
     final ColorArray ca = new ColorArray(32, Color.YELLOW, Color.GREEN);
 
     @Override
-    public void run(float startTime, float endTime) throws SimulationException {
-        enableInput();
-    }
-
-    protected void enableInput() {
-        if ((keyHandler == null) && (editor.viewer != null)) {
-            keyHandler = new KeyboardHandler() {
-
-                @Override
-                public void keyReleased(PInputEvent event) {
-                    //editor.keyReleased(event);
-                }
-
-                @Override
-                public void keyPressed(PInputEvent event) {
-                    editor.keyPressed(event, c, r);
-                }
-            };
-            //ui.getPNode().getRoot().addInputEventListener(keyHandler);
-            //ui.getViewer().getSky().addInputEventListener(keyHandler);
-            editor.viewer.getSky().addInputEventListener(keyHandler);
-            //viewer.getSky().addInputEventListener(keyHandler);
-
-        }
-    }
-
-
-
-    @Override
     protected void paint(ca.nengo.ui.lib.world.PaintContext paintContext, double ww, double hh) {
 
         long now = System.currentTimeMillis();
@@ -102,7 +77,7 @@ public class Cursor extends AbstractWidget {
 
 
         int ee = (int)(tc * (ww/4f))/2; //extra border
-        g.fillRect((int)(-ee), (int)(-ee), (int) (ww + ee*2), (int) (hh+ ee*2));
+        g.fillRect((int) (-ee), (int) (-ee), (int) (ww + ee * 2), (int) (hh + ee * 2));
 
 
 
@@ -117,13 +92,9 @@ public class Cursor extends AbstractWidget {
     public String toScript(HashMap<String, Object> scriptData) throws ScriptGenException {
         return "";
     }
-
-    public void move(int c, int r)
-    {
-        this.c = c;
-        this.r = r;
+    @Override
+    public void run(float startTime, float endTime) throws SimulationException {
     }
-
 
 }
 
