@@ -79,7 +79,7 @@ public class drawPanel extends JPanel {
         }).start();
     }
             
-    int setpoint=100;
+    int setpoint=80;
     int x=160;
     int y=10;
     int k=0;
@@ -90,7 +90,6 @@ public class drawPanel extends JPanel {
         if(k<1) {
           //nar.addInput("move(left). :|: %0.00;0.99%");
          // nar.addInput("move(right). :|: %0.00;0.99%");
-            nar.addInput("move(right)! :|:");
             nar.addInput("move(left)! :|:");
             nar.addInput("move(right)! :|:");
         }
