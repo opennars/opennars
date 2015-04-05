@@ -351,7 +351,7 @@ public class Concept extends Item<Term> implements Termable {
         if(belief==null) {
             return false;
         }
-        if(goal.truth.getExpDifAbs(belief.truth)>0.4) {
+        if(goal.truth.getExpDifAbs(belief.truth)>0.1) {
             return false; //not worth pursuing anymore
         }
         return true;
