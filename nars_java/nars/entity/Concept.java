@@ -421,11 +421,13 @@ public class Concept extends Item<Term> implements Termable {
             
             if(isSatisfied(goal,belief)) { //it is satisfied, remove 
                 recallCommitedGoal();
-                return;
+                if(!(goal.term instanceof Operation)) //Operations are allowed to execute
+                    return;
             }
             
             if(commitedGoal!=null && !isSatisfied(goal,commitedGoal.sentence)) { //desire values don't match, delete commited goal
                 recallCommitedGoal();
+                return;
             }
             
             if(goal.truth.getExpectation()<nal.memory.param.decisionThreshold.get()) {
