@@ -418,6 +418,12 @@ public class Concept extends Item<Term> implements Termable {
                 return;
             }
             
+            if(commitedGoal!=null && !isSatisfied(goal,commitedGoal.sentence)) { //desire values don't match, delete commited goal
+                if(commitedGoal!=null)
+                    deleted.add(commitedGoal);
+                commitedGoal=null;
+            }
+            
             if(goal.truth.getExpectation()<nal.memory.param.decisionThreshold.get()) {
                 if(commitedGoal!=null)
                     deleted.add(commitedGoal);
