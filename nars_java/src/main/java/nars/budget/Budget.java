@@ -346,13 +346,14 @@ public class Budget implements Cloneable, BudgetTarget {
 
     public boolean equalsByPrecision(final Object that) {
         if (that instanceof Budget) {
+            //TODO avoid use of Math.abs by using TruthValue.isEquals(,,epsilon)
             final Budget t = ((Budget) that);
             float dPrio = Math.abs(getPriority() - t.getPriority());
-            if (dPrio >= TRUTH_EPSILON) return false;
+            if (dPrio >= BUDGET_EPSILON) return false;
             float dDura = Math.abs(getDurability() - t.getDurability());
-            if (dDura >= TRUTH_EPSILON) return false;
+            if (dDura >= BUDGET_EPSILON) return false;
             float dQual = Math.abs(getQuality() - t.getQuality());
-            if (dQual >= TRUTH_EPSILON) return false;
+            if (dQual >= BUDGET_EPSILON) return false;
             return true;
         }
         return false;

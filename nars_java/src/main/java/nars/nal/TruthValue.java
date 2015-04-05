@@ -34,18 +34,10 @@ import static nars.Global.TRUTH_EPSILON;
 public class TruthValue implements Cloneable { // implements Cloneable {
 
 
-    final static Term Truth_TRUE = new Term("TRUE");
-    final static Term Truth_FALSE = new Term("FALSE");
-    final static Term Truth_UNSURE = new Term("UNSURE");
-    
-    /**
-     * The character that marks the two ends of a truth value
-     */
-    private static final char DELIMITER = Symbols.TRUTH_VALUE_MARK;
-    /**
-     * The character that separates the factors in a truth value
-     */
-    private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
+    final static Term Truth_TRUE = Term.get("TRUE");
+    final static Term Truth_FALSE = Term.get("FALSE");
+    final static Term Truth_UNSURE = Term.get("UNSURE");
+
     /**
      * The frequency factor of the truth value
      */
@@ -92,9 +84,9 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @param v The truth value to be cloned
      */
     public TruthValue(final TruthValue v) {
-        frequency = v.getFrequency();
-        confidence = v.getConfidence();
-        analytic = v.getAnalytic();
+        setFrequency(v.getFrequency());
+        setConfidence(v.getConfidence());
+        setAnalytic(v.getAnalytic());
     }
 
     public TruthValue(char punctuation) {
@@ -130,15 +122,16 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return confidence;
     }
 
-    public TruthValue setFrequency(final float f) {
-        if (f > 1.0f) this.frequency = 1.0f;
-        else if (f < 0f) this.frequency = 0f;
-        else this.frequency = f;
+    public TruthValue setFrequency(float f) {
+        if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
+        this.frequency = Math.round( f / TRUTH_EPSILON) * TRUTH_EPSILON;
         return this;
     }
     
     public TruthValue setConfidence(float c) {
-        this.confidence = (c < Global.MAX_CONFIDENCE) ? c : Global.MAX_CONFIDENCE;
+        if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
+        if (c > Global.MAX_CONFIDENCE)  c = Global.MAX_CONFIDENCE;
+        this.confidence = Math.round( c / TRUTH_EPSILON) * TRUTH_EPSILON;
         return this;
     }
     
@@ -191,9 +184,10 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         return getFrequency() < 0.5;
     }
 
-    public static boolean isEqual(final float a, final float b, float epsilon) {
-        float d = Math.abs(a - b);
-        return (d < epsilon);
+    public static boolean isEqual(final float a, final float b, final float epsilon) {
+        if (a > b) return ((a - b) < epsilon);
+        else if ( a < b) return ((b - a) < epsilon);
+        return true;
     }
     
     /**
@@ -255,20 +249,20 @@ public class TruthValue implements Cloneable { // implements Cloneable {
         
         sb.ensureCapacity(11);
         return sb
-            .append(DELIMITER)
+            .append(Symbols.TRUTH_VALUE_MARK)
             .append(Texts.n2(frequency))
-            .append(SEPARATOR)
+            .append(Symbols.VALUE_SEPARATOR)
             .append(Texts.n2(confidence))
-            .append(DELIMITER);        
+            .append(Symbols.TRUTH_VALUE_MARK);
     }
 
     public String toStringExternal1() {
         return new StringBuilder(5)
-                .append(DELIMITER)
+                .append(Symbols.TRUTH_VALUE_MARK)
                 .append(Texts.n1(frequency))
-                .append(SEPARATOR)
+                .append(Symbols.VALUE_SEPARATOR)
                 .append(Texts.n1(confidence))
-                .append(DELIMITER).toString();
+                .append(Symbols.TRUTH_VALUE_MARK).toString();
     }
 
 
