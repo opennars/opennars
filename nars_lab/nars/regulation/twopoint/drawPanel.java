@@ -60,7 +60,7 @@ public class drawPanel extends JPanel {
                 }
                 
                 if (args[0].toString().equals("left")) {
-                    x -= 3;
+                    x -= 10;
                     if (x < setpoint) {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
@@ -69,7 +69,7 @@ public class drawPanel extends JPanel {
                     }
                 }
                 if (args[0].toString().equals("right")) {
-                    x += 3;
+                    x += 10;
                     if (x > setpoint) {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
@@ -108,13 +108,15 @@ public class drawPanel extends JPanel {
  
     public void target(String direction) {
         nar.addInput("<target --> " + direction + ">. :|:");
+        //nar.addInput("move(left)! :|:");       
     }
     
     NAR nar;
  
     public drawPanel() {
-       // Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
+        Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
         nar = new Default().build();
+        //nar.param.decisionThreshold.set(0.1f);
  
         nar.addPlugin(new move());
         
@@ -178,13 +180,18 @@ public class drawPanel extends JPanel {
     int setpoint = 80;
     int x = 160;
     int y = 10;
+ 
+    protected void train() {
+        //nar.addInput("move(left). :|: %0.00;0.99%");
+        // nar.addInput("move(right). :|: %0.00;0.99%");
+        
+        
+        long trainDelayCycles = minCyclesPerMovement * 2;
+        nar.addInput("move(left)! :|:\n"+trainDelayCycles+"\n" + "move(right)! :|:");
+    }
+    
     List<Integer> prevx=new ArrayList<>();
     List<Integer> prevy=new ArrayList<>();
-    
-    protected void train() {
-        long trainDelayCycles = minCyclesPerMovement * 2;
-        nar.addInput("move(left)! :|:\n" + trainDelayCycles + "\n" + "move(right)! :|:");
-    }
     
     private void doDrawing(Graphics g) {
         
@@ -194,10 +201,10 @@ public class drawPanel extends JPanel {
  
         g2d.setColor(Color.blue);
         for(int i=0;i<prevx.size();i++) {
-            g2d.fillRect(prevy.get(i), prevx.get(i), 4, 4);
+            g2d.fillRect(prevy.get(i), prevx.get(i), 10, 10);
         }
         
-        g2d.fillRect(y, x, 4, 4);
+        g2d.fillRect(y, x, 10, 10);
         g2d.setColor(Color.red);
         //g2d.fillOval(y, setpoint, 10, 10);
         g2d.drawLine(0, setpoint+5, 1000, setpoint+5);
