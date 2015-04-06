@@ -63,15 +63,15 @@
 
 <(*,SELF,{t001}) --> at>!
 
-<(^go-to,$1)=/><(*,SELF,$1) --> at>>.
+<(^goto,$1)=/><(*,SELF,$1) --> at>>.
 
 19
 
-''outputMustContain('(^go-to,{t001})! %1.00;0.81%')
+''outputMustContain('(^goto,{t001})! %1.00;0.81%')
 
 ********** [33 + 09 -> 34]
-  IN: (^go-to,{t001}). :\: 
-  IN: <(^go-to,$1)=/><(*,SELF,$1) --> at>>. 
+  IN: (^goto,{t001}). :\:
+  IN: <(^goto,$1)=/><(*,SELF,$1) --> at>>.
 41
 IN: <(*,SELF,{t001}) --> at>? :\:
 30
@@ -104,12 +104,12 @@ IN: <(*,SELF,{t001}) --> at>? :\:
 ''outputMustContain('<(*,SELF,{t003}) --> at>! %1.00;0.81%')
 ********** [15 + 09 -> 16]:
   IN: <(*,SELF,{t003}) --> at>!
-  IN: <(^go-to,$1)=/><(*,SELF,$1) --> at>>.
+  IN: <(^goto,$1)=/><(*,SELF,$1) --> at>>.
 19
-''outputMustContain('(^go-to,{t003})! %1.00;0.81%')
+''outputMustContain('(^goto,{t003})! %1.00;0.81%')
 ********** [17 + 09 -> 18]
-  IN: <(*,{t003}) --> ^go-to>. :|: 
-  IN: <<(*,$1) --> ^go-to> =/> <(*,SELF,$1) --> at>>. 
+  IN: <(*,{t003}) --> ^goto>. :|:
+  IN: <<(*,$1) --> ^goto> =/> <(*,SELF,$1) --> at>>.
 85
   IN: <SELF --> (/,at,_,{t003})>? :\:
 5
@@ -124,10 +124,10 @@ IN: <(*,SELF,{t001}) --> at>? :\:
 
 ''outputMustContain('<{t003} --> (/,on,{t002},_)>. :|: %1.00;0.90%')
 ********** [10 + 05 -> 11]
-  IN: <(&/,<(*,Self,{t002}) --> hold>,(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>.  
+  IN: <(&/,<(*,Self,{t002}) --> hold>,(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>.
   IN: <(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002})) =/> <(*,Self,{t002}) --> hold>>.  
 40
-''outputMustContain('<(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.81%')
+''outputMustContain('<(&/,<(*,Self,{t002}) --> reachable>,(^pick,{t002}),(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.81%')
 
 ********** [06 + 07 -> 12]
   IN: <(&|,<(*,$1,$2) --> on>,<(*,Self,$2) --> at>) =|> <(*,Self,$1) --> reachable>>.
@@ -135,15 +135,15 @@ IN: <(*,SELF,{t001}) --> at>? :\:
 5
 ''outputMustContain('<<(*,Self,{t003}) --> at> =|> <(*,Self,{t002}) --> reachable>>. :|: %1.00;0.81%)
 ********** [13 + 09 -> 14]
-  IN: <(&/,<(*,Self,{t003}) --> at>,(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|: 
-  IN: <(^go-to,$1) =/> <(*,Self,$1) --> at>>.  
+  IN: <(&/,<(*,Self,{t003}) --> at>,(^pick,{t002}),(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|:
+  IN: <(^goto,$1) =/> <(*,Self,$1) --> at>>.
 16
-''outputMustContain('<(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :\: %1.00;0.81%')
+''outputMustContain('<(&/,(^goto,{t003}),(^pick,{t002}),(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :\: %1.00;0.81%')
 ********** [01 + 14 -> 15]
   IN: <{t001} --> [opened]>!  
-  IN: <(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|:
+  IN: <(&/,(^goto,{t003}),(^pick,{t002}),(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|:
 24
-''outputMustContain('(&/,(^go-to,{t003}),(^pick,{t002}),(^go-to,{t001}),(^open,{t001}))! %1.00;0.43%')
+''outputMustContain('(&/,(^goto,{t003}),(^pick,{t002}),(^goto,{t001}),(^open,{t001}))! %1.00;0.43%')
 
 ********** [01 + 06 -> 10]: 
   IN: <{t001} --> [opened]>!  

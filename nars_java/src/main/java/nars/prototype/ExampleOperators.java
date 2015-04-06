@@ -14,7 +14,7 @@ public class ExampleOperators {
             //new Wait(),            
             new NullOperator("^break"),
             new NullOperator("^drop"),
-            new NullOperator("^go-to"),
+            new NullOperator("^goto"),
             new NullOperator("^open"),
             new NullOperator("^pick"),
             new NullOperator("^strike"),

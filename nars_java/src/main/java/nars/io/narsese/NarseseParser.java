@@ -54,7 +54,10 @@ public class NarseseParser extends BaseParser<Object> {
 
     //These should be set to something like RecoveringParseRunner for performance
     public final ParseRunner inputParser = new ErrorReportingParseRunner(Input(), 0);
-    public final ParseRunner singleTaskParser = new ErrorReportingParseRunner(Task(), 0);
+    public final ParseRunner singleTaskParser = new ErrorReportingParseRunner(Task(true), 0);
+
+    //use a parameter or something to avoid this extra instance
+    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ErrorReportingParseRunner(Task(false), 0);
 
     public final ParseRunner singleTermParser = new ErrorReportingParseRunner(Term(), 0); //new RecoveringParseRunner(Term());
 
@@ -73,14 +76,14 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public Rule Input() {
-        return sequence(s(), zeroOrMore(sequence(firstOf(Comment(), Task()), s())), EOI);
+        return sequence(s(), zeroOrMore(sequence(firstOf(Comment(), Task(true)), s())), EOI);
     }
 
     public Rule Comment() {
         return sequence("//", zeroOrMore(noneOf("\n")), push(match()));
     }
 
-    public Rule Task() {
+    public Rule Task(boolean newStamp) {
         //TODO separate goal into an alternate form "!" because it does not use a tense
         Var<float[]> budget = new Var();
         Var<Character> punc = new Var();
@@ -117,12 +120,12 @@ public class NarseseParser extends BaseParser<Object> {
                         )
                 ),
 
-                push(getTask(budget, term, punc, truth, tense))
+                push(getTask(budget, term, punc, truth, tense, newStamp))
 
         );
     }
 
-    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth, Var<Tense> tense) {
+    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<TruthValue> truth, Var<Tense> tense, boolean newStamp) {
 
         char p = punc.get();
 
@@ -150,7 +153,10 @@ public class NarseseParser extends BaseParser<Object> {
 
         Tense te = tense.get();
 
-        return new Task(new Sentence((Compound)content, p, t, new Stamp(memory, Stamp.UNPERCEIVED, te), false /* already normalized */), B );
+        return new Task(new Sentence((Compound)content, p, t,
+                getNewStamp(memory, newStamp, Stamp.UNPERCEIVED, te),
+                false /* already normalized */), B );
+
     }
 
 
@@ -394,6 +400,12 @@ public class NarseseParser extends BaseParser<Object> {
      */
     Rule NamespacedAtom() {
         return sequence(Atom(), '.', Atom(), push(Inheritance.make(Term.get(pop()), Term.get(pop()))));
+    }
+
+    public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
+        return new Stamp(
+                newStamp ? new long[] { memory.newStampSerial() } : new long[] { /* blank */ },
+                memory, creationTime, tense);
     }
 
     public static class ImageIndexTerm extends Term {
@@ -745,10 +757,13 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one task
      */
-    public Task parseTask(String input) throws InvalidInputException {
+    public Task parseTask(String input, boolean newStamp) throws InvalidInputException {
         ParsingResult r = null;
         try {
-            r = singleTaskParser.run(input);
+            if (newStamp)
+                r = singleTaskParser.run(input);
+            else
+                r = singleTaskParserNonNewStamp.run(input);
         }
         catch (Throwable ge) {
             throw new InvalidInputException(ge.toString() + " parsing: " + input);

@@ -14,7 +14,7 @@
 
 //and
 
-//<(&/,(^go-to,$1),(^pick,$1)) =/> <$1 --> reached>>.
+//<(&/,(^goto,$1),(^pick,$1)) =/> <$1 --> reached>>.
 //<goal --> reached>!
 
 //are already working.

@@ -34,7 +34,7 @@ public class NarseseParserTest {
 
     Task task(String s) throws InvalidInputException {
         //TODO n.task(s) when the parser is replaced
-        return p.parseTask(s);
+        return p.parseTask(s, true);
     }
 
 
@@ -214,6 +214,7 @@ public class NarseseParserTest {
         }
         catch (Exception e) { }
     }
+
 
     protected void testBelieveAB(Operation t) {
         assertEquals(3, t.getArguments().size());

@@ -43,7 +43,7 @@ public class Englisch {
 
     public Englisch() {
         //TODO use word tokenization so that word substitutions dont get applied across words.
-        sub.put("go to", "go-to");
+        sub.put("go to", "goto");
         //etc..
     }
 

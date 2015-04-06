@@ -120,7 +120,7 @@ public class DefaultOperators {
          */
                 
         /* operators for testing examples */
-//        table.put("^go-to", new GoTo("^go-to"));
+//        table.put("^goto", new GoTo("^go-to"));
 //        table.put("^pick", new Pick("^pick"));
 //        table.put("^open", new Open("^open"));
 //        table.put("^break", new Break("^break"));

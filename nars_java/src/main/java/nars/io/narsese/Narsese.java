@@ -119,11 +119,11 @@ public class Narsese {
 
 
     public Task parseTask(String s) throws InvalidInputException {
-        return parseTaskWithNewParser(s);
+        return parseTask(s, true);
     }
 
-    public Task parseTaskWithNewParser(String s) throws InvalidInputException {
-        return newParser.parseTask(s);
+    public Task parseTask(String s, boolean newStamp) throws InvalidInputException {
+        return newParser.parseTask(s, newStamp);
     }
 
     public Task parseTaskIfEqualToOldParser(String s) throws InvalidInputException {
@@ -132,7 +132,7 @@ public class Narsese {
 
         InvalidInputException uError = null;
         try {
-            u = parseTask(s, true);
+            u = parseTaskOld(s, true);
         }
         catch (InvalidInputException tt) {
             uError = tt;
@@ -140,7 +140,7 @@ public class Narsese {
 
 
         try {
-            t = newParser.parseTask(s);
+            t = parseTask(s, true);
             if (t.equals(u))
                 return t;
         }
@@ -159,6 +159,7 @@ public class Narsese {
 
     }
 
+
     /**
      * Enter a new Task in String into the memory, called from InputWindow or
      * locally.
@@ -168,13 +169,13 @@ public class Narsese {
      * @param time The current time
      * @return An experienced task
      */    
-    public Task parseTask(String s, boolean newStamp) throws InvalidInputException {
+    public Task parseTaskOld(String s, boolean newStamp) throws InvalidInputException {
         StringBuilder buffer = new StringBuilder(Texts.escape(s));
 
         String budgetString = getBudgetString(buffer);
 
 
-        Sentence sentence = parseSentence(buffer, newStamp);
+        Sentence sentence = parseSentenceOld(buffer, newStamp, Stamp.UNPERCEIVED);
         if (sentence == null) return null;
 
         Budget budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
@@ -183,15 +184,17 @@ public class Narsese {
 
     }
 
-    public Sentence parseSentence(StringBuilder buffer) {
-        return parseSentence(buffer, true);
-    }
+//    public Sentence parseSentence(StringBuilder buffer) {
+//        return parseSentence(buffer, true);
+//    }
+//
+//    public Sentence parseSentence(StringBuilder buffer, boolean newStamp) {
+//        return parseSentence(buffer, newStamp, Stamp.UNPERCEIVED);
+//    }
+//
 
-    public Sentence parseSentence(StringBuilder buffer, boolean newStamp) {
-        return parseSentence(buffer, newStamp, Stamp.UNPERCEIVED);
-    }
 
-    public Sentence parseSentence(StringBuilder buffer, boolean newStamp, long creationTime) {
+    public Sentence parseSentenceOld(StringBuilder buffer, boolean newStamp, long creationTime) {
         String truthString = getTruthString(buffer);
         Tense tense = parseTense(buffer);
         String str = buffer.toString().trim();
@@ -200,9 +203,7 @@ public class Narsese {
         char punc = str.charAt(last);
 
         /* if -1, will be set right before the Task is input */
-        Stamp stamp = new Stamp(
-                newStamp ? new long[] { memory.newStampSerial() } : new long[] { /* blank */ },
-                memory, creationTime, tense);
+        Stamp stamp = NarseseParser.getNewStamp(memory, newStamp, creationTime, tense);
 
         TruthValue truth = parseTruth(truthString, punc);
         Term content = parseTerm(str.substring(0, last));

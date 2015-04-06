@@ -6,23 +6,22 @@ package nars.io;
 
 import nars.Events;
 import nars.Events.ERR;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.Narsese;
 import nars.nal.Sentence;
-import nars.nal.term.Term;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.SynchronousSentenceFunction;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Term;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @author me
@@ -106,7 +105,8 @@ public class BindJavascriptExpression implements TextReaction {
                                     //TODO handle result being an array or collection
 
                                     try {
-                                        return Collections.singleton(narsese.parseSentence(new StringBuilder(result.toString())));
+                                        throw new RuntimeException("disabled sentence parsing temporarly");
+                                        //return Collections.singleton(narsese.parseSentence(new StringBuilder(result.toString())));
                                     } catch (InvalidInputException ex) {
                                         memory.emit(ERR.class, ex.toString());
                                         if (Global.DEBUG)

@@ -1,4 +1,4 @@
-(^go-to,{switch0}). :|: %1.00;0.90%
+(^goto,{switch0}). :|: %1.00;0.90%
 6
 <{switch0} --> [at]>. :|: %1.00;0.90%
 6
@@ -10,7 +10,7 @@
 6
 (--,<{door5} --> [opened]>). :|: %1.00;0.90%
 6
-(^go-to,{place4}). :|: %1.00;0.90%
+(^goto,{place4}). :|: %1.00;0.90%
 6
 <{place4} --> [at]>. :|: %1.00;0.90%
 50
@@ -19,5 +19,5 @@
 <{door5} --> opened>!
 
 5000
-''outputMustContain('^go-to([{switch0}, SELF])=null')
+''outputMustContain('^goto([{switch0}, SELF])=null')
 ''outputMustContain('^activate([{switch0}, SELF])=null')
