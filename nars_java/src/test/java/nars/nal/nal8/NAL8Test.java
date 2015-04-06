@@ -50,9 +50,9 @@ public class NAL8Test extends JavaNALTest {
         nar.believe(condition, Tense.Present, 1.0f, 0.9f);
         nar.goal("(&/,"+ condition + ',' + action + ")", 1.0f, 0.9f);
 
-        nar.mustDesire(100, action, 1.0f, 0.43f);
+        nar.mustDesire(100, action, 1.0f, 0.42f);
 
-        nar.mustOutput(1, 10, action, '.', 1f, 1f, 0.98f, 0.99f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
+        nar.mustOutput(1, 10, action, '.', 1f, 1f, 0.98f, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
 
 
         nar.run(100);

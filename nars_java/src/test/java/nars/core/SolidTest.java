@@ -1,17 +1,17 @@
 package nars.core;
 
 import nars.Global;
-import nars.prototype.Solid;
 import nars.io.Answered;
 import nars.io.test.TestNAR;
 import nars.nal.Sentence;
+import nars.prototype.Solid;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class SolidTest {
@@ -19,11 +19,11 @@ public class SolidTest {
     @Test
     public void testDetective() throws FileNotFoundException {
 
-        int time = 20; //should solve the example in few cycles
+        int time = 32; //should solve the example in few cycles
 
         Global.DEBUG = true;
 
-        Solid s = new Solid(3, 384, 1, 10, 2, 4);
+        Solid s = new Solid(3, 256, 1, 8, 2, 4);
         s.param.duration.set(3);
         s.param.noveltyHorizon.set(2);
 
@@ -45,7 +45,8 @@ public class SolidTest {
         };
 
         n.step(time);
-        assertEquals(2, solutions.get());
+
+        assertTrue(2 <= solutions.get());
     }
 
 

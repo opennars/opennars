@@ -29,15 +29,23 @@ public class TermLinkTest {
         assertEquals(2, cj0.size());
 
         Bag<TermLinkKey, TermLink> cj1 = getTermLinks("(&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>)");
-        System.out.println(cj1.keySet());
+        //System.out.println(cj1.keySet());
 
-        assertEquals(1, cj1.size());
-
+        assertEquals(5, cj1.size());
         //NOTE: cj1.size() will equal 5 if termlinks are normalized in TermLinkBuilder
+    }
+
+    @Test
+    public void testImplicatedConjunctionWithVariablesTermLinks() {
+        Bag<TermLinkKey, TermLink> cj1 = getTermLinks("<<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>");
+        //System.out.println(cj1.keySet());
+        // [Dba:<#1 --> key>, Dbb:<$1 --> (/,open,#2,_)>, Da:<$1 --> lock>, Db:(&&,<#1 --> key>,<$2 --> (/,open,#1,_)>), Dab:lock]
+        assertEquals(5, cj1.size());
 
     }
 
-    @Test public void testImplicationTermLinks() {
+
+        @Test public void testImplicationTermLinks() {
         Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>");
         assertEquals(2, cj2.size()); //Da:(*,c,d)  and Db:e
         List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(*,c,d) ==> e>");
