@@ -113,7 +113,7 @@ public class drawPanel extends JPanel {
     NAR nar;
  
     public drawPanel() {
-       // Parameters.TEMPORAL_INDUCTION_SAMPLES=0;
+        Parameters.TEMPORAL_INDUCTION_SAMPLES=0;
      //   Parameters.DERIVATION_DURABILITY_LEAK=0.1f;
        // Parameters.DERIVATION_PRIORITY_LEAK=0.1f;
         Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
@@ -177,7 +177,7 @@ public class drawPanel extends JPanel {
  
     }
  
-    int setpoint = 80; //80 230
+    static int setpoint = 80; //80 230
     int x = 160;
     int y = 10;
  

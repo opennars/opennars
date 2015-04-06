@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Random;
 import javax.swing.JPanel;
 
@@ -16,7 +18,7 @@ import javax.swing.JPanel;
  *
  * @author patrick.hammer
  */
-public class twoPointRegulator extends javax.swing.JFrame {
+public class twoPointRegulator extends javax.swing.JFrame implements KeyListener {
 
     
     /**
@@ -25,6 +27,8 @@ public class twoPointRegulator extends javax.swing.JFrame {
     public twoPointRegulator() {
         initComponents();
         this.setTitle("Experience Predictive Control");
+        this.setSize(1400, 400);
+        this.addKeyListener(this);
     }
 
     /**
@@ -109,4 +113,30 @@ public class twoPointRegulator extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private nars.regulation.twopoint.drawPanel drawPanel1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if(e.getKeyCode()==KeyEvent.VK_UP) {
+            drawPanel.setpoint+=10;
+        }
+        if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+            drawPanel.setpoint-=10;
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode()==KeyEvent.VK_UP) {
+            drawPanel.setpoint-=10;
+        }
+        if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+            drawPanel.setpoint+=10;
+        }
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
