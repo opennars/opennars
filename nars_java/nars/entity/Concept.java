@@ -390,8 +390,10 @@ public class Concept extends Item<Term> implements Termable {
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 //task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()
                 //if(task.sentence.getOccurenceTime()==Stamp.ETERNAL || task.sentence.getOccurenceTime()>=memory.time()-memory.param.duration.get()) {
-                    if(!executeDecision(task)) {
-                        memory.emit(UnexecutableGoal.class, task, this, nal);
+                    if(task.sentence.truth.getExpectation()>Parameters.OPERATION_TRUTH_EXPECTATION_TRESHOLD) {
+                        if(!executeDecision(task)) {
+                            memory.emit(UnexecutableGoal.class, task, this, nal);
+                        }
                     }
                 //}
             }
