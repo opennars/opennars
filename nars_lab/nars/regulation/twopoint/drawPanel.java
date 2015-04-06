@@ -38,7 +38,6 @@ public class drawPanel extends JPanel {
             super("^move");        
         }
         
-
         @Override
         protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
             if(args.length==2) { //left, self
@@ -47,7 +46,7 @@ public class drawPanel extends JPanel {
                     x-=10;
                     if(x>setpoint) {
                         nar.addInput("<SELF --> [good]>. :|: %1.00;0.90%");
-                    } else {
+                    } else if (x<setpoint) {
                         nar.addInput("<SELF --> [good]>. :|: %0.00;0.90%");
                     }
                 }
@@ -55,7 +54,7 @@ public class drawPanel extends JPanel {
                     x+=10;
                     if(x>setpoint) {
                         nar.addInput("<SELF --> [good]>. :|: %0.00;0.90%");
-                    } else {
+                    } else if (x<setpoint)  {
                         nar.addInput("<SELF --> [good]>. :|: %1.00;0.90%");
                     }
                 }
@@ -84,60 +83,42 @@ public class drawPanel extends JPanel {
     int y=10;
     int k=0;
     private void doDrawing(Graphics g) {
-        int modu=10;
-        boolean cond = (inc!=lastinc);
-        lastinc=inc;
+        
         if(k<1) {
-          //nar.addInput("move(left). :|: %0.00;0.99%");
-         // nar.addInput("move(right). :|: %0.00;0.99%");
+            nar.addInput("move(left)! :|:");
+            nar.addInput("move(right)! :|:");
             nar.addInput("move(left)! :|:");
             nar.addInput("move(right)! :|:");
         }
-        if((cond || k%50==0) && x==setpoint) {
-                nar.addInput("<SELF --> [good]>. :|: %1.00;0.90%");
-        }
-        if(cond) {
-            System.out.println(x);
+        for(int u=0;u<100;u++) {
+            boolean cond = (inc!=lastinc);
+            lastinc=inc;
             
+            if((cond || k%50==0) && x==setpoint) {
+                    nar.addInput("<SELF --> [good]>. :|: %1.00;0.90%");
+            }
             if(cond) {
-                nar.addInput("<SELF --> [good]>! :|:");
-            }
-            
+                System.out.println(x);
 
-            if(x>setpoint) {
-                nar.addInput("<target --> left>. :|:");
-                //nar.addInput("move(left)! :|:");
+                nar.addInput("<SELF --> [good]>! :|:");
+
+                if(x>setpoint) {
+                    nar.addInput("<target --> left>. :|:");
+                }
+                if(x<setpoint) {
+                    nar.addInput("<target --> right>. :|:");
+                }
             }
-            if(x<setpoint) {
-                nar.addInput("<target --> right>. :|:");
-               // nar.addInput("move(right)! :|:");
-            }
+
+            nar.step(1);
         }
         k++;
-        
-        
-        
-        nar.step(100);
         Graphics2D g2d = (Graphics2D) g;
 
         g2d.setColor(Color.blue);
         g2d.fillOval(x, y, 10, 10);
         g2d.setColor(Color.red);
         g2d.fillOval(setpoint, y, 10, 10);
-        
-        /*for (int i = 0; i <= 1000; i++) {
-
-            Dimension size = getSize();
-            Insets insets = getInsets();
-
-            int w = size.width - insets.left - insets.right;
-            int h = size.height - insets.top - insets.bottom;
-
-            Random r = new Random();
-            int x = Math.abs(r.nextInt()) % w;
-            int y = Math.abs(r.nextInt()) % h;
-            g2d.drawLine(x, y, x, y);
-        }*/
     }
 
     @Override
