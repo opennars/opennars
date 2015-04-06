@@ -177,7 +177,7 @@ public class drawPanel extends JPanel {
  
     }
  
-    int setpoint = 230; //80 230
+    int setpoint = 80; //80 230
     int x = 160;
     int y = 10;
  
@@ -202,7 +202,7 @@ public class drawPanel extends JPanel {
         
         g2d.fillRect(y, x, 10, 10);
         g2d.setColor(Color.red);
-        g2d.drawLine(0, setpoint+5, 1000, setpoint+5);
+        g2d.drawLine(0, setpoint+5, 2000, setpoint+5);
     }
  
     @Override
