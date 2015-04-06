@@ -214,5 +214,8 @@ public class Parameters {
     public static boolean BREAK_NAL_HOL_BOUNDARY=true;
     
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
+    
+    public static double OPERATION_TRUTH_EXPECTATION_TRESHOLD=0.6f;
+    
 }
 
