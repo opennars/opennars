@@ -16,23 +16,22 @@
  */
 package nars.core;
 
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
+import nars.io.narsese.InvalidInputException;
 import nars.nal.Concept;
+import nars.nal.NALOperator;
 import nars.nal.Statement;
 import nars.nal.Task;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.prototype.Default;
-import nars.io.Texts;
-import nars.io.narsese.InvalidInputException;
-import nars.nal.NALOperator;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.DifferenceExt;
 import nars.nal.nal3.DifferenceInt;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.prototype.Default;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -203,35 +202,35 @@ public class TermTest {
 
     }    
     
-    @Test
-    public void testEscaping() {        
-        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
-        
-//        NAR n = new Default().build();
-//        n.addInput("<a --> \"b c\">.");
-//        n.step(1);
-//        n.finish(1);
-//        
-//        Term t = new Term("\\\"b_c\\\"");
-//        System.out.println(t);
-//        System.out.println(n.memory.getConcepts());
-//        System.out.println(n.memory.conceptProcessor.getConcepts());
-//        
-//        
-//        assertTrue(n.memory.concept(new Term("a"))!=null);
-//        assertTrue(n.memory.concept(t)!=null);
-
-    }
+//    @Test
+//    public void testEscaping() {
+//        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
+//
+////        NAR n = new Default().build();
+////        n.addInput("<a --> \"b c\">.");
+////        n.step(1);
+////        n.finish(1);
+////
+////        Term t = new Term("\\\"b_c\\\"");
+////        System.out.println(t);
+////        System.out.println(n.memory.getConcepts());
+////        System.out.println(n.memory.conceptProcessor.getConcepts());
+////
+////
+////        assertTrue(n.memory.concept(new Term("a"))!=null);
+////        assertTrue(n.memory.concept(t)!=null);
+//
+//    }
     
-    protected void bidiEscape(String... tests) {
-        for (String s : tests) {
-            s = '"' + s + '"';
-            String escaped = Texts.escape(s).toString();
-            String unescaped = Texts.unescape(escaped).toString();
-            //System.out.println(s + " " + escaped + " " + unescaped);
-            assertEquals(s, unescaped);
-        }
-    }
+//    protected void bidiEscape(String... tests) {
+//        for (String s : tests) {
+//            s = '"' + s + '"';
+//            String escaped = Texts.escape(s).toString();
+//            String unescaped = Texts.unescape(escaped).toString();
+//            //System.out.println(s + " " + escaped + " " + unescaped);
+//            assertEquals(s, unescaped);
+//        }
+//    }
 
     @Test public void invalidTermIndep() {
         

@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.io.Texts;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -419,7 +418,8 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule QuotedLiteral() {
-        return sequence("\"", AnyString(), "\"", push(Texts.escapeLiteral(match())));
+        return sequence("\"", AnyString(), "\"",
+                   push("\"" + match() + "\""));
     }
 
     Rule AnyString() {

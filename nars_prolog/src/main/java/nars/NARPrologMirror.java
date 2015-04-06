@@ -1,11 +1,7 @@
 package nars;
 
 import nars.Events.*;
-import nars.io.Texts;
 import nars.nal.*;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -17,6 +13,9 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.prolog.*;
 
@@ -405,10 +404,10 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     public static String pescape(String p) {
-        return Texts.escapeLiteral(p).toString();
+        return p;
     }
     public static String unpescape(String p) {
-        return Texts.unescapeLiteral(p).toString();
+        return p.toString();
     }
 
     public boolean believable(TruthValue tv) {

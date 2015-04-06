@@ -5,15 +5,14 @@ import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.io.Texts;
 import nars.nal.*;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -170,7 +169,7 @@ public class Narsese {
      * @return An experienced task
      */    
     public Task parseTaskOld(String s, boolean newStamp) throws InvalidInputException {
-        StringBuilder buffer = new StringBuilder(Texts.escape(s));
+        StringBuilder buffer = new StringBuilder(s);
 
         String budgetString = getBudgetString(buffer);
 

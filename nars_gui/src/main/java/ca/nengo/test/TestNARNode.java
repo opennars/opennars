@@ -180,7 +180,7 @@ public class TestNARNode  {
                                 System.err.println("Warning: " + w + " (" + w.getClass() + ") has empty name");
                             continue;
                         }
-                        t.add(Term.text(ww));
+                        t.add(Term.quoted(ww));
                     }
 
                     return Inheritance.make(SetExt.make(t), Term.get("intersects"));

@@ -1,8 +1,7 @@
 package nars.operate.software;
 
-import nars.io.Texts;
-import nars.nal.term.Term;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Term;
 import nars.operate.mental.Mental;
 
 import javax.script.Bindings;
@@ -40,7 +39,7 @@ public class Javascript extends TermFunction implements Mental {
         bindings.put("scriptArguments", scriptArguments);
         bindings.put("memory", getMemory());
         
-        String input = Texts.unescape(args[0].name()).toString();
+        String input = (args[0].name()).toString();
         if (input.charAt(0) == '"') {
             input = input.substring(1, input.length() - 1);
         }
@@ -50,7 +49,7 @@ public class Javascript extends TermFunction implements Mental {
         } catch (Throwable ex) {
             result = ex.toString();
         }
-        return Term.text(result.toString());
+        return Term.quoted(result.toString());
     }
 
 }

@@ -315,8 +315,8 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
     }
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
-    public static Term text(String t) {
-        return Term.get(Texts.escape('"' + t + '"').toString());
+    public static Term quoted(String t) {
+        return Term.get('"' + t + '"');
     }
 
 

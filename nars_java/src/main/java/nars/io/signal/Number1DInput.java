@@ -17,7 +17,6 @@
 package nars.io.signal;
 
 import nars.NAR;
-import nars.io.Texts;
 
 import java.text.NumberFormat;
 
@@ -72,7 +71,7 @@ public class Number1DInput {
         int i = (int) Math.round(v / dv);
         //double percent = (dv * i);
         String ps = intf.format(i);
-        return Texts.escapeLiteral("\u211d" + ps + "/" + resolution).toString();
+        return ("\u211d" + ps + "_" + resolution);
     }
 
     public void initPredicates(int resolution) {

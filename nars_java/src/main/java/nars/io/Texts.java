@@ -18,44 +18,44 @@ public class Texts {
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html
     
-    private final static Map<Character,Character> escapeMap = new HashMap(256);
-    private final static Map<Character,Character> escapeMapReverse = new HashMap(256);
-    static {
-        char[][] escapings = new char[][] {
-            {':', '\u25B8'},
-            {' ', '\u2581'},
-            {'%', '\u25B9'}, 
-            {'#', '\u25BA'}, 
-            {'&', '\u25BB'}, 
-            {'?', '\u25FF'}, 
-            {'/', '\u279A'}, 
-            {'=', '\u25BD'}, 
-            {';', '\u25BE'}, 
-            {'-', '\u25BF'},   
-            {'.', '\u00B8'},
-            {'<', '\u25B4'},
-            {'>', '\u25B5'},
-            {'[', '\u25B6'},
-            {']', '\u25B7'},
-                {'(', '\u26B6'},
-                {')', '\u26B7'},
-                {'{', '\u27B6'},
-                {'}', '\u27B7'},
-            {'$', '\u25B3'}
-        };
-        
-        for (final char[] pair : escapings) {
-            Character existing = escapeMap.put(pair[0], pair[1]);
-            if (existing!=null) {
-                System.err.println("escapeMap has duplicate key: " + pair[0] + " can not apply to both " + existing + " and " + pair[1] );
-                System.exit(1);
-            }
-        }
-
-        //generate reverse mapping
-        for (Map.Entry<Character, Character> e : escapeMap.entrySet())
-            escapeMapReverse.put(e.getValue(), e.getKey());
-    }
+//    private final static Map<Character,Character> escapeMap = new HashMap(256);
+//    private final static Map<Character,Character> escapeMapReverse = new HashMap(256);
+//    static {
+//        char[][] escapings = new char[][] {
+//            {':', '\u25B8'},
+//            {' ', '\u2581'},
+//            {'%', '\u25B9'},
+//            {'#', '\u25BA'},
+//            {'&', '\u25BB'},
+//            {'?', '\u25FF'},
+//            {'/', '\u279A'},
+//            {'=', '\u25BD'},
+//            {';', '\u25BE'},
+//            {'-', '\u25BF'},
+//            {'.', '\u00B8'},
+//            {'<', '\u25B4'},
+//            {'>', '\u25B5'},
+//            {'[', '\u25B6'},
+//            {']', '\u25B7'},
+//                {'(', '\u26B6'},
+//                {')', '\u26B7'},
+//                {'{', '\u27B6'},
+//                {'}', '\u27B7'},
+//            {'$', '\u25B3'}
+//        };
+//
+//        for (final char[] pair : escapings) {
+//            Character existing = escapeMap.put(pair[0], pair[1]);
+//            if (existing!=null) {
+//                System.err.println("escapeMap has duplicate key: " + pair[0] + " can not apply to both " + existing + " and " + pair[1] );
+//                System.exit(1);
+//            }
+//        }
+//
+//        //generate reverse mapping
+//        for (Map.Entry<Character, Character> e : escapeMap.entrySet())
+//            escapeMapReverse.put(e.getValue(), e.getKey());
+//    }
 
     public static final Field sbval;
     public static final Field val;
@@ -80,58 +80,58 @@ public class Texts {
     }    
     
 
-    protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {       
-        StringBuilder b = new StringBuilder(s.length());
-        
-        
-        final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
-        
-        boolean inQuotes = !useQuotes;
-        char lastChar = 0;
-        
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            
-            
-            if (c == Symbols.QUOTE) {
-                b.append(Symbols.QUOTE);
-                
-                if (useQuotes) {
-                    if (lastChar != '\\')
-                        inQuotes = !inQuotes;
-                }
-                
-                continue;
-            }
-            
-            if (!inQuotes) {
-                b.append(c);
-                continue;
-            }
-            
-            Character d = map.get(c);
-            if (d == null)
-                d = c;
-            b.append(d);
-
-            if (unescape)
-                lastChar = d;
-            else
-                lastChar = c;
-        }
-        return b;
-    }
-
-    /** returns an escaped representation for input.  ranges that begin and end with Symbols.QUOTE are escaped, otherwise the string is not modified.
-     */    
-    public static StringBuilder escape(CharSequence s) {
-        return escape(s, false, true);
-    }
-
-    /** returns an unescaped represntation of input */
-    public static StringBuilder unescape(CharSequence s) {
-        return escape(s, true, true);
-    }
+//    protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {
+//        StringBuilder b = new StringBuilder(s.length());
+//
+//
+//        final Map<Character,Character> map = unescape ? escapeMapReverse : escapeMap;
+//
+//        boolean inQuotes = !useQuotes;
+//        char lastChar = 0;
+//
+//        for (int i = 0; i < s.length(); i++) {
+//            char c = s.charAt(i);
+//
+//
+//            if (c == Symbols.QUOTE) {
+//                b.append(Symbols.QUOTE);
+//
+//                if (useQuotes) {
+//                    if (lastChar != '\\')
+//                        inQuotes = !inQuotes;
+//                }
+//
+//                continue;
+//            }
+//
+//            if (!inQuotes) {
+//                b.append(c);
+//                continue;
+//            }
+//
+//            Character d = map.get(c);
+//            if (d == null)
+//                d = c;
+//            b.append(d);
+//
+//            if (unescape)
+//                lastChar = d;
+//            else
+//                lastChar = c;
+//        }
+//        return b;
+//    }
+//
+//    /** returns an escaped representation for input.  ranges that begin and end with Symbols.QUOTE are escaped, otherwise the string is not modified.
+//     */
+//    public static StringBuilder escape(CharSequence s) {
+//        return escape(s, false, true);
+//    }
+//
+//    /** returns an unescaped represntation of input */
+//    public static StringBuilder unescape(CharSequence s) {
+//        return escape(s, true, true);
+//    }
     
     
     
@@ -158,15 +158,15 @@ public class Texts {
 //    }
 //        
 
-    /** escapeLiteral does not involve quotes. this can be used to escape characters directly.*/
-    public static StringBuilder escapeLiteral(CharSequence s) {
-        return escape(s, false, false);
-    }
-    
-    /** unescapeLiteral does not involve quotes. this can be used to unescape characters directly.*/
-    public static StringBuilder unescapeLiteral(CharSequence s) {
-        return escape(s, true, false);        
-    }    
+//    /** escapeLiteral does not involve quotes. this can be used to escape characters directly.*/
+//    public static StringBuilder escapeLiteral(CharSequence s) {
+//        return escape(s, false, false);
+//    }
+//
+//    /** unescapeLiteral does not involve quotes. this can be used to unescape characters directly.*/
+//    public static StringBuilder unescapeLiteral(CharSequence s) {
+//        return escape(s, true, false);
+//    }
 
     /**
      * Warning: don't modify the return char[] because it will beinconsistent with s.hashCode()

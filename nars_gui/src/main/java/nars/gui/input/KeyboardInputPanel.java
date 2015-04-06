@@ -7,7 +7,6 @@ package nars.gui.input;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import nars.NAR;
-import nars.io.Texts;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,7 +59,7 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
     }
 
     public void onCharTyped(char c, float priority, float freq, float conf) {        
-        String charTerm = "\"" + Texts.escapeLiteral(Character.toString(c)) + "\"";
+        String charTerm = "\"" + c + "\"";
         nar.input("$" + n2(priority) + "$ < {" + charTerm + "} --> " + prefix + ">. :|: %" + n2(freq) + ";" + n2(conf) + "%");
         //nar.input("<(&/, <" + charTerm + " --> " + prefix + ">, ?dt) =/> <?next --> \" + prefix + \">>?");
     }

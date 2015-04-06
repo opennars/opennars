@@ -1,13 +1,12 @@
 package nars;
 
-import nars.io.Texts;
 import nars.nal.Task;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 import nars.prolog.*;
 
 import java.util.ArrayList;
@@ -212,7 +211,7 @@ public class PrologQueryOperator extends Operator {
     static public String getStringOfTerm(Term term) {
         // escape sign codes
         String string = term.name().toString();
-        string = Texts.unescape(string).toString();
+
         if (string.charAt(0) != '"') {
             throw new RuntimeException("term is not a string as expected!");
         }

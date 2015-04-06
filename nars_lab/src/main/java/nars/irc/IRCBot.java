@@ -178,8 +178,8 @@ public class IRCBot {
                 }
                 //TODO apostrophe words
                 else if (input.pattern.equals("punct")) {
-                    String b = Texts.escapeLiteral(input.content).toString();
-                    wordTerm = Term.text(b);
+                    String b = input.content;
+                    wordTerm = Term.quoted(b);
 
                     a = input.content;
                     pattern = "word";

@@ -276,8 +276,7 @@ public class TextOutput extends Output {
                 buffer.append(signal.toString());
         }
 
-        return Texts.unescape(buffer);
-
+        return buffer;
     }
 
     /*
@@ -356,7 +355,7 @@ public class TextOutput extends Output {
 //NOT IMPLEMENTED YET
 class HTMLOutput {
     /** generates a human-readable string from an output channel and signal */
-    public static String getOutputHTML(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar) {
+    public static CharSequence getOutputHTML(final Class channel, Object signal, final boolean showChannel, final boolean showStamp, final NAR nar) {
         final StringBuilder buffer = new StringBuilder();
         
         
@@ -385,7 +384,7 @@ class HTMLOutput {
             } else {
                 buffer.append(signal.toString());
             }
-            return Texts.unescape(buffer).toString();
+            return buffer;
         }
 
         if (showChannel)
@@ -422,7 +421,7 @@ class HTMLOutput {
             buffer.append(signal.toString());
         }
         
-        return "<div style='clear: both'>" + escapeHTML(Texts.unescape(buffer).toString()) + "</div>";
+        return "<div style='clear: both'>" + escapeHTML(buffer.toString()) + "</div>";
         
     }    
 
