@@ -24,6 +24,7 @@ public class twoPointRegulator extends javax.swing.JFrame {
      */
     public twoPointRegulator() {
         initComponents();
+        this.setTitle("Experience Predictive Control");
     }
 
     /**
