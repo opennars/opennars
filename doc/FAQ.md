@@ -47,4 +47,4 @@ NO
   * Does NARS index strings and identifiers, like Prolog implementations do ?
 Yes, in the sense that in NARS all sentences involving a term are referred in a concept named by the term.
   * Are there some stress tests for NARS?
-NO
+Yes

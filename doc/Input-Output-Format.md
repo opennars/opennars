@@ -1,33 +1,38 @@
-Narsese Grammar - I/O Format
-----------------------------
+> ### InputOutputFormat  
+> The input/output format of the system 
+
+***
+
+### I/O Format
 
 Each line in the system's input and output is either a task (as defined in the following grammar, in BNF notation), or an integer, indicating the number of inference steps between tasks.
 
 In a task, all the space characters are optional, and will be ignored by the system in processing.
 
-NOTE: Not all the constructs are implemented in the current version (1.5.5). The Narsese items for temporal inference (on time and tense) and procedural inference (on operation and goal) are removed from the code, and will be re-implemented. The explanation of these items are put in "()" to separate them from the implemented ones.
+### Narsese Grammar
 
-```java
-                       GRAMMAR RULE                          BRIEF EXPLANATION
+```
+                        GRAMMAR RULE                          BRIEF EXPLANATION
                <task> ::= [<budget>] <sentence>              // task to be processed
-           <sentence> ::= [<tense>] <statement>"." [<truth>] // judgment to be remembered
-                        | [<tense>] <statement>"?"           // question to be answered
-                        | <statement>"!" [<truth>]           // (goal to be realized)
+           <sentence> ::= <statement>"." [<tense>] [<truth>] // judgment to be remembered
+                        | <statement>"?" [<tense>]           // question to be answered
+                        | <statement>"@" [<tense>]           // question on desire value to be answered
+                        | <statement>"!" [<truth>]           // goal to be realized
           <statement> ::= "<"<term> <copula> <term>">"       // two terms related to each other
                         | <term>                             // a term can name a statement
-                        | "(^"<word> {","<term>} ")"         // (an operation to be executed)                         
+                        | "(^"<word> {","<term>} ")"         // an operation to be executed                         
              <copula> ::= "-->"                              // inheritance
                         | "<->"                              // similarity
                         | "{--"                              // instance
                         | "--]"                              // property
                         | "{-]"                              // instance-property
                         | "==>"                              // implication
-                        | "=/>"                              // (predictive implication)
-                        | "=|>"                              // (concurrent implication)
-                        | "=\>"                              // (retrospective implication)
+                        | "=/>"                              // predictive implication
+                        | "=|>"                              // concurrent implication
+                        | "=\>"                              // retrospective implication
                         | "<=>"                              // equivalence
-                        | "</>"                              // (predictive equivalence)
-                        | "<|>"                              // (concurrent equivalence)
+                        | "</>"                              // predictive equivalence
+                        | "<|>"                              // concurrent equivalence
                <term> ::= <word>                             // an atomic constant term
                         | <variable>                         // an atomic variable term
                         | <compound-term>                    // a term with internal structure
@@ -44,17 +49,43 @@ NOTE: Not all the constructs are implemented in the current version (1.5.5). The
                         | "(--," <term> ")"                  // negation
                         | "(||," <term> {","<term>} ")"      // disjunction
                         | "(&&," <term> {","<term>} ")"      // conjunction
-                        | "(&/," <term> {","<term>} ")"      // (sequential events)
-                        | "(&|," <term> {","<term>} ")"      // (parallel events)
+                        | "(&/," <term> {","<term>} ")"      // sequential events
+                        | "(&|," <term> {","<term>} ")"      // parallel events
            <variable> ::= "$"<word>                          // independent variable
                         | "#"[<word>]                        // dependent variable
                         | "?"[<word>]                        // query variable in question
-              <tense> ::= ":/:"                              // (future event)
-                        | ":|:"                              // (present event)
-                        | ":\:"                              // (past event)
+              <tense> ::= ":/:"                              // future event
+                        | ":|:"                              // present event
+                        | ":\:"                              // past event
               <truth> ::= "%"<frequency>[";"<confidence>]"%" // two numbers in [0,1]x(0,1)
              <budget> ::= "$"<priority>[";"<durability>]"$"  // two numbers in [0,1]x(0,1)
                <word> : Unicode string in an arbitrary alphabet
 ```
 
-From: https://code.google.com/p/open-nars/wiki/InputOutputFormat
+### Example Usage
+
+* Tim is dead.
+
+  `<{Tim} --> [dead]>.`
+
+* Tim is a human.
+
+  `<{Tim} --> human>.`
+
+* Humans are a lifeform.
+
+  `<human --> lifeform>.`
+
+* Lifeforms are like machines.
+
+  `<lifeform <-> machine>.`
+
+* Tom eats chocolate.
+  
+  ```
+  <(*,{Tom},chocolate) --> eat>.
+
+  <{Tom} --> (/,eat,_,chocolate)>.
+
+  <chocolate --> (/,eat,{Tom},_)>.
+  ```
