@@ -60,8 +60,8 @@ public class Anticipate extends Operator implements EventObserver, Mental {
             
     final Set<Term> newTasks = new LinkedHashSet();
     NAL nal;
-
-    final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+ 
+    final static TruthValue expiredTruth = new TruthValue(0.0f, Parameters.ANTICIPATION_CONFIDENCE);
     final static BudgetValue expiredBudget = new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY, Parameters.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
     
     public Anticipate() {

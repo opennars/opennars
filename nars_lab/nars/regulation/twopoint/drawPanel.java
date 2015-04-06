@@ -18,6 +18,7 @@ import nars.core.EventEmitter;
 import nars.core.Events.CycleEnd;
 import nars.core.Memory;
 import nars.core.NAR;
+import nars.core.NAR.PluginState;
 import nars.core.Parameters;
 import nars.core.build.Default;
 import nars.entity.Task;
@@ -26,6 +27,7 @@ import nars.io.TextOutput;
 import nars.language.Term;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.plugin.mental.InternalExperience;
  
 /**
  *
@@ -117,6 +119,15 @@ public class drawPanel extends JPanel {
  
         nar.addPlugin(new move());
         
+        int k=0;
+        for(PluginState s: nar.getPlugins()) {
+            if(s.plugin instanceof InternalExperience) {
+                nar.removePlugin(s);
+                break;
+            }
+            k++;
+        }
+        
         nar.on(CycleEnd.class, new EventEmitter.EventObserver() {
  
             @Override
@@ -182,20 +193,6 @@ public class drawPanel extends JPanel {
         g2d.fillOval(x, y, 10, 10);
         g2d.setColor(Color.red);
         g2d.fillOval(setpoint, y, 10, 10);
- 
-        /*for (int i = 0; i <= 1000; i++) {
-
-         Dimension size = getSize();
-         Insets insets = getInsets();
-
-         int w = size.width - insets.left - insets.right;
-         int h = size.height - insets.top - insets.bottom;
-
-         Random r = new Random();
-         int x = Math.abs(r.nextInt()) % w;
-         int y = Math.abs(r.nextInt()) % h;
-         g2d.drawLine(x, y, x, y);
-         }*/
     }
  
     @Override

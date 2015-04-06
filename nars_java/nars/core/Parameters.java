@@ -217,5 +217,7 @@ public class Parameters {
     
     public static double OPERATION_TRUTH_EXPECTATION_TRESHOLD=0.6f;
     
+    public static float ANTICIPATION_CONFIDENCE=0.95f;
+    
 }
 
