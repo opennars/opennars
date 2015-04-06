@@ -36,9 +36,7 @@ import nars.plugin.mental.InternalExperience;
  */
 public class drawPanel extends JPanel {
  
-    final int feedbackCycles = 50;
-    private long minCyclesPerMovement = 50;
-    private long lastMovementAt = -minCyclesPerMovement-1;
+    final int feedbackCycles = 100;
     
     int movement = 0;
     int lastMovement = 0;
@@ -51,13 +49,15 @@ public class drawPanel extends JPanel {
  
         @Override
         protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-            if (args.length == 2) { //left, self
-                
+
+            if (args.length == 2 || args.length==3) { //left, self
+                prevy.add(y);
+                prevx.add(x);
                 long now = nar.time();
-                if (now - lastMovementAt < minCyclesPerMovement) {
+               /* if (now - lastMovementAt < minCyclesPerMovement) {
                     moving();
                     return null;
-                }
+                }*/
                 
                 if (args[0].toString().equals("left")) {
                     x -= 10;
@@ -79,7 +79,7 @@ public class drawPanel extends JPanel {
                 }
                 
                 movement++;
-                lastMovementAt = now;
+               // lastMovementAt = now;
                 
             }
             return null;
@@ -107,16 +107,17 @@ public class drawPanel extends JPanel {
     }
  
     public void target(String direction) {
-        nar.addInput("<target --> " + direction + ">. :|:");
-        //nar.addInput("move(left)! :|:");       
+        nar.addInput("<target --> " + direction + ">. :|:");      
     }
     
     NAR nar;
  
     public drawPanel() {
+       // Parameters.TEMPORAL_INDUCTION_SAMPLES=0;
+     //   Parameters.DERIVATION_DURABILITY_LEAK=0.1f;
+       // Parameters.DERIVATION_PRIORITY_LEAK=0.1f;
         Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
         nar = new Default().build();
-        //nar.param.decisionThreshold.set(0.1f);
  
         nar.addPlugin(new move());
         
@@ -145,14 +146,9 @@ public class drawPanel extends JPanel {
                 if (hasMoved || nar.time() % feedbackCycles == 0) {
                     if (x == setpoint)
                         good();
-                    else
-                        bad();
                 }
                 
-                if (hasMoved) {
-                    
-                    beGoodNow();
- 
+                if(nar.time()%1000==0) {
                     if (x > setpoint)
                         target("left");                    
                     else if (x < setpoint)
@@ -161,6 +157,13 @@ public class drawPanel extends JPanel {
                         target("here");
                     
                 }
+                if(nar.time()%10000==0) {
+                    beGood();
+                }
+                
+               /* if (hasMoved) {
+                    
+                }*/
                 
                 repaint();
             }
@@ -168,26 +171,19 @@ public class drawPanel extends JPanel {
  
         NARSwing.themeInvert();
         new NARSwing(nar);
-        
-        
-        beGood();
  
         
-        train();
+        intialDesire();
  
     }
  
-    int setpoint = 80;
+    int setpoint = 230; //80 230
     int x = 160;
     int y = 10;
  
-    protected void train() {
-        //nar.addInput("move(left). :|: %0.00;0.99%");
-        // nar.addInput("move(right). :|: %0.00;0.99%");
-        
-        
-        long trainDelayCycles = minCyclesPerMovement * 2;
-        nar.addInput("move(left)! :|:\n"+trainDelayCycles+"\n" + "move(right)! :|:");
+    protected void intialDesire() {
+        nar.addInput("move(left)! :|: %1.00;0.65%");
+        nar.addInput("move(right)! :|: %1.00;0.65%");
     }
     
     List<Integer> prevx=new ArrayList<>();
@@ -206,7 +202,6 @@ public class drawPanel extends JPanel {
         
         g2d.fillRect(y, x, 10, 10);
         g2d.setColor(Color.red);
-        //g2d.fillOval(y, setpoint, 10, 10);
         g2d.drawLine(0, setpoint+5, 1000, setpoint+5);
     }
  
