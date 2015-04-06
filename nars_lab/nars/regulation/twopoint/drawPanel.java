@@ -11,6 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.swing.JPanel;
@@ -59,7 +60,7 @@ public class drawPanel extends JPanel {
                 }
                 
                 if (args[0].toString().equals("left")) {
-                    x -= 10;
+                    x -= 3;
                     if (x < setpoint) {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
@@ -68,7 +69,7 @@ public class drawPanel extends JPanel {
                     }
                 }
                 if (args[0].toString().equals("right")) {
-                    x += 10;
+                    x += 3;
                     if (x > setpoint) {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
@@ -107,15 +108,13 @@ public class drawPanel extends JPanel {
  
     public void target(String direction) {
         nar.addInput("<target --> " + direction + ">. :|:");
-        //nar.addInput("move(left)! :|:");       
     }
     
     NAR nar;
  
     public drawPanel() {
-        Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
+       // Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
         nar = new Default().build();
-        //nar.param.decisionThreshold.set(0.1f);
  
         nar.addPlugin(new move());
         
@@ -135,6 +134,12 @@ public class drawPanel extends JPanel {
                 boolean hasMoved = (movement != lastMovement);
                 lastMovement = movement;
  
+                if(nar.time()%100==0) {
+                    y+=1;
+                    prevy.add(y);
+                    prevx.add(x);
+                }
+                
                 if (hasMoved || nar.time() % feedbackCycles == 0) {
                     if (x == setpoint)
                         good();
@@ -173,12 +178,10 @@ public class drawPanel extends JPanel {
     int setpoint = 80;
     int x = 160;
     int y = 10;
- 
+    List<Integer> prevx=new ArrayList<>();
+    List<Integer> prevy=new ArrayList<>();
+    
     protected void train() {
-        //nar.addInput("move(left). :|: %0.00;0.99%");
-        // nar.addInput("move(right). :|: %0.00;0.99%");
-        
-        
         long trainDelayCycles = minCyclesPerMovement * 2;
         nar.addInput("move(left)! :|:\n" + trainDelayCycles + "\n" + "move(right)! :|:");
     }
@@ -190,9 +193,14 @@ public class drawPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
  
         g2d.setColor(Color.blue);
-        g2d.fillOval(x, y, 10, 10);
+        for(int i=0;i<prevx.size();i++) {
+            g2d.fillRect(prevy.get(i), prevx.get(i), 4, 4);
+        }
+        
+        g2d.fillRect(y, x, 4, 4);
         g2d.setColor(Color.red);
-        g2d.fillOval(setpoint, y, 10, 10);
+        //g2d.fillOval(y, setpoint, 10, 10);
+        g2d.drawLine(0, setpoint+5, 1000, setpoint+5);
     }
  
     @Override
