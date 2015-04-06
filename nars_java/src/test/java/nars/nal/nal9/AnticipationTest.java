@@ -1,10 +1,10 @@
 package nars.nal.nal9;
 
-import nars.prototype.Default;
 import nars.ProtoNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
+import nars.prototype.Default;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -31,8 +31,9 @@ public class AnticipationTest extends JavaNALTest {
 
     @Test //test the occurrence time feature of TaskCondition
     public void testOcurrenceTimeTesting()  throws InvalidInputException {
-        nar.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
+        //TextOutput.out(nar);
         nar.mustOutput(0, 50, "<a --> b>", '.', 0.00f, 1.00f, 0.0f, 1.0f, -55);
+        nar.believe("<a --> b>", Tense.Present, 1.0f, 0.9f);
         nar.run();
     }
 

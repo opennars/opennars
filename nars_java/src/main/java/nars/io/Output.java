@@ -24,8 +24,8 @@ public abstract class Output extends AbstractReaction {
             ImmediateOperation.class,
             Echo.class,
             Say.class,
-            Answer.class,
-            Events.PluginsChange.class
+            Answer.class
+            //Events.PluginsChange.class //this gets annoying
     };
             
     public Output(EventEmitter source, boolean active) {

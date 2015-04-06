@@ -245,7 +245,7 @@ public class LocalSimulator<K,N extends Node> implements Simulator<K,N>, java.io
                 } /*else if(myNode instanceof SocketUDPNode && ((SocketUDPNode)myNode).isReceiver()) {
                     myDeferredSocketNodes.add(myNode);
                     continue;
-                } else*/
+                }*/ else
                 {
                     myNode.run(startTime, endTime);
                 }
