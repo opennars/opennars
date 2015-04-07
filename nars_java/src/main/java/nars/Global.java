@@ -236,6 +236,7 @@ public class Global {
     public static final float TERMLINK_FORGETTING_ACCURACY = 0.2f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.2f;
     public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
+    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
 
     public static <X> List<X> newArrayList() {

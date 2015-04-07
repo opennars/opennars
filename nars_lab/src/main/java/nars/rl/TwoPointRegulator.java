@@ -50,9 +50,9 @@ public class TwoPointRegulator extends JPanel {
     //String self = "SELF";
     String reward = "reward";
     String target = "good";
-
-    //String goodness = "[good]";
     String goodness = "good";
+    //String goodness = "[good]";
+
 
     int movement = 0;
     int lastMovement = 0;
@@ -64,7 +64,7 @@ public class TwoPointRegulator extends JPanel {
     private boolean here;
 
     static int setpoint = 0; //80 230
-    float x = 20;
+    float x = 0;
 
     public class move extends Operator {
 
@@ -159,7 +159,7 @@ public class TwoPointRegulator extends JPanel {
 
     private String getTargetTerm(boolean left, boolean right, String... additional) {
 
-        String term = "(&&,";
+        String term = "(&|,";
         if (left)
             term += "<" + target + " --> left>";
         else

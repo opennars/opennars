@@ -48,14 +48,27 @@ public class NAL8Test extends JavaNALTest {
         //TextOutput.out(nar);
 
         nar.believe(condition, Tense.Present, 1.0f, 0.9f);
-        nar.goal("(&/,"+ condition + ',' + action + ")", 1.0f, 0.9f);
+        nar.goal("(&/," + condition + ',' + action + ")", 1.0f, 0.9f);
 
-        nar.mustDesire(100, action, 1.0f, 0.42f);
+        nar.mustDesire(40, action, 1.0f, 0.42f);
 
-        nar.mustOutput(1, 10, action, '.', 1f, 1f, 0.98f, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
+        nar.mustOutput(1, 10, action, '.', 1f, 1f, Global.OPERATOR_EXECUTION_CONFIDENCE, 1.00f, 0); // :|: %1.00;0.99%"); //TODO use an ExecuteCondition instance
 
 
-        nar.run(100);
+        nar.run(40);
+    }
+
+    @Test public void testGoalExecute0() {
+        /* 8.1.14
+        ********** [24 + 12 -> 25]
+        IN: <(*,SELF,{t002}) --> reachable>. :|:
+        IN: (&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))!
+                45
+        ''outputMustContain('(^pick,{t002},SELF)! %1.00;0.43%')
+        */
+
+
+        testGoalExecute("<a --> b>", "(^pick,c,SELF)");
     }
 
     @Test public void testGoalExecute1() {
