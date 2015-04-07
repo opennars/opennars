@@ -4,6 +4,8 @@
  */
 package nars.regulation.twopoint;
  
+//TODO: Integrate ideas from [23:39] <sseehh_> patham9,  here's code https://gist.github.com/automenta/569bd8694a789a5d9490 i'm done for now
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -113,10 +115,10 @@ public class drawPanel extends JPanel {
     NAR nar;
  
     public drawPanel() {
-        Parameters.TEMPORAL_INDUCTION_SAMPLES=0;
+     //   Parameters.TEMPORAL_INDUCTION_SAMPLES=0;
      //   Parameters.DERIVATION_DURABILITY_LEAK=0.1f;
        // Parameters.DERIVATION_PRIORITY_LEAK=0.1f;
-        Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
+       // Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF = false;
         nar = new Default().build();
  
         nar.addPlugin(new move());
