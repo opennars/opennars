@@ -173,13 +173,14 @@ public class drawPanel extends JPanel {
  
         NARSwing.themeInvert();
         new NARSwing(nar);
- 
+        nar.addInput("*volume=0");
+        nar.start(1);
         
         intialDesire();
  
     }
  
-    static int setpoint = 80; //80 230
+    static int setpoint = 220; //80 230
     int x = 160;
     int y = 10;
  
@@ -193,7 +194,7 @@ public class drawPanel extends JPanel {
     
     private void doDrawing(Graphics g) {
         
- 
+       
         //nar.step(10);
         Graphics2D g2d = (Graphics2D) g;
  
