@@ -27,7 +27,7 @@ public class twoPointRegulator extends javax.swing.JFrame implements KeyListener
     public twoPointRegulator() {
         initComponents();
         this.setTitle("Experience Predictive Control");
-        this.setSize(1400, 400);
+        this.setSize(700, 400);
         this.addKeyListener(this);
     }
 
