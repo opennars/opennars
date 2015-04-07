@@ -292,7 +292,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     public static <X extends Compound> X termOrNull(Term t) {
         if (invalidSentenceTerm(t))
             return null;
-        return (X)t;
+        return (X)t.normalized();
     }
 
     

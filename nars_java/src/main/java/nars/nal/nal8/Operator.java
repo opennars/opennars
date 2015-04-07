@@ -50,7 +50,7 @@ import java.util.List;
 public abstract class Operator extends Term implements IOperator {
 
     protected NAR nar;
-    public static final float executionConfidence = Global.MAX_CONFIDENCE;
+    public static final float executionConfidence = Global.DEFAULT_GOAL_CONFIDENCE; //Global.MAX_CONFIDENCE;
     
     //protected Operator() {   super();    }
     
@@ -177,7 +177,7 @@ public abstract class Operator extends Term implements IOperator {
                 t.setCause(op);
                 t.addHistory("Feedback");
 
-                memory.taskAdd(t);
+                memory.taskInput(t);
             }
         }
 

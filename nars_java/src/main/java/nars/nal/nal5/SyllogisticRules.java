@@ -173,15 +173,15 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    public static void analogy(Term subj, Term pred, Sentence asym, Sentence sym, int figure, NAL nal) {
+    public static boolean analogy(Term subj, Term pred, Sentence asym, Sentence sym, int figure, NAL nal) {
         if (Statement.invalidStatement(subj, pred)) {
-            return;
+            return false;
         }
         int order1 = asym.term.getTemporalOrder();
         int order2 = sym.term.getTemporalOrder();
         int order = analogyOrder(order1, order2, figure);
         if (order == ORDER_INVALID) {
-            return;
+            return false;
         } else if (figure < 20) {
             order = reverseOrder(order);
         }
@@ -193,12 +193,12 @@ public final class SyllogisticRules {
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
                 if(asym.truth==null) { //a question for example
-                    return;
+                    return false;
                 }
                 budget = BudgetFunctions.backwardWeak(asym.truth, nal);
             } else {
                 if(sym.truth==null) { //a question for example
-                    return;
+                    return false;
                 }
                 budget = BudgetFunctions.backward(sym.truth, nal);
             }
@@ -216,10 +216,14 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        nal.doublePremiseTask( Statement.make(st, subj, pred, order), truth, budget,
+        Compound statement = Sentence.termOrNull(Statement.make(st, subj, pred, order));
+        if (statement == null) return false;
+
+        nal.doublePremiseTask(statement, truth, budget,
                 nal.newStamp(asym, sym), false, true);
 
         nal.memory.logic.ANALOGY.hit();
+        return true;
     }
 
     /**

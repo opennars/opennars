@@ -236,7 +236,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
      * @return Whether the Task is derived from another task
      */
     public boolean isInput() {
-        return parentTask == null;
+        return parentTask == null && cause == null;
     }
     
 //    public boolean aboveThreshold() {

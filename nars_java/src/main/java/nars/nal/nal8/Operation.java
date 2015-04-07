@@ -23,6 +23,7 @@ package nars.nal.nal8;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.io.Symbols;
+import nars.nal.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -262,5 +263,11 @@ public class Operation extends Inheritance {
     /** returns a reference to the raw arguments as contained by the Product subject of this operation */
     public Term[] getArgumentsRaw() {
         return getArguments().term;
+    }
+
+    public float getDesire(Memory m) {
+        Concept c = m.concept(getTerm());
+        if (c == null) return 0;
+        return c.getDesire().getExpectation();
     }
 }

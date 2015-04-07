@@ -823,7 +823,8 @@ public class Memory implements Serializable {
 
         if (includeTaskLinks) {
             for (Concept c : concepts) {
-                c.taskLinks.forEach(tl -> { t.add(tl.targetTask); });
+                if (c.taskLinks!=null)
+                    c.taskLinks.forEach(tl -> { t.add(tl.targetTask); });
             }
         }
 
