@@ -145,7 +145,7 @@ public class Launcher extends javax.swing.JFrame {
 
         jButton1.setBackground(java.awt.Color.darkGray);
         jButton1.setForeground(new java.awt.Color(255, 255, 254));
-        jButton1.setText(" Run NARS");
+        jButton1.setText(" Run OpenNARS");
         jButton1.setActionCommand("jButton1");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
