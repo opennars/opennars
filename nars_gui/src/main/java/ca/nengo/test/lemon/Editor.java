@@ -212,12 +212,12 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         }
 
         private void updateMatchesBounds(){
-            if (root == null) return;
+            //if (root == null) return;//this shouldnt happen anymore
             root.accept(new Lang.MatchVisitor() {
                 @Override
                 public void visit(Lang.Match m) {
                     m.bounds = new PBounds();
-                    for (int i = m.node.getStartIndex(); i < m.node.getEndIndex(); i++) {
+                    for (int i = m.start; i < m.end; i++) {
                         Glyph g = text2glyphMap.get(i);
                         if (g != null)
                             m.bounds.add(g.bounds);
@@ -232,7 +232,7 @@ public class Editor extends DefaultNetwork implements UIBuilder {
         }
 
         private void paintMatches(Graphics2D g){
-            if (root == null) return;
+            //if (root == null) return;
             root.accept(new Lang.MatchVisitor() {
                 @Override
                 public void visit(Lang.Match m) {

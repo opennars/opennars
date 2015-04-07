@@ -8,11 +8,14 @@ import nars.NAR;
 import nars.io.narsese.NarseseParser;
 import nars.prototype.Default;
 import org.parboiled.Node;
+import org.parboiled.errors.InvalidInputError;
 import org.parboiled.errors.ParserRuntimeException;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
+import org.parboiled.support.MatcherPath;
 import org.parboiled.support.ParsingResult;
 import org.parboiled.trees.TreeNode;
+import org.piccolo2d.PNode;
 import org.piccolo2d.util.PBounds;
 
 import java.awt.*;
@@ -48,12 +51,34 @@ public class Lang {
         System.out.println(s);
     }
 
+    public class Feedback {
+        String message = "Hi, are you a bridge?";
+        int start;
+        int end;
+        public Feedback(){}
+    }
+    public class Error extends Feedback{
+        public Error(String message){
+            this.message = message;
+            this.start = -1;
+        };
+        public Error(String message, int start, int end){
+            this.message = message;
+            this.start = start;
+            this.end = end;
+        };
+    }
 
-    public class Match {
-        public Node node;
+    //public class xxx extends PNode..
+
+    public class Match { // turn these into piccolo pnodes
+        public Node ast;
         Color bgColor = new Color(255,0,255);
         PBounds bounds;
         int level;
+        int start = -1; // -1 indicates that it isnt related to any glyph in particular
+        int end = -1;
+        ArrayList<Feedback> feedback = new ArrayList<Feedback>();
 
         public void accept(MatchVisitor visitor, boolean depth_first){
             visitor.visit(this);
@@ -62,7 +87,12 @@ public class Lang {
         public Match(Node n){
             for (TreeNode<Node<Object>> p = n; p != null; p = p.getParent())
                 this.level++;
-            this.node = n;
+            this.ast = n;
+            if (ast != null)
+            {
+                start = n.getStartIndex();
+                end = n.getEndIndex();
+            }
             debug(" new " + this);
         }
 
@@ -71,7 +101,10 @@ public class Lang {
         }
 
         public void print(){
-            debug(this.node.getStartIndex() + "," + this.node.getEndIndex() + " "+this.getClass().getSimpleName() + ", value: " + this.node.getValue() + ", matcher: " + this.node.getMatcher());
+            String r = start + "," + end + " "+getClass().getSimpleName();
+            if (ast != null)
+                r += ", value: " + ast.getValue() + ", matcher: " + ast.getMatcher();
+            debug(r);
         }
 
         public Match node2widget(Node n) {
@@ -136,7 +169,7 @@ public class Lang {
 
     };
     public class MatchWithChildren extends Match {
-        public ArrayList<Match> items;
+        public ArrayList<Match> items = new ArrayList<Match>();
 
         public void accept(MatchVisitor visitor, boolean depth_first){
             if (!depth_first)
@@ -150,21 +183,24 @@ public class Lang {
 
         public MatchWithChildren(Node n){
             super(n);
-            items = children2list(n);
+            if (n != null)
+                items = children2list(n);
         }
 
         public Match collapsed(){
             ArrayList<Match> new_items = new ArrayList<Match>();
             for (Match i:items) {
                 Match c = i.collapsed();
-                if (i.node.getStartIndex() == this.node.getStartIndex() && i.node.getEndIndex() == this.node.getEndIndex()) {
+                if (i.start == start && i.end == end) { //? re -1's?
                     return c;
                 } else {
-                    if (i.node.getStartIndex() != i.node.getEndIndex())
+                    if (i.start != i.end)
                         new_items.add(c);
                 }
             }
-            return (getClass() == ListMatch.class) ? new ListMatch(node, new_items) : new Syntaxed(node, new_items);
+            return (getClass() == ListMatch.class) ?
+                    new ListMatch(ast, new_items) :
+                    new Syntaxed(ast, new_items);
         }
 
         public void print(){
@@ -206,7 +242,7 @@ public class Lang {
     public class Number extends Match {
         public Number(Node n){super(n);}
         public float getFloat(){
-            return (float)node.getValue();
+            return (float)ast.getValue();
         }
     };
 
@@ -226,16 +262,16 @@ public class Lang {
     public Match text2match(String text)
     {
 
-        ParseRunner rpr = new RecoveringParseRunner(p.Input());
+        RecoveringParseRunner rpr = new RecoveringParseRunner(p.Input());
 
         System.out.println("parsing:\"" + text + "\"");
 
-        Match w = null;
+        Match w = new ListMatch(null);;
 
         try {
 
             ParsingResult r = rpr.run(text);
-            p.printDebugResultInfo(r);
+            //p.printDebugResultInfo(r);
 
             Node root = r.getParseTree();
             //Object x = root.getValue();
@@ -247,24 +283,48 @@ public class Lang {
             System.out.println("Node n: " + n);
             w = new ListMatch(n);
             System.out.println();
-            System.out.println("Match w: " + w);
-            System.out.println();
-            w.print();
-            System.out.println();
-            System.out.println("collapse:");
-            System.out.println();
-            w = w.collapsed();
-            System.out.println();
-            System.out.println("collapsed:");
-            w.print();
-            System.out.println();
-            System.out.println("done text2match.");
-            System.out.println();
         }
         catch (ParserRuntimeException e) {
             e.printStackTrace();
             System.out.println("so yeah, that didnt parse.");
+            w.feedback.add(new Error(e.toString()));
         }
+
+        System.out.println();
+
+        if (!rpr.getParseErrors().isEmpty()){
+            System.out.println("errors.");
+            for (Object e : rpr.getParseErrors()) {
+
+                if (e instanceof InvalidInputError) {
+                    InvalidInputError iie = (InvalidInputError) e;
+                    String msg = (iie.getClass().getSimpleName() + ": " + iie.getErrorMessage() + "\n");
+                    msg += (" at: " + iie.getStartIndex() + " to " + iie.getEndIndex()  + "\n");
+                    for (MatcherPath m : iie.getFailedMatchers())
+                        msg += ("  ?-> " + m + '\n');
+                    w.feedback.add(new Error(msg, iie.getStartIndex(),iie.getEndIndex()));
+                    System.out.println(msg);
+                } else {
+                    w.feedback.add(new Error(e.toString()));
+                    System.out.println(e.toString());
+                }
+            }
+        }
+        System.out.println();
+        System.out.println("Match w: " + w);
+        System.out.println();
+        w.print();
+        System.out.println();
+        System.out.println("collapse:");
+        System.out.println();
+        w = w.collapsed();
+        System.out.println();
+        System.out.println("collapsed:");
+        w.print();
+        System.out.println();
+        System.out.println("done text2match.");
+        System.out.println();
+
         return w;
     }
 }
