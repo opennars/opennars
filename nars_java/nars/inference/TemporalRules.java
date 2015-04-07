@@ -491,7 +491,7 @@ public class TemporalRules {
     }
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+        if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
             if(task.sentence.term instanceof Implication) {
                 boolean valid=false;
                 if(task.sentence.term instanceof Implication) {

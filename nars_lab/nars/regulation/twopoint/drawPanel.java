@@ -184,8 +184,8 @@ public class drawPanel extends JPanel {
     int y = 10;
  
     protected void intialDesire() {
-        nar.addInput("move(left)! :|: %1.00;0.65%");
-        nar.addInput("move(right)! :|: %1.00;0.65%");
+        nar.addInput("move(left)! :|: %1.00;0.50%");
+        nar.addInput("move(right)! :|: %1.00;0.50%");
     }
     
     List<Integer> prevx=new ArrayList<>();
