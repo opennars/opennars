@@ -191,13 +191,14 @@ public class Parameters {
     
     public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
     
-    public static int TEMPORAL_INDUCTION_SAMPLES = 0; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
+    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
     
     public static float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
     public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
-    public static float CURIOSITY_PRIORITY_THRESHOLD=0.5f; //0.3f in 1.6.3
+    public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
+    public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
     public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
     public static float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
     public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
@@ -214,8 +215,6 @@ public class Parameters {
     public static boolean BREAK_NAL_HOL_BOUNDARY=true;
     
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
-    
-    public static double OPERATION_TRUTH_EXPECTATION_TRESHOLD=0.6f;
     
     public static float ANTICIPATION_CONFIDENCE=0.95f;
     

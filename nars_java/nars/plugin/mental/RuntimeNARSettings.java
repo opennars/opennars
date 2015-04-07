@@ -107,6 +107,13 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.CURIOSITY_DESIRE_DURABILITY_MUL=(float) val;
     }
     
+    public double getCuriosityBusinessThreshold() {
+        return Parameters.CURIOSITY_BUSINESS_THRESHOLD;
+    }
+    public void setCuriosityBusinessThreshold(double val) {
+        Parameters.CURIOSITY_BUSINESS_THRESHOLD=(float) val;
+    }
+    
     public boolean isCuriosityForOperatorOnly() {
         return Parameters.CURIOSITY_FOR_OPERATOR_ONLY;
     }
