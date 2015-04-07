@@ -37,7 +37,11 @@ public class KeyboardHandler extends PBasicInputEventHandler implements Destroya
 	@Override
 	public void keyReleased(PInputEvent event) {
 		if (!event.isShiftDown()) {
-			UIEnvironment.getInstance().getUniverse().setSelectionMode(false);
+			try {
+				UIEnvironment.getInstance().getUniverse().setSelectionMode(false);
+			}
+			  catch (NullPointerException e) {System.err.println("isShiftDown #HACK: " + e);}
+
 		}
 		super.keyReleased(event);
 	}

@@ -52,8 +52,9 @@ public class NengrowPanel extends Nengrow {
 
     public void add(Object... x) {
         for (Object n : x) {
+            System.out.println("NengrowPanel.add #HACK: adding"+x);
             if (n instanceof Editor) {
-                Editor mesh = (Editor)n; //problem?
+                Editor mesh = (Editor)n;
                 try {
                     addNodeModel(mesh.newUIWindow(1600, 800, true, false, true), null, null );
                     addNodeModel(mesh);
@@ -61,7 +62,7 @@ public class NengrowPanel extends Nengrow {
                     e.printStackTrace();
                 }
             }
-            if (n instanceof TestCharMesh.CharMeshEdit) {
+            else if (n instanceof TestCharMesh.CharMeshEdit) {
                 TestCharMesh.CharMeshEdit mesh = (TestCharMesh.CharMeshEdit)n;
                 try {
                     addNodeModel(mesh.newUIWindow(600, 400, true, false, true), null, null );
