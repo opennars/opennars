@@ -1,0 +1,19 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package jurls.examples.approximation;
+
+import java.awt.Color;
+
+/**
+ *
+ * @author thorsten
+ */
+public interface RenderFunction2D {
+
+    public double compute(double x, double y);
+
+    public Color getColor();
+}

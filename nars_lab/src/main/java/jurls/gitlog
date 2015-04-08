@@ -1,0 +1,83 @@
+commit 52656aa8be3af8dc8381fdc8b932d78b6b82d135
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Wed Mar 11 19:26:53 2015 +0100
+
+    new epsilon computation complete now
+
+commit ae6a785677db4bc0f0c5f65e8c13846f6c77b3d6
+Author: thorsten <thorsten@thorsten-System-Product-Name>
+Date:   Wed Mar 11 14:42:04 2015 +0100
+
+    new epsilon computation, still a todo
+
+commit 772eae45c6b7dd1ab8d9af6f1d72d6d13134aa1b
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Tue Mar 3 01:16:08 2015 +0100
+
+    added wavelets
+
+commit 755efc4f866b12a814043ffa444bcb29bb2a8b49
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Mon Mar 2 12:25:22 2015 +0100
+
+    update
+
+commit 96c7add50ccf72353a4d2f446afef07bc25460fa
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Mon Mar 2 12:14:34 2015 +0100
+
+    update
+
+commit 37f38f916b2daae16f680a3240bd0643a967c7e5
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Mon Mar 2 11:39:56 2015 +0100
+
+    tweaks, nn speedup
+
+commit f1999780d7f74fb340105174d12f0c213d6aab80
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 23:47:00 2015 +0100
+
+    update
+
+commit 3542fa2da480e346ecea810babd2fe460561233e
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 21:07:19 2015 +0100
+
+    tweaks again
+
+commit 8c4117380d95885c466277fcced4f4b3bd0a1740
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 20:44:42 2015 +0100
+
+    tweaks q lambda worked after 20k steps
+
+commit a1ca06a01042ba61c24cfeb411f2a9e728ceb319
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 12:30:39 2015 +0100
+
+    tweaks
+
+commit 0864be0a204c2351cc8b8671142a034969961840
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 10:17:39 2015 +0100
+
+    better debug string
+
+commit 1cf934a93d311402a83793f44d0ca662f69b15a0
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 08:52:28 2015 +0100
+
+    recursive, stackable brain
+
+commit b4cb1b1d4da86a8b6e79f42e71181bb9c304107c
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Sat Feb 28 07:34:40 2015 +0100
+
+    removing some libs, cleanup on frame disposal
+
+commit 77dbbd99e13892dc2a73ed6b51c6ba4ef307caff
+Author: Thorsten Kiefer <info@edv-rt.de>
+Date:   Fri Feb 27 14:50:45 2015 +0100
+
+    major update

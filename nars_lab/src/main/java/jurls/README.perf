@@ -1,0 +1,68 @@
+
+CPU/GPU Supercompilation
+------------------------
+ * OpenCL
+   * JOCL
+ * Graal
+   * https://github.com/rjsingh/graal
+   * https://github.com/rjsingh/graal/tree/master/graal/com.edinburgh.parallel.opencl/src/com/edinburgh/parallel/opencl 
+ * Aparapi
+ * Aeminium
+   * https://github.com/AEminium/AeminiumGPUCompiler
+ * Procyon
+   * https://bitbucket.org/mstrobel/procyon/wiki/Expressions%20Framework
+
+
+Improving Inline Performance (at RAM expense)
+---------------
+-XX:InlineSmallCode=256 -XX:MaxInlineSize=256 -XX:MaxTrivialSize=256
+
+
+Log compilation and inlining of JuRLs methods:
+------------
+-XX:+UnlockDiagnosticVMOptions -XX:InlineSmallCode=256 -XX:MaxInlineSize=256 -XX:MaxTrivialSize=64 -XX:CompileCommand="log,jurls.*" -XX:CompileCommand="print,jurls.*"  -XX:+LogCompilation -XX:LogFile="/tmp/hotspot"
+
+**Example Compilation / Inlining report (saved in /tmp/hotspot)**
+
+```
+<task compile_id='1089' method='jurls/core/approximation/Sum value ()D' bytes='45' count='23949' backedge_count='67087' iicount='23950' level='2' stamp='9.758'>
+<task_done success='1' nmsize='552' count='24190' backedge_count='67764' stamp='9.759'/>
+</task>
+<task compile_id='1092' method='jurls/core/approximation/Sum partialDerive (Ljurls/core/approximation/Scalar;)D' bytes='49' count='6023' backedge_count='17194' iicount='6023' level='2' stamp='9.759'>
+<task compile_id='1095' method='jurls/core/approximation/Product value ()D' bytes='30' count='25583' iicount='25583' stamp='9.760'>
+<task_done success='1' nmsize='568' count='32303' inlined_bytes='20' stamp='9.764'/>
+</task>
+<task compile_id='1101' method='jurls/core/approximation/Product partialDerive (Ljurls/core/approximation/Scalar;)D' bytes='77' count='15936' iicount='15937' stamp='9.775'>
+<task_done success='1' nmsize='1176' count='37995' inlined_bytes='20' stamp='9.783'/>
+</task>
+<task compile_id='1107' method='jurls/core/approximation/CosineScaled partialDerive (Ljurls/core/approximation/Scalar;)D' bytes='42' count='7205' iicount='7206' stamp='9.790'>
+<task_done success='1' nmsize='744' count='9396' inlined_bytes='62' stamp='9.794'/>
+</task>
+<task compile_id='1238' method='jurls/core/approximation/DiffableFunctionMarshaller parameterGradient ([D)Lorg/apache/commons/math3/linear/ArrayRealVector;' bytes='64' count='401' backedge_count='69647' iicount='401' stamp='10.942'>
+<task_done success='1' nmsize='1560' count='406' backedge_count='70586' inlined_bytes='96' stamp='10.957'/>
+</task>
+<task compile_id='1259' method='jurls/core/approximation/DiffableFunctionMarshaller addToParameters (Lorg/apache/commons/math3/linear/ArrayRealVector;)V' bytes='35' count='448' backedge_count='77953' iicount='448' stamp='11.078'>
+<task_done success='1' nmsize='472' count='449' backedge_count='78127' inlined_bytes='16' stamp='11.085'/>
+
+```
+
+
+
+Reference:
+----------
+-XX:InlineSmallCode=n	Inline a previously compiled method only if its generated native code size is less than this. The default value varies with the platform on which the JVM is running.
+-XX:MaxInlineSize=35	Maximum bytecode size of a method to be inlined.
+-XX:FreqInlineSize=n	Maximum bytecode size of a frequently executed method to be inlined. The default value varies with the platform on which the JVM is running.
+-XX:MaxTrivialSize=size
+Sets the maximum bytecode size (in bytes) of a trivial method to be inlined. Append the letter k or K to indicate kilobytes, m or M to indicate megabytes, g or G to indicate gigabytes. By default, the maximum bytecode size of a trivial method is set to 6 bytes: -XX:MaxTrivialSize=6
+
+-XX:+LogCompilation
+Enables logging of compilation activity to a file named hotspot.log in the current working directory. You can specify a different log file path and name using the -XX:LogFile option.
+
+
+-XX:+PrintInlining
+Enables printing of inlining decisions. This enables you to see which methods are getting inlined.
+
+By default, this option is disabled and inlining information is not printed. The -XX:+PrintInlining option has to be used together with the -XX:+UnlockDiagnosticVMOptions option that unlocks diagnostic JVM options.
+
+

@@ -1,0 +1,237 @@
+/*
+ * Copyright (c) 2009-2013, Peter Abeles. All Rights Reserved.
+ *
+ * This file is part of Efficient Java Matrix Library (EJML).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package jurls.core.utils;
+
+import jurls.core.approximation.ParameterizedFunction;
+import jurls.core.brain.NeuroMap;
+import jurls.core.brain.NeuroMap.InputOutput;
+import org.apache.commons.math3.linear.RealMatrix;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+/**
+ * Renders a matrix as an image. Positive elements are shades of red, negative
+ * shades of blue, 0 is black.
+ *
+ * @author Peter Abeles
+ */
+public class MatrixImage extends JPanel {
+
+    BufferedImage image;
+    private double maxValue;
+    private double minValue;
+
+    public MatrixImage(int width, int height) {
+        super();
+        setPreferredSize(new Dimension(width, height));
+        setMinimumSize(new Dimension(width, height));
+
+    }
+
+    public int val2col(final double n, final double min, final double max) {
+        final double mean = (max + min) / 2.0;
+        final double n5 = min + 2.0 * (max - min) / 3.0;
+        int r;
+        if (n < mean) {
+            r = (int) (255.0 * (min - n) / (mean - min)) + 255;
+        } else {
+            r = 0;
+        }
+        if (r < 0) {
+            r = 0;
+        }
+        if (r > 255) {
+            r = 255;
+        }
+        int g;
+        if (n < mean) {
+            g = (int) (255.0 * (n - min) / (mean - min));
+        } else if (n < n5) {
+            g = 255;
+        } else {
+            g = (int) (255.0 * (n5 - n) / (max - n5)) + 255;
+        }
+        if (g < 0) {
+            g = 0;
+        }
+        if (g > 255) {
+            g = 255;
+        }
+        int b;
+        if (n < mean) {
+            b = 0;
+        } else if (n < n5) {
+            b = (int) (255.0 * (n - mean) / (n5 - mean));
+        } else {
+            b = 255;
+        }
+        if (b < 0) {
+            b = 0;
+        }
+        if (b > 255) {
+            b = 255;
+        }
+
+        return b << 16 | g << 8 | r;
+    }
+
+    public int getColorRedBlue(double value) {
+        if (value == 0) {
+            return 255 << 24;
+        } else if (value > 0) {
+            int p = 255 - (int) (255.0 * (value - minValue) / (maxValue - minValue));
+            return 255 << 24 | 255 << 16 | p << 8 | p;
+        } else {
+            int p = 255 + (int) (255.0 * (value - minValue) / (maxValue - minValue));
+            return 255 << 24 | p << 16 | p << 8 | 255;
+        }
+
+    }
+
+    private int getColor(double value) {
+        return val2col(value, -1, 1);
+    }
+
+    public interface Data2D {
+
+        public double getValue(int x, int y);
+    }
+
+    public void draw(final double[] v, double minValue, double maxValue, boolean vertical) {
+        int w, h;
+        if (vertical) {
+            w = 1;
+            h = v.length;
+        } else {
+            w = v.length;
+            h = 1;
+        }
+
+        draw(new Data2D() {
+            @Override
+            public double getValue(int x, int y) {
+                return v[x + y];
+            }
+        }, w, h, minValue, maxValue);
+    }
+
+    public void draw(ParameterizedFunction f) {
+        int numParam = f.numberOfParameters();
+        final int cw = (int) Math.ceil(Math.sqrt(numParam));
+        final int ch = numParam / cw;
+        draw(new Data2D() {
+
+            @Override
+            public double getValue(int x, int y) {
+                int i = y * ch + x;
+                if (i < numParam) {
+                    return f.getParameter(i);
+                }
+                return 0;
+            }
+
+        }, cw, ch, -1.0, 1.0);
+
+    }
+
+    public void draw(final RealMatrix M, double minValue, double maxValue) {
+        draw(new Data2D() {
+
+            @Override
+            public double getValue(int x, int y) {
+                return M.getEntry(x, y);
+            }
+
+        }, M.getColumnDimension(), M.getRowDimension(), minValue, maxValue);
+    }
+
+    /* todo move these variables to a subclass specifically for visualizing neuromap */
+    InputOutput io = null;
+    int lx = -1, ly = -1;
+    int row = 0;
+
+    public void draw(final NeuroMap m, double minValue, double maxValue, int maxRows) {
+
+        int entries = Math.min(maxRows, m.getCapacity());
+        int row = m.getIndex() - entries;
+
+        draw(new Data2D() {
+
+            double[] input, output; //cache for speed
+
+            @Override
+            public double getValue(int y, int x) {
+
+                if (y != ly) {
+                    io = m.memory[y + row];
+                    input = io.input;
+                    output = io.output;
+                }
+
+                ly = y;
+                lx = x;
+
+                if ((io != null) && (input != null) && (output != null)) {
+                    final int ioil = input.length;
+                    if (lx < ioil) {
+                        return input[lx];
+                    } else {
+                        lx -= ioil;
+                        if (lx < output.length) {
+                            return output[lx];
+                        }
+                    }
+                }
+                return 0;
+            }
+
+        }, (m.getDimensions(true, true)), entries, minValue, maxValue);
+    }
+
+    public void draw(final Data2D d, int cw, int ch, double minValue, double maxValue) {
+
+        if (image == null || image.getWidth() != cw || image.getHeight() != ch) {
+            image = new BufferedImage(cw, ch, BufferedImage.TYPE_INT_RGB);
+        }
+
+        this.minValue = minValue;
+        this.maxValue = maxValue;
+
+        final int w = image.getWidth();
+        final int h = image.getHeight();
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                final double value = d.getValue(i, j);
+                image.setRGB(j, i, getColor(value));
+            }
+        }
+
+        repaint();
+    }
+
+    @Override
+    public void paint(Graphics g) {
+
+        g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+
+    }
+
+}
