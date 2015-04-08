@@ -6,6 +6,7 @@
 
 package raytracer.objects;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.basic.Ray;
 import raytracer.basic.Transformation;
 import raytracer.effects.NormalEffect;
@@ -14,7 +15,6 @@ import raytracer.exception.LinearlyDependentException;
 import raytracer.shader.Shader;
 import raytracer.util.BoundingField;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector3d;
 import java.io.IOException;
 import java.util.Collection;
@@ -159,7 +159,7 @@ public class OffObject extends SceneObject
      * @throws raytracer.exception.InvalidFormatException
      */
     private void loadOffFile(String fileName)
-    throws IOException, InvalidFormatException
+    throws InvalidFormatException
     {
         // Datei �ffnen:
         Scanner scanner = new Scanner(getClass().getClassLoader().getResourceAsStream(fileName));

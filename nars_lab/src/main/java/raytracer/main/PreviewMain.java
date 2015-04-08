@@ -4,12 +4,12 @@ import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.*;
+import com.jogamp.opengl.awt.GLJPanel;
+import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
 import raytracer.basic.BowlingScene;
 
-import javax.media.opengl.*;
-import javax.media.opengl.awt.GLJPanel;
-import javax.media.opengl.glu.GLU;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 import java.awt.*;

@@ -1,6 +1,7 @@
 package raytracer.effects;
 
 import raytracer.util.Noise;
+
 import javax.vecmath.Vector3d;
 
 /**

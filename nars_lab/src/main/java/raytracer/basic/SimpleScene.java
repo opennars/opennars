@@ -10,7 +10,7 @@
 //import SceneObject;
 //import java.util.Iterator;
 //import java.util.Vector;
-//import javax.media.opengl.GLAutoDrawable;
+//
 //
 ///**
 // * Eine <code>SimpleScene</code> verwaltet alle Szenen-Objekte separat und ist

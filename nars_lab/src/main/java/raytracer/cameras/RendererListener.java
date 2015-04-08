@@ -23,12 +23,12 @@ public interface RendererListener extends EventListener
      * 
      * @param event <code>RendererEvent</code>-Objekt zum aufgetretenen Ereignis.
      */
-    public void renderUpdate(RendererEvent event);
+    void renderUpdate(RendererEvent event);
     
     /**
      * Wird aufgerufen, sobald das Rendern abgeschlossen ist.
      * 
      * @param event <code>RendererEvent</code>-Objekt zum aufgetretenen Ereignis.
      */
-    public void renderFinished(RendererEvent event);
+    void renderFinished(RendererEvent event);
 }

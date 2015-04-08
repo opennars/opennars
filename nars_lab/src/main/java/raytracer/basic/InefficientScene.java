@@ -12,7 +12,7 @@
 //import SceneObjectCollection;
 //import java.util.Iterator;
 //import java.util.Vector;
-//import javax.media.opengl.GLAutoDrawable;
+//
 //
 ///**
 // * Diese Implementierung der Szene ist ineffizient.

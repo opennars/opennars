@@ -6,6 +6,9 @@
 
 package raytracer.objects;
 
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.basic.Ray;
 import raytracer.basic.RaytracerConstants;
 import raytracer.basic.Transformation;
@@ -13,9 +16,6 @@ import raytracer.exception.LinearlyDependentException;
 import raytracer.shader.Shader;
 import raytracer.util.FloatingPoint;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.util.Collection;

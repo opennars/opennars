@@ -6,6 +6,7 @@
 
 package raytracer.objects;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.basic.Ray;
 import raytracer.basic.Transformation;
 import raytracer.effects.NormalEffect;
@@ -14,7 +15,6 @@ import raytracer.exception.LinearlyDependentException;
 import raytracer.shader.Shader;
 import raytracer.util.BoundingField;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.io.BufferedInputStream;
@@ -211,7 +211,7 @@ public class PlyObject extends SceneObject
      * @throws raytracer.exception.InvalidFormatException
      */
     private void loadPlyFile(String fileName, boolean smoothNormals)
-    throws IOException, InvalidFormatException
+    throws InvalidFormatException
     {
         // Datei �ffnen:
         Scanner scanner = new Scanner(new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(fileName)));

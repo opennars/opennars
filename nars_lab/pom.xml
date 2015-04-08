@@ -48,6 +48,13 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>2.7.8</version>
+        </dependency>
+
+
         <!--
         <dependency>
             <groupId>org.clojure</groupId>
@@ -121,12 +128,12 @@
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
-            <version>2.2.4</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-main</artifactId>
-            <version>2.2.4</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sociaal</groupId>
@@ -137,7 +144,7 @@
         <dependency>
             <groupId>gov.nasa</groupId>
             <artifactId>worldwind</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.0-986</version>
         </dependency>
         <dependency>
             <groupId>gov.nasa</groupId>

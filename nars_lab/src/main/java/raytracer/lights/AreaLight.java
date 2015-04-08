@@ -6,12 +6,12 @@
 
 package raytracer.lights;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.basic.*;
 import raytracer.objects.Shape;
 import raytracer.objects.Triangle;
 import raytracer.shader.Shader;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector3d;
 import java.util.Collection;
 

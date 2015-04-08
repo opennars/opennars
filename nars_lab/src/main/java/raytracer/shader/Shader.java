@@ -4,7 +4,7 @@ import raytracer.basic.ColorEx;
 import raytracer.basic.Intersection;
 
 /**
- * Ein Shader liefert Informationen über die Farbe eines Objekts zu einem
+ * Ein Shader liefert Informationen ï¿½ber die Farbe eines Objekts zu einem
  * darauf geschossenen Strahl.
  * 
  * @author Mathias Kosch
@@ -17,8 +17,8 @@ public interface Shader
      * Ermittelt den Farbwert zu einem Schnittpunkt mit dem Strahl in einem
      * <code>Intersection</code>-Objekt.
      * 
-     * @param intersection Informationen über den Schnitt.
+     * @param intersection Informationen ï¿½ber den Schnitt.
      * @return Farbwert am Schnittpunkt mit dem Strahl.
      */
-	public ColorEx shade(Intersection intersection);
+    ColorEx shade(Intersection intersection);
 }

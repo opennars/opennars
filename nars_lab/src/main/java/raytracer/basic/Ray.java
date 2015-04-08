@@ -10,8 +10,9 @@
 package raytracer.basic;
 
 import raytracer.objects.Shape;
-import java.util.Stack;
+
 import javax.vecmath.Vector3d;
+import java.util.Stack;
 
 /**
  * Strahlen werden in einer Szene umher geschossen, um Farbinformationen

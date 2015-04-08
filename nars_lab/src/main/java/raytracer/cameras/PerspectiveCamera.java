@@ -14,6 +14,7 @@ package raytracer.cameras;
 
 import raytracer.basic.ColorEx;
 import raytracer.basic.Ray;
+
 import javax.vecmath.Vector3d;
 
 /**

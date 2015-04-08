@@ -3,6 +3,7 @@
 package raytracer.basic;
 
 import raytracer.objects.Shape;
+
 import javax.vecmath.Vector3d;
 
 /**

@@ -6,12 +6,8 @@
 
 package raytracer.util;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Vector;
 import javax.vecmath.Vector3d;
+import java.util.*;
 
 /**
  * Umschlie�ende K�rper werden benutzt, um die Dimensionen einer Menge von

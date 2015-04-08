@@ -6,11 +6,11 @@
 
 package raytracer.shader;
 
-import javax.vecmath.Vector3d;
-
 import raytracer.basic.ColorEx;
 import raytracer.basic.Intersection;
 import raytracer.util.Noise;
+
+import javax.vecmath.Vector3d;
 
 /**
  * Dieser Shader liefert einen festgelegten (monotonen) Farbwert zur�ck.

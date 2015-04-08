@@ -14,12 +14,12 @@
 
 package raytracer.objects;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import org.apache.commons.math3.util.FastMath;
 import raytracer.basic.Ray;
 import raytracer.basic.Transformation;
 import raytracer.util.FloatingPoint;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import java.util.*;

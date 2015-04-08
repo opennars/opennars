@@ -6,8 +6,8 @@
 
 package raytracer.objects;
 
-import java.util.Collection;
 import javax.vecmath.Vector3d;
+import java.util.Collection;
 
 /**
  * Eine <code>SceneObjectCollection</code> ist eine Sammlung vom Szenen-Objekten,

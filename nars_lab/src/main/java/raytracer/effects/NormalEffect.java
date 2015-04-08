@@ -4,7 +4,7 @@ import javax.vecmath.Vector3d;
 
 /**
  * Effekte auf den Normalenvektoren erzeugen den Eindruck von
- * Oberflächenstrukturen.
+ * Oberflï¿½chenstrukturen.
  * 
  * @author Mathias Kosch
  *
@@ -12,11 +12,11 @@ import javax.vecmath.Vector3d;
 public interface NormalEffect
 {
     /**
-     * Verändert einen Normalenvektor anhand eines bestimmten Effekts.
+     * Verï¿½ndert einen Normalenvektor anhand eines bestimmten Effekts.
      * 
      * @param normal Normalenvektor, der angepasst wird.
      * @param point Punkt, von dem der 
      * Normalenvektor ausgeht.
      */
-    public void adjustNormal(Vector3d normal, Vector3d point);
+    void adjustNormal(Vector3d normal, Vector3d point);
 }

@@ -6,10 +6,10 @@
 
 package raytracer.basic;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.lights.Light;
 import raytracer.objects.SceneObject;
 
-import javax.media.opengl.GLAutoDrawable;
 import java.util.Collection;
 import java.util.List;
 

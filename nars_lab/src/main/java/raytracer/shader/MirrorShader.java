@@ -9,6 +9,7 @@ package raytracer.shader;
 import raytracer.basic.ColorEx;
 import raytracer.basic.Intersection;
 import raytracer.basic.Ray;
+
 import javax.vecmath.Vector3d;
 
 /**

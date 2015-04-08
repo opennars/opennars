@@ -190,7 +190,7 @@ implements RendererListener, WindowListener, ComponentListener, ActionListener
 
                     Vector3d delta = new Vector3d(e.getX() - dragStartX, e.getY() - dragStartY, 0);
                     delta.scale(0.0005);
-                    f.org.add( delta );
+                    FirstCamera.org.add(delta);
 
                     dragStartX = e.getX();
                     dragStartY = e.getY();

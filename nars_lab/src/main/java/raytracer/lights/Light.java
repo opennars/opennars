@@ -9,6 +9,7 @@ package raytracer.lights;
 import raytracer.basic.ColorEx;
 import raytracer.basic.Ray;
 import raytracer.objects.SceneObject;
+
 import javax.vecmath.Vector3d;
 
 /**

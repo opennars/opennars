@@ -6,11 +6,11 @@
 
 package raytracer.objects;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.basic.Transformation;
 import raytracer.effects.NormalEffect;
 import raytracer.shader.Shader;
 
-import javax.media.opengl.GLAutoDrawable;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.util.Collection;

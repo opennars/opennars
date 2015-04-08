@@ -6,14 +6,15 @@
 
 package raytracer.lights;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import raytracer.basic.ColorEx;
 import raytracer.basic.Ray;
 import raytracer.basic.RaytracerConstants;
 import raytracer.basic.Transformation;
 import raytracer.objects.Shape;
-import java.util.Collection;
+
 import javax.vecmath.Vector3d;
-import javax.media.opengl.GLAutoDrawable;
+import java.util.Collection;
 
 /**
  * Dieses Licht ist punktf�rmig und nicht in der Szene sichtbar.

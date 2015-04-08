@@ -4,8 +4,6 @@ import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.ui.NengrowPanel;
-import ca.nengo.ui.model.math.JuRLsFunctionApproximator;
-import ca.nengo.ui.model.plot.FunctionPlot;
 import ca.nengo.ui.model.widget.SliderNode;
 
 
@@ -15,8 +13,8 @@ public class TestFunctionPlot {
         NetworkImpl network = new DefaultNetwork("Function Approximation");
 
         network.addNode( new SliderNode("Detail Level", 8f, 3, 24f));
-        network.addNode(new JuRLsFunctionApproximator("Fourier Approximator Test"));
-        network.addNode(new FunctionPlot("Function Plot"));
+        //network.addNode(new JuRLsFunctionApproximator("Fourier Approximator Test"));
+        //network.addNode(new FunctionPlot("Function Plot"));
         return network;
     }
 
