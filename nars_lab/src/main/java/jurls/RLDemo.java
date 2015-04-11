@@ -84,10 +84,10 @@ public class RLDemo extends javax.swing.JFrame {
 
     final int updatePeriodMS = 0;
     private int numIterationsPerLoop = 1;
-    private final ApproxParameters approxParameters = new ApproxParameters(0, 0.9);
-    private final RLParameters rLParameters = new RLParameters(0, 0.9, 0.9, 0);
+    private final ApproxParameters approxParameters = new ApproxParameters(0.01, 0.1);
+    private final RLParameters rLParameters = new RLParameters(0.01, 0.9, 0.9, 0);
     private int numPhysicsIterations = 0;
-    private final AgentMenu agentMenu = new AgentMenu("", 2);
+    private final AgentMenu agentMenu = new AgentMenu("", 1);
     private final DomainMenu domainMenu = new DomainMenu();
     private final ObjectListMenu iterationsMenu = new ObjectListMenu(
             "No. Iterations", 0, 1, 2, 5, 10, 50, 100, 500, 1000, 5000

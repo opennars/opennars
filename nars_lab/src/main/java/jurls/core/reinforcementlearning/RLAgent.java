@@ -29,7 +29,7 @@ public class RLAgent extends LearnerAndActor {
     private final UpdateProcedure.Context context = new UpdateProcedure.Context();
     private final ActionSelector actionSelector;
     private final double[] stateAction;
-    private final double[][] memory = new double[10][];
+    private final double[][] memory;
     private int memoryIndex = 0;
     private final double[] stateMax;
     private final double[] stateMin;
@@ -40,6 +40,7 @@ public class RLAgent extends LearnerAndActor {
     private double factor2 = 0;
     private double rSum = 0;
     private double epsilon = 0;
+    private double factor1ComponentDivisor = 1000;
 
     public RLAgent(
             ParameterizedFunctionGenerator parameterizedFunctionGenerator,
@@ -48,7 +49,8 @@ public class RLAgent extends LearnerAndActor {
             int numActions,
             double[] s0,
             ApproxParameters approxParameters,
-            RLParameters rLParameters
+            RLParameters rLParameters,
+            int memorySize
     ) {
         this.parameterizedFunction = parameterizedFunctionGenerator.generate(s0.length + 1);
         this.updateProcedure = updateProcedure;
@@ -59,6 +61,7 @@ public class RLAgent extends LearnerAndActor {
         this.approxParameters = approxParameters;
         this.rLParameters = rLParameters;
         stateAction = new double[s0.length + 1];
+        memory = new double[memorySize][];
 
         for (int i = 0; i < memory.length; ++i) {
             memory[i] = new double[s0.length];
@@ -74,6 +77,8 @@ public class RLAgent extends LearnerAndActor {
 
     @Override
     public int learnAndAction(double[] state, double reward, double[] previousState, int previousAction) {
+        final double U = 0.01; //prevents divison by zero
+
         for (int i = 0; i < state.length; ++i) {
             if (state[i] > stateMax[i]) {
                 stateMax[i] = state[i];
@@ -82,7 +87,7 @@ public class RLAgent extends LearnerAndActor {
                 stateMin[i] = state[i];
             }
             if (stateMin[i] == stateMax[i]) {
-                stateMax[i] = stateMin[i] + 0.1;
+                stateMax[i] = stateMin[i] + U;
             }
             normalizedState[i] = (state[i] - stateMin[i]) / (stateMax[i] - stateMin[i]);
             memory[memoryIndex][i] = normalizedState[i];
@@ -93,7 +98,7 @@ public class RLAgent extends LearnerAndActor {
             memoryIndex = 0;
         }
 
-        double sum = 0;
+        double nextFactor1 = 0;
         for (int i = 0; i < memory.length; ++i) {
             double[] m = memory[i];
             double sum2 = 0;
@@ -101,9 +106,9 @@ public class RLAgent extends LearnerAndActor {
                 double d = normalizedState[j] - m[j];
                 sum2 += d * d;
             }
-            sum += 1 / (1 + sum2 * 1000);
+            nextFactor1 += 1 / (1 + sum2 * factor1ComponentDivisor);
         }
-        sum /= memory.length;
+        nextFactor1 /= memory.length;
 
         if (reward > rewardMax) {
             rewardMax = reward;
@@ -112,13 +117,13 @@ public class RLAgent extends LearnerAndActor {
             rewardMin = reward;
         }
         if (rewardMin == rewardMax) {
-            rewardMax = rewardMin + 0.1;
+            rewardMax = rewardMin + U;
         }
         double r = (reward - rewardMin) / (rewardMax - rewardMin);
         rSum = r + rSum * rLParameters.getGamma();
         double referenceQ = 1 / (1 - rLParameters.getGamma());
 
-        factor1 = sum;
+        factor1 = nextFactor1;
         factor2 = 1 - rSum / referenceQ;
 
         epsilon = rLParameters.getEpsilon() * factor1 * factor2;
@@ -157,13 +162,16 @@ public class RLAgent extends LearnerAndActor {
         ActionValuePair[] actionProbabilityPairs = getActionProbabilities(state);
         Arrays.sort(actionProbabilityPairs, (ActionValuePair o1, ActionValuePair o2) -> (int) Math.signum(o1.getV() - o2.getV()));
 
-        double x = Math.random();
-        int i = -1;
+        //System.out.println(Arrays.toString(actionProbabilityPairs));
+        int i = actionProbabilityPairs.length-1; //highest value
 
-        while (x > 0) {
-            ++i;
-            x -= actionProbabilityPairs[i].getV();
-        }
+//        double x = Math.random();
+        //int i = -1;
+//
+//        while (x > 0) {
+//            ++i;
+//            x -= actionProbabilityPairs[i].getV();
+//        }
 
         return actionProbabilityPairs[i].getA();
     }

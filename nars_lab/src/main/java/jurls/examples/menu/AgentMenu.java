@@ -84,7 +84,8 @@ public class AgentMenu extends RLMenu {
                     numActions,
                     s0,
                     approxParameters,
-                    rLParameters
+                    rLParameters,
+                    4
             );
         }
 

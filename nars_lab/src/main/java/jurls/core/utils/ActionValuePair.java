@@ -34,4 +34,9 @@ public class ActionValuePair {
     public void setA(int a) {
         this.a = a;
     }
+
+    @Override
+    public String toString() {
+        return a + "=" + v;
+    }
 }

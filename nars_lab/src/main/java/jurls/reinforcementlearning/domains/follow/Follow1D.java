@@ -32,7 +32,7 @@ public class Follow1D implements RLDomain {
     private final int history = 256;
 
 
-    final int historyPoints = 1;
+    final int historyPoints = 2; //includes current value
     
     final int historyInterval = history / (historyPoints+1); //how many history points to skip for each observation
     
