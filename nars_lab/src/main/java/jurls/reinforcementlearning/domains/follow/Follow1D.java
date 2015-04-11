@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jurls.reinforcementlearning.domains;
+package jurls.reinforcementlearning.domains.follow;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import jurls.reinforcementlearning.domains.RLDomain;
+import nars.predict.Discretize;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.JComponent;
 
 /**
  *
@@ -18,17 +21,20 @@ import javax.swing.JComponent;
  */
 public class Follow1D implements RLDomain {
 
-    final int numActions = 7; //should be an odd number so the middle value = 0 (no movement)
+    final int numActions = 6;
+
+     //if movement, should be an odd number so the middle value = 0 (no movement)
     
-    final double acceleration = 0.05;
+    final double acceleration = 0.03;
     final double decelerationFactor = 0.25;
     
     
     private final int history = 256;
 
-    final int historyPoints = 16;
+
+    final int historyPoints = 1;
     
-    final int historyInterval = 4; //how many history points to skip for each observation
+    final int historyInterval = history / (historyPoints+1); //how many history points to skip for each observation
     
     @Override
     public int numActions() {
@@ -101,8 +107,9 @@ public class Follow1D implements RLDomain {
     @Override
     public double[] observe() {
         if (observation == null) {
-            observation = new double[historyPoints*2];
+            observation = new double[historyPoints*numActions];
         }
+        Arrays.fill(observation, -1);
         double my = 0, target = 0;
         for (int i = 0; i < historyPoints; i++) {
             int j = positions.size() - 1 - (i * historyInterval);
@@ -110,9 +117,11 @@ public class Follow1D implements RLDomain {
                 my = positions.get(j);
                 target = targets.get(j);
             }
-            observation[i] = my - 0.5;
-            observation[i+historyPoints] = target - 0.5;
+            //observation[i+historyPoints] = my - 0.5;
+            int index = Discretize.i(target, numActions);
+            observation[i*numActions+index] = 1;
         }
+        //System.out.println(Arrays.toString(observation));
         return observation;
     }
 
@@ -123,7 +132,8 @@ public class Follow1D implements RLDomain {
     }
 
     public void updateTarget(int time) {        
-        updateTargetXOR(time);
+        updateTargetSine(time);
+        //updateTargetXOR(time);
         //updateTargetRandom();
     }
 
@@ -137,29 +147,46 @@ public class Follow1D implements RLDomain {
         int complexity = 10;
         double speed = 0.1;
         double scale = 1.0;
-        double v = ( ((int)(speed * cycle))%complexity ^ 0xf3f24f)%complexity * scale / complexity;
+        double v = ( ((int)(speed * cycle )%complexity ^ 0xf3f24f)%complexity * scale / complexity);
         targetPos = v;
     }
-    
-    
+
+    public void updateTargetSine(int cycle) {
+        double speed = 0.1;
+        double scale = 1.0f;
+        double v = (0.5f + 0.5f * Math.sin( (speed * cycle / (Math.PI*2)) )) * scale;
+        targetPos = v;
+    }
+
     @Override
     public void takeAction(int action) {
+        takeActionPosition(action);
+        //takeActionAccelerating(action);
+
+
+    }
+    protected void takeActionPosition(int action) {
+        myPos = (action / ((double)(numActions-1))) * maxPos;
+    }
+
+    protected void takeActionAccelerating(int action) {
         double a = Math.round(action - (numActions/2d));
         double direction = (a)/(numActions/2d);
-        
+
         if (direction==0) {
             //decelerate on zero
             myV *= decelerationFactor;
         }
         else {
-            myV = direction * acceleration;        
+            myV = direction * acceleration;
         }
+        myPos += myV;
+
     }
 
     @Override
     public void worldStep() {
 
-        myPos += myV;
         if (myPos > maxPos) {
             myPos = maxPos;
             myV = 0;

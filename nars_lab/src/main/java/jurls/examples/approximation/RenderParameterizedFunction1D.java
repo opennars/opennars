@@ -5,8 +5,9 @@
  */
 package jurls.examples.approximation;
 
-import java.awt.Color;
 import jurls.core.approximation.ParameterizedFunction;
+
+import java.awt.*;
 
 /**
  *
@@ -41,7 +42,7 @@ public class RenderParameterizedFunction1D implements RenderFunction1D {
         return color;
     }
 
-    public void oneStepTowards(double x, double y) {
+    public void learn(double x, double y) {
         xs[0] = x;
         parameterizedFunction.learn(xs, y);
     }

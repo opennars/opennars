@@ -5,19 +5,13 @@
  */
 package jurls.examples.menu;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButtonMenuItem;
 import jurls.core.LearnerAndActor;
 import jurls.core.approximation.ApproxParameters;
 import jurls.core.approximation.ParameterizedFunctionGenerator;
 import jurls.core.brain.Brain;
-import jurls.core.reinforcementlearning.EpsilonGreedyActionSelector;
-import jurls.core.reinforcementlearning.QUpdateProcedure;
-import jurls.core.reinforcementlearning.QZeroAgent;
-import jurls.core.reinforcementlearning.RLAgent;
-import jurls.core.reinforcementlearning.RLParameters;
-import jurls.core.reinforcementlearning.SARSAUpdateProcedure;
-import jurls.core.reinforcementlearning.UpdateProcedure;
+import jurls.core.reinforcementlearning.*;
+
+import javax.swing.*;
 
 /**
  *
@@ -31,6 +25,12 @@ public class AgentMenu extends RLMenu {
     public JRadioButtonMenuItem qzero = new JRadioButtonMenuItem(new MyAction("Q(0)"));
     public JRadioButtonMenuItem brain = null;
     public AgentMenu soulMenu = null;
+
+    //TODO make a menu for this
+    private ActionSelector getActionSelector() {
+        return new EpsilonGreedyActionSelector();
+        //return new ByQActionSelector();
+    }
 
     public AgentMenu(String prefix, int depth) {
         super(prefix + "RL Agent");
@@ -80,7 +80,7 @@ public class AgentMenu extends RLMenu {
         if (qlambda.isSelected() || sarsalambda.isSelected()) {
             return new RLAgent(
                     pfg, up,
-                    new EpsilonGreedyActionSelector(),
+                    getActionSelector(),
                     numActions,
                     s0,
                     approxParameters,
@@ -107,5 +107,6 @@ public class AgentMenu extends RLMenu {
 
         return null;
     }
+
 
 }

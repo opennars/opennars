@@ -5,6 +5,8 @@
  */
 package jurls;
 
+import automenta.vivisect.Video;
+import automenta.vivisect.swing.NSlider;
 import javafx.application.Platform;
 import jurls.core.LearnerAndActor;
 import jurls.core.approximation.ApproxParameters;
@@ -13,9 +15,12 @@ import jurls.core.reinforcementlearning.RLParameters;
 import jurls.core.utils.LineCharts;
 import jurls.core.utils.MatrixImage;
 import jurls.examples.menu.AgentMenu;
-import jurls.examples.menu.DomainMenu;
 import jurls.examples.menu.ObjectListMenu;
+import jurls.examples.menu.RLMenu;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.follow.Follow1D;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,17 +33,64 @@ import java.awt.event.ActionListener;
  */
 public class RLDemo extends javax.swing.JFrame {
 
+
+    public class DomainMenu extends RLMenu {
+
+        private final JRadioButtonMenuItem follow1D = new JRadioButtonMenuItem(new MyAction("Follow 1D"));
+        private final JRadioButtonMenuItem poleBalancing = new JRadioButtonMenuItem(new MyAction("Pole Balancing"));
+        private final JRadioButtonMenuItem wanderBot = new JRadioButtonMenuItem(new MyAction("Wander Bot"));
+        //private final JRadioButtonMenuItem martialArts = new JRadioButtonMenuItem(new MyAction("Martial Arts"));
+
+        public DomainMenu() {
+            super("Domain");
+
+            ButtonGroup bg = new ButtonGroup();
+            bg.add(poleBalancing);
+            bg.add(wanderBot);
+            bg.add(follow1D);
+            //bg.add(martialArts);
+
+            add(follow1D);
+            add(poleBalancing);
+            add(wanderBot);
+            //add(martialArts);
+
+            follow1D.setSelected(true);
+        }
+
+        public RLDomain getDomain() {
+            if (poleBalancing.isSelected()) {
+                return new PoleBalancing2D();
+            }
+
+            if (wanderBot.isSelected()) {
+                return new Curiousbot();
+            }
+
+            if (follow1D.isSelected()) {
+                return new Follow1D();
+            }
+
+            /*if (martialArts.isSelected()) {
+                return new MartialArts();
+            }*/
+
+            return null;
+        }
+    }
+
     private LearnerAndActor agent;
     private RLDomain rLDomain;
 
+    final int updatePeriodMS = 0;
     private int numIterationsPerLoop = 1;
-    private final ApproxParameters approxParameters = new ApproxParameters(0.01, 0.1);
-    private final RLParameters rLParameters = new RLParameters(0.9, 0.9, 0.9, 1);
+    private final ApproxParameters approxParameters = new ApproxParameters(0, 0.9);
+    private final RLParameters rLParameters = new RLParameters(0, 0.9, 0.9, 0);
     private int numPhysicsIterations = 0;
     private final AgentMenu agentMenu = new AgentMenu("", 2);
     private final DomainMenu domainMenu = new DomainMenu();
     private final ObjectListMenu iterationsMenu = new ObjectListMenu(
-            "No. Iterations", 0, 1, 50, 500, 1000, 5000
+            "No. Iterations", 0, 1, 2, 5, 10, 50, 100, 500, 1000, 5000
     );
     private int action = 0;
     boolean visualize = true;
@@ -73,10 +125,12 @@ public class RLDemo extends javax.swing.JFrame {
             }
         }
     };
-    private Timer timer = new Timer(5, new ActionListener() {
+    private Timer timer = new Timer(updatePeriodMS, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            synchronized (RLDemo.this) {
+
+                updateParameters();
+
                 for (int i = 0; i < numIterationsPerLoop; ++i) {
                     double[] previousState = rLDomain.observe();
                     rLDomain.takeAction(action);
@@ -132,7 +186,7 @@ public class RLDemo extends javax.swing.JFrame {
                 }
 
                 rLDomain.component().repaint();
-            }
+
         }
     });
 
@@ -155,15 +209,20 @@ public class RLDemo extends javax.swing.JFrame {
         });
         iterationsMenu.notifyListeners();
 
-        approxParameters.setAlpha(Double.parseDouble(alphaTextField.getText()));
-        approxParameters.setMomentum(Double.parseDouble(momentumTextField.getText()));
-        rLParameters.setEpsilon(Double.parseDouble(qEpsilonTextField.getText()));
-        rLParameters.setAlpha(Double.parseDouble(qAlphaTextField.getText()));
-        rLParameters.setGamma(Double.parseDouble(gammaTextField.getText()));
+        updateParameters();
 
         menuAction.actionPerformed(null);
 
         timer.start();
+    }
+
+    protected void updateParameters() {
+
+//        rLParameters.setEpsilon(Double.parseDouble(qEpsilonTextField.getText()));
+//        rLParameters.setAlpha(Double.parseDouble(qAlphaTextField.getText()));
+//        rLParameters.setGamma(Double.parseDouble(gammaTextField.getText()));
+
+
     }
 
     /**
@@ -182,19 +241,19 @@ public class RLDemo extends javax.swing.JFrame {
         agentButtonGroup = new javax.swing.ButtonGroup();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
+
+        parametersPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        alphaTextField = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        momentumTextField = new javax.swing.JTextField();
+//        alphaTextField = new javax.swing.JTextField();
+//        momentumTextField = new javax.swing.JTextField();
+//        qAlphaTextField = new javax.swing.JTextField();
+//        gammaTextField = new javax.swing.JTextField();
+//        qEpsilonTextField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        qAlphaTextField = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        gammaTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        qEpsilonTextField = new javax.swing.JTextField();
+
         jLabel4 = new javax.swing.JLabel();
         debugLabel = new javax.swing.JLabel();
         renderPanel = new javax.swing.JPanel();
@@ -214,75 +273,21 @@ public class RLDemo extends javax.swing.JFrame {
 
         jPanel3.setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setLayout(new java.awt.BorderLayout());
 
-        jPanel9.setLayout(new java.awt.GridLayout(0, 4));
+        parametersPanel.setLayout(new GridLayout(0,2));
 
-        jLabel1.setText("Approximator Learning Rate (Alpha)");
-        jPanel9.add(jLabel1);
+        parametersPanel.add(new NSlider(approxParameters.alpha, "Approximator Learning Rate (Alpha)", 0f, 1.0f));
+        parametersPanel.add(new NSlider(approxParameters.momentum, "Approximator Momentum", 0f, 1.0f));
 
-        alphaTextField.setText("0.001");
-        alphaTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                alphaTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel9.add(alphaTextField);
+        parametersPanel.add(new NSlider(rLParameters.alpha, "Q Learning Rate", 0f, 1.0f));
+        parametersPanel.add(new NSlider(rLParameters.gamma, "Q Farsight", 0f, 1.0f));
+        parametersPanel.add(new NSlider(rLParameters.epsilon, "Q Randomness", 0f, 1.0f));
+        parametersPanel.add(new NSlider(rLParameters.lambda, "Q Lambda", 0f, 1.0f));
 
-        jLabel2.setText("Approximator Momentum");
-        jPanel9.add(jLabel2);
 
-        momentumTextField.setText("0.9");
-        momentumTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                momentumTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel9.add(momentumTextField);
 
-        jLabel9.setText("Q Learning Rate (Alpha)");
-        jPanel9.add(jLabel9);
 
-        qAlphaTextField.setText("0.9");
-        qAlphaTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                qAlphaTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel9.add(qAlphaTextField);
-
-        jLabel10.setText("Q Farsight (Gamma)");
-        jPanel9.add(jLabel10);
-
-        gammaTextField.setText("0.9");
-        gammaTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                gammaTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel9.add(gammaTextField);
-
-        jLabel3.setText("Q Randomness (Epsilon)");
-        jPanel9.add(jLabel3);
-
-        jPanel1.setLayout(new java.awt.BorderLayout());
-
-        qEpsilonTextField.setText("1");
-        qEpsilonTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                qEpsilonTextFieldActionPerformed(evt);
-            }
-        });
-        jPanel1.add(qEpsilonTextField, java.awt.BorderLayout.CENTER);
-
-        jLabel4.setText("* factor1 * factor2");
-        jPanel1.add(jLabel4, java.awt.BorderLayout.EAST);
-
-        jPanel9.add(jPanel1);
-
-        jPanel2.add(jPanel9, java.awt.BorderLayout.PAGE_START);
-
-        jPanel3.add(jPanel2, java.awt.BorderLayout.PAGE_END);
+        jPanel3.add(parametersPanel, java.awt.BorderLayout.SOUTH);
 
         debugLabel.setText("jLabel5");
         jPanel3.add(debugLabel, java.awt.BorderLayout.NORTH);
@@ -334,25 +339,25 @@ public class RLDemo extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void alphaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alphaTextFieldActionPerformed
-        approxParameters.setAlpha(Double.parseDouble(alphaTextField.getText()));
-    }//GEN-LAST:event_alphaTextFieldActionPerformed
-
-    private void momentumTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_momentumTextFieldActionPerformed
-        approxParameters.setMomentum(Double.parseDouble(momentumTextField.getText()));
-    }//GEN-LAST:event_momentumTextFieldActionPerformed
-
-    private void qAlphaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qAlphaTextFieldActionPerformed
-        rLParameters.setAlpha(Double.parseDouble(qAlphaTextField.getText()));
-    }//GEN-LAST:event_qAlphaTextFieldActionPerformed
-
-    private void gammaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gammaTextFieldActionPerformed
-        rLParameters.setGamma(Double.parseDouble(gammaTextField.getText()));
-    }//GEN-LAST:event_gammaTextFieldActionPerformed
-
-    private void qEpsilonTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qEpsilonTextFieldActionPerformed
-        rLParameters.setEpsilon(Double.parseDouble(qEpsilonTextField.getText()));
-    }//GEN-LAST:event_qEpsilonTextFieldActionPerformed
+//    private void alphaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alphaTextFieldActionPerformed
+//        approxParameters.setAlpha(Double.parseDouble(alphaTextField.getText()));
+//    }//GEN-LAST:event_alphaTextFieldActionPerformed
+//
+//    private void momentumTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_momentumTextFieldActionPerformed
+//        approxParameters.setMomentum(Double.parseDouble(momentumTextField.getText()));
+//    }//GEN-LAST:event_momentumTextFieldActionPerformed
+//
+//    private void qAlphaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qAlphaTextFieldActionPerformed
+//        rLParameters.setAlpha(Double.parseDouble(qAlphaTextField.getText()));
+//    }//GEN-LAST:event_qAlphaTextFieldActionPerformed
+//
+//    private void gammaTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_gammaTextFieldActionPerformed
+//        rLParameters.setGamma(Double.parseDouble(gammaTextField.getText()));
+//    }//GEN-LAST:event_gammaTextFieldActionPerformed
+//
+//    private void qEpsilonTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qEpsilonTextFieldActionPerformed
+//        rLParameters.setEpsilon(Double.parseDouble(qEpsilonTextField.getText()));
+//    }//GEN-LAST:event_qEpsilonTextFieldActionPerformed
 
     @Override
     public void dispose() {
@@ -367,35 +372,13 @@ public class RLDemo extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RLDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RLDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RLDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RLDemo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                Video.themeInvert();
+
                 new RLDemo().setVisible(true);
             }
         });
@@ -404,11 +387,11 @@ public class RLDemo extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup actionSelectorButtonGroup;
     private javax.swing.ButtonGroup agentButtonGroup;
-    private javax.swing.JTextField alphaTextField;
+    //private javax.swing.JTextField alphaTextField;
     private javax.swing.ButtonGroup approximatorButtonGroup;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel debugLabel;
-    private javax.swing.JTextField gammaTextField;
+    //private javax.swing.JTextField gammaTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -416,23 +399,23 @@ public class RLDemo extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    //private javax.swing.JPanel jPanel1;
+    //private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel parametersPanel;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextField momentumTextField;
+    //private javax.swing.JTextField momentumTextField;
     private javax.swing.ButtonGroup numFeaturesButtonGroup;
-    private javax.swing.JTextField qAlphaTextField;
-    private javax.swing.JTextField qEpsilonTextField;
+    //private javax.swing.JTextField qAlphaTextField;
+    //private javax.swing.JTextField qEpsilonTextField;
     private javax.swing.JPanel renderPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -32,7 +32,7 @@ public class Discretize {
         
     }
     
-    public int i(double v) {
+    public static int i(double v, int discretization) {
         if (v <= 0) {
             return 0;
         }
@@ -47,7 +47,7 @@ public class Discretize {
         this.discretization = discretization;
     }
     
-    public double d(double v) {
+    public static double d(double v, int discretization) {
         if (v <= 0) {
             return 0;
         }
@@ -68,24 +68,24 @@ public class Discretize {
     }
 
     /** calculate proportion that value 'v' is at level 'l', or somewhere in between levels */
-    public double pDiscrete(double v, int i) {        
-        int center = i(v);
+    public static double pDiscrete(double v, int i, int discretization) {
+        int center = i(v, discretization);
         if (i == center) return 1.0;
         return 0.0;
     }
 
     
     /** calculate proportion that value 'v' is at level 'l', or somewhere in between levels */
-    public double pSmooth(double v, int l) {
-        double center = d(v);
+    public static double pSmooth(double v, int l, int discretization) {
+        double center = d(v, discretization);
         double levelsFromCenter = Math.abs(l - center);
         double sharpness = 10.0;
         return 1.0 / (1 + levelsFromCenter/(discretization/2)*sharpness);        }
     
     /** assign 1.0 to the closest discretized level regardless */
-    public double pSmoothDiscrete(double v, int l) {
-        double center = d(v);
-        int centerDisc = i(v);
+    public static double pSmoothDiscrete(double v, int l, int discretization) {
+        double center = d(v, discretization);
+        int centerDisc = i(v, discretization);
         if (centerDisc == l) return 1.0; 
         double levelsFromCenter = Math.abs(l - center);
         double sharpness = 10.0;
@@ -112,7 +112,7 @@ public class Discretize {
     }    
     
     public Term getValueTerm(double y) {
-        return Term.get("y" + i((float)y));
+        return Term.get("y" + i((float)y, discretization));
     }
 
     /**
@@ -124,14 +124,17 @@ public class Discretize {
     void believe(String variable, double signal, int dt) {        
         for (int i = 0; i < discretization; i++) {
             //double p = pDiscrete(signal, i);
-            double p = pSmoothDiscrete(signal, i);
+            double p = pSmoothDiscrete(signal, i, discretization);
             believe(variable, i, dt, (float)p, 0.95f, BeliefInsertion.MemoryInput);
         }
             
     }
 
-    
-    
+    public int i(float v) {
+        return i(v, discretization);
+    }
+
+
     public static enum BeliefInsertion {
         Input, MemoryInput, ImmediateProcess, BeliefInsertion
     }

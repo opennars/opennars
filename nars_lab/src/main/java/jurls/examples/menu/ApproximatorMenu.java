@@ -5,24 +5,9 @@
  */
 package jurls.examples.menu;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JRadioButtonMenuItem;
-import jurls.core.approximation.ATanSigmoidFactory;
-import jurls.core.approximation.ActivationFunctionFactory;
-import jurls.core.approximation.ApproxParameters;
-import jurls.core.approximation.CNFBooleanFunction;
-import jurls.core.approximation.DiffableFunctionMarshaller;
-import jurls.core.approximation.Generator;
-import jurls.core.approximation.GradientFitter;
-import jurls.core.approximation.InputNormalizer;
-import jurls.core.approximation.LogisticSigmoidFactory;
-import jurls.core.approximation.OutputNormalizer;
-import jurls.core.approximation.ParameterizedFunction;
-import jurls.core.approximation.ParameterizedFunctionGenerator;
-import jurls.core.approximation.RadialBasisFunctionFactory;
-import jurls.core.approximation.TanhSigmoidFactory;
+import jurls.core.approximation.*;
+
+import javax.swing.*;
 
 /**
  *
@@ -160,8 +145,8 @@ public class ApproximatorMenu extends RLMenu {
         fourier.setSelected(true);
         hidden.atan.setSelected(true);
         output.atan.setSelected(true);
-        normalizeOutput.setSelected(true);
-        normalizeInput.setSelected(true);
+        normalizeOutput.setSelected(false);
+        normalizeInput.setSelected(false);
 
         cnf.setEnabled(!onlyDiffable);
         numberOfInputBitsMenu.setEnabled(!onlyDiffable);

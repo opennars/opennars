@@ -31,14 +31,16 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
     private final ObjectListMenu iterationsMenu = new ObjectListMenu(
             "No. Iterations", 0, 1, 50, 500, 1000, 5000
     );
+    int components = 16;
     private final RenderFunction1D f;
     private Timer timer = new Timer(5, new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             for (int i = 0; i < numIterationsPerLoop; ++i) {
-                double x = Math.random() * getWidth();
-                renderParameterizedFunction.oneStepTowards(x, f.compute(x));
+                double x = Math.random();
+                //System.out.println(x + " " + f.compute(x));
+                renderParameterizedFunction.learn(x, f.compute(x));
                 numIterations++;
             }
             functionRenderer1.repaint();
@@ -80,11 +82,11 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
         });
         iterationsMenu.notifyListeners();
 
-        double[] ys = new double[10];
+        double[] ys = new double[components];
         for (int i = 0; i < ys.length; ++i) {
-            ys[i] = Math.random() * 400 + 5;
+            ys[i] = 2f * (Math.random() - 0.5);
         }
-        f = new RenderArrayFunction1D(getWidth(), Color.blue, ys);
+        f = new RenderArrayFunction1D(Color.blue, ys);
 
         functionRenderer1.renderFunctions.add(f);
         functionRenderer1.renderFunctions.add(renderParameterizedFunction);
@@ -213,29 +215,6 @@ public class ApproximationDemo1D extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ApproximationDemo1D.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ApproximationDemo1D.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ApproximationDemo1D.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ApproximationDemo1D.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

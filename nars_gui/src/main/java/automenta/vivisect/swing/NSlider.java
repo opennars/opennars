@@ -144,7 +144,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     //TODO return boolean indicating if the value actually changed
     public void setValue(float v) {
         if (v != value.floatValue()) {
-            value.set( v );     
+            value.set( v );
             onChange(v);
         }
     }

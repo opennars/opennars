@@ -5,53 +5,64 @@
  */
 package jurls.core.reinforcementlearning;
 
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
+
 /**
  *
  * @author thorsten
  */
 public class RLParameters {
 
-    private double alpha;
-    private double gamma;
-    private double lambda;
-    private double epsilon;
+    /** learning rate */
+    public final AtomicDouble alpha;
+
+    /** farsight */
+    public final AtomicDouble gamma;
+
+    /** lambda
+     * "A value of λ=1.0 effectively makes algorithm run an online Monte Carlo in which the effects of all future interactions are fully considered in updating each Q-value of an episode."
+     */
+    public final AtomicDouble lambda;
+
+    /** randomness */
+    public final AtomicDouble epsilon;
 
     public RLParameters(double alpha, double gamma, double lambda, double epsilon) {
-        this.alpha = alpha;
-        this.gamma = gamma;
-        this.lambda = lambda;
-        this.epsilon = epsilon;
+        this.alpha = new AtomicDouble(alpha);
+        this.gamma = new AtomicDouble(gamma);
+        this.lambda = new AtomicDouble(lambda);
+        this.epsilon = new AtomicDouble(epsilon);
     }
 
     public double getAlpha() {
-        return alpha;
+        return alpha.get();
     }
 
     public void setAlpha(double alpha) {
-        this.alpha = alpha;
+        this.alpha.set(alpha);
     }
 
     public double getGamma() {
-        return gamma;
+        return gamma.get();
     }
 
     public void setGamma(double gamma) {
-        this.gamma = gamma;
+        this.gamma.set(gamma);
     }
 
     public double getLambda() {
-        return lambda;
+        return lambda.get();
     }
 
     public void setLambda(double lambda) {
-        this.lambda = lambda;
+        this.lambda.set(lambda);
     }
 
     public double getEpsilon() {
-        return epsilon;
+        return epsilon.get();
     }
 
     public void setEpsilon(double epsilon) {
-        this.epsilon = epsilon;
+        this.epsilon.set(epsilon);
     }
 }

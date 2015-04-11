@@ -5,33 +5,37 @@
  */
 package jurls.core.approximation;
 
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
+
 /**
  *
  * @author thorsten
  */
 public class ApproxParameters {
 
-    private double alpha;
-    private double momentum;
+    /** learning rate */
+    public final AtomicDouble alpha = new AtomicDouble();
+
+    public final AtomicDouble momentum = new AtomicDouble();
 
     public ApproxParameters(double alpha, double momentum) {
-        this.alpha = alpha;
-        this.momentum = momentum;
+        this.alpha.set(alpha);
+        this.momentum.set(momentum);
     }
 
     public double getAlpha() {
-        return alpha;
+        return alpha.get();
     }
 
     public void setAlpha(double alpha) {
-        this.alpha = alpha;
+        this.alpha.set( alpha );
     }
 
     public double getMomentum() {
-        return momentum;
+        return momentum.get();
     }
 
     public void setMomentum(double momentum) {
-        this.momentum = momentum;
+        this.momentum.set( momentum);
     }
 }

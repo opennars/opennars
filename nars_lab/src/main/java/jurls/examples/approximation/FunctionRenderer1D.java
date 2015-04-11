@@ -35,10 +35,12 @@ public class FunctionRenderer1D extends javax.swing.JPanel {
 
             double prevX = 0;
             double prevY = 0;
-            for (double x = 0; x < getWidth(); x += 10) {
-                double y = rf.compute(x);
-                g.drawLine((int) prevX, (int) prevY, (int) x, (int) y);
-                prevX = x;
+            for (double x = 0; x < 1.0; x += 0.01) {
+                double y0 =rf.compute(x);
+                double y = (0.5f * y0+0.5)*getHeight();
+                int px = (int)(getWidth() * x);
+                g.drawLine((int) prevX, (int) prevY, (int) px, (int) y);
+                prevX = px;
                 prevY = y;
             }
         }
