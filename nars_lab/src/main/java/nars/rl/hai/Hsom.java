@@ -7,8 +7,8 @@ public class Hsom {
     private double[][] coords1;
     private double[][] coords2;
     private double[][][] vis;
-    private int numInputs = 100;
-    private int SomSize = 10;
+    private int numInputs;
+    private int SomSize;
     private double gamma = 5.0f;
     private double eta = 0.1f;
     

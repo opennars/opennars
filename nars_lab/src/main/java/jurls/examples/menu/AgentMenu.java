@@ -10,6 +10,7 @@ import jurls.core.approximation.ApproxParameters;
 import jurls.core.approximation.ParameterizedFunctionGenerator;
 import jurls.core.brain.Brain;
 import jurls.core.reinforcementlearning.*;
+import nars.rl.hai.HaiQBrain;
 
 import javax.swing.*;
 
@@ -20,6 +21,7 @@ import javax.swing.*;
 public class AgentMenu extends RLMenu {
 
     public ApproximatorMenu approximatorMenu = new ApproximatorMenu(true);
+    public JRadioButtonMenuItem haiq = new JRadioButtonMenuItem(new MyAction("HaiQ"));
     public JRadioButtonMenuItem qlambda = new JRadioButtonMenuItem(new MyAction("Q(lambda)"));
     public JRadioButtonMenuItem sarsalambda = new JRadioButtonMenuItem(new MyAction("SARSA(lmabda)"));
     public JRadioButtonMenuItem qzero = new JRadioButtonMenuItem(new MyAction("Q(0)"));
@@ -36,10 +38,12 @@ public class AgentMenu extends RLMenu {
         super(prefix + "RL Agent");
 
         ButtonGroup bg = new ButtonGroup();
+        bg.add(haiq);
         bg.add(qlambda);
         bg.add(sarsalambda);
         bg.add(qzero);
 
+        add(haiq);
         add(qlambda);
         add(sarsalambda);
         add(qzero);
@@ -68,7 +72,13 @@ public class AgentMenu extends RLMenu {
             ApproxParameters approxParameters,
             RLParameters rLParameters
     ) {
+
+        if (haiq.isSelected()) {
+            return new HaiQBrain(numActions, s0.length);
+        }
+
         UpdateProcedure up = null;
+
         if (qlambda.isSelected()) {
             up = new QUpdateProcedure();
         }

@@ -1,17 +1,21 @@
 package nars.rl.hai;
 
+import jurls.core.LearnerAndActor;
 import nars.Memory;
 
 
 /**
  * TODO generalize SOM to N-d
  */
-public class HaiQBrain {
+public class HaiQBrain extends LearnerAndActor {
 
     double Q[][][]; //state, action
     double et[][][]; //eligiblity trace
-    int nActions = 0, nStates = 0;
-    double Alpha = 0.1, Gamma = 0.8, Lambda = 0.1; //0.1 0.5 0.9
+    int nActions, nStates;
+    double Alpha = 0.1, Gamma = 0.5, Lambda = 0.9; //0.1 0.5 0.9
+
+    double Epsilon = 0.01; //random rate
+
     Hsom som;
 
     int lastStateX = 0, lastStateY = 0, lastAction = 0;
@@ -37,7 +41,10 @@ public class HaiQBrain {
 
     
     int q(int StateX, int StateY, double reward) {
-        
+
+        final double[][][] Q = this.Q; //local reference
+        final double[][][] et = this.et;
+
         int maxk = 0;
         double maxval = Double.NEGATIVE_INFINITY;
         for (int k = 0; k < nActions; k++) {
@@ -48,7 +55,7 @@ public class HaiQBrain {
         }
         
         int Action;
-        if (random(1.0) < Alpha) {
+        if (random(1.0) < Epsilon) {
             Action = (int) random(nActions);
         } else {
             Action = maxk;
@@ -99,6 +106,16 @@ public class HaiQBrain {
 
     public double getGamma() {
         return Gamma;
+    }
+
+    @Override
+    public int learnAndAction(double[] nextState, double nextReward, double[] previousState, int previousAction) {
+        return act(nextState, nextReward);
+    }
+
+    @Override
+    public void stop() {
+
     }
 
     /*
