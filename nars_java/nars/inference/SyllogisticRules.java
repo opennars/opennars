@@ -221,8 +221,6 @@ public final class SyllogisticRules {
         int order = analogyOrder(order1, order2, figure);
         if (order == ORDER_INVALID) {
             return;
-        } else if (figure < 20) {
-            order = reverseOrder(order);
         }
         Statement st = (Statement) asym.term;
         TruthValue truth = null;
