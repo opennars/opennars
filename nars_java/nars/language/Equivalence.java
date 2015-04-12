@@ -115,8 +115,12 @@ public class Equivalence extends Statement {
             default:
                 copula = NativeOperator.EQUIVALENCE;
         }
-        
-        Term[] t = Term.toSortedSetArray(subject, predicate);
+        Term[] t;
+        if (temporalOrder==TemporalRules.ORDER_FORWARD)
+            t = new Term[] { subject, predicate };
+        else
+            t = Term.toSortedSetArray(subject, predicate);
+       
         if (t.length != 2)
             return null;        
         return new Equivalence(t, temporalOrder);
