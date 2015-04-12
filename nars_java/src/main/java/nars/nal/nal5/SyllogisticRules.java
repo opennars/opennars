@@ -180,11 +180,9 @@ public final class SyllogisticRules {
         int order1 = asym.term.getTemporalOrder();
         int order2 = sym.term.getTemporalOrder();
         int order = analogyOrder(order1, order2, figure);
-        if (order == ORDER_INVALID) {
+        if (order == ORDER_INVALID)
             return false;
-        } else if (figure < 20) {
-            order = reverseOrder(order);
-        }
+
         Statement st = (Statement) asym.term;
         TruthValue truth = null;
         Budget budget;
