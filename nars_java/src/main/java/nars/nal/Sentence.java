@@ -191,7 +191,8 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
                     else {
                         //the result would not be valid, so just return the original input
                         //this sentence should not be created but in the meantime, this will prevent it from having any effect
-                        truth.setConfidence(0);
+                        if (truth!=null)
+                            truth.setConfidence(0);
                     }
                 }
             }

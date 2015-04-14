@@ -4,7 +4,10 @@
  */
 package nars.nal;
 
-import nars.*;
+import nars.Events;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
 import nars.budget.Budget;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
@@ -147,6 +150,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
         if (task.getParentTask() == null) {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
+        }
+        else {
+            if (task.sentence.equals(task.getParentTask().sentence)) {
+                memory.emit(Events.ERR.class, "singlePremiseTask: newSentece equal to parentTask sentence: " + task);
+                return false;
+            }
         }
 
 

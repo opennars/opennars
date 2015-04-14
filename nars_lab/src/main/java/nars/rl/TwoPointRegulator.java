@@ -151,11 +151,11 @@ public class TwoPointRegulator extends JPanel {
     }
 
     public Task bad(boolean left, boolean right) {
-        return nar.task(getTargetTerm(left, right, "(--,<" + reward + " --> " + goodness + ">)") + ". :|: %1.00;0.95%");
+        return nar.task(getTargetTerm0(left, right, "(--,<" + reward + " --> " + goodness + ">)") + ". :|: %0.90;0.90%");
     }
 
     public void target(boolean left, boolean right) {
-        nar.input(getTargetTerm(left, right) + ". :|: %1.00;0.95%");
+        nar.input(getTargetTerm0(left, right) + ". :|: %0.90;0.90%");
     }
 
     private String getTargetTerm0(boolean left, boolean right, String... additional) {
@@ -181,7 +181,7 @@ public class TwoPointRegulator extends JPanel {
 
         return term;
     }
-    private String getTargetTerm(boolean left, boolean right, String... additional) {
+    private String getTargetTerm1(boolean left, boolean right, String... additional) {
 
         String term = "(&|,";
         if (left)
@@ -370,7 +370,7 @@ public class TwoPointRegulator extends JPanel {
                 int x = Math.round(s.x);
                 float happiness = s.happiness;
                 g2d.setColor(new Color(Video.colorHSB(happiness, 0.75f, 0.75f, 0.5f)));
-                int r = (int) (speed * (0.2f + 0.8f * s.busy));
+                int r = (int) (speed * (0.2f + 0.8f * s.busy))*2;
                 g2d.fillRect((int) (i / 100), dy + x - r / 2, 1, r);
                 i++;
             }
