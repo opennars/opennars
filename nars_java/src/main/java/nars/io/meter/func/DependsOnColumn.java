@@ -21,21 +21,23 @@ abstract public class DependsOnColumn<Source,Result> extends FunctionMeter<Resul
     protected final Metrics metrics;
     
 
+    //TODO since making id final, getcolumnID will have no effect. replace with a static builder method or something
 
     public DependsOnColumn(Metrics metrics, String source, int numResults) {
-        super("",numResults);
+        super("", numResults);
         
         int i = 0;
         Signal m = metrics.getSignal(source);
         if (m == null)
             throw new RuntimeException("Missing signal: " + source);
-        
-        for (Signal s : getSignals()) {            
-            s.id = getColumnID(m, i++);
-        }
-        
+
         this.metrics = metrics;
         this.sourceColumn = metrics.indexOf(source);
+
+        for (Signal s : getSignals()) {            
+            //s.id = getColumnID(m, i++);
+        }
+        
     }
 
 //    

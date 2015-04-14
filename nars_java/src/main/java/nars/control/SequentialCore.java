@@ -61,8 +61,8 @@ abstract public class SequentialCore implements Core {
             ((CoreAware)concepts).setCore(this);
         if (concepts instanceof Memory.MemoryAware)
             ((Memory.MemoryAware)concepts).setMemory(m);
-        if (subcon instanceof Memory.MemoryAware)
-            ((Memory.MemoryAware)subcon).setMemory(m);
+        if (subcon!=null)
+            subcon.setMemory(m);
     }
 
     protected static class DefaultConceptProcess extends ConceptProcess {

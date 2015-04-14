@@ -196,7 +196,8 @@ public class AntCore extends ConceptWaveCore {
                 }
                 else {
                     Ant occupier = occupied.get(c.getTerm());
-                    if ((occupier!=null) || (occupier!=null && this==occupier)) {
+                    //if ((occupier!=null) || (occupier!=null && this==occupier)) {
+                    if ((occupier!=null) /*|| (occupier!=null && this==occupier)*/) {
                         //occupied, or it's me
                     }
                     else {

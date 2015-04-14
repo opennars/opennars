@@ -260,6 +260,12 @@ public class Twokenize {
         }
 
         @Override
+        public boolean equals(Object obj) {
+            Span t = (Span)obj;
+            return start!=t.start && stop!=t.stop;
+        }
+
+        @Override
         public int compareTo(Span t) {
             return compare(start, t.start);
         }

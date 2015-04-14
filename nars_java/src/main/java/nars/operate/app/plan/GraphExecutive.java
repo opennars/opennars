@@ -466,7 +466,7 @@ public class GraphExecutive {
         //System.err.println("No Concept confidence available for " + t);
         
         //if no concept confidence is available, assume 0
-        return 0f;
+        return 0.0f;
     }
 
     /** returns 0..1.0, 1.0 being highest priority, 0 = no priority */

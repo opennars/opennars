@@ -31,7 +31,7 @@ import static nars.nal.term.Compound.termArray;
  */
 public class Abbreviation extends AbstractOperator {
 
-    private static final double abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
+    private static final float abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
     private Operator abbreviate = null;
     private Memory memory;
 

@@ -59,8 +59,8 @@ public class GlobalAnticipation implements IOperator, Reaction {
         if (event == Events.TaskDerive.class) {
             Task derivedTask=(Task) args[0];
             if(derivedTask.sentence.term instanceof Implication &&
-               (((Implication) derivedTask.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
-                    ((Implication) derivedTask.sentence.term).getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
+               (derivedTask.sentence.term.getTemporalOrder()==TemporalRules.ORDER_FORWARD ||
+                    derivedTask.sentence.term.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT)) {
 
                 if(!current_tasks.contains(derivedTask)) {
                     current_tasks.add(derivedTask);

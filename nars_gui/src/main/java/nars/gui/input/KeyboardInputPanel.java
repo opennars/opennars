@@ -55,11 +55,11 @@ public class KeyboardInputPanel extends NPanel implements KeyListener, FocusList
 
     /** can be adjusted according to how many other windows are active, etc. */
     public void setFocus(float freq, float conf) {
-        nar.input("<{focus} --> " + prefix + ">. :|: %" + n2(freq) + ";" + n2(conf) + "%");
+        nar.input("<" + prefix + " --> [focus]>. :|: %" + n2(freq) + ";" + n2(conf) + "%");
     }
 
     public void onCharTyped(char c, float priority, float freq, float conf) {        
-        String charTerm = "\"" + c + "\"";
+        String charTerm = "" + c;/// + "\"";
         nar.input("$" + n2(priority) + "$ < {" + charTerm + "} --> " + prefix + ">. :|: %" + n2(freq) + ";" + n2(conf) + "%");
         //nar.input("<(&/, <" + charTerm + " --> " + prefix + ">, ?dt) =/> <?next --> \" + prefix + \">>?");
     }

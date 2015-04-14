@@ -11,7 +11,7 @@ package nars.io.meter;
  * May cache re-usable metadata specific to the signal shared by several SignalData views (ex: min, max)
  */
 public class Signal implements Comparable<Signal> {
-    public String id;
+    public final String id;
     public String unit;
     
     private double min, max;

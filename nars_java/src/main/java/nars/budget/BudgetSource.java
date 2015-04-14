@@ -8,13 +8,13 @@ import reactor.jarjar.jsr166e.extra.AtomicDouble;
 public interface BudgetSource {
 
     /** total energy available */
-    public double energy();
+    public float energy();
 
     /** set the total energy */
-    public double energy(double newValue);
+    public float energy(float newValue);
 
     /** add to the total available energy */
-    default public double energyAdd(final double newValue) {
+    default public float energyAdd(final float newValue) {
         if (newValue == 0) return energy();
         return energy( energy() + newValue );
     }
@@ -23,12 +23,12 @@ public interface BudgetSource {
     default public void energyReset() { energy(0);     }
 
     /** returns any "change" not taken */
-    default public double send(BudgetTarget target, double x) {
-        double resultingBalance = energy() - x;
+    default public float send(BudgetTarget target, float x) {
+        float resultingBalance = energy() - x;
         if (resultingBalance < 0)
             return x;
 
-        double r = target.receive(x);
+        float r = target.receive(x);
 
         return energyAdd( -(x - r) );
     }
@@ -39,18 +39,18 @@ public interface BudgetSource {
         private AtomicDouble energy = new AtomicDouble();
 
         @Override
-        public double energy() {
-            return energy.get();
+        public float energy() {
+            return energy.floatValue();
         }
 
         @Override
-        public double energy(double newValue) {
+        public float energy(float newValue) {
             energy.set(newValue);
             return newValue;
         }
 
         @Override
-        public double receive(double amount) {
+        public float receive(float amount) {
             energyAdd(amount);
             return 0; //return nothing
         }

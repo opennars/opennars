@@ -199,22 +199,20 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
         if (!allow(s))
             return false;               
         
-            Compound cs = s.term;
-        
-            if (cs instanceof Statement) {
+        Compound cs = s.term;
+
+        if (cs instanceof Statement) {
 
 
-                Statement st = (Statement) cs;
-                if (allow(st)) {
+            Statement st = (Statement) cs;
+            if (allow(st)) {
 
-                    if (add(s, st, c)) {
-                        //event.emit(GraphChange.class, st, null);
-                        return true;
-                    }
+                if (add(s, st, c)) {
+                    //event.emit(GraphChange.class, st, null);
+                    return true;
                 }
             }
-
-
+        }
         
         return false;
     }    

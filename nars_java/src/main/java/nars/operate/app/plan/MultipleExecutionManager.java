@@ -42,7 +42,7 @@ public class MultipleExecutionManager extends AbstractReaction {
      * execution
      */
     int numActiveTasks = 1;
-    float maxExecutionsPerDuration = 1f;
+    float maxExecutionsPerDuration = 1.0f;
 
     /**
      * time of last execution

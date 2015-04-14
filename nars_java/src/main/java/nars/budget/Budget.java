@@ -28,6 +28,8 @@ import nars.nal.BudgetFunctions;
 import nars.nal.Sentence;
 import nars.nal.TruthValue;
 
+import java.util.Objects;
+
 import static nars.Global.BUDGET_EPSILON;
 import static nars.Global.TRUTH_EPSILON;
 import static nars.nal.BudgetFunctions.m;
@@ -85,7 +87,7 @@ public class Budget implements Cloneable, BudgetTarget {
 
     public Budget(final float p, final float d, final TruthValue qualityFromTruth) {
         this(p, d, qualityFromTruth !=
-                null ? BudgetFunctions.truthToQuality(qualityFromTruth) : 1f);
+                null ? BudgetFunctions.truthToQuality(qualityFromTruth) : 1.0f);
     }
 
 
@@ -134,7 +136,7 @@ public class Budget implements Cloneable, BudgetTarget {
     }
 
     public Budget accumulate(final float addPriority, final float addDurability, final float addQuality) {
-        setPriority(Math.min(1f, getPriority() + addPriority)); //add priority
+        setPriority(Math.min(1.0f, getPriority() + addPriority)); //add priority
         setDurability(m(getDurability(), addDurability)); //max durab
         setQuality(m(getQuality(), addQuality)); //max quali
         return this;
@@ -187,8 +189,8 @@ public class Budget implements Cloneable, BudgetTarget {
     public boolean setDurability(float d) {
         if (Global.DEBUG) ensureBetweenZeroAndOne(d);
 
-        if(d>=1.0) {
-            d = (float) (1.0-TRUTH_EPSILON);
+        if(d>=1.0f) {
+            d = (1.0f-TRUTH_EPSILON);
             //throw new RuntimeException("durability value above or equal 1");
         }
         /*else if (d < BUDGET_EPSILON) {
@@ -227,7 +229,7 @@ public class Budget implements Cloneable, BudgetTarget {
             throw new RuntimeException("Priority is NaN");
         if (v > 1.0f)
             throw new RuntimeException("Priority > 1.0: " + v);
-        if (v < 0f)
+        if (v < 0.0f)
             throw new RuntimeException("Priority < 1.0: " + v);
     }
 
@@ -237,7 +239,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * @param v The increasing percent
      */
     public void incPriority(final float v) {
-        setPriority( (float) Math.min(1.0, or(priority, v)));
+        setPriority( (float) Math.min(1.0f, or(priority, v)));
     }
 
     public void addPriority(final float v) {
@@ -357,6 +359,11 @@ public class Budget implements Cloneable, BudgetTarget {
 
     public boolean equals(final Object that) { return equalsByPrecision(that); }
 
+    @Override
+    public int hashCode() {
+        //this will be relatively slow if used in a hash collection
+        return Objects.hash(getPriority(), getDurability(), getQuality());
+    }
 
     /**
      * Whether the budget should get any processing at all
@@ -525,11 +532,11 @@ public class Budget implements Cloneable, BudgetTarget {
     }
 
     @Override
-    public double receive(double amount) {
+    public float receive(float amount) {
         float maxReceivable = 1.0f - getPriority();
 
-        double received = Math.min(amount, maxReceivable);
-        addPriority((float) received);
+        float received = Math.min(amount, maxReceivable);
+        addPriority(received);
 
         return amount - received;
     }

@@ -76,8 +76,8 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     private Deque<E> pending;
     private ArraySortedIndex<E> toRemove;
     
-    private float activityThreshold = 0f;
-    private float forgetThreshold = 1f;
+    private float activityThreshold = 0.0f;
+    private float forgetThreshold = 1.0f;
     private float latencyMin = 0; /* in cycles */
     
     private float targetActivations;
@@ -268,7 +268,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
         
         //increase latency according to activity threshold, so an increase in activitythreshold
         //is matched by increase in latency threshold       
-        float latencyScale = (1f + activityThreshold);
+        float latencyScale = (1.0f + activityThreshold);
         
         /*if (activity < activityThreshold) {
             activity += (activityThreshold - activity) * (firingAge / (latencyCyclesMax*latencyScale));
@@ -465,7 +465,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
         int s = size();
         if (s > capacity) {
             //forgetThreshold *= 1.1f;
-            forgetThreshold = 1.0f - ((s - capacity)/capacity);
+            forgetThreshold = 1.0f - ((((float)s) - capacity)/capacity);
             if (forgetThreshold > 0.99f) forgetThreshold = 0.99f;
         }
         else if (s < capacity) {

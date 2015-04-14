@@ -526,7 +526,7 @@ JsonSerializationContext context) {
                     if (y == null)
                         out.print('?');
                     else if (y instanceof Number)
-                        out.print((Number)y);
+                        out.print(y);
                     else
                         out.print('\"' + y.toString() + '\"');
                 }

@@ -24,7 +24,7 @@ public class BeliefTruthExecutive extends AbstractExecutive {
 
     private final Operator operator;
     private NAR.PluggedIn opReg;
-    public float basePeriod = 1f; //fundamental frqeuency to scale all action frequencies
+    public float basePeriod = 1.0f; //fundamental frqeuency to scale all action frequencies
     private Memory memory;
 
     public class Action {
@@ -54,7 +54,7 @@ public class BeliefTruthExecutive extends AbstractExecutive {
 
         public float getFrequency() {
             if (period == 0) return 0;
-            return 1f / period;
+            return 1.00f / period;
         }
 
         public float getActualFrequency() {

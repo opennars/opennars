@@ -23,9 +23,18 @@ public abstract class FunctionMeter<M> implements Meter<M> {
             s[i] = prefix + '_' + i;
         return s;
     }
+    public static String[] newDefaultSignalIDs(String prefix, String... prefixes) {
+        String[] s = new String[prefixes.length];
+        for (int i = 0; i < prefixes.length; i++)
+            s[i] = prefix + '_' + prefixes[i];
+        return s;
+    }
     
     public FunctionMeter(String prefix, int n) {
         this(newDefaultSignalIDs(prefix, n));
+    }
+    public FunctionMeter(String prefix, boolean noop, String... prefixes) {
+        this(newDefaultSignalIDs(prefix, prefixes));
     }
     
     public FunctionMeter(String... ids) {

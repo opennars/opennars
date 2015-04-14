@@ -26,14 +26,10 @@ public class PeriodMeter extends FunctionMeter<Double> {
     private final boolean frequency;
     
     public PeriodMeter(String id, boolean nanoSeconds, double windowSec, boolean asFrequency) {
-        super(id, 4);
+        super(id, true, ".min", ".max", ".mean", ".stddev");
         
-        getSignals().get(0).id = id + ".min";
-        getSignals().get(1).id = id + ".max";
-        getSignals().get(2).id = id + ".mean";
-        getSignals().get(3).id = id + ".stddev";
-        
-        this.window = windowSec * 1E9;
+
+        this.window = windowSec * 1.0E9;
         this.stat = new DescriptiveStatistics();
         this.nanoSeconds = nanoSeconds;
         this.frequency = asFrequency;

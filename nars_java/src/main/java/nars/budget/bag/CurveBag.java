@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
-    final float MASS_EPSILON = 1e-5f;
+    final float MASS_EPSILON = 1.0e-5f;
 
     /**
      * mapping from key to item
@@ -263,7 +263,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
             return 0.01f;
         }
         float f = mass / s;
-        if (f > 1f)
+        if (f > 1.0f)
             return 1.0f;
         if (f < 0.01f)
             return 0.01f;
@@ -350,7 +350,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
         float y = getFocus(x);
         if (y < 0) y = 0;
-        if (y > 1.0f) y = 1f;
+        if (y > 1.0f) y = 1.0f;
 
         int result = (int) Math.floor(y * s);
         if (result == s) {
@@ -492,13 +492,11 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
             selected = items.remove(index);
             if (selected == null)
-                throw new RuntimeException(this + " inconsistent index: items contained " + selected + " but had no key referencing it");
+                throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
             //should be the same object instance
-            if (selected != null) {
-                nameTable.removeKey(selected.name());
-                mass -= selected.budget.getPriority();
-            }
+            nameTable.removeKey(selected.name());
+            mass -= selected.budget.getPriority();
         }
 
         return selected;
@@ -545,19 +543,19 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
      */
     public static interface BagCurve {
 
-        public double y(double x);
+        public float y(float x);
     }
 
 
     public static class CubicBagCurve implements BagCurve {
 
         @Override
-        public final double y(final double x) {
+        public final float y(final float x) {
             //1.0 - ((1.0-x)^2)
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:        
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return 1.0 - (x * x * x);
+            return 1.0f - (x * x * x);
         }
 
     }
@@ -568,8 +566,8 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
     public static class FairPriorityProbabilityCurve implements BagCurve {
 
         @Override
-        public final double y(final double x) {
-            return 1 - Math.exp(-5 * x);
+        public final float y(final float x) {
+            return (float)(1f - Math.exp(-5f * x));
         }
 
     }
@@ -578,12 +576,12 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
     public static class QuadraticBagCurve implements BagCurve {
 
         @Override
-        public final double y(final double x) {
+        public final float y(final float x) {
             //1.0 - ((1.0-x)^2)
             // a function which has domain and range between 0..1.0 but
             //   will result in values above 0.5 more often than not.  see the curve:        
             //http://fooplot.com/#W3sidHlwZSI6MCwiZXEiOiIxLjAtKCgxLjAteCleMikiLCJjb2xvciI6IiMwMDAwMDAifSx7InR5cGUiOjAsImVxIjoiMS4wLSgoMS4wLXgpXjMpIiwiY29sb3IiOiIjMDAwMDAwIn0seyJ0eXBlIjoxMDAwLCJ3aW5kb3ciOlsiLTEuMDYyODU2NzAzOTk5OTk5MiIsIjIuMzQ1MDE1Mjk2IiwiLTAuNDM2NTc0NDYzOTk5OTk5OSIsIjEuNjYwNTc3NTM2MDAwMDAwNCJdfV0-       
-            return 1 - (x * x);
+            return 1f - (x * x);
         }
 
     }

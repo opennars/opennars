@@ -329,13 +329,13 @@ public class Texts {
     public static final String n2Slow(final float x) { return twoDecimal.format(x);     }
 
     public static long thousandths(final float d) {
-        return (long) ((d * 1000f + 0.5f));
+        return (long) ((d * 1000.0f + 0.5f));
     }
     public static long hundredths(final float d) {
-        return (long) ((d * 100f + 0.5f));
+        return (long) ((d * 100.0f + 0.5f));
     }
     public static int tens(final float d) {
-        return (int) ((d * 10f + 0.5f));
+        return (int) ((d * 10.0f + 0.5f));
     }
      
     public static final CharSequence n2(final float x) {         

@@ -106,7 +106,9 @@ public class TextInput extends Input.BufferedInput {
                 if (input!=null) {
                     try {
                         input.close();
-                    } catch (IOException ex1) { }
+                    } catch (IOException ex1) {
+                        ex1.printStackTrace();
+                    }
                 }
                 if (Global.DEBUG) {
                     e.printStackTrace();

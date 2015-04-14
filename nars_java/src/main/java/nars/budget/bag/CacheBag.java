@@ -68,7 +68,8 @@ public class CacheBag<K, I extends Item<K>> implements Memory.MemoryAware, Remov
                 if (v instanceof Concept)
                     memory.emit(Events.ConceptForget.class, v);
             }
-            rn.getValue().end();
+            I v = rn.getValue();
+            if (v!=null) v.end();
         }
     }
 

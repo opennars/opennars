@@ -159,7 +159,7 @@ public class Cons<T> implements Iterable<T> {
             return false;
         }
 
-        Cons cons = (Cons) o;
+        Cons<T> cons = (Cons<T>) o;
 
         return car.equals(cons.car) && cdr.equals(cons.cdr);
 

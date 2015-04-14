@@ -130,7 +130,7 @@ abstract public class BufferedOutput extends Output {
         }
 
 
-        float c = 1f;
+        float c = 1.0f;
         if (o instanceof Task) {
             Task t = (Task)o;
             if (t.sentence != null) {
@@ -141,10 +141,10 @@ abstract public class BufferedOutput extends Output {
                 else
                     conf = 1.0f;
 
-                c =  1f + 0.2f * (1f - t.getPriority());
-                c *= 1f + 0.02f * (float) Math.sqrt(t.getTerm().complexity);
-                c *= 1f + 0.2f * (1f - conf);
-                c *= 1f + 0.1f * t.sentence.stamp.getOriginality();
+                c = 1.0f + 0.2f * (1.0f - t.getPriority());
+                c *= 1.0f + 0.02f * (float) Math.sqrt(t.getTerm().complexity);
+                c *= 1.0f + 0.2f * (1.0f - conf);
+                c *= 1.0f + 0.1f * t.sentence.stamp.getOriginality();
             }
         }
 
@@ -154,7 +154,7 @@ abstract public class BufferedOutput extends Output {
             c/=0.5f;
         }
         if (event == Events.ERR.class) {
-            c*=2f;
+            c*= 2.0f;
         }
 
         return c;
@@ -230,8 +230,9 @@ abstract public class BufferedOutput extends Output {
 
             String nextChannel = i.channel.getSimpleName();
 
-            String content = TextOutput.getOutputString(
-                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, buffer, 0).toString();
+            StringBuilder content = TextOutput.getOutputString(
+                    i.channel, i.object, false /* showchannel*/, false /* show stamp */, nar, buffer, 0);
+
 
             String prefix = nextChannel + (": ");
 
@@ -278,7 +279,7 @@ abstract public class BufferedOutput extends Output {
 
         Object signal;
         if ((args.length >= 1) && (args[0] instanceof Task))
-            signal = ((Task) args[0]);
+            signal = args[0];
         else
             signal = args;
 

@@ -86,7 +86,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         if (t.sentence.truth!=null) {
             float f = t.sentence.truth.getFrequency();
             float c = t.sentence.truth.getConfidence();
-            float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/2f; //error tolerance epsilon
+            float e = Global.TESTS_TRUTH_ERROR_TOLERANCE/ 2.0f; //error tolerance epsilon
             this.freqMin = f - e;
             this.freqMax = f + e;
             this.confMin = c - e;
@@ -115,9 +115,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.cycleEnd = cycleEnd;
         setEternal();
         this.freqMax = Math.min(1.0f, freqMax);
-        this.freqMin = Math.max(0f, freqMin);
+        this.freqMin = Math.max(0.0f, freqMin);
         this.confMax = Math.min(1.0f, confMax);
-        this.confMin = Math.max(0f, confMin);
+        this.confMin = Math.max(0.0f, confMin);
         this.punc = punc;
         this.term = n.term(sentenceTerm);
     }

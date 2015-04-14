@@ -36,7 +36,7 @@ public class InternalExperience extends AbstractOperator {
     
     //less probable form
     public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 
-            INTERNAL_EXPERIENCE_PROBABILITY/4f;
+            INTERNAL_EXPERIENCE_PROBABILITY/ 4.0f;
 
 
 

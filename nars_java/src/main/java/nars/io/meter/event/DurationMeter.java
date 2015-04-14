@@ -22,7 +22,7 @@ public class DurationMeter extends DoubleMeter {
         super(id);
         
         
-        this.window = windowSec * 1E9;
+        this.window = windowSec * 1.0E9;
         //this.stat = new DescriptiveStatistics();
         this.nanoSeconds = nanoSeconds;
         this.frequency = asFrequency;
@@ -53,7 +53,7 @@ public class DurationMeter extends DoubleMeter {
     }
     
     public synchronized double sinceStart() {
-        double resolutionTime = nanoSeconds ? 1E9 : 1E3;
+        double resolutionTime = nanoSeconds ? 1.0E9 : 1.0E3;
         return (PeriodMeter.now(nanoSeconds) - startTime) / resolutionTime;
     }
 

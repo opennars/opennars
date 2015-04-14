@@ -315,7 +315,7 @@ public class ClassicalConditioningHelper implements IOperator {
         if(enabled) {
             if (enabled)
                 lastElems.clear();
-            Global.DEFAULT_JUDGMENT_PRIORITY=(float) 0.01;
+            Global.DEFAULT_JUDGMENT_PRIORITY= 0.01f;
         } else {
             Global.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
         }

@@ -214,7 +214,7 @@ public class Memory implements Serializable {
     /**
      * The remaining number of steps to be carried out (stepLater mode)
      */
-    private int inputPausedUntil = -1;
+    private long inputPausedUntil = -1;
 
     /**
      * System clock, relatively defined to guarantee the repeatability of
@@ -435,7 +435,7 @@ public class Memory implements Serializable {
      */
     public float conceptPriority(final Term t) {
         final Concept c = concept(t);
-        return (c == null) ? 0f : c.getPriority();
+        return (c == null) ? 0.0f : c.getPriority();
     }
 
 
@@ -516,11 +516,11 @@ public class Memory implements Serializable {
 
             //STATEMENTS --------------------------
             case PROPERTY:
-                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return Property.make(a[0], a[1]); break;
             case INSTANCE:
-                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return Instance.make(a[0], a[1]); break;
             case INSTANCE_PROPERTY:
-                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]);
+                if (ensureTermLength(2, a)) return InstanceProperty.make(a[0], a[1]); break;
 
             case INHERITANCE:
                 if (ensureTermLength(2, a)) return Inheritance.makeTerm(a[0], a[1]); break;
@@ -587,7 +587,7 @@ public class Memory implements Serializable {
         }
 
         float inputPriorityFactor = param.inputActivationFactor.floatValue();
-        if (inputPriorityFactor!=1.0)
+        if (inputPriorityFactor!=1.0f)
             t.setPriority( t.getPriority() * inputPriorityFactor );
 
         if (!t.budget.aboveThreshold()) {
@@ -809,7 +809,7 @@ public class Memory implements Serializable {
      * @param cycles The number of logic steps to think for, will end thinking at time() + cycles unless more thinking is queued
      */
     public void think(final long cycles) {
-        inputPausedUntil = (int) (time() + cycles);
+        inputPausedUntil = (time() + cycles);
     }
 
     /**

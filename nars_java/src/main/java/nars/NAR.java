@@ -542,7 +542,7 @@ public class NAR implements Runnable {
 
             if (minFramePeriodMS > 0) {
                 
-                double remainingTime = minFramePeriodMS - (frameTime/1E3);
+                double remainingTime = minFramePeriodMS - (frameTime/ 1.0E3);
                 if (remainingTime > 0) {
                     try {
                         Thread.sleep(minFramePeriodMS);
