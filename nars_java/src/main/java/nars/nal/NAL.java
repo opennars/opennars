@@ -144,12 +144,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      */
     public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
 
-        Sentence currentBelief = getCurrentBelief();
 
         if (task.getParentTask() == null) {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
         }
-
 
 
         //its revision, of course its cyclic, apply evidental base policy
@@ -167,6 +165,18 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                 }
             }
         }
+
+
+        if (nal(7)) {
+            //adjust occurence time
+            Task parent = task.getParentTask();
+            final Sentence occurence = parent != null ? parent.sentence : null;
+            if (occurence != null && !occurence.isEternal()) {
+                //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
+                task.getStamp().setOccurrenceTime(occurence.getOccurrenceTime());
+            }
+        }
+
 
         if (addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask)) {
 
