@@ -121,7 +121,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
         this.parentTask = parentTask;
         if (parentTask!=null && parentTask.get()!=null) {
             if (parentTask.get().sentence.equals(s)) {
-                throw new RuntimeException("parentTask with equal sentence");
+                throw new RuntimeException("parentTask with equal sentence: " + s);
             }
         }
 

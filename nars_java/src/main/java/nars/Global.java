@@ -238,6 +238,8 @@ public class Global {
     public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
     public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
+    public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection
+
 
     public static <X> List<X> newArrayList() {
         return new FastList(); //GS
@@ -282,6 +284,12 @@ public class Global {
     public static <C> Reference<Stamp> reference(Stamp s) {
         return new SoftReference(s);
     }
+
+
+
+
+    public static float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
 
 
     public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above

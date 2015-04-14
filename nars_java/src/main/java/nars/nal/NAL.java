@@ -156,7 +156,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         {
             //if revised, the stamp should already have been prevented from even being created
 
-            if (revised || !allowOverlap) {
+            if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
                 if (task.getStamp().isCyclic()) {
                     //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                     //re.printStackTrace();
@@ -178,12 +178,16 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         }
 
 
+        task.setDurability(task.getDurability()*Global.DERIVATION_DURABILITY_LEAK);
+        task.setPriority(task.getPriority()*Global.DERIVATION_PRIORITY_LEAK);
+
         if (addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask)) {
 
             memory.event.emit(Events.TaskDerive.class, task, revised, single, currentTask);
             memory.logic.TASK_DERIVED.hit();
 
         }
+
 
         if (nal(7)) {
             if (task.sentence.getOccurrenceTime() > memory.time()) {

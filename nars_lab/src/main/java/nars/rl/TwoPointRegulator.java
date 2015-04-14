@@ -8,6 +8,7 @@ import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.nal.Task;
+import nars.nal.filter.DeriveOnlyDesired;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
@@ -30,22 +31,19 @@ public class TwoPointRegulator extends JPanel {
         Global.DEBUG = true;
     }
 
-    //final int feedbackCycles = 5000;
-
-
-    final int targetCyclesMin = 500;
+    final int targetCyclesMin = 10000;
     final int targetCyclesMax = targetCyclesMin;
     int targetCycles = targetCyclesMin;
 
     final int beGoodPeriod = targetCyclesMin;
 
-    private final int cyclesPerFrame = 10;
+    private final int cyclesPerFrame = 50;
 
     final int trainingActionPeriod = targetCyclesMin;
-    final int initialTrainingCycles = 15;
+    final int initialTrainingCycles = 5;
 
-    float initialDesireConf = 0.65f;
-    int speed = 10;
+    float initialDesireConf = 0.85f;
+    int speed = 4;
 
     //String self = "SELF";
     String reward = "reward";
@@ -59,12 +57,12 @@ public class TwoPointRegulator extends JPanel {
     int historySize = 8000 * 10;
     Deque<State> history = new ArrayDeque<>();
     boolean speedProportionalToExpectation = true;
-    private float closeEnough = 1f; //tolerance threshold
+    private float closeEnough = 0.5f; //tolerance threshold
     private float distance;
     private boolean here;
 
     static int setpoint = 0; //80 230
-    float x = 0;
+    float x = 50;
 
     public class move extends Operator {
 
@@ -134,7 +132,10 @@ public class TwoPointRegulator extends JPanel {
 
 
     public void beGood() {
+
         nar.input("<" + reward + " --> " + goodness + ">!");
+        nar.input("move(left)@");
+        nar.input("move(right)@");
     }
 
 //    public void moving() {
@@ -157,9 +158,9 @@ public class TwoPointRegulator extends JPanel {
         nar.input(getTargetTerm(left, right) + ". :|: %1.00;0.95%");
     }
 
-    private String getTargetTerm(boolean left, boolean right, String... additional) {
+    private String getTargetTerm0(boolean left, boolean right, String... additional) {
 
-        String term = "(&|,";
+        String term = "(&&,";
         if (left)
             term += "<" + target + " --> left>";
         else
@@ -171,6 +172,29 @@ public class TwoPointRegulator extends JPanel {
             term += "<" + target + " --> right>";
         else
             term += "(--,<" + target + " --> right>)";
+
+        for (String s : additional) {
+            term += "," + s;
+        }
+
+        term += ")";
+
+        return term;
+    }
+    private String getTargetTerm(boolean left, boolean right, String... additional) {
+
+        String term = "(&|,";
+        if (left)
+            term += "<move(left) --> " + target + ">";
+        else
+            term += "<(--,move(left)) -->" + target + ">";
+
+        term += ",";
+
+        if (right)
+            term += "<move(right) --> " + target + ">";
+        else
+            term += "<(--,move(right)) -->" + target + ">";
 
         for (String s : additional) {
             term += "," + s;
@@ -208,15 +232,17 @@ public class TwoPointRegulator extends JPanel {
 
         nar = new NAR(new Default().setInternalExperience(null));
 
+        //nar.on(new DeriveOnlyDesired());
+
         nar.on(new move());
 
         nar.setCyclesPerFrame(cyclesPerFrame);
-        nar.param.shortTermMemoryHistory.set(2);
-        nar.param.duration.set(5);
+        nar.param.shortTermMemoryHistory.set(1);
+        nar.param.duration.set(cyclesPerFrame/5);
         //nar.param.duration.setLinear
 
 
-        nar.param.decisionThreshold.set(0.6);
+        nar.param.decisionThreshold.set(0.75);
 
         nar.param.outputVolume.set(5);
 
@@ -281,10 +307,15 @@ public class TwoPointRegulator extends JPanel {
         };
 
 
-        train(initialTrainingCycles);
+        //train(initialTrainingCycles);
+        train2();
 
     }
 
+    protected void train2() {
+        nar.input("move(left)!");
+        nar.input("move(right)!");
+    }
 
     protected void train(int periods) {
         int delay = trainingActionPeriod;
@@ -294,7 +325,7 @@ public class TwoPointRegulator extends JPanel {
             t += "move(" + dir + ")! %1.00;" + initialDesireConf + "% \n" +
                     //delay + "\n" +
                     //"move(right)! :|: %1.00;" + initialDesireConf + "%\n" +
-                    delay + "\n";
+                    (int)(Math.random()*delay) + "\n";
         }
         nar.input(t);
     }
