@@ -122,7 +122,8 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                             taskLinkTask
                             );
 
-                    f.deriveTask(newTask, false, false, s, taskLinkTask, false);
+                    f.setCurrentBelief(s);
+                    f.deriveTask(newTask, false, false, taskLinkTask, false);
 
                 }
             }

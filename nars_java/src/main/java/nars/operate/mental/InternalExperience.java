@@ -223,7 +223,7 @@ public class InternalExperience extends AbstractOperator {
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
-                nal.deriveTask(newTask, false, false, null, null, false);
+                nal.deriveTask(newTask, false, false, null, false);
             }
         }
 
@@ -269,7 +269,7 @@ public class InternalExperience extends AbstractOperator {
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
-                    nal.deriveTask(newTask, false, false, null, null, false);
+                    nal.deriveTask(newTask, false, false, null, false);
                 }
             }
         }

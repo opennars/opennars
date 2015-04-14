@@ -133,7 +133,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
 
 
     public boolean deriveTask(final Task task, final boolean revised, final boolean single) {
-        return deriveTask(task, revised, single, null, null, false);
+        return deriveTask(task, revised, single, null, false);
     }
 
     /**
@@ -142,7 +142,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param task the derived task
      * @param allowOverlap
      */
-    public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Sentence currentBelief, Task currentTask, boolean allowOverlap) {
+    public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+
+        Sentence currentBelief = getCurrentBelief();
 
         if (task.getParentTask() == null) {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
@@ -256,10 +258,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newBudget      The budget value in task
      */
     public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final Budget newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
-        return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentBelief(), getCurrentTask(), allowOverlap);
+        return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentTask(), allowOverlap);
     }
 
-    public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Sentence subbedBelief, Task subbedTask, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
         if (!Global.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
             if (!newBudget.aboveThreshold()) {
                 //early exit test for below budget
@@ -278,7 +280,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         try {
             derived = deriveTask(new Task(
                     new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                    newBudget, subbedTask, subbedBelief), false, false, subbedBelief, subbedTask, allowOverlap);
+                    newBudget, subbedTask, getCurrentBelief()), false, false, subbedTask, allowOverlap);
         } catch (RuntimeException e) {
             if (Global.DEBUG) throw e;
             System.err.println(e);
@@ -294,8 +296,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                                     subbedTask.sentence.punctuation,
                                     TruthFunctions.eternalize(newTruth),
                                     newStamp.cloneEternal()),
-                            newBudget, subbedTask, subbedBelief),
-                    false, false, subbedBelief, subbedTask, allowOverlap);
+                            newBudget, subbedTask, getCurrentBelief()),
+                    false, false, subbedTask, allowOverlap);
         }
 
         return derived;
@@ -464,6 +466,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         return currentBelief;
     }
 
+    public void setCurrentBelief(Sentence belief) {
+        this.currentBelief = belief;
+    }
 
 
 

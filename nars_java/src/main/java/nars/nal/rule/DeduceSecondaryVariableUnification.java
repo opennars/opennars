@@ -81,7 +81,9 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                 Task dummy = new Task(second_belief, budget, task, null);
                 Task newTask = new Task(newSentence, budget, dummy, second_belief);
 
-                if (nal.deriveTask(newTask, false, false, taskSentence, dummy, false)) {
+                nal.setCurrentBelief(taskSentence);
+
+                if (nal.deriveTask(newTask, false, false, dummy, false)) {
 
                     nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
@@ -282,21 +284,25 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     continue;
                 }
 
-                TruthValue truth = deduction(taskSentence.truth, truthSecond);
+                TruthValue truth;
 
                 char mark = Symbols.JUDGMENT;
                 if (taskSentence.isGoal() || second_belief.isGoal()) {
                     truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
                     mark = Symbols.GOAL;
                 }
+                else {
+                    truth = deduction(taskSentence.truth, truthSecond);
+                }
 
                 Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
-                //same as above?
-                Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
 
 
                 if (budget.aboveThreshold()) {
+
+                    //same as above?
+                    Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
 
                     Sentence newSentence = new Sentence(result, mark, truth,
                             new Stamp(useEvidentalBase, nal.time(), taskSentence.getOccurrenceTime()));
@@ -304,7 +310,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     Task dummy = new Task(second_belief, budget, task, null);
                     Task newTask = new Task(newSentence, budget, task, null);
 
-                    if (nal.deriveTask(newTask, false, false, taskSentence, dummy, true /* allow overlap */)) {
+                    nal.setCurrentBelief(taskSentence);
+
+                    if (nal.deriveTask(newTask, false, false, dummy, true /* allow overlap */)) {
 
                         nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
                         nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();

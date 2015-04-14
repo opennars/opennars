@@ -1,13 +1,13 @@
 package nars.nal.rule;
 
-import nars.Memory;
 import nars.Global;
+import nars.Memory;
 import nars.nal.*;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
 
 import java.util.Set;
 
@@ -60,8 +60,20 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
                     Sentence temporalBelief = next.getBestBelief(true, true);
+
+                    //TODO: make this work if it is needed, but i think it just implements a restore point that is not needed due to the refactor
+//                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+//                    Stamp SVSTamp=nal.getNewStamp();
+//                    Sentence SVBelief=nal.getCurrentBelief();
+//                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
+
+                    //now set the current context:
+//                    f.setCurrentBelief(temporalBelief);
+
                     if (temporalBelief!=null) {
-                        induct(f, task, taskSentence, memory, temporalBelief);
+                        if(!taskSentence.isEternal() && !temporalBelief.isEternal()) {
+                            induct(f, task, taskSentence, memory, temporalBelief);
+                        }
                     }
 
                 }
@@ -107,7 +119,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
         TemporalRules.temporalInduction(currentBelief, prevBelief,
                 nal.newStamp(currentBelief, prevBelief),
-                nal, prevBelief, controllerTask);
+                nal, controllerTask);
         return false;
     }
 

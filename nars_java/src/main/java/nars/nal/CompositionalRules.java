@@ -302,7 +302,7 @@ public final class CompositionalRules {
 
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
-        Sentence belief = nal.getCurrentBelief();
+        final Sentence belief = nal.getCurrentBelief();
         Compound content = Terms.compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null) {
             return false;
@@ -331,7 +331,7 @@ public final class CompositionalRules {
                 if (conj != null) {
                     truth = intersection(contentBelief.truth, belief.truth);
                     budget = BudgetFunctions.compoundForward(truth, conj, nal);
-                    nal.doublePremiseTask(conj, truth, budget, nal.newStamp(belief, contentBelief), false, belief, contentTask, false);
+                    nal.doublePremiseTask(conj, truth, budget, nal.newStamp(belief, contentBelief), false, contentTask, false);
                 }
             }
         } else {

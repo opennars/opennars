@@ -20,17 +20,23 @@
  */
 package nars.nal;
 
-import nars.nal.tlink.TLink;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.Global;
+import nars.budget.Budget;
+import nars.io.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
+import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.term.Variable;
+import nars.nal.tlink.TLink;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
 
 import java.util.Arrays;
 
@@ -222,6 +228,54 @@ public class RuleTables {
                 }
                 break;
             default:
+        }
+    }
+
+    public static void goalFromQuestion(final Task task, final Term taskTerm, final NAL nal) {
+        if(task.sentence.punctuation==Symbols.QUESTION && (taskTerm instanceof Implication || taskTerm instanceof Equivalence)) { //<a =/> b>? |- a!
+            Term goalterm=null;
+            Term goalterm2=null;
+            if(taskTerm instanceof Implication) {
+                Implication imp=(Implication)taskTerm;
+                if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                    if(!Global.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
+                        goalterm=imp.getSubject();
+                    }
+                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Global.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation)) {
+                        goalterm=imp.getPredicate(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
+                    }
+                }
+                else
+                if(imp.getTemporalOrder()==TemporalRules.ORDER_BACKWARD) {
+                    if(!Global.CURIOSITY_FOR_OPERATOR_ONLY || imp.getPredicate() instanceof Operation) {
+                        goalterm=imp.getPredicate();
+                    }
+                    if(goalterm instanceof Variable && goalterm.hasVarQuery() && (!Global.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation)) {
+                        goalterm=imp.getSubject(); //overwrite, it is a how question, in case of <?how =/> b> it is b! which is desired
+                    }
+                }
+            }
+            else
+            if(taskTerm instanceof Equivalence) {
+                Equivalence qu=(Equivalence)taskTerm;
+                if(qu.getTemporalOrder()== TemporalRules.ORDER_FORWARD || qu.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                    if(!Global.CURIOSITY_FOR_OPERATOR_ONLY || qu.getSubject() instanceof Operation) {
+                        goalterm=qu.getSubject();
+                    }
+                    if(!Global.CURIOSITY_FOR_OPERATOR_ONLY || qu.getPredicate() instanceof Operation) {
+                        goalterm2=qu.getPredicate();
+                    }
+                }
+            }
+            TruthValue truth=new TruthValue(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+            if(goalterm!=null && !(goalterm instanceof Variable) && !goalterm.hasVarIndep()) {
+                Sentence sent=new Sentence(goalterm, Symbols.GOAL,truth, nal.newStamp(task.sentence,nal.memory.time()));
+                nal.singlePremiseTask(sent, new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+            }
+            if(goalterm2!=null && !(goalterm2 instanceof Variable) && !goalterm2.hasVarIndep()) {
+                Sentence sent=new Sentence(goalterm2,Symbols.GOAL,truth.clone(), nal.newStamp(task.sentence,nal.memory.time()));
+                nal.singlePremiseTask(sent, new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+            }
         }
     }
 

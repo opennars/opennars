@@ -157,13 +157,9 @@ public class ConceptProcess extends NAL {
     protected void processTerm(TermLink bLink) {
         setCurrentTermLink(bLink);
 
-        Sentence belief = getCurrentBelief();
-
         reasoner.fire(this);
 
-        if (belief!=null) {
-            emit(Events.BeliefReason.class, belief, getCurrentTaskLink().getTarget(), this);
-        }
+        emit(Events.BeliefReason.class, getCurrentBelief(), getCurrentTask(), this);
     }
 
     @Override
@@ -199,27 +195,15 @@ public class ConceptProcess extends NAL {
     public void setCurrentTermLink(TermLink currentTermLink) {
 
         if (currentTermLink == null) {
-            this.currentBelief = null;
             this.currentTermLink = null;
             this.currentBeliefConcept = null;
-
         }
         else {
-
             this.currentTermLink = currentTermLink;
-            currentTermLink.budget.setUsed(memory.time());
-
-            Term beliefTerm = currentTermLink.getTerm();
-
-            this.currentBeliefConcept = memory.concept(beliefTerm);
-            if (this.currentBeliefConcept!=null) {
-                this.currentBelief = currentBeliefConcept.getBelief(this, getCurrentTask());
-            }
-            else {
-                this.currentBelief = null;
-            }
+            currentTermLink.setUsed(memory.time());
         }
     }
+
 
     /**
      * @return the currentTerm

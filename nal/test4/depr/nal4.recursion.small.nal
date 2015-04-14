@@ -4,10 +4,12 @@
 
 <(*,(*,(*,0))) --> num>?
 
-1200
 
 ''these two conditions need confidence values, otherwise they are assumed to represent 1.00;0.90 which isnt the case
 ''//outputMustContain('<(*,0) --> num>.')
-''//outputMustContain('<(*,(*,0)) --> num>.')
+
+''outputMustContain('<(*,(*,0)) --> num>.')
 
 ''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.66%')
+
+2200

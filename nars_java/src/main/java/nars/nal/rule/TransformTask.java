@@ -29,6 +29,9 @@ public class TransformTask extends ConceptFireTask {
 
         if (t.type == TermLink.TRANSFORM) {
 
+            f.setCurrentBelief(null);
+
+
             // to turn this into structural logic as below?
             Compound content = f.getCurrentTask().getTerm();
             short[] indices = t.index;

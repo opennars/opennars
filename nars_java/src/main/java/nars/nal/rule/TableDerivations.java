@@ -11,6 +11,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import static nars.io.Symbols.VAR_INDEPENDENT;
+import static nars.nal.RuleTables.goalFromQuestion;
 
 
 public class TableDerivations extends ConceptFireTaskTerm {
@@ -39,6 +40,8 @@ public class TableDerivations extends ConceptFireTaskTerm {
                             if (taskTerm instanceof Statement) {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, f);
                             }
+                        } else {
+                            goalFromQuestion(f.getCurrentTask(), taskTerm, f);
                         }
                         break;
                     case TermLink.COMPOUND_STATEMENT:

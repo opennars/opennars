@@ -21,9 +21,9 @@ public class SolidTest {
 
         int time = 32; //should solve the example in few cycles
 
-        Global.DEBUG = true;
+        Global.DEBUG = false;
 
-        Solid s = new Solid(3, 256, 1, 8, 2, 4);
+        Solid s = new Solid(3, 384, 1, 8, 2, 4);
         s.param.duration.set(3);
         s.param.noveltyHorizon.set(2);
 

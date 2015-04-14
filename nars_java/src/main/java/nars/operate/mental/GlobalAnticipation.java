@@ -192,7 +192,7 @@ public class GlobalAnticipation implements IOperator, Reaction {
             }
         }
         for(Task t: derivetasks) {
-            if(nal.deriveTask(t, false, false, null, null, false)) {
+            if(nal.deriveTask(t, false, false, null, false)) {
                 boolean debug=true;
             }
         }

@@ -310,7 +310,9 @@ public class Concept extends Item<Term> implements Termable {
                     }
                     */
 
-                    if (revision(judg, projectedBelief, false, nal, projectedBelief))
+                    nal.setCurrentBelief(null);
+
+                    if (revision(judg, projectedBelief, false, nal))
                         return false;
                 }
 
@@ -394,7 +396,9 @@ public class Concept extends Item<Term> implements Termable {
                     }
                     */
 
-                    boolean revisionSucceeded = revision(goal, projectedGoal, false, nal, projectedGoal);
+                    nal.setCurrentBelief(null);
+
+                    boolean revisionSucceeded = revision(goal, projectedGoal, false, nal);
                     if(revisionSucceeded) {
                         // it is revised, so there is a new task for which this function will be called
                         return false; // with higher/lower desire
