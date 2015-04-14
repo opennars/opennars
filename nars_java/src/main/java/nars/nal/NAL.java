@@ -150,6 +150,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
         }
 
+
+
         //its revision, of course its cyclic, apply evidental base policy
 
         /*if(Parameters.DEBUG)*/ //TODO make this DEBUG only once it is certain

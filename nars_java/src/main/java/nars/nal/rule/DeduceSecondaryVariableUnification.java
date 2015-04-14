@@ -68,10 +68,16 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
             Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
             if (budget.aboveThreshold()) {
+
+                long occ = taskSentence.getOccurrenceTime();
+                if (!second_belief.isEternal()) {
+                    occ = second_belief.getOccurrenceTime();
+                }
+
                 final Stamp sx = new Stamp(
                         s.build().evidentialBase,
                         nal.time(),
-                        taskSentence.getOccurrenceTime(),
+                        occ,
                         nal.memory.duration()
                 );
 
@@ -304,8 +310,13 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     //same as above?
                     Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
 
+                    long occ = taskSentence.getOccurrenceTime();
+                    if (!second_belief.isEternal()) {
+                        occ = second_belief.getOccurrenceTime();
+                    }
+
                     Sentence newSentence = new Sentence(result, mark, truth,
-                            new Stamp(useEvidentalBase, nal.time(), taskSentence.getOccurrenceTime()));
+                            new Stamp(useEvidentalBase, nal.time(), occ));
 
                     Task dummy = new Task(second_belief, budget, task, null);
                     Task newTask = new Task(newSentence, budget, task, null);

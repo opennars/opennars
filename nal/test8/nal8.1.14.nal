@@ -1,5 +1,5 @@
 ********** [24 + 12 -> 25]
   IN: <(*,SELF,{t002}) --> reachable>. :|: 
   IN: (&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))! 
-45
 ''outputMustContain('(^pick,{t002},SELF)! %1.00;0.43%')
+45

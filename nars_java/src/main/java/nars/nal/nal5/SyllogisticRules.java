@@ -487,6 +487,7 @@ public final class SyllogisticRules {
             final long now = nal.time();
             long baseTime = (belief.term instanceof Implication) ?
                 taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
+
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = now;
             }

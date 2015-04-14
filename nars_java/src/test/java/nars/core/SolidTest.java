@@ -19,7 +19,7 @@ public class SolidTest {
     @Test
     public void testDetective() throws FileNotFoundException {
 
-        int time = 32; //should solve the example in few cycles
+        int time = 48; //should solve the example in few cycles
 
         Global.DEBUG = false;
 
