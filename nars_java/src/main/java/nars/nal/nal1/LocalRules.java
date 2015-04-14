@@ -161,7 +161,7 @@ public class LocalRules {
 
         task.setBestSolution(belief);
 
-        memory.logic.SOLUTION_BEST.set((double) task.getPriority());
+        memory.logic.SOLUTION_BEST.set(task.getPriority());
 
         if (problem.isGoal()) {
             memory.emotion.adjustHappy(newQ, task.getPriority());
@@ -196,7 +196,9 @@ public class LocalRules {
             memory.emit(Output.class, task, belief);
         }*/
 
-        nal.addSolution(nal.getCurrentTask(), budget, belief, task);
+        //nal.addSolution(nal.getCurrentTask(), budget, belief, task);
+        nal.addSolution(task, budget, belief, task);
+
         return true;
 
 

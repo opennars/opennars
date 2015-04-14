@@ -259,7 +259,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             if (taskSentence.truth == null)
                 throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
 
-            final NAL.StampBuilder stamp = nal.newStamp(taskSentence, second_belief);
+
+            final NAL.StampBuilder stamp = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
 
             dedSecondLayerVariableUnificationTerms(nal, task,
                     second_belief, stamp, terms_dependent,
@@ -291,12 +292,17 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
+                //same as above?
+                Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
+
+
                 if (budget.aboveThreshold()) {
 
-                    Sentence newSentence = new Sentence(result, mark, truth, stamp);
+                    Sentence newSentence = new Sentence(result, mark, truth,
+                            new Stamp(useEvidentalBase, nal.time(), taskSentence.getOccurrenceTime()));
 
                     Task dummy = new Task(second_belief, budget, task, null);
-                    Task newTask = new Task(newSentence, budget, dummy, second_belief);
+                    Task newTask = new Task(newSentence, budget, task, null);
 
                     if (nal.deriveTask(newTask, false, false, taskSentence, dummy, true /* allow overlap */)) {
 

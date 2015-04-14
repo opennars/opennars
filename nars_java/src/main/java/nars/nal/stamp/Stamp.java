@@ -129,9 +129,10 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
      */
     public static Stamp zip(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
 
-        if (first==second) {
-            throw new RuntimeException("Same stamp: " + first);
-        }
+//        if (first==second) {
+//            throw new RuntimeException("Same stamp: " + first);
+//        }
+
 //        if (first.equals(second, true, true, true, true)) {
 //            throw new RuntimeException("Equal stamp: " + first);
 //        }

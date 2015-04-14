@@ -760,6 +760,7 @@ public class NarseseParser extends BaseParser<Object> {
     public Task parseTask(String input, boolean newStamp) throws InvalidInputException {
         ParsingResult r = null;
         try {
+            input = input.trim();
             if (newStamp)
                 r = singleTaskParser.run(input);
             else

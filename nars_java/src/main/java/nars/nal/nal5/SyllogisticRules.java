@@ -93,7 +93,7 @@ public final class SyllogisticRules {
 
         final NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
         nal.doublePremiseTask(content1, truth1, budget1, stamp, false, true);
-        nal.doublePremiseTask(content2, truth2, budget2, stamp, false, true);
+        nal.doublePremiseTask(content2, truth2, budget2, stamp, false, false);
     }
 
     /**
@@ -636,7 +636,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        nal.doublePremiseTask(content, truth, budget, nal.newStamp(taskSentence, belief), false, true);
+        nal.doublePremiseTask(content, truth, budget, nal.newStamp(taskSentence, belief), false, !conditionalTask);
 
         return true;
     }

@@ -819,13 +819,13 @@ public class Memory implements Serializable {
     public Set<Task> getTasks(boolean includeTaskLinks, boolean includeNewTasks, boolean includeNovelTasks) {
 
         //TODO estimate size
-        Set<Task> t = Global.newHashSet(4);
+        Set<Task> t = Global.newHashSet(concepts.size() * 16 /* estimate */);
 
         if (includeTaskLinks) {
-            for (Concept c : concepts) {
+            concepts.forEach( c -> {
                 if (c.taskLinks!=null)
                     c.taskLinks.forEach(tl -> { t.add(tl.targetTask); });
-            }
+            });
         }
 
         /*

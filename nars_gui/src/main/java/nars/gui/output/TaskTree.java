@@ -209,6 +209,8 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
             Task parent = t.getParentTask();
 
             if (parent != null && parent.equals(t)) {
+                System.err.println((t + " has parentTask equal to itself"));
+                System.err.println(t.getExplanation());
                 throw new RuntimeException(t + " has parentTask equal to itself");
             }
 

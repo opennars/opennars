@@ -40,23 +40,26 @@ public class HaiQBrain extends LearnerAndActor {
     public static double random(double max) { return Memory.randomNumber.nextDouble() * max;    }
 
     
-    int q(int StateX, int StateY, double reward) {
+    int q(final int StateX, final int StateY, final double reward) {
 
         final double[][][] Q = this.Q; //local reference
         final double[][][] et = this.et;
+        final int actions = nActions;
+        final int states = nStates;
 
         int maxk = 0;
         double maxval = Double.NEGATIVE_INFINITY;
-        for (int k = 0; k < nActions; k++) {
-            if (Q[StateX][StateY][k] > maxval) {
+        for (int k = 0; k < actions; k++) {
+            double v = Q[StateX][StateY][k];
+            if (v > maxval) {
                 maxk = k;
-                maxval = Q[StateX][StateY][k];
+                maxval = v;
             }
         }
         
         int Action;
         if (random(1.0) < Epsilon) {
-            Action = (int) random(nActions);
+            Action = (int) random(actions);
         } else {
             Action = maxk;
         }
@@ -68,9 +71,9 @@ public class HaiQBrain extends LearnerAndActor {
         
         final double AlphaDeltaQ = Alpha * DeltaQ;
         final double GammaLambda = Gamma * Lambda;
-        for (int i = 0; i < nStates; i++) {
-            for (int j = 0; j < nStates; j++) {
-                for (int k = 0; k < nActions; k++) {
+        for (int i = 0; i < states; i++) {
+            for (int j = 0; j < states; j++) {
+                for (int k = 0; k < actions; k++) {
                     final double e = et[i][j][k];
                     Q[i][j][k] += AlphaDeltaQ * e;
                     et[i][j][k] = GammaLambda * e;

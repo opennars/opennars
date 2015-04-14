@@ -119,6 +119,11 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
         super(b);
         this.sentence = s;
         this.parentTask = parentTask;
+        if (parentTask!=null && parentTask.get()!=null) {
+            if (parentTask.get().sentence.equals(s)) {
+                throw new RuntimeException("parentTask with equal sentence");
+            }
+        }
 
         if (parentTask == null)
             addHistory("Input");

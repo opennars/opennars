@@ -484,18 +484,18 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * Concept.processGoal
      *
      * @param budget          The budget value of the new Task
-     * @param sentence        The content of the new Task
+     * @param solutionBelief        The content of the new Task
      * @param candidateBelief The belief to be used in future logic, for
      *                        forward/backward correspondence
      */
-    public void addSolution(final Task currentTask, final Budget budget, final Sentence sentence, final Task parentBeliefTask) {
-        Sentence candidateBelief = parentBeliefTask.getParentBelief();
+    public void addSolution(final Task currentTask, final Budget budget, final Sentence solutionBelief, final Task parentBeliefTask) {
+        Sentence parentTaskParentBelief = parentBeliefTask.getParentBelief();
 
         addNewTask(
-                new Task(sentence, budget, currentTask, sentence, candidateBelief)
+                new Task(solutionBelief, budget, currentTask, parentTaskParentBelief, solutionBelief)
                         .addHistory(currentTask.getHistory()),
                 "Activated",
-                true, false, false, sentence, currentTask);
+                true, false, false, solutionBelief, currentTask);
     }
 
     /**
