@@ -273,7 +273,7 @@ public class LocalRules {
         TruthValue value2 = judgment2.truth;
         TruthValue truth = TruthFunctions.intersection(value1, value2);
         BudgetValue budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,false, false);
+        nal.doublePremiseTask(content, truth, budget,false, true);
     }
 
     /**

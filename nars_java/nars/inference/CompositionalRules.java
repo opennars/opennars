@@ -290,7 +290,7 @@ public final class CompositionalRules {
             return;
         }
         BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.doublePremiseTask(content, truth, budget, false, false);
+        nal.doublePremiseTask(content, truth, budget, false, true);
     }
 
     /**
@@ -387,7 +387,7 @@ public final class CompositionalRules {
         }
         if (truth != null) {
             BudgetValue budget = BudgetFunctions.compoundForward(truth, content, nal);
-            nal.doublePremiseTask(content, truth, budget, false, false);
+            nal.doublePremiseTask(content, truth, budget, false, true);
         }
     }
 
