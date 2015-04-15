@@ -116,7 +116,7 @@ public final class StructuralRules {
             return;
         }
         
-        if (!(subj instanceof Product) && !(subj instanceof SetExt) && !(subj instanceof SetInt)) {
+        if (!(subj instanceof Product) && !(subj instanceof SetTensional) && !(subj instanceof Difference) && !(subj instanceof Image)) {
             return; // no abduction on other compounds for now, but may change in the future
         }
         
