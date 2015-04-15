@@ -126,8 +126,6 @@ public class Launcher extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBackground(new java.awt.Color(0, 0, 0));
-
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -143,9 +141,8 @@ public class Launcher extends javax.swing.JFrame {
             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jButton1.setBackground(java.awt.Color.darkGray);
         jButton1.setForeground(new java.awt.Color(255, 255, 254));
-        jButton1.setText(" Run OpenNARS");
+        jButton1.setText("OpenNARS");
         jButton1.setActionCommand("jButton1");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,7 +166,6 @@ public class Launcher extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(254, 255, 255));
         jLabel3.setText("Run Application Examples:");
 
-        jButton2.setBackground(java.awt.Color.darkGray);
         jButton2.setForeground(new java.awt.Color(254, 255, 255));
         jButton2.setText("Website");
         jButton2.setActionCommand("jButton1");
@@ -202,7 +198,6 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
-        jButton5.setBackground(java.awt.Color.darkGray);
         jButton5.setForeground(new java.awt.Color(254, 255, 255));
         jButton5.setText("IRC");
         jButton5.setActionCommand("jButton1");
@@ -238,7 +233,6 @@ public class Launcher extends javax.swing.JFrame {
             }
         });
 
-        jButton3.setBackground(java.awt.Color.darkGray);
         jButton3.setForeground(new java.awt.Color(255, 255, 254));
         jButton3.setText("Web GUI");
         jButton3.setActionCommand("jButton1");

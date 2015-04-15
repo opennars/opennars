@@ -63,7 +63,7 @@ public class drawPanel extends JPanel {
                 
                 if (args[0].toString().equals("left")) {
                     x -= 10;
-                    if (x < setpoint) {
+                    if (x <= setpoint) {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
                     } else {
@@ -72,7 +72,7 @@ public class drawPanel extends JPanel {
                 }
                 if (args[0].toString().equals("right")) {
                     x += 10;
-                    if (x > setpoint) {
+                    if (x >= setpoint) {
                         System.out.println("BAD:\n" + operation.getTask().getExplanation());
                         bad();
                     } else {
@@ -90,10 +90,11 @@ public class drawPanel extends JPanel {
     
     public void beGood() {
         nar.addInput("<SELF --> [good]>!");
+        nar.addInput("<SELF --> [bad]>! %0%");
     }
     
     public void moving() {
-        nar.addInput("<SELF --> [moving]>. :|:");
+        //nar.addInput("<SELF --> [moving]>. :|:");
     }
     
     public void beGoodNow() {
@@ -105,7 +106,7 @@ public class drawPanel extends JPanel {
     }
     
     public void bad() {
-        nar.addInput("<SELF --> [good]>. :|: %0.00;0.90%");
+        nar.addInput("<SELF --> [bad]>. :|: %0.00;0.90%");
     }
  
     public void target(String direction) {
@@ -123,14 +124,14 @@ public class drawPanel extends JPanel {
  
         nar.addPlugin(new move());
         
-        int k=0;
+       /* int k=0;
         for(PluginState s: nar.getPlugins()) {
             if(s.plugin instanceof InternalExperience) {
                 nar.removePlugin(s);
                 break;
             }
             k++;
-        }
+        }*/
         
         nar.on(CycleEnd.class, new EventEmitter.EventObserver() {
  
@@ -152,9 +153,9 @@ public class drawPanel extends JPanel {
                 
                 if(nar.time()%1000==0) {
                     if (x > setpoint)
-                        target("left");                    
+                        target("left1"); //this way it also has to learn left <-> left1         
                     else if (x < setpoint)
-                        target("right");                    
+                        target("right1"); //and learn right <-> right1
                     else
                         target("here");
                     
@@ -180,7 +181,7 @@ public class drawPanel extends JPanel {
  
     }
  
-    static int setpoint = 220; //80 230
+    static int setpoint = 220; //220; //80
     int x = 160;
     int y = 10;
  
