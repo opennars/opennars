@@ -443,9 +443,9 @@ public final class SyllogisticRules {
                     strong=true;
                 } else if (side == 0) {
                     truth = TruthFunctions.deduction(truth1, truth2);
+                    strong=true;
                 } else {
                     truth = TruthFunctions.abduction(truth2, truth1);
-                    strong=true;
                 }
             }
             budget = BudgetFunctions.forward(truth, nal);
