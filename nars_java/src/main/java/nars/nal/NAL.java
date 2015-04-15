@@ -153,8 +153,8 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         }
         else {
             if (task.sentence.equals(task.getParentTask().sentence)) {
-                memory.emit(Events.ERR.class, "singlePremiseTask: newSentece equal to parentTask sentence: " + task);
-                return false;
+                memory.emit(Events.ERR.class, "singlePremiseTask: new task's sentence equal to parentTask sentence: " + task);
+                //return false;
             }
         }
 

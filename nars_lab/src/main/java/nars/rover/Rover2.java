@@ -70,7 +70,7 @@ public class Rover2 extends PhysicsModel {
                     setConceptBagSize(1500).
                     setSubconceptBagSize(12000).
                     setNovelTaskBagSize(256));
-            nar.param.inputsMaxPerCycle.set(1000);
+            nar.param.inputsMaxPerCycle.set(100);
             nar.setCyclesPerFrame(512);
         }
 
@@ -79,19 +79,19 @@ public class Rover2 extends PhysicsModel {
         //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
 
 
-        new NARPrologMirror(nar, 0.95f, true, true, false);
+        //new NARPrologMirror(nar, 0.95f, true, true, false);
 
 
 
         float framesPerSecond = 30f;
 
-        nar.param.shortTermMemoryHistory.set(8);
+        nar.param.shortTermMemoryHistory.set(4);
         nar.param.temporalRelationsMax.set(3);
 
         (nar.param).outputVolume.set(3);
         (nar.param).duration.set(5);
         //nar.param.budgetThreshold.set(0.02);
-        nar.param.confidenceThreshold.set(0.02);
+        //nar.param.confidenceThreshold.set(0.02);
         (nar.param).conceptForgetDurations.set(5f);
         (nar.param).taskLinkForgetDurations.set(10f);
         (nar.param).termLinkForgetDurations.set(10f);
@@ -195,7 +195,7 @@ public class Rover2 extends PhysicsModel {
             t = "reverse";
         } else {
             if (angleTerms[i+ha] == null) {
-                angleTerms[i+ha] = "a" + i;
+                angleTerms[i+ha] = ("a" + i).replace('-','n');
             }
             t = angleTerms[i+ha];
         }

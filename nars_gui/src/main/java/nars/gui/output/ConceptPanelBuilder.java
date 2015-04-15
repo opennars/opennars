@@ -12,18 +12,20 @@ import com.google.common.collect.Multimap;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.NAR;
+import nars.budget.Bag;
+import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
 import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
-import nars.budget.Budget.Budgetable;
 import nars.nal.Concept;
 import nars.nal.Item;
 import nars.nal.Sentence;
-import nars.nal.term.Term;
 import nars.nal.TruthValue.Truthable;
-import nars.budget.Bag;
+import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -135,6 +137,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
         private final TruthChart beliefChart;
         private final TruthChart desireChart;
         private final PriorityColumn questionChart;
+        private RadialBagChart taskLinkChart;
+        private ScatterPlotBagChart termLinkChart;
         //private final BagChart termLinkChart;
         //private final BagChart taskLinkChart;
         int chartWidth = 64;
@@ -218,6 +222,12 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 nengo.getUniverse().add(beliefChart);
                 nengo.getUniverse().add(questionChart);
                 nengo.getUniverse().add(desireChart);
+
+                JPanel details = new JPanel(new GridLayout(0,2));
+                details.add(termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
+                details.add(taskLinkChart = new RadialBagChart(c, c.taskLinks));
+                add(details, BorderLayout.SOUTH);
+
             }
             else {
                 JTextArea title = new JTextArea(concept.term.toString());
@@ -228,15 +238,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
                     title.setEditable(false);
                     title.setOpaque(false);
                     title.setFont(Video.monofont.deriveFont(titleSize));
+
+                    JPanel titlePanel = new JPanel(new BorderLayout());
+                    titlePanel.setOpaque(false);
+                    titlePanel.add(title, CENTER);
+                    titlePanel.add(subtitle, SOUTH);
+
+
+                    add(titlePanel, NORTH);
                 }
 
-                JPanel titlePanel = new JPanel(new BorderLayout());
-                titlePanel.setOpaque(false);
-                titlePanel.add(title, CENTER);
-                titlePanel.add(subtitle, SOUTH);
-
-
-                add(titlePanel, NORTH);
 
 
                 JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
@@ -317,14 +328,14 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 desireChart.setVisible(false);
             }
 
-            /*
+
             if (termLinkChart != null) {
                 termLinkChart.update(time);
             }
             if (taskLinkChart != null) {
                 taskLinkChart.update(time);
             }
-            */
+
 
             validate();
 
@@ -349,8 +360,11 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             this.w = width;
             this.h = height;
+
+            setIgnoreRepaint(true);
             setSize(width, height);
             Dimension minimumSize = new Dimension(width, height);
+            setBorder(LineBorder.createGrayLineBorder());
             setMinimumSize(minimumSize);
             setPreferredSize(minimumSize);
         }
@@ -424,7 +438,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             minTime = maxTime = time;
             for (Sentence s : i) {
-                if (s.isEternal()) continue;
+                if (s == null || s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
 
                 if (minTime > when)
@@ -447,6 +461,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
             for (Sentence s : i) {
+                if (s == null) continue;
                 if (s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
 
@@ -519,6 +534,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         private final Concept concept;
         private final Bag bag;
+        private final String conceptString;
 
         float momentum = 0.9f;
         int maxItems = 32;
@@ -529,6 +545,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             this.concept = c;
             this.bag = b;
+            this.conceptString = concept.getTerm().toString();
         }
 
         boolean updateData() {
@@ -538,7 +555,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             synchronized (priority) {
                 min = Float.POSITIVE_INFINITY;
                 max = Float.NEGATIVE_INFINITY;
-                priority.clear();
+                //priority.clear();
 
                 bag.forEach(new Consumer<Item>() {
                     boolean finished = false;
@@ -554,6 +571,13 @@ public class ConceptPanelBuilder extends AbstractReaction {
                         }
 
                         String n = t.name().toString();
+
+                        if (t instanceof TaskLink) {
+
+                            if (((TaskLink) t).getTerm().equals(concept.getTerm())) {
+                                n = n.replace(conceptString,"");
+                            }
+                        }
 
                         float existing = priority.getOrDefault(n, -0.01f);
 
@@ -610,15 +634,28 @@ public class ConceptPanelBuilder extends AbstractReaction {
             for (Map.Entry<String, Float> e : priority.entrySet()) {
 
                 String s = e.getKey();
+                float v = e.getValue();
                 //int textLength = g.getFontMetrics().stringWidth(s);
-                float y = e.getValue() * (height * 0.85f) + (height * 0.1f);
+                float y = (v) * (height * 0.85f) + (height * 0.1f);
+                y = height - y;
 
                 g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
-                //g.translate((int) x, (int) y /*+ textLength*/);
 
-                //g.rotate(-Math.PI/2);
-                g.drawString(s, (int) x, (int) y);
-                //g.rotate(Math.PI/2);
+
+
+                g.translate((int) x, (int) y /*+ textLength*/);
+
+                float angle = -(float)((1.0f - v) * Math.PI/2f);
+                if (angle!=0)
+                    g.rotate(angle);
+
+
+                g.drawString(s, 0,0);
+
+                if (angle!=0)
+                    g.rotate(-angle);
+
+                g.translate(-(int) x, -(int) y /*+ textLength*/);
 
                 x += dx;
             }
@@ -653,6 +690,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             for (Map.Entry<String, Float> e : priority.entrySet()) {
 
                 String s = e.getKey();
+
 
                 float rad = e.getValue() * (width/2 * 0.45f) + (width/2 * 0.12f);
 

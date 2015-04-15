@@ -131,7 +131,7 @@ public class RoverModel {
         //random new position
         food.setTransform(new Vec2(x * 2.0f, y * 2.0f), food.getAngle());
 
-        mouthInput.set("$0.95;0.50$ <goal --> Food>. :|: %1.00;0.95%");
+        mouthInput.set("$0.95;0.50$ <goal --> Food>. :|: %0.90;0.90%");
     }
 
     public class VisionRay implements LayerDraw {
@@ -350,7 +350,7 @@ public class RoverModel {
             a = maxAngleVelocityFelt;
         }
         if (a < 0.1) {
-            feltAngularVelocity.set("<(*,rotation," + Rover2.f(0) + ") --> feel>. :|: %1.00;0.90%");
+            feltAngularVelocity.set("<(*,rotation," + Rover2.f(0) + ") --> feel>. :|: %0.95;0.90%");
             //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");
         } else {
             String direction;

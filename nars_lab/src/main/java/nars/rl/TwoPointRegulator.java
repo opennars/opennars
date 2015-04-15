@@ -8,7 +8,6 @@ import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.nal.Task;
-import nars.nal.filter.DeriveOnlyDesired;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
@@ -19,6 +18,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 
@@ -31,30 +31,31 @@ public class TwoPointRegulator extends JPanel {
         Global.DEBUG = true;
     }
 
-    final int targetCyclesMin = 10000;
+    final int targetCyclesMin = 200;
     final int targetCyclesMax = targetCyclesMin;
     int targetCycles = targetCyclesMin;
 
     final int beGoodPeriod = targetCyclesMin;
 
-    private final int cyclesPerFrame = 50;
+    private final int cyclesPerFrame = 1;
+    float drawXScale = 0.5f;
+    int historySize = (int)(800 / drawXScale);
 
     final int trainingActionPeriod = targetCyclesMin;
-    final int initialTrainingCycles = 5;
+    final int initialTrainingCycles = 15;
 
-    float initialDesireConf = 0.85f;
-    int speed = 4;
+    float initialDesireConf = 0.6f;
+    int speed = 25;
 
     //String self = "SELF";
-    String reward = "reward";
     String target = "good";
-    String goodness = "good";
+    String reward = "good";
+    String goodness = "reward";
     //String goodness = "[good]";
 
 
     int movement = 0;
     int lastMovement = 0;
-    int historySize = 8000 * 10;
     Deque<State> history = new ArrayDeque<>();
     boolean speedProportionalToExpectation = true;
     private float closeEnough = 0.5f; //tolerance threshold
@@ -62,7 +63,7 @@ public class TwoPointRegulator extends JPanel {
     private boolean here;
 
     static int setpoint = 0; //80 230
-    float x = 50;
+    float x = 30;
 
     public class move extends Operator {
 
@@ -77,7 +78,12 @@ public class TwoPointRegulator extends JPanel {
                 throw new RuntimeException("how did this get derived");
             }
 
-            if (args.length != 2) { // || args.length==3) { //left, self
+            if (args.length == 1) {
+                String t = Math.random() < 0.5 ? ("left") : ("right");
+                nar.input("move(" + t + ")!");
+                return null;
+            }
+            else if (args.length != 2) { // || args.length==3) { //left, self
                 System.err.println(this + " ?? " + Arrays.toString(args));
                 return null;
             }
@@ -116,16 +122,18 @@ public class TwoPointRegulator extends JPanel {
 
             if (here || closer) {
                 System.out.println("GOOD:\n" + operation.getTask().getExplanation());
-                return Arrays.asList(good(here ? 0.95f : 0.75f));
+                return Arrays.asList(good(here ? 0.95f : 0.85f));
             } else {
                 if (x > setpoint) {
                     System.out.println("BAD:\n" + operation.getTask().getExplanation());
-                    return Arrays.asList(bad(true, false));
+                    bad(true, false);
+
                 } else { // (x > setpoint - thresh)
                     System.out.println("BAD:\n" + operation.getTask().getExplanation());
-                    return Arrays.asList(bad(false, true));
+                    bad(false, true);
                 }
             }
+            return null;
 
         }
     }
@@ -133,9 +141,15 @@ public class TwoPointRegulator extends JPanel {
 
     public void beGood() {
 
-        nar.input("<" + reward + " --> " + goodness + ">!");
-        nar.input("move(left)@");
-        nar.input("move(right)@");
+        nar.input("<" + reward + " <-> " + goodness + ">! :|:");
+
+        //nar.input("move(SELF)! :|:");
+
+        /*if (!here) {
+            nar.input("<" + reward + " --> " + goodness + ">. :|: %0.05;0.65%");
+        }*/
+        //nar.input("move(left)@");
+        //nar.input("move(right)@");
     }
 
 //    public void moving() {
@@ -147,39 +161,41 @@ public class TwoPointRegulator extends JPanel {
 //    }
 
     public Task good(float conf) {
-        return nar.task("<" + reward + " --> " + goodness + ">. :|: %1.00;" + conf + "%");
+        return nar.task("<" + reward + " <-> " + goodness + ">. :|: %0.90;" + conf + "%");
     }
 
-    public Task bad(boolean left, boolean right) {
-        return nar.task(getTargetTerm0(left, right, "(--,<" + reward + " --> " + goodness + ">)") + ". :|: %0.90;0.90%");
+    public void bad(boolean left, boolean right) {
+        String b = "<" + reward + " <-> " + goodness + ">" + ". :|: %0.10;0.90%"; //punishment
+        java.util.List<String> cb = getTargetTerm2(left, right);
+        cb.add(b);
+        for (String tt : cb)
+            nar.input(tt + ". :|: %0.90;0.90%");
     }
 
     public void target(boolean left, boolean right) {
-        nar.input(getTargetTerm0(left, right) + ". :|: %0.90;0.90%");
+        for (String tt : getTargetTerm2(left, right))
+            nar.input(tt + ". :|: %0.95;0.90%");
     }
 
-    private String getTargetTerm0(boolean left, boolean right, String... additional) {
+    private java.util.List<String> getTargetTerm2(boolean left, boolean right) {
 
-        String term = "(&&,";
+        java.util.List<String> l = new ArrayList(3);
+
         if (left)
-            term += "<" + target + " --> left>";
+            l.add("<left --> " + target + ">");
         else
-            term += "(--,<" + target + " --> left>)";
+            l.add("(--,<left --> " + target + ">)");
 
-        term += ",";
+
 
         if (right)
-            term += "<" + target + " --> right>";
+            l.add("<right --> " + target + ">");
         else
-            term += "(--,<" + target + " --> right>)";
+            l.add("(--,<right --> " + target + ">)");
 
-        for (String s : additional) {
-            term += "," + s;
-        }
 
-        term += ")";
+        return l;
 
-        return term;
     }
     private String getTargetTerm1(boolean left, boolean right, String... additional) {
 
@@ -238,7 +254,7 @@ public class TwoPointRegulator extends JPanel {
 
         nar.setCyclesPerFrame(cyclesPerFrame);
         nar.param.shortTermMemoryHistory.set(1);
-        nar.param.duration.set(cyclesPerFrame/5);
+        nar.param.duration.set(5);
         //nar.param.duration.setLinear
 
 
@@ -312,9 +328,10 @@ public class TwoPointRegulator extends JPanel {
 
     }
 
+
     protected void train2() {
-        nar.input("move(left)!");
-        nar.input("move(right)!");
+        for (int i= 0; i < initialTrainingCycles; i++)
+            nar.input("move(SELF)!");
     }
 
     protected void train(int periods) {
@@ -361,6 +378,9 @@ public class TwoPointRegulator extends JPanel {
 
         Graphics2D g2d = (Graphics2D) g;
 
+        g2d.setColor(Color.black);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+
         g2d.setColor(Color.gray);
         g2d.fillRect(0, dy + setpoint - speed / 4, getWidth(), speed / 2);
 
@@ -370,8 +390,8 @@ public class TwoPointRegulator extends JPanel {
                 int x = Math.round(s.x);
                 float happiness = s.happiness;
                 g2d.setColor(new Color(Video.colorHSB(happiness, 0.75f, 0.75f, 0.5f)));
-                int r = (int) (speed * (0.2f + 0.8f * s.busy))*2;
-                g2d.fillRect((int) (i / 100), dy + x - r / 2, 1, r);
+                int r = (int) (speed * (0.2f + 0.8f * s.busy));
+                g2d.fillRect((int) (i * drawXScale), dy + x - r / 2, 1, r);
                 i++;
             }
         }
