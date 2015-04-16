@@ -1,11 +1,13 @@
 package nars.nal.nal1;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
 import nars.Global;
+import nars.ProtoNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
+import nars.prototype.Curve;
+import nars.prototype.Default;
+import nars.prototype.Discretinuous;
+import nars.prototype.Solid;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -24,8 +26,9 @@ public class NAL1Test extends JavaNALTest {
                 {new Default().setInternalExperience(null)},
                 {new Default().level(2)}, //why does this need level 2 for some tests?
                 {new Curve().setInternalExperience(null)},
-                {new Default.DefaultMicro() }
-                //{new Discretinuous()}
+                {new Default.DefaultMicro() },
+                {new Discretinuous()},
+                {new Solid(1, 96, 0, 4, 0, 3)}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }

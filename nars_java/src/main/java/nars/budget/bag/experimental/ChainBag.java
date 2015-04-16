@@ -1,14 +1,15 @@
 package nars.budget.bag.experimental;
 
-import nars.Memory;
 import nars.Global;
-import nars.nal.Item;
+import nars.Memory;
 import nars.budget.Bag;
 import nars.budget.BagTransaction;
+import nars.nal.Item;
 import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
 import nars.util.data.linkedlist.DDNodePool;
+import nars.util.math.Distributor;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
@@ -89,7 +90,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     @Override
     public V pop() {
         if (size() == 0) return null;
-        DD<V> d = next();
+        DD<V> d = next(true);
         if (d==null) return null;
 
         removal.addValue(d.item.getPriority());
@@ -102,7 +103,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     @Override
     public V peekNext() {
-        DD<V> d = next();
+        DD<V> d = next(true);
         if (d!=null) return d.item;
         return null;
     }
@@ -116,7 +117,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             bx = index.get(key);
         }
         else {
-            bx = next();
+            bx = next(true);
         }
 
 
@@ -205,7 +206,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         DD<V> c = current; //save current position
 
         while (loops++ <= size && nextRemoval == null)
-            next();
+            next(false);
 
         if (nextRemoval == null) {
             //throw new RuntimeException(this + " considered nothing removeable");
@@ -215,7 +216,12 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         current = c;  //restore current position if it wasn't what was removed
     }
 
-    protected DD<V> next() {
+    /**
+     *
+     * @param byPriority - whether to select according to priority, or just the next item in chain order
+     * @return
+     */
+    protected DD<V> next(boolean byPriority) {
         final int s = size();
         if (s == 0) return null;
         final boolean atCapacity = s >= capacity();
@@ -240,12 +246,17 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
             final double percentileEstimate = getPercentile(ni.getPriority());
 
-            if (selectPercentile(percentileEstimate))
+            if (!byPriority) {
+                if (nextRemoval == null)
+                    considerRemoving(next, percentileEstimate);
                 break;
+            }
+            else {
+                if (selectPercentile(percentileEstimate))
+                    break;
 
-
-            if (atCapacity) {
-                considerRemoving(next, percentileEstimate);
+                if (atCapacity)
+                    considerRemoving(next, percentileEstimate);
             }
 
             next = after(next);
@@ -322,6 +333,20 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     protected boolean selectPercentile(final double percentileEstimate) {
+        //return selectPercentileRandom(percentileEstimate);
+        return selectPercentileDistributor(percentileEstimate);
+    }
+
+    short d[] = Distributor.get(10).order;
+    int dLen = d.length;
+    int dp = 0;
+
+    protected boolean selectPercentileDistributor(final double percentileEstimate) {
+        final int dLen = this.dLen;
+        return d[ (dp++)%dLen ]/((double)dLen) < (percentileEstimate);
+    }
+
+    protected boolean selectPercentileRandom(final double percentileEstimate) {
         return Memory.randomNumber.nextFloat() < percentileEstimate;
     }
 

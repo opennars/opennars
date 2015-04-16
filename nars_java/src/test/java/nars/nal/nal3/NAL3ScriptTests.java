@@ -5,6 +5,7 @@ import nars.prototype.Curve;
 import nars.prototype.Default;
 import nars.ProtoNAR;
 import nars.nal.ScriptNALTest;
+import nars.prototype.Discretinuous;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -23,7 +24,9 @@ public class NAL3ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3),
-                new Curve());
+                new Curve(),
+                new Discretinuous()
+        );
     }
 
     public int getMaxCycles() { return 200; }

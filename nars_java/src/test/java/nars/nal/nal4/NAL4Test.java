@@ -5,6 +5,8 @@ import nars.prototype.Default;
 import nars.ProtoNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
+import nars.prototype.Discretinuous;
+import nars.prototype.Solid;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -20,12 +22,15 @@ public class NAL4Test extends JavaNALTest {
     public static Collection configurations() {
         return Arrays.asList(new Object[][]{
                 {new Default()},
-                {new Default().level(6)},
                 {new Default().setInternalExperience(null) },
+                {new Default().level(5)},
 
                 //{new DefaultBuffered().setInternalExperience(null) },
 
-                {new Curve().setInternalExperience(null)}
+                {new Curve().setInternalExperience(null)},
+                //{new Discretinuous().level(5) }
+                {new Solid(1, 96, 0, 4, 0, 3).level(5)}
+
 
         });
     }

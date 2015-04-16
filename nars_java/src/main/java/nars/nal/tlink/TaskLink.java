@@ -23,16 +23,16 @@ package nars.nal.tlink;
 import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.Terms.Termable;
 import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Sentence.Sentenced;
 import nars.nal.Task;
+import nars.nal.Terms.Termable;
 import nars.nal.term.Term;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Reference to a Task.
@@ -188,7 +188,8 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
         if (noveltyHorizon == 0) return true;
 
         if (records==null) {
-            records = new ArrayDeque(recordLength);
+            //records = new ArrayDeque(recordLength);
+            records = new LinkedList();
         }
 
         //TODO remove old entries from records if recordLength < records.size()  -- for dynamic adjusting of novelty parameters
