@@ -185,11 +185,14 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
     }
 
 
-    public synchronized void renderSky(long now, Map<Concept, VNCControl.ActivityRectangle> positions, Deque<OCR.BufferUpdate> ocrResults) {
+    /** heatmap */
+    public synchronized void renderSky(long now, Map<Concept, VNCControl.ActivityRectangle> positions, Deque<OCR.BufferUpdate> ocrResults, int cyclesSinceLast) {
         if (getRenderer() == null) return;
 
         int overlayX = getRenderer().getWidth();
         int overlayY = getRenderer().getHeight();
+        float ww = (float) (overlayX);
+        float hh = (float) (overlayY);
 
         BufferedImage skyImage = new BufferedImage(overlayX, overlayY, BufferedImage.TYPE_INT_ARGB);
 
@@ -198,6 +201,7 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 
 
 
+        float screenPixels = overlayX * overlayY;
         for (Map.Entry<Concept, VNCControl.ActivityRectangle> e : positions.entrySet()) {
 
             Concept c = e.getKey();
@@ -206,31 +210,47 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
             if (r.current == -1)
                 continue; //has been de-activated, so no need to repaint
 
-            float priority = c.getPriority();
+            //float priority = c.getPriority();
+            float priority = r.prioritySum / cyclesSinceLast;
+
+
             float dp = r.prev - priority;
-            float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
-            float opacity = 0.5f; //each layer applies more, so set to << 1
+            //float ap = Math.abs(dp) * 4; if (ap > 1f) ap = 1f;
+            float opacity = 0.25f; //each layer applies more, so set to << 1
 
-            Color color = new Color(0f,
-                    dp > 0 ? ap : 0f,
-                    dp < 0 ? ap : 0f,
-                    ap * opacity
-            );
+            double rw = r.getWidth();
+            double rh = r.getHeight();
 
-            float ww = (float) (overlayX);
-            float hh = (float) (overlayY);
+            float red, green, b = 0;
+
+            if (rw <= 2d/(3*3*3*3)) {
+                red = 0; green = 1f;
+            }
+            else if (rw <= 2d/(3*3*3)) {
+                red = 0.33f; green = 0.66f;
+            }
+            else if (rw <= 2d/(3*3)) {
+                red = 0.66f; green = 0.33f;
+            }
+            else { //if (rw <= 2d/3) {
+                red = 0.5f; green = 0;
+            }
+
+            Color color = new Color(red, green, b, priority * opacity );
+
 
             //System.out.println(c + " " + r.x + " " + r.y + " " + r.width + " " + r.height + " : " + ww + " " + hh);
 
 
 
             g.setPaint(color);
-            g.fillRect( (int)( (r.getX())*ww),
-                    (int)( ( r.getY())*hh),
-                    (int)(r.getWidth()*ww),
-                    (int)(r.getHeight()*hh));
+            g.fillRect((int) ((r.getX()) * ww),
+                    (int) ((r.getY()) * hh),
+                    (int) (rw * ww),
+                    (int) (rh*hh));
 
-            r.prev = priority;
+            r.prev = r.prioritySum;
+            r.prioritySum = 0;
         }
 
 
@@ -349,13 +369,13 @@ public class Surface extends JPanel implements IRepaintController, IChangeSettin
 	 */
 	@Override
 	public void repaintBitmap(FramebufferUpdateRectangle rect) {
-		repaintBitmap(rect.x, rect.y, rect.width, rect.height);
+        repaintBitmap(rect.x, rect.y, rect.width, rect.height);
 	}
 
 	@Override
 	public void repaintBitmap(int x, int y, int width, int height) {
-		repaint((int)(x * scaleFactor), (int)(y * scaleFactor),
-                (int)Math.ceil(width * scaleFactor), (int)Math.ceil(height * scaleFactor));
+        repaint((int) (x * scaleFactor), (int) (y * scaleFactor),
+                (int) Math.ceil(width * scaleFactor), (int) Math.ceil(height * scaleFactor));
 	}
 
 	@Override

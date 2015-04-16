@@ -1,9 +1,11 @@
 package nars.nal.nal7;
 
 
-import nars.prototype.Default;
 import nars.ProtoNAR;
 import nars.nal.ScriptNALTest;
+import nars.prototype.Curve;
+import nars.prototype.Default;
+import nars.prototype.Discretinuous;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -20,10 +22,13 @@ public class NAL7ScriptTests extends ScriptNALTest {
     public static Collection configurations() {
         return getParams(new String[]{"test7"},
                 new Default(),
-                new Default().setInternalExperience(null));
+                new Default().setInternalExperience(null),
+                new Discretinuous(),
+                new Curve()
+        );
     }
 
-    public int getMaxCycles() { return 500; }
+    public int getMaxCycles() { return 800; }
 
 
 }

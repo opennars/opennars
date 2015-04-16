@@ -470,11 +470,11 @@ public class OCR {
         }
 
 
-        public String getLocation(Surface surface) {
+        public String getLocation(Surface surface, int resolutionLevel) {
 
             BufferedImage frame = surface.getRenderer().getFrame();
 
-            return get3x3CoordsTree(rect.x + rect.width / 2, rect.y + rect.height / 2, surface.getWidth(), surface.getHeight(), 3);
+            return get3x3CoordsTree(rect.x + rect.width / 2, rect.y + rect.height / 2, surface.getWidth(), surface.getHeight(), resolutionLevel);
         }
 
 

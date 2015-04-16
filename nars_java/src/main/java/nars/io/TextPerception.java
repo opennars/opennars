@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.Global;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.OldNarseseParser;
 import nars.io.narsese.NarseseParser;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
@@ -41,7 +41,7 @@ public class TextPerception {
     public List<TextReaction> parsers;
     
     
-    public Narsese narsese;    
+    public OldNarseseParser narsese;
     public Englisch englisch;
     public Twenglish twenglish;
     
@@ -54,7 +54,7 @@ public class TextPerception {
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
 
-    public TextPerception(NAR n, @Deprecated Narsese narsese, NarseseParser newParser) {
+    public TextPerception(NAR n, @Deprecated OldNarseseParser narsese, NarseseParser newParser) {
         this.memory = n.memory;
         this.narsese = narsese;
         this.englisch = new Englisch();

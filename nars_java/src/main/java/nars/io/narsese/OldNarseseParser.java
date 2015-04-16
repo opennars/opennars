@@ -33,16 +33,17 @@ import static nars.nal.nal8.Operation.make;
  * Utility methods for working and reacting to Narsese input.
  * This will eventually be integrated with NarseseParser for systematic
  * parsing and prediction of input.
+ *
+ * TODO move this inside NarseseParserTest which should be the only place it can be used
  */
-@BuildParseTree
-public class Narsese {
+@Deprecated public class OldNarseseParser {
     
     public final Memory memory;
     private final NarseseParser newParser;
     private Term self;
 
 
-    public Narsese(NAR n, NarseseParser newParser) {
+    public OldNarseseParser(NAR n, NarseseParser newParser) {
 
         this.memory = n.memory;
         this.newParser = newParser;

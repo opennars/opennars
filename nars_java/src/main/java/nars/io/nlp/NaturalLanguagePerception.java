@@ -1,7 +1,7 @@
 package nars.io.nlp;
 
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.OldNarseseParser;
 import nars.nal.Task;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class NaturalLanguagePerception {
         }
     }
     
-    static public List<Task> parseLine(String input, Narsese narsese, String prefix) {
+    static public List<Task> parseLine(String input, OldNarseseParser narsese, String prefix) {
 
         List<String> statements = new ArrayList();
 

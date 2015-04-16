@@ -8,7 +8,7 @@ import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.*;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.OldNarseseParser;
 import nars.io.narsese.NarseseParser;
 import nars.nal.*;
 import nars.nal.nal7.Tense;
@@ -66,7 +66,7 @@ public class NAR implements Runnable {
     public final Param param;
     
 
-    @Deprecated public final Narsese narsese;
+    @Deprecated public final OldNarseseParser narsese;
     public TextPerception textPerception;
 
     public void think(int delay) {
@@ -128,7 +128,7 @@ public class NAR implements Runnable {
 
 
         this.narseseParser = NarseseParser.newParser(this);
-        this.narsese = new Narsese(this, narseseParser);
+        this.narsese = new OldNarseseParser(this, narseseParser);
         this.textPerception = new TextPerception(this, narsese, narseseParser);
 
         m.event.on(Events.ResetStart.class, togglePluginOnReset);

@@ -95,13 +95,13 @@ public class NarseseParser extends BaseParser<Object> {
 
                 optional(sequence(Budget(), budget.set((float[]) pop()))),
 
-                s(),
+
 
                 Term(),
 
                 term.set((Term) pop()),
 
-                s(),
+
 
                 SentenceTypeChar(),
                 punc.set(matchedChar()),
@@ -320,6 +320,7 @@ public class NarseseParser extends BaseParser<Object> {
         */
 
         return sequence(
+                s(),
                 firstOf(
                         Interval(),
                         Variable(),
@@ -357,7 +358,10 @@ public class NarseseParser extends BaseParser<Object> {
                         Atom()
 
                 ),
-                push(term(pop()))
+
+                push(term(pop())),
+
+                s()
         );
     }
 
@@ -405,6 +409,11 @@ public class NarseseParser extends BaseParser<Object> {
         return new Stamp(
                 newStamp ? new long[] { memory.newStampSerial() } : new long[] { /* blank */ },
                 memory, creationTime, tense);
+    }
+
+    /** creates a parser that is not associated with a memory; it will not parse any operator terms (which are registered with a Memory instance) */
+    public static NarseseParser newParser() {
+        return newParser((Memory)null);
     }
 
     public static class ImageIndexTerm extends Term {

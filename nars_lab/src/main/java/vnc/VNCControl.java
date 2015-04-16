@@ -12,9 +12,9 @@ import nars.io.Texts;
 import nars.io.narsese.NarseseParser;
 import nars.nal.Concept;
 import nars.nal.Task;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.NullOperator;
+import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import vnc.drawing.Renderer;
@@ -32,6 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 abstract public class VNCControl extends VNCClient {
 
+    final int resolutionLevels = 4;
+
+    boolean narsCanType = true; //enable/disable for keyboard events from NARS
+
+    boolean keyTypeOnly = true; //whether to only send keyTyped events and ignore the press/release timing (simpler)
+
     private final NAR nar;
 
     Map<Concept,ActivityRectangle> positions = new LinkedHashMap();
@@ -40,6 +46,7 @@ abstract public class VNCControl extends VNCClient {
     List<Concept> incoming = new CopyOnWriteArrayList();
     Deque<OCR.BufferUpdate> ocrResults = new ConcurrentLinkedDeque<>();
     private SkyActivity skyActivity;
+    private boolean keyboardInputs = true;
 
     public VNCControl(NAR nar, String host, int port) {
         super(host, port);
@@ -52,24 +59,32 @@ abstract public class VNCControl extends VNCClient {
     abstract public static class ConceptMap extends AbstractReaction {
 
         int frame = -1;
+        int cycleInFrame = -1;
 
         public int frame() { return frame; }
 
         abstract public void reset();
 
         public ConceptMap(NAR nar) {
-            super(nar, Events.ConceptNew.class, Events.ConceptForget.class, Events.FrameEnd.class, Events.ResetStart.class);
+            super(nar, Events.ConceptNew.class, Events.ConceptForget.class, Events.CycleEnd.class, Events.FrameEnd.class, Events.ResetStart.class);
         }
+
         abstract protected void onFrame();
+        abstract protected void onCycle();
 
 
         abstract public boolean contains(Concept c);
 
         @Override
         public void event(Class event, Object[] args) {
+            if (event == Events.CycleEnd.class) {
+                cycleInFrame++;
+                onCycle();
+            }
             if (event == Events.FrameEnd.class) {
                 frame++;
                 onFrame();
+                cycleInFrame = 0;
             }
             if (event == Events.ResetStart.class) {
                 frame = 0;
@@ -97,6 +112,7 @@ abstract public class VNCControl extends VNCClient {
     public static class ActivityRectangle extends Rectangle.Double {
         public float current = 0;
         public float prev = 0;
+        public float prioritySum = 0;
 
         public ActivityRectangle(float x, float y, float wx, float wy) {
             super(x, y, wx, wy);
@@ -120,22 +136,55 @@ abstract public class VNCControl extends VNCClient {
 
     }
 
+    public static float[] get3x3Coordinates(Product s) {
+        float wx = 1f;
+        float wy = 1f;
+        float cx = 0f;
+        float cy = 0f;
+        while (s!=null) {
+            wx/=3;
+            wy/=3;
+            Product next = null;
+
+            int dx = 0, dy = 0;
+
+            String charX = s.term[0].toString();
+            switch (charX) {
+                case "L": dx = -1; break;
+                case "R": dx = 1; break;
+            }
+            String charY = s.term[1].toString();
+            switch (charY) {
+                case "U": dy = -1; break;
+                case "D": dy = 1; break;
+            }
+            if (s.term.length > 2 && s.term[2] instanceof Product) {
+                next = (Product)s.term[2];
+            }
+
+            cx += wx * dx;
+            cy += wy * dy;
+            s = next;
+        }
+        return new float[] {  (cx  + 0.5f)-wx/2 , (cy + 0.5f)-wy/2, wx, wy };
+    }
+
 
     static final Set<Term> seeds = new LinkedHashSet();
     static {
-        NarseseParser n = NarseseParser.newParser((Memory)null);
+        NarseseParser n = NarseseParser.newParser();
 
-        //level 1
-        for (double i = 0; i < 3; i++) {
-            for (double j = 0; j < 3; j++) {
-                seeds.add(n.parseTerm(OCR.get3x3CoordsTree(i / 3.0 + i/6.0f, j / 3.0 + j/6.0f, 1.0, 1.0, 1)));
-            }
-        }
-        //level 2
+        for (int scale = 1; scale<=3; scale++) {
 
-        for (double i = 0; i < 9; i++) {
-            for (double j = 0; j < 9; j++) {
-                seeds.add(n.parseTerm(OCR.get3x3CoordsTree(i / 9.0 + i/18.0, j / 9.0 + i/18.0, 1.0, 1.0, 2)));
+            double div = Math.pow(3, scale);
+
+            for (double i = 0; i < div; i++) {
+                for (double j = 0; j < div; j++) {
+                    seeds.add(n.parseTerm(OCR.get3x3CoordsTree(
+                            i / div * 1.5,
+                            j / div * 1.5,
+                            1.0, 1.0, scale)));
+                }
             }
         }
     }
@@ -167,36 +216,19 @@ abstract public class VNCControl extends VNCClient {
 
         }
 
+
         public void register(Concept c) {
+
             Product s = (Product)c.getTerm();
-            float wx = 1f;
-            float wy = 1f;
-            float cx = 0f;
-            float cy = 0f;
-            while (s!=null) {
-                wx/=3;
-                wy/=3;
-                Product next = null;
-
-                int dx = 0, dy = 0;
-                for (Term t : s) {
-                    if (t instanceof Product) next = (Product) t;
-                    else if (t.getClass() == Term.class) {
-                        switch(t.toString()) {
-                            case "L": dx = -1; break;
-                            case "R": dx = 1; break;
-                            case "U": dy = 1; break;
-                            case "D": dy = -1; break;
-                        }
-                    }
-                }
-                cx += wx * dx;
-                cy += wy * dy;
-                s = next;
-            }
+            float[] d = get3x3Coordinates(s);
+            float cx = d[0];
+            float cy = d[1];
+            float wx = d[2];
+            float wy = d[3];
 
 
-            ActivityRectangle r = new ActivityRectangle(cx + 1/3.0f, cy + 1/3.0f, wx, wy);
+
+            ActivityRectangle r = new ActivityRectangle(cx, cy, wx, wy);
 
             //System.out.println(c + " " + r);
 
@@ -209,7 +241,7 @@ abstract public class VNCControl extends VNCClient {
             ActivityRectangle r = positions.remove(c);
             if (r!=null)
                 r.current = -1;
-            renderSky();
+            //renderSky();
         }
 
         @Override
@@ -218,7 +250,7 @@ abstract public class VNCControl extends VNCClient {
             incoming.add(c);
 
             //SwingUtilities.invokeLater(this::render);
-            renderSky();
+            //renderSky();
 
         }
 
@@ -229,18 +261,25 @@ abstract public class VNCControl extends VNCClient {
         }
 
         @Override
+        protected void onCycle() {
+            for (Map.Entry<Concept, VNCControl.ActivityRectangle> e : positions.entrySet()) {
+                e.getValue().prioritySum += (e.getKey()).getPriority();
+            }
+        }
+
+        @Override
         protected void onFrame() {
 
             if (getSurface() == null) return;
             else if (pendingReset) reset();
 
-            renderSky();
+            renderSky(cycleInFrame);
 
         }
 
     };
 
-    protected synchronized void renderSky() {
+    protected synchronized void renderSky(int cyclesSinceLast) {
 
         if (getSurface() == null) return;
 
@@ -251,7 +290,7 @@ abstract public class VNCControl extends VNCClient {
                 skyActivity.register(x);
         }
 
-        getSurface().renderSky(nar.time(), positions, ocrResults);
+        getSurface().renderSky(nar.time(), positions, ocrResults, cyclesSinceLast);
         repaint();
     }
 
@@ -269,7 +308,42 @@ abstract public class VNCControl extends VNCClient {
 
     }
     private void addOperators() {
-        nar.on(new NullOperator("^keyboard"));
+        nar.on(new NullOperator("^keyboard") {
+            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+
+
+                if (!narsCanType || operation.getTask().isInput()) return null;
+
+                if (args.length < 3) return null;
+
+                int code = Integer.parseInt(args[0].toString());
+                int modifiers = Integer.parseInt(args[1].toString());
+
+                long now = System.currentTimeMillis();
+
+                if (args.length == 3 ) {
+
+                    //keytype
+                    keyboardInputs = false;
+                    inputKey(code, modifiers, KeyEvent.KEY_PRESSED);
+                    inputKey(code, modifiers, KeyEvent.KEY_RELEASED);
+                    keyboardInputs = true;
+
+                    return null;
+                }
+
+                if (args.length==4) {
+
+                    boolean pressed = args[2].toString().equals("ON");
+
+                    keyboardInputs = false;
+                    inputKey(code, modifiers, pressed ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED);
+                    keyboardInputs = true;
+                }
+
+                return null;
+            }
+        });
         nar.on(new NullOperator("^mouse"));
         /*{
 
@@ -349,12 +423,21 @@ abstract public class VNCControl extends VNCClient {
             }
 
             if (input) {
-                String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight(),3);
+                String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight(), resolutionLevels);
                 /*String ii = "<(*,B" + pe.buttonMask + ", " + loc  + ") --> ON>. :|: " +
                         (mousePressed ? "%1.00;0.90%" : "%0.00;0.90%");*/
 
-                String ii = "mouse(B" + pe.buttonMask + ", " + loc  + ")! :|: ";
+                String ii = "mouse(B" + pe.buttonMask + ", " + loc  + ")! :|:";
 
+
+//                {
+//                    //Test accuracy of recursive representation
+//                    Product t = (Product)nar.term(loc);
+//                    float d[] = get3x3Coordinates(t);
+//                    System.out.println(pe.x + "," + pe.y + " = " + loc + " = " +
+//                            d[0] * getWidth() + "," + d[1] * getHeight());
+//
+//                }
 
                 nar.input(
                         ii
@@ -382,7 +465,7 @@ abstract public class VNCControl extends VNCClient {
                 //u.getLocation()
                 String ii = "";
 
-                String location = u.getLocation(getSurface());
+                String location = u.getLocation(getSurface(), resolutionLevels);
 
                 float pri = 0.4f + 0.3f * (float)Math.sqrt(u.getScreenFraction(getSurface()));
 
@@ -429,12 +512,27 @@ abstract public class VNCControl extends VNCClient {
         }
     };
 
-    @Deprecated protected void keyEvent(KeyEvent e, boolean press) {
+    @Deprecated protected synchronized void keyEvent(KeyEvent e, boolean press) {
         /*String ii = "<{K" + e.getKeyCode() + "} --> ON>. :|: " +
                 (press ? "%1.00;0.90%" : "%0.00;0.90%");*/
-        String ii = "keyboard(K" + e.getKeyCode() + "," + (press ? "ON":"OFF") + ")! :|: ";
-        nar.input(ii);
-        System.out.println(nar.time() + ": " + ii);
+        //System.out.println(keyboardInputs + " " + keyTypeOnly + " " + e + " " +press);
+        if (keyboardInputs) {
+            String ii;
+            String middle = (0 + e.getExtendedKeyCode()) + "," + e.getModifiersEx();
+            if (keyTypeOnly) {
+                if (!press) {
+                    ii = "keyboard(" + middle + ")! :|: ";
+                }
+                else {
+                    return;
+                }
+            }
+            else {
+                ii = "keyboard(" + middle + "," + (press ? "ON" : "OFF") + ")! :|: ";
+            }
+            nar.input(ii);
+            System.out.println(nar.time() + ": " + ii);
+        }
     }
 
     @Override

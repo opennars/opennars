@@ -18,7 +18,7 @@ package nars.io.nlp;
 
 import nars.Memory;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.OldNarseseParser;
 import nars.io.nlp.Twokenize.Span;
 import nars.nal.term.Compound;
 import nars.nal.Sentence;
@@ -101,7 +101,7 @@ public class Twenglish {
         this.memory = memory;
     }
 
-    protected Collection<Task> parseSentence(List<Span> s, Narsese narsese, boolean modifyVocabulary) {
+    protected Collection<Task> parseSentence(List<Span> s, OldNarseseParser narsese, boolean modifyVocabulary) {
         return spansToSentenceTerms(s);
     }
     
@@ -187,7 +187,7 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(String s, Narsese narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(String s, OldNarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         
         List<Task> results = new ArrayList();

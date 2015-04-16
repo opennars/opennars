@@ -10,7 +10,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.OldNarseseParser;
 import nars.nal.Sentence;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
@@ -29,14 +29,14 @@ import java.util.Collection;
 public class BindJavascriptExpression implements TextReaction {
 
     public static final String BINDING_SYMBOL = ":=";
-    private final Narsese narsese;
+    private final OldNarseseParser narsese;
     private final NAR nar;
     ScriptEngine js;
 
     public BindJavascriptExpression(NAR nar) {
         super();
         this.nar = nar;
-        this.narsese = new Narsese(nar, null /* TODO */);
+        this.narsese = new OldNarseseParser(nar, null /* TODO */);
     }
 
 

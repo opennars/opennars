@@ -17,7 +17,7 @@
 package nars.io.nlp;
 
 import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.Narsese;
+import nars.io.narsese.OldNarseseParser;
 import nars.nal.Task;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class Englisch {
     }
 
     
-    protected void parseSentence(String s, Narsese narsese, List<String> statements, boolean modifyVocabulary) {
+    protected void parseSentence(String s, OldNarseseParser narsese, List<String> statements, boolean modifyVocabulary) {
         s = s.trim();
         
         String punct = ".";
@@ -161,7 +161,7 @@ public class Englisch {
     }
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(String s, Narsese narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(String s, OldNarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         List<String> statements = new ArrayList();
 

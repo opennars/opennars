@@ -4,8 +4,6 @@ import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.*;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.ImageInt;
@@ -15,6 +13,10 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+
+import java.util.Arrays;
 
 
 /**
@@ -100,29 +102,35 @@ public class TransformTask extends ConceptFireTask {
             return;
         Compound comp = (Compound)compT;
 
+        if (comp.term.length <= index) {
+            throw new RuntimeException("Invalid term index: " + index + ", term=" + comp + ", indices="  + Arrays.toString(indices));
+        }
+
+        Term cti = comp.term[index];
+
         if (comp instanceof Product) {
             if (side == 0) {
-                subject = comp.term[index];
+                subject = cti;
                 predicate = ImageExt.make((Product) comp, inh.getPredicate(), index);
             } else {
                 subject = ImageInt.make((Product) comp, inh.getSubject(), index);
-                predicate = comp.term[index];
+                predicate =cti;
             }
         } else if ((comp instanceof ImageExt) && (side == 1)) {
             if (index == ((ImageExt) comp).relationIndex) {
                 subject = Product.make(comp, inh.getSubject(), index);
-                predicate = comp.term[index];
+                predicate = cti;
             } else {
-                subject = comp.term[index];
+                subject = cti;
                 predicate = ImageExt.make((ImageExt) comp, inh.getSubject(), index);
             }
         } else if ((comp instanceof ImageInt) && (side == 0)) {
             if (index == ((ImageInt) comp).relationIndex) {
-                subject = comp.term[index];
+                subject = cti;
                 predicate = Product.make(comp, inh.getPredicate(), index);
             } else {
                 subject = ImageInt.make((ImageInt) comp, inh.getPredicate(), index);
-                predicate = comp.term[index];
+                predicate = cti;
             }
         } else {
             return;

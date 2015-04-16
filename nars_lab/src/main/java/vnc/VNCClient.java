@@ -282,9 +282,33 @@ public abstract class VNCClient extends JPanel implements WindowListener, KeyLis
 
 
     /** inject keypress to event stream, to remote VNC host */
-    public void inputKey(char chr) {
-        getSurface().key.keyTyped( chr, this );
+    @Deprecated public void inputKey(char chr) {
+        getSurface().key.keyTyped(chr, this);
     }
+
+    public void inputKey(KeyEvent k) {
+        //System.err.println("TYPE: " + k);
+        try {
+            getSurface().dispatchEvent(k);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void inputKey(int code, int modifiers, int mode) {
+        try {
+            KeyEvent ke = new KeyEvent(getSurface(),
+                    mode, System.currentTimeMillis(),
+                    modifiers,
+                    code);
+            inputKey(ke);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /** when received a new video frame buffer update */
     protected void videoUpdate(vnc.drawing.Renderer image, FramebufferUpdateRectangle rect) {
