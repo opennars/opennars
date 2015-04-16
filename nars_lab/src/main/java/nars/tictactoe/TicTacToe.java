@@ -87,7 +87,7 @@ public class TicTacToe extends JPanel {
                 simulationTime());
 
         nar.on(new AddO("^addO"));
-        (nar.param).duration.set(1000);
+        (nar.param).duration.set(100);
         (nar.param).outputVolume.set(0);
         
         new NARSwing(nar);    
@@ -249,7 +249,6 @@ public class TicTacToe extends JPanel {
                     nar.input("<(*," + i + ",nars) --> move>. :|:");
                     playing = !playing;
                     
-                    System.out.println( operation.getTask().getExplanation() );
 
                     updateField();
 
@@ -264,7 +263,9 @@ public class TicTacToe extends JPanel {
                 nar.input("(--,<input --> succeeded>). :|:");
             }
             
-            
+
+            System.out.println(operation.getTask().getExplanation());
+
             return null;
         }
 

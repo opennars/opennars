@@ -37,7 +37,7 @@ public class TwoPointRegulator extends JPanel {
 
     final int beGoodPeriod = targetCyclesMin;
 
-    private final int cyclesPerFrame = 1;
+    private final int cyclesPerFrame = 10;
     float drawXScale = 0.5f;
     int historySize = (int)(800 / drawXScale);
 
@@ -141,7 +141,7 @@ public class TwoPointRegulator extends JPanel {
 
     public void beGood() {
 
-        nar.input("<" + reward + " <-> " + goodness + ">! :|:");
+        nar.input("<" + reward + " --> " + goodness + ">! :|:");
 
         //nar.input("move(SELF)! :|:");
 
@@ -161,15 +161,18 @@ public class TwoPointRegulator extends JPanel {
 //    }
 
     public Task good(float conf) {
-        return nar.task("<" + reward + " <-> " + goodness + ">. :|: %0.90;" + conf + "%");
+        return nar.task("<" + reward + " --> " + goodness + ">. :|: %0.90;" + conf + "%");
     }
 
+    public void bad() {
+        String b = "<" + reward + " --> " + goodness + ">" + ". :|: %0.05;0.90%"; //punishment
+        nar.input(b);
+    }
     public void bad(boolean left, boolean right) {
-        String b = "<" + reward + " <-> " + goodness + ">" + ". :|: %0.10;0.90%"; //punishment
+        bad();
         java.util.List<String> cb = getTargetTerm2(left, right);
-        cb.add(b);
         for (String tt : cb)
-            nar.input(tt + ". :|: %0.90;0.90%");
+            nar.input(tt + ". :|: %0.95;0.90%");
     }
 
     public void target(boolean left, boolean right) {

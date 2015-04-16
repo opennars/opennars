@@ -117,7 +117,7 @@ public final class StructuralRules {
         }
         
         if (!(subj instanceof Product) && !(subj instanceof SetTensional)
-            /*&& !(subj instanceof Difference) && !(subj instanceof Image)*/ //this gives a condition which switchOrder() below can potentially make true
+            && !(subj instanceof Difference) && !(subj instanceof Image) //this gives a condition which switchOrder() below can potentially make true
                 ) {
             return; // no abduction on other compounds for now, but may change in the future
         }

@@ -33,6 +33,8 @@ public class NAL2Test extends JavaNALTest {
         });
     }
 
+
+
     /** 2.10 */
     @Test
     public void structureTransformation() throws InvalidInputException {
