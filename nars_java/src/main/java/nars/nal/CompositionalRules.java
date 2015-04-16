@@ -172,7 +172,7 @@ public final class CompositionalRules {
         return nal.doublePremiseTask((Compound) content, truth,
                 BudgetFunctions.compoundForward(truth, content, nal),
                 nal.newStamp(nal.getCurrentTask().sentence, nal.getCurrentBelief()),
-                false, false);
+                false, true);
     }
 
     /* till this general code is ready, the easier solution
@@ -282,7 +282,7 @@ public final class CompositionalRules {
         if (truth != null) {
             return nal.doublePremiseTask(content, truth,
                     BudgetFunctions.compoundForward(truth, content, nal),
-                    nal.newStamp(sentence, belief), false, false);
+                    nal.newStamp(sentence, belief), false, true);
         }
         return false; //probably should never reach here
     }

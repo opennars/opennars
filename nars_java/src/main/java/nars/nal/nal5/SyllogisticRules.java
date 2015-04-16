@@ -330,6 +330,9 @@ public final class SyllogisticRules {
         TruthValue truth2 = subSentence.truth;
         TruthValue truth = null;
         Budget budget;
+
+        boolean strong = false;
+
         if (taskSentence.isQuestion()) {
             if (statement instanceof Equivalence) {
                 budget = BudgetFunctions.backward(beliefTruth, nal);
@@ -350,16 +353,20 @@ public final class SyllogisticRules {
             if (taskSentence.isGoal()) {
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.desireStrong(truth1, truth2);
+                    strong = true;
                 } else if (side == 0) {
                     truth = TruthFunctions.desireInd(truth1, truth2);
                 } else {
                     truth = TruthFunctions.desireDed(truth1, truth2);
+                    strong = true;
                 }
             } else { // isJudgment
                 if (statement instanceof Equivalence) {
                     truth = TruthFunctions.analogy(truth2, truth1);
+                    strong = true;
                 } else if (side == 0) {
                     truth = TruthFunctions.deduction(truth1, truth2);
+                    strong = true;
                 } else {
                     truth = TruthFunctions.abduction(truth2, truth1);
                 }
@@ -369,7 +376,7 @@ public final class SyllogisticRules {
         if(!Variables.indepVarUsedInvalid(content)) {
             nal.doublePremiseTask(content, truth, budget,
                     st,
-                    false, false);
+                    false, strong);
         }
     }
 

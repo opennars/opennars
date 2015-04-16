@@ -224,7 +224,7 @@ public class NarseseParserTest {
         assertEquals("SELF", t.getArgument(2).toString());
     }
 
-    public void testOperationNoArgs() {
+    @Test public void testOperationNoArgs() {
         taskEqualsOldParser("believe()");
     }
 
