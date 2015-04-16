@@ -21,8 +21,8 @@ public class TestHSOM {
         int position = 0;
         int cycles = 15000;
         double[] vision = new double[size*2];
-        
-        HaiQBrain h = new HaiQBrain(3, size);
+
+        HsomQBrain h = new HsomQBrain(size, 3);
         int nextAction = -1;
         
         for (int i = 0; i < cycles; i++) {

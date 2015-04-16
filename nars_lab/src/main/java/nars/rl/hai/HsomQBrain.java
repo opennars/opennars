@@ -5,9 +5,9 @@ import nars.Memory;
 
 
 /**
- * TODO generalize SOM to N-d
+ * original HaiQ SOM+QLearn brain
  */
-public class HaiQBrain extends LearnerAndActor {
+public class HsomQBrain extends LearnerAndActor {
 
     double Q[][][]; //state, action
     double et[][][]; //eligiblity trace
@@ -20,7 +20,7 @@ public class HaiQBrain extends LearnerAndActor {
 
     int lastStateX = 0, lastStateY = 0, lastAction = 0;
 
-    public HaiQBrain(int nactions, int nstates) {
+    public HsomQBrain(int nactions, int nstates) {
         nActions = nactions;
         nStates = nstates;
         Q = new double[nStates][nStates][nActions];
