@@ -100,7 +100,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         setTaskLinkBagLevels(16);
 
         setTermLinkBagSize(96);
-        setTermLinkBagLevels(32);
+        setTermLinkBagLevels(28);
         
         setNovelTaskBagSize(32);
         setNovelTaskBagLevels(16);
@@ -135,7 +135,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         param.conceptsFiredPerCycle.set(1);
         
         param.termLinkMaxReasoned.set(3);
-        param.termLinkMaxMatched.set(10);
+        param.termLinkMaxMatched.set(9);
         param.termLinkRecordLength.set(10);
         param.noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
         

@@ -17,6 +17,11 @@ public abstract class AbstractReaction implements Reaction {
     public AbstractReaction(NAR n, Class... events) {
         this(n.memory.event, true, events);
     }
+
+    public AbstractReaction(Memory m, boolean active, Class... events) {
+        this(m.event, active, events);
+    }
+
     public AbstractReaction(Memory m, Class... events) {
         this(m.event, true, events);
     }
@@ -58,6 +63,4 @@ public abstract class AbstractReaction implements Reaction {
         return active!=null;
     }
 
-
-    ;
 }

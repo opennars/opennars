@@ -87,7 +87,7 @@ public class LogicMetrics extends AbstractReaction {
 
 
     public LogicMetrics(Memory m) {
-        super(m, Events.IN.class, Events.FrameEnd.class);
+        super(m, false, Events.IN.class, Events.FrameEnd.class);
         this.m = m;
         reset();
     }
@@ -210,8 +210,13 @@ public class LogicMetrics extends AbstractReaction {
     }
 
     public void commit() {
-        m.concepts.forEach(conceptMeter);
-        conceptMeter.commit(m);
+        if (isActive()) {
+            m.concepts.forEach(conceptMeter);
+            conceptMeter.commit(m);
+        }
+        else {
+            throw new RuntimeException(this + " is not active and should have nothing to commit");
+        }
     }
 
 //    @Override

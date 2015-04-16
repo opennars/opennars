@@ -309,18 +309,21 @@ public class LocalRules {
         final Term subjB = beliefContent.getSubject();
         final Term predB = beliefContent.getPredicate();
         Term otherTerm;
-        if (subjT.hasVarQuery()) {
+
+        if (subjT.hasVarQuery() && predT.hasVarQuery()) {
+            throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
+        }
+        else if (subjT.hasVarQuery()) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order);
         }
-        if (predT.hasVarQuery()) {
+        else if (predT.hasVarQuery()) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order);
         }
         
-        if (content == null) return;
-        
-        nal.singlePremiseTask(content, Symbols.JUDGMENT, newTruth, newBudget);
+        if (content != null)
+            nal.singlePremiseTask(content, Symbols.JUDGMENT, newTruth, newBudget);
     }
 
     

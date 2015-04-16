@@ -93,7 +93,11 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (d==null) return null;
 
         removal.addValue(d.item.getPriority());
-        return remove(d.item.name());
+        V v = remove(d.item.name());
+
+        if (Global.DEBUG_BAG) size();
+
+        return v;
     }
 
     @Override
@@ -121,6 +125,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             V n = selector.newItem();
             if (n!=null) {
                 V overflow = put(n);
+
+                if (Global.DEBUG_BAG) size();
+
                 if (overflow!=null)
                     selector.overflow(overflow);
                 return n; //return the new instance
@@ -149,28 +156,63 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (nextRemoval!=null && nextRemoval.getPriority() > newItem.getPriority())
             return newItem; //too low priority to add to this
 
+        V overflow = null;
+
         DD<V> d = chain.add(newItem);
         DD<V> previous = index.put(newItem.name(), d);
         if (previous!=null) {
+
             //displaced an item with the same key
-            merge(previous.item.budget,  newItem.budget);
-            updatePercentile(previous.item.getPriority());
+            merge(previous.item.budget, newItem.budget);
+
+            if (previous!=d)
+                chain.remove(previous);
+
+            updatePercentile(newItem.getPriority());
+
+            if (Global.DEBUG) size();
+
             return null;
         }
-        else {
-            boolean atCapacity = (size() >= capacity());
 
-            if (atCapacity && nextRemoval!=null) {
-                V overflow = remove(nextRemoval.name());
-                nextRemoval = null;
-                return overflow;
+        boolean atCapacity = (size() >= capacity());
+
+        if (atCapacity) {
+            if (nextRemoval == null) {
+                //find something to remove
+                getNextRemoval();
             }
-            else {
-                //bag will remain over-budget until a removal candidate is decided
-            }
+            overflow = remove(nextRemoval.name());
+            nextRemoval = null;
         }
+        else {
+            //bag will remain over-budget until a removal candidate is decided
+        }
+
         updatePercentile(newItem.getPriority());
-        return null;
+
+        if (Global.DEBUG_BAG) size();
+
+        return overflow;
+    }
+
+    protected void getNextRemoval() {
+        final int size = size();
+        if (size == 0) return;
+
+        int loops = 0;
+
+        DD<V> c = current; //save current position
+
+        while (loops++ <= size && nextRemoval == null)
+            next();
+
+        if (nextRemoval == null) {
+            //throw new RuntimeException(this + " considered nothing removeable");
+            nextRemoval = current.item;
+        }
+
+        current = c;  //restore current position if it wasn't what was removed
     }
 
     protected DD<V> next() {
@@ -300,7 +342,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (Global.DEBUG) {
             final int s2 = chain.size();
             if (s1 != s2)
-                throw new RuntimeException(this + " bag fault; inconsistent index");
+                throw new RuntimeException(this + " bag fault; inconsistent index (" + s1 + " index != " + s2 + " chain)");
         }
         return s1;
     }
@@ -329,7 +371,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             V v = d.item; //save it here because chain.remove will nullify .item field
             chain.remove(d);
 
-            if (Global.DEBUG) size();
+            if (Global.DEBUG_BAG) size();
+
+            if (current!=null && v == current.item)
+                current = after(current);
 
             return v;
         }

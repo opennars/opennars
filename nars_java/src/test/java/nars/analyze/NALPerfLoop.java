@@ -1,10 +1,10 @@
 package nars.analyze;
 
-import nars.prototype.Default;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.io.ExampleFileInput;
 import nars.nal.NALTest;
+import nars.prototype.Discretinuous;
 
 import java.util.Collection;
 
@@ -18,19 +18,19 @@ public class NALPerfLoop {
     
     public static void main(String[] args) {
        
-        int repeats = 3;
-        int warmups = 1;
+        int repeats = 1;
+        int warmups = 0;
         int maxConcepts = 1024;
-        int extraCycles = 2048;
+        int extraCycles = 32048;
         int randomExtraCycles = 512;
         Global.THREADS = 1;
-        Global.EXIT_ON_EXCEPTION = false;
+        Global.EXIT_ON_EXCEPTION = true;
           
-        NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
+        //NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         
-        //NAR n = new NAR(new Discretinuous().setConceptBagSize(2048));
+        NAR n = new NAR(new Discretinuous().setConceptBagSize(maxConcepts));
 
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         

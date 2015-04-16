@@ -123,10 +123,13 @@ public class ConceptProcess extends NAL {
      */
     TermLink nextTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
 
+        final int links = currentConcept.termLinks.size();
+        if (links == 0) return null;
+
         int toMatch = memory.param.termLinkMaxMatched.get();
 
         //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
-        if (currentConcept.termLinks.size() == 1) toMatch = 1;
+        if (links == 1) toMatch = 1;
 
         termLinkNovel.set(taskLink, time, noveltyHorizon, memory.param.termLinkRecordLength.get());
 

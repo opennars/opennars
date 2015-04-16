@@ -284,7 +284,7 @@ public final class CompositionalRules {
                     BudgetFunctions.compoundForward(truth, content, nal),
                     nal.newStamp(sentence, belief), false, false);
         }
-        return false;
+        return false; //probably should never reach here
     }
 
     /**
@@ -368,8 +368,8 @@ public final class CompositionalRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask(content, truth, budget, stamp, false, false);
-        return true;
+
+        return nal.doublePremiseTask(content, truth, budget, stamp, false, false);
     }
 
 
@@ -512,7 +512,7 @@ public final class CompositionalRules {
                     commonTerm = term21;
                 }
 
-                if(term21 instanceof ImageInt && commonTerm == null && term11 instanceof ImageInt) {
+                if(term21 instanceof ImageInt && commonTerm == null /*&& term11 instanceof ImageInt -- already checked */) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
                     if(!(term11.containsTermRecursivelyOrEquals(commonTerm))) {
                         commonTerm=null;
@@ -705,7 +705,7 @@ public final class CompositionalRules {
      */
     private static Term secondCommonTerm(Term term1, Term term2, int index) {
         Term commonTerm = null;
-        if (index == 0) {
+        /*if (index == 0)*/ {
             if ((term1 instanceof ImageExt) && (term2 instanceof ImageExt)) {
                 commonTerm = ((ImageExt) term1).getTheOtherComponent();
                 if ((commonTerm == null) || !term2.containsTermRecursivelyOrEquals(commonTerm)) {
@@ -715,7 +715,9 @@ public final class CompositionalRules {
                     }
                 }
             }
-        } else if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
+        }
+        /*else*/ if ((term1 instanceof ImageInt) && (term2 instanceof ImageInt)) {
+            System.err.println("secondCommonTerm: this condition was never possible, and may not be.  but allowing it in case it does..");
             commonTerm = ((ImageInt) term1).getTheOtherComponent();
             if ((commonTerm == null) || !term2.containsTermRecursivelyOrEquals(commonTerm)) {
                 commonTerm = ((ImageInt) term2).getTheOtherComponent();

@@ -400,6 +400,8 @@ public class RuleTables {
                 case 12: rt1 = s1.getPredicate();   rt2 = s2.getSubject();  break;
                 case 21: rt1 = s1.getSubject();     rt2 = s2.getPredicate(); break;
                 case 22: rt1 = s1.getSubject();     rt2 = s2.getSubject();   break;
+                default:
+                    throw new RuntimeException("Invalid figure: " + figure);
             }
             
             SyllogisticRules.resemblance(rt1, rt2, belief, taskSentence, figure, nal);

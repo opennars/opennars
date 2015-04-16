@@ -72,73 +72,70 @@ public class TemporalRules {
     }
 
     public final static int dedExeOrder(final int order1, final int order2) {
-        int order = ORDER_INVALID;
         if ((order1 == order2) || (order2 == TemporalRules.ORDER_NONE)) {
-            order = order1;
+            return order1;
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
-            order = order2;
+            return order2;
         } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
-            order = order1;
+            return order1;
         }
-        return order;
+        return ORDER_INVALID;
     }
 
     public final static int abdIndComOrder(final int order1, final int order2) {
-        int order = ORDER_INVALID;
         if (order2 == TemporalRules.ORDER_NONE) {
-            order = order1;
+            return order1;
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
-            order = reverseOrder(order2);
+            return reverseOrder(order2);
         } else if ((order2 == TemporalRules.ORDER_CONCURRENT) || (order1 == -order2)) {
-            order = order1;
+            return order1;
         }
-        return order;
+        return ORDER_INVALID;
     }
 
     public final static int analogyOrder(final int order1, final int order2, final int figure) {
-        int order = ORDER_INVALID;
+
         if ((order2 == TemporalRules.ORDER_NONE) || (order2 == TemporalRules.ORDER_CONCURRENT)) {
-            order = order1;
-        } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
-            order = (figure < 20) ? order2 : reverseOrder(order2);
-        } else if (order1 == order2) {
+            return order1;
+        }
+        else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
+            return (figure < 20) ? order2 : reverseOrder(order2);
+        }
+        else if (order1 == order2) {
             if ((figure == 12) || (figure == 21)) {
-                order = order1;
-            }
-        } else if ((order1 == -order2)) {
-            if ((figure == 11) || (figure == 22)) {
-                order = order1;
+                return order1;
             }
         }
-        return order;
+        else if ((order1 == -order2)) {
+            if ((figure == 11) || (figure == 22)) {
+                return order1;
+            }
+        }
+        return ORDER_INVALID;
     }
 
     public static final int resemblanceOrder(final int order1, final int order2, final int figure) {
-        int order = ORDER_INVALID;
-        int order1Reverse = reverseOrder(order1);
-        
         if ((order2 == TemporalRules.ORDER_NONE)) {
-            order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
+            return (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
         } else if ((order1 == TemporalRules.ORDER_NONE) || (order1 == TemporalRules.ORDER_CONCURRENT)) {
-            order = (figure % 10 == 1) ? order2 : reverseOrder(order2); // switch when 12 or 22
+            return (figure % 10 == 1) ? order2 : reverseOrder(order2); // switch when 12 or 22
         } else if (order2 == TemporalRules.ORDER_CONCURRENT) {
-            order = (figure > 20) ? order1 : order1Reverse; // switch when 11 or 12
+            return (figure > 20) ? order1 : reverseOrder(order1); // switch when 11 or 12
         } else if (order1 == order2) {
-            order = (figure == 21) ? order1 : -order1;
+            return (figure == 21) ? order1 : -order1;
         }
-        return order;
+        return ORDER_INVALID;
     }
 
     public static final int composeOrder(final int order1, final int order2) {
-        int order = ORDER_INVALID;
         if (order2 == TemporalRules.ORDER_NONE) {
-            order = order1;
+            return order1;
         } else if (order1 == TemporalRules.ORDER_NONE) {
-            order = order2;
+            return order2;
         } else if (order1 == order2) {
-            order = order1;
+            return order1;
         }
-        return order;
+        return ORDER_INVALID;
     }
     
     /** whether temporal induction can generate a task by avoiding producing wrong terms; only one temporal operate is allowed */

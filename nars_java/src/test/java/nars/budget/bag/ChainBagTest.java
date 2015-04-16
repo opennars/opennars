@@ -7,6 +7,7 @@ import nars.budget.bag.experimental.ChainBag;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -17,21 +18,24 @@ public class ChainBagTest {
     @Test
     public void testChainBagSequence() {
 
-        int loops = 8;
+        testChainBagSequence(8, 8*8); //no restriction
+        testChainBagSequence(8, 8); //restricted
+    }
+    public void testChainBagSequence(int loops, int capacity) {
 
-        ChainBag bag = new ChainBag(loops * loops);
+        ChainBag bag = new ChainBag(capacity);
 
 
         float fractionToAdjust = 0.1f;
         float fractionTRemove = 0.1f;
 
-        for (int i = 0 ;i < loops; i++) {
-            for (int j = 0; j < loops; j++) {
-                bag.put(new BagPerf.NullItem(Memory.randomNumber.nextFloat()));
-            }
+        int inputs = loops * loops;
+        for (int i = 0 ;i < inputs; i++) {
+            bag.put(new BagPerf.NullItem(Memory.randomNumber.nextFloat()));
+            assertTrue(capacity >= bag.size());
         }
 
-        assertEquals(loops * loops, bag.size());
+        assertEquals(capacity-1, bag.size());
 
         for (int j = 0; j < loops-1; j++) {
             for (int i = 0; i < loops; i++) {
@@ -43,7 +47,7 @@ public class ChainBagTest {
             Item r = bag.pop();
             //System.out.println("pop: " + r);
             assertNotNull(r);
-            assertEquals(loops * loops - (1+j), bag.size());
+            assertEquals((capacity - 1)- (1 + j), bag.size());
         }
 
 

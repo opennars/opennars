@@ -20,6 +20,7 @@
  */
 package nars.nal.nal8;
 
+import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.io.Symbols;
@@ -107,9 +108,11 @@ public class Operation extends Inheritance {
     
     @Override
     protected CharSequence makeName() {
-        if(getSubject() instanceof Product && getPredicate() instanceof Operator)
-            return makeName(getPredicate().name(), ((Product)getSubject()).term);
-        return makeStatementName(getSubject(), NALOperator.INHERITANCE, getPredicate());
+        if (Global.DEBUG)
+            if (!(getSubject() instanceof Product && getPredicate() instanceof Operator))
+                throw new RuntimeException("Invalid Operation contents: " + this); //should never happen
+
+       return makeName(getPredicate().name(), ((Product)getSubject()).term);
     }
 
     

@@ -56,7 +56,7 @@ public final class SyllogisticRules {
         }
         int order1 = sentence.term.getTemporalOrder();
         int order2 = belief.term.getTemporalOrder();
-        int order = dedExeOrder(order1, order2);
+        int order =  dedExeOrder(order1, order2);
         if (order == ORDER_INVALID) {
             return;
         }

@@ -105,7 +105,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         Default, Fast
     }
 
-    NextNonEmptyLevelMode nextNonEmptyMode = NextNonEmptyLevelMode.Default;
+    NextNonEmptyLevelMode nextNonEmptyMode = NextNonEmptyLevelMode.Fast;
 
 
     public LevelBag(int levels, int capacity) {
