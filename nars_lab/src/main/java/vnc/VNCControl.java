@@ -9,9 +9,11 @@ import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
+import nars.io.narsese.NarseseParser;
 import nars.nal.Concept;
 import nars.nal.Task;
 import nars.nal.nal3.SetExt;
+import nars.nal.nal4.Product;
 import nars.nal.nal8.NullOperator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
@@ -119,19 +121,21 @@ abstract public class VNCControl extends VNCClient {
     }
 
 
-    static final Set<String> seeds = new LinkedHashSet();
+    static final Set<Term> seeds = new LinkedHashSet();
     static {
+        NarseseParser n = NarseseParser.newParser((Memory)null);
+
         //level 1
         for (double i = 0; i < 3; i++) {
             for (double j = 0; j < 3; j++) {
-                seeds.add(OCR.get3x3CoordsTree(i / 3.0 + i/6.0f, j / 3.0 + j/6.0f, 1.0, 1.0, 1));
+                seeds.add(n.parseTerm(OCR.get3x3CoordsTree(i / 3.0 + i/6.0f, j / 3.0 + j/6.0f, 1.0, 1.0, 1)));
             }
         }
         //level 2
 
         for (double i = 0; i < 9; i++) {
             for (double j = 0; j < 9; j++) {
-                seeds.add(OCR.get3x3CoordsTree(i / 9.0 + i/18.0, j / 9.0 + i/18.0, 1.0, 1.0, 2));
+                seeds.add(n.parseTerm(OCR.get3x3CoordsTree(i / 9.0 + i/18.0, j / 9.0 + i/18.0, 1.0, 1.0, 2)));
             }
         }
     }
@@ -164,7 +168,7 @@ abstract public class VNCControl extends VNCClient {
         }
 
         public void register(Concept c) {
-            SetExt s = (SetExt)c.getTerm();
+            Product s = (Product)c.getTerm();
             float wx = 1f;
             float wy = 1f;
             float cx = 0f;
@@ -172,11 +176,11 @@ abstract public class VNCControl extends VNCClient {
             while (s!=null) {
                 wx/=3;
                 wy/=3;
-                SetExt next = null;
+                Product next = null;
 
                 int dx = 0, dy = 0;
                 for (Term t : s) {
-                    if (t instanceof SetExt) next = (SetExt) t;
+                    if (t instanceof Product) next = (Product) t;
                     else if (t.getClass() == Term.class) {
                         switch(t.toString()) {
                             case "L": dx = -1; break;
@@ -220,7 +224,7 @@ abstract public class VNCControl extends VNCClient {
 
         @Override
         public boolean contains(Concept c) {
-            String s = c.getTerm().toString();
+            Term s = c.getTerm();
             return seeds.contains(s);
         }
 
@@ -325,13 +329,16 @@ abstract public class VNCControl extends VNCClient {
 
     boolean mousePressed = false;
 
+
     @Override
     protected void onMessageSend(ClientToServerMessage m) {
         super.onMessageSend(m);
 
         if (m instanceof PointerEventMessage) {
             PointerEventMessage pe = (PointerEventMessage)m;
+
             boolean input = false;
+
             if ((pe.buttonMask > 0) && (!mousePressed)) {
                 input = true;
                 mousePressed = true;
@@ -343,13 +350,16 @@ abstract public class VNCControl extends VNCClient {
 
             if (input) {
                 String loc = OCR.get3x3CoordsTree(pe.x, pe.y, getSurface().getWidth(), getSurface().getHeight(),3);
-                String ii = "<(*,B" + pe.buttonMask + ", " + loc  + ") --> ON>. :|: " +
-                        (mousePressed ? "%1.00;0.90%" : "%0.00;0.90%");
+                /*String ii = "<(*,B" + pe.buttonMask + ", " + loc  + ") --> ON>. :|: " +
+                        (mousePressed ? "%1.00;0.90%" : "%0.00;0.90%");*/
+
+                String ii = "mouse(B" + pe.buttonMask + ", " + loc  + ")! :|: ";
+
 
                 nar.input(
                         ii
                 );
-                //System.out.println(nar.time() + ": "  +ii);
+                System.out.println(nar.time() + ": " + ii);
             }
         }
     }
@@ -406,7 +416,13 @@ abstract public class VNCControl extends VNCClient {
 
                 float ocrConf = u.getConfidence();
 
-                Task t = nar.believe(ii, u.getInputTime(), 1.0f, ocrConf, pri);
+                try {
+                    Task t = nar.believe(ii, u.getInputTime(), 1.0f, ocrConf, pri);
+                }
+                catch (Throwable x) {
+                    System.err.println(ii + " -> " + x);
+                    x.printStackTrace();
+                }
 
                 System.out.print(nar.time() + ": " + Texts.n2(pri) + "," + Texts.n2(ocrConf) + " " + ii + "\t" + u.getWaitingTime() + " wait, " + u.getProcessingTime() + " proc ms\n");
             }
@@ -414,10 +430,11 @@ abstract public class VNCControl extends VNCClient {
     };
 
     @Deprecated protected void keyEvent(KeyEvent e, boolean press) {
-        String ii = "<{K" + e.getKeyCode() + "} --> ON>. :|: " +
-                (press ? "%1.00;0.90%" : "%0.00;0.90%");
+        /*String ii = "<{K" + e.getKeyCode() + "} --> ON>. :|: " +
+                (press ? "%1.00;0.90%" : "%0.00;0.90%");*/
+        String ii = "keyboard(K" + e.getKeyCode() + "," + (press ? "ON":"OFF") + ")! :|: ";
         nar.input(ii);
-        //System.out.println(nar.time() + ": " + ii);
+        System.out.println(nar.time() + ": " + ii);
     }
 
     @Override

@@ -332,7 +332,8 @@ public class NarseseParserTest {
     }
 
     @Test public void testEscape() throws InvalidInputException {
-        //TODO use existing escaping tests?
+        taskEqualsOldParser("<a --> \"a\">.");
+        assertTrue( task("<a --> \"a\">.").toString().contains("<a --> \"a\">.") );
     }
 
     @Test public void testFuzzyKeywords() throws InvalidInputException {

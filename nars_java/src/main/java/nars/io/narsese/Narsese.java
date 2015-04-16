@@ -359,7 +359,9 @@ public class Narsese {
     }
 
 
-
+    public Term parseTerm(String s) throws InvalidInputException {
+        return newParser.parseTerm(s);
+    }
     
     /* ---------- react String into term ---------- */
     /**
@@ -375,7 +377,7 @@ public class Narsese {
      * @param memory Reference to the memory
      * @return the Term generated from the String
      */
-    public Term parseTerm(String s) throws InvalidInputException {
+    public Term parseTermOld(String s) throws InvalidInputException {
         s = s.trim();
         
         if (s.length() == 0) return null;

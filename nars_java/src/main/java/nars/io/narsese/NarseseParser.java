@@ -418,8 +418,8 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule QuotedLiteral() {
-        return sequence("\"", AnyString(), "\"",
-                   push("\"" + match() + "\""));
+        return sequence("\"", AnyString(),
+                   push("\"" + match() + "\""), "\"");
     }
 
     Rule AnyString() {
@@ -638,7 +638,9 @@ public class NarseseParser extends BaseParser<Object> {
         if (o instanceof String) {
             String s= (String)o;
             if (s.charAt(0) == NALOperator.OPERATION.ch) {
-                return memory.operator(s);
+                if (memory!=null)
+                    return memory.operator(s);
+                return null;
             } else {
                 return Term.get(s);
             }

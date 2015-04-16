@@ -221,7 +221,7 @@ public class OCR {
             } else
                 uy = -1;
 
-            String p = ",{" + loccharx(ux) + "," + locchary(uy);
+            String p = ",(" + loccharx(ux) + "," + locchary(uy);
             j += p;
             count++;
 
@@ -231,7 +231,7 @@ public class OCR {
         }
         if (j.isEmpty()) return "";
         for (int i = 0; i < count; i++)
-            j += "}";
+            j += ")";
         j = j.substring(1, j.length()); //remove leading comma
         return j;
 
