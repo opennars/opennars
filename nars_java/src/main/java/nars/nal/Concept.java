@@ -34,13 +34,9 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.*;
-import nars.util.data.CuckooMap;
 
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.collect.Iterators.*;
 import static nars.nal.BudgetFunctions.divide;
@@ -151,7 +147,10 @@ public class Concept extends Item<Term> implements Termable {
         this.termLinkBuilder = new TermLinkBuilder(this);
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
 
-        this.nextTermBudget = new CuckooMap<>();
+        this.nextTermBudget =
+                new HashMap();
+                //Global.newHashMap();
+                //new CuckooMap<>();
 
     }
 
@@ -718,10 +717,12 @@ public class Concept extends Item<Term> implements Termable {
 
 
         if (updateTLinks || linkPendingEveryCycle ) {
-            for (TermLinkTemplate t : nextTermBudget.keySet()) {
-                Budget pending = dequeNextTermBudget(t);
+            HashMap<TermLinkTemplate,Budget> ntb = new HashMap(nextTermBudget); //clone because it may call itself recursively and it wont be able to modify this map while iterating it
+            nextTermBudget.clear();
+            for (Map.Entry<TermLinkTemplate,Budget> t : ntb.entrySet()) {
+                Budget pending = t.getValue();
                 if (pending!=null)
-                    if (linkTerm(t, pending, updateTLinks))
+                    if (linkTerm(t.getKey(), pending, updateTLinks))
                         activity = true;
             }
         }
@@ -788,7 +789,7 @@ public class Concept extends Item<Term> implements Termable {
         }
     }
 
-        /** returns null if non-existing or not above threshold */
+    /** returns null if non-existing or not above threshold */
     Budget dequeNextTermBudget(TermLinkTemplate from) {
         Budget accum = nextTermBudget.remove(from);
         if (accum == null) return null;

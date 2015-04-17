@@ -56,20 +56,21 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param s The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
-    public final static float rankBelief(final Sentence s, long now) {
+    public final static float rankBelief(final Sentence s, final long now) {
         final float confidence = s.truth.getConfidence();
 
-        if (s.isEternal()) {
+        //if (s.isEternal()) {
             final float originality = s.stamp.getOriginality();
             return or(confidence, originality);
-        }
-        else {
-            long window = 30;//TODO relate to duration
-            float timeRelevance = window / (window + Math.abs(now - s.getOccurrenceTime()));
-            if (timeRelevance > 1.0f) timeRelevance = 1.0f;
-            return or(confidence, timeRelevance);
-        }
+        //}
+//        else {
+//            long window = 30;//TODO relate to duration
+//            float timeRelevance = window / (window + Math.abs(now - s.getOccurrenceTime()));
+//            if (timeRelevance > 1.0f) timeRelevance = 1.0f;
+//            return or(confidence, timeRelevance);
+//        }
     }
+
     public final static float rankBeliefOriginal(final Sentence judg) {
         final float confidence = judg.truth.getConfidence();
         final float originality = judg.stamp.getOriginality();

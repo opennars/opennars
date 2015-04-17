@@ -105,7 +105,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         Default, Fast
     }
 
-    NextNonEmptyLevelMode nextNonEmptyMode = NextNonEmptyLevelMode.Fast;
+    NextNonEmptyLevelMode nextNonEmptyMode = NextNonEmptyLevelMode.Default;
 
 
     public LevelBag(int levels, int capacity) {
@@ -306,7 +306,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** returns whether there is available item; if so then currentLevel will be set to the next level of it */
-    protected boolean nextNonEmptyLevel() {
+    protected synchronized boolean nextNonEmptyLevel() {
         if (size() == 0)
             return false; // empty bag
 
@@ -402,7 +402,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public E update(final BagTransaction<K, E> selector) {
+    public synchronized E update(final BagTransaction<K, E> selector) {
 
         final K key = selector.name();
         final DD<E> bx;
@@ -435,7 +435,14 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         E c = selector.update(b);
         if (c!=null) {
 
-            relevel(bx, c);
+            try {
+                relevel(bx, c);
+            }
+            catch (RuntimeException e) {
+                this.printAll(System.err);
+                throw e;
+            }
+
             if (c==b) {
                 //update the mass as measured before and after selector update, since it is the same instance and the ordinary relevel budget change would not affect it
                 final float priNow = b.getPriority();

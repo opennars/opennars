@@ -166,8 +166,9 @@ public class TwoPointRegulatorAgent extends JPanel {
                 }*/
 
             float dx;
+            float exp = operation.getTask().sentence.truth.getExpectation();
             if (speedProportionalToExpectation) {
-                dx = speed * 0.5f + 0.5f * operation.getTask().sentence.truth.getExpectation();
+                dx = speed * 0.5f + 0.5f * exp;
                 //dx = speed * operation.getTask().sentence.truth.getExpectation();
                 //dx = speed * operation.getDesire(memory);
             } else {
@@ -195,7 +196,7 @@ public class TwoPointRegulatorAgent extends JPanel {
             System.out.println(operation.getTask().getExplanation());
 
 
-            acted(a);
+            acted(a, exp);
 
 
 //            if (here || closer) {
@@ -216,7 +217,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         }
     }
 
-    private void acted(int a) {
+    private void acted(int a, float expectation) {
         double delta = updateDistance();
 
         closer = delta < 0;
@@ -224,7 +225,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         boolean further = delta > 0;
         int nextAct = -1;
         if (here) {
-            nextAct = ql.act(0, 1.0, a);
+            nextAct = ql.act(0, 1.0);
         } else if (x > setpoint) {
             nextAct = ql.act(1, closer ?  0.5 : -1.0 ); //further ? -0.5 : -0.1, a);
         } else { // if (x < setpoint)
@@ -232,7 +233,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         }
 
         if (a == -1) {
-            ql.act(nextAct);
+            ql.execNext(nextAct);
         }
         System.out.println("Qact=" + nextAct + " " + closer);
 
@@ -331,7 +332,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         return distance - oldDistance;
     }
 
-    NAR nar;
+    public final NAR nar;
 
     abstract public static class HaiQNAR extends AbstractHaiQBrain {
 
@@ -344,8 +345,8 @@ public class TwoPointRegulatorAgent extends JPanel {
         public HaiQNAR(NAR nar, int nstates, int nactions) {
             super(nstates, nactions);
 
-            setAlpha(0.25f);
-            setEpsilon(0);
+            setAlpha(0.2f);
+            setEpsilon(0.1f);
             setLambda(0.5f);
 
             this.nar = nar;
@@ -360,7 +361,6 @@ public class TwoPointRegulatorAgent extends JPanel {
                 for (int a = 0; a < nactions; a++) {
                     if (s == 0) {
                         actions.put(getActionOperation(a), a);
-
                     }
 
                     qseeds.add(qterm(s, a));
@@ -458,7 +458,8 @@ public class TwoPointRegulatorAgent extends JPanel {
 
 
             //float conf = (float)Math.abs(dq)/2.0f + 0.5f; //confidence of each update
-            float conf = 0.5f;
+            float conf = 0.5f; //1 / #states ?  1/(#states * #goals) ?
+
 
             System.out.println(c + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
 
@@ -472,12 +473,14 @@ public class TwoPointRegulatorAgent extends JPanel {
             //c.goals.clear();
 
             //new DirectProcess(nar.memory, nar.task(updatedGoal)).run();
-            //new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
-            //System.out.println("  " + c.goals.size() + " " + c.goals );
+            //nar.input(updatedBelief);
 
-            nar.input(updatedBelief);
 
-            c.print(System.out, true, false, false, false);
+            c.beliefs.clear();
+            c.taskLinks.clear();
+            new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
+
+            //c.print(System.out, false, true, false, false);
         }
 
         @Override
@@ -497,7 +500,7 @@ public class TwoPointRegulatorAgent extends JPanel {
 
         }
 
-        public void act(int nextAct) {
+        public void execNext(int nextAct) {
             Operation a = actions.inverse().get(nextAct);
             nar.input(a + "! :|:");
         }
@@ -556,7 +559,7 @@ public class TwoPointRegulatorAgent extends JPanel {
             public void event(Class event, Object[] args) {
 
 
-                acted(-1);
+                acted(-1, 0);
 
                 repaint();
 

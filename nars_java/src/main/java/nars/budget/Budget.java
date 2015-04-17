@@ -419,7 +419,11 @@ public class Budget implements Cloneable, BudgetTarget {
      */
     @Override
     public String toString() {
-        return MARK + Texts.n4(priority) + SEPARATOR + Texts.n4(durability) + SEPARATOR + Texts.n4(quality) + MARK;
+        return Budget.toString(this);
+    }
+
+    public static String toString(Budget b) {
+        return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
     }
 
     /**

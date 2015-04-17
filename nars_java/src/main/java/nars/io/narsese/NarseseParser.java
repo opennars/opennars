@@ -753,7 +753,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse a series of tasks
      */
-    public void parse(String input, Consumer<Task> c) {
+    public synchronized void parse(String input, Consumer<Task> c) {
         ParsingResult r = inputParser.run(input);
         //r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
         r.getValueStack().iterator().forEachRemaining(x -> {
@@ -768,7 +768,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one task
      */
-    public Task parseTask(String input, boolean newStamp) throws InvalidInputException {
+    public synchronized Task parseTask(String input, boolean newStamp) throws InvalidInputException {
         ParsingResult r = null;
         try {
             input = input.trim();
@@ -797,7 +797,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one term
      */
-    public <T extends Term> T parseTerm(String input) throws InvalidInputException {
+    public synchronized <T extends Term> T parseTerm(String input) throws InvalidInputException {
         ParsingResult r = singleTermParser.run(input);
 
 

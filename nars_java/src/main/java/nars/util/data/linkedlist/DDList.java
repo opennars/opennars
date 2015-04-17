@@ -117,8 +117,9 @@ public class DDList<E> implements Iterable<E> {
 
     /** unlinks the node from this list; partial removal only used for transferring between levels without pool involvement */
     public synchronized DD<E> detach(DD<E> i) {
-        if (size == 0)
+        if (size == 0) {
             throw new RuntimeException("How are you going to remove " + i + " from a level with size=0");
+        }
         if (i == null) throw new RuntimeException("Bag requires non-null items");
         if (i.owner() != getID()) throw new RuntimeException("Removal of non-owned item: " + i + " last on level " + id);
 

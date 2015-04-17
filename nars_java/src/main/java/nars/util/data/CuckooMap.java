@@ -362,6 +362,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public V remove (Object key) {
+        if (key == null)
+            throw new RuntimeException("can not remover key null");
+
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         if (key.equals(keyTable[index])) {
@@ -394,6 +397,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
     }
 
     V removeStash (K key) {
+        if (key == null)
+            throw new RuntimeException("can not remover key null");
+
         K[] keyTable = this.keyTable;
         for (int i = capacity, n = i + stashSize; i < n; i++) {
             if (key.equals(keyTable[i])) {
@@ -452,6 +458,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public Set<K> keySet() {
+        if (size() == 0) return Collections.EMPTY_SET;
         Set<K> s = Global.newHashSet(size());
         for (K k : keyTable)
             if (k!=null) s.add(k);

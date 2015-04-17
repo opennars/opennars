@@ -16,7 +16,7 @@ public interface TLink<T extends Termable> extends Budget.Budgetable {
     public static void print(TLink t, PrintStream out) {
         out.print(t.toString());
         out.print(' ');
-        out.print(t.getBudget());
+        out.print(Budget.toString(t.getBudget()));
 
         if (t.getBudget().isNew()) {
             out.print(" (new) ");
