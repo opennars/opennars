@@ -8,7 +8,7 @@ import nars.Events.Answer;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import reactor.event.registry.Registration;

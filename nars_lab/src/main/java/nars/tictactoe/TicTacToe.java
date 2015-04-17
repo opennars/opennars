@@ -31,7 +31,7 @@ import nars.prototype.Discretinuous;
 import nars.gui.NARSwing;
 import nars.Events.OUT;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;

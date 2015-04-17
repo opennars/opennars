@@ -6,7 +6,7 @@ import nars.Events;
 import nars.NAR;
 import nars.Global;
 import nars.event.AbstractReaction;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;

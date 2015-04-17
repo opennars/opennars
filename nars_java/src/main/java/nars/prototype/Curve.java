@@ -2,18 +2,19 @@ package nars.prototype;
 
 import nars.Core;
 import nars.Memory;
+import nars.budget.Bag;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.budget.bag.CurveBag;
+import nars.budget.bag.CurveBag.FairPriorityProbabilityCurve;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.budget.Bag;
-import nars.budget.bag.CurveBag;
-import nars.budget.bag.CurveBag.FairPriorityProbabilityCurve;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
 
 
 public class Curve extends Default {
@@ -62,7 +63,7 @@ public class Curve extends Default {
         Bag<String, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), curve, randomRemoval);
         Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), curve, randomRemoval);
         
-        return new Concept(b, t, taskLinks, termLinks, m);        
+        return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }
     
 }

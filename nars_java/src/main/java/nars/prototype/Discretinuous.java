@@ -1,18 +1,19 @@
 package nars.prototype;
 
 import nars.Memory;
+import nars.budget.Bag;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.budget.bag.LevelBag;
+import nars.budget.bag.experimental.ChainBag;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.budget.Bag;
-import nars.budget.bag.LevelBag;
-import nars.budget.bag.experimental.ChainBag;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
 
 import static nars.budget.bag.LevelBag.NextNonEmptyLevelMode.Fast;
 
@@ -53,7 +54,7 @@ public class Discretinuous extends Default {
         Bag<String, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new ChainBag<>(getConceptTermLinks());
 
-        return new Concept(b, t, taskLinks, termLinks, m);        
+        return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }
     
 }

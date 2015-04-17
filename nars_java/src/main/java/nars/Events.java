@@ -1,7 +1,7 @@
 package nars;
 
 import nars.event.Reaction;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.ConceptProcess;

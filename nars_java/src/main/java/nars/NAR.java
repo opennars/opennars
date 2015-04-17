@@ -11,6 +11,7 @@ import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.OldNarseseParser;
 import nars.io.narsese.NarseseParser;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;

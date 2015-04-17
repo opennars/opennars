@@ -6,6 +6,7 @@ import nars.io.Symbols;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.nal.term.Compound;
+import nars.util.data.CuckooMap;
 
 /** utility method for creating new tasks following a fluent builder pattern
  *  warning: does not correctly support parent stamps, use .stamp() to specify one
@@ -107,4 +108,12 @@ public class ProtoTask<T extends Compound> {
     }
 
 
+    public ProtoTask<T> punctuation(final char punctuation) {
+        this.punc = punctuation;
+        return this;
+    }
+
+    public ProtoTask<T> time(long creationTime, long occurrenceTime) {
+        return stamp(new Stamp(memory,creationTime, occurrenceTime));
+    }
 }

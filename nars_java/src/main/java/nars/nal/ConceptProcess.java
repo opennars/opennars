@@ -5,9 +5,10 @@
 package nars.nal;
 
 import nars.Events;
+import nars.nal.concept.Concept;
+import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.term.Term;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *

@@ -9,7 +9,7 @@ import nars.Memory;
 import nars.Global;
 import nars.event.AbstractReaction;
 import nars.io.Texts;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.TruthValue;

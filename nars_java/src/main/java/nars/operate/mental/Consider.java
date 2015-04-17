@@ -19,7 +19,7 @@ package nars.operate.mental;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.tlink.TaskLink;
 import nars.nal.nal8.Operation;

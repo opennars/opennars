@@ -4,7 +4,7 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractExecutive;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;

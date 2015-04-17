@@ -8,7 +8,7 @@ package nars.operate.app.farg;
 import nars.Events.CycleEnd;
 import nars.NAR;
 import nars.event.Reaction;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.budget.bag.LevelBag;
 
 /**

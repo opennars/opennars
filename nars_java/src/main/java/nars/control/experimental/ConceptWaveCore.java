@@ -9,8 +9,7 @@ import nars.Memory;
 import nars.Memory.MemoryAware;
 import nars.nal.BudgetFunctions;
 import nars.budget.Budget;
-import nars.nal.Concept;
-import nars.nal.ConceptBuilder;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.budget.bag.experimental.DelayBag;
 import nars.budget.bag.experimental.FairDelayBag;
@@ -33,15 +32,13 @@ abstract public class ConceptWaveCore implements Core {
     public DelayBag<Term, Concept> concepts;
     //public final CacheBag<Term, Concept> subcon;
     
-    private final ConceptBuilder conceptBuilder;
     Memory memory;
     List<Runnable> run = new ArrayList();
 
     private final int maxConcepts;
                
-    public ConceptWaveCore(int maxConcepts, ConceptBuilder conceptBuilder) {
+    public ConceptWaveCore(int maxConcepts) {
         this.maxConcepts = maxConcepts;
-        this.conceptBuilder = conceptBuilder;        
         //this.subcon = subcon
     }    
 
@@ -73,7 +70,7 @@ abstract public class ConceptWaveCore implements Core {
         }
         else {
             if (createIfMissing)
-                c = conceptBuilder.newConcept(budget, term, memory);
+                c = memory.newConcept(budget, term);
             if (c == null)
                 return null;
             concepts.put(c);

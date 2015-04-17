@@ -5,7 +5,7 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.icon.NodeIcon;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Named;
 import nars.nal.Task;
 import nars.nal.term.Term;

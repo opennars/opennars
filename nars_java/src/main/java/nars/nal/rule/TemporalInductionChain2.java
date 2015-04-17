@@ -3,6 +3,7 @@ package nars.nal.rule;
 import nars.Global;
 import nars.Memory;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Term;

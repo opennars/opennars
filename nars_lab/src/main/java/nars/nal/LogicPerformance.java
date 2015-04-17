@@ -11,6 +11,7 @@ import nars.Events.ConceptFired;
 import nars.Events.TaskImmediateProcessed;
 import nars.NAR;
 import nars.Global;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;

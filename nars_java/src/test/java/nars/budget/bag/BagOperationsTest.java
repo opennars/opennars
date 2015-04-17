@@ -6,7 +6,7 @@ package nars.budget.bag;
 
 import nars.budget.Bag;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.nal.term.Term;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class BagOperationsTest {
     public static class NullConcept extends Concept {
 
         public NullConcept(String id, float priority) {
-            super(new Budget(priority, priority, priority), new Term(id), null, null, null);
+            super(new Term(id), new Budget(priority, priority, priority), null, null, null);
         }    
 
         @Override

@@ -3,10 +3,9 @@ package vnc;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -67,18 +66,20 @@ abstract public class ConceptMap extends AbstractReaction {
     /** uses a predefined set of terms that will be mapped */
     abstract public static class SeededConceptMap extends ConceptMap {
 
-        public final Set<Term> seeds;
+        public final Set<Term> terms;
 
         public SeededConceptMap(NAR nar, Set<Term> terms) {
             super(nar);
-            this.seeds = terms;
+            this.terms = terms;
         }
 
 
         @Override
         public boolean contains(Concept c) {
             Term s = c.getTerm();
-            return seeds.contains(s);
+            return terms.contains(s);
         }
+
+        public boolean contains(Term t) { return terms.contains(t); }
     }
 }

@@ -24,7 +24,7 @@ package nars.io;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;

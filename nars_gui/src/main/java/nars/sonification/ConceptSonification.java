@@ -9,7 +9,7 @@ import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.nal.ConceptProcess;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 
 import java.io.IOException;
 import java.nio.file.Files;

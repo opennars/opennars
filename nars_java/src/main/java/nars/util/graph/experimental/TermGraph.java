@@ -5,7 +5,7 @@ import com.google.common.collect.Iterators;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.NALOperator;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TermLink;
 import org.jgrapht.EdgeFactory;

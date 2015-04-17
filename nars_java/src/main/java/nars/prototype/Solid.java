@@ -10,6 +10,7 @@ import nars.budget.Budget;
 import nars.nal.*;
 import nars.budget.bag.CacheBag;
 import nars.budget.bag.CurveBag;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
 import nars.nal.term.Term;
 
@@ -113,10 +114,6 @@ public class Solid extends Default {
                         return subcon;
                     }
 
-                    @Override
-                    public ConceptBuilder getConceptBuilder() {
-                        return Solid.this.getConceptBuilder();
-                    }
                 };
 
                 @Override

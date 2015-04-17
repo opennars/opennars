@@ -8,7 +8,7 @@ import nars.NAR;
 import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
 import nars.rover.jbox2d.j2d.DrawPhy2D.LayerDraw;
 import org.jbox2d.collision.shapes.PolygonShape;

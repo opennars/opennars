@@ -8,7 +8,7 @@ import nars.NAR;
 import nars.gui.NARSwing;
 import nars.io.Texts;
 import nars.io.narsese.NarseseParser;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.NullOperator;
@@ -202,7 +202,7 @@ abstract public class VNCControl extends VNCClient {
         @Override
         public boolean contains(Concept c) {
             Term s = c.getTerm();
-            return seeds.contains(s);
+            return terms.contains(s);
         }
 
         @Override

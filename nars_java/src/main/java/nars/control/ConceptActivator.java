@@ -5,8 +5,7 @@ import nars.Memory;
 import nars.Global;
 import nars.nal.BudgetFunctions;
 import nars.budget.Budget;
-import nars.nal.Concept;
-import nars.nal.ConceptBuilder;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.budget.bag.CacheBag;
 import nars.budget.tx.BagActivator;
@@ -68,14 +67,7 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
 
         //create new concept, with the applied budget
         if (createIfMissing) {
-
-            Concept concept = null;
-
-            /** use the concept created by the first conceptbuilder to return non-null */
-            for (ConceptBuilder cb : getMemory().getConceptBuilders()) {
-                concept = cb.newConcept(budget, getKey(), getMemory());
-                if (concept!=null) break;
-            }
+            Concept concept = getMemory().newConcept(budget, getKey());
 
             if ( concept == null) {
                 throw new RuntimeException("No ConceptBuilder will build: " + getKey() + " " + budget + ", builders=" + getMemory().getConceptBuilders());

@@ -10,7 +10,7 @@ import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.TruthValue;
 

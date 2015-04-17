@@ -10,6 +10,7 @@ import nars.Global;
 import nars.budget.Budget;
 import nars.nal.*;
 import nars.nal.Terms.Termable;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TLink;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
@@ -41,8 +42,8 @@ public class AntCore extends ConceptWaveCore {
         return 0;
     }
 
-    public AntCore(int numAnts, float cycleSpeed, int maxConcepts, ConceptBuilder conceptBuilder) {
-        super(maxConcepts, conceptBuilder);
+    public AntCore(int numAnts, float cycleSpeed, int maxConcepts) {
+        super(maxConcepts);
                 
         this.cycleSpeed = cycleSpeed;
         this.conceptVisitDelivery = 1.0f / numAnts;

@@ -2,6 +2,7 @@ package nars;
 
 import nars.Events.*;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;

@@ -2,7 +2,7 @@ package nars.util.graph;
 
 import nars.NAR;
 import nars.nal.MemoryObserver;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.util.data.CuckooMap;
 import org.jgrapht.graph.DefaultEdge;

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.nal;
+package nars.nal.concept;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -29,6 +29,7 @@ import nars.Memory.MemoryAware;
 import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.io.Symbols;
+import nars.nal.*;
 import nars.nal.Terms.Termable;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
@@ -44,9 +45,8 @@ import static nars.nal.BudgetFunctions.rankBelief;
 import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
-public class Concept extends Item<Term> implements Termable {
+abstract public class Concept extends Item<Term> implements Termable {
 
-    
     /**
      * The term is the unique ID of the concept
      */
@@ -123,11 +123,10 @@ public class Concept extends Item<Term> implements Termable {
     /* ---------- constructor and initialization ---------- */
     /**
      * Constructor, called in Memory.getConcept only
-     *
-     * @param term A term corresponding to the concept
+     *  @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Budget b, final Term term, final Bag<String, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
+    public Concept(final Term term, final Budget b, final Bag<String, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;
@@ -183,6 +182,11 @@ public class Concept extends Item<Term> implements Termable {
     public boolean directProcess(final DirectProcess nal) {
 
         final Task task = nal.getCurrentTask();
+
+        if (!valid(task)) {
+            memory.taskRemoved(task, "Filtered by Concept");
+            return false;
+        }
 
         char type = task.sentence.punctuation;
         switch (type) {
@@ -367,7 +371,11 @@ public class Concept extends Item<Term> implements Termable {
     }
 
 
-    
+    /** by default, any Task is valid */
+    public boolean valid(Task t) {
+        return true;
+    }
+
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
@@ -377,6 +385,7 @@ public class Concept extends Item<Term> implements Termable {
      * @return Whether to continue the processing of the task
      */
     protected boolean processGoal(final DirectProcess nal, final Task task) {
+
 
         final Sentence goal = task.sentence, oldGoal;
 

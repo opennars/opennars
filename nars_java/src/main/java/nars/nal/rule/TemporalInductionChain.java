@@ -6,6 +6,7 @@ import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.nal5.Conjunction;

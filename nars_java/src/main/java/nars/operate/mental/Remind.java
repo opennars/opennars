@@ -20,7 +20,7 @@ import nars.Memory;
 import nars.Global;
 import nars.nal.BudgetFunctions.Activating;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;

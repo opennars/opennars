@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.event.AbstractReaction;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 

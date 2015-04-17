@@ -26,7 +26,7 @@ import nars.nal.NAL;
 import nars.nal.NALOperator;
 import nars.nal.TruthFunctions;
 import nars.nal.term.Compound;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal5.Conjunction;

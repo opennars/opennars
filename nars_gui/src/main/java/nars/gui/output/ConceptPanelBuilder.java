@@ -17,7 +17,7 @@ import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
 import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.TruthValue.Truthable;

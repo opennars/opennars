@@ -5,7 +5,7 @@
 package nars.gui.output;
 
 import nars.NAR;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 import javax.swing.*;

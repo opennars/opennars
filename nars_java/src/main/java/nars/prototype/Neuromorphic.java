@@ -1,18 +1,19 @@
 package nars.prototype;
 
-import nars.control.experimental.AntCore;
 import nars.Core;
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Bag;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.budget.bag.experimental.DelayBag;
+import nars.budget.bag.experimental.FairDelayBag;
+import nars.control.experimental.AntCore;
+import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
+import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.budget.Bag;
-import nars.budget.bag.experimental.DelayBag;
-import nars.budget.bag.experimental.FairDelayBag;
-import nars.nal.term.Term;
 
 /**
  *
@@ -37,7 +38,7 @@ public class Neuromorphic extends Curve {
     public Core newCore() {
         if (numAnts == -1)
             numAnts = param.conceptsFiredPerCycle.get();
-        return new AntCore(numAnts, 2.0f, getConceptBagSize(), getConceptBuilder());
+        return new AntCore(numAnts, 2.0f, getConceptBagSize());
     }
 
     
@@ -70,7 +71,7 @@ public class Neuromorphic extends Curve {
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(
                     param.termLinkForgetDurations, getConceptTermLinks());
             termLinks.setMemory(m);
-            return new Concept(b, t, taskLinks, termLinks, m);
+            return new DefaultConcept(t, b, taskLinks, termLinks, m);
         }
         else {
             return super.newConcept(b, t, m);

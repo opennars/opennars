@@ -9,7 +9,7 @@ import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.TruthValue;
 import nars.nal.term.Compound;

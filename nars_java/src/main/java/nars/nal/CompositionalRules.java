@@ -23,6 +23,7 @@ package nars.nal;
 import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.*;

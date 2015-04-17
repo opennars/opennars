@@ -5,6 +5,7 @@ import nars.Global;
 import nars.budget.Budget;
 import nars.io.Texts;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;

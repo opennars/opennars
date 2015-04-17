@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.prototype.Default;
 import nars.io.Symbols;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.nal.tlink.TermLinkTemplate;

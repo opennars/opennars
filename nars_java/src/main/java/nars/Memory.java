@@ -20,7 +20,6 @@
  */
 package nars;
 
-import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -32,6 +31,7 @@ import nars.io.meter.EmotionMeter;
 import nars.io.meter.LogicMetrics;
 import nars.io.meter.ResourceMeter;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -82,7 +82,7 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private int level;
-    final List<ConceptBuilder> conceptBuilders = new ArrayList();
+    final List<ConceptBuilder> conceptBuilders;
 
     public NALRuleEngine rules;
     private Term self;
@@ -160,8 +160,26 @@ public class Memory implements Serializable {
     }
 
     /** conceptbuilder handler chain */
-    public Iterable<ConceptBuilder> getConceptBuilders() {
+    public List<ConceptBuilder> getConceptBuilders() {
         return conceptBuilders;
+    }
+
+
+    public Concept newConcept(final Budget budget, final Term term) {
+
+        Concept concept = null;
+
+        /** use the concept created by the first conceptbuilder to return non-null */
+        List<ConceptBuilder> cb = getConceptBuilders();
+        int cbn = cb.size();
+
+        for (int i = 0; i < cbn; i++) {
+            ConceptBuilder c  =  cb.get(i);
+            concept = c.newConcept(budget, term, this);
+            if (concept != null) break;
+        }
+
+        return concept;
     }
 
     @Deprecated public static enum Forgetting {
@@ -268,8 +286,7 @@ public class Memory implements Serializable {
         this.event = new EventEmitter();
 
 
-        if (core instanceof ConceptBuilder)
-            conceptBuilders.add((ConceptBuilder)core); //default conceptbuilder
+        conceptBuilders = new ArrayList(1);
 
         //optional:
         this.resource = new ResourceMeter();

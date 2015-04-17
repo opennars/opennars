@@ -6,7 +6,7 @@ import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
 import nars.io.TextOutput;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;

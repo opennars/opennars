@@ -2,7 +2,7 @@ package nars.nal.tlink;
 
 import nars.Global;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Statement;
 import nars.nal.nal1.Negation;
 import nars.nal.nal4.Image;

@@ -1,7 +1,7 @@
 package nars.nal.tlink;
 
 import nars.nal.Terms;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 /** contains most of the essential data to populate new TermLinks */

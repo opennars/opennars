@@ -4,6 +4,7 @@ import nars.Events;
 import nars.Memory;
 import nars.event.AbstractReaction;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import org.jgrapht.EdgeFactory;

@@ -8,7 +8,7 @@ package nars.core;
 import com.google.common.collect.Iterables;
 import nars.NAR;
 import nars.prototype.Default;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import org.junit.Test;
 
 import java.util.HashSet;

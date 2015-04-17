@@ -1,6 +1,6 @@
 package nars.nal.rule;
 
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.ConceptProcess;
 import nars.nal.Sentence;
 import nars.nal.Terms;

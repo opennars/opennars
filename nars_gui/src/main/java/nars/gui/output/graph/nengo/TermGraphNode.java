@@ -11,7 +11,7 @@ import com.google.common.collect.Iterators;
 import nars.Memory;
 import nars.event.ConceptReaction;
 import nars.nal.Terms;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Named;
 import nars.nal.Task;
 import nars.nal.term.Term;

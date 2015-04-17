@@ -1,6 +1,6 @@
 package nars.util.graph;
 
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.tlink.TaskLink;

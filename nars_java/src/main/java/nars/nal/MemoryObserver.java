@@ -6,6 +6,7 @@ import nars.Events.CycleStart;
 import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
+import nars.nal.concept.Concept;
 
 public abstract class MemoryObserver extends AbstractReaction {
 

@@ -11,13 +11,17 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
+import nars.budget.bag.CurveBag;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
 import nars.nal.*;
+import nars.nal.concept.Concept;
+import nars.nal.concept.ControlledConcept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.rl.hai.AbstractHaiQBrain;
@@ -338,10 +342,10 @@ public class TwoPointRegulatorAgent extends JPanel {
     abstract public static class HaiQNAR extends AbstractHaiQBrain implements ConceptBuilder {
 
         private final NAR nar;
-        ConceptMap.SeededConceptMap c;
+        ConceptMap.SeededConceptMap seed;
         BiMap<Term,Integer> states;
         BiMap<Operation, Integer> actions;
-        private final Concept[][] q;
+        private final ControlledConcept[][] q;
 
         public HaiQNAR(NAR nar, int nstates, int nactions) {
             super(nstates, nactions);
@@ -369,18 +373,9 @@ public class TwoPointRegulatorAgent extends JPanel {
             }
 
 
-            nar.memory.on((ConceptBuilder)this);
 
-            //System.out.println("states:\n" + states);
-            //System.out.println("actions:\n" + actions);
 
-            for (int s = 0; s < nstates; s++) {
-                for (int a = 0; a < nactions; a++) {
-                    initializeQ(s, a);
-                }
-            }
-
-            c = new ConceptMap.SeededConceptMap(nar, qseeds) {
+            seed = new ConceptMap.SeededConceptMap(nar, qseeds) {
 
                 @Override
                 protected void onFrame() {
@@ -409,13 +404,26 @@ public class TwoPointRegulatorAgent extends JPanel {
                     Implication t = (Implication) c.getTerm();
                     int[] x = qterm(t);
                     if (x!=null)
-                        q[x[0]][x[1]] = c;
+                        q[x[0]][x[1]] = (ControlledConcept)c;
 
                     //System.out.println( Arrays.deepToString(q) );
                 }
             };
 
-            this.q = new Concept[nstates][nactions];
+
+
+            this.q = new ControlledConcept[nstates][nactions];
+
+            nar.memory.on((ConceptBuilder)this);
+
+            //System.out.println("states:\n" + states);
+            //System.out.println("actions:\n" + actions);
+
+            for (int s = 0; s < nstates; s++) {
+                for (int a = 0; a < nactions; a++) {
+                    initializeQ(s, a);
+                }
+            }
         }
 
         @Override
@@ -439,7 +447,7 @@ public class TwoPointRegulatorAgent extends JPanel {
 
         private void initializeQ(int s, int a) {
             Term t = qterm(s, a);
-            //nar.input(t + ". %0.50;0.50%");
+            nar.input(t + ". :|: %0.50;0.50%");
         }
 
         public Term qterm(int s, int a) {
@@ -454,7 +462,7 @@ public class TwoPointRegulatorAgent extends JPanel {
             float thresh = 0.01f;
             if (Math.abs(dq) < thresh) return;
 
-            Concept c = q[state][action];
+            ControlledConcept c = q[state][action];
             double q = q(state, action);
             double nq = q + dq;
             if (nq > 1d) nq = 1d;
@@ -479,12 +487,14 @@ public class TwoPointRegulatorAgent extends JPanel {
             //new DirectProcess(nar.memory, nar.task(updatedGoal)).run();
             //nar.input(updatedBelief);
 
+            //c.beliefs.clear();
+            //new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
 
-            c.beliefs.clear();
-            c.taskLinks.clear();
-            new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
 
-            //c.print(System.out, false, true, false, false);
+            TruthValue tv = new TruthValue((float)nextFreq, conf);
+            c.setPresent(tv, '.', new Budget('.', tv));
+
+            c.print(System.out, true, false, false, false);
         }
 
         @Override
@@ -508,6 +518,17 @@ public class TwoPointRegulatorAgent extends JPanel {
             Operation a = actions.inverse().get(nextAct);
             nar.input(a + "! :|:");
         }
+
+        @Override
+        public Concept newConcept(Budget b, Term t, Memory m) {
+            if (seed.contains(t)) {
+                return new ControlledConcept((Compound)t, b, m,
+                        new CurveBag(10,true),
+                        new CurveBag(10,true));
+            }
+            return null;
+        }
+
     }
 
 
@@ -519,10 +540,6 @@ public class TwoPointRegulatorAgent extends JPanel {
 
         ql = new HaiQNAR(nar,3, 3) {
 
-            @Override
-            public Concept newConcept(Budget b, Term t, Memory m) {
-                return null;
-            }
 
             @Override public Term getStateTerm(int s) {
                 switch (s) {

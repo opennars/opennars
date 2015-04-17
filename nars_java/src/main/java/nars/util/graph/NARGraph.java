@@ -3,7 +3,7 @@ package nars.util.graph;
 import nars.NAR;
 import nars.Global;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Named;
 import nars.nal.Terms.Termable;
 import nars.budget.Budget.Budgetable;

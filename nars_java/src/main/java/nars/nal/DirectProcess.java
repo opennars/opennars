@@ -7,6 +7,7 @@ package nars.nal;
 import nars.Events;
 import nars.Memory;
 import nars.Global;
+import nars.nal.concept.Concept;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,
@@ -23,6 +24,16 @@ public class DirectProcess extends NAL {
                 throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
         }
     }
+
+    /** runs the entire process in a constructor, for when a Concept is provided */
+    public DirectProcess(Concept c, Task task) {
+        this(c.memory, task);
+
+        onStart();
+        process(c);
+        onFinished();
+    }
+
 
     @Override
     protected void onFinished() {
@@ -44,8 +55,11 @@ public class DirectProcess extends NAL {
         Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
         if (c == null) return;
 
+        process(c);
 
+    }
 
+    protected void process(Concept c) {
         if (c.directProcess(this)) {
 
             c.link(currentTask);

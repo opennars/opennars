@@ -3,7 +3,7 @@ package nars;
 import javolution.context.ConcurrentContext;
 import nars.nal.BudgetFunctions.Activating;
 import nars.budget.Budget;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
 

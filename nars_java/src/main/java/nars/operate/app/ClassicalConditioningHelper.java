@@ -10,6 +10,7 @@ import nars.NAR;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.operate.IOperator;
 import nars.event.Reaction;

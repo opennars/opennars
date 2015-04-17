@@ -6,7 +6,7 @@ import nars.Core.CoreAware;
 import nars.Memory;
 import nars.Global;
 import nars.nal.BudgetFunctions;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.budget.Bag;
 import nars.util.data.sorted.ArraySortedIndex;

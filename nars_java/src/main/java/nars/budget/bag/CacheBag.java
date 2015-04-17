@@ -3,7 +3,7 @@ package nars.budget.bag;
 import com.google.common.cache.*;
 import nars.Events;
 import nars.Memory;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Item;
 
 /**

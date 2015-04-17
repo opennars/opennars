@@ -4,6 +4,7 @@ import nars.Global;
 import nars.nal.*;
 import nars.budget.Bag;
 import nars.budget.bag.CacheBag;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;

@@ -3,23 +3,24 @@ package nars.prototype;
 import nars.*;
 import nars.Memory.Forgetting;
 import nars.Memory.Timing;
-import nars.control.DefaultCore;
-import nars.budget.Budget;
 import nars.budget.Bag;
+import nars.budget.Budget;
 import nars.budget.bag.CacheBag;
 import nars.budget.bag.LevelBag;
+import nars.control.DefaultCore;
 import nars.event.AbstractExecutive;
 import nars.event.exe.DesireThresholdExecutive;
-import nars.nal.Concept;
 import nars.nal.ConceptBuilder;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
+import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 import nars.operate.app.STMInduction;
 import nars.operate.mental.*;
 
@@ -217,7 +218,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         Bag<String, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
         
-        return new Concept(b, t, taskLinks, termLinks, m);        
+        return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }
 
     
@@ -329,7 +330,12 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     }
 
 
-
+    @Override
+    protected Memory newMemory(Param p) {
+        Memory m = super.newMemory(p);
+        m.on((ConceptBuilder) this); //default conceptbuilder
+        return m;
+    }
 
     public static class CommandLineNARBuilder extends Default {
         

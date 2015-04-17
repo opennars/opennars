@@ -5,7 +5,7 @@ import nars.Events.ConceptNew;
 import nars.Events.InferenceEvent;
 import nars.NAR;
 import nars.nal.MemoryObserver;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 
 import java.io.PrintStream;

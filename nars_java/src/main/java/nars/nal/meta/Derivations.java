@@ -8,6 +8,7 @@ import nars.NAR;
 import nars.Global;
 import nars.event.AbstractReaction;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.term.Variable;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;

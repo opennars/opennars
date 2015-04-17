@@ -19,7 +19,7 @@ package nars.core;
 import nars.Global;
 import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Statement;
 import nars.nal.Task;

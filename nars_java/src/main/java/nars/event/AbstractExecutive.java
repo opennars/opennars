@@ -3,7 +3,7 @@ package nars.event;
 import nars.operate.AbstractOperator;
 import nars.Events;
 import nars.NAR;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 
 /**

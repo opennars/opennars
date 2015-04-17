@@ -18,7 +18,7 @@
 package nars.operate.mental;
 
 import nars.Memory;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;

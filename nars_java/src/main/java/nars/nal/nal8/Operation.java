@@ -24,7 +24,7 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.Concept;
+import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;

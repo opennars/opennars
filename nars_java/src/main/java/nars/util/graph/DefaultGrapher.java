@@ -3,6 +3,7 @@ package nars.util.graph;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import nars.nal.*;
+import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.term.Compound;
