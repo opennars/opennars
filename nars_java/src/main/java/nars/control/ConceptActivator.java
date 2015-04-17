@@ -51,7 +51,6 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     }
 
     abstract public CacheBag<Term,Concept> getSubConcepts();
-    abstract public ConceptBuilder getConceptBuilder();
 
     @Override
     public Concept newItem() {
@@ -70,7 +69,18 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         //create new concept, with the applied budget
         if (createIfMissing) {
 
-            Concept concept = getConceptBuilder().newConcept(budget, getKey(), getMemory());
+            Concept concept = null;
+
+            /** use the concept created by the first conceptbuilder to return non-null */
+            for (ConceptBuilder cb : getMemory().getConceptBuilders()) {
+                concept = cb.newConcept(budget, getKey(), getMemory());
+                if (concept!=null) break;
+            }
+
+            if ( concept == null) {
+                throw new RuntimeException("No ConceptBuilder will build: " + getKey() + " " + budget + ", builders=" + getMemory().getConceptBuilders());
+            }
+
 
             if (getMemory().logic!=null)
                 getMemory().logic.CONCEPT_NEW.hit();

@@ -33,8 +33,8 @@ public class DefaultCore extends SequentialCore {
 
 
 
-    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, ConceptBuilder conceptBuilder, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
-        super(concepts, subcon, conceptBuilder);
+    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+        super(concepts, subcon);
 
 
         this.novelTasks = novelTasks;

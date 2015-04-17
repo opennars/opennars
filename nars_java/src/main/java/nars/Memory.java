@@ -20,6 +20,7 @@
  */
 package nars;
 
+import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -81,6 +82,7 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private int level;
+    final List<ConceptBuilder> conceptBuilders = new ArrayList();
 
     public NALRuleEngine rules;
     private Term self;
@@ -145,6 +147,21 @@ public class Memory implements Serializable {
      */
     public void decide(Concept c, Task executableOperationTask) {
         emit(Events.DecideExecution.class, c, executableOperationTask);
+    }
+
+    /** prepend a conceptbuilder to the conceptbuilder handler chain */
+    public void on(ConceptBuilder c) {
+        conceptBuilders.add(0, c);
+    }
+
+    /** remove a conceptbuilder which has been added; return true if successfully removed or false if it wasnt present */
+    public boolean off(ConceptBuilder c) {
+        return conceptBuilders.remove(c);
+    }
+
+    /** conceptbuilder handler chain */
+    public Iterable<ConceptBuilder> getConceptBuilders() {
+        return conceptBuilders;
     }
 
     @Deprecated public static enum Forgetting {
@@ -232,7 +249,7 @@ public class Memory implements Serializable {
      *
      * added during runtime
      */
-    public Memory(int nalLevel, Param param, Core concepts) {
+    public Memory(int nalLevel, Param param, Core core) {
 
         this.level = nalLevel;
 
@@ -242,7 +259,7 @@ public class Memory implements Serializable {
 
         this.rules = new NALRuleEngine(this);
 
-        this.concepts = concepts;
+        this.concepts = core;
         this.concepts.init(this);
 
         this.self = Symbols.DEFAULT_SELF; //default value
@@ -250,6 +267,9 @@ public class Memory implements Serializable {
         this.operators = Global.newHashMap();
         this.event = new EventEmitter();
 
+
+        if (core instanceof ConceptBuilder)
+            conceptBuilders.add((ConceptBuilder)core); //default conceptbuilder
 
         //optional:
         this.resource = new ResourceMeter();

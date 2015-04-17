@@ -86,8 +86,8 @@ public class TicTacToe extends JPanel {
                 setSubconceptBagSize(10000).
                 simulationTime());
 
-        nar.on(new AddO("^addO"));
-        (nar.param).duration.set(100);
+        nar.on(new AddO());
+        (nar.param).duration.set(10);
         (nar.param).outputVolume.set(0);
         
         new NARSwing(nar);    
@@ -180,7 +180,7 @@ public class TicTacToe extends JPanel {
             */
 
             public Color getBackgroundColor(float priority) {
-                return Color.getHSBColor(0.2f + priority * 0.2f, 0.75f, 0.5f + priority * 0.5f);
+                return Color.getHSBColor(0.1f + priority * 0.4f, 0.75f, 0.5f + priority * 0.5f);
             }
             
             Color blue = new Color(0.5f, 0.5f, 1f);
@@ -216,8 +216,8 @@ public class TicTacToe extends JPanel {
 
     public class AddO extends Operator {
 
-        public AddO(String name) {
-            super(name);
+        public AddO() {
+            super("^add0");
         }
 
         @Override
@@ -334,7 +334,7 @@ public class TicTacToe extends JPanel {
     public void reset() {
         playing = STARTING_PLAYER;
         Arrays.fill(field, 0);
-        nar.input("<game --> reset>. :|:");
+        nar.input("<empty --> win>. :|:");
         teach();
         updateField();
     }
@@ -344,7 +344,6 @@ public class TicTacToe extends JPanel {
     public void teach() {
         
         String rules = "";
-        rules+=("<nars --> win>! %1.0;0.99%\n");
 
         //+"<(^addO,$1) =/> <input --> succeeded>>.\n"); //usually input succeeds
         //+"<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
@@ -354,46 +353,33 @@ public class TicTacToe extends JPanel {
             int a = h[0];
             int b = h[1];
             int c = h[2];
-            rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
+            //rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
             rules+=("<(&|,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>.\n");
         }
         
         //for NAL9 (anticipate)
-        if (nar.memory.operator("^anticipate")!=null) {
-            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
-            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
-        }
-        
+//        if (nar.memory.operator("^anticipate")!=null) {
+//            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
+//            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
+//        }
+
+        rules+=("<(&/,<$1 --> empty>, (^add0,$1,SELF)) =/> <input --> succeeded>>.\n");
+
         rules+=("<nars --> win>! %1.0;0.99%\n");
         rules+=("<human --> win>! %0.0;0.99%\n");
 
-        rules+=("(&/,<#1 --> field>,(^addO,#1))!\n"); //doing something is also a goal :D
+        //rules+=("<<#1 --> field> =/> (^addO,#1,SELF)>. %0.5;0.5%\n"); //doing something is also a goal :D
         
 
-        
-        rules+=("(^addO,0)! %1.0;0.7%\n");
-        rules+=("(^addO,1)! %1.0;0.7%\n");
-        rules+=("(^addO,2)! %1.0;0.7%\n");
-        rules+=("(^addO,3)! %1.0;0.7%\n");
-        rules+=("(^addO,4)! %1.0;0.7%\n");
-        rules+=("(^addO,5)! %1.0;0.7%\n");
-        rules+=("(^addO,6)! %1.0;0.7%\n");
-        rules+=("(^addO,7)! %1.0;0.7%\n");
-        rules+=("(^addO,8)! %1.0;0.7%\n");
-         
-        
-        rules+=("<{nars,human,empty} <-> field>.\n");        
-        rules+=("(||,<human --> win>,<nars --> win>).\n");
-        rules+=("<0 --> field>.\n");
-        rules+=("<1 --> field>.\n");
-        rules+=("<2 --> field>.\n");
-        rules+=("<3 --> field>.\n");
-        rules+=("<4 --> field>.\n");
-        rules+=("<5 --> field>.\n");
-        rules+=("<6 --> field>.\n");
-        rules+=("<7 --> field>.\n");
-        rules+=("<8 --> field>.\n");
-         
+
+        for (int i = 0; i < 9; i++)
+            rules+=("(^addO," + i + ")! %0.5;0.5%\n");
+
+
+        rules+=("<{human,nars,empty} --> win>.\n");
+        rules+=("<{nars,human,empty} <-> field>.\n");
+        rules+=("<{0,1,2,3,4,5,6,7,8} --> field>.\n");
+
         rules+=("<input --> succeeded>!\n");
         
         nar.input(rules);

@@ -30,17 +30,16 @@ abstract public class SequentialCore implements Core {
      */
     public final Bag<Term, Concept> concepts;
     public final CacheBag<Term, Concept> subcon;
-    protected final ConceptBuilder conceptBuilder;
+
 
     protected List<Runnable> run = new ArrayList();
 
     protected Memory memory;
 
-    public SequentialCore(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon, ConceptBuilder conceptBuilder) {
+    public SequentialCore(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon) {
 
         this.concepts = concepts;
         this.subcon = subcon;
-        this.conceptBuilder = conceptBuilder;
 
     }
 
@@ -148,10 +147,6 @@ abstract public class SequentialCore implements Core {
             return subcon;
         }
 
-        @Override
-        public ConceptBuilder getConceptBuilder() {
-            return conceptBuilder;
-        }
     };
 
 

@@ -212,10 +212,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     }
 
 
-    ConceptBuilder getConceptBuilder() {
-        return this;
-    }
-
     @Override
     public Concept newConcept(Budget b, Term t, Memory m) {
         Bag<String, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
@@ -236,7 +232,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     @Override
     public Core newCore() {
-        return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
+        return new DefaultCore(newConceptBag(), newSubconceptBag(), newNovelTaskBag());
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {

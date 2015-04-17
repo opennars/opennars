@@ -10,6 +10,7 @@ import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
@@ -334,7 +335,7 @@ public class TwoPointRegulatorAgent extends JPanel {
 
     public final NAR nar;
 
-    abstract public static class HaiQNAR extends AbstractHaiQBrain {
+    abstract public static class HaiQNAR extends AbstractHaiQBrain implements ConceptBuilder {
 
         private final NAR nar;
         ConceptMap.SeededConceptMap c;
@@ -367,12 +368,15 @@ public class TwoPointRegulatorAgent extends JPanel {
                 }
             }
 
-            System.out.println("states:\n" + states);
-            System.out.println("actions:\n" + actions);
+
+            nar.memory.on((ConceptBuilder)this);
+
+            //System.out.println("states:\n" + states);
+            //System.out.println("actions:\n" + actions);
 
             for (int s = 0; s < nstates; s++) {
                 for (int a = 0; a < nactions; a++) {
-                    conceptualize(s, a);
+                    initializeQ(s, a);
                 }
             }
 
@@ -396,7 +400,7 @@ public class TwoPointRegulatorAgent extends JPanel {
                         int s = x[0];
                         int a = x[1];
                         q[s][a] = null;
-                        conceptualize(s,a);
+                        initializeQ(s, a);
                     }
                 }
 
@@ -433,9 +437,9 @@ public class TwoPointRegulatorAgent extends JPanel {
             return new int[] { state, action };
         }
 
-        private void conceptualize(int s, int a) {
+        private void initializeQ(int s, int a) {
             Term t = qterm(s, a);
-            nar.input(t + ". %0.50;0.50%");
+            //nar.input(t + ". %0.50;0.50%");
         }
 
         public Term qterm(int s, int a) {
@@ -514,6 +518,12 @@ public class TwoPointRegulatorAgent extends JPanel {
         nar.on(new move());
 
         ql = new HaiQNAR(nar,3, 3) {
+
+            @Override
+            public Concept newConcept(Budget b, Term t, Memory m) {
+                return null;
+            }
+
             @Override public Term getStateTerm(int s) {
                 switch (s) {
                     case 0: return nar.term(state(false,false));
