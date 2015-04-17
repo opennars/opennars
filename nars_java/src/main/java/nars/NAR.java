@@ -193,7 +193,16 @@ public class NAR implements Runnable {
 
     /** parses and forms a Task from a string but doesnt input it */
     public Task task(String taskText) {
-        return narsese.parseTask(taskText);
+        Task t = narsese.parseTask(taskText);
+
+        long now = time();
+        if (!t.sentence.isEternal()) {
+            t.getStamp().setTime(now, now + t.sentence.getOccurrenceTime());
+        }
+        else {
+            t.getStamp().setTime(now, Stamp.ETERNAL);
+        }
+        return t;
     }
 
 

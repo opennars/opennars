@@ -1,8 +1,11 @@
 package nars.rl;
 
 import automenta.vivisect.Video;
+import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import jurls.core.utils.MatrixImage;
+import jurls.core.utils.MatrixImage.Data2D;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -10,9 +13,7 @@ import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
-import nars.nal.Concept;
-import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.*;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -100,39 +101,42 @@ public class TwoPointRegulatorAgent extends JPanel {
     final int targetCyclesMin = 200;
     final int targetCyclesMax = targetCyclesMin;
     private final HaiQNAR ql;
+    private final MatrixImage mi;
     int targetCycles = targetCyclesMin;
 
     final int beGoodPeriod = targetCyclesMin;
 
-    private final int cyclesPerFrame = 10;
+    private final int cyclesPerFrame = 50;
     float drawXScale = 0.5f;
     int historySize = (int)(800 / drawXScale);
 
     final int trainingActionPeriod = targetCyclesMin;
-    final int initialTrainingCycles = 15;
+    final int initialTrainingCycles = 1;
 
-    float initialDesireConf = 0.6f;
-    int speed = 25;
+    float initialDesireConf = 0.7f;
+    int speed = 5;
 
     //String self = "SELF";
     String target = "good";
-    String reward = "good";
-    String goodness = "reward";
+    static String reward = "SELF";
+    static String goodness = "good";
     //String goodness = "[good]";
 
 
     int movement = 0;
     int lastMovement = 0;
     Deque<State> history = new ArrayDeque<>();
-    boolean speedProportionalToExpectation = true;
-    private float closeEnough = 0.5f; //tolerance threshold
+    boolean speedProportionalToExpectation = false;
+    private float closeEnough = speed; //tolerance threshold
     private float distance;
-    private boolean here;
+    private boolean here, closer;
 
     static int setpoint = 0; //80 230
     float x = 30;
 
     public class move extends Operator {
+
+
 
         public move() {
             super("^move");
@@ -170,11 +174,16 @@ public class TwoPointRegulatorAgent extends JPanel {
                 dx = speed;
             }
 
+            int a = -1;
 
             if (args[0].toString().equals("left")) {
                 x -= dx;
+                a = 1;
             } else if (args[0].toString().equals("right")) {
                 x += dx;
+                a = 2;
+            } else if (args[0].toString().equals("center")) {
+                a = 0;
             } else {
                 System.err.println(this + " ?? " + Arrays.toString(args));
                 return null;
@@ -183,9 +192,12 @@ public class TwoPointRegulatorAgent extends JPanel {
             movement++;
             // lastMovementAt = now;
 
-            double delta = updateDistance();
+            System.out.println(operation.getTask().getExplanation());
 
-//            boolean closer = delta < 0;
+
+            acted(a);
+
+
 //            if (here || closer) {
 //                System.out.println("GOOD:\n" + operation.getTask().getExplanation());
 //                return Arrays.asList(good(here ? 0.95f : 0.85f));
@@ -202,6 +214,28 @@ public class TwoPointRegulatorAgent extends JPanel {
             return null;
 
         }
+    }
+
+    private void acted(int a) {
+        double delta = updateDistance();
+
+        closer = delta < 0;
+
+        boolean further = delta > 0;
+        int nextAct = -1;
+        if (here) {
+            nextAct = ql.act(0, 1.0, a);
+        } else if (x > setpoint) {
+            nextAct = ql.act(1, closer ?  0.5 : further ? -0.5 : -0.1, a);
+        } else { // if (x < setpoint)
+            nextAct = ql.act(2, closer ?  0.5 : further ? -0.5 : -0.1, a);
+        }
+
+        if (a == -1) {
+            ql.act(nextAct);
+        }
+        System.out.println("Qact=" + nextAct + " " + closer);
+
     }
 
 
@@ -226,29 +260,29 @@ public class TwoPointRegulatorAgent extends JPanel {
 //        nar.input("<" + self + " --> [good]>! :|:");
 //    }
 
-    public Task good(float conf) {
+/*    public Task good(float conf) {
         return nar.task("<" + reward + " --> " + goodness + ">. :|: %0.90;" + conf + "%");
-    }
+    }*/
 
-    public void bad() {
-        String b = "<" + reward + " --> " + goodness + ">" + ". :|: %0.05;0.90%"; //punishment
-        nar.input(b);
-    }
-    public void bad(boolean left, boolean right) {
-        bad();
-        String tt = state(left, right);
-        nar.input(tt + ". :|: %0.95;0.90%");
-    }
+//    public void bad() {
+//        String b = "<" + reward + " --> " + goodness + ">" + ". :|: %0.05;0.90%"; //punishment
+//        nar.input(b);
+//    }
+//    public void bad(boolean left, boolean right) {
+//        bad();
+//        String tt = state(left, right);
+//        nar.input(tt + ". :|: %0.95;0.90%");
+//    }
 
-    public void target(boolean left, boolean right) {
-        nar.input( state(left, right) + ". :|: %0.95;0.90%");
-    }
+//    public void target(boolean left, boolean right) {
+//        nar.input( state(left, right) + ". :|: %0.95;0.90%");
+//    }
 
     private String state(boolean left, boolean right) {
 
         java.util.List<String> l = new ArrayList(3);
 
-        String x = left ? "left" : "right";
+        String x;
 
         if ((!left && !right) || (left && right))
             x = "center";
@@ -260,7 +294,9 @@ public class TwoPointRegulatorAgent extends JPanel {
             x = "right";
 
 
+
         return ("<" + target + " --> " + x + ">");
+        //return "<<" + reward + "-->" + goodness + "> ==> <" + x + " --> " + target + ">>";
 
     }
 
@@ -307,6 +343,10 @@ public class TwoPointRegulatorAgent extends JPanel {
 
         public HaiQNAR(NAR nar, int nstates, int nactions) {
             super(nstates, nactions);
+
+            setAlpha(0.25f);
+            setEpsilon(0);
+            setLambda(0.5f);
 
             this.nar = nar;
             states = HashBiMap.create(nstates);
@@ -374,6 +414,15 @@ public class TwoPointRegulatorAgent extends JPanel {
             this.q = new Concept[nstates][nactions];
         }
 
+        @Override
+        public int act(int state, double r, int action) {
+
+            String b = "<" + reward + " --> " + goodness + ">" + ". :|: %" + Texts.n2(r/2.0+0.5f) + ";0.90%"; //punishment
+            nar.input(b);
+
+            return super.act(state, r, action);
+        }
+
         private int[] qterm(Implication t) {
             Term s = t.getSubject();
             Operation p = (Operation)t.getPredicate();
@@ -386,7 +435,7 @@ public class TwoPointRegulatorAgent extends JPanel {
 
         private void conceptualize(int s, int a) {
             Term t = qterm(s, a);
-            nar.input(t + "! %0.50;0.10");
+            nar.input(t + ". %0.50;0.50%");
         }
 
         public Term qterm(int s, int a) {
@@ -398,23 +447,59 @@ public class TwoPointRegulatorAgent extends JPanel {
 
         @Override
         public void qAdd(int state, int action, double dq) {
+            float thresh = 0.01f;
+            if (Math.abs(dq) < thresh) return;
+
             Concept c = q[state][action];
             double q = q(state, action);
             double nq = q + dq;
-            if (nq > 1.0) nq = 1.0;
-            if (nq < 0.0) nq = 0.0;
+            if (nq > 1d) nq = 1d;
+            if (nq < -1d) nq = -1d;
 
-            float alpha = 0.10f; //confidence of each update
-            nar.input(c.getTerm() + "! :|: %" + Texts.n2(nq) + ";" + Texts.n2(alpha) + "%");
+
+            //float conf = (float)Math.abs(dq)/2.0f + 0.5f; //confidence of each update
+            float conf = 0.5f;
+
+            System.out.println(c + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
+
+            double nextFreq = (nq/2) + 0.5f;
+
+            //String updatedGoal = c.getTerm() + "! :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(conf) + "%";
+            String updatedBelief = c.getTerm() + ". :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(conf) + "%";
+
+
+            //c.beliefs.clear();
+            //c.goals.clear();
+
+            //new DirectProcess(nar.memory, nar.task(updatedGoal)).run();
+            //new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
+            //System.out.println("  " + c.goals.size() + " " + c.goals );
+
+            nar.input(updatedBelief);
+            System.out.println( "  " + c.beliefs.size() + " " + c.beliefs );
         }
 
         @Override
         public double q(int state, int action) {
-            TruthValue t = q[state][action].getDesire();
-            if (t == null) return 0;
-            return t.getFrequency();
+//            Concept c = q[state][action];
+//            TruthValue t = c.getDesire();
+//            if (t == null) return 0.5;
+//            return t.getFrequency(); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
+
+            Concept c = q[state][action];
+            if (c == null) return 0f;
+            Sentence s = c.getBestBelief();
+            if (s == null) return 0f;
+            TruthValue t = s.truth;
+            if (t == null) return 0f;
+            return ((t.getFrequency() - 0.5f)*2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
+
         }
 
+        public void act(int nextAct) {
+            Operation a = actions.inverse().get(nextAct);
+            nar.input(a + "! :|:");
+        }
     }
 
 
@@ -424,7 +509,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         nar = new NAR(new Default().setInternalExperience(null));
         nar.on(new move());
 
-        ql = new HaiQNAR(nar,3, 2) {
+        ql = new HaiQNAR(nar,3, 3) {
             @Override public Term getStateTerm(int s) {
                 switch (s) {
                     case 0: return nar.term(state(false,false));
@@ -436,8 +521,10 @@ public class TwoPointRegulatorAgent extends JPanel {
 
             @Override public Operation getActionOperation(int s) {
                 switch(s) {
-                    case 0: return (Operation)nar.term("move(left)");
-                    case 1: return (Operation)nar.term("move(right)");
+                    case 0: return (Operation)nar.term("move(center)");
+                    case 1: return (Operation)nar.term("move(left)");
+                    case 2: return (Operation)nar.term("move(right)");
+                    //case 3: return (Operation)nar.term("move(SELF)"); //random
                 }
                 return null;
             }
@@ -466,8 +553,18 @@ public class TwoPointRegulatorAgent extends JPanel {
 
             @Override
             public void event(Class event, Object[] args) {
-                frame();
+
+
+                acted(-1);
+
                 repaint();
+
+                mi.draw(new Data2D() {
+                    @Override
+                    public double getValue(int x, int y) {
+                        return ql.q(y, x);
+                    }
+                }, ql.states.size(), ql.actions.size(), -1, 1);
             }
         };
 
@@ -479,22 +576,14 @@ public class TwoPointRegulatorAgent extends JPanel {
         this.setIgnoreRepaint(true);
 
 
+        new NWindow("Q",
+                mi = new MatrixImage(400,400)
+        ).show(400, 400);
         init();
 
     }
 
 
-    protected void frame() {
-        int nextAct = -1;
-        if (here) {
-            nextAct = ql.act(0, 1.0);
-        } else if (x > setpoint) {
-            nextAct = ql.act(1, 0.0);
-        } else { // if (x < setpoint)
-            nextAct = ql.act(2, 0.0);
-        }
-        System.out.println("Qact=" + nextAct);
-    }
 
     protected void cycle() {
         boolean hasMoved = (movement != lastMovement);
@@ -509,17 +598,17 @@ public class TwoPointRegulatorAgent extends JPanel {
 //                        nar.input(good());
 //                }
 
-        if (distance > speed * 10) {
-            //most often, farthest
-            targetCycles = targetCyclesMin;
-        } else if (distance > speed * 5) {
-            targetCycles = (targetCyclesMin + targetCyclesMax) / 2;
-        } else {
-            //least often, closest
-            targetCycles = targetCyclesMax;
-        }
+//        if (distance > speed * 10) {
+//            //most often, farthest
+//            targetCycles = targetCyclesMin;
+//        } else if (distance > speed * 5) {
+//            targetCycles = (targetCyclesMin + targetCyclesMax) / 2;
+//        } else {
+//            //least often, closest
+//            targetCycles = targetCyclesMax;
+//        }
 
-        if (nar.time() % targetCycles == 0) {
+        /*if (nar.time() % targetCycles == 0) {
             if (here) {
                 //target("here", 1.0f);
                 target(false, false);
@@ -531,7 +620,7 @@ public class TwoPointRegulatorAgent extends JPanel {
                 target(false, true);
             }
 
-        }
+        }*/
 
         if (nar.time() % beGoodPeriod == 0) {
             beGood();
@@ -546,8 +635,11 @@ public class TwoPointRegulatorAgent extends JPanel {
     }
 
     protected void train2() {
-        for (int i= 0; i < initialTrainingCycles; i++)
+        for (int i= 0; i < initialTrainingCycles; i++) {
             nar.input("move(SELF)!");
+            /*nar.input("move(left)!");
+            nar.input("move(right)!");*/
+        }
     }
 
     protected void train(int periods) {

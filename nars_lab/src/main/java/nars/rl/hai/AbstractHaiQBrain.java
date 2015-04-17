@@ -58,30 +58,37 @@ abstract public class AbstractHaiQBrain {
     abstract public void qAdd(int state, int action, double dq);
     abstract public double q(int state, int action);
 
+    public int act(final int state, final double reward) {
+        return act(state, reward, -1);
+    }
+
     /**
      * returns action #
      */
-    public int act(final int state, final double reward) {
+    public int act(final int state, final double reward, int nextAction) {
 
         final double[][] et = this.et; //local reference
         final int actions = nActions;
         final int states = nStates;
 
-        int maxk = -1;
-        double maxval = Double.NEGATIVE_INFINITY;
-        for (int k = 0; k < actions; k++) {
-            double v = q(state, k);
-            if (v > maxval) {
-                maxk = k;
-                maxval = v;
+
+
+        if (nextAction == -1) {
+            int maxk = -1;
+            double maxval = Double.NEGATIVE_INFINITY;
+            for (int k = 0; k < actions; k++) {
+                double v = q(state, k);
+                if (v > maxval) {
+                    maxk = k;
+                    maxval = v;
+                }
             }
-        }
-        
-        int nextAction;
-        if (epsilon > 0 && random(1.0) < epsilon) {
-            nextAction = (int) random(actions);
-        } else {
-            nextAction = maxk;
+
+            if (epsilon > 0 && random(1.0) < epsilon) {
+                nextAction = (int) random(actions);
+            } else {
+                nextAction = maxk;
+            }
         }
         
         double DeltaQ = reward + gamma * q(state, nextAction) -  q(state, lastAction);
@@ -127,4 +134,7 @@ abstract public class AbstractHaiQBrain {
         return gamma;
     }
 
+    public void setEpsilon(double epsilon) {
+        this.epsilon = epsilon;
+    }
 }
