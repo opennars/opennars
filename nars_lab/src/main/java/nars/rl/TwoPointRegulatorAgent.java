@@ -113,7 +113,7 @@ public class TwoPointRegulatorAgent extends JPanel {
     final int trainingActionPeriod = targetCyclesMin;
     final int initialTrainingCycles = 1;
 
-    float initialDesireConf = 0.7f;
+    float initialDesireConf = 0.75f;
     int speed = 5;
 
     //String self = "SELF";
@@ -226,9 +226,9 @@ public class TwoPointRegulatorAgent extends JPanel {
         if (here) {
             nextAct = ql.act(0, 1.0, a);
         } else if (x > setpoint) {
-            nextAct = ql.act(1, closer ?  0.5 : further ? -0.5 : -0.1, a);
+            nextAct = ql.act(1, closer ?  0.5 : -1.0 ); //further ? -0.5 : -0.1, a);
         } else { // if (x < setpoint)
-            nextAct = ql.act(2, closer ?  0.5 : further ? -0.5 : -0.1, a);
+            nextAct = ql.act(2, closer ?  0.5 : -1.0 ); //further ? -0.5 : -0.1, a);
         }
 
         if (a == -1) {
@@ -476,7 +476,8 @@ public class TwoPointRegulatorAgent extends JPanel {
             //System.out.println("  " + c.goals.size() + " " + c.goals );
 
             nar.input(updatedBelief);
-            System.out.println( "  " + c.beliefs.size() + " " + c.beliefs );
+
+            c.print(System.out, true, false, false, false);
         }
 
         @Override

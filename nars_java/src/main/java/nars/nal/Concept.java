@@ -326,23 +326,30 @@ public class Concept extends Item<Term> implements Termable {
             }
 
 
-            addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class);
+            if (!addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class)) {
+                //wasnt added to table
+                memory.taskRemoved(task, "Insufficient Rank"); //irrelevant
+                return false;
+            }
         }
         return true;
     }
 
-    protected void addToTable(final Task task, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
+    protected boolean addToTable(final Task task, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
         final Sentence newSentence = task.sentence;
         int preSize = table.size();
 
         Sentence removed = addToTable(memory, newSentence, table, max);
 
         if (removed != null) {
+            if (removed == newSentence) return false;
+
             memory.event.emit(eventRemove, this, removed, task);
         }
         if ((preSize != table.size()) || (removed != null)) {
             memory.event.emit(eventAdd, this, task);
         }
+        return true;
     }
 
     /**
@@ -401,6 +408,7 @@ public class Concept extends Item<Term> implements Termable {
                     boolean revisionSucceeded = revision(goal, projectedGoal, false, nal);
                     if(revisionSucceeded) {
                         // it is revised, so there is a new task for which this function will be called
+                        memory.taskRemoved(task, "Revised");
                         return false; // with higher/lower desire
                     }
                 }
@@ -417,7 +425,11 @@ public class Concept extends Item<Term> implements Termable {
         }
 
 
-        addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+        if (!addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class)) {
+            //wasnt added to table
+            memory.taskRemoved(task, "Insufficient Rank"); //irrelevant
+            return false;
+        }
 
         memory.decide(this, task);
         return true;
@@ -562,7 +574,10 @@ public class Concept extends Item<Term> implements Termable {
      * @return whether table was modified
      */
     public static Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
-        float rank1 = rankBelief(newSentence);    // for the new isBelief
+
+        long now = memory.time();
+
+        float rank1 = rankBelief(newSentence, now);    // for the new isBelief
 
         float rank2;
         int i;
@@ -572,12 +587,12 @@ public class Concept extends Item<Term> implements Termable {
         for (i = 0; i < table.size(); i++) {
             Sentence existingSentence = table.get(i);
 
-            rank2 = rankBelief(existingSentence);
+            rank2 = rankBelief(existingSentence, now);
 
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(existingSentence, false, false, true, true)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
-                    return null;
+                    return newSentence;
                 }
                 table.add(i, newSentence);
                 break;
@@ -1142,22 +1157,56 @@ public class Concept extends Item<Term> implements Termable {
 //        return sb;
 //    }
 
-    /** prints a summary of all termlink, tasklink, etc.. */
     public void print(PrintStream out) {
+        print(out, true, true, true, true);
+    }
+    /** prints a summary of all termlink, tasklink, etc.. */
+    public void print(PrintStream out, boolean showbeliefs, boolean showgoals, boolean showtermlinks, boolean showtasklinks) {
         final String indent = "\t";
-        out.println(term);
-        out.println("TermLinks");
-        for (TLink t : termLinks) {
-            out.print(indent);
-            TLink.print(t, out);
-            out.println();
+        long now = memory.time();
+
+        out.println("CONCEPT: " + term + " @ " + now);
+
+        if (showbeliefs) {
+            out.print(" Beliefs:");
+            if (beliefs.isEmpty()) out.println(" none");
+            else out.println();
+            for (Sentence s : beliefs) {
+                out.print(indent);
+                out.println((int) (rankBelief(s, now) * 100.0) + "%: " + s);
+            }
         }
-        out.println("TaskLinks");
-        for (TLink t : taskLinks) {
-            out.print(indent);
-            TLink.print(t, out);
-            out.println();
+
+        if (showgoals) {
+            out.print(" Goals:");
+            if (goals.isEmpty()) out.println(" none");
+            else out.println();
+            for (Sentence s : goals) {
+                out.print(indent);
+                out.println((int) (rankBelief(s, now) * 100.0) + "%: " + s);
+            }
         }
+
+        if (showtermlinks) {
+
+            out.println(" TermLinks:");
+            for (TLink t : termLinks) {
+                out.print(indent);
+                TLink.print(t, out);
+                out.println();
+            }
+
+        }
+
+        if (showtasklinks) {
+            out.println(" TaskLinks:");
+            for (TLink t : taskLinks) {
+                out.print(indent);
+                TLink.print(t, out);
+                out.println();
+            }
+        }
+
         out.println();
     }
 
