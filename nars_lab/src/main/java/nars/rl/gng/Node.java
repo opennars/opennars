@@ -25,7 +25,8 @@ public class Node extends ArrayRealVector {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        //return Objects.hash(id);
+        return id;
     }
 
     /** create a node from two existing nodes */
@@ -75,14 +76,21 @@ public class Node extends ArrayRealVector {
         return Math.sqrt(getDistanceSq(x));
     }
 
-    public void update(double m, double[] x) {
+    /** 0 < rate < 1.0 */
+    public void update(double rate, double[] x) {
         final double[] d = getDataRef();
         for (int i = 0; i < getDimension(); i++) {
-            d[i] += m * (d[i] - x[i]);
+            double c = d[i];
+            d[i] =  ((1.0 - rate) * c ) + (rate * x[i]);
         }
     }
 
-//    public double distanceTo(double[] x) {
+    @Override
+    public String toString() {
+        return id + ": " + super.toString();
+    }
+
+    //    public double distanceTo(double[] x) {
 //        double retVal = 0;
 //        for (int i = 0; i < x.length; i++) {
 //            retVal += Math.pow(x[i] - weights[i], 2);

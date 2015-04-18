@@ -4,8 +4,8 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -84,8 +84,10 @@ public class TestSOMAgent extends JPanel {
         public HgngQNAR(NAR nar, int dimensions, int somSize, int actions) {
             super(nar, somSize, actions);
 
+            setEpsilon(0); //no randomness
+
             this.dimensions = dimensions;
-            som = new NeuralGasNet(2, somSize);
+            som = new NeuralGasNet(dimensions, somSize);
         }
 
         @Override
@@ -102,14 +104,11 @@ public class TestSOMAgent extends JPanel {
         }
 
         public void learn(double[] input, double reward) {
-            try {
-                Node closest = som.learn(input);
-                System.out.println(closest.id + " :: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
-                super.learn(closest.id, reward);
-            }
-            catch (Throwable t) {
-                t.printStackTrace();;
-            }
+
+            Node closest = som.learn(input);
+            //System.out.println(closest.id + " :: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+            super.learn(closest.id, reward);
+
         }
     }
 
@@ -187,7 +186,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        ql = new HgngQNAR(nar, exampleObs.length, exampleObs.length * 2, domain.numActions()) {
+        ql = new HgngQNAR(nar, exampleObs.length, exampleObs.length * 6, domain.numActions()) {
             @Override public Operation getActionOperation(int s) {
                 return (Operation)nar.term("move(" + s + ")");
             }
@@ -254,9 +253,9 @@ public class TestSOMAgent extends JPanel {
     public static void main(String args[]) {
 
         /* Create and display the form */
-        RLDomain d = new PoleBalancing2D();
+        //RLDomain d = new PoleBalancing2D();
         //RLDomain d = new Follow1D();
-        //RLDomain d = new Curiousbot();
+        RLDomain d = new Curiousbot();
         //RLDomain d = new Tetris(4,8);
 
         d.newWindow();

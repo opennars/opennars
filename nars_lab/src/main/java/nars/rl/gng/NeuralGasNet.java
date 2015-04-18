@@ -1,16 +1,17 @@
 package nars.rl.gng;
 
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.SimpleGraph;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * from: https://github.com/scadgek/NeuralGas
  * TODO use a graph for incidence structures to avoid some loops
  */
-public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
+public class NeuralGasNet extends SimpleGraph<Node,Connection> {
     private final int dimension;
 
     private int iteration;
@@ -84,15 +85,16 @@ public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
 
         //default values
         setLambda(5);
-        setMaxAge(15);
-        setAlpha(0.5);
-        setBeta(0.0005);
-        setEpsW(0.05);
-        setEpsN(0.0006);
+        setMaxAge(55);
+        setAlpha(0.1);
+        //setBeta(1.0 - 0.0005);
+        setBeta(0);
+        setEpsW(0.1);
+        setEpsN(0.05);
 
 
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < maxNodes; i++) {
             addVertex(new Node(i, dimension).randomizeUniform(-1.0, 1.0));
         }
 
@@ -141,8 +143,9 @@ public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
 
         }
         for (Node node : vertexSet()) {
+            if (node == closest) continue;
             double dd = node.getDistanceSq(x); //TODO cache this localDist
-            if (node != closest && (dd < minDist2)) {
+            if (dd < minDist2) {
                 nextClosestNode = node;
                 minDist2 = dd;
             }
@@ -160,25 +163,19 @@ public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
         closest.update(getEpsW(), x);
 
         //update weights for "winner"'s neighbours
-        for (Connection connection : edgeSet()) {
+        for (Connection connection : edgesOf(closest)) {
             Node toUpdate = null;
             if (connection.from == closest) {
-                toUpdate = connection.from;
-            } else if (connection.to == closest) {
                 toUpdate = connection.to;
+            } else if (connection.to == closest) {
+                toUpdate = connection.from;
             }
 
-            if (toUpdate != null) {
+            //if (toUpdate != null) { //should not be null
                 toUpdate.update(getEpsN(), x);
-                connection.setAge(connection.getAge() + 1);
-            }
+                connection.age();
+            //}
         }
-
-
-
-        //set connection between "winners" to age zero
-        addEdge(new Connection(closest, nextClosestNode));
-        addEdge(new Connection(nextClosestNode, closest));
 
         //remove connections with age > maxAge
         List<Connection> toRemove = new ArrayList(1);
@@ -189,17 +186,19 @@ public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
         }
         removeAllEdges(toRemove);
 
-        int nextID;
-        if (vertexSet().size() >= maxNodes - 1) {
-            nextID = furthest.id;
-            removeVertex(furthest);
-        }
-        else {
-            nextID = vertexSet().size();
-        }
+        //set connection between "winners" to age zero
+        Connection nc = new Connection(closest, nextClosestNode);
+        removeEdge(nc);
+        addEdge(nc);
+
+
 
         //if iteration is lambda
         if (iteration != 0 && iteration % getLambda() == 0) {
+
+            int nextID = furthest.id;
+            removeVertex(furthest);
+
 
             //find node with maximal local error
             double maxError = Double.NEGATIVE_INFINITY;
@@ -207,56 +206,63 @@ public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
             for (Node node : vertexSet()) {
                 if (node.getLocalError() > maxError) {
                     maxErrorNode = node;
-                    break;
+                    maxError = node.getLocalError();
                 }
+            }
+
+            if (maxErrorNode == null) {
+                throw new RuntimeException("maxErrorNode=null");
             }
 
             //find max error neighbour of the mentioned node
             maxError = Double.NEGATIVE_INFINITY;
             Node maxErrorNeighbour = null;
-            for (Connection connection : edgeSet()) {
 
-                if (connection.to == maxErrorNode) {
-                    if (connection.from.getLocalError() > maxError) {
-                        maxErrorNeighbour = connection.from;
-                    }
-                } else if (connection.from == maxErrorNode) {
-                    if (connection.to.getLocalError() > maxError) {
-                        maxErrorNeighbour = connection.to;
-                    }
+            for (Connection connection : edgesOf(maxErrorNode)) {
+
+                Node otherNode = connection.to == maxErrorNode ? connection.from : connection.to;
+
+                if (otherNode.getLocalError() > maxError) {
+                    maxErrorNeighbour = otherNode;
+                    maxError = otherNode.getLocalError();
                 }
+
             }
-            final Node mENeighbor = maxErrorNeighbour;
-            final Node mENode = maxErrorNeighbour;
+
+            if (maxErrorNeighbour == null) {
+                throw new RuntimeException("maxErrorNeighbor=null");
+            }
 
             //remove connection between them
-            removeEdge(mENode, maxErrorNeighbour);
-            removeEdge(maxErrorNeighbour, mENode);
+            removeEdge(maxErrorNode, maxErrorNeighbour);
 
-
-
-            if (maxErrorNeighbour == null || maxErrorNode == null) {
-                throw new RuntimeException("SOMETHING WENT WRONG");
-            }
+            //System.out.println("creating new node " + nextID + " in: " + vertexSet());
 
             //create node between errorest nodes
             Node newNode = new Node(nextID, maxErrorNode, maxErrorNeighbour);
             addVertex(newNode);
 
+            if (maxErrorNode.id == newNode.id) {
+                throw new RuntimeException("new node has same id as max error node");
+            }
+
             //create connections between them
             addEdge(new Connection(maxErrorNode, newNode));
-            addEdge(new Connection(newNode, maxErrorNode));
+            addEdge(new Connection(maxErrorNeighbour, newNode));
 
             //update errors of the error nodes
             maxErrorNode.setLocalError(maxErrorNode.getLocalError() * getAlpha());
             maxErrorNeighbour.setLocalError(maxErrorNeighbour.getLocalError() * getAlpha());
         }
 
+
+        //System.out.println(vertexSet().size() + " nodes, " + edgeSet().size() + " edges in neuralgasnet");
+
         //update errors of the nodes
         for (Node node : vertexSet()) {
-            node.setLocalError(node.getLocalError() - node.getLocalError() * getBeta());
+            node.setLocalError(node.getLocalError() * getBeta());
 
-            System.out.println("  "+ node);
+            //System.out.println("  "+ node);
         }
 
 //            //save positions
@@ -277,6 +283,7 @@ public class NeuralGasNet extends SimpleDirectedGraph<Node,Connection> {
     }
 
     private void addEdge(Connection connection) {
+
         addEdge(connection.from, connection.to, connection);
     }
 }

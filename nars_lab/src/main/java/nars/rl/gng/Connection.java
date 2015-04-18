@@ -11,6 +11,13 @@ public class Connection {
     private int age;
 
     public Connection(Node from, Node to) {
+        //sort by id
+        if (from.id > to.id) {
+            Node t = to;
+            to = from;
+            from = t;
+        }
+
         this.age = 0;
         this.from = from;
         this.to = to;
@@ -33,5 +40,9 @@ public class Connection {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public void age() {
+        age += 1;
     }
 }

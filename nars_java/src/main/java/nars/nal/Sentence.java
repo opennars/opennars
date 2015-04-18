@@ -126,15 +126,18 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 
         this.truth = truth;
 
-
         //HACK special handling for conjunctions which may have a trailing interval
         if ((seedTerm instanceof Conjunction) && (seedTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             st = st.clone(); //temporary: clone the stamp in case it's modified in getTerm; shouldnt be necessary when terms are rerranged
+
             T newSeedTerm = getTerm(seedTerm, st);
+            if (newSeedTerm == null)
+                throw new RuntimeException("Error creating a sentence for Conjunction term: " + seedTerm);
             if (newSeedTerm != seedTerm) {
                 normalize = true;
                 seedTerm = newSeedTerm;
             }
+
         }
 
 

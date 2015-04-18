@@ -2,6 +2,7 @@ package nars.rl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import nars.Global;
 import nars.NAR;
 import nars.event.FrameReaction;
 import nars.io.Symbols;
@@ -60,12 +61,28 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
      */
     float updateThresh = 0.01f;
 
-    /**
-     * confidence of update beliefs (a learning rate)
-     */
-    float updateConfidence = 0.5f;
+    boolean updateEachFrame = true; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
 
-    boolean updateEachFrame = true;
+    //OPERATING PARAMETERS ------------------------
+    /** confidence of update beliefs (a learning rate); set to zero to disable */
+    float qUpdateConfidence = 0.5f;
+
+    /** confidence of reward update beliefs; set to zero to disable reward beliefs */
+    float rewardBeliefConfidence = 0.5f;
+
+    /** confidence of reward command goal; set to zero to disable reward beliefs */
+    float rewardGoalConfidence = 0.5f;
+
+    //TODO belief update priority, durability etc
+    //TODO reward goal priority, durability etc
+
+    float actionFreq = 1.0f;
+    float actionConf = Global.DEFAULT_GOAL_CONFIDENCE;
+    float actionPriority = Global.DEFAULT_GOAL_PRIORITY;
+    float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
+
+
+
 
     public HaiQNAR(NAR nar, int nstates, int nactions) {
         super(nstates, nactions);
@@ -181,6 +198,10 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
 
     abstract public Term getStateTerm(int s);
 
+    public String getRewardTerm() {
+        return "<SELF --> good>";
+    }
+
     /**
      * this should return operations which call an operator that calls this instance's learn(state, reward) function at the end of its execution
      */
@@ -189,7 +210,10 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     @Override
     public void qAdd(int state, int action, double dq) {
 
+        if (qUpdateConfidence == 0) return;
+
         if (Math.abs(dq) < updateThresh) return;
+
 
         double q = q(state, action);
         double nq = q + dq;
@@ -203,7 +227,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
 
         //TODO avoid using String
 
-        String updatedBelief = qt + (punc + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(updateConfidence) + "%");
+        String updatedBelief = qt + (punc + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
 
         new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
 
@@ -225,14 +249,41 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     }
 
     public void act(int action) {
+        act(action, actionFreq, actionConf, actionPriority, actionDurability);
+    }
+
+    public void act(int action, float freq, float conf, float priority, float durability) {
         Operation a = actions.inverse().get(action);
 
         //TODO use DirectProcess?
-        nar.input(a + "! :|:");
+        nar.input("$" + priority + ";" + durability + "$ " + a + "! :|: %" + freq + ';' + conf + '%');
     }
 
     public void react() {
         act(getNextAction());
+    }
+
+    public int learn(final int state, final double reward, int nextAction) {
+        if (rewardBeliefConfidence > 0) {
+            String rt = getRewardTerm();
+
+            //expects -1..+1 as reward range input
+            float rFreq = ((float)reward)/2.0f + 0.5f;
+
+            //clip reward to bounds
+            if (rFreq < 0) rFreq = 0;
+            if (rFreq > 1f) rFreq = 1f;
+
+            String r = rt + ". :|: %" + rFreq + ';' + rewardBeliefConfidence + '%';
+            nar.input(r);
+        }
+        if (rewardGoalConfidence > 0) {
+            String rt = getRewardTerm();
+            String r = rt + "! :|: %1.0;" + rewardGoalConfidence + '%';
+            nar.input(r);
+        }
+
+        return super.learn(state, reward, nextAction);
     }
 
 }
