@@ -50,6 +50,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 
 
 
+
     public static interface Sentenced<T2 extends Compound> extends Termable {
         public Sentence<T2> getSentence();
     }
@@ -202,6 +203,9 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     }
 
 
+    public void setRevisible(boolean b) {
+        this.revisible = b;
+    }
     
     /**
      * To check whether two sentences are equal

@@ -19,51 +19,62 @@ import java.util.Set;
 /** concept which holds a fixed set of beliefs or goals, and rejects others */
 public class AxiomaticConcept extends Concept {
 
-    public Set<Task> axioms = Global.newHashSet(4);
+    public Set<Task> goalAxioms = Global.newHashSet(4);
+    public Set<Task> beliefAxioms = Global.newHashSet(4);
+    boolean restrict;
 
     public AxiomaticConcept(Term t, Budget b, Memory m, Bag<TermLinkKey, TermLink> ttaskLinks, Bag<String, TaskLink> ttermLinks) {
         super(t, b, ttermLinks, ttaskLinks, m);
+        restrict = true;
+    }
+
+    /** whether to limit beliefs/goals to those contained (by equals()) in the axioms set */
+    public void setRestrict(boolean restrict) {
+        this.restrict = restrict;
+
+        //TODO if true, remove any restricted beliefs/goals
     }
 
     public void clearAxioms(final boolean beliefs, final boolean goals) {
-        axioms.clear();
-        axioms.removeIf( t -> {
-            if (t.sentence.isJudgment() && beliefs) return true;
-            if (t.sentence.isGoal() && goals) return true;
-            return false;
-        });
-        if (beliefs)
+
+        if (beliefs) {
+            beliefAxioms.clear();
             this.beliefs.clear();
-        if (goals)
+        }
+        if (goals) {
+            goalAxioms.clear();
             this.goals.clear();
+        }
 
         taskLinks.clear();
     }
 
     public void addAxiom(Task t, boolean process) {
-        axioms.add(t);
+        if (t.sentence.isJudgment())
+            beliefAxioms.add(t);
+        if (t.sentence.isGoal())
+            goalAxioms.add(t);
         if (process)
             new DirectProcess(this, t);
     }
 
     @Override
     public boolean valid(Task t) {
-        if (!(t.sentence.isGoal() || t.sentence.isJudgment())) {
-            //allow all questions and quests
-            return true;
-        }
 
-        if (axioms.contains(t)) {
-            return true;
-        }
-        else {
+        if (!restrict) return true;
+
+        if ((t.sentence.isJudgment() && !beliefAxioms.isEmpty() && !beliefAxioms.contains(t)) ||
+        (t.sentence.isGoal() && !goalAxioms.isEmpty() && !goalAxioms.contains(t))) {
             onInvalid(t);
             return false;
         }
+
+        return true;
     }
 
     public void onInvalid(Task t) {
         /** can be overridden to discover blocked attempts to change the belief */
+        System.out.println(this + " rejected: " + t);
     }
 
     public static ConceptBuilder add(Memory m, Task... defaultAxioms) {

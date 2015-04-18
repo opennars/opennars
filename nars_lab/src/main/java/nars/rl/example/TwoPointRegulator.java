@@ -1,4 +1,4 @@
-package nars.rl;
+package nars.rl.example;
 
 import automenta.vivisect.Video;
 import nars.Events;

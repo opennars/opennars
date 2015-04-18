@@ -468,7 +468,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
             param.reliance.set(0.9f);
 
-            param.decisionThreshold.set(0.30);
+            param.decisionThreshold.set(0.60);
 
             //add derivation filters here:
             //param.getDefaultDerivationFilters().add(new BeRational());

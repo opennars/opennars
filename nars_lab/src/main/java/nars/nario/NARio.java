@@ -78,7 +78,7 @@ public class NARio extends Run {
         
         (nar.param).duration.set(memoryCyclesPerFrame); //2 frames seems good
         (nar.param).outputVolume.set(0);
-        (nar.param).decisionThreshold.set(0);
+        (nar.param).decisionThreshold.set(0.75);
         
         float fps = 20f;
         gameRate = 1.0f / fps;

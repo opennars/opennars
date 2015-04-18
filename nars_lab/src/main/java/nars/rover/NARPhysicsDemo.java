@@ -178,7 +178,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     public static void main(String[] args) {
         NAR n = new NAR(new Default());
         (n.param).duration.set(20);
-        (n.param).decisionThreshold.set(0);
+        (n.param).decisionThreshold.set(0.75f);
         (n.param).outputVolume.set(5);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();

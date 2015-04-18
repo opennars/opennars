@@ -1,15 +1,16 @@
 package nars.operate.app;
 
-import nars.operate.AbstractOperator;
 import nars.Events;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
+import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.DirectProcess;
+import nars.operate.AbstractOperator;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -96,7 +97,10 @@ public class STMInduction extends AbstractOperator {
         }
 
 
-        for (Task stmLast : stm) {
+        //iterate on a copy because temporalInduction seems like it sometimes calls itself recursively and this will cause a concurrent modification exception otherwise
+        Task[] stmCopy = stm.toArray(new Task[stm.size()]);
+
+        for (Task stmLast : stmCopy) {
 
 
 

@@ -982,17 +982,17 @@ abstract public class Concept extends Item<Term> implements Termable {
 //    }
 
     /** returns the best belief of the specified types */
-    public Sentence getBestBelief(boolean eternal, boolean nonEternal) {
-        return getBestSentence(beliefs, eternal, nonEternal);
+    public Sentence getStrongestBelief(boolean eternal, boolean nonEternal) {
+        return getStrongestSentence(beliefs, eternal, nonEternal);
     }
 
 
-    public Sentence getBestGoal(boolean eternal, boolean nonEternal) {
-        return getBestSentence(goals, eternal, nonEternal);
+    public Sentence getStrongestGoal(boolean eternal, boolean nonEternal) {
+        return getStrongestSentence(goals, eternal, nonEternal);
     }
 
     /** temporary until goal is separated into goalEternal, goalTemporal */
-    @Deprecated public Sentence getBestSentence(List<Sentence> table, boolean eternal, boolean temporal) {
+    @Deprecated public Sentence getStrongestSentence(List<Sentence> table, boolean eternal, boolean temporal) {
         for (Sentence s : table) {
             boolean e = s.isEternal();
             if (e && eternal) return s;
@@ -1000,13 +1000,16 @@ abstract public class Concept extends Item<Term> implements Termable {
         }
         return null;
     }
-    protected static Sentence getBestSentence(List<Sentence> table) {
+    protected static Sentence getStrongestSentence(List<Sentence> table) {
         if (table.isEmpty()) return null;
         return table.get(0);
     }
 
-    public Sentence getBestBelief() {
-        return getBestBelief(true, true);
+    public Sentence getStrongestBelief() {
+        return getStrongestBelief(true, true);
+    }
+    public Sentence getStrongGoal() {
+        return getStrongestGoal(true, true);
     }
 
     public List<TermLinkTemplate> getTermLinkTempltes() {

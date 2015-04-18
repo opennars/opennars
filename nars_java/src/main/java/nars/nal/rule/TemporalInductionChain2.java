@@ -60,7 +60,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 if ((t instanceof Implication) && (alreadyInducted.add(t))) {
 
-                    Sentence temporalBelief = next.getBestBelief(true, true);
+                    Sentence temporalBelief = next.getStrongestBelief(true, true);
 
                     //TODO: make this work if it is needed, but i think it just implements a restore point that is not needed due to the refactor
 //                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION

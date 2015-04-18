@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.io.Symbols;
+import nars.nal.Task;
 import nars.nal.TruthValue;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
@@ -20,21 +21,24 @@ public class ControlledConcept extends AxiomaticConcept {
         super(t, b, m, ttaskLinks, ttermLinks);
     }
 
-    public void setEternal(TruthValue t, char punctuation, Budget b) {
-        set(t, punctuation, memory.time(), Stamp.ETERNAL, b);
+    public void setEternal(boolean reset, TruthValue t, char punctuation, Budget b) {
+        set(reset, t, punctuation, memory.time(), Stamp.ETERNAL, b);
     }
 
-    public void setPresent(TruthValue t, char punctuation, Budget b) {
-        set(t, punctuation, memory.time(), memory.time(), b);
+    public void setPresent(boolean reset, TruthValue t, char punctuation, Budget b) {
+        set(reset, t, punctuation, memory.time(), memory.time(), b);
     }
 
-    public void set(TruthValue t, char punctuation, long creationTime, long occurrenceTime, Budget b) {
+    public void set(boolean reset, TruthValue t, char punctuation, long creationTime, long occurrenceTime, Budget b) {
         if ((punctuation == Symbols.QUESTION) || (punctuation == Symbols.QUEST))
             throw new RuntimeException("Invalid punctuation: " + punctuation);
 
-        clearAxioms(punctuation == Symbols.JUDGMENT, punctuation == Symbols.GOAL);
+        if (reset)
+            clearAxioms(punctuation == Symbols.JUDGMENT, punctuation == Symbols.GOAL);
 
-        addAxiom(memory.newTask((Compound) getTerm()).
-                punctuation(punctuation).truth(t).budget(b).time(creationTime, occurrenceTime).get(), true);
+        Task tt = memory.newTask((Compound) getTerm()).
+                punctuation(punctuation).truth(t).budget(b).time(creationTime, occurrenceTime).get();
+        addAxiom(tt, true);
+
     }
 }

@@ -58,14 +58,14 @@ abstract public class AbstractHaiQBrain {
     abstract public void qAdd(int state, int action, double dq);
     abstract public double q(int state, int action);
 
-    public int act(final int state, final double reward) {
-        return act(state, reward, -1);
+    public int learn(final int state, final double reward) {
+        return learn(state, reward, -1);
     }
 
     /**
      * returns action #
      */
-    public int act(final int state, final double reward, int nextAction) {
+    public int learn(final int state, final double reward, int nextAction) {
 
         final double[][] et = this.et; //local reference
         final int actions = nActions;
@@ -108,6 +108,10 @@ abstract public class AbstractHaiQBrain {
         lastState = state;
         lastAction = nextAction;
         return nextAction;
+    }
+
+    public int getNextAction() {
+        return lastAction;
     }
 
     public void setAlpha(double Alpha) {

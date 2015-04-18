@@ -46,7 +46,10 @@ public class TableDerivations extends ConceptFireTaskTerm {
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
-                            SyllogisticRules.detachment(belief, taskSentence, bIndex, f);
+                            if (belief.getTerm() instanceof Statement)
+                                SyllogisticRules.detachment(belief, taskSentence, bIndex, f);
+                            else
+                                throw new RuntimeException(belief + " not a statement via termlink " + tLink);
                         }
                         break;
                     case TermLink.COMPONENT_CONDITION:

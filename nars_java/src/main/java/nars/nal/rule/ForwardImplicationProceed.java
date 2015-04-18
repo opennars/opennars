@@ -80,10 +80,10 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
                 Sentence s = null;
                 if (taskLinkTask.sentence.punctuation == Symbols.JUDGMENT) {
-                    s = next.getBestBelief();
+                    s = next.getStrongestBelief();
                 }
                 else if (taskLinkTask.sentence.punctuation == Symbols.GOAL) {
-                    s = next.getBestGoal(true, true);
+                    s = next.getStrongestGoal(true, true);
                 }
                 if (s == null) continue;
 

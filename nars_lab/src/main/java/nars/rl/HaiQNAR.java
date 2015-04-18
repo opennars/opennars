@@ -1,0 +1,228 @@
+package nars.rl;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import nars.NAR;
+import nars.event.FrameReaction;
+import nars.io.Symbols;
+import nars.io.Texts;
+import nars.nal.DirectProcess;
+import nars.nal.Sentence;
+import nars.nal.TruthValue;
+import nars.nal.concept.Concept;
+import nars.nal.nal5.Implication;
+import nars.nal.nal8.Operation;
+import nars.nal.term.Term;
+import nars.rl.hai.AbstractHaiQBrain;
+import vnc.ConceptMap;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Created by me on 4/17/15.
+ */
+abstract public class HaiQNAR extends AbstractHaiQBrain {
+
+    private final NAR nar;
+    private final FrameReaction frameReaction;
+
+    /**
+     * initializes that mapping which tracks concepts as they appear and disappear, maintaining mapping to the current instance
+     */
+    ConceptMap.SeededConceptMap seed;
+
+    /**
+     * state <-> index map
+     */
+    public final BiMap<Term, Integer> states;
+
+    /**
+     * action <-> index map
+     */
+    public final BiMap<Operation, Integer> actions;
+
+    /**
+     * q-value matrix:  q[state][action]
+     */
+    private final Concept[][] q;
+
+    /**
+     * what type of concept feature affected: belief (.) or goal (!)
+     */
+    char punc = Symbols.GOAL;
+
+    /**
+     * min threshold of q-update necessary to cause an effect
+     */
+    float updateThresh = 0.01f;
+
+    /**
+     * confidence of update beliefs (a learning rate)
+     */
+    float updateConfidence = 0.5f;
+
+    boolean updateEachFrame = true;
+
+    public HaiQNAR(NAR nar, int nstates, int nactions) {
+        super(nstates, nactions);
+
+        setAlpha(0.2f);
+        setEpsilon(0.1f);
+        setLambda(0.5f);
+
+        this.nar = nar;
+        states = HashBiMap.create(nstates);
+        actions = HashBiMap.create(nactions);
+
+        Set<Term> qseeds = new HashSet();
+        for (int s = 0; s < nstates; s++) {
+
+            states.put(getStateTerm(s), s);
+
+            for (int a = 0; a < nactions; a++) {
+                if (s == 0) {
+                    actions.put(getActionOperation(a), a);
+                }
+
+                qseeds.add(qterm(s, a));
+            }
+        }
+
+
+        frameReaction = new FrameReaction(nar) {
+            @Override
+            public void onFrame() {
+                if (updateEachFrame) react();
+            }
+        };
+
+        seed = new ConceptMap.SeededConceptMap(nar, qseeds) {
+
+            @Override
+            protected void onFrame() {
+
+            }
+
+            @Override
+            protected void onCycle() {
+
+            }
+
+            @Override
+            protected void onConceptForget(Concept c) {
+                Implication t = (Implication) c.getTerm();
+                int[] x = qterm(t);
+                if (x != null) {
+                    int s = x[0];
+                    int a = x[1];
+                    q[s][a] = null;
+                    initializeQ(s, a);
+                }
+            }
+
+            @Override
+            protected void onConceptNew(Concept c) {
+                Implication t = (Implication) c.getTerm();
+                int[] x = qterm(t);
+                if (x != null)
+                    q[x[0]][x[1]] = c;
+
+                //System.out.println( Arrays.deepToString(q) );
+            }
+        };
+
+
+        this.q = new Concept[nstates][nactions];
+
+        //nar.memory.on((ConceptBuilder)this);
+
+        //System.out.println("states:\n" + states);
+        //System.out.println("actions:\n" + actions);
+
+        for (int s = 0; s < nstates; s++) {
+            for (int a = 0; a < nactions; a++) {
+                initializeQ(s, a);
+            }
+        }
+    }
+
+
+    private int[] qterm(Implication t) {
+        Term s = t.getSubject();
+        Operation p = (Operation) t.getPredicate();
+
+        int state = states.get(s);
+        int action = actions.get(p);
+
+        return new int[]{state, action};
+    }
+
+    /**
+     * called when a new qterm is created at initialization. any related update task can be performed in overriding subclass method
+     */
+    protected void initializeQ(int s, int a) {
+
+    }
+
+    public Term qterm(int s, int a) {
+        return nar.term("<" + getStateTerm(s) + "=/>" + getActionOperation(a) + ">");
+    }
+
+    abstract public Term getStateTerm(int s);
+
+    /**
+     * this should return operations which call an operator that calls this instance's learn(state, reward) function at the end of its execution
+     */
+    abstract public Operation getActionOperation(int s);
+
+    @Override
+    public void qAdd(int state, int action, double dq) {
+
+        if (Math.abs(dq) < updateThresh) return;
+
+        double q = q(state, action);
+        double nq = q + dq;
+        if (nq > 1d) nq = 1d;
+        if (nq < -1d) nq = -1d;
+
+        Term qt = qterm(state, action);
+        //System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
+
+        double nextFreq = (nq / 2) + 0.5f;
+
+        //TODO avoid using String
+
+        String updatedBelief = qt + (punc + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(updateConfidence) + "%");
+
+        new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
+
+    }
+
+    @Override
+    public double q(int state, int action) {
+        Concept c = q[state][action];
+        if (c == null) return 0f;
+        Sentence s = punc == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
+        if (s == null) return 0f;
+        TruthValue t = s.truth;
+        if (t == null) return 0f;
+
+        //TODO try expectation
+
+        return ((t.getFrequency() - 0.5f) * 2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
+
+    }
+
+    public void act(int action) {
+        Operation a = actions.inverse().get(action);
+
+        //TODO use DirectProcess?
+        nar.input(a + "! :|:");
+    }
+
+    public void react() {
+        act(getNextAction());
+    }
+
+}

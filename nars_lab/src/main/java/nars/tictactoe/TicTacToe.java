@@ -27,6 +27,7 @@ import nars.event.Reaction;
 import nars.Events.FrameEnd;
 import nars.Memory;
 import nars.NAR;
+import nars.nal.concept.AxiomaticConcept;
 import nars.prototype.Discretinuous;
 import nars.gui.NARSwing;
 import nars.Events.OUT;
@@ -87,8 +88,9 @@ public class TicTacToe extends JPanel {
                 simulationTime());
 
         nar.on(new AddO());
-        (nar.param).duration.set(10);
+        (nar.param).duration.set(100);
         (nar.param).outputVolume.set(0);
+        nar.param.conceptsFiredPerCycle.set(100);
         
         new NARSwing(nar);    
         nar.on(new Reaction() {
@@ -203,7 +205,8 @@ public class TicTacToe extends JPanel {
         }, CENTER);       
         
         
-        
+
+        init();
         
         reset();
         
@@ -341,6 +344,51 @@ public class TicTacToe extends JPanel {
 
 
 
+    public void init() {
+        AxiomaticConcept.add(nar.memory,
+                nar.task("<nars --> win>! %1.0;0.99%"),
+                nar.task("<nars --> win>! :|: %1.0;0.99%"),
+
+                nar.task("<human --> win>! %0.0;0.99%"),
+                nar.task("<human --> win>! :|: %0.0;0.99%"),
+                nar.task("<empty --> win>! %0.0;0.99%"),
+                nar.task("<empty --> win>! :|: %0.0;0.99%"),
+
+                nar.task("<input --> succeeded>! %1.0;0.99%"),
+                nar.task("<input --> succeeded>! :|: %1.0;0.99%"),
+
+                nar.task("<{nars,human,empty} <-> field>."),
+                nar.task("<<$1 --> empty> =/> (||,<$1 --> nars>,<$1 --> human>)>."),
+                nar.task("<<$1 --> nars> =/> (--,<$1 --> human>)>."),
+                nar.task("<<$1 --> human> =/> (--,<$1 --> nars>)>."),
+
+
+
+                nar.task("<<nars --> win> <-> (--,<human --> win>)>."),
+                nar.task("<<human --> win> <-> (--,<nars --> win>)>."),
+
+                nar.task("<(&/,<$1 --> empty>, (^add0,$1,SELF)) =/> <input --> succeeded>>."),
+
+
+                nar.task("<{0,1,2,3,4,5,6,7,8} --> field>.")
+        );
+
+        //rules+=("<<#1 --> field> =/> (^addO,#1,SELF)>. %0.5;0.5%\n"); //doing something is also a goal :D
+
+        for (int[] h : howToWin) {
+            int a = h[0];
+            int b = h[1];
+            int c = h[2];
+            //rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
+            String tt = "<(&&,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>";
+            AxiomaticConcept.add(nar.memory,
+                    nar.task(tt + ". %1.0;0.99%")
+            );
+        }
+
+
+    }
+
     public void teach() {
         
         String rules = "";
@@ -349,39 +397,27 @@ public class TicTacToe extends JPanel {
         //+"<(&/,<1 --> set>,(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //usually input succeeds but not when it was set by player cause overwrite is not valid
         //+"<(&/,(^addO,$1),(^addO,$1)) =/> (--,<input --> succeeded>)>.\n"); //also overwriting on own is not valid
                 
-        for (int[] h : howToWin) {                
-            int a = h[0];
-            int b = h[1];
-            int c = h[2];
-            //rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
-            rules+=("<(&|,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>.\n");
-        }
-        
+
         //for NAL9 (anticipate)
 //        if (nar.memory.operator("^anticipate")!=null) {
 //            rules+=("<(&/,(--,<$1 --> empty>),(^add0,$1)) =/> (--,<input --> succeeded>)>>.\n");
 //            rules+=("<(&/,(--,<$1 --> field>),(^add0,$1)) =/> (--,<input --> succeeded>)>.\n");
 //        }
 
-        rules+=("<(&/,<$1 --> empty>, (^add0,$1,SELF)) =/> <input --> succeeded>>.\n");
 
-        rules+=("<nars --> win>! %1.0;0.99%\n");
-        rules+=("<human --> win>! %0.0;0.99%\n");
-
-        //rules+=("<<#1 --> field> =/> (^addO,#1,SELF)>. %0.5;0.5%\n"); //doing something is also a goal :D
-        
+        //rules+=("<nars --> win>! %1.0;0.99%\n");
+        //rules+=("<human --> win>! %0.0;0.99%\n");
 
 
-        for (int i = 0; i < 9; i++)
-            rules+=("(^addO," + i + ")! %0.5;0.5%\n");
+        for (int i = 0; i < 9; i++) {
+            rules += ("add0(" + i + ")@\n");
+            rules += ("add0(" + i + ")! %1.0;0.75%\n");
+        }
 
 
-        rules+=("<{human,nars,empty} --> win>.\n");
-        rules+=("<{nars,human,empty} <-> field>.\n");
-        rules+=("<{0,1,2,3,4,5,6,7,8} --> field>.\n");
+        //rules+=("<{human,nars,empty} --> win>.\n");
 
-        rules+=("<input --> succeeded>!\n");
-        
+
         nar.input(rules);
         
         updateField();
