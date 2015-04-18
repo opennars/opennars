@@ -92,7 +92,7 @@ public class Hsom {
                         * Math.exp((diff1 + diff2) / (-2 * gamma * gamma));
     }
 
-    void adapt(final double[] input) {
+    public void adapt(final double[] input) {
         int i1, i2, j;
         input(input);
         if (eta != 0.0f) {
@@ -110,5 +110,9 @@ public class Hsom {
     public void setParams(double AdaptionStrenght, double AdaptioRadius) {
         eta = AdaptionStrenght;
         gamma = AdaptioRadius;
+    }
+
+    public int width() {
+        return SomSize;
     }
 }

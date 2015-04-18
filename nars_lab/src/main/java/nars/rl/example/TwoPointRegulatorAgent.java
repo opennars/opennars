@@ -186,6 +186,7 @@ public class TwoPointRegulatorAgent extends JPanel {
                 return null;
             }
         };
+        ql.init();
 
 
         nar.setCyclesPerFrame(cyclesPerFrame);
@@ -211,7 +212,7 @@ public class TwoPointRegulatorAgent extends JPanel {
                     public double getValue(int x, int y) {
                         return ql.q(y, x);
                     }
-                }, ql.states.size(), ql.actions.size(), -1, 1);
+                }, ql.nstates, ql.nactions, -1, 1);
             }
         };
 

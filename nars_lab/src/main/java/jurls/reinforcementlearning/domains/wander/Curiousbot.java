@@ -1,11 +1,12 @@
 package jurls.reinforcementlearning.domains.wander;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import javax.swing.JComponent;
 import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.wander.brain.MyPerception;
+import nars.rl.curiosity.Curiosity;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class Curiousbot extends JComponent implements RLDomain {
 
@@ -37,7 +38,7 @@ public class Curiousbot extends JComponent implements RLDomain {
     @Override
     public double reward() {
         double f = world.getPlayer().speed();
-        double c = world.getPlayer().collides() ? -10.0 : 1.0;
+        double c = world.getPlayer().collides() ? -1.0 : 1.0;
         return f * c;
     }
 
@@ -145,12 +146,12 @@ public class Curiousbot extends JComponent implements RLDomain {
         y[2] = (int) (yp + cos * R / 2 - sin * R / 2);
         g.setColor(Color.red);
         g.fillPolygon(x, y, 3);
-        /*
+
          drawRadar(player);
-         drawOutput(player);
-         drawCuriosity(player.getPerception().getCuriosity());*/
+         //drawOutput(player);
+         //drawCuriosity(player.getPerception().getCuriosity());
     }
-    /*
+
      private void drawCuriosity(Curiosity curiosity) {
      int ySize = 10;
      g.setColor(Color.blue);
@@ -159,8 +160,8 @@ public class Curiousbot extends JComponent implements RLDomain {
      drawArray("Curiosity NN desired output", curiosity.getDesOutputBkp(), 100, 40, 5, ySize);
      g.setColor(Color.red);
      drawArray("Curiosity NN actual output", curiosity.getOutputBkp(), 100, 80, 5, ySize);
-     }*/
-    /*
+     }
+
      private void drawArray(String title, double[] output, int x0, int y0, int xSize, int ySize) {
      g.drawString(title, x0, y0 + ySize + 15);
      for (int i = 0; i < output.length; i++) {
@@ -174,28 +175,28 @@ public class Curiousbot extends JComponent implements RLDomain {
      }
      }
 
-     private void drawOutput(Player player) {
-     double[] output = player.getBrain().getOutput();
-     int i;
-     g.drawString("Brain output:", 2, 10);
-     g.drawString("1 - Move forward", 2, 20);
-     g.drawString("2 - Turn left", 2, 30);
-     g.drawString("3 - Turn right", 2, 40);
-     for (i = 0; i < output.length; i++) {
-     g.setColor(Color.blue);
-     double o = output[i];
-     if(o>0) {
-     g.fillRect(i*10, (int)(100-o*100), 9, (int)(o*100));
-     } else {
-     g.fillRect(i*10, (100), 9, (int)(-o*100));
-     }
-     g.setColor(Color.yellow);
-     g.drawString(""+(i+1), i*10, 98);
-     }
-     MyPerception perception = player.getPerception();
-     double reward = perception.getReward();
-     g.fillRect(i*10, (int)(100-reward*100), 10, (int)(reward*100));
-     }
+//     private void drawOutput(Player player) {
+//     double[] output = player.getBrain().getOutput();
+//     int i;
+//     g.drawString("Brain output:", 2, 10);
+//     g.drawString("1 - Move forward", 2, 20);
+//     g.drawString("2 - Turn left", 2, 30);
+//     g.drawString("3 - Turn right", 2, 40);
+//     for (i = 0; i < output.length; i++) {
+//     g.setColor(Color.blue);
+//     double o = output[i];
+//     if(o>0) {
+//     g.fillRect(i*10, (int)(100-o*100), 9, (int)(o*100));
+//     } else {
+//     g.fillRect(i*10, (100), 9, (int)(-o*100));
+//     }
+//     g.setColor(Color.yellow);
+//     g.drawString(""+(i+1), i*10, 98);
+//     }
+//     MyPerception perception = player.getPerception();
+//     double reward = perception.getReward();
+//     g.fillRect(i*10, (int)(100-reward*100), 10, (int)(reward*100));
+//     }
 
      private void drawRadar(Player player) {
      int xp;
@@ -206,13 +207,14 @@ public class Curiousbot extends JComponent implements RLDomain {
      MyPerception perc = player.getPerception();
      xp = scaledX(perc.xPerc(d, a));
      yp = scaledY(perc.yPerc(d, a));
-     double out = perc.getOutput()[i++];
-     g.setColor(out > 0.5 ? Color.red : Color.blue);
+     //double out = perc.getOutput()[i++];
+     //g.setColor(out > 0.5 ? Color.red : Color.blue);
+         g.setColor( Color.blue);
      g.drawOval(xp-1, yp-1, 3, 3);
      }
      }
      }
-     */
+
 
     private void makeBufferedImage() {
         width = World.SIZE * 2;

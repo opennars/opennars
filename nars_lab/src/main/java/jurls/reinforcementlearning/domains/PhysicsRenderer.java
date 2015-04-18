@@ -5,8 +5,7 @@
  */
 package jurls.reinforcementlearning.domains;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 /**
  *
@@ -23,21 +22,25 @@ public class PhysicsRenderer extends javax.swing.JPanel {
         initComponents();
     }
 
+    Stroke st = new BasicStroke(4);
+
     @Override
     protected void paintComponent(Graphics g) {
-        g.setColor(Color.black);
+        g.setColor(new Color(0, 0, 0, 0.25f));
         g.fillRect(0, 0, getWidth(), getHeight());
 
+        Graphics2D g2 = (Graphics2D)g;
+        g2.setStroke(st);
         if (physics2D != null) {
-            g.setColor(Color.red);
+            g.setColor(Color.magenta);
             g.drawLine(0, (int) physics2D.floor, getWidth(), (int) physics2D.floor);
 
-            g.setColor(Color.white);
+            g.setColor(Color.orange);
             for (Connection c : physics2D.connections) {
                 g.drawLine((int) c.p1.x, (int) c.p1.y, (int) c.p2.x, (int) c.p2.y);
             }
 
-            g.setColor(Color.yellow);
+            g.setColor(Color.green);
             for (Point p : physics2D.points) {
                 g.drawArc((int) p.x - 10, (int) p.y - 10, 20, 20, 0, 360);
             }

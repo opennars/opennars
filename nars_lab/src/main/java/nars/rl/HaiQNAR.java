@@ -24,8 +24,11 @@ import java.util.Set;
  */
 abstract public class HaiQNAR extends AbstractHaiQBrain {
 
-    private final NAR nar;
-    private final FrameReaction frameReaction;
+    public final NAR nar;
+
+    final FrameReaction frameReaction;
+    public final int nactions;
+    public final int nstates;
 
     /**
      * initializes that mapping which tracks concepts as they appear and disappear, maintaining mapping to the current instance
@@ -45,7 +48,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     /**
      * q-value matrix:  q[state][action]
      */
-    private final Concept[][] q;
+    public final Concept[][] q;
 
     /**
      * what type of concept feature affected: belief (.) or goal (!)
@@ -72,8 +75,22 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
         setLambda(0.5f);
 
         this.nar = nar;
+        this.nstates = nstates;
+        this.nactions = nactions;
+
         states = HashBiMap.create(nstates);
         actions = HashBiMap.create(nactions);
+        this.q = new Concept[nstates][nactions];
+
+        frameReaction = new FrameReaction(nar) {
+            @Override
+            public void onFrame() {
+                if (updateEachFrame) react();
+            }
+        };
+    }
+
+    public void init() {
 
         Set<Term> qseeds = new HashSet();
         for (int s = 0; s < nstates; s++) {
@@ -90,12 +107,6 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
         }
 
 
-        frameReaction = new FrameReaction(nar) {
-            @Override
-            public void onFrame() {
-                if (updateEachFrame) react();
-            }
-        };
 
         seed = new ConceptMap.SeededConceptMap(nar, qseeds) {
 
@@ -133,7 +144,6 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
         };
 
 
-        this.q = new Concept[nstates][nactions];
 
         //nar.memory.on((ConceptBuilder)this);
 
@@ -145,8 +155,8 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
                 initializeQ(s, a);
             }
         }
-    }
 
+    }
 
     private int[] qterm(Implication t) {
         Term s = t.getSubject();

@@ -11,7 +11,6 @@ import nars.predict.Discretize;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,16 +22,19 @@ public class Follow1D implements RLDomain {
 
     final int numActions = 9;
 
+    final int discretization = 9;
+
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
-    final double acceleration = 0.03;
+    final double acceleration = 0.005;
     final double decelerationFactor = 0.25;
-    
-    
-    private final int history = 256;
+    double speed = 0.005;
 
 
-    final int historyPoints = 2; //includes current value
+    private final int history = 8192;
+
+
+    final int historyPoints = 1; //includes current value
     
     final int historyInterval = history / (historyPoints+1); //how many history points to skip for each observation
     
@@ -107,9 +109,9 @@ public class Follow1D implements RLDomain {
     @Override
     public double[] observe() {
         if (observation == null) {
-            observation = new double[historyPoints*numActions];
+            observation = new double[historyPoints*discretization];
         }
-        Arrays.fill(observation, -1);
+        //Arrays.fill(observation, -1);
         double my = 0, target = 0;
         for (int i = 0; i < historyPoints; i++) {
             int j = positions.size() - 1 - (i * historyInterval);
@@ -118,8 +120,12 @@ public class Follow1D implements RLDomain {
                 target = targets.get(j);
             }
             //observation[i+historyPoints] = my - 0.5;
-            int index = Discretize.i(target, numActions);
-            observation[i*numActions+index] = 1;
+            //int index = Discretize.i(target, discretization);
+
+            for (int k = 0; k < discretization; k++) {
+                double v = Discretize.pSmoothDiscrete(target, k, discretization);
+                observation[i * discretization + k] = v;
+            }
         }
         //System.out.println(Arrays.toString(observation));
         return observation;
@@ -132,27 +138,26 @@ public class Follow1D implements RLDomain {
     }
 
     public void updateTarget(int time) {        
-        updateTargetSine(time);
-        //updateTargetXOR(time);
-        //updateTargetRandom();
+        //updateTargetSine(time);
+        updateTargetXOR(time);
+        //updateTargetRandom(time);
     }
 
             
     public void updateTargetRandom(int cycle) {        
-        final double targetAcceleration = 0.01;
-        targetPos += targetV;
+        final double targetAcceleration = 0.002;
+        targetPos += targetV * speed;
         targetV += (Math.random() - 0.5) * targetAcceleration;        
     }
     public void updateTargetXOR(int cycle) {        
         int complexity = 10;
-        double speed = 0.1;
         double scale = 1.0;
-        double v = ( ((int)(speed * cycle )%complexity ^ 0xf3f24f)%complexity * scale / complexity);
+        double s = 0.25;
+        double v = ( ((int)(speed  * s * cycle )%complexity ^ 0xf3f24f)%complexity * scale / complexity);
         targetPos = v;
     }
 
     public void updateTargetSine(int cycle) {
-        double speed = 0.1;
         double scale = 1.0f;
         double v = (0.5f + 0.5f * Math.sin( (speed * cycle / (Math.PI*2)) )) * scale;
         targetPos = v;
@@ -160,8 +165,9 @@ public class Follow1D implements RLDomain {
 
     @Override
     public void takeAction(int action) {
-        //takeActionPosition(action);
-        takeActionAccelerating(action);
+        takeActionPosition(action);
+        //takeActionVelocity(action);
+        //takeActionAccelerate(action);
 
 
     }
@@ -169,16 +175,32 @@ public class Follow1D implements RLDomain {
         myPos = (action / ((double)(numActions-1))) * maxPos;
     }
 
-    protected void takeActionAccelerating(int action) {
+    protected void takeActionVelocity(int action) {
         double a = Math.round(action - (numActions/2d));
         double direction = (a)/(numActions/2d);
 
         if (direction==0) {
             //decelerate on zero
-            myV *= decelerationFactor;
+            //myV *= decelerationFactor;
+            myV = 0;
         }
         else {
             myV = direction * acceleration;
+        }
+        myPos += myV;
+
+    }
+    protected void takeActionAccelerate(int action) {
+        double a = Math.round(action - (numActions/2d));
+        double direction = (a)/(numActions/2d);
+
+        if (direction==0) {
+            //decelerate on zero
+            //myV *= decelerationFactor;
+            myV = 0;
+        }
+        else {
+            myV += direction * acceleration;
         }
         myPos += myV;
 
@@ -190,10 +212,12 @@ public class Follow1D implements RLDomain {
         if (myPos > maxPos) {
             myPos = maxPos;
             myV = 0;
+            //myV = -myV; //bounce
         }
         if (myPos < 0) {
             myPos = 0;
             myV = 0;
+            //myV = -myV; //bounce
         }
 
 

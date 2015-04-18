@@ -5,7 +5,9 @@
  */
 package jurls.reinforcementlearning.domains;
 
-import java.awt.Component;
+import automenta.vivisect.swing.NWindow;
+
+import java.awt.*;
 
 /**
  *
@@ -25,4 +27,7 @@ public interface RLDomain {
 
     public int numActions();
 
+    default public NWindow newWindow() {
+        return new NWindow(getClass().toString(), component()).show(800,600);
+    }
 }

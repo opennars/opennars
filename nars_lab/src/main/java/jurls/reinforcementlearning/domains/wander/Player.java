@@ -24,12 +24,13 @@ public class Player {
     public double y;
     public double r;
     public double angle;
-    double vx, vy;
+    public double vx, vy;
     private World world;
     public final Action[] actions;
     private int currentAction;
     private double yOld;
     private double xOld;
+    double speed = 0.02;
 
     public Player(World world) {
         this.world = world;
@@ -67,8 +68,8 @@ public class Player {
     }
 
     public void moveForward(double step) {
-        vx += Math.cos(angle) * step * 0.1;
-        vy += Math.sin(angle) * step * 0.1;
+        vx += Math.cos(angle) * step * speed;
+        vy += Math.sin(angle) * step * speed;
         if (world.isCollision()) {
             x = xOld;
             y = yOld;
@@ -84,8 +85,8 @@ public class Player {
     public void update() {
         x += vx;
         y += vy;
-        vx *= 0.9;
-        vy *= 0.9;
+        vx *= 0.95;
+        vy *= 0.95;
     }
 
     public void randomizePosition() {
@@ -108,10 +109,10 @@ public class Player {
         return (currentAction == MOVE_FORWARD) && world.isCollision();
     }
 //
-//    public MyPerception getPerception() {
-//        return perception;
-//    }
-//
+    public MyPerception getPerception() {
+        return perception;
+    }
+
 //    public Brain getBrain() {
 //        return brain;
 //    }
