@@ -92,7 +92,7 @@ public class Hsom {
                         * Math.exp((diff1 + diff2) / (-2 * gamma * gamma));
     }
 
-    public void adapt(final double[] input) {
+    public void learn(final double[] input) {
         int i1, i2, j;
         input(input);
         if (eta != 0.0f) {

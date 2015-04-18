@@ -75,7 +75,7 @@ public class Hai {
     }
 
     int UpdateSOM(double[] viewField, double reward) {
-        som.adapt(viewField);
+        som.learn(viewField);
         return Update(som.winnerx, som.winnery, reward);
     }
 }

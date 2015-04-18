@@ -33,7 +33,7 @@ public class HsomQBrain extends LearnerAndActor {
      * returns action #
      */
     public int act(double[] input, double reward) {
-        som.adapt(input);
+        som.learn(input);
         return q(som.winnerx, som.winnery, reward);
     }
     

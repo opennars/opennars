@@ -18,6 +18,8 @@ import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.rl.HaiQNAR;
+import nars.rl.gng.NeuralGasNet;
+import nars.rl.gng.Node;
 import nars.rl.hai.Hsom;
 
 import javax.swing.*;
@@ -61,7 +63,7 @@ public class TestSOMAgent extends JPanel {
         }
 
         public void learn(double[] input, double reward) {
-            som.adapt(input);
+            som.learn(input);
             int s = som.winnerx * dimensions + som.winnery;
             //System.out.println(Arrays.toString(input) + " " + reward );
             //System.out.println(som.winnerx + " " + som.winnery + " -> " + s);
@@ -71,7 +73,47 @@ public class TestSOMAgent extends JPanel {
         }
     }
 
-    private final HsomQNAR ql;
+    abstract public static class HgngQNAR extends HaiQNAR {
+
+        private final NeuralGasNet som;
+        private final int dimensions;
+
+        public HgngQNAR(NAR nar, int dimensions, int actions) {
+            this(nar, dimensions, dimensions * dimensions /* * dimensions */, actions);
+        }
+        public HgngQNAR(NAR nar, int dimensions, int somSize, int actions) {
+            super(nar, somSize, actions);
+
+            this.dimensions = dimensions;
+            som = new NeuralGasNet(2, somSize);
+        }
+
+        @Override
+        protected void initializeQ(int s, int a) {
+            System.out.println(qterm(s, a));
+        }
+
+        @Override
+        public Term getStateTerm(int s) {
+            //return nar.term("<state --> [s" + s + "]>");
+            //int row = s / dimensions;
+            //int column = s % dimensions;
+            return nar.term("<state --> s" + s + ">");
+        }
+
+        public void learn(double[] input, double reward) {
+            try {
+                Node closest = som.learn(input);
+                System.out.println(closest.id + " :: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+                super.learn(closest.id, reward);
+            }
+            catch (Throwable t) {
+                t.printStackTrace();;
+            }
+        }
+    }
+
+    private final HgngQNAR ql;
     private final MatrixImage mi;
 
 
@@ -145,7 +187,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        ql = new HsomQNAR(nar, exampleObs.length, domain.numActions()) {
+        ql = new HgngQNAR(nar, exampleObs.length, exampleObs.length * 2, domain.numActions()) {
             @Override public Operation getActionOperation(int s) {
                 return (Operation)nar.term("move(" + s + ")");
             }
