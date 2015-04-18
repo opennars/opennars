@@ -268,15 +268,36 @@ public class TemporalRules {
             Statement ss2 = (Statement) t2;
 
             Variable var1 = new Variable("$0");
-            Variable var2 = var1;
+            Variable var2 = new Variable("$1");
 
-            if (ss1.getSubject().equals(ss2.getSubject())) {
+           /* if (ss1.getSubject().equals(ss2.getSubject())) {
                 t11 = Statement.make(ss1, var1, ss1.getPredicate());
                 t22 = Statement.make(ss2, var2, ss2.getPredicate());
             } else if (ss1.getPredicate().equals(ss2.getPredicate())) {
                 t11 = Statement.make(ss1, ss1.getSubject(), var1);
                 t22 = Statement.make(ss2, ss2.getSubject(), var2);
+            }*/
+            
+            if(ss2.containsTermRecursively(ss1.getSubject())) {
+                HashMap<Term,Term> subs=new HashMap();
+                subs.put(ss1.getSubject(), var1);
+                if(ss2.containsTermRecursively(ss1.getPredicate())) {
+                    subs.put(ss1.getPredicate(), var2);
+                }
+                t11=ss1.applySubstitute(subs);
+                t22=ss2.applySubstitute(subs);
             }
+            
+            if(ss1.containsTermRecursively(ss2.getSubject())) {
+                HashMap<Term,Term> subs=new HashMap();
+                subs.put(ss2.getSubject(), var1);
+                if(ss1.containsTermRecursively(ss2.getPredicate())) {
+                    subs.put(ss2.getPredicate(), var2);
+                }
+                t11=ss1.applySubstitute(subs);
+                t22=ss2.applySubstitute(subs);
+            }
+            
             //allow also temporal induction on operator arguments:
             if(ss2 instanceof Operation ^ ss1 instanceof Operation) {
                 if(ss2 instanceof Operation && !(ss2.getSubject() instanceof Variable)) {//it is an operation, let's look if one of the arguments is same as the subject of the other term
