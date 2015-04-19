@@ -11,6 +11,7 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.operate.IOperator;
 import reactor.event.Event;
 import reactor.function.Supplier;
@@ -577,6 +578,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             }
         }
         return newStamp(A, B, A.getOccurrenceTime());
+    }
+
+    public float conceptPriority(Term target) {
+        return memory.conceptPriority(target);
     }
 
     public interface DerivationFilter extends IOperator {

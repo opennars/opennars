@@ -68,16 +68,16 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     float qUpdateConfidence = 0.5f;
 
     /** confidence of reward update beliefs; set to zero to disable reward beliefs */
-    float rewardBeliefConfidence = 0.5f;
+    float rewardBeliefConfidence = 0.9f;
 
     /** confidence of reward command goal; set to zero to disable reward beliefs */
-    float rewardGoalConfidence = 0.5f;
+    float rewardGoalConfidence = 0.9f;
 
     //TODO belief update priority, durability etc
     //TODO reward goal priority, durability etc
 
     float actionFreq = 1.0f;
-    float actionConf = Global.DEFAULT_GOAL_CONFIDENCE;
+    float actionConf = Global.DEFAULT_GOAL_CONFIDENCE * 0.25f;
     float actionPriority = Global.DEFAULT_GOAL_PRIORITY;
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
 

@@ -23,7 +23,12 @@ public class ConceptProcess extends NAL {
     protected final Concept currentConcept;
 
     protected TermLink currentTermLink;
-    private Concept currentBeliefConcept;
+
+
+    //essentially a cache for a concept lookup
+    private transient Concept currentTermLinkConcept;
+
+
     private int termLinksToFire;
     private int termlinkMatches;
 
@@ -200,10 +205,11 @@ public class ConceptProcess extends NAL {
 
         if (currentTermLink == null) {
             this.currentTermLink = null;
-            this.currentBeliefConcept = null;
+            this.currentTermLinkConcept = null;
         }
         else {
             this.currentTermLink = currentTermLink;
+            this.currentTermLinkConcept = null; //this will be fetched if requested, and cached until the termlink changes
             currentTermLink.setUsed(memory.time());
         }
     }
@@ -228,10 +234,24 @@ public class ConceptProcess extends NAL {
 
 
     /** the current belief concept */
-    public Concept getCurrentBeliefConcept() {
-        return currentBeliefConcept;
+    public Concept getCurrentTermLinkConcept() {
+        if (currentTermLinkConcept == null && getCurrentTermLink()!=null) {
+            currentTermLinkConcept = memory.concept( getCurrentTermLink().target );
+        }
+        return currentTermLinkConcept;
     }
 
+    public float conceptPriority(Term target) {
+        //first check for any cached Concept
+        if (target == getCurrentTermLink().target) {
+            Concept c = getCurrentTermLinkConcept();
+
+            if (c == null) return 0; //if the concept does not exist, use priority = 0
+
+            return c.getPriority();
+        }
+        return super.conceptPriority(target);
+    }
 
 
     @Override

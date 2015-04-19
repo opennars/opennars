@@ -383,9 +383,14 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     private static Budget budgetInference(final float qual, final int complexity, final NAL nal) {
         Item t = null;
+        final boolean conceptProcess;
         if (nal instanceof ConceptProcess) {
             t =((ConceptProcess)nal).getCurrentTaskLink();
+            conceptProcess = true;
         }
+        else
+            conceptProcess = false;
+
         if (t == null)
             t = nal.getCurrentTask();
 
@@ -393,13 +398,15 @@ public final class BudgetFunctions extends UtilityFunctions {
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
 
-        TermLink bLink = nal instanceof ConceptProcess ? ((ConceptProcess)nal).getCurrentTermLink() : null;
-        if (bLink != null) {
-            priority = or(priority, bLink.getPriority());
-            durability = and(durability, bLink.getDurability());
-            final float targetActivation = nal.memory.conceptPriority(bLink.target);
-            bLink.incPriority(or(quality, targetActivation));
-            bLink.incDurability(quality);
+        if (conceptProcess) {
+            final TermLink bLink = ((ConceptProcess)nal).getCurrentTermLink();
+            if (bLink!=null) {
+                priority = or(priority, bLink.getPriority());
+                durability = and(durability, bLink.getDurability());
+                final float targetActivation = nal.conceptPriority(bLink.target);
+                bLink.incPriority(or(quality, targetActivation));
+                bLink.incDurability(quality);
+            }
         }
 
         return new Budget(priority, durability, quality);

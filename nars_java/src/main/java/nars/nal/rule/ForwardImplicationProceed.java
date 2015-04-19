@@ -35,7 +35,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
         if (!f.nal(7)) return true;
 
-        Concept concept = f.getCurrentBeliefConcept();
+        Concept concept = f.getCurrentTermLinkConcept();
         if (concept == null) return true;
 
         Task taskLinkTask = f.getCurrentTask();// taskLink.getTask();

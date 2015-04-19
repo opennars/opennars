@@ -19,7 +19,7 @@ public class PoleBalancing2D implements RLDomain {
     private final Point pendulumPoint;
     private final PhysicsRenderer physicsRenderer;
 
-    double speed = 1.5;
+    double speed = 0.5;
     double dt = 0.001;
     double gravity = 0.05;
 

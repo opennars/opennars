@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class Follow1D implements RLDomain {
 
-    final int numActions = 9;
+    final int numActions = 3;
 
-    final int discretization = 9;
+    final int discretization = 3;
 
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
@@ -165,8 +165,8 @@ public class Follow1D implements RLDomain {
 
     @Override
     public void takeAction(int action) {
-        takeActionPosition(action);
-        //takeActionVelocity(action);
+        //takeActionPosition(action);
+        takeActionVelocity(action);
         //takeActionAccelerate(action);
 
 

@@ -25,6 +25,7 @@ public class NALPerfLoop {
         int randomExtraCycles = 512;
         Global.THREADS = 1;
         Global.EXIT_ON_EXCEPTION = true;
+        Global.DEBUG = false;
           
         //NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
@@ -41,7 +42,7 @@ public class NALPerfLoop {
             for (Object o : c) {
                 Object x = o;
                 String examplePath = (x instanceof Object[]) ? (String)(((Object[])x)[1]) : (String)x;
-                Global.DEBUG = true;
+
 
                 
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,false);
