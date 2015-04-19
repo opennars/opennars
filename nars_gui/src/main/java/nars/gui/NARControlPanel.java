@@ -45,6 +45,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.BorderLayout.CENTER;
@@ -72,7 +74,6 @@ public class NARControlPanel extends TimeControl implements Reaction {
      */
     private final TextOutput experienceWriter;
     private final MeterNode meters;
-    private Timer timer;
 
 
     /**
@@ -80,6 +81,13 @@ public class NARControlPanel extends TimeControl implements Reaction {
      */
     private boolean savingExp = false;
 
+    private Timer timer;
+    final Executor narexe = Executors.newSingleThreadExecutor();
+    final Runnable narrun = new Runnable() {
+        @Override public void run() {
+            nar.frame(1);
+        }
+    };
 
     private NSlider volumeSlider;
 
@@ -528,6 +536,9 @@ public class NARControlPanel extends TimeControl implements Reaction {
         this.GUIUpdatePeriodMS = (int)(1000.0/fps);
     }
 
+    public void frame() {
+        narexe.execute(narrun);
+    }
     /**
      * Handling button click
      *
@@ -538,7 +549,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
         Object obj = e.getSource();
 
         if (obj == timer) {
-            nar.frame(1);
+            frame();
         }
         else if (obj instanceof JButton) {
             if (obj == stopButton) {
@@ -546,8 +557,8 @@ public class NARControlPanel extends TimeControl implements Reaction {
                 updateGUI();
             } else if (obj == walkButton) {
                 setSpeed(0);
-                nar.frame(1);
                 updateGUI();
+                frame();
             }
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
