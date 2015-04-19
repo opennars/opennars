@@ -31,7 +31,7 @@ import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 
 /** for displaying any generic Graph */
-public class GraphPanelNengo extends Nengrow {
+public class GraphPanelNengo<V extends Named, E> extends Nengrow {
 
     private final GraphNode graphNode;
     private NodeViewer networkUIViewer;
@@ -50,7 +50,11 @@ public class GraphPanelNengo extends Nengrow {
 
     public static class GraphNode extends AbstractMapNetwork implements UIBuilder {
 
+        GraphPanelNengo vis;
+
         float simTimePerLayout = 0.25f;
+        float simTimePerRefresh = 0.8f;
+
         long lasTLayout = System.currentTimeMillis();
         Rectangle2D layoutBounds = new Rectangle2D.Double(-500, -500, 1000, 1000);
         private int numVertices = 0;
@@ -78,15 +82,15 @@ public class GraphPanelNengo extends Nengrow {
                     /*if (e.e instanceof TermLink) {
                         return 4.0;
                     }*/
-                        return 0.5 + 0.5 * e.getTermlinkPriority();
-                        //return 1;
+                        //return 0.25 + 0.5 * e.get;
+                        return 1;
                     }
 
 
                     @Override
                     public double getRadius(UIVertex narGraphVertex) {
                         double r = 1 + narGraphVertex.getRadius();
-                        return r * 2000;
+                        return r * 100;
                     }
 
                     @Override
@@ -102,9 +106,8 @@ public class GraphPanelNengo extends Nengrow {
             addStepListener(new SubCycle() {
                 @Override
                 public double getTimePerCycle() {
-                    return simTimePerLayout;
+                    return simTimePerRefresh;
                 }
-
                 @Override
                 public void run(int numCycles, float endTime, long deltaMS) {
 
@@ -135,8 +138,8 @@ public class GraphPanelNengo extends Nengrow {
                             UIEdge ee = addEdge((UIVertex) v1, (UIVertex) v2);
                             if (ee != null) {
 
-                                System.out.println("edge: " + source + " to " + target);
-                                System.out.println(" " + v1 + " to " + v2);
+                                //System.out.println("edge: " + source + " to " + target);
+                                //System.out.println(" " + v1 + " to " + v2);
 
                                 ee.add((Named)e);
                             }
@@ -162,10 +165,36 @@ public class GraphPanelNengo extends Nengrow {
                     }
 
 
-                    double layoutRad = Math.sqrt(g.vertexSet().size()) * 800;
+
+                }
+
+                @Override
+                public String toString() {
+                    return "refresh";
+                }
+            });
+
+            addStepListener(new SubCycle() {
+                @Override
+                public double getTimePerCycle() {
+                    return simTimePerLayout;
+                }
+
+                @Override
+                public void run(int numCycles, float endTime, long deltaMS) {
+
+            /*
+            hmap.setEquilibriumDistance(55);
+            hmap.setMaxRepulsionDistance(5000);
+            hmap.setAttractionStrength(16);
+            hmap.setSpeedFactor(10);
+            */
+
+                    double layoutRad = Math.sqrt(g.vertexSet().size()) * 400;
                     layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
                     //hmap.setInitialTemp(200, 0.5f);
                     //hmap.setForceConstant(100);
+                    organicLayout.setForceConstant(300);
                     organicLayout.resetLearning();
                     organicLayout.run(1);
 
@@ -190,7 +219,8 @@ public class GraphPanelNengo extends Nengrow {
             return this.ui = new DefaultUINetwork(this);
         }
 
-        public void start() {
+        public void start(GraphPanelNengo vis) {
+            this.vis = vis;
 
             for (Object o :graph.vertexSet()) {
                 if (o instanceof Named) {
@@ -240,7 +270,7 @@ public class GraphPanelNengo extends Nengrow {
                 @Override
                 public void update() {
                     super.update();
-                    setPaint(Color.BLUE);
+                    setPaint(vis.getEdgeColor(this));
                 }
             };
             if (!add(exist))
@@ -395,6 +425,10 @@ public class GraphPanelNengo extends Nengrow {
 
     }
 
+    public Color getEdgeColor(UIEdge<? extends UIVertex> v) {
+        return Color.GRAY;
+    }
+
     public static GraphNode newGraph(Graph g) {
         GraphNode network = new GraphNode(g);
         return network;
@@ -406,15 +440,15 @@ public class GraphPanelNengo extends Nengrow {
         this(newGraph(g));
     }
 
-    public GraphPanelNengo(GraphNode graph, float fps) {
-        this(graph);
-        setFPS(fps);
+    @Override
+    protected void initialize() {
+        super.initialize();
     }
 
     public GraphPanelNengo(GraphNode graph) {
         super();
 
-
+        this.fps = 10;
 
         this.graphNode = graph;
 
@@ -445,12 +479,13 @@ public class GraphPanelNengo extends Nengrow {
 
         add(controls, BorderLayout.SOUTH);
 
+
     }
 
     @Override
     protected void start() {
         super.start();
-        graphNode.start();
+        graphNode.start(this);
     }
 
     @Override

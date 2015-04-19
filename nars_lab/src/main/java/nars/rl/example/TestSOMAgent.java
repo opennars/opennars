@@ -5,7 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLDomain;
-import jurls.reinforcementlearning.domains.follow.Follow1D;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -13,12 +13,15 @@ import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
 import nars.gui.output.graph.nengo.GraphPanelNengo;
+import nars.gui.output.graph.nengo.UIEdge;
+import nars.gui.output.graph.nengo.UIVertex;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Discretinuous;
 import nars.rl.HaiQNAR;
+import nars.rl.gng.Connection;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
 import nars.rl.hai.Hsom;
@@ -112,7 +115,9 @@ public class TestSOMAgent extends JPanel {
             double d = closest.getLocalDistance();
 
             //perception input
-            //System.out.println(closest.id + " :: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+
+            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+
             float freq = 1.0f;
             float conf = (float)(1.0f / (1.0f + d)); //TODO normalize against input mag?
             nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
@@ -240,7 +245,19 @@ public class TestSOMAgent extends JPanel {
         new Frame().setVisible(true);
         this.setIgnoreRepaint(true);
 
-        new GraphPanelNengo(ql.som).newWindow(800, 600);
+        new GraphPanelNengo<Node,Connection>(ql.som) {
+
+            @Override
+            public Color getEdgeColor(UIEdge<? extends UIVertex> v) {
+
+                Node a = (Node)v.getSource().vertex;
+                Node b = (Node)v.getTarget().vertex;
+                float dist = (float)a.getDistance(b);
+                float o = 1f / (1f + dist);
+                return new Color(o, 0.25f, 1f - o, 0.25f + 0.75f * o);
+            }
+
+        }.newWindow(800, 600);
 
         new NWindow("Q",
                 mi = new MatrixImage(400,400)
@@ -268,13 +285,13 @@ public class TestSOMAgent extends JPanel {
 
         /* Create and display the form */
         //RLDomain d = new PoleBalancing2D();
-        RLDomain d = new Follow1D();
-        //RLDomain d = new Curiousbot();
+        //RLDomain d = new Follow1D();
+        RLDomain d = new Curiousbot();
         //RLDomain d = new Tetris(10,16);
 
         d.newWindow();
 
-        new TestSOMAgent(d, 5);
+        new TestSOMAgent(d, 12);
 
 
 

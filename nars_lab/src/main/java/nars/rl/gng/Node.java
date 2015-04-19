@@ -26,7 +26,7 @@ public class Node extends ArrayRealVector implements Named<String> {
     @Override
     public int hashCode() {
         //return Objects.hash(id);
-        return id;
+        return (id+1)*37;
     }
 
     /** create a node from two existing nodes */
@@ -103,6 +103,10 @@ public class Node extends ArrayRealVector implements Named<String> {
     @Override
     public String name() {
         return Integer.toString(id);
+    }
+
+    public double getDistanceSq(Node b) {
+        return getDistanceSq(b.getDataRef());
     }
 
     //    public double distanceTo(double[] x) {

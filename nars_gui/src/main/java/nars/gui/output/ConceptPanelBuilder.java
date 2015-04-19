@@ -17,6 +17,7 @@ import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
+import nars.nal.TruthValue;
 import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.nal.Sentence;
@@ -62,11 +63,18 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
     }
 
-    public static Color getColor(float freq, float conf, float factor) {
-        float ii = 0.25f + (factor * conf) * 0.75f;
-        float green = freq > 0.5f ? (freq / 2f) : 0f;
-        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
-        return new Color(red, green, 1.0f, ii);
+
+    public static Color getBeliefColor(float freq, float conf, float factor) {
+        float ii = 0.45f + (factor*conf) * 0.55f;
+//        float green = freq > 0.5f ? (freq / 2f) : 0f;
+//        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
+        return new Color(freq, 1.0f - freq, 1.0f, ii);
+    }
+    public static Color getGoalColor(float freq, float conf, float factor) {
+        float ii = 0.45f + (factor*conf) * 0.55f;
+//        float green = freq > 0.5f ? (freq / 2f) : 0f;
+//        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
+        return new Color(1.0f - freq, 1.0f, freq, ii);
     }
 
     public ConceptPanel newPanel(Concept c, boolean label, boolean full, int chartSize) {
@@ -130,12 +138,21 @@ public class ConceptPanelBuilder extends AbstractReaction {
         return x;
     }
 
+    public ConceptPanel getFirstPanelOrCreateNew(Concept c, boolean label, boolean full, int chartSize) {
+        Collection<ConceptPanel> existing = getPanels(c);
+        if (existing.isEmpty()) {
+            return newPanel(c, label, full, chartSize);
+        }
+        return existing.iterator().next();
+    }
+
+
+
     public static class ConceptPanel extends NPanel {
 
         final float titleSize = 24f;
         private final Concept concept;
-        private final TruthChart beliefChart;
-        private final TruthChart desireChart;
+        private final TruthChart beliefGoalChart;
         private final PriorityColumn questionChart;
         private RadialBagChart taskLinkChart;
         private ScatterPlotBagChart termLinkChart;
@@ -146,13 +163,13 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         private JLabel subtitle;
         //final float subfontSize = 16f;
-        private BeliefTimeline beliefTime;
+        private BeliefTimeline beliefGoalTime;
         public boolean closed;
         // private final PCanvas syntaxPanel;
 
 
         public ConceptPanel(final Concept c, boolean label, boolean full, int chartSize) {
-            super(new BorderLayout());
+            super();
             this.concept = c;
             this.closed = false;
 
@@ -163,12 +180,13 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
 
 
-            this.beliefTime = new BeliefTimeline(chartWidth / 2, chartHeight);
-            this.beliefChart = new TruthChart(chartWidth, chartHeight);
+            this.beliefGoalTime = new BeliefTimeline(chartHeight * 2, chartHeight, false);
+            this.beliefGoalChart = new TruthChart(chartWidth, chartHeight);
             this.questionChart = new PriorityColumn((int) Math.ceil(Math.sqrt(chartWidth)), chartHeight);
-            this.desireChart = new TruthChart(chartWidth, chartHeight);
 
             if (full) {
+                setLayout(new BorderLayout());
+
                 TermGraphPanelNengo nengo;
 
 
@@ -218,10 +236,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                 nengo.getUniverse().setLayout(fl);
 
-                nengo.getUniverse().add(beliefTime);
-                nengo.getUniverse().add(beliefChart);
+                nengo.getUniverse().add(beliefGoalTime);
+                nengo.getUniverse().add(beliefGoalChart);
                 nengo.getUniverse().add(questionChart);
-                nengo.getUniverse().add(desireChart);
 
                 JPanel details = new JPanel(new GridLayout(0,2));
                 details.add(termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
@@ -230,9 +247,26 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             }
             else {
-                JTextArea title = new JTextArea(concept.term.toString());
+                setLayout(new BorderLayout());
+
+
+                JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
+                details.setOpaque(false);
+
+                details.add(beliefGoalTime);
+                details.add(beliefGoalChart);
+                details.add(questionChart);
+
+                //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
+
+                //details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
+                //details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
+
+                add(details, WEST);
 
                 if (label) {
+                    JTextArea title = new JTextArea(concept.term.toString());
+
                     title.setWrapStyleWord(true);
                     title.setLineWrap(true);
                     title.setEditable(false);
@@ -245,25 +279,12 @@ public class ConceptPanelBuilder extends AbstractReaction {
                     titlePanel.add(subtitle, SOUTH);
 
 
-                    add(titlePanel, NORTH);
+                    add(titlePanel, CENTER);
                 }
 
 
 
-                JPanel details = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
-                details.setOpaque(false);
 
-                details.add(beliefTime);
-                details.add(beliefChart);
-                details.add(questionChart);
-                details.add(desireChart);
-
-                //details.add(this.questChart = new PriorityColumn((int)Math.ceil(Math.sqrt(chartWidth)), chartHeight)));
-
-                //details.add(this.termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
-                //details.add(this.taskLinkChart = new RadialBagChart(c, c.taskLinks));
-
-                add(details, CENTER);
 
             }
 
@@ -289,43 +310,33 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             String st = "";
 
-            beliefChart.setVisible(true);
-            if (!concept.beliefs.isEmpty()) {
-                List<Sentence> bb = concept.beliefs;
-                beliefChart.update(time, bb);
-                st += (bb.get(0).truth.toString()) + ' ';
+            beliefGoalChart.setVisible(true);
+            if (!concept.beliefs.isEmpty() || !concept.goals.isEmpty()) {
 
-                beliefTime.setVisible(
-                        beliefTime.update(time, bb));
+                beliefGoalChart.update(time, concept.beliefs, concept.goals);
+
+                if (!concept.beliefs.isEmpty())
+                    st += (concept.beliefs.get(0).truth.toString()) + ' ';
+                if (!concept.goals.isEmpty()) {
+                    st += " desire: " + concept.goals.get(0).truth.toString();
+                }
+
+                beliefGoalTime.setVisible(
+                        beliefGoalTime.update(time, concept.beliefs, concept.goals));
+            }
+            else {
+                beliefGoalChart.setVisible(false);
+                beliefGoalTime.setVisible(false);
             }
 
             if (subtitle != null)
-                subtitle.setText(st);
-
-            /*
-            else {
-                subtitle.setText("");
-                if (!concept.questions.isEmpty())
-                    subtitle.setText("?(question)");
-                beliefTime.setVisible(false);
-            }*/
+                subtitle.setText(st.trim());
 
             if (!concept.questions.isEmpty()) {
                 questionChart.setVisible(true);
                 questionChart.update(concept.questions);
             } else {
                 questionChart.setVisible(false);
-            }
-
-            if (!concept.goals.isEmpty()) {
-                desireChart.setVisible(true);
-                if (subtitle != null) {
-                    String s = subtitle.getText();
-                    subtitle.setText(s + (s.equals("") ? "" : " ") + "desire: " + concept.goals.get(0).truth.toString());
-                }
-                desireChart.update(time, concept.goals);
-            } else {
-                desireChart.setVisible(false);
             }
 
 
@@ -425,26 +436,32 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         float minTime, maxTime;
         private float timeFactor;
+        boolean vertical;
+        int thick = 4;
 
-        public BeliefTimeline(int width, int height) {
+        public BeliefTimeline(int width, int height, boolean vertical) {
             super(width, height);
+            this.vertical = vertical;
         }
 
         public int getT(long when) {
             return Math.round((when - minTime) / timeFactor);
         }
 
-        public boolean update(long time, Collection<Sentence> i) {
+        public boolean update(long time, Collection<Sentence> belief, Collection<Sentence> goal) {
 
             minTime = maxTime = time;
-            for (Sentence s : i) {
+            for (Sentence s : belief) {
                 if (s == null || s.isEternal()) continue;
                 long when = s.getOccurrenceTime();
-
-                if (minTime > when)
-                    minTime = when;
-                if (maxTime < when)
-                    maxTime = when;
+                if (minTime > when) minTime = when;
+                if (maxTime < when) maxTime = when;
+            }
+            for (Sentence s : goal) {
+                if (s == null || s.isEternal()) continue;
+                long when = s.getOccurrenceTime();
+                if (minTime > when) minTime = when;
+                if (maxTime < when) maxTime = when;
             }
 
             if (minTime == maxTime) {
@@ -452,41 +469,59 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 return false;
             }
 
-            Graphics g = g();
+            Graphics2D g = g();
             if (g == null) return false;
 
-            int thick = 4;
-            timeFactor = (maxTime - minTime) / ((float) w - thick);
+
+            timeFactor = 1.0f / (maxTime - minTime);
+            if (vertical)
+                timeFactor *= ((float) h - thick);
+            else
+                timeFactor *= ((float) w - thick);
+
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
-            for (Sentence s : i) {
-                if (s == null) continue;
-                if (s.isEternal()) continue;
-                long when = s.getOccurrenceTime();
+            for (Sentence s : belief)
+                draw(g, s, true);
+            for (Sentence s : goal)
+                draw(g, s, false);
 
-                int yy = getT(when);
-
-
-                float freq = s.getTruth().getFrequency();
-                float conf = s.getTruth().getConfidence();
-
-                int xx = (int) ((1.0f - freq) * (this.w - thick));
-
-
-                g.setColor(getColor(freq, conf, 1.0f));
-
-                g.fillRect(xx, yy, thick, thick);
-
-            }
 
             // "now" axis
             g.setColor(Color.GRAY);
             int tt = getT(time);
-            g.fillRect(0, tt - 1, getWidth(), 3);
+            if (vertical)
+                g.fillRect(0, tt - 1, getWidth(), 3);
+            else
+                g.fillRect(tt - 1, 0, 3, getHeight());
 
             g.dispose();
             return true;
+        }
+
+        private void draw(Graphics2D g, Sentence s, boolean belief) {
+            if (s == null) return;
+            if (s.isEternal()) return;
+            float freq = s.getTruth().getFrequency();
+            float conf = s.getTruth().getConfidence();
+
+            long when = s.getOccurrenceTime();
+
+            int yy = getT(when);
+
+
+
+            int xx = (int) ((1.0f - freq) * (this.w - thick));
+
+
+            g.setColor(belief ? getBeliefColor(freq, conf, 1.0f) : getGoalColor(freq, conf, 1.0f));
+
+            if (vertical)
+                g.fillRect(xx, yy, thick, thick);
+            else
+                g.fillRect(yy, xx, thick, thick);
+
         }
     }
 
@@ -496,35 +531,42 @@ public class ConceptPanelBuilder extends AbstractReaction {
             super(width, height);
         }
 
-        public void update(long now, Iterable<? extends Truthable> i) {
+        public void update(long now, Collection<? extends Truthable> beliefs, Collection<? extends Truthable> goals) {
             Graphics g = g();
             if (g == null) return;
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
-            for (Truthable s : i) {
-                float freq = s.getTruth().getFrequency();
-                float conf = s.getTruth().getConfidence();
-
-                float factor = 1.0f;
-                if (s instanceof Sentence) {
-                    Sentence ss = (Sentence) s;
-                    if (!ss.isEternal()) {
-                        //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
-                        factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now));
-                    }
-                }
-                g.setColor(getColor(freq, conf, factor));
-
-                int w = 6;
-                int h = 6;
-                float dw = getWidth() - w;
-                float dh = getHeight() - h;
-                g.fillRect((int) (freq * dw), (int) ((1.0 - conf) * dh), w, h);
-
+            for (Truthable s : beliefs) {
+                draw(now, g, s, true);
+            }
+            for (Truthable s : goals) {
+                draw(now, g, s, false);
             }
             g.dispose();
 
+        }
+
+        private void draw(long now, Graphics g, Truthable s, boolean belief) {
+            float freq = s.getTruth().getFrequency();
+            float conf = s.getTruth().getConfidence();
+
+            float factor = 1.0f;
+            if (s instanceof Sentence) {
+                Sentence ss = (Sentence) s;
+                if (!ss.isEternal()) {
+                    //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
+                    factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now));
+                }
+            }
+            g.setColor(belief ? getBeliefColor(freq, conf, factor) :
+                            getGoalColor(freq, conf, factor)            );
+
+            int w = 6;
+            int h = 6;
+            float dw = getWidth() - w;
+            float dh = getHeight() - h;
+            g.fillRect((int) (freq * dw), (int) ((1.0 - conf) * dh), w, h);
         }
     }
 

@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
 * Created by me on 3/12/15.
 */
-public class UIEdge<V extends Named> extends ShapeObject implements Named<String> {
+public class UIEdge<V extends UIVertex> extends ShapeObject implements Named<String> {
 
     final V s, t;
     final double tEpsilon = 2; //# pixel difference to cause repaint
@@ -156,7 +156,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         if (ntask > 0) tasklinkPriority /= ntask;
         if (nterm > 0) termlinkPriority /= nterm;
 
-        setPaint(getEdgeColor(this));
+        setPaint(getEdgeColor());
 
 
     }
@@ -271,10 +271,10 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
 
 
 
-    public Color getEdgeColor(UIEdge e) {
-        float priority = (float) e.getPriorityMean();
-        float termlinkPriority = (float) e.getTermlinkPriority();
-        float tasklinkPriority = (float) e.getTasklinkPriority();
+    public Color getEdgeColor() {
+        float priority = (float) getPriorityMean();
+        float termlinkPriority = (float) getTermlinkPriority();
+        float tasklinkPriority = (float) getTasklinkPriority();
         // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
 
         return new Color(0.25f + 0.75f * termlinkPriority, 0.25f, 0.25f + 0.75f * tasklinkPriority, 0.25f + 0.75f * priority);

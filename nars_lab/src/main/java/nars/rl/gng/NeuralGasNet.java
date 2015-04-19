@@ -84,13 +84,14 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         this.maxNodes = maxNodes;
 
         //default values
-        setLambda(100);
-        setMaxAge(50);
+        setLambda(20);
+        setMaxAge(20);
 
-        setAlpha(0.1);
-        setBeta(0.9); //setBeta(1.0 - 0.0005);
-        setEpsW(0.1);
-        setEpsN(0.05);
+        setAlpha(0.8);
+        setBeta(0.9);
+
+        setEpsW(0.05);
+        setEpsN(0.02);
 
 
 
@@ -157,7 +158,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         }
 
         //update local error of the "winner"
-        closest.setLocalError(closest.getLocalError() + closest.getDistance(x));
+        closest.setLocalError(closest.getLocalError() + closest.getLocalDistance());
 
         //update weights for "winner"
         closest.update(getEpsW(), x);

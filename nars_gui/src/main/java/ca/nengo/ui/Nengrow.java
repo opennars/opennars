@@ -15,7 +15,7 @@ import java.util.*;
 abstract public class Nengrow extends AbstractNengo {
 
     private float simulationDT;
-    double fps = 30;
+    protected double fps = 30;
     private java.util.Timer timer;
 
     public Nengrow() {

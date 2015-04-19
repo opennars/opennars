@@ -24,8 +24,8 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     protected long layoutPeriod = -1;
     boolean destroyed = false;
 
-    final Set<UIEdge<V>> incoming = new CopyOnWriteArraySet<>();//.atomic();
-    final Set<UIEdge<V>> outgoing = new CopyOnWriteArraySet<>();//.atomic();
+    final Set<UIEdge<UIVertex<V>>> incoming = new CopyOnWriteArraySet<>();//.atomic();
+    final Set<UIEdge<UIVertex<V>>> outgoing = new CopyOnWriteArraySet<>();//.atomic();
 
     public UIVertex(V vertex) {
         super(vertex.name().toString());
@@ -130,7 +130,7 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     }
 
 
-    private Set<UIEdge<V>> getEdgeSet(final boolean in) {
+    private Set<UIEdge<UIVertex<V>>> getEdgeSet(final boolean in) {
         return in ? incoming : outgoing;
     }
 
@@ -166,15 +166,15 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
 
     abstract public boolean isDependent();
 
-    public Set<UIEdge<V>> getEdgesIn() {
+    public Set<UIEdge<UIVertex<V>>> getEdgesIn() {
         return incoming;
     }
-    public Set<UIEdge<V>> getEdgesOut() {
+    public Set<UIEdge<UIVertex<V>>> getEdgesOut() {
         return incoming;
     }
 
     /** Iterables.concat makes a copy of the list, unnecessary */
-    @Deprecated public Iterable<UIEdge<V>> getEdges(boolean in, boolean out) {
+    @Deprecated public Iterable<UIEdge<UIVertex<V>>> getEdges(boolean in, boolean out) {
         if (destroyed) return Collections.emptyList();
 
         boolean i = !incoming.isEmpty();
