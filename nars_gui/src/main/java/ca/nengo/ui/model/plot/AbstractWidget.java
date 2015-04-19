@@ -10,6 +10,7 @@ import ca.nengo.ui.model.UIBuilder;
 import ca.nengo.ui.model.UINeoNode;
 import ca.nengo.ui.model.icon.EmptyIcon;
 import ca.nengo.ui.model.icon.ModelIcon;
+import org.piccolo2d.extras.nodes.PNodeCache;
 import org.piccolo2d.util.PBounds;
 
 /**
@@ -29,6 +30,7 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
         ui = newUI(width, height);
         //setBounds(-width/2,-height/2,width,height);
     }
+
 
     public boolean isResizable() {
         return true;
@@ -56,7 +58,8 @@ public abstract class AbstractWidget extends AbstractNode implements UIBuilder {
 
     @Override
     final public AbstractWidgetUI newUI(double width, double height) {
-        return new AbstractWidgetUI(width, height);
+        AbstractWidgetUI a = new AbstractWidgetUI(width, height);
+        return a;
     }
 
     @Override

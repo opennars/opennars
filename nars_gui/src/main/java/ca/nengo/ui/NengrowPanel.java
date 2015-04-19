@@ -24,7 +24,7 @@ public class NengrowPanel extends Nengrow {
     public NodeViewer window;
 
     /** simulation timestep */
-    protected float dt = 0.01f;
+    protected float dt = 0.1f;
 
     protected float time = 0;
 

@@ -72,6 +72,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
      */
     private final TextOutput experienceWriter;
     private final MeterNode meters;
+    private Timer timer;
 
 
     /**
@@ -84,6 +85,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
 
     private final NARMetrics metrics;
+    private float lastSpeed = 0;
 
     public NARControlPanel(final NAR nar) {
         this(nar, null, true);
@@ -421,7 +423,13 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
         if (addCharts) {
             meters = new MeterNode(nar, this.metrics.getMetrics());
-            NengrowPanel np = new NengrowPanel(meters);
+            NengrowPanel np = new NengrowPanel(meters) {
+                @Override
+                public double getFPS() {
+                    return 10;
+                }
+
+            };
 
 
             add(np, CENTER);
@@ -431,7 +439,9 @@ public class NARControlPanel extends TimeControl implements Reaction {
         
         init();
         volumeSlider.setValue(nar.param.outputVolume.get());
-        
+
+
+        this.timer = null;
     }
 
     public NWindow newKeyboardInput() {
@@ -526,13 +536,17 @@ public class NARControlPanel extends TimeControl implements Reaction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object obj = e.getSource();
-        if (obj instanceof JButton) {
+
+        if (obj == timer) {
+            nar.frame(1);
+        }
+        else if (obj instanceof JButton) {
             if (obj == stopButton) {
                 setSpeed(0);
                 updateGUI();
             } else if (obj == walkButton) {
-                nar.stop();
-                nar.step(1);
+                setSpeed(0);
+                nar.frame(1);
                 updateGUI();
             }
         } else if (obj instanceof JMenuItem) {
@@ -652,7 +666,9 @@ public class NARControlPanel extends TimeControl implements Reaction {
             }
 
         }
-        if (currentSpeed == nextSpeed) return;
+
+        //if (currentSpeed == nextSpeed) return;
+
         lastSpeed = currentSpeed;
         speedSlider.repaint();
         stopButton.setText(String.valueOf(FA_PlayCharacter));
@@ -663,7 +679,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
         currentSpeed = nextSpeed;
 
         float logScale = 50f;
-        if (nextSpeed > 0) {
+        if (currentSpeed > 0) {
             long ms = (long) ((1.0 - Math.log(1+nextSpeed*logScale)/Math.log(1+logScale)) * maxPeriodMS);
             if (ms < 1) {
                 if (allowFullSpeed)
@@ -673,10 +689,22 @@ public class NARControlPanel extends TimeControl implements Reaction {
             }
             stopButton.setText(String.valueOf(FA_StopCharacter));
             //nar.setThreadYield(true);
-            nar.start(ms, nar.getCyclesPerFrame());
+
+            if (timer == null) {
+                timer = new Timer((int)ms, this);
+                timer.setCoalesce(true);
+            }
+            else {
+                timer.setDelay((int)ms);
+                if (!timer.isRunning())
+                    timer.restart();
+            }
+
         } else {
             stopButton.setText(String.valueOf(FA_PlayCharacter));
-            nar.stop();
+            if (timer!=null) {
+                timer.stop();
+            }
         }
     }
 

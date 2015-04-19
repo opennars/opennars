@@ -59,13 +59,13 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     /**
      * min threshold of q-update necessary to cause an effect
      */
-    float updateThresh = 0.01f;
+    float updateThresh = Global.TRUTH_EPSILON;
 
     boolean updateEachFrame = true; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
 
     //OPERATING PARAMETERS ------------------------
     /** confidence of update beliefs (a learning rate); set to zero to disable */
-    float qUpdateConfidence = 0.5f;
+    float qUpdateConfidence = 0.55f;
 
     /** confidence of reward update beliefs; set to zero to disable reward beliefs */
     float rewardBeliefConfidence = 0.9f;
@@ -77,7 +77,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     //TODO reward goal priority, durability etc
 
     float actionFreq = 1.0f;
-    float actionConf = Global.DEFAULT_GOAL_CONFIDENCE * 0.25f;
+    float actionConf = Global.DEFAULT_GOAL_CONFIDENCE * 0.2f;
     float actionPriority = Global.DEFAULT_GOAL_PRIORITY;
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
 
@@ -87,7 +87,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     public HaiQNAR(NAR nar, int nstates, int nactions) {
         super(nstates, nactions);
 
-        setAlpha(0.2f);
+        setAlpha(0.4f);
         setEpsilon(0.1f);
         setLambda(0.5f);
 
@@ -212,7 +212,12 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
 
         if (qUpdateConfidence == 0) return;
 
-        if (Math.abs(dq) < updateThresh) return;
+        if (Math.abs(dq) < updateThresh) {
+            //setAlpha(Math.min(getAlpha() + 0.01, 1.0));
+            //System.out.println(dq + " delta-Q too small, alpha=" + getAlpha());
+            return;
+        }
+
 
 
         double q = q(state, action);
@@ -221,7 +226,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
         if (nq < -1d) nq = -1d;
 
         Term qt = qterm(state, action);
-        //System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
+        System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
 
         double nextFreq = (nq / 2) + 0.5f;
 

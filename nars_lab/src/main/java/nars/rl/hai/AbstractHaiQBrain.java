@@ -90,11 +90,26 @@ abstract public class AbstractHaiQBrain {
                 nextAction = maxk;
             }
         }
-        
+
+        /*
+        Q-learning
+        def learn(self, state1, action1, reward, state2):
+            maxqnew = max([self.getQ(state2, a) for a in self.actions])
+            self.learnQ(state1, action1,
+                        reward, reward + self.gamma*maxqnew)
+
+
+        SARSA
+        def learn(self, state1, action1, reward, state2, action2):
+            qnext = self.getQ(state2, action2)
+            self.learnQ(state1, action1,
+                        reward, reward + self.gamma * qnext)
+        */
+
         double DeltaQ = reward + gamma * q(state, nextAction) -  q(state, lastAction);
         
         et[state][lastAction] += 1;
-        
+
         final double AlphaDeltaQ = alpha * DeltaQ;
         final double GammaLambda = gamma * lambda;
         for (int i = 0; i < states; i++) {

@@ -6,11 +6,11 @@
 package jurls.reinforcementlearning.domains.follow;
 
 import jurls.reinforcementlearning.domains.RLDomain;
-import nars.predict.Discretize;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class Follow1D implements RLDomain {
 
-    final int numActions = 3;
+    final int numActions = 9;
 
-    final int discretization = 3;
+    //final int discretization = 3;
 
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
@@ -109,7 +109,7 @@ public class Follow1D implements RLDomain {
     @Override
     public double[] observe() {
         if (observation == null) {
-            observation = new double[historyPoints*discretization];
+            observation = new double[historyPoints];
         }
         //Arrays.fill(observation, -1);
         double my = 0, target = 0;
@@ -122,10 +122,11 @@ public class Follow1D implements RLDomain {
             //observation[i+historyPoints] = my - 0.5;
             //int index = Discretize.i(target, discretization);
 
-            for (int k = 0; k < discretization; k++) {
-                double v = Discretize.pSmoothDiscrete(target, k, discretization);
-                observation[i * discretization + k] = v;
-            }
+//            for (int k = 0; k < discretization; k++) {
+//                double v = Discretize.pSmoothDiscrete(target, k, discretization);
+//                observation[i * discretization + k] = v;
+//            }
+            observation[i] = target; // - my;
         }
         //System.out.println(Arrays.toString(observation));
         return observation;
@@ -165,8 +166,8 @@ public class Follow1D implements RLDomain {
 
     @Override
     public void takeAction(int action) {
-        //takeActionPosition(action);
-        takeActionVelocity(action);
+        takeActionPosition(action);
+        //takeActionVelocity(action);
         //takeActionAccelerate(action);
 
 

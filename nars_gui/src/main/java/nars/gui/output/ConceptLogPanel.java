@@ -49,16 +49,28 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     }
 
     @Override
+    protected void visibility(boolean appearedOrDisappeared) {
+        super.visibility(appearedOrDisappeared);
+        if (!appearedOrDisappeared) {
+            off();
+        }
+    }
+
+    @Override
     public void setFontSize(float v) {
 
+    }
+
+    protected void off() {
+        pendingDisplay.clear();
+        content.removeAll();
+        b.off();
     }
 
     @Override
     protected void clearLog() {
 
-        pendingDisplay.clear();
-        content.removeAll();
-        b.off();
+        off();
 
         b = new ConceptPanelBuilder(nar);
         y = 0;

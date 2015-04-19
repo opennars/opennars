@@ -30,7 +30,7 @@ public class Player {
     private int currentAction;
     private double yOld;
     private double xOld;
-    double speed = 0.02;
+    double acceleration = 0.02;
 
     public Player(World world) {
         this.world = world;
@@ -68,8 +68,8 @@ public class Player {
     }
 
     public void moveForward(double step) {
-        vx += Math.cos(angle) * step * speed;
-        vy += Math.sin(angle) * step * speed;
+        vx += Math.cos(angle) * step * acceleration;
+        vy += Math.sin(angle) * step * acceleration;
         if (world.isCollision()) {
             x = xOld;
             y = yOld;

@@ -38,8 +38,11 @@ public class Curiousbot extends JComponent implements RLDomain {
     @Override
     public double reward() {
         double f = world.getPlayer().speed();
-        double c = world.getPlayer().collides() ? -1.0 : 1.0;
-        return f * c;
+        if (f < world.getPlayer().acceleration) return -0.25f; //too slow, penalize
+        else {
+            double c = world.getPlayer().collides() ? -1.0 : 1.0;
+            return f * c;
+        }
     }
 
     @Override

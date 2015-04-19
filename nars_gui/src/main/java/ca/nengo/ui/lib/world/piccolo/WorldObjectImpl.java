@@ -241,10 +241,17 @@ public class WorldObjectImpl implements WorldObject {
             pnode.addChild(index, wo.getPNode());
         }
     }
-    public void addChildCache(WorldObject wo) {
+    public PNodeCache addChildCache(WorldObject wo) {
         PNodeCache cacheNode = new PNodeCache();
         cacheNode.addChild(wo.getPNode());
         pnode.addChild(cacheNode);
+        return cacheNode;
+    }
+    public PNodeCache addChildCache(PNode p) {
+        PNodeCache cacheNode = new PNodeCache();
+        cacheNode.addChild(p);
+        pnode.addChild(cacheNode);
+        return cacheNode;
     }
 
     public void addChildrenListener(ChildListener listener) {

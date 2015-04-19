@@ -53,7 +53,7 @@ public class NAR implements Runnable {
     private final NarseseParser narseseParser;
 
 
-    private Thread thread = null;
+    @Deprecated private Thread thread = null;
     long minFramePeriodMS;
     
     /**
@@ -440,7 +440,7 @@ public class NAR implements Runnable {
     /**
      * Stop the logic process, killing its thread.
      */
-    public void stop() {
+    @Deprecated public void stop() {
         if (thread!=null) {
             thread.interrupt();
             thread = null;

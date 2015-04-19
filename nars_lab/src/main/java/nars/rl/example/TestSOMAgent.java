@@ -5,6 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.follow.Follow1D;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Events;
 import nars.Global;
@@ -12,16 +13,12 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
-import nars.gui.output.graph.nengo.GraphPanelNengo;
-import nars.gui.output.graph.nengo.UIEdge;
-import nars.gui.output.graph.nengo.UIVertex;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Discretinuous;
 import nars.rl.HaiQNAR;
-import nars.rl.gng.Connection;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
 import nars.rl.hai.Hsom;
@@ -34,6 +31,9 @@ import java.util.Arrays;
  * TODO add parameters determining what sensor input is exposed to NARS
  * --how many SOM nodes (# closest), confidence inverse proportional to distance
  * --raw input?  if so, allow segmentation (ex: columns size to form products for each row)
+ * TODO measure action coherence as % similarlity of chosen execution to rejected executions
+ * TODO use concept desire in accumulating votes\
+ * TODO abstract the voting execution into an abstract Operator
  */
 public class TestSOMAgent extends JPanel {
 
@@ -105,7 +105,7 @@ public class TestSOMAgent extends JPanel {
             //int row = s / dimensions;
             //int column = s % dimensions;
 
-            return nar.term("<{s" + s + "} --> state>");
+            return nar.term("{s" + s + "}");
             //return nar.term("s" + s);
         }
 
@@ -153,6 +153,11 @@ public class TestSOMAgent extends JPanel {
 
             long lastWorldStep = 0;
 
+            int exeCount = 0;
+            Task strongest = null;
+
+            int cyclesPerUpdate = cyclesPerFrame;
+
             @Override
             protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
 
@@ -162,33 +167,53 @@ public class TestSOMAgent extends JPanel {
                 }
 
                 try {
-                    int action = Integer.parseInt(args[0].toString());
 
-                    domain.takeAction(action);
+
 
                     long now = nar.time();
                     long dt = now - lastWorldStep;
 
-                    for (int i = 0; i < dt; i++)
-                        domain.worldStep();
+                    exeCount++;
 
-                    lastWorldStep = now;
+                    Task newTask = operation.getTask();
+                    if (strongest == null) strongest = newTask;
+                    else {
+                        if (strongest.getDesire().getExpectation() > newTask.getDesire().getExpectation())
+                            strongest = newTask;
+                    }
 
-                    double r = domain.reward();
+                    if (dt > cyclesPerUpdate) {
+                        Term ta = ((Operation)strongest.getTerm()).getArgument(0);
+                        int action = Integer.parseInt(ta.toString());
 
-                    //double dr = r - lastReward;
+                        domain.takeAction(action);
+
+                        for (int i = 0; i < dt; i++)
+                            domain.worldStep();
+
+                        lastWorldStep = now;
+
+                        double r = domain.reward();
+
+                        //double dr = r - lastReward;
+
+                        lastReward = r;
+
+                        double[] o = domain.observe();
+
+                        //System.out.println(Arrays.toString(o) + " " + r);
 
 
+                        ql.learn(o, r);
+
+                        System.out.println("exe " + strongest + " of " + exeCount);
+                        strongest = null;
+                        exeCount = 0;
+                    }
+                    else {
+                    }
 
 
-                    lastReward = r;
-
-                    double[] o = domain.observe();
-
-                    //System.out.println(Arrays.toString(o) + " " + r);
-
-
-                    ql.learn(o, r);
 
                 }
                 catch (NumberFormatException e) {
@@ -245,6 +270,7 @@ public class TestSOMAgent extends JPanel {
         new Frame().setVisible(true);
         this.setIgnoreRepaint(true);
 
+        /*
         new GraphPanelNengo<Node,Connection>(ql.som) {
 
             @Override
@@ -258,6 +284,7 @@ public class TestSOMAgent extends JPanel {
             }
 
         }.newWindow(800, 600);
+        */
 
         new NWindow("Q",
                 mi = new MatrixImage(400,400)
@@ -287,11 +314,11 @@ public class TestSOMAgent extends JPanel {
         //RLDomain d = new PoleBalancing2D();
         //RLDomain d = new Follow1D();
         RLDomain d = new Curiousbot();
-        //RLDomain d = new Tetris(10,16);
+        //RLDomain d = new Tetris(10,14);
 
         d.newWindow();
 
-        new TestSOMAgent(d, 12);
+        new TestSOMAgent(d, 7);
 
 
 

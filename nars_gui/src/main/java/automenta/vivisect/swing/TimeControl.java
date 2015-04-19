@@ -33,7 +33,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
 
     protected AtomicBoolean updateScheduled = new AtomicBoolean(false);
     protected float currentSpeed = 0f;
-    protected float lastSpeed = 0f;
+    //protected float lastSpeed = 0f;
 
     public TimeControl(LayoutManager l) {
         super(l);

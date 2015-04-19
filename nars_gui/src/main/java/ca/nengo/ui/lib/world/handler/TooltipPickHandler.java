@@ -73,7 +73,7 @@ public class TooltipPickHandler extends AbstractPickHandler {
 				/*} else */
                 if (wo instanceof WorldLayer || wo instanceof Window) {
 					break;
-				} else if (wo.getVisible() && wo.getTooltip() != null) {
+				} else if (wo!=null && wo.getVisible() && wo.getTooltip() != null) {
 					//return null; // hack to eliminate tool tips
 					return wo;
 				}

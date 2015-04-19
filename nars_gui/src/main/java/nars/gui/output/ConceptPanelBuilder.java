@@ -438,6 +438,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         private float timeFactor;
         boolean vertical;
         int thick = 4;
+        int timeMargin = 3;
 
         public BeliefTimeline(int width, int height, boolean vertical) {
             super(width, height);
@@ -475,9 +476,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             timeFactor = 1.0f / (maxTime - minTime);
             if (vertical)
-                timeFactor *= ((float) h - thick);
+                timeFactor *= ((float) h - timeMargin*2);
             else
-                timeFactor *= ((float) w - thick);
+                timeFactor *= ((float) w - timeMargin*2);
 
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
@@ -492,9 +493,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
             g.setColor(Color.GRAY);
             int tt = getT(time);
             if (vertical)
-                g.fillRect(0, tt - 1, getWidth(), 3);
+                g.fillRect(0, timeMargin + tt - 1, getWidth(), 3);
             else
-                g.fillRect(tt - 1, 0, 3, getHeight());
+                g.fillRect(timeMargin + tt - 1, 0, 3, getHeight());
 
             g.dispose();
             return true;
