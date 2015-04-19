@@ -154,7 +154,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         }
         else {
             if (task.sentence.equals(task.getParentTask().sentence)) {
-                memory.emit(Events.ERR.class, "singlePremiseTask: new task's sentence equal to parentTask sentence: " + task);
+                memory.emit(Events.ERR.class, "deriveTask: new task's sentence equal to parentTask sentence: " + task);
                 //return false;
             }
         }
@@ -342,6 +342,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
         return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
+    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget) {
+        return singlePremiseTask(newContent, punctuation, newTruth, newBudget, null);
+    }
     /**
      * Shared final operations by all single-premise rules, called in
      * StructuralRules
@@ -351,8 +354,12 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget) {
-
+    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp) {
+        if (!Global.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
+            if (!newBudget.aboveThreshold()) {
+                return false; //early exit test for below budget
+            }
+        }
 
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
@@ -367,21 +374,16 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             }
         }
 
-        Sentence taskSentence = getCurrentTask().sentence;
 
-        //final long now = nal(7) ? time() : Stamp.ETERNAL;
+        if (stamp == null) {
+            final Sentence taskSentence = getCurrentTask().sentence;
 
-        StampBuilder stamp;
-        if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-            stamp = newStamp(taskSentence.stamp, null);
-        } else {
-            // to answer a question with negation in NAL-5 --- move to activated task?
-            stamp = newStamp(null, getCurrentBelief());
-        }
-
-
-        if (newContent.subjectOrPredicateIsIndependentVar()) {
-            return false;
+            if (taskSentence.isJudgment() || getCurrentBelief() == null) {
+                stamp = newStamp(taskSentence.stamp, null);
+            } else {
+                // to answer a question with negation in NAL-5 --- move to activated task?
+                stamp = newStamp(null, getCurrentBelief());
+            }
         }
 
         return singlePremiseTask(

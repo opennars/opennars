@@ -267,14 +267,19 @@ public class RuleTables {
                     }
                 }
             }
+
             TruthValue truth=new TruthValue(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
-            if(goalterm!=null && !(goalterm instanceof Variable) && !goalterm.hasVarIndep()) {
-                Sentence sent=new Sentence(goalterm, Symbols.GOAL,truth, nal.newStamp(task.sentence,nal.memory.time()));
-                nal.singlePremiseTask(sent, new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+            if(goalterm!=null && (goalterm instanceof Compound) && !goalterm.hasVarIndep()) {
+                nal.singlePremiseTask((Compound) goalterm, Symbols.GOAL, truth,
+                        new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)),
+                        nal.newStamp(task.sentence,nal.memory.time())
+                );
             }
-            if(goalterm2!=null && !(goalterm2 instanceof Variable) && !goalterm2.hasVarIndep()) {
-                Sentence sent=new Sentence(goalterm2,Symbols.GOAL,truth.clone(), nal.newStamp(task.sentence,nal.memory.time()));
-                nal.singlePremiseTask(sent, new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
+            if(goalterm2!=null && (goalterm2 instanceof Compound) && !goalterm2.hasVarIndep()) {
+                nal.singlePremiseTask((Compound) goalterm2, Symbols.GOAL, truth,
+                        new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)),
+                        nal.newStamp(task.sentence,nal.memory.time())
+                );
             }
         }
     }
