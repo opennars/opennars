@@ -1,11 +1,13 @@
 package nars.rl.gng;
 
+import nars.nal.Named;
+
 import java.util.Objects;
 
 /**
  * Created by Scadgek on 11/3/2014.
  */
-public class Connection {
+public class Connection implements Named<String> {
     public final Node from;
     public final Node to;
     private int age;
@@ -44,5 +46,10 @@ public class Connection {
 
     public void age() {
         age += 1;
+    }
+
+    @Override
+    public String name() {
+        return from.id + ":" + to.id;
     }
 }

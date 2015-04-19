@@ -32,14 +32,15 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
     private final Memory memory;
 
     //float simTimePerCycle = 1f;
-    float simTimePerLayout = 0.25f;
     boolean allowTermNodes = true;
 
+    float simTimePerLayout = 0.25f;
     long lasTLayout = System.currentTimeMillis();
 
     Rectangle2D layoutBounds = new Rectangle2D.Double(-500, -500, 1000, 1000);
 
-
+    private DefaultUINetwork ui;
+    private int numVertices = 0;
     final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> organicLayout =
             new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(layoutBounds) {
 
@@ -151,8 +152,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 //            return "nar";
 //        }
 //    };
-    private DefaultUINetwork ui;
-    private int numVertices = 0;
+
     SubCycle layoutCycle = new SubCycle() {
         @Override
         public double getTimePerCycle() {

@@ -130,7 +130,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         Node nextClosestNode = null;
         Node furthest = null;
         for (Node node : vertexSet()) {
-            double dd = node.getDistanceSq(x);
+            double dd = node.updateDistanceSq(x);
 
             if (dd > maxDist) {
                 furthest = node;
@@ -144,7 +144,7 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         }
         for (Node node : vertexSet()) {
             if (node == closest) continue;
-            double dd = node.getDistanceSq(x); //TODO cache this localDist
+            double dd = node.getLocalDistanceSq(); //TODO cache this localDist
             if (dd < minDist2) {
                 nextClosestNode = node;
                 minDist2 = dd;

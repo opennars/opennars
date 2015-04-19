@@ -15,7 +15,7 @@ import nars.NAR;
 import nars.budget.Bag;
 import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
-import nars.gui.output.graph.nengo.GraphPanelNengo;
+import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.nal.concept.Concept;
 import nars.nal.Item;
@@ -169,10 +169,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
             this.desireChart = new TruthChart(chartWidth, chartHeight);
 
             if (full) {
-                GraphPanelNengo nengo;
+                TermGraphPanelNengo nengo;
 
 
-                add(nengo = new GraphPanelNengo(new TermGraphNode(c.memory) {
+                add(nengo = new TermGraphPanelNengo(new TermGraphNode(c.memory) {
 
                     Set<Term> neighbors = new LinkedHashSet();
 

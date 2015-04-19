@@ -5,13 +5,14 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLDomain;
-import jurls.reinforcementlearning.domains.tetris.Tetris;
+import jurls.reinforcementlearning.domains.follow.Follow1D;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
+import nars.gui.output.graph.nengo.GraphPanelNengo;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -100,14 +101,23 @@ public class TestSOMAgent extends JPanel {
             //return nar.term("<state --> [s" + s + "]>");
             //int row = s / dimensions;
             //int column = s % dimensions;
-            //return nar.term("<state --> s" + s + ">");
-            return nar.term("s" + s);
+
+            return nar.term("<{s" + s + "} --> state>");
+            //return nar.term("s" + s);
         }
 
         public void learn(double[] input, double reward) {
 
             Node closest = som.learn(input);
+            double d = closest.getLocalDistance();
+
+            //perception input
             //System.out.println(closest.id + " :: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+            float freq = 1.0f;
+            float conf = (float)(1.0f / (1.0f + d)); //TODO normalize against input mag?
+            nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
+
+
             super.learn(closest.id, reward);
 
         }
@@ -117,7 +127,7 @@ public class TestSOMAgent extends JPanel {
     private final MatrixImage mi;
 
 
-    private final int cyclesPerFrame = 30;
+    private final int cyclesPerFrame = 50;
 
 
     public final NAR nar;
@@ -197,7 +207,7 @@ public class TestSOMAgent extends JPanel {
         nar.setCyclesPerFrame(cyclesPerFrame);
         nar.param.shortTermMemoryHistory.set(1);
         nar.param.duration.set(5);         //nar.param.duration.setLinear
-        nar.param.decisionThreshold.set(0.75);
+        nar.param.decisionThreshold.set(0.7);
         nar.param.outputVolume.set(5);
 
 
@@ -230,6 +240,7 @@ public class TestSOMAgent extends JPanel {
         new Frame().setVisible(true);
         this.setIgnoreRepaint(true);
 
+        new GraphPanelNengo(ql.som).newWindow(800, 600);
 
         new NWindow("Q",
                 mi = new MatrixImage(400,400)
@@ -257,13 +268,13 @@ public class TestSOMAgent extends JPanel {
 
         /* Create and display the form */
         //RLDomain d = new PoleBalancing2D();
-        //RLDomain d = new Follow1D();
+        RLDomain d = new Follow1D();
         //RLDomain d = new Curiousbot();
-        RLDomain d = new Tetris(10,16);
+        //RLDomain d = new Tetris(10,16);
 
         d.newWindow();
 
-        new TestSOMAgent(d, 100);
+        new TestSOMAgent(d, 5);
 
 
 

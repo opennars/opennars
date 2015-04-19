@@ -35,7 +35,7 @@ import nars.gui.input.KeyboardInputPanel;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterNode;
-import nars.gui.output.graph.nengo.GraphPanelNengo;
+import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.io.TextOutput;
 import nars.nal.meta.NARMetrics;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
@@ -171,7 +171,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new NWindow("Concepts",
-                            new GraphPanelNengo(nar) ).show(800, 800, false);
+                            new TermGraphPanelNengo(nar) ).show(800, 800, false);
                 }
             });
             m.add(mv);

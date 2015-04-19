@@ -26,12 +26,12 @@ public class Follow1D implements RLDomain {
 
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
-    final double acceleration = 0.005;
+    final double acceleration = 0.05;
     final double decelerationFactor = 0.25;
-    double speed = 0.005;
+    double speed = 0.01;
 
 
-    private final int history = 8192;
+    private final int history = 4096;
 
 
     final int historyPoints = 1; //includes current value
@@ -138,8 +138,8 @@ public class Follow1D implements RLDomain {
     }
 
     public void updateTarget(int time) {        
-        //updateTargetSine(time);
-        updateTargetXOR(time);
+        updateTargetSine(time);
+        //updateTargetXOR(time);
         //updateTargetRandom(time);
     }
 

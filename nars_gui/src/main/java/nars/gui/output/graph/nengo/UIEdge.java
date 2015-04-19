@@ -129,6 +129,7 @@ public class UIEdge<V extends Named> extends ShapeObject implements Named<String
         if (getPNode().getParent().getParent()==null) return;
         pscale = getPNode().getParent().getParent().getScale(); //parent of the parent because nodes are collected in a container node of the vertex, which is beneath the icon
 
+        //TODO move this to a TermNode specific subclass
 
         tasklinkPriority = termlinkPriority = priority = 0;
         int ntask = 0, nterm = 0, np = 0;

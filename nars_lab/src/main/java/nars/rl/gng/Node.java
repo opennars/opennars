@@ -1,16 +1,16 @@
 package nars.rl.gng;
 
+import nars.nal.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
-
-import java.util.Objects;
 
 /**
  * Created by Scadgek on 11/3/2014.
  */
-public class Node extends ArrayRealVector {
+public class Node extends ArrayRealVector implements Named<String> {
 
     private double localError;
     public final int id;
+    private double localDistanceSq; //caches square of last tested distance
 
     public Node(int id, int dimensions) {
         super(dimensions);
@@ -88,6 +88,21 @@ public class Node extends ArrayRealVector {
     @Override
     public String toString() {
         return id + ": " + super.toString();
+    }
+
+    public double updateDistanceSq(double[] x) {
+        this.localDistanceSq = getDistanceSq(x);
+        return localDistanceSq;
+    }
+
+    public double getLocalDistanceSq() {
+        return localDistanceSq;
+    }
+    public double getLocalDistance() { return Math.sqrt(localDistanceSq); }
+
+    @Override
+    public String name() {
+        return Integer.toString(id);
     }
 
     //    public double distanceTo(double[] x) {
