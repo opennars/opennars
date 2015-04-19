@@ -20,6 +20,9 @@
  */
 package nars.nal.tlink;
 
+import com.gs.collections.api.block.procedure.primitive.ObjectLongProcedure;
+import com.gs.collections.api.map.primitive.ObjectLongMap;
+import com.gs.collections.impl.map.mutable.primitive.ObjectLongHashMap;
 import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
@@ -30,9 +33,7 @@ import nars.nal.Task;
 import nars.nal.Terms.Termable;
 import nars.nal.term.Term;
 
-import java.util.Deque;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Reference to a Task.
@@ -51,6 +52,11 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
 
     private String name;
 
+    /** time when records table was last filtered for old entries;
+     *  used to prevent repeated filtering on the same time cycle (nothing will have changed)
+     */
+    transient private long lastClean = -1;
+
     public static String key(short type, short[] index, Task task) {
         if (Global.TASK_LINK_UNIQUE_BY_INDEX)
             return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
@@ -59,33 +65,9 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     }
 
 
-    /* Remember the TermLinks, and when they has been used recently with this TaskLink */
-    public final static class Recording {
-    
-        public final TermLink link;
-        long time;
 
-        public Recording(TermLink link, long time) {
-            this.link = link;
-            this.time = time;
-        }
-
-        public long getTime() {
-            return time;
-        }
-
-        
-        public void setTime(long t) {
-            this.time = t;
-        }
-
-        @Override
-        public String toString() {
-            return link + "@" + time;
-        }
-    }
-    
-    Deque<Recording> records;
+    /** stores the last access time that this tasklink was fired with a given termlink */
+    ObjectLongHashMap<TermLink> records;
     
 
     
@@ -138,7 +120,7 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
         return name().hashCode();
     }
 
-    public Deque<Recording> getRecords() {
+    public ObjectLongMap<TermLink> getRecords() {
         return records;
     }
 
@@ -189,42 +171,66 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
 
         if (records==null) {
             //records = new ArrayDeque(recordLength);
-            records = new LinkedList();
+            //records = new LinkedList();
+            records = new ObjectLongHashMap<>(recordLength);
         }
 
         //TODO remove old entries from records if recordLength < records.size()  -- for dynamic adjusting of novelty parameters
 
-        //iterating the FIFO deque from oldest (first) to newest (last)
-        Iterator<Recording> ir = records.iterator();
-        while (ir.hasNext()) {
-            Recording r = ir.next();
-            if (termLink.equals(r.link)) {
-                if (currentTime < r.getTime() + noveltyHorizon) {
-                    //too recent, not novel
-                    return false;
-                } else {
-                    //happened long enough ago that we have forgotten it somewhat, making it seem more novel
-                    r.setTime(currentTime);
-                    ir.remove();
-                    records.addLast(r);
-                    return true;
-                }
+        final long minTime = currentTime - noveltyHorizon;
+
+        boolean novelEnough;
+
+        long lastTime = records.getIfAbsentPut(termLink, currentTime);
+        novelEnough = lastTime < minTime;
+
+
+        //(attempt to) keep recordedLinks queue a maximum finite size
+        if (!records.isEmpty() && lastClean<currentTime && records.size()  > recordLength) {
+
+            recordsFilter.removeOlderThan(minTime);
+
+            //if the records list continues to exceed the length,
+            // remove values by sorted earliest time
+            // this will remove all entries which have the target
+            // value
+            while (records.size() > recordLength) {
+                recordsFilter.removeOlderThan(records.min() + 1);
             }
-            else if (currentTime > r.getTime() + noveltyHorizon) {
-                //remove a record which will not apply to any other tlink
-                ir.remove();
-            }
+
+            lastClean=currentTime;
         }
-        
-        
-        //keep recordedLinks queue a maximum finite size
-        while (!records.isEmpty() && records.size() + 1 >= recordLength) records.removeFirst();
-        
-        // add knowledge reference to recordedLinks
-        records.addLast(new Recording(termLink, currentTime));
-        
-        return true;
+
+
+        return novelEnough;
     }
+
+    class RecordsFilter implements ObjectLongProcedure<TermLink> {
+
+        List<TermLink> toForget = Global.newArrayList();
+        private long minTime = -1;
+
+        public void removeOlderThan(long anyBeforeOrAtTime) {
+
+            this.minTime = anyBeforeOrAtTime;
+
+            records.forEachKeyValue(this);
+
+            int n = toForget.size();
+            for (int i = 0; i < n; i++)
+                records.removeKey(toForget.get(i));
+            toForget.clear();
+        }
+
+        @Override
+        public void value(TermLink key, long value) {
+            if (value < minTime) toForget.add(key);
+        }
+
+
+    }
+
+    public final RecordsFilter recordsFilter = new RecordsFilter();
 
     @Override
     public String toString() {
@@ -263,3 +269,44 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     
     
 }
+
+/** Remember the TermLinks, and when they has been used
+ //     * recently with this TaskLink
+ //     * Equality (& hashCode) tests only the termlink, useful for
+ //     * fast comparison in a set.
+ //     * */
+//    final static class Recording {
+//
+//        public final TermLink link;
+//        long time;
+//
+//        public Recording(TermLink link, long time) {
+//            this.link = link;
+//            this.time = time;
+//        }
+//
+//        @Override
+//        public int hashCode() {
+//            return link.hashCode();
+//        }
+//
+//        @Override
+//        public boolean equals(Object obj) {
+//            return link.equals(obj);
+//        }
+//
+//        public long getTime() {
+//            return time;
+//        }
+//
+//
+//        public void setTime(long t) {
+//            this.time = t;
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return link + "@" + time;
+//        }
+//    }
+//
