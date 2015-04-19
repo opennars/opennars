@@ -5,7 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLDomain;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -16,7 +16,7 @@ import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
-import nars.prototype.Default;
+import nars.prototype.Discretinuous;
 import nars.rl.HaiQNAR;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
@@ -27,13 +27,13 @@ import java.awt.*;
 import java.util.Arrays;
 
 /**
- * @author patrick.hammer
+ * TODO add parameters determining what sensor input is exposed to NARS
+ * --how many SOM nodes (# closest), confidence inverse proportional to distance
+ * --raw input?  if so, allow segmentation (ex: columns size to form products for each row)
  */
 public class TestSOMAgent extends JPanel {
 
-    static {
-        Global.DEBUG = true;
-    }
+
 
     private final RLDomain domain;
 
@@ -100,7 +100,8 @@ public class TestSOMAgent extends JPanel {
             //return nar.term("<state --> [s" + s + "]>");
             //int row = s / dimensions;
             //int column = s % dimensions;
-            return nar.term("<state --> s" + s + ">");
+            //return nar.term("<state --> s" + s + ">");
+            return nar.term("s" + s);
         }
 
         public void learn(double[] input, double reward) {
@@ -122,13 +123,13 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
-    public TestSOMAgent(RLDomain d) {
+    public TestSOMAgent(RLDomain d, int somSize) {
         super();
 
         this.domain = d;
         double[] exampleObs = d.observe();
 
-        nar = new NAR(new Default(2000,10,4).setInternalExperience(null));
+        nar = new NAR(new Discretinuous(2000,10,4).setInternalExperience(null));
 
         nar.on(new Operator("^move") {
 
@@ -169,7 +170,7 @@ public class TestSOMAgent extends JPanel {
 
                     double[] o = domain.observe();
 
-                    System.out.println(Arrays.toString(o) + " " + r);
+                    //System.out.println(Arrays.toString(o) + " " + r);
 
 
                     ql.learn(o, r);
@@ -186,7 +187,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        ql = new HgngQNAR(nar, exampleObs.length, exampleObs.length * 6, domain.numActions()) {
+        ql = new HgngQNAR(nar, exampleObs.length, somSize, domain.numActions()) {
             @Override public Operation getActionOperation(int s) {
                 return (Operation)nar.term("move(" + s + ")");
             }
@@ -252,15 +253,17 @@ public class TestSOMAgent extends JPanel {
      */
     public static void main(String args[]) {
 
+        Global.DEBUG = false;
+
         /* Create and display the form */
         //RLDomain d = new PoleBalancing2D();
         //RLDomain d = new Follow1D();
-        RLDomain d = new Curiousbot();
-        //RLDomain d = new Tetris(4,8);
+        //RLDomain d = new Curiousbot();
+        RLDomain d = new Tetris(10,16);
 
         d.newWindow();
 
-        new TestSOMAgent(d);
+        new TestSOMAgent(d, 100);
 
 
 

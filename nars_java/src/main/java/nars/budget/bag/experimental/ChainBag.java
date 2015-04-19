@@ -184,6 +184,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
                 getNextRemoval();
             }
             overflow = remove(nextRemoval.name());
+            if (overflow == null)
+                throw new RuntimeException(this + " error removing nextRemoval=" + nextRemoval);
             nextRemoval = null;
         }
         else {

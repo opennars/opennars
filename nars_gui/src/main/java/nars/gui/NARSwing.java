@@ -50,8 +50,6 @@ public class NARSwing extends NARControlPanel {
 
     public NARSwing(NAR nar, boolean logPanel) {
         super(nar);
-                
-        Global.DEBUG = true;
         
         mainWindow = new NWindow(NAR.VERSION, this);
         mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

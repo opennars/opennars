@@ -2,17 +2,22 @@ package nars.prototype;
 
 import javolution.util.FastSortedSet;
 import javolution.util.function.Equality;
-import nars.control.ConceptActivator;
 import nars.Core;
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Bag;
 import nars.budget.Budget;
-import nars.nal.*;
 import nars.budget.bag.CacheBag;
 import nars.budget.bag.CurveBag;
+import nars.budget.bag.experimental.ChainBag;
+import nars.control.ConceptActivator;
+import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.nal.tlink.TaskLink;
+import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 
 import java.util.Comparator;
 import java.util.Iterator;
@@ -267,11 +272,11 @@ public class Solid extends Default {
 
     @Override
     public Concept newConcept(Budget b, Term t, Memory m) {
-        //Bag<String, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
-        //Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
+        Bag<String, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
 
-        //return new Concept(b, t, taskLinks, termLinks, m);
-        return super.newConcept(b, t, m);
+        return new DefaultConcept(t, b, taskLinks, termLinks, m);
+        //return super.newConcept(b, t, m);
     }
 
 

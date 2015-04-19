@@ -19,17 +19,17 @@ import static nars.budget.bag.LevelBag.NextNonEmptyLevelMode.Fast;
 
 /** Uses discrete bag for concepts, and continuousbag for termlink and tasklink bags. */
 public class Discretinuous extends Default {
-    private final boolean randomRemoval;
+
 
     public Discretinuous() {
-        this(true);
-    }
-    public Discretinuous(boolean randomRemoval) {
         super();
-        this.randomRemoval = randomRemoval;
     }
 
-    
+    public Discretinuous(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+        super(maxConcepts, conceptsFirePerCycle, termLinksPerCycle);
+    }
+
+
     @Override
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
 

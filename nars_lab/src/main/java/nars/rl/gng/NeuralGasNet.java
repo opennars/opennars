@@ -84,11 +84,11 @@ public class NeuralGasNet extends SimpleGraph<Node,Connection> {
         this.maxNodes = maxNodes;
 
         //default values
-        setLambda(5);
-        setMaxAge(55);
+        setLambda(100);
+        setMaxAge(50);
+
         setAlpha(0.1);
-        //setBeta(1.0 - 0.0005);
-        setBeta(0);
+        setBeta(0.9); //setBeta(1.0 - 0.0005);
         setEpsW(0.1);
         setEpsN(0.05);
 

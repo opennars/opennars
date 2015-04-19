@@ -20,7 +20,7 @@ public class PoleBalancing2D implements RLDomain {
     private final PhysicsRenderer physicsRenderer;
 
     double speed = 0.5;
-    double dt = 0.001;
+    double dt = 0.0005;
     double gravity = 0.05;
 
     int maxX = 800;

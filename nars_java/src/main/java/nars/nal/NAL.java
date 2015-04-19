@@ -309,7 +309,6 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                     newBudget, subbedTask, getCurrentBelief()), false, false, subbedTask, allowOverlap);
         } catch (RuntimeException e) {
             if (Global.DEBUG) throw e;
-            System.err.println(e);
             return false;
         }
 
@@ -354,7 +353,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp) {
+    public boolean singlePremiseTask(Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp) {
         if (!Global.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
             if (!newBudget.aboveThreshold()) {
                 return false; //early exit test for below budget
@@ -374,6 +373,9 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
             }
         }
 
+        newContent = Sentence.termOrNull(newContent);
+        if (newContent == null)
+            return false;
 
         if (stamp == null) {
             final Sentence taskSentence = getCurrentTask().sentence;
@@ -385,6 +387,7 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
                 stamp = newStamp(null, getCurrentBelief());
             }
         }
+
 
         return singlePremiseTask(
                 new Sentence(newContent,

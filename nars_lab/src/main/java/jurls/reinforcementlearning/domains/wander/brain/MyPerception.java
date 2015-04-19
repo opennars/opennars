@@ -4,10 +4,10 @@ import jurls.reinforcementlearning.domains.wander.Player;
 
 public class MyPerception  {
 
-    public static final int RADAR_ANGLES = 2;
+    public static final int RADAR_ANGLES = 3;
     public static final int RADAR_DISTS = 1; //rows
     private static final long serialVersionUID = 1L;
-    public static final double RADAR_R = 0.6;
+    public static final double RADAR_R = 1.0; //0.6 = mostly front
     public static final double RADAR_D = 20;
     public static final int RADAR_D0 = 1;
     private Player player;
