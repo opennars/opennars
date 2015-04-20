@@ -1,0 +1,10 @@
+<(&&,<$x --> [boy]>,<$x --> [girl]>) =\> (&&,<$x --> [jumping]>,<$x --> [withWings]>)>. 
+<(&&,<$y --> [flying]>,<$y --> bird>) =\> (&&,<$y --> [boy]>,<$y --> [girl]>)>.
+
+
+''outputMustContain('<(&&,<$1 --> [flying]>,<$1 --> bird>) =\>  (&&,<$1 --> [jumping]>,<$1 --> [withWings]>)>. %1.00;0.81%')
+''outputMustContain('<(&&,<$1 --> [jumping]>,<$1 --> [withWings]>) =/> (&&,<$1 --> [flying]>,<$1 --> bird>)>. %1.00;0.45%')
+
+19
+
+

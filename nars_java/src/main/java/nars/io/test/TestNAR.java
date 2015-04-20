@@ -62,9 +62,9 @@ public class TestNAR extends NAR {
                             }
                         }
 
-                        if (finished) {
-                            stop();
-                        }
+//                        if (finished) {
+//                            stop();
+//                        }
 
                     }
                 }

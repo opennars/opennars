@@ -1,0 +1,11 @@
+'Temporal Analogy 
+
+<<robin --> bird> </> <robin --> animal>>.
+<<robin --> [flying]> =/> <robin --> bird>>.
+
+
+''outputMustContain('<<robin --> [flying]> =/> <robin --> animal>>.  %1.00;0.81%')
+''outputMustContain('<<robin --> animal> =\> <robin --> bird>>.  %1.00;0.45%')
+
+100
+
