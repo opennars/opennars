@@ -11,7 +11,10 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
+import nars.event.FrameReaction;
 import nars.gui.NARSwing;
+import nars.io.Symbols;
+import nars.io.Texts;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -24,7 +27,6 @@ import nars.rl.hai.Hsom;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 /**
  * TODO add parameters determining what sensor input is exposed to NARS
@@ -108,7 +110,7 @@ public class TestSOMAgent extends JPanel {
             //return nar.term("s" + s);
         }
 
-        public void learn(double[] input, double reward) {
+        public int learn(double[] input, double reward) {
 
             Node closest = som.learn(input);
             double d = closest.getLocalDistance();
@@ -122,7 +124,7 @@ public class TestSOMAgent extends JPanel {
             nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
 
 
-            super.learn(closest.id, reward);
+            return super.learn(closest.id, reward);
 
         }
     }
@@ -137,6 +139,9 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
+    Task strongest = null; //current action
+    int exeCount = 0;
+
     public TestSOMAgent(RLDomain d, int somSize) {
         super();
 
@@ -145,81 +150,93 @@ public class TestSOMAgent extends JPanel {
 
         nar = new NAR(new Discretinuous(2000, 10, 4).setInternalExperience(null));
 
+        AbstractReaction rl = new FrameReaction(nar) {
+
+            public int nextQAction = -1; //default q-action if NARS does not specify one by the next frame
+            double lastReward = 0;
+
+            @Override
+            public void onFrame() {
+                long now = nar.time();
+
+                int action = -1;
+
+                if (strongest!=null) {
+                    Term ta = ((Operation) strongest.getTerm()).getArgument(0);
+                    action = Integer.parseInt(ta.toString());
+                    System.out.print("NARS act: '" + action + "' (from " + exeCount + " total executions) vs. '" + nextQAction + "' qAct");
+                }
+                if (action == -1) {
+                    action = nextQAction;
+                    System.out.print("QL act: " + action);
+
+                    if (action == -1) {
+                        //no qAction specified either, choose random
+                        action = (int)(Math.random() * domain.numActions());
+                    }
+
+                    ql.act(action, Symbols.JUDGMENT);
+                }
+
+                domain.takeAction(action);
+
+                domain.worldStep();
+
+
+                double r = domain.reward();
+
+                //double dr = r - lastReward;
+
+                lastReward = r;
+
+                double[] o = domain.observe();
+
+                //System.out.println(Arrays.toString(o) + " " + r);
+
+                System.out.println("  reward=" + Texts.n4(r));
+
+                nextQAction = ql.learn(o, r);
+
+                exeCount = 0;
+                strongest = null;
+
+                SwingUtilities.invokeLater(swingUpdate);
+
+
+            }
+        };
         nar.on(new Operator("^move") {
 
 
-            double lastReward = 0;
 
             long lastWorldStep = 0;
 
-            int exeCount = 0;
-            Task strongest = null;
 
-            int cyclesPerUpdate = cyclesPerFrame;
 
             @Override
             protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
 
                 if (args.length != 2) { // || args.length==3) { //left, self
-                    System.err.println(this + " ?? " + Arrays.toString(args));
+                    //System.err.println(this + " ?? " + Arrays.toString(args));
                     return null;
                 }
 
+                Term ta = ((Operation) operation.getTerm()).getArgument(0);
+                try {
+                    Integer.parseInt(ta.toString());
 
-                long now = nar.time();
-                long dt = now - lastWorldStep;
+                    exeCount++;
 
-                exeCount++;
-
-                Task newTask = operation.getTask();
-                if (strongest == null) strongest = newTask;
-                else {
-                    if (strongest.getDesire().getExpectation() > newTask.getDesire().getExpectation())
-                        strongest = newTask;
-                }
-
-                for (long i = lastWorldStep; i < now; i++) {
-                    if (i % cyclesPerUpdate != 0) continue;
-
-                    Term ta = ((Operation) strongest.getTerm()).getArgument(0);
-
-
-                    int action = -1;
-                    try {
-                        action = Integer.parseInt(ta.toString());
-                    } catch (NumberFormatException e) {
-                        action = (int) (Math.random() * domain.numActions());
-                        System.err.println("invalid parameter: " + ta + " ... random action");
+                    Task newTask = operation.getTask();
+                    if (strongest == null) strongest = newTask;
+                    else {
+                        if (strongest.getDesire().getExpectation() > newTask.getDesire().getExpectation())
+                            strongest = newTask;
                     }
 
-                    domain.takeAction(action);
+                } catch (NumberFormatException e) {
 
-                    domain.worldStep();
-
-                    lastWorldStep = i;
-
-                    double r = domain.reward();
-
-                    //double dr = r - lastReward;
-
-                    lastReward = r;
-
-                    double[] o = domain.observe();
-
-                    //System.out.println(Arrays.toString(o) + " " + r);
-
-
-                    ql.learn(o, r);
-
-                    System.out.println("exe " + strongest + " of " + exeCount);
-                    exeCount = 0;
                 }
-
-                SwingUtilities.invokeLater(swingUpdate);
-
-
-                strongest = null;
-
 
                 return null;
             }

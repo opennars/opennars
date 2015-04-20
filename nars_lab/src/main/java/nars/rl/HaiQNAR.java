@@ -52,16 +52,16 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     public final Concept[][] q;
 
     /**
-     * what type of concept feature affected: belief (.) or goal (!)
+     * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char punc = Symbols.GOAL;
+    char statePunctuation = Symbols.GOAL;
 
     /**
      * min threshold of q-update necessary to cause an effect
      */
     float updateThresh = Global.TRUTH_EPSILON;
 
-    boolean updateEachFrame = true; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
+    boolean updateEachFrame = false; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
 
     //OPERATING PARAMETERS ------------------------
     /** confidence of update beliefs (a learning rate); set to zero to disable */
@@ -232,7 +232,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
 
         //TODO avoid using String
 
-        String updatedBelief = qt + (punc + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
+        String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
 
         new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
 
@@ -242,7 +242,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
     public double q(int state, int action) {
         Concept c = q[state][action];
         if (c == null) return 0f;
-        Sentence s = punc == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
+        Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
         TruthValue t = s.truth;
         if (t == null) return 0f;
@@ -253,19 +253,19 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
 
     }
 
-    public void act(int action) {
-        act(action, actionFreq, actionConf, actionPriority, actionDurability);
+    public void act(int action, char punctuation) {
+        act(action, punctuation, actionFreq, actionConf, actionPriority, actionDurability);
     }
 
-    public void act(int action, float freq, float conf, float priority, float durability) {
+    public void act(int action, char punctuation, float freq, float conf, float priority, float durability) {
         Operation a = actions.inverse().get(action);
 
         //TODO use DirectProcess?
-        nar.input("$" + priority + ";" + durability + "$ " + a + "! :|: %" + freq + ';' + conf + '%');
+        nar.input("$" + priority + ";" + durability + "$ " + a + punctuation + " :|: %" + freq + ';' + conf + '%');
     }
 
     public void react() {
-        act(getNextAction());
+        act(getNextAction(), Symbols.GOAL);
     }
 
     public int learn(final int state, final double reward, int nextAction) {
