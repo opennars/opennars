@@ -1,8 +1,7 @@
 
 package nars.event;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.Lists;
 import nars.Events;
 import nars.Global;
 import reactor.core.Environment;
@@ -14,9 +13,7 @@ import reactor.event.selector.Selector;
 import reactor.event.selector.Selectors;
 import reactor.function.Consumer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * TODO separate this into a single-thread and multithread implementation
@@ -164,10 +161,12 @@ abstract public class EventEmitter<E>  {
         }
     }
 
-    /** simple single-thread synchronous (in-thread) event emitter */
+    /** simple single-thread synchronous (in-thread) event emitter.
+     * stores lists of reactions as array for fast iteration
+     * */
     public static class DefaultEventEmitter<E> extends EventEmitter<E> {
 
-        final Multimap<Class,Reaction> reactions = MultimapBuilder.hashKeys(16).arrayListValues().build();
+        final Map<Class,Reaction[]> reactions = new HashMap(16);
 
         final List<DefaultEventRegistration> pendingAdditions = new ArrayList();
         final List<DefaultEventRegistration> pendingRemovals = new ArrayList();
@@ -194,34 +193,44 @@ abstract public class EventEmitter<E>  {
             int pr = pendingRemovals.size();
             for (int i = 0; i < pr; i++) {
                 DefaultEventRegistration d = pendingRemovals.get(i);
-                reactions.remove(d.chan, d.reaction);
+
+                List<Reaction> l = toList(d.chan);
+                l.remove(d.reaction);
+                fromList(d.chan, l);
             }
             pendingRemovals.clear();
 
             int pa = pendingAdditions.size();
             for (int i = 0; i < pa; i++) {
                 DefaultEventRegistration d = pendingAdditions.get(i);
-                reactions.put(d.chan, d.reaction);
+
+                List<Reaction> l = toList(d.chan);
+                l.add(d.reaction);
+                fromList(d.chan, l);
             }
             pendingAdditions.clear();
 
         }
 
+        List<Reaction> toList(Class c) {
+            Reaction[] r = reactions.get(c);
+            if (r == null) return new ArrayList();
+            return Lists.newArrayList(r);
+        }
+
+        void fromList(Class c, List<Reaction> l) {
+            Reaction[] r = l.toArray(new Reaction[l.size()]);
+            reactions.put(c, r);
+        }
+
         @Override
         public void notify(final Class channel, final Object... arg) {
-            Collection<Reaction> c = reactions.get(channel);
-            for (Reaction r : c) {
-                r.event(channel, arg);
+            Reaction[] c = reactions.get(channel);
+            if (c!=null) {
+                for (Reaction r : c) {
+                    r.event(channel, arg);
+                }
             }
-//            if (c instanceof ArrayList) {
-//                //cast to array list to iterate without instantiating an iterator
-//                ArrayList<Reaction> l = (ArrayList)c;
-//                int s = l.size();
-//                for (int i = 0; i < s; i++) {
-//                    Reaction r = l.get(i);
-//                    r.event(channel, arg);
-//                }
-//            }
         }
 
         @Override
