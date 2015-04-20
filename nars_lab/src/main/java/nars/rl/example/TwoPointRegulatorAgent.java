@@ -15,7 +15,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
-import nars.rl.HaiQNAR;
+import nars.rl.BaseQLAgent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +32,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         Global.DEBUG = true;
     }
 
-    private final HaiQNAR ql;
+    private final BaseQLAgent ql;
     private final MatrixImage mi;
 
 
@@ -127,7 +127,7 @@ public class TwoPointRegulatorAgent extends JPanel {
                 reward = closer ?  0.5 : -1.0;
             }
 
-            ql.learn(state, reward);
+            ql.learn(state, reward, 1f);
 
             return null;
 
@@ -164,7 +164,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         nar = new NAR(new Default().setInternalExperience(null));
         nar.on(new Move());
 
-        ql = new HaiQNAR(nar, 3, 3) {
+        ql = new BaseQLAgent(nar, 3, 3) {
 
 
             @Override public Term getStateTerm(int s) {

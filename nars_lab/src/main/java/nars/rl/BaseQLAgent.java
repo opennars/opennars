@@ -21,11 +21,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by me on 4/17/15.
+ * QL Agent coprocessor "Brain" operating in terms of (unprocessed) discrete Q-states
  */
-abstract public class HaiQNAR extends AbstractHaiQBrain {
+abstract public class BaseQLAgent extends AbstractHaiQBrain {
 
-    public final NAR nar;
+    public NAR nar;
 
     final FrameReaction frameReaction;
     public final int nactions;
@@ -84,7 +84,7 @@ abstract public class HaiQNAR extends AbstractHaiQBrain {
 
 
 
-    public HaiQNAR(NAR nar, int nstates, int nactions) {
+    public BaseQLAgent(NAR nar, int nstates, int nactions) {
         super(nstates, nactions);
 
         setAlpha(0.4f);

@@ -30,4 +30,7 @@ public interface RLEnvironment {
     default public NWindow newWindow() {
         return new NWindow(getClass().toString(), component()).show(800,600);
     }
+
+
+    default public int inputDimension() { return observe().length; }
 }

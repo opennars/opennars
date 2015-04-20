@@ -20,7 +20,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Discretinuous;
-import nars.rl.HaiQNAR;
+import nars.rl.BaseQLAgent;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
 import nars.rl.hai.Hsom;
@@ -41,61 +41,190 @@ import java.awt.*;
 public class TestSOMAgent extends JPanel {
 
 
-    private final RLEnvironment environment;
-    private final RL rl;
 
-    abstract public static class HsomQNAR extends HaiQNAR {
+//    abstract public static class HsomQNAR extends BaseQLAgent {
+//
+//        private final Hsom som;
+//        private final int dimensions;
+//
+//        public HsomQNAR(NAR nar, int dimensions, int actions) {
+//            super(nar, dimensions * dimensions, actions);
+//
+//            this.dimensions = dimensions;
+//            som = new Hsom(dimensions, dimensions);
+//        }
+//
+//        @Override
+//        protected void initializeQ(int s, int a) {
+//            System.out.println(qterm(s, a));
+//        }
+//
+//        @Override
+//        public Term getStateTerm(int s) {
+//            //return nar.term("<state --> [s" + s + "]>");
+//            int row = s / dimensions;
+//            int column = s % dimensions;
+//            return nar.term("<state --> [(s" + row + ",s" + column + ")]>");
+//        }
+//
+//        public void learn(double[] input, double reward) {
+//            som.learn(input);
+//            int s = som.winnerx * dimensions + som.winnery;
+//            //System.out.println(Arrays.toString(input) + " " + reward );
+//            //System.out.println(som.winnerx + " " + som.winnery + " -> " + s);
+//
+//            //System.out.println(Arrays.deepToString(q));
+//            super.learn(s, reward);
+//        }
+//    }
 
-        private final Hsom som;
-        private final int dimensions;
+    /* dimension reduction / input processing implementations */
+    public interface Perception {
 
-        public HsomQNAR(NAR nar, int dimensions, int actions) {
-            super(nar, dimensions * dimensions, actions);
+        /** initialize for a QLAgent that will use it
+         *  returns the # dimensions the processed perception
+         *  will be represented in
+         * */
+        public int setEnvironment(RLEnvironment env);
 
-            this.dimensions = dimensions;
-            som = new Hsom(dimensions, dimensions);
+        public void setAgent(QLAgent agent);
+
+        /** process the next vector of input; should call methods (ex: input) on the agent provided by reset */
+        public void perceive(double[] input, double reward, double t);
+    }
+
+
+    public static class HaiSOMPerception implements Perception {
+
+        private Hsom som = null;
+        private QLAgent agent;
+        private RLEnvironment env;
+
+        @Override
+        public int setEnvironment(RLEnvironment env) {
+            this.env = env;
+            som = new Hsom(env.inputDimension(), env.inputDimension());
+            return som.width()*som.width();
         }
 
         @Override
-        protected void initializeQ(int s, int a) {
-            System.out.println(qterm(s, a));
+        public void setAgent(QLAgent agent) {
+            this.agent = agent;
         }
 
         @Override
-        public Term getStateTerm(int s) {
-            //return nar.term("<state --> [s" + s + "]>");
-            int row = s / dimensions;
-            int column = s % dimensions;
-            return nar.term("<state --> [(s" + row + ",s" + column + ")]>");
-        }
+        public void perceive(double[] input, double reward, double t) {
 
-        public void learn(double[] input, double reward) {
             som.learn(input);
-            int s = som.winnerx * dimensions + som.winnery;
+            int s = som.winnerx * env.inputDimension() + som.winnery;
             //System.out.println(Arrays.toString(input) + " " + reward );
             //System.out.println(som.winnerx + " " + som.winnery + " -> " + s);
 
             //System.out.println(Arrays.deepToString(q));
-            super.learn(s, reward);
+            agent.learn(s, reward, 1f);
         }
     }
 
-    abstract public static class HgngQNAR extends HaiQNAR {
+    /** growing neural gas */
+    public static class GNGPerception implements Perception {
 
-        private final NeuralGasNet som;
-        private final int dimensions;
+        private NeuralGasNet som = null;
+        private final int nodes;
+        private QLAgent agent;
 
-        public HgngQNAR(NAR nar, int dimensions, int actions) {
-            this(nar, dimensions, dimensions * dimensions /* * dimensions */, actions);
+        public GNGPerception(int nodes) {
+            this.nodes = nodes;
         }
 
-        public HgngQNAR(NAR nar, int dimensions, int somSize, int actions) {
-            super(nar, somSize, actions);
+        @Override
+        public int setEnvironment(RLEnvironment env) {
+            som = new NeuralGasNet(env.inputDimension(), nodes);
+            return nodes;
+        }
+
+        @Override
+        public void setAgent(QLAgent agent) {
+            this.agent = agent;
+        }
+
+        @Override
+        public void perceive(double[] input, double reward, double t) {
+            Node closest = som.learn(input);
+            double d = closest.getLocalDistance();
+            float conf = (float) (1.0f / (1.0f + d)); //TODO normalize against input mag?
+
+            //perception input
+
+            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+
+            agent.learn(closest.id, reward, conf);
+        }
+    }
+
+    //Autoencoder
+    //GNG
+    //DBSCAN?
+    //...
+    //Embedded NAR?
+
+
+    abstract public static class QLAgent extends BaseQLAgent {
+
+        private final Perception perception;
+        private final RLEnvironment env;
+        private final RL rl;
+
+        private final ArrayRealVector actByExpectation;
+        private final ArrayRealVector actByPriority;
+        //private final ArrayRealVector actByQ;
+
+        public int actByQStrongest = -1; //default q-action if NARS does not specify one by the next frame
+        double lastReward = 0;
+
+
+
+        public QLAgent(NAR nar, RLEnvironment env, Perception p) {
+            super(nar, p.setEnvironment(env), env.numActions());
+
+            this.env = env;
+            this.perception = p;
+            this.rl = new RL();
+
+            this.actByPriority = new ArrayRealVector(env.numActions());
+            this.actByExpectation = new ArrayRealVector(env.numActions());
 
             setEpsilon(0); //no randomness
 
-            this.dimensions = dimensions;
-            som = new NeuralGasNet(dimensions, somSize);
+            nar.on(new Operator("^move") {
+
+
+                @Override
+                protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
+
+                    if (args.length != 2) { // || args.length==3) { //left, self
+                        //System.err.println(this + " ?? " + Arrays.toString(args));
+                        return null;
+                    }
+
+                    Term ta = ((Operation) operation.getTerm()).getArgument(0);
+                    try {
+                        int a = Integer.parseInt(ta.toString());
+                        rl.desire(a, operation);
+
+                    } catch (NumberFormatException e) {
+
+                    }
+
+                    return null;
+                }
+            });
+
+            p.setAgent(this);
+        }
+
+        @Override
+        public Operation getActionOperation(int s) {
+            return (Operation) nar.term("move(" + s + ")");
         }
 
         @Override
@@ -113,72 +242,64 @@ public class TestSOMAgent extends JPanel {
             //return nar.term("s" + s);
         }
 
-        public int learn(double[] input, double reward) {
-
-            Node closest = som.learn(input);
-            double d = closest.getLocalDistance();
-
-            //perception input
-
-            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+        @Override
+        public int learn(int state, double reward, int nextAction, float confidence) {
 
             float freq = 1.0f;
-            float conf = (float) (1.0f / (1.0f + d)); //TODO normalize against input mag?
-            nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
+            nar.input(getStateTerm(state) + ". :|: %" + freq + ";" + confidence + "%");
 
 
-            return super.learn(closest.id, reward);
-
-        }
-    }
-
-    private final HgngQNAR ql;
-    private final MatrixImage mi;
-
-
-    private final int cyclesPerFrame = 50;
-
-
-    public final NAR nar;
-
-
-
-    /** interface to an RL world/experiment/etc..
-     * implements a per-frame reaction in which an action
-     * is decided either by NARS or an Agent, the world updated,
-     * and the new input processed by the Agent's perception interface */
-    public static class RL extends FrameReaction {
-
-        private final NAR nar;
-        private final RLEnvironment environment;
-        private final ArrayRealVector actByExpectation;
-        private final ArrayRealVector actByPriority;
-        private final HgngQNAR agent;
-        //private final ArrayRealVector actByQ;
-
-        public int actByQStrongest = -1; //default q-action if NARS does not specify one by the next frame
-        double lastReward = 0;
-
-        public RL(HgngQNAR agent, RLEnvironment environment) {
-            super(agent.nar);
-
-            this.nar = agent.nar;
-            this.agent = agent;
-            this.environment = environment;
-
-
-            this.actByPriority = new ArrayRealVector(environment.numActions());
-            this.actByExpectation = new ArrayRealVector(environment.numActions());
+            return super.learn(state, reward, nextAction, confidence);
         }
 
-        public void desire(int action, Operation operation) {
-            desire(action, operation.getTask().getPriority(), operation.getTaskExpectation() );
-        }
+//        public int learn(double[] input, double reward, float conf) {
+//
+//            Node closest = som.learn(input);
+//            double d = closest.getLocalDistance();
+//
+//            //perception input
+//
+//            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+//
+//            float freq = 1.0f;
+//            nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
+//
+//
+//            return super.learn(closest.id, reward, conf);
+//
+//        }
 
-        protected void desire(int action, float priority, float expectation) {
-            actByPriority.addToEntry(action, priority);
-            actByExpectation.addToEntry(action, expectation);
-        }
+
+
+        /** interface to an RL world/experiment/etc..
+         * implements a per-frame reaction in which an action
+         * is decided either by NARS or an Agent, the world updated,
+         * and the new input processed by the Agent's perception interface */
+        class RL extends FrameReaction {
+
+            public RL() {
+                super(nar);
+
+            }
+
+            public void desire(int action, Operation operation) {
+                desire(action, operation.getTask().getPriority(), operation.getTaskExpectation());
+            }
+
+            protected void desire(int action, float priority, float expectation) {
+                actByPriority.addToEntry(action, priority);
+                actByExpectation.addToEntry(action, expectation);
+            }
+
+
+
+            @Override
+            public void onFrame() {
+                QLAgent.this.onFrame();
+            }
+
+
+        };
 
         /** decides which action, TODO make this configurable */
         public synchronized int decide() {
@@ -201,8 +322,7 @@ public class TestSOMAgent extends JPanel {
             return winner;
         }
 
-        @Override
-        public void onFrame() {
+        protected void onFrame() {
             long now = nar.time();
 
             int action = decide();
@@ -213,95 +333,86 @@ public class TestSOMAgent extends JPanel {
 
                 if (action == -1) {
                     //no qAction specified either, choose random
-                    action = (int)(Math.random() * environment.numActions());
+                    action = (int)(Math.random() * env.numActions());
                 }
 
                 /** introduce belief or goal for the QL action */
-                agent.act(action, Symbols.GOAL);
+                act(action, Symbols.GOAL);
             }
 
-            environment.takeAction(action);
+            env.takeAction(action);
 
-            environment.worldStep();
+            env.worldStep();
 
 
-            double r = environment.reward();
+            double r = env.reward();
 
             //double dr = r - lastReward;
 
             lastReward = r;
 
-            double[] o = environment.observe();
+            double[] o = env.observe();
 
             //System.out.println(Arrays.toString(o) + " " + r);
 
             System.out.println("  reward=" + Texts.n4(r));
 
-            actByQStrongest = agent.learn(o, r);
-
+            perception.perceive(o, r, nar.time());
+            actByQStrongest = getNextAction();
 
 
         }
+    }
+
+    private final QLAgent ql;
+    private final MatrixImage mi;
 
 
-    };
+    private final int cyclesPerFrame = 50;
+
+
+    public final NAR nar;
+
+
+
 
 
     public TestSOMAgent(RLEnvironment d, int somSize) {
         super();
 
-        this.environment = d;
         double[] exampleObs = d.observe();
 
         nar = new NAR(new Discretinuous(2000, 10, 4).setInternalExperience(null));
 
 
-
-        nar.on(new Operator("^move") {
-
-
-
+        final Runnable swingUpdate = new Runnable() {
 
             @Override
-            protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            public void run() {
+                repaint();
 
-                if (args.length != 2) { // || args.length==3) { //left, self
-                    //System.err.println(this + " ?? " + Arrays.toString(args));
-                    return null;
-                }
+                d.component().repaint();
 
-                Term ta = ((Operation) operation.getTerm()).getArgument(0);
-                try {
-                    int a = Integer.parseInt(ta.toString());
-                    rl.desire(a, operation);
-
-                } catch (NumberFormatException e) {
-
-                }
-
-                return null;
-            }
-        });
-
-        ql = new HgngQNAR(nar, exampleObs.length, somSize, environment.numActions()) {
-            @Override
-            public Operation getActionOperation(int s) {
-                return (Operation) nar.term("move(" + s + ")");
+                mi.draw(new Data2D() {
+                    @Override
+                    public double getValue(int x, int y) {
+                        return ql.q(y, x);
+                    }
+                }, ql.nstates, ql.nactions, -1, 1);
             }
         };
-        ql.init();
 
 
-
-        rl = new RL(ql, environment) {
-
+        ql = new QLAgent(nar, d, new GNGPerception(somSize)) {
             @Override
             public void onFrame() {
                 super.onFrame();
 
                 SwingUtilities.invokeLater(swingUpdate);
             }
+
         };
+        ql.init();
 
 
 
@@ -356,22 +467,7 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    final Runnable swingUpdate = new Runnable() {
 
-        @Override
-        public void run() {
-            repaint();
-
-            environment.component().repaint();
-
-            mi.draw(new Data2D() {
-                @Override
-                public double getValue(int x, int y) {
-                    return ql.q(y, x);
-                }
-            }, ql.nstates, ql.nactions, -1, 1);
-        }
-    };
 
     protected void cycle() {
 
