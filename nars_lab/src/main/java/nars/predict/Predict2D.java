@@ -325,7 +325,7 @@ public class Predict2D extends JPanel {
             update(t);
 
             n.memory.timeSimulationAdd(1);
-            n.step(20);
+            n.frame(20);
 
             t += 1;
 

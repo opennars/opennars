@@ -33,7 +33,11 @@ public class TetrisBlocksComponent {
         this.tetVis = ev;
     }
 
-    public void render(Graphics2D g) {
+    float motionBlur = 0.6f;
+    final Color alphaBlack = new Color(0,0,0,1.0f-motionBlur);
+    final Color alphaWhite = new Color(1f,1f,1f,1.0f - motionBlur);
+
+    public void render(Graphics2D g, int DABS) {
 
         Rectangle2D agentRect;
         int numCols = tetVis.getWorldWidth();
@@ -41,7 +45,6 @@ public class TetrisBlocksComponent {
         double[] tempWorld = tetVis.getWorld();
 
         //Desired abstract block size
-        int DABS = 30;
         int scaleFactorX = numCols * DABS;
         int scaleFactorY = numRows * DABS;
 
@@ -50,17 +53,24 @@ public class TetrisBlocksComponent {
         int x = 0;
         int y = 0;
 
+
+        g.setColor(alphaBlack);
+        g.fillRect(0, 0, w*numCols, h*numRows);
+
         for (int i = 0; i < numRows; i++) {
+            y = i * DABS;
+
             for (int j = 0; j < numCols; j++) {
+
                 x = j * DABS;
-                y = i * DABS;
+
                 int in = i * numCols + j;
-                
 
                 double bc = tempWorld[in];
+
                 Color c = null;
                 if ((bc < 1.0) && (bc > 0)) {
-                    c = (Color.WHITE);
+                    c = alphaWhite; //falling block, ~0.5
                 }
                 else if (bc > 0) {
                     int thisBlockColor = (int)bc;
@@ -79,7 +89,7 @@ public class TetrisBlocksComponent {
                                 c = (Color.YELLOW);
                                 break;
                             case 5:
-                                c = (Color.LIGHT_GRAY);
+                                c = new Color(0.3f, 0.3f, 1.0f); //blue
                                 break;
                             case 6:
                                 c = (Color.ORANGE);
@@ -89,14 +99,13 @@ public class TetrisBlocksComponent {
                                 break;
                         }
                     }
+                }
+
+                if (c!=null) {
                     g.setColor(c);
                     g.fillRect(x, y, w, h);
                 }
-                 else {
-                    g.setColor(Color.BLACK);
-                    
-                    g.fillRect(x, y, w, h);
-                }
+
             }
         }
         //g.setColor(Color.GRAY);

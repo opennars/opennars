@@ -115,7 +115,7 @@ public class NALTestPerformance {
                 }
                 
                 try {
-                    nar.step(1);
+                    nar.frame(1);
                 } catch (Exception e) {
                     error = true;
                 }

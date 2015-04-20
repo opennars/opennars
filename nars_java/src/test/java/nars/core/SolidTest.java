@@ -44,7 +44,7 @@ public class SolidTest {
 
         };
 
-        n.step(time);
+        n.frame(time);
 
         assertTrue(2 <= solutions.get());
     }

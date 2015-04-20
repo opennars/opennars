@@ -93,7 +93,7 @@ public class NARRun {
                 log("NARSBatch.run():"
                         + " step " + nar.time());
 
-            nar.step(1);
+            nar.frame(1);
             
             
             if (logging)

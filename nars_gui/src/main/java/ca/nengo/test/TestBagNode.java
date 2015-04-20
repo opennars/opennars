@@ -125,7 +125,7 @@ public class TestBagNode extends Nengrow {
 
         public void setFramesPerSecond(Double fps) {
             if (fps !=null) {
-                n.step( fps.intValue());
+                n.frame(fps.intValue());
             }
         }
 

@@ -100,7 +100,7 @@ public class Number1DInputTest {
         //Number1DInput v = new Number1DInput("a", x, resolution);
         //n.addInput(v);
         
-        n.step(1);
+        n.frame(1);
         
         for (int i = 0; i < 10; i++) {
             //v.next(randomArray(N, 1.0, 0));

@@ -181,16 +181,16 @@ public class TermTest {
        assertTrue(a.equals(a1));
        
        n.input(statement1);
-       n.step(4);
+       n.frame(4);
               
        n.input(" <a  --> b>.  ");
-       n.step(1);
+       n.frame(1);
        n.input(" <a--> b>.  ");
-       n.step(1);
+       n.frame(1);
        
        String statement2 = "<a --> c>.";
        n.input(statement2);
-       n.step(4);
+       n.frame(4);
        
        Term a2 = n.term("a");
        assertTrue(a2!=null);

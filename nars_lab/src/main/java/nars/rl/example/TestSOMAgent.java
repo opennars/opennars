@@ -5,8 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLDomain;
-import jurls.reinforcementlearning.domains.follow.Follow1D;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -38,7 +37,6 @@ import java.util.Arrays;
 public class TestSOMAgent extends JPanel {
 
 
-
     private final RLDomain domain;
 
     abstract public static class HsomQNAR extends HaiQNAR {
@@ -47,7 +45,7 @@ public class TestSOMAgent extends JPanel {
         private final int dimensions;
 
         public HsomQNAR(NAR nar, int dimensions, int actions) {
-            super(nar, dimensions*dimensions, actions);
+            super(nar, dimensions * dimensions, actions);
 
             this.dimensions = dimensions;
             som = new Hsom(dimensions, dimensions);
@@ -85,6 +83,7 @@ public class TestSOMAgent extends JPanel {
         public HgngQNAR(NAR nar, int dimensions, int actions) {
             this(nar, dimensions, dimensions * dimensions /* * dimensions */, actions);
         }
+
         public HgngQNAR(NAR nar, int dimensions, int somSize, int actions) {
             super(nar, somSize, actions);
 
@@ -119,7 +118,7 @@ public class TestSOMAgent extends JPanel {
             //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
 
             float freq = 1.0f;
-            float conf = (float)(1.0f / (1.0f + d)); //TODO normalize against input mag?
+            float conf = (float) (1.0f / (1.0f + d)); //TODO normalize against input mag?
             nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
 
 
@@ -144,12 +143,12 @@ public class TestSOMAgent extends JPanel {
         this.domain = d;
         double[] exampleObs = d.observe();
 
-        nar = new NAR(new Discretinuous(2000,10,4).setInternalExperience(null));
+        nar = new NAR(new Discretinuous(2000, 10, 4).setInternalExperience(null));
 
         nar.on(new Operator("^move") {
 
 
-            double lastReward= 0;
+            double lastReward = 0;
 
             long lastWorldStep = 0;
 
@@ -166,59 +165,60 @@ public class TestSOMAgent extends JPanel {
                     return null;
                 }
 
-                try {
 
+                long now = nar.time();
+                long dt = now - lastWorldStep;
 
+                exeCount++;
 
-                    long now = nar.time();
-                    long dt = now - lastWorldStep;
-
-                    exeCount++;
-
-                    Task newTask = operation.getTask();
-                    if (strongest == null) strongest = newTask;
-                    else {
-                        if (strongest.getDesire().getExpectation() > newTask.getDesire().getExpectation())
-                            strongest = newTask;
-                    }
-
-                    if (dt > cyclesPerUpdate) {
-                        Term ta = ((Operation)strongest.getTerm()).getArgument(0);
-                        int action = Integer.parseInt(ta.toString());
-
-                        domain.takeAction(action);
-
-                        for (int i = 0; i < dt; i++)
-                            domain.worldStep();
-
-                        lastWorldStep = now;
-
-                        double r = domain.reward();
-
-                        //double dr = r - lastReward;
-
-                        lastReward = r;
-
-                        double[] o = domain.observe();
-
-                        //System.out.println(Arrays.toString(o) + " " + r);
-
-
-                        ql.learn(o, r);
-
-                        System.out.println("exe " + strongest + " of " + exeCount);
-                        strongest = null;
-                        exeCount = 0;
-                    }
-                    else {
-                    }
-
-
-
+                Task newTask = operation.getTask();
+                if (strongest == null) strongest = newTask;
+                else {
+                    if (strongest.getDesire().getExpectation() > newTask.getDesire().getExpectation())
+                        strongest = newTask;
                 }
-                catch (NumberFormatException e) {
 
+                for (long i = lastWorldStep; i < now; i++) {
+                    if (i % cyclesPerUpdate != 0) continue;
+
+                    Term ta = ((Operation) strongest.getTerm()).getArgument(0);
+
+
+                    int action = -1;
+                    try {
+                        action = Integer.parseInt(ta.toString());
+                    } catch (NumberFormatException e) {
+                        action = (int) (Math.random() * domain.numActions());
+                        System.err.println("invalid parameter: " + ta + " ... random action");
+                    }
+
+                    domain.takeAction(action);
+
+                    domain.worldStep();
+
+                    lastWorldStep = i;
+
+                    double r = domain.reward();
+
+                    //double dr = r - lastReward;
+
+                    lastReward = r;
+
+                    double[] o = domain.observe();
+
+                    //System.out.println(Arrays.toString(o) + " " + r);
+
+
+                    ql.learn(o, r);
+
+                    System.out.println("exe " + strongest + " of " + exeCount);
+                    exeCount = 0;
                 }
+
+                SwingUtilities.invokeLater(swingUpdate);
+
+
+                strongest = null;
 
 
                 return null;
@@ -226,10 +226,10 @@ public class TestSOMAgent extends JPanel {
         });
 
 
-
         ql = new HgngQNAR(nar, exampleObs.length, somSize, domain.numActions()) {
-            @Override public Operation getActionOperation(int s) {
-                return (Operation)nar.term("move(" + s + ")");
+            @Override
+            public Operation getActionOperation(int s) {
+                return (Operation) nar.term("move(" + s + ")");
             }
         };
         ql.init();
@@ -242,26 +242,18 @@ public class TestSOMAgent extends JPanel {
 
 
         new AbstractReaction(nar, Events.CycleEnd.class) {
-            @Override public void event(Class event, Object[] args) {
+            @Override
+            public void event(Class event, Object[] args) {
                 cycle();
             }
         };
 
-        new AbstractReaction(nar, Events.FrameEnd.class) {
-            @Override public void event(Class event, Object[] args) {
-
-                //repaint();
-
-                d.component().repaint();
-
-                mi.draw(new Data2D() {
-                    @Override
-                    public double getValue(int x, int y) {
-                        return ql.q(y, x);
-                    }
-                }, ql.nstates, ql.nactions, -1, 1);
-            }
-        };
+//        new AbstractReaction(nar, Events.FrameEnd.class) {
+//            @Override
+//            public void event(Class event, Object[] args) {
+//
+//            }
+//        };
 
         Video.themeInvert();
 
@@ -287,20 +279,33 @@ public class TestSOMAgent extends JPanel {
         */
 
         new NWindow("Q",
-                mi = new MatrixImage(400,400)
+                mi = new MatrixImage(400, 400)
         ).show(400, 400);
 
     }
 
 
+    final Runnable swingUpdate = new Runnable() {
+
+        @Override
+        public void run() {
+            repaint();
+
+            domain.component().repaint();
+
+            mi.draw(new Data2D() {
+                @Override
+                public double getValue(int x, int y) {
+                    return ql.q(y, x);
+                }
+            }, ql.nstates, ql.nactions, -1, 1);
+        }
+    };
 
     protected void cycle() {
 
 
     }
-
-
-
 
 
     /**
@@ -313,13 +318,12 @@ public class TestSOMAgent extends JPanel {
         /* Create and display the form */
         //RLDomain d = new PoleBalancing2D();
         //RLDomain d = new Follow1D();
-        RLDomain d = new Curiousbot();
-        //RLDomain d = new Tetris(10,14);
+        //RLDomain d = new Curiousbot();
+        RLDomain d = new Tetris(10, 14);
 
         d.newWindow();
 
-        new TestSOMAgent(d, 7);
-
+        new TestSOMAgent(d, 100);
 
 
     }

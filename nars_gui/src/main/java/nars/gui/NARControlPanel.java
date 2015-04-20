@@ -85,7 +85,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
     final Executor narexe = Executors.newSingleThreadExecutor();
     final Runnable narrun = new Runnable() {
         @Override public void run() {
-            nar.frame(1);
+            nar.frame();
         }
     };
 
@@ -759,7 +759,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
         pc.add(stopButton);
 
         walkButton = new AwesomeButton('\uf051');
-        walkButton.setToolTipText("Walk 1 Cycle");
+        walkButton.setToolTipText("Walk 1 Frame");
         walkButton.addActionListener(this);
         pc.add(walkButton);
 

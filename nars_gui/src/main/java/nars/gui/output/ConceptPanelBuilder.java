@@ -17,7 +17,6 @@ import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
-import nars.nal.TruthValue;
 import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.nal.Sentence;
@@ -26,13 +25,10 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -358,43 +354,6 @@ public class ConceptPanelBuilder extends AbstractReaction {
             validate();
         }
 
-
-    }
-
-    public static class ImagePanel extends JPanel {
-
-        final int w, h;
-        public BufferedImage image;
-
-        public ImagePanel(int width, int height) {
-            super();
-
-            this.w = width;
-            this.h = height;
-
-            setIgnoreRepaint(true);
-            setSize(width, height);
-            Dimension minimumSize = new Dimension(width, height);
-            setBorder(LineBorder.createGrayLineBorder());
-            setMinimumSize(minimumSize);
-            setPreferredSize(minimumSize);
-        }
-
-        public Graphics2D g() {
-            if (image == null) {
-                image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-            }
-            if (image != null) {
-                return image.createGraphics();
-            }
-            return null;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            g.drawImage(image, 0, 0, null);
-        }
 
     }
 

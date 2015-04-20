@@ -354,7 +354,7 @@ class play extends javax.swing.JFrame {
         if(success) {
             enableall(true);
             check_field();
-            nar.step(100); //give time to see win condition
+            nar.frame(100); //give time to see win condition
             nar.stop();
         }
             

@@ -450,21 +450,21 @@ public class NAR implements Runnable {
     }    
 
     /** steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of */
-    public double step() {
-        return step(1);
+    public double frame() {
+        return frame(1);
     }
 
     /** Runs multiple frames, unless already running (then it return -1).
      * @return total time in seconds elapsed in realtime
      * */
-    public double step(final int frames) {
+    public double frame(final int frames) {
         
         final boolean wasRunning = running;
         running = true;
         stopped = false;
         double elapsed = 0;
         for (int f = 0; (f < frames) && (!stopped); f++) {
-            elapsed += frame(cyclesPerFrame);
+            elapsed += frameCycles(cyclesPerFrame);
         }
         running = wasRunning;
         return elapsed;
@@ -486,7 +486,7 @@ public class NAR implements Runnable {
 
         long cycleStart = time();
         do {
-            step(1);
+            frame(1);
 
             long now = time();
 
@@ -516,7 +516,7 @@ public class NAR implements Runnable {
         
         long cycleStart = time();
         do {
-            step(1);           
+            frame(1);
         }
         while ((!memory.perception.isEmpty()) && (!stopped));
                    
@@ -529,7 +529,7 @@ public class NAR implements Runnable {
         
         //finish all remaining cycles
         while (!memory.thinking() && (!stopped)) {
-            step(1);
+            frame(1);
         }
         
         running = false;
@@ -548,7 +548,7 @@ public class NAR implements Runnable {
         while (running && !stopped) {      
             
 
-            double frameTime = step(1); //in seconds
+            double frameTime = frame(1); //in seconds
 
             if (minFramePeriodMS > 0) {
                 
@@ -592,7 +592,7 @@ public class NAR implements Runnable {
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    public double frame(final int cycles) {
+    protected double frameCycles(final int cycles) {
 
 
         memory.resource.FRAME_DURATION.start();

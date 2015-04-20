@@ -41,7 +41,7 @@ public class Tetris implements RLDomain {
     @Override
     public Component component() {
         if (vis == null)
-            vis = new TetrisVisualizer(this);
+            vis = new TetrisVisualizer(this, 40);
         return vis;
     }
 
@@ -59,7 +59,7 @@ public class Tetris implements RLDomain {
     @Override
     public void worldStep() {
         step(nextAction);
-        
+        vis.render();
     }
 
     @Override

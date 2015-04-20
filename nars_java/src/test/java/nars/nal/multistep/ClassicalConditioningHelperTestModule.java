@@ -22,23 +22,23 @@ public class ClassicalConditioningHelperTestModule {
         nar.on(blub);
         blub.EnableAutomaticConditioning=false;
         nar.input("<a --> M>. :|:"); //abcbbbabc
-        nar.step(6);
+        nar.frame(6);
         nar.input("<b --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<c --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<b --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<b --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<b --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<a --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<b --> M>. :|:");
-        nar.step(6);
+        nar.frame(6);
         nar.input("<c --> M>. :|:");
-        nar.step(1);
+        nar.frame(1);
         blub.classicalConditioning();
     }
     

@@ -62,7 +62,7 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         
         nar.input(i);
         
-        nar.step(cycles);        
+        nar.frame(cycles);
 
         
 //        new NWindow("_", new PCanvas(new TimelineVis(

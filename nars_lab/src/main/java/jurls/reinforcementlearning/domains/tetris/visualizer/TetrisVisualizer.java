@@ -18,14 +18,14 @@ limitations under the License.
  */
 package jurls.reinforcementlearning.domains.tetris.visualizer;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import jurls.reinforcementlearning.domains.tetris.Tetris;
+import nars.gui.output.ImagePanel;
 
-public class TetrisVisualizer extends Canvas {
+import java.awt.*;
 
+public class TetrisVisualizer extends ImagePanel {
+
+    private final int blockSize;
     private int lastUpdateTimeStep = -1;
     javax.swing.JCheckBox printGridCheckBox = null;
     private final Tetris tetris;
@@ -38,11 +38,12 @@ public class TetrisVisualizer extends Canvas {
         return false;
     }
 
-    public TetrisVisualizer(Tetris t) {
-        super();
-        this.tetris = t;
+    public TetrisVisualizer(Tetris t, int blockSize) {
+        super(t.getWidth() * blockSize,t.getHeight() * blockSize);
 
-        setSize(500,500);
+        this.tetris = t;
+        this.blockSize = blockSize;
+
         blocks = new TetrisBlocksComponent(this);
         
 //        this.theGlueState = theGlueState;
@@ -54,14 +55,22 @@ public class TetrisVisualizer extends Canvas {
 //        addVizComponentAtPositionWithSize(theTetrlaisScoreViz, 0, 0, 1.0, 0.3);
 //
 //        addDesiredExtras();
+
+        render();
     }
 
-    @Override
-    public void paint(Graphics g) {
-        blocks.render((Graphics2D) g);
-        g.setColor(Color.WHITE);
-        g.drawString("Score: " + tetris.reward(), 0, 400);
+    public void render() {
+        blocks.render(g(), blockSize);
     }
+
+//    @Override
+//    public void paint(Graphics g) {
+//        //g.setPaintMode();
+//        blocks.render((Graphics2D) g);
+//        //g.setColor(Color.BLUE);
+//        //g.setXORMode(Color.GREEN);
+//        //g.drawString("Score: " + Texts.n4(tetris.reward()), 0, 400);
+//    }
     
     
 ////Override this if you don't want some extras (like check boxes)

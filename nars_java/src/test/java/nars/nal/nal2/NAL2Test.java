@@ -59,7 +59,7 @@ public class NAL2Test extends JavaNALTest {
 
         nar.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
                 .en("Birdie is similar to Tweety.");
-        nar.step(1);
+        nar.frame(1);
         nar.ask("<{Birdie} <-> {Tweety}>")
                 .en("Is Birdie similar to Tweety?");
 

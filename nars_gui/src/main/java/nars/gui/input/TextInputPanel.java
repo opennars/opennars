@@ -267,7 +267,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             @Override
             public String run() {
                 if (!nar.isRunning())
-                    nar.step(1);
+                    nar.frame(1);
                 return input;
             }
 
@@ -300,7 +300,7 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
             //TODO make sequential evaluation
             nar.input(input);
             if (!nar.isRunning())
-                nar.step(1);
+                nar.frame(1);
         }
 
         

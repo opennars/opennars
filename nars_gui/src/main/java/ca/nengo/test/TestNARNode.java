@@ -98,7 +98,7 @@ public class TestNARNode  {
         public void run(float startTime, float endTime) throws SimulationException {
             super.run(startTime, endTime);
 
-            nar.step(1); //TODO scale # cycles to actual time elapsed
+            nar.frame(1); //TODO scale # cycles to actual time elapsed
         }
 
         protected void initOperators() {

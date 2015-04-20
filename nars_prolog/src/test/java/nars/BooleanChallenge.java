@@ -389,12 +389,12 @@ public class BooleanChallenge {
         inputProb = 0.10;
 
         for (int i = 0; i < bit1Iterations; i++)
-            nar.step(1);
+            nar.frame(1);
 
         inputProb = 0.0;
 
         for (int i = 0; i < bit2Thinking; i++)
-            nar.step(1);
+            nar.frame(1);
 
     }
 
