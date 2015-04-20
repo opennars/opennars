@@ -5,9 +5,8 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.learning.Autoencoder;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.follow.Follow1D;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -221,8 +220,6 @@ public class TestSOMAgent extends JPanel {
 
             //perception input
 
-            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
-
             if (vis!=null) {
 
                 vis.draw(new Data2D() {
@@ -237,8 +234,7 @@ public class TestSOMAgent extends JPanel {
             agent.learn(closest, reward, conf);
         }
     }
-    //Autoencoder
-    //GNG
+
     //DBSCAN?
     //...
     //Embedded NAR?
@@ -404,8 +400,10 @@ public class TestSOMAgent extends JPanel {
                     action = (int)(Math.random() * env.numActions());
                 }
 
-                /** introduce belief or goal for the QL action */
-                act(action, Symbols.GOAL);
+                /** introduce belief or goal for a QL action */
+
+                //act(action, Symbols.GOAL);  //provides faster action but may cause illogical feedback loops
+                act(action, Symbols.JUDGMENT); //more "correct" probably because it just notices the "autonomic" QL reaction that was executed
             }
 
             env.takeAction(action);
@@ -531,16 +529,16 @@ public class TestSOMAgent extends JPanel {
         Global.DEBUG = false;
 
         /* Create and display the form */
-        //RLEnvironment d = new PoleBalancing2D();
+        RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
 
         d.newWindow();
 
         //Perception p = new GNGPerception(64);
         //Perception p = new HaiSOMPerception();
-        Perception p = new AEPerception(32, 4);
+        Perception p = new AEPerception(16, 2);
 
         new TestSOMAgent(d, p);
 

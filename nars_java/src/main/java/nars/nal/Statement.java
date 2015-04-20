@@ -157,7 +157,10 @@ public abstract class Statement extends Compound {
         StringBuilder sb = new StringBuilder(length)
             .append(STATEMENT_OPENER.ch)
             .append(subjectName)
+
             .append(' ').append(relation).append(' ')
+            //.append(relation)
+
             .append(predicateName)
             .append(STATEMENT_CLOSER.ch);
             
@@ -176,7 +179,8 @@ public abstract class Statement extends Compound {
         //Texts.append(cb, subjectName);
         cb.append(subjectName);
                 
-        cb.append(' ').append(relation.toString()).append(' ');
+        cb.append(' ').append(relation).append(' ');
+        //cb.append(relation);
         
         //Texts.append(cb, predicateName);
         cb.append(predicateName);
@@ -207,13 +211,20 @@ public abstract class Statement extends Compound {
         if ((subject instanceof Statement) && (predicate instanceof Statement)) {
             final Statement s1 = (Statement) subject;
             final Statement s2 = (Statement) predicate;
+
             final Term t11 = s1.getSubject();
             final Term t22 = s2.getPredicate();
+            if (!t11.equals(t22)) return false;
+
             final Term t12 = s1.getPredicate();
             final Term t21 = s2.getSubject();
-            if (t11.equals(t22) && t12.equals(t21)) {
+            if (t12.equals(t21)) {
                 return true;
             }
+
+            /*if (t11.equals(t22) && t12.equals(t21))
+                return true;
+            */
         }
         return false;
     }
