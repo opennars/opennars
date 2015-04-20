@@ -268,7 +268,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
         act(getNextAction(), Symbols.GOAL);
     }
 
-    public int learn(final int state, final double reward, int nextAction) {
+    public int learn(final int state, final double reward, int nextAction, float confidence) {
         if (rewardBeliefConfidence > 0) {
             String rt = getRewardTerm();
 
@@ -288,7 +288,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
             nar.input(r);
         }
 
-        return super.learn(state, reward, nextAction);
+        return super.learn(state, reward, nextAction, confidence);
     }
 
 }

@@ -18,7 +18,7 @@ public class PoleBalancing2D implements RLEnvironment {
     private final Point pendulumPoint;
     private final PhysicsRenderer physicsRenderer;
 
-    double speed = 0.1;
+    double speed = 0.4;
     double dt = 0.2;
     double gravity = 0.2;
 

@@ -120,6 +120,9 @@ public class Autoencoder {
 
     // Encode
     public double[] encode(double[] x, double[] y, boolean sigmoid, boolean normalize) {
+
+        final double[][] W = this.W;
+
         if (y == null)
             y = new double[n_hidden];
                     
@@ -182,13 +185,21 @@ public class Autoencoder {
             L_hbias = new double[n_hidden];            
         }
 
+        final double[][] W = this.W;
+        final double[] L_hbias = this.L_hbias;
+        final double[] L_vbias = this.L_vbias;
+        final double[] vbias = this.vbias;
+
+
         if (noiseLevel > 0) {        
             addNoise(x, tilde_x, noiseLevel, corruptionRate);
         }
         else {
-            tilde_x = x;
+            this.tilde_x = x;
         }
-        
+
+        final double[] tilde_x = this.tilde_x;
+
         encode(tilde_x, y, sigmoid, true);                
         
         get_reconstructed_input(y, z);
@@ -209,10 +220,14 @@ public class Autoencoder {
         
         error /= n_visible;
 
+        final int n = n_visible;
+        final double[] y = this.y;
+        final double[] hbias = this.hbias;
+
         // hbias
         for (int i = 0; i < n_hidden; i++) {
             L_hbias[i] = 0;
-            for (int j = 0; j < n_visible; j++) {
+            for (int j = 0; j < n; j++) {
                 L_hbias[i] += W[i][j] * L_vbias[j];
             }
             double yi = y[i];
@@ -225,7 +240,7 @@ public class Autoencoder {
         for (int i = 0; i < n_hidden; i++) {
             double yi = y[i];
             double lhb = L_hbias[i];
-            for (int j = 0; j < n_visible; j++) {
+            for (int j = 0; j < n; j++) {
                 W[i][j] += learningRate * (lhb * tilde_x[j] + L_vbias[j] * yi);
             }
         }
@@ -242,4 +257,19 @@ public class Autoencoder {
         return z;
     }
 
+    /** finds the index of the highest output value, or returns a random one if none are */
+    public int getMax() {
+
+        double m = Double.MIN_VALUE;
+        int best = -1;
+        for (int i = 0; i < y.length; i++) {
+            double Y = y[i];
+            if (Y > m) {
+                m = Y;
+                best = i;
+            }
+        }
+        if (best == -1) return (int)(Math.random() * y.length);
+        return best;
+    }
 }

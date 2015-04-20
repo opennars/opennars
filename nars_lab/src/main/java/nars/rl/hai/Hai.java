@@ -1,9 +1,12 @@
 package nars.rl.hai;
 
+import nars.util.data.XORShiftRandom;
+
 /** Original Q-Learning + SOM agent by patham9 */
 public class Hai {
 
-    public static double random(double max) { return Math.random() * max;    }
+    //public static double random(double max) { return Math.random() * max;    }
+    public static double random(double max) { return XORShiftRandom.global.nextDouble() * max;    }
 
     double Q[][][]; //state, action
     double et[][][];

@@ -2,10 +2,11 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
+import jurls.core.learning.Autoencoder;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -42,42 +43,6 @@ public class TestSOMAgent extends JPanel {
 
 
 
-//    abstract public static class HsomQNAR extends BaseQLAgent {
-//
-//        private final Hsom som;
-//        private final int dimensions;
-//
-//        public HsomQNAR(NAR nar, int dimensions, int actions) {
-//            super(nar, dimensions * dimensions, actions);
-//
-//            this.dimensions = dimensions;
-//            som = new Hsom(dimensions, dimensions);
-//        }
-//
-//        @Override
-//        protected void initializeQ(int s, int a) {
-//            System.out.println(qterm(s, a));
-//        }
-//
-//        @Override
-//        public Term getStateTerm(int s) {
-//            //return nar.term("<state --> [s" + s + "]>");
-//            int row = s / dimensions;
-//            int column = s % dimensions;
-//            return nar.term("<state --> [(s" + row + ",s" + column + ")]>");
-//        }
-//
-//        public void learn(double[] input, double reward) {
-//            som.learn(input);
-//            int s = som.winnerx * dimensions + som.winnery;
-//            //System.out.println(Arrays.toString(input) + " " + reward );
-//            //System.out.println(som.winnerx + " " + som.winnery + " -> " + s);
-//
-//            //System.out.println(Arrays.deepToString(q));
-//            super.learn(s, reward);
-//        }
-//    }
-
     /* dimension reduction / input processing implementations */
     public interface Perception {
 
@@ -103,7 +68,8 @@ public class TestSOMAgent extends JPanel {
         @Override
         public int setEnvironment(RLEnvironment env) {
             this.env = env;
-            som = new Hsom(env.inputDimension(), env.inputDimension());
+
+            som = new Hsom(env.inputDimension()+1, env.inputDimension());
             return som.width()*som.width();
         }
 
@@ -161,6 +127,61 @@ public class TestSOMAgent extends JPanel {
         }
     }
 
+    /** denoising autoencoder */
+    public static class AEPerception implements Perception {
+
+        private final MatrixImage vis;
+        private Autoencoder ae = null;
+        private final int nodes;
+        private QLAgent agent;
+
+        double noise = 0.001;
+        double learningRate = 0.01;
+
+        public AEPerception(int nodes) {
+            this.nodes = nodes;
+
+            new NWindow("AE",
+                    vis = new MatrixImage(400, 400)
+            ).show(400, 400);
+        }
+
+        @Override
+        public int setEnvironment(RLEnvironment env) {
+            ae = new Autoencoder(env.inputDimension(), nodes);
+            return nodes;
+        }
+
+        @Override
+        public void setAgent(QLAgent agent) {
+            this.agent = agent;
+        }
+
+        @Override
+        public void perceive(double[] input, double reward, double t) {
+            double error = ae.train(input, learningRate, 0, noise, false);
+            int closest = ae.getMax();
+
+            float conf = (float) (1.0f / (1.0f + error)); //TODO normalize against input mag?
+
+            //perception input
+
+            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
+
+            if (vis!=null) {
+
+                vis.draw(new Data2D() {
+                    @Override
+                    public double getValue(int x, int y) {
+                        return ae.W[y][x];
+                    }
+                }, ae.W.length, ae.W[0].length, -1, 1);
+                vis.repaint();
+            }
+
+            agent.learn(closest, reward, conf);
+        }
+    }
     //Autoencoder
     //GNG
     //DBSCAN?
@@ -182,8 +203,14 @@ public class TestSOMAgent extends JPanel {
         double lastReward = 0;
 
 
-
-        public QLAgent(NAR nar, RLEnvironment env, Perception p) {
+        /**
+         *
+         * @param nar
+         * @param env
+         * @param p
+         * @param epsilon randomness factor
+         */
+        public QLAgent(NAR nar, RLEnvironment env, Perception p, double epsilon) {
             super(nar, p.setEnvironment(env), env.numActions());
 
             this.env = env;
@@ -193,7 +220,7 @@ public class TestSOMAgent extends JPanel {
             this.actByPriority = new ArrayRealVector(env.numActions());
             this.actByExpectation = new ArrayRealVector(env.numActions());
 
-            setEpsilon(0); //no randomness
+            setEpsilon(epsilon);
 
             nar.on(new Operator("^move") {
 
@@ -251,23 +278,6 @@ public class TestSOMAgent extends JPanel {
 
             return super.learn(state, reward, nextAction, confidence);
         }
-
-//        public int learn(double[] input, double reward, float conf) {
-//
-//            Node closest = som.learn(input);
-//            double d = closest.getLocalDistance();
-//
-//            //perception input
-//
-//            //System.out.println(closest.id + "<" + Texts.n4(closest.getLocalError()) + ">: " + Arrays.toString(input) + " -> " + Arrays.toString(closest.getDataRef()));
-//
-//            float freq = 1.0f;
-//            nar.input(getStateTerm(closest.id) + ". :|: %" + freq + ";" + conf + "%");
-//
-//
-//            return super.learn(closest.id, reward, conf);
-//
-//        }
 
 
 
@@ -377,7 +387,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-    public TestSOMAgent(RLEnvironment d, int somSize) {
+    public TestSOMAgent(RLEnvironment d, Perception p) {
         super();
 
         double[] exampleObs = d.observe();
@@ -403,7 +413,7 @@ public class TestSOMAgent extends JPanel {
         };
 
 
-        ql = new QLAgent(nar, d, new GNGPerception(somSize)) {
+        ql = new QLAgent(nar, d, p, 0.02) {
             @Override
             public void onFrame() {
                 super.onFrame();
@@ -480,17 +490,21 @@ public class TestSOMAgent extends JPanel {
      */
     public static void main(String args[]) {
 
-        Global.DEBUG = true;
+        Global.DEBUG = false;
 
         /* Create and display the form */
-        //RLEnvironment d = new PoleBalancing2D();
+        RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
 
         d.newWindow();
 
-        new TestSOMAgent(d, 16);
+        //Perception p = new GNGPerception(64);
+        //Perception p = new HaiSOMPerception();
+        Perception p = new AEPerception(8);
+
+        new TestSOMAgent(d, p);
 
 
     }
