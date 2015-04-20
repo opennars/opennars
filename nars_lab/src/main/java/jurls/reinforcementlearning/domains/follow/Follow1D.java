@@ -5,12 +5,11 @@
  */
 package jurls.reinforcementlearning.domains.follow;
 
-import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.RLEnvironment;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,20 +17,20 @@ import java.util.List;
  *
  * @author thorsten
  */
-public class Follow1D implements RLDomain {
+public class Follow1D implements RLEnvironment {
 
-    final int numActions = 9;
+    final int numActions = 5;
 
     //final int discretization = 3;
 
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
-    final double acceleration = 0.05;
+    final double acceleration = 0.03;
     final double decelerationFactor = 0.25;
-    double speed = 0.01;
+    double speed = 0.02;
 
 
-    private final int history = 4096;
+    private final int history = 512;
 
 
     final int historyPoints = 1; //includes current value
@@ -166,8 +165,8 @@ public class Follow1D implements RLDomain {
 
     @Override
     public void takeAction(int action) {
-        takeActionPosition(action);
-        //takeActionVelocity(action);
+        //takeActionPosition(action);
+        takeActionVelocity(action);
         //takeActionAccelerate(action);
 
 

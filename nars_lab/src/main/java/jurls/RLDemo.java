@@ -18,7 +18,7 @@ import jurls.examples.menu.AgentMenu;
 import jurls.examples.menu.ObjectListMenu;
 import jurls.examples.menu.RLMenu;
 import jurls.reinforcementlearning.domains.PoleBalancing2D;
-import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.follow.Follow1D;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 
@@ -58,7 +58,7 @@ public class RLDemo extends javax.swing.JFrame {
             follow1D.setSelected(true);
         }
 
-        public RLDomain getDomain() {
+        public RLEnvironment getDomain() {
             if (poleBalancing.isSelected()) {
                 return new PoleBalancing2D();
             }
@@ -80,7 +80,7 @@ public class RLDemo extends javax.swing.JFrame {
     }
 
     private LearnerAndActor agent;
-    private RLDomain rLDomain;
+    private RLEnvironment rLDomain;
 
     final int updatePeriodMS = 0;
     private int numIterationsPerLoop = 1;

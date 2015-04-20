@@ -20,11 +20,11 @@ package jurls.reinforcementlearning.domains.tetris;
 
 import java.awt.Component;
 import java.net.URL;
-import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.tetris.visualizer.TetrisVisualizer;
 
 
-public class Tetris implements RLDomain {
+public class Tetris implements RLEnvironment {
 
     private double currentScore = 0;
     public TetrisState gameState = null;

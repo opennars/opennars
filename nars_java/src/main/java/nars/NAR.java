@@ -414,14 +414,16 @@ public class NAR implements Runnable {
 
     
     @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
-        if (isRunning()) stop();
-        this.minFramePeriodMS = minCyclePeriodMS;
-        this.cyclesPerFrame = cyclesPerFrame;
-        running = true;
-        if (thread == null) {
-            thread = new Thread(this, this.toString() + "_reasoner");
-            thread.start();
-        }
+        throw new RuntimeException("WARNING: this threading model is not safe and deprecated");
+
+//        if (isRunning()) stop();
+//        this.minFramePeriodMS = minCyclePeriodMS;
+//        this.cyclesPerFrame = cyclesPerFrame;
+//        running = true;
+//        if (thread == null) {
+//            thread = new Thread(this, this.toString() + "_reasoner");
+//            thread.start();
+//        }
     }
     
     /**
@@ -441,12 +443,14 @@ public class NAR implements Runnable {
      * Stop the logic process, killing its thread.
      */
     @Deprecated public void stop() {
-        if (thread!=null) {
-            thread.interrupt();
-            thread = null;
-        }
-        stopped = true;
-        running = false;
+        throw new RuntimeException("WARNING: this threading model is not safe and deprecated");
+
+//        if (thread!=null) {
+//            thread.interrupt();
+//            thread = null;
+//        }
+//        stopped = true;
+//        running = false;
     }    
 
     /** steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of */

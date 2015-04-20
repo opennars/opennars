@@ -13,7 +13,7 @@ import java.awt.*;
  *
  * @author thorsten
  */
-public interface RLDomain {
+public interface RLEnvironment {
 
     public double[] observe();
 

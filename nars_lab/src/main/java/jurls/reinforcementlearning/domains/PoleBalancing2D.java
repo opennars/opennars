@@ -6,37 +6,37 @@
 package jurls.reinforcementlearning.domains;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 /**
  *
  * @author thorsten
  */
-public class PoleBalancing2D implements RLDomain {
+public class PoleBalancing2D implements RLEnvironment {
 
     private final Physics2D physics2D;
     private final Point agentPoint;
     private final Point pendulumPoint;
     private final PhysicsRenderer physicsRenderer;
 
-    double speed = 0.5;
-    double dt = 0.001;
-    double gravity = 0.08;
+    double speed = 0.1;
+    double dt = 0.2;
+    double gravity = 0.2;
 
     int maxX = 800;
     int minAgentX = 50;
     int maxAgentX = 750;
     double poleLength = 175;
-    double decay = 0.999;
-    double decay2 = 0.999;
+    double decay = 0.995;
+    double decay2 = 0.995;
+    double agentY = 300;
 
 
     public PoleBalancing2D() {
         physics2D = new Physics2D(gravity, 300);
         physicsRenderer = new PhysicsRenderer();
         physicsRenderer.physics2D = physics2D;
-        agentPoint = new Point(400, 300, 0, 0, decay2, 0);
-        pendulumPoint = new Point(400, 300-poleLength, 0, 0, decay, decay);
+        agentPoint = new Point((minAgentX + maxAgentX) / 2.0, agentY, 0, 0, decay2, 0);
+        pendulumPoint = new Point((minAgentX + maxAgentX)/2.0, agentY-poleLength, 0, 0, decay, decay);
         Connection c = new Connection(poleLength, agentPoint, pendulumPoint);
         physics2D.points.add(agentPoint);
         physics2D.points.add(pendulumPoint);

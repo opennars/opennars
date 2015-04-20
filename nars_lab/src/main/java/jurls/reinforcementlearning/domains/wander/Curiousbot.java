@@ -1,6 +1,6 @@
 package jurls.reinforcementlearning.domains.wander;
 
-import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.brain.MyPerception;
 import nars.rl.curiosity.Curiosity;
 
@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Curiousbot extends JComponent implements RLDomain {
+public class Curiousbot extends JComponent implements RLEnvironment {
 
     private World world;
     double[] inputs;

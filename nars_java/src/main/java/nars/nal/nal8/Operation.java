@@ -24,10 +24,11 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.TruthValue;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.term.Compound;
@@ -268,9 +269,25 @@ public class Operation extends Inheritance {
         return getArguments().term;
     }
 
-    public float getDesire(Memory m) {
+    public TruthValue getConceptDesire(Memory m) {
         Concept c = m.concept(getTerm());
-        if (c == null) return 0;
-        return c.getDesire().getExpectation();
+        if (c == null) return null;
+        return c.getDesire();
     }
+    public float getConceptExpectation(Memory m) {
+        TruthValue tv = getConceptDesire(m);
+        if (tv == null) return 0;
+        return tv.getExpectation();
+    }
+
+
+    public TruthValue getTaskDesire() {
+        return getTask().getDesire();
+    }
+    public float getTaskExpectation() {
+        TruthValue tv = getTaskDesire();
+        if (tv == null) return 0;
+        return tv.getExpectation();
+    }
+
 }

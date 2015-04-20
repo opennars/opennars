@@ -19,7 +19,7 @@ public class Physics2D {
     public final List<Connection> connections = new ArrayList<>();
     public double floor;
 
-    double w = 0.1;
+    double w = 0.4;
 
     public Physics2D(double gravity,double floor) {
         this.gravity = gravity;

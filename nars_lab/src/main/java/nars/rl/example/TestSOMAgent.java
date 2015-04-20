@@ -4,8 +4,8 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
-import jurls.reinforcementlearning.domains.RLDomain;
-import jurls.reinforcementlearning.domains.tetris.Tetris;
+import jurls.reinforcementlearning.domains.RLEnvironment;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -24,6 +24,8 @@ import nars.rl.HaiQNAR;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
 import nars.rl.hai.Hsom;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +41,8 @@ import java.awt.*;
 public class TestSOMAgent extends JPanel {
 
 
-    private final RLDomain domain;
+    private final RLEnvironment environment;
+    private final RL rl;
 
     abstract public static class HsomQNAR extends HaiQNAR {
 
@@ -139,77 +142,123 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
-    Task strongest = null; //current action
-    int exeCount = 0;
 
-    public TestSOMAgent(RLDomain d, int somSize) {
+    /** interface to an RL world/experiment/etc..
+     * implements a per-frame reaction in which an action
+     * is decided either by NARS or an Agent, the world updated,
+     * and the new input processed by the Agent's perception interface */
+    public static class RL extends FrameReaction {
+
+        private final NAR nar;
+        private final RLEnvironment environment;
+        private final ArrayRealVector actByExpectation;
+        private final ArrayRealVector actByPriority;
+        private final HgngQNAR agent;
+        //private final ArrayRealVector actByQ;
+
+        public int actByQStrongest = -1; //default q-action if NARS does not specify one by the next frame
+        double lastReward = 0;
+
+        public RL(HgngQNAR agent, RLEnvironment environment) {
+            super(agent.nar);
+
+            this.nar = agent.nar;
+            this.agent = agent;
+            this.environment = environment;
+
+
+            this.actByPriority = new ArrayRealVector(environment.numActions());
+            this.actByExpectation = new ArrayRealVector(environment.numActions());
+        }
+
+        public void desire(int action, Operation operation) {
+            desire(action, operation.getTask().getPriority(), operation.getTaskExpectation() );
+        }
+
+        protected void desire(int action, float priority, float expectation) {
+            actByPriority.addToEntry(action, priority);
+            actByExpectation.addToEntry(action, expectation);
+        }
+
+        /** decides which action, TODO make this configurable */
+        public synchronized int decide() {
+
+            double m = actByExpectation.getL1Norm();
+            if (m == 0) return -1;
+
+            int winner = actByExpectation.getMaxIndex();
+            if (winner == -1) return -1; //no winner?
+
+            RealVector normalized = actByExpectation.unitVector();
+            double alignment = normalized.dotProduct(actByExpectation);
+
+            System.out.print("NARS act: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
+            System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%" );
+
+            actByExpectation.mapMultiplyToSelf(0); //zero
+            actByPriority.mapMultiplyToSelf(0); //zero
+
+            return winner;
+        }
+
+        @Override
+        public void onFrame() {
+            long now = nar.time();
+
+            int action = decide();
+
+            if (action==-1) {
+                action = actByQStrongest;
+                System.out.print("QL act: " + action);
+
+                if (action == -1) {
+                    //no qAction specified either, choose random
+                    action = (int)(Math.random() * environment.numActions());
+                }
+
+                /** introduce belief or goal for the QL action */
+                agent.act(action, Symbols.GOAL);
+            }
+
+            environment.takeAction(action);
+
+            environment.worldStep();
+
+
+            double r = environment.reward();
+
+            //double dr = r - lastReward;
+
+            lastReward = r;
+
+            double[] o = environment.observe();
+
+            //System.out.println(Arrays.toString(o) + " " + r);
+
+            System.out.println("  reward=" + Texts.n4(r));
+
+            actByQStrongest = agent.learn(o, r);
+
+
+
+        }
+
+
+    };
+
+
+    public TestSOMAgent(RLEnvironment d, int somSize) {
         super();
 
-        this.domain = d;
+        this.environment = d;
         double[] exampleObs = d.observe();
 
         nar = new NAR(new Discretinuous(2000, 10, 4).setInternalExperience(null));
 
-        AbstractReaction rl = new FrameReaction(nar) {
-
-            public int nextQAction = -1; //default q-action if NARS does not specify one by the next frame
-            double lastReward = 0;
-
-            @Override
-            public void onFrame() {
-                long now = nar.time();
-
-                int action = -1;
-
-                if (strongest!=null) {
-                    Term ta = ((Operation) strongest.getTerm()).getArgument(0);
-                    action = Integer.parseInt(ta.toString());
-                    System.out.print("NARS act: '" + action + "' (from " + exeCount + " total executions) vs. '" + nextQAction + "' qAct");
-                }
-                if (action == -1) {
-                    action = nextQAction;
-                    System.out.print("QL act: " + action);
-
-                    if (action == -1) {
-                        //no qAction specified either, choose random
-                        action = (int)(Math.random() * domain.numActions());
-                    }
-
-                    ql.act(action, Symbols.JUDGMENT);
-                }
-
-                domain.takeAction(action);
-
-                domain.worldStep();
 
 
-                double r = domain.reward();
-
-                //double dr = r - lastReward;
-
-                lastReward = r;
-
-                double[] o = domain.observe();
-
-                //System.out.println(Arrays.toString(o) + " " + r);
-
-                System.out.println("  reward=" + Texts.n4(r));
-
-                nextQAction = ql.learn(o, r);
-
-                exeCount = 0;
-                strongest = null;
-
-                SwingUtilities.invokeLater(swingUpdate);
-
-
-            }
-        };
         nar.on(new Operator("^move") {
 
-
-
-            long lastWorldStep = 0;
 
 
 
@@ -223,16 +272,8 @@ public class TestSOMAgent extends JPanel {
 
                 Term ta = ((Operation) operation.getTerm()).getArgument(0);
                 try {
-                    Integer.parseInt(ta.toString());
-
-                    exeCount++;
-
-                    Task newTask = operation.getTask();
-                    if (strongest == null) strongest = newTask;
-                    else {
-                        if (strongest.getDesire().getExpectation() > newTask.getDesire().getExpectation())
-                            strongest = newTask;
-                    }
+                    int a = Integer.parseInt(ta.toString());
+                    rl.desire(a, operation);
 
                 } catch (NumberFormatException e) {
 
@@ -242,14 +283,27 @@ public class TestSOMAgent extends JPanel {
             }
         });
 
-
-        ql = new HgngQNAR(nar, exampleObs.length, somSize, domain.numActions()) {
+        ql = new HgngQNAR(nar, exampleObs.length, somSize, environment.numActions()) {
             @Override
             public Operation getActionOperation(int s) {
                 return (Operation) nar.term("move(" + s + ")");
             }
         };
         ql.init();
+
+
+
+        rl = new RL(ql, environment) {
+
+            @Override
+            public void onFrame() {
+                super.onFrame();
+
+                SwingUtilities.invokeLater(swingUpdate);
+            }
+        };
+
+
 
         nar.setCyclesPerFrame(cyclesPerFrame);
         nar.param.shortTermMemoryHistory.set(1);
@@ -308,7 +362,7 @@ public class TestSOMAgent extends JPanel {
         public void run() {
             repaint();
 
-            domain.component().repaint();
+            environment.component().repaint();
 
             mi.draw(new Data2D() {
                 @Override
@@ -330,17 +384,17 @@ public class TestSOMAgent extends JPanel {
      */
     public static void main(String args[]) {
 
-        Global.DEBUG = false;
+        Global.DEBUG = true;
 
         /* Create and display the form */
-        //RLDomain d = new PoleBalancing2D();
-        //RLDomain d = new Follow1D();
-        //RLDomain d = new Curiousbot();
-        RLDomain d = new Tetris(10, 14);
+        //RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new Follow1D();
+        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Tetris(10, 14);
 
         d.newWindow();
 
-        new TestSOMAgent(d, 100);
+        new TestSOMAgent(d, 16);
 
 
     }

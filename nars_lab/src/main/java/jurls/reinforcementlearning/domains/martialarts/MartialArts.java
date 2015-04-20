@@ -21,13 +21,13 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import jurls.reinforcementlearning.domains.RLDomain;
+import jurls.reinforcementlearning.domains.RLEnvironment;
 
 /**
  *
  * @author thorsten
  */
-public class MartialArts implements RLDomain {
+public class MartialArts implements RLEnvironment {
 
     private final World world = new World();
     private final Renderer renderer = new Renderer(world);
