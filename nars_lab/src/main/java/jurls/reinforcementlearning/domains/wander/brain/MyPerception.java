@@ -1,10 +1,11 @@
 package jurls.reinforcementlearning.domains.wander.brain;
 
 import jurls.reinforcementlearning.domains.wander.Player;
+import org.apache.commons.math3.util.MathUtils;
 
 public class MyPerception  {
 
-    public static final int RADAR_ANGLES = 3;
+    public static final int RADAR_ANGLES = 2;
     public static final int RADAR_DISTS = 1; //rows
     private static final long serialVersionUID = 1L;
     public static final double RADAR_R = 1.0; //0.6 = mostly front
@@ -20,14 +21,14 @@ public class MyPerception  {
 
     public double[] updateInputValues(double[] input) {
         if (input == null)
-            input = new double[RADAR_DISTS * (RADAR_ANGLES*2+1) + 2];
+            input = new double[RADAR_DISTS * (RADAR_ANGLES*2+1) + 1];
         
         int j = 0;
 
 
         //input[j++] = (player.angle % (Math.PI*2) / (Math.PI*2) - 0.5);
-        input[j++] = player.vx * 10;
-        input[j++] = player.vy * 10;
+
+        input[j++] = MathUtils.normalizeAngle(player.angle,0)/(Math.PI) - 1.0;
 
         for (int d = RADAR_D0; d <= RADAR_DISTS; d++) {
             for (int a = -RADAR_ANGLES; a <= RADAR_ANGLES; a++) {

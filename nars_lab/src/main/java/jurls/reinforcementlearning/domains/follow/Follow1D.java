@@ -25,15 +25,15 @@ public class Follow1D implements RLEnvironment {
 
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
-    final double acceleration = 0.03;
+    final double acceleration = 0.06;
     final double decelerationFactor = 0.25;
-    double speed = 0.02;
+    double speed = 0.9;
 
 
-    private final int history = 512;
+    private final int history = 64;
 
 
-    final int historyPoints = 1; //includes current value
+    final int historyPoints = 3; //includes current value
     
     final int historyInterval = history / (historyPoints+1); //how many history points to skip for each observation
     
@@ -134,7 +134,8 @@ public class Follow1D implements RLEnvironment {
     @Override
     public double reward() {
         double dist = Math.abs(myPos - targetPos) / maxPos;
-        return 1.0 - dist * 3f;
+        if (dist < 0.1) return (0.1 - dist) * 10.0;
+        return -(dist-0.1);
     }
 
     public void updateTarget(int time) {        
@@ -211,13 +212,13 @@ public class Follow1D implements RLEnvironment {
 
         if (myPos > maxPos) {
             myPos = maxPos;
-            myV = 0;
-            //myV = -myV; //bounce
+            //myV = 0;
+            myV = -myV/2; //bounce
         }
         if (myPos < 0) {
             myPos = 0;
-            myV = 0;
-            //myV = -myV; //bounce
+            //myV = 0;
+            myV = -myV/2; //bounce
         }
 
 

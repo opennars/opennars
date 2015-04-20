@@ -5,13 +5,12 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.learning.Autoencoder;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import nars.Events;
+import jurls.reinforcementlearning.domains.follow.Follow1D;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.event.AbstractReaction;
 import nars.event.FrameReaction;
 import nars.gui.NARSwing;
 import nars.io.Symbols;
@@ -125,21 +124,51 @@ public class TestSOMAgent extends JPanel {
 
             agent.learn(closest.id, reward, conf);
         }
+
+        /*
+        public void newVisWindow() {
+
+        new GraphPanelNengo<Node,Connection>(ql.som) {
+
+            @Override
+            public Color getEdgeColor(UIEdge<? extends UIVertex> v) {
+
+                Node a = (Node)v.getSource().vertex;
+                Node b = (Node)v.getTarget().vertex;
+                float dist = (float)a.getDistance(b);
+                float o = 1f / (1f + dist);
+                return new Color(o, 0.25f, 1f - o, 0.25f + 0.75f * o);
+            }
+
+        }.newWindow(800, 600);
+
+        }*/
     }
 
     /** denoising autoencoder */
     public static class AEPerception implements Perception {
 
         private final MatrixImage vis;
+        private final int history;
         private Autoencoder ae = null;
         private final int nodes;
         private QLAgent agent;
 
         double noise = 0.001;
-        double learningRate = 0.01;
+        double learningRate = 0.05;
+        private double[] ii;
+        private int frameDimension;
+
+        /** present and history input buffer */
 
         public AEPerception(int nodes) {
+            this(nodes, 1);
+        }
+
+        /** history=1 means no history, just present */
+        public AEPerception(int nodes, int history) {
             this.nodes = nodes;
+            this.history = history;
 
             new NWindow("AE",
                     vis = new MatrixImage(400, 400)
@@ -148,7 +177,13 @@ public class TestSOMAgent extends JPanel {
 
         @Override
         public int setEnvironment(RLEnvironment env) {
-            ae = new Autoencoder(env.inputDimension(), nodes);
+            frameDimension = env.inputDimension();
+            if (history > 1)
+                ii = new double[frameDimension * history];
+            else
+                ii = env.observe();
+
+            ae = new Autoencoder(ii.length, nodes);
             return nodes;
         }
 
@@ -159,7 +194,27 @@ public class TestSOMAgent extends JPanel {
 
         @Override
         public void perceive(double[] input, double reward, double t) {
-            double error = ae.train(input, learningRate, 0, noise, false);
+
+            if (history > 1) {
+
+                //subtract old input from current input
+                for (int i = 0; i < input.length; i++) {
+                    ii[i] = input[i] - ii[i];
+                }
+
+                //shift over
+                System.arraycopy(ii, 0, ii, frameDimension, ii.length - frameDimension);
+
+                //copy new input to first frame
+                System.arraycopy(input, 0, ii, 0, input.length);
+            }
+            else {
+                ii = input;
+            }
+
+            //System.out.println(Arrays.toString(ii));
+
+            double error = ae.train(ii, learningRate, 0, noise, true);
             int closest = ae.getMax();
 
             float conf = (float) (1.0f / (1.0f + error)); //TODO normalize against input mag?
@@ -298,7 +353,10 @@ public class TestSOMAgent extends JPanel {
 
             protected void desire(int action, float priority, float expectation) {
                 actByPriority.addToEntry(action, priority);
-                actByExpectation.addToEntry(action, expectation);
+                //actByExpectation.addToEntry(action, expectation);
+
+                //TEMPORARY: sum expectation * taskPriority
+                actByExpectation.addToEntry(action, expectation * priority);
             }
 
 
@@ -374,16 +432,12 @@ public class TestSOMAgent extends JPanel {
         }
     }
 
-    private final QLAgent ql;
-    private final MatrixImage mi;
 
 
-    private final int cyclesPerFrame = 50;
+
 
 
     public final NAR nar;
-
-
 
 
 
@@ -392,28 +446,34 @@ public class TestSOMAgent extends JPanel {
 
         double[] exampleObs = d.observe();
 
-        nar = new NAR(new Discretinuous(2000, 10, 4).setInternalExperience(null));
+        nar = new NAR(new Discretinuous(concepts, conceptsPerCycle, 4).setInternalExperience(null));
 
 
-        final Runnable swingUpdate = new Runnable() {
+        final QLAgent ql = new QLAgent(nar, d, p, 0.02) {
 
-            @Override
-            public void run() {
-                repaint();
-
-                d.component().repaint();
-
-                mi.draw(new Data2D() {
-                    @Override
-                    public double getValue(int x, int y) {
-                        return ql.q(y, x);
-                    }
-                }, ql.nstates, ql.nactions, -1, 1);
-            }
-        };
+            private final MatrixImage mi = new MatrixImage(400, 400);
+            private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
 
 
-        ql = new QLAgent(nar, d, p, 0.02) {
+            final Runnable swingUpdate = new Runnable() {
+
+                @Override
+                public void run() {
+                    repaint();
+
+                    d.component().repaint();
+
+                    mi.draw(new Data2D() {
+                        @Override
+                        public double getValue(int x, int y) {
+                            return q(y, x);
+                        }
+                    }, nstates, nactions, -1, 1);
+                }
+            };
+
+
+
             @Override
             public void onFrame() {
                 super.onFrame();
@@ -427,18 +487,18 @@ public class TestSOMAgent extends JPanel {
 
 
         nar.setCyclesPerFrame(cyclesPerFrame);
-        nar.param.shortTermMemoryHistory.set(1);
-        nar.param.duration.set(5);         //nar.param.duration.setLinear
+        nar.param.shortTermMemoryHistory.set(2);
+        nar.param.duration.set(5 * cyclesPerFrame / 2);         //nar.param.duration.setLinear
         nar.param.decisionThreshold.set(0.7);
         nar.param.outputVolume.set(5);
 
 
-        new AbstractReaction(nar, Events.CycleEnd.class) {
-            @Override
-            public void event(Class event, Object[] args) {
-                cycle();
-            }
-        };
+//        new AbstractReaction(nar, Events.CycleEnd.class) {
+//            @Override
+//            public void event(Class event, Object[] args) {
+//                cycle();
+//            }
+//        };
 
 //        new AbstractReaction(nar, Events.FrameEnd.class) {
 //            @Override
@@ -454,36 +514,14 @@ public class TestSOMAgent extends JPanel {
         new Frame().setVisible(true);
         this.setIgnoreRepaint(true);
 
-        /*
-        new GraphPanelNengo<Node,Connection>(ql.som) {
-
-            @Override
-            public Color getEdgeColor(UIEdge<? extends UIVertex> v) {
-
-                Node a = (Node)v.getSource().vertex;
-                Node b = (Node)v.getTarget().vertex;
-                float dist = (float)a.getDistance(b);
-                float o = 1f / (1f + dist);
-                return new Color(o, 0.25f, 1f - o, 0.25f + 0.75f * o);
-            }
-
-        }.newWindow(800, 600);
-        */
-
-        new NWindow("Q",
-                mi = new MatrixImage(400, 400)
-        ).show(400, 400);
-
-    }
-
-
-
-
-    protected void cycle() {
 
 
     }
 
+
+    int concepts = 2000;
+    int conceptsPerCycle = 10;
+    private final int cyclesPerFrame = 100;
 
     /**
      * @param args the command line arguments
@@ -493,16 +531,16 @@ public class TestSOMAgent extends JPanel {
         Global.DEBUG = false;
 
         /* Create and display the form */
-        RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        //RLEnvironment d = new Curiousbot();
+        RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
 
         d.newWindow();
 
         //Perception p = new GNGPerception(64);
         //Perception p = new HaiSOMPerception();
-        Perception p = new AEPerception(8);
+        Perception p = new AEPerception(32, 4);
 
         new TestSOMAgent(d, p);
 

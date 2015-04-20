@@ -33,7 +33,7 @@ public class TetrisState {
     static final int NONE = 4; /*The no-action Action*/
     static final int FALL = 5; /* fall down */
 
-    float fallingBLockColor = 0.75f;
+    float fallingBLockColor = 0.5f;
 
     private Random randomGenerator = new Random();
     
