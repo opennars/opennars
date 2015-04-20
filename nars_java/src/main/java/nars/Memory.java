@@ -283,7 +283,7 @@ public class Memory implements Serializable {
         this.self = Symbols.DEFAULT_SELF; //default value
 
         this.operators = Global.newHashMap();
-        this.event = new EventEmitter();
+        this.event = new EventEmitter.DefaultEventEmitter();
 
 
         conceptBuilders = new ArrayList(1);
@@ -744,6 +744,8 @@ public class Memory implements Serializable {
 
     /** executes one complete memory cycle (if not disabled) */
     public synchronized void cycle(boolean newFrame) {
+
+        event.cycle();
 
         if (!isEnabled()) {
             return;

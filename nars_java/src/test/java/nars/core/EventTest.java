@@ -22,8 +22,23 @@ public class EventTest {
 
     @Test
     public void testReactor() throws InterruptedException {
+        EventEmitter e = EventEmitter.ReactorEventEmitter.newSynchronous();
+        testEmitter(e);
+    }
+    @Test
+    public void testReactorException() throws InterruptedException {
+        EventEmitter e = EventEmitter.ReactorEventEmitter.newSynchronous();
+        testException(e);
+    }
 
-        EventEmitter e = EventEmitter.newSynchronous();
+    @Test
+    public void testDefault() throws InterruptedException {
+        EventEmitter e = new EventEmitter.DefaultEventEmitter();
+        testEmitter(e);
+    }
+
+    public void testEmitter(EventEmitter e) {
+
 
         AtomicBoolean b = new AtomicBoolean();
 
@@ -37,22 +52,18 @@ public class EventTest {
             }
         });
 
-        e.notify(Events.CycleEnd.class, new Object[] { true} );
+        e.cycle();
 
+        e.emit(Events.CycleEnd.class);
 
-        //Thread.sleep(100);
-
-        e.shutdown();
 
         assertTrue(b.get());
     }
 
-    @Test
-    public void testReactorException() throws InterruptedException {
 
+    public void testException(EventEmitter e) {
         AtomicBoolean b = new AtomicBoolean();
 
-        EventEmitter e = new EventEmitter();
 
         e.on(Events.CycleEnd.class, new Reaction() {
             @Override
@@ -66,9 +77,10 @@ public class EventTest {
                 b.set(true);
             }
         });
-        e.notify(Events.CycleEnd.class);
 
-        Thread.sleep(100);
+        e.cycle();
+
+        e.emit(Events.CycleEnd.class);
 
 
         assertTrue(b.get());
