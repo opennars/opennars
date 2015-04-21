@@ -5,8 +5,8 @@ import automenta.vivisect.swing.NWindow;
 import jurls.core.learning.Autoencoder;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -529,16 +529,16 @@ public class TestSOMAgent extends JPanel {
         Global.DEBUG = false;
 
         /* Create and display the form */
-        RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
         //RLEnvironment d = new Curiousbot();
-        //RLEnvironment d = new Tetris(10, 14);
+        RLEnvironment d = new Tetris(10, 14);
 
         d.newWindow();
 
         //Perception p = new GNGPerception(64);
         //Perception p = new HaiSOMPerception();
-        Perception p = new AEPerception(16, 2);
+        Perception p = new AEPerception(32, 2);
 
         new TestSOMAgent(d, p);
 

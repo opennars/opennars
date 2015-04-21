@@ -45,16 +45,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
     private final Multimap<Concept, ConceptPanel> concept = HashMultimap.create();
     static float conceptGraphFPS = 4; //default update frames per second
 
+    final Set<Concept> changed = new HashSet();
 
     public ConceptPanelBuilder(NAR n) {
-        super(n, Events.FrameEnd.class
-                /*,
+        super(n, Events.FrameEnd.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class*/);
+                Events.ConceptGoalRemove.class);
 
         this.nar = n;
 
@@ -77,16 +77,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
     public ConceptPanel newPanel(Concept c, boolean label, boolean full, int chartSize) {
         ConceptPanel cp = new ConceptPanel(c, label, full, chartSize){
 
-            @Override
-            protected void visibility(final boolean appearedOrDisappeared) {
-
-                    if (appearedOrDisappeared) {
-                        //concept.put(c, this);
-                    } else {
-                        this.closed = true;
-                    }
-
-            }
+//            @Override
+//            protected void visibility(final boolean appearedOrDisappeared) {
+//
+//                    if (appearedOrDisappeared) {
+//                        //concept.put(c, this);
+//                    } else {
+//                        this.closed = true;
+//                    }
+//
+//            }
         }.update(nar.time());
         synchronized (concept) {
             concept.put(c, cp);
@@ -99,8 +99,39 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         if (event == FrameEnd.class) {
             //SwingUtilities.invokeLater(this);
-            updateAll();
+            if (isAutoRemove())
+                updateAll();
+            else
+                updateChanged();
         }
+        else {
+            if (args[0] instanceof Concept) {
+                Concept c = (Concept)args[0];
+                changed.add(c);
+            }
+            else {
+                throw new RuntimeException(this + " unable to process unknown event format: " + event + " with " + Arrays.toString(args));
+            }
+        }
+    }
+
+    public boolean isAutoRemove() {
+        return true;
+    }
+
+    public synchronized void updateChanged() {
+
+        if (changed.isEmpty()) return;
+
+        final long now = nar.time();
+
+        for (Concept c : changed) {
+            for (ConceptPanel cp : concept.get(c)) {
+                cp.update(now);
+            }
+        }
+
+        changed.clear();
     }
 
     public void updateAll() {
@@ -111,7 +142,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             while (ee.hasNext()) {
                 final Map.Entry<Concept, ConceptPanel> e = ee.next();
                 final ConceptPanel cp = e.getValue();
-                if ((cp.closed) || (!cp.isVisible())) {
+                if (isAutoRemove() && (cp.closed) || (!cp.isVisible())) {
                     ee.remove();
                 }
                 else if ( cp.isVisible() ) {
@@ -119,6 +150,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 }
             }
         }
+    }
+
+    public boolean remove(ConceptPanel cp) {
+        return concept.remove(cp.concept, cp);
     }
 
     public void off() {
@@ -145,7 +180,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
 
 
-    public static class ConceptPanel extends NPanel {
+    public static class ConceptPanel extends JPanel {
 
         final float titleSize = 18f;
         private final Concept concept;
@@ -352,10 +387,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
             return this;
         }
 
-        @Override
-        protected void visibility(boolean appearedOrDisappeared) {
-            validate();
-        }
+//        @Override
+//        protected void visibility(boolean appearedOrDisappeared) {
+//            validate();
+//        }
 
 
     }

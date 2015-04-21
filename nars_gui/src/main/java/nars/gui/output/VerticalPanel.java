@@ -9,6 +9,8 @@ import nars.gui.VerticalLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  *
@@ -54,6 +56,19 @@ public class VerticalPanel extends NPanel {
     @Override
     protected void visibility(boolean appearedOrDisappeared) {
     
+    }
+
+    public synchronized java.util.List<Component> limit(int maxComponents) {
+        int toRemove = content.getComponentCount() - maxComponents;
+        if (toRemove <= 0) return Collections.EMPTY_LIST;
+
+        ArrayList<Component> removed = new ArrayList(toRemove);
+        for (int i = 0; i < toRemove; i++) {
+            Component j = content.getComponent(0);
+            removed.add(j);
+            content.remove(0);
+        }
+        return removed;
     }
 
 

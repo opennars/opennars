@@ -28,6 +28,8 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
     int y = 0;
 
+    final int maxItems = 256;
+
     public ConceptLogPanel(NAR c) {
         super(c);
 
@@ -45,7 +47,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
                 }
             }
         };
-        b = new ConceptPanelBuilder(nar);
+        b = newBuilder();
         add(content, BorderLayout.CENTER);
     }
 
@@ -74,9 +76,19 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         off();
 
         y = 0;
-        b = new ConceptPanelBuilder(nar);
+        b = newBuilder();
         content.removeAllVertically();
 
+    }
+
+    private ConceptPanelBuilder newBuilder() {
+         return new ConceptPanelBuilder(nar) {
+
+             @Override
+             public boolean isAutoRemove() {
+                 return false; //concept log panel will manage removals
+             }
+         };
     }
 
     public void applyPriority(JComponent p, float priority) {
@@ -134,21 +146,14 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     }
 
     protected synchronized void append(JComponent j) {
-
-        boolean queueUpdate = false;
-        if (pendingDisplay.isEmpty()) {
-            queueUpdate = true;
-        }
-
-        pendingDisplay.add(j);
-
-        if (queueUpdate)
+        if (pendingDisplay.add(j))
             SwingUtilities.invokeLater(this);
-
     }
 
     @Override
     public void run() {
+
+        if (pendingDisplay.size() == 0) return;
 
         Iterator<JComponent> i = pendingDisplay.iterator();
         while (i.hasNext()) {
@@ -163,6 +168,17 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
             i.remove();
         }
+
+
+        for (Component c : content.limit(maxItems)) {
+            if (c instanceof ConceptPanelBuilder.ConceptPanel) {
+                b.remove((ConceptPanelBuilder.ConceptPanel) c);
+                ((ConceptPanelBuilder.ConceptPanel)c).closed = true;
+            }
+        }
+
+
+        content.updateUI();
 
         SwingUtilities.invokeLater(content::scrollBottom);
     }
