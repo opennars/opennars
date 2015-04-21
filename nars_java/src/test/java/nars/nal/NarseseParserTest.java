@@ -1,5 +1,6 @@
 package nars.nal;
 
+import nars.budget.Budget;
 import nars.prototype.Default;
 import nars.NAR;
 import nars.Global;
@@ -60,8 +61,8 @@ public class NarseseParserTest {
 
         assertNotNull(t);
         assertEquals('!', t.getPunctuation());
-        assertEquals(0.99f, t.budget.getPriority(), 0.001);
-        assertEquals(0.95f, t.budget.getDurability(), 0.001);
+        assertEquals(0.99f, t.getPriority(), 0.001);
+        assertEquals(0.95f, t.getDurability(), 0.001);
         assertEquals(0.93f, t.sentence.getTruth().getFrequency(), 0.001);
         assertEquals(0.95f, t.sentence.getTruth().getConfidence(), 0.001);
     }
@@ -74,8 +75,8 @@ public class NarseseParserTest {
         assertEquals("a", i.getSubject().toString());
         assertEquals("b", i.getPredicate().toString());
         assertEquals('.', t.getPunctuation());
-        assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.budget.getPriority(), 0.001);
-        assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.budget.getDurability(), 0.001);
+        assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
+        assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
         assertEquals(1f, t.sentence.getTruth().getFrequency(), 0.001);
         assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.sentence.getTruth().getConfidence(), 0.001);
     }
@@ -93,8 +94,8 @@ public class NarseseParserTest {
         assertEquals(NALOperator.EQUIVALENCE, t.sentence.term.operator());
 
         assertEquals('.', t.getPunctuation());
-        assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.budget.getPriority(), 0.001);
-        assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.budget.getDurability(), 0.001);
+        assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
+        assertEquals(Global.DEFAULT_JUDGMENT_DURABILITY, t.getDurability(), 0.001);
         assertEquals(0f, t.sentence.getTruth().getFrequency(), 0.001);
         assertEquals(0.93f, t.sentence.getTruth().getConfidence(), 0.001);
     }

@@ -24,6 +24,7 @@ package nars.io;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
+import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -248,7 +249,7 @@ public class TextOutput extends Output {
 
 
             Task t = (Task) signal;
-            if (t.budget != null && t.sentence != null) {
+            if (t != null && t.sentence != null) {
                 if (channel == Events.OUT.class && t.getPriority() <= outputMinPriority)
                     return null;
 

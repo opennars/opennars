@@ -326,7 +326,7 @@ public final class CompositionalRules {
                 if (contentBelief == null) {
                     return false;
                 }
-                Task contentTask = new Task(contentBelief, task.budget);
+                Task contentTask = new Task(contentBelief, task);
                 //nal.setCurrentTask(contentTask);
                 Compound conj = Sentence.termOrNull(Conjunction.make(component, content));
                 if (conj != null) {

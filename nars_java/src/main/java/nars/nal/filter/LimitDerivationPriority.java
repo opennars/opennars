@@ -4,6 +4,7 @@
  */
 package nars.nal.filter;
 
+import nars.nal.Item;
 import nars.nal.NAL;
 import nars.budget.Budget;
 import nars.nal.Sentence;
@@ -19,7 +20,7 @@ public class LimitDerivationPriority implements NAL.DerivationFilter {
     public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
         Budget currentTaskBudget = nal.getCurrentTask().getBudget();
-        task.budget.andPriority(currentTaskBudget.getPriority());
+        task.andPriority(currentTaskBudget.getPriority());
         
         return null;
     }

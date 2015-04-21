@@ -1,11 +1,9 @@
 package nars;
 
+import nars.budget.Budget;
 import nars.event.Reaction;
+import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.ConceptProcess;
-import nars.nal.DirectProcess;
 import nars.operate.AbstractOperator;
 
 import java.util.Arrays;
@@ -31,7 +29,7 @@ public class Events {
             Task t = (Task)args[0];
             if (t.isInput()) return; //input events will already have been output via IN channel
 
-            final float budget = t.budget.summary();
+            final float budget = t.summary();
             final float noiseLevel = 1.0f - (this.volume.get() / 100.0f);
 
             if (budget >= noiseLevel) {  // only report significant derived Tasks

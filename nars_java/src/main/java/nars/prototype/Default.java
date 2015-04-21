@@ -7,6 +7,7 @@ import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.budget.bag.CacheBag;
 import nars.budget.bag.LevelBag;
+import nars.budget.bag.experimental.ChainBag;
 import nars.control.DefaultCore;
 import nars.event.AbstractExecutive;
 import nars.event.exe.DesireThresholdExecutive;
@@ -211,15 +212,15 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         n.on(new RuntimeNARSettings());
 
     }
-
-
     @Override
-    public Concept newConcept(Budget b, Term t, Memory m) {
-        Bag<String, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
-        
+    public Concept newConcept(Budget b, final Term t, final Memory m) {
+        Bag<String, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new ChainBag<>(getConceptTermLinks());
+
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }
+
+
 
     
     public Bag<Term, Concept> newConceptBag() {
@@ -237,7 +238,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
+        //return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
+        return new ChainBag(getNovelTaskBagSize());
     }
 
     public Default setSubconceptBagSize(int subconceptBagSize) {
@@ -451,16 +453,16 @@ public class Default extends ProtoNAR implements ConceptBuilder {
             param.temporalRelationsMax.set(4);
 
 
-            param.conceptBeliefsMax.set(5);
-            param.conceptGoalsMax.set(3);
-            param.conceptQuestionsMax.set(2);
+            param.conceptBeliefsMax.set(7);
+            param.conceptGoalsMax.set(5);
+            param.conceptQuestionsMax.set(3);
 
 
 
             param.termLinkMaxReasoned.set(3);
             param.termLinkMaxMatched.set(5);
-            param.termLinkRecordLength.set(3);
-            param.noveltyHorizon.set(3);
+            param.termLinkRecordLength.set(6);
+            param.noveltyHorizon.set(6);
 
             param.setForgetting(Forgetting.Periodic);
             param.setTiming(Timing.Cycle);

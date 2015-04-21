@@ -246,7 +246,7 @@ abstract public class EventEmitter<E>  {
         }
     }
 
-    abstract void notify(Class channel, Object... arg);
+    abstract void notify(Class channel, Object[] arg);
 
     abstract public EventRegistration on(Class<?> c, Reaction o);
 
@@ -314,7 +314,11 @@ abstract public class EventEmitter<E>  {
 //            super.emit(channel, arg);
 //    }
 
-    
+
+    public void emit(final Class channel) {
+        notify(channel, null);
+    }
+
     public void emit(final Class channel, final Object... args) {
 //        if (args.length == 0) {
 //            //notify(channel);

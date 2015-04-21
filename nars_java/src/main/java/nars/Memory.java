@@ -599,7 +599,7 @@ public class Memory implements Serializable {
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:*/
-                BudgetFunctions.forgetPeriodic(x.budget, forgetCycles, relativeThreshold, time());
+                BudgetFunctions.forgetPeriodic(x, forgetCycles, relativeThreshold, time());
                 //break;
         //}
     }
@@ -627,7 +627,7 @@ public class Memory implements Serializable {
         if (inputPriorityFactor!=1.0f)
             t.setPriority( t.getPriority() * inputPriorityFactor );
 
-        if (!t.budget.aboveThreshold()) {
+        if (!(t.aboveThreshold())) {
             taskRemoved(t, "Insufficient budget");
             return false;
         }

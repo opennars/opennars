@@ -9,6 +9,7 @@ import nars.Memory;
 import nars.Memory.MemoryAware;
 import nars.nal.BudgetFunctions;
 import nars.budget.Budget;
+import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.budget.bag.experimental.DelayBag;
@@ -66,7 +67,7 @@ abstract public class ConceptWaveCore implements Core {
         Concept c = concept(term);
         if (c!=null) {
             //existing
-            BudgetFunctions.activate(c.budget, budget, BudgetFunctions.Activating.Max);
+            BudgetFunctions.activate(c, budget, BudgetFunctions.Activating.Max);
         }
         else {
             if (createIfMissing)

@@ -4,6 +4,7 @@
  */
 package nars.budget.bag.experimental;
 
+import nars.budget.Budget;
 import nars.nal.Item;
 import nars.util.math.Distributor;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
@@ -36,7 +37,7 @@ public class FairDelayBag<E extends Item<K>, K> extends DelayBag<K, E> {
         /** since distributor has a min value of 1, 
             subtract one so that items with low priority can be selected */
         final int currentLevel = distributor[reloadIteration % levels] - 1;
-        return c.budget.getPriority() * levels >= currentLevel;
+        return c.getPriority() * levels >= currentLevel;
     }
 
     @Override

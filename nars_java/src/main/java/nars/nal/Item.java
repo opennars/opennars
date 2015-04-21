@@ -49,9 +49,6 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
     }
 
     public static final Comparator<Item> priorityComparator = new ItemPriorityComparator<>();
-    
-    /** The budget of the Item, consisting of 3 numbers */
-    @Deprecated public final Budget budget = this;
 
 
     protected Item( ) {
@@ -87,7 +84,7 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
     public String toString() {        
         //return budget + " " + key ;
         
-        String budgetStr = budget!=null ? super.toString() : "";
+        String budgetStr = this !=null ? super.toString() : "";
         String n = name().toString();
         return new StringBuilder(budgetStr.length()+n.length()+1).append(budgetStr).append(' ').append(n).toString();
     }
@@ -187,7 +184,7 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
 
     @Override
     public Budget getBudget() {
-        return budget;
+        return this;
     }
     
     

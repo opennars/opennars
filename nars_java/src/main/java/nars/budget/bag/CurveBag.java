@@ -2,6 +2,7 @@ package nars.budget.bag;
 
 import nars.Memory;
 import nars.Global;
+import nars.budget.Budget;
 import nars.nal.Item;
 import nars.budget.Bag;
 import nars.util.data.sorted.ArraySortedIndex;
@@ -152,7 +153,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
         public E removeItem(final E removed) {
             if (items.remove(removed)) {
-                mass -= removed.budget.getPriority();
+                mass -= removed.getPriority();
                 return removed;
             }
             return null;
@@ -496,7 +497,7 @@ public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
 
             //should be the same object instance
             nameTable.removeKey(selected.name());
-            mass -= selected.budget.getPriority();
+            mass -= selected.getPriority();
         }
 
         return selected;

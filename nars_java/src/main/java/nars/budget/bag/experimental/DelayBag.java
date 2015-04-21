@@ -5,6 +5,7 @@ import nars.Core;
 import nars.Core.CoreAware;
 import nars.Memory;
 import nars.Global;
+import nars.budget.Budget;
 import nars.nal.BudgetFunctions;
 import nars.nal.concept.Concept;
 import nars.nal.Item;
@@ -203,7 +204,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
             e = ee.getValue();
                            
             if (forgettable(e))
-                BudgetFunctions.forgetPeriodic(e.budget, forgetCycles, Global.FORGET_QUALITY_RELATIVE, now);
+                BudgetFunctions.forgetPeriodic(e, forgetCycles, Global.FORGET_QUALITY_RELATIVE, now);
             
             float p = e.getPriority();
             
@@ -260,9 +261,9 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
     
     protected boolean fireable(final E c) {
         
-        final float firingAge = now - c.budget.getLastForgetTime();        
+        final float firingAge = now - c.getLastForgetTime();
         
-        float activity = c.budget.getPriority();                
+        float activity = c.getPriority();
         
         //System.out.println(firingAge + " " + activity + " " + latencyMin);
         
@@ -364,8 +365,8 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
             nameTable.put(x.name(), x);
         }
         
-        if (x.budget.getLastForgetTime() == -1)
-            x.budget.setLastForgetTime(now);
+        if (x.getLastForgetTime() == -1)
+            x.setLastForgetTime(now);
 
         /* return null since nothing was actually displaced yet */
         return null;

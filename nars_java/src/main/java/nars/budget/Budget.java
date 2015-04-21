@@ -446,7 +446,7 @@ public class Budget implements Cloneable, BudgetTarget {
     }
 
     /** 1 digit resolution */
-    public String toStringExternal1(boolean includeQuality) {
+    public String toStringExternalBudget1(boolean includeQuality) {
         final char priorityString = Texts.n1(priority);
         final char durabilityString = Texts.n1(durability);
         StringBuilder sb = new StringBuilder(1 + 1 + 1 + (includeQuality ? 1 : 0) + 1)

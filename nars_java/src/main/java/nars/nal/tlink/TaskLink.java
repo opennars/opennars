@@ -39,7 +39,7 @@ import java.util.Iterator;
  * <p>
  * The rule to separate a Task and a TaskLink is that the same Task can be
  * linked from multiple Concepts, with different BudgetValue.
- *
+ * <p>
  * TaskLinks are unique according to the Task they reference
  */
 public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sentenced {
@@ -86,13 +86,17 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     }
 
     Deque<Recording> records;
+    long newestRecordTime = -1;
 
 
-
-    /** The type of tlink, one of the above */
+    /**
+     * The type of tlink, one of the above
+     */
     public final short type;
 
-    /** The index of the component in the component list of the compound, may have up to 4 levels */
+    /**
+     * The index of the component in the component list of the compound, may have up to 4 levels
+     */
     public final short[] index;
 
 
@@ -110,9 +114,9 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
      * Constructor
      * <p>
      *
-     * @param t The target Task
+     * @param t        The target Task
      * @param template The TermLink template
-     * @param v The budget
+     * @param v        The budget
      */
     public TaskLink(final Task t, final TermLinkTemplate template, final Budget v) {
         super(v);
@@ -146,7 +150,7 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
-            TaskLink t = (TaskLink)obj;
+            TaskLink t = (TaskLink) obj;
             //return t.name().equals(name());
             return t.targetTask.equals(targetTask);
         }
@@ -155,6 +159,7 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
 
     /**
      * Get one index by level
+     *
      * @param i The index level
      * @return The index value
      */
@@ -173,7 +178,7 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
      * <p>
      * called in TermLinkBag only
      *
-     * @param termLink The TermLink to be checked
+     * @param termLink    The TermLink to be checked
      * @param currentTime The current time
      * @return Whether they are novel to each other
      */
@@ -187,46 +192,58 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
 
         if (noveltyHorizon == 0) return true;
 
-        if (records==null) {
+        if (records == null) {
             records = new ArrayDeque(recordLength);
             //records = new LinkedList();
         }
 
-        //TODO remove old entries from records if recordLength < records.size()  -- for dynamic adjusting of novelty parameters
-
-        //iterating the FIFO deque from oldest (first) to newest (last)
-        Iterator<Recording> ir = records.iterator();
         final long minTime = currentTime - noveltyHorizon;
-        while (ir.hasNext()) {
-            Recording r = ir.next();
-            final long rtime = r.getTime();
 
-            if (termLink.equals(r.link)) {
-                if (minTime < rtime) {
-                    //too recent, not novel
-                    return false;
-                } else {
-                    //happened long enough ago that we have forgotten it somewhat, making it seem more novel
-                    r.setTime(currentTime);
+        if (newestRecordTime <= minTime) {
+            //just erase the entire record list because its newest entry is older than the noveltyHorizon
+            //faster than iterating and removing individual entries (in the following else condition)
+            records.clear();
+        } else {
+            //iterating the FIFO deque from oldest (first) to newest (last)
+            Iterator<Recording> ir = records.iterator();
+            while (ir.hasNext()) {
+                Recording r = ir.next();
+                final long rtime = r.getTime();
+
+                if (termLink.equals(r.link)) {
+                    if (minTime < rtime) {
+                        //too recent, not novel
+                        return false;
+                    } else {
+                        //happened long enough ago that we have forgotten it somewhat, making it seem more novel
+                        r.setTime(currentTime);
+                        ir.remove();
+                        addRecord(r);
+                        return true;
+                    }
+                } else if (minTime > rtime) {
+                    //remove a record which will not apply to any other tlink
                     ir.remove();
-                    records.addLast(r);
-                    return true;
                 }
             }
-            else if (minTime > rtime) {
-                //remove a record which will not apply to any other tlink
-                ir.remove();
-            }
+
+
+            //keep recordedLinks queue a maximum finite size
+            int toRemove = (records.size() + 1) - recordLength;
+            for (int i = 0; i < toRemove; i++)
+                records.removeFirst();
+
         }
 
-
-        //keep recordedLinks queue a maximum finite size
-        while (!records.isEmpty() && records.size() + 1 >= recordLength) records.removeFirst();
-
         // add knowledge reference to recordedLinks
-        records.addLast(new Recording(termLink, currentTime));
+        addRecord(new Recording(termLink, currentTime));
 
         return true;
+    }
+
+    protected void addRecord(Recording r) {
+        records.addLast(r);
+        newestRecordTime = r.time;
     }
 
     @Override
@@ -240,15 +257,18 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
      *
      * @return The linked Task
      */
-    @Override public Task getTarget() {
+    @Override
+    public Task getTarget() {
         return getTask();
     }
 
-    public Task getTask() { return targetTask; }
+    public Task getTask() {
+        return targetTask;
+    }
 
     @Override
     public void end() {
-        if (records !=null) {
+        if (records != null) {
             records.clear();
             records = null;
         }
@@ -260,9 +280,9 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sen
     }
 
     @Override
-    public Sentence getSentence() {   return getTarget().sentence;  }
-
-
+    public Sentence getSentence() {
+        return getTarget().sentence;
+    }
 
 
 }

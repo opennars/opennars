@@ -9,6 +9,7 @@ import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
+import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.TruthValue;
@@ -229,7 +230,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
         Idea i = ideas.get(t);
         if (i==null)
             return;
-        update(i, t.budget);
+        update(i, t);
     }
 
     protected void update(Idea i, Budget currentTaskBudget) {
@@ -262,7 +263,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
     protected void onOutputConcept(Concept c, Task t) {
         Idea i = ideas.get(c);
         if (t!=null)
-            update(i, t.budget);
+            update(i, t);
         else
             update(i, null);
     }

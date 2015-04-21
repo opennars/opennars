@@ -7,6 +7,7 @@ package nars.nal;
 import nars.Events;
 import nars.Memory;
 import nars.Global;
+import nars.budget.Budget;
 import nars.nal.concept.Concept;
 
 /**
@@ -52,7 +53,7 @@ public class DirectProcess extends NAL {
 
     @Override
     public void process() {
-        Concept c = memory.conceptualize(currentTask.budget, getCurrentTask().getTerm());
+        Concept c = memory.conceptualize(getCurrentTask(), getCurrentTask().getTerm());
         if (c == null) return;
 
         process(c);

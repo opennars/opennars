@@ -5,9 +5,11 @@
 package nars.rover;
 
 import nars.NAR;
+import nars.budget.Budget;
 import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
+import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
 import nars.rover.jbox2d.j2d.DrawPhy2D.LayerDraw;
@@ -173,7 +175,7 @@ public class RoverModel {
         public synchronized void step(boolean feel, boolean drawing) {
             float conceptActivity = 0f;
             if (angleConcept!=null) {
-                conceptActivity = angleConcept.budget.getPriority();
+                conceptActivity = angleConcept.getPriority();
                 sight.setProbability(Math.max(minVisionInputProbability, Math.min(1.0f, maxVisionInputProbability * conceptActivity)));
             }
 

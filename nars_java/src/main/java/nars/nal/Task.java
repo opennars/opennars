@@ -169,11 +169,11 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
 
     @Override
     public Task clone() {
-        return new Task(sentence, budget, parentTask, parentBelief, bestSolution);
+        return new Task(sentence, this, parentTask, parentBelief, bestSolution);
     }
     
     public Task clone(final Sentence replacedSentence) {
-        return new Task(replacedSentence, budget, parentTask, parentBelief, bestSolution);
+        return new Task(replacedSentence, this, parentTask, parentBelief, bestSolution);
     }
     
     @Override public Sentence name() {
@@ -261,10 +261,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terma
      * @param that The other Task
      */
     public boolean merge(final Task that) {
-        if (getCreationTime() >= ((Task) that).getCreationTime()) {
-            return super.merge(that.budget);
+        if (getCreationTime() >= that.getCreationTime()) {
+            return super.merge(that);
         } else {
-            return that.merge(this.budget);
+            return that.merge(that);
         }
     }
 

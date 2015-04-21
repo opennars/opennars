@@ -43,16 +43,9 @@ public class Discretinuous extends Default {
 
 
     @Override
-    public Concept newConcept(Budget b, final Term t, final Memory m) {
-        
-        /*AbstractBag<TaskLink> taskLinks = new ContinuousBag2<>(getTaskLinkBagSize(), m.param.taskCyclesToForget, curve, randomRemoval);
-        AbstractBag<TermLink> termLinks = new ContinuousBag2<>(getTermLinkBagSize(), m.param.beliefCyclesToForget, curve, randomRemoval);*/
-        
-        //Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), randomRemoval);
-        //Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), randomRemoval);
-
-        Bag<String, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag<>(getConceptTermLinks());
+    public Concept newConcept(Budget b, Term t, Memory m) {
+        Bag<String, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }

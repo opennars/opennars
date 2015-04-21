@@ -2,8 +2,10 @@ package nars.rover;
 
 import nars.Memory;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
+import nars.nal.Item;
 import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
@@ -513,7 +515,7 @@ public class Rover extends PhysicsModel {
             @Override
             protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
                 Term t1 = args[0];
-                float priority = operation.getTask().budget.getPriority();
+                float priority = operation.getTask().getPriority();
 
 
                 if (args.length > 2) {

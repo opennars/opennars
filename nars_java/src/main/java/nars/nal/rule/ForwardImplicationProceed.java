@@ -1,6 +1,7 @@
 package nars.nal.rule;
 
 
+import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.*;
@@ -34,6 +35,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
     @Override
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
         if (!f.nal(7)) return true;
+        if (PERCEPTION_DECISION_ACCEL_SAMPLES == 0) return true;
 
         Concept concept = f.getCurrentTermLinkConcept();
         if (concept == null) return true;
@@ -76,7 +78,13 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
             final Conjunction conj2 = (Conjunction) t;
 
-            if (conj.getTemporalOrder() == conj2.getTemporalOrder() && alreadyInducted.add(t)) {
+            if (conj.getTemporalOrder() == conj2.getTemporalOrder() &&
+                    (alreadyInducted == null ||alreadyInducted.add(t))) {
+
+                if (alreadyInducted == null && PERCEPTION_DECISION_ACCEL_SAMPLES > 1) {
+                    alreadyInducted = Global.newHashSet(PERCEPTION_DECISION_ACCEL_SAMPLES);
+                    alreadyInducted.add(t);
+                }
 
                 Sentence s = null;
                 if (taskLinkTask.sentence.punctuation == Symbols.JUDGMENT) {

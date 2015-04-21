@@ -4,6 +4,7 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
+import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;
@@ -39,7 +40,7 @@ public class Counting implements IOperator {
                         return;
 
                     Task task = (Task)a[0];
-                    if(task.budget.summary() < InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+                    if (task.summary() < InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                         return;
                     }
 
@@ -72,7 +73,7 @@ public class Counting implements IOperator {
                                 TruthValue truth = task.sentence.truth.clone();
                                 Stamp stampi = task.sentence.stamp.clone();
                                 Sentence j = new Sentence(new_term, Symbols.JUDGMENT, truth, stampi);
-                                Budget budg = task.budget.clone();
+                                Budget budg = new Budget(task);
                                 Task newTask = new Task(j, budg,task);                               
 
                                 memory.taskAdd(newTask, "Derived (Cardinality)");

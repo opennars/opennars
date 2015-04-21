@@ -5,7 +5,9 @@ import automenta.vivisect.swing.NWindow;
 import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
+import nars.budget.Budget;
 import nars.io.TextOutput;
+import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -174,7 +176,7 @@ public class SwingLogText extends SwingText {
                 Task t = (Task) o;
                 Sentence s = t.sentence;
                 if (s != null) {
-                    priority = t.budget.getPriority();
+                    priority = t.getPriority();
                     printBlock(LogPanel.getPriorityColor(priority), "  ");
 
                     TruthValue tv = s.truth;

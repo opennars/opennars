@@ -6,6 +6,7 @@ import com.google.common.collect.MultimapBuilder;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
+import nars.budget.Budget;
 import nars.event.AbstractReaction;
 import nars.nal.*;
 import nars.nal.concept.Concept;
@@ -211,7 +212,7 @@ public class Derivations extends DirectedMultigraph {
         String s = genericString(t.sentence, unique, now, includeDerivedTruth);
 
         if (includeDerivedBudget)
-            tempTaskString.append(t.budget.toStringExternal1(false));
+            tempTaskString.append(t.toStringExternalBudget1(false));
 
         tempTaskString.append(s);
 

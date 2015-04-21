@@ -3,6 +3,8 @@ package nars.budget.bag;
 import nars.analyze.experimental.BagPerf;
 import nars.Memory;
 import nars.budget.Bag;
+import nars.budget.Budget;
+import nars.nal.Item;
 import nars.util.data.sorted.SortedIndex;
 
 import static org.junit.Assert.assertEquals;
@@ -48,9 +50,9 @@ public class AbstractBagTest {
                 BagPerf.NullItem t = f.pop();
                 if (t == null) break;
                 if (i % 2 == 0)
-                    t.budget.setPriority(t.budget.getPriority()*0.99f);
+                    t.setPriority(t.getPriority() * 0.99f);
                 else
-                    t.budget.setPriority(Math.min(1.0f,t.budget.getPriority()*1.01f));
+                    t.setPriority(Math.min(1.0f, t.getPriority() * 1.01f));
                 f.put(t);
             }
 

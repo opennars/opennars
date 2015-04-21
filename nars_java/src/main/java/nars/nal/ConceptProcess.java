@@ -5,6 +5,7 @@
 package nars.nal;
 
 import nars.Events;
+import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -76,7 +77,7 @@ public class ConceptProcess extends NAL {
 
     protected void processTask() {
 
-        currentTaskLink.budget.setUsed(memory.time());
+        currentTaskLink.setUsed(memory.time());
 
         setCurrentTermLink(null);
         reasoner.fire(this);
@@ -174,7 +175,7 @@ public class ConceptProcess extends NAL {
     @Override
     protected void process() {
 
-        currentConcept.budget.setUsed(memory.time());
+        currentConcept.setUsed(memory.time());
 
         processTask();
 

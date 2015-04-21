@@ -3,6 +3,7 @@ package nars.io.test;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import nars.io.condition.TaskCondition;
+import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.stamp.Stamp;
 import nars.nal.Task;
@@ -29,7 +30,7 @@ public class ExplainableTask extends Task {
     }
 
     public ExplainableTask(Task t) {
-        super(t.sentence, t.budget);
+        super(t.sentence, t);
         this.task = t;
     }
 

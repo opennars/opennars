@@ -339,9 +339,9 @@ public class NAR implements Runnable {
         if (confidence!=-1)
             t.sentence.truth.setConfidence(confidence);
         if (priority!=-1)
-            t.budget.setPriority(priority);
+            t.setPriority(priority);
         if (durability!=-1)
-            t.budget.setDurability(durability);
+            t.setDurability(durability);
         
         return input(t);
     }

@@ -26,6 +26,7 @@ import nars.Events.EXE;
 import nars.Memory;
 import nars.NAR;
 import nars.Global;
+import nars.nal.Item;
 import nars.operate.IOperator;
 import nars.budget.Budget;
 import nars.nal.Task;
@@ -117,7 +118,7 @@ public abstract class Operator extends Term implements IOperator {
                 Operator operator = operation.getOperator();
                 StringBuilder sb = new StringBuilder();
 
-                Budget b = getTask()!=null ? getTask().budget : null;
+                Budget b = getTask();
                 if (b!=null)
                     sb.append(b.toStringExternal()).append(' ');
 
@@ -199,7 +200,7 @@ public abstract class Operator extends Term implements IOperator {
                 memory.newTask(operation).
                         judgment().
                         truth(truth).
-                        budget(opTask.budget).
+                        budget(operation.getTask()).
                         stamp(new Stamp(opTask.getStamp(), memory, Tense.Present)).
                         parent(opTask).
                         get().

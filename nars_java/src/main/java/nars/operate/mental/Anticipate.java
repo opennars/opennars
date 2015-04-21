@@ -365,7 +365,7 @@ public class Anticipate extends AbstractOperator implements Mental {
             expiredate = getCreationTime() + Interval.cycles(m + 1, dura);
         }
 
-        public float getPriority() { return task.budget.getPriority(); }
+        public float getPriority() { return task.getPriority(); }
 
         /** when the prediction happened */
         public long getCreationTime() { return creationTime; }
@@ -394,7 +394,7 @@ public class Anticipate extends AbstractOperator implements Mental {
         }
 
         public Budget getBudget() {
-            return task.budget;
+            return task;
         }
     }
 }

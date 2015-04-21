@@ -4,13 +4,13 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.nal.DirectProcess;
+import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
 import nars.operate.AbstractOperator;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -63,7 +63,7 @@ public class STMInduction extends AbstractOperator {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
-        if (newEvent.budget == null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        if (newEvent == null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
 

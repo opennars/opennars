@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Bag;
 import nars.budget.BagTransaction;
+import nars.budget.Budget;
 import nars.nal.Item;
 import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
@@ -164,7 +165,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         if (previous!=null) {
 
             //displaced an item with the same key
-            merge(previous.item.budget, newItem.budget);
+            merge(previous.item, newItem);
 
             if (previous!=d)
                 chain.remove(previous);

@@ -2,6 +2,7 @@ package nars.util.data.sorted;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.budget.Budget;
 import nars.nal.Item;
 
 import java.util.Collection;
@@ -48,7 +49,7 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
     }
 
     public final int positionOf(final E o) {
-        final float y = o.budget.getPriority();
+        final float y = o.getPriority();
         if ((y < 0) || (y > 1.0f)) {
             System.err.println("Invalid priority value: " + o);
             System.exit(1);
@@ -66,7 +67,7 @@ public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
 
                 E midVal = get(mid);
 
-                final float x = midVal.budget.getPriority();
+                final float x = midVal.getPriority();
 
                 if (x < y) {
                     low = mid + 1;

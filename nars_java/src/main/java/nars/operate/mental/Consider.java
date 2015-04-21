@@ -19,6 +19,7 @@ package nars.operate.mental;
 
 import nars.Memory;
 import nars.budget.Budget;
+import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.tlink.TaskLink;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 public class Consider extends Operator implements Mental {
 
     public static Budget budgetMentalConcept(final Operation o) {
-        return o.getTask().budget.clone();
+        return o.getTask().clone();
     }
     
     public Consider() {

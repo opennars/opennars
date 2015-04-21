@@ -4,7 +4,8 @@ import automenta.vivisect.Video;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.NARPrologMirror;
+import nars.budget.Budget;
+import nars.nal.Item;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.NullOperator;
@@ -459,7 +460,7 @@ public class Rover2 extends PhysicsModel {
 
                 Term t1 = args[0];
 
-                float priority = operation.getTask().budget.getPriority();
+                float priority = operation.getTask().getPriority();
 
                 String command = "";
                 if (args.length == 1 + 1) {

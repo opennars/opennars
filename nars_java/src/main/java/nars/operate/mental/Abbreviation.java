@@ -2,9 +2,7 @@ package nars.operate.mental;
 
 import com.google.common.collect.Lists;
 import nars.budget.Budget;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.*;
 import nars.nal.term.Term;
 import nars.operate.AbstractOperator;
 import nars.Events.TaskDerive;
@@ -12,7 +10,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.Global;
 import nars.io.Symbols;
-import nars.nal.BudgetFunctions;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
@@ -97,7 +94,7 @@ public class Abbreviation extends AbstractOperator {
     public boolean canAbbreviate(Task task) {
         return !(task.sentence.term instanceof Operation) && 
                 (task.sentence.term.getComplexity() > abbreviationComplexityMin.get()) &&
-                (task.budget.getQuality() > abbreviationQualityMin.get());
+                (task.getQuality() > abbreviationQualityMin.get());
     }
 
 
