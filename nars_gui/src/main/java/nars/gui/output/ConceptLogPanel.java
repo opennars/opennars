@@ -6,13 +6,17 @@ import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.io.TextOutput;
+import nars.nal.Named;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Created by me on 4/19/15.
@@ -29,6 +33,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     int y = 0;
 
     final int maxItems = 256;
+    private String filter = null;
 
     public ConceptLogPanel(NAR c) {
         super(c);
@@ -49,7 +54,46 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         };
         b = newBuilder();
         add(content, BorderLayout.CENTER);
+
+        JTextField quickfilter = new JTextField(16);
+        quickfilter.setToolTipText("Quick filter");
+        quickfilter.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                String f = quickfilter.getText();
+                setFilter(f);
+            }
+        });
+        menu.add(quickfilter);
     }
+
+    protected void setFilter(String f) {
+        if (f.isEmpty())
+            this.filter = null;
+        else
+            this.filter = f;
+
+        content.forEach(filterComponent);
+    }
+
+    final Consumer<Component> filterComponent = new Consumer<Component>() {
+
+        @Override
+        public void accept(Component x) {
+            boolean vis = true;
+
+            if (filter != null) {
+                if (x instanceof Named) {
+                    String s = ((Named) x).name().toString();
+                    vis = s.contains(filter);
+                } else {
+                    vis = false;
+                }
+            }
+
+            x.setVisible(vis);
+        }
+    };
 
     @Override
     protected void visibility(boolean appearedOrDisappeared) {
@@ -163,6 +207,8 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
             if (j instanceof ConceptPanelBuilder.ConceptPanel) {
                 content.removeVertically(j);
             }
+
+            filterComponent.accept(j);
 
             content.addVertically(j);
 

@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 /**
  *
@@ -68,9 +69,16 @@ public class VerticalPanel extends NPanel {
             removed.add(j);
             content.remove(0);
         }
+
         return removed;
     }
 
+    public synchronized void forEach(Consumer<Component> x) {
+        for (int i = 0; i < content.getComponentCount(); i++) {
+            Component j = content.getComponent(i);
+            x.accept(j);
+        }
+    }
 
     public void removeAllVertically() {
         content.removeAll();

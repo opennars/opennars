@@ -5,7 +5,6 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import automenta.vivisect.swing.NPanel;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
@@ -16,12 +15,13 @@ import nars.budget.Bag;
 import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
 import nars.gui.VerticalLayout;
-import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
-import nars.nal.concept.Concept;
+import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.nal.Item;
+import nars.nal.Named;
 import nars.nal.Sentence;
 import nars.nal.TruthValue.Truthable;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 
@@ -33,7 +33,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static java.awt.BorderLayout.*;
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.WEST;
 
 /**
  * Manages a set of ConceptPanels by receiving events and dispatching update commands
@@ -180,10 +181,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
 
 
-    public static class ConceptPanel extends JPanel {
+    public static class ConceptPanel extends JPanel implements Named<Concept> {
 
         final float titleSize = 18f;
-        private final Concept concept;
+        public final Concept concept;
         private final TruthChart beliefGoalChart;
         private final PriorityColumn questionChart;
         private RadialBagChart taskLinkChart;
@@ -198,6 +199,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         private BeliefTimeline beliefGoalTime;
         public boolean closed;
         // private final PCanvas syntaxPanel;
+
 
 
         public ConceptPanel(final Concept c, boolean label, boolean full, int chartSize) {
@@ -338,6 +340,11 @@ public class ConceptPanelBuilder extends AbstractReaction {
             //syntaxPanel.setBounds(0,0,400,400);
 
 
+        }
+
+        @Override
+        public Concept name() {
+            return concept;
         }
 
         public ConceptPanel update(long time) {

@@ -30,6 +30,7 @@ import java.io.PrintWriter;
 abstract public class LogPanel extends NPanel implements LogOutput {
 
     protected final NAR nar;
+    protected final JPanel menu;
 
     private AbstractReaction out;
     
@@ -75,12 +76,12 @@ abstract public class LogPanel extends NPanel implements LogOutput {
         };
                 
         //JPanel menuBottom = new JPanel(new WrapLayout(FlowLayout.RIGHT, 0, 0));
-        JPanel menuTop = new JPanel(new WrapLayout(FlowLayout.LEFT, 0, 0));
+        menu = new JPanel(new WrapLayout(FlowLayout.LEFT, 0, 0));
 
         //menuBottom.setOpaque(false);
         //menuBottom.setBorder(new EmptyBorder(0,0,0,0));
-        menuTop.setOpaque(false);
-        menuTop.setBorder(new EmptyBorder(0, 0, 0, 0));
+        menu.setOpaque(false);
+        menu.setBorder(new EmptyBorder(0, 0, 0, 0));
 
         
         JButton clearButton = new AwesomeButton('\uf016');
@@ -91,7 +92,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 clearLog();
             }
         });
-        menuTop.add(clearButton);
+        menu.add(clearButton);
 
         final String defaultStreamButtonLabel = "Stream to File..";
         final JToggleButton streamButton = new AwesomeToggleButton('\uf0c7', '\uf052');
@@ -112,9 +113,9 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 }
             }
         });
-        menuTop.add(streamButton);
+        menu.add(streamButton);
 
-        menuTop.add(Box.createHorizontalStrut(4));
+        menu.add(Box.createHorizontalStrut(4));
 
         final JToggleButton showStatementsBox = new JToggleButton(".");
         showStatementsBox.setToolTipText("Show Statements");
@@ -125,7 +126,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 showStatements = showStatementsBox.isSelected();
             }
         });
-        menuTop.add(showStatementsBox);
+        menu.add(showStatementsBox);
 
         final JToggleButton showQuestionsBox = new JToggleButton("?");
         showQuestionsBox.setToolTipText("Show Questions");
@@ -136,7 +137,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 showQuestions = showQuestionsBox.isSelected();
             }
         });
-        menuTop.add(showQuestionsBox);
+        menu.add(showQuestionsBox);
 
         final JToggleButton showExecutionsBox = new JToggleButton("!");
         showExecutionsBox.setToolTipText("Show Goals & Executions");
@@ -147,7 +148,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 showExecutions = showExecutionsBox.isSelected();
             }
         });
-        menuTop.add(showExecutionsBox);
+        menu.add(showExecutionsBox);
         
         final JToggleButton showErrorBox = new JToggleButton("Errors");
         showErrorBox.setSelected(showErrors);
@@ -157,7 +158,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 showErrors = showErrorBox.isSelected();
             }
         });
-        menuTop.add(showErrorBox);
+        menu.add(showErrorBox);
 
         final JToggleButton showStampBox = new JToggleButton("Stamp");
         showStampBox.addActionListener(new ActionListener() {
@@ -166,7 +167,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
                 setShowStamp(showStampBox.isSelected());
             }
         });
-        menuTop.add(showStampBox);
+        menu.add(showStampBox);
 
         final JToggleButton showTraceBox = new JToggleButton("Trace");
         showTraceBox.setEnabled(true);
@@ -177,9 +178,9 @@ abstract public class LogPanel extends NPanel implements LogOutput {
             }
         });
         setTrace(showTraceBox.isSelected());
-        menuTop.add(showTraceBox);
+        menu.add(showTraceBox);
 
-        menuTop.add(Box.createHorizontalStrut(4));
+        menu.add(Box.createHorizontalStrut(4));
 
         
         final NSlider fontSlider = new NSlider(12f, 6f, 40f) {
@@ -191,11 +192,11 @@ abstract public class LogPanel extends NPanel implements LogOutput {
             
         };
         fontSlider.setPrefix("Font size: ");
-        menuTop.add(fontSlider);
+        menu.add(fontSlider);
 
 
         //add(menuBottom, BorderLayout.SOUTH);
-        add(menuTop, BorderLayout.NORTH);
+        add(menu, BorderLayout.NORTH);
 
         addContainerListener(new ContainerListener() {
 
