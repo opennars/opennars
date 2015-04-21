@@ -78,7 +78,7 @@ abstract public class AbstractHaiQBrain {
 
         for (int i = 0; i < state.length; i++) {
             lastAction = actualLastAction;
-            int action = learn(i, reward, state[i] * confidence);
+            int action = qlearn(i, reward, -1, state[i] * confidence);
 
             //act.addToEntry(action, confidence);
 
@@ -94,6 +94,7 @@ abstract public class AbstractHaiQBrain {
         return lastAction = act.getMaxIndex();
     }
 
+    /** learn a discrete state */
     public int learn(final int state, final double reward) {
         return learn(state, reward, 1f);
     }
@@ -102,10 +103,7 @@ abstract public class AbstractHaiQBrain {
         return learn(state, reward, -1, confidence);
     }
 
-    /**
-     * returns action #
-     */
-    public int learn(final int state, final double reward, int nextAction, double confidence) {
+    protected int qlearn(final int state, final double reward, int nextAction, double confidence) {
 
         final double[][] et = this.et; //local reference
         final int actions = nActions;
@@ -145,7 +143,7 @@ abstract public class AbstractHaiQBrain {
         */
 
         double DeltaQ = reward + gamma * q(state, nextAction) -  q(state, lastAction);
-        
+
         et[state][lastAction] += confidence;
 
         final double AlphaDeltaQ = confidence * alpha * DeltaQ;
@@ -160,6 +158,13 @@ abstract public class AbstractHaiQBrain {
 
         lastAction = nextAction;
         return nextAction;
+    }
+
+    /**
+     * returns action #
+     */
+    public int learn(final int state, final double reward, int nextAction, double confidence) {
+        return qlearn(state, reward, nextAction, confidence);
     }
 
     public int getRandomAction() {

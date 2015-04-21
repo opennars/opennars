@@ -13,9 +13,7 @@ import nars.NAR;
 import nars.ProtoNAR;
 import nars.event.FrameReaction;
 import nars.gui.NARSwing;
-import nars.io.Symbols;
 import nars.io.Texts;
-import nars.nal.DirectProcess;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -42,6 +40,7 @@ import java.awt.*;
 public class TestSOMAgent extends JPanel {
 
 
+    private final QLAgent agent;
 
     /* dimension reduction / input processing implementations */
     public interface Perception {
@@ -255,9 +254,7 @@ public class TestSOMAgent extends JPanel {
         public int actByQStrongest = -1; //default q-action if NARS does not specify one by the next frame
         double lastReward = 0;
 
-        /** confidence of state belief updates */
-        //TODO move this to BseQLAgent with other parameters
-        float stateUpdateConfidence = 0.9f;
+
 
         /**
          *
@@ -321,19 +318,11 @@ public class TestSOMAgent extends JPanel {
             //int row = s / dimensions;
             //int column = s % dimensions;
 
-            return nar.term("{s" + s + "}");
+            return nar.term("[s" + s + "]");
+            //return nar.term("{s" + s + "}");
             //return nar.term("s" + s);
         }
 
-        @Override
-        public int learn(int state, double reward, int nextAction, double confidence) {
-
-            //System.out.println(getStateTerm(state) + " " + confidence);
-
-            DirectProcess.run(nar, getStateTerm(state) + ". :\\: %" + confidence + ";" + stateUpdateConfidence + "%");
-
-            return super.learn(state, reward, nextAction, confidence);
-        }
 
 
 
@@ -354,10 +343,10 @@ public class TestSOMAgent extends JPanel {
 
             protected void desire(int action, float priority, float expectation) {
                 actByPriority.addToEntry(action, priority);
-                //actByExpectation.addToEntry(action, expectation);
+                actByExpectation.addToEntry(action, expectation);
 
-                //TEMPORARY: sum expectation * taskPriority
-                actByExpectation.addToEntry(action, expectation * priority);
+                //ALTERNATIVE: sum expectation * taskPriority
+                //actByExpectation.addToEntry(action, expectation * priority);
             }
 
 
@@ -382,7 +371,7 @@ public class TestSOMAgent extends JPanel {
             RealVector normalized = actByExpectation.unitVector();
             double alignment = normalized.dotProduct(actByExpectation);
 
-            System.out.print("NARS act: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
+            System.out.print("NARS exec: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
             System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%" );
 
             actByExpectation.mapMultiplyToSelf(0); //zero
@@ -396,9 +385,9 @@ public class TestSOMAgent extends JPanel {
 
             int action = decide();
 
-            if (action==-1) {
+            if ((action==-1) && ((qAutonomicGoalConfidence > 0) || ((qAutonomicBeliefConfidence > 0)) )) {
                 action = actByQStrongest;
-                System.out.print("QL act: " + action);
+                System.out.print("QL auto: " + action);
 
                 if (action == -1) {
                     //no qAction specified either, choose random
@@ -407,11 +396,12 @@ public class TestSOMAgent extends JPanel {
 
                 /** introduce belief or goal for a QL action */
 
-                act(action, Symbols.GOAL);  //provides faster action but may cause illogical feedback loops
+                autonomic(action);  //provides faster action but may cause illogical feedback loops
                 //act(action, Symbols.JUDGMENT); //maybe more "correct" probably because it just notices the "autonomic" QL reaction that was executed
             }
 
-            env.takeAction(action);
+            if (action!=-1)
+                env.takeAction(action);
 
             env.worldStep();
 
@@ -429,8 +419,8 @@ public class TestSOMAgent extends JPanel {
             System.out.println("  reward=" + Texts.n4(r));
 
             perception.perceive(o, r, nar.time());
-            actByQStrongest = getNextAction();
 
+            actByQStrongest = getNextAction();
 
         }
     }
@@ -454,7 +444,7 @@ public class TestSOMAgent extends JPanel {
         nar = new NAR(dd);
 
 
-        final QLAgent ql = new QLAgent(nar, d, p, 0.05) {
+        agent = new QLAgent(nar, d, p, 0.05) {
 
             private final MatrixImage mi = new MatrixImage(400, 400);
             private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
@@ -487,7 +477,7 @@ public class TestSOMAgent extends JPanel {
             }
 
         };
-        ql.init();
+        agent.init();
 
 
 
@@ -497,7 +487,7 @@ public class TestSOMAgent extends JPanel {
         nar.param.decisionThreshold.set(0.65);
         nar.param.outputVolume.set(5);
 
-        ql.setqUpdateConfidence(qLearnedConfidence);
+
 
 
 //        new AbstractReaction(nar, Events.CycleEnd.class) {
@@ -545,8 +535,8 @@ public class TestSOMAgent extends JPanel {
         Global.DEBUG = false;
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
-        Global.DERIVATION_PRIORITY_LEAK = 0.9f;
-        Global.DERIVATION_DURABILITY_LEAK = 0.9f;
+        Global.DERIVATION_PRIORITY_LEAK = 0.95f;
+        Global.DERIVATION_DURABILITY_LEAK = 0.95f;
         int concepts = 2000;
         int conceptsPerCycle = 10;
 
@@ -561,8 +551,9 @@ public class TestSOMAgent extends JPanel {
         dd.setTaskLinkBagSize(24);
         dd.setInternalExperience(null);
 
-        new TestSOMAgent(d, p, dd, qLearnedConfidence);
-
+        TestSOMAgent a = new TestSOMAgent(d, p, dd, qLearnedConfidence);
+        a.agent.setqUpdateConfidence(qLearnedConfidence);
+        a.agent.autonomicDesire(0.55f);
 
     }
 

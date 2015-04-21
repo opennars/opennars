@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import nars.Global;
 import nars.NAR;
-import nars.event.FrameReaction;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.nal.DirectProcess;
@@ -71,11 +70,15 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
     /** confidence of reward command goal; set to zero to disable reward beliefs */
     float rewardGoalConfidence = 0.9f;
 
+    /** confidence of state belief updates */
+    float stateUpdateConfidence = 0.9f;
+
     //TODO belief update priority, durability etc
     //TODO reward goal priority, durability etc
 
-    float actionFreq = 1.0f;
-    float actionConf = Global.DEFAULT_GOAL_CONFIDENCE * 0.2f;
+
+    protected float qAutonomicGoalConfidence = 0; //set to 0 to disable qAutonomous
+    protected float qAutonomicBeliefConfidence = 0; //set to 0 to disable qAutonomous
     float actionPriority = Global.DEFAULT_GOAL_PRIORITY;
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
 
@@ -255,11 +258,25 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
 
     }
 
-    public void act(int action, char punctuation) {
-        act(action, punctuation, actionFreq, actionConf, actionPriority, actionDurability);
+    /** fire all actions (ex: to teach them at the beginning) */
+    public void autonomicDesire(float goalConf) {
+        for (int i = 0; i < nactions; i++) {
+            autonomic(i, Symbols.GOAL, goalConf);
+        }
+
     }
 
-    public void act(int action, char punctuation, float freq, float conf, float priority, float durability) {
+    public void autonomic(int action) {
+        autonomic(action, Symbols.GOAL, qAutonomicGoalConfidence);
+        autonomic(action, Symbols.JUDGMENT, qAutonomicBeliefConfidence);
+
+    }
+    public void autonomic(int action, char punctuation, float conf) {
+        if (conf > 0)
+            autonomic(action, punctuation, 1.0f, conf, actionPriority, actionDurability);
+    }
+
+    public void autonomic(int action, char punctuation, float freq, float conf, float priority, float durability) {
         Operation a = actions.inverse().get(action);
 
         DirectProcess.run(nar,
@@ -271,12 +288,47 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
 //        act(getNextAction(), Symbols.GOAL);
 //    }
 
+
+    @Override
+    public synchronized int learn(double[] state, double reward, float confidence) {
+        believeReward((float) reward);
+        goalReward();
+
+        return super.learn(state, reward, confidence);
+    }
+
     public int learn(final int state, final double reward, int nextAction, double confidence) {
+        believeReward((float) reward);
+        goalReward();
+        return super.learn(state, reward, nextAction, confidence);
+    }
+
+    @Override
+    protected int qlearn(int state, double reward, int nextAction, double confidence) {
+        //belief about current state
+        if (stateUpdateConfidence > 0) {
+            DirectProcess.run(nar, getStateTerm(state) + ". :|: %" + confidence + ";" + stateUpdateConfidence + "%");
+        }
+
+        return super.qlearn(state, reward, nextAction, confidence);
+    }
+
+    private void goalReward() {
+        //seek reward goal
+        if (rewardGoalConfidence > 0) {
+            String rt = getRewardTerm();
+            String r = rt + "! :|: %1.0;" + rewardGoalConfidence + '%';
+            DirectProcess.run(nar, r);
+        }
+    }
+
+    private void believeReward(float reward) {
+        //belief about current reward amount
         if (rewardBeliefConfidence > 0) {
             String rt = getRewardTerm();
 
             //expects -1..+1 as reward range input
-            float rFreq = ((float)reward)/2.0f + 0.5f;
+            float rFreq = reward /2.0f + 0.5f;
 
             //clip reward to bounds
             if (rFreq < 0) rFreq = 0;
@@ -285,13 +337,6 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
             String r = rt + ". :|: %" + rFreq + ';' + rewardBeliefConfidence + '%';
             DirectProcess.run(nar, r);
         }
-        if (rewardGoalConfidence > 0) {
-            String rt = getRewardTerm();
-            String r = rt + "! :|: %1.0;" + rewardGoalConfidence + '%';
-            DirectProcess.run(nar, r);
-        }
-
-        return super.learn(state, reward, nextAction, confidence);
     }
 
 }
