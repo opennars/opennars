@@ -43,6 +43,8 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
      */
     public final BiMap<Operation, Integer> actions;
 
+    final double dq[][]; //pending delta-Q to apply
+
     /**
      * q-value matrix:  q[state][action]
      */
@@ -99,6 +101,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
         states = HashBiMap.create(nstates);
         actions = HashBiMap.create(nactions);
         this.q = new Concept[nstates][nactions];
+        this.dq = new double[nstates][nactions];
 
 //        frameReaction = new FrameReaction(nar) {
 //            @Override
@@ -212,18 +215,37 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
      */
     abstract public Operation getActionOperation(int s);
 
+
+
+
     @Override
     public void qAdd(int state, int action, double dq) {
-
         if (qUpdateConfidence == 0) return;
+        this.dq[state][action] += dq;
+    }
+
+    protected void qCommit() {
+        if (qUpdateConfidence == 0) return;
+
+        final double[][] dq = this.dq; //local reference
+
+        //input all dQ values
+        for (int s = 0; s < nstates; s++)
+            for (int a = 0; a < nactions; a++) {
+                double d = dq[s][a];
+                qCommit(s, a, d);
+                dq[s][a] = 0;
+            }
+
+    }
+
+    protected void qCommit(int state, int action, double dq) {
 
         if (Math.abs(dq) < updateThresh) {
             //setAlpha(Math.min(getAlpha() + 0.01, 1.0));
             //System.out.println(dq + " delta-Q too small, alpha=" + getAlpha());
             return;
         }
-
-
 
         double q = q(state, action);
         double nq = q + dq;
@@ -294,13 +316,19 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
         believeReward((float) reward);
         goalReward();
 
-        return super.learn(state, reward, confidence);
+
+        int l = super.learn(state, reward, confidence);
+        qCommit();
+        return l;
     }
 
     public int learn(final int state, final double reward, int nextAction, double confidence) {
         believeReward((float) reward);
         goalReward();
-        return super.learn(state, reward, nextAction, confidence);
+
+        int l = super.learn(state, reward, nextAction, confidence);
+        qCommit();
+        return l;
     }
 
     @Override

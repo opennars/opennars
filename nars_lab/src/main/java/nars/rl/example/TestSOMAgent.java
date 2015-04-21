@@ -540,11 +540,11 @@ public class TestSOMAgent extends JPanel {
         int concepts = 2000;
         int conceptsPerCycle = 10;
 
-        float qLearnedConfidence = 0.1f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.05f; //0.85f; //0 to disable
 
         //Perception p = new GNGPerception(64);
         //Perception p = new HaiSOMPerception();
-        Perception p = new AEPerception(32, 1);
+        Perception p = new AEPerception(18,2);
 
 
         Default dd = new Default(concepts, conceptsPerCycle, 4);
@@ -553,7 +553,7 @@ public class TestSOMAgent extends JPanel {
 
         TestSOMAgent a = new TestSOMAgent(d, p, dd, qLearnedConfidence);
         a.agent.setqUpdateConfidence(qLearnedConfidence);
-        a.agent.autonomicDesire(0.55f);
+        a.agent.autonomicDesire(0.51f);
 
     }
 

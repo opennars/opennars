@@ -8,8 +8,8 @@ import java.util.Arrays;
 
 abstract public class AbstractHaiQBrain {
 
-    //double Q[][]; //state, action
     double et[][]; //eligiblity trace
+
     int nActions, nStates;
 
     /** learning rate */
@@ -30,6 +30,7 @@ abstract public class AbstractHaiQBrain {
         nActions = nactions;
         nStates = nstates;
         et = new double[nStates][nActions];
+
     }
 
 
