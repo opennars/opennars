@@ -1,6 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
+import javolution.util.FastSet;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
@@ -10,8 +11,8 @@ import nars.nal.concept.Concept;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by me on 4/19/15.
@@ -23,7 +24,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     ConceptPanelBuilder b;
     VerticalPanel content = new VerticalPanel();
 
-    final Deque<JComponent> pendingDisplay = new ArrayDeque(); //new ConcurrentLinkedDeque<>();
+    final Set<JComponent> pendingDisplay = new FastSet().atomic(); //new ConcurrentLinkedDeque<>();
 
     int y = 0;
 
@@ -38,7 +39,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            updateConcept((Concept)args[0],1.0f,"Conceptualized");
+                            updateConcept((Concept) args[0], 1.0f, "Conceptualized");
                         }
                     });
                 }
@@ -63,7 +64,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
     protected void off() {
         pendingDisplay.clear();
-        content.removeAll();
+        content.removeAllVertically();
         b.off();
     }
 
@@ -72,14 +73,10 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
         off();
 
-        b = new ConceptPanelBuilder(nar);
         y = 0;
-        remove(content);
-        content = new VerticalPanel();
-        add(content, BorderLayout.CENTER);
+        b = new ConceptPanelBuilder(nar);
+        content.removeAllVertically();
 
-        doLayout();
-        updateUI();
     }
 
     public void applyPriority(JComponent p, float priority) {
@@ -98,7 +95,6 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         p.setBorder(BorderFactory.createMatteBorder(0, 14, 0, 0, c2));
 
 
-
         //updateUI();
     }
 
@@ -109,13 +105,13 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
         if (o instanceof Task) {
 
-            Task t = (Task)o;
+            Task t = (Task) o;
 
             priority = t.getPriority();
 
 
             Concept c = nar.concept(t.getTerm());
-            if (c !=null) {
+            if (c != null) {
                 updateConcept(c, priority, t.toString(nar.memory).toString());
                 return;
             }
@@ -151,22 +147,25 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
     }
 
-        @Override
-        public void run() {
+    @Override
+    public void run() {
 
-            while (!pendingDisplay.isEmpty()) {
+        Iterator<JComponent> i = pendingDisplay.iterator();
+        while (i.hasNext()) {
 
-                JComponent j = pendingDisplay.removeFirst();
+            JComponent j = i.next();
 
-                if (j instanceof ConceptPanelBuilder.ConceptPanel)
-                    content.remove(j);
-
-                content.addPanel(y++, j);
-                content.scrollBottom();
-                doLayout();
-                updateUI();
+            if (j instanceof ConceptPanelBuilder.ConceptPanel) {
+                content.removeVertically(j);
             }
+
+            content.addVertically(j);
+
+            i.remove();
         }
+
+        SwingUtilities.invokeLater(content::scrollBottom);
+    }
 
     @Override
     void limitBuffer(int incomingDataSize) {

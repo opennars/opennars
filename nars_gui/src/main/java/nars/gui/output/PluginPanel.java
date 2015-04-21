@@ -147,17 +147,17 @@ public class PluginPanel extends VerticalPanel {
         if (!ppp.isEmpty()) {
             for (PluggedIn p : ppp) {
                 PluginPane pp = new PluginPane(p);
-                pp.setBorder(new BevelBorder(BevelBorder.RAISED));            
-                addPanel(i++, pp);
+                pp.setBorder(new BevelBorder(BevelBorder.RAISED));
+                addVertically(pp, i++);
             }
         }
         else {
-            addPanel(i++, new JLabel("(No plugins active.)"));
+            addVertically(new JLabel("(No plugins active.)"), i++);
         }
     
         
-        contentWrap.doLayout();
-        contentWrap.validate();
+        //contentWrap.doLayout();
+        //contentWrap.validate();
     }
     
 

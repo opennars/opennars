@@ -90,8 +90,8 @@ public class PropretiesUtil {
 		dialog.getContentPane().setLayout(new BorderLayout());
 
         VerticalPanel centerPane = new VerticalPanel();
-        centerPane.addPanel(0, new ReflectPanel(o));
-        centerPane.addPanel(1, createConfigurationPane(o));
+        centerPane.add(new ReflectPanel(o), 0);
+        centerPane.add(createConfigurationPane(o), 1);
 
         dialog.setPreferredSize(new Dimension(400, 600));
 		dialog.getContentPane().add(centerPane, BorderLayout.CENTER);

@@ -86,6 +86,8 @@ public class NARControlPanel extends TimeControl implements Reaction {
     final Runnable narrun = new Runnable() {
         @Override public void run() {
             nar.frame();
+            if (timer!=null)
+                timer.restart();
         }
     };
 
@@ -537,6 +539,8 @@ public class NARControlPanel extends TimeControl implements Reaction {
     }
 
     public void frame() {
+        if (timer!=null)
+            timer.stop();
         narexe.execute(narrun);
     }
     /**

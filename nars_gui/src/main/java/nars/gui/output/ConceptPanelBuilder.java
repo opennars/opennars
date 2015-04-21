@@ -15,6 +15,7 @@ import nars.NAR;
 import nars.budget.Bag;
 import nars.budget.Budget.Budgetable;
 import nars.event.AbstractReaction;
+import nars.gui.VerticalLayout;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.nal.concept.Concept;
@@ -146,7 +147,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
     public static class ConceptPanel extends NPanel {
 
-        final float titleSize = 24f;
+        final float titleSize = 18f;
         private final Concept concept;
         private final TruthChart beliefGoalChart;
         private final PriorityColumn questionChart;
@@ -261,18 +262,19 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 add(details, WEST);
 
                 if (label) {
-                    JTextArea title = new JTextArea(concept.term.toString());
-
-                    title.setWrapStyleWord(true);
-                    title.setLineWrap(true);
-                    title.setEditable(false);
-                    title.setOpaque(false);
+//                    JTextArea title = new JTextArea(concept.term.toString());
+//
+//                    title.setWrapStyleWord(true);
+//                    title.setLineWrap(true);
+//                    title.setEditable(false);
+//                    title.setOpaque(false);
+                    JLabel title = new JLabel(concept.term.toString());
                     title.setFont(Video.monofont.deriveFont(titleSize));
 
-                    JPanel titlePanel = new JPanel(new BorderLayout());
+                    JPanel titlePanel = new JPanel(new VerticalLayout());
                     titlePanel.setOpaque(false);
-                    titlePanel.add(title, CENTER);
-                    titlePanel.add(subtitle, SOUTH);
+                    titlePanel.add(title);
+                    titlePanel.add(subtitle);
 
 
                     add(titlePanel, CENTER);
@@ -284,6 +286,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             }
 
+            doLayout();
 
            /* TermSyntaxVis tt = new TermSyntaxVis(c.term);
             syntaxPanel = new PCanvas(tt);

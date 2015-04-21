@@ -9,7 +9,6 @@ import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
-import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.TruthValue;
@@ -249,7 +248,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
 
                 //SwingUtilities..
                 content.remove(p);
-                addPanel(y++, p);
+                addVertically(p, y++);
 
                 scrollBottom();
 
