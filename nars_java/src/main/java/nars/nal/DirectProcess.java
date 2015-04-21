@@ -7,6 +7,7 @@ package nars.nal;
 import nars.Events;
 import nars.Memory;
 import nars.Global;
+import nars.NAR;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 
@@ -70,5 +71,19 @@ public class DirectProcess extends NAL {
         }
     }
 
+    public static DirectProcess run(NAR nar, String task) {
+        return run(nar.memory, nar.task(task));
+    }
 
+    /** create and execute a direct process immediately */
+    public static DirectProcess run(NAR nar, Task task) {
+        return run(nar.memory, task);
+    }
+
+    /** create and execute a direct process immediately */
+    public static DirectProcess run(Memory m, Task task) {
+        DirectProcess d = new DirectProcess(m, task);
+        d.run();
+        return d;
+    }
 }

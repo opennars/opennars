@@ -26,8 +26,6 @@ import java.util.Set;
 abstract public class BaseQLAgent extends AbstractHaiQBrain {
 
     public NAR nar;
-
-    final FrameReaction frameReaction;
     public final int nactions;
     public final int nstates;
 
@@ -61,7 +59,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
      */
     float updateThresh = Global.TRUTH_EPSILON;
 
-    boolean updateEachFrame = false; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
+    //boolean updateEachFrame = false; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
 
     //OPERATING PARAMETERS ------------------------
     /** confidence of update beliefs (a learning rate); set to zero to disable */
@@ -99,12 +97,16 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
         actions = HashBiMap.create(nactions);
         this.q = new Concept[nstates][nactions];
 
-        frameReaction = new FrameReaction(nar) {
-            @Override
-            public void onFrame() {
-                if (updateEachFrame) react();
-            }
-        };
+//        frameReaction = new FrameReaction(nar) {
+//            @Override
+//            public void onFrame() {
+//                if (updateEachFrame) react();
+//            }
+//        };
+    }
+
+    public void setqUpdateConfidence(float qUpdateConfidence) {
+        this.qUpdateConfidence = qUpdateConfidence;
     }
 
     public void init() {
@@ -226,7 +228,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
         if (nq < -1d) nq = -1d;
 
         Term qt = qterm(state, action);
-        System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
+        //System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
 
         double nextFreq = (nq / 2) + 0.5f;
 
@@ -234,7 +236,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
 
         String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
 
-        new DirectProcess(nar.memory, nar.task(updatedBelief)).run();
+        DirectProcess.run(nar, updatedBelief);
 
     }
 
@@ -260,15 +262,16 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
     public void act(int action, char punctuation, float freq, float conf, float priority, float durability) {
         Operation a = actions.inverse().get(action);
 
-        //TODO use DirectProcess?
-        nar.input("$" + priority + ";" + durability + "$ " + a + punctuation + " :|: %" + freq + ';' + conf + '%');
+        DirectProcess.run(nar,
+                "$" + priority + ";" + durability + "$ " + a + punctuation + " :|: %" + freq + ';' + conf + '%'
+        );
     }
 
-    public void react() {
-        act(getNextAction(), Symbols.GOAL);
-    }
+//    public void react() {
+//        act(getNextAction(), Symbols.GOAL);
+//    }
 
-    public int learn(final int state, final double reward, int nextAction, float confidence) {
+    public int learn(final int state, final double reward, int nextAction, double confidence) {
         if (rewardBeliefConfidence > 0) {
             String rt = getRewardTerm();
 
@@ -280,12 +283,12 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain {
             if (rFreq > 1f) rFreq = 1f;
 
             String r = rt + ". :|: %" + rFreq + ';' + rewardBeliefConfidence + '%';
-            nar.input(r);
+            DirectProcess.run(nar, r);
         }
         if (rewardGoalConfidence > 0) {
             String rt = getRewardTerm();
             String r = rt + "! :|: %1.0;" + rewardGoalConfidence + '%';
-            nar.input(r);
+            DirectProcess.run(nar, r);
         }
 
         return super.learn(state, reward, nextAction, confidence);

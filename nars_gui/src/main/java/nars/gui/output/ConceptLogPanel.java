@@ -59,7 +59,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         quickfilter.setToolTipText("Quick filter");
         quickfilter.addKeyListener(new KeyAdapter() {
             @Override
-            public void keyPressed(KeyEvent e) {
+            public void keyReleased(KeyEvent e) {
                 String f = quickfilter.getText();
                 setFilter(f);
             }

@@ -1,6 +1,9 @@
 package nars.rl.hai;
 
 import nars.Memory;
+import org.apache.commons.math3.linear.ArrayRealVector;
+
+import java.util.Arrays;
 
 
 abstract public class AbstractHaiQBrain {
@@ -21,7 +24,7 @@ abstract public class AbstractHaiQBrain {
     /** random rate */
     double epsilon = 0.01;
 
-    int lastState = 0, lastAction = 0;
+    int lastAction = 0;
 
     public AbstractHaiQBrain(int nstates, int nactions) {
         nActions = nactions;
@@ -58,20 +61,55 @@ abstract public class AbstractHaiQBrain {
     abstract public void qAdd(int state, int action, double dq);
     abstract public double q(int state, int action);
 
-    public int learn(final int state, final double reward, float confidence) {
+    /**
+     * learn an entire input vector. each entry in state should be between 0 and 1 reprsenting the degree to which that state is active
+     * @param state
+     * @param reward
+     * @param confidence
+     * @return
+     */
+    public synchronized int learn(final double[] state, final double reward, float confidence) {
+        ArrayRealVector act = new ArrayRealVector(nActions);
+
+        //HACK - allow learn to update lastAction but restore to the value before this method was called, and then set the final value after all learning completed
+        int actualLastAction = lastAction;
+
+        // System.out.println(confidence + " " + Arrays.toString(state));
+
+        for (int i = 0; i < state.length; i++) {
+            lastAction = actualLastAction;
+            int action = learn(i, reward, state[i] * confidence);
+
+            //act.addToEntry(action, confidence);
+
+            act.setEntry(action, Math.max(act.getEntry(action), confidence));
+        }
+
+        if (epsilon > 0) {
+            if (Memory.randomNumber.nextDouble() < epsilon)
+                return lastAction = getRandomAction();
+        }
+
+        //choose maximum action
+        return lastAction = act.getMaxIndex();
+    }
+
+    public int learn(final int state, final double reward) {
+        return learn(state, reward, 1f);
+    }
+
+    public int learn(final int state, final double reward, double confidence) {
         return learn(state, reward, -1, confidence);
     }
 
     /**
      * returns action #
      */
-    public int learn(final int state, final double reward, int nextAction, float confidence) {
+    public int learn(final int state, final double reward, int nextAction, double confidence) {
 
         final double[][] et = this.et; //local reference
         final int actions = nActions;
         final int states = nStates;
-
-
 
         if (nextAction == -1) {
             int maxk = -1;
@@ -85,7 +123,7 @@ abstract public class AbstractHaiQBrain {
             }
 
             if (epsilon > 0 && random(1.0) < epsilon) {
-                nextAction = (int) random(actions);
+                nextAction = getRandomAction();
             } else {
                 nextAction = maxk;
             }
@@ -108,9 +146,9 @@ abstract public class AbstractHaiQBrain {
 
         double DeltaQ = reward + gamma * q(state, nextAction) -  q(state, lastAction);
         
-        et[state][lastAction] += 1;
+        et[state][lastAction] += confidence;
 
-        final double AlphaDeltaQ = alpha * DeltaQ;
+        final double AlphaDeltaQ = confidence * alpha * DeltaQ;
         final double GammaLambda = gamma * lambda;
         for (int i = 0; i < states; i++) {
             for (int k = 0; k < actions; k++) {
@@ -120,9 +158,12 @@ abstract public class AbstractHaiQBrain {
             }
         }
 
-        lastState = state;
         lastAction = nextAction;
         return nextAction;
+    }
+
+    public int getRandomAction() {
+        return (int) random(nActions);
     }
 
     public int getNextAction() {

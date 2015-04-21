@@ -85,11 +85,11 @@ public class Global {
      *  other values may be used, for example, 0.02 for 50, 0.10 for 10, etc.
      *  Change at your own risk
      */
-    public static final float TRUTH_EPSILON = 0.01f;
+    public static float TRUTH_EPSILON = 0.01f;
     public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
 
     /** minimum difference necessary to cause a modifciation in budget components */
-    public static final float BUDGET_EPSILON = 0.005f;
+    public static float BUDGET_EPSILON = 0.005f;
     
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted.

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class Follow1D implements RLEnvironment {
 
-    final int numActions = 5;
+    final int numActions = 3;
 
     //final int discretization = 3;
 
@@ -134,8 +134,7 @@ public class Follow1D implements RLEnvironment {
     @Override
     public double reward() {
         double dist = Math.abs(myPos - targetPos) / maxPos;
-        if (dist < 0.1) return (0.1 - dist) * 10.0;
-        return -(dist-0.1);
+        return (0.5 - dist) * 2;
     }
 
     public void updateTarget(int time) {        

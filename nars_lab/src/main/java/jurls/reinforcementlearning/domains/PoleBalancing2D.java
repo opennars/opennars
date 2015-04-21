@@ -48,11 +48,13 @@ public class PoleBalancing2D implements RLEnvironment {
         double[] o = new double[]{
             (agentPoint.x)/(maxX),
             //agentPoint.y/600.0,
-            (pendulumPoint.x)/(maxX),
-            (pendulumPoint.y - agentPoint.y)/(poleLength*1.2),
+            //(pendulumPoint.x)/(maxX),
+            //(pendulumPoint.y - agentPoint.y)/(poleLength*1.2),
+                Math.atan2(pendulumPoint.vy, pendulumPoint.vx),
+                Math.atan2(pendulumPoint.y, pendulumPoint.x),
                 //Math.signum(pendulumPoint.vx),
-            pendulumPoint.vx*dt,
-            pendulumPoint.vy*dt
+            //pendulumPoint.vx*dt,
+            //pendulumPoint.vy*dt
         };
         //System.out.println(Arrays.toString(o));
         return o;

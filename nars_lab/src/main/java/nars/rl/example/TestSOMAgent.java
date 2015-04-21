@@ -6,19 +6,21 @@ import jurls.core.learning.Autoencoder;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.tetris.Tetris;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.ProtoNAR;
 import nars.event.FrameReaction;
 import nars.gui.NARSwing;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.nal.DirectProcess;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
-import nars.prototype.Discretinuous;
+import nars.prototype.Default;
 import nars.rl.BaseQLAgent;
 import nars.rl.gng.NeuralGasNet;
 import nars.rl.gng.Node;
@@ -85,7 +87,7 @@ public class TestSOMAgent extends JPanel {
             //System.out.println(som.winnerx + " " + som.winnery + " -> " + s);
 
             //System.out.println(Arrays.deepToString(q));
-            agent.learn(s, reward, 1f);
+            agent.learn(s, reward);
         }
     }
 
@@ -214,9 +216,10 @@ public class TestSOMAgent extends JPanel {
             //System.out.println(Arrays.toString(ii));
 
             double error = ae.train(ii, learningRate, 0, noise, true);
-            int closest = ae.getMax();
 
             float conf = (float) (1.0f / (1.0f + error)); //TODO normalize against input mag?
+            agent.learn(ae.getOutput(), reward, conf);
+
 
             //perception input
 
@@ -231,7 +234,6 @@ public class TestSOMAgent extends JPanel {
                 vis.repaint();
             }
 
-            agent.learn(closest, reward, conf);
         }
     }
 
@@ -253,6 +255,9 @@ public class TestSOMAgent extends JPanel {
         public int actByQStrongest = -1; //default q-action if NARS does not specify one by the next frame
         double lastReward = 0;
 
+        /** confidence of state belief updates */
+        //TODO move this to BseQLAgent with other parameters
+        float stateUpdateConfidence = 0.9f;
 
         /**
          *
@@ -321,11 +326,11 @@ public class TestSOMAgent extends JPanel {
         }
 
         @Override
-        public int learn(int state, double reward, int nextAction, float confidence) {
+        public int learn(int state, double reward, int nextAction, double confidence) {
 
-            float freq = 1.0f;
-            nar.input(getStateTerm(state) + ". :|: %" + freq + ";" + confidence + "%");
+            //System.out.println(getStateTerm(state) + " " + confidence);
 
+            DirectProcess.run(nar, getStateTerm(state) + ". :\\: %" + confidence + ";" + stateUpdateConfidence + "%");
 
             return super.learn(state, reward, nextAction, confidence);
         }
@@ -402,8 +407,8 @@ public class TestSOMAgent extends JPanel {
 
                 /** introduce belief or goal for a QL action */
 
-                //act(action, Symbols.GOAL);  //provides faster action but may cause illogical feedback loops
-                act(action, Symbols.JUDGMENT); //more "correct" probably because it just notices the "autonomic" QL reaction that was executed
+                act(action, Symbols.GOAL);  //provides faster action but may cause illogical feedback loops
+                //act(action, Symbols.JUDGMENT); //maybe more "correct" probably because it just notices the "autonomic" QL reaction that was executed
             }
 
             env.takeAction(action);
@@ -439,15 +444,17 @@ public class TestSOMAgent extends JPanel {
 
 
 
-    public TestSOMAgent(RLEnvironment d, Perception p) {
+    public TestSOMAgent(RLEnvironment d, Perception p, ProtoNAR dd, float qLearnedConfidence) {
         super();
 
         double[] exampleObs = d.observe();
 
-        nar = new NAR(new Discretinuous(concepts, conceptsPerCycle, 4).setInternalExperience(null));
 
 
-        final QLAgent ql = new QLAgent(nar, d, p, 0.02) {
+        nar = new NAR(dd);
+
+
+        final QLAgent ql = new QLAgent(nar, d, p, 0.05) {
 
             private final MatrixImage mi = new MatrixImage(400, 400);
             private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
@@ -485,10 +492,12 @@ public class TestSOMAgent extends JPanel {
 
 
         nar.setCyclesPerFrame(cyclesPerFrame);
-        nar.param.shortTermMemoryHistory.set(2);
-        nar.param.duration.set(5 * cyclesPerFrame / 2);         //nar.param.duration.setLinear
-        nar.param.decisionThreshold.set(0.7);
+        nar.param.shortTermMemoryHistory.set(3);
+        nar.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
+        nar.param.decisionThreshold.set(0.65);
         nar.param.outputVolume.set(5);
+
+        ql.setqUpdateConfidence(qLearnedConfidence);
 
 
 //        new AbstractReaction(nar, Events.CycleEnd.class) {
@@ -517,30 +526,42 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    int concepts = 2000;
-    int conceptsPerCycle = 10;
-    private final int cyclesPerFrame = 100;
+    private final int cyclesPerFrame = 50;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
 
-        Global.DEBUG = false;
 
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        //RLEnvironment d = new Curiousbot();
-        RLEnvironment d = new Tetris(10, 14);
+        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Tetris(10, 14);
 
         d.newWindow();
 
+        Global.DEBUG = false;
+        //Global.TRUTH_EPSILON = 0.01f;
+        //Global.BUDGET_EPSILON = 0.02f;
+        Global.DERIVATION_PRIORITY_LEAK = 0.9f;
+        Global.DERIVATION_DURABILITY_LEAK = 0.9f;
+        int concepts = 2000;
+        int conceptsPerCycle = 10;
+
+        float qLearnedConfidence = 0.1f; //0.85f; //0 to disable
+
         //Perception p = new GNGPerception(64);
         //Perception p = new HaiSOMPerception();
-        Perception p = new AEPerception(32, 2);
+        Perception p = new AEPerception(32, 1);
 
-        new TestSOMAgent(d, p);
+
+        Default dd = new Default(concepts, conceptsPerCycle, 4);
+        dd.setTaskLinkBagSize(24);
+        dd.setInternalExperience(null);
+
+        new TestSOMAgent(d, p, dd, qLearnedConfidence);
 
 
     }
