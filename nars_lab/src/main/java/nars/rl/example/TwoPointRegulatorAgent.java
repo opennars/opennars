@@ -191,16 +191,16 @@ public class TwoPointRegulatorAgent extends JPanel {
             public void init() {
                 super.init();
 
-                ql.possibleDesire(actions, 0.9f); //doesnt work yet
+                ql.possibleDesire(actions, 0.9f);
 
-                setqAutonomicGoalConfidence(0.55f);
+                //setqAutonomicGoalConfidence(0.55f);
             }
         };
 
 
         nar.setCyclesPerFrame(cyclesPerFrame);
         nar.param.shortTermMemoryHistory.set(2);
-        nar.param.duration.set(5);         //nar.param.duration.setLinear
+        nar.param.duration.set(5 * cyclesPerFrame / 2);         //nar.param.duration.setLinear
         nar.param.decisionThreshold.set(0.5);
         nar.param.outputVolume.set(5);
 
