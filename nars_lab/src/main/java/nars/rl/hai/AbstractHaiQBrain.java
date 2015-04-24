@@ -1,16 +1,14 @@
 package nars.rl.hai;
 
+import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Memory;
-import org.apache.commons.math3.linear.ArrayRealVector;
 
-import java.util.Arrays;
+import java.util.AbstractList;
+import java.util.List;
+import java.util.Map;
 
 
-abstract public class AbstractHaiQBrain {
-
-    double et[][]; //eligiblity trace
-
-    int nActions, nStates;
+abstract public class AbstractHaiQBrain<S,A> {
 
     /** learning rate */
     double alpha = 0.1;
@@ -24,33 +22,76 @@ abstract public class AbstractHaiQBrain {
     /** random rate */
     double epsilon = 0.01;
 
-    int lastAction = 0;
+    A lastAction = null;
 
-    public AbstractHaiQBrain(int nstates, int nactions) {
-        nActions = nactions;
-        nStates = nstates;
-        et = new double[nStates][nActions];
-
+    public AbstractHaiQBrain() {
     }
 
+    public static List<Integer> range(final int begin, final int end) {
+        return new AbstractList<Integer>() {
+            @Override
+            public Integer get(int index) {
+                return begin + index;
+            }
 
-    public static class ArrayHaiQBrain extends AbstractHaiQBrain {
+            @Override
+            public int size() {
+                return end - begin;
+            }
+        };
+    }
+
+    public static class ArrayHaiQBrain extends AbstractHaiQBrain<Integer,Integer> {
+
+        int nActions, nStates;
+
+        final Iterable<Integer> actionRange, stateRange;
 
         private final double[][] Q;
+        double et[][]; //eligiblity trace
 
         public ArrayHaiQBrain(int states, int actions) {
-            super(states, actions);
+            this.nActions = actions;
+            actionRange = range(0, nActions);
+            this.nStates = states;
+            stateRange = range(0, states);
             Q = new double[nStates][nActions];
+            et = new double[nStates][nActions];
+        }
+
+
+        @Override public Integer getRandomAction() {
+            return (int) random(nActions);
         }
 
         @Override
-        public void qAdd(int state, int action, double dq) {
+        public void eligibility(Integer state, Integer action, double dEligibility) {
+            et[state][action] = dEligibility;
+        }
+
+        @Override
+        public double eligibility(Integer state, Integer action) {
+            return et[state][action];
+        }
+
+        @Override
+        public void qAdd(Integer state, Integer action, double dq) {
             Q[state][action] += dq;
         }
 
         @Override
-        public double q(int state, int action) {
+        public double q(Integer state, Integer action) {
             return Q[state][action];
+        }
+
+        @Override
+        public Iterable<Integer> getStates() {
+            return stateRange;
+        }
+
+        @Override
+        public Iterable<Integer> getActions() {
+            return actionRange;
         }
 
     }
@@ -58,9 +99,12 @@ abstract public class AbstractHaiQBrain {
     
     public static double random(double max) { return Memory.randomNumber.nextDouble() * max;    }
 
+    abstract public void eligibility(S state, A action, double dEligibility);
+    abstract public double eligibility(S state, A action);
 
-    abstract public void qAdd(int state, int action, double dq);
-    abstract public double q(int state, int action);
+
+    abstract public void qAdd(S state, A action, double dq);
+    abstract public double q(S state, A action);
 
     /**
      * learn an entire input vector. each entry in state should be between 0 and 1 reprsenting the degree to which that state is active
@@ -69,21 +113,23 @@ abstract public class AbstractHaiQBrain {
      * @param confidence
      * @return
      */
-    public synchronized int learn(final double[] state, final double reward, float confidence) {
-        ArrayRealVector act = new ArrayRealVector(nActions);
+    public synchronized A learn(final Map<S,Double> state, final double reward, float confidence) {
+        //TODO use ObjectDoubleMap
+        ObjectDoubleHashMap<A> act = new ObjectDoubleHashMap();
 
         //HACK - allow learn to update lastAction but restore to the value before this method was called, and then set the final value after all learning completed
-        int actualLastAction = lastAction;
+        A actualLastAction = lastAction;
 
         // System.out.println(confidence + " " + Arrays.toString(state));
 
-        for (int i = 0; i < state.length; i++) {
+        for (S i : getStates()) {
             lastAction = actualLastAction;
-            int action = qlearn(i, reward, -1, state[i] * confidence);
+            A action = qlearn(i, reward, null, state.get(i) * confidence);
 
-            //act.addToEntry(action, confidence);
 
-            act.setEntry(action, Math.max(act.getEntry(action), confidence));
+            act.addToValue(action, confidence);
+
+            //act.put(action, Math.max(act.get(action), confidence));
         }
 
         if (epsilon > 0) {
@@ -92,28 +138,28 @@ abstract public class AbstractHaiQBrain {
         }
 
         //choose maximum action
-        return lastAction = act.getMaxIndex();
+        return act.keysView().max();
     }
 
     /** learn a discrete state */
-    public int learn(final int state, final double reward) {
+    public A learn(final S state, final double reward) {
         return learn(state, reward, 1f);
     }
 
-    public int learn(final int state, final double reward, double confidence) {
-        return learn(state, reward, -1, confidence);
+    public A learn(final S state, final double reward, double confidence) {
+        return learn(state, reward, null, confidence);
     }
 
-    protected int qlearn(final int state, final double reward, int nextAction, double confidence) {
+    abstract public Iterable<S> getStates();
+    abstract public Iterable<A> getActions();
 
-        final double[][] et = this.et; //local reference
-        final int actions = nActions;
-        final int states = nStates;
+    protected A qlearn(final S state, final double reward, A nextAction, double confidence) {
 
-        if (nextAction == -1) {
-            int maxk = -1;
+
+        if (nextAction == null) {
+            A maxk = null;
             double maxval = Double.NEGATIVE_INFINITY;
-            for (int k = 0; k < actions; k++) {
+            for (A k : getActions()) {
                 double v = q(state, k);
                 if (v > maxval) {
                     maxk = k;
@@ -145,15 +191,15 @@ abstract public class AbstractHaiQBrain {
 
         double DeltaQ = reward + gamma * q(state, nextAction) -  q(state, lastAction);
 
-        et[state][lastAction] += confidence;
+        eligibility(state, lastAction, eligibility(state, lastAction) + confidence);
 
         final double AlphaDeltaQ = confidence * alpha * DeltaQ;
         final double GammaLambda = gamma * lambda;
-        for (int i = 0; i < states; i++) {
-            for (int k = 0; k < actions; k++) {
-                final double e = et[i][k];
+        for (S i : getStates()) {
+            for (A k : getActions()) {
+                final double e = eligibility(i, k);
                 qAdd(i, k, AlphaDeltaQ * e);
-                et[i][k] = GammaLambda * e;
+                eligibility(i, k, GammaLambda * e);
             }
         }
 
@@ -164,15 +210,13 @@ abstract public class AbstractHaiQBrain {
     /**
      * returns action #
      */
-    public int learn(final int state, final double reward, int nextAction, double confidence) {
+    public A learn(final S state, final double reward, A nextAction, double confidence) {
         return qlearn(state, reward, nextAction, confidence);
     }
 
-    public int getRandomAction() {
-        return (int) random(nActions);
-    }
+    abstract public A getRandomAction();
 
-    public int getNextAction() {
+    public A getNextAction() {
         return lastAction;
     }
 
