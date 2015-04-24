@@ -2,10 +2,10 @@ package nars.rl.hai;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Memory;
+import nars.nal.Task;
 
 import java.util.AbstractList;
 import java.util.List;
-import java.util.Map;
 
 
 abstract public class AbstractHaiQBrain<S,A> {
@@ -22,7 +22,7 @@ abstract public class AbstractHaiQBrain<S,A> {
     /** random rate */
     double epsilon = 0.01;
 
-    A lastAction = null;
+    protected A lastAction = null;
 
     public AbstractHaiQBrain() {
     }
@@ -106,40 +106,6 @@ abstract public class AbstractHaiQBrain<S,A> {
     abstract public void qAdd(S state, A action, double dq);
     abstract public double q(S state, A action);
 
-    /**
-     * learn an entire input vector. each entry in state should be between 0 and 1 reprsenting the degree to which that state is active
-     * @param state
-     * @param reward
-     * @param confidence
-     * @return
-     */
-    public synchronized A learn(final Map<S,Double> state, final double reward, float confidence) {
-        //TODO use ObjectDoubleMap
-        ObjectDoubleHashMap<A> act = new ObjectDoubleHashMap();
-
-        //HACK - allow learn to update lastAction but restore to the value before this method was called, and then set the final value after all learning completed
-        A actualLastAction = lastAction;
-
-        // System.out.println(confidence + " " + Arrays.toString(state));
-
-        for (S i : getStates()) {
-            lastAction = actualLastAction;
-            A action = qlearn(i, reward, null, state.get(i) * confidence);
-
-
-            act.addToValue(action, confidence);
-
-            //act.put(action, Math.max(act.get(action), confidence));
-        }
-
-        if (epsilon > 0) {
-            if (Memory.randomNumber.nextDouble() < epsilon)
-                return lastAction = getRandomAction();
-        }
-
-        //choose maximum action
-        return act.keysView().max();
-    }
 
     /** learn a discrete state */
     public A learn(final S state, final double reward) {
@@ -253,5 +219,9 @@ abstract public class AbstractHaiQBrain<S,A> {
 
     public void setEpsilon(double epsilon) {
         this.epsilon = epsilon;
+    }
+
+    public double getEpsilon() {
+        return epsilon;
     }
 }

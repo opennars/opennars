@@ -1,5 +1,6 @@
 package nars.nario;
 
+import automenta.vivisect.Video;
 import nars.Events;
 import nars.Memory;
 import nars.NAR;
@@ -13,7 +14,6 @@ import nars.nal.term.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.operate.app.plan.TemporalParticlePlanner;
 import nars.prototype.Default;
 
 import javax.swing.*;
@@ -31,7 +31,11 @@ import static java.lang.Math.signum;
 public class NARio extends Run {
 
     static int memoryCyclesPerFrame = 10;
-    
+
+    int movementStatusPeriod = 50;
+    int commandPeriod = 50;
+    int keyStatePeriod = 25;
+
     private final NAR nar;
     private LevelScene level;
     private float lastX = -1;
@@ -56,7 +60,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
 
-        NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(500));
+        NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(2500));
         
         //nar.on(new TemporalParticlePlanner());
 
@@ -78,16 +82,19 @@ public class NARio extends Run {
         
         (nar.param).duration.set(memoryCyclesPerFrame); //2 frames seems good
         (nar.param).outputVolume.set(0);
-        (nar.param).decisionThreshold.set(0.75);
-        
+        (nar.param).decisionThreshold.set(0.55);
+        nar.param.conceptsFiredPerCycle.set(25);
+        nar.setCyclesPerFrame(50);
+        nar.param.shortTermMemoryHistory.set(4);
+
         float fps = 20f;
         gameRate = 1.0f / fps;
 
-        
 
+        Video.themeInvert();
         NARSwing sw=new NARSwing(nar);
-        
-        nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
+
+        //nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
         
         NARio nario = new NARio(nar);
         sw.setSpeed(0.95f);
@@ -129,15 +136,26 @@ public class NARio extends Run {
                         //nar.addInput("<solid <-> empty>. %0.00;0.99%");
                         //nar.addInput("<up <-> down>. %0.00;0.99%");
                         //nar.addInput("<left <-> right>. %0.00;0.99%");
-        
+        {
+            //teach keys
+            int[] ev2=new int[]{Mario.KEY_DOWN,Mario.KEY_JUMP,Mario.KEY_JUMP,Mario.KEY_LEFT,Mario.KEY_RIGHT,Mario.KEY_SPEED,Mario.KEY_UP};
+            for (boolean b : new boolean[] { true, false }) {
+                for (int i : ev2) {
+                    setKey(i, b, true);
+                }
+            }
+        }
     }
     
     ChangedTextInput[] keyInput = new ChangedTextInput[6];
-    
+
     protected void setKey(int k, boolean pressed) {
+        setKey(k, pressed, true);
+    }
+    protected void setKey(int k, boolean pressed, boolean goal) {
         if (keyInput[k] == null && pressed)
             keyInput[k] = new ChangedTextInput(nar);
-        nar.input("(^keyboard" + k + "," + (pressed ? "on" : "off") + "). :|:");
+        nar.input("(^keyboard" + k + "," + (pressed ? "on" : "off") + ")" + (goal? '!' : '.') + " :|:");
     }
     
     @Override protected void toggleKey(int keyCode, boolean isPressed)
@@ -255,12 +273,18 @@ public class NARio extends Run {
                     return "zero";
                 }
             }
-            
+
+            protected void updateMovement(String direction, boolean truth) {
+                String s = "<" + direction + " --> moved>. :|: %" +
+                        (truth ? "1.0" : "0.0" ) + ";0.90%";
+                nar.input(s);
+            }
+
             int tt=0;
             @Override
             public void event(Class event, Object... arguments) {
 
-                nar.memory.timeSimulationAdd(memoryCyclesPerFrame);
+                nar.memory.timeSimulationAdd(1);
 
                 {
         //                int ji = 10;
@@ -275,54 +299,57 @@ public class NARio extends Run {
                 }
                 
                 tt++;
+                /*
                 if(tt%19==0) {
                     int[] ev2=new int[]{Mario.KEY_DOWN,Mario.KEY_JUMP,Mario.KEY_JUMP,Mario.KEY_LEFT,Mario.KEY_RIGHT,Mario.KEY_SPEED,Mario.KEY_UP};
                     for(int i : ev2) {
                         scene.toggleKey(i, false);
                     }
-                }
-                if(Memory.randomNumber.nextDouble()<1.0/10.0 && tt<200) {
-                    
+                }*/
+
+                //if(Memory.randomNumber.nextDouble()<1.0/10.0 && tt<200) {
+
+                boolean keyState = www % keyStatePeriod == 0;
                     
                     
 //                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
-                    boolean isPressed = offKeys ? Memory.randomNumber.nextBoolean() : true;
+                    //boolean isPressed = offKeys ? Memory.randomNumber.nextBoolean() : true;
+
                     
-                    int[] ev=new int[]{KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_UP,KeyEvent.VK_S};
-                    int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
-                    if (keyCode == KeyEvent.VK_LEFT)
-                    {
-                        setKey(0, isPressed);
-                        scene.toggleKey(Mario.KEY_LEFT, isPressed);
-                    }
-                    if (keyCode == KeyEvent.VK_RIGHT)
-                    {
-                        setKey(1, isPressed);
-                        scene.toggleKey(Mario.KEY_RIGHT, isPressed);
-                    }
-                    if (keyCode == KeyEvent.VK_DOWN)
-                    {
-                        setKey(2, isPressed);
-                        scene.toggleKey(Mario.KEY_DOWN, isPressed);
-                    }
-                    if (keyCode == KeyEvent.VK_UP)
-                    {
-                        setKey(3, isPressed);
-                        scene.toggleKey(Mario.KEY_JUMP, isPressed);
-                        setKey(1, isPressed);
-                        scene.toggleKey(Mario.KEY_RIGHT, isPressed);
-                    }
-                    if (keyCode == KeyEvent.VK_S)
-                    {
-                        setKey(4, isPressed);
-                        scene.toggleKey(Mario.KEY_UP, isPressed);
-                    }
-                    if (keyCode == KeyEvent.VK_A) //wat
-                    {
-                        setKey(5, isPressed);
-                        scene.toggleKey(Mario.KEY_DOWN, isPressed);
-                    }
-                }
+//                    int[] ev=new int[]{KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_UP,KeyEvent.VK_S};
+//                    int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
+//                    if (keyCode == KeyEvent.VK_LEFT)
+//                    {
+//                        //if (keyState) setKey(0, isPressed);
+//                        scene.toggleKey(Mario.KEY_LEFT, isPressed);
+//                    }
+//                    if (keyCode == KeyEvent.VK_RIGHT)
+//                    {
+//                        //if (keyState) setKey(1, isPressed);
+//                        scene.toggleKey(Mario.KEY_RIGHT, isPressed);
+//                    }
+//                    if (keyCode == KeyEvent.VK_DOWN)
+//                    {
+//                        //if (keyState) setKey(2, isPressed);
+//                        scene.toggleKey(Mario.KEY_DOWN, isPressed);
+//                    }
+//                    if (keyCode == KeyEvent.VK_UP)
+//                    {
+//                        //if (keyState) setKey(3, isPressed);
+//                        scene.toggleKey(Mario.KEY_JUMP, isPressed);
+//
+//                    }
+//                    if (keyCode == KeyEvent.VK_S)
+//                    {
+//                        //if (keyState) setKey(4, isPressed);
+//                        scene.toggleKey(Mario.KEY_UP, isPressed);
+//                    }
+//                    if (keyCode == KeyEvent.VK_A) //wat
+//                    {
+//                        //if (keyState) setKey(5, isPressed);
+//                        scene.toggleKey(Mario.KEY_DOWN, isPressed);
+//                    }
+                //}
                     
                /* if (cycle % cyclesPerMario == 0)*/ {
                     cycle(gameRate);
@@ -356,17 +383,26 @@ public class NARio extends Run {
                             movement = true;
                         }
 
-                        if (movement) {
 
-                            if (!((mx==0) && (my==0))) {
-                                String dir=direction(mx,my);
-                                if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
-                                    //if significantly changed block position, record it for next difference
-                                    nar.input("<right --> moved>. :|:");
-                                    lastMX = x;
-                                    lastMY = y;
-                                }
-                            }
+                        if (movement || (www % movementStatusPeriod== 0)) {
+
+//                            if (!((mx==0) && (my==0))) {
+//                                String dir=direction(mx,my);
+//                                if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
+//                                    //if significantly changed block position, record it for next difference
+//                                    nar.input("<right --> moved>. :|:");
+//                                    lastMX = x;
+//                                    lastMY = y;
+//                                }
+//                                else {
+//                                    nar.input("(--, <right --> moved>). :|:");
+//                                }
+//                            }
+
+                            updateMovement("nowhere", (mx == 0 && my == 0));
+                            updateMovement("left", (mx > 0));
+                            updateMovement("right", (mx < 0));
+
                             //this one is wrong like when getting stuck indicates:
                           //  velInput.set(/*"$" + movementPriority + "$"*/"<(*," + slog(dx) + "," + slog(dy) + ") --> velocity>. :|:");
                             
@@ -406,10 +442,11 @@ public class NARio extends Run {
                                 String direction = direction(i,j);
            
                                 char datachar = (char)('r' + data);
-                                String s = "<" + direction + " --> " + (blocked ? "solid" : "empty") + ">. :|:";
+                                String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
+
                                 s += "\n";
                                 
-                                s +=  "<" + direction + " --> d" + datachar + ">. :|:";
+                                s +=  "<{" + datachar + "} --> " + direction + ">. :|:";
 
                                 if ((sight[k] != null) && (sight[k].equals(s))) {
                                     continue;
@@ -424,7 +461,7 @@ public class NARio extends Run {
                     }
 
                     if (gotCoin > 0) {
-                        chg.set("<"+direction(0,0)+" --> gotCoin>. :|:");
+                        chg.set("<{gotCoin} --> "+direction(0,0)+">. :|:");
                     }
 
                         
@@ -517,7 +554,7 @@ public class NARio extends Run {
                             int dy = Math.round((y - s.y) / 16);
 
                             chg.set(/*"$" + sightPriority + "$" +*/
-                                    " <"+direction(dx,dy)+" --> " + type + ">. :|:");
+                                    " <{" + type + "} --> " +direction(dx,dy) + ">. :|:");
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
                         }
@@ -530,8 +567,10 @@ public class NARio extends Run {
                     lastY = y;
                     gotCoin = 0;
                 }
-                if(www%200==0) {
-                     nar.input("<right --> moved>!");
+                if(www%commandPeriod==0) {
+                    nar.input("<right --> moved>!");
+                    nar.input("<nowhere --> moved>! %0%");
+
                      //nar.addInput("<up --> moved>!");
                      //nar.addInput("<up --> moved>!");
                      /* nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right

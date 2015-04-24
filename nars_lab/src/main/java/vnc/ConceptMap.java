@@ -101,14 +101,30 @@ abstract public class ConceptMap extends AbstractReaction {
             return values.keySet().iterator();
         }
 
+        public void add(Concept c) {
+            values.put(c.term, c);
+        }
+
+        public boolean contains(Term t) {
+            return values.containsKey(t);
+        }
+
         @Override
         protected void onConceptNew(Concept c) {
-            values.put(c.term, c);
+            add(c);
         }
 
         @Override
         protected void onConceptForget(Concept c) {
             values.remove(c.term);
+        }
+
+        public void add(Term a) {
+            values.put(a, null);
+        }
+
+        public int size() {
+            return values.size();
         }
     }
 }

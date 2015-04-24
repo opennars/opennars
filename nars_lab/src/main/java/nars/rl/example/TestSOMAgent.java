@@ -2,9 +2,8 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import jurls.core.learning.Autoencoder;
+import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
-import jurls.core.utils.MatrixImage.Data2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
@@ -22,8 +21,6 @@ import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.rl.BaseQLAgent;
-import nars.rl.gng.NeuralGasNet;
-import nars.rl.gng.Node;
 import nars.rl.hai.Hsom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -31,8 +28,6 @@ import org.apache.commons.math3.linear.RealVector;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * TODO add parameters determining what sensor input is exposed to NARS
@@ -64,12 +59,21 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    /** inputs the perceived data in a raw numerically discretized form for each dimension */
+    /** TODO inputs the perceived data in a raw numerically discretized form for each dimension */
+
+    /** TODO inputs the perceived data directly as frequency data */
     public static class RawPerception implements Perception {
+
+        private final float confidence;
+        private final String id;
 
         private RLEnvironment env;
         private QLAgent agent;
 
+        public RawPerception(String id, float confidence) {
+            this.confidence = confidence;
+            this.id = id;
+        }
 
         @Override
         public void init(RLEnvironment env, QLAgent agent) {
@@ -81,20 +85,26 @@ public class TestSOMAgent extends JPanel {
         public void perceive(double[] input, double t) {
             //simple binary +/- 0 discretization
             for (int i = 0; i < input.length; i++) {
-                double d = input[i];
-                String v = d > 0 ? "d1" : "d0";
-                agent.perceive("<raw" + i + " --> [state]>", d > 0f ? 1f : 0f, 0.5f);
+
+                float f = getFrequency(input[i]);
+                agent.perceive("<{" + id + i + "} --> state>", f, confidence);
             }
 
+        }
+
+        public float getFrequency(double d) {
+            float f = (float)(d / 2f) + 0.5f;
+            f = Math.min(1.0f, f);
+            f = Math.max(0.0f, f);
+            return f;
         }
 
         @Override
         public boolean isState(Term t) {
             //TODO better pattern recognizer
             String s = t.toString();
-            if (t instanceof Inheritance) {
-                if (s.startsWith("<raw") && s.endsWith(" --> [state]>")) {
-                    System.out.println(t + " " + t.getComplexity());
+            if ((t instanceof Inheritance)/* && (t.getComplexity() == 4)*/) {
+                if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
                     return true;
                 }
             }
@@ -104,9 +114,18 @@ public class TestSOMAgent extends JPanel {
 
     public static class HaiSOMPerception implements Perception {
 
+        private final String id;
+        private final float confidence;
+        private int somSize;
         private Hsom som = null;
         private QLAgent agent;
         private RLEnvironment env;
+
+        public HaiSOMPerception(String id, int somSize, float confidence) {
+            this.id = id;
+            this.somSize = somSize;
+            this.confidence = confidence;
+        }
 
         @Override
         public void init(RLEnvironment env, QLAgent agent) {
@@ -114,7 +133,8 @@ public class TestSOMAgent extends JPanel {
 
             this.agent = agent;
 
-            som = new Hsom(env.inputDimension()+1, env.inputDimension());
+            if (somSize == -1) somSize = env.inputDimension()+1;
+            som = new Hsom(somSize, env.inputDimension());
         }
 
 
@@ -122,7 +142,7 @@ public class TestSOMAgent extends JPanel {
         public void perceive(double[] input, double t) {
 
             som.learn(input);
-            int s = som.winnerx * env.inputDimension() + som.winnery;
+            //int s = som.winnerx * env.inputDimension() + som.winnery;
             //System.out.println(Arrays.toString(input) + " " + reward );
             //System.out.println(som.winnerx + " " + som.winnery + " -> " + s);
 
@@ -131,15 +151,16 @@ public class TestSOMAgent extends JPanel {
 
             int x = som.winnerx;
             int y = som.winnery;
-            agent.perceive("<(*,somx" + x + ",somy" + y + ") --> [state]>", 1, 0.75f);
+
+            agent.perceive("<(*," + id + x + "," + id + y + ") --> [state]>", 1, confidence);
         }
 
         @Override
         public boolean isState(Term t) {
             //TODO better pattern recognizer
             String s = t.toString();
-            if ((t instanceof Inheritance) && (t.getComplexity() == 6)) {
-                if (s.startsWith("<(*,somx") && s.endsWith(") --> [state]>")) {
+            if ((t instanceof Inheritance) /*&& (t.getComplexity() == 6)*/) {
+                if (s.startsWith("<(*," + id) && s.endsWith(") --> [state]>")) {
                     //System.out.println(t + " " + t.getComplexity());
                     return true;
                 }
@@ -319,7 +340,7 @@ public class TestSOMAgent extends JPanel {
             return nar.term("(^move," + i + ",SELF)");
         }
 
-        final Set<Term> actions = new HashSet();
+
         final java.util.List<Task> incoming = new ArrayList();
 
         /**
@@ -332,15 +353,14 @@ public class TestSOMAgent extends JPanel {
         public QLAgent(NAR nar, RLEnvironment env, Perception... perceptions) {
             super(nar);
 
+            //HACK TODO this is necessary to disable the superclass's state belief update in methods we end up calling, this class has its own belief update method that should only be called
+            stateUpdateConfidence = 0;
+
             this.perceptions = perceptions;
             for (Perception p : perceptions) {
                 p.init(env, this);
             }
 
-            for (int i = 0; i < env.numActions(); i++) {
-                Term a = operation(i);
-                actions.add(a);
-            }
 
             this.env = env;
 
@@ -381,14 +401,22 @@ public class TestSOMAgent extends JPanel {
         @Override
         public void init() {
             super.init();
+
+            for (int i = 0; i < env.numActions(); i++) {
+                Term a = operation(i);
+                actions.add(a);
+            }
+
+            possibleDesire(0.75f);
+
             setqAutonomicGoalConfidence(0.55f);
-            possibleDesire(actions, 0.9f);
         }
 
         @Override
         public boolean isState(Term s) {
             for (Perception p : perceptions) {
-                if (p.isState(s)) return true;
+                if (p.isState(s))
+                    return true;
             }
             return false;
         }
@@ -500,7 +528,6 @@ public class TestSOMAgent extends JPanel {
 
             //double dr = r - lastReward;
 
-            lastReward = r;
 
             double[] o = env.observe();
 
@@ -508,13 +535,14 @@ public class TestSOMAgent extends JPanel {
 
             System.out.println("  reward=" + Texts.n4(r));
 
-            perceive(o, nar.time());
+            learn(o, nar.time(), r);
 
             actByQStrongest = getNextAction();
 
+            lastReward = r;
         }
 
-        private void perceive(double[] o, long time) {
+        private void learn(double[] o, long time, double reward) {
             for (Perception p : perceptions) {
                 p.perceive(o, time);
             }
@@ -526,10 +554,17 @@ public class TestSOMAgent extends JPanel {
                 DirectProcess.run(nar, t);
             }
 
+            believeReward((float) reward);
+            goalReward();
+
+            learn(incoming, reward);
+
+            qCommit();
 
             incoming.clear();
 
         }
+
     }
 
 
@@ -557,6 +592,9 @@ public class TestSOMAgent extends JPanel {
             private final MatrixImage mi = new MatrixImage(400, 400);
             private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
 
+            final java.util.List<Term> xstates = new ArrayList();
+            final java.util.List<Term> xactions = new ArrayList();
+
 
             final Runnable swingUpdate = new Runnable() {
 
@@ -567,6 +605,26 @@ public class TestSOMAgent extends JPanel {
                     d.component().repaint();
 
 
+                    if (xstates.size() != states.size()) {
+                        xstates.clear();
+                        Iterables.addAll(xstates, states);
+                    }
+                    if (xactions.size() != actions.size()) {
+                        xactions.clear();
+                        Iterables.addAll(xactions, actions);
+                    }
+
+                    repaint();
+
+
+                    mi.draw(new MatrixImage.Data2D() {
+                        @Override
+                        public double getValue(int y, int x) {
+                            return q(xstates.get(x), xactions.get(y));
+                        }
+                    }, xstates.size(), xactions.size(), -1, 1);
+
+
 //                    mi.draw(new Data2D() {
 //                        @Override
 //                        public double getValue(int x, int y) {
@@ -575,7 +633,6 @@ public class TestSOMAgent extends JPanel {
 //                    }, nstates, nactions, -1, 1);
                 }
             };
-
 
 
             @Override
@@ -624,7 +681,7 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    private final int cyclesPerFrame = 50;
+    private final int cyclesPerFrame = 100;
 
     /**
      * @param args the command line arguments
@@ -637,6 +694,7 @@ public class TestSOMAgent extends JPanel {
         //RLEnvironment d = new Follow1D();
         RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
+        //RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
@@ -646,12 +704,11 @@ public class TestSOMAgent extends JPanel {
         Global.DERIVATION_PRIORITY_LEAK = 0.95f;
         Global.DERIVATION_DURABILITY_LEAK = 0.95f;
         int concepts = 2000;
-        int conceptsPerCycle = 10;
+        int conceptsPerCycle = 25;
 
-        float qLearnedConfidence = 0.05f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.8f; //0.85f; //0 to disable
 
         //Perception p = new GNGPerception(64);
-        Perception p = new HaiSOMPerception();
         //Perception p = new AEPerception(18,2);
 
 
@@ -660,11 +717,22 @@ public class TestSOMAgent extends JPanel {
         dd.setInternalExperience(null);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception(),
-                p);
+                new RawPerception("L", 0.8f),
+                new RawPerception("P", 0.8f) {
+                    @Override
+                    public float getFrequency(double d) {
+                        // pos or negative binary
+                        if (d > 0) return 1;
+                        return 0;
+                    }
+                },
+                new HaiSOMPerception("A", 3, 0.8f),
+                new HaiSOMPerception("B", 2, 0.8f)
+        );
 
-        a.agent.setqUpdateConfidence(qLearnedConfidence);
-        a.agent.possibleDesire(0.51f);
+
+
+        a.agent.setEpsilon(0.10);
 
     }
 

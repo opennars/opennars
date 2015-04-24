@@ -310,6 +310,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         if (Mario.lives == 0)
         {
             lose();
+
         }
     }
 

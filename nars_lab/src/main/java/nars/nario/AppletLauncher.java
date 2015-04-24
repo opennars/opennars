@@ -19,7 +19,12 @@ public class AppletLauncher extends JApplet
         if (!started)
         {
             started = true;
-            mario = new MarioComponent();
+            mario = new MarioComponent() {
+                @Override
+                public void lose() {
+                    super.lose();
+                }
+            };
             setContentPane(mario);
             setFocusable(false);
             mario.setFocusCycleRoot(true);

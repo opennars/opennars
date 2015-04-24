@@ -216,7 +216,8 @@ public class TwoPointRegulatorAgent extends JPanel {
             final List<Term> xstates = new ArrayList();
             final List<Term> xactions = new ArrayList();
 
-            @Override public void event(Class event, Object[] args) {
+            @Override
+            public void event(Class event, Object[] args) {
 
                 if (xstates.size() != states.size()) {
                     xstates.clear();
@@ -230,7 +231,6 @@ public class TwoPointRegulatorAgent extends JPanel {
                 }
 
                 repaint();
-
 
 
                 mi.draw(new Data2D() {

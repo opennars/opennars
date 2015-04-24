@@ -98,9 +98,9 @@ public class TetrisState {
             int x = 0;
             for (double i : worldState) {
                 if (monochrome)
-                    worldObservation[x] = i > 0 ? 1.0 : 0.0;
+                    worldObservation[x] = i > 0 ? 1.0 : -1.0;
                 else
-                    worldObservation[x] = i;
+                    worldObservation[x] = i > 0 ? i : - 1.0;
                 x++;
             }
             

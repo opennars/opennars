@@ -68,7 +68,7 @@ public class Tetris implements RLEnvironment {
     }
     @Override
     public double[] observe() {
-        return gameState.asVector(true);
+        return gameState.asVector(false);
     }
 
     public void restart() {

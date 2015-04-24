@@ -1,14 +1,15 @@
 package nars.nario;
 
+import automenta.vivisect.audio.FixedSoundSource;
 import nars.nario.level.BgLevelGenerator;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.level.SpriteTemplate;
-import automenta.vivisect.audio.FixedSoundSource;
 import nars.nario.sprites.*;
 
 import java.awt.*;
 import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class LevelScene extends Scene implements SpriteContext
     {
         try
         {
-            Level.loadBehaviors(new DataInputStream(LevelScene.class.getResourceAsStream("res/tiles.dat")));
+            Level.loadBehaviors(new DataInputStream(new FileInputStream("nars_lab/src/main/java/nars/nario/res/tiles.dat")));
         }
         catch (IOException e)
         {
@@ -80,13 +81,13 @@ public class LevelScene extends Scene implements SpriteContext
          recorder.addLong(LevelGenerator.lastSeed);
          }*/
 
-        if (levelType==LevelGenerator.TYPE_OVERGROUND)
-            Art.startMusic(1);
-        else if (levelType==LevelGenerator.TYPE_UNDERGROUND)
-            Art.startMusic(2);
-        else if (levelType==LevelGenerator.TYPE_CASTLE)
-            Art.startMusic(3);
-        
+//        if (levelType==LevelGenerator.TYPE_OVERGROUND)
+//            Art.startMusic(1);
+//        else if (levelType==LevelGenerator.TYPE_UNDERGROUND)
+//            Art.startMusic(2);
+//        else if (levelType==LevelGenerator.TYPE_CASTLE)
+//            Art.startMusic(3);
+//
 
         paused = false;
         Sprite.spriteContext = this;

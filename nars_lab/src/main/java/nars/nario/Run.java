@@ -1,5 +1,8 @@
 package nars.nario;
 
+import nars.nario.level.Level;
+import nars.nario.level.LevelGenerator;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -24,7 +27,18 @@ public class Run extends MarioComponent {
         
         
     }
-    
+
+    @Override
+    public void levelFailed() {
+        int type = LevelGenerator.TYPE_UNDERGROUND;
+        startLevel((long)(Math.random() * 1000), 1, type);
+    }
+
+    @Override
+    public void lose() {
+
+    }
+
     public static void main(String[] args)     {
         new Run();
     }

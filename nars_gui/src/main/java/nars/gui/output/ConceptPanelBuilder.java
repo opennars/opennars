@@ -63,16 +63,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
 
     public static Color getBeliefColor(float freq, float conf, float factor) {
-        float ii = 0.45f + (factor*conf) * 0.55f;
+        //float ii = 0.45f + (factor*conf) * 0.55f;
 //        float green = freq > 0.5f ? (freq / 2f) : 0f;
 //        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
-        return new Color(freq, 1.0f - freq, 1.0f, ii);
+        return new Color(freq, 1.0f - freq, 1.0f, factor);
     }
     public static Color getGoalColor(float freq, float conf, float factor) {
-        float ii = 0.45f + (factor*conf) * 0.55f;
+        //float ii = 0.45f + (factor*conf) * 0.55f;
 //        float green = freq > 0.5f ? (freq / 2f) : 0f;
 //        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
-        return new Color(1.0f - freq, 1.0f, freq, ii);
+        return new Color(1.0f - freq, 1.0f, freq, factor);
     }
 
     public ConceptPanel newPanel(Concept c, boolean label, boolean full, int chartSize) {
@@ -443,14 +443,15 @@ public class ConceptPanelBuilder extends AbstractReaction {
         boolean vertical;
         int thick = 4;
         int timeMargin = 3;
+        private float length;
 
         public BeliefTimeline(int width, int height, boolean vertical) {
             super(width, height);
             this.vertical = vertical;
         }
 
-        public int getT(long when) {
-            return Math.round((when - minTime) / timeFactor);
+        public float getT(long when) {
+            return ((when - minTime) / timeFactor);
         }
 
         public boolean update(long time, Collection<Sentence> belief, Collection<Sentence> goal) {
@@ -478,11 +479,12 @@ public class ConceptPanelBuilder extends AbstractReaction {
             if (g == null) return false;
 
 
-            timeFactor = 1.0f / (maxTime - minTime);
+            timeFactor = 1.0f * (maxTime - minTime);
+
             if (vertical)
-                timeFactor *= ((float) h - timeMargin*2);
+                length = ((float) h - timeMargin*2);
             else
-                timeFactor *= ((float) w - timeMargin*2);
+                length = ((float) w - timeMargin*2);
 
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
@@ -495,7 +497,10 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             // "now" axis
             g.setColor(Color.GRAY);
-            int tt = getT(time);
+
+
+            int tt = Math.round( getT(time) * length );
+
             if (vertical)
                 g.fillRect(0, timeMargin + tt - 1, getWidth(), 3);
             else
@@ -513,14 +518,14 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             long when = s.getOccurrenceTime();
 
-            int yy = getT(when);
+            int yy = (int)(getT(when) * length);
 
 
 
             int xx = (int) ((1.0f - freq) * (this.w - thick));
 
 
-            g.setColor(belief ? getBeliefColor(freq, conf, 1.0f) : getGoalColor(freq, conf, 1.0f));
+            g.setColor(belief ? getBeliefColor(freq, conf, 0.75f) : getGoalColor(freq, conf, 0.75f));
 
             if (vertical)
                 g.fillRect(xx, yy, thick, thick);
@@ -556,12 +561,13 @@ public class ConceptPanelBuilder extends AbstractReaction {
             float freq = s.getTruth().getFrequency();
             float conf = s.getTruth().getConfidence();
 
-            float factor = 1.0f;
+            float factor = 0.75f;
             if (s instanceof Sentence) {
                 Sentence ss = (Sentence) s;
                 if (!ss.isEternal()) {
                     //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
-                    factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now));
+                    //factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now));
+                    factor = 0.5f;
                 }
             }
             g.setColor(belief ? getBeliefColor(freq, conf, factor) :

@@ -5,12 +5,15 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
+import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.TruthValue;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
@@ -42,7 +45,8 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
     /** q-value matrix:  q[state][action] */
     public final HashBasedTable<Term,Term,Concept> q = HashBasedTable.create();
     private ConceptMap conceptMap;
-    private ConceptMap.ConceptMapSet actions, states;
+    protected ConceptMap.ConceptMapSet actions;
+    protected ConceptMap.ConceptMapSet states;
 
 
 
@@ -50,7 +54,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
     public final HashBasedTable<Term,Term,Double> e = HashBasedTable.create();
 
     /** delta-Q temporary buffer */
-    final HashBasedTable<Term,Term,Double> dq = HashBasedTable.create();
+    protected final HashBasedTable<Term,Term,Double> dq = HashBasedTable.create();
 
     /** term cache
      * TODO make weak */
@@ -80,7 +84,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
     float rewardGoalConfidence = 0.9f;
 
     /** confidence of state belief updates */
-    float stateUpdateConfidence = 0.9f;
+    protected float stateUpdateConfidence = 0.9f;
 
     //TODO belief update priority, durability etc
     //TODO reward goal priority, durability etc
@@ -387,17 +391,51 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
 //        act(getNextAction(), Symbols.GOAL);
 //    }
 
+    /**
+     * learn an entire input vector. each entry in state should be between 0 and 1 reprsenting the degree to which that state is active
+     * @param state - set of input Tasks (beliefs) which will be input to the belief, and also interpreted by the qlearning system according to their freq/conf
+     * @param reward
+     * @param confidence
+     * @return
+     */
+    public synchronized Term learn(final Iterable<Task> state, final double reward) {
 
-    @Override
-    public synchronized Term learn(Map<Term,Double> state, double reward, float confidence) {
-        believeReward((float) reward);
-        goalReward();
+        ObjectDoubleHashMap<Term> act = new ObjectDoubleHashMap();
+
+        //HACK - allow learn to update lastAction but restore to the value before this method was called, and then set the final value after all learning completed
+        Term actualLastAction = lastAction;
+
+        // System.out.println(confidence + " " + Arrays.toString(state));
+
+        for (Task i : state) {
+            lastAction = actualLastAction;
+
+            float freq = i.sentence.truth.getFrequency();
+            float confidence = i.sentence.truth.getConfidence();
 
 
-        Term l = super.learn(state, reward, confidence);
-        qCommit();
-        return l;
+            Term action = qlearn(i.sentence.getTerm(), reward, null, freq * confidence);
+
+
+            //act.addToValue(action, confidence);
+
+            act.put(action, Math.max(act.get(action), confidence));
+
+
+        }
+
+        double e = getEpsilon();
+        if (e > 0) {
+            if (Memory.randomNumber.nextDouble() < e)
+                return lastAction = getRandomAction();
+        }
+
+        //choose maximum action
+        return act.keysView().max();
     }
+
+
+
 
     public Term learn(Term state, final double reward, Term nextAction, double confidence) {
         believeReward((float) reward);
@@ -419,7 +457,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
         return super.qlearn(state, reward, nextAction, confidence);
     }
 
-    private void goalReward() {
+    protected void goalReward() {
         //seek reward goal
         if (rewardGoalConfidence > 0) {
             String rt = getRewardTerm();
@@ -428,7 +466,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
         }
     }
 
-    private void believeReward(float reward) {
+    protected void believeReward(float reward) {
         //belief about current reward amount
         if (rewardBeliefConfidence > 0) {
             String rt = getRewardTerm();
@@ -452,4 +490,6 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
     public void setqAutonomicBeliefConfidence(float qAutonomicBeliefConfidence) {
         this.qAutonomicBeliefConfidence = qAutonomicBeliefConfidence;
     }
+
+
 }

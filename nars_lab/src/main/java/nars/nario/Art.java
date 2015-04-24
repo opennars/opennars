@@ -85,23 +85,23 @@ public class Art
             endScene = cutImage(gc, "/endscene.gif", 96, 96);
             gameOver = cutImage(gc, "/gameovergost.gif", 96, 64);
 
-            if (sound != null)
-            {
-                samples[SAMPLE_BREAK_BLOCK] = loadSample("/snd/breakblock.wav");
-                samples[SAMPLE_GET_COIN] = loadSample("/snd/coin.wav");
-                samples[SAMPLE_MARIO_JUMP] = loadSample("/snd/jump.wav");
-                samples[SAMPLE_MARIO_STOMP] = loadSample("/snd/stomp.wav");
-                samples[SAMPLE_MARIO_KICK] = loadSample("/snd/kick.wav");
-                samples[SAMPLE_MARIO_POWER_UP] = loadSample("/snd/powerup.wav");
-                samples[SAMPLE_MARIO_POWER_DOWN] = loadSample("/snd/powerdown.wav");
-                samples[SAMPLE_MARIO_DEATH] = loadSample("/snd/death.wav");
-                samples[SAMPLE_ITEM_SPROUT] = loadSample("/snd/sprout.wav");
-                samples[SAMPLE_CANNON_FIRE] = loadSample("/snd/cannon.wav");
-                samples[SAMPLE_SHELL_BUMP] = loadSample("/snd/bump.wav");
-                samples[SAMPLE_LEVEL_EXIT] = loadSample("/snd/exit.wav");
-                samples[SAMPLE_MARIO_1UP] = loadSample("/snd/1-up.wav");
-                samples[SAMPLE_MARIO_FIREBALL] = loadSample("/snd/fireball.wav");
-            }
+//            if (sound != null)
+//            {
+//                samples[SAMPLE_BREAK_BLOCK] = loadSample("/snd/breakblock.wav");
+//                samples[SAMPLE_GET_COIN] = loadSample("/snd/coin.wav");
+//                samples[SAMPLE_MARIO_JUMP] = loadSample("/snd/jump.wav");
+//                samples[SAMPLE_MARIO_STOMP] = loadSample("/snd/stomp.wav");
+//                samples[SAMPLE_MARIO_KICK] = loadSample("/snd/kick.wav");
+//                samples[SAMPLE_MARIO_POWER_UP] = loadSample("/snd/powerup.wav");
+//                samples[SAMPLE_MARIO_POWER_DOWN] = loadSample("/snd/powerdown.wav");
+//                samples[SAMPLE_MARIO_DEATH] = loadSample("/snd/death.wav");
+//                samples[SAMPLE_ITEM_SPROUT] = loadSample("/snd/sprout.wav");
+//                samples[SAMPLE_CANNON_FIRE] = loadSample("/snd/cannon.wav");
+//                samples[SAMPLE_SHELL_BUMP] = loadSample("/snd/bump.wav");
+//                samples[SAMPLE_LEVEL_EXIT] = loadSample("/snd/exit.wav");
+//                samples[SAMPLE_MARIO_1UP] = loadSample("/snd/1-up.wav");
+//                samples[SAMPLE_MARIO_FIREBALL] = loadSample("/snd/fireball.wav");
+//            }
         }
         catch (Exception e)
         {

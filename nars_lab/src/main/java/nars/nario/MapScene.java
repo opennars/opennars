@@ -81,7 +81,7 @@ public class MapScene extends Scene
 
     public void startMusic()
     {
-        Art.startMusic(0);
+        /*Art.startMusic(0);*/
     }
 
     private boolean generateLevel()

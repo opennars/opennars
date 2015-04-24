@@ -107,12 +107,12 @@ public class Audio implements Runnable
 
     public void play(SoundProducer p, SoundSource soundSource, float volume, float priority)
     {
-        if (!alive)
-            return;
-        
-        synchronized (listenerMixer) {
-            listenerMixer.addSoundProducer(p, soundSource, volume, priority);
-        }
+//        if (!alive)
+//            return;
+//
+//        synchronized (listenerMixer) {
+//            listenerMixer.addSoundProducer(p, soundSource, volume, priority);
+//        }
     }
 
     public List<Sound> getSounds() { return listenerMixer.sounds; }

@@ -24,7 +24,7 @@ public class ListenerMixer implements StereoSoundProducer
 
     public void addSoundProducer(SoundProducer producer, SoundSource soundSource, float volume, float priority)
     {
-        sounds.add(new Sound(producer, soundSource, volume, priority));
+        //sounds.add(new Sound(producer, soundSource, volume, priority));
     }
 
     public void update(float alpha)
