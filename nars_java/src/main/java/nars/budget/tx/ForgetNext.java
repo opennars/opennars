@@ -28,13 +28,13 @@ public class ForgetNext<K, V extends Item<K>> implements BagTransaction<K,V> {
         return null; //signals to the bag updater to use the next item
     }
 
-    protected boolean forgetWillChangeBudget(Budget v) {
+    protected boolean forgetWillChangeBudget(final Budget v) {
         final long now = memory.time();
         if (v.getLastForgetTime() == -1) {
             v.setLastForgetTime(now);
             return false;
         }
-        return (v.getLastForgetTime() != memory.time()) && //there is >0 time across which forgetting would be applied
+        return (v.getLastForgetTime() != now) && //there is >0 time across which forgetting would be applied
                 (v.getPriority() > v.getQuality() * Global.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
     }
 

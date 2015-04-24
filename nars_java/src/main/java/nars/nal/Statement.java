@@ -83,7 +83,7 @@ public abstract class Statement extends Compound {
      * @return The Statement built
      */
     final public static Statement make(final NALOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
-        
+
         switch (o) {
             case INHERITANCE:
                 return Inheritance.make(subject, predicate);
@@ -108,9 +108,9 @@ public abstract class Statement extends Compound {
             case EQUIVALENCE_AFTER:
                 return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_FORWARD);
             case EQUIVALENCE_WHEN:
-                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);            
+                return Equivalence.make(subject, predicate, customOrder ? order : TemporalRules.ORDER_CONCURRENT);
         }
-        
+
         return null;
     }
 

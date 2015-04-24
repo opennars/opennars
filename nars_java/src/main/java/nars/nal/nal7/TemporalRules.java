@@ -398,9 +398,9 @@ public class TemporalRules {
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
-    public static float solutionQuality(final Sentence problem, final Sentence solution, Memory memory) {
+    public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
 
-        return solution.projectionTruthQuality(problem.getOccurrenceTime(), memory.time(), problem.hasQueryVar());
+        return solution.projectionTruthQuality(problem.getOccurrenceTime(), time, problem.hasQueryVar());
 
 //        if (!matchingOrder(problem, solution)) {
 //            return 0.0F;
@@ -441,7 +441,7 @@ public class TemporalRules {
             feedbackToLinks = true;
         }*/
         boolean judgmentTask = task.sentence.isJudgment();
-        final float quality = TemporalRules.solutionQuality(problem, solution, nal.memory);
+        final float quality = TemporalRules.solutionQuality(problem, solution, nal.time());
         if (judgmentTask) {
             task.incPriority(quality);
         } else {

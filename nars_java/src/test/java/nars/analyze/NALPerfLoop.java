@@ -20,7 +20,7 @@ public class NALPerfLoop {
        
         int repeats = 1;
         int warmups = 0;
-        int maxConcepts = 1024;
+        int maxConcepts = 2048;
         int extraCycles = 10048;
         int randomExtraCycles = 512;
         Global.THREADS = 1;

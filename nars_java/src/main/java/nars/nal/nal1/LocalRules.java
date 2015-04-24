@@ -122,11 +122,12 @@ public class LocalRules {
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return false;
         }
-        
+
+        final long now = memory.time();
         Sentence oldBest = task.getBestSolution();
-        float newQ = TemporalRules.solutionQuality(problem, belief, memory);
+        float newQ = TemporalRules.solutionQuality(problem, belief, now);
         if (oldBest != null) {
-            float oldQ = TemporalRules.solutionQuality(problem, oldBest, memory);
+            float oldQ = TemporalRules.solutionQuality(problem, oldBest, now);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
                     memory.emotion.adjustHappy(oldQ, task.getPriority());

@@ -406,20 +406,21 @@ public class Term implements AbstractTerm, Termable, Named<CharSequence> {
     }
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */
-    public static boolean valid(Term content) {
-        
-        try {
-            Term cloned = content.cloneDeep();
-            return cloned!=null;
-        }
-        catch (Throwable e) {
-            if (Global.DEBUG && Global.DEBUG_INVALID_SENTENCES) {
-                System.err.println("INVALID TERM: " + content);
-                e.printStackTrace();
-            }
-            return false;
-        }
-        
+    public static boolean valid(final Term content) {
+
+        return true;
+//        try {
+//            Term cloned = content.cloneDeep();
+//            return cloned!=null;
+//        }
+//        catch (Throwable e) {
+//            if (Global.DEBUG && Global.DEBUG_INVALID_SENTENCES) {
+//                System.err.println("INVALID TERM: " + content);
+//                e.printStackTrace();
+//            }
+//            return false;
+//        }
+//
     }
 
     public boolean subjectOrPredicateIsIndependentVar() {

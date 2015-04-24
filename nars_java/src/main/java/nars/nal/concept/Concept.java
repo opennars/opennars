@@ -633,10 +633,11 @@ abstract public class Concept extends Item<Term> implements Termable {
         float beliefQuality;
         Sentence candidate = null;
 
+        final long now = memory.time();
         for (List<Sentence> list : lists) {
             for (int i = 0; i < list.size(); i++) {
                 Sentence judg = list.get(i);
-                beliefQuality = solutionQuality(query, judg, memory);
+                beliefQuality = solutionQuality(query, judg, now);
                 if (beliefQuality > currentBest) {
                     currentBest = beliefQuality;
                     candidate = judg;
