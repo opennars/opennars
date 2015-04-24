@@ -159,6 +159,7 @@ public abstract class Operator extends Term implements IOperator {
         }
         catch (Exception e) {
             feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
+            e.printStackTrace();
         }
 
         //Display a message in the output stream to indicate the reportExecution of an operation

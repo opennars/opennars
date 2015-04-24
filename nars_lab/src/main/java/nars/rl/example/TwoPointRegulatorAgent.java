@@ -2,6 +2,8 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import nars.Events;
@@ -10,18 +12,20 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
-import nars.nal.*;
+import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.rl.BaseQLAgent;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author patrick.hammer
@@ -36,7 +40,7 @@ public class TwoPointRegulatorAgent extends JPanel {
     private final MatrixImage mi;
 
 
-    private final int cyclesPerFrame = 50;
+    private final int cyclesPerFrame = 15;
     float drawXScale = 0.5f;
     int historySize = (int)(800 / drawXScale);
 
@@ -51,7 +55,7 @@ public class TwoPointRegulatorAgent extends JPanel {
 
     Deque<State> history = new ArrayDeque<>();
 
-
+    Term center, left, right;
 
     public class Move extends Operator {
 
@@ -62,6 +66,8 @@ public class TwoPointRegulatorAgent extends JPanel {
         public Move() {
             super("^move");
         }
+
+
 
         @Override
         protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
@@ -104,7 +110,6 @@ public class TwoPointRegulatorAgent extends JPanel {
             }
 
 
-            System.out.println(operation.getTask().getExplanation());
 
             double oldDistance = distance;
             distance = Math.abs(x - targetX);
@@ -114,44 +119,32 @@ public class TwoPointRegulatorAgent extends JPanel {
             boolean closer = delta < 0;
 
             boolean further = delta > 0;
-            int state;
+            Term state;
             double reward;
             if (here) {
-                state = 0;
+                state = center;
                 reward = 1.0;
             } else if (x > targetX) {
-                state = 1;
+                state = left;
                 reward = closer ?  0.5 : -1.0;
             } else { // if (x < targetX)
-                state = 2;
+                state = right;
                 reward = closer ?  0.5 : -1.0;
             }
+
+
+            System.out.println(state + " " + reward);
+            System.out.println(ql.q);
+            System.out.println(ql.e);
+            System.out.println(operation.getTask().getExplanation());
+
+
 
             ql.learn(state, reward, 1f);
 
             return null;
 
         }
-    }
-
-
-
-
-    private String state(boolean left, boolean right) {
-
-        String x;
-
-        if ((!left && !right) || (left && right))
-            x = "center";
-
-        else if (left)
-            x = "left";
-
-        else //if(right)
-            x = "right";
-
-        return "<" + target + " --> " + x + ">";
-
     }
 
 
@@ -162,37 +155,57 @@ public class TwoPointRegulatorAgent extends JPanel {
         super();
 
         nar = new NAR(new Default().setInternalExperience(null));
+
+        center = nar.term("<state --> [center]>");
+        left = nar.term("<state --> [left]>");
+        right = nar.term("<state --> [right]>");
+
+
         nar.on(new Move());
 
-        ql = new BaseQLAgent(nar, 3, 3) {
+        Set<Term> actions = new HashSet();
+        actions.add(nar.term("move(center)"));
+        actions.add(nar.term("move(left)"));
+        actions.add(nar.term("move(right)"));
+
+        Set<Term> states = new HashSet();
+        states.add(center);
+        states.add(left);
+        states.add(right);
+
+        ql = new BaseQLAgent(nar) {
 
 
-            @Override public Term getStateTerm(int s) {
-                switch (s) {
-                    case 0: return nar.term(state(false,false));
-                    case 1: return nar.term(state(true,false));
-                    case 2: return nar.term(state(false,true));
-                }
-                return null;
+
+            @Override
+            public boolean isState(Term s) {
+                return states.contains(s);
             }
 
-            @Override public Operation getActionOperation(int s) {
-                switch(s) {
-                    case 0: return (Operation)nar.term("move(center)");
-                    case 1: return (Operation)nar.term("move(left)");
-                    case 2: return (Operation)nar.term("move(right)");
-                    //case 3: return (Operation)nar.term("move(SELF)"); //random
-                }
-                return null;
+            @Override
+            public boolean isAction(Term a) {
+                return actions.contains(a);
+            }
+
+            @Override
+            public void init() {
+                super.init();
+
+                //ql.possibleDesire(actions, 0.9f); //doesnt work yet
+                nar.input("move(left)!");
+                nar.input("move(right)!");
+                nar.input("move(center)!");
+
+                setqAutonomicGoalConfidence(0.55f);
             }
         };
         ql.init();
 
 
         nar.setCyclesPerFrame(cyclesPerFrame);
-        nar.param.shortTermMemoryHistory.set(1);
+        nar.param.shortTermMemoryHistory.set(2);
         nar.param.duration.set(5);         //nar.param.duration.setLinear
-        nar.param.decisionThreshold.set(0.75);
+        nar.param.decisionThreshold.set(0.5);
         nar.param.outputVolume.set(5);
 
 
@@ -203,16 +216,34 @@ public class TwoPointRegulatorAgent extends JPanel {
         };
 
         new AbstractReaction(nar, Events.FrameEnd.class) {
+
+            final List<Term> xstates = new ArrayList();
+            final List<Term> xactions = new ArrayList();
+
             @Override public void event(Class event, Object[] args) {
 
+                if (xstates.size() != states.size()) {
+                    xstates.clear();
+                    for (Term s : states)
+                        xstates.add(s);
+                }
+                if (xactions.size() != actions.size()) {
+                    xactions.clear();
+                    for (Term a : actions)
+                        xactions.add(a);
+                }
+
                 repaint();
+
+
 
                 mi.draw(new Data2D() {
                     @Override
                     public double getValue(int x, int y) {
-                        return ql.q(y, x);
+
+                        return ql.q(xstates.get(x), xactions.get(y));
                     }
-                }, ql.nstates, ql.nactions, -1, 1);
+                }, states.size(), actions.size(), -1, 1);
             }
         };
 
@@ -225,8 +256,11 @@ public class TwoPointRegulatorAgent extends JPanel {
 
 
         new NWindow("Q",
-                mi = new MatrixImage(400,400)
+                mi = new MatrixImage(200,200)
         ).show(400, 400);
+
+
+
 
     }
 

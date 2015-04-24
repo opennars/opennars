@@ -84,6 +84,7 @@ public class DirectProcess extends NAL {
     public static DirectProcess run(Memory m, Task task) {
         //System.err.println("direct: " + task);
         DirectProcess d = new DirectProcess(m, task);
+
         d.run();
         return d;
     }

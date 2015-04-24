@@ -65,8 +65,8 @@ abstract public class AbstractHaiQBrain<S,A> {
         }
 
         @Override
-        public void eligibility(Integer state, Integer action, double dEligibility) {
-            et[state][action] = dEligibility;
+        public void eligibility(Integer state, Integer action, double eligibility) {
+            et[state][action] = eligibility;
         }
 
         @Override
@@ -99,7 +99,7 @@ abstract public class AbstractHaiQBrain<S,A> {
     
     public static double random(double max) { return Memory.randomNumber.nextDouble() * max;    }
 
-    abstract public void eligibility(S state, A action, double dEligibility);
+    abstract public void eligibility(S state, A action, double eligibility);
     abstract public double eligibility(S state, A action);
 
 
@@ -189,9 +189,16 @@ abstract public class AbstractHaiQBrain<S,A> {
                         reward, reward + self.gamma * qnext)
         */
 
-        double DeltaQ = reward + gamma * q(state, nextAction) -  q(state, lastAction);
+        double qLast;
+        if (lastAction!=null)
+            qLast = q(state, lastAction);
+        else
+            qLast = 0;
 
-        eligibility(state, lastAction, eligibility(state, lastAction) + confidence);
+        double DeltaQ = reward + gamma * q(state, nextAction) -  qLast;
+
+        if (lastAction!=null)
+            eligibility(state, lastAction, eligibility(state, lastAction) + confidence);
 
         final double AlphaDeltaQ = confidence * alpha * DeltaQ;
         final double GammaLambda = gamma * lambda;

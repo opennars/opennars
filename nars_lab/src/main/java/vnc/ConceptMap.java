@@ -6,6 +6,9 @@ import nars.event.AbstractReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -81,5 +84,31 @@ abstract public class ConceptMap extends AbstractReaction {
         }
 
         public boolean contains(Term t) { return terms.contains(t); }
+    }
+
+
+    /** uses a predefined set of terms that will be mapped */
+    abstract public static class ConceptMapSet extends ConceptMap implements Iterable<Term> {
+
+        public final Map<Term,Concept> values = new HashMap();
+
+        public ConceptMapSet(NAR nar) {
+            super(nar);
+        }
+
+        @Override
+        public Iterator<Term> iterator() {
+            return values.keySet().iterator();
+        }
+
+        @Override
+        protected void onConceptNew(Concept c) {
+            values.put(c.term, c);
+        }
+
+        @Override
+        protected void onConceptForget(Concept c) {
+            values.remove(c.term);
+        }
     }
 }

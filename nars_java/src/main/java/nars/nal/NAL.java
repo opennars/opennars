@@ -29,7 +29,7 @@ import java.util.*;
  * if it contains similarity or instances or properties it is NAL2
  * and if it only contains inheritance
  */
-public abstract class NAL extends Event implements Runnable, Supplier<Iterable<Task>> {
+public abstract class NAL  implements Runnable, Supplier<Iterable<Task>> {
 
 
     public final Memory memory;
@@ -80,11 +80,10 @@ public abstract class NAL extends Event implements Runnable, Supplier<Iterable<T
      * @param nalLevel the NAL level to limit processing of this reasoning context. set to -1 to use Memory's default value
      */
     public NAL(Memory mem, int nalLevel, Task task) {
-        super(null);
+        super();
 
 
         //setKey(getClass());
-        setData(this);
 
         memory = mem;
         reasoner = memory.rules;

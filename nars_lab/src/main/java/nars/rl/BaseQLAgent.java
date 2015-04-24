@@ -1,6 +1,9 @@
 package nars.rl;
 
+import com.google.common.base.Function;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import nars.Global;
 import nars.NAR;
@@ -16,8 +19,10 @@ import nars.nal.term.Term;
 import nars.rl.hai.AbstractHaiQBrain;
 import vnc.ConceptMap;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,15 +37,17 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
      * initializes that mapping which tracks concepts as they appear and disappear, maintaining mapping to the current instance
      */
 
-    ConceptMap states;
-    ConceptMap actions;
 
 
     /** q-value matrix:  q[state][action] */
-    final HashBasedTable<Term,Term,Concept> q = HashBasedTable.create();
+    public final HashBasedTable<Term,Term,Concept> q = HashBasedTable.create();
+    private ConceptMap conceptMap;
+    private ConceptMap.ConceptMapSet actions, states;
+
+
 
     /** eligibility trace */
-    final HashBasedTable<Term,Term,Double> e = HashBasedTable.create();
+    public final HashBasedTable<Term,Term,Double> e = HashBasedTable.create();
 
     /** delta-Q temporary buffer */
     final HashBasedTable<Term,Term,Double> dq = HashBasedTable.create();
@@ -96,22 +103,8 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
         this.nar = nar;
 
 
-//        frameReaction = new FrameReaction(nar) {
-//            @Override
-//            public void onFrame() {
-//                if (updateEachFrame) react();
-//            }
-//        };
-    }
 
-    public void setqUpdateConfidence(float qUpdateConfidence) {
-        this.qUpdateConfidence = qUpdateConfidence;
-    }
-
-    public void init() {
-
-
-        actions = new ConceptMap(nar) {
+        actions = new ConceptMap.ConceptMapSet(nar) {
 
             @Override
             public boolean contains(Concept c) {
@@ -120,6 +113,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
 
             @Override
             protected void onConceptForget(final Concept c) {
+                super.onConceptForget(c);
                 Term action = c.term;
                 Collection<Term> knownStates = new ArrayList(q.rowKeySet()); //copy to avoid concurrentmodification
                 for (final Term state : knownStates) {
@@ -128,11 +122,9 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
                 }
             }
 
-            @Override
-            protected void onConceptNew(Concept c) {           }
         };
 
-        states = new ConceptMap(nar) {
+        states = new ConceptMap.ConceptMapSet(nar) {
 
             @Override
             public boolean contains(Concept c) {
@@ -141,6 +133,8 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
 
             @Override
             protected void onConceptForget(final Concept c) {
+                super.onConceptForget(c);
+
                 Term state = c.term;
                 Collection<Term> knownActions = new ArrayList(q.columnKeySet()); //copy to avoid concurrentmodification
                 for (final Term action : knownActions) {
@@ -149,9 +143,43 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
                 }
             }
 
-            @Override
-            protected void onConceptNew(Concept c) {           }
         };
+
+        conceptMap = new ConceptMap(nar) {
+            @Override
+            public boolean contains(Concept c) {
+                Term x = c.term;
+                if (!(x instanceof Implication)) return false;
+                if (x.getTemporalOrder() != TemporalRules.ORDER_FORWARD) return false;
+
+                Implication i = (Implication)x;
+                return (isState(i.getSubject()) && isAction(i.getPredicate()));
+            }
+
+            @Override
+            protected void onConceptForget(final Concept c) {
+                Implication i = (Implication)c.term;
+                q.remove(state(i), action(i));
+            }
+
+            @Override
+            protected void onConceptNew(Concept c) {
+                System.out.println("concept new " + c );
+
+                Implication i = (Implication)c.term;
+                q.put(state(i), action(i), c);
+            }
+
+        };
+
+    }
+
+    public void setqUpdateConfidence(float qUpdateConfidence) {
+        this.qUpdateConfidence = qUpdateConfidence;
+    }
+
+    public void init() {
+
 
 
 
@@ -171,28 +199,46 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
         return null;
     }
 
-//    private int[] qterm(Implication t) {
-//        Term s = t.getSubject();
-//        Operation p = (Operation) t.getPredicate();
-//
-//        int state = states.get(s);
-//        int action = actions.get(p);
-//
-//        return new int[]{state, action};
-//    }
+    @Override
+    public void eligibility(Term state, Term action, double eligibility) {
+        e.put(state, action, eligibility);
+    }
 
+    @Override
+    public double eligibility(Term state, Term action) {
+        Double E = e.get(state, action);
+        if (E == null) return 0;
+        return E;
+    }
 
+    @Override
+    public Term getRandomAction() {
+        final List<Term> t = Lists.newArrayList(getActions());
+        if (t.isEmpty()) return null;
+        int n = (int)(Math.random() * t.size());
+        return t.get(n);
+    }
+
+    @Override
+    public Iterable<Term> getStates() {
+        return states;
+    }
+
+    @Override
+    public Iterable<Term> getActions() {
+        return actions;
+    }
 
     public Implication qterm(Term s, Term a) {
         Implication i = termCache.get(s, a);
         if (i == null) {
             i = Implication.make(s, a, TemporalRules.ORDER_FORWARD);
-            termCache.put(s, a, i);
+            if (i!=null)
+                termCache.put(s, a, i);
         }
         return i;
     }
 
-    //abstract public Term getStateTerm(int s);
 
     abstract public boolean isState(Term s);
     abstract public boolean isAction(Term a);
@@ -262,6 +308,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
 
     }
 
+
     @Override
     public double q(Term state, Term action) {
         Concept c = q.get(state, action);
@@ -278,12 +325,33 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
     }
 
     /** fire all actions (ex: to teach them at the beginning) */
-    public void autonomicDesire(float goalConf) {
-        for (Term a : q.columnKeySet()) {
+    public void possibleDesire(float goalConf) {
+        possibleDesire(q.columnKeySet(), goalConf);
+    }
+
+    public void possibleDesire(float goalConf, Iterable<String> actions) {
+        possibleDesire(Iterables.transform(actions, new Function<String, Term>() {
+            @Nullable
+            @Override
+            public Term apply(String t) {
+                return nar.term(t);
+            }
+        }), goalConf);
+    }
+    /** fire all actions (ex: to teach them at the beginning) */
+    public void possibleDesire(Iterable<Term> actions, float goalConf) {
+        for (Term a : actions) {
+            possibleDesire(goalConf, a);
+        }
+    }
+
+    /** fire all actions (ex: to teach them at the beginning) */
+    public void possibleDesire(float goalConf, Term... actions) {
+        for (Term a : actions) {
             autonomic(a, Symbols.GOAL, goalConf);
         }
-
     }
+
 
     public void autonomic(Term action) {
         autonomic(action, Symbols.GOAL, qAutonomicGoalConfidence);
@@ -365,4 +433,11 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
         }
     }
 
+    public void setqAutonomicGoalConfidence(float qAutonomicGoalConfidence) {
+        this.qAutonomicGoalConfidence = qAutonomicGoalConfidence;
+    }
+
+    public void setqAutonomicBeliefConfidence(float qAutonomicBeliefConfidence) {
+        this.qAutonomicBeliefConfidence = qAutonomicBeliefConfidence;
+    }
 }
