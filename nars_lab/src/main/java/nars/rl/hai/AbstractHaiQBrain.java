@@ -30,7 +30,7 @@ abstract public class AbstractHaiQBrain<S,A> {
     public static List<Integer> range(final int begin, final int end) {
         return new AbstractList<Integer>() {
             @Override
-            public Integer get(int index) {
+            public Integer get(final int index) {
                 return begin + index;
             }
 

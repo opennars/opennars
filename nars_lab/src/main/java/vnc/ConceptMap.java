@@ -26,9 +26,9 @@ abstract public class ConceptMap extends AbstractReaction {
         super(nar, Events.ConceptNew.class, Events.ConceptForget.class, Events.CycleEnd.class, Events.FrameEnd.class, Events.ResetStart.class);
     }
 
-    abstract protected void onFrame();
+    protected void onFrame() { }
 
-    abstract protected void onCycle();
+    protected void onCycle() { }
 
 
     abstract public boolean contains(Concept c);
