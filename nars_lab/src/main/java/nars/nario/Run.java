@@ -28,11 +28,7 @@ public class Run extends MarioComponent {
         
     }
 
-    @Override
-    public void levelFailed() {
-        int type = LevelGenerator.TYPE_UNDERGROUND;
-        startLevel((long)(Math.random() * 1000), 1, type);
-    }
+
 
     @Override
     public void lose() {

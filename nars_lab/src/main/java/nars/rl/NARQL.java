@@ -19,20 +19,18 @@ import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Term;
-import nars.rl.hai.AbstractHaiQBrain;
 import vnc.ConceptMap;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * QL Agent coprocessor "Brain" operating in terms of (unprocessed) discrete Q-states
  * TODO generify the state,action term types
  */
-abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
+abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
 
     public NAR nar;
 
@@ -98,7 +96,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
 
     boolean initialized = true;
 
-    public BaseQLAgent(NAR nar) {
+    public NARQL(NAR nar) {
         super();
 
         setAlpha(0.4f);

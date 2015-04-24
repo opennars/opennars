@@ -2,7 +2,7 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.rl;
+package nars.rl.util;
 
 
 /*
@@ -59,6 +59,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
+import nars.gui.output.graph.nengo.UIVertex;
 import nars.nal.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
@@ -327,7 +328,7 @@ public class ThreeDView extends JFXPanel {
         
         double scale = 200.0;
         for (Object c : h.keys()) {
-            ArrayRealVector v = h.getPosition(c);
+            ArrayRealVector v = h.getPosition((UIVertex)c);
             if (v.getDimension()>=3) {
                 double x = v.getEntry(0);
                 double y = v.getEntry(1);

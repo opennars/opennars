@@ -2,8 +2,6 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
 import jurls.core.utils.MatrixImage.Data2D;
 import nars.Events;
@@ -17,9 +15,8 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
-import nars.rl.BaseQLAgent;
+import nars.rl.NARQL;
 
-import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -36,7 +33,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         Global.DEBUG = true;
     }
 
-    private final BaseQLAgent ql;
+    private final NARQL ql;
     private final MatrixImage mi;
 
 
@@ -173,7 +170,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         states.add(left);
         states.add(right);
 
-        ql = new BaseQLAgent(nar) {
+        ql = new NARQL(nar) {
 
 
 

@@ -1,8 +1,6 @@
-package nars.rl.hai;
+package nars.rl;
 
-import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Memory;
-import nars.nal.Task;
 
 import java.util.AbstractList;
 import java.util.List;
