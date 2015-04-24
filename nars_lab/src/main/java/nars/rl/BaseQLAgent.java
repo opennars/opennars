@@ -92,6 +92,7 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
 
 
+    boolean initialized = true;
 
     public BaseQLAgent(NAR nar) {
         super();
@@ -146,6 +147,17 @@ abstract public class BaseQLAgent extends AbstractHaiQBrain<Term,Term> {
         };
 
         conceptMap = new ConceptMap(nar) {
+            @Override
+            protected void onCycle() {
+                super.onCycle();
+                if (initialized) {
+
+                    init();
+
+                    initialized = false;
+                }
+            }
+
             @Override
             public boolean contains(Concept c) {
                 Term x = c.term;

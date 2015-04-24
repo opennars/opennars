@@ -191,15 +191,11 @@ public class TwoPointRegulatorAgent extends JPanel {
             public void init() {
                 super.init();
 
-                //ql.possibleDesire(actions, 0.9f); //doesnt work yet
-                nar.input("move(left)!");
-                nar.input("move(right)!");
-                nar.input("move(center)!");
+                ql.possibleDesire(actions, 0.9f); //doesnt work yet
 
                 setqAutonomicGoalConfidence(0.55f);
             }
         };
-        ql.init();
 
 
         nar.setCyclesPerFrame(cyclesPerFrame);
