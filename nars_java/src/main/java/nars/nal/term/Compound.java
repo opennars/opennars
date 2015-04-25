@@ -40,6 +40,10 @@ import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
 
     @Deprecated protected CharSequence name = null;
+    @Override
+    public final String toString() {
+        return name().toString();
+    }
 
     /**
      * list of (direct) term
@@ -190,6 +194,11 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
 
     public Compound normalized() {
         return cloneNormalized();
+    }
+
+    @Override
+    public int hashCode() {
+        return name().hashCode();
     }
 
     @Override

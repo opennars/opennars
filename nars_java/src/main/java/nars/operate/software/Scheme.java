@@ -3,9 +3,10 @@ package nars.operate.software;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import nars.nal.term.Term;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
 import nars.operate.software.scheme.DefaultEnvironment;
 import nars.operate.software.scheme.Environment;
 import nars.operate.software.scheme.Evaluator;
@@ -31,7 +32,7 @@ public class Scheme extends TermFunction {
                 //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
                 return new SchemeProduct((Product)term);
             }
-            else if (term.getClass() == Term.class) {
+            else if (term.getClass() == Atom.class) {
 
                 String s = term.toString();
 
