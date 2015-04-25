@@ -27,7 +27,7 @@ import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Sentence.Sentenced;
 import nars.nal.Task;
-import nars.nal.Terms.Termable;
+import nars.nal.term.Termed;
 import nars.nal.term.Term;
 
 import java.util.ArrayDeque;
@@ -42,7 +42,7 @@ import java.util.Iterator;
  * <p>
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<String> implements TLink<Task>, Termable, Sentenced {
+public class TaskLink extends Item<String> implements TLink<Task>, Termed, Sentenced {
 
     /**
      * The Task linked

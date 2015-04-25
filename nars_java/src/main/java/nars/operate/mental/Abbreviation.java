@@ -1,20 +1,24 @@
 package nars.operate.mental;
 
 import com.google.common.collect.Lists;
-import nars.budget.Budget;
-import nars.nal.*;
-import nars.nal.term.Term;
-import nars.operate.AbstractOperator;
 import nars.Events.TaskDerive;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
+import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.stamp.Stamp;
+import nars.nal.BudgetFunctions;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.TruthValue;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
+import nars.operate.AbstractOperator;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.util.ArrayList;
@@ -54,7 +58,7 @@ public class Abbreviation extends AbstractOperator {
         private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
 
         public Term newSerialTerm() {
-            return new Term(Symbols.TERM_PREFIX + String.valueOf(currentTermSerial.incrementAndGet()));
+            return Atom.get(Symbols.TERM_PREFIX + String.valueOf(currentTermSerial.incrementAndGet()));
         }
 
 

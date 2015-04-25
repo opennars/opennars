@@ -49,7 +49,7 @@ public class Javascript extends TermFunction implements Mental {
         } catch (Throwable ex) {
             result = ex.toString();
         }
-        return Term.quoted(result.toString());
+        return quoted(result.toString());
     }
 
 }

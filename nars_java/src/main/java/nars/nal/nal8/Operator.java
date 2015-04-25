@@ -23,16 +23,17 @@ package nars.nal.nal8;
 
 import com.google.common.collect.Lists;
 import nars.Events.EXE;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
-import nars.operate.IOperator;
 import nars.budget.Budget;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.TruthValue;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
+import nars.operate.IOperator;
 import nars.operate.io.Echo;
 
 import java.util.Arrays;
@@ -47,7 +48,7 @@ import java.util.List;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-public abstract class Operator extends Term implements IOperator {
+public abstract class Operator extends Atom implements IOperator {
 
     protected NAR nar;
     public static final float executionConfidence = Global.OPERATOR_EXECUTION_CONFIDENCE; //Global.MAX_CONFIDENCE;

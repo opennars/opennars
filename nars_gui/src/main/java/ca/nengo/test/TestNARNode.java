@@ -13,6 +13,7 @@ import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
+import nars.nal.term.Atom;
 import nars.prototype.Default;
 import nars.Events;
 import nars.Memory;
@@ -74,7 +75,7 @@ public class TestNARNode  {
         public NARNode(String name, NAR nar) {
             super(name);
             this.nar = nar;
-            nar.memory.setSelf(Term.get(name));
+            nar.memory.setSelf(Atom.get(name));
             nar.param.outputVolume.set(25);
             initOperators();
 
@@ -180,10 +181,10 @@ public class TestNARNode  {
                                 System.err.println("Warning: " + w + " (" + w.getClass() + ") has empty name");
                             continue;
                         }
-                        t.add(Term.quoted(ww));
+                        t.add(Atom.quoted(ww));
                     }
 
-                    return Inheritance.make(SetExt.make(t), Term.get("intersects"));
+                    return Inheritance.make(SetExt.make(t), get("intersects"));
                 }
 
 

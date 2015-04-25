@@ -4,6 +4,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import nars.nal.*;
 import nars.nal.concept.Concept;
+import nars.nal.term.Termed;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.term.Compound;
@@ -304,9 +305,9 @@ public class DefaultGrapher implements NARGraph.Grapher {
                     aroundConcept((Concept) vertex, true);
                 else
                     onConcept((Concept) vertex, true);
-            } else if (vertex instanceof Terms.Termable) {
+            } else if (vertex instanceof Termed) {
                 if (!aroundOnly)
-                    onTerm(((Terms.Termable) vertex).getTerm());
+                    onTerm(((Termed) vertex).getTerm());
             }
         //}
         return this;

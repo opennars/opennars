@@ -1,31 +1,12 @@
 package nars.nal.term;
 
 
+/**
+    * Term is the basic component of Narsese, and the object of processing in NARS.
 
-
-public interface AbstractTerm extends Cloneable, Comparable<AbstractTerm> {
-
-    /**
-     * Whether this compound term contains any variable term
-     *
-     * @return Whether the name contains a variable
-     */
-    //boolean hasVar();
-
-    /**
-     * Check whether the current Term can name a Concept.
-     *
-     * @return A Term is constant by default
-     */
-    //boolean isConstant();
-
-    /**
-     * Reporting the name of the current Term.
-     *
-     * @return The name of the term as a String
-     */
-    default CharSequence name() {
-        return toString();
-    }
-    
+    * A Term may have an associated Concept containing relations with other Terms.
+    * It is not linked in the Term, because a Concept may be forgot while the Term
+    * exists. Multiple objects may represent the same Term.
+ */
+@Deprecated public interface AbstractTerm extends Term {
 }

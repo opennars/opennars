@@ -23,7 +23,7 @@ package nars.nal.tlink;
 import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.nal.Terms.Termable;
+import nars.nal.term.Termed;
 import nars.nal.Item;
 import nars.nal.term.Term;
 
@@ -39,7 +39,7 @@ import nars.nal.term.Term;
  * <p>
  * This class is mainly used in logic.RuleTable to dispatch premises to logic rules
  */
-public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termable, TermLinkKey {
+public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, TermLinkKey {
 
 
 

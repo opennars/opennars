@@ -9,7 +9,7 @@ import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.*;
-import nars.nal.Terms.Termable;
+import nars.nal.term.Termed;
 import nars.nal.concept.Concept;
 import nars.nal.tlink.TLink;
 import nars.nal.tlink.TaskLink;
@@ -376,7 +376,7 @@ public class AntCore extends ConceptWaveCore {
 
                 eta = viaLink.getPriority();
                 link = viaLink;
-                Termable target = viaLink.getTarget();
+                Termed target = viaLink.getTarget();
                 viaLink = null;
                 if (goNextConcept(target, new Budget(getConceptVisitDelivery(), 0.5f, 0.5f)) == null)
                     return;
@@ -392,7 +392,7 @@ public class AntCore extends ConceptWaveCore {
             return (float)(speed * conceptVisitDelivery);
         }                
         
-        protected synchronized Concept goNextConcept(Termable x, Budget delivery) {
+        protected synchronized Concept goNextConcept(Termed x, Budget delivery) {
 
             Term ct = x.getTerm();
             if (concept!=null)

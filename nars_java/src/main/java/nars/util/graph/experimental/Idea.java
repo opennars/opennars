@@ -8,19 +8,20 @@ import com.google.common.base.Objects;
 import nars.Events;
 import nars.Events.ConceptForget;
 import nars.Events.ConceptNew;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.event.EventEmitter;
 import nars.event.Reaction;
 import nars.io.Symbols;
-import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Terms.Termable;
+import nars.nal.Terms;
+import nars.nal.concept.Concept;
 import nars.nal.nal4.Image;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.term.Termed;
 
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class Idea implements Iterable<Concept> {
     final Set<NALOperator> operators = new HashSet<NALOperator>();
 
 
-    public static CharSequence getKey(Termable tt) {
+    public static CharSequence getKey(Termed tt) {
         Term t = tt.getTerm();
         if (t instanceof Compound) {
             Compound ct = (Compound)t;
@@ -57,7 +58,7 @@ public class Idea implements Iterable<Concept> {
             }            
             else {
                 //key = sorted set of subterms
-                return Term.toSortedSet(ct.term).toString();
+                return Terms.toSortedSet(ct.term).toString();
             }
         }
         else {
@@ -308,7 +309,7 @@ public class Idea implements Iterable<Concept> {
             
         }
         
-        public Idea get(Termable t) {
+        public Idea get(Termed t) {
             return get(Idea.getKey(t.getTerm()));
         }
 

@@ -5,6 +5,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.prolog.*;
@@ -116,7 +117,7 @@ public class PrologQueryOperator extends Operator {
         //  create the nars result and return it
         Inheritance resultInheritance = Inheritance.make(
                 operatorInheritance,
-                new Term("prolog_evaluation")
+                Atom.get("prolog_evaluation")
         );
         
         
@@ -344,17 +345,17 @@ public class PrologQueryOperator extends Operator {
         if( prologTerm instanceof Int ) {
             Int prologIntegerTerm = (Int)prologTerm;
 
-            return new Term(String.valueOf(prologIntegerTerm.intValue()));
+            return Atom.get(String.valueOf(prologIntegerTerm.intValue()));
         }
         else if( prologTerm instanceof nars.prolog.Double ) {
             nars.prolog.Double prologDoubleTerm = (nars.prolog.Double)prologTerm;
 
-            return new Term(String.valueOf(prologDoubleTerm.floatValue()));
+            return Atom.get(String.valueOf(prologDoubleTerm.floatValue()));
         }
         else if( prologTerm instanceof nars.prolog.Float ) {
             nars.prolog.Float prologFloatTerm = (nars.prolog.Float)prologTerm;
 
-            return new Term(String.valueOf(prologFloatTerm.floatValue()));
+            return Atom.get(String.valueOf(prologFloatTerm.floatValue()));
         }
         else if( prologTerm instanceof Struct ) {
             Struct structTerm = (Struct)prologTerm;
@@ -363,7 +364,7 @@ public class PrologQueryOperator extends Operator {
             if (structTerm.getArity() == 0) {
                 String variableAsString = structTerm.getName();
 
-                return new Term('"' + variableAsString + '"');
+                return Atom.get('"' + variableAsString + '"');
             }
             else if (structTerm.getArity() == 2 && structTerm.getName().equals(".")) {
                 // convert the result array to a nars thingy
@@ -379,7 +380,7 @@ public class PrologQueryOperator extends Operator {
                 // is wraped up in a inheritance because there can also exist operators
                 // and it is better understandable by nars or other operators
                 return Inheritance.make(new Product(innerProductTerms),
-                    new Term("prolog_list")
+                    Atom.get("prolog_list")
                 );
             }
             else {
@@ -400,12 +401,12 @@ public class PrologQueryOperator extends Operator {
                     innerProductTerms[i+1] = convertPrologTermToNarsTermRecursive(parametersAsList.get(i), memory);
                 }
                 
-                innerProductTerms[0] = new Term(operationName);
+                innerProductTerms[0] = Atom.get(operationName);
                 
                 // is wraped up in a inheritance because there can also exist operators
                 // and it is better understandable by nars or other operators
                 return Inheritance.make(new Product(innerProductTerms),
-                    new Term("prolog_operation")
+                    Atom.get("prolog_operation")
                     
                 );
             }

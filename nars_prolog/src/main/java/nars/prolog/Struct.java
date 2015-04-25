@@ -936,7 +936,7 @@ public class Struct extends Term {
     }
 
     @Override
-    public int compareTo(AbstractTerm o) {
+    public int compareTo(nars.nal.term.Term o) {
         if (!(o instanceof Struct)) {
             return -1;
         }

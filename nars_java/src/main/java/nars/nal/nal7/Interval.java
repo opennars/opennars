@@ -20,7 +20,7 @@ package nars.nal.nal7;
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.io.Symbols;
-import nars.nal.term.Term;
+import nars.nal.term.Atom;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author peiwang / SeH
  */
-public class Interval extends Term {
+public class Interval extends Atom {
 
     public static class AtomicDuration extends AtomicInteger {
         
@@ -124,15 +124,9 @@ public class Interval extends Term {
      * for specifying magnitude directly.
      */
     protected Interval(final int magnitude, final boolean yesMagnitude) {
-        super();
+        super(Symbols.INTERVAL_PREFIX + String.valueOf(1+magnitude));
         this.magnitude = magnitude;
-        setName(Symbols.INTERVAL_PREFIX + String.valueOf(1+magnitude));        
     }
-    
-//    protected Interval(final String s) {
-//        magnitude = Integer.parseInt(s.substring(1));
-//        setName(s);
-//    }
 
     public static int magnitude(final long timeDiff, final AtomicDuration duration) {
         int m = (int) Math.round(Math.log(timeDiff) / duration.getSubDurationLog());

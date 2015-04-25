@@ -17,6 +17,7 @@
  */
 package nars.prolog;
 
+import nars.nal.NALOperator;
 import nars.nal.term.AbstractTerm;
 import nars.prolog.util.OneWayList;
 
@@ -29,7 +30,7 @@ import java.util.*;
  * @see Var
  * @see  Number
  */
-public abstract class Term implements AbstractTerm, Serializable {
+public abstract class Term implements nars.nal.term.Term, Serializable {
 	private static final long serialVersionUID = 1L;
 
     // true and false constants
@@ -58,7 +59,12 @@ public abstract class Term implements AbstractTerm, Serializable {
     
     /** is this term a ground term? */
     public abstract boolean isGround();
-    
+
+    @Override
+    public boolean isConstant() {
+        return hasVar();
+    }
+
     /**
      * Tests for the equality of two object terms
      *
@@ -148,13 +154,86 @@ public abstract class Term implements AbstractTerm, Serializable {
     }
 
 
+    @Override
+    public Term clone() {
+        /** shouldnt need cloned */
+        return this;
+    }
 
     @Override
-    public int compareTo(AbstractTerm o) {
+    public nars.nal.term.Term cloneDeep() {
+        /** shouldnt need cloned */
+        return this;
+    }
+
+    @Override
+    public void recurseSubtermsContainingVariables(nars.nal.term.TermVisitor v, nars.nal.term.Term parent) {
+
+    }
+
+    @Override
+    public short getComplexity() {
+        return 0;
+    }
+
+    @Override
+    public NALOperator operator() {
+        return null;
+    }
+
+    @Override
+    public void recurseTerms(nars.nal.term.TermVisitor v, nars.nal.term.Term parent) {
+
+    }
+
+    @Override
+    public int containedTemporalRelations() {
+        return 0;
+    }
+
+    @Override
+    public boolean containsTermRecursivelyOrEquals(nars.nal.term.Term target) {
+        return false;
+    }
+
+    @Override
+    public boolean isNormalized() {
+        return true;
+    }
+
+    @Override
+    public boolean containsTerm(nars.nal.term.Term target) {
+        //TODO
+        return false;
+    }
+
+    @Override
+    public boolean hasVarQuery() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarDep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVarIndep() {
+        return false;
+    }
+
+    @Override
+    public boolean hasVar() {
+        /** not a nars variable */
+        return false;
+    }
+
+    @Override
+    public int compareTo(nars.nal.term.Term o) {
         if (!getClass().isAssignableFrom(o.getClass())) {
             return -1;
         }
-        return ((String)name()).compareTo(((String)o.name()));
+        return ((String)name()).compareTo(((String) o.name()));
     }
     
     

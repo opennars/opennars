@@ -23,6 +23,7 @@ package nars.nal;
 import nars.Global;
 import nars.io.Symbols;
 import nars.io.Texts;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -34,9 +35,9 @@ import static nars.Global.TRUTH_EPSILON;
 public class TruthValue implements Cloneable { // implements Cloneable {
 
 
-    final static Term Truth_TRUE = Term.get("TRUE");
-    final static Term Truth_FALSE = Term.get("FALSE");
-    final static Term Truth_UNSURE = Term.get("UNSURE");
+    final static Term Truth_TRUE = Atom.get("TRUE");
+    final static Term Truth_FALSE = Atom.get("FALSE");
+    final static Term Truth_UNSURE = Atom.get("UNSURE");
 
     /**
      * The frequency factor of the truth value

@@ -109,7 +109,7 @@ public class Disjunction extends Junction {
             return make(t[0], t[1]);
         }
 
-        t = Term.toSortedSetArray(t);
+        t = Terms.toSortedSetArray(t);
 
         if (t.length == 1) {
             // special case: single component

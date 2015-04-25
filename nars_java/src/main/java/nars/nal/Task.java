@@ -24,13 +24,13 @@ import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
-import nars.nal.Terms.Termable;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.term.Termed;
 
 import java.lang.ref.Reference;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termable,Budget.Budgetable, Stamped {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed,Budget.Budgetable, Stamped {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();

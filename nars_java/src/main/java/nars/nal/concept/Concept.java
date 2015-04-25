@@ -30,7 +30,7 @@ import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.*;
-import nars.nal.Terms.Termable;
+import nars.nal.term.Termed;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -45,7 +45,7 @@ import static nars.nal.BudgetFunctions.rankBelief;
 import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
-abstract public class Concept extends Item<Term> implements Termable {
+abstract public class Concept extends Item<Term> implements Termed {
 
     /**
      * The term is the unique ID of the concept
@@ -1018,7 +1018,7 @@ abstract public class Concept extends Item<Term> implements Termable {
     }
 
 
-    public Iterator<? extends Termable> adjacentTermables(boolean termLinks, boolean taskLinks) {
+    public Iterator<? extends Termed> adjacentTermables(boolean termLinks, boolean taskLinks) {
         if (termLinks && taskLinks) {
             return concat(
                     this.termLinks.iterator(), this.taskLinks.iterator()
@@ -1034,18 +1034,18 @@ abstract public class Concept extends Item<Term> implements Termable {
         return null;
     }
     public Iterator<Term> adjacentTerms(boolean termLinks, boolean taskLinks) {
-        return transform(adjacentTermables(termLinks, taskLinks), new Function<Termable, Term>() {
+        return transform(adjacentTermables(termLinks, taskLinks), new Function<Termed, Term>() {
             @Override
-            public Term apply(final Termable term) {
+            public Term apply(final Termed term) {
                 return term.getTerm();
             }
         });
     }
 
     public Iterator<Concept> adjacentConcepts(boolean termLinks, boolean taskLinks) {
-        final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termable, Concept>() {
+        final Iterator<Concept> termToConcept = transform(adjacentTerms(termLinks, taskLinks), new Function<Termed, Concept>() {
             @Override
-            public Concept apply(final Termable term) {
+            public Concept apply(final Termed term) {
                 return memory.concept(term.getTerm());
             }
         });

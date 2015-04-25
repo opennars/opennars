@@ -8,6 +8,7 @@ package nars.operate.app.farg;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.Item;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
 /**
@@ -23,19 +24,18 @@ public class Codelet extends Item<Term> {
     //Linedetector codelets would then inherit from Codelet and its adding/removal 
     //would be regulated by controller
     
-    Object args;
+    final Object args;
     public int timestamp;
     public Object bin=null;
-    Term t;
-    Memory mem;
+    final Term t;
+    final Memory mem;
     public static int codeletid=0;
     
     public Codelet(Budget budget, Memory mem, Object args) {
         super(budget);
         this.args=args;
         this.mem=mem;
-        t=new Term("Codelet"+String.valueOf(codeletid));
-        codeletid++;
+        t = Atom.get("Codelet" + String.valueOf(codeletid++));
     }
     
     

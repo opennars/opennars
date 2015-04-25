@@ -187,7 +187,7 @@ public class Double extends Number {
 
  
     @Override
-    public int compareTo(AbstractTerm o) {
+    public int compareTo(nars.nal.term.Term o) {
         if (o instanceof Number)
             return (new java.lang.Double(value)).compareTo(((Number)o).doubleValue());
         else

@@ -20,23 +20,20 @@
  */
 package nars.nal;
 
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
 import nars.io.Symbols;
 import nars.io.Texts;
-import nars.nal.Terms.Termable;
 import nars.nal.TruthFunctions.EternalizedTruthValue;
-import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamped;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
+import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamped;
+import nars.nal.term.*;
 
 import java.util.*;
 
@@ -46,12 +43,12 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termable, TruthValue.Truthable, Stamped {
+public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termed, TruthValue.Truthable, Stamped {
 
 
 
 
-    public static interface Sentenced<T2 extends Compound> extends Termable {
+    public static interface Sentenced<T2 extends Compound> extends Termed {
         public Sentence<T2> getSentence();
     }
 
@@ -663,7 +660,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
             Statement st = (Statement) t;
 
             /* A statement sentence is not allowed to have a independent variable as subj or pred"); */
-            if (t.subjectOrPredicateIsIndependentVar())
+            if (st.subjectOrPredicateIsIndependentVar())
                 return true;
 
             if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
@@ -687,7 +684,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     }
 
 
-    @Deprecated public static class SubTermVarCollector implements Term.TermVisitor {
+    @Deprecated public static class SubTermVarCollector implements TermVisitor {
         private final List<Variable> vars;
 
         public SubTermVarCollector(List<Variable> vars) {

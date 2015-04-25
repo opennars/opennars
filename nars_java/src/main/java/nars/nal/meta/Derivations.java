@@ -4,20 +4,23 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import nars.Events;
-import nars.NAR;
 import nars.Global;
-import nars.budget.Budget;
+import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.nal.*;
+import nars.nal.ConceptProcess;
+import nars.nal.NAL;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.concept.Concept;
-import nars.nal.term.Variable;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.term.TermVisitor;
+import nars.nal.term.Variable;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;
@@ -298,7 +301,7 @@ public class Derivations extends DirectedMultigraph {
     }
 
     public static String genericLiteral(Term c, Map<Term, Integer> unique) {
-        c.recurseTerms(new Term.TermVisitor() {
+        c.recurseTerms(new TermVisitor() {
             @Override public void visit(Term t, Term superterm) {
                 if ((t.getClass() == Term.class) || (t instanceof Variable)) {
                     if (!unique.containsKey(t))

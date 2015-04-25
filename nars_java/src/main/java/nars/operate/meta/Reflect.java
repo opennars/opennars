@@ -4,13 +4,14 @@
  */
 package nars.operate.meta;
 
-import nars.nal.term.Compound;
 import nars.nal.Statement;
-import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Atom;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term
@@ -46,7 +47,7 @@ public class Reflect extends TermFunction {
         return Inheritance.make(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
     }
     public static Term sop(Statement s, String operatorName) {
-        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Term.quoted(operatorName));
+        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Atom.quoted(operatorName));
     }
     public static Term sop(Statement s, Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
@@ -57,7 +58,7 @@ public class Reflect extends TermFunction {
         for (Term x : t)
             m[i++] = getMetaTerm(x);
         
-        return Inheritance.make(Product.make(m), Term.quoted(operatorName));
+        return Inheritance.make(Product.make(m), Atom.quoted(operatorName));
     }
     
     public static Term getMetaTerm(Term node) {

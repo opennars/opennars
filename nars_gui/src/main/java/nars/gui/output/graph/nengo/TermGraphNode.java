@@ -10,7 +10,7 @@ import ca.nengo.ui.model.plot.AbstractWidget;
 import com.google.common.collect.Iterators;
 import nars.Memory;
 import nars.event.ConceptReaction;
-import nars.nal.Terms;
+import nars.nal.term.Termed;
 import nars.nal.concept.Concept;
 import nars.nal.Named;
 import nars.nal.Task;
@@ -296,8 +296,8 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
 
 
     public void refresh(Object x) {
-        if (x instanceof Terms.Termable)
-            if (!includeTerm(((Terms.Termable) x).getTerm()))
+        if (x instanceof Termed)
+            if (!includeTerm(((Termed) x).getTerm()))
                 return;
         new MyGrapher().on(null, x, false).finish();
     }
@@ -390,7 +390,7 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
     public AbstractWidget getNode(Named v) {
         final Named input = v;
         if ((v instanceof Concept) || (v instanceof Task))
-            v = ((Terms.Termable) v).getTerm();
+            v = ((Termed) v).getTerm();
         AbstractWidget u = getNode(v.name().toString());
         if ((u != null) && (u instanceof UIVertex))
             u = ((UIVertex) u).add(input);

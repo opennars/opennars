@@ -21,6 +21,7 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
+import nars.nal.Terms;
 import nars.nal.term.Term;
 
 import java.util.Collection;
@@ -59,7 +60,7 @@ public class SetExt extends SetTensional {
     }
     
     public static SetExt make(Term... t) {
-        t = toSortedSetArray(t);
+        t = Terms.toSortedSetArray(t);
         if (t.length == 0) return null;
         return new SetExt(t);
     }

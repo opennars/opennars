@@ -18,6 +18,7 @@
 package nars.prolog;
 
 import nars.nal.term.AbstractTerm;
+import nars.nal.term.Atom;
 import nars.prolog.net.AbstractSocket;
 
 import java.util.AbstractMap;
@@ -564,7 +565,7 @@ public class Var extends Term {
     }
 
     @Override
-    public int compareTo(AbstractTerm o) {
+    public int compareTo(nars.nal.term.Term o) {
         if (!(o instanceof Var)) {
             return -1;
         }

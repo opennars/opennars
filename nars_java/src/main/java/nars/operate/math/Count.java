@@ -46,9 +46,9 @@ public class Count extends TermFunction implements Mental {
 
     final static String requireMessage = "Requires 1 SetExt or SetInt argument";
     
-    final static Term counted = Term.get("counted");
-    
-    
+    final static Term counted = get("counted");
+
+
     @Override
     public Term function(Term[] x) {
 //        if (x.length!=1) {
@@ -61,7 +61,7 @@ public class Count extends TermFunction implements Mental {
         }       
         
         int n = ((Compound) content).size();
-        return Term.get(n);
+        return get((Object) n);
     }
 
     

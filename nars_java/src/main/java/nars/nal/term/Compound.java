@@ -25,6 +25,7 @@ import nars.Memory;
 import nars.Global;
 import nars.io.Symbols;
 import nars.nal.NALOperator;
+import nars.nal.Statement;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.util.data.sexpression.IPair;
@@ -36,7 +37,9 @@ import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 /** a compound term */
-public abstract class Compound extends Term implements Iterable<Term>, IPair {
+public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
+
+    @Deprecated protected CharSequence name = null;
 
     /**
      * list of (direct) term
@@ -185,9 +188,40 @@ public abstract class Compound extends Term implements Iterable<Term>, IPair {
     @Override
     public abstract Term clone();
 
-    @Override
     public Compound normalized() {
         return cloneNormalized();
+    }
+
+    @Override
+    public boolean equals(final Object that) {
+        if (this == that) return true;
+        if (!(that instanceof Compound)) return false;
+        final Compound t = (Compound)that;
+        if ((name == null) || (t.name == null)) {
+            //check operate first because name() may to avoid potential construction of name()
+            if (operator()!=t.operator() || getComplexity() != t.getComplexity() )
+                return false;
+        }
+        return name().equals(t.name());
+    }
+
+    public void recurseTerms(final TermVisitor v, Term parent) {
+        v.visit(this, parent);
+        if (this instanceof Compound) {
+            for (Term t : ((Compound)this).term) {
+                t.recurseTerms(v, this);
+            }
+        }
+    }
+    public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
+        if (hasVar()) {
+            v.visit(this, parent);
+            if (this instanceof Compound) {
+                for (Term t : ((Compound) this).term) {
+                    t.recurseSubtermsContainingVariables(v, this);
+                }
+            }
+        }
     }
 
     /** extracts a subterm provided by the index tuple
@@ -264,16 +298,33 @@ public abstract class Compound extends Term implements Iterable<Term>, IPair {
         result.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
 
 
-        if (!valid(result)) {
-//                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
-//                ntc.printStackTrace();
-//                throw ntc;
-            return null;
-        }
+//        if (!valid(result)) {
+////                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
+////                ntc.printStackTrace();
+////                throw ntc;
+//            return null;
+//        }
 
 
         return (T)result;
 
+    }
+
+    public boolean subjectOrPredicateIsIndependentVar() {
+        if (!(this instanceof Statement))
+            return false;
+
+        Statement cont=(Statement)this;
+        if (!cont.hasVarIndep()) return false;
+
+        Term subj = cont.getSubject();
+        if ((subj instanceof Variable) && (subj.hasVarIndep()))
+            return true;
+        Term pred = cont.getPredicate();
+        if ((pred instanceof Variable) && (pred.hasVarIndep()))
+            return true;
+
+        return false;
     }
 
     /**
@@ -312,7 +363,6 @@ public abstract class Compound extends Term implements Iterable<Term>, IPair {
      */
     abstract public Term clone(final Term[] replaced);
 
-    @Override
     public Compound cloneDeep() {
         Term c = clone(cloneTermsDeep());
         if (c == null) return null;

@@ -19,6 +19,7 @@ package nars.core;
 import nars.Global;
 import nars.NAR;
 import nars.io.narsese.InvalidInputException;
+import nars.nal.Terms;
 import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Statement;
@@ -29,6 +30,7 @@ import nars.nal.nal3.DifferenceInt;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.prototype.Default;
@@ -86,11 +88,11 @@ public class TermTest {
         Term b = n.term("b");
         Term c = n.term("c");
 
-        assertEquals(3, Term.toSortedSetArray(a, b, c).length);
-        assertEquals(2, Term.toSortedSetArray(a, b, b).length);
-        assertEquals(1, Term.toSortedSetArray(a, a).length);
-        assertEquals(1, Term.toSortedSetArray(a).length);
-        assertEquals("correct natural ordering", a, Term.toSortedSetArray(a, b)[0]);
+        assertEquals(3, Terms.toSortedSetArray(a, b, c).length);
+        assertEquals(2, Terms.toSortedSetArray(a, b, b).length);
+        assertEquals(1, Terms.toSortedSetArray(a, a).length);
+        assertEquals(1, Terms.toSortedSetArray(a).length);
+        assertEquals("correct natural ordering", a, Terms.toSortedSetArray(a, b)[0]);
     }    
     
     @Test
@@ -304,8 +306,8 @@ public class TermTest {
 
     @Test public void testDifferenceImmediate() {
         {
-            SetInt a = SetInt.make(Term.get("a"), Term.get("b"), Term.get("c"));
-            SetInt b = SetInt.make(Term.get("d"), Term.get("b"));
+            SetInt a = SetInt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
+            SetInt b = SetInt.make(Atom.get("d"), Atom.get("b"));
             Term d = DifferenceInt.make(a, b);
             assertEquals(d.toString(), d.getClass(), SetInt.class);
             assertEquals(d.toString(), 2, ((SetInt) d).size());
@@ -313,8 +315,8 @@ public class TermTest {
         }
 
         {
-            SetExt a = SetExt.make( Term.get("a"), Term.get("b"), Term.get("c") );
-            SetExt b = SetExt.make( Term.get("d"), Term.get("b") );
+            SetExt a = SetExt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
+            SetExt b = SetExt.make(Atom.get("d"), Atom.get("b"));
             Term d = DifferenceExt.make(a, b);
             assertEquals(d.toString(), d.getClass(), SetExt.class);
             assertEquals(d.toString(), 2, ((SetExt)d).size() );

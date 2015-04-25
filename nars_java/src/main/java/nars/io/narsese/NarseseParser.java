@@ -16,6 +16,7 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -402,7 +403,7 @@ public class NarseseParser extends BaseParser<Object> {
      * MACRO: namespace.x    becomes    <x --> namespace>
      */
     Rule NamespacedAtom() {
-        return sequence(Atom(), '.', Atom(), push(Inheritance.make(Term.get(pop()), Term.get(pop()))));
+        return sequence(Atom(), '.', Atom(), push(Inheritance.make(Atom.get(pop()), Atom.get(pop()))));
     }
 
     public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
@@ -416,7 +417,7 @@ public class NarseseParser extends BaseParser<Object> {
         return newParser((Memory)null);
     }
 
-    public static class ImageIndexTerm extends Term {
+    public static class ImageIndexTerm extends Atom {
         ImageIndexTerm() {
             super("_");
         }
@@ -651,7 +652,7 @@ public class NarseseParser extends BaseParser<Object> {
                     return memory.operator(s);
                 return null;
             } else {
-                return Term.get(s);
+                return Atom.get(s);
             }
         }
         throw new RuntimeException(o + " is not a term");

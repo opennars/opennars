@@ -53,11 +53,11 @@ public class Say extends Operator {
     }
 
     final int MAX_WORD_LENGTH = 16;
-    final Term WORD = Term.get("WORD");
-    final Term QUIET = Term.get("QUIET");
-    final Term INCOHERENT = Term.get("INCOHERENT");
-    final Term SAID = Term.get("SAID");
-    //NOISY
+    final Term WORD = get("WORD");
+    final Term QUIET = get("QUIET");
+    final Term INCOHERENT = get("INCOHERENT");
+    final Term SAID = get("SAID");
+//NOISY
 
     long lastEmit = 0;
     long emitPeriod = 50; //cycles between which buffer is auto-flush

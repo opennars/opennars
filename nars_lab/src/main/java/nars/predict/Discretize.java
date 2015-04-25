@@ -8,6 +8,7 @@ import nars.NAR;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
@@ -93,7 +94,7 @@ public class Discretize {
     }
     
     public Inheritance getValueTerm(String prefix, int level) {
-        return Instance.make( Term.get(prefix), Term.get("y" + level));
+        return Instance.make(Atom.get(prefix), Atom.get("y" + level));
     }
     
     public Term[] getValueTerms(String prefix) {
@@ -112,7 +113,7 @@ public class Discretize {
     }    
     
     public Term getValueTerm(double y) {
-        return Term.get("y" + i((float)y, discretization));
+        return Atom.get("y" + i((float) y, discretization));
     }
 
     /**

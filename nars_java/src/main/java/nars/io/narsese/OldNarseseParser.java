@@ -13,10 +13,10 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import org.parboiled.annotations.BuildParseTree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -447,7 +447,7 @@ import static nars.nal.nal8.Operation.make;
                 }
                 else {
                     //void "()" arguments, default to (SELF)
-                    a = Term.EmptyTermArray;
+                    a = Terms.EmptyTermArray;
                 }                                                            
                 
                 Operation o = Operation.make(operator, a, self);
@@ -497,7 +497,7 @@ import static nars.nal.nal8.Operation.make;
         if (containVar(s)) {
             return new Variable(s);
         } else {
-            return Term.get(s);
+            return Atom.get(s);
         }
     }
 

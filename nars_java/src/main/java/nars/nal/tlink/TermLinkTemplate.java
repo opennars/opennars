@@ -1,11 +1,11 @@
 package nars.nal.tlink;
 
-import nars.nal.Terms;
+import nars.nal.term.Termed;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 /** contains most of the essential data to populate new TermLinks */
-public class TermLinkTemplate implements Terms.Termable {
+public class TermLinkTemplate implements Termed {
 
     /** The linked Term */
     public final Term target;

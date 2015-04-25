@@ -15,6 +15,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -507,7 +508,7 @@ public class NARPrologMirror extends AbstractMirror {
             int arity = s.getArity();
             String predicate = s.name().toString();
             if (arity == 0) {
-                return Term.get(unpescape(predicate));
+                return Atom.get(unpescape(predicate));
             }
             if (arity == 1) {
                 switch (predicate) {
@@ -565,7 +566,7 @@ public class NARPrologMirror extends AbstractMirror {
         }
         else if (term instanceof nars.prolog.Number) {
             nars.prolog.Number n = (nars.prolog.Number)term;
-            return new Term('"' + String.valueOf(n.doubleValue()) + '"');
+            return Atom.get('"' + String.valueOf(n.doubleValue()) + '"');
         }
         
         return null;

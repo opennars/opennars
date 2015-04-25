@@ -20,7 +20,6 @@
  */
 package nars;
 
-import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -51,6 +50,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -99,7 +99,7 @@ public class Memory implements Serializable {
     }
 
     public Concept concept(CharSequence t) {
-        return concept(Term.get(t));
+        return concept(Atom.get(t));
     }
 
 

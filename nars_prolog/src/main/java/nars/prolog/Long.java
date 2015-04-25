@@ -187,7 +187,7 @@ public class Long extends Number {
      * @author Paolo Contessi
      */
     @Override
-    public int compareTo(AbstractTerm o) {
+    public int compareTo(nars.nal.term.Term o) {
         if (o instanceof Number)
             return (new java.lang.Long(value)).compareTo(((Number)o).longValue());
         else

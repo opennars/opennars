@@ -8,6 +8,7 @@ import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.Item;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class BagOperationsTest {
     public static class NullConcept extends Concept {
 
         public NullConcept(String id, float priority) {
-            super(new Term(id), new Budget(priority, priority, priority), null, null, null);
+            super(Atom.get(id), new Budget(priority, priority, priority), null, null, null);
         }    
 
         @Override
@@ -78,7 +79,7 @@ public class BagOperationsTest {
         assertEquals(0.4f, b.getMaxPriority(),0.001f);
         
         
-        Item tb = b.remove(new Term("b"));
+        Item tb = b.remove(Atom.get("b"));
         assertTrue(tb!=null);
         assertEquals(1, b.size());
         assertEquals(0.4f, tb.getPriority(), 0.001f);
@@ -107,7 +108,7 @@ public class BagOperationsTest {
             assertNull(null, zzz);
 
             assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
-            assertNotNull(b.get(Term.get("a")));
+            assertNotNull(b.get(Atom.get("a")));
         }
         
     }

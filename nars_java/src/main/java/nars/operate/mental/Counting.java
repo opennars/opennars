@@ -4,10 +4,10 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
-import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.operate.IOperator;
 import nars.event.Reaction;
@@ -25,8 +25,8 @@ public class Counting implements IOperator {
 
     public Reaction obs;
     
-    final static Term CARDINALITY = Term.get("CARDINALITY");
-    
+    final static Term CARDINALITY = Atom.get("CARDINALITY");
+
     @Override public boolean setEnabled(NAR n, boolean enabled) {
         Memory memory = n.memory;
         
@@ -58,9 +58,9 @@ public class Counting implements IOperator {
                                 int cardinality=set_term.size();   
 
                                 //now create term <(*,M,cardinality) --> CARDINALITY>.
-                                Term[] product_args = new Term[] { 
+                                Term[] product_args = new Term[] {
                                     inh.getPredicate(),
-                                    Term.get(cardinality) 
+                                        Atom.get((Object) cardinality)
                                 };
 
                                 //TODO CARDINALITY can be a static final instance shared by all

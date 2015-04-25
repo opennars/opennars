@@ -83,7 +83,7 @@ public class IntersectionExt extends Intersect {
         }
         if ((term1 instanceof SetExt) && (term2 instanceof SetExt)) {
             // set intersection
-            TreeSet<Term> set = Term.toSortedSet(((Compound) term1).term);
+            TreeSet<Term> set = Terms.toSortedSet(((Compound) term1).term);
             
             set.retainAll(((Compound) term2).asTermList());
             
@@ -116,7 +116,7 @@ public class IntersectionExt extends Intersect {
 
     
     public static Term make(Term[] t) {
-        t = Term.toSortedSetArray(t);
+        t = Terms.toSortedSetArray(t);
         switch (t.length) {
             case 0: return null;
             case 1: return t[0];

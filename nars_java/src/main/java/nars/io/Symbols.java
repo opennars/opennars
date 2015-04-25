@@ -23,6 +23,7 @@ package nars.io;
 
 import nars.Events;
 import nars.nal.NALOperator;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
 import java.util.Collections;
@@ -111,7 +112,7 @@ public class Symbols {
     protected static final Map<Character,NALOperator> charToOperator
             = Collections.unmodifiableMap(_charToOperator);
 
-    public static final Term DEFAULT_SELF = Term.get("SELF");
+    public static final Term DEFAULT_SELF = Atom.get("SELF");
 
 
     /** separates prefix from the term in a termlink or tasklink */

@@ -28,7 +28,7 @@ import static nars.io.Symbols.*;
 /**
  * A variable term, which does not correspond to a concept
  */
-public class Variable extends Term {
+public class Variable extends Atom {
 
     
     
@@ -52,8 +52,7 @@ public class Variable extends Term {
      * @param name A String read from input
      */
     protected Variable(final CharSequence n, final Term scope) {
-        super();
-        this.name = n;
+        super(n);
         this.type = n.charAt(0);
         if (!validVariableType(type))
             throw new RuntimeException("Invalid variable type: " + n);
@@ -61,7 +60,6 @@ public class Variable extends Term {
         this.hash = 0; //calculate lazily
     }
 
-    @Override protected void setName(CharSequence newName) { }
 
 
     

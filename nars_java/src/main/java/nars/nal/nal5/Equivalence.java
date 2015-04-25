@@ -22,9 +22,10 @@ package nars.nal.nal5;
 
 import nars.nal.NALOperator;
 import nars.nal.Statement;
-import nars.nal.term.Term;
+import nars.nal.Terms;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Term;
 
 import java.util.Arrays;
 
@@ -122,7 +123,7 @@ public class Equivalence extends Statement {
         if (temporalOrder==TemporalRules.ORDER_FORWARD)
             t = new Term[] { subject, predicate };
         else
-            t = Term.toSortedSetArray(subject, predicate);
+            t = Terms.toSortedSetArray(subject, predicate);
 
         if (t.length != 2)
             return null;

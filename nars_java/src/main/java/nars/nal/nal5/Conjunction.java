@@ -186,7 +186,7 @@ public class Conjunction extends Junction {
             //return new Conjunction(Terms.reverse(argList), TemporalRules.ORDER_FORWARD);
             //return null;
         } else {
-            Term[] a = Term.toSortedSetArray(argList);
+            Term[] a = Terms.toSortedSetArray(argList);
             if (a.length == 1) return a[0];
             return new Conjunction(a, temporalOrder);
         }

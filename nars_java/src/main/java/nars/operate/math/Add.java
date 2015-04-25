@@ -16,8 +16,9 @@
  */
 package nars.operate.math;
 
-import nars.nal.term.Term;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
 import nars.operate.mental.Mental;
 
 /**
@@ -49,7 +50,7 @@ public class Add extends TermFunction implements Mental {
             throw new RuntimeException("2nd parameter not an integer: " + x[1]);
         }
         
-        return new Term(String.valueOf(n1 + n2));            
+        return Atom.get(String.valueOf(n1 + n2));
     }
 
 }

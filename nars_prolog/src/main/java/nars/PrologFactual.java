@@ -77,7 +77,7 @@ public class PrologFactual extends TermFunction {
                     p.solveEnd();
 
                     if (answers.isEmpty()) {
-                        return Term.get("null");
+                        return get("null");
                     }
                     else {
                         return SetExt.make(answers);

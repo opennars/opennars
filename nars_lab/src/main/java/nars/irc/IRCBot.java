@@ -7,6 +7,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.Memory;
+import nars.nal.term.Atom;
 import nars.prototype.Default;
 import nars.NAR;
 import nars.Global;
@@ -173,13 +174,13 @@ public class IRCBot {
                 Term wordTerm;
                 if (input.pattern.equals("word")) {
                     a = input.content.toLowerCase().toString();
-                    wordTerm = Term.get(a);
+                    wordTerm = Atom.get(a);
                     pattern = "word";
                 }
                 //TODO apostrophe words
                 else if (input.pattern.equals("punct")) {
                     String b = input.content;
-                    wordTerm = Term.quoted(b);
+                    wordTerm = Atom.quoted(b);
 
                     a = input.content;
                     pattern = "word";

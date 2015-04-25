@@ -20,6 +20,7 @@ import nars.Memory;
 import nars.io.narsese.InvalidInputException;
 import nars.io.narsese.OldNarseseParser;
 import nars.io.nlp.Twokenize.Span;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -132,7 +133,7 @@ public class Twenglish {
         if (inputProduct) {
             Term p = 
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
-            Compound q = Sentence.termOrNull( Instance.make( p, Term.get(sentenceType) ) );
+            Compound q = Sentence.termOrNull( Instance.make( p, Atom.get(sentenceType)) );
             if (q != null) {
                 throw new RuntimeException("API Upgrade not finished here:");
                 /*tt.add(
@@ -179,10 +180,10 @@ public class Twenglish {
     }
     
     public Term lexToTerm(String c) {
-        return Term.get(c);
+        return Atom.get(c);
     }
     public Term tagToTerm(String c) {
-        return Term.get(c.toLowerCase());
+        return Atom.get(c.toLowerCase());
     }
     
     

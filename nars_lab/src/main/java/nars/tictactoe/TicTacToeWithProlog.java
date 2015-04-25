@@ -23,22 +23,23 @@ package nars.tictactoe;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import nars.NARPrologMirror;
-import nars.prototype.Default;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Global;
+import nars.NARPrologMirror;
+import nars.budget.Budget;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.narsese.InvalidInputException;
-import nars.budget.Budget;
-import nars.nal.concept.Concept;
 import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
+import nars.prototype.Default;
 
 import javax.swing.*;
 import java.awt.*;
@@ -139,7 +140,7 @@ public class TicTacToeWithProlog extends JPanel {
 
             @Override
             public Concept initTerm(int x, int y) {
-                Term t = new Term( Integer.toString(y * 3 + x) );
+                Term t = Atom.get(Integer.toString(y * 3 + x));
                 fieldTerms.add(t);
                 return nar.memory.conceptualize(new Budget(0.5f, 0.5f, 0.5f), t);
             }

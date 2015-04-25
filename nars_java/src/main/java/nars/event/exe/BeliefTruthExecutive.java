@@ -6,6 +6,7 @@ import nars.NAR;
 import nars.event.AbstractExecutive;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -34,7 +35,7 @@ public class BeliefTruthExecutive extends AbstractExecutive {
         private float period; //(1/freq) in cycles
 
         public Action(String id) {
-            this.term = Term.get( operator.getTerm().toString().replace("^", "") + id );
+            this.term = Atom.get(operator.getTerm().toString().replace("^", "") + id);
             setFrequency(0);
         }
 
