@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.io.Symbols;
+import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;
 import nars.nal.stamp.Stamp;
@@ -17,7 +18,7 @@ import nars.nal.tlink.TermLinkKey;
  */
 public class ControlledConcept extends AxiomaticConcept {
 
-    public ControlledConcept(Compound t, Budget b, Memory m, Bag<TermLinkKey, TermLink> ttaskLinks, Bag<String, TaskLink> ttermLinks) {
+    public ControlledConcept(Compound t, Budget b, Memory m, Bag<TermLinkKey, TermLink> ttaskLinks, Bag<Sentence, TaskLink> ttermLinks) {
         super(t, b, m, ttaskLinks, ttermLinks);
     }
 

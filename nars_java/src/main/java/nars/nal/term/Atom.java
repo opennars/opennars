@@ -37,7 +37,25 @@ public class Atom implements Term {
     }
 
 
+    /**
+     * @param that The Term to be compared with the current Term
+     */
+    @Override
+    public int compareTo(final Term that) {
+        if (that==this) return 0;
 
+        // variables have earlier sorting order than non-variables
+        if (that instanceof Atom) {
+            if (that.getClass() == Variable.class)
+                return 1;
+
+            return Texts.compare(name(), (/*(Atom)*/that).name());
+        }
+        else {
+            return -1;
+        }
+
+    }
 
 //    /**
 //     * Default constructor that build an internal Term

@@ -42,21 +42,13 @@ import java.util.Iterator;
  * <p>
  * TaskLinks are unique according to the Task they reference
  */
-public class TaskLink extends Item<String> implements TLink<Task>, Termed, Sentenced {
+public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sentenced {
 
     /**
      * The Task linked
      */
     public final Task targetTask;
 
-    private String name;
-
-    public static String key(short type, short[] index, Task task) {
-        if (Global.TASK_LINK_UNIQUE_BY_INDEX)
-            return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
-        else
-            return task.sentence.name();
-    }
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
@@ -107,7 +99,6 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termed, Sente
 
         this.targetTask = t;
 
-        this.name = null;
     }
 
     /**
@@ -125,21 +116,16 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termed, Sente
 
         this.targetTask = t;
 
-        this.name = null;
     }
 
 
     @Override
-    public String name() {
-        if (name == null) {
-            this.name = key(type, index, targetTask);
-        }
-        return name;
-    }
+    public Sentence name() { return getSentence(); }
+
 
     @Override
     public int hashCode() {
-        return name().hashCode();
+        return getSentence().hashCode();
     }
 
     public Deque<Recording> getRecords() {
@@ -147,12 +133,15 @@ public class TaskLink extends Item<String> implements TLink<Task>, Termed, Sente
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) return true;
         if (obj instanceof TaskLink) {
             TaskLink t = (TaskLink) obj;
-            //return t.name().equals(name());
-            return t.targetTask.equals(targetTask);
+            return getSentence().equals(t.getSentence());
+
+            /*if (Global.TASK_LINK_UNIQUE_BY_INDEX)
+                return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
+            else*/
         }
         return false;
     }

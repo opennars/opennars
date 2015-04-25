@@ -24,6 +24,7 @@ import com.google.common.collect.Iterators;
 import nars.Memory;
 import nars.Global;
 import nars.io.Symbols;
+import nars.io.Texts;
 import nars.nal.NALOperator;
 import nars.nal.Statement;
 import nars.nal.Terms;
@@ -199,6 +200,17 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
     @Override
     public int hashCode() {
         return name().hashCode();
+    }
+
+    @Override
+    public int compareTo(final Term that) {
+        if (that==this) return 0;
+
+        // variables have earlier sorting order than non-variables
+        if (!(that instanceof Compound)) return 1;
+
+        Compound c = (Compound)that;
+        return Texts.compare(name(), c.name());
     }
 
     @Override

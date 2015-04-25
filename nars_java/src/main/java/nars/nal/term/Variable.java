@@ -30,10 +30,15 @@ import static nars.io.Symbols.*;
  */
 public class Variable extends Atom {
 
-    
-    
 
-    
+    @Override
+    public int compareTo(Term that) {
+        if (that instanceof Variable) {
+            return Variable.compare(this, (Variable)that);
+        }
+        return -1; /** variables have earlier sorting order than non-variables */
+    }
+
     /** caches the type character for faster lookup than charAt(0) */
     private transient char type = 0;
     

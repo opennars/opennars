@@ -56,7 +56,7 @@ public enum NALOperator {
 
     OPERATION("^", 8),
 
-    /** an atomic term; this value is set if not a compound term */
+    /** an atomic term (includes interval and variables); this value is set if not a compound term */
     ATOM(".", 0, false);
 
     //-----------------------------------------------------

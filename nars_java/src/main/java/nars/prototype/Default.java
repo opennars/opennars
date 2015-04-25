@@ -216,7 +216,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     }
     @Override
     public Concept newConcept(Budget b, final Term t, final Memory m) {
-        Bag<String, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
+        Bag<Sentence, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new ChainBag<>(getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);

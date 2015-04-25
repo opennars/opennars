@@ -275,7 +275,7 @@ public class Solid extends Default {
 
     @Override
     public Concept newConcept(Budget b, Term t, Memory m) {
-        Bag<String, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
+        Bag<Sentence, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);

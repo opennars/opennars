@@ -7,6 +7,7 @@ import nars.budget.Budget;
 import nars.budget.bag.CurveBag;
 import nars.nal.ConceptBuilder;
 import nars.nal.DirectProcess;
+import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -23,7 +24,7 @@ public class AxiomaticConcept extends Concept {
     public Set<Task> beliefAxioms = Global.newHashSet(4);
     boolean restrict;
 
-    public AxiomaticConcept(Term t, Budget b, Memory m, Bag<TermLinkKey, TermLink> ttaskLinks, Bag<String, TaskLink> ttermLinks) {
+    public AxiomaticConcept(Term t, Budget b, Memory m, Bag<TermLinkKey, TermLink> ttaskLinks, Bag<Sentence, TaskLink> ttermLinks) {
         super(t, b, ttermLinks, ttaskLinks, m);
         restrict = true;
     }
@@ -88,7 +89,7 @@ public class AxiomaticConcept extends Concept {
 
             @Override
             public Concept newConcept(Budget b, Term t, Memory m) {
-                Bag<String, TaskLink> ttaskLinks = new CurveBag(10, true);
+                Bag<Sentence, TaskLink> ttaskLinks = new CurveBag(10, true);
                 Bag<TermLinkKey, TermLink> ttermLinks = new CurveBag(10, true);;
 
 

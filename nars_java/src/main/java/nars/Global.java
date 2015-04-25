@@ -235,7 +235,7 @@ public class Global {
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
     public static final float TERMLINK_FORGETTING_ACCURACY = 0.2f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.2f;
-    public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
+    //public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
     public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
     public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection

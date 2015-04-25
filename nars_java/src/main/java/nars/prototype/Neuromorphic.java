@@ -8,6 +8,7 @@ import nars.budget.Budget;
 import nars.budget.bag.experimental.DelayBag;
 import nars.budget.bag.experimental.FairDelayBag;
 import nars.control.experimental.AntCore;
+import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
@@ -65,7 +66,7 @@ public class Neuromorphic extends Curve {
     public Concept newConcept(Budget b, final Term t, final Memory m) {
 
         if (fairdelaybag) {
-            DelayBag<String, TaskLink> taskLinks = new FairDelayBag(
+            DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(
                     param.taskLinkForgetDurations, getConceptTaskLinks());
             taskLinks.setMemory(m);
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(

@@ -92,17 +92,15 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     public TermLink(boolean incoming, Term host, TermLinkTemplate template, String name, Budget v) {
         super(v);
 
-        host.ensureNormalized("Host term in TermLink");
-        template.target.ensureNormalized("Template target in " + template);
 
         if (incoming) {
             this.source = template.target;
-            this.target = host;
+            this.target = host.ensureNormalized("Host term in TermLink");
             type = template.type;
         }
         else {
             this.source = host;
-            this.target = template.target;
+            this.target = template.target.ensureNormalized("Template target in " + template);
             type = (short)(template.type - 1); //// point to component
         }
 
@@ -152,42 +150,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
     public String getPrefix() { return prefix; }
 
-    /** the original prefix code, verbose. see TermLinkTemplate.prefix(..) */
-    @Deprecated protected CharSequence newPrefix() {
 
-        final String at1, at2;
-        if ((type % 2) == 1) {  // to component
-            at1 = Symbols.TO_COMPONENT_1;
-            at2 = Symbols.TO_COMPONENT_2;
-        } else {                // to compound
-            at1 = Symbols.TO_COMPOUND_1;
-            at2 = Symbols.TO_COMPOUND_2;
-        }
-
-        final int MAX_INDEX_DIGITS = 2;
-
-        final CharSequence targetName = target.name();
-
-        final int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);// + targetName.length();
-
-        final StringBuilder n = new StringBuilder(estimatedLength);
-        n.append(at1).append('T').append(type);
-        if (index != null) {
-            for (final short i : index) {
-                //prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
-
-                n.append('-');
-
-                final char ii = (char)(i + 1);
-                if (ii < 10)
-                    n.append((char)(ii+'0') );
-                else
-                    n.append( Texts.n2(ii) );
-            }
-
-        }
-        return n.append(at2);//.append(targetName);
-    }
 
     /**
      * Get one index by level
@@ -222,8 +185,44 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
     @Override
     public Term getTerm() {
-        target.ensureNormalized("Template target");
         return target;
     }
 
+
+//    /** the original prefix code, verbose. see TermLinkTemplate.prefix(..) */
+//    @Deprecated protected CharSequence newPrefix() {
+//
+//        final String at1, at2;
+//        if ((type % 2) == 1) {  // to component
+//            at1 = Symbols.TO_COMPONENT_1;
+//            at2 = Symbols.TO_COMPONENT_2;
+//        } else {                // to compound
+//            at1 = Symbols.TO_COMPOUND_1;
+//            at2 = Symbols.TO_COMPOUND_2;
+//        }
+//
+//        final int MAX_INDEX_DIGITS = 2;
+//
+//        final CharSequence targetName = target.name();
+//
+//        final int estimatedLength = 2+2+1+MAX_INDEX_DIGITS*( (index!=null ? index.length : 0) + 1);// + targetName.length();
+//
+//        final StringBuilder n = new StringBuilder(estimatedLength);
+//        n.append(at1).append('T').append(type);
+//        if (index != null) {
+//            for (final short i : index) {
+//                //prefix.append('-').append( Integer.toString(i + 1, 16 /** hexadecimal */)  );
+//
+//                n.append('-');
+//
+//                final char ii = (char)(i + 1);
+//                if (ii < 10)
+//                    n.append((char)(ii+'0') );
+//                else
+//                    n.append( Texts.n2(ii) );
+//            }
+//
+//        }
+//        return n.append(at2);//.append(targetName);
+//    }
 }

@@ -44,7 +44,7 @@ public class Discretinuous extends Default {
 
     @Override
     public Concept newConcept(Budget b, Term t, Memory m) {
-        Bag<String, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
+        Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);

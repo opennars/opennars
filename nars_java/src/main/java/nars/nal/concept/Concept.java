@@ -55,7 +55,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     /**
      * Task links for indirect processing
      */
-    public final Bag<String, TaskLink> taskLinks;
+    public final Bag<Sentence, TaskLink> taskLinks;
 
     /**
      * Term links between the term and its components and compounds; beliefs
@@ -126,7 +126,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      *  @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
-    public Concept(final Term term, final Budget b, final Bag<String, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
+    public Concept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);        
         
         this.term = term;

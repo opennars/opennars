@@ -28,6 +28,8 @@ import nars.nal.NALOperator;
 import nars.nal.Named;
 import nars.nal.nal7.TemporalRules;
 
+import java.lang.reflect.Type;
+
 public interface Term extends Cloneable, Comparable<Term>, Named<CharSequence>, Termed {
 
 
@@ -78,30 +80,15 @@ public interface Term extends Cloneable, Comparable<Term>, Named<CharSequence>, 
     public boolean containsTerm(final Term target);
     public boolean containsTermRecursivelyOrEquals(final Term target);
 
-    default public void ensureNormalized(String role) {
+    @Deprecated default public Term ensureNormalized(String role) {
         if (hasVar() && !isNormalized()) {
             System.err.println(this + " is not normalized but as " + role + " should have already been");
             System.exit(1);
         }
+        return this;
     }
 
-    /**
-     * @param that The Term to be compared with the current Term
-     * @return The same as compareTo as defined on Strings
-     */
-    @Override
-    default public int compareTo(final Term that) {
-        if (that==this) return 0;
 
-        //previously: Orders among terms: variable < atomic < compound
-        if (that instanceof Variable) {
-            if (getClass()!=Variable.class) return 1;
-            return Variable.compare((Variable)this, (Variable)that);
-        }
-        else if (this instanceof Variable)
-            return -1;
-        return Texts.compare(name(), that.name());
-    }
 
     default public boolean isExecutable(final Memory mem) {
         return false;
