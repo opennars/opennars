@@ -45,13 +45,7 @@ public class NALTestScore extends NALTest {
         saveSimilar = false;
         showReport = false;
 
-        
-        //NAR n = new NeuromorphicNARBuilder().setConceptBagSize(maxConcepts).build();
-        //NAR n = new CurveBagNARBuilder().setConceptBagSize(maxConcepts).build();
-        
-        //NAR n = new DiscretinuousBagNARBuilder().setConceptBagSize(maxConcepts).build();
 
-        //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         
         final Collection c = NALTest.params();
         
@@ -70,14 +64,14 @@ public class NALTestScore extends NALTest {
 
             if (maxCycles!=-1) {
                 
-                //TODO extract as TimeLimit plugin
-                n.on(new Reaction() {
-                    @Override public void event(Class event, Object[] arguments) {
-                        if (n.time() > maxCycles) {
-                            n.stop();
-                        }
-                    }
-                }, Events.CycleEnd.class);
+//                //TODO extract as TimeLimit plugin
+//                n.on(new Reaction() {
+//                    @Override public void event(Class event, Object[] arguments) {
+//                        if (n.time() > maxCycles) {
+//                            n.stop();
+//                        }
+//                    }
+//                }, Events.CycleEnd.class);
             }
                         
             double s = new NALTestScore(examplePath).score();
@@ -93,7 +87,7 @@ public class NALTestScore extends NALTest {
         return score;        
 
     }
-    
-    
+
+
     
 }

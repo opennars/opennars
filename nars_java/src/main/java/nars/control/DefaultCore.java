@@ -68,6 +68,7 @@ public class DefaultCore extends SequentialCore {
         //inputs
         memory.perceiveNext(memory.param.inputsMaxPerCycle.get());
 
+
         //all new tasks
         int numNewTasks = newTasks.size();
         for (int i = 0; i < numNewTasks; i++) {
@@ -78,6 +79,8 @@ public class DefaultCore extends SequentialCore {
             else
                 break;
         }
+
+        memory.inputDerived();
 
         //1 novel tasks if numNewTasks empty
         if (newTasks.isEmpty()) {
@@ -90,6 +93,7 @@ public class DefaultCore extends SequentialCore {
             }
         }
 
+        memory.inputDerived();
 
         //1 concept if (memory.newTasks.isEmpty())*/
         int conceptsToFire = newTasks.isEmpty() ? memory.param.conceptsFiredPerCycle.get() : 0;
@@ -100,7 +104,7 @@ public class DefaultCore extends SequentialCore {
             }
         }
 
-
+        memory.inputDerived();
 
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,
@@ -158,14 +162,14 @@ public class DefaultCore extends SequentialCore {
 
                 if (overflow != null) {
                     if (overflow == task) {
-                        memory.taskRemoved(task, "Ignored");
+                        memory.removed(task, "Ignored");
                     } else {
-                        memory.taskRemoved(overflow, "Displaced novel task");
+                        memory.removed(overflow, "Displaced novel task");
                     }
                 }
 
             } else {
-                memory.taskRemoved(task, "Neglected");
+                memory.removed(task, "Neglected");
             }
             //}
         }

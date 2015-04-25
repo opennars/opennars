@@ -184,7 +184,7 @@ abstract public class Concept extends Item<Term> implements Termable {
         final Task task = nal.getCurrentTask();
 
         if (!valid(task)) {
-            memory.taskRemoved(task, "Filtered by Concept");
+            memory.removed(task, "Filtered by Concept");
             return false;
         }
 
@@ -286,7 +286,7 @@ abstract public class Concept extends Item<Term> implements Termable {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
                 
-                memory.taskRemoved(task, "Duplicated");
+                memory.removed(task, "Duplicated");
                 return false;
             } else if (revisible(judg, oldBelief)) {
                 final long now = memory.time();
@@ -331,7 +331,7 @@ abstract public class Concept extends Item<Term> implements Termable {
 
             if (!addToTable(task, beliefs, memory.param.conceptBeliefsMax.get(), ConceptBeliefAdd.class, ConceptBeliefRemove.class)) {
                 //wasnt added to table
-                memory.taskRemoved(task, "Insufficient Rank"); //irrelevant
+                memory.removed(task, "Insufficient Rank"); //irrelevant
                 return false;
             }
         }
@@ -398,7 +398,7 @@ abstract public class Concept extends Item<Term> implements Termable {
 
 
             if (newStamp.equals(oldStamp, true, true, false, true)) {
-                memory.taskRemoved(task, "Duplicated");
+                memory.removed(task, "Duplicated");
                 return false; // duplicate
             } else if (revisible(goal, oldGoal)) {
 
@@ -416,7 +416,7 @@ abstract public class Concept extends Item<Term> implements Termable {
                     boolean revisionSucceeded = revision(goal, projectedGoal, false, nal);
                     if(revisionSucceeded) {
                         // it is revised, so there is a new task for which this function will be called
-                        memory.taskRemoved(task, "Revised");
+                        memory.removed(task, "Revised");
                         return false; // with higher/lower desire
                     }
                 }
@@ -435,7 +435,7 @@ abstract public class Concept extends Item<Term> implements Termable {
 
         if (!addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class)) {
             //wasnt added to table
-            memory.taskRemoved(task, "Insufficient Rank"); //irrelevant
+            memory.removed(task, "Insufficient Rank"); //irrelevant
             return false;
         }
 

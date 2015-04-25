@@ -59,6 +59,8 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     final HashBasedTable<Term,Term,Implication> termCache = HashBasedTable.create();
 
 
+    final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
+
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
@@ -164,7 +166,8 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
             public boolean contains(Concept c) {
                 Term x = c.term;
                 if (!(x instanceof Implication)) return false;
-                if (x.getTemporalOrder() != TemporalRules.ORDER_FORWARD) return false;
+                if (x.getTemporalOrder() != implicationOrder) return false;
+
 
                 Implication i = (Implication)x;
                 return (isState(i.getSubject()) && isAction(i.getPredicate()));
@@ -200,14 +203,14 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     }
 
     public Term state(Implication t) {
-        if (t.getTemporalOrder()!=TemporalRules.ORDER_FORWARD) return null;
+        if (t.getTemporalOrder()!=implicationOrder) return null;
         Term subj = t.getSubject();
         if (isState(subj)) return subj;
         return null;
     }
 
     public Term action(Implication t) {
-        if (t.getTemporalOrder()!=TemporalRules.ORDER_FORWARD) return null;
+        if (t.getTemporalOrder()!=implicationOrder) return null;
         Term pred = t.getPredicate();
         if (isAction(pred)) return pred;
         return null;
@@ -246,7 +249,7 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     public Implication qterm(Term s, Term a) {
         Implication i = termCache.get(s, a);
         if (i == null) {
-            i = Implication.make(s, a, TemporalRules.ORDER_FORWARD);
+            i = Implication.make(s, a, implicationOrder);
             if (i!=null)
                 termCache.put(s, a, i);
         }

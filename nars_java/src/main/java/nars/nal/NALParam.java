@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * General class which has all NAL Rules
+ * General class which specifies NAL rules, their ordering, and other parameters applied during inference processes
  */
-public class NALRuleEngine extends RuleEngine<NAL> {
+public class NALParam extends RuleEngine<NAL> {
 
     private List<NAL.DerivationFilter> derivationFilters = new ArrayList();
 
-    public NALRuleEngine(Memory memory) {
+    public NALParam(Memory memory) {
         super();
 
         initConceptFireRules();

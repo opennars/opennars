@@ -2,10 +2,8 @@ package nars.rover;
 
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
-import nars.nal.Item;
 import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
@@ -628,8 +626,8 @@ public class Rover extends PhysicsModel {
         NARPhysics phys=new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
 
             @Override
-            public void cycle() {
-                super.cycle(); 
+            public void frame() {
+                super.frame();
                 nar.memory.timeSimulationAdd(cyclesPerFrame);
             }
             

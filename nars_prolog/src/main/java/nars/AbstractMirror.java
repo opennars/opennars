@@ -53,7 +53,7 @@ abstract public class AbstractMirror extends AbstractReaction {
             //System.err.println("  " + t);
 
             if (mode == InputMode.InputTask)
-                nar.memory.taskInput(t);
+                nar.memory.input(t);
             else if (mode == InputMode.ImmediateProcess)
                 new DirectProcess(nar.memory, t).run();
 

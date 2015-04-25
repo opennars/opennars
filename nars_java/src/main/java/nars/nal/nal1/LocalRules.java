@@ -166,7 +166,7 @@ public class LocalRules {
         
         Budget budget = TemporalRules.solutionEval(problem, belief, task, nal);
         if (!budget.aboveThreshold()) {
-            memory.taskRemoved(task, "Insufficient budget");
+            memory.removed(task, "Insufficient budget");
             return false;
         }
 

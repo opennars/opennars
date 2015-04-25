@@ -68,10 +68,6 @@ public class ConceptProcess extends NAL {
         emit(Events.ConceptFired.class, this);
         memory.logic.TASKLINK_FIRE.hit();
 
-
-        if (newTasks!=null && !newTasks.isEmpty()) {
-            memory.taskAdd(newTasks);
-        }
     }
 
 
@@ -97,7 +93,6 @@ public class ConceptProcess extends NAL {
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
 
-            int numAddedTasksBefore = newTasksCount();
 
             final TermLink bLink = nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
             if (bLink != null) {
@@ -107,9 +102,8 @@ public class ConceptProcess extends NAL {
 
                 termLinksSelected++;
 
-                int numAddedTasksAfter = newTasksCount();
 
-                emit(Events.TermLinkSelected.class, bLink, this, numAddedTasksBefore, numAddedTasksAfter);
+                emit(Events.TermLinkSelected.class, bLink, this);
                 memory.logic.TERM_LINK_SELECT.hit();
             }
 

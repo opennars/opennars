@@ -4,8 +4,6 @@ import automenta.vivisect.Video;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
-import nars.nal.Item;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.NullOperator;
@@ -55,7 +53,7 @@ public class Rover2 extends PhysicsModel {
         Video.themeInvert();
 
         NAR nar;
-        if (multithread) {
+        /*if (multithread) {
             Global.THREADS = 4;
             nar = new NAR(new Neuromorphic(16).simulationTime()
                     .setConceptBagSize(1500).setSubconceptBagSize(4000)
@@ -65,14 +63,15 @@ public class Rover2 extends PhysicsModel {
                     .setInternalExperience(null));
             nar.setCyclesPerFrame(128);
         }
-        else {
+        else*/ {
             Global.THREADS = 1;
             nar = new NAR(new Default().simulationTime().
-                    setConceptBagSize(1500).
+                    setConceptBagSize(2500).
                     setSubconceptBagSize(12000).
                     setNovelTaskBagSize(256));
             nar.param.inputsMaxPerCycle.set(100);
-            nar.setCyclesPerFrame(512);
+            nar.param.conceptsFiredPerCycle.set(64);
+            nar.setCyclesPerFrame(64);
         }
 
         //NAR nar = new CurveBagNARBuilder().
@@ -90,7 +89,7 @@ public class Rover2 extends PhysicsModel {
         nar.param.temporalRelationsMax.set(3);
 
         (nar.param).outputVolume.set(3);
-        (nar.param).duration.set(5);
+        (nar.param).duration.set(nar.getCyclesPerFrame() * 5);
         //nar.param.budgetThreshold.set(0.02);
         //nar.param.confidenceThreshold.set(0.02);
         (nar.param).conceptForgetDurations.set(5f);
@@ -107,8 +106,9 @@ public class Rover2 extends PhysicsModel {
         new NARPhysics<Rover2>(nar, 1.0f / framesPerSecond, theRover ) {
 
             @Override
-            public void cycle() {
-                super.cycle();
+            public void frame() {
+                super.frame();
+
                 nar.memory.timeSimulationAdd(1);
             }
 
@@ -156,7 +156,7 @@ public class Rover2 extends PhysicsModel {
 
         };
 
-        nar.start((long)(1000f/framesPerSecond));
+        //nar.start((long)(1000f/framesPerSecond));
 
         // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }
@@ -413,7 +413,8 @@ public class Rover2 extends PhysicsModel {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
-        world = new FoodSpawnWorld1(this, 32, sz, sz);
+        world = new ReactorWorld(this, 32, sz, sz*2);
+        //world = new FoodSpawnWorld1(this, 32, sz, sz);
         //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);

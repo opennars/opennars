@@ -1,5 +1,6 @@
 package nars.nal.nal1;
 
+import junit.framework.TestCase;
 import nars.Global;
 import nars.ProtoNAR;
 import nars.io.narsese.InvalidInputException;
@@ -32,6 +33,7 @@ public class NAL1Test extends JavaNALTest {
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }
+
 
 
     @Test
@@ -160,5 +162,6 @@ public class NAL1Test extends JavaNALTest {
 
         nar.run();
     }
+
 
 }

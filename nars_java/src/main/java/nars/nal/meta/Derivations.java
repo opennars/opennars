@@ -176,7 +176,7 @@ public class Derivations extends DirectedMultigraph {
                     TaskLink tl = (TaskLink)args[0];
                     Concept c = (Concept)args[1];
                     NAL n = (NAL)args[2];
-                    result(c, tl, null, n.getNewTasks(), n.time());
+                    result(c, tl, null, null /*n.getNewTasks()*/, n.time()); //TODO see if derivations can be noticed another way
                 }
 
                 else if (event == Events.TermLinkSelected.class) {
@@ -200,7 +200,7 @@ public class Derivations extends DirectedMultigraph {
     static Iterable<Task> getTasks(NAL n, int taskStart, int taskEnd) {
         if (taskStart == taskEnd)
             return Collections.emptyList();
-        return Iterables.limit(Iterables.skip(n.getNewTasks(), taskStart), taskEnd - taskStart);
+        return Iterables.limit(Iterables.skip(null /*n.getNewTasks()*/, taskStart), taskEnd - taskStart); //TODO see if derivations can be noticed another way
     }
 
 

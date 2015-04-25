@@ -187,6 +187,7 @@ public class Solid extends Default {
                     if (t++ >= maxTasks) break;
                 }
                 tasks.clear();
+                memory.inputDerived();
             }
 
             @Override
@@ -216,6 +217,8 @@ public class Solid extends Default {
                     }
 
                 }
+
+                memory.inputDerived();
 
                 //processNewTasks();
 

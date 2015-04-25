@@ -26,7 +26,6 @@ import nars.Events.EXE;
 import nars.Memory;
 import nars.NAR;
 import nars.Global;
-import nars.nal.Item;
 import nars.operate.IOperator;
 import nars.budget.Budget;
 import nars.nal.Task;
@@ -179,7 +178,7 @@ public abstract class Operator extends Term implements IOperator {
                 t.setCause(op);
                 t.addHistory("Feedback");
 
-                memory.taskInput(t);
+                memory.input(t);
             }
         }
 

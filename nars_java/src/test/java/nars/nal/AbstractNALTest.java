@@ -31,7 +31,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     private static final int similarsToSave = 3;
 
-    static final DoubleMeter testScore, testTime, testSeed;
+    static final DoubleMeter testCost, testTime, testSeed;
     static final HitMeter testConcepts;
     static final ObjectMeter<String> testBuild;
     public static OutputStream dataOut = null;
@@ -48,7 +48,7 @@ abstract public class AbstractNALTest extends TestCase {
 //    }
 
     public static final Metrics<String,Object> results = new Metrics().addMeters(
-            testScore = new DoubleMeter("Score"),
+            testCost = new DoubleMeter("Cost"),
             testBuild = new ObjectMeter<String>("Build"),
             testSeed = new DoubleMeter("Seed"),
             testTime = new DoubleMeter("uSecPerCycle"),
@@ -96,7 +96,7 @@ abstract public class AbstractNALTest extends TestCase {
     public static void endAnalysis(String label, TestNAR nar, ProtoNAR build, long nanos, long seed, boolean success) {
 
         testBuild.set(build.toString());
-        testScore.set( OutputCondition.score(nar.requires) );
+        testCost.set(OutputCondition.cost(nar.requires));
         testSeed.set(seed);
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
         testConcepts.hit(nar.memory.concepts.size());

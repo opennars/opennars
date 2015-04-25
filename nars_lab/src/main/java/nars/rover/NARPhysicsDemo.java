@@ -122,8 +122,8 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     
     
     @Override
-    public void cycle() {
-        super.cycle();
+    public void frame() {
+        super.frame();
         
         /*
         if (!implication) {

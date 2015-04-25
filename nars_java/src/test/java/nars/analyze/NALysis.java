@@ -1,9 +1,8 @@
 package nars.analyze;
 
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
 import nars.Memory;
+import nars.NAR;
 import nars.ProtoNAR;
 import nars.io.ExampleFileInput;
 import nars.io.TextOutput;
@@ -11,9 +10,13 @@ import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
 import nars.io.test.TestNAR;
 import nars.nal.AbstractNALTest;
+import nars.prototype.Curve;
+import nars.prototype.Default;
 import org.junit.Ignore;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static nars.io.ExampleFileInput.getPaths;
 
@@ -142,13 +145,20 @@ public class NALysis extends AbstractNALTest {
 
 
 
-    public static void runDir(String dirPath, int maxCycles, long seed, ProtoNAR... builds) {
+    public static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, ProtoNAR... builds) {
         Collection<String> paths = getPaths(dirPath);
 
+        List<TestNAR> nars = new ArrayList(paths.size() * builds.length);
+
         for (String p : paths) {
-            for (ProtoNAR b : builds)
-                analyze(b, p, maxCycles, seed).run();
+            for (ProtoNAR b : builds) {
+                TestNAR n = analyze(b, p, maxCycles, seed);
+                nars.add(n);
+                n.run();
+            }
         }
+
+        return nars;
     }
 
     public static void nal(String dirPath, String filter, ProtoNAR build, int maxCycles) {

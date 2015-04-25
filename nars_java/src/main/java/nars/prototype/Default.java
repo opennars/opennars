@@ -211,6 +211,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
         n.on(new RuntimeNARSettings());
 
+        n.memory.setDerivationProcessor(new Memory.ConstantLeakyDerivations(Global.DERIVATION_PRIORITY_LEAK, Global.DERIVATION_DURABILITY_LEAK));
+
     }
     @Override
     public Concept newConcept(Budget b, final Term t, final Memory m) {

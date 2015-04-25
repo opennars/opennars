@@ -77,6 +77,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         for (short i = 0; i < t.term.length; ) {
             Term ti = t.term[i].normalized();
 
+            if (ti == null) {
+                throw new RuntimeException("prepareComponentLinks: " + t.term[i] + " normalized to null in superterm " + t);
+            }
+
             if (ti.isConstant()) {
                 addTemplate(new TermLinkTemplate(concept, type, ti, i));
             }

@@ -457,7 +457,7 @@ public class MultipleExecutionManager extends AbstractReaction {
 
     public boolean inputGoal(Compound currentTerm) {
         try {
-            memory.taskInput(memory.newTask(currentTerm).goal().present().truth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE).get());
+            memory.input(memory.newTask(currentTerm).goal().present().truth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE).get());
             return true;
         }
         catch (Exception e) {

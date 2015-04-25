@@ -4,6 +4,12 @@
  */
 package nars.rover;
 
+import org.jbox2d.collision.shapes.ChainShape;
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+
 /**
  *
  * @author me
@@ -19,8 +25,8 @@ public class FoodSpawnWorld1 extends RoverWorld {
         
         float foodSpawnR = w / 1.5f;
         for (int i = 0; i < numFood; i++) {
-            float minSize = 0.8f;
-            float maxSize = 4.0f;
+            float minSize = 0.2f;
+            float maxSize = 1.0f;
             float mass = 4.0f;
             addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass);
         }
@@ -29,6 +35,8 @@ public class FoodSpawnWorld1 extends RoverWorld {
         addWall(-w, 0, wt, h, 0);
         addWall(w, 0, wt, h, 0);
         addWall(0, -h, w, wt, 0);
+
+
     }
     
 }

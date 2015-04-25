@@ -15,7 +15,7 @@ import org.jbox2d.dynamics.Fixture;
  * @author me
  */
 abstract public class RoverWorld {
-    private final PhysicsModel p;
+    protected final PhysicsModel p;
 
     public RoverWorld(PhysicsModel p) {
         super();

@@ -1,12 +1,15 @@
 package nars.nal.nal1;
 
 
+import nars.Global;
 import nars.ProtoNAR;
+import nars.io.narsese.InvalidInputException;
 import nars.nal.ScriptNALTest;
 import nars.prototype.Curve;
 import nars.prototype.Default;
 import nars.prototype.Discretinuous;
 import nars.prototype.Solid;
+import org.junit.Test;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -33,6 +36,7 @@ public class NAL1ScriptTests extends ScriptNALTest {
     }
 
     public int getMaxCycles() { return 1000; }
+
 
 
 }

@@ -24,7 +24,7 @@ abstract public class NARGame implements Reaction {
     }
     
     abstract public void init();
-    abstract public void cycle();
+    abstract public void frame();
     
     
     public void start(float fps, int cyclesPerFrame) {
@@ -40,7 +40,7 @@ abstract public class NARGame implements Reaction {
     @Override
     public void event(Class event, Object[] arguments) {
         if (event == Events.FrameEnd.class) {
-            cycle();
+            frame();
         }
         nar.memory.timeSimulationAdd(cyclesPerFrame);
         

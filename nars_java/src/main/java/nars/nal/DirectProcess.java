@@ -39,8 +39,6 @@ public class DirectProcess extends NAL {
     @Override
     protected void onFinished() {
 
-        if (newTasks!=null && !newTasks.isEmpty())
-            memory.taskAdd(newTasks);
 
     }
 

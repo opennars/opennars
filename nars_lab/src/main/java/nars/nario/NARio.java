@@ -2,6 +2,7 @@ package nars.nario;
 
 import automenta.vivisect.Video;
 import nars.Events;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.Reaction;
@@ -73,6 +74,8 @@ public class NARio extends Run {
         //NAR nar = new Default().realtime().build();
 
         NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(2500));
+
+        Global.TRUTH_EPSILON = 0.02f;
 
         //nar.on(new TemporalParticlePlanner());
 
@@ -419,9 +422,9 @@ public class NARio extends Run {
 //                                }
 //                            }
 
-                        updateMovement("nowhere", (mx == 0 && my == 0));
-                        updateMovement("left", (mx > 0));
-                        updateMovement("right", (mx < 0));
+//                        updateMovement("nowhere", (mx == 0 && my == 0));
+//                        updateMovement("left", (mx > 0));
+//                        updateMovement("right", (mx < 0));
 
                         //this one is wrong like when getting stuck indicates:
                         //  velInput.set(/*"$" + movementPriority + "$"*/"<(*," + slog(dx) + "," + slog(dy) + ") --> velocity>. :|:");
@@ -599,7 +602,7 @@ public class NARio extends Run {
                     gotCoin = 0;
                 }
                 if (www % commandPeriod == 0) {
-                    nar.input("<right --> moved>!");
+                    nar.input("<right --> " + direction(1, 0) + ">!");
                     nar.input("<nowhere --> moved>! %0%");
 
                     //nar.addInput("<up --> moved>!");

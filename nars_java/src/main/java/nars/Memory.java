@@ -20,6 +20,7 @@
  */
 package nars;
 
+import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -84,7 +85,7 @@ public class Memory implements Serializable {
     private int level;
     final List<ConceptBuilder> conceptBuilders;
 
-    public NALRuleEngine rules;
+    public NALParam rules;
     private Term self;
 
     public void setLevel(int nalLevel) {
@@ -182,6 +183,17 @@ public class Memory implements Serializable {
         return concept;
     }
 
+    /** all accumulated derivations are input to the memory in the order they have been sorted, obeying any input quantity limits */
+    public synchronized void inputDerived() {
+        if (!derivations.isEmpty()) {
+
+            for (Task t : derivations) {
+                taskAdd(t);
+            }
+            derivations.clear();
+        }
+    }
+
     @Deprecated public static enum Forgetting {
         @Deprecated Iterative,
         Periodic
@@ -232,6 +244,9 @@ public class Memory implements Serializable {
     private final Set<Concept> questionConcepts = Global.newHashSet(16);
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
+    /** incoming derivations, for sorting and filtering before memory input */
+    protected SortedSet<Task> derivations = new TreeSet(TaskComparator.the);
+
     public final EventEmitter event;
 
     /* InnateOperator registry. Containing all registered operators of the system */
@@ -275,7 +290,7 @@ public class Memory implements Serializable {
 
         this.perception = new Perception();
 
-        this.rules = new NALRuleEngine(this);
+        this.rules = new NALParam(this);
 
         this.concepts = core;
         this.concepts.init(this);
@@ -296,7 +311,7 @@ public class Memory implements Serializable {
         //------------------------------------ 
         reset(false);
 
-        this.event.set(conceptIndices, true, Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class );
+        this.event.set(conceptIndices, true, Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class);
     }
 
 
@@ -628,12 +643,12 @@ public class Memory implements Serializable {
             t.setPriority( t.getPriority() * inputPriorityFactor );
 
         if (!(t.aboveThreshold())) {
-            taskRemoved(t, "Insufficient budget");
+            removed(t, "Insufficient budget");
             return false;
         }
 
         if (!Terms.levelValid(t.sentence, nal())) {
-            taskRemoved(t, "Insufficient NAL level");
+            removed(t, "Insufficient NAL level");
             return false;
         }
 
@@ -659,7 +674,7 @@ public class Memory implements Serializable {
      * @param task The addInput task
      * @return how many tasks were queued to newTasks
      */
-    public int taskInput(final Task task) {
+    public int input(final Task task) {
 
         task.ensurePerceived(this);
 
@@ -671,8 +686,61 @@ public class Memory implements Serializable {
         return 0;
     }
 
+
+    public interface DerivationProcessor {
+        public boolean process(Task derived);
+    }
+
+    public static class ConstantLeakyDerivations implements DerivationProcessor {
+        private final float priorityMultiplier;
+        private final float durabilityMultiplier;
+
+        public ConstantLeakyDerivations(float priorityMultiplier, float durabilityMultiplier) {
+            this.priorityMultiplier = priorityMultiplier;
+            this.durabilityMultiplier = durabilityMultiplier;
+        }
+
+        @Override
+        public boolean process(final Task derived) {
+            derived.setPriority(derived.getPriority() * priorityMultiplier);
+            derived.setDurability(derived.getDurability() * durabilityMultiplier);
+            return true;
+        }
+    }
+
+    DerivationProcessor derivationProcessor = null;
+
+    public void setDerivationProcessor(DerivationProcessor derivationProcessor) {
+        this.derivationProcessor = derivationProcessor;
+    }
+
+
+    /** returns true if the derivation is permitted to continue, meanwhile this function may update its budget and other properties */
+    protected boolean processDerivation(Task derived) {
+        if (derivationProcessor != null) {
+            return derivationProcessor.process(derived);
+        }
+        return true;
+    }
+
+    public boolean input(final Task task, boolean solutionOrDerivation ) {
+        if (solutionOrDerivation) {
+            return input(task) == 1;
+        }
+        else {
+            //it's a derivation,
+            // 1. process it (ex: apply derivation leak)
+            // 2. queue it in the derivation sorted set
+            if (processDerivation(task)) {
+                derivations.add(task);
+            }
+
+        }
+        return true;
+    }
+
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
-    public void taskRemoved(final Task task, final String removalReason) {
+    public void removed(final Task task, final String removalReason) {
         task.addHistory(removalReason);
         if (Global.TASK_HISTORY && Global.DEBUG_DERIVATION_STACKTRACES)
             task.addHistory(NAL.getNALStack());
@@ -715,7 +783,7 @@ public class Memory implements Serializable {
 
         Task t = perception.get();
         if (t != null)
-            return taskInput(t);
+            return input(t);
 
         return -1;
     }
