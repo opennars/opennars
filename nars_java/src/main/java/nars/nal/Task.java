@@ -255,18 +255,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 //    public boolean isStructural() {
 //        return (parentBelief == null) && (parentTask != null);
 //    }
-    /**
-     * Merge one Task into another
-     *
-     * @param that The other Task
-     */
-    public boolean merge(final Task that) {
-        if (getCreationTime() >= that.getCreationTime()) {
-            return super.merge(that);
-        } else {
-            return that.merge(that);
-        }
-    }
+
+
 
     /**
      * Get the best-so-far solution for a Question or Goal

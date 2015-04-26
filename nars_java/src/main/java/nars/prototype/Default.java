@@ -13,6 +13,7 @@ import nars.event.exe.DesireThresholdExecutive;
 import nars.nal.ConceptBuilder;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.TaskComparator;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
 import nars.nal.nal8.Operator;
@@ -88,7 +89,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         setConceptBagSize(maxConcepts);
-        setSubconceptBagSize(maxConcepts*8);
+        setSubconceptBagSize(maxConcepts * 8);
         param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
         param.termLinkMaxReasoned.set(termLinksPerCycle);
         param.termLinkMaxMatched.set((int)(termLinksPerCycle*3));
@@ -98,9 +99,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         this.internalExperience =
                 maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
 
-
-        setConceptBagSize(1024);
-        setSubconceptBagSize(256);
+        param.setDerivationDuplicationMode(TaskComparator.Duplication.Or);
 
         setTaskLinkBagSize(32);
 
@@ -136,7 +135,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
         param.inputsMaxPerCycle.set(1);
 
-        param.termLinkMaxMatched.set(9);
         param.termLinkRecordLength.set(10);
         param.noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
 

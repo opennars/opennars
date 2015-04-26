@@ -61,7 +61,7 @@ public class UtilityFunctions {
         for (final float f : arr) {
             product *= (1 - f);
         }
-        return 1 - product;
+        return 1f - product;
     }
     
     public final static float or(final float a, final float b) {

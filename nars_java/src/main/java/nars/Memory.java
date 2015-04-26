@@ -245,7 +245,7 @@ public class Memory implements Serializable {
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
     /** incoming derivations, for sorting and filtering before memory input */
-    protected SortedSet<Task> derivations = new TreeSet(TaskComparator.the);
+    protected SortedSet<Task> derivations;
 
     public final EventEmitter event;
 
@@ -300,6 +300,7 @@ public class Memory implements Serializable {
         this.operators = Global.newHashMap();
         this.event = new EventEmitter.DefaultEventEmitter();
 
+        this.derivations = new TreeSet(new TaskComparator(param.getDerivationDuplicationMode()));
 
         conceptBuilders = new ArrayList(1);
 
@@ -734,6 +735,8 @@ public class Memory implements Serializable {
             //it's a derivation,
             // 1. process it (ex: apply derivation leak)
             // 2. queue it in the derivation sorted set
+            //  this may merge with an existing item in the set.
+
             if (processDerivation(task)) {
                 derivations.add(task);
             }

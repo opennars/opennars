@@ -42,7 +42,6 @@ public abstract class NAL  implements Runnable {
      */
     //protected SortedSet<Task> newTasks; //lazily instantiated
 
-    public final Comparator<Task>  taskPriorityComparator = new TaskComparator();
 
 
     public NAL(Memory mem, Task task) {

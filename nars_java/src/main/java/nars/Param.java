@@ -1,6 +1,7 @@
 package nars;
 
 import com.google.gson.*;
+import nars.nal.TaskComparator;
 import nars.nal.nal7.Interval.AtomicDuration;
 import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Param implements Serializable {
 
 
+    private TaskComparator.Duplication derivationDuplicationMode;
 
     public Param() {    }
 
@@ -220,4 +222,12 @@ public class Param implements Serializable {
         json = b.create();            
     }
 
+    public TaskComparator.Duplication getDerivationDuplicationMode() {
+        return derivationDuplicationMode;
+    }
+
+    /** handling behavior for duplicate derivations in bulk processing */
+    public void setDerivationDuplicationMode(TaskComparator.Duplication derivationDuplicationMode) {
+        this.derivationDuplicationMode = derivationDuplicationMode;
+    }
 }

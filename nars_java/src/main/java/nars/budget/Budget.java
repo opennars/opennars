@@ -238,8 +238,8 @@ public class Budget implements Cloneable, BudgetTarget {
      * Uses the 'or' function so it is not linear
      * @param v The increasing percent
      */
-    public void incPriority(final float v) {
-        setPriority( (float) Math.min(1.0f, or(priority, v)));
+    public void orPriority(final float v) {
+        setPriority( Math.min(1.0f, or(priority, v)));
     }
 
     public void addPriority(final float v) {
@@ -273,7 +273,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * Increase durability value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incDurability(final float v) {
+    public void orDurability(final float v) {
         setDurability(or(durability, v));
     }
 
@@ -281,7 +281,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * Decrease durability value by a percentage of the remaining range
      * @param v The decreasing percent
      */
-    public void decDurability(final float v) {
+    public void andDurability(final float v) {
         setDurability(and(durability, v));
     }
 
@@ -298,7 +298,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * Increase quality value by a percentage of the remaining range
      * @param v The increasing percent
      */
-    public void incQuality(final float v) {
+    public void orQuality(final float v) {
         quality = or(quality, v);
     }
 
@@ -306,7 +306,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * Decrease quality value by a percentage of the remaining range
      * @param v The decreasing percent
      */
-    public void decQuality(final float v) {
+    public void andQuality(final float v) {
         quality = and(quality, v);
     }
 

@@ -4,8 +4,8 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -14,6 +14,7 @@ import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.gui.NARSwing;
 import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
@@ -307,7 +308,7 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    private final static int cyclesPerFrame = 100;
+    private final static int cyclesPerFrame = 20;
 
     /**
      * @param args the command line arguments
@@ -316,9 +317,9 @@ public class TestSOMAgent extends JPanel {
 
 
         /* Create and display the form */
-        //RLEnvironment d = new PoleBalancing2D();
+        RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 
@@ -328,7 +329,7 @@ public class TestSOMAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 256;
+        int concepts = 4096;
         int conceptsPerCycle = 25;
 
         float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
@@ -339,10 +340,28 @@ public class TestSOMAgent extends JPanel {
 
         Default dd = new Default(concepts, conceptsPerCycle, 4) {
 
-//            @Override
-//            public Memory.DerivationProcessor getDerivationProcessor() {
-//                return new Memory.ConstantLeakyDerivations(0.95f, 0.95f);
-//            }
+            @Override
+            public Memory.DerivationProcessor getDerivationProcessor() {
+                //return new Memory.ConstantLeakyDerivations(0.95f, 0.95f);
+                return new Memory.DerivationProcessor() {
+
+                    @Override
+                    public boolean process(Task derived) {
+                        float amp = 1f;
+
+                        switch (derived.getPunctuation()) {
+                            case '?': amp = 0.6f; break;
+                            case '@': amp = 0.6f; break;
+
+                            case '!': amp = 0.75f; break;
+
+                            case '.': amp = 0.4f; break;
+                        }
+                        derived.setPriority(derived.getPriority() * amp);
+                        return true;
+                    }
+                };
+            }
 
             /** ranks beliefs by recency. the relevance decays proportional to delta time from now divided by window length (in cycles) */
             public float rankBeliefRecent(final Sentence s, final long now, final float window, final float eternalWindow) {
@@ -375,11 +394,11 @@ public class TestSOMAgent extends JPanel {
             }
         };
 
-        dd.setTaskLinkBagSize(24);
+        dd.setTaskLinkBagSize(36);
         dd.setInternalExperience(null);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.8f),
+                new RawPerception("L", 0.5f),
                 /*new RawPerception("P", 0.8f) {
                     @Override
                     public float getFrequency(double d) {
@@ -388,7 +407,7 @@ public class TestSOMAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("A", 4, 0.8f)
+                new HaiSOMPerception("A", 2, 0.7f)
                 //new HaiSOMPerception("B", 2, 0.8f)
         );
 

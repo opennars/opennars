@@ -99,10 +99,14 @@ public class Events {
         }        
     }
 
-    //when remembered a previously forgotten concept
+    /** when remembered a previously forgotten concept from subconcepts */
     public static class ConceptRemember {    }
-    
+
+    /** when a concept leaves main memory and is either moved to subconcepts or ConceptDelete */
     public static class ConceptForget { }
+
+    /** if a concept is completely removed from both main, and subconcepts (or if subconcepts has capacity 0) */
+    public static class ConceptDelete { }
     
     abstract public static class ConceptBeliefAdd implements Reaction {
         

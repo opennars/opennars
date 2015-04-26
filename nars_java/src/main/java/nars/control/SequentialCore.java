@@ -117,6 +117,7 @@ abstract public class SequentialCore implements Core {
 
     @Override
     public void conceptRemoved(Concept c) {
+        memory.emit(Events.ConceptForget.class, c);
 
         if (subcon!=null) {
             subcon.add(c);
@@ -129,8 +130,6 @@ abstract public class SequentialCore implements Core {
             //explicitly destroy all concept data structures to free memory for GC
             //c.end();
         }
-
-
 
 
     }

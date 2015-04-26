@@ -443,7 +443,7 @@ public class TemporalRules {
         boolean judgmentTask = task.sentence.isJudgment();
         final float quality = TemporalRules.solutionQuality(problem, solution, nal.time());
         if (judgmentTask) {
-            task.incPriority(quality);
+            task.orPriority(quality);
         } else {
             float taskPriority = task.getPriority();
             budget = new Budget(UtilityFunctions.or(taskPriority, quality), task.getDurability(), BudgetFunctions.truthToQuality(solution.truth));

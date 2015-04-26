@@ -120,11 +120,7 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
             protected void onConceptForget(final Concept c) {
                 super.onConceptForget(c);
                 Term action = c.term;
-                Collection<Term> knownStates = new ArrayList(q.rowKeySet()); //copy to avoid concurrentmodification
-                for (final Term state : knownStates) {
-                    q.remove(state, action);
-                    e.remove(state, action);
-                }
+                q.columnMap().remove(action);
             }
 
         };
@@ -141,11 +137,7 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
                 super.onConceptForget(c);
 
                 Term state = c.term;
-                Collection<Term> knownActions = new ArrayList(q.columnKeySet()); //copy to avoid concurrentmodification
-                for (final Term action : knownActions) {
-                    q.remove(state, action);
-                    e.remove(state, action);
-                }
+                q.rowMap().remove(state);
             }
 
         };

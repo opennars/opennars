@@ -47,7 +47,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float truthToQuality(final TruthValue t) {
         final float exp = t.getExpectation();
-        return max(exp, (1f - exp)*0.75f);
+        return max(exp, (1f - exp) * 0.75f);
     }
 
 
@@ -63,18 +63,18 @@ public final class BudgetFunctions extends UtilityFunctions {
         final float difT = truth.getExpDifAbs(tTruth);
         final Task task = nal.getCurrentTask();
         task.decPriority(1f - difT);
-        task.decDurability(1f - difT);
+        task.andDurability(1f - difT);
 
         boolean feedbackToLinks = (nal instanceof ConceptProcess);
         if (feedbackToLinks) {
             ConceptProcess fc = (ConceptProcess)nal;
             TaskLink tLink = fc.getCurrentTaskLink();
             tLink.decPriority(1f - difT);
-            tLink.decDurability(1f - difT);
+            tLink.andDurability(1f - difT);
             TermLink bLink = fc.getCurrentTermLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1f - difB);
-            bLink.decDurability(1f - difB);
+            bLink.andDurability(1f - difB);
         }
 
         float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
@@ -376,8 +376,8 @@ public final class BudgetFunctions extends UtilityFunctions {
                 priority = or(priority, bLink.getPriority());
                 durability = and(durability, bLink.getDurability());
                 final float targetActivation = nal.conceptPriority(bLink.target);
-                bLink.incPriority(or(quality, targetActivation));
-                bLink.incDurability(quality);
+                bLink.orPriority(or(quality, targetActivation));
+                bLink.orDurability(quality);
             }
         }
 
