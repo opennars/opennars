@@ -320,15 +320,15 @@ public class Memory implements Serializable {
 
         @Override
         public void event(Class event, Object[] args) {
-
-            if ((event == Events.ConceptForget.class) || (event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
-                Concept c = (Concept)args[0];
-                if (c.questions.isEmpty()) questionConcepts.remove(c);
-                else questionConcepts.add(c);
-                if (c.goals.isEmpty())  goalConcepts.remove(c);
-                else goalConcepts.add(c);
-                return;
-            }
+//
+//            if ((event == Events.ConceptForget.class) || (event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
+//                Concept c = (Concept)args[0];
+//                if (c.questions.isEmpty()) questionConcepts.remove(c);
+//                else questionConcepts.add(c);
+//                if (c.goals.isEmpty())  goalConcepts.remove(c);
+//                else goalConcepts.add(c);
+//                return;
+//            }
 
 
             //TODO this may also be triggered by Quests; may want to distinguish them with a different event for Quests

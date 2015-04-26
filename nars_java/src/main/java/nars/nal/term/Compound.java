@@ -474,6 +474,8 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
 
     @Override
     public CharSequence name() {
+        //new Exception().printStackTrace(); //for debugging when this is called
+
         if (this.name == null) {
             this.name = makeName();
         }
@@ -1078,6 +1080,10 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
         public InvalidTermConstruction(String reason) {
             super(reason);
         }
+    }
+
+    public CharSequence nameCached() {
+        return this.name;
     }
 
 //    @Deprecated public static class UnableToCloneException extends RuntimeException {

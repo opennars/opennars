@@ -100,7 +100,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
         }
         else {
             this.source = host;
-            this.target = template.target.ensureNormalized("Template target in " + template);
+            this.target = template.target.ensureNormalized("Template target");
             type = (short)(template.type - 1); //// point to component
         }
 

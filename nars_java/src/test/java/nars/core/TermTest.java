@@ -326,4 +326,11 @@ public class TermTest {
 
     }
 
+    @Test public void avoidsNameConstructionUnlessOutput() {
+        String term = "<a --> b>";
+        NAR n = new NAR(new Default());
+        n.input(term + ".");
+        n.run(1);
+        assertNull(((Compound)n.concept(term).term).nameCached());
+    }
 }

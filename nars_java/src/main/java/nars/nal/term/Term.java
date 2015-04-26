@@ -130,5 +130,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<CharSequence>, 
     public boolean hasVarDep();
 
     public boolean hasVarQuery();
+
+
 }
 
