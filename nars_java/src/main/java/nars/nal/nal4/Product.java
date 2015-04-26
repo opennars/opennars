@@ -23,6 +23,7 @@ package nars.nal.nal4;
 
 import nars.nal.NALOperator;
 import nars.nal.term.Compound;
+import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
 /**
  * A Product is a sequence of 1 or more terms.
  */
-public class Product extends Compound {
+public class Product extends DefaultCompound {
     
     /**
      * Constructor with partial values, called by make

@@ -3,13 +3,13 @@ package nars.nal.nal3;
 import nars.Global;
 import nars.io.Symbols;
 import nars.nal.Terms;
-import nars.nal.term.Compound;
+import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)
  */
-abstract public class SetTensional extends Compound {
+abstract public class SetTensional extends DefaultCompound {
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term

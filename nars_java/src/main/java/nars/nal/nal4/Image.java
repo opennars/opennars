@@ -3,7 +3,7 @@ package nars.nal.nal4;
 import nars.io.Symbols;
 import nars.io.narsese.NarseseParser;
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
+import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
@@ -15,7 +15,7 @@ import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
  */
 
 
-abstract public class Image extends Compound {
+abstract public class Image extends DefaultCompound {
     /** The index of relation in the component list */
     public final short relationIndex;
 

@@ -17,9 +17,9 @@ import java.util.TreeSet;
  */
 public class Atom implements Term {
 
-    protected final CharSequence name;
+    protected final String name;
 
-    private static final Map<CharSequence,Atom> atoms = Global.newHashMap(8192);
+    private static final Map<String,Atom> atoms = Global.newHashMap(8192);
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Atom quoted(String t) {
@@ -68,12 +68,12 @@ public class Atom implements Term {
      *
      * @param name A String as the name of the Term
      */
-    protected Atom(final CharSequence name) {
+    protected Atom(final String name) {
         this.name = name;
     }
 
     /** gets the atomic term given a name */
-    public final static Atom get(final CharSequence name) {
+    public final static Atom get(final String name) {
         Atom x = atoms.get(name);
         if (x != null) return x;
         x = new Atom(name);
@@ -83,8 +83,8 @@ public class Atom implements Term {
 
     public final static Term get(Object o) {
         if (o instanceof Term) return (Term)o;
-        if (o instanceof CharSequence) {
-            return get((CharSequence) o);
+        if (o instanceof String) {
+            return get((String) o);
         }
         return null;
     }
@@ -114,7 +114,7 @@ public class Atom implements Term {
      * @return The name of the term as a String
      */
     @Override
-    public CharSequence name() {
+    public String name() {
         return name;
     }
 

@@ -272,7 +272,7 @@ public class TermTest {
             
             forced.term[0] = subj;
             forced.term[1] = pred;
-            forced.invalidateName();
+            forced.invalidate();
             
             assertEquals(t, forced.toString());
             
@@ -331,6 +331,6 @@ public class TermTest {
         NAR n = new NAR(new Default());
         n.input(term + ".");
         n.run(1);
-        assertNull(((Compound)n.concept(term).term).nameCached());
+        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).term).nameCached());
     }
 }

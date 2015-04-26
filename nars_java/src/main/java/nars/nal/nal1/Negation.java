@@ -21,20 +21,20 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
+import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
 /**
  * A negation of a statement.
  */
-public class Negation extends Compound {
+public class Negation extends Compound1 {
 
 
 
     /** avoid using this externally, because double-negatives can be unwrapped to the 
      * original term using Negation.make */
     protected Negation(final Term t) {
-        super(new Term[] { t });
+        super(t);
         
         init(term);
     }

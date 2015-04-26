@@ -47,7 +47,7 @@ public class Variable extends Atom {
     private transient int hash;
     
 
-    public Variable(final CharSequence name) {
+    public Variable(final String name) {
         this(name, null);        
     }
     
@@ -56,7 +56,7 @@ public class Variable extends Atom {
      *
      * @param name A String read from input
      */
-    protected Variable(final CharSequence n, final Term scope) {
+    protected Variable(final String n, final Term scope) {
         super(n);
         this.type = n.charAt(0);
         if (!validVariableType(type))
@@ -211,17 +211,17 @@ public class Variable extends Atom {
     }
     
     private static final int MAX_CACHED_VARNAME_INDEXES = 64;
-    private static final CharSequence[] vn1 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
-    private static final CharSequence[] vn2 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
-    private static final CharSequence[] vn3 = new CharSequence[MAX_CACHED_VARNAME_INDEXES];
+    private static final String[] vn1 = new String[MAX_CACHED_VARNAME_INDEXES];
+    private static final String[] vn2 = new String[MAX_CACHED_VARNAME_INDEXES];
+    private static final String[] vn3 = new String[MAX_CACHED_VARNAME_INDEXES];
     
     
-    public static CharSequence getName(char type, int index) {
+    public static String getName(char type, int index) {
         if (index > MAX_CACHED_VARNAME_INDEXES)
             return newName(type, index);
-        
-        
-        CharSequence[] cache;
+
+
+        String[] cache;
         switch (type) {
             case VAR_INDEPENDENT: cache = vn1; break;
             case VAR_DEPENDENT: cache = vn2; break;
@@ -229,8 +229,8 @@ public class Variable extends Atom {
             default:
                 throw new RuntimeException("Invalid variable type");
         }
-        
-        CharSequence c = cache[index];
+
+        String c = cache[index];
         if (c == null) {
             c = newName(type, index);
             cache[index] = c;
@@ -239,7 +239,7 @@ public class Variable extends Atom {
         return c;
     }
     
-    protected static CharSequence newName(char type, int index) {
+    protected static String newName(char type, int index) {
         
         int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
         StringBuilder cb  = new StringBuilder(1 + digits).append(type);

@@ -40,7 +40,7 @@ import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 /** a compound term */
 public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
 
-    @Deprecated protected CharSequence name = null;
+
     @Override
     public final String toString() {
         return name().toString();
@@ -73,7 +73,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
      * subclasses should be sure to call init() in their constructors; it is not done here
      * to allow subclass constructors to set data before calling init()
      */
-    public Compound(final Term[] components) {
+    public Compound(final Term... components) {
         super();
 
         this.complexity = -1;
@@ -197,10 +197,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
         return cloneNormalized();
     }
 
-    @Override
-    public int hashCode() {
-        return name().hashCode();
-    }
+    abstract public int hashCode();
 
     @Override
     public int compareTo(final Term that) {
@@ -209,22 +206,24 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
         // variables have earlier sorting order than non-variables
         if (!(that instanceof Compound)) return 1;
 
-        Compound c = (Compound)that;
-        return Texts.compare(name(), c.name());
+        final Compound c = (Compound)that;
+
+        int opdiff = operator().compareTo(c.operator());
+        if (opdiff == 0) {
+            return compareSubterms(c);
+        }
+        return opdiff;
+    }
+
+    /** compares only the contents of the subterms; assume that the other term is of the same operator type */
+    public int compareSubterms(final Compound otherCompoundOfEqualType) {
+        //this is what we want to avoid - generating string names
+        //override in subclasses where a different non-string comparison can be made
+        return Texts.compare(name(), otherCompoundOfEqualType.name());
     }
 
     @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        if (!(that instanceof Compound)) return false;
-        final Compound t = (Compound)that;
-        if ((name == null) || (t.name == null)) {
-            //check operate first because name() may to avoid potential construction of name()
-            if (operator()!=t.operator() || getComplexity() != t.getComplexity() )
-                return false;
-        }
-        return name().equals(t.name());
-    }
+    abstract public boolean equals(final Object that);
 
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
@@ -234,6 +233,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
             }
         }
     }
+
     public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
         if (hasVar()) {
             v.visit(this, parent);
@@ -279,7 +279,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
 
             if (vv == null) {
                 //type + id
-                CharSequence n = Variable.getName(v.getType(), rename.size() + 1);
+                String n = Variable.getName(v.getType(), rename.size() + 1);
                 vv = new Variable(n, result);
                 rename.put(vname, vv);
                 if (!n.equals(v.name()))
@@ -313,7 +313,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
         if (result == null) return null;
 
         if (vn.hasRenamed()) {
-            result.invalidateName();
+            result.invalidate();
         }
 
         result.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
@@ -349,7 +349,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
     }
 
     /**
-     * call this after changing Term[] contents
+     * call this after changing Term[] contents: recalculates variables and complexity
      */
     protected void init(Term[] term) {
 
@@ -363,21 +363,14 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
             hasVarQueries |= t.hasVarQuery();
         }
 
-        invalidateName();
+        invalidate();
     }
 
-    public void invalidateName() {
-        if (hasVar()) {
-            this.name = null; //invalidate name so it will be (re-)created lazily
-            for (final Term t : term) {
-                if (t instanceof Compound)
-                    ((Compound) t).invalidateName();
-            }
-        }
-        else {
-            setNormalized(true);
-        }
+    public void invalidate() {
+
     }
+
+
 
     /**
      * Must be Term return type because the type of Term may change with different arguments
@@ -472,16 +465,8 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
         return makeCompoundName(operator(), term);
     }
 
-    @Override
-    public CharSequence name() {
-        //new Exception().printStackTrace(); //for debugging when this is called
 
-        if (this.name == null) {
-            this.name = makeName();
-        }
-        return this.name;
-    }
-    
+    abstract public CharSequence name();
 
  
 
@@ -1083,7 +1068,7 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
     }
 
     public CharSequence nameCached() {
-        return this.name;
+        return null;
     }
 
 //    @Deprecated public static class UnableToCloneException extends RuntimeException {
