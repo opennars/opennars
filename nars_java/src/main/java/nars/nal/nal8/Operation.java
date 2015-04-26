@@ -61,7 +61,7 @@ public class Operation extends Inheritance {
         super(t);
     }
     protected Operation() {
-        super(null);
+        super();
     }
 
     

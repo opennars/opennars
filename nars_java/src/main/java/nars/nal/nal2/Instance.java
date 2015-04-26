@@ -41,6 +41,6 @@ public abstract class Instance /*extends Statement*/ {
      * @return A compound generated or null
      */
     public static Inheritance make(final Term subject, final Term predicate) {
-        return Inheritance.make(new SetExt(subject), predicate);
+        return Inheritance.make(SetExt.make(subject), predicate);
     }
 }

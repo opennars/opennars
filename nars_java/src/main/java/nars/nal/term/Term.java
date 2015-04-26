@@ -82,8 +82,9 @@ public interface Term extends Cloneable, Comparable<Term>, Named<CharSequence>, 
 
     @Deprecated default public Term ensureNormalized(String role) {
         if (hasVar() && !isNormalized()) {
-            System.err.println(this + " is not normalized but as " + role + " should have already been");
-            System.exit(1);
+            //System.err.println(this + " is not normalized but as " + role + " should have already been");
+            //System.exit(1);
+            throw new RuntimeException(this + " is not normalized but as " + role + " should have already been");
         }
         return this;
     }

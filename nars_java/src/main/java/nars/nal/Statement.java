@@ -31,7 +31,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
-import nars.nal.term.DefaultCompound;
+import nars.nal.term.Compound2;
 import nars.nal.term.Term;
 
 import java.util.Arrays;
@@ -43,7 +43,7 @@ import static nars.nal.NALOperator.STATEMENT_OPENER;
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-public abstract class Statement extends DefaultCompound {
+public abstract class Statement extends Compound2 {
     
     /**
      * Constructor with partial values, called by make
@@ -51,8 +51,14 @@ public abstract class Statement extends DefaultCompound {
      * 
      * @param arg The component list of the term
      */
-    protected Statement(final Term[] arg) {
-        super(arg);
+    protected Statement(final Term subj, final Term pred) {
+        super(subj, pred);
+    }
+    protected Statement(final Term... twoTermsPlease) {
+        this(twoTermsPlease[0], twoTermsPlease[1]);
+    }
+    @Deprecated protected Statement() {
+        this(null, null);
     }
     
 

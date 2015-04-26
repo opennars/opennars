@@ -40,6 +40,6 @@ public abstract class Property /*would extend "Statement" if it were its own typ
      * @return A compound generated or null
      */
     final public static Inheritance make(final Term subject, final Term predicate) {
-        return Inheritance.make(subject, new SetInt(predicate));
+        return Inheritance.make(subject, SetInt.make(predicate));
     }
 }

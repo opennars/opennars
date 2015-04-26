@@ -126,14 +126,21 @@ public class Variable extends Atom {
     @Override public boolean equals(final Object that) {
         if (this == that) return true;
         if (!(that instanceof Variable)) return false;
+
         if (!hasScope()) return false;
+        if (!((Variable) that).hasScope()) return false;
 
         Variable v = (Variable)that;
         if (!name().equals(v.name())) return false;
         /*if (getScope() == this) {
             if (v.getScope()!=v) return false;
         }*/
-        return (v.getScope().equals(getScope()));
+
+
+        //return (v.getScope().equals(getScope()));
+
+        //this must compare by an immutable key because it can cause a circular loop
+        return (v.getScope().name().equals(getScope().name()));
     }
     
     public boolean equalsTerm(Object that) {
@@ -169,7 +176,7 @@ public class Variable extends Atom {
     public int hashCode() {
         if (hash == 0) {
             if (hasScope())
-                this.hash = 31 * name.hashCode() + scope.hashCode();            
+                this.hash = 31 * name.hashCode() + scope.operator().hashCode(); //scope.hashCode(); //this can cause a circular loop of hashcode caluclating, so just use the operator as the hash component
             else
                 this.hash = name.hashCode();
         }
@@ -251,9 +258,10 @@ public class Variable extends Atom {
     }
 
     public static int compare(final Variable a, final Variable b) {
-        int i = Texts.compare(a.name(), b.name());
+        int i = a.name().compareTo(b.name());
         if (i == 0)
-            return a.getScope().compareTo(b.getScope());
+            return Texts.compare(a.getScope().name(), b.getScope().name());
         return i;
     }
+
 }

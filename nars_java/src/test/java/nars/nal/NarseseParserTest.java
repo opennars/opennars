@@ -179,7 +179,7 @@ public class NarseseParserTest {
         assertEquals(NALOperator.CONJUNCTION, c.operator());
         assertEquals(2, c.size());
         assertEquals(5, c.getComplexity());
-        assertEquals(NALOperator.INHERITANCE, c.term[0].operator());
+        assertEquals(NALOperator.INHERITANCE, c.term[1].operator());
     }
 
 

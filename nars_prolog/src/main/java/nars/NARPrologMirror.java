@@ -523,12 +523,12 @@ public class NARPrologMirror extends AbstractMirror {
             }
             if (predicate.equals("setint")) {
                 Term[] a = nterm(s.getArg());
-                if (a!=null) return new SetInt(nterm(s.getArg()));
+                if (a!=null) return SetInt.make(nterm(s.getArg()));
                 else return null;
             }
             if (predicate.equals("setext")) {
                 Term[] a = nterm(s.getArg());
-                if (a!=null) return new SetExt(nterm(s.getArg()));
+                if (a!=null) return SetExt.make(nterm(s.getArg()));
                 else return null;
             }
             if (arity == 2) {                

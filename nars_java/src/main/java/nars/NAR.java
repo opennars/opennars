@@ -218,7 +218,7 @@ public class NAR implements Runnable {
     }
 
     public Term term(String t) throws InvalidInputException {
-        return narsese.parseTerm(t);
+        return narsese.parseTerm(t).normalized();
     }
 
     public Concept concept(Term term) {

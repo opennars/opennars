@@ -22,10 +22,12 @@ package nars.nal.nal3;
 
 import nars.nal.NALOperator;
 import nars.nal.Terms;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.Collection;
 
+import static nars.nal.NALOperator.SET_EXT_OPENER;
 import static nars.nal.NALOperator.SET_INT_CLOSER;
 import static nars.nal.NALOperator.SET_INT_OPENER;
 
@@ -39,7 +41,7 @@ public class SetInt extends SetTensional {
      * @param n The name of the term
      * @param arg The component list of the term - args must be unique and sorted
      */
-    public SetInt(final Term... arg) {
+    protected SetInt(final Term... arg) {
         super(arg);
     }
  
@@ -51,19 +53,20 @@ public class SetInt extends SetTensional {
      * @return A new object, to be casted into a SetInt
      */
     @Override
-    public SetInt clone() {
-        return new SetInt(term);
+    public Compound clone() {
+        return SetInt.make(term);
     }
 
-    @Override public SetInt clone(Term[] replaced) {
+    @Override public Compound clone(Term[] replaced) {
         return make(replaced);
     }
 
-    public static SetInt make(Collection<Term> l) {
+    public static Compound make(Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }    
     
-    public static SetInt make(Term... t) {
+
+    public static Compound make(Term... t) {
         t = Terms.toSortedSetArray(t);
         if (t.length == 0) return null;
         return new SetInt(t);

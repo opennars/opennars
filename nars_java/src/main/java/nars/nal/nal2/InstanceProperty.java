@@ -42,6 +42,6 @@ public abstract class InstanceProperty /*extends Statement*/ {
      * @return A compound generated or null
      */
     final public static Inheritance make(final Term subject, final Term predicate) {
-        return Inheritance.make(new SetExt(subject), new SetInt(predicate));
+        return Inheritance.make(SetExt.make(subject), SetInt.make(predicate));
     }
 }

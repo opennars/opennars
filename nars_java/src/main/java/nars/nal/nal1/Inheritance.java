@@ -38,16 +38,19 @@ public class Inheritance extends Statement {
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    protected Inheritance(final Term[] arg) {
-        super(arg);  
+    protected Inheritance(final Term... arg) {
+        super(arg);
 
-        if (arg!=null)
-            init(arg);
+        init(arg);
+    }
+
+    @Deprecated protected Inheritance() {
+        super();
     }
     
-    protected Inheritance(final Term subj, final Term pred) {
-        this(new Term[] { subj, pred} );
-    }
+    /*protected Inheritance(final Term subj, final Term pred) {
+        this(subj, pred);
+    }*/
 
 
     

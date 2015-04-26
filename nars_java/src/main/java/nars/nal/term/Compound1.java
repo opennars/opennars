@@ -3,6 +3,8 @@ package nars.nal.term;
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound1 extends Compound {
 
+    private CharSequence cachedName = null;
+
     public Compound1(Term the) {
         super(the);
     }
@@ -36,7 +38,19 @@ abstract public class Compound1 extends Compound {
     }
 
     @Override
+    public void invalidate() {
+        cachedName = null;
+    }
+
+    @Override
     public CharSequence name() {
-        return makeName();
+        if (cachedName == null)
+            cachedName = makeName();
+        return cachedName;
+    }
+
+    @Override
+    public CharSequence nameCached() {
+        return cachedName;
     }
 }

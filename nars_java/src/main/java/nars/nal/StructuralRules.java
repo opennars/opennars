@@ -251,7 +251,7 @@ public final class StructuralRules {
                 structuralStatement(component, pred, order, truthDed, nal);
             } else if ((compound instanceof SetExt) && (compound.size() > 1)) {
                 Term[] t1 = new Term[]{component};
-                structuralStatement(new SetExt(t1), pred, order, truthDed, nal);
+                structuralStatement(SetExt.make(t1), pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
                 if (index == 0) {
                     structuralStatement(component, pred, order, truthDed, nal);
@@ -263,7 +263,7 @@ public final class StructuralRules {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(subj, component, order, truthDed, nal);
             } else if ((compound instanceof SetInt) && (compound.size() > 1)) {
-                structuralStatement(subj, new SetInt(component), order, truthDed, nal);
+                structuralStatement(subj, SetInt.make(component), order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
                     structuralStatement(subj, component, order, truthDed, nal);

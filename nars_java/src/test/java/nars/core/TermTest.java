@@ -306,8 +306,8 @@ public class TermTest {
 
     @Test public void testDifferenceImmediate() {
         {
-            SetInt a = SetInt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
-            SetInt b = SetInt.make(Atom.get("d"), Atom.get("b"));
+            Compound a = SetInt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
+            Compound b = SetInt.make(Atom.get("d"), Atom.get("b"));
             Term d = DifferenceInt.make(a, b);
             assertEquals(d.toString(), d.getClass(), SetInt.class);
             assertEquals(d.toString(), 2, ((SetInt) d).size());
@@ -315,8 +315,8 @@ public class TermTest {
         }
 
         {
-            SetExt a = SetExt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
-            SetExt b = SetExt.make(Atom.get("d"), Atom.get("b"));
+            Compound a = SetExt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
+            Compound b = SetExt.make(Atom.get("d"), Atom.get("b"));
             Term d = DifferenceExt.make(a, b);
             assertEquals(d.toString(), d.getClass(), SetExt.class);
             assertEquals(d.toString(), 2, ((SetExt)d).size() );
@@ -326,11 +326,34 @@ public class TermTest {
 
     }
 
-    @Test public void avoidsNameConstructionUnlessOutput() {
-        String term = "<a --> b>";
+    public void nullCachedName(String term) {
         NAR n = new NAR(new Default());
         n.input(term + ".");
         n.run(1);
         assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).term).nameCached());
     }
+
+    @Test public void avoidsNameConstructionUnlessOutputInheritance() {
+        nullCachedName("<a --> b>");
+    }
+
+    @Test public void avoidsNameConstructionUnlessOutputNegationAtomic() {
+        nullCachedName("(--, a)");
+    }
+    @Test public void avoidsNameConstructionUnlessOutputNegationCompound() {
+        nullCachedName("(--, <a-->b> )");
+    }
+    @Test public void avoidsNameConstructionUnlessOutputSet1() {
+        nullCachedName("[x]");
+        nullCachedName("{x}");
+    }
+
+    @Test public void testTermEqualityWithQueryVariables() {
+        NAR n = new NAR(new Default());
+        String a = "<?1-->bird>";
+        assertEquals(n.term(a), n.term(a));
+        String b = "<bird-->?1>";
+        assertEquals(n.term(b), n.term(b));
+    }
+
 }

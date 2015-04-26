@@ -62,7 +62,7 @@ public abstract class Feel extends Operator implements Mental {
         Stamp stamp = new Stamp(memory, Tense.Present);
         TruthValue truth = new TruthValue(value, 0.999f);
                 
-        Term predicate = new SetInt(feelingTerm);
+        Term predicate = SetInt.make(feelingTerm);
         
         Term content = Inheritance.make(selfSubject, predicate);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, stamp);

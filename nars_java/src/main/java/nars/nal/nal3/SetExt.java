@@ -22,6 +22,7 @@ package nars.nal.nal3;
 
 import nars.nal.NALOperator;
 import nars.nal.Terms;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class SetExt extends SetTensional {
      * @param n The name of the term
      * @param arg The component list of the term - args must be unique and sorted
      */
-    public SetExt(final Term... arg) {
+    protected SetExt(final Term... arg) {
         super(arg);
     }
 
@@ -55,17 +56,17 @@ public class SetExt extends SetTensional {
         return new SetExt(term);
     }
     
-    @Override public SetExt clone(Term[] replaced) {
+    @Override public Compound clone(Term[] replaced) {
         return make(replaced);
     }
-    
-    public static SetExt make(Term... t) {
+
+    public static Compound make(Term... t) {
         t = Terms.toSortedSetArray(t);
         if (t.length == 0) return null;
         return new SetExt(t);
     }
 
-    public static SetExt make(Collection<Term> l) {
+    public static Compound make(Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }
 

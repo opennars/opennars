@@ -28,12 +28,13 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import org.apache.commons.math3.stat.Frequency;
 
 import java.util.*;
@@ -157,7 +158,7 @@ public class Say extends Operator {
                 truth(b, 0.9f).present().get());
     }
 
-    private SetExt asWord(Term t) {
+    private Compound asWord(Term t) {
         if (t.getClass() == SetExt.class && ((SetExt)t).size() == 1) {
             t = ((SetExt)t).term[0];
         }

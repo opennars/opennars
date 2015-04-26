@@ -21,6 +21,7 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
+import nars.nal.term.Compound;
 import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
@@ -79,6 +80,19 @@ public class Negation extends Compound1 {
             return ((Negation) t).negated();
         }         
         return new Negation(t);
+    }
+
+    @Override
+    public void invalidate() {
+        if (hasVar()) {
+            for (final Term t : term) {
+                if (t instanceof Compound)
+                    ((Compound) t).invalidate();
+            }
+        }
+        else {
+            setNormalized(true);
+        }
     }
 
     /**

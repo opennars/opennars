@@ -2,14 +2,23 @@ package nars.nal.nal3;
 
 import nars.Global;
 import nars.io.Symbols;
+import nars.nal.NALOperator;
 import nars.nal.Terms;
+import nars.nal.term.Compound1;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
+
+import static nars.nal.NALOperator.SET_INT_CLOSER;
+import static nars.nal.NALOperator.SET_INT_OPENER;
+import static nars.nal.NALOperator.SET_EXT_CLOSER;
+import static nars.nal.NALOperator.SET_EXT_OPENER;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set)
  */
 abstract public class SetTensional extends DefaultCompound {
+
+
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
