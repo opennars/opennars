@@ -219,13 +219,13 @@ public abstract class NAL  implements Runnable {
 
             task.setParticipateInTemporalInduction(false);
 
-            if (Global.DEBUG_DERIVATION_STACKTRACES) {
+            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
                 task.addHistory(System.nanoTime() + " " + this.toString());
             }
 
             task.addHistory(reason);
 
-            if (Global.DEBUG_DERIVATION_STACKTRACES) {
+            if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
                 task.addHistory(getNALStack());
             }
 

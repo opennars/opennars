@@ -92,7 +92,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         setSubconceptBagSize(maxConcepts * 8);
         param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
         param.termLinkMaxReasoned.set(termLinksPerCycle);
-        param.termLinkMaxMatched.set((int)(termLinksPerCycle*3));
+        param.termLinkMaxMatched.set((termLinksPerCycle*3));
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;

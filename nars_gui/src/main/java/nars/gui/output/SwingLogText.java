@@ -5,16 +5,15 @@ import automenta.vivisect.swing.NWindow;
 import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.io.TextOutput;
-import nars.nal.Item;
-import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.TruthValue;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayDeque;

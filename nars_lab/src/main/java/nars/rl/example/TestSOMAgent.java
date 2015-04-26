@@ -325,11 +325,12 @@ public class TestSOMAgent extends JPanel {
 
         d.newWindow();
 
-        Global.DEBUG = false;
+        Global.DEBUG = true;
+        Global.DEBUG_BAG = true;
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 4096;
+        int concepts = 2000;
         int conceptsPerCycle = 25;
 
         float qLearnedConfidence = 0.7f; //0.85f; //0 to disable

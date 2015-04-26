@@ -117,7 +117,7 @@ abstract public class Nengrow extends AbstractNengo {
         stop();
 
         double fps = getFPS();
-        System.out.println(this + " FPS=" + fps);
+        //System.out.println(this + " FPS=" + fps);
         if (fps > 0) {
             timer = new java.util.Timer("", false);
             timer.scheduleAtFixedRate(new TimerTask() {
@@ -126,7 +126,7 @@ abstract public class Nengrow extends AbstractNengo {
                     Nengrow.this.run();
                     repaint();
                 }
-            }, 0, (int) (1000 / fps));
+            }, 0, (int) (1000.0 / fps));
         }
     }
     protected void stop() {

@@ -173,7 +173,7 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
 
             @Override
             protected void onConceptNew(Concept c) {
-                System.out.println("concept new " + c );
+                //System.out.println("concept new " + c );
 
                 Implication i = (Implication)c.term;
                 q.put(state(i), action(i), c);

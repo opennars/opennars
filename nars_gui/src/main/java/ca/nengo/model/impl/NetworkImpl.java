@@ -597,7 +597,12 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      * @see ca.nengo.model.Node#run(float, float)
      */
     @Deprecated public void run(float startTime, float endTime) throws SimulationException {
-        getSimulator().run(startTime, endTime, myStepSize);
+        float st;
+        if (myStepSize > 0)
+            st = myStepSize;
+        else
+            st = (endTime - startTime);
+        getSimulator().run(startTime, endTime, st);
     }
 
     public void run(float startTime, float endTime, int stepsPerCycle) throws SimulationException {

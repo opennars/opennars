@@ -192,8 +192,8 @@ abstract public class NARQLAgent extends NARQL {
         RealVector normalized = actByExpectation.unitVector();
         double alignment = normalized.dotProduct(actByExpectation);
 
-        System.out.print("NARS exec: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
-        System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
+        //System.out.print("NARS exec: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
+        //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
 
         actByExpectation.mapMultiplyToSelf(0); //zero
         actByPriority.mapMultiplyToSelf(0); //zero
@@ -208,7 +208,7 @@ abstract public class NARQLAgent extends NARQL {
 
         if ((action == null) && ((qAutonomicGoalConfidence > 0) || ((qAutonomicBeliefConfidence > 0)))) {
             action = actByQStrongest;
-            System.out.print("QL auto: " + action);
+            //System.out.print("QL auto: " + action);
 
             if (action == null) {
                 //no qAction specified either, choose random

@@ -38,8 +38,10 @@ abstract public class NPanel extends JPanel implements HierarchyListener {
         super.removeNotify();
     }
 
+
     @Override
     public void hierarchyChanged(HierarchyEvent e) {
+
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
             boolean showing = isShowing();
             visibility(showing);

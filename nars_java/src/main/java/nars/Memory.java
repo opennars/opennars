@@ -302,7 +302,7 @@ public class Memory implements Serializable {
 
         this.derivations = new TreeSet(new TaskComparator(param.getDerivationDuplicationMode()));
 
-        conceptBuilders = new ArrayList(1);
+        this.conceptBuilders = new ArrayList(1);
 
         //optional:
         this.resource = new ResourceMeter();

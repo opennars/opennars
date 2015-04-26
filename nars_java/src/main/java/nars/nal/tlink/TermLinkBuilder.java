@@ -29,6 +29,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     TermLinkTemplate currentTemplate;
 
     boolean incoming;
+    transient private String prefix = null;
 
     public TermLinkBuilder(Concept c) {
         super();
@@ -172,11 +173,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     /** configures this selector's current bag key for the next bag operation */
     public TermLinkBuilder set(TermLinkTemplate temp) {
+        this.prefix = null;
         this.currentTemplate = temp;
         return this;
     }
 
     public TermLinkBuilder setIncoming(boolean b) {
+        this.prefix = null;
         this.incoming = b;
         return this;
     }
@@ -197,7 +200,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     public String getPrefix() {
-        return currentTemplate.prefix(incoming);
+        String p = this.prefix;
+        if (p == null) {
+            p = this.prefix = currentTemplate.prefix(incoming);
+        }
+        return p;
     }
 
     public Term getTarget() {

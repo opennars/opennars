@@ -13,6 +13,7 @@ public interface TermLinkKey {
     public String getPrefix();
 
     default public int termLinkHashCode() {
+
         return Objects.hash(getPrefix(), getTarget());
     }
 

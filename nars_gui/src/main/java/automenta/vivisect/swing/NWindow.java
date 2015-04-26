@@ -97,6 +97,10 @@ public class NWindow extends JFrame {
         this(title);
         getContentPane().add(component, BorderLayout.CENTER);
     }
+    public NWindow(String title, Container container) {
+        this(title);
+        setContentPane(container);
+    }
 
     final Color transparentColor = new Color(0,0,0,0);
 
@@ -147,7 +151,7 @@ public class NWindow extends JFrame {
     }
 
     protected void close() {
-        
+        getContentPane().removeAll();
     }
     
     

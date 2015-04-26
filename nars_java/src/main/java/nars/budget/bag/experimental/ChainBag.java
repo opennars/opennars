@@ -128,8 +128,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             if (n!=null) {
                 V overflow = put(n);
 
-                if (Global.DEBUG_BAG) size();
-
                 if (overflow!=null)
                     selector.overflow(overflow);
                 return n; //return the new instance
