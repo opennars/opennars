@@ -32,19 +32,19 @@ import static java.lang.Math.signum;
  */
 public class NARio extends Run {
 
-    static int memoryCyclesPerFrame = 50;
+    static int memoryCyclesPerFrame = 40;
 
     int movementStatusPeriod = 1;
-    int commandPeriod = 10;
+    int commandPeriod = 50;
     //int keyStatePeriod = 25;
-    int radarPeriod = 2;
+    int radarPeriod = 3;
 
     private final NAR nar;
-    private LevelScene level;
+
     private float lastX = -1;
     private float lastY = -1;
     int cycle = 0;
-    int gotCoin = 0;
+
     private Mario mario;
     static double gameRate;
 
@@ -52,6 +52,7 @@ public class NARio extends Run {
 
     private ChangedTextInput moveInput;
     private ChangedTextInput velInput;
+    private LevelScene level;
 
     public NARio(NAR n) {
         super();
@@ -60,10 +61,54 @@ public class NARio extends Run {
         run();
     }
 
+    public static String n(int x) {
+        if (x == 0) return "z";
+        if (x < 0) return "n" + (-x);
+        else return "p" + x;
+    }
+
+    public static String direction(int i, int j) {
+
+        return "(*," + n(i) + "," + n(j) + ")";
+
+    }
+
+    protected void goals() {
+
+        //move, mostly to the right
+        nar.input("<moved --> [" + direction(1, 0) + "]>! %1.0;0.5%");
+        nar.input("<moved --> [" + direction(-1, 0) + "]>! %1.0;0.2%");
+        nar.input("<moved --> [" + direction(0, +1) + "]>! %1.0;0.2%");
+        nar.input("<moved --> [" + direction(0, -1) + "]>! %1.0;0.2%");
+
+        //dont remain still
+        nar.input("<moved --> [" + direction(0, 0) + "]>! %0.0;0.5%");
+
+        nar.input("(--,<nars --> died>)! :|: %1.00;0.9%");
+        nar.input("<nars --> stomp>! :|: %1.00;0.5%");
+        nar.input("<nars --> coin>! :|: %1.00;0.45%");
+
+    }
+
+    public void coin() {
+        nar.input("<nars --> coin>. :|:");
+        System.out.println("MONEY");
+    }
     protected void hurt() {
         nar.input("<nars --> died>. :|:");
-        nar.input("(--,<nars --> died>)! :|: %1.00;0.98%");
+        goals();
+        System.out.println("OUCH");
     }
+    public void stomp() {
+        nar.input("<nars --> stomp>. :|:");
+        System.out.println("KILL");
+    }
+    public void trip() {
+        nar.input("<nars --> trip>. :|:");
+        System.out.println("TRIP");
+    }
+
+
 
     @Override
     public void levelFailed() {
@@ -107,7 +152,7 @@ public class NARio extends Run {
     public static void main(String[] arg) {
         //NAR nar = new Default().realtime().build();
 
-        NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(2500));
+        NAR nar = new NAR(new Default().setInternalExperience(null).simulationTime().setConceptBagSize(2500));
 
         Global.EXIT_ON_EXCEPTION = true;
         //Global.TRUTH_EPSILON = 0.01f;
@@ -134,9 +179,9 @@ public class NARio extends Run {
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.69);
-        nar.param.conceptsFiredPerCycle.set(250);
-        nar.param.shortTermMemoryHistory.set(4);
+        nar.param.decisionThreshold.set(0.75);
+        nar.param.conceptsFiredPerCycle.set(1000);
+        nar.param.shortTermMemoryHistory.set(5);
 
         float fps = 20f;
         gameRate = 1.0f / fps;
@@ -253,27 +298,65 @@ public class NARio extends Run {
     }
 
     @Override
-    public void ready() {
-        //level = startLevel(0, 1, LevelGenerator.TYPE_OVERGROUND);
-
-
-        scene = level = new LevelScene(graphicsConfiguration, this, 4, 1, LevelGenerator.TYPE_OVERGROUND) {
+    protected LevelScene newLevel(long seed, int difficulty, int type) {
+        return new LevelScene(graphicsConfiguration, this, 4, 1, LevelGenerator.TYPE_OVERGROUND) {
             @Override
             protected Mario newMario(LevelScene level) {
                 return new Mario(level) {
                     @Override
                     public void getCoin() {
                         super.getCoin();
-                        gotCoin++;
+                        coin();
+                    }
+
+                    @Override
+                    public void die() {
+                        super.die();
+                        hurt();
+                    }
+
+                    @Override
+                    public void getMushroom() {
+                        super.getMushroom();
+                        trip();
                     }
 
                     @Override
                     public void getHurt() {
+                        super.getHurt();
                         hurt();
+                    }
+
+                    @Override
+                    public void stomp(BulletBill bill) {
+                        super.stomp(bill);
+                        NARio.this.stomp();
+                    }
+
+                    @Override
+                    public void stomp(Enemy enemy) {
+                        super.stomp(enemy);
+                        NARio.this.stomp();
+                    }
+
+                    @Override
+                    public void stomp(Shell shell) {
+                        super.stomp(shell);
+                        NARio.this.stomp();
                     }
                 };
             }
         };
+    }
+
+    @Override
+    public void ready() {
+        //super.ready();
+
+        scene = newLevel((int)(Math.random() * 1000), 1, LevelGenerator.TYPE_OVERGROUND);
+
+        level = (LevelScene) scene;
+
         level.setSound(sound);
         level.init();
 
@@ -302,35 +385,8 @@ public class NARio extends Run {
             //boolean representation_simple = false;
             boolean right = false;
 
-            String n(int x) {
-                if (x == 0) return "z";
-                if (x < 0) return "n" + (-x);
-                else return "p" + x;
-            }
 
-            public String direction(int i, int j) {
-                right = false;
-                //if (!representation_simple) {
-                //return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
-                return "(*," + n(i) + "," + n(j) + ")";
-                /*} else {
-                    if (Math.abs(i) > Math.abs(j)) {
-                        if (i < 0) {
-                            return "left";
-                        } else if (i > 0) {
-                            right = true;
-                            return "right";
-                        }
-                    } else {
-                        if (j < 0) {
-                            return "down";
-                        } else if (i < 0) {
-                            return "up";
-                        }
-                    }
-                    return "zero";
-                }*/
-            }
+
 
             protected void updateMovement(String direction, float freq) {
                 String s = "<moved --> [" + direction + "]>. :|: %" +
@@ -529,7 +585,7 @@ public class NARio extends Run {
 
 
 
-                            float sightPriority = (float)(2.0 / (2.0 + Math.sqrt(i*i+j*j)));
+                            float sightPriority = (float)(4.0 / (4.0 + Math.sqrt(i*i+j*j)));
 
                             String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [" + datachar + "]>. :|:";
                             nar.input(s2);
@@ -553,9 +609,7 @@ public class NARio extends Run {
                     }
 
 
-                    if (gotCoin > 0) {
-                        chg.set("<{gotCoin} --> " + direction(0, 0) + ">. :|:");
-                    }
+
 
 
                     int[] keys = new int[]{Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
@@ -631,7 +685,7 @@ public class NARio extends Run {
                             //priority/=2f;
                         }
 
-                        double senseRadius = 7;
+                        double senseRadius = 15;
                         double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
                         if (dist <= senseRadius) {
                             double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
@@ -645,8 +699,9 @@ public class NARio extends Run {
                             int dx = Math.round((x - s.x) / 16);
                             int dy = Math.round((y - s.y) / 16);
 
-                            float sightPriority = (float)(2.0 / (2.0 + Math.sqrt(dx*dx+dy*dy)));
-                            chg.set("$" + sightPriority + "$" +
+                            float sightPriority = (float)(4.0 / (4.0 + Math.sqrt(dx*dx+dy*dy)));
+
+                            nar.input("$" + sightPriority + "$" +
                                     " <{" + type + "} --> " + direction(dx, dy) + ">. :|:");
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
@@ -658,17 +713,10 @@ public class NARio extends Run {
 
                     lastX = x;
                     lastY = y;
-                    gotCoin = 0;
                 }
 
                 if (www % commandPeriod == 0) {
-
-                    //move to the right
-                    nar.input("<moved --> [" + direction(1, 0) + "]>! %1.0;0.9%");
-
-                    //dont remain still
-                    nar.input("<moved --> [" + direction(0, 0) + "]>! %0.1;0.9%");
-
+                    goals();
                 }
                 www++;
                 cycle++;
