@@ -234,10 +234,6 @@ public class GeneticSearchEncog {
                 throw new RuntimeException("Invalid Builder type " + builderType);
             }
 
-            b.setConceptBagLevels(bagLevels);
-            b.setTermLinkBagLevels(bagLevels);
-            b.setTaskLinkBagLevels(bagLevels);
-            b.setNovelTaskBagLevels(bagLevels);
 
             b.setConceptBagSize(numConcepts);
             b.setTaskLinkBagSize(numTaskLinks);

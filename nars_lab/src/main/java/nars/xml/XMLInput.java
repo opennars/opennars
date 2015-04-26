@@ -37,9 +37,7 @@ public class XMLInput extends PrintWriterInput {
 
     public static void main(String[] args) throws Exception {
         NAR n = new NAR(new Default().
-                setConceptBagSize(8192).
-                setTermLinkBagLevels(8).
-                setTaskLinkBagLevels(8));
+                setConceptBagSize(8192));
 
         new TextOutput(n, System.out);
 

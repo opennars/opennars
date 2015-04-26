@@ -28,7 +28,7 @@ public class NAL1Test extends JavaNALTest {
                 {new Curve().setInternalExperience(null)},
                 {new Default.DefaultMicro() },
                 {new Classic()},
-                {new Solid(1, 96, 0, 4, 0, 3)}
+                {new Solid(1, 64, 0, 4, 0, 3)}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }
@@ -131,7 +131,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void backwardInference() throws InvalidInputException {
-        long time = 1200;
+        long time = build instanceof Solid ? 15 : 350;
 
         //TextOutput.out(n);
         nar.believe("<bird --> swimmer>", 1.0f, 0.8f);
@@ -144,7 +144,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void multistep() throws InvalidInputException {
-        long time = 8550;
+        long time = build instanceof Solid ? 15 : 350;
 
         //TextOutput.out(nar);
         nar.believe("<a --> b>", 1.0f, 0.9f);

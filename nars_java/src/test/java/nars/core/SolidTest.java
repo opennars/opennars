@@ -4,12 +4,14 @@ import nars.Global;
 import nars.io.Answered;
 import nars.io.test.TestNAR;
 import nars.nal.Sentence;
+import nars.nal.term.Term;
 import nars.prototype.Solid;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -19,19 +21,20 @@ public class SolidTest {
     @Test
     public void testDetective() throws FileNotFoundException {
 
-        int time = 64; //should solve the example in few cycles
+        int time = 48; //should solve the example in few cycles
 
-        Global.DEBUG = false;
+        Global.DEBUG = true;
 
-        Solid s = new Solid(3, 384, 1, 8, 2, 4);
-        s.param.duration.set(3);
-        s.param.noveltyHorizon.set(2);
+        Solid s = new Solid(3, 400, 1, 4, 1, 3);
+        s.param.duration.set(1);
+//        s.param.noveltyHorizon.set(2);
 
         TestNAR n = new TestNAR(s);
 
         //TextOutput.out(n).setOutputPriorityMin(1.0f);
 
-        AtomicInteger solutions = new AtomicInteger(0);
+        Set<Term> solutionTerms = new HashSet();
+        Set<Sentence> solutions = new HashSet();
 
         n.input(new File("../nal/other/detective.nal"));
 
@@ -39,14 +42,21 @@ public class SolidTest {
 
             @Override
             public void onSolution(Sentence belief) {
-                solutions.incrementAndGet();
+                solutions.add(belief);
+                solutionTerms.add(belief.getTerm());
+                if ((solutionTerms.size() >= 2) && (solutions.size() >= 2)) {
+                    n.stop();
+                }
             }
 
         };
 
         n.frame(time);
 
-        assertTrue(2 <= solutions.get());
+        //System.out.println(solutions);
+        assertTrue("at least 2 unique solutions: " + solutions.toString(), 2 <= solutions.size());
+        assertTrue("at least 2 unique terms: " + solutionTerms.toString(), 2 <= solutionTerms.size());
+
     }
 
 

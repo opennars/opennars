@@ -83,7 +83,16 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     /** Default DEFAULTS */
     public Default() {
-        super();
+        this(1024, 1, 3);
+
+    }
+
+    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
+        setConceptBagSize(maxConcepts);
+        setSubconceptBagSize(maxConcepts*8);
+        param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
+        param.termLinkMaxReasoned.set(termLinksPerCycle);
+        param.termLinkMaxMatched.set((int)(termLinksPerCycle*3));
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
@@ -99,7 +108,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         setTermLinkBagSize(96);
 
         setNovelTaskBagSize(32);
-        setNovelTaskBagLevels(16);
 
 
 
@@ -128,32 +136,21 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         param.conceptQuestionsMax.set(5);
 
         param.inputsMaxPerCycle.set(1);
-        param.conceptsFiredPerCycle.set(1);
-        
-        param.termLinkMaxReasoned.set(3);
+
         param.termLinkMaxMatched.set(9);
         param.termLinkRecordLength.set(10);
         param.noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
-        
+
         param.setForgetting(Forgetting.Periodic);
         param.setTiming(Timing.Cycle);
         param.outputVolume.set(100);
 
         param.reliance.set(0.9f);
-        
+
         param.decisionThreshold.set(0.60);
-    
+
         //add derivation filters here:
         //param.getDefaultDerivationFilters().add(new BeRational());
-    }
-
-    public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
-        this();
-        setConceptBagSize(maxConcepts);
-        setSubconceptBagSize(maxConcepts*8);
-        param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-        param.termLinkMaxReasoned.set(termLinksPerCycle);
-        param.termLinkMaxMatched.set((int)(termLinksPerCycle*1.5));
 
     }
 
@@ -234,7 +231,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        //return new LevelBag<>(getNovelTaskBagLevels(), getNovelTaskBagSize());
         return new ChainBag(getNovelTaskBagSize());
     }
 
@@ -246,7 +242,12 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     public int getSubconceptBagSize() {
         return subconceptBagSize;
     }
- 
+
+
+
+    public int getNovelTaskBagSize() {
+        return taskBufferSize;
+    }
     
     
     public int getConceptBagSize() { return conceptBagSize; }    
@@ -259,14 +260,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         return this;
     }
 
-    public int getNovelTaskBagSize() {
-        return taskBufferSize;
-    }
-    
-    public Default setNovelTaskBagLevels(int l) {
-        this.taskBufferLevels = l;
-        return this;
-    }
 
     public int getNovelTaskBagLevels() {
         return taskBufferLevels;
@@ -412,7 +405,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
             setTermLinkBagSize(16);
 
             setNovelTaskBagSize(16);
-            setNovelTaskBagLevels(4);
 
 
 

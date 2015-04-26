@@ -27,11 +27,13 @@ public class Classic extends Default {
 
 
     public Classic() {
-        super();
+        this(1000, 1, 3);
 
         setConceptBagLevels(64);
         setTaskLinkBagLevels(16);
         setTermLinkBagLevels(28);
+        setNovelTaskBagLevels(16);
+
     }
 
     public Classic(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
@@ -49,6 +51,7 @@ public class Classic extends Default {
 
         return new LevelBag(getNovelTaskBagSize(), getNovelTaskBagLevels());
     }
+
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
@@ -85,6 +88,13 @@ public class Classic extends Default {
 
     public Default setTermLinkBagLevels(int termLinkBagLevels) {
         this.termLinkBagLevels = termLinkBagLevels;
+        return this;
+    }
+
+
+
+    public Default setNovelTaskBagLevels(int l) {
+        this.taskBufferLevels = l;
         return this;
     }
 

@@ -24,7 +24,8 @@ public class NAL7ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Classic(),
-                new Curve()
+                new Curve(),
+                new Default.DefaultMicro()
         );
     }
 

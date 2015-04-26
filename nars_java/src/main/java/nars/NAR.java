@@ -440,17 +440,10 @@ public class NAR implements Runnable {
     
     
     /**
-     * Stop the logic process, killing its thread.
+     * Exits an iteration loop if running
      */
-    @Deprecated public void stop() {
-        throw new RuntimeException("WARNING: this threading model is not safe and deprecated");
-
-//        if (thread!=null) {
-//            thread.interrupt();
-//            thread = null;
-//        }
-//        stopped = true;
-//        running = false;
+    public void stop() {
+        running = false;
     }    
 
     /** steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of */
