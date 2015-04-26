@@ -217,7 +217,7 @@ public class LinePlot extends AbstractWidget {
             plotSurfaceWrap.setBounds(ui.getBounds());
         }
 
-        plotSurfaceWrap.invalidateCache();
+        plotSurfaceWrap.repaint();
 
     }
     @Override

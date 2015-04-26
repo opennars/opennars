@@ -73,6 +73,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
      */
     private final TextOutput experienceWriter;
     private final MeterNode meters;
+    private NengrowPanel meterPanel;
 
 
     /**
@@ -431,17 +432,30 @@ public class NARControlPanel extends TimeControl implements Reaction {
         add(top, NORTH);
 
         if (addCharts) {
-            meters = new MeterNode(nar, this.metrics.getMetrics());
-            NengrowPanel np = new NengrowPanel(meters) {
+            meters = new MeterNode(nar, this.metrics.getMetrics()) {
+                @Override
+                public void updateMeter() {
+                    super.updateMeter();
+
+                    if (meterPanel!=null)
+                        meterPanel.repaint();
+                }
+            };
+            meterPanel = new NengrowPanel(meters) {
                 @Override
                 public double getFPS() {
                     return 10;
                 }
 
+                @Override
+                public void run() {
+
+                }
+
             };
 
 
-            add(np, CENTER);
+            add(meterPanel, CENTER);
         }
         else
             meters = null;

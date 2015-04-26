@@ -4,8 +4,8 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -317,20 +317,20 @@ public class TestSOMAgent extends JPanel {
 
 
         /* Create and display the form */
-        RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        //RLEnvironment d = new Curiousbot();
+        RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
-        Global.DEBUG = true;
-        Global.DEBUG_BAG = true;
+        Global.DEBUG = false;
+        Global.DEBUG_BAG = false;
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 2000;
+        int concepts = 2048;
         int conceptsPerCycle = 25;
 
         float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
@@ -395,7 +395,7 @@ public class TestSOMAgent extends JPanel {
             }
         };
 
-        dd.setTaskLinkBagSize(36);
+        dd.setTaskLinkBagSize(32);
         dd.setInternalExperience(null);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,

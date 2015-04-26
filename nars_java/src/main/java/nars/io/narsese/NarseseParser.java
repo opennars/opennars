@@ -53,13 +53,13 @@ public class NarseseParser extends BaseParser<Object> {
     private final int level;
 
     //These should be set to something like RecoveringParseRunner for performance
-    public final ParseRunner inputParser = new ErrorReportingParseRunner(Input(), 0);
-    public final ParseRunner singleTaskParser = new ErrorReportingParseRunner(Task(true), 0);
+    public final ParseRunner inputParser = new RecoveringParseRunner(Input(), 0);
+    public final ParseRunner singleTaskParser = new RecoveringParseRunner(Task(true), 0);
 
     //use a parameter or something to avoid this extra instance
-    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ErrorReportingParseRunner(Task(false), 0);
+    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new RecoveringParseRunner(Task(false), 0);
 
-    public final ParseRunner singleTermParser = new ErrorReportingParseRunner(Term(), 0); //new RecoveringParseRunner(Term());
+    public final ParseRunner singleTermParser = new RecoveringParseRunner(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
     public Memory memory;
 

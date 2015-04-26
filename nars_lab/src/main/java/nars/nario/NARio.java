@@ -76,13 +76,13 @@ public class NARio extends Run {
     protected void goals() {
 
         //move, mostly to the right
-        nar.input("<moved --> [" + direction(1, 0) + "]>! %1.0;0.5%");
-        nar.input("<moved --> [" + direction(-1, 0) + "]>! %1.0;0.2%");
-        nar.input("<moved --> [" + direction(0, +1) + "]>! %1.0;0.2%");
-        nar.input("<moved --> [" + direction(0, -1) + "]>! %1.0;0.2%");
+        nar.input("<moved --> [" + direction(+1, 0) + "]>! %1.0;0.2%");
+        //nar.input("<moved --> [" + direction(-1, 0) + "]>! %1.0;0.2%");
+        //nar.input("<moved --> [" + direction(0, +1) + "]>! %1.0;0.2%");
+        //nar.input("<moved --> [" + direction(0, -1) + "]>! %1.0;0.2%");
 
         //dont remain still
-        nar.input("<moved --> [" + direction(0, 0) + "]>! %0.0;0.5%");
+        nar.input("<moved --> [" + direction(0, 0) + "]>! %0.0;0.2%");
 
         nar.input("(--,<nars --> died>)! :|: %1.00;0.9%");
         nar.input("<nars --> stomp>! :|: %1.00;0.5%");
@@ -398,7 +398,7 @@ public class NARio extends Run {
             protected void updateMovement(int cx, int cy, int tx, int ty) {
                 double f = cosineSimilarityScaled(new double[]{cx, cy}, new double[]{tx, ty});
                 float ff = (float)(f / 2f + 0.5f);
-                updateMovement(direction(tx, ty), ff);
+                updateMovement(direction(-tx, -ty), ff); //for some reason the sign needs negated
             }
 
             int tt = 0;

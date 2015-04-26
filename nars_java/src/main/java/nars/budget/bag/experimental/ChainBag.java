@@ -46,7 +46,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     double minMaxMomentum = 0.98;
 
-    private final DDNodePool<V> nodePool = new DDNodePool(16);
+    private final DDNodePool<V> nodePool;
 
     V nextRemoval = null;
 
@@ -71,7 +71,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
         this.capacity = capacity;
         this.mass = 0;
-        this.index = new CuckooMap(capacity * 2);
+        this.index = new CuckooMap(capacity);
+        nodePool = new DDNodePool(capacity);
         this.chain = new DDList(0, nodePool);
         this.mean = new Mean();
 
