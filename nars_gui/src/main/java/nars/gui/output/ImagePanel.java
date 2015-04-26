@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 /**
  * Created by me on 4/19/15.
  */
-public class ImagePanel extends JPanel {
+public class ImagePanel extends JComponent {
 
     final int w, h;
     public BufferedImage image;
@@ -19,7 +19,9 @@ public class ImagePanel extends JPanel {
         this.w = width;
         this.h = height;
 
+        setDoubleBuffered(true);
         setIgnoreRepaint(true);
+
         setSize(width, height);
         Dimension minimumSize = new Dimension(width, height);
         setBorder(LineBorder.createGrayLineBorder());
@@ -38,9 +40,11 @@ public class ImagePanel extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        //super.paintComponent(g);
         g.drawImage(image, 0, 0, null);
+        super.paintBorder(g);
     }
+
 
 }

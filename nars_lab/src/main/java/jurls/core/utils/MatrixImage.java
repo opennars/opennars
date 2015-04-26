@@ -32,7 +32,7 @@ import java.awt.image.BufferedImage;
  *
  * @author Peter Abeles
  */
-public class MatrixImage extends JPanel {
+public class MatrixImage extends JComponent {
 
     BufferedImage image;
     private double maxValue;
@@ -40,6 +40,7 @@ public class MatrixImage extends JPanel {
 
     public MatrixImage(int width, int height) {
         super();
+
         setPreferredSize(new Dimension(width, height));
         setMinimumSize(new Dimension(width, height));
 
@@ -207,6 +208,11 @@ public class MatrixImage extends JPanel {
 
     public void draw(final Data2D d, int cw, int ch, double minValue, double maxValue) {
 
+        if ((cw == 0) || (ch == 0)) {
+            image = null;
+            return;
+        }
+
         if (image == null || image.getWidth() != cw || image.getHeight() != ch) {
             image = new BufferedImage(cw, ch, BufferedImage.TYPE_INT_RGB);
         }
@@ -227,10 +233,17 @@ public class MatrixImage extends JPanel {
         repaint();
     }
 
+
+
     @Override
     public void paint(Graphics g) {
 
-        g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+        if (image == null) {
+            g.setColor(Color.GRAY);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
+        else
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 
     }
 

@@ -6,8 +6,8 @@ import nars.event.AbstractReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -90,7 +90,7 @@ abstract public class ConceptMap extends AbstractReaction {
     /** uses a predefined set of terms that will be mapped */
     abstract public static class ConceptMapSet extends ConceptMap implements Iterable<Term> {
 
-        public final Map<Term,Concept> values = new HashMap();
+        public final Map<Term,Concept> values = new LinkedHashMap();
 
         public ConceptMapSet(NAR nar) {
             super(nar);

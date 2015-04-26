@@ -11,7 +11,7 @@ import jurls.reinforcementlearning.domains.wander.brain.actions.MoveBackward;
 
 public class Player {
 
-    public static final double TURNING_ANGLE = MyPerception.RADAR_R/4f;
+    public static final double TURNING_ANGLE = MyPerception.RADAR_R/16f; //velocity actually
     public static final double STEP_SIZE = MyPerception.RADAR_D/2d;
     private static final int MOVE_FORWARD = 0;
     private static final int MOVE_BACKWARD = 1;
@@ -31,6 +31,7 @@ public class Player {
     private double yOld;
     private double xOld;
     double acceleration = 0.02;
+    private double vangle = 0;
 
     public Player(World world) {
         this.world = world;
@@ -63,11 +64,15 @@ public class Player {
         actions[action].execute();        
     }
 
-    public void turn(double delta) {
+    /*public void turn(double delta) {
         angle += delta;
+    }*/
+    public void turn(double delta) {
+        vangle += delta;
     }
 
     public void moveForward(double step) {
+        angle += vangle;
         vx += Math.cos(angle) * step * acceleration;
         vy += Math.sin(angle) * step * acceleration;
         if (world.isCollision()) {
@@ -87,6 +92,7 @@ public class Player {
         y += vy;
         vx *= 0.95;
         vy *= 0.95;
+        vangle *= 0.95;
     }
 
     public void randomizePosition() {

@@ -39,14 +39,16 @@ import static java.awt.BorderLayout.WEST;
 /**
  * Manages a set of ConceptPanels by receiving events and dispatching update commands
  * TODO use a minimum framerate for updating
+ * TODO use ConceptMapSet and remove the MultiMap
  */
 public class ConceptPanelBuilder extends AbstractReaction {
+
 
     private final NAR nar;
     private final Multimap<Concept, ConceptPanel> concept = HashMultimap.create();
     static float conceptGraphFPS = 4; //default update frames per second
 
-    final Set<Concept> changed = new HashSet();
+    final Set<Concept> changed = new LinkedHashSet();
 
     public ConceptPanelBuilder(NAR n) {
         super(n, Events.FrameEnd.class,
@@ -557,27 +559,36 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         }
 
-        private void draw(long now, Graphics g, Truthable s, boolean belief) {
-            float freq = s.getTruth().getFrequency();
-            float conf = s.getTruth().getConfidence();
+        private void draw(final long now, final Graphics g, final Truthable s, final boolean belief) {
+            final float freq = s.getTruth().getFrequency();
+            final float conf = s.getTruth().getConfidence();
 
-            float factor = 0.75f;
+            float factor = 0.9f;
             if (s instanceof Sentence) {
                 Sentence ss = (Sentence) s;
                 if (!ss.isEternal()) {
                     //float factor = TruthFunctions.temporalProjection(now, ss.getOccurenceTime(), now);
                     //factor = 1.0f / (1f + Math.abs(ss.getOccurrenceTime() - now));
-                    factor = 0.5f;
+                    factor = 0.75f;
                 }
             }
             g.setColor(belief ? getBeliefColor(freq, conf, factor) :
                             getGoalColor(freq, conf, factor)            );
 
-            int w = 6;
-            int h = 6;
+            int w, h;
+            if (belief) {
+                w = 10;
+                h = 4;
+            }
+            else {
+                h = 10;
+                w = 4;
+            }
             float dw = getWidth() - w;
             float dh = getHeight() - h;
-            g.fillRect((int) (freq * dw), (int) ((1.0 - conf) * dh), w, h);
+
+            /* x-axis: confidence, y-axis: freq */
+            g.fillRect((int) ((1.0f - conf) * dh), (int) ((1.0f - freq) * dw), w, h);
         }
     }
 

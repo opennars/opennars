@@ -31,7 +31,7 @@ abstract public class TimeControl extends NPanel implements ActionListener {
     /** in memory cycles */
 
 
-    protected AtomicBoolean updateScheduled = new AtomicBoolean(false);
+
     protected float currentSpeed = 0f;
     //protected float lastSpeed = 0f;
 

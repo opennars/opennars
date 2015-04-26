@@ -24,8 +24,12 @@ public class ConsolePanel extends JSplitPane {
         add(inputPanel, 1);
 
         setOpaque(false);
+        setDoubleBuffered(true);
+        setIgnoreRepaint(true);
     }
-    
+
+
+
     int cnt=0;
     @Override
     public void paint(Graphics g) {

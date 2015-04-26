@@ -58,6 +58,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     public NSlider(AtomicDouble value, String prefix, float min, float max) {
         this(value, min, max);
         this.prefix = prefix;
+        setDoubleBuffered(true);
         setToolTipText(prefix);
     }
     
@@ -80,7 +81,12 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
     }
 
     public float value() { return value.floatValue(); }
-        
+
+    @Override
+    public void update(Graphics g) {
+
+    }
+
     @Override
     public void paint(Graphics g) {
         int w = getWidth();
@@ -101,7 +107,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
             g.setColor(barColor);
         }
         
-        int wp = (int)(((float)w) * p );
+        int wp = (int)(((float) w) * p);
         g.fillRect(0, 0, wp, h);
 
 
@@ -110,14 +116,16 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
 
         g.setXORMode(Color.BLACK);        
         super.paint(g);
+
     }
-    
+
     public void onValueUpdated() {
         setText(getText());
     }
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+        repaint();
     }
     
     @Override
@@ -146,6 +154,7 @@ public class NSlider extends JLabel implements MouseListener, MouseMotionListene
         if (v != value.floatValue()) {
             value.set( v );
             onChange(v);
+            repaint();
         }
     }
 

@@ -54,8 +54,7 @@ public class NAR implements Runnable {
 
 
     @Deprecated private Thread thread = null;
-    long minFramePeriodMS;
-    
+
     /**
      * The name of the reasoner
      */
@@ -115,8 +114,7 @@ public class NAR implements Runnable {
     private boolean running = false;
     
     
-    /** used by stop() to signal that a running loop should be interrupted */
-    private boolean stopped = false;
+
     
     private boolean threadYield = false;
 
@@ -457,10 +455,9 @@ public class NAR implements Runnable {
     public double frame(final int frames) {
         
         final boolean wasRunning = running;
-        running = true;
-        stopped = false;
         double elapsed = 0;
-        for (int f = 0; (f < frames) && (!stopped); f++) {
+        running = true;
+        for (int f = 0; (f < frames) && running; f++) {
             elapsed += frameCycles(cyclesPerFrame);
         }
         running = wasRunning;
@@ -479,7 +476,6 @@ public class NAR implements Runnable {
             throw new RuntimeException("minCycles " + minCycles + " required <= maxCycles " + maxCycles);
 
         running = true;
-        stopped = false;
 
         long cycleStart = time();
         do {
@@ -489,10 +485,8 @@ public class NAR implements Runnable {
 
             long elapsed = now - cycleStart;
 
-            if (elapsed < minCycles)
-                running = !stopped;
-            else
-                running = (!memory.perception.isEmpty()) && (!stopped) &&
+            if (elapsed >= minCycles)
+                running = (!memory.perception.isEmpty()) &&
                     (elapsed < maxCycles);
         }
         while (running);
@@ -507,7 +501,6 @@ public class NAR implements Runnable {
         if (cycles <= 0) return this;
         
         running = true;
-        stopped = false;
 
         //clear existing input
         
@@ -515,7 +508,7 @@ public class NAR implements Runnable {
         do {
             frame(1);
         }
-        while ((!memory.perception.isEmpty()) && (!stopped));
+        while ((!memory.perception.isEmpty()) && (running));
                    
         long cyclesCompleted = time() - cycleStart;
         
@@ -525,7 +518,7 @@ public class NAR implements Runnable {
             memory.think(cycles);
         
         //finish all remaining cycles
-        while (!memory.thinking() && (!stopped)) {
+        while (!memory.thinking() && (running)) {
             frame(1);
         }
         
@@ -535,14 +528,18 @@ public class NAR implements Runnable {
     }
     
 
-    /** Main loop executed by the Thread.  Should not be called directly. */    
-    @Override public void run() {
+    /** Run until stopped, at full speed */
+    public void run() {
+        runAtRate(0);
+    }
+
+    /** Runs until stopped, at a given delay period between frames (0= no delay). Main loop */
+    public void runAtRate(long minFramePeriodMS) {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
         running = true;
-        stopped = false;
-        
-        while (running && !stopped) {      
+
+        while (running) {
             
 
             double frameTime = frame(1); //in seconds
@@ -582,7 +579,7 @@ public class NAR implements Runnable {
     }
 
 
-    protected void error(Throwable e)  {
+    protected void error(Throwable e) {
         memory.error(e);
     }
 
@@ -643,9 +640,7 @@ public class NAR implements Runnable {
         return running;
     }    
 
-    public long getMinFramePeriodMS() {
-        return minFramePeriodMS;
-    }
+
 
     /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
      *  This is for improving program responsiveness when NAR is run with no delay.

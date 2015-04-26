@@ -35,6 +35,9 @@ public class NengrowPanel extends Nengrow {
     public NengrowPanel(Network view) {
         super();
 
+        setDoubleBuffered(true);
+        setIgnoreRepaint(true);
+
         try {
             networkUI = (UINetwork) addNodeModel(view);
             window = networkUI.openViewer(Window.WindowState.MAXIMIZED);

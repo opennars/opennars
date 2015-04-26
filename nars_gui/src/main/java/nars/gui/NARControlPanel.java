@@ -57,7 +57,6 @@ import static nars.Memory.Timing.Simulation;
 
 public class NARControlPanel extends TimeControl implements Reaction {
 
-    //final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
 
     /**
      * Reference to the reasoner
@@ -95,7 +94,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
 
     private final NARMetrics metrics;
-    private float lastSpeed = 0;
+    private long currentSpeedMS;
 
     public NARControlPanel(final NAR nar) {
         this(nar, null, true);
@@ -494,24 +493,11 @@ public class NARControlPanel extends TimeControl implements Reaction {
         setSpeed(0);
         setSpeed(0);        //call twice to make it start as paused
         setFrameRate(25);
-        updateGUI();
         nar.memory.event.on(FrameEnd.class, this);
+        updateGUI();
     }
 
-    final Runnable updateGUIRunnable = new Runnable() {
-        @Override public void run() {
-            updateGUI();
-        }
-    };
 
-    protected void updateGUI() {
-                
-        speedSlider.repaint();
-
-        updateScheduled.set(false);
-
-    }
-    
 
     @Override
     public void event(final Class event, final Object... arguments) {
@@ -521,17 +507,17 @@ public class NARControlPanel extends TimeControl implements Reaction {
             long deltaTime = now - lastUpdateTime;
             
             if ((deltaTime >= GUIUpdatePeriodMS) /*|| (!updateScheduled.get())*/) {
-                
-                updateScheduled.set(true);                
-                                                
-                speedSlider.repaint();
-                
-                SwingUtilities.invokeLater(updateGUIRunnable);
+
+                updateGUI();
 
                 lastUpdateTime = now;
                 
             }
         }
+    }
+
+    protected void updateGUI() {
+        speedSlider.repaint();
     }
 
     public void setFrameRate(float fps) {
@@ -557,10 +543,10 @@ public class NARControlPanel extends TimeControl implements Reaction {
         }
         else if (obj instanceof JButton) {
             if (obj == stopButton) {
-                setSpeed(0);
+                setSpeed(-1);
                 updateGUI();
             } else if (obj == walkButton) {
-                setSpeed(0);
+                setSpeed(-1);
                 updateGUI();
                 frame();
             }
@@ -662,36 +648,22 @@ public class NARControlPanel extends TimeControl implements Reaction {
 
     @Override
     public void setSpeed(float nextSpeed) {
+        if (this.currentSpeed == nextSpeed) return;
+
         final float maxPeriodMS = 1024.0f;
 
-        if (nextSpeed == -1) {
-            //disable speed change
-            speedSlider.setEnabled(false);
-            stopButton.setEnabled(false);
-            walkButton.setEnabled(false);
-        }
-
-        if (nextSpeed == 0) {
-            if (currentSpeed == 0) {
-                if (lastSpeed == 0) {
-                    lastSpeed = defaultSpeed;
-                }
-                nextSpeed = lastSpeed;
-            } else {
-            }
-
-        }
-
-        //if (currentSpeed == nextSpeed) return;
-
-        lastSpeed = currentSpeed;
-        speedSlider.repaint();
-        stopButton.setText(String.valueOf(FA_PlayCharacter));
-
-        /*if (currentSpeed == s)
-         return;*/
-        speedSlider.setValue(nextSpeed);
         currentSpeed = nextSpeed;
+
+        speedSlider.setValue(nextSpeed);
+        speedSlider.repaint();
+
+
+        if (nextSpeed == -1) {
+            stop();
+            return;
+        }
+
+
 
         float logScale = 50f;
         if (currentSpeed > 0) {
@@ -702,49 +674,46 @@ public class NARControlPanel extends TimeControl implements Reaction {
                 else
                     ms = 1;
             }
-            stopButton.setText(String.valueOf(FA_StopCharacter));
-            //nar.setThreadYield(true);
 
-            if (timer == null) {
-                timer = new Timer((int)ms, this);
-                timer.setCoalesce(true);
-            }
-            else {
-                timer.setDelay((int)ms);
-                if (!timer.isRunning())
-                    timer.restart();
-            }
+            this.currentSpeedMS = ms;
+            restart((int) ms);
 
         } else {
-            stopButton.setText(String.valueOf(FA_PlayCharacter));
-            if (timer!=null) {
-                timer.stop();
-            }
+            this.currentSpeedMS = -1;
+            stop();
         }
     }
 
+    protected void restart(int ms) {
+        if (timer == null) {
+            timer = new Timer(ms, this);
+            timer.setCoalesce(true);
+            timer.setRepeats(false);
+            //System.out.println("timer start: " + ms);
+        }
+        else {
+            timer.setInitialDelay(ms);
+            timer.restart();
+            //System.out.println("timer restart: " + ms);
+        }
 
-    
-//
-//    @Override
-//    public void run() {
-//        
-//
-//        updateGUI();
-//        
-//        lastTime = nar.getTime();
-//
-//        while (true) {
-//            try {
-//                Thread.sleep(GUIUpdatePeriodMS);
-//            } catch (InterruptedException ex) {
-//            }
-//
-//
-//            updateGUI();
-//
-//        }
-//    }
+
+        stopButton.setText(String.valueOf(FA_StopCharacter));
+    }
+
+    protected void stop() {
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+            stopButton.setText(String.valueOf(FA_PlayCharacter));
+            speedSlider.setEnabled(true);
+            stopButton.setEnabled(true);
+            walkButton.setEnabled(true);
+            currentSpeedMS = -1;
+            updateGUI();
+        }
+
+    }
 
 
     AtomicDouble tasklinkRate = new AtomicDouble(1),
@@ -946,7 +915,7 @@ public class NARControlPanel extends TimeControl implements Reaction {
         } else if (currentSpeed == 1.0) {
             sb.append(" - run max speed");
         } else {
-            sb.append(" - run ").append(nar.getMinFramePeriodMS()).append(" ms / frame");
+            sb.append(" - run ").append(currentSpeedMS).append(" ms / frame");
         }
         return sb.toString();
 
