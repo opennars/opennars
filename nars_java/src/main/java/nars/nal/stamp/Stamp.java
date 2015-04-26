@@ -379,7 +379,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (evidentialSet == null)
             toSet();
         if (hash == 0) {
-            hash = Objects.hash(evidentialHash, occurrenceTime);
+            hash = (int)(evidentialHash + 31 * occurrenceTime);
         }
         return hash;
     }

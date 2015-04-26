@@ -20,15 +20,14 @@
  */
 package nars.nal.tlink;
 
-import nars.Global;
 import nars.budget.Budget;
-import nars.io.Symbols;
 import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Sentence.Sentenced;
 import nars.nal.Task;
-import nars.nal.term.Termed;
 import nars.nal.term.Term;
+import nars.nal.term.Termed;
+import nars.util.data.CircularArrayList;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -77,7 +76,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
     }
 
-    Deque<Recording> records;
+    CircularArrayList<Recording> records;
     long newestRecordTime = -1;
 
 
@@ -128,7 +127,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         return getSentence().hashCode();
     }
 
-    public Deque<Recording> getRecords() {
+    public CircularArrayList<Recording> getRecords() {
         return records;
     }
 
@@ -182,8 +181,9 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         if (noveltyHorizon == 0) return true;
 
         if (records == null) {
-            records = new ArrayDeque(recordLength);
+            //records = new ArrayDeque(recordLength);
             //records = new LinkedList();
+            records = new CircularArrayList<>(recordLength);
         }
 
         final long minTime = currentTime - noveltyHorizon;
@@ -194,9 +194,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
             records.clear();
         } else {
             //iterating the FIFO deque from oldest (first) to newest (last)
-            Iterator<Recording> ir = records.iterator();
-            while (ir.hasNext()) {
-                Recording r = ir.next();
+            //  this awkward for-loop with the CircularArrayList replaced an ArrayDeque version because ArrayDeque does not provide indexed access and this required using its Iterator which involved an allocation.  this should be less expensive and it is a critical section
+            int size = records.size();
+            for (int i = 0; i < size; i++) {
+                Recording r = records.get(i);
                 final long rtime = r.getTime();
 
                 if (termLink.equals(r.link)) {
@@ -206,13 +207,16 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
                     } else {
                         //happened long enough ago that we have forgotten it somewhat, making it seem more novel
                         r.setTime(currentTime);
-                        ir.remove();
+                        records.removeFast(i);
                         addRecord(r);
                         return true;
                     }
                 } else if (minTime > rtime) {
                     //remove a record which will not apply to any other tlink
-                    ir.remove();
+
+                    records.removeFast(i);
+                    i--; //skip back one so the next iteration will be at the element after the one removed
+                    size--;
                 }
             }
 

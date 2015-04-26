@@ -56,7 +56,7 @@ abstract public class Image extends DefaultCompound {
      * @return the oldName of the term
      */
     protected static CharSequence makeImageName(final NALOperator op, final Term[] arg, final int relationIndex) {
-        final int sizeEstimate = 12 * arg.length + 2;
+        final int sizeEstimate = 24 * arg.length + 2;
         
         StringBuilder name = new StringBuilder(sizeEstimate)
             .append(COMPOUND_TERM_OPENER.ch)

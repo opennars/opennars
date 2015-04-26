@@ -220,8 +220,12 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(frequency, confidence, analytic);
-        //return (int) (getExpectation() * 37);
+        int h = 0;
+        h += Float.floatToRawIntBits(frequency);
+        h += 31 * Float.floatToRawIntBits(confidence);
+        if (analytic)
+            h += 31;
+        return h;
     }
 
     @Override

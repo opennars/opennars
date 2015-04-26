@@ -11,7 +11,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     private final E e = null;
 
     private final int n; // buffer length
-    public final Object[] buf;
+    public final E[] buf;
     private int head = 0;
     private int tail = 0;
     private int size = 0;
@@ -19,7 +19,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     public CircularArrayList(int capacity) {
         n = capacity;
         //buf = (E[])Array.newInstance(clazz, capacity);
-        buf = new Object[capacity];
+        buf = (E[])new Object[capacity];
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         //same as the original function below but avoid another function call to help guarante inlining
         int m = (head + i) % n;
         //if (m < 0) m += n;        
-        return (E) buf[m];
+        return buf[m];
 
         //original code:
         //return buf[wrapIndex(head + i)];
@@ -111,7 +111,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         int m = (head + i) % n;
         //if (m < 0) m += n;        
 
-        E existing = (E) buf[m];
+        E existing = buf[m];
         buf[m] = e;
         return existing;
     }
@@ -141,7 +141,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     }
 
 
-    public void removeFast(int i) {
+    public void removeFast(final int i) {
         if (i > 0) {
             shiftBlock(0, i);
         }

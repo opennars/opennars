@@ -92,12 +92,6 @@ public class Inheritance extends Statement {
         
         boolean subjectProduct = subject instanceof Product;
         boolean predicateOperator = predicate instanceof Operator;
-        
-        if (Global.DEBUG) {
-            if (!predicateOperator && predicate.toString().startsWith("^")) {
-                throw new RuntimeException("operate term detected but is not an operate: " + predicate);
-            }
-        }
 
         if (subjectProduct && predicateOperator) {
             return Operation.make((Operator) predicate, ((Compound) subject).term);
