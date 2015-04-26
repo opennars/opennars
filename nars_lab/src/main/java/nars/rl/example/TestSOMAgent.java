@@ -5,7 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.Global;
 import nars.NAR;
 import nars.ProtoNAR;
@@ -13,8 +13,8 @@ import nars.gui.NARSwing;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.rl.HaiSOMPerception;
-import nars.rl.Perception;
 import nars.rl.NARQLAgent;
+import nars.rl.Perception;
 import nars.rl.RawPerception;
 
 import javax.swing.*;
@@ -306,21 +306,21 @@ public class TestSOMAgent extends JPanel {
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
-        //RLEnvironment d = new Tetris(10, 8);
+        RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
         Global.DEBUG = false;
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
-        Global.DERIVATION_PRIORITY_LEAK = 0.95f;
-        Global.DERIVATION_DURABILITY_LEAK = 0.95f;
+        Global.DERIVATION_PRIORITY_LEAK = 0.85f;
+        Global.DERIVATION_DURABILITY_LEAK = 0.85f;
         int concepts = 2000;
         int conceptsPerCycle = 25;
 
-        float qLearnedConfidence = 0.8f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
 
         //Perception p = new GNGPerception(64);
         //Perception p = new AEPerception(18,2);
@@ -332,16 +332,16 @@ public class TestSOMAgent extends JPanel {
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 new RawPerception("L", 0.8f),
-                new RawPerception("P", 0.8f) {
+                /*new RawPerception("P", 0.8f) {
                     @Override
                     public float getFrequency(double d) {
                         // pos or negative binary
                         if (d > 0) return 1;
                         return 0;
                     }
-                },
-                new HaiSOMPerception("A", 3, 0.8f),
-                new HaiSOMPerception("B", 2, 0.8f)
+                },*/
+                new HaiSOMPerception("A", 4, 0.8f)
+                //new HaiSOMPerception("B", 2, 0.8f)
         );
 
 

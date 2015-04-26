@@ -609,9 +609,11 @@ public final class SyllogisticRules {
         } else {
             newCondition = oldCondition.setComponent(index, newComponent);
         }
-        Compound content;
+        final Compound content;
         if (newCondition != null) {
             content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
+            if (content == null)
+                return false;
         } else {
             Term p = premise1.getPredicate();
             if (p instanceof Compound)

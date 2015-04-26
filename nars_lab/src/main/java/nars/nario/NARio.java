@@ -8,6 +8,7 @@ import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
+import nars.io.TextOutput;
 import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
@@ -16,6 +17,7 @@ import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
 import nars.prototype.Default;
+import org.apache.commons.math3.linear.ArrayRealVector;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -32,10 +34,10 @@ public class NARio extends Run {
 
     static int memoryCyclesPerFrame = 50;
 
-    int movementStatusPeriod = 50;
-    int commandPeriod = 50;
+    int movementStatusPeriod = 1;
+    int commandPeriod = 10;
     //int keyStatePeriod = 25;
-    int radarPeriod = 40;
+    int radarPeriod = 2;
 
     private final NAR nar;
     private LevelScene level;
@@ -66,8 +68,40 @@ public class NARio extends Run {
     @Override
     public void levelFailed() {
 
-        int type = LevelGenerator.TYPE_UNDERGROUND;
-        startLevel((long) (Math.random() * 1000), 1, type);
+        int type = Math.random() > 0.5 ? LevelGenerator.TYPE_UNDERGROUND : LevelGenerator.TYPE_OVERGROUND;
+        startLevel((long) (Math.random() * 8000), 1, type);
+    }
+
+    public static double cosineSimilarity(double[] vectorA, double[] vectorB) {
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < vectorA.length; i++) {
+            dotProduct += vectorA[i] * vectorB[i];
+            double ai = vectorA[i];
+            double bi = vectorB[i];
+            normA += ai*ai;
+            normB += bi*bi;
+        }
+        normA = Math.sqrt(normA);
+        normB = Math.sqrt(normB);
+        return dotProduct / (normA * normB);
+    }
+
+    public static double cosineSimilarityScaled(double[] vectorA, double[] vectorB) {
+        double dotProduct = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < vectorA.length; i++) {
+            dotProduct += vectorA[i] * vectorB[i];
+            double ai = vectorA[i];
+            double bi = vectorB[i];
+            normA += ai*ai;
+            normB += bi*bi;
+        }
+        normA = Math.sqrt(normA);
+        normB = Math.sqrt(normB);
+        return dotProduct / (normA * normB) * (normA / normB);
     }
 
     public static void main(String[] arg) {
@@ -75,7 +109,8 @@ public class NARio extends Run {
 
         NAR nar = new NAR(new Default().simulationTime().setConceptBagSize(2500));
 
-        Global.TRUTH_EPSILON = 0.02f;
+        Global.EXIT_ON_EXCEPTION = true;
+        //Global.TRUTH_EPSILON = 0.01f;
 
         //nar.on(new TemporalParticlePlanner());
 
@@ -95,11 +130,12 @@ public class NARio extends Run {
 
         //new TextOutput(nar, System.out).setShowInput(true);
 
-        (nar.param).duration.set(memoryCyclesPerFrame);
-        (nar.param).outputVolume.set(0);
-        (nar.param).decisionThreshold.set(0.69);
-        nar.param.conceptsFiredPerCycle.set(75);
-        nar.setCyclesPerFrame(50);
+        nar.param.duration.set(memoryCyclesPerFrame);
+        nar.setCyclesPerFrame(memoryCyclesPerFrame);
+
+        nar.param.outputVolume.set(0);
+        nar.param.decisionThreshold.set(0.69);
+        nar.param.conceptsFiredPerCycle.set(250);
         nar.param.shortTermMemoryHistory.set(4);
 
         float fps = 20f;
@@ -113,6 +149,7 @@ public class NARio extends Run {
 
         NARio nario = new NARio(nar);
         //sw.setSpeed(0.95f);
+
     }
 
     ChangedTextInput chg;
@@ -262,7 +299,7 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
-            boolean representation_simple = false;
+            //boolean representation_simple = false;
             boolean right = false;
 
             String n(int x) {
@@ -273,10 +310,10 @@ public class NARio extends Run {
 
             public String direction(int i, int j) {
                 right = false;
-                if (!representation_simple) {
-                    //return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
-                    return "(*," + n(i) + "," + n(j) + ")";
-                } else {
+                //if (!representation_simple) {
+                //return "(*,"+String.valueOf(i)+","+String.valueOf(j)+")";
+                return "(*," + n(i) + "," + n(j) + ")";
+                /*} else {
                     if (Math.abs(i) > Math.abs(j)) {
                         if (i < 0) {
                             return "left";
@@ -292,16 +329,24 @@ public class NARio extends Run {
                         }
                     }
                     return "zero";
-                }
+                }*/
             }
 
-            protected void updateMovement(String direction, boolean truth) {
-                String s = "<" + direction + " --> moved>. :|: %" +
-                        (truth ? "1.0" : "0.0") + ";0.90%";
+            protected void updateMovement(String direction, float freq) {
+                String s = "<moved --> [" + direction + "]>. :|: %" +
+                        freq + ";0.90%";
                 nar.input(s);
             }
 
+
+            protected void updateMovement(int cx, int cy, int tx, int ty) {
+                double f = cosineSimilarityScaled(new double[]{cx, cy}, new double[]{tx, ty});
+                float ff = (float)(f / 2f + 0.5f);
+                updateMovement(direction(tx, ty), ff);
+            }
+
             int tt = 0;
+            int dx, dy, mx, my;
 
             @Override
             public void event(Class event, Object... arguments) {
@@ -392,11 +437,11 @@ public class NARio extends Run {
                 boolean movement = false;
 
                 if (lastX != -1) {
-                    int dx = Math.round((x - lastX) / 1);
-                    int dy = Math.round((y - lastY) / 1);
+                    dx = Math.round((x - lastX) / 1);
+                    dy = Math.round((y - lastY) / 1);
 
-                    int mx = Math.round((x - lastMX) / 16);
-                    int my = Math.round((y - lastMY) / 16);
+                    mx = Math.round((x - lastMX) / 16);
+                    my = Math.round((y - lastMY) / 16);
 
                     //if no movement, decrease priority of sense
                     if ((dx == 0) && (dy == 0)) {
@@ -406,51 +451,64 @@ public class NARio extends Run {
                         movement = true;
                     }
 
+//
+//                    if (movement || (www % movementStatusPeriod == 0)) {
+//
+////                            if (!((mx==0) && (my==0))) {
+////                                String dir=direction(mx,my);
+////                                if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
+////                                    //if significantly changed block position, record it for next difference
+////                                    nar.input("<right --> moved>. :|:");
+////                                    lastMX = x;
+////                                    lastMY = y;
+////                                }
+////                                else {
+////                                    nar.input("(--, <right --> moved>). :|:");
+////                                }
+////                            }
+//
+////                        updateMovement("nowhere", (mx == 0 && my == 0));
+////                        updateMovement("left", (mx > 0));
+////                        updateMovement("right", (mx < 0));
+//
+//                        //this one is wrong like when getting stuck indicates:
+//                        //  velInput.set(/*"$" + movementPriority + "$"*/"<(*," + slog(dx) + "," + slog(dy) + ") --> velocity>. :|:");
+//
+//                    } else {
+//                        //if (moveInput.set("<"+direction(0,0)" --> moved>. :|:")) { //stopped
+//                        //}
+//
+//                    }
+//
+                }
 
-                    if (movement || (www % movementStatusPeriod == 0)) {
+                lastMX = x;
+                lastMY = y;
 
-//                            if (!((mx==0) && (my==0))) {
-//                                String dir=direction(mx,my);
-//                                if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
-//                                    //if significantly changed block position, record it for next difference
-//                                    nar.input("<right --> moved>. :|:");
-//                                    lastMX = x;
-//                                    lastMY = y;
-//                                }
-//                                else {
-//                                    nar.input("(--, <right --> moved>). :|:");
-//                                }
-//                            }
+                if (www % movementStatusPeriod == 0) {
 
-//                        updateMovement("nowhere", (mx == 0 && my == 0));
-//                        updateMovement("left", (mx > 0));
-//                        updateMovement("right", (mx < 0));
-
-                        //this one is wrong like when getting stuck indicates:
-                        //  velInput.set(/*"$" + movementPriority + "$"*/"<(*," + slog(dx) + "," + slog(dy) + ") --> velocity>. :|:");
-
-                    } else {
-                        //if (moveInput.set("<"+direction(0,0)+" --> moved>. :|:")) { //stopped
-                        lastMX = x;
-                        lastMY = y;
-                        //}
-
+                    if ((dx == 0) && (dy == 0)) {
+                        updateMovement(direction(0,0), 1.0f);
                     }
-
+                    else {
+                        //4 basis vectors
+                        int maxVelocity = 64;
+                        updateMovement(dx, dy, 0, -maxVelocity);
+                        updateMovement(dx, dy, 0, maxVelocity);
+                        updateMovement(dx, dy, -maxVelocity, 0);
+                        updateMovement(dx, dy, maxVelocity, 0);
+                    }
                 }
 
                     /*if (movement)*/
-                {
+                if (www % radarPeriod == 0)  {
                     //predict next type of block at next current position
 
-                    int k = -1; //cycle through a different seeing each cycle
-
-                    int rad = 2;
+                    int rad = 4;
                     for (int i = -rad; i <= rad; i++) {
                         for (int j = -rad; j <= rad; j++) {
 
-                            if ((i == 0) && (j==0)) continue;
-                            k++;
+                            if ((i == 0) && (j == 0)) continue;
 
                             int block = level.level.getBlock(x + i * 16f - 8, y + j * 16f - 8);
                             int data = level.level.getData(x + i * 16 - 8, y + j * 16 - 8);
@@ -467,19 +525,19 @@ public class NARio extends Run {
                             String direction = direction(i, j);
 
                             char datachar = (char) ('r' + data);
-                            String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
+                            //String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
 
 
 
-                            String s2 = "<{" + datachar + "} --> " + direction + ">. :|:";
+                            float sightPriority = (float)(2.0 / (2.0 + Math.sqrt(i*i+j*j)));
 
-                            if (www % radarPeriod == 0) {
-                                nar.input(s);
+                            String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [" + datachar + "]>. :|:";
+                            nar.input(s2);
+
+
 
                                 //System.out.println(i + " " + j + " " +  s2);
 
-                                nar.input(s2);
-                            }
 
 //                            if ((sight[k] != null) && (sight[k].equals(s))) {
 //                                continue;
@@ -559,7 +617,7 @@ public class NARio extends Run {
                             //nar.addInput(budget + "(^" + ko + "," + state + ")!");
                         }
 
-                        keyTime[k] = nextKeyTime;
+                        keyTime[kk] = nextKeyTime;
                     }
 
 
@@ -587,7 +645,8 @@ public class NARio extends Run {
                             int dx = Math.round((x - s.x) / 16);
                             int dy = Math.round((y - s.y) / 16);
 
-                            chg.set(/*"$" + sightPriority + "$" +*/
+                            float sightPriority = (float)(2.0 / (2.0 + Math.sqrt(dx*dx+dy*dy)));
+                            chg.set("$" + sightPriority + "$" +
                                     " <{" + type + "} --> " + direction(dx, dy) + ">. :|:");
 
                             //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
@@ -601,19 +660,15 @@ public class NARio extends Run {
                     lastY = y;
                     gotCoin = 0;
                 }
-                if (www % commandPeriod == 0) {
-                    nar.input("<right --> " + direction(1, 0) + ">!");
-                    nar.input("<nowhere --> moved>! %0%");
 
-                    //nar.addInput("<up --> moved>!");
-                    //nar.addInput("<up --> moved>!");
-                     /* nar.addInput("<"+direction(1,0)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(2,0)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(1,1)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(2,2)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(1,-1)+" --> moved>!"); //move right
-                    nar.addInput("<"+direction(2,-2)+" --> moved>!"); //move right */
-                    //nar.addInput("<"+direction(1,1)+" --> moved>!");
+                if (www % commandPeriod == 0) {
+
+                    //move to the right
+                    nar.input("<moved --> [" + direction(1, 0) + "]>! %1.0;0.9%");
+
+                    //dont remain still
+                    nar.input("<moved --> [" + direction(0, 0) + "]>! %0.1;0.9%");
+
                 }
                 www++;
                 cycle++;

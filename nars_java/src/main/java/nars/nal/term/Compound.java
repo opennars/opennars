@@ -381,9 +381,9 @@ public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
         Term c = clone(cloneTermsDeep());
         if (c == null) return null;
 
-        if (c.operator() != operator()) {
-            throw new RuntimeException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
-        }
+//        if (c.operator() != operator()) {
+//            throw new RuntimeException("cloneDeep resulted in different class: " + c + '(' + c.getClass() + ") from " + this + " (" + getClass() + ')');
+//        }
 
 
         return ((Compound) c);

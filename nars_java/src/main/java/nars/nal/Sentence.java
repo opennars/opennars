@@ -305,7 +305,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 //        }
 
         X x = (X)t.normalized();
-        if (invalidSentenceTerm(x)) {
+        if (x == null || invalidSentenceTerm(x)) {
             return null;
         }
 
