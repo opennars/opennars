@@ -44,21 +44,18 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     
 
     
-    int taskLinkBagLevels;
-    
+
     /** Size of TaskLinkBag */
     int taskLinkBagSize;
-    
-    int termLinkBagLevels;
-    
+
+
     /** Size of TermLinkBag */
     int termLinkBagSize;
     
     /** determines maximum number of concepts */
-    int conceptBagSize;    
-    
-    int conceptBagLevels;
-    
+    int conceptBagSize;
+
+
     /** max # subconscious "subconcept" concepts */
     int subconceptBagSize;
 
@@ -96,14 +93,11 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
         setConceptBagSize(1024);
         setSubconceptBagSize(256);
-        setConceptBagLevels(64);
-        
+
         setTaskLinkBagSize(32);
-        setTaskLinkBagLevels(16);
 
         setTermLinkBagSize(96);
-        setTermLinkBagLevels(28);
-        
+
         setNovelTaskBagSize(32);
         setNovelTaskBagLevels(16);
 
@@ -226,7 +220,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     
     public Bag<Term, Concept> newConceptBag() {
-        return new LevelBag(getConceptBagLevels(), getConceptBagSize());
+        return new ChainBag(getConceptBagSize());
     }
     
     CacheBag<Term,Concept> newSubconceptBag() {        
@@ -259,21 +253,6 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     public Default setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
     
-    
-    public int getConceptBagLevels() { return conceptBagLevels; }    
-    public Default setConceptBagLevels(int bagLevels) { this.conceptBagLevels = bagLevels; return this;  }
-        
-    /**
-     * @return the taskLinkBagLevels
-     */
-    public int getTaskLinkBagLevels() {
-        return taskLinkBagLevels;
-    }
-       
-    public Default setTaskLinkBagLevels(int taskLinkBagLevels) {
-        this.taskLinkBagLevels = taskLinkBagLevels;
-        return this;
-    }
 
     public Default setNovelTaskBagSize(int taskBufferSize) {
         this.taskBufferSize = taskBufferSize;
@@ -303,14 +282,7 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         return this;
     }
 
-    public int getTermLinkBagLevels() {
-        return termLinkBagLevels;
-    }
 
-    public Default setTermLinkBagLevels(int termLinkBagLevels) {
-        this.termLinkBagLevels = termLinkBagLevels;
-        return this;
-    }
 
     public int getConceptTermLinks() {
         return termLinkBagSize;
@@ -434,13 +406,10 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
             setConceptBagSize(128);
             setSubconceptBagSize(16);
-            setConceptBagLevels(8);
 
             setTaskLinkBagSize(16);
-            setTaskLinkBagLevels(4);
 
             setTermLinkBagSize(16);
-            setTermLinkBagLevels(4);
 
             setNovelTaskBagSize(16);
             setNovelTaskBagLevels(4);

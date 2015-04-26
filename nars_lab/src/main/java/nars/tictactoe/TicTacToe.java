@@ -37,7 +37,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.prototype.Discretinuous;
+import nars.prototype.Classic;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,7 +83,7 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
-        nar = new NAR(new Discretinuous().
+        nar = new NAR(new Classic().
                 setConceptBagSize(1000).
                 setSubconceptBagSize(10000).
                 simulationTime());

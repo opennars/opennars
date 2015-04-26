@@ -5,7 +5,7 @@ import nars.ProtoNAR;
 import nars.nal.ScriptNALTest;
 import nars.prototype.Curve;
 import nars.prototype.Default;
-import nars.prototype.Discretinuous;
+import nars.prototype.Classic;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class NAL2ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null).level(3), //needs 3 for sets
                 new Curve(),
                 new Default.DefaultMicro(),
-                new Discretinuous()
+                new Classic()
         );
     }
 

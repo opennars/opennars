@@ -5,7 +5,6 @@ import nars.prototype.Default;
 import nars.ProtoNAR;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
-import nars.prototype.Discretinuous;
 import nars.prototype.Solid;
 import org.junit.Test;
 import org.junit.runners.Parameterized;

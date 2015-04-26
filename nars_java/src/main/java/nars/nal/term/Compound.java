@@ -38,7 +38,7 @@ import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 /** a compound term */
-public abstract class Compound implements AbstractTerm, Iterable<Term>, IPair {
+public abstract class Compound implements Term, Iterable<Term>, IPair {
 
 
     @Override

@@ -1,7 +1,7 @@
 package nars.nal;
 
 
-import nars.prototype.Discretinuous;
+import nars.prototype.Classic;
 import nars.NAR;
 import nars.Param;
 
@@ -143,7 +143,7 @@ public class TestQController {
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new NAR(new Discretinuous().setConceptBagSize(8192))
+        return new NAR(new Classic().setConceptBagSize(8192))
         //return build(g, g.param);
         ;
     }

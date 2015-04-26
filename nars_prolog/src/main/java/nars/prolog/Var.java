@@ -18,7 +18,6 @@
 package nars.prolog;
 
 import nars.nal.term.AbstractTerm;
-import nars.nal.term.Atom;
 import nars.prolog.net.AbstractSocket;
 
 import java.util.AbstractMap;
