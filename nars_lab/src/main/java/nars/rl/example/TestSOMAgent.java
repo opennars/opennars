@@ -7,10 +7,19 @@ import jurls.core.utils.MatrixImage;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.ProtoNAR;
+import nars.budget.Bag;
+import nars.budget.Budget;
 import nars.gui.NARSwing;
+import nars.nal.Sentence;
+import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
 import nars.rl.HaiSOMPerception;
 import nars.rl.NARQLAgent;
@@ -20,6 +29,8 @@ import nars.rl.RawPerception;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+
+import static nars.nal.UtilityFunctions.or;
 
 /**
  * TODO add parameters determining what sensor input is exposed to NARS
@@ -219,14 +230,14 @@ public class TestSOMAgent extends JPanel {
                     d.component().repaint();
 
 
-                    if (xstates.size() != states.size()) {
+                    //if (xstates.size() != states.size()) {
                         xstates.clear();
                         Iterables.addAll(xstates, states);
-                    }
-                    if (xactions.size() != actions.size()) {
+                    //}
+                    //if (xactions.size() != actions.size()) {
                         xactions.clear();
                         Iterables.addAll(xactions, actions);
-                    }
+                    //}
 
                     repaint();
 
@@ -238,6 +249,7 @@ public class TestSOMAgent extends JPanel {
                         }
                     }, xstates.size(), xactions.size(), -1, 1);
 
+                    nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
 
 //                    mi.draw(new Data2D() {
 //                        @Override
@@ -295,7 +307,7 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    private final int cyclesPerFrame = 100;
+    private final static int cyclesPerFrame = 100;
 
     /**
      * @param args the command line arguments
@@ -315,9 +327,8 @@ public class TestSOMAgent extends JPanel {
         Global.DEBUG = false;
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
-        Global.DERIVATION_PRIORITY_LEAK = 0.85f;
-        Global.DERIVATION_DURABILITY_LEAK = 0.85f;
-        int concepts = 2000;
+
+        int concepts = 256;
         int conceptsPerCycle = 25;
 
         float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
@@ -326,7 +337,44 @@ public class TestSOMAgent extends JPanel {
         //Perception p = new AEPerception(18,2);
 
 
-        Default dd = new Default(concepts, conceptsPerCycle, 4);
+        Default dd = new Default(concepts, conceptsPerCycle, 4) {
+
+//            @Override
+//            public Memory.DerivationProcessor getDerivationProcessor() {
+//                return new Memory.ConstantLeakyDerivations(0.95f, 0.95f);
+//            }
+
+            /** ranks beliefs by recency. the relevance decays proportional to delta time from now divided by window length (in cycles) */
+            public float rankBeliefRecent(final Sentence s, final long now, final float window, final float eternalWindow) {
+                final float confidence = s.truth.getConfidence();
+
+                //final float originality = s.stamp.getOriginality();
+                final float w, when;
+                if (s.isEternal()) {
+                    w = eternalWindow;
+                    when = s.getCreationTime();
+                }
+                else {
+                    w = window;
+                    when = s.getOccurrenceTime();
+                }
+                float timeRelevance = 1f / (1f+ Math.abs(now - when)/w);
+                //return or(confidence, Math.min(originality, timeRelevance));
+                return or(confidence, timeRelevance);
+            }
+
+
+            @Override
+            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+                return new DefaultConcept(t, b, taskLinks, termLinks, m) {
+//                    @Override
+//                    public float rankBelief(Sentence s, long now) {
+//                        return rankBeliefRecent(s, now, cyclesPerFrame * 200, cyclesPerFrame * 1000);
+//                    }
+                };
+            }
+        };
+
         dd.setTaskLinkBagSize(24);
         dd.setInternalExperience(null);
 

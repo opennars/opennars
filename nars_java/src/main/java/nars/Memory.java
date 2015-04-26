@@ -176,7 +176,7 @@ public class Memory implements Serializable {
 
         for (int i = 0; i < cbn; i++) {
             ConceptBuilder c  =  cb.get(i);
-            concept = c.newConcept(budget, term, this);
+            concept = c.newConcept(term, budget, this);
             if (concept != null) break;
         }
 
@@ -311,7 +311,10 @@ public class Memory implements Serializable {
         //------------------------------------ 
         reset(false);
 
-        this.event.set(conceptIndices, true, Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class, Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class, Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class);
+        this.event.set(conceptIndices, true,
+                Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class,
+                Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class
+                /*Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class*/);
     }
 
 

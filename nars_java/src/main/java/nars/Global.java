@@ -288,8 +288,6 @@ public class Global {
 
 
 
-    public static float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-    public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
 
 
     public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above

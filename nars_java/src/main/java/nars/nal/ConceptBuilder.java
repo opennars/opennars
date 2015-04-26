@@ -7,5 +7,5 @@ import nars.nal.term.Term;
 
 
 public interface ConceptBuilder {
-    public Concept newConcept(Budget b, Term t, Memory m);
+    public Concept newConcept(Term t, Budget b, Memory m);
 }

@@ -1,15 +1,13 @@
 package vnc;
 
 import nars.Events;
+import nars.Global;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by me on 4/16/15.
@@ -26,7 +24,8 @@ abstract public class ConceptMap extends AbstractReaction {
     public void reset() { }
 
     public ConceptMap(NAR nar) {
-        super(nar, Events.ConceptNew.class, Events.ConceptForget.class, Events.CycleEnd.class, Events.FrameEnd.class, Events.ResetStart.class);
+        super(nar, Events.ConceptNew.class, Events.ConceptRemember.class,
+                Events.ConceptForget.class, Events.CycleEnd.class, Events.FrameEnd.class, Events.ResetStart.class);
     }
 
     protected void onFrame() { }
@@ -50,7 +49,7 @@ abstract public class ConceptMap extends AbstractReaction {
         if (event == Events.ResetStart.class) {
             frame = 0;
             reset();
-        } else if (event == Events.ConceptNew.class) {
+        } else if ((event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
             Concept c = (Concept) args[0];
             if (contains(c))
                 onConceptNew(c);
@@ -90,6 +89,9 @@ abstract public class ConceptMap extends AbstractReaction {
     /** uses a predefined set of terms that will be mapped */
     abstract public static class ConceptMapSet extends ConceptMap implements Iterable<Term> {
 
+
+        public final Set<Term> inclusions = Global.newHashSet(16);
+
         public final Map<Term,Concept> values = new LinkedHashMap();
 
         public ConceptMapSet(NAR nar) {
@@ -101,17 +103,20 @@ abstract public class ConceptMap extends AbstractReaction {
             return values.keySet().iterator();
         }
 
-        public void add(Concept c) {
+        public void include(Concept c) {
             values.put(c.term, c);
         }
 
-        public boolean contains(Term t) {
-            return values.containsKey(t);
+        public boolean contains(final Term t) {
+            if (!values.containsKey(t)) {
+                return inclusions.contains(t);
+            }
+            return true;
         }
 
         @Override
         protected void onConceptNew(Concept c) {
-            add(c);
+            include(c);
         }
 
         @Override
@@ -119,9 +124,14 @@ abstract public class ConceptMap extends AbstractReaction {
             values.remove(c.term);
         }
 
-        public void add(Term a) {
+        /** set a term to be present always in this map, even if the conept disappears */
+        public void include(Term a) {
+            inclusions.add(a);
             values.put(a, null);
         }
+
+        /** remove an inclusion, and/or add an exclusion */
+        //TODO public void exclude(Term a) { }
 
         public int size() {
             return values.size();

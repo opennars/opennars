@@ -41,7 +41,7 @@ import java.util.*;
 
 import static com.google.common.collect.Iterators.*;
 import static nars.nal.BudgetFunctions.divide;
-import static nars.nal.BudgetFunctions.rankBelief;
+import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
@@ -581,7 +581,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public static Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    public Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
 
         long now = memory.time();
 
@@ -825,6 +825,28 @@ abstract public class Concept extends Item<Term> implements Termed {
         return termLinks.update(termLink);
 
     }
+
+
+    /**
+     * Determine the rank of a judgment by its quality and originality (stamp
+     baseLength), called from Concept
+     *
+     * @param s The judgment to be ranked
+     * @return The rank of the judgment, according to truth value only
+     */
+    public float rankBelief(final Sentence s, final long now) {
+        return rankBeliefOriginal(s);
+
+    }
+
+
+
+    public static float rankBeliefOriginal(final Sentence judg) {
+        final float confidence = judg.truth.getConfidence();
+        final float originality = judg.stamp.getOriginality();
+        return or(confidence, originality);
+    }
+
 
     /**
      * Return a string representation of the concept, called in ConceptBag only

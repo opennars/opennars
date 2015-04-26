@@ -88,7 +88,7 @@ public class AxiomaticConcept extends Concept {
         ConceptBuilder cb = new ConceptBuilder() {
 
             @Override
-            public Concept newConcept(Budget b, Term t, Memory m) {
+            public Concept newConcept(Term t, Budget b, Memory m) {
                 Bag<Sentence, TaskLink> ttaskLinks = new CurveBag(10, true);
                 Bag<TermLinkKey, TermLink> ttermLinks = new CurveBag(10, true);;
 

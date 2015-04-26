@@ -102,7 +102,7 @@ abstract public class NARQLAgent extends NARQL {
 
         for (int i = 0; i < env.numActions(); i++) {
             Term a = operation(i);
-            actions.add(a);
+            actions.include(a);
         }
 
         possibleDesire(0.75f);

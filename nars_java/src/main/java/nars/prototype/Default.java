@@ -6,7 +6,6 @@ import nars.Memory.Timing;
 import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.budget.bag.CacheBag;
-import nars.budget.bag.LevelBag;
 import nars.budget.bag.experimental.ChainBag;
 import nars.control.DefaultCore;
 import nars.event.AbstractExecutive;
@@ -202,19 +201,28 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
         n.on(new RuntimeNARSettings());
 
-        n.memory.setDerivationProcessor(new Memory.ConstantLeakyDerivations(Global.DERIVATION_PRIORITY_LEAK, Global.DERIVATION_DURABILITY_LEAK));
+        n.memory.setDerivationProcessor(getDerivationProcessor());
 
     }
+
+    public Memory.DerivationProcessor getDerivationProcessor() {
+        final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        return new Memory.ConstantLeakyDerivations(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK);
+    }
+
     @Override
-    public Concept newConcept(Budget b, final Term t, final Memory m) {
+    public Concept newConcept(final Term t, final Budget b, final Memory m) {
         Bag<Sentence, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new ChainBag<>(getConceptTermLinks());
 
-        return new DefaultConcept(t, b, taskLinks, termLinks, m);
+        return newConcept(t, b, taskLinks, termLinks, m);
     }
 
 
-
+    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+        return new DefaultConcept(t, b, taskLinks, termLinks, m);
+    }
     
     public Bag<Term, Concept> newConceptBag() {
         return new ChainBag(getConceptBagSize());

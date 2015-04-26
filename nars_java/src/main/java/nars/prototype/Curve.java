@@ -57,7 +57,7 @@ public class Curve extends Default {
     }
     
     @Override
-    public Concept newConcept(Budget b, final Term t, final Memory m) {
+    public Concept newConcept(final Term t, Budget b, final Memory m) {
 
 
         Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), curve, randomRemoval);

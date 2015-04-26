@@ -63,7 +63,7 @@ public class Neuromorphic extends Curve {
     }
 
     @Override
-    public Concept newConcept(Budget b, final Term t, final Memory m) {
+    public Concept newConcept(final Term t, Budget b, final Memory m) {
 
         if (fairdelaybag) {
             DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(
@@ -75,7 +75,7 @@ public class Neuromorphic extends Curve {
             return new DefaultConcept(t, b, taskLinks, termLinks, m);
         }
         else {
-            return super.newConcept(b, t, m);
+            return super.newConcept(t, b, m);
         }
 
 

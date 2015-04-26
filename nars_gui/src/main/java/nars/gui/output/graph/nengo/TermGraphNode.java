@@ -209,17 +209,17 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
         this.conceptReaction = new ConceptReaction(memory) {
 
             @Override
-            public void onFiredConcept(Concept c) {
+            public void onConceptProcessed(Concept c) {
                 refresh(c);
             }
 
             @Override
-            public void onNewConcept(Concept c) {
+            public void onConceptRemember(Concept c) {
                 refresh(c);
             }
 
             @Override
-            public void onForgetConcept(Concept c) {
+            public void onConceptForget(Concept c) {
                 remove(c);
             }
         };

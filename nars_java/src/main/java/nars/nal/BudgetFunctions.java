@@ -50,34 +50,6 @@ public final class BudgetFunctions extends UtilityFunctions {
         return max(exp, (1f - exp)*0.75f);
     }
 
-    /**
-     * Determine the rank of a judgment by its quality and originality (stamp
- baseLength), called from Concept
-     *
-     * @param s The judgment to be ranked
-     * @return The rank of the judgment, according to truth value only
-     */
-    public final static float rankBelief(final Sentence s, final long now) {
-        final float confidence = s.truth.getConfidence();
-
-        //if (s.isEternal()) {
-            final float originality = s.stamp.getOriginality();
-            return or(confidence, originality);
-        //}
-//        else {
-//            long window = 30;//TODO relate to duration
-//            float timeRelevance = window / (window + Math.abs(now - s.getOccurrenceTime()));
-//            if (timeRelevance > 1.0f) timeRelevance = 1.0f;
-//            return or(confidence, timeRelevance);
-//        }
-    }
-
-    public final static float rankBeliefOriginal(final Sentence judg) {
-        final float confidence = judg.truth.getConfidence();
-        final float originality = judg.stamp.getOriginality();
-        return or(confidence, originality);
-    }
-
 
     /**
      * Evaluate the quality of a revision, then de-prioritize the premises

@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.budget.Bag;
 import nars.budget.Budget;
 import nars.budget.bag.LevelBag;
-import nars.budget.bag.experimental.ChainBag;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
@@ -60,7 +59,7 @@ public class Classic extends Default {
 
 
     @Override
-    public Concept newConcept(Budget b, Term t, Memory m) {
+    public Concept newConcept(Term t, Budget b, Memory m) {
         Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
         Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 

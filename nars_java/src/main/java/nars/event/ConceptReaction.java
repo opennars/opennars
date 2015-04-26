@@ -19,7 +19,7 @@ abstract public class ConceptReaction extends AbstractReaction {
     }
 
     public ConceptReaction(Memory m) {
-        super(m.event, true, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class);
+        super(m.event, true, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class, Events.ConceptRemember.class);
 
         this.memory = m;
         //add existing events
@@ -29,7 +29,7 @@ abstract public class ConceptReaction extends AbstractReaction {
                 memory.concepts.forEach(new Consumer<Concept>() {
                     @Override
                     public void accept(Concept concept) {
-                        onNewConcept(concept);
+                        onConceptRemember(concept);
                     }
                 });
             }
@@ -38,29 +38,34 @@ abstract public class ConceptReaction extends AbstractReaction {
 
     @Override
     public void event(final Class event, final Object[] args) {
-        if (event == Events.ConceptNew.class) {
+        if ((event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
             Concept c = (Concept)args[0];
-            onNewConcept(c);
+            onConceptRemember(c);
         }
         else if (event == Events.ConceptForget.class) {
             Concept c = (Concept)args[0];
-            onForgetConcept(c);
+            onConceptForget(c);
         }
         else if (event == Events.ConceptFired.class) {
             Concept c = ((ConceptProcess)args[0]).getCurrentConcept();
-            onFiredConcept(c);
+            onConceptProcessed(c);
         }
         else if (event == Events.ResetStart.class) {
             memory.concepts.forEach(new Consumer<Concept>() {
                 @Override
                 public void accept(Concept concept) {
-                    onForgetConcept(concept);
+                    onConceptForget(concept);
                 }
             });
         }
     }
 
-    abstract public void onNewConcept(Concept c);
-    abstract public void onForgetConcept(Concept c);
-    abstract public void onFiredConcept(Concept c);
+    /** called for concepts newly created or remembered (from subconcepts) */
+    abstract public void onConceptRemember(Concept c);
+
+    /** called if concept leaves main memory (either removed entirely, or moved to subconcepts) */
+    abstract public void onConceptForget(Concept c);
+
+    /** called if a concept is processed during ConceptProcessed */
+    abstract public void onConceptProcessed(Concept c);
 }
