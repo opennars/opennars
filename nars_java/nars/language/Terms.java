@@ -333,7 +333,7 @@ public class Terms {
             t1=new Sentence(t1,Symbols.TERM_NORMALIZING_WORKAROUND_MARK,null,null).term;
             
             
-            if (!t1.hasVarIndep() && !(t1 instanceof Variable)) {
+            if (!(t1 instanceof Variable)) {
                 componentLinks.add(new TermLink(type, t1, i));
             }
             if ((tEquivalence || (tImplication && (i == 0))) && ((t1 instanceof Conjunction) || (t1 instanceof Negation))) {
