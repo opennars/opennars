@@ -80,7 +80,7 @@ public class DefaultCore extends SequentialCore {
                 break;
         }
 
-        memory.inputDerived();
+        //int afterNewTasks = memory.inputDerived();
 
         //1 novel tasks if numNewTasks empty
         if (newTasks.isEmpty()) {
@@ -93,7 +93,7 @@ public class DefaultCore extends SequentialCore {
             }
         }
 
-        memory.inputDerived();
+        //int afterNovelTasks = memory.inputDerived();
 
         //1 concept if (memory.newTasks.isEmpty())*/
         int conceptsToFire = newTasks.isEmpty() ? memory.param.conceptsFiredPerCycle.get() : 0;
@@ -104,7 +104,10 @@ public class DefaultCore extends SequentialCore {
             }
         }
 
-        memory.inputDerived();
+        int afterConceptsFire = memory.inputDerived();
+
+
+        //System.out.println("derivation: " + afterNewTasks + ", " + afterNovelTasks + ", " + afterConceptsFire);
 
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,

@@ -22,7 +22,7 @@ public interface BagTransaction<K,V extends Item<K>> extends Budget.Budgetable {
      * */
     V updateItem(V v);
 
-    public default V update(V v) {
+    public default V update(final V v) {
         if (v == null) throw new RuntimeException("null item");
 
         boolean changed = false;

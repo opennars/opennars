@@ -28,13 +28,14 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new Curve(),
                 new Default.DefaultMicro(),
                 new Classic(),
-                new Solid(1, 64, 0, 3, 0, 3)
+                new Solid(1, 32, 1, 1, 1,2)
         );
     }
 
     public int getMaxCycles() {
         if (build instanceof Solid)
-            return 10;
+            return 1; //yes needs only ONE cycle for these tests
+
         return 500;
     }
 

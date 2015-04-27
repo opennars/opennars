@@ -184,14 +184,17 @@ public class Memory implements Serializable {
     }
 
     /** all accumulated derivations are input to the memory in the order they have been sorted, obeying any input quantity limits */
-    public synchronized void inputDerived() {
-        if (!derivations.isEmpty()) {
+    public synchronized int inputDerived() {
+        if (derivations.isEmpty()) return 0;
 
-            for (Task t : derivations) {
-                taskAdd(t);
-            }
-            derivations.clear();
+        int c = 0;
+        for (Task t : derivations) {
+            taskAdd(t);
+            c++;
         }
+        derivations.clear();
+
+        return c;
     }
 
     @Deprecated public static enum Forgetting {

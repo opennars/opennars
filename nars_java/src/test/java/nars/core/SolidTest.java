@@ -21,13 +21,12 @@ public class SolidTest {
     @Test
     public void testDetective() throws FileNotFoundException {
 
-        int time = 48; //should solve the example in few cycles
+        int time = 96; //should solve the example in few cycles
 
         Global.DEBUG = true;
 
-        Solid s = new Solid(3, 400, 1, 4, 1, 3);
-        s.param.duration.set(1);
-//        s.param.noveltyHorizon.set(2);
+        Solid s = new Solid(3, 600, 1, 1, 1, 3);
+        s.param.duration.set(2);
 
         TestNAR n = new TestNAR(s);
 

@@ -8,7 +8,6 @@ import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
-import nars.io.TextOutput;
 import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
@@ -17,7 +16,6 @@ import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
 import nars.prototype.Default;
-import org.apache.commons.math3.linear.ArrayRealVector;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -36,7 +34,6 @@ public class NARio extends Run {
 
     int movementStatusPeriod = 1;
     int commandPeriod = 50;
-    //int keyStatePeriod = 25;
     int radarPeriod = 3;
 
     private final NAR nar;
@@ -73,6 +70,8 @@ public class NARio extends Run {
 
     }
 
+    int dx, dy, mx, my;
+
     protected void goals() {
 
         //move, mostly to the right
@@ -94,20 +93,22 @@ public class NARio extends Run {
         nar.input("<nars --> coin>. :|:");
         System.out.println("MONEY");
     }
+
     protected void hurt() {
         nar.input("<nars --> died>. :|:");
         goals();
         System.out.println("OUCH");
     }
+
     public void stomp() {
         nar.input("<nars --> stomp>. :|:");
         System.out.println("KILL");
     }
+
     public void trip() {
         nar.input("<nars --> trip>. :|:");
         System.out.println("TRIP");
     }
-
 
 
     @Override
@@ -125,8 +126,8 @@ public class NARio extends Run {
             dotProduct += vectorA[i] * vectorB[i];
             double ai = vectorA[i];
             double bi = vectorB[i];
-            normA += ai*ai;
-            normB += bi*bi;
+            normA += ai * ai;
+            normB += bi * bi;
         }
         normA = Math.sqrt(normA);
         normB = Math.sqrt(normB);
@@ -141,8 +142,8 @@ public class NARio extends Run {
             dotProduct += vectorA[i] * vectorB[i];
             double ai = vectorA[i];
             double bi = vectorB[i];
-            normA += ai*ai;
-            normB += bi*bi;
+            normA += ai * ai;
+            normB += bi * bi;
         }
         normA = Math.sqrt(normA);
         normB = Math.sqrt(normB);
@@ -183,7 +184,7 @@ public class NARio extends Run {
         nar.param.conceptsFiredPerCycle.set(1000);
         nar.param.shortTermMemoryHistory.set(5);
 
-        float fps = 20f;
+        float fps = 10f;
         gameRate = 1.0f / fps;
 
 
@@ -299,7 +300,7 @@ public class NARio extends Run {
 
     @Override
     protected LevelScene newLevel(long seed, int difficulty, int type) {
-        return new LevelScene(graphicsConfiguration, this, 4, 1, LevelGenerator.TYPE_OVERGROUND) {
+        return new LevelScene(graphicsConfiguration, this, seed, 1, Math.random() < 0.5 ?  LevelGenerator.TYPE_OVERGROUND : LevelGenerator.TYPE_UNDERGROUND) {
             @Override
             protected Mario newMario(LevelScene level) {
                 return new Mario(level) {
@@ -353,7 +354,7 @@ public class NARio extends Run {
     public void ready() {
         //super.ready();
 
-        scene = newLevel((int)(Math.random() * 1000), 1, LevelGenerator.TYPE_OVERGROUND);
+        scene = newLevel((int) (Math.random() * 1000), 1, LevelGenerator.TYPE_OVERGROUND);
 
         level = (LevelScene) scene;
 
@@ -386,23 +387,20 @@ public class NARio extends Run {
             boolean right = false;
 
 
-
-
             protected void updateMovement(String direction, float freq) {
                 String s = "<moved --> [" + direction + "]>. :|: %" +
-                        freq + ";0.90%";
+                        freq + ";0.80%";
                 nar.input(s);
             }
 
 
             protected void updateMovement(int cx, int cy, int tx, int ty) {
                 double f = cosineSimilarityScaled(new double[]{cx, cy}, new double[]{tx, ty});
-                float ff = (float)(f / 2f + 0.5f);
+                float ff = (float) (f / 2f + 0.5f);
                 updateMovement(direction(-tx, -ty), ff); //for some reason the sign needs negated
             }
 
-            int tt = 0;
-            int dx, dy, mx, my;
+
 
             @Override
             public void event(Class event, Object... arguments) {
@@ -421,7 +419,6 @@ public class NARio extends Run {
                     //                System.out.println();
                 }
 
-                tt++;
                 /*
                 if(tt%19==0) {
                     int[] ev2=new int[]{Mario.KEY_DOWN,Mario.KEY_JUMP,Mario.KEY_JUMP,Mario.KEY_LEFT,Mario.KEY_RIGHT,Mario.KEY_SPEED,Mario.KEY_UP};
@@ -490,7 +487,6 @@ public class NARio extends Run {
                 float x = level.mario.x;
                 float y = level.mario.y;
 
-                boolean movement = false;
 
                 if (lastX != -1) {
                     dx = Math.round((x - lastX) / 1);
@@ -499,13 +495,13 @@ public class NARio extends Run {
                     mx = Math.round((x - lastMX) / 16);
                     my = Math.round((y - lastMY) / 16);
 
-                    //if no movement, decrease priority of sense
-                    if ((dx == 0) && (dy == 0)) {
-                        //sightPriority/=2.0f;
-                        //movementPriority/=2.0f;
-                    } else {
-                        movement = true;
-                    }
+//                    //if no movement, decrease priority of sense
+//                    if ((dx == 0) && (dy == 0)) {
+//                        //sightPriority/=2.0f;
+//                        //movementPriority/=2.0f;
+//                    } else {
+//                        movement = true;
+//                    }
 
 //
 //                    if (movement || (www % movementStatusPeriod == 0)) {
@@ -541,12 +537,11 @@ public class NARio extends Run {
                 lastMX = x;
                 lastMY = y;
 
-                if (www % movementStatusPeriod == 0) {
+                if (t % movementStatusPeriod == 0) {
 
                     if ((dx == 0) && (dy == 0)) {
-                        updateMovement(direction(0,0), 1.0f);
-                    }
-                    else {
+                        updateMovement(direction(0, 0), 1.0f);
+                    } else {
                         //4 basis vectors
                         int maxVelocity = 64;
                         updateMovement(dx, dy, 0, -maxVelocity);
@@ -557,7 +552,7 @@ public class NARio extends Run {
                 }
 
                     /*if (movement)*/
-                if (www % radarPeriod == 0)  {
+                if (t % radarPeriod == 0) {
                     //predict next type of block at next current position
 
                     int rad = 4;
@@ -584,15 +579,13 @@ public class NARio extends Run {
                             //String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
 
 
-
-                            float sightPriority = (float)(4.0 / (4.0 + Math.sqrt(i*i+j*j)));
+                            float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(i * i + j * j)));
 
                             String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [" + datachar + "]>. :|:";
                             nar.input(s2);
 
 
-
-                                //System.out.println(i + " " + j + " " +  s2);
+                            //System.out.println(i + " " + j + " " +  s2);
 
 
 //                            if ((sight[k] != null) && (sight[k].equals(s))) {
@@ -607,9 +600,6 @@ public class NARio extends Run {
 
                         }
                     }
-
-
-
 
 
                     int[] keys = new int[]{Mario.KEY_LEFT, Mario.KEY_RIGHT, Mario.KEY_UP, Mario.KEY_DOWN, Mario.KEY_JUMP, Mario.KEY_SPEED};
@@ -699,7 +689,7 @@ public class NARio extends Run {
                             int dx = Math.round((x - s.x) / 16);
                             int dy = Math.round((y - s.y) / 16);
 
-                            float sightPriority = (float)(4.0 / (4.0 + Math.sqrt(dx*dx+dy*dy)));
+                            float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
 
                             nar.input("$" + sightPriority + "$" +
                                     " <{" + type + "} --> " + direction(dx, dy) + ">. :|:");
@@ -715,10 +705,10 @@ public class NARio extends Run {
                     lastY = y;
                 }
 
-                if (www % commandPeriod == 0) {
+                if (t % commandPeriod == 0) {
                     goals();
                 }
-                www++;
+                t++;
                 cycle++;
             }
 
@@ -727,7 +717,7 @@ public class NARio extends Run {
 
     }
 
-    public int www = 0;
+    public int t = 0;
 
     @Override
     protected void update() {

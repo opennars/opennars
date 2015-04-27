@@ -4,8 +4,8 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -317,9 +317,9 @@ public class TestSOMAgent extends JPanel {
 
 
         /* Create and display the form */
-        //RLEnvironment d = new PoleBalancing2D();
+        RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 
