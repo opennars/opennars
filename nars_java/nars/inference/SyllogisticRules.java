@@ -302,7 +302,8 @@ public final class SyllogisticRules {
             }
         }
         Statement s=Statement.make(higherOrder ? NativeOperator.EQUIVALENCE : NativeOperator.SIMILARITY, term1, term2, order);
-        nal.doublePremiseTask( s, truth, budget,false, true );
+        //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
+            nal.doublePremiseTask( s, truth, budget,false, true );
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
         
        if(Parameters.BREAK_NAL_HOL_BOUNDARY && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {

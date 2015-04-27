@@ -229,6 +229,10 @@ public abstract class NAL implements Runnable {
      */
     public Task doublePremiseTask(final Term newContent, final TruthValue newTruth, final BudgetValue newBudget, boolean temporalInduction, boolean overlapAllowed) {
         
+        if(newContent == null) {
+            return null;
+        }
+        
         if (!newBudget.aboveThreshold()) {
             return null;
         }

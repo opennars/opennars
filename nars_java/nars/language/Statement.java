@@ -99,6 +99,10 @@ public abstract class Statement extends CompoundTerm {
      */
     final public static Statement make(final NativeOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
         
+        if(Terms.equalSubTermsInRespectToImageAndProduct(subject, predicate)) {
+            return null;
+        }
+        
         switch (o) {
             case INHERITANCE:
                 return Inheritance.make(subject, predicate);
