@@ -31,7 +31,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
     
     float lineWidth = 4f;
     float nodeSize = 16f;
-    int maxLabelLen = 16;
+    int maxLabelLen = 99999;
     float nodeSpeed = 0.2f;
     float textSize = 1f;
     
