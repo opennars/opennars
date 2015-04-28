@@ -35,7 +35,7 @@ import nars.plugin.mental.InternalExperience;
  */
 public class NARio extends Run {
 
-    static int memoryCyclesPerFrame = 10;
+    static int memoryCyclesPerFrame = 20;
     
     private final NAR nar;
     private LevelScene level;
@@ -93,7 +93,8 @@ public class NARio extends Run {
 
         NARSwing sw=new NARSwing(nar);
         
-        nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
+        //nar.start(((long)(1000f/fps)));//, memCyclesPerFrame, 1f);
+        nar.start((long)(1000f/fps), memoryCyclesPerFrame);
         
         NARio nario = new NARio(nar);
         sw.controls.setSpeed(0.95f);
@@ -167,15 +168,15 @@ public class NARio extends Run {
         {
             setKey(3, isPressed);
             scene.toggleKey(Mario.KEY_UP, isPressed);
-            setKey(1, isPressed);
-            scene.toggleKey(Mario.KEY_RIGHT, isPressed);
+         //   setKey(1, isPressed);
+          //  scene.toggleKey(Mario.KEY_RIGHT, isPressed);
         }
         if (keyCode == KeyEvent.VK_S)
         {
             setKey(4, isPressed);
             scene.toggleKey(Mario.KEY_JUMP, isPressed);
-            setKey(1, isPressed);
-            scene.toggleKey(Mario.KEY_RIGHT, isPressed);
+           // setKey(1, isPressed);
+            //scene.toggleKey(Mario.KEY_RIGHT, isPressed);
         }
         if (keyCode == KeyEvent.VK_A)
         {
@@ -232,7 +233,7 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
-            boolean representation_simple=true;
+            boolean representation_simple=false;
             boolean right=false;
             public String direction(int i,int j) {
                 right=false;
@@ -295,7 +296,7 @@ public class NARio extends Run {
                     //System.out.println("choosing random "+String.valueOf(Math.random()));
                     
 //                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
-                    boolean isPressed = offKeys ? Memory.randomNumber.nextBoolean() : true;
+                    boolean isPressed = false; //offKeys ? Memory.randomNumber.nextBoolean() : true;
                     
                     int[] ev=new int[]{KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_UP,KeyEvent.VK_S};
                     int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
@@ -318,8 +319,8 @@ public class NARio extends Run {
                     {
                         setKey(3, isPressed);
                         scene.toggleKey(Mario.KEY_JUMP, isPressed);
-                        setKey(1, isPressed);
-                        scene.toggleKey(Mario.KEY_RIGHT, isPressed);
+                       // setKey(1, isPressed);
+                      //  scene.toggleKey(Mario.KEY_RIGHT, isPressed);
                     }
                     if (keyCode == KeyEvent.VK_S)
                     {
@@ -461,9 +462,9 @@ public class NARio extends Run {
                                         else {
                                             System.out.println();
                                         }*/
-                                        if(Mario.KEY_UP==k || Mario.KEY_JUMP==k) {
+                                        /*if(Mario.KEY_UP==k || Mario.KEY_JUMP==k) {
                                             mario.keys[Mario.KEY_RIGHT] = state.equals("on");
-                                        }
+                                        }*/
                                         mario.keys[k] = state.equals("on");
                                     //}
 
