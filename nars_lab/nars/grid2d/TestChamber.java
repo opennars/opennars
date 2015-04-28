@@ -229,7 +229,8 @@ public class TestChamber {
                     if(path==null) {
                         executed_going=false;
                     }
-                    if (path != null) {
+                    //if (path != null) 
+                    {
                         if(inventorybag!=null) {
                             inventorybag.x=(int)space.current.x;
                             inventorybag.y=(int)space.current.y;
@@ -239,11 +240,12 @@ public class TestChamber {
                         if(inventorybag==null || !(inventorybag instanceof Key)) {
                             keyn=-1;
                         }
-                        if (path.size() <= 1) {
+                        if (path==null || path.size() <= 1) {
+                            space.target=null;
                             active=true;
                             executed_going=false;
                             //System.out.println("at destination; didnt need to find path");
-                            if (!"".equals(goal) && space.current.equals(space.target)) {
+                            if (!"".equals(goal)) {// && space.current.equals(space.target)) {
                                 //--nar.step(6);
                                 GridObject obi=null;
                                 if(!"".equals(opname)) {
