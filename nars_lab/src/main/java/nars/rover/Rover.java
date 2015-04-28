@@ -1,5 +1,6 @@
 package nars.rover;
 
+import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
 import nars.io.ChangedTextInput;
@@ -220,11 +221,11 @@ public class Rover extends PhysicsModel {
                          double dy=v1.y-v2.y;
                          float d = (float) Math.sqrt(dx*dx+dy*dy)/distance;*/
 
-                        draw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
-                        draw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
+                        //draw().drawPoint(ccallback.m_point, 5.0f, new Color3f(0.4f, 0.9f, 0.4f));
+                        //draw().drawSegment(point1, ccallback.m_point, new Color3f(0.8f, 0.8f, 0.8f));
                         pooledHead.set(ccallback.m_normal);
                         pooledHead.mulLocal(.5f).addLocal(ccallback.m_point);
-                        draw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
+                        //draw().drawSegment(ccallback.m_point, pooledHead, new Color3f(0.9f, 0.9f, 0.4f));
 
 
                         if (d < minDist) {
@@ -232,7 +233,7 @@ public class Rover extends PhysicsModel {
                             hit = ccallback.body;
                         }
                     } else {
-                        draw().drawSegment(point1, point2, laserColor);
+                        //draw().drawSegment(point1, point2, laserColor);
                     }
                 }
                 
@@ -612,11 +613,13 @@ public class Rover extends PhysicsModel {
 
 
     public static void main(String[] args) {
+
+        Video.themeInvert();
+
         //NAR nar = new Default().
         //NAR nar = new DiscretinuousBagNARBuilder().
         NAR nar = new NAR(new Default().simulationTime());
 
-        nar.on(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
         int cyclesPerFrame = 10; //was 200    
         (nar.param).outputVolume.set(0);
@@ -676,7 +679,7 @@ public class Rover extends PhysicsModel {
             
         };
         
-        nar.start(((long) (1000f / framesPerSecond)));//, cyclesPerFrame, 1.0f);
+        //nar.start(((long) (1000f / framesPerSecond)));//, cyclesPerFrame, 1.0f);
         //setSpeed(1.0f);
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
     }

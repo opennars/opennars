@@ -413,9 +413,9 @@ public class Rover2 extends PhysicsModel {
         getWorld().setGravity(new Vec2());
         getWorld().setAllowSleep(false);
 
-        world = new ReactorWorld(this, 32, sz, sz*2);
+        //world = new ReactorWorld(this, 32, sz, sz*2);
         //world = new FoodSpawnWorld1(this, 32, sz, sz);
-        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
+        world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);
 

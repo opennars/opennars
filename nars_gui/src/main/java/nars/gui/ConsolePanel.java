@@ -2,8 +2,8 @@ package nars.gui;
 
 import nars.NAR;
 import nars.gui.input.TextInputPanel;
+import nars.gui.output.ConceptLogPanel;
 import nars.gui.output.LogPanel;
-import nars.gui.output.SwingLogPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +16,8 @@ public class ConsolePanel extends JSplitPane {
     public ConsolePanel(NAR nar) {
         super(JSplitPane.VERTICAL_SPLIT);
         
-        LogPanel outputLog = new SwingLogPanel(nar);
-        //LogPanel outputLog = new ConceptLogPanel(nar);
+        //LogPanel outputLog = new SwingLogPanel(nar);
+        LogPanel outputLog = new ConceptLogPanel(nar);
         add(outputLog, 0);
         
         TextInputPanel inputPanel = new TextInputPanel(nar);
