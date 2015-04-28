@@ -171,8 +171,20 @@ public class Rover extends PhysicsModel {
 
         }
 
+        public class InputDistance
+        {
+            public String inp;
+            public double dist;
+            public InputDistance(String inp, double dist)
+            {
+                this.inp = inp;
+                this.dist = dist;
+            }
+        }
+        
         double goods=1;
         double bads=1;
+        ArrayList<InputDistance> Li=new ArrayList<InputDistance>();
             
         public class VisionRay {
             final Vec2 point; //where the retina receives vision at
@@ -294,10 +306,12 @@ public class Rover extends PhysicsModel {
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     if(Sgood.equals("bad") && n%100==0) {
-                        nar.addInput("<(*," + id + "," + dist + ",good) --> see>. :|: %0.00;0.90%");
+                        Li.add(new InputDistance("<(*," + id +/* "," + dist +*/ ",good) --> see>. :|: %0.00;0.90%", di));
+                       // nar.addInput("<(*," + id + "," + dist + ",good) --> see>. :|: %0.00;0.90%");
                     } else if(n%100==0) {
                         //nar.addInput("<(*," + id + ",good) --> see>. :|:");
-                        nar.addInput("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
+                        Li.add(new InputDistance("<(*," + id +/* "," + dist +*/ ","+Sgood+") --> see>. :|:", di));
+                        //nar.addInput("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     }
                 }
                 else {
@@ -312,6 +326,22 @@ public class Rover extends PhysicsModel {
         public void step() {
             for (VisionRay v : vision)
                 v.step();
+            
+            double d=999999;
+            String inp="";
+            
+            for(InputDistance I : Li) {
+                if(I.dist<d) {
+                    inp=I.inp;
+                    d=I.dist;
+                }
+            }
+            
+            Li.clear();
+            
+            if(!("".equals(inp))) {
+                nar.addInput(inp);
+            }
             
             if(Rover.cnt>=do_sth_importance) {
                 Rover.cnt=0;
@@ -332,7 +362,7 @@ public class Rover extends PhysicsModel {
             if(feel_motion) {
                 feelMotion();
             }
-            rover.thrust(0, 100);
+           // rover.thrust(0, 100);
             Rover.cnt++;
         }
 
@@ -459,10 +489,10 @@ public class Rover extends PhysicsModel {
 
         public RoverWorld(PhysicsModel p, float w, float h) {
             Phys=p;
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 8; i++) {
                 AddABlock(p, w, h,false);
             }
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 8; i++) {
                 AddABlock(p, w, h,true);
             }
         }
