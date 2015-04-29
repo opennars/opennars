@@ -90,11 +90,11 @@ public class drawPanel extends JPanel {
     
     public void beGood() {
         nar.addInput("<SELF --> [good]>!");
-        nar.addInput("<SELF --> [bad]>! %0%");
+     //   nar.addInput("<SELF --> [bad]>! %0%");
     }
     
     public void moving() {
-        //nar.addInput("<SELF --> [moving]>. :|:");
+      //  nar.addInput("<SELF --> [moving]>. :|:");
     }
     
     public void beGoodNow() {
@@ -106,7 +106,7 @@ public class drawPanel extends JPanel {
     }
     
     public void bad() {
-        nar.addInput("<SELF --> [bad]>. :|: %0.00;0.90%");
+        //nar.addInput("<SELF --> [bad]>. :|: %1.00;0.90%");
     }
  
     public void target(String direction) {
@@ -181,7 +181,7 @@ public class drawPanel extends JPanel {
  
     }
  
-    static int setpoint = 220; //220; //80
+    static int setpoint = 80; //220; //80
     int x = 160;
     int y = 10;
  
