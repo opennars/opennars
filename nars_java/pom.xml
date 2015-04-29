@@ -24,6 +24,14 @@
         <finalName>opennars_core_${project.version}</finalName>
         <plugins>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
             <!-- Order is important ! Execution follows the declaration order -->
 
             <plugin>
