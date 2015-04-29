@@ -336,6 +336,13 @@ public class NARio extends Run {
                     {
                         setKey(4, isPressed);
                         scene.toggleKey(Mario.KEY_UP, isPressed);
+                        if(rightmoved) { //compound action is helpful
+                           setKey(1, isPressed);
+                           scene.toggleKey(Mario.KEY_RIGHT, isPressed); 
+                        } else {
+                           setKey(0, isPressed);
+                           scene.toggleKey(Mario.KEY_LEFT, isPressed); 
+                        }
                     }
                     if (keyCode == KeyEvent.VK_A) //wat
                     {
