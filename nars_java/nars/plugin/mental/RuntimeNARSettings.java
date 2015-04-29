@@ -171,6 +171,13 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.QUESTION_GENERATION_ON_DECISION_MAKING=val;
     }
     
+    public boolean isHowQuestionGenerationOnDecisionMaking() {
+        return Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING;
+    }
+    public void setHowQuestionGenerationOnDecisionMaking(boolean val) {
+        Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING=val;
+    }
+    
     public boolean isCuriosityAlsoOnLowConfidentHighPriorityBelief() {
         return Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF;
     }
