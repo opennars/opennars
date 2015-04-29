@@ -1001,7 +1001,7 @@ public class RuleTables {
      */
     private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {        
         
-        if(index>compound.term.length) {
+        if(index >= compound.term.length) {
             return;
         }
         Term component = compound.term[index];
