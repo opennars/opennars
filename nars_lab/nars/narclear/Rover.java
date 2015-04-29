@@ -260,14 +260,14 @@ public class Rover extends PhysicsModel {
                 if (hit!=null) {  
                     
                     float di = minDist; 
-                    if(id.startsWith("back")) {
+                    /*f(id.startsWith("back")) {
                         if(good) {
                             sight.set("<goal --> reached>. :|: %0.0;0.90%");
                         } else {
                             sight.set("<goal --> reached>. :|: %1.0;0.90%");
                         }
                         return;
-                    }
+                    }*/
                     
                     String dist = "unknown";                    
                     //if (distanceSteps == 2) {
@@ -279,7 +279,7 @@ public class Rover extends PhysicsModel {
                     
                     if(n%1000==0) {
                         nar.addInput("<goal --> reached>. %0.00;0.90%"); //dont remember
-                        nar.addInput("<goal --> reached>! %1.00;0.99%"); //also remember on goal
+                        nar.addInput("<goal --> reached>! %1.00;0.90%"); //also remember on goal
                     }
                     if(di <= 0.2f) {
                         
