@@ -31,21 +31,21 @@ public class TwoPointRegulator extends JPanel {
         Global.DEBUG = true;
     }
 
-    final int targetCyclesMin = 200;
+    final int targetCyclesMin = 100;
     final int targetCyclesMax = targetCyclesMin;
     int targetCycles = targetCyclesMin;
 
     final int beGoodPeriod = targetCyclesMin;
 
-    private final int cyclesPerFrame = 10;
+    private final int cyclesPerFrame = 1;
     float drawXScale = 0.5f;
     int historySize = (int)(800 / drawXScale);
 
     final int trainingActionPeriod = targetCyclesMin;
-    final int initialTrainingCycles = 15;
+    final int initialTrainingCycles = 25;
 
-    float initialDesireConf = 0.6f;
-    int speed = 25;
+    float initialDesireConf = 0.7f;
+    int speed = 15;
 
     //String self = "SELF";
     String target = "good";
@@ -256,12 +256,12 @@ public class TwoPointRegulator extends JPanel {
         nar.on(new move());
 
         nar.setCyclesPerFrame(cyclesPerFrame);
-        nar.param.shortTermMemoryHistory.set(1);
-        nar.param.duration.set(5);
+        nar.param.shortTermMemoryHistory.set(2);
+        nar.param.duration.set(cyclesPerFrame*5);
         //nar.param.duration.setLinear
 
 
-        nar.param.decisionThreshold.set(0.75);
+        nar.param.decisionThreshold.set(0.6);
 
         nar.param.outputVolume.set(5);
 
