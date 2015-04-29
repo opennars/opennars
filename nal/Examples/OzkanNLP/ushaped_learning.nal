@@ -33,8 +33,10 @@
 //eaten is the passive form of eat:
 <(*,"eat","eaten") --> passive>.
 //eated is not the passive form of eat_
-(--,<(*,"eat","eaten") --> passive>).
+(--,<(*,"eat","eated") --> passive>).
 
 //Inductive conclusion revised again:
  OUT: <<$1 --> appended> ==> <$1 --> passive>>. %0.67;0.72%
 
+//mistake acknowledged (revised):
+ OUT: <(*,"eat","eated") --> passive>. %0.12;0.91%
