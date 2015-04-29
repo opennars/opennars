@@ -265,6 +265,7 @@ public class NARio extends Run {
             
             int tt=0;
             int do_sth_importance=0;
+            boolean rightmoved=true;
             @Override
             public void event(Class event, Object... arguments) {
 
@@ -302,11 +303,13 @@ public class NARio extends Run {
                     int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
                     if (keyCode == KeyEvent.VK_LEFT)
                     {
+                        rightmoved=false;
                         setKey(0, isPressed);
                         scene.toggleKey(Mario.KEY_LEFT, isPressed);
                     }
                     if (keyCode == KeyEvent.VK_RIGHT)
                     {
+                        rightmoved=true;
                         setKey(1, isPressed);
                         scene.toggleKey(Mario.KEY_RIGHT, isPressed);
                     }
@@ -319,6 +322,13 @@ public class NARio extends Run {
                     {
                         setKey(3, isPressed);
                         scene.toggleKey(Mario.KEY_JUMP, isPressed);
+                        if(rightmoved) { //compound action is helpful
+                           setKey(1, isPressed);
+                           scene.toggleKey(Mario.KEY_RIGHT, isPressed); 
+                        } else {
+                           setKey(0, isPressed);
+                           scene.toggleKey(Mario.KEY_LEFT, isPressed); 
+                        }
                        // setKey(1, isPressed);
                       //  scene.toggleKey(Mario.KEY_RIGHT, isPressed);
                     }
