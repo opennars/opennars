@@ -233,7 +233,7 @@ public class NARio extends Run {
             private float lastMX;
             private float lastMY;
 
-            boolean representation_simple=false;
+            boolean representation_simple=true;
             boolean right=false;
             public String direction(int i,int j) {
                 right=false;
@@ -296,7 +296,7 @@ public class NARio extends Run {
                     //System.out.println("choosing random "+String.valueOf(Math.random()));
                     
 //                    boolean isPressed=true; //Memory.randomNumber.nextBoolean();
-                    boolean isPressed = false; //offKeys ? Memory.randomNumber.nextBoolean() : true;
+                    boolean isPressed = true; //offKeys ? Memory.randomNumber.nextBoolean() : true;
                     
                     int[] ev=new int[]{KeyEvent.VK_LEFT,KeyEvent.VK_RIGHT,KeyEvent.VK_UP,KeyEvent.VK_S};
                     int keyCode=ev[Memory.randomNumber.nextInt(ev.length)];
