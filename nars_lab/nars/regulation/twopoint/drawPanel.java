@@ -106,7 +106,7 @@ public class drawPanel extends JPanel {
     }
     
     public void bad() {
-        //nar.addInput("<SELF --> [bad]>. :|: %1.00;0.90%");
+        nar.addInput("<SELF --> [good]>. :|: %0.00;0.90%");
     }
  
     public void target(String direction) {
