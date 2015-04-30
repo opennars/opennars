@@ -40,7 +40,7 @@ public class PerceptionAccel implements Plugin, EventEmitter.EventObserver {
         return true;
     }
     
-    double partConceptsPrioThreshold=0.6;
+    double partConceptsPrioThreshold=0.1;
     public void setPartConceptsPrioThreshold(double value) {
         partConceptsPrioThreshold=value;
     }
