@@ -216,13 +216,6 @@ public class GlobalAnticipation implements Plugin, EventEmitter.EventObserver {
     public boolean setEnabled(NAR n, boolean enabled) {
         //Events.TaskDerive.class Events.ConceptBeliefRemove.class
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.TaskDerive.class, Events.ConceptBeliefRemove.class);
-        for(PluginState s : n.getPlugins()) {
-            if(s.plugin instanceof Anticipate)
-            {
-                s.plugin.setEnabled(n, !enabled);
-            }
-        }
-        
         return true;
     }
     
