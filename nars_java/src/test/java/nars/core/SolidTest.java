@@ -25,7 +25,7 @@ public class SolidTest {
 
         Global.DEBUG = true;
 
-        Solid s = new Solid(3, 800, 1, 1, 1, 3);
+        Solid s = new Solid(3, 600, 1, 1, 1, 8);
         s.param.duration.set(2);
 
         TestNAR n = new TestNAR(s);

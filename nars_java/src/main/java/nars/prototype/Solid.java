@@ -20,7 +20,6 @@ import nars.nal.tlink.TermLinkKey;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /** processes every concept fairly, according to priority, in each cycle */
@@ -28,7 +27,7 @@ public class Solid extends Default {
 
 
     private final int maxConcepts, maxSubConcepts;
-    private final int maxTasks;
+    private final int maxTasksPerCycle; //if ==-1, no limit
     private final int minTaskLink;
     private final int maxTaskLink;
     private final int minTermLink;
@@ -42,7 +41,10 @@ public class Solid extends Default {
         this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = maxConcepts;
         this.maxSubConcepts = maxConcepts * 4;
-        this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
+
+        //this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
+        this.maxTasksPerCycle = -1;
+
         this.minTaskLink = minTaskLink;
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
@@ -61,42 +63,6 @@ public class Solid extends Default {
 
 
 
-    static final Comparator<Item> budgetComparator = new Comparator<Item>() {
-        //almost...
-        //> Math.pow(2.0,32.0) * 0.000000000001
-        //0.004294967296
-
-        //one further is below 0.001 resolution
-        //> Math.pow(2.0,32.0) * 0.0000000000001
-        //0.0004294967296
-
-        @Override
-        public int compare(final Item o1, final Item o2) {
-            if (o1.equals(o2)) return 0; //is this necessary?
-            float p1 = o1.getPriority();
-            float p2 = o2.getPriority();
-            if (p1 == p2) {
-                float d1 = o1.getDurability();
-                float d2 = o2.getDurability();
-                if (d1 == d2) {
-                    float q1 = o1.getQuality();
-                    float q2 = o2.getQuality();
-                    if (q1 == q2) {
-                        return Integer.compare(o1.hashCode(), o2.hashCode());
-                    }
-                    else {
-                        return q1 < q2 ? -1 : 1;
-                    }
-                }
-                else {
-                    return d1 < d2 ? -1 : 1;
-                }
-            }
-            else {
-                return p1 < p2 ? -1 : 1;
-            }
-        }
-    };
 
     @Override
     public Core newCore() {
@@ -140,17 +106,6 @@ public class Solid extends Default {
 
                 @Override
                 public void addTask(Task t) {
-                    if (!t.aboveThreshold())
-                        return;
-
-                    if (tasks.size() >= maxTasks) {
-                        //reject this task if it lower than the lowest
-                        Task lowest = tasks.first();
-                        if (budgetComparator.compare(lowest, t) == 1) {
-                            return;
-                        }
-                    }
-
                     tasks.add(t);
                 }
 
@@ -167,14 +122,14 @@ public class Solid extends Default {
 
             protected void processNewTasks() {
                 int t = 0;
+                final int mt = maxTasksPerCycle;
                 for (Task task : tasks) {
 
-                    if (!task.aboveThreshold()) continue; //need to check again because it seems that Task proirity can be modified even after it is in the task queue
-
-                    if (DirectProcess.run(getMemory(), task)!=null)
+                    if (DirectProcess.run(getMemory(), task)!=null) {
                         t++;
+                        if (mt!=-1 && t >= mt) break;
+                    }
 
-                    if (t >= maxTasks) break;
                 }
                 tasks.clear();
             }
@@ -271,5 +226,43 @@ public class Solid extends Default {
     }
 
 
+    /*
+    static final Comparator<Item> budgetComparator = new Comparator<Item>() {
+        //almost...
+        //> Math.pow(2.0,32.0) * 0.000000000001
+        //0.004294967296
+
+        //one further is below 0.001 resolution
+        //> Math.pow(2.0,32.0) * 0.0000000000001
+        //0.0004294967296
+
+        @Override
+        public int compare(final Item o1, final Item o2) {
+            if (o1.equals(o2)) return 0; //is this necessary?
+            float p1 = o1.getPriority();
+            float p2 = o2.getPriority();
+            if (p1 == p2) {
+                float d1 = o1.getDurability();
+                float d2 = o2.getDurability();
+                if (d1 == d2) {
+                    float q1 = o1.getQuality();
+                    float q2 = o2.getQuality();
+                    if (q1 == q2) {
+                        return Integer.compare(o1.hashCode(), o2.hashCode());
+                    }
+                    else {
+                        return q1 < q2 ? -1 : 1;
+                    }
+                }
+                else {
+                    return d1 < d2 ? -1 : 1;
+                }
+            }
+            else {
+                return p1 < p2 ? -1 : 1;
+            }
+        }
+    };
+    */
 
 }

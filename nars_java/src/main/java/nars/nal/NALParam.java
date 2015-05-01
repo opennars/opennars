@@ -49,17 +49,15 @@ public class NALParam extends RuleEngine<NAL> {
     }
 
     void initDerivationFilters() {
-        //derivationFilters.add(new FilterBelowBudget());
         derivationFilters.add(new FilterBelowConfidence());
         derivationFilters.add(new FilterOperationWithSubjOrPredVariable());
-        //derivationFilters.add(new FilterCyclic());
     }
 
-    public void fire(ConceptProcess fireConcept) {
-        int n = logicrules.size();
+    public void fire(final ConceptProcess fireConcept) {
+        final List<LogicRule<NAL>> rules = logicrules;
+        final int n = rules.size();
         for (int l = 0; l < n; l++) {
-            LogicRule<NAL> r = logicrules.get(l);
-            if (!r.accept(fireConcept))
+            if (!rules.get(l).accept(fireConcept))
                 break;
         }
     }
@@ -69,18 +67,16 @@ public class NALParam extends RuleEngine<NAL> {
     }
 
     /** tests validity of a derived task; if valid returns null, else returns a String rule explaining why it is invalid */
-    public String getDerivationRejection(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    public String getDerivationRejection(final NAL nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
 
         List<DerivationFilter> derivationFilters = getDerivationFilters();
+        final int dfs = derivationFilters.size();
 
-        if (derivationFilters != null) {
-            final int dfs = derivationFilters.size();
-            for (int i = 0; i < dfs; i++) {
-                DerivationFilter d = derivationFilters.get(i);
-                String rejectionReason = d.reject(nal, task, solution, revised, single, currentBelief, currentTask);
-                if (rejectionReason != null) {
-                    return rejectionReason;
-                }
+        for (int i = 0; i < dfs; i++) {
+            DerivationFilter d = derivationFilters.get(i);
+            String rejectionReason = d.reject(nal, task, solution, revised, single, currentBelief, currentTask);
+            if (rejectionReason != null) {
+                return rejectionReason;
             }
         }
         return null;

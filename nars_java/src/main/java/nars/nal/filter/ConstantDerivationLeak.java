@@ -16,8 +16,12 @@ public class ConstantDerivationLeak implements DerivationFilter {
     public final AtomicDouble durabilityMultiplier;
 
     public ConstantDerivationLeak(float priorityMultiplier, float durabilityMultiplier) {
-        this.priorityMultiplier = new AtomicDouble(priorityMultiplier);
-        this.durabilityMultiplier = new AtomicDouble(durabilityMultiplier);
+        this(new AtomicDouble(priorityMultiplier), new AtomicDouble(durabilityMultiplier));
+    }
+
+    public ConstantDerivationLeak(AtomicDouble priorityMultiplier, AtomicDouble durabilityMultiplier) {
+        this.priorityMultiplier = priorityMultiplier;
+        this.durabilityMultiplier = durabilityMultiplier;
     }
 
 

@@ -12,7 +12,6 @@ import nars.nal.tlink.TaskLink;
 
 import java.util.Iterator;
 import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -52,7 +51,7 @@ public class DefaultCore extends SequentialCore {
     public void init(Memory m) {
         super.init(m);
 
-        this.newTasks = new ConcurrentSkipListSet<>(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+        this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
         //this.newTasks = new TreeSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
     }
 
@@ -112,19 +111,19 @@ public class DefaultCore extends SequentialCore {
 
     }
 
-    private void runNewTasks(int numNewTasks) {
-        if (newTasks.isEmpty()) return;
-
+    private void runNewTasks(final int numNewTasks) {
         Iterator<Task> ii = newTasks.iterator();
 
-        for (int i = 0; ii.hasNext() && i < numNewTasks; ) {
+        for (int i = 0; ii.hasNext() && i < numNewTasks; i++) {
             Task task = ii.next();
+
+            //note: removing it before running in case running it somehow produces the same task, then it should be added again and not merge with it
             ii.remove();
 
-            if (run(task))
-                i++;
-        }
+            run(task);
 
+
+        }
     }
 
     /** returns whether the task was run */
@@ -159,10 +158,13 @@ public class DefaultCore extends SequentialCore {
                 if (overflow != null) {
                     if (overflow == task) {
                         memory.removed(task, "Ignored");
+                        return false;
                     } else {
                         memory.removed(overflow, "Displaced novel task");
                     }
                 }
+
+                return true;
 
             } else {
                 memory.removed(task, "Neglected");

@@ -6,7 +6,7 @@ package nars.nal;
  */
 abstract public class LogicRule<X>  {
 
-    /** return false to discontinue subsequent rules for this object; true to continue */
+    /** return false to cancel subsequent rules for this object; true to continue */
     abstract public boolean accept(X x);
 
 //    public LogicRule setAction(Consumer<Event<X>> action) {
