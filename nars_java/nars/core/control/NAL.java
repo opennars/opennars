@@ -190,7 +190,10 @@ public abstract class NAL implements Runnable {
         }
         
         if(task.sentence.getOccurenceTime()>memory.time() && ((this.getCurrentTask()!=null && (this.getCurrentTask().isInput() || this.getCurrentTask().sentence.producedByTemporalInduction)) || (this.getCurrentBelief()!=null && this.getCurrentBelief().producedByTemporalInduction))) {
-            ((Anticipate)memory.getOperator("^anticipate")).anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
+            Anticipate ret = ((Anticipate)memory.getOperator("^anticipate"));
+            if(ret!=null) {
+                ret.anticipate(task.sentence.term, memory, task.sentence.getOccurenceTime(),task);
+            }
         }
         
         task.setParticipateInTemporalInductionOnSucceedingEvents(false);
