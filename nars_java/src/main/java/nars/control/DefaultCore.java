@@ -119,9 +119,10 @@ public class DefaultCore extends SequentialCore {
 
         for (int i = 0; ii.hasNext() && i < numNewTasks; ) {
             Task task = ii.next();
+            ii.remove();
+
             if (run(task))
                 i++;
-            ii.remove();
         }
 
     }
@@ -138,8 +139,7 @@ public class DefaultCore extends SequentialCore {
                 ) {
 
             //it is a question/quest or a judgment for a concept which exists:
-            new DirectProcess(memory, task).run();
-            return true;
+            return DirectProcess.run(memory, task)!=null;
 
         } else {
             //it is a judgment or goal which would create a new concept:
@@ -195,7 +195,7 @@ public class DefaultCore extends SequentialCore {
 
         final Task task = novelTasks.pop();
 
-        return new DirectProcess(memory, task);
+        return DirectProcess.run(memory, task);
     }
 
 

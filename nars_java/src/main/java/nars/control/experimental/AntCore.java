@@ -56,7 +56,7 @@ public class AntCore extends ConceptWaveCore {
 
     @Override public void init(Memory m) {
         super.init(m);
-        concepts.setTargetActivated( (int)(ants.size() * 0.1f) );
+        concepts.setTargetActivated((int) (ants.size() * 0.1f));
     }
 
     @Deprecated final Deque<Task> tasks = new ArrayDeque();
@@ -75,10 +75,13 @@ public class AntCore extends ConceptWaveCore {
 
         if (!tasks.isEmpty()) {
             int maxNewTasks = Math.min(tasks.size(), ants.size());
-            for (int i = 0; i < maxNewTasks; i++) {
+            for (int i = 0; i < maxNewTasks && !tasks.isEmpty(); ) {
                 Task t = tasks.removeFirst();
                 if (t == null) break;
-                run.add(new DirectProcess(memory, t));
+                if (t.aboveThreshold()) {
+                    run.add(new DirectProcess(memory, t));
+                    i++;
+                }
             }
         }
 

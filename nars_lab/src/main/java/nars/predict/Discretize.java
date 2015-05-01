@@ -163,8 +163,8 @@ public class Discretize {
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.input(t);
             else if (mode == BeliefInsertion.ImmediateProcess)
-                new DirectProcess(nar.memory, t).run();
-            
+                DirectProcess.run(nar.memory, t);
+
         }
     }            
 }

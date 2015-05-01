@@ -171,8 +171,10 @@ public class Solid extends Default {
 
                     if (!task.aboveThreshold()) continue; //need to check again because it seems that Task proirity can be modified even after it is in the task queue
 
-                    new DirectProcess(getMemory(), task).run();
-                    if (t++ >= maxTasks) break;
+                    if (DirectProcess.run(getMemory(), task)!=null)
+                        t++;
+
+                    if (t >= maxTasks) break;
                 }
                 tasks.clear();
             }

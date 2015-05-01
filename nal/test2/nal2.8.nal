@@ -8,8 +8,7 @@
 
 
 
-'Bright thing is a type of smart thing. 
-''outputMustContain('<[smart] --> [bright]>. %0.90;0.66%')
-''//outputMustContain('<[bright] <-> [smart]>. %0.90;0.90%')
+'Bright thing is a type of smart thing.
+''outputMustContain('<[bright] <-> [smart]>. %0.90;0.73%')
 
 6

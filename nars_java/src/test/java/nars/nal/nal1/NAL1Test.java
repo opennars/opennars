@@ -144,7 +144,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void multistep() throws InvalidInputException {
-        long time = build instanceof Solid ? 15 : 350;
+        long time = build instanceof Solid ? 15 : 750;
 
         //TextOutput.out(nar);
         nar.believe("<a --> b>", 1.0f, 0.9f);

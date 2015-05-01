@@ -5,6 +5,7 @@
 package nars.nal;
 
 import nars.Events;
+import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
@@ -18,11 +19,6 @@ public class DirectProcess extends NAL {
 
     public DirectProcess(Memory mem, Task task) {
         super(mem, task);
-
-//        if (Global.DEBUG) {
-//            if (!task.aboveThreshold())
-//                throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
-//        }
     }
 
     /** runs the entire process in a constructor, for when a Concept is provided */
@@ -85,6 +81,13 @@ public class DirectProcess extends NAL {
 
     /** create and execute a direct process immediately */
     public static DirectProcess run(Memory m, Task task) {
+
+        if (Global.DEBUG) {
+            if (!task.aboveThreshold())
+                return null;
+                //throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
+        }
+
         //System.err.println("direct: " + task);
         DirectProcess d = new DirectProcess(m, task);
 
