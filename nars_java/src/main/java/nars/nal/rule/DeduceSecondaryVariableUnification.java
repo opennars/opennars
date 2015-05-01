@@ -6,15 +6,15 @@ import nars.budget.Budget;
 import nars.io.Symbols;
 import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.nal.stamp.Stamp;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -68,33 +68,31 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
             Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
-            if (budget.aboveThreshold()) {
 
-                long occ = taskSentence.getOccurrenceTime();
-                if (!second_belief.isEternal()) {
-                    occ = second_belief.getOccurrenceTime();
-                }
+            long occ = taskSentence.getOccurrenceTime();
+            if (!second_belief.isEternal()) {
+                occ = second_belief.getOccurrenceTime();
+            }
 
-                final Stamp sx = new Stamp(
-                        s.build().evidentialBase,
-                        nal.time(),
-                        occ,
-                        nal.memory.duration()
-                );
+            final Stamp sx = new Stamp(
+                    s.build().evidentialBase,
+                    nal.time(),
+                    occ,
+                    nal.memory.duration()
+            );
 
-                Sentence newSentence = new Sentence(result, mark, truth, sx);
+            Sentence newSentence = new Sentence(result, mark, truth, sx);
 
 
-                Task dummy = new Task(second_belief, budget, task, null);
-                Task newTask = new Task(newSentence, budget, dummy, second_belief);
+            Task dummy = new Task(second_belief, budget, task, null);
+            Task newTask = new Task(newSentence, budget, dummy, second_belief);
 
-                nal.setCurrentBelief(taskSentence);
+            nal.setCurrentBelief(taskSentence);
 
-                if (nal.deriveTask(newTask, false, false, dummy, false)) {
+            if (nal.deriveTask(newTask, false, false, dummy, false)) {
 
-                    nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
+                nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
-                }
             }
 
 
@@ -169,7 +167,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             Term secterm = secondConcept.term;
 
             Sentence second_belief = secondConcept.getStrongestBelief();
-                                                //getBeliefRandomByConfidence(task.sentence.isEternal());
+            //getBeliefRandomByConfidence(task.sentence.isEternal());
             if (second_belief == null)
                 continue;
 
@@ -297,42 +295,38 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 if (taskSentence.isGoal() || second_belief.isGoal()) {
                     truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
                     mark = Symbols.GOAL;
-                }
-                else {
+                } else {
                     truth = deduction(taskSentence.truth, truthSecond);
                 }
 
                 Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
 
+                //same as above?
+                Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
 
-                if (budget.aboveThreshold()) {
-
-                    //same as above?
-                    Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
-
-                    long occ = taskSentence.getOccurrenceTime();
-                    if (!second_belief.isEternal()) {
-                        occ = second_belief.getOccurrenceTime();
-                    }
-
-                    Sentence newSentence = new Sentence(result, mark, truth,
-                            new Stamp(useEvidentalBase, nal.time(), occ));
-
-                    Task dummy = new Task(second_belief, budget, task, null);
-                    Task newTask = new Task(newSentence, budget, task, null);
-
-                    nal.setCurrentBelief(taskSentence);
-
-                    if (nal.deriveTask(newTask, false, false, dummy, true /* allow overlap */)) {
-
-                        nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
-                        nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
-
-                        unifiedAnything = true;
-
-                    }
+                long occ = taskSentence.getOccurrenceTime();
+                if (!second_belief.isEternal()) {
+                    occ = second_belief.getOccurrenceTime();
                 }
+
+                Sentence newSentence = new Sentence(result, mark, truth,
+                        new Stamp(useEvidentalBase, nal.time(), occ));
+
+                Task dummy = new Task(second_belief, budget, task, null);
+                Task newTask = new Task(newSentence, budget, task, null);
+
+                nal.setCurrentBelief(taskSentence);
+
+                if (nal.deriveTask(newTask, false, false, dummy, true /* allow overlap */)) {
+
+                    nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
+                    nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
+
+                    unifiedAnything = true;
+
+                }
+
             }
 
             remainingUnifications--;

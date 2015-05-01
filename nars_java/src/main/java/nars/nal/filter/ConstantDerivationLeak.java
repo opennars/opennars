@@ -25,8 +25,8 @@ public class ConstantDerivationLeak implements DerivationFilter {
     public String reject(final NAL nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
         if (!solution) {
             final Task derived = task;
-            derived.setPriority((float) (derived.getPriority() * priorityMultiplier.get()));
-            derived.setDurability((float) (derived.getDurability() * durabilityMultiplier.get()));
+            derived.mulPriority(priorityMultiplier.floatValue());
+            derived.mulDurability(durabilityMultiplier.floatValue());
         }
         return null;
     }

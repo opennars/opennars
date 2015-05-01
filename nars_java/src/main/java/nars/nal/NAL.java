@@ -250,12 +250,6 @@ public abstract class NAL  implements Runnable {
     }
 
     public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
-        if (!Global.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
-            if (!newBudget.aboveThreshold()) {
-                //early exit test for below budget
-                return false;
-            }
-        }
 
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
@@ -316,11 +310,6 @@ public abstract class NAL  implements Runnable {
      * @param newBudget   The budget value in task
      */
     public boolean singlePremiseTask(Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp) {
-        if (!Global.DEBUG) { //in debug mode, allow the task to be created so we get the entire thing when it is rejected in the filter later
-            if (!newBudget.aboveThreshold()) {
-                return false; //early exit test for below budget
-            }
-        }
 
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {

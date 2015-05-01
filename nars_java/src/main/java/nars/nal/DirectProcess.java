@@ -20,10 +20,10 @@ public class DirectProcess extends NAL {
     public DirectProcess(Memory mem, Task task) {
         super(mem, task);
 
-        if (Global.DEBUG) {
-            if (!task.aboveThreshold())
-                throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
-        }
+//        if (Global.DEBUG) {
+//            if (!task.aboveThreshold())
+//                throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
+//        }
     }
 
     /** runs the entire process in a constructor, for when a Concept is provided */

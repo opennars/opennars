@@ -49,7 +49,7 @@ public class NALParam extends RuleEngine<NAL> {
     }
 
     void initDerivationFilters() {
-        derivationFilters.add(new FilterBelowBudget());
+        //derivationFilters.add(new FilterBelowBudget());
         derivationFilters.add(new FilterBelowConfidence());
         derivationFilters.add(new FilterOperationWithSubjOrPredVariable());
         //derivationFilters.add(new FilterCyclic());

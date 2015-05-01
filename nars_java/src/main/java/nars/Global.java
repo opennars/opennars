@@ -163,13 +163,7 @@ public class Global {
     
     
     //RUNTIME PERFORMANCE (should not affect logic): ----------------------------------
-    
-    /**
-     * max length of a Term name for which it can be stored statically via String.intern().
-     * set to zero to disable this feature.
-     * The problem with indiscriminate use of intern() is that interned strings can not be garbage collected (i.e. permgen) - possible a memory leak if terms disappear.
-     */
-    //public static int INTERNED_TERM_NAME_MAXLEN = 0;
+
           
     /**
      * Determines when TermLink and TaskLink should use Rope implementation for its Key,

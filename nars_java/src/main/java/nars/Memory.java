@@ -648,7 +648,7 @@ public class Memory implements Serializable {
 
         float inputPriorityFactor = param.inputActivationFactor.floatValue();
         if (inputPriorityFactor!=1.0f)
-            t.setPriority( t.getPriority() * inputPriorityFactor );
+            t.mulPriority( inputPriorityFactor );
 
         if (!(t.aboveThreshold())) {
             removed(t, "Insufficient budget");

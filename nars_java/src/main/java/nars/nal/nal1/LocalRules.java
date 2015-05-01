@@ -85,10 +85,6 @@ public class LocalRules {
         TruthValue truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        if (!budget.aboveThreshold()) {
-            return false;
-        }
-
         if (nal.deriveTask(new Task(new Sentence(newBelief.term,
                 t.sentence.punctuation,
                 truth,
@@ -165,16 +161,11 @@ public class LocalRules {
         }
         
         Budget budget = TemporalRules.solutionEval(problem, belief, task, nal);
-        if (!budget.aboveThreshold()) {
-            memory.removed(task, "Insufficient budget");
-            return false;
-        }
 
             
         //Solution Activated
         if(task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST) {
             if(task.isInput()) { //only show input tasks as solutions
-
                 memory.emit(Answer.class, task, belief);
             } else {
                 memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed

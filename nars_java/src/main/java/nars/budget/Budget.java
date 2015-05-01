@@ -545,6 +545,14 @@ public class Budget implements Cloneable, BudgetTarget {
         return amount - received;
     }
 
+    public boolean mulPriority(float factor) {
+        return setPriority(getPriority() * factor);
+    }
+
+    public boolean mulDurability(float factor) {
+        return setDurability(getDurability() * factor);
+    }
+
 
     /** indicates an implementation has, or is associated with a specific BudgetValue */
     public interface Budgetable {

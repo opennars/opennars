@@ -196,14 +196,13 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
         final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
         final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        nalParam.derivationFilters.add(0, new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+        nalParam.derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
 
 
         n.on(new Events.OUT());
 
         n.on(new RuntimeNARSettings());
 
-        //n.memory.setDerivationProcessor(getDerivationProcessor());
 
     }
 
