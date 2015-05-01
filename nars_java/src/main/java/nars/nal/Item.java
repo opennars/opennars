@@ -93,13 +93,21 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
      * Return a String representation of the Item after simplification
      * @return A simplified String representation of the content
      */
-    public String toStringBudgetSentence() {
-        final String briefBudget = super.toStringExternal();
-        String n = name().toString();
-        return new StringBuilder(briefBudget.length()+n.length()+1).append(briefBudget).append(' ').append(n).toString();
+    public String toStringWithBudget() {
+        StringBuilder sb = new StringBuilder();
+        appendWithBudget(sb);
+        return sb.toString();
     }
+
     public String toStringSentence() {
         return name().toString();
+    }
+
+    public void appendWithBudget(StringBuilder sb) {
+        final String briefBudget = super.toStringExternal();
+        final String n = name().toString();
+        sb.ensureCapacity(briefBudget.length()+n.length()+1);
+        sb.append(briefBudget).append(' ').append(n);
     }
 
     /** similar to toStringExternal but includes budget afterward */

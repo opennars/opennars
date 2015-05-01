@@ -237,7 +237,7 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
      * this is a way to apply the forgetting process applied in putBack.
      */
     public void forgetNext(final float forgetCycles, final float accuracy, final Memory m) {
-        int conceptsToForget = Math.round(size() * accuracy);
+        final int conceptsToForget = Math.round(size() * accuracy);
         if (conceptsToForget == 0) return;
 
         forgetNext.set(forgetCycles, m);

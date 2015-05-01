@@ -1,17 +1,19 @@
 package nars.control;
 
 import nars.Global;
-import nars.nal.*;
+import nars.Memory;
 import nars.budget.Bag;
 import nars.budget.bag.CacheBag;
+import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.nal.tlink.TaskLink;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -29,7 +31,7 @@ public class DefaultCore extends SequentialCore {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    public final Deque<Task> newTasks;
+    protected SortedSet<Task> newTasks;
 
 
 
@@ -43,13 +45,16 @@ public class DefaultCore extends SequentialCore {
             ((CoreAware) novelTasks).setCore(this);
         }
 
-        this.newTasks = (Global.THREADS > 1)
-                ? new ConcurrentLinkedDeque<>() : new ArrayDeque<>();
-
 
     }
 
+    @Override
+    public void init(Memory m) {
+        super.init(m);
 
+        this.newTasks = new ConcurrentSkipListSet<>(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+        //this.newTasks = new TreeSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+    }
 
     @Override
     public void addTask(Task t) {
@@ -71,16 +76,8 @@ public class DefaultCore extends SequentialCore {
 
         //all new tasks
         int numNewTasks = newTasks.size();
-        for (int i = 0; i < numNewTasks; i++) {
-            Runnable r = nextNewTask();
-            if (r != null) {
-                r.run();
-            }
-            else
-                break;
-        }
+        runNewTasks(numNewTasks);
 
-        //int afterNewTasks = memory.inputDerived();
 
         //1 novel tasks if numNewTasks empty
         if (newTasks.isEmpty()) {
@@ -93,7 +90,6 @@ public class DefaultCore extends SequentialCore {
             }
         }
 
-        //int afterNovelTasks = memory.inputDerived();
 
         //1 concept if (memory.newTasks.isEmpty())*/
         int conceptsToFire = newTasks.isEmpty() ? memory.param.conceptsFiredPerCycle.get() : 0;
@@ -104,10 +100,7 @@ public class DefaultCore extends SequentialCore {
             }
         }
 
-        int afterConceptsFire = memory.inputDerived();
 
-
-        //System.out.println("derivation: " + afterNewTasks + ", " + afterNovelTasks + ", " + afterConceptsFire);
 
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,
@@ -119,23 +112,22 @@ public class DefaultCore extends SequentialCore {
 
     }
 
-    private ConceptProcess nextTaskLink(Concept concept) {
-        if (concept == null) return null;
+    private void runNewTasks(int numNewTasks) {
+        if (newTasks.isEmpty()) return;
 
+        Iterator<Task> ii = newTasks.iterator();
 
-        TaskLink taskLink = concept.taskLinks.forgetNext(memory.param.taskLinkForgetDurations, memory);
-        if (taskLink!=null)
-            return newConceptProcess(concept, taskLink);
-        else {
-            return null;
+        for (int i = 0; ii.hasNext() && i < numNewTasks; ) {
+            Task task = ii.next();
+            if (run(task))
+                i++;
+            ii.remove();
         }
 
     }
 
-    protected Runnable nextNewTask() {
-        if (newTasks.isEmpty()) return null;
-
-        final Task task = newTasks.removeFirst();
+    /** returns whether the task was run */
+    protected boolean run(Task task) {
         final Sentence sentence = task.sentence;
 
         memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
@@ -144,9 +136,10 @@ public class DefaultCore extends SequentialCore {
                 || sentence.isQuestion()
                 || (concept(sentence.term) != null)
                 ) {
-            //it is a question/quest or a judgment for a concept which exists:
 
-            return new DirectProcess(memory, task);
+            //it is a question/quest or a judgment for a concept which exists:
+            new DirectProcess(memory, task).run();
+            return true;
 
         } else {
             //it is a judgment or goal which would create a new concept:
@@ -176,8 +169,23 @@ public class DefaultCore extends SequentialCore {
             }
             //}
         }
-        return null;
+        return false;
     }
+
+
+    private ConceptProcess nextTaskLink(Concept concept) {
+        if (concept == null) return null;
+
+
+        TaskLink taskLink = concept.taskLinks.forgetNext(memory.param.taskLinkForgetDurations, memory);
+        if (taskLink!=null)
+            return newConceptProcess(concept, taskLink);
+        else {
+            return null;
+        }
+
+    }
+
 
     /**
      * Select a novel task to process.

@@ -183,19 +183,6 @@ public class Memory implements Serializable {
         return concept;
     }
 
-    /** all accumulated derivations are input to the memory in the order they have been sorted, obeying any input quantity limits */
-    public synchronized int inputDerived() {
-        if (derivations.isEmpty()) return 0;
-
-        int c = 0;
-        for (Task t : derivations) {
-            taskAdd(t);
-            c++;
-        }
-        derivations.clear();
-
-        return c;
-    }
 
     @Deprecated public static enum Forgetting {
         @Deprecated Iterative,
@@ -247,8 +234,6 @@ public class Memory implements Serializable {
     private final Set<Concept> questionConcepts = Global.newHashSet(16);
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
-    /** incoming derivations, for sorting and filtering before memory input */
-    protected SortedSet<Task> derivations;
 
     public final EventEmitter event;
 
@@ -304,7 +289,6 @@ public class Memory implements Serializable {
         this.operators = Global.newHashMap();
         this.event = new EventEmitter.DefaultEventEmitter();
 
-        this.derivations = new TreeSet(new TaskComparator(narParam.getDerivationDuplicationMode()));
 
         this.conceptBuilders = new ArrayList(1);
 
@@ -650,19 +634,13 @@ public class Memory implements Serializable {
         if (inputPriorityFactor!=1.0f)
             t.mulPriority( inputPriorityFactor );
 
-        if (!(t.aboveThreshold())) {
-            removed(t, "Insufficient budget");
-            return false;
-        }
 
         if (!Terms.levelValid(t.sentence, nal())) {
             removed(t, "Insufficient NAL level");
             return false;
         }
 
-
         concepts.addTask(t);
-
 
         emit(Events.TaskAdd.class, t, reason);
         logic.TASK_ADD_NEW.hit();
@@ -696,15 +674,15 @@ public class Memory implements Serializable {
 
 
     public boolean input(final Task task, boolean solutionOrDerivation ) {
-        if (solutionOrDerivation) {
-            //it's a solution, input directly
-            return input(task) == 1;
-        }
-        else {
+//        if (solutionOrDerivation) {
+//            //it's a solution, input directly
+//            return input(task) == 1;
+//        }
+//        else {
             //it's a derivation, queue it in the derivation sorted set
             //  this may merge with an existing item in the set.
-            derivations.add(task);
-        }
+            taskAdd(task);
+        //}
         return true;
     }
 

@@ -251,10 +251,9 @@ public class ConceptProcess extends NAL {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append('[').append(currentConcept).append(':').append(currentTaskLink).append(',').append(currentTermLink).append(']');
-        return sb.toString();
+        return new StringBuilder()
+        .append("ConceptProcess[").append(currentConcept.toString()).append(':').append(currentTaskLink).append(',').append(currentTermLink).append(']')
+        .toString();
     }
 
 

@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Param implements Serializable {
 
 
-    private TaskComparator.Duplication derivationDuplicationMode;
+    private TaskComparator.Duplication derivationDuplicationMode = TaskComparator.Duplication.Or;
 
     public Param() {    }
 

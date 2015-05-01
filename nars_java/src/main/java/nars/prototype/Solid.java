@@ -1,7 +1,5 @@
 package nars.prototype;
 
-import javolution.util.FastSortedSet;
-import javolution.util.function.Equality;
 import nars.Core;
 import nars.Memory;
 import nars.NAR;
@@ -21,6 +19,9 @@ import nars.nal.tlink.TermLinkKey;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /** processes every concept fairly, according to priority, in each cycle */
 public class Solid extends Default {
@@ -126,24 +127,11 @@ public class Solid extends Default {
                     return concepts.mass();
                 }
 
-                //iterates in reverse, lowest to highest
-                FastSortedSet<Task> tasks = new FastSortedSet(new Equality<Task>() {
+                //final SortedSet<Task> tasks = new TreeSet(new TaskComparator(TaskComparator.Duplication.Or));
+                final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new TaskComparator(TaskComparator.Duplication.Or));
+                /*final SortedSet<Task> tasks = new FastSortedSet(
+                        new WrapperComparatorImpl(new TaskComparator(TaskComparator.Duplication.Or))).atomic();*/
 
-                    @Override
-                    public int hashCodeOf(Task object) {
-                        return object.hashCode();
-                    }
-
-                    @Override
-                    public boolean areEqual(Task left, Task right) {
-                        return left.equals(right);
-                    }
-
-                    @Override
-                    public int compare(Task left, Task right) {
-                        return budgetComparator.compare(left, right);
-                    }
-                });
 
                 @Override
                 public Iterator<Concept> iterator() {
@@ -187,7 +175,6 @@ public class Solid extends Default {
                     if (t++ >= maxTasks) break;
                 }
                 tasks.clear();
-                memory.inputDerived();
             }
 
             @Override
@@ -218,7 +205,6 @@ public class Solid extends Default {
 
                 }
 
-                memory.inputDerived();
 
                 //processNewTasks();
 

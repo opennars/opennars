@@ -188,12 +188,6 @@ public abstract class NAL  implements Runnable {
      */
     protected boolean addNewTask(Task task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
-        if (Global.DEBUG) {
-            //detect strange occurrence time
-            if (task.sentence != null && task.sentence.stamp.getOccurrenceTime() < -99999999 && !task.sentence.isEternal())
-                throw new RuntimeException("Probably invalid occurence time:\n" + task.getExplanation());
-        }
-
         if (!nal(7) && !task.sentence.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
         }

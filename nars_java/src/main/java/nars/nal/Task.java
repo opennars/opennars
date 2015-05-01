@@ -298,7 +298,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     @Override
     @Deprecated public String toString() {
-        return toStringBudgetSentence();
+        return toStringWithBudget();
     }
 
 

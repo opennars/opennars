@@ -96,7 +96,7 @@ public class NARTrace extends MemoryObserver {
 
         @Override
         public String toString() {
-            return "Task " + type + " (" + task.getHistory() + "): " + task.toStringBudgetSentence();
+            return "Task " + type + " (" + task.getHistory() + "): " + task.toStringWithBudget();
         }
         @Override
         public String toLabel() {

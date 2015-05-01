@@ -5,7 +5,6 @@
 package nars.nal;
 
 import nars.Events;
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
@@ -44,7 +43,14 @@ public class DirectProcess extends NAL {
 
     @Override
     public String toString() {
-        return "ImmediateProcess[" + getCurrentTask().toString() + ']';
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("DirectProcess[");
+        getCurrentTask().appendWithBudget(sb);
+        sb.append(']');
+
+        return sb.toString();
+
     }
 
 
@@ -87,4 +93,5 @@ public class DirectProcess extends NAL {
         d.run();
         return d;
     }
+
 }

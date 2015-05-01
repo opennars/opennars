@@ -866,7 +866,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     @Override
     public String toStringLong() {
         String res = 
-                toStringBudgetSentence() + " " + term.name()
+                toStringWithBudget() + " " + term.name()
                 + toStringIfNotNull(termLinks.size(), "termLinks")
                 + toStringIfNotNull(taskLinks.size(), "taskLinks")
                 + toStringIfNotNull(beliefs.size(), "beliefs")

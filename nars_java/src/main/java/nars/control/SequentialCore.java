@@ -5,6 +5,7 @@ import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.BudgetFunctions;
+import nars.nal.TaskComparator;
 import nars.nal.concept.Concept;
 import nars.nal.ConceptProcess;
 import nars.budget.Bag;
@@ -16,6 +17,7 @@ import nars.nal.term.Term;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 
 /**
@@ -61,6 +63,8 @@ abstract public class SequentialCore implements Core {
             ((Memory.MemoryAware)concepts).setMemory(m);
         if (subcon!=null)
             subcon.setMemory(m);
+
+
     }
 
     protected static class DefaultConceptProcess extends ConceptProcess {
