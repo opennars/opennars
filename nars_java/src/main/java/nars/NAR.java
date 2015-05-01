@@ -662,7 +662,7 @@ public class NAR implements Runnable {
 
     /** normal way to construct a NAR, using a particular Build instance */
     public NAR(ProtoNAR b) {
-        this(b.newMemory(b.param));
+        this(b.newMemory(b.param, b.getNALParam()));
         b.init(this);
     }
 

@@ -1,5 +1,7 @@
 package nars;
 
+import nars.nal.NALParam;
+
 /**
  * NAR design parameters which define a NAR at initialization.
  * All the information necessary to create a new NAR (builder / parameter object)
@@ -33,8 +35,8 @@ abstract public class ProtoNAR extends Global {
 //        return conceptBuilder;
 //    }
 
-    protected Memory newMemory(Param p) {
-        return new Memory(getMaximumNALLevel(), p, newCore());
+    protected Memory newMemory(Param narParam, NALParam nalParam) {
+        return new Memory(getMaximumNALLevel(), narParam, nalParam, newCore());
     }
 
     protected abstract int getMaximumNALLevel();
@@ -51,5 +53,6 @@ abstract public class ProtoNAR extends Global {
     public String toJSON() {
         return Param.json.toJson(this);
     }
-    
+
+    abstract public NALParam getNALParam();
 }

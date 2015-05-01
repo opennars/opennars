@@ -1,5 +1,6 @@
 package nars.nal.filter;
 
+import nars.nal.DerivationFilter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -7,7 +8,7 @@ import nars.nal.Task;
 /**
 * Created by me on 2/9/15.
 */
-public class FilterBelowConfidence implements NAL.DerivationFilter {
+public class FilterBelowConfidence implements DerivationFilter {
 
     @Override public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
         if (task.sentence.truth != null) {

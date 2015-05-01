@@ -6,7 +6,7 @@ package nars.nal.filter;
 
 import nars.io.Symbols;
 import nars.nal.NAL;
-import nars.nal.NAL.DerivationFilter;
+import nars.nal.DerivationFilter;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;

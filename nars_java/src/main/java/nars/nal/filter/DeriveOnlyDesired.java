@@ -5,7 +5,7 @@
 package nars.nal.filter;
 
 import nars.nal.NAL;
-import nars.nal.NAL.DerivationFilter;
+import nars.nal.DerivationFilter;
 import nars.nal.Sentence;
 import nars.nal.Task;
 

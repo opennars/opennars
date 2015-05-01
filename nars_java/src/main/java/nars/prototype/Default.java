@@ -10,10 +10,7 @@ import nars.budget.bag.experimental.ChainBag;
 import nars.control.DefaultCore;
 import nars.event.AbstractExecutive;
 import nars.event.exe.DesireThresholdExecutive;
-import nars.nal.ConceptBuilder;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.TaskComparator;
+import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
 import nars.nal.nal8.Operator;
@@ -33,6 +30,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import nars.nal.filter.ConstantDerivationLeak;
+
 import static nars.operate.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.operate.mental.InternalExperience.InternalExperienceMode.Minimal;
 
@@ -43,7 +42,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     
 
-    
+
+    final NALParam nalParam = new NALParam();
 
     /** Size of TaskLinkBag */
     int taskLinkBagSize;
@@ -194,20 +194,19 @@ public class Default extends ProtoNAR implements ConceptBuilder {
             }
         }
 
+        final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        nalParam.derivationFilters.add(0, new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+
 
         n.on(new Events.OUT());
 
         n.on(new RuntimeNARSettings());
 
-        n.memory.setDerivationProcessor(getDerivationProcessor());
+        //n.memory.setDerivationProcessor(getDerivationProcessor());
 
     }
 
-    public Memory.DerivationProcessor getDerivationProcessor() {
-        final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        return new Memory.ConstantLeakyDerivations(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK);
-    }
 
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
@@ -217,6 +216,10 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         return newConcept(t, b, taskLinks, termLinks, m);
     }
 
+    @Override
+    public NALParam getNALParam() {
+        return nalParam;
+    }
 
     protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
@@ -306,8 +309,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
 
     @Override
-    protected Memory newMemory(Param p) {
-        Memory m = super.newMemory(p);
+    protected Memory newMemory(Param narParam, NALParam nalParam) {
+        Memory m = super.newMemory(narParam, nalParam);
         m.on((ConceptBuilder) this); //default conceptbuilder
         return m;
     }

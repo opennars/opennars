@@ -283,17 +283,18 @@ public class Memory implements Serializable {
     /**
      * Create a new memory
      *
-     * added during runtime
+     * @param narParam reasoner paramerters
+     * @param nalParam logic parameters
      */
-    public Memory(int nalLevel, Param param, Core core) {
+    public Memory(int nalLevel, Param narParam, NALParam nalParam, Core core) {
 
         this.level = nalLevel;
 
-        this.param = param;
+        this.param = narParam;
+        this.rules = nalParam;
 
         this.perception = new Perception();
 
-        this.rules = new NALParam(this);
 
         this.concepts = core;
         this.concepts.init(this);
@@ -303,7 +304,7 @@ public class Memory implements Serializable {
         this.operators = Global.newHashMap();
         this.event = new EventEmitter.DefaultEventEmitter();
 
-        this.derivations = new TreeSet(new TaskComparator(param.getDerivationDuplicationMode()));
+        this.derivations = new TreeSet(new TaskComparator(narParam.getDerivationDuplicationMode()));
 
         this.conceptBuilders = new ArrayList(1);
 
@@ -694,56 +695,15 @@ public class Memory implements Serializable {
     }
 
 
-    public interface DerivationProcessor {
-        public boolean process(Task derived);
-    }
-
-    public static class ConstantLeakyDerivations implements DerivationProcessor {
-        private final float priorityMultiplier;
-        private final float durabilityMultiplier;
-
-        public ConstantLeakyDerivations(float priorityMultiplier, float durabilityMultiplier) {
-            this.priorityMultiplier = priorityMultiplier;
-            this.durabilityMultiplier = durabilityMultiplier;
-        }
-
-        @Override
-        public boolean process(final Task derived) {
-            derived.setPriority(derived.getPriority() * priorityMultiplier);
-            derived.setDurability(derived.getDurability() * durabilityMultiplier);
-            return true;
-        }
-    }
-
-    DerivationProcessor derivationProcessor = null;
-
-    public void setDerivationProcessor(DerivationProcessor derivationProcessor) {
-        this.derivationProcessor = derivationProcessor;
-    }
-
-
-    /** returns true if the derivation is permitted to continue, meanwhile this function may update its budget and other properties */
-    protected boolean processDerivation(Task derived) {
-        if (derivationProcessor != null) {
-            return derivationProcessor.process(derived);
-        }
-        return true;
-    }
-
     public boolean input(final Task task, boolean solutionOrDerivation ) {
         if (solutionOrDerivation) {
+            //it's a solution, input directly
             return input(task) == 1;
         }
         else {
-            //it's a derivation,
-            // 1. process it (ex: apply derivation leak)
-            // 2. queue it in the derivation sorted set
+            //it's a derivation, queue it in the derivation sorted set
             //  this may merge with an existing item in the set.
-
-            if (processDerivation(task)) {
-                derivations.add(task);
-            }
-
+            derivations.add(task);
         }
         return true;
     }

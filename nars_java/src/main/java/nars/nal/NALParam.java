@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class NALParam extends RuleEngine<NAL> {
 
-    private List<NAL.DerivationFilter> derivationFilters = new ArrayList();
+    public final List<DerivationFilter> derivationFilters = new ArrayList();
 
-    public NALParam(Memory memory) {
+    public NALParam() {
         super();
 
         initConceptFireRules();
@@ -64,18 +64,19 @@ public class NALParam extends RuleEngine<NAL> {
         }
     }
 
-    public List<NAL.DerivationFilter> getDerivationFilters() {
+    public List<DerivationFilter> getDerivationFilters() {
         return derivationFilters;
     }
 
     /** tests validity of a derived task; if valid returns null, else returns a String rule explaining why it is invalid */
-    public String derivationRejected(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    public String getDerivationRejection(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
-        List<NAL.DerivationFilter> derivationFilters = getDerivationFilters();
+        List<DerivationFilter> derivationFilters = getDerivationFilters();
 
         if (derivationFilters != null) {
-            for (int i = 0; i < derivationFilters.size(); i++) {
-                NAL.DerivationFilter d = derivationFilters.get(i);
+            final int dfs = derivationFilters.size();
+            for (int i = 0; i < dfs; i++) {
+                DerivationFilter d = derivationFilters.get(i);
                 String rejectionReason = d.reject(nal, task, solution, revised, single, currentBelief, currentTask);
                 if (rejectionReason != null) {
                     return rejectionReason;

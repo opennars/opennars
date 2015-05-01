@@ -7,13 +7,10 @@ package nars.nal;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
-import nars.NAR;
 import nars.budget.Budget;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.operate.IOperator;
-import reactor.function.Supplier;
 
 import java.util.*;
 
@@ -208,7 +205,7 @@ public abstract class NAL  implements Runnable {
             currentTask = getCurrentTask();
 
 
-        String rejectionReason = reasoner.derivationRejected(this, task, solution, revised, single, currentBelief, currentTask);
+        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, currentBelief, currentTask);
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
             return false;
@@ -542,20 +539,6 @@ public abstract class NAL  implements Runnable {
 
     public float conceptPriority(Term target) {
         return memory.conceptPriority(target);
-    }
-
-    public interface DerivationFilter extends IOperator {
-
-
-        /**
-         * returns null if allowed to derive, or a String containing a short rejection rule for logging
-         */
-        public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask);
-
-        @Override
-        public default boolean setEnabled(NAR n, boolean enabled) {
-            return true;
-        }
     }
 
     public interface StampBuilder<C> {

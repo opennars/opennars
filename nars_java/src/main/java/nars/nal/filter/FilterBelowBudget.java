@@ -1,13 +1,9 @@
 package nars.nal.filter;
 
-import nars.budget.Budget;
-import nars.nal.Item;
-import nars.nal.NAL;
-import nars.nal.Sentence;
-import nars.nal.Task;
+import nars.nal.*;
 
 
-public class FilterBelowBudget implements NAL.DerivationFilter {
+public class FilterBelowBudget implements DerivationFilter {
 
     public final static String INSUFFICIENT_BUDGET = "Insufficient Budget";
 

@@ -1,5 +1,6 @@
 package nars.nal.filter;
 
+import nars.nal.DerivationFilter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -10,7 +11,7 @@ import nars.nal.nal8.Operation;
 /**
 * Created by me on 2/9/15.
 */
-public class FilterOperationWithSubjOrPredVariable implements NAL.DerivationFilter {
+public class FilterOperationWithSubjOrPredVariable implements DerivationFilter {
     @Override public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
         Term t = task.sentence.term;
         if (t instanceof Operation) {
