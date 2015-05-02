@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Additional interfaces for interacting with RL environment,
  * deciding next action, and managing goal and reward states
  */
-abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
+public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
     private final RLEnvironment env;
@@ -41,8 +41,7 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
 
-    float perceptionQuality = 0.95f;
-    float perceptionDurability = 0.75f;
+
 
     /**
      * corresponds to the numeric operation as specified by the environment
@@ -173,12 +172,10 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
      */
     public Task perceive(S term, float freq, float conf) {
         Task t = nar.memory.newTask((Compound)term)
-                .punctuation('.')
+                .judgment()
                 .present()
                 .truth(freq, conf)
                 .get();
-        t.orQuality(perceptionQuality);
-        t.orDurability(perceptionDurability);
         incoming.add(t);
         return t;
     }
@@ -294,8 +291,6 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
             p.perceive(o, time);
         }
 
-        //System.out.println("INCOMING");
-        //System.out.println(incoming);
 
         for (Task t : incoming) {
             DirectProcess.run(nar, t);

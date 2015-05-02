@@ -5,10 +5,8 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
-import automenta.vivisect.swing.NPanel;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Multimap;
+import javolution.util.FastMap;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.NAR;
@@ -31,7 +29,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -47,7 +44,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
 
     private final NAR nar;
-    private final Multimap<Concept, ConceptPanel> concept = HashMultimap.create();
+    private final Map<Concept, ConceptPanel> concept = new FastMap().atomic();
     static float conceptGraphFPS = 4; //default update frames per second
 
     final Set<Concept> changed = new LinkedHashSet();
@@ -72,6 +69,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 //        float red = freq <= 0.5f ? ((1.0f - freq) / 2f) : 0;
         return new Color(freq, 1.0f - freq, 1.0f, factor);
     }
+
     public static Color getGoalColor(float freq, float conf, float factor) {
         //float ii = 0.45f + (factor*conf) * 0.55f;
 //        float green = freq > 0.5f ? (freq / 2f) : 0f;
@@ -93,11 +91,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
 //                    }
 //
 //            }
-    //    }
+        //    }
 
-        synchronized (concept) {
-            concept.put(c, cp);
-        }
+        concept.put(c, cp);
         return cp;
     }
 
@@ -110,19 +106,18 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 updateAll();
             else
                 updateChanged();
-        }
-        else {
+        } else {
             if (args[0] instanceof Concept) {
-                Concept c = (Concept)args[0];
+                Concept c = (Concept) args[0];
                 changed.add(c);
-            }
-            else {
+            } else {
                 throw new RuntimeException(this + " unable to process unknown event format: " + event + " with " + Arrays.toString(args));
             }
         }
     }
 
-    @Deprecated public boolean isAutoRemove() {
+    @Deprecated
+    public boolean isAutoRemove() {
         return true;
     }
 
@@ -132,81 +127,71 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         final long now = nar.time();
 
-        List<ConceptPanel> toRemove = new ArrayList();
-        synchronized(concept) {
-            for (Concept c : changed) {
-                for (ConceptPanel cp : concept.get(c)) {
-                    if (cp.isShowing())
-                        cp.update(now);
-                    else
-                        toRemove.add(cp);
-                }
+
+        for (Concept c : changed) {
+            ConceptPanel cp = concept.get(c);
+            if (cp == null) {
+                continue;
+            }
+            if (cp.isShowing())
+                cp.update(now);
+            else {
+                concept.remove(c);
             }
         }
+
 
         changed.clear();
 
-        remove(toRemove);
 
     }
 
-    public void updateAll() {
-        //TODO only update the necessary concepts
-        long t = nar.time();
-        synchronized (concept) {
-            final Iterator<Map.Entry<Concept, ConceptPanel>> ee = concept.entries().iterator();
-            while (ee.hasNext()) {
-                final Map.Entry<Concept, ConceptPanel> e = ee.next();
-                final ConceptPanel cp = e.getValue();
-                if (isAutoRemove() && (cp.closed) || (!cp.isShowing())) {
-                    ee.remove();
-                }
-                else if ( cp.isVisible() ) {
-                    cp.update(t);
-                }
-            }
-        }
+    @Deprecated public void updateAll() {
+//        throw new RuntimeException("should not need to update all");
+//        //TODO only update the necessary concepts
+//        long t = nar.time();
+//        synchronized (concept) {
+//            final Iterator<Map.Entry<Concept, ConceptPanel>> ee = concept.entries().iterator();
+//            while (ee.hasNext()) {
+//                final Map.Entry<Concept, ConceptPanel> e = ee.next();
+//                final ConceptPanel cp = e.getValue();
+//                if (isAutoRemove() && (cp.closed) || (!cp.isShowing())) {
+//                    ee.remove();
+//                } else if (cp.isVisible()) {
+//                    cp.update(t);
+//                }
+//            }
+//        }
     }
 
     public void remove(Collection<ConceptPanel> cp) {
         if (cp.isEmpty()) return;
 
-        synchronized (concept) {
-            for (ConceptPanel c : cp)
-                concept.remove(c.concept, c);
-        }
+        for (ConceptPanel c : cp)
+            concept.remove(c.concept, c);
     }
 
     public boolean remove(ConceptPanel cp) {
-        boolean r;
-        synchronized (concept) {
-            r = concept.remove(cp.concept, cp);
-        }
-        return r;
+        return concept.remove(cp.concept, cp);
     }
 
     public void off() {
         super.off();
-        synchronized (concept) {
-            concept.clear();
-        }
-
+        changed.clear();
+        concept.clear();
     }
 
-    public Collection<ConceptPanel> getPanels(Concept c) {
-        Collection<ConceptPanel> x = concept.get(c);
-        if (x == null) return Collections.EMPTY_LIST;
-        return x;
+    public ConceptPanel getPanel(Concept c) {
+        return concept.get(c);
     }
 
     public ConceptPanel getFirstPanelOrCreateNew(Concept c, boolean label, boolean full, int chartSize) {
-        Collection<ConceptPanel> existing = getPanels(c);
-        if (existing.isEmpty()) {
+        ConceptPanel existing = getPanel(c);
+        if (existing == null) {
             return newPanel(c, label, full, chartSize);
         }
-        return existing.iterator().next();
+        return existing;
     }
-
 
 
     final static float titleSize = 18f;
@@ -231,7 +216,6 @@ public class ConceptPanelBuilder extends AbstractReaction {
         private BeliefTimeline beliefGoalTime;
         public boolean closed;
         // private final PCanvas syntaxPanel;
-
 
 
         public ConceptPanel(final Concept c, boolean label, boolean full, int chartSize) {
@@ -306,13 +290,12 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 nengo.getUniverse().add(beliefGoalChart);
                 nengo.getUniverse().add(questionChart);
 
-                JPanel details = new JPanel(new GridLayout(0,2));
+                JPanel details = new JPanel(new GridLayout(0, 2));
                 details.add(termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
                 details.add(taskLinkChart = new RadialBagChart(c, c.taskLinks));
                 add(details, BorderLayout.SOUTH);
 
-            }
-            else {
+            } else {
                 setLayout(new BorderLayout());
 
 
@@ -348,9 +331,6 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                     add(titlePanel, CENTER);
                 }
-
-
-
 
 
             }
@@ -393,8 +373,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
                 beliefGoalTime.setVisible(
                         beliefGoalTime.update(time, concept.beliefs, concept.goals));
-            }
-            else {
+            } else {
                 beliefGoalChart.setVisible(false);
                 beliefGoalTime.setVisible(false);
             }
@@ -511,9 +490,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
             timeFactor = 1.0f * (maxTime - minTime);
 
             if (vertical)
-                length = ((float) h - timeMargin*2);
+                length = ((float) h - timeMargin * 2);
             else
-                length = ((float) w - timeMargin*2);
+                length = ((float) w - timeMargin * 2);
 
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
@@ -528,7 +507,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             g.setColor(Color.GRAY);
 
 
-            int tt = Math.round( getT(time) * length );
+            int tt = Math.round(getT(time) * length);
 
             if (vertical)
                 g.fillRect(0, timeMargin + tt - 1, getWidth(), 3);
@@ -547,8 +526,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             long when = s.getOccurrenceTime();
 
-            int yy = (int)(getT(when) * length);
-
+            int yy = (int) (getT(when) * length);
 
 
             int xx = (int) ((1.0f - freq) * (this.w - thick));
@@ -600,14 +578,13 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 }
             }
             g.setColor(belief ? getBeliefColor(freq, conf, factor) :
-                            getGoalColor(freq, conf, factor)            );
+                    getGoalColor(freq, conf, factor));
 
             int w, h;
             if (belief) {
                 w = 10;
                 h = 4;
-            }
-            else {
+            } else {
                 h = 10;
                 w = 4;
             }
@@ -666,7 +643,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
                         if (t instanceof TaskLink) {
 
                             if (((TaskLink) t).getTerm().equals(concept.getTerm())) {
-                                n = n.replace(conceptString,"");
+                                n = n.replace(conceptString, "");
                             }
                         }
 
@@ -733,17 +710,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
                 g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
 
 
-
                 g.translate((int) x, (int) y /*+ textLength*/);
 
-                float angle = -(float)((1.0f - v) * Math.PI/2f);
-                if (angle!=0)
+                float angle = -(float) ((1.0f - v) * Math.PI / 2f);
+                if (angle != 0)
                     g.rotate(angle);
 
 
-                g.drawString(s, 0,0);
+                g.drawString(s, 0, 0);
 
-                if (angle!=0)
+                if (angle != 0)
                     g.rotate(-angle);
 
                 g.translate(-(int) x, -(int) y /*+ textLength*/);
@@ -772,18 +748,18 @@ public class ConceptPanelBuilder extends AbstractReaction {
             int count = priority.size();
             final int width = getWidth();
             final int height = getHeight();
-            float dx = (float)(Math.PI*2) / (count);
+            float dx = (float) (Math.PI * 2) / (count);
             float theta = phase;
             g.setFont(Video.monofont.deriveFont(9f));
 
             int i = 0;
-            g.translate(width/2, height/2);
+            g.translate(width / 2, height / 2);
             for (Map.Entry<String, Float> e : priority.entrySet()) {
 
                 String s = e.getKey();
 
 
-                float rad = e.getValue() * (width/2 * 0.45f) + (width/2 * 0.12f);
+                float rad = e.getValue() * (width / 2 * 0.45f) + (width / 2 * 0.12f);
 
                 g.setColor(Color.getHSBColor(e.getValue() * 0.5f + 0.25f, 0.75f, 0.8f));
                 //g.translate((int) theta, (int) y /*+ textLength*/);
@@ -793,10 +769,9 @@ public class ConceptPanelBuilder extends AbstractReaction {
                     int textLength = g.getFontMetrics().stringWidth(s);
                     x = 0;
                     y = 0;
-                    x -= textLength/2;
+                    x -= textLength / 2;
                     g.drawString(s, x, y);
-                }
-                else {
+                } else {
                     if (i == 0) g.rotate(phase); //initial angle offset
 
                     //x = (int) (rad * Math.cos(theta)) + width / 2;
@@ -816,7 +791,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         @Override
         public void mouseDragged(MouseEvent e) {
             int ex = e.getPoint().x;
-            phase += (ex - prevx)/32f;
+            phase += (ex - prevx) / 32f;
             prevx = ex;
             repaint();
         }

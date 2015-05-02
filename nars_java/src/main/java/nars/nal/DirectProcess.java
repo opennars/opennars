@@ -91,7 +91,8 @@ public class DirectProcess extends NAL {
         //System.err.println("direct: " + task);
         DirectProcess d = new DirectProcess(m, task);
 
-        //m.emit(Events.IN.class, task); //TODO use a different event than IN
+        if (task.isInput())
+            m.emit(Events.IN.class, task); //TODO use a different event than IN
 
         d.run();
         return d;

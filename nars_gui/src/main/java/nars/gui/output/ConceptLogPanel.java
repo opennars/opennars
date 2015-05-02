@@ -148,9 +148,9 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
         p.setBackground(c);
 
-        Color c2 = Color.getHSBColor(hue, 0.6f, 0.5f + priority * 0.5f);
+        //Color c2 = Color.getHSBColor(hue, 0.6f, 0.5f + priority * 0.5f);
 
-        p.setBorder(BorderFactory.createMatteBorder(0, 14, 0, 0, c2));
+        p.setBorder(BorderFactory.createMatteBorder(4, 8, 4, 0, c));
 
 
         //updateUI();
@@ -177,7 +177,9 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
         CharSequence s = TextOutput.getOutputString(channel, o, showStamp, nar, new StringBuilder());
         JLabel jl = new JLabel(s.toString());
-        //jl.setFont(Video.monofont);
+        jl.setDoubleBuffered(true);
+        jl.setIgnoreRepaint(true);
+
         applyPriority(jl, priority);
         append(jl);
 

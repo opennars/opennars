@@ -74,7 +74,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     float rewardGoalConfidence = 0.9f;
 
     /** confidence of state belief updates */
-    protected float stateUpdateConfidence = 0.9f;
+    @Deprecated protected float stateUpdateConfidence = 0.9f;
 
     //TODO belief update priority, durability etc
     //TODO reward goal priority, durability etc
@@ -129,6 +129,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             protected A qlearn(S state, double reward, A nextAction, double confidence) {
                 //belief about current state
                 if (stateUpdateConfidence > 0) {
+
                     //TODO avoid using String
                     DirectProcess.run(nar, (state) + ". :|: %" + confidence + ";" + stateUpdateConfidence + "%");
                 }
@@ -323,9 +324,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     public void autonomic(Term action, char punctuation, float freq, float conf, float priority, float durability) {
 
         //TODO avoid using String to build the task
-        DirectProcess.run(nar,
-                "$" + priority + ";" + durability + "$ " + action + punctuation + " :|: %" + freq + ';' + conf + '%'
-        );
+        Task t = nar.memory.newTask((Compound)action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).get();
+        DirectProcess.run(nar, t);
     }
 
 //    public void react() {
@@ -375,7 +375,10 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         }
 
         //choose maximum action
-        return act.keysView().max();
+        if (!act.isEmpty())
+            return act.keysView().max();
+        else
+            return null;
     }
 
 
@@ -395,19 +398,15 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     protected void goalReward() {
         //seek reward goal
         if (rewardGoalConfidence > 0) {
-            //TODO do not use String to construct
-            String rt = getRewardTerm().toString();
-            String r = rt + "! :|: %1.0;" + rewardGoalConfidence + '%';
-            DirectProcess.run(nar, r);
+            DirectProcess.run(nar,
+                nar.memory.newTask((Compound)getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence).get()
+            );
         }
     }
 
     protected void believeReward(float reward) {
         //belief about current reward amount
         if (rewardBeliefConfidence > 0) {
-
-            //TODO do not use String to construct
-            String rt = getRewardTerm().toString();
 
             //expects -1..+1 as reward range input
             float rFreq = reward /2.0f + 0.5f;
@@ -416,8 +415,9 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             if (rFreq < 0) rFreq = 0;
             if (rFreq > 1f) rFreq = 1f;
 
-            String r = rt + ". :|: %" + rFreq + ';' + rewardBeliefConfidence + '%';
-            DirectProcess.run(nar, r);
+            DirectProcess.run(nar,
+                    nar.memory.newTask((Compound)getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence).get()
+            );
         }
     }
 
@@ -429,8 +429,4 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         this.qAutonomicBeliefConfidence = qAutonomicBeliefConfidence;
     }
 
-
-    public void off() {
-        super.off();
-    }
 }

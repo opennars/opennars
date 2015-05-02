@@ -308,7 +308,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     public StringBuilder appendToString(StringBuilder sb, Memory memory) {
         if (sb == null) sb = new StringBuilder();
-        sb.append(sentence.toString(memory,true)).append(getBudget());
+        sentence.toString(sb, memory, false);
         return sb;
     }
 

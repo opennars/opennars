@@ -1,68 +1,74 @@
 package nars.nario;
 
 import automenta.vivisect.Video;
-import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.prototype.Default;
+import nars.rl.HaiSOMPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
+import nars.rl.example.QVis;
 
-import java.awt.*;
+import javax.swing.*;
 
 /**
  * Created by me on 4/26/15.
  */
-public class RLNario extends NARio implements RLEnvironment {
+public class RLNario extends NARio  {
+
+    private final QVis mi;
 
     public RLNario(NAR nar, Perception... p) {
         super(nar);
 
-        QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p) {
+        float fps = 30f;
+        gameRate = 1.0f / fps;
 
-        };
+        QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p);
 
-        agent.brain.setEpsilon(0.10);
-        agent.init();
+        agent.brain.setEpsilon(0.05);
+
+        //agent.setqAutonomicGoalConfidence(0.1f);
+
+        mi = new QVis(agent);
+
 
         Video.themeInvert();
         new NARSwing(nar);
     }
 
-    public static void main(String[] args) {
-        NAR n = new NAR(new Default());
-        new RLNario(n, new RawPerception("r", 0.7f));
-
-    }
-
     @Override
-    @Deprecated public double[] observe() {
-        return new double[0];
+    protected void input(String sensed) {
+        //ignore this input
     }
 
-    @Override
-    public double getReward() {
-        return dx / 10.0;
-    }
-
-    @Override
-    public void takeAction(int action) {
-
-    }
 
     @Override
     public void frame() {
+        super.frame();
+        SwingUtilities.invokeLater(mi::run);
+    }
+
+    public static void main(String[] args) {
+
+
+        NAR nar = new NAR(new Default().setInternalExperience(null)
+                .simulationTime().setConceptBagSize(3500));
+
+        nar.param.duration.set(memoryCyclesPerFrame * 3);
+        nar.setCyclesPerFrame(memoryCyclesPerFrame);
+
+        nar.param.outputVolume.set(0);
+        nar.param.decisionThreshold.set(0.55);
+        nar.param.conceptsFiredPerCycle.set(50);
+        nar.param.shortTermMemoryHistory.set(5);
+
+        new RLNario(nar,
+                new RawPerception("r", 0.3f),
+                new HaiSOMPerception("s", 4, 0.7f)
+        );
 
     }
 
-    @Override
-    public Component component() {
-        return null;
-    }
-
-    @Override
-    public int numActions() {
-        return 5;
-    }
 }

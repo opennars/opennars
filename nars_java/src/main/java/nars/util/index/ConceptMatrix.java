@@ -5,6 +5,8 @@ import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
+import java.util.Map;
+
 /**
  * Maintains a growing/sparse matrix consisting of a mapping of R row label concepts (ex: states),
  * C column label concepts (ex: actions), and E entry concepts (ex: implication of a state to an
@@ -46,9 +48,15 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 super.onConceptForget(c);
                 C col = (C)c.term;
 
-                table.columnMap().remove(col);
+                Map<C, Map<R, Concept>> cm = table.columnMap();
+                if (cm!=null) {
+                    Map<R, Concept> mc = cm.get(col);
+                    if (mc!=null && mc.isEmpty()) {
+                        cm.remove(col);
+                        onColumnRemove(col);
+                    }
+                }
 
-                onColumnRemove(col);
             }
 
         };
@@ -66,9 +74,16 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
                 R r = (R)c.term;
 
-                table.rowMap().remove(r);
-
-                onRowRemove(r);
+                //remove the row if no entries remain
+                //even if the index label concept is removed, there may still be entries referring to it
+                Map<R, Map<C, Concept>> rm = table.rowMap();
+                if (rm!=null) {
+                    Map<C, Concept> mr = rm.get(r);
+                    if (mr!=null && mr.isEmpty()) {
+                        rm.remove(r);
+                        onRowRemove(r);
+                    }
+                }
             }
 
         };

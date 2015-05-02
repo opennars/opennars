@@ -4,7 +4,9 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.nal.nal1.Inheritance;
 import nars.nal.term.Term;
 
-/** TODO inputs the perceived data directly as frequency data */
+/** inputs the perceived data directly as unipolar frequency data
+ *  TODO normalization
+ * */
 public class RawPerception implements Perception {
 
     private final float confidence;
@@ -30,7 +32,8 @@ public class RawPerception implements Perception {
         for (int i = 0; i < input.length; i++) {
 
             float f = getFrequency(input[i]);
-            agent.perceive("<{" + id + i + "} --> state>", f, confidence);
+            //agent.perceive("<{" + id + i + "} --> state>", f, confidence);
+            agent.perceive("<state --> [" + id + i + "]>", f, confidence);
         }
 
     }
@@ -47,7 +50,8 @@ public class RawPerception implements Perception {
         //TODO better pattern recognizer
         String s = t.toString();
         if ((t instanceof Inheritance)/* && (t.getComplexity() == 4)*/) {
-            if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
+            if (s.startsWith("<state --> [" + id) && s.endsWith("]>")) {
+            //if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
                 return true;
             }
         }

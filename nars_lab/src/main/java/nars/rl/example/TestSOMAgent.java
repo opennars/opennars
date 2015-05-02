@@ -1,11 +1,8 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
-import automenta.vivisect.swing.NWindow;
-import com.google.common.collect.Iterables;
-import jurls.core.utils.MatrixImage;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import jurls.reinforcementlearning.domains.tetris.Tetris;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -16,7 +13,6 @@ import nars.gui.NARSwing;
 import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
-import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
@@ -29,7 +25,6 @@ import nars.rl.RawPerception;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 import static nars.nal.UtilityFunctions.or;
 
@@ -201,91 +196,6 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
-    public static class QVis extends MatrixImage implements Runnable {
-
-        final java.util.List<Term> xstates = new ArrayList();
-        final java.util.List<Operation> xactions = new ArrayList();
-        private final QLAgent agent;
-        private final NWindow nmi;
-
-        MatrixImage.Data2D mid = new MatrixImage.Data2D() {
-
-            @Override
-            public double getValue(final int y, final int x) {
-                return agent.q(xstates.get(x), xactions.get(y));
-            }
-
-        };
-
-
-
-
-
-        public QVis(QLAgent agent) {
-            super(400,400);
-            this.agent = agent;
-
-            nmi = new NWindow("Q", this).show(400, 400);
-        }
-
-        @Override
-        public void run() {
-            repaint();
-
-
-
-            //if (xstates.size() != states.size()) {
-            xstates.clear();
-            Iterables.addAll(xstates, agent.rows);
-            //}
-            //if (xactions.size() != actions.size()) {
-            xactions.clear();
-            Iterables.addAll(xactions, agent.cols);
-            //}
-
-            repaint();
-
-
-            draw(mid, xstates.size(), xactions.size(), -1, 1);
-
-            nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
-
-//                    mi.draw(new Data2D() {
-//                        @Override
-//                        public double getValue(int x, int y) {
-//                            return q(y, x);
-//                        }
-//                    }, nstates, nactions, -1, 1);
-        }
-
-        @Override
-        public void draw(Data2D d, int cw, int ch, double minValue, double maxValue) {
-            super.draw(d, cw, ch, minValue, maxValue);
-
-            for (int i = 0; i < ch; i++) {
-                for (int j = 0; j < cw; j++) {
-                    final double value = d.getValue(i, j);
-
-                    float pri = 0;
-
-                    Concept c = (Concept) agent.table.get(xstates.get(j), xactions.get(i));
-                    if (c != null) {
-                        pri = c.getPriority();
-                    }
-
-                    int ipri = (int)(127 * pri)+127;
-                    int p = image.getRGB(j, i);
-
-                    //dim
-                    p &= (ipri << 24) | 0xffffff; // | (ipri << 16) | (ipri << 8) | (ipri);
-
-                    image.setRGB(j, i, p);
-                }
-            }
-        }
-
-    }
-
     public TestSOMAgent(RLEnvironment env, ProtoNAR dd, float qLearnedConfidence, Perception... p) {
         super();
 
@@ -314,10 +224,8 @@ public class TestSOMAgent extends JPanel {
 
         };
 
-        agent.init();
-        nar.param.shortTermMemoryHistory.set(3);
-        nar.param.decisionThreshold.set(0.65);
-        nar.param.outputVolume.set(5);
+
+
 
 
         Video.themeInvert();
@@ -341,9 +249,9 @@ public class TestSOMAgent extends JPanel {
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
-        //RLEnvironment d = new Tetris(10, 8);
+        RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
@@ -423,6 +331,9 @@ public class TestSOMAgent extends JPanel {
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.param.shortTermMemoryHistory.set(3);
+        dd.param.decisionThreshold.set(0.65);
+        dd.param.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 new RawPerception("L", 0.5f),

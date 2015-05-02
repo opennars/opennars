@@ -117,9 +117,11 @@ public abstract class Operator extends Atom implements IOperator {
                 Operator operator = operation.getOperator();
                 StringBuilder sb = new StringBuilder();
 
-                Budget b = getTask();
-                if (b!=null)
-                    sb.append(b.toStringExternal()).append(' ');
+                getTask().appendToString(sb, operator.getMemory());
+
+//                Budget b = getTask();
+//                if (b!=null)
+//                    sb.append(b.toStringExternal()).append(' ');
 
                 sb.append(operator).append('(');
                 if (args.length > 0) {
