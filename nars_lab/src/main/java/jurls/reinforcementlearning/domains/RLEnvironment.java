@@ -10,27 +10,32 @@ import automenta.vivisect.swing.NWindow;
 import java.awt.*;
 
 /**
- *
+ * Reinforcement Learning interface
  * @author thorsten
  */
 public interface RLEnvironment {
 
+    /** current observation */
     public double[] observe();
 
-    public double reward();
+    /** current reward */
+    public double getReward();
 
+    /** set the next action (0 <= action < numActions) */
     public void takeAction(int action);
 
-    public void worldStep();
-
-    public Component component();
+    /** advance world simulation by 1 frame */
+    public void frame();
 
     public int numActions();
 
-    default public NWindow newWindow() {
+    default public int numStates() { return observe().length; }
+
+
+    @Deprecated public Component component();
+    @Deprecated default public NWindow newWindow() {
         return new NWindow(getClass().toString(), component()).show(800,600);
     }
 
 
-    default public int inputDimension() { return observe().length; }
 }

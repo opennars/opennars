@@ -134,12 +134,12 @@ public class RLDemo extends javax.swing.JFrame {
                 for (int i = 0; i < numIterationsPerLoop; ++i) {
                     double[] previousState = rLDomain.observe();
                     rLDomain.takeAction(action);
-                    rLDomain.worldStep();
+                    rLDomain.frame();
                     double[] nextState = rLDomain.observe();
 
                     action = agent.learnAndAction(
                             nextState,
-                            rLDomain.reward(),
+                            rLDomain.getReward(),
                             previousState,
                             action
                     );
@@ -150,7 +150,7 @@ public class RLDemo extends javax.swing.JFrame {
                 debugLabel.setText("@" + numPhysicsIterations);
 
                 if (visualize) {
-                    final double r = rLDomain.reward();
+                    final double r = rLDomain.getReward();
 
                     Platform.runLater(new Runnable() {
 

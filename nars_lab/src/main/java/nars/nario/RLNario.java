@@ -42,7 +42,7 @@ public class RLNario extends NARio implements RLEnvironment {
     }
 
     @Override
-    public double reward() {
+    public double getReward() {
         return dx / 10.0;
     }
 
@@ -52,7 +52,7 @@ public class RLNario extends NARio implements RLEnvironment {
     }
 
     @Override
-    public void worldStep() {
+    public void frame() {
 
     }
 

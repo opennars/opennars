@@ -175,7 +175,7 @@ public class MartialArts implements RLEnvironment {
     }
 
     @Override
-    public double reward() {
+    public double getReward() {
         return reward(1, world.rlPlayer, world.opponentPlayer)
                 + reward(-1, world.opponentPlayer, world.rlPlayer);
     }
@@ -193,7 +193,7 @@ public class MartialArts implements RLEnvironment {
     }
 
     @Override
-    public void worldStep() {
+    public void frame() {
         animate(world.opponentPlayer);
         animate(world.rlPlayer);
 

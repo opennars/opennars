@@ -18,6 +18,7 @@ import nars.nal.TruthValue;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
 
@@ -268,13 +269,14 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         Term qt = qterm(state, action);
         //System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
 
-        double nextFreq = (nq / 2) + 0.5f;
+        float nextFreq = (float)((nq / 2f) + 0.5f);
 
-        //TODO avoid using String
 
-        String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
 
-        DirectProcess.run(nar, updatedBelief);
+        //String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
+        Task t = nar.memory.newTask((Compound)qt).punctuation(statePunctuation).present().truth(nextFreq, qUpdateConfidence).get();
+
+        DirectProcess.run(nar, t);
 
     }
 

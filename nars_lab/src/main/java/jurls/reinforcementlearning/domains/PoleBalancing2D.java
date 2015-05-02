@@ -62,7 +62,7 @@ public class PoleBalancing2D implements RLEnvironment {
     }
 
     @Override
-    public double reward() {
+    public double getReward() {
 
         return (agentPoint.y - pendulumPoint.y)/poleLength;
     }
@@ -94,7 +94,7 @@ public class PoleBalancing2D implements RLEnvironment {
     }
 
     @Override
-    public void worldStep() {
+    public void frame() {
 
         agentPoint.vx += dvx;
         dvx = 0;

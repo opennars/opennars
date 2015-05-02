@@ -52,12 +52,12 @@ public class Tetris implements RLEnvironment {
 
 
     @Override
-    public double reward() {
+    public double getReward() {
         return Math.max(-30, Math.min(30, currentScore - previousScore))/30.0;
     }
 
     @Override
-    public void worldStep() {
+    public void frame() {
         step(nextAction);
         vis.render();
     }

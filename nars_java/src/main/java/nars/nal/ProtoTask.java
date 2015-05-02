@@ -41,6 +41,10 @@ public class ProtoTask<T extends Compound> {
 
     public ProtoTask<T> truth(float freq, float conf) {
         this.truth = new TruthValue(freq, conf);
+        if (budget == null) {
+            //set a default budget if none exists
+            budget = new Budget(punc, truth);
+        }
         return this;
     }
 

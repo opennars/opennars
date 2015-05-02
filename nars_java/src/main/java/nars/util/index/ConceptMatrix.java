@@ -24,8 +24,8 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     /** q-value matrix:  q[state][action] */
     public final HashBasedTable<R,C,Concept> table = HashBasedTable.create();
 
-    protected final SetConceptMap<C> cols;
-    protected final SetConceptMap<R> rows;
+    public final SetConceptMap<C> cols;
+    public final SetConceptMap<R> rows;
 
     boolean initialized = true;
 

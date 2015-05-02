@@ -66,8 +66,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     protected int maxNALLevel;
 
     InternalExperience.InternalExperienceMode internalExperience;
-        
-    
+    private int cyclesPerFrame = 1;
+
 
     public ProtoNAR level(int maxNALlevel) {
         this.maxNALLevel = maxNALlevel;
@@ -166,6 +166,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     @Override
     public void init(NAR n) {
+
+        n.setCyclesPerFrame(cyclesPerFrame);
 
 
         for (Operator o : DefaultOperators.get())
@@ -316,6 +318,10 @@ public class Default extends ProtoNAR implements ConceptBuilder {
         Memory m = super.newMemory(narParam, nalParam);
         m.on((ConceptBuilder) this); //default conceptbuilder
         return m;
+    }
+
+    public void setCyclesPerFrame(int cyclesPerFrame) {
+        this.cyclesPerFrame = cyclesPerFrame;
     }
 
     public static class CommandLineNARBuilder extends Default {

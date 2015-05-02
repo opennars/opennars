@@ -28,8 +28,8 @@ public class HaiSOMPerception implements Perception {
 
         this.agent = agent;
 
-        if (somSize == -1) somSize = env.inputDimension()+1;
-        som = new Hsom(somSize, env.inputDimension());
+        if (somSize == -1) somSize = env.numStates()+1;
+        som = new Hsom(somSize, env.numStates());
     }
 
 

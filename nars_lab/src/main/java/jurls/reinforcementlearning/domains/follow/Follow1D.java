@@ -132,7 +132,7 @@ public class Follow1D implements RLEnvironment {
     }
 
     @Override
-    public double reward() {
+    public double getReward() {
         double dist = Math.abs(myPos - targetPos) / maxPos;
         return (0.5 - dist) * 2;
     }
@@ -207,7 +207,7 @@ public class Follow1D implements RLEnvironment {
     }
 
     @Override
-    public void worldStep() {
+    public void frame() {
 
         if (myPos > maxPos) {
             myPos = maxPos;

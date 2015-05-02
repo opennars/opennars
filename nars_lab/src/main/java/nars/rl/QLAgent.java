@@ -8,11 +8,11 @@ import nars.nal.DirectProcess;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -40,6 +40,9 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
 
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
+
+    float perceptionQuality = 0.95f;
+    float perceptionDurability = 0.75f;
 
     /**
      * corresponds to the numeric operation as specified by the environment
@@ -169,7 +172,13 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
      * adds a perception belief of a given strength (0..1.0) to the input buffer
      */
     public Task perceive(S term, float freq, float conf) {
-        Task t = nar.task(term + ". :|: %" + freq + ";" + conf + "%");
+        Task t = nar.memory.newTask((Compound)term)
+                .punctuation('.')
+                .present()
+                .truth(freq, conf)
+                .get();
+        t.orQuality(perceptionQuality);
+        t.orDurability(perceptionDurability);
         incoming.add(t);
         return t;
     }
@@ -209,7 +218,7 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
 
     }
 
-    ;
+
 
     /**
      * decides which action, TODO make this configurable
@@ -259,10 +268,10 @@ abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation>
             env.takeAction(i);
         }
 
-        env.worldStep();
+        env.frame();
 
 
-        double r = env.reward();
+        double r = env.getReward();
 
         //double dr = r - lastReward;
 

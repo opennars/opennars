@@ -201,91 +201,54 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
+    public static class QVis extends MatrixImage implements Runnable {
 
-    public TestSOMAgent(RLEnvironment d, ProtoNAR dd, float qLearnedConfidence, Perception... p) {
-        super();
+        final java.util.List<Term> xstates = new ArrayList();
+        final java.util.List<Operation> xactions = new ArrayList();
+        private final QLAgent agent;
+        private final NWindow nmi;
 
-        double[] exampleObs = d.observe();
+        MatrixImage.Data2D mid = new MatrixImage.Data2D() {
 
+            @Override
+            public double getValue(final int y, final int x) {
+                return agent.q(xstates.get(x), xactions.get(y));
+            }
 
-
-        nar = new NAR(dd);
-        nar.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
-
-
-        agent = new QLAgent(nar, "act", "<nar --> [good]>", d, p) {
-
-
-
-
+        };
 
 
-            final Runnable swingUpdate = new Runnable() {
-
-                final java.util.List<Term> xstates = new ArrayList();
-                final java.util.List<Operation> xactions = new ArrayList();
-
-                MatrixImage.Data2D mid = new MatrixImage.Data2D() {
-
-                    @Override
-                    public double getValue(final int y, final int x) {
-                        return q(xstates.get(x), xactions.get(y));
-                    }
-
-                };
-
-                private final MatrixImage mi = new MatrixImage(400, 400) {
-                    @Override
-                    public void draw(Data2D d, int cw, int ch, double minValue, double maxValue) {
-                        super.draw(d, cw, ch, minValue, maxValue);
-
-                        for (int i = 0; i < ch; i++) {
-                            for (int j = 0; j < cw; j++) {
-                                final double value = d.getValue(i, j);
-
-                                float pri = 0;
-
-                                Concept c = (Concept) agent.table.get(xstates.get(j), xactions.get(i));
-                                if (c != null) {
-                                    pri = c.getPriority();
-                                }
-
-                                int ipri = (int)(127 * pri)+127;
-                                int p = image.getRGB(j, i);
-
-                                //dim
-                                p &= (ipri << 24) | 0xffffff; // | (ipri << 16) | (ipri << 8) | (ipri);
-
-                                image.setRGB(j, i, p);
-                            }
-                        }
-                    }
-                };
-
-                private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
-
-                @Override
-                public void run() {
-                    repaint();
-
-                    d.component().repaint();
 
 
-                    //if (xstates.size() != states.size()) {
-                        xstates.clear();
-                        Iterables.addAll(xstates, rows);
-                    //}
-                    //if (xactions.size() != actions.size()) {
-                        xactions.clear();
-                        Iterables.addAll(xactions, cols);
-                    //}
 
-                    repaint();
+        public QVis(QLAgent agent) {
+            super(400,400);
+            this.agent = agent;
+
+            nmi = new NWindow("Q", this).show(400, 400);
+        }
+
+        @Override
+        public void run() {
+            repaint();
 
 
-                    mi.draw(mid, xstates.size(), xactions.size(), -1, 1);
 
-                    nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
+            //if (xstates.size() != states.size()) {
+            xstates.clear();
+            Iterables.addAll(xstates, agent.rows);
+            //}
+            //if (xactions.size() != actions.size()) {
+            xactions.clear();
+            Iterables.addAll(xactions, agent.cols);
+            //}
+
+            repaint();
+
+
+            draw(mid, xstates.size(), xactions.size(), -1, 1);
+
+            nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
 
 //                    mi.draw(new Data2D() {
 //                        @Override
@@ -293,6 +256,51 @@ public class TestSOMAgent extends JPanel {
 //                            return q(y, x);
 //                        }
 //                    }, nstates, nactions, -1, 1);
+        }
+
+        @Override
+        public void draw(Data2D d, int cw, int ch, double minValue, double maxValue) {
+            super.draw(d, cw, ch, minValue, maxValue);
+
+            for (int i = 0; i < ch; i++) {
+                for (int j = 0; j < cw; j++) {
+                    final double value = d.getValue(i, j);
+
+                    float pri = 0;
+
+                    Concept c = (Concept) agent.table.get(xstates.get(j), xactions.get(i));
+                    if (c != null) {
+                        pri = c.getPriority();
+                    }
+
+                    int ipri = (int)(127 * pri)+127;
+                    int p = image.getRGB(j, i);
+
+                    //dim
+                    p &= (ipri << 24) | 0xffffff; // | (ipri << 16) | (ipri << 8) | (ipri);
+
+                    image.setRGB(j, i, p);
+                }
+            }
+        }
+
+    }
+
+    public TestSOMAgent(RLEnvironment env, ProtoNAR dd, float qLearnedConfidence, Perception... p) {
+        super();
+
+        nar = new NAR(dd);
+
+        agent = new QLAgent(nar, "act", "<nar --> [good]>", env, p) {
+
+            final QVis qvis = new QVis(this);
+
+            final Runnable swingUpdate = new Runnable() {
+
+                @Override
+                public void run() {
+                    env.component().repaint();
+                    qvis.run();
                 }
             };
 
@@ -305,18 +313,14 @@ public class TestSOMAgent extends JPanel {
             }
 
         };
+
         agent.init();
-
-
-
-        nar.setCyclesPerFrame(cyclesPerFrame);
         nar.param.shortTermMemoryHistory.set(3);
         nar.param.decisionThreshold.set(0.65);
         nar.param.outputVolume.set(5);
 
 
         Video.themeInvert();
-
         NARSwing s = new NARSwing(nar);
 
         new Frame().setVisible(true);
@@ -327,7 +331,6 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-    private final static int cyclesPerFrame = 20;
 
     /**
      * @param args the command line arguments
@@ -351,7 +354,7 @@ public class TestSOMAgent extends JPanel {
 
         int concepts = 2048;
         int conceptsPerCycle = 25;
-
+        final int cyclesPerFrame = 20;
         float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
 
         //Perception p = new GNGPerception(64);
@@ -416,6 +419,10 @@ public class TestSOMAgent extends JPanel {
 
         dd.setTaskLinkBagSize(32);
         dd.setInternalExperience(null);
+
+
+        dd.setCyclesPerFrame(cyclesPerFrame);
+        dd.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 new RawPerception("L", 0.5f),
