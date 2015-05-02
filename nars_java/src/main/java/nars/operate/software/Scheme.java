@@ -32,7 +32,7 @@ public class Scheme extends TermFunction {
                 //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
                 return new SchemeProduct((Product)term);
             }
-            else if (term.getClass() == Atom.class) {
+            else if (term instanceof Atom) {
 
                 String s = term.toString();
 

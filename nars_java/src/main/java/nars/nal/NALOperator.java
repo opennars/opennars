@@ -66,6 +66,7 @@ public enum NALOperator {
     //-----------------------------------------------------
 
 
+
     /** symbol representation of this getOperator */
     public final String symbol;
 
@@ -109,5 +110,6 @@ public enum NALOperator {
     @Override
     public String toString() { return symbol; }
 
-
+    public static final NALOperator SET_EXT = NALOperator.SET_EXT_OPENER;
+    public static final NALOperator SET_INT = NALOperator.SET_INT_OPENER;
 }

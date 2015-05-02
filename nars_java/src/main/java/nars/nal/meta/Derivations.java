@@ -15,10 +15,7 @@ import nars.nal.concept.Concept;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.term.TermVisitor;
-import nars.nal.term.Variable;
+import nars.nal.term.*;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -303,7 +300,7 @@ public class Derivations extends DirectedMultigraph {
     public static String genericLiteral(Term c, Map<Term, Integer> unique) {
         c.recurseTerms(new TermVisitor() {
             @Override public void visit(Term t, Term superterm) {
-                if ((t.getClass() == Term.class) || (t instanceof Variable)) {
+                if (t instanceof Atom) {
                     if (!unique.containsKey(t))
                         unique.put(t, unique.size());
                 }
@@ -344,7 +341,7 @@ public class Derivations extends DirectedMultigraph {
         else
             unique = _unique;
 
-        if (t.getClass() == Term.class) {
+        if (t.getClass() == Atom.class) {
             //atomic term
             return genericLiteral(t, unique);
         }

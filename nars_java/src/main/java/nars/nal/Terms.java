@@ -32,20 +32,26 @@ public class Terms {
 
     public final static Term[] EmptyTermArray = new Term[0];
 
+    public static final boolean equalType(final Term a, final Term b) {
+        return equalType(a, b, false);
+    }
+
     /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type;
      * only compares operator */
-    public static final boolean equalType(final Term a, final Term b) {
+    public static final boolean equalType(final Term a, final Term b, final boolean exactClassIfAtomic) {
         if (a instanceof Compound) {
             return (a.operator()==b.operator());
         }
         else {
+            if (exactClassIfAtomic)
+                return a.getClass() == b.getClass();
+            else
+                return true;
             /*if (a instanceof Interval) return b instanceof Interval;
             else if (a instanceof Variable) return b instanceof Variable;
             else if (a instanceof Operator) return b instanceof Operator;*/
 
             //return a.getClass() == b.getClass();
-
-            return true;
         }
     }
 
@@ -196,10 +202,10 @@ public class Terms {
      */
     public static Term reduceComponents(final Compound t1, final Term t2, final Memory memory) {
         final Term[] list;
-        if (t1.getClass() == t2.getClass())  {
+        if (Terms.equalType(t1, t2))  {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
-            list = t1.cloneTermsExcept(true, new Term[] { t2 });
+            list = t1.cloneTermsExcept(true, t2);
         }
         if (list != null) {
             if (list.length > 1) {
@@ -216,7 +222,7 @@ public class Terms {
 
     public static Term reduceComponentOneLayer(Compound t1, Term t2, Memory memory) {
         Term[] list;
-        if (t1.getClass() == t2.getClass()) {
+        if (Terms.equalType(t1, t2)) {
             list = t1.cloneTermsExcept(true, ((Compound) t2).term);
         } else {
             list = t1.cloneTermsExcept(true, new Term[] { t2 });

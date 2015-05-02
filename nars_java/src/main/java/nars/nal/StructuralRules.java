@@ -112,7 +112,8 @@ public final class StructuralRules {
     static void structuralDecompose2(Statement statement, int index, NAL nal) {
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
-        if (subj.getClass() != pred.getClass()) {
+
+        if (!Terms.equalType(subj, pred)) {
             return;
         }
         

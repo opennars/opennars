@@ -3,6 +3,7 @@ package nars.nal.nal4;
 import nars.io.Symbols;
 import nars.io.narsese.NarseseParser;
 import nars.nal.NALOperator;
+import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
 
@@ -40,8 +41,8 @@ abstract public class Image extends DefaultCompound {
 
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
-        if ((t.getClass() != Term.class) && (!(t instanceof NarseseParser.ImageIndexTerm)))
-            return false;
+        if (t instanceof Compound) return false;
+        if (t instanceof NarseseParser.ImageIndexTerm) return true;
         CharSequence n = t.name();
         if (n.length() != 1) return false;
         return n.charAt(0) == Symbols.IMAGE_PLACE_HOLDER;

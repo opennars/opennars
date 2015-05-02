@@ -65,7 +65,7 @@ public class Negation extends Compound1 {
     
     /** get the term which is negated by this */
     public Term negated() {
-        return term[0];
+        return the();
     }
 
     /**

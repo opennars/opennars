@@ -573,7 +573,7 @@ public class RuleTables {
         Term component = compound.term[index];
         
         Task task = nal.getCurrentTask();
-        if (component.getClass() == statement.getClass()) {
+        if (Terms.equalType(component, statement, true)) {
             if ((compound instanceof Conjunction) && (nal.getCurrentBelief() != null)) {
                 Term[] u = new Term[] { compound, statement };
                 if (Variables.unify(VAR_DEPENDENT, component, statement, u)) {

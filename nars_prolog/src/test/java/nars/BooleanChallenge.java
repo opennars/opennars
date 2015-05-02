@@ -1,16 +1,17 @@
 package nars;
 
-import nars.prototype.Default;
 import nars.Events.CycleEnd;
 import nars.Events.OUT;
 import nars.event.Reaction;
 import nars.io.Texts;
 import nars.io.narsese.InvalidInputException;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.prototype.Default;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,7 +96,7 @@ public class BooleanChallenge {
                     Term pred = ((Inheritance) t).getPredicate();
 
                     if ((subj instanceof SetExt) && (((SetExt) subj).size() == 1))
-                        subj = ((SetExt) subj).term[0];
+                        subj = ((Compound) subj).term[0];
 
                     if (subj instanceof Product) {
                         Product p = (Product) subj;

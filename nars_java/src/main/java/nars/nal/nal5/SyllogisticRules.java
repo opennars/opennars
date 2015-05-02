@@ -427,7 +427,7 @@ public final class SyllogisticRules {
             boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
             premise1 = (Implication) u[0]; premise2 = u[1];
             
-            if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
+            if (!match && (Terms.equalType(commonComponent, oldCondition, true))) {
             
                 Compound compoundCommonComponent = ((Compound) commonComponent);
                 
@@ -583,7 +583,7 @@ public final class SyllogisticRules {
         boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
         premise1 = (Equivalence) u[0]; premise2 = u[1];
         
-        if (!match && (commonComponent.getClass() == oldCondition.getClass())) {
+        if (!match && (Terms.equalType(commonComponent, oldCondition))) {
             u = new Term[] { premise1, premise2 };
             match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u);
             premise1 = (Equivalence) u[0]; premise2 = u[1];

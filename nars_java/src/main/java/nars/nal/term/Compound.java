@@ -557,7 +557,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * @param toRemove
      * @return the cloned array with the missing terms removed, OR null if no terms were actually removed when requireModification=true
      */
-    public Term[] cloneTermsExcept(final boolean requireModification, final Term[] toRemove) {
+    public Term[] cloneTermsExcept(final boolean requireModification, final Term... toRemove) {
         //TODO if deep, this wastes created clones that are then removed.  correct this inefficiency?
 
         List<Term> l = asTermList();
@@ -730,7 +730,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * true if equal operate and all terms contained
      */
     public boolean containsAllTermsOf(final Term t) {
-        if (getClass() == t.getClass()) {
+        if (Terms.equalType(this, t)) {
             return Terms.containsAll(term, ((Compound) t).term);
         } else {
             return Terms.contains(term, t);
@@ -747,8 +747,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     public Term setComponent(final int index, final Term t) {
 
 
+
+        final boolean e = (t!=null) && Terms.equalType(this, t, true, true);
+
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
-        if (t != null && (getClass() != t.getClass()) && (term[index].equals(t)))
+        if (t != null && (e) && (term[index].equals(t)))
             return this;
 
         List<Term> list = asTermList();//Deep();
@@ -756,7 +759,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         list.remove(index);
 
         if (t != null) {
-            if (getClass() != t.getClass()) {
+            if (!e) {
                 list.add(index, t);
             } else {
                 //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
@@ -1009,7 +1012,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * compare subterms where any variables matched are not compared
      */
     public boolean equalsVariablesAsWildcards(final Compound c) {
-        if (getClass() != c.getClass()) return false;
+        if (!Terms.equalType(this, c)) return false;
         if (size() != c.size()) return false;
         for (int i = 0; i < size(); i++) {
             Term a = term[i];

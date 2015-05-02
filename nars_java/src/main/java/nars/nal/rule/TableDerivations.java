@@ -81,8 +81,12 @@ public class TableDerivations extends ConceptFireTaskTerm {
                                 Term[] u = new Term[] { beliefTerm, taskTerm };
                                 if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u)) {
                                     Sentence<Statement> newBelief = belief.clone(u[0], Statement.class);
-                                    Sentence newTaskSentence = taskSentence.clone(u[1]);
-                                    RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
+                                    if (newBelief!=null) {
+                                        Sentence newTaskSentence = taskSentence.clone(u[1]);
+                                        if (newTaskSentence!=null) {
+                                            RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
+                                        }
+                                    }
                                 } else {
                                     SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, f);
                                 }
