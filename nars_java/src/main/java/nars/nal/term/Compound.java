@@ -228,7 +228,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * */
     protected void share(Compound equivalent) {
         if (!hasVar()) {
-            System.arraycopy(term, 0, equivalent.term, 0, term.length);
+            //System.arraycopy(term, 0, equivalent.term, 0, term.length);
         }
     }
 
@@ -303,8 +303,10 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
                     renamed = true;
             }
 
-            //also use the instance of the previously normalized variable
             return vv;
+
+            //also use the instance of the previously normalized variable
+            //return vv;
         }
 
         public boolean hasRenamed() {

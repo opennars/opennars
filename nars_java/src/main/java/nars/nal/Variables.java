@@ -87,7 +87,7 @@ public class Variables {
                 }
                 return true;
             }
-        } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && (Terms.equalType(term1, term2))) {
+        } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && (Terms.equalType(term1, term2, true))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
             if (cTerm1.size() != cTerm2.size()) {

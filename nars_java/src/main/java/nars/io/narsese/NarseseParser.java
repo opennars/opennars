@@ -148,14 +148,12 @@ public class NarseseParser extends BaseParser<Object> {
 
         content = Sentence.termOrNull(content);
         if (content==null) return null;
-        content = ((Compound) content).cloneNormalized();
-        if (content == null) return null;
 
         Tense te = tense.get();
 
         return new Task(new Sentence((Compound)content, p, t,
                 getNewStamp(memory, newStamp, Stamp.UNPERCEIVED, te),
-                false /* already normalized */), B );
+                false), B );
 
     }
 

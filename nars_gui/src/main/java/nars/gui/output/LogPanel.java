@@ -65,8 +65,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
         this.nar = n;
 
-        this.logger = new TraceWriter(nar);
-        logger.setActive(false);
+        this.logger = new TraceWriter(nar, false);
 
         out = new AbstractReaction(nar, false, events) {
             @Override public void event(final Class event, final Object[] arguments) {
@@ -316,7 +315,9 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     public void setTrace(boolean b) {
         if (b) {
             logger.addOutput(this);
+            logger.setActive(true);
         } else {
+            logger.setActive(false);
             logger.removeOutput(this);
         }
     }

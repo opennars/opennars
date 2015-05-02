@@ -48,9 +48,12 @@ public class TraceWriter extends MemoryObserver {
     private final List<LogOutput> outputs = new CopyOnWriteArrayList<>();
 
     public TraceWriter(NAR n) {
-        super(n, true);
+        this(n, true);
     }
-    
+    public TraceWriter(NAR n, boolean active) {
+        super(n, active);
+    }
+
     public TraceWriter(NAR n, PrintStream p) {
         super(n, true);
         addOutput(p);

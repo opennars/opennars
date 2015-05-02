@@ -615,7 +615,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             float dh = getHeight() - h;
 
             /* x-axis: confidence, y-axis: freq */
-            g.fillRect((int) ((1.0f - conf) * dh), (int) ((1.0f - freq) * dw), w, h);
+            g.fillRect((int) ((conf) * dh), (int) ((1.0f - freq) * dw), w, h);
         }
     }
 

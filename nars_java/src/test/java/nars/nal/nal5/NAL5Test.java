@@ -35,7 +35,7 @@ public class NAL5Test extends JavaNALTest {
 
     @Test public void deriveFromConjunctionComponents() {
         nar.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
-        nar.mustBelieve(25, "<a <-> b>", 1.0f, 0.66f);
+        nar.mustBelieve(35, "<a <-> b>", 1.0f, 0.66f);
         nar.run();
     }
 
