@@ -51,15 +51,14 @@ import java.util.List;
 public abstract class Operator extends Atom implements IOperator {
 
     protected NAR nar;
-    public static final float executionConfidence = Global.OPERATOR_EXECUTION_CONFIDENCE; //Global.MAX_CONFIDENCE;
-    
-    //protected Operator() {   super();    }
-    
+
+
     protected Operator(String name) {
         super(name);
         if (!name.startsWith("^"))
             throw new RuntimeException("Operator name needs ^ prefix");
     }
+
 
 
     @Override public boolean setEnabled(NAR n, boolean enabled) {
@@ -168,7 +167,7 @@ public abstract class Operator extends Atom implements IOperator {
 
         //internal notice of the execution
         if (!isImmediate()) {
-            executedTask(op, new TruthValue(1f, executionConfidence), memory);
+            executedTask(op, new TruthValue(1f, Global.OPERATOR_EXECUTION_CONFIDENCE), memory);
         }
 
         //feedback tasks as input

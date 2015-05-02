@@ -81,7 +81,8 @@ public final class CompositionalRules {
 
         final Sentence taskBelief = nal.getCurrentTask().sentence;
 
-        if ((!taskBelief.isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
+        if ((!taskBelief.isJudgment()) || (!Terms.equalType(taskContent, beliefContent))) {
+        //if ((!taskBelief.isJudgment()) || (taskContent.getClass() != beliefContent.getClass())) {
             return;
         }
 
@@ -618,7 +619,7 @@ public final class CompositionalRules {
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
 
-        if (!taskSentence.isJudgment() || (premise1.getClass() != premise2.getClass()) || oldCompound.containsTerm(premise1)) {
+        if (!taskSentence.isJudgment() || (!Terms.equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {
             return false;
         }
 

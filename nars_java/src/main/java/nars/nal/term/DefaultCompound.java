@@ -50,7 +50,7 @@ abstract public class DefaultCompound extends Compound {
             }
         }
         else {
-            setNormalized(true);
+            setNormalized();
         }
     }
 

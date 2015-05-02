@@ -1,6 +1,8 @@
 package nars.nal;
 
 
+import nars.io.Symbols;
+
 public enum NALOperator {
 
     //TODO include min/max arity for each operate, if applicable
@@ -57,7 +59,9 @@ public enum NALOperator {
     OPERATION("^", 8),
 
     /** an atomic term (includes interval and variables); this value is set if not a compound term */
-    ATOM(".", 0, false);
+    ATOM(".", 0, false),
+
+    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX), 0, false);
 
     //-----------------------------------------------------
 

@@ -329,7 +329,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
             result.invalidate();
         }
 
-        result.setNormalized(true); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
+        result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
 
 
 //        if (!valid(result)) {
@@ -991,8 +991,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     
 
-    protected void setNormalized(boolean b) {
-        this.normalized = b;
+    protected void setNormalized() {
+        this.normalized = true;
     }
 
 //    /** recursively sets all subterms normalization */
@@ -1022,7 +1022,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return true;
     }
 
-    public Term[] cloneTermsReplacing(Term from, Term to) {
+    public Term[] cloneTermsReplacing(final Term from, final Term to) {
         Term[] y = new Term[term.length];
         int i = 0;
         for (Term x : term) {

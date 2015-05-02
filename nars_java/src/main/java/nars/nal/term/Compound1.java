@@ -37,13 +37,13 @@ abstract public class Compound1 extends Compound {
     public void invalidate() {
         if (hasVar()) {
             Term n = the();
+            cachedName = null;
             if (n instanceof Compound) {
-                cachedName = null;
                 ((Compound)n).invalidate();
             }
         }
         else {
-            setNormalized(true);
+            setNormalized();
         }
     }
 

@@ -1,10 +1,7 @@
 package nars.nal;
 
-import nars.Memory;
 import nars.Global;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.Memory;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -17,6 +14,12 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal5.Junction;
+import nars.nal.nal7.Interval;
+import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.Operator;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;
@@ -28,6 +31,36 @@ import java.util.*;
 public class Terms {
 
     public final static Term[] EmptyTermArray = new Term[0];
+
+    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type;
+     * only compares operator */
+    public static final boolean equalType(final Term a, final Term b) {
+        if (a instanceof Compound) {
+            return (a.operator()==b.operator());
+        }
+        else {
+            /*if (a instanceof Interval) return b instanceof Interval;
+            else if (a instanceof Variable) return b instanceof Variable;
+            else if (a instanceof Operator) return b instanceof Operator;*/
+
+            //return a.getClass() == b.getClass();
+
+            return true;
+        }
+    }
+
+    /** use this instead of .getClass() == .getClass() comparisons, to allow for different implementations of the same essential type */
+    public static final boolean equalType(final Term a, final Term b, final boolean operator, final boolean temporalOrder) {
+        if (operator) {
+            if (!equalType(a, b)) return false;
+        }
+        if (temporalOrder) {
+            if (!TemporalRules.matchingOrder(a.getTemporalOrder(), b.getTemporalOrder()))
+                return false;
+        }
+        return true;
+    }
+
 
     public static boolean equalSubTermsInRespectToImageAndProduct(final Term a, final Term b) {
         if (a == null || b == null) {
