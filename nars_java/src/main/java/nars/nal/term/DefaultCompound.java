@@ -27,7 +27,17 @@ abstract public class DefaultCompound extends Compound {
             if (/*operator()!=t.operator()|| */ getComplexity() != t.getComplexity() )
                 return false;
         }
-        return name().equals(t.name());
+        if (name().equals(t.name())) {
+            share(t);
+            return true;
+        }
+        return false;
+    }
+
+
+    protected void share(DefaultCompound equivalent) {
+        super.share(equivalent);
+        equivalent.name = this.name; //also share name key
     }
 
     @Override

@@ -82,18 +82,7 @@ public class Negation extends Compound1 {
         return new Negation(t);
     }
 
-    @Override
-    public void invalidate() {
-        if (hasVar()) {
-            for (final Term t : term) {
-                if (t instanceof Compound)
-                    ((Compound) t).invalidate();
-            }
-        }
-        else {
-            setNormalized(true);
-        }
-    }
+
 
     /**
      * Try to make a new Negation. Called by StringParser.

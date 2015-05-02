@@ -1,7 +1,5 @@
 package nars.nal.term;
 
-import nars.Global;
-
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound2 extends Compound {
 
@@ -39,7 +37,12 @@ abstract public class Compound2 extends Compound {
         if (getClass()!=that.getClass()) return false;
         Compound2 c = (Compound2)that;
         //if (operator()!=c.operator()) return false;
-        return a().equals(c.a()) && b().equals(c.b());
+        if (a().equals(c.a()) && b().equals(c.b())) {
+            share(c);
+            return true;
+        }
+        return false;
+
     }
 
 

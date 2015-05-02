@@ -22,18 +22,18 @@ import static nars.io.Texts.n4;
 public class OptimizeLeakGenetic {
 
 
-    final static int cycles = 50;
+    final static int cycles = 1500;
 
     // parameters for the GA
     private static final int POPULATION_SIZE = 50;
-    private static final int NUM_GENERATIONS = 50;
-    private static final double ELITISM_RATE = 0.2;
-    private static final double CROSSOVER_RATE = 1;
-    private static final double MUTATION_RATE = 0.1;
+    private static final int NUM_GENERATIONS = 250;
+    private static final double ELITISM_RATE = 0.25;
+    private static final double CROSSOVER_RATE = 0.5;
+    private static final double MUTATION_RATE = 0.15;
     private static final int TOURNAMENT_ARITY = 2;
 
     final static int values = 6;
-    final static int bitsPerValue = 4;
+    final static int bitsPerValue = 5;
 
 
     public static void optimize() {

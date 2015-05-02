@@ -26,7 +26,25 @@ abstract public class Compound1 extends Compound {
         if (getClass()!=that.getClass()) return false;
         nars.nal.term.Compound1 c = (nars.nal.term.Compound1)that;
         //if (operator()!=c.operator()) return false;
-        return the().equals(c.the());
+        if (the().equals(c.the())) {
+            share(c);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void invalidate() {
+        if (hasVar()) {
+            Term n = the();
+            if (n instanceof Compound) {
+                cachedName = null;
+                ((Compound)n).invalidate();
+            }
+        }
+        else {
+            setNormalized(true);
+        }
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
@@ -37,10 +55,7 @@ abstract public class Compound1 extends Compound {
         return the().compareTo(((nars.nal.term.Compound1) otherCompoundOfEqualType).the());
     }
 
-    @Override
-    public void invalidate() {
-        cachedName = null;
-    }
+
 
     @Override
     public CharSequence name() {

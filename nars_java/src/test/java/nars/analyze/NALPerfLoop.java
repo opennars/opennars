@@ -24,7 +24,7 @@ public class NALPerfLoop {
         int extraCycles = 10048;
         int randomExtraCycles = 512;
         Global.THREADS = 1;
-        Global.EXIT_ON_EXCEPTION = true;
+        Global.EXIT_ON_EXCEPTION = false;
         Global.DEBUG = true;
           
         NAR n = new NAR(new Default().setConceptBagSize(maxConcepts) );

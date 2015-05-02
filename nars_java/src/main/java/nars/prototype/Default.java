@@ -204,8 +204,8 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     }
 
     protected void initDerivationFilters() {
-        final float DERIVATION_PRIORITY_LEAK=0.35f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        final float DERIVATION_DURABILITY_LEAK=0.5f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
         getNALParam().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
 
 

@@ -53,7 +53,7 @@ public class NAR implements Runnable {
     private final NarseseParser narseseParser;
 
 
-    @Deprecated private Thread thread = null;
+
 
     /**
      * The name of the reasoner

@@ -210,9 +210,22 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
         int opdiff = operator().compareTo(c.operator());
         if (opdiff == 0) {
-            return compareSubterms(c);
+            //return compareSubterms(c);
+
+            int sd = compareSubterms(c);
+            if (sd == 0) {
+                share(c);
+            }
+            return sd;
         }
         return opdiff;
+    }
+
+    /** copy subterms so that reference check will be sufficient to determine equality
+     * assumes that 'equivalent' has already been determined to be equal.
+     * */
+    protected void share(Compound equivalent) {
+        System.arraycopy(term, 0, equivalent.term, 0, term.length);
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
