@@ -76,15 +76,15 @@ public class NAR implements Runnable {
 
 
     /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
-    public class PluggedIn implements Serializable {
+    public class OperatorRegistration implements Serializable {
         final public nars.operate.IOperator IOperator;
         boolean enabled = false;
 
-        public PluggedIn(IOperator IOperator) {
+        public OperatorRegistration(IOperator IOperator) {
             this(IOperator,true);
         }
         
-        public PluggedIn(IOperator IOperator, boolean enabled) {
+        public OperatorRegistration(IOperator IOperator, boolean enabled) {
             this.IOperator = IOperator;
             setEnabled(enabled);
         }
@@ -108,7 +108,7 @@ public class NAR implements Runnable {
         public Memory getMemory() { return NAR.this.memory; }
     }
     
-    protected final List<PluggedIn> plugins = new CopyOnWriteArrayList<>();
+    protected final List<OperatorRegistration> plugins = new CopyOnWriteArrayList<>();
     
     /** Flag for running continuously  */
     private boolean running = false;
@@ -144,7 +144,7 @@ public class NAR implements Runnable {
 
     final Reaction togglePluginOnReset = new Reaction() {
 
-        final List<PluggedIn> toReEnable = new ArrayList();
+        final List<OperatorRegistration> toReEnable = new ArrayList();
 
         @Override
         public void event(Class event, Object[] args) {
@@ -152,14 +152,14 @@ public class NAR implements Runnable {
             //toggle plugins
 
             //1. disable all
-            for (PluggedIn p : getPlugins()) {
+            for (OperatorRegistration p : getPlugins()) {
                 if (p.isEnabled()) {
                     toReEnable.add(p);
                     p.setEnabled(false);
                 }
             }
             //2. enable all
-            for (PluggedIn p : toReEnable) {
+            for (OperatorRegistration p : toReEnable) {
                 p.setEnabled(true);
             }
 
@@ -215,8 +215,8 @@ public class NAR implements Runnable {
         return input(-1, -1, taskText, frequency, confidence);
     }
 
-    public <T extends Term> T term(String t) throws InvalidInputException {
-        return (T) narsese.parseTerm(t).normalized();
+    public Term term(String t) throws InvalidInputException {
+        return narsese.parseTerm(t).normalized();
     }
 
     public Concept concept(Term term) {
@@ -386,17 +386,17 @@ public class NAR implements Runnable {
 
 
     /** add and enable a plugin or operate */
-    public PluggedIn on(IOperator p) {
+    public OperatorRegistration on(IOperator p) {
         if (p instanceof Operator) {
             memory.operatorAdd((Operator) p);
         }
-        PluggedIn ps = new PluggedIn(p);
+        OperatorRegistration ps = new OperatorRegistration(p);
         plugins.add(ps);
         return ps;
     }
 
     /** disable and remove a plugin or operate; use the PluginState instance returned by on(plugin) to .off() it */
-    protected void off(PluggedIn ps) {
+    protected void off(OperatorRegistration ps) {
         if (plugins.remove(ps)) {
             IOperator p = ps.IOperator;
             if (p instanceof Operator) {
@@ -406,7 +406,7 @@ public class NAR implements Runnable {
         }
     }
     
-    public List<PluggedIn> getPlugins() {
+    public List<OperatorRegistration> getPlugins() {
         return Collections.unmodifiableList(plugins);
     }
 

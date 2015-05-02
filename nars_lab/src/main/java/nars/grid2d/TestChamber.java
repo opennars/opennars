@@ -47,7 +47,7 @@ public class TestChamber {
         NAR nar = new NAR(builder);
         //set NAR runtime parmeters:  
 
-        for(NAR.PluggedIn pluginstate : nar.getPlugins()) {
+        for(NAR.OperatorRegistration pluginstate : nar.getPlugins()) {
             if(pluginstate.IOperator instanceof InternalExperience || pluginstate.IOperator instanceof FullInternalExperience) {
                 pluginstate.off();
             }

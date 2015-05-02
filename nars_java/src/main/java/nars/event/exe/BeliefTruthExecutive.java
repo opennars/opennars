@@ -24,7 +24,7 @@ public class BeliefTruthExecutive extends AbstractExecutive {
 
 
     private final Operator operator;
-    private NAR.PluggedIn opReg;
+    private NAR.OperatorRegistration opReg;
     public float basePeriod = 1.0f; //fundamental frqeuency to scale all action frequencies
     private Memory memory;
 

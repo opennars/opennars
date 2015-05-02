@@ -15,6 +15,7 @@ import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
 import nars.prototype.Default;
+import nars.util.index.SeedConceptMap;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
 import vnc.rfb.client.PointerEventMessage;
@@ -134,7 +135,7 @@ abstract public class VNCControl extends VNCClient {
         }
     }
 
-    public class SkyActivity extends ConceptMap.SeededConceptMap {
+    public class SkyActivity extends SeedConceptMap {
 
 
 

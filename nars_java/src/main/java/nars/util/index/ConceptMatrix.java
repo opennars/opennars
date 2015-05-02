@@ -1,18 +1,16 @@
-package nars.rl;
+package nars.util.index;
 
-import com.google.common.collect.HashBasedTable;
 import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
-import vnc.ConceptMap;
 
 /**
- * Maintains a growing/sparse matrix consisting of a mapping of R row label terms (ex: states),
- * C column label terms (ex: actions), and E entry terms (ex: implication of a state to an
+ * Maintains a growing/sparse matrix consisting of a mapping of R row label concepts (ex: states),
+ * C column label concepts (ex: actions), and E entry concepts (ex: implication of a state to an
  * action) -- according to a specified pattern that matches concepts as they become
  * active and removes them when forgotten.
  */
-abstract public class TermMatrix<R extends Term, C extends Term, E extends Term> {
+abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Term> {
 
     public final NAR nar;
 
@@ -20,24 +18,22 @@ abstract public class TermMatrix<R extends Term, C extends Term, E extends Term>
      * initializes that mapping which tracks concepts as they appear and disappear, maintaining mapping to the current instance
      */
 
-
-
-    protected ConceptMap entries;
-    protected ConceptMap.ConceptMapSet<C> cols; //col
-    protected ConceptMap.ConceptMapSet<R> rows;  //row
+    protected final ConceptMap entries;
+    protected final SetConceptMap<C> cols;
+    protected final SetConceptMap<R> rows;
 
     boolean initialized = true;
 
-    public TermMatrix(NAR nar) {
+    public ConceptMatrix(NAR nar) {
         super();
 
         this.nar = nar;
 
-        cols = new ConceptMap.ConceptMapSet(nar) {
+        cols = new SetConceptMap(nar) {
 
             @Override
             public boolean contains(Concept c) {
-                return isAction((C)c.term);
+                return isCol((C) c.term);
             }
 
             @Override
@@ -49,11 +45,11 @@ abstract public class TermMatrix<R extends Term, C extends Term, E extends Term>
 
         };
 
-        rows = new ConceptMap.ConceptMapSet(nar) {
+        rows = new SetConceptMap(nar) {
 
             @Override
             public boolean contains(Concept c) {
-                return isState((R)c.term);
+                return isRow((R) c.term);
             }
 
             @Override
@@ -81,19 +77,19 @@ abstract public class TermMatrix<R extends Term, C extends Term, E extends Term>
             @Override
             public boolean contains(Concept c) {
                 Term x = c.term;
-                return isEntry((E)c.term);
+                return isEntry(c.term);
             }
 
             @Override
             protected void onConceptForget(final Concept c) {
                 E i = (E)c.term;
-                onEntryRemove(state(i), action(i));
+                onEntryRemove(getRow(i), getCol(i));
             }
 
             @Override
             protected void onConceptNew(Concept c) {
                 E i = (E)c.term;
-                onEntryAdd(state(i), action(i), c);
+                onEntryAdd(getRow(i), getCol(i), c);
             }
 
         };
@@ -119,9 +115,15 @@ abstract public class TermMatrix<R extends Term, C extends Term, E extends Term>
 
     }
 
-    abstract public R state(E entry);
-    abstract public C action(E entry);
-    abstract public boolean isState(Term s);
-    abstract public boolean isAction(Term a);
+    abstract public R getRow(E entry);
+    abstract public C getCol(E entry);
+    abstract public boolean isRow(Term s);
+    abstract public boolean isCol(Term a);
     abstract public boolean isEntry(Term c);
+
+    public void off() {
+        cols.off();
+        rows.off();
+        entries.off();
+    }
 }

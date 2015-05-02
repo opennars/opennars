@@ -212,7 +212,7 @@ public class TestSOMAgent extends JPanel {
         nar.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
 
 
-        agent = new QLAgent(nar, d, p) {
+        agent = new QLAgent(nar, "act", "<nar --> [good]>", d, p) {
 
             private final MatrixImage mi = new MatrixImage(400, 400);
             private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
@@ -278,22 +278,6 @@ public class TestSOMAgent extends JPanel {
         nar.param.decisionThreshold.set(0.65);
         nar.param.outputVolume.set(5);
 
-
-
-
-//        new AbstractReaction(nar, Events.CycleEnd.class) {
-//            @Override
-//            public void event(Class event, Object[] args) {
-//                cycle();
-//            }
-//        };
-
-//        new AbstractReaction(nar, Events.FrameEnd.class) {
-//            @Override
-//            public void event(Class event, Object[] args) {
-//
-//            }
-//        };
 
         Video.themeInvert();
 
@@ -418,31 +402,5 @@ public class TestSOMAgent extends JPanel {
     }
 
 
-//    protected void train2() {
-//        for (int i= 0; i < initialTrainingCycles; i++) {
-//            nar.input("move(SELF)!");
-//            /*nar.input("move(left)!");
-//            nar.input("move(right)!");*/
-//        }
-//    }
-//
-//    protected void train(int periods) {
-//        int delay = trainingActionPeriod;
-//        String t = "";
-//        for (int i = 0; i < periods; i++) {
-//            String dir = Math.random() < 0.5 ? "left" : "right";
-//            t += "move(" + dir + ")! %1.00;" + initialDesireConf + "% \n" +
-//                    //delay + "\n" +
-//                    //"move(right)! :|: %1.00;" + initialDesireConf + "%\n" +
-//                    (int)(Math.random()*delay) + "\n";
-//        }
-//        nar.input(t);
-//    }
-
-//    public void beGood() {
-//
-//        nar.input("<" + reward + " --> " + goodness + ">! :|:");
-//
-//    }
 
 }

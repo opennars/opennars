@@ -4,7 +4,7 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.ReflectPanel;
 import nars.Events;
 import nars.NAR;
-import nars.NAR.PluggedIn;
+import nars.NAR.OperatorRegistration;
 import nars.operate.IOperator;
 import nars.event.AbstractReaction;
 import nars.util.data.PackageUtility;
@@ -91,9 +91,9 @@ public class PluginPanel extends VerticalPanel {
 
     
     public class PluginPane extends JPanel {
-        private final PluggedIn plugin;
+        private final OperatorRegistration plugin;
 
-        public PluginPane(PluggedIn p) {
+        public PluginPane(OperatorRegistration p) {
             super(new BorderLayout());
             
             this.plugin = p;
@@ -143,9 +143,9 @@ public class PluginPanel extends VerticalPanel {
         content.removeAll();
         
         int i = 0;
-        List<PluggedIn> ppp = nar.getPlugins();
+        List<OperatorRegistration> ppp = nar.getPlugins();
         if (!ppp.isEmpty()) {
-            for (PluggedIn p : ppp) {
+            for (OperatorRegistration p : ppp) {
                 PluginPane pp = new PluginPane(p);
                 pp.setBorder(new BevelBorder(BevelBorder.RAISED));
                 addVertically(pp, i++);
@@ -190,7 +190,7 @@ public class PluginPanel extends VerticalPanel {
             JOptionPane.showMessageDialog(this, ex.toString());
         }
     }
-    protected void removePlugin(PluggedIn ps) {
+    protected void removePlugin(OperatorRegistration ps) {
         ps.off();
     }
     

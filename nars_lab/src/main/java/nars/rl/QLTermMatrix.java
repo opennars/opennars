@@ -19,6 +19,7 @@ import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Term;
+import nars.util.index.ConceptMatrix;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
  * S = state
  * A = action
  */
-abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermMatrix<S,A,Implication> {
+abstract public class QLTermMatrix<S extends Term, A extends Term> extends ConceptMatrix<S,A,Implication> {
 
     public AbstractHaiQBrain<S,A> brain;
 
@@ -153,9 +154,9 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
                 return t.get(n);
             }
 
-            public boolean isState(S s) { return QLTermMatrix.this.isState(s); }
+            public boolean isState(S s) { return QLTermMatrix.this.isRow(s); }
             public boolean isAction(A a) {
-                return QLTermMatrix.this.isAction(a);
+                return QLTermMatrix.this.isCol(a);
             }
 
         };
@@ -215,20 +216,20 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
 
 
         Implication i = (Implication)x;
-        return (isState((S)i.getSubject()) && isAction((A)i.getPredicate()));
+        return (isRow((S) i.getSubject()) && isCol((A) i.getPredicate()));
     }
 
-    public S state(Implication t) {
+    public S getRow(Implication t) {
         if (t.getTemporalOrder()!=implicationOrder) return null;
         S subj = (S)t.getSubject();
-        if (isState(subj)) return subj;
+        if (isRow(subj)) return subj;
         return null;
     }
 
-    public A action(Implication t) {
+    public A getCol(Implication t) {
         if (t.getTemporalOrder()!=implicationOrder) return null;
         A pred = (A)t.getPredicate();
-        if (isAction(pred)) return pred;
+        if (isCol(pred)) return pred;
         return null;
     }
 
@@ -244,12 +245,10 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     }
 
 
-    abstract public boolean isState(Term s);
-    abstract public boolean isAction(Term a);
+    abstract public boolean isRow(Term s);
+    abstract public boolean isCol(Term a);
 
-    public String getRewardTerm() {
-        return "<SELF --> good>";
-    }
+    abstract public Term getRewardTerm();
 
     /**
      * this should return operations which call an operator that calls this instance's learn(state, reward) function at the end of its execution
@@ -412,7 +411,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     protected void goalReward() {
         //seek reward goal
         if (rewardGoalConfidence > 0) {
-            String rt = getRewardTerm();
+            //TODO do not use String to construct
+            String rt = getRewardTerm().toString();
             String r = rt + "! :|: %1.0;" + rewardGoalConfidence + '%';
             DirectProcess.run(nar, r);
         }
@@ -421,7 +421,9 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     protected void believeReward(float reward) {
         //belief about current reward amount
         if (rewardBeliefConfidence > 0) {
-            String rt = getRewardTerm();
+
+            //TODO do not use String to construct
+            String rt = getRewardTerm().toString();
 
             //expects -1..+1 as reward range input
             float rFreq = reward /2.0f + 0.5f;
@@ -444,4 +446,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     }
 
 
+    public void off() {
+        super.off();
+    }
 }

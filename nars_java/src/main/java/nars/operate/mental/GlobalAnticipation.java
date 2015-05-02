@@ -7,7 +7,7 @@ package nars.operate.mental;
 
 import nars.Events;
 import nars.NAR;
-import nars.NAR.PluggedIn;
+import nars.NAR.OperatorRegistration;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.*;
@@ -213,7 +213,7 @@ public class GlobalAnticipation implements IOperator, Reaction {
     public boolean setEnabled(NAR n, boolean enabled) {
         //Events.TaskDerive.class Events.ConceptBeliefRemove.class
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.TaskDerive.class, Events.ConceptBeliefRemove.class);
-        for(PluggedIn s : n.getPlugins()) {
+        for(OperatorRegistration s : n.getPlugins()) {
             if(s.IOperator instanceof Anticipate)
             {
                 s.IOperator.setEnabled(n, !enabled);

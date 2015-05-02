@@ -5,8 +5,8 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.prototype.Default;
-import nars.rl.QLAgent;
 import nars.rl.Perception;
+import nars.rl.QLAgent;
 import nars.rl.RawPerception;
 
 import java.awt.*;
@@ -19,7 +19,7 @@ public class RLNario extends NARio implements RLEnvironment {
     public RLNario(NAR nar, Perception... p) {
         super(nar);
 
-        QLAgent agent = new QLAgent(nar, this, p) {
+        QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p) {
 
         };
 
