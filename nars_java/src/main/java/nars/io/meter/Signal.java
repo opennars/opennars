@@ -13,7 +13,7 @@ package nars.io.meter;
 public class Signal implements Comparable<Signal> {
     public final String id;
     public String unit;
-    
+
     private double min, max;
 
 
@@ -33,9 +33,9 @@ public class Signal implements Comparable<Signal> {
 
     @Override
     public boolean equals(Object obj) {
-        return id.equals(((Signal)obj).id);
+        return id.equals(((Signal) obj).id);
     }
-    
+
     @Override
     public String toString() {
         return id;
@@ -53,14 +53,15 @@ public class Signal implements Comparable<Signal> {
     public double getMin() {
         return min;
     }
-    
+
         void setMin(double newMin) { this.min = newMin; }
         void setMax(double newMax) { this.max = newMax; }
 
         void resetBounds() {
             min = Double.POSITIVE_INFINITY;
-            max = Double.NEGATIVE_INFINITY;        
+            max = Double.NEGATIVE_INFINITY;
         }
+
 //        void invalidateBounds() {
 //            min = max = Double.NaN;
 //        }

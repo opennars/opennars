@@ -1,5 +1,6 @@
 package nars.analyze.experimental;
 
+import nars.Global;
 import nars.ProtoNAR;
 import nars.analyze.NALysis;
 import nars.io.ExampleFileInput;
@@ -7,25 +8,40 @@ import nars.io.test.TestNAR;
 import nars.nal.AbstractNALTest;
 import nars.prototype.Default;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by me on 4/24/15.
  */
 
-public class LeakOptimization  {
+public class ExampleScores {
 
-    public LeakOptimization(ProtoNAR p) {
+    public final double totalCost;
+
+    public ExampleScores(ProtoNAR p, int cycleLimit) {
         super();
 
+        Global.DEBUG = false;
+
+        NALysis.showFail = false;
+
+        AbstractNALTest.reset();
 
         for (String dir : ExampleFileInput.directories) {
-            List<TestNAR> x = NALysis.runDir(dir, 2000, 0, p);
+            List<TestNAR> x = NALysis.runDir(dir, cycleLimit, 0, p);
         }
 
-        AbstractNALTest.results.printCSV(System.out);
+        //AbstractNALTest.results.printCSV(System.out);
+
+        double totalCost = 0;
+        for (double x : AbstractNALTest.results.doubleArray("Cost")) {
+            if (!Double.isFinite(x)) totalCost += cycleLimit;
+            else totalCost += x;
+        }
+
+        this.totalCost = totalCost;
+
+
 
 //        Iterator<Object[]> ii = AbstractNALTest.results.iterator();
 //        while (ii.hasNext()) {
@@ -48,7 +64,7 @@ public class LeakOptimization  {
     }
 
     public static void main(String[] args) {
-        new LeakOptimization(new Default());
+        new ExampleScores(new Default(), 500);
     }
 
 }

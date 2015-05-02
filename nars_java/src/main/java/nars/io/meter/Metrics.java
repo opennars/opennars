@@ -9,8 +9,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.gson.*;
+import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
+import org.apache.commons.math3.util.DoubleArray;
+import org.apache.commons.math3.util.MathArrays;
 
 import java.io.PrintStream;
 import java.lang.reflect.Type;
@@ -401,7 +404,7 @@ JsonSerializationContext context) {
             c = new Object[ numRows() ];
         
         int r = 0;
-        for (Object[] row : this) {
+        for (final Object[] row : this) {
             c[r++] = row[signal];
         }
         
@@ -445,6 +448,21 @@ JsonSerializationContext context) {
             if (o instanceof Number) r.add(((Number)o).doubleValue());
         return r;
     }
+
+    public static double[] doubleArray(Object... l) {
+        DoubleArrayList r = new DoubleArrayList(l.length);
+        for (Object o : l)
+            if (o instanceof Number) r.add(((Number)o).doubleValue());
+        return r.toArray();
+    }
+
+    public double[] doubleArray(int col) {
+        return doubleArray(getData(col));
+    }
+    public double[] doubleArray(String signal) {
+        return doubleArray(indexOf(signal));
+    }
+
 
 
     public List<Object> getNewSignalValues(int column, int num) {

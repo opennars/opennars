@@ -7,6 +7,7 @@ package nars.io.condition;
 import nars.Events;
 import nars.NAR;
 import nars.event.AbstractReaction;
+import nars.io.narsese.InvalidInputException;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
 
@@ -103,13 +104,19 @@ public abstract class OutputCondition extends AbstractReaction {
 
                 String match = s.substring(expectOutContains.length(), s.length() - 2); //remove ') suffix:
 
-                Task t = n.narsese.parseTask(match, false);
-                if (t!=null)
-                    conditions.add(new TaskCondition(n, Events.OUT.class,t,
-                            -Stamp.UNPERCEIVED, /* to cancel it */
-                            false));
-                else
-                    conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
+                try {
+                    Task t = n.narsese.parseTask(match, false);
+                    if (t != null)
+                        conditions.add(new TaskCondition(n, Events.OUT.class, t,
+                                -Stamp.UNPERCEIVED, /* to cancel it */
+                                false));
+                    else
+                        conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
+                }
+                catch (InvalidInputException e) {
+                    System.err.println(OutputCondition.class.getSimpleName() + ": Error parsing: " + example);
+                    e.printStackTrace();
+                }
             }
 
             else if (s.indexOf(expectInContains)==0) {

@@ -19,7 +19,7 @@ import java.util.Collection;
  * @author me
  */
 @Ignore
-public class NALTestScore extends NALTest {
+@Deprecated public class NALTestScore extends NALTest {
 
     
     

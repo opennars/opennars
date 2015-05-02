@@ -24,7 +24,8 @@ import java.util.*;
 public class ExampleFileInput extends TextInput {
 
     public static final String[] directories =
-            new String[] { "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8", "/testchamber", "/conditioning", "/decisionmaking", "/other", "/other/pattern_matching1", "/test", "/metacat" };
+            new String[] { "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8", "testchamber", "other", "other/pattern_matching1", "test", "metacat" };
+            //new String[] { "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8", "testchamber", "conditioning", "decisionmaking", "other", "other/pattern_matching1", "test", "metacat" };
 
     public static String load(String path) throws IOException {
         StringBuilder  sb  = new StringBuilder();

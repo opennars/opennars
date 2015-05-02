@@ -31,9 +31,8 @@ abstract public class AbstractNALTest extends TestCase {
 
     private static final int similarsToSave = 3;
 
-    static final DoubleMeter testCost, testTime, testSeed;
-    static final HitMeter testConcepts;
-    static final ObjectMeter<String> testBuild;
+
+
     public static OutputStream dataOut = null;
     private static String script;
     PrintStream log = System.out;
@@ -47,13 +46,25 @@ abstract public class AbstractNALTest extends TestCase {
 //        }
 //    }
 
-    public static final Metrics<String,Object> results = new Metrics().addMeters(
-            testCost = new DoubleMeter("Cost"),
-            testBuild = new ObjectMeter<String>("Build"),
-            testSeed = new DoubleMeter("Seed"),
-            testTime = new DoubleMeter("uSecPerCycle"),
-            testConcepts = new HitMeter("Concepts")
-    );
+
+    public static Metrics<String,Object> results;
+    static DoubleMeter testCost, testTime, testSeed;
+    static HitMeter testConcepts;
+    static ObjectMeter<String> testBuild;
+
+    public static void reset() {
+        results = new Metrics().addMeters(
+                testCost = new DoubleMeter("Cost"),
+                testBuild = new ObjectMeter<String>("Build"),
+                testSeed = new DoubleMeter("Seed"),
+                testTime = new DoubleMeter("uSecPerCycle"),
+                testConcepts = new HitMeter("Concepts")
+        );
+    }
+
+    static {
+        reset();
+    }
 
 
     public static final CountOutputEvents eventCounter = new CountOutputEvents(results);
@@ -120,8 +131,6 @@ abstract public class AbstractNALTest extends TestCase {
     }
 
     public static long runScript(TestNAR nar, String path, int maxCycles) {
-
-        Global.DEBUG = true;
 
         script = ExampleFileInput.getExample(path);
 

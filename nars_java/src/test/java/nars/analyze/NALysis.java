@@ -29,6 +29,7 @@ public class NALysis extends AbstractNALTest {
     public static boolean showInput = false;
     static boolean showOutput = false;
     static boolean showTrace = false;
+    public static boolean showFail = true; //failure report
 
     public NALysis(ProtoNAR b) {
         super(b);
@@ -81,7 +82,7 @@ public class NALysis extends AbstractNALTest {
 
                 //results.printCSVLastLine(System.out);
 
-                if (!suc) {
+                if (!suc && showFail) {
                     System.out.println("-------------------------------------------");
 
                     System.out.println("FAIL: " + testName);
@@ -145,12 +146,13 @@ public class NALysis extends AbstractNALTest {
 
 
 
-    public static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, ProtoNAR... builds) {
+    public synchronized static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, ProtoNAR... builds) {
         Collection<String> paths = getPaths(dirPath);
 
         List<TestNAR> nars = new ArrayList(paths.size() * builds.length);
 
         for (String p : paths) {
+            if (p.contains("README")) continue;
             for (ProtoNAR b : builds) {
                 TestNAR n = analyze(b, p, maxCycles, seed);
                 nars.add(n);
