@@ -65,7 +65,6 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
         this.nar = n;
 
-
         this.logger = new TraceWriter(nar);
         logger.setActive(false);
 
@@ -316,10 +315,8 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
     public void setTrace(boolean b) {
         if (b) {
-            logger.setActive(true);
             logger.addOutput(this);
         } else {
-            logger.setActive(false);
             logger.removeOutput(this);
         }
     }

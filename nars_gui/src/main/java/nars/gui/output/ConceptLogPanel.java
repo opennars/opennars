@@ -38,6 +38,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     public ConceptLogPanel(NAR c) {
         super(c);
 
+
         conceptReaction = new AbstractReaction(nar, Events.ConceptNew.class, Events.ConceptRemember.class) {
 
             @Override
@@ -66,6 +67,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         });
         menu.add(quickfilter);
     }
+
 
     protected void setFilter(String f) {
         if (f.isEmpty())
