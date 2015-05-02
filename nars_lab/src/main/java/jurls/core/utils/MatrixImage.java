@@ -34,12 +34,14 @@ import java.awt.image.BufferedImage;
  */
 public class MatrixImage extends JComponent {
 
-    BufferedImage image;
+    protected BufferedImage image;
     private double maxValue;
     private double minValue;
 
     public MatrixImage(int width, int height) {
         super();
+
+        setBackground(Color.BLACK);
 
         setPreferredSize(new Dimension(width, height));
         setMinimumSize(new Dimension(width, height));
@@ -90,10 +92,10 @@ public class MatrixImage extends JComponent {
             b = 255;
         }
 
-        return b << 16 | g << 8 | r;
+        return 255 << 24 | b << 16 | g << 8 | r;
     }
 
-    public int getColorRedBlue(double value) {
+    public int getColorRedBlue(final double value) {
         if (value == 0) {
             return 255 << 24;
         } else if (value > 0) {
@@ -106,7 +108,7 @@ public class MatrixImage extends JComponent {
 
     }
 
-    private int getColor(double value) {
+    public int getColor(final double value) {
         return val2col(value, -1, 1);
     }
 
@@ -214,8 +216,9 @@ public class MatrixImage extends JComponent {
         }
 
         if (image == null || image.getWidth() != cw || image.getHeight() != ch) {
-            image = new BufferedImage(cw, ch, BufferedImage.TYPE_INT_RGB);
+            image = new BufferedImage(cw, ch, BufferedImage.TYPE_INT_ARGB);
         }
+
 
         this.minValue = minValue;
         this.maxValue = maxValue;

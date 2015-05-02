@@ -35,8 +35,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
 
-    /** q-value matrix:  q[state][action] */
-    public final HashBasedTable<S,A,Concept> q = HashBasedTable.create();
+
 
     /** eligibility trace */
     public final HashBasedTable<S,A,Double> e = HashBasedTable.create();
@@ -168,8 +167,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
 
-    public double q(Term state, Term action) {
-        Concept c = q.get(state, action);
+    public double q(S state, A action) {
+        Concept c = getEntry(state, action);
         if (c == null) return 0f;
         Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
@@ -181,6 +180,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         return ((t.getFrequency() - 0.5f) * 2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
     }
 
+
+
     public void setqUpdateConfidence(float qUpdateConfidence) {
         this.qUpdateConfidence = qUpdateConfidence;
     }
@@ -189,25 +190,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     }
 
-    @Override
-    protected void onColumnRemove(A a) {
-        q.columnMap().remove(a);
-    }
-
-    @Override
-    protected void onRowRemove(S s) {
-        q.rowMap().remove(s);
-    }
-
-    @Override
-    public void onEntryAdd(S s, A a, Concept entry) {
-        q.put(s, a, entry);
-    }
-
-    @Override
-    public void onEntryRemove(S s, A a) {
-        q.remove(s, a);
-    }
 
     @Override
     public boolean isEntry(Term x) {
@@ -299,7 +281,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     /** fire all actions (ex: to teach them at the beginning) */
     public void possibleDesire(float goalConf) {
-        possibleDesire(q.columnKeySet(), goalConf);
+        possibleDesire(table.columnKeySet(), goalConf);
     }
 
     public void possibleDesire(float goalConf, Iterable<String> actions) {

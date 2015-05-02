@@ -16,14 +16,15 @@ import nars.gui.NARSwing;
 import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
+import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
 import nars.rl.HaiSOMPerception;
-import nars.rl.QLAgent;
 import nars.rl.Perception;
+import nars.rl.QLAgent;
 import nars.rl.RawPerception;
 
 import javax.swing.*;
@@ -214,14 +215,54 @@ public class TestSOMAgent extends JPanel {
 
         agent = new QLAgent(nar, "act", "<nar --> [good]>", d, p) {
 
-            private final MatrixImage mi = new MatrixImage(400, 400);
-            private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
 
-            final java.util.List<Term> xstates = new ArrayList();
-            final java.util.List<Term> xactions = new ArrayList();
+
+
 
 
             final Runnable swingUpdate = new Runnable() {
+
+                final java.util.List<Term> xstates = new ArrayList();
+                final java.util.List<Operation> xactions = new ArrayList();
+
+                MatrixImage.Data2D mid = new MatrixImage.Data2D() {
+
+                    @Override
+                    public double getValue(final int y, final int x) {
+                        return q(xstates.get(x), xactions.get(y));
+                    }
+
+                };
+
+                private final MatrixImage mi = new MatrixImage(400, 400) {
+                    @Override
+                    public void draw(Data2D d, int cw, int ch, double minValue, double maxValue) {
+                        super.draw(d, cw, ch, minValue, maxValue);
+
+                        for (int i = 0; i < ch; i++) {
+                            for (int j = 0; j < cw; j++) {
+                                final double value = d.getValue(i, j);
+
+                                float pri = 0;
+
+                                Concept c = (Concept) agent.table.get(xstates.get(j), xactions.get(i));
+                                if (c != null) {
+                                    pri = c.getPriority();
+                                }
+
+                                int ipri = (int)(127 * pri)+127;
+                                int p = image.getRGB(j, i);
+
+                                //dim
+                                p &= (ipri << 24) | 0xffffff; // | (ipri << 16) | (ipri << 8) | (ipri);
+
+                                image.setRGB(j, i, p);
+                            }
+                        }
+                    }
+                };
+
+                private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
 
                 @Override
                 public void run() {
@@ -242,12 +283,7 @@ public class TestSOMAgent extends JPanel {
                     repaint();
 
 
-                    mi.draw(new MatrixImage.Data2D() {
-                        @Override
-                        public double getValue(int y, int x) {
-                            return q(xstates.get(x), xactions.get(y));
-                        }
-                    }, xstates.size(), xactions.size(), -1, 1);
+                    mi.draw(mid, xstates.size(), xactions.size(), -1, 1);
 
                     nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
 

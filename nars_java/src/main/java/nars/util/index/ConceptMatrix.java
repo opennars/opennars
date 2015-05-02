@@ -1,5 +1,6 @@
 package nars.util.index;
 
+import com.google.common.collect.HashBasedTable;
 import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -14,11 +15,15 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
     public final NAR nar;
 
-    /**
-     * initializes that mapping which tracks concepts as they appear and disappear, maintaining mapping to the current instance
-     */
 
-    protected final ConceptMap entries;
+    //TODO combine entries and table into the same ConceptMap subclass
+
+    /** active entries */
+    public final ConceptMap entries;
+
+    /** q-value matrix:  q[state][action] */
+    public final HashBasedTable<R,C,Concept> table = HashBasedTable.create();
+
     protected final SetConceptMap<C> cols;
     protected final SetConceptMap<R> rows;
 
@@ -33,13 +38,16 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             @Override
             public boolean contains(Concept c) {
-                return isCol((C) c.term);
+                return isCol(c.term);
             }
 
             @Override
             protected void onConceptForget(final Concept c) {
                 super.onConceptForget(c);
                 C col = (C)c.term;
+
+                table.columnMap().remove(col);
+
                 onColumnRemove(col);
             }
 
@@ -49,7 +57,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             @Override
             public boolean contains(Concept c) {
-                return isRow((R) c.term);
+                return isRow(c.term);
             }
 
             @Override
@@ -57,6 +65,9 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 super.onConceptForget(c);
 
                 R r = (R)c.term;
+
+                table.rowMap().remove(r);
+
                 onRowRemove(r);
             }
 
@@ -83,13 +94,25 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
             @Override
             protected void onConceptForget(final Concept c) {
                 E i = (E)c.term;
-                onEntryRemove(getRow(i), getCol(i));
+
+                R rr = getRow(i);
+                C cc = getCol(i);
+
+                table.remove(rr, cc);
+
+                onEntryRemove(rr, cc);
             }
 
             @Override
             protected void onConceptNew(Concept c) {
                 E i = (E)c.term;
-                onEntryAdd(getRow(i), getCol(i), c);
+
+                R rr = getRow(i);
+                C cc = getCol(i);
+
+                table.put(rr, cc, c);
+
+                onEntryAdd(rr, cc, c);
             }
 
         };
@@ -114,6 +137,11 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     protected void init() {
 
     }
+
+    protected Concept getEntry(R row, C col) {
+        return table.get(row, col);
+    }
+
 
     abstract public R getRow(E entry);
     abstract public C getCol(E entry);
