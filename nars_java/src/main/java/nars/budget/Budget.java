@@ -135,10 +135,10 @@ public class Budget implements Cloneable, BudgetTarget {
         return accumulate(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
-    public Budget accumulate(final float addPriority, final float addDurability, final float addQuality) {
-        setPriority(Math.min(1.0f, getPriority() + addPriority)); //add priority
-        setDurability(m(getDurability(), addDurability)); //max durab
-        setQuality(m(getQuality(), addQuality)); //max quali
+    public Budget accumulate(final float addPriority, final float otherDurability, final float otherQuality) {
+        addPriority(addPriority);
+        maxDurability(otherDurability);
+        maxQuality(otherQuality);
         return this;
     }
 
@@ -242,8 +242,18 @@ public class Budget implements Cloneable, BudgetTarget {
         setPriority( Math.min(1.0f, or(priority, v)));
     }
 
-    public void addPriority(final float v) {
-        setPriority( v + getPriority() );
+    public boolean addPriority(final float v) {
+        return setPriority( v + getPriority() );
+    }
+
+    public boolean maxPriority(final float otherPriority) {
+        return setPriority(m(getPriority(), otherPriority)); //max durab
+    }
+    public boolean maxDurability(final float otherDurability) {
+        return setDurability(m(getDurability(), otherDurability)); //max durab
+    }
+    public boolean maxQuality(final float otherQuality) {
+        return setQuality(m(getQuality(), otherQuality)); //max durab
     }
 
     /** AND's (multiplies) priority with another value */

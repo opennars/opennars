@@ -41,8 +41,8 @@ public class TaskComparator implements Comparator<Task> {
                     break;
                 case Or:
                     o1.orPriority(o2.getPriority());
-                    o1.orDurability(o2.getPriority());
-                    o1.orQuality(o2.getPriority());
+                    o1.maxDurability(o2.getPriority());
+                    o1.maxQuality(o2.getPriority());
                     break;
             }
             o2.merge(o1);

@@ -267,9 +267,9 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static boolean merge(final Budget b, final Budget a) {
         return
-            b.setPriority(m(b.getPriority(), a.getPriority())) ||
-            b.setDurability(m(b.getDurability(), a.getDurability())) ||
-            b.setQuality(m(b.getQuality(), a.getQuality()));
+            b.maxPriority(a.getPriority()) ||
+            b.maxDurability(a.getDurability()) ||
+            b.maxQuality(a.getQuality());
     }
 
     /** maximum, simpler and faster than Math.max without its additional tests */
