@@ -10,7 +10,6 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.io.Symbols;
-import nars.io.Texts;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -30,23 +29,14 @@ import java.util.List;
  * S = state
  * A = action
  */
-abstract public class QLTermMatrix<S extends Term, A extends Term> extends ConceptMatrix<S,A,Implication> {
+abstract public class QLTermMatrix<S extends Term, A extends Term> extends ConceptMatrix<S,A,Implication, QEntry> {
 
     public AbstractHaiQBrain<S,A> brain;
 
 
-
-
-
-    /** eligibility trace */
-    public final HashBasedTable<S,A,Double> e = HashBasedTable.create();
-
-    /** delta-Q temporary buffer */
-    protected final HashBasedTable<S,A,Double> dq = HashBasedTable.create();
-
     /** term cache
      * TODO make weak */
-    final HashBasedTable<S,A,Implication> termCache = HashBasedTable.create();
+    //final HashBasedTable<S,A,Implication> termCache = HashBasedTable.create();
 
 
     final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
@@ -94,30 +84,28 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
             @Override
-            public void eligibility(S state, A action, double eligibility) {
-                e.put(state, action, eligibility);
-            }
-
-            @Override
             public double eligibility(S state, A action) {
-                Double E = e.get(state, action);
-                if (E == null) return 0;
-                return E;
+                QEntry v = getEntry(state, action);
+                if (v == null) return 0;
+                return v.getE();
             }
 
             @Override
-            public void qAdd(S state, A action, double dQ) {
+            public void qAdd(S state, A action, double dqDivE, double eMult, double eAdd) {
+
                 if (qUpdateConfidence == 0) return;
 
-                final Double currentDQ = dq.get(state, action);
-                final Double next;
+                QEntry v = getEntry(state, action);
+                if (v == null) {
+                    v = newEntry(null);
+                    table.put(state, action, v);
+                }
 
-                if (currentDQ == null)
-                    next = dQ;
-                else
-                    next = dQ + currentDQ;
+                if (Double.isFinite(dqDivE))
+                    v.addDQ(dqDivE);
+                if (Double.isFinite(eMult))
+                    v.updateE(eMult, eAdd);
 
-                dq.put(state, action, next);
             }
 
             @Override
@@ -169,9 +157,13 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
 
-    public double q(S state, A action) {
-        Concept c = getEntry(state, action);
-        if (c == null) return 0f;
+    public double q(final S state, final A action) {
+        QEntry v = getEntry(state, action);
+        if (v == null) return 0;
+
+        Concept c = v.getConcept();
+        if (c == null) return 0;
+
         Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
         TruthValue t = s.truth;
@@ -219,6 +211,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
     public Implication qterm(S s, A a) {
+        return Implication.make(s, a, implicationOrder);
+        /*
         Implication i = termCache.get(s, a);
         if (i == null) {
             i = Implication.make(s, a, implicationOrder);
@@ -226,6 +220,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                 termCache.put(s, a, i);
         }
         return i;
+        */
     }
 
 
@@ -245,22 +240,18 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         if (qUpdateConfidence == 0) return;
 
         //input all dQ values
-        for (Table.Cell<S, A, Double> c : dq.cellSet()) {
+        for (Table.Cell<S, A, QEntry> c : table.cellSet()) {
             S state = c.getRowKey();
             A action = c.getColumnKey();
             qCommit(state, action, c.getValue());
         }
 
-        dq.clear();
     }
 
-    protected void qCommit(S state, A action, double dq) {
+    protected void qCommit(S state, A action, QEntry c) {
 
-        if (Math.abs(dq) < updateThresh) {
-            //setAlpha(Math.min(getAlpha() + 0.01, 1.0));
-            //System.out.println(dq + " delta-Q too small, alpha=" + getAlpha());
-            return;
-        }
+        double dq = c.clearDQ(updateThresh);
+        if (dq == 0) return;
 
         double q = q(state, action);
         double nq = q + dq;

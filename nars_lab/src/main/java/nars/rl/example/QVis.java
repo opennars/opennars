@@ -6,6 +6,7 @@ import jurls.core.utils.MatrixImage;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
+import nars.rl.QEntry;
 import nars.rl.QLAgent;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class QVis extends MatrixImage implements Runnable {
 
     final java.util.List<Term> xstates = new ArrayList();
     final java.util.List<Operation> xactions = new ArrayList();
-    private final QLAgent agent;
+    private final QLAgent<Term> agent;
     private final NWindow nmi;
 
     Data2D mid = new Data2D() {
@@ -76,9 +77,12 @@ public class QVis extends MatrixImage implements Runnable {
 
                 float pri = 0;
 
-                Concept c = (Concept) agent.table.get(xstates.get(j), xactions.get(i));
-                if (c != null) {
-                    pri = c.getPriority();
+                QEntry v = agent.table.get(xstates.get(j), xactions.get(i));
+                if (v != null) {
+                    Concept c = v.getConcept();
+                    if (c != null) {
+                        pri = c.getPriority();
+                    }
                 }
 
                 int ipri = (int) (127 * pri) + 127;

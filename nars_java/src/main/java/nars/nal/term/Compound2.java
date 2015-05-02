@@ -37,6 +37,10 @@ abstract public class Compound2 extends Compound {
         if (getClass()!=that.getClass()) return false;
         Compound2 c = (Compound2)that;
         //if (operator()!=c.operator()) return false;
+
+        if (getTemporalOrder() != c.getTemporalOrder()) return false;
+        if (getComplexity() != c.getComplexity()) return false;
+
         if (a().equals(c.a()) && b().equals(c.b())) {
             share(c);
             return true;

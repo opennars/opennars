@@ -71,10 +71,6 @@ abstract public class AbstractHaiQBrain<S,A> {
             return (int) random(nActions);
         }
 
-        @Override
-        public void eligibility(Integer state, Integer action, double eligibility) {
-            et[state][action] = eligibility;
-        }
 
         @Override
         public double eligibility(Integer state, Integer action) {
@@ -82,14 +78,19 @@ abstract public class AbstractHaiQBrain<S,A> {
         }
 
         @Override
-        public void qAdd(Integer state, Integer action, double dq) {
-            Q[state][action] += dq;
-        }
-
-        @Override
         public double q(Integer state, Integer action) {
             return Q[state][action];
         }
+
+        @Override
+        public void qAdd(Integer state, Integer action, double dqDivE, double eMult, double eAdd) {
+            final double e = et[state][action];
+            if (Double.isFinite(dqDivE))
+                Q[state][action] += dqDivE * e;
+            if (Double.isFinite(eMult))
+                et[state][action] = e * eMult + eAdd;
+        }
+
 
         @Override
         public Iterable<Integer> getStates() {
@@ -106,11 +107,10 @@ abstract public class AbstractHaiQBrain<S,A> {
     
     public static double random(double max) { return Memory.randomNumber.nextDouble() * max;    }
 
-    abstract public void eligibility(S state, A action, double eligibility);
     abstract public double eligibility(S state, A action);
 
 
-    abstract public void qAdd(S state, A action, double dq);
+    abstract public void qAdd(S state, A action, double dqDivE, double eMult, double eAdd);
     abstract public double q(S state, A action);
 
 
@@ -171,15 +171,13 @@ abstract public class AbstractHaiQBrain<S,A> {
         double DeltaQ = reward + gamma * q(state, nextAction) -  qLast;
 
         if (lastAction!=null)
-            eligibility(state, lastAction, eligibility(state, lastAction) + confidence);
+            qAdd(state, lastAction, Double.NaN, 1, confidence);
 
         final double AlphaDeltaQ = confidence * alpha * DeltaQ;
         final double GammaLambda = gamma * lambda;
         for (S i : getStates()) {
             for (A k : getActions()) {
-                final double e = eligibility(i, k);
-                qAdd(i, k, AlphaDeltaQ * e);
-                eligibility(i, k, GammaLambda * e);
+                qAdd(i, k, AlphaDeltaQ, GammaLambda, 0);
             }
         }
 

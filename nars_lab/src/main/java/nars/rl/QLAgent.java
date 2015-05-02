@@ -6,6 +6,7 @@ import nars.NAR;
 import nars.event.FrameReaction;
 import nars.nal.DirectProcess;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
@@ -307,4 +308,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     }
 
+    @Override
+    public QEntry newEntry(Concept concept) {
+        return new QEntry(concept);
+    }
 }
