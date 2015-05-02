@@ -518,22 +518,23 @@ public class RuleTables {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-     public static void compoundAndSelf(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
+     public static boolean compoundAndSelf(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (compound instanceof Junction) {
             if (nal.getCurrentBelief() != null) {
-                CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
+                return CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
             } else if (compound.containsTerm(component)) {
-                StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
+                return StructuralRules.structuralCompound(compound, component, compoundTask, index, nal);
             }
 //        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
                 if (compound.term[0] instanceof Compound)
-                    StructuralRules.transformNegation((Compound)compound.term[0], nal);
+                    return StructuralRules.transformNegation((Compound)compound.term[0], nal);
             } else {
-                StructuralRules.transformNegation(compound, nal);
+                return StructuralRules.transformNegation(compound, nal);
             }
         }
+        return false;
     }
 
     /**
@@ -543,14 +544,15 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param nal Reference to the memory
      */
-    public static void compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
-        if (taskTerm.getClass() == beliefTerm.getClass()) {
-            if (taskTerm.size() > beliefTerm.size()) {
-                compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
+    public static boolean compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
+        if (Terms.equalType(taskTerm, beliefTerm)) {
+            if (taskTerm.size() >= beliefTerm.size()) {
+                return compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
             } else if (taskTerm.size() < beliefTerm.size()) {
-                compoundAndSelf(beliefTerm, taskTerm, false, index, nal);
+                return compoundAndSelf(beliefTerm, taskTerm, false, index, nal);
             }
         }
+        return false;
     }
 
     /**

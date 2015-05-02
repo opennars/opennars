@@ -412,7 +412,7 @@ public final class StructuralRules {
      * @param content The premise
      * @param nal Reference to the memory
      */
-    public static void transformNegation(Compound content, NAL nal) {
+    public static boolean transformNegation(final Compound content, final NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         TruthValue truth = sentence.truth;
@@ -425,7 +425,8 @@ public final class StructuralRules {
         } else {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
-        nal.singlePremiseTask(content, truth, budget);
+
+        return nal.singlePremiseTask(content, truth, budget);
     }
 
 }
