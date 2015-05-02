@@ -19,44 +19,33 @@ import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Term;
-import vnc.ConceptMap;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * QL Agent coprocessor "Brain" operating in terms of (unprocessed) discrete Q-states
- * TODO generify the state,action term types
+ * S = state
+ * A = action
  */
-abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
+abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermMatrix<S,A,Implication> {
 
-    public NAR nar;
-
-    /**
-     * initializes that mapping which tracks concepts as they appear and disappear, maintaining mapping to the current instance
-     */
+    AbstractHaiQBrain<S,A> brain;
 
 
 
     /** q-value matrix:  q[state][action] */
-    public final HashBasedTable<Term,Term,Concept> q = HashBasedTable.create();
-    private ConceptMap conceptMap;
-    protected ConceptMap.ConceptMapSet actions;
-    protected ConceptMap.ConceptMapSet states;
-
-
+    public final HashBasedTable<S,A,Concept> q = HashBasedTable.create();
 
     /** eligibility trace */
-    public final HashBasedTable<Term,Term,Double> e = HashBasedTable.create();
+    public final HashBasedTable<S,A,Double> e = HashBasedTable.create();
 
     /** delta-Q temporary buffer */
-    protected final HashBasedTable<Term,Term,Double> dq = HashBasedTable.create();
+    protected final HashBasedTable<S,A,Double> dq = HashBasedTable.create();
 
     /** term cache
      * TODO make weak */
-    final HashBasedTable<Term,Term,Implication> termCache = HashBasedTable.create();
+    final HashBasedTable<S,A,Implication> termCache = HashBasedTable.create();
 
 
     final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
@@ -96,91 +85,99 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
 
 
-    boolean initialized = true;
 
-    public NARQL(NAR nar) {
-        super();
+    public QLTermMatrix(NAR nar) {
+        super(nar);
 
-        setAlpha(0.4f);
-        setEpsilon(0.1f);
-        setLambda(0.5f);
+        brain = new AbstractHaiQBrain<S, A>() {
 
-        this.nar = nar;
-
-
-
-        actions = new ConceptMap.ConceptMapSet(nar) {
 
             @Override
-            public boolean contains(Concept c) {
-                return isAction(c.term);
+            public void eligibility(S state, A action, double eligibility) {
+                e.put(state, action, eligibility);
             }
 
             @Override
-            protected void onConceptForget(final Concept c) {
-                super.onConceptForget(c);
-                Term action = c.term;
-                q.columnMap().remove(action);
-            }
-
-        };
-
-        states = new ConceptMap.ConceptMapSet(nar) {
-
-            @Override
-            public boolean contains(Concept c) {
-                return isState(c.term);
+            public double eligibility(S state, A action) {
+                Double E = e.get(state, action);
+                if (E == null) return 0;
+                return E;
             }
 
             @Override
-            protected void onConceptForget(final Concept c) {
-                super.onConceptForget(c);
+            public void qAdd(S state, A action, double dQ) {
+                if (qUpdateConfidence == 0) return;
 
-                Term state = c.term;
-                q.rowMap().remove(state);
+                final Double currentDQ = dq.get(state, action);
+                final Double next;
+
+                if (currentDQ == null)
+                    next = dQ;
+                else
+                    next = dQ + currentDQ;
+
+                dq.put(state, action, next);
             }
 
-        };
-
-        conceptMap = new ConceptMap(nar) {
             @Override
-            protected void onCycle() {
-                super.onCycle();
-                if (initialized) {
+            public double q(S state, A action) {
+                return QLTermMatrix.this.q(state,action);
+            }
 
-                    init();
-
-                    initialized = false;
+            @Override
+            protected A qlearn(S state, double reward, A nextAction, double confidence) {
+                //belief about current state
+                if (stateUpdateConfidence > 0) {
+                    //TODO avoid using String
+                    DirectProcess.run(nar, (state) + ". :|: %" + confidence + ";" + stateUpdateConfidence + "%");
                 }
+
+                return super.qlearn(state, reward, nextAction, confidence);
             }
 
             @Override
-            public boolean contains(Concept c) {
-                Term x = c.term;
-                if (!(x instanceof Implication)) return false;
-                if (x.getTemporalOrder() != implicationOrder) return false;
-
-
-                Implication i = (Implication)x;
-                return (isState(i.getSubject()) && isAction(i.getPredicate()));
+            public Iterable<S> getStates() {
+                return rows;
             }
 
             @Override
-            protected void onConceptForget(final Concept c) {
-                Implication i = (Implication)c.term;
-                q.remove(state(i), action(i));
+            public Iterable<A> getActions() {
+                return cols;
             }
 
             @Override
-            protected void onConceptNew(Concept c) {
-                //System.out.println("concept new " + c );
+            public A getRandomAction() {
+                final List<A> t = Lists.newArrayList(getActions());
+                if (t.isEmpty()) return null;
+                int n = (int)(Math.random() * t.size());
+                return t.get(n);
+            }
 
-                Implication i = (Implication)c.term;
-                q.put(state(i), action(i), c);
+            public boolean isState(S s) { return QLTermMatrix.this.isState(s); }
+            public boolean isAction(A a) {
+                return QLTermMatrix.this.isAction(a);
             }
 
         };
 
+        brain.setAlpha(0.4f);
+        brain.setEpsilon(0.1f);
+        brain.setLambda(0.5f);
+
+    }
+
+
+    private double q(Term state, Term action) {
+        Concept c = q.get(state, action);
+        if (c == null) return 0f;
+        Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
+        if (s == null) return 0f;
+        TruthValue t = s.truth;
+        if (t == null) return 0f;
+
+        //TODO try expectation
+
+        return ((t.getFrequency() - 0.5f) * 2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
     }
 
     public void setqUpdateConfidence(float qUpdateConfidence) {
@@ -189,56 +186,54 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
 
     public void init() {
 
-
-
-
     }
 
-    public Term state(Implication t) {
+    @Override
+    protected void onColumnRemove(A a) {
+        q.columnMap().remove(a);
+    }
+
+    @Override
+    protected void onRowRemove(S s) {
+        q.rowMap().remove(s);
+    }
+
+    @Override
+    public void onEntryAdd(S s, A a, Concept entry) {
+        q.put(s, a, entry);
+    }
+
+    @Override
+    public void onEntryRemove(S s, A a) {
+        q.remove(s, a);
+    }
+
+    @Override
+    public boolean isEntry(Implication x) {
+        if (!(x instanceof Implication)) return false;
+        if (x.getTemporalOrder() != implicationOrder) return false;
+
+
+        Implication i = (Implication)x;
+        return (isState((S)i.getSubject()) && isAction((A)i.getPredicate()));
+    }
+
+    public S state(Implication t) {
         if (t.getTemporalOrder()!=implicationOrder) return null;
-        Term subj = t.getSubject();
+        S subj = (S)t.getSubject();
         if (isState(subj)) return subj;
         return null;
     }
 
-    public Term action(Implication t) {
+    public A action(Implication t) {
         if (t.getTemporalOrder()!=implicationOrder) return null;
-        Term pred = t.getPredicate();
+        A pred = (A)t.getPredicate();
         if (isAction(pred)) return pred;
         return null;
     }
 
-    @Override
-    public void eligibility(Term state, Term action, double eligibility) {
-        e.put(state, action, eligibility);
-    }
 
-    @Override
-    public double eligibility(Term state, Term action) {
-        Double E = e.get(state, action);
-        if (E == null) return 0;
-        return E;
-    }
-
-    @Override
-    public Term getRandomAction() {
-        final List<Term> t = Lists.newArrayList(getActions());
-        if (t.isEmpty()) return null;
-        int n = (int)(Math.random() * t.size());
-        return t.get(n);
-    }
-
-    @Override
-    public Iterable<Term> getStates() {
-        return states;
-    }
-
-    @Override
-    public Iterable<Term> getActions() {
-        return actions;
-    }
-
-    public Implication qterm(Term s, Term a) {
+    public Implication qterm(S s, A a) {
         Implication i = termCache.get(s, a);
         if (i == null) {
             i = Implication.make(s, a, implicationOrder);
@@ -249,8 +244,8 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     }
 
 
-    abstract public boolean isState(Term s);
-    abstract public boolean isAction(Term a);
+    abstract public boolean isState(S s);
+    abstract public boolean isAction(A a);
 
     public String getRewardTerm() {
         return "<SELF --> good>";
@@ -262,36 +257,21 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     //abstract public Operation getActionOperation(int s);
 
 
-    @Override
-    public void qAdd(final Term state, final Term action, final double dQ) {
-
-        if (qUpdateConfidence == 0) return;
-
-        final Double currentDQ = dq.get(state, action);
-        final Double next;
-
-        if (currentDQ == null)
-            next = dQ;
-        else
-            next = dQ + currentDQ;
-
-        dq.put(state, action, next);
-    }
 
     protected void qCommit() {
         if (qUpdateConfidence == 0) return;
 
         //input all dQ values
-        for (Table.Cell<Term, Term, Double> c : dq.cellSet()) {
-            Term state = c.getRowKey();
-            Term action = c.getColumnKey();
+        for (Table.Cell<S, A, Double> c : dq.cellSet()) {
+            S state = c.getRowKey();
+            A action = c.getColumnKey();
             qCommit(state, action, c.getValue());
         }
 
         dq.clear();
     }
 
-    protected void qCommit(Term state, Term action, double dq) {
+    protected void qCommit(S state, A action, double dq) {
 
         if (Math.abs(dq) < updateThresh) {
             //setAlpha(Math.min(getAlpha() + 0.01, 1.0));
@@ -318,37 +298,22 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
     }
 
 
-    @Override
-    public double q(Term state, Term action) {
-        Concept c = q.get(state, action);
-        if (c == null) return 0f;
-        Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
-        if (s == null) return 0f;
-        TruthValue t = s.truth;
-        if (t == null) return 0f;
-
-        //TODO try expectation
-
-        return ((t.getFrequency() - 0.5f) * 2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
-
-    }
-
     /** fire all actions (ex: to teach them at the beginning) */
     public void possibleDesire(float goalConf) {
         possibleDesire(q.columnKeySet(), goalConf);
     }
 
     public void possibleDesire(float goalConf, Iterable<String> actions) {
-        possibleDesire(Iterables.transform(actions, new Function<String, Term>() {
+        possibleDesire(Iterables.transform(actions, new Function<String, A>() {
             @Nullable
             @Override
-            public Term apply(String t) {
-                return nar.term(t);
+            public A apply(String t) {
+                return (A) nar.term(t);
             }
         }), goalConf);
     }
     /** fire all actions (ex: to teach them at the beginning) */
-    public void possibleDesire(Iterable<Term> actions, float goalConf) {
+    public void possibleDesire(Iterable<A> actions, float goalConf) {
         for (Term a : actions) {
             possibleDesire(goalConf, a);
         }
@@ -396,18 +361,18 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
         ObjectDoubleHashMap<Term> act = new ObjectDoubleHashMap();
 
         //HACK - allow learn to update lastAction but restore to the value before this method was called, and then set the final value after all learning completed
-        Term actualLastAction = lastAction;
+        A actualLastAction = brain.getLastAction();
 
         // System.out.println(confidence + " " + Arrays.toString(state));
 
         for (Task i : state) {
-            lastAction = actualLastAction;
+            brain.setLastAction(actualLastAction);
 
             float freq = i.sentence.truth.getFrequency();
             float confidence = i.sentence.truth.getConfidence();
 
 
-            Term action = qlearn(i.sentence.getTerm(), reward, null, freq * confidence);
+            Term action = brain.qlearn((S)i.sentence.getTerm(), reward, null, freq * confidence);
 
 
             //act.addToValue(action, confidence);
@@ -417,10 +382,13 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
 
         }
 
-        double e = getEpsilon();
+        double e = brain.getEpsilon();
         if (e > 0) {
-            if (Memory.randomNumber.nextDouble() < e)
-                return lastAction = getRandomAction();
+            if (Memory.randomNumber.nextDouble() < e) {
+                A l = brain.getRandomAction();
+                brain.setLastAction(l);
+                return l;
+            }
         }
 
         //choose maximum action
@@ -430,25 +398,16 @@ abstract public class NARQL extends AbstractHaiQBrain<Term,Term> {
 
 
 
-    public Term learn(Term state, final double reward, Term nextAction, double confidence) {
+    public Term learn(S state, final double reward, A nextAction, double confidence) {
         believeReward((float) reward);
         goalReward();
 
-        Term l = super.learn(state, reward, nextAction, confidence);
+        Term l = brain.learn(state, reward, nextAction, confidence);
         qCommit();
         return l;
     }
 
-    @Override
-    protected Term qlearn(Term state, double reward, Term nextAction, double confidence) {
-        //belief about current state
-        if (stateUpdateConfidence > 0) {
-            //TODO avoid using String
-            DirectProcess.run(nar, (state) + ". :|: %" + confidence + ";" + stateUpdateConfidence + "%");
-        }
 
-        return super.qlearn(state, reward, nextAction, confidence);
-    }
 
     protected void goalReward() {
         //seek reward goal

@@ -15,7 +15,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.prototype.Default;
-import nars.rl.NARQL;
+import nars.rl.QLTermMatrix;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +33,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         Global.DEBUG = true;
     }
 
-    private final NARQL ql;
+    private final QLTermMatrix ql;
     private final MatrixImage mi;
 
 
@@ -170,25 +170,25 @@ public class TwoPointRegulatorAgent extends JPanel {
         states.add(left);
         states.add(right);
 
-        ql = new NARQL(nar) {
+        ql = new QLTermMatrix(nar) {
 
 
 
             @Override
             public boolean isState(Term s) {
-                return states.contains(s);
+                return rows.contains(s);
             }
 
             @Override
             public boolean isAction(Term a) {
-                return actions.contains(a);
+                return cols.contains(a);
             }
 
             @Override
             public void init() {
                 super.init();
 
-                ql.possibleDesire(actions, 0.9f);
+                ql.possibleDesire(cols, 0.9f);
 
                 //setqAutonomicGoalConfidence(0.55f);
             }

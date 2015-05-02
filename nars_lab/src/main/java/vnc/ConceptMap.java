@@ -87,27 +87,27 @@ abstract public class ConceptMap extends AbstractReaction {
 
 
     /** uses a predefined set of terms that will be mapped */
-    abstract public static class ConceptMapSet extends ConceptMap implements Iterable<Term> {
+    abstract public static class ConceptMapSet<T extends Term> extends ConceptMap implements Iterable<T> {
 
 
-        public final Set<Term> inclusions = Global.newHashSet(16);
+        public final Set<T> inclusions = Global.newHashSet(16);
 
-        public final Map<Term,Concept> values = new LinkedHashMap();
+        public final Map<T,Concept> values = new LinkedHashMap();
 
         public ConceptMapSet(NAR nar) {
             super(nar);
         }
 
         @Override
-        public Iterator<Term> iterator() {
+        public Iterator<T> iterator() {
             return values.keySet().iterator();
         }
 
         public void include(Concept c) {
-            values.put(c.term, c);
+            values.put((T)c.term, c);
         }
 
-        public boolean contains(final Term t) {
+        public boolean contains(final T t) {
             if (!values.containsKey(t)) {
                 return inclusions.contains(t);
             }
@@ -125,7 +125,7 @@ abstract public class ConceptMap extends AbstractReaction {
         }
 
         /** set a term to be present always in this map, even if the conept disappears */
-        public void include(Term a) {
+        public void include(T a) {
             inclusions.add(a);
             values.put(a, null);
         }

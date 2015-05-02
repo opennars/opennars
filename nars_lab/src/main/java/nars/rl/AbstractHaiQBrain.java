@@ -1,6 +1,7 @@
 package nars.rl;
 
 import nars.Memory;
+import nars.nal.term.Term;
 
 import java.util.AbstractList;
 import java.util.List;
@@ -37,6 +38,14 @@ abstract public class AbstractHaiQBrain<S,A> {
                 return end - begin;
             }
         };
+    }
+
+    public A getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(A a) {
+        this.lastAction = a;
     }
 
     public static class ArrayHaiQBrain extends AbstractHaiQBrain<Integer,Integer> {

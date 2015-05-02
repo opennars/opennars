@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Additional interfaces for interacting with RL environment
  */
-abstract public class NARQLAgent extends NARQL {
+abstract public class NARQLAgent extends QLTermMatrix {
 
 
     private final RLEnvironment env;
@@ -102,7 +102,7 @@ abstract public class NARQLAgent extends NARQL {
 
         for (int i = 0; i < env.numActions(); i++) {
             Term a = operation(i);
-            actions.include(a);
+            cols.include(a);
         }
 
         possibleDesire(0.75f);
@@ -121,7 +121,7 @@ abstract public class NARQLAgent extends NARQL {
 
     @Override
     public boolean isAction(Term a) {
-        return actions.contains(a);
+        return cols.contains(a);
     }
 
 

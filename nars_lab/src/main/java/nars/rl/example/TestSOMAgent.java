@@ -232,11 +232,11 @@ public class TestSOMAgent extends JPanel {
 
                     //if (xstates.size() != states.size()) {
                         xstates.clear();
-                        Iterables.addAll(xstates, states);
+                        Iterables.addAll(xstates, rows);
                     //}
                     //if (xactions.size() != actions.size()) {
                         xactions.clear();
-                        Iterables.addAll(xactions, actions);
+                        Iterables.addAll(xactions, cols);
                     //}
 
                     repaint();
