@@ -22,7 +22,7 @@ import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
 import nars.rl.HaiSOMPerception;
-import nars.rl.NARQLAgent;
+import nars.rl.QLAgent;
 import nars.rl.Perception;
 import nars.rl.RawPerception;
 
@@ -43,7 +43,7 @@ import static nars.nal.UtilityFunctions.or;
 public class TestSOMAgent extends JPanel {
 
 
-    private final NARQLAgent agent;
+    private final QLAgent agent;
 
 
     //    /** growing neural gas */
@@ -212,7 +212,7 @@ public class TestSOMAgent extends JPanel {
         nar.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
 
 
-        agent = new NARQLAgent(nar, d, p) {
+        agent = new QLAgent(nar, d, p) {
 
             private final MatrixImage mi = new MatrixImage(400, 400);
             private final NWindow nmi = new NWindow("Q", mi).show(400, 400);
@@ -413,7 +413,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        a.agent.setEpsilon(0.10);
+        a.agent.brain.setEpsilon(0.10);
 
     }
 

@@ -121,7 +121,7 @@ abstract public class TermMatrix<R extends Term, C extends Term, E extends Term>
 
     abstract public R state(E entry);
     abstract public C action(E entry);
-    abstract public boolean isState(R s);
-    abstract public boolean isAction(C a);
-    abstract public boolean isEntry(E c);
+    abstract public boolean isState(Term s);
+    abstract public boolean isAction(Term a);
+    abstract public boolean isEntry(Term c);
 }

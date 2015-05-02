@@ -11,7 +11,7 @@ public class RawPerception implements Perception {
     private final String id;
 
     private RLEnvironment env;
-    private NARQLAgent agent;
+    private QLAgent agent;
 
     public RawPerception(String id, float confidence) {
         this.confidence = confidence;
@@ -19,7 +19,7 @@ public class RawPerception implements Perception {
     }
 
     @Override
-    public void init(RLEnvironment env, NARQLAgent agent) {
+    public void init(RLEnvironment env, QLAgent agent) {
         this.env = env;
         this.agent = agent;
     }

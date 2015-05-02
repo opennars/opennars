@@ -13,7 +13,7 @@ public interface Perception {
      * returns the # dimensions the processed perception
      * will be represented in
      */
-    public void init(RLEnvironment env, NARQLAgent agent);
+    public void init(RLEnvironment env, QLAgent agent);
 
     /**
      * process the next vector of input; calls agent methods (ex: input) in reaction to input at time 't'

@@ -30,7 +30,7 @@ import java.util.List;
  */
 abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermMatrix<S,A,Implication> {
 
-    AbstractHaiQBrain<S,A> brain;
+    public AbstractHaiQBrain<S,A> brain;
 
 
 
@@ -167,7 +167,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     }
 
 
-    private double q(Term state, Term action) {
+    public double q(Term state, Term action) {
         Concept c = q.get(state, action);
         if (c == null) return 0f;
         Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
@@ -209,7 +209,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     }
 
     @Override
-    public boolean isEntry(Implication x) {
+    public boolean isEntry(Term x) {
         if (!(x instanceof Implication)) return false;
         if (x.getTemporalOrder() != implicationOrder) return false;
 
@@ -244,8 +244,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends TermM
     }
 
 
-    abstract public boolean isState(S s);
-    abstract public boolean isAction(A a);
+    abstract public boolean isState(Term s);
+    abstract public boolean isAction(Term a);
 
     public String getRewardTerm() {
         return "<SELF --> good>";

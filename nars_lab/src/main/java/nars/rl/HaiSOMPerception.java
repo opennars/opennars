@@ -13,7 +13,7 @@ public class HaiSOMPerception implements Perception {
     private final float confidence;
     private int somSize;
     private Hsom som = null;
-    private NARQLAgent agent;
+    private QLAgent agent;
     private RLEnvironment env;
 
     public HaiSOMPerception(String id, int somSize, float confidence) {
@@ -23,7 +23,7 @@ public class HaiSOMPerception implements Perception {
     }
 
     @Override
-    public void init(RLEnvironment env, NARQLAgent agent) {
+    public void init(RLEnvironment env, QLAgent agent) {
         this.env = env;
 
         this.agent = agent;

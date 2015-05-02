@@ -33,7 +33,7 @@ public class TwoPointRegulatorAgent extends JPanel {
         Global.DEBUG = true;
     }
 
-    private final QLTermMatrix ql;
+    private final QLTermMatrix<Term,Term> ql;
     private final MatrixImage mi;
 
 
@@ -137,7 +137,7 @@ public class TwoPointRegulatorAgent extends JPanel {
 
 
 
-            ql.learn(state, reward, 1f);
+            ql.brain.learn(state, reward, 1);
 
             return null;
 

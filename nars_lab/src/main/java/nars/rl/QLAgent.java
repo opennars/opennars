@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Additional interfaces for interacting with RL environment
  */
-abstract public class NARQLAgent extends QLTermMatrix {
+abstract public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
     private final RLEnvironment env;
@@ -28,14 +28,14 @@ abstract public class NARQLAgent extends QLTermMatrix {
     private final ArrayRealVector actByPriority;
     private final Perception[] perceptions;
 
-    public Term actByQStrongest = null; //default q-action if NARS does not specify one by the next frame
+    public Operation actByQStrongest = null; //default q-action if NARS does not specify one by the next frame
     double lastReward = 0;
 
 
     /**
      * corresponds to the numeric operation as specified by the environment
      */
-    protected Term operation(int i) {
+    protected Operation operation(int i) {
         //return nar.term("move(" + i + ")"); //TODO write narseesparser test to handle this, it wont parse
         return nar.term("(^move," + i + ",SELF)");
     }
@@ -49,7 +49,7 @@ abstract public class NARQLAgent extends QLTermMatrix {
      * @param p
      * @param epsilon randomness factor
      */
-    public NARQLAgent(NAR nar, RLEnvironment env, Perception... perceptions) {
+    public QLAgent(NAR nar, RLEnvironment env, Perception... perceptions) {
         super(nar);
 
         //HACK TODO this is necessary to disable the superclass's state belief update in methods we end up calling, this class has its own belief update method that should only be called
@@ -101,7 +101,7 @@ abstract public class NARQLAgent extends QLTermMatrix {
         super.init();
 
         for (int i = 0; i < env.numActions(); i++) {
-            Term a = operation(i);
+            Operation a = operation(i);
             cols.include(a);
         }
 
@@ -121,7 +121,9 @@ abstract public class NARQLAgent extends QLTermMatrix {
 
     @Override
     public boolean isAction(Term a) {
-        return cols.contains(a);
+        if (a instanceof Operation)
+            return cols.contains((Operation)a);
+        return false;
     }
 
 
@@ -129,13 +131,13 @@ abstract public class NARQLAgent extends QLTermMatrix {
      * adds a perception belief of a given strength (0..1.0) to the input buffer
      */
     public void perceive(String term, float freq, float conf) {
-        perceive(nar.term(term), freq, conf);
+        perceive((S)nar.term(term), freq, conf);
     }
 
     /**
      * adds a perception belief of a given strength (0..1.0) to the input buffer
      */
-    public Task perceive(Term term, float freq, float conf) {
+    public Task perceive(S term, float freq, float conf) {
         Task t = nar.task(term + ". :|: %" + freq + ";" + conf + "%");
         incoming.add(t);
         return t;
@@ -170,7 +172,7 @@ abstract public class NARQLAgent extends QLTermMatrix {
 
         @Override
         public void onFrame() {
-            NARQLAgent.this.onFrame();
+            QLAgent.this.onFrame();
         }
 
 
@@ -242,7 +244,7 @@ abstract public class NARQLAgent extends QLTermMatrix {
 
         learn(o, nar.time(), r);
 
-        actByQStrongest = getNextAction();
+        actByQStrongest = brain.getNextAction();
 
         lastReward = r;
     }
