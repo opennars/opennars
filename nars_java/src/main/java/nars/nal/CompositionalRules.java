@@ -59,12 +59,12 @@ public final class CompositionalRules {
 
     //Descriptive variable names are used during debugging;
     //but otherwise should be $1, $2, #1, #2 to help avoid the need to rename during certain normalizations
-    final static Variable varInd1 = new Variable(Global.DEBUG ? "$i1" : "$1");
-    final static Variable varInd2 = new Variable(Global.DEBUG ? "$i2" : "$2");
-    final static Variable varDep = new Variable(Global.DEBUG ? "#d1" : "#1");
-    final static Variable varDep2 = new Variable(Global.DEBUG ? "#d2" : "#2");
-    public static final Variable depIndVar1 = new Variable(Global.DEBUG ? "#di1" : "#3");
-    public static final Variable depIndVar2 = new Variable(Global.DEBUG ? "#di2" : "#4");
+    final static Variable varInd1 = new Variable("$i");
+    final static Variable varInd2 = new Variable("$j");
+    final static Variable varDep = new Variable("#d");
+    final static Variable varDep2 = new Variable("#e");
+    final static Variable depIndVar1 = new Variable("#f");
+    final static Variable depIndVar2 = new Variable("#g");
 
     /**
      * {<S ==> M>, <P ==> M>} |- {<(S|P) ==> M>, <(S&P) ==> M>, <(S-P) ==>
@@ -650,7 +650,7 @@ public final class CompositionalRules {
             Term content = Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
             if (content != null) {
 
-                substitute.put(commonTerm1, new Variable("#v", content));
+                substitute.put(commonTerm1, varDep2);
 
                 Compound ct = Terms.compoundOrNull(((Compound) content).applySubstitute(substitute));
                 if (ct != null) {

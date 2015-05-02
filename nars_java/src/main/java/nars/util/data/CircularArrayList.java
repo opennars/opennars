@@ -137,7 +137,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
             shiftBlock(i, s);
         }
 
-        setFast(i, e);
+        if (e!=null)
+            setFast(i, e);
     }
 
 
@@ -189,6 +190,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     public void addLast(final E e) {
         add(size, e);
     }
+
+
 
     @Override
     public E getFirst() {

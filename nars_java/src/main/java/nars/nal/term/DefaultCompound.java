@@ -37,7 +37,9 @@ abstract public class DefaultCompound extends Compound {
 
     protected void share(DefaultCompound equivalent) {
         super.share(equivalent);
-        equivalent.name = this.name; //also share name key
+        if (!hasVar()) {
+            equivalent.name = this.name; //also share name key
+        }
     }
 
     @Override

@@ -226,7 +226,8 @@ public class NarseseParserTest {
     }
 
     @Test public void testOperationNoArgs() {
-        taskEqualsOldParser("believe()");
+        taskEqualsOldParser("believe()!");
+        taskEqualsOldParser("believe( )!");
     }
 
     @Test public void testOperation() throws InvalidInputException {

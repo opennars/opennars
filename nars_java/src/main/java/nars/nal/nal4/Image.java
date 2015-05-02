@@ -42,7 +42,6 @@ abstract public class Image extends DefaultCompound {
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
         if (t instanceof Compound) return false;
-        if (t instanceof NarseseParser.ImageIndexTerm) return true;
         CharSequence n = t.name();
         if (n.length() != 1) return false;
         return n.charAt(0) == Symbols.IMAGE_PLACE_HOLDER;

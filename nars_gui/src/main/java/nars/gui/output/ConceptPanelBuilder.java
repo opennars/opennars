@@ -133,12 +133,14 @@ public class ConceptPanelBuilder extends AbstractReaction {
         final long now = nar.time();
 
         List<ConceptPanel> toRemove = new ArrayList();
-        for (Concept c : changed) {
-            for (ConceptPanel cp : concept.get(c)) {
-                if (cp.isShowing())
-                    cp.update(now);
-                else
-                    toRemove.add(cp);
+        synchronized(concept) {
+            for (Concept c : changed) {
+                for (ConceptPanel cp : concept.get(c)) {
+                    if (cp.isShowing())
+                        cp.update(now);
+                    else
+                        toRemove.add(cp);
+                }
             }
         }
 
@@ -156,7 +158,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             while (ee.hasNext()) {
                 final Map.Entry<Concept, ConceptPanel> e = ee.next();
                 final ConceptPanel cp = e.getValue();
-                if (isAutoRemove() && (cp.closed) || (!cp.isVisible())) {
+                if (isAutoRemove() && (cp.closed) || (!cp.isShowing())) {
                     ee.remove();
                 }
                 else if ( cp.isVisible() ) {

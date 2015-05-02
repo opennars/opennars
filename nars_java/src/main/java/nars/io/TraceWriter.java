@@ -61,18 +61,31 @@ public class TraceWriter extends MemoryObserver {
         addOutput(l);        
     }
     
-    public void addOutput(LogOutput l) {
+    public LogOutput addOutput(final LogOutput l) {
         outputs.add(l);
+        return l;
     }
     
-    public void addOutput(PrintStream p) {
-        //TODO removeOutput(p)
-        
-        addOutput(new LogOutput() {
-            @Override public void traceAppend(Class channel, String s) {
-                p.println(channel.getSimpleName() + ": " + s);
-            }
-        });        
+    public PrintStreamLogOutput addOutput(final PrintStream p) {
+        PrintStreamLogOutput r = new PrintStreamLogOutput(p);
+        addOutput(r);
+        return r;
+    }
+
+    public static class PrintStreamLogOutput implements LogOutput {
+
+        private final PrintStream p;
+
+        public PrintStreamLogOutput(PrintStream p) {
+            this.p = p;
+        }
+
+        @Override
+        public void traceAppend(final Class channel, final String s) {
+            p.print(channel.getSimpleName());
+            p.print(": ");
+            p.print(s);
+        }
     }
     
     public void removeOutput(LogOutput l) {
@@ -90,7 +103,9 @@ public class TraceWriter extends MemoryObserver {
             return;
         
         String s = args.length == 1 ? args[0].toString() : Arrays.toString(args);
-        for (final LogOutput o : outputs) {            
+        int n = outputs.size();
+        for (int i = 0; i < n; i++) {
+            final LogOutput o = outputs.get(i);
             o.traceAppend(channel, s);
         }
     }

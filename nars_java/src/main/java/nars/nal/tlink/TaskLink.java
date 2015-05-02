@@ -51,10 +51,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
-    public final static class Recording {
+    final static class Recording {
 
-        public final TermLink link;
-        long time;
+        public TermLink link;
+        public long time;
 
         public Recording(TermLink link, long time) {
             this.link = link;
@@ -76,9 +76,41 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
     }
 
-    CircularArrayList<Recording> records;
+    RecordingList records;
     long newestRecordTime = -1;
 
+    /** allows re-use of the Recording object since it would otherwise be instantiated frequently */
+    public static class RecordingList extends CircularArrayList<Recording> {
+
+        /** recycled recording */
+        Recording spare = null;
+
+        public RecordingList(int capacity) {
+            super(capacity);
+        }
+
+        @Override
+        public Recording remove(int i) {
+            Recording r = super.remove(i);
+            spare = r;
+            return r;
+        }
+
+        public void add(final TermLink t, final long time) {
+
+            if (spare!=null) {
+                spare.link = t;
+                spare.time = time;
+                add(spare);
+                spare = null;
+            }
+            else {
+                add(new Recording(t, time));
+            }
+        }
+
+
+    }
 
     /**
      * The type of tlink, one of the above
@@ -183,7 +215,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         if (records == null) {
             //records = new ArrayDeque(recordLength);
             //records = new LinkedList();
-            records = new CircularArrayList<>(recordLength);
+            records = new RecordingList(recordLength);
         }
 
         final long minTime = currentTime - noveltyHorizon;
@@ -214,7 +246,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
                 } else if (minTime > rtime) {
                     //remove a record which will not apply to any other tlink
 
-                    records.removeFast(i);
+                    records.remove(i);
                     i--; //skip back one so the next iteration will be at the element after the one removed
                     size--;
                 }
@@ -229,7 +261,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
 
         // add knowledge reference to recordedLinks
-        addRecord(new Recording(termLink, currentTime));
+        records.add(termLink, currentTime);
 
         return true;
     }

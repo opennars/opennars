@@ -227,8 +227,9 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * assumes that 'equivalent' has already been determined to be equal.
      * */
     protected void share(Compound equivalent) {
-        if (!hasVar())
+        if (!hasVar()) {
             System.arraycopy(term, 0, equivalent.term, 0, term.length);
+        }
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */

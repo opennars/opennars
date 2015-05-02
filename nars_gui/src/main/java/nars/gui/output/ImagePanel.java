@@ -29,7 +29,7 @@ public class ImagePanel extends JComponent {
         setPreferredSize(minimumSize);
     }
 
-    public Graphics2D g() {
+    public synchronized Graphics2D g() {
         if (image == null) {
             image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         }

@@ -27,7 +27,6 @@ import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.errors.InvalidInputError;
 import org.parboiled.errors.ParseError;
-import org.parboiled.parserunners.ErrorReportingParseRunner;
 import org.parboiled.parserunners.ParseRunner;
 import org.parboiled.parserunners.RecoveringParseRunner;
 import org.parboiled.support.MatcherPath;
@@ -40,6 +39,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
+import static nars.io.Symbols.IMAGE_PLACE_HOLDER;
 import static nars.nal.NALOperator.*;
 import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
@@ -337,6 +337,10 @@ public class NarseseParser extends BaseParser<Object> {
                         MultiArgTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER, false, false, false),
                         MultiArgTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER, false, false, false),
 
+                        sequence(
+                                Atom(),
+                                EmptyOperationParens()
+                        ),
 
                         //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
                         sequence(
@@ -345,8 +349,10 @@ public class NarseseParser extends BaseParser<Object> {
                         ),
 
 
-                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, true, false, false, false),
 
+
+
+                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_OPENER, NALOperator.COMPOUND_TERM_CLOSER, true, false, false, false),
 
 
                         //default to product if no operator specified in ( )
@@ -417,18 +423,8 @@ public class NarseseParser extends BaseParser<Object> {
         return newParser((Memory)null);
     }
 
-    public static class ImageIndexTerm extends Atom {
-        ImageIndexTerm() {
-            super("_");
-        }
 
-        @Override
-        public boolean equals(Object that) {
-            return that==this || that instanceof ImageIndexTerm;
-        }
-    }
-
-    final static ImageIndexTerm imageIndexTerm = new ImageIndexTerm();
+    final static Atom imageIndexTerm = Atom.get(String.valueOf(IMAGE_PLACE_HOLDER));
 
     Rule ImageIndex() {
         return sequence("_", push(imageIndexTerm));
@@ -612,6 +608,20 @@ public class NarseseParser extends BaseParser<Object> {
                 close != null ? sequence(s(), close.ch) : s(),
 
                 push(nextTermVector(defaultOp, allowInternalOp))
+        );
+    }
+
+    /**
+     * operation()
+     */
+    Rule EmptyOperationParens() {
+        return sequence(
+
+                pushAll(term("^" + pop()), Compound.class),
+
+                s(), NALOperator.COMPOUND_TERM_OPENER.ch, s(), NALOperator.COMPOUND_TERM_CLOSER.ch,
+
+                push(nextTermVector(NALOperator.OPERATION, false))
         );
     }
 
