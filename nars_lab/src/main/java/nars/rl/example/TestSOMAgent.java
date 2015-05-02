@@ -341,28 +341,28 @@ public class TestSOMAgent extends JPanel {
 
         Default dd = new Default(concepts, conceptsPerCycle, 4) {
 
-            @Override
-            public Memory.DerivationProcessor getDerivationProcessor() {
-                //return new Memory.ConstantLeakyDerivations(0.95f, 0.95f);
-                return new Memory.DerivationProcessor() {
-
-                    @Override
-                    public boolean process(Task derived) {
-                        float amp = 1f;
-
-                        switch (derived.getPunctuation()) {
-                            case '?': amp = 0.6f; break;
-                            case '@': amp = 0.6f; break;
-
-                            case '!': amp = 0.75f; break;
-
-                            case '.': amp = 0.4f; break;
-                        }
-                        derived.setPriority(derived.getPriority() * amp);
-                        return true;
-                    }
-                };
-            }
+//            @Override
+//            public Memory.DerivationProcessor getDerivationProcessor() {
+//                //return new Memory.ConstantLeakyDerivations(0.95f, 0.95f);
+//                return new Memory.DerivationProcessor() {
+//
+//                    @Override
+//                    public boolean process(Task derived) {
+//                        float amp = 1f;
+//
+//                        switch (derived.getPunctuation()) {
+//                            case '?': amp = 0.6f; break;
+//                            case '@': amp = 0.6f; break;
+//
+//                            case '!': amp = 0.75f; break;
+//
+//                            case '.': amp = 0.4f; break;
+//                        }
+//                        derived.setPriority(derived.getPriority() * amp);
+//                        return true;
+//                    }
+//                };
+//            }
 
             /** ranks beliefs by recency. the relevance decays proportional to delta time from now divided by window length (in cycles) */
             public float rankBeliefRecent(final Sentence s, final long now, final float window, final float eternalWindow) {

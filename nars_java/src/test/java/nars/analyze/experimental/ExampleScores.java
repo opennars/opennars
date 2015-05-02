@@ -63,8 +63,8 @@ public class ExampleScores {
 
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         new ExampleScores(new Default(), 500);
-    }
+    }*/
 
 }

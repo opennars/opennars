@@ -1,5 +1,6 @@
 package nars.analyze.experimental;
 
+import nars.Global;
 import nars.ProtoNAR;
 import nars.io.Symbols;
 import nars.io.Texts;
@@ -16,6 +17,8 @@ import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 
 import java.util.Arrays;
+
+import static nars.io.Texts.n4;
 
 /**
  * Created by me on 5/1/15.
@@ -43,13 +46,13 @@ public class OptimizeLeak {
                         //double fTol,
                         //double pointTol,
                         int maxEvaluations,
-                        int additionalInterpolationPoints) {
+                        int additionalInterpolationPoints, double trustMax, double trustMin) {
 
 //         System.out.println(func.getClass().getName() + " BEGIN"); // XXX
 
         int dim = startPoint.length;
         final int numIterpolationPoints = 2 * dim + 1 + additionalInterpolationPoints;
-        BOBYQAOptimizer optim = new BOBYQAOptimizer(numIterpolationPoints);
+        BOBYQAOptimizer optim = new BOBYQAOptimizer(numIterpolationPoints, trustMax, trustMin);
         PointValuePair result = boundaries == null ?
                 optim.optimize(new MaxEval(maxEvaluations),
                         new ObjectiveFunction(func),
@@ -87,55 +90,78 @@ public class OptimizeLeak {
     }
 
     public static void main(String[] args) {
-        final int cycles = 1000;
+        final int cycles = 1500;
         final int iterations = 2000;
+        Global.DEBUG = false;
+
+        final int dim = 7;
+
+        double[][] bb = boundaries(dim, -0.35, 0.6);
+        bb[0][0] = 0; //set base, which is different from the others
+        bb[1][0] = 1;
 
         optimize(new MultivariateFunction() {
-            @Override
-            public double value(double[] d) {
-                final float jLeakPri = (float)d[0];
-                final float jLeakDur = (float)d[1];
-                final float gLeakPri = (float)d[2];
-                final float gLeakDur = (float)d[3];
-                final float qLeakPri = (float)d[4];
-                final float qLeakDur = (float)d[5];
 
-                ProtoNAR b = new Default() {
-                    @Override
-                    protected void initDerivationFilters() {
+                    float base;
 
-                        getNALParam().derivationFilters.add(new ConstantDerivationLeak(0,0) {
-                            @Override
-                            protected void leak(Task derived) {
-                                switch (derived.getPunctuation()) {
-
-                                    case Symbols.JUDGMENT:
-                                        derived.mulPriority(jLeakPri);
-                                        derived.mulDurability(jLeakDur);
-                                        break;
-
-                                    case Symbols.GOAL:
-                                        derived.mulPriority(gLeakPri);
-                                        derived.mulDurability(gLeakDur);
-                                        break;
-
-                                    case '?':
-                                    case Symbols.QUEST:
-                                        derived.mulPriority(qLeakPri);
-                                        derived.mulDurability(qLeakDur);
-                                        break;
-                                }
-                            }
-                        });
+                    final float x(double p) {
+                        return (float) Math.max(0, Math.min(1.0, p + base));
                     }
-                };
+                     @Override
+                     public double value(double[] d) {
+                         this.base = (float) d[0]; //base
+                         final float jLeakPri = x(d[1]);
+                         final float jLeakDur = x(d[2]);
+                         final float gLeakPri = x(d[3]);
+                         final float gLeakDur = x(d[4]);
+                         final float qLeakPri = x(d[5]);
+                         final float qLeakDur = x(d[6]);
 
-                ExampleScores e = new ExampleScores(b, cycles);
-                System.out.println(Arrays.toString(d) + ", " + e.totalCost);
+                         Default b = new Default() {
+                             @Override
+                             protected void initDerivationFilters() {
 
-                return e.totalCost;
-            }
-        }, new double[] { 0.4, 0.4, 0.4, 0.4, 0.4, 0.4 }, boundaries(6, 0.05, 1.0), GoalType.MINIMIZE, iterations, 1);
+                                 getNALParam().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
+                                     @Override
+                                     protected void leak(Task derived) {
+                                         switch (derived.getPunctuation()) {
+
+                                             case Symbols.JUDGMENT:
+                                                 derived.mulPriority(jLeakPri);
+                                                 derived.mulDurability(jLeakDur);
+                                                 break;
+
+                                             case Symbols.GOAL:
+                                                 derived.mulPriority(gLeakPri);
+                                                 derived.mulDurability(gLeakDur);
+                                                 break;
+
+                                             case '?':
+                                             case Symbols.QUEST:
+                                                 derived.mulPriority(qLeakPri);
+                                                 derived.mulDurability(qLeakDur);
+                                                 break;
+                                         }
+                                     }
+                                 });
+                             }
+                         };
+                         b.setInternalExperience(null);
+
+                         ExampleScores e = new ExampleScores(b, cycles);
+                         System.out.println(
+                                 n4(jLeakPri) + ", " + n4(jLeakDur) + ",   " +
+                                 n4(gLeakPri) + ", " + n4(gLeakDur) + ",   " +
+                                 n4(qLeakPri) + ", " + n4(qLeakDur) + ",   " +
+                                  "   " + e.totalCost);
+
+                         return e.totalCost;
+                     }
+                 }, new double[]{0.4, 0, 0, 0, 0, 0, 0},
+                bb, GoalType.MINIMIZE, iterations,
+                3,
+                2 * 6.0, 1E-8 /* 1E-8 default */
+        );
     }
 
     public static void main2(String[] args) {
@@ -156,7 +182,7 @@ public class OptimizeLeak {
                 };
 
                 ExampleScores e = new ExampleScores(b, cycles);
-                System.out.println(Texts.n4(p) + ", " + Texts.n4(d) + ", " + e.totalCost);
+                System.out.println(n4(p) + ", " + n4(d) + ", " + e.totalCost);
             }
         }
     }
