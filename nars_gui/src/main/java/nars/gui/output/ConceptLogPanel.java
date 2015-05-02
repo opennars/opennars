@@ -175,7 +175,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
         CharSequence s = TextOutput.getOutputString(channel, o, showStamp, nar, new StringBuilder());
         JLabel jl = new JLabel(s.toString());
-        jl.setFont(Video.monofont);
+        //jl.setFont(Video.monofont);
         applyPriority(jl, priority);
         append(jl);
 

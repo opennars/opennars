@@ -4,6 +4,7 @@ import nars.NAR;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.ConceptLogPanel;
 import nars.gui.output.LogPanel;
+import nars.gui.output.SwingLogPanel;
 
 import javax.swing.*;
 import java.awt.*;

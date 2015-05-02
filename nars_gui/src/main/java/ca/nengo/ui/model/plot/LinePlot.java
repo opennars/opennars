@@ -36,6 +36,9 @@ public class LinePlot extends AbstractWidget {
     private final PNodeCache plotSurfaceWrap;
 
 
+    long minRepaintPeriod = 75; //milliseconds
+    long lastRepaint = 0;
+
     private String label = "?";
 
     final Deque<Double> history = new ArrayDeque<>(); //TODO use seomthing more efficient
@@ -78,7 +81,7 @@ public class LinePlot extends AbstractWidget {
         plotSurface = new PXPath(rect) {
             @Override
             protected void paint(PPaintContext paintContext) {
-                super.paint(paintContext);
+                //super.paint(paintContext);
 
                 if (changed) {
                     changed = false;
@@ -217,7 +220,15 @@ public class LinePlot extends AbstractWidget {
             plotSurfaceWrap.setBounds(ui.getBounds());
         }
 
-        plotSurfaceWrap.repaint();
+
+        long now = System.currentTimeMillis();
+        if (now - lastRepaint > minRepaintPeriod) {
+            plotSurfaceWrap.repaint();
+            lastRepaint = now;
+        }
+        else {
+            plotSurfaceWrap.invalidatePaint();
+        }
 
     }
     @Override

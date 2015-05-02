@@ -38,8 +38,9 @@ public class NALysisSome extends NALysis {
         //String test = "./nal/test8/nal8.1.7.nal";
         //String test = "./nal/test5/depr/nal5.19.nal";
         //String test = "./nal/test4/depr/nal4.recursion.small.nal";
+        String test = "./nal/test4/nal4.everyday_reasoning.nal";
         //String test = "./nal/test8/nal8.1.0.nal";
-        String test = "./nal/test8/nal8.1.4.nal";
+        //String test = "./nal/test8/nal8.1.4.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
         //String test = "./nal/test6/nal6.22.nal";
         //String test = "./nal/test5/nal5.18.1.nal";

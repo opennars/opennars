@@ -5,6 +5,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.Video;
+import automenta.vivisect.swing.NPanel;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Multimap;
@@ -30,6 +31,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -78,7 +80,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
     }
 
     public ConceptPanel newPanel(Concept c, boolean label, boolean full, int chartSize) {
-        ConceptPanel cp = new ConceptPanel(c, label, full, chartSize){
+        ConceptPanel cp = new ConceptPanel(c, label, full, chartSize).update(nar.time());
+//        {
 
 //            @Override
 //            protected void visibility(final boolean appearedOrDisappeared) {
@@ -90,7 +93,8 @@ public class ConceptPanelBuilder extends AbstractReaction {
 //                    }
 //
 //            }
-        }.update(nar.time());
+    //    }
+
         synchronized (concept) {
             concept.put(c, cp);
         }
@@ -118,7 +122,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
         }
     }
 
-    public boolean isAutoRemove() {
+    @Deprecated public boolean isAutoRemove() {
         return true;
     }
 
@@ -128,13 +132,20 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
         final long now = nar.time();
 
+        List<ConceptPanel> toRemove = new ArrayList();
         for (Concept c : changed) {
             for (ConceptPanel cp : concept.get(c)) {
-                cp.update(now);
+                if (cp.isShowing())
+                    cp.update(now);
+                else
+                    toRemove.add(cp);
             }
         }
 
         changed.clear();
+
+        remove(toRemove);
+
     }
 
     public void updateAll() {
@@ -155,8 +166,21 @@ public class ConceptPanelBuilder extends AbstractReaction {
         }
     }
 
+    public void remove(Collection<ConceptPanel> cp) {
+        if (cp.isEmpty()) return;
+
+        synchronized (concept) {
+            for (ConceptPanel c : cp)
+                concept.remove(c.concept, c);
+        }
+    }
+
     public boolean remove(ConceptPanel cp) {
-        return concept.remove(cp.concept, cp);
+        boolean r;
+        synchronized (concept) {
+            r = concept.remove(cp.concept, cp);
+        }
+        return r;
     }
 
     public void off() {
@@ -183,12 +207,16 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
 
 
+    final static float titleSize = 18f;
+    final static Font titleFont = Video.monofont.deriveFont(titleSize);
+
     public static class ConceptPanel extends JPanel implements Named<Concept> {
 
-        final float titleSize = 18f;
+
         public final Concept concept;
         private final TruthChart beliefGoalChart;
         private final PriorityColumn questionChart;
+        private final boolean full;
         private RadialBagChart taskLinkChart;
         private ScatterPlotBagChart termLinkChart;
         //private final BagChart termLinkChart;
@@ -210,11 +238,11 @@ public class ConceptPanelBuilder extends AbstractReaction {
             this.closed = false;
 
             this.chartWidth = this.chartHeight = chartSize;
+            this.full = full;
+
             setOpaque(false);
 
             this.subtitle = new JLabel();
-
-
 
             this.beliefGoalTime = new BeliefTimeline(chartHeight * 2, chartHeight, false);
             this.beliefGoalChart = new TruthChart(chartWidth, chartHeight);
@@ -308,7 +336,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
 //                    title.setEditable(false);
 //                    title.setOpaque(false);
                     JLabel title = new JLabel(concept.term.toString());
-                    title.setFont(Video.monofont.deriveFont(titleSize));
+                    title.setFont(titleFont);
 
                     JPanel titlePanel = new JPanel(new VerticalLayout());
                     titlePanel.setOpaque(false);
@@ -333,9 +361,6 @@ public class ConceptPanelBuilder extends AbstractReaction {
 
             syntaxPanel.noLoop();
             syntaxPanel.redraw();
-
-
-
 
             add(syntaxPanel);*/
             //setComponentZOrder(overlay, 1);
@@ -391,7 +416,7 @@ public class ConceptPanelBuilder extends AbstractReaction {
             }
 
 
-            validate();
+            //validate();
 
             return this;
         }

@@ -421,10 +421,17 @@ public class NarseseParser extends BaseParser<Object> {
         ImageIndexTerm() {
             super("_");
         }
+
+        @Override
+        public boolean equals(Object that) {
+            return that==this || that instanceof ImageIndexTerm;
+        }
     }
 
+    final static ImageIndexTerm imageIndexTerm = new ImageIndexTerm();
+
     Rule ImageIndex() {
-        return sequence("_", push(new ImageIndexTerm()));
+        return sequence("_", push(imageIndexTerm));
     }
 
     Rule QuotedLiteral() {
