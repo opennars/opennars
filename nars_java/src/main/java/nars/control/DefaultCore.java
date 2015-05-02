@@ -10,9 +10,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.*;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard
@@ -31,7 +29,8 @@ public class DefaultCore extends SequentialCore {
      * cycle
      */
     protected SortedSet<Task> newTasks;
-
+    protected List<Task> incoming = new ArrayList();
+    protected boolean executingNewTasks = false;
 
 
 
@@ -51,14 +50,16 @@ public class DefaultCore extends SequentialCore {
     public void init(Memory m) {
         super.init(m);
 
-        this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
-        //this.newTasks = new TreeSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+        //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+        this.newTasks = new TreeSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
     }
 
     @Override
     public void addTask(Task t) {
-
-        newTasks.add(t);
+        if (executingNewTasks)
+            incoming.add(t); //buffer it
+        else
+            newTasks.add(t); //add it directly to the newtasks set
     }
 
 
@@ -112,18 +113,24 @@ public class DefaultCore extends SequentialCore {
     }
 
     private void runNewTasks(final int numNewTasks) {
-        Iterator<Task> ii = newTasks.iterator();
 
+        executingNewTasks = true;
+
+
+        Iterator<Task> ii = newTasks.iterator();
         for (int i = 0; ii.hasNext() && i < numNewTasks; i++) {
             Task task = ii.next();
 
-            //note: removing it before running in case running it somehow produces the same task, then it should be added again and not merge with it
-            ii.remove();
-
             run(task);
-
-
         }
+        newTasks.clear();
+
+        executingNewTasks = false;
+
+        for (Task t : incoming)
+            newTasks.add(t);
+
+        incoming.clear();
     }
 
     /** returns whether the task was run */

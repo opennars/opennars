@@ -22,7 +22,10 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-/** processes every concept fairly, according to priority, in each cycle */
+/** processes every concept fairly, according to priority, in each cycle
+ *
+ * TODO eliminate ConcurrentSkipListSet like is implemented in DefaultCore
+ * */
 public class Solid extends Default {
 
 
@@ -40,7 +43,7 @@ public class Solid extends Default {
         super();
         this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = maxConcepts;
-        this.maxSubConcepts = maxConcepts * 4;
+        this.maxSubConcepts = maxConcepts * 2;
 
         //this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
         this.maxTasksPerCycle = -1;
@@ -50,7 +53,7 @@ public class Solid extends Default {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         param.duration.set(3);
-        param.noveltyHorizon.set(2);
+        param.noveltyHorizon.set(1);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class NALPerfLoop {
         int repeats = 1;
         int warmups = 0;
         int maxConcepts = 2048;
-        int extraCycles = 20048;
+        int extraCycles = 10048;
         int randomExtraCycles = 512;
         Global.THREADS = 1;
         Global.EXIT_ON_EXCEPTION = true;
@@ -36,7 +36,7 @@ public class NALPerfLoop {
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         
         Collection c = NALTest.params();
-        c.addAll((ExampleFileInput.getUnitTests("test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8")).values());
+        c.addAll(ExampleFileInput.getAllExamples().values());
 
         while (true) {
             for (Object o : c) {

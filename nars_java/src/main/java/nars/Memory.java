@@ -54,6 +54,7 @@ import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.util.data.XORShiftRandom;
 import reactor.function.Supplier;
 
 import java.io.Serializable;
@@ -218,8 +219,8 @@ public class Memory implements Serializable {
 
 
     private static long defaultRandomSeed = 1;
-    public static final Random randomNumber = new Random(defaultRandomSeed);
-            //new XORShiftRandom(defaultRandomSeed); //not thread safe but faster
+    public static final Random randomNumber = //new Random(defaultRandomSeed);
+            new XORShiftRandom(defaultRandomSeed); //not thread safe but faster
 
 
     public static void resetStatic(long randomSeed) {

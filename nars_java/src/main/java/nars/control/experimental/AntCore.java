@@ -344,7 +344,7 @@ public class AntCore extends ConceptWaveCore {
             
             //TODO weighted probability selection
             //TODO use Memory.random instance not Math.random
-            int i = (int)(links.size() * Math.random());
+            int i = (int)(links.size() * Memory.randomNumber.nextDouble()s);
             return links.get(i);
         }
         */

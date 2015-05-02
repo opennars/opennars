@@ -3,6 +3,7 @@ package nars.budget.bag.experimental;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Global;
+import nars.Memory;
 import nars.nal.Item;
 import nars.budget.Bag;
 import nars.util.data.CircularArrayList;
@@ -101,7 +102,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     protected void swapToProportionalIndex(int currentIndex, float priority) {
         //TODO choose reinsertionIndex intelligently
         //int reinsertionIndex = Memory.randomNumber.nextInt(queue.size()-1);
-        int reinsertionIndex = (int)(Math.random() * (1.0f - priority) * (queue.size()-1));
+        int reinsertionIndex = (int)(Memory.randomNumber.nextDouble() * (1.0f - priority) * (queue.size()-1));
         if (currentIndex == reinsertionIndex) return;
         queue.swap(currentIndex, reinsertionIndex);
     }

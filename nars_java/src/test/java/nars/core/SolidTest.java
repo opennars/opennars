@@ -1,6 +1,7 @@
 package nars.core;
 
 import nars.Global;
+import nars.Memory;
 import nars.io.Answered;
 import nars.io.test.TestNAR;
 import nars.nal.Sentence;
@@ -21,12 +22,13 @@ public class SolidTest {
     @Test
     public void testDetective() throws FileNotFoundException {
 
-        int time = 128; //should solve the example in few cycles
+        int time = 256; //should solve the example in few cycles
 
+        Memory.resetStatic(1);
         Global.DEBUG = true;
 
-        Solid s = new Solid(3, 600, 1, 1, 1, 8);
-        s.param.duration.set(2);
+        Solid s = new Solid(1, 800, 1, 1, 2, 5);
+        s.setInternalExperience(null);
 
         TestNAR n = new TestNAR(s);
 

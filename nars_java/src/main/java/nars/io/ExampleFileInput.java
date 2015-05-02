@@ -4,6 +4,7 @@
  */
 package nars.io;
 
+import com.sun.xml.internal.ws.util.QNameMap;
 import nars.NAR;
 import nars.ProtoNAR;
 import nars.io.condition.OutputCondition;
@@ -21,6 +22,9 @@ import java.util.*;
  * TODO use getClass().getResource ?
  */
 public class ExampleFileInput extends TextInput {
+
+    public static final String[] directories =
+            new String[] { "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8", "/testchamber", "/conditioning", "/decisionmaking", "/other", "/other/pattern_matching1", "/test", "/metacat" };
 
     public static String load(String path) throws IOException {
         StringBuilder  sb  = new StringBuilder();
@@ -153,5 +157,9 @@ public class ExampleFileInput extends TextInput {
             }
         }
         return params;
+    }
+
+    public static Map<String, String> getAllExamples() {
+        return getUnitTests(directories);
     }
 }
