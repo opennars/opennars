@@ -19,16 +19,13 @@ package nars.core;
 import nars.Global;
 import nars.NAR;
 import nars.io.narsese.InvalidInputException;
-import nars.nal.Terms;
-import nars.nal.concept.Concept;
 import nars.nal.NALOperator;
 import nars.nal.Statement;
 import nars.nal.Task;
+import nars.nal.Terms;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.DifferenceExt;
-import nars.nal.nal3.DifferenceInt;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
+import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
@@ -309,7 +306,7 @@ public class TermTest {
             Compound a = SetInt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
             Compound b = SetInt.make(Atom.get("d"), Atom.get("b"));
             Term d = DifferenceInt.make(a, b);
-            assertEquals(d.toString(), d.getClass(), SetInt.class);
+            assertEquals(d.toString(), d.getClass(), SetIntN.class);
             assertEquals(d.toString(), 2, ((SetInt) d).size());
             assertEquals(d.toString(), "[a,c]");
         }
@@ -318,7 +315,7 @@ public class TermTest {
             Compound a = SetExt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
             Compound b = SetExt.make(Atom.get("d"), Atom.get("b"));
             Term d = DifferenceExt.make(a, b);
-            assertEquals(d.toString(), d.getClass(), SetExt.class);
+            assertEquals(d.toString(), d.getClass(), SetExtN.class);
             assertEquals(d.toString(), 2, ((SetExt)d).size() );
             assertEquals(d.toString(), "{a,c}");
 
@@ -343,8 +340,11 @@ public class TermTest {
     @Test public void avoidsNameConstructionUnlessOutputNegationCompound() {
         nullCachedName("(--, <a-->b> )");
     }
-    @Test public void avoidsNameConstructionUnlessOutputSet1() {
+
+    @Test public void avoidsNameConstructionUnlessOutputSetInt1() {
         nullCachedName("[x]");
+    }
+    @Test public void avoidsNameConstructionUnlessOutputSetExt1() {
         nullCachedName("{x}");
     }
 

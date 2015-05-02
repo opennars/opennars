@@ -21,8 +21,8 @@
 package nars.nal.term;
 
 import com.google.common.collect.Iterators;
-import nars.Memory;
 import nars.Global;
+import nars.Memory;
 import nars.io.Symbols;
 import nars.io.Texts;
 import nars.nal.NALOperator;
@@ -32,6 +32,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
@@ -208,7 +209,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
         final Compound c = (Compound)that;
 
-        int opdiff = operator().compareTo(c.operator());
+
+        int opdiff = getClass().getName().compareTo(c.getClass().getName());
         if (opdiff == 0) {
             //return compareSubterms(c);
 
@@ -225,7 +227,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * assumes that 'equivalent' has already been determined to be equal.
      * */
     protected void share(Compound equivalent) {
-        System.arraycopy(term, 0, equivalent.term, 0, term.length);
+        if (!hasVar())
+            System.arraycopy(term, 0, equivalent.term, 0, term.length);
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */

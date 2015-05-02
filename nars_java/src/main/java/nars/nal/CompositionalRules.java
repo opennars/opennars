@@ -650,7 +650,7 @@ public final class CompositionalRules {
             Term content = Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
             if (content != null) {
 
-                substitute.put(commonTerm1, varDep2);
+                substitute.put(commonTerm1, new Variable("#v", content));
 
                 Compound ct = Terms.compoundOrNull(((Compound) content).applySubstitute(substitute));
                 if (ct != null) {

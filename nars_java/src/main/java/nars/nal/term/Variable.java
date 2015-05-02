@@ -56,7 +56,7 @@ public class Variable extends Atom {
      *
      * @param name A String read from input
      */
-    protected Variable(final String n, final Term scope) {
+    public Variable(final String n, final Term scope) {
         super(n);
         this.type = n.charAt(0);
         if (!validVariableType(type))
