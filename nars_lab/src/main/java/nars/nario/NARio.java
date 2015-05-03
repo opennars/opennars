@@ -615,6 +615,8 @@ public class NARio extends Run implements RLEnvironment {
                         hurt();
                     }
 
+
+
                     @Override
                     public void stomp(BulletBill bill) {
                         super.stomp(bill);

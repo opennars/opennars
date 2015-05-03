@@ -57,8 +57,29 @@ public class RawPerception implements Perception {
         return tasks;
     }
 
+    public String getStateTerm(int s) {
+        return getStateTermBinaryProduct(s);
+    }
+
+    public String getStateTermBinaryProduct(int t) {
+        if (t == 0) return "(0)";
+
+        String x = "(";
+        //String bin = Integer.toBinaryString(t);
+        String bin = Integer.toOctalString(t);
+
+        for (char c : bin.toCharArray()) {
+            x += c + ",";
+        }
+        return x.substring(0,x.length() - 1) + ')';
+    }
+
+    public String getStateTermOrdinal(int s) {
+        return "i" + s;
+    }
+
     public Compound newState(NAR nar, int i) {
-        return (Compound) nar.term("<state --> [" + id + i + "]>");
+        return (Compound) nar.term("<" + id + " --> [" + getStateTerm(i) + "]>");
     }
 
     public float getFrequency(double d) {
@@ -72,8 +93,8 @@ public class RawPerception implements Perception {
     public boolean isState(Term t) {
         //TODO better pattern recognizer
         String s = t.toString();
-        if ((t instanceof Inheritance) && (t.getComplexity() == 4)) {
-            if (s.startsWith("<state --> [" + id) && s.endsWith("]>")) {
+        if ((t instanceof Inheritance) /*&& (t.getComplexity() == 4)*/ ) {
+            if (s.startsWith("<" + id + " --> [") && s.endsWith("]>")) {
             //if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
                 return true;
             }

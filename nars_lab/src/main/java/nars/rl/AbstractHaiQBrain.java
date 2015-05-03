@@ -7,6 +7,9 @@ import java.util.AbstractList;
 import java.util.List;
 
 
+//TODO update a collection of states all at once, to reduce the lookup/hashing of table access
+//  in: A qlearn(final S state, final double reward, A nextAction, double confidence) {
+
 abstract public class AbstractHaiQBrain<S,A> {
 
     /** learning rate */
@@ -168,7 +171,7 @@ abstract public class AbstractHaiQBrain<S,A> {
         else
             qLast = 0;
 
-        double DeltaQ = reward + gamma * q(state, nextAction) -  qLast;
+        double DeltaQ = reward + gamma * q(state, nextAction) - qLast;
 
         if (lastAction!=null)
             qAdd(state, lastAction, Double.NaN, 1, confidence);
