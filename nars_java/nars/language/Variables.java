@@ -247,13 +247,26 @@ public class Variables {
 //    }    
     
     /**
-     * Check whether a string represent a name of a term that contains an
-     * independent variable
+     * Check whether a term is using an
+     * independent variable in an invalid way
      *
      * @param n The string name to be checked
      * @return Whether the name contains an independent variable
      */
     public static boolean indepVarUsedInvalid(Term T) {
+        
+        //if its a conjunction/disjunction, this is invalid: (&&,<$1 --> test>,<$1 --> test2>), while this isnt: (&&,<$1 --> test ==> <$1 --> test2>,others)
+        //this means we have to go through the conjunction, and check if the component is a indepVarUsedInvalid instance, if yes, return true
+        //
+        if(T instanceof Conjunction || T instanceof Disjunction) {
+            Term[] part=((CompoundTerm)T).term;
+            for(Term t : part) {
+                if(indepVarUsedInvalid(t)) {
+                    return true;
+                }
+            }
+        }
+        
         if(!(T instanceof Inheritance) && !(T instanceof Similarity)) {
             return false;
         }
