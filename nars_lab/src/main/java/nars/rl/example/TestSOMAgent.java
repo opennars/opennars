@@ -18,10 +18,7 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
-import nars.rl.HaiSOMPerception;
-import nars.rl.Perception;
-import nars.rl.QLAgent;
-import nars.rl.RawPerception;
+import nars.rl.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,97 +93,6 @@ public class TestSOMAgent extends JPanel {
 //        }*/
 //    }
 //
-//    /** denoising autoencoder */
-//    public static class AEPerception implements Perception {
-//
-//        private final MatrixImage vis;
-//        private final int history;
-//        private Autoencoder ae = null;
-//        private final int nodes;
-//        private QLAgent agent;
-//
-//        double noise = 0.001;
-//        double learningRate = 0.05;
-//        private double[] ii;
-//        private int frameDimension;
-//
-//        /** present and history input buffer */
-//
-//        public AEPerception(int nodes) {
-//            this(nodes, 1);
-//        }
-//
-//        /** history=1 means no history, just present */
-//        public AEPerception(int nodes, int history) {
-//            this.nodes = nodes;
-//            this.history = history;
-//
-//            new NWindow("AE",
-//                    vis = new MatrixImage(400, 400)
-//            ).show(400, 400);
-//        }
-//
-//        @Override
-//        public int init(RLEnvironment env, QLAgent agent) {
-//            frameDimension = env.inputDimension();
-//            if (history > 1)
-//                ii = new double[frameDimension * history];
-//            else
-//                ii = env.observe();
-//
-//            this.agent = agent;
-//
-//            ae = new Autoencoder(ii.length, nodes);
-//            return nodes;
-//        }
-//
-//
-//
-//        @Override
-//        public void perceive(double[] input, double t) {
-//
-//            if (history > 1) {
-//
-//                //subtract old input from current input
-//                for (int i = 0; i < input.length; i++) {
-//                    ii[i] = input[i] - ii[i];
-//                }
-//
-//                //shift over
-//                System.arraycopy(ii, 0, ii, frameDimension, ii.length - frameDimension);
-//
-//                //copy new input to first frame
-//                System.arraycopy(input, 0, ii, 0, input.length);
-//            }
-//            else {
-//                ii = input;
-//            }
-//
-//            //System.out.println(Arrays.toString(ii));
-//
-//            double error = ae.train(ii, learningRate, 0, noise, true);
-//
-//            float conf = (float) (1.0f / (1.0f + error)); //TODO normalize against input mag?
-//
-//
-//            //agent.learn(ae.getOutput(), reward, conf);
-//
-//
-//            //perception input
-//
-//            if (vis!=null) {
-//
-//                vis.draw(new Data2D() {
-//                    @Override
-//                    public double getValue(int x, int y) {
-//                        return ae.W[y][x];
-//                    }
-//                }, ae.W.length, ae.W[0].length, -1, 1);
-//                vis.repaint();
-//            }
-//
-//        }
-//    }
 
     //DBSCAN?
     //...
@@ -337,6 +243,7 @@ public class TestSOMAgent extends JPanel {
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 new RawPerception("L", 0.5f),
+                new AEPerception("A", 0.6f, 32)
                 /*new RawPerception("P", 0.8f) {
                     @Override
                     public float getFrequency(double d) {
@@ -345,7 +252,7 @@ public class TestSOMAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("A", 2, 0.7f)
+                //new HaiSOMPerception("A", 2, 0.7f)
                 //new HaiSOMPerception("B", 2, 0.8f)
         );
 

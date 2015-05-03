@@ -5,9 +5,7 @@ import nars.NAR;
 import nars.nal.Task;
 import nars.nal.term.Term;
 
-/**
- * Created by me on 4/24/15.
- */ /* dimension reduction / input processing implementations */
+/* dimension reduction / input processing implementations */
 public interface Perception  {
 
     /**

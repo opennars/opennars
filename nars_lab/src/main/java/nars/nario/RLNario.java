@@ -4,10 +4,7 @@ import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.prototype.Default;
-import nars.rl.HaiSOMPerception;
-import nars.rl.Perception;
-import nars.rl.QLAgent;
-import nars.rl.RawPerception;
+import nars.rl.*;
 import nars.rl.example.QVis;
 
 import javax.swing.*;
@@ -66,7 +63,8 @@ public class RLNario extends NARio  {
 
         new RLNario(nar,
                 new RawPerception("r", 0.3f),
-                new HaiSOMPerception("s", 4, 0.7f)
+                //new HaiSOMPerception("s", 4, 0.7f),
+                new AEPerception("A", 0.6f, 32)
         );
 
     }
