@@ -306,7 +306,7 @@ public final class SyllogisticRules {
             nal.doublePremiseTask( s, truth, budget,false, true );
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
         
-       if(Parameters.BREAK_NAL_HOL_BOUNDARY && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
+       if(Parameters.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) && order1==order2 && belief.term.isHigherOrderStatement() && sentence.term.isHigherOrderStatement()) {
            
             BudgetValue budget1=null, budget2=null, budget3=null;
             TruthValue truth1=null, truth2=null, truth3=null;
