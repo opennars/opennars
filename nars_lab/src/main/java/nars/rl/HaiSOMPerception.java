@@ -1,9 +1,13 @@
 package nars.rl;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import nars.NAR;
+import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.term.Term;
 import nars.rl.hai.Hsom;
+
+import java.util.Collections;
 
 /** TODO inputs the perceived data in a raw numerically discretized form for each dimension */
 
@@ -34,7 +38,7 @@ public class HaiSOMPerception implements Perception {
 
 
     @Override
-    public void perceive(double[] input, double t) {
+    public Iterable<Task> perceive(NAR nar, double[] input, double t) {
 
         som.learn(input);
         //int s = som.winnerx * env.inputDimension() + som.winnery;
@@ -47,7 +51,10 @@ public class HaiSOMPerception implements Perception {
         int x = som.winnerx;
         int y = som.winnery;
 
-        agent.perceive("<(*," + id + x + "," + id + y + ") --> [state]>", 1, confidence);
+        return Collections.singleton(
+                //TODO avoid String parsing
+                nar.task("<state --> [(*," + id + x + "," + id + y + ")]>. :|: %1.00;" + confidence + '%')
+        );
     }
 
     @Override
@@ -55,7 +62,7 @@ public class HaiSOMPerception implements Perception {
         //TODO better pattern recognizer
         String s = t.toString();
         if ((t instanceof Inheritance) /*&& (t.getComplexity() == 6)*/) {
-            if (s.startsWith("<(*," + id) && s.endsWith(") --> [state]>")) {
+            if (s.startsWith("<state --> [(*," + id) && s.endsWith(")]>")) {
                 //System.out.println(t + " " + t.getComplexity());
                 return true;
             }

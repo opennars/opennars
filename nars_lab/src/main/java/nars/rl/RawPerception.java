@@ -1,8 +1,14 @@
 package nars.rl;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import nars.NAR;
+import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** inputs the perceived data directly as unipolar frequency data
  *  TODO normalization
@@ -14,6 +20,7 @@ public class RawPerception implements Perception {
 
     private RLEnvironment env;
     private QLAgent agent;
+    final List<Compound> states = new ArrayList();
 
     public RawPerception(String id, float confidence) {
         this.confidence = confidence;
@@ -24,18 +31,34 @@ public class RawPerception implements Perception {
     public void init(RLEnvironment env, QLAgent agent) {
         this.env = env;
         this.agent = agent;
+
     }
 
     @Override
-    public void perceive(double[] input, double t) {
+    public Iterable<Task> perceive(NAR nar, double[] input, double t) {
+        List<Task> tasks = new ArrayList(input.length);
+
         //simple binary +/- 0 discretization
         for (int i = 0; i < input.length; i++) {
 
             float f = getFrequency(input[i]);
-            //agent.perceive("<{" + id + i + "} --> state>", f, confidence);
-            agent.perceive("<state --> [" + id + i + "]>", f, confidence);
+
+            Compound x;
+            if (states.size() > i) {
+                x = states.get(i);
+            }
+            else {
+                states.add(x = newState(nar, i));
+            }
+
+            tasks.add(nar.memory.newTask(x).judgment().present().truth(f, confidence).get());
         }
 
+        return tasks;
+    }
+
+    public Compound newState(NAR nar, int i) {
+        return (Compound) nar.term("<state --> [" + id + i + "]>");
     }
 
     public float getFrequency(double d) {
@@ -49,7 +72,7 @@ public class RawPerception implements Perception {
     public boolean isState(Term t) {
         //TODO better pattern recognizer
         String s = t.toString();
-        if ((t instanceof Inheritance)/* && (t.getComplexity() == 4)*/) {
+        if ((t instanceof Inheritance) && (t.getComplexity() == 4)) {
             if (s.startsWith("<state --> [" + id) && s.endsWith("]>")) {
             //if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
                 return true;

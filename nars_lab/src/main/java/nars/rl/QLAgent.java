@@ -1,5 +1,6 @@
 package nars.rl;
 
+import com.google.common.collect.Iterables;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
@@ -9,7 +10,6 @@ import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -161,25 +161,25 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     }
 
 
-    /**
-     * adds a perception belief of a given strength (0..1.0) to the input buffer
-     */
-    public void perceive(String term, float freq, float conf) {
-        perceive((S)nar.term(term), freq, conf);
-    }
-
-    /**
-     * adds a perception belief of a given strength (0..1.0) to the input buffer
-     */
-    public Task perceive(S term, float freq, float conf) {
-        Task t = nar.memory.newTask((Compound)term)
-                .judgment()
-                .present()
-                .truth(freq, conf)
-                .get();
-        incoming.add(t);
-        return t;
-    }
+//    /**
+//     * adds a perception belief of a given strength (0..1.0) to the input buffer
+//     */
+//    public void perceive(String term, float freq, float conf) {
+//        perceive((S)nar.term(term), freq, conf);
+//    }
+//
+//    /**
+//     * adds a perception belief of a given strength (0..1.0) to the input buffer
+//     */
+//    public Task perceive(S term, float freq, float conf) {
+//        Task t = nar.memory.newTask((Compound)term)
+//                .judgment()
+//                .present()
+//                .truth(freq, conf)
+//                .get();
+//        incoming.add(t);
+//        return t;
+//    }
 
 
     /**
@@ -287,9 +287,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         lastReward = r;
     }
 
-    private void learn(double[] o, long time, double reward) {
-        for (Perception p : perceptions) {
-            p.perceive(o, time);
+    private void learn(final double[] o, final long time, final double reward) {
+        for (final Perception p : perceptions) {
+            Iterables.addAll(incoming, p.perceive(nar, o, time));
         }
 
 
