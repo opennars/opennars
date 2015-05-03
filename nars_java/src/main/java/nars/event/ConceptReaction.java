@@ -22,16 +22,17 @@ abstract public class ConceptReaction extends AbstractReaction {
         super(m.event, true, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class, Events.ConceptRemember.class);
 
         this.memory = m;
+        memory.taskLater(this::init);
+
+    }
+
+    protected void init() {
+
         //add existing events
-        memory.taskLater(new Runnable() {
+        memory.concepts.forEach(new Consumer<Concept>() {
             @Override
-            public void run() {
-                memory.concepts.forEach(new Consumer<Concept>() {
-                    @Override
-                    public void accept(Concept concept) {
-                        onConceptRemember(concept);
-                    }
-                });
+            public void accept(Concept concept) {
+                onConceptRemember(concept);
             }
         });
     }

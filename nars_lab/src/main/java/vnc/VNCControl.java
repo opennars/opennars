@@ -183,17 +183,18 @@ abstract public class VNCControl extends VNCClient {
 
         }
         @Override
-        protected void onConceptForget(Concept c) {
+        protected boolean onConceptForget(Concept c) {
             ActivityRectangle r = positions.remove(c);
             if (r!=null)
                 r.current = -1;
             //renderSky();
+            return r!=null;
         }
 
         @Override
-        protected void onConceptNew(Concept c) {
+        protected boolean onConceptNew(Concept c) {
 
-            incoming.add(c);
+            return incoming.add(c);
 
             //SwingUtilities.invokeLater(this::render);
             //renderSky();

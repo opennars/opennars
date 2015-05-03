@@ -27,8 +27,9 @@ abstract public class SetConceptMap<T extends Term> extends ConceptMap implement
         return values.keySet().iterator();
     }
 
-    public void include(Concept c) {
-        values.put((T)c.term, c);
+    public boolean include(Concept c) {
+        Concept removed = values.put((T) c.term, c);
+        return removed!=c; //different instance
     }
 
     public boolean contains(final T t) {
@@ -39,13 +40,14 @@ abstract public class SetConceptMap<T extends Term> extends ConceptMap implement
     }
 
     @Override
-    protected void onConceptNew(Concept c) {
-        include(c);
+    protected boolean onConceptNew(Concept c) {
+        return include(c);
     }
 
     @Override
-    protected void onConceptForget(Concept c) {
-        values.remove(c.term);
+    protected boolean onConceptForget(Concept c) {
+        if (inclusions.contains(c.term)) return false;
+        return values.remove(c.term)!=null;
     }
 
     /** set a term to be present always in this map, even if the conept disappears */

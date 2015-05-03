@@ -200,5 +200,8 @@ public class Video {
     public static int colorHSB(float hue, float saturation, float brightness, float alpha) {
         return Color.HSBtoRGB(hue, saturation, brightness) & 0x00ffffff | ((int)(255f*alpha) << 24);
     }
+    public static int colorHSB(float hue, float saturation, float brightness) {
+        return Color.HSBtoRGB(hue, saturation, brightness);
+    }
   
 }

@@ -34,10 +34,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     public AbstractHaiQBrain<S,A> brain;
 
 
-    /** term cache
-     * TODO make weak */
-    //final HashBasedTable<S,A,Implication> termCache = HashBasedTable.create();
-
+    /** pending tasks to execute to prevent CME */
+    transient private final List<Task> pending = Global.newArrayList();
 
     final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
 
@@ -236,22 +234,30 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
 
-    protected void qCommit() {
+    protected synchronized void qCommit() {
         if (qUpdateConfidence == 0) return;
+
 
         //input all dQ values
         for (Table.Cell<S, A, QEntry> c : table.cellSet()) {
             S state = c.getRowKey();
             A action = c.getColumnKey();
-            qCommit(state, action, c.getValue());
+            Task t = qCommit(state, action, c.getValue());
+            if (t!=null)
+                pending.add(t);
         }
 
+        for (int i = 0; i< pending.size(); i++) {
+            Task t = pending.get(i);
+            DirectProcess.run(nar, t);
+        }
+        pending.clear();
     }
 
-    protected void qCommit(S state, A action, QEntry c) {
+    protected Task qCommit(S state, A action, QEntry c) {
 
         double dq = c.clearDQ(updateThresh);
-        if (dq == 0) return;
+        if (dq == 0) return null;
 
         double q = q(state, action);
         double nq = q + dq;
@@ -268,7 +274,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         //String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
         Task t = nar.memory.newTask((Compound)qt).punctuation(statePunctuation).present().truth(nextFreq, qUpdateConfidence).get();
 
-        DirectProcess.run(nar, t);
+        return t;
 
     }
 

@@ -20,6 +20,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
     private final ConceptReaction entries;
 
+    /** base type for cell entries in the matrix. subclass to add additional information per cell */
     public static class EntryValue {
 
         @Nullable
@@ -41,7 +42,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     public final NAR nar;
 
 
-    //TODO combine entries and table into the same ConceptMap subclass
 
     /** active entries */
     //public final ConceptMap entries;
@@ -52,7 +52,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     public final SetConceptMap<C> cols;
     public final SetConceptMap<R> rows;
 
-    boolean initialized = true;
+    boolean uninitialized = true;
 
 
     public ConceptMatrix(NAR nar) {
@@ -63,26 +63,38 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
         cols = new SetConceptMap(nar) {
 
             @Override
+            protected void onFrame() {
+                super.onFrame();
+                if (uninitialized) {
+                    ConceptMatrix.this.init();
+                    uninitialized = false;
+                }
+            }
+
+
+            @Override
             public boolean contains(Concept c) {
                 return isCol(c.term);
             }
 
             @Override
-            protected void onConceptForget(final Concept c) {
-                super.onConceptForget(c);
-                C col = (C)c.term;
+            protected boolean onConceptForget(final Concept c) {
+                if (super.onConceptForget(c)) {
+                    C col = (C) c.term;
 
-                //remove the col if no entries referencing concepts remain
-                //even if the index label concept is removed, there may still be entries referring to it
-                Map<C, Map<R, V>> cm = table.columnMap();
-                if (cm!=null) {
-                    Map<R, V> mc = cm.get(col);
-                    if (mc!=null && !hasConcepts(mc.values())) {
+                    //remove the col if no entries referencing concepts remain
+                    //even if the index label concept is removed, there may still be entries referring to it
+
+                    Map<R, V> cm = table.column(col);
+                    if (cm != null && !hasConcepts(cm.values())) {
                         cm.remove(col);
                         onColumnRemove(col);
                     }
-                }
 
+                    return true;
+
+                }
+                return false;
             }
 
         };
@@ -95,26 +107,33 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
             }
 
             @Override
-            protected void onConceptForget(final Concept c) {
-                super.onConceptForget(c);
+            protected boolean onConceptForget(final Concept c) {
+                if (super.onConceptForget(c)) {
 
-                R r = (R)c.term;
+                    R r = (R) c.term;
 
-                //remove the row if no entries referencing concepts remain
-                //even if the index label concept is removed, there may still be entries referring to it
-                Map<R, Map<C, V>> rm = table.rowMap();
-                if (rm!=null) {
-                    Map<C, V> mr = rm.get(r);
-                    if (mr!=null && !hasConcepts(mr.values())) {
-                        rm.remove(r);
-                        onRowRemove(r);
+                    //remove the row if no entries referencing concepts remain
+                    //even if the index label concept is removed, there may still be entries referring to it
+                    Map<R, Map<C, V>> rm = table.rowMap();
+                    if (rm != null) {
+                        Map<C, V> mr = rm.get(r);
+                        if (mr != null && !hasConcepts(mr.values())) {
+                            rm.remove(r);
+                            onRowRemove(r);
+                        }
                     }
+
+                    return true;
                 }
+
+                return false;
             }
 
         };
 
         entries = new ConceptReaction(nar) {
+
+
 
             @Override
             public void onConceptRemember(Concept c) {

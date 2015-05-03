@@ -353,7 +353,6 @@ public class TestSOMAgent extends JPanel {
 
         a.agent.brain.setEpsilon(0.10);
 
-        a.agent.init();
 
     }
 

@@ -208,6 +208,7 @@ public class MatrixImage extends JComponent {
         }, (m.getDimensions(true, true)), entries, minValue, maxValue);
     }
 
+
     public void draw(final Data2D d, int cw, int ch, double minValue, double maxValue) {
 
         if ((cw == 0) || (ch == 0)) {
@@ -216,7 +217,7 @@ public class MatrixImage extends JComponent {
         }
 
         if (image == null || image.getWidth() != cw || image.getHeight() != ch) {
-            image = new BufferedImage(cw, ch, BufferedImage.TYPE_INT_ARGB);
+            image = new BufferedImage(cw, ch, BufferedImage.TYPE_INT_RGB);
         }
 
 
@@ -229,13 +230,16 @@ public class MatrixImage extends JComponent {
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 final double value = d.getValue(i, j);
-                image.setRGB(j, i, getColor(value));
+                pixel(image, j, i, value);
             }
         }
 
         repaint();
     }
 
+    protected void pixel(BufferedImage image, int j, int i, double value) {
+        image.setRGB(j, i, getColor(value));
+    }
 
 
     @Override

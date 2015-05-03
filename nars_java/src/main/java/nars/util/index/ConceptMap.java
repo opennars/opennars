@@ -61,9 +61,11 @@ abstract public class ConceptMap extends AbstractReaction {
 
     }
 
-    protected abstract void onConceptForget(Concept c);
+    /** returns true if the concept was successfully removed (ie. it was already present and not permanently included) */
+    protected abstract boolean onConceptForget(Concept c);
 
-    protected abstract void onConceptNew(Concept c);
+    /** returns true if the concept was successfully added (ie. it was not already present) */
+    protected abstract boolean onConceptNew(Concept c);
 
 
 }
