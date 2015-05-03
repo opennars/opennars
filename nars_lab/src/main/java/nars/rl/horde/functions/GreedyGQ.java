@@ -13,8 +13,8 @@ public class GreedyGQ<A> implements HordeAgent.OffPolicyLearner<A> {
 
     protected final GQ gq;
 
-    protected final Policy target;
-    protected final Policy behaviour;
+    protected final Policy<A> target;
+    protected final Policy<A> behaviour;
     protected final StateToStateAction<A> toStateAction;
 
     public double rho_t;
@@ -23,7 +23,7 @@ public class GreedyGQ<A> implements HordeAgent.OffPolicyLearner<A> {
     private final RealVector prototype;
 
     @SuppressWarnings("unchecked")
-    public GreedyGQ(GQ gq, A[] actions, StateToStateAction<A> toStateAction, Policy target, Policy behaviour) {
+    public GreedyGQ(GQ gq, A[] actions, StateToStateAction<A> toStateAction, Policy<A> target, Policy<A> behaviour) {
         this.gq = gq;
         this.target = target;
         this.behaviour = behaviour;
