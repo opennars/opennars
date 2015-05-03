@@ -5,9 +5,9 @@ import org.apache.commons.math3.linear.RealVector;
 
 
 public interface VectorPool {
-  ArrayRealVector newVector();
+    ArrayRealVector newVector();
 
-  ArrayRealVector newVector(RealVector v);
+    ArrayRealVector newVector(RealVector v);
 
-  void releaseAll();
+    void releaseAll();
 }

@@ -1,14 +1,12 @@
 package nars.rl.horde.demons;
 
 import nars.rl.horde.functions.RewardFunction;
-import org.apache.commons.math3.analysis.function.Abs;
-
 
 import java.io.Serializable;
 
-public class PredictionDemonVerifier implements Serializable {
+public class PredictionDemonVerifier<A> implements Serializable {
     private static final long serialVersionUID = 6127406364376542150L;
-    private final PredictionDemon predictionDemon;
+    private final PredictionDemon<A> predictionDemon;
     private final RewardFunction rewardFunction;
     private final TDErrorMonitor errorMonitor;
 
@@ -109,12 +107,11 @@ public class PredictionDemonVerifier implements Serializable {
     }
 
 
-
-    public PredictionDemonVerifier(double gamma, PredictionDemon predictionDemon) {
+    public PredictionDemonVerifier(double gamma, PredictionDemon<A> predictionDemon) {
         this(gamma, predictionDemon, 0.01);
     }
 
-    public PredictionDemonVerifier(double gamma, PredictionDemon predictionDemon, double precision) {
+    public PredictionDemonVerifier(double gamma, PredictionDemon<A> predictionDemon, double precision) {
         this.predictionDemon = predictionDemon;
         rewardFunction = predictionDemon.rewardFunction();
         errorMonitor = new TDErrorMonitor(gamma, precision);

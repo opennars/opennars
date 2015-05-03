@@ -26,6 +26,7 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
+import org.apache.commons.math3.util.MathUtils;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -233,6 +234,13 @@ public class Global {
     public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
     public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection
+
+    public static boolean equals(double a, double b) {
+        return Math.abs(a - b) <= Double.MIN_VALUE*2;
+    }
+    public static boolean equals(float a, float b) {
+        return Math.abs(a - b) <= Float.MIN_VALUE*2;
+    }
 
 
     public static <X> List<X> newArrayList() {

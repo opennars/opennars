@@ -8,10 +8,10 @@ import org.apache.commons.math3.linear.RealVector;
 
 
 public class GTDLambda implements OnPolicyTD, GVF {
-    protected double gamma;
+    protected final double gamma;
     final public double alpha_v;
     public final double alpha_w;
-    protected double lambda;
+    protected final double lambda;
     private double gamma_t;
 
     final public ArrayRealVector v;
@@ -22,7 +22,6 @@ public class GTDLambda implements OnPolicyTD, GVF {
 
     protected double delta_t;
     private double correction;
-    private double rho_t;
 
     public GTDLambda(double lambda, double gamma, double alpha_v, double alpha_w, int nbFeatures) {
         this(lambda, gamma, alpha_v, alpha_w, nbFeatures, new ATraces());
@@ -48,7 +47,7 @@ public class GTDLambda implements OnPolicyTD, GVF {
         delta_t = r_tp1 + (1 - gamma_tp1) * z_tp1 + gamma_tp1 * v.dotProduct(x_tp1) - v_t;
         // Update traces
         e.update(gamma_t * lambda, x_t);
-        rho_t = pi_t / b_t;
+        double rho_t = pi_t / b_t;
         e.vect().mapMultiplyToSelf(rho_t);
         // Compute correction
         ArrayRealVector correctionVector = pool.newVector();

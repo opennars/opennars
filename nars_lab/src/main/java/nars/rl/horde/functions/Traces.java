@@ -1,6 +1,5 @@
 package nars.rl.horde.functions;
 
-import nars.rl.horde.HordeAgent;
 import org.apache.commons.math3.linear.RealVector;
 
 import java.io.Serializable;

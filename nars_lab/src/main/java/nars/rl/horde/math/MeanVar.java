@@ -3,11 +3,11 @@ package nars.rl.horde.math;
 import java.io.Serializable;
 
 public interface MeanVar extends Serializable {
-  void update(double newValue);
+    void update(double newValue);
 
-  MeanVar newInstance();
+    MeanVar newInstance();
 
-  double mean();
+    double mean();
 
-  double var();
+    double var();
 }

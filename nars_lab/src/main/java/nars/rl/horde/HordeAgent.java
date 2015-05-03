@@ -2,7 +2,6 @@ package nars.rl.horde;
 
 import nars.rl.horde.demons.Predictor;
 import org.apache.commons.math3.linear.RealVector;
-import processing.core.PVector;
 
 import java.io.Serializable;
 
@@ -15,15 +14,17 @@ public class HordeAgent<A> {
     public interface ControlLearner<A> extends Control<A> {
         A step(RealVector x_t, A a_t, RealVector x_tp1, double r_tp1);
 
-        Policy policy();
+        Policy<A> policy();
     }
+
     public interface OffPolicyLearner<A> extends Control<A> {
         void learn(RealVector x_t, A a_t, RealVector x_tp1, A a_tp1, double reward);
 
-        Policy targetPolicy();
+        Policy<A> targetPolicy();
 
         Predictor predictor();
     }
+
     public interface OffPolicyTD extends Predictor, LinearLearner {
         double update(double pi_t, double b_t, RealVector x_t, RealVector x_tp1, double r_tp1);
 
@@ -77,7 +78,7 @@ public class HordeAgent<A> {
         return a_tp1;
     }
 
-    public ControlLearner control() {
+    public ControlLearner<A> control() {
         return control;
     }
 
@@ -85,11 +86,11 @@ public class HordeAgent<A> {
         return projector;
     }
 
-    public Horde horde() {
+    public Horde<A> horde() {
         return horde;
     }
 
-    public Policy behaviourPolicy() {
+    public Policy<A> behaviourPolicy() {
         return control.policy();
     }
 }

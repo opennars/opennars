@@ -8,66 +8,67 @@ import org.apache.commons.math3.linear.RealVector;
  * Accumulating traces
  */
 public class ATraces implements Traces {
-  private static final long serialVersionUID = 6241887723527497111L;
-  public static final OpenMapRealVector DefaultPrototype = new OpenMapRealVector(0);
-  public static final double DefaultThreshold = 1e-8;
+    private static final long serialVersionUID = 6241887723527497111L;
+    public static final OpenMapRealVector DefaultPrototype = new OpenMapRealVector(0);
+    public static final double DefaultThreshold = 1e-8;
 
-  protected double threshold = 1e-8;
-  protected final RealVector prototype;
+    protected final double threshold;
+    protected final RealVector prototype;
 
-  protected RealVector vector;
+    protected RealVector vector;
 
 
-  public ATraces() {
-    this(DefaultPrototype);
-  }
+    public ATraces() {
+        this(DefaultPrototype);
+    }
 
-  public ATraces(RealVector prototype) {
-    this(prototype, DefaultThreshold);
-  }
+    public ATraces(RealVector prototype) {
+        this(prototype, DefaultThreshold);
+    }
 
-  public ATraces(RealVector prototype, double threshold) {
-    this(prototype, threshold, 0);
-  }
+    public ATraces(RealVector prototype, double threshold) {
+        this(prototype, threshold, 0);
+    }
 
-  protected ATraces(RealVector prototype, double threshold, int size) {
-    this.prototype = prototype;
-    vector = size > 0 ? prototype.copy() : null;
-  }
+    protected ATraces(RealVector prototype, double threshold, int size) {
+        this.prototype = prototype;
+        vector = size > 0 ? prototype.copy() : null;
+        this.threshold = threshold;
+    }
 
-  @Override
-  public ATraces newTraces(int size) {
-    return new ATraces(prototype, threshold, size);
-  }
+    @Override
+    public ATraces newTraces(int size) {
+        return new ATraces(prototype, threshold, size);
+    }
 
-  @Override
-  public void update(double lambda, RealVector phi) {
-    updateVector(lambda, phi);
-    adjustUpdate();
-    if (clearRequired(phi, lambda))
-      clearBelowThreshold();
-    //assert Vectors.checkValues(vector);
-  }
+    @Override
+    public void update(double lambda, RealVector phi) {
+        updateVector(lambda, phi);
+        adjustUpdate();
+        if (clearRequired(phi, lambda))
+            clearBelowThreshold();
+        //assert Vectors.checkValues(vector);
+    }
 
-  protected void adjustUpdate() {
-  }
+    protected void adjustUpdate() {
+    }
 
-  protected void updateVector(double lambda, RealVector phi) {
-    vector.mapMultiplyToSelf(lambda);
-    vector.combineToSelf(1, 1, phi);
-  }
+    protected void updateVector(double lambda, RealVector phi) {
+        vector.mapMultiplyToSelf(lambda);
+        vector.combineToSelf(1, 1, phi);
+    }
 
-  private boolean clearRequired(RealVector phi, double lambda) {
-    if (threshold == 0)
-      return false;
-    if (vector instanceof ArrayRealVector)
-      return false;
-    return true;
-  }
+    private boolean clearRequired(RealVector phi, double lambda) {
+        if (threshold == 0)
+            return false;
+        if (vector instanceof ArrayRealVector)
+            return false;
+        return true;
+    }
 
-  protected void clearBelowThreshold() {
-    throw new RuntimeException("clearBelowThreshold: not implemented yet");
-  }
+    protected void clearBelowThreshold() {
+        throw new RuntimeException("clearBelowThreshold: not implemented yet");
+    }
 
 
 //  protected void clearBelowThreshold() {
@@ -106,18 +107,18 @@ public class ATraces implements Traces {
 //    }
 //  };
 
-  @Override
-  public RealVector vect() {
-    return vector;
-  }
+    @Override
+    public RealVector vect() {
+        return vector;
+    }
 
-  @Override
-  public void clear() {
-    vector = new OpenMapRealVector();
-  }
+    @Override
+    public void clear() {
+        vector = new OpenMapRealVector();
+    }
 
 
-  public RealVector prototype() {
-    return prototype;
-  }
+    public RealVector prototype() {
+        return prototype;
+    }
 }

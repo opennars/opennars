@@ -5,10 +5,10 @@ import org.apache.commons.math3.linear.RealVector;
 
 public interface LinearLearner {
 
-  RealVector weights();
+    RealVector weights();
 
-  void resetWeight(int index);
+    void resetWeight(int index);
 
-  double error();
+    double error();
 
 }

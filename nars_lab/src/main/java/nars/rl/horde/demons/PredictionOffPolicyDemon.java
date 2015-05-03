@@ -15,7 +15,6 @@ public class PredictionOffPolicyDemon<A> implements Demon<A> {
     protected final Policy<A> target;
     protected final Policy<A> behaviour;
 
-    private double rho_t;
     private final OutcomeFunction outcomeFunction;
     private final GammaFunction gammaFunction;
 
@@ -23,7 +22,7 @@ public class PredictionOffPolicyDemon<A> implements Demon<A> {
         this(target, behaviour, gtd, rewardFunction, new ConstantGamma(gtd.gamma()), new ConstantOutcomeFunction(0));
     }
 
-    public PredictionOffPolicyDemon(Policy target, Policy behaviour, GVF gtd, RewardFunction rewardFunction,
+    public PredictionOffPolicyDemon(Policy<A> target, Policy<A> behaviour, GVF gtd, RewardFunction rewardFunction,
                                     GammaFunction gammaFunction, OutcomeFunction outcomeFunction) {
         this.rewardFunction = rewardFunction;
         this.gammaFunction = gammaFunction;
@@ -35,7 +34,7 @@ public class PredictionOffPolicyDemon<A> implements Demon<A> {
 
     @Override
     public void update(RealVector x_t, A a_t, RealVector x_tp1) {
-        rho_t = a_t != null ? target.pi(a_t) / behaviour.pi(a_t) : 0;
+        double rho_t = a_t != null ? target.pi(a_t) / behaviour.pi(a_t) : 0;
         gtd.update(1, 1, x_t, x_tp1, rewardFunction.reward(), gammaFunction.gamma(), outcomeFunction.outcome());
     }
 

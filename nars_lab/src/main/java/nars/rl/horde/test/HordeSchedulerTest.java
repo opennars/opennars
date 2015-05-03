@@ -18,7 +18,6 @@ import java.util.List;
 public class HordeSchedulerTest {
 
 
-
     static class FakeDemon implements Demon<Integer> {
         RealVector x_tp1;
         Integer a_t;

@@ -19,7 +19,7 @@ public class GreedyGQ<A> implements HordeAgent.OffPolicyLearner<A> {
 
     public double rho_t;
     private final A[] actions;
-    private double delta_t;
+
     private final RealVector prototype;
 
     @SuppressWarnings("unchecked")
@@ -54,7 +54,7 @@ public class GreedyGQ<A> implements HordeAgent.OffPolicyLearner<A> {
             }
         }
         RealVector phi_stat = x_t != null ? toStateAction.stateAction(x_t, a_t) : null;
-        delta_t = gq.update(phi_stat, rho_t, r_tp1, sa_bar_tp1, z_tp1);
+        double delta_t = gq.update(phi_stat, rho_t, r_tp1, sa_bar_tp1, z_tp1);
         pool.releaseAll();
         return delta_t;
     }
@@ -72,7 +72,7 @@ public class GreedyGQ<A> implements HordeAgent.OffPolicyLearner<A> {
     }
 
     @Override
-    public Policy targetPolicy() {
+    public Policy<A> targetPolicy() {
         return target;
     }
 

@@ -8,7 +8,7 @@ import java.util.Stack;
 
 
 public class ThreadVectorPool implements VectorPool {
-    class AllocatedBuffer {
+    static class AllocatedBuffer {
         final ArrayRealVector[] buffers;
         final int lastAllocation;
         final RealVector prototype;
@@ -22,8 +22,8 @@ public class ThreadVectorPool implements VectorPool {
 
     int nbAllocation;
     private final Thread thread;
-    private final Stack<ArrayRealVector[]> stackedVectors = new Stack<ArrayRealVector[]>();
-    private final Stack<AllocatedBuffer> stackedBuffers = new Stack<AllocatedBuffer>();
+    private final Stack<ArrayRealVector[]> stackedVectors = new Stack<>();
+    private final Stack<AllocatedBuffer> stackedBuffers = new Stack<>();
     private ArrayRealVector[] buffers;
     private int lastAllocation;
     private final RealVector prototype;
