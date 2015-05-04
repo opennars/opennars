@@ -37,7 +37,7 @@ public class Javascript extends SynchronousFunctionOperator implements Mental {
         System.arraycopy(args, 1, scriptArguments, 0, args.length-1);
         
         Bindings bindings = new SimpleBindings();
-        bindings.put("scriptArguments", scriptArguments);
+        bindings.put("arg", scriptArguments);
         bindings.put("memory", memory);
         bindings.put("nar", nar); 
         

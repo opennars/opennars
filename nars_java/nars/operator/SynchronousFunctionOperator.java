@@ -70,8 +70,8 @@ public abstract class SynchronousFunctionOperator extends Operator {
         
         int numParam = numArgs-1;
         
-        if(numParam==0) {
-            numParam=1; //there are no operators with 0 arguments..
+        if(this instanceof Javascript && !variable) {
+            numParam++;
         }
         
         Term[] x = new Term[numParam];
@@ -83,7 +83,7 @@ public abstract class SynchronousFunctionOperator extends Operator {
             if (y == null) {
                 return null;
             }
-            if(numArgs == 1 && this instanceof Javascript) {
+            if(!variable && this instanceof Javascript) {
                 return null;
             }
             //m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
