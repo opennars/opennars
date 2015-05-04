@@ -628,14 +628,14 @@ public class ByteBuf  {
     
     public void writeSmallLongArray( long[] values ) {
         int byteSize = values.length * 8 + 1;
-        this.addUnsignedByte( ( short ) values.length );
+        this.addUnsignedByte((short) values.length);
         doWriteLongArray( values, byteSize );
     }
 
     
     public void writeMediumLongArray( long[] values ) {
         int byteSize = values.length * 8 + 2;
-        this.addUnsignedShort( values.length );
+        this.addUnsignedShort(values.length);
         doWriteLongArray( values, byteSize );
     }
 
@@ -661,14 +661,14 @@ public class ByteBuf  {
     
     public void writeSmallFloatArray( float[] values ) {
         int byteSize = values.length * 4 + 1;
-        this.addUnsignedByte( ( short ) values.length );
+        this.addUnsignedByte((short) values.length);
         doWriteFloatArray( values, byteSize );
     }
 
     
     public void writeMediumFloatArray( float[] values ) {
         int byteSize = values.length * 4 + 2;
-        this.addUnsignedShort( values.length );
+        this.addUnsignedShort(values.length);
         doWriteFloatArray( values, byteSize );
 
     }
@@ -695,7 +695,7 @@ public class ByteBuf  {
     
     public void writeSmallDoubleArray( double[] values ) {
         int byteSize = values.length * 8 + 1;
-        this.addUnsignedByte( ( short ) values.length );
+        this.addUnsignedByte((short) values.length);
         doWriteDoubleArray( values, byteSize );
 
     }
@@ -703,7 +703,7 @@ public class ByteBuf  {
     
     public void writeMediumDoubleArray( double[] values ) {
         int byteSize = values.length * 8 + 2;
-        this.addUnsignedShort( values.length );
+        this.addUnsignedShort(values.length);
         doWriteDoubleArray( values, byteSize );
 
     }
@@ -733,6 +733,9 @@ public class ByteBuf  {
 
     public byte[] toBytes() {
         return Byt.slc( this.buffer, 0, length );
+    }
+    public byte[] toBytes(int start) {
+        return Byt.slc( this.buffer, start, length-start+1);
     }
 
 

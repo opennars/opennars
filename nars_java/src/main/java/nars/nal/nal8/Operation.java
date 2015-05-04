@@ -20,7 +20,6 @@
  */
 package nars.nal.nal8;
 
-import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.io.Symbols;
@@ -34,11 +33,9 @@ import nars.nal.nal4.Product;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.util.ByteBuf;
 
 import java.util.Arrays;
-
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -106,8 +103,37 @@ public class Operation extends Inheritance {
     public Operator getOperator() {
         return (Operator)getPredicate();
     }
-    
-//    @Override
+
+    @Override
+    protected byte[] makeKey() {
+        byte[] op = getPredicate().name();
+        Term[] arg = getArgumentsRaw();
+
+        ByteBuf b = ByteBuf.create(64);
+        //b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch).add(op);
+        b.add(op); //add the operator name without leading '^'
+        b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+
+
+        int n=0;
+        for (final Term t : arg) {
+            /*if(n==arg.length-1) {
+                break;
+            }*/
+            if (n!=0)
+                b.add((byte)Symbols.ARGUMENT_SEPARATOR);
+
+            b.add(t.name());
+
+            n++;
+        }
+
+        b.add((byte)NALOperator.COMPOUND_TERM_CLOSER.ch);
+
+        return b.toBytes(1 /* skip leading ^ */);
+    }
+
+    //    @Override
 //    protected CharSequence makeName() {
 //        if (Global.DEBUG)
 //            if (!(getSubject() instanceof Product && getPredicate() instanceof Operator))
