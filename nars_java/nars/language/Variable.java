@@ -25,6 +25,7 @@ import nars.core.Parameters;
 import static nars.io.Symbols.VAR_DEPENDENT;
 import static nars.io.Symbols.VAR_INDEPENDENT;
 import static nars.io.Symbols.VAR_QUERY;
+import nars.io.Texts;
 import static nars.language.Variable.newName;
 
 /**
@@ -212,6 +213,34 @@ public class Variable extends Term {
 
     public Term getScope() {
         return scope;
+    }
+    
+    //ported back from 1.7, sehs addition
+    public static int compare(final Variable a, final Variable b) {
+        //int i = a.name().compareTo(b.name());
+        int i=Texts.compareTo(a.name(), b.name());
+        if (i == 0) {
+            boolean ascoped = a.scope!=a;
+            boolean bscoped = b.scope!=b;
+            if (!ascoped && !bscoped) {
+                //if the two variables are each without scope, they are not equal.
+                //so use their identityHashCode to determine a stable ordering
+                int as = System.identityHashCode(a.scope);
+                int bs = System.identityHashCode(b.scope);
+                return Integer.compare(as, bs);
+            }
+            else if (ascoped && !bscoped) {
+                return -1;
+            }
+            else if (bscoped && !ascoped) {
+             return 1;
+            }
+            else {
+                return Texts.compareTo(a.getScope().name(), b.getScope().name());
+               // return Texts.compare(a.getScope().name(), b.getScope().name());
+           }
+        } 
+        return i;
     }
 
 
