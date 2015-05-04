@@ -264,7 +264,7 @@ public class Symbols {
     public static final String STOP_COMMAND = "*stop";
     public static final String START_COMMAND = "*start";
     public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
-    
+    public static final String SET_DECISION_LEVEL_COMMAND = "*decisionthreshold";
     
     /* Stamp, display only */
     public static final char STAMP_OPENER = '{';

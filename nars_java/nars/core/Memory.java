@@ -109,6 +109,7 @@ import nars.operator.Operator;
 import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reset;
+import nars.operator.io.SetDecisionThreshold;
 import nars.operator.io.SetVolume;
 import nars.storage.Bag;
 
@@ -675,7 +676,11 @@ public class Memory implements Serializable {
         else if (t instanceof SetVolume) {            
             param.noiseLevel.set(((SetVolume)t).volume);
             emit(IN.class, t);
-        }            
+        } 
+        else if (t instanceof SetDecisionThreshold) {
+            param.decisionThreshold.set(((SetDecisionThreshold)t).volume);
+            emit(IN.class, t);
+        } 
         else {
             emit(IN.class, "Unrecognized Input Task: " + t);
         }
