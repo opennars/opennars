@@ -1,10 +1,13 @@
 package nars.operator.software;
 
+import java.util.HashMap;
 import javax.script.Bindings;
+import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import nars.core.Memory;
+import nars.io.Output.ERR;
 import nars.io.Texts;
 import nars.language.Term;
 import nars.operator.SynchronousFunctionOperator;
@@ -15,7 +18,9 @@ import nars.operator.mental.Mental;
  */
 public class Javascript extends SynchronousFunctionOperator implements Mental {
     
-    ScriptEngine js = null;      
+    ScriptEngine js = null;   
+    Bindings bindings = null;
+    final HashMap global = new HashMap();
 
     public Javascript() {
         super("^js");
@@ -36,10 +41,13 @@ public class Javascript extends SynchronousFunctionOperator implements Mental {
         scriptArguments = new Term[args.length-1];
         System.arraycopy(args, 1, scriptArguments, 0, args.length-1);
         
-        Bindings bindings = new SimpleBindings();
+        if(bindings == null) {
+            bindings = new SimpleBindings();
+        }
         bindings.put("arg", scriptArguments);
         bindings.put("memory", memory);
         bindings.put("nar", nar); 
+        bindings.put("global", global);
         
         String input = Texts.unescape(args[0].name()).toString();
         if (input.charAt(0) == '"') {
@@ -49,7 +57,12 @@ public class Javascript extends SynchronousFunctionOperator implements Mental {
         try {
             result = js.eval(input, bindings);
         } catch (Throwable ex) {
-            result = ex.toString();
+            //result=ex.toString();
+            nar.emit(ERR.class, ex.toString());
+            return null;
+        }
+        if(result==null) {
+            return null;
         }
         return Term.text(result.toString());
     }

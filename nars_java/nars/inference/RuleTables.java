@@ -270,7 +270,7 @@ public class RuleTables {
             Term goalterm2=null;
             if(taskTerm instanceof Implication) {
                 Implication imp=(Implication)taskTerm;
-                if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
+                if(imp.getTemporalOrder()!=TemporalRules.ORDER_BACKWARD || imp.getTemporalOrder()==TemporalRules.ORDER_CONCURRENT) {
                     if(!Parameters.CURIOSITY_FOR_OPERATOR_ONLY || imp.getSubject() instanceof Operation) {
                         goalterm=imp.getSubject();
                     }

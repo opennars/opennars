@@ -4,7 +4,7 @@
 (--,<{K} --> [vocalic]>).
 <{4} --> [even]>.
 (--,<{7} --> [even]>).
-<(&&,<#voc --> [vocalic]>,<(*,#voc,$num) --> card>) =|> <$num --> [even]>>?
+<(&&,<#voc --> [vocalic]>,<(*,#voc,$num) --> card>) ==> <$num --> [even]>>?
 <wonder(<$sth --> card>) =|> pick($sth)>!
 //
 //Input was: The cards E, K, 4, 7 are observed like usual in Wason Selection task, each card has a symbol on one side, a number on the other
