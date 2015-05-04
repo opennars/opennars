@@ -1,5 +1,6 @@
 package nars.core.build;
 
+import nars.core.NAR;
 import nars.operator.NullOperator;
 import nars.operator.Operator;
 import nars.operator.io.Say;
@@ -31,7 +32,10 @@ public class DefaultOperators {
      * An operator name should contain at least two characters after '^'.
      *     
      */    
-    public static Operator[] get() {
+    public static Operator[] get(NAR nar) {
+        
+        Javascript js=new Javascript();
+        js.setEnabled(nar, true);
         
         return new Operator[] {
             //new Wait(),            
@@ -67,7 +71,7 @@ public class DefaultOperators {
             new MathExpression(),
                         
 
-            new Javascript(),      // javascript evaluation
+            js,      // javascript evaluation
             
             new NumericCertainty(),
             
