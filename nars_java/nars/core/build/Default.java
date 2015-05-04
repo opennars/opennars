@@ -141,7 +141,7 @@ public class Default extends Build implements ConceptBuilder {
     @Override
     public NAR init(NAR n) {
         
-        for (Operator o : DefaultOperators.get())
+        for (Operator o : DefaultOperators.get(n))
             n.memory.addOperator(o);
         for (Operator o : ExampleOperators.get())
             n.memory.addOperator(o);

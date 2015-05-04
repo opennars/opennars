@@ -53,8 +53,11 @@ public abstract class Operator extends Term implements Plugin {
             throw new RuntimeException("Operator name needs ^ prefix");
     }
 
+    public NAR nar; 
+    
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
+        this.nar = n;
         return true;
     }        
     

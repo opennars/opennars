@@ -39,6 +39,7 @@ public class Javascript extends SynchronousFunctionOperator implements Mental {
         Bindings bindings = new SimpleBindings();
         bindings.put("scriptArguments", scriptArguments);
         bindings.put("memory", memory);
+        bindings.put("nar", nar); 
         
         String input = Texts.unescape(args[0].name()).toString();
         if (input.charAt(0) == '"') {

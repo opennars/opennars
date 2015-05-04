@@ -16,6 +16,7 @@ import nars.language.Product;
 import nars.language.Similarity;
 import nars.language.Term;
 import nars.language.Variable;
+import nars.operator.software.Javascript;
 
 
 /** 
@@ -49,7 +50,11 @@ public abstract class SynchronousFunctionOperator extends Operator {
         if (args[args.length-1].equals(Term.SELF))
             numArgs--;
         
-        if (numArgs < 2) {
+        if (numArgs < 1) {
+            throw new RuntimeException("Requires at least 1 arguments");
+        }
+        
+        if (numArgs < 2 && !(this instanceof Javascript)) {
             throw new RuntimeException("Requires at least 2 arguments");
         }
         
@@ -57,13 +62,18 @@ public abstract class SynchronousFunctionOperator extends Operator {
         Term lastTerm = args[numArgs-1];
         boolean variable = lastTerm instanceof Variable;
         
-        if(!variable) {
+        if(!variable && !(this instanceof Javascript)) { 
             throw new RuntimeException("output can not be specified");
         }
         
         
         
         int numParam = numArgs-1;
+        
+        if(numParam==0) {
+            numParam=1; //there are no operators with 0 arguments..
+        }
+        
         Term[] x = new Term[numParam];
         System.arraycopy(args, 0, x, 0, numParam);
         
@@ -71,6 +81,9 @@ public abstract class SynchronousFunctionOperator extends Operator {
         //try {
             y = function(m, x);
             if (y == null) {
+                return null;
+            }
+            if(numArgs == 1 && this instanceof Javascript) {
                 return null;
             }
             //m.emit(SynchronousFunctionOperator.class, Arrays.toString(x) + " | " + y);
