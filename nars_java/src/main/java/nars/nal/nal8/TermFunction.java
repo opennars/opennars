@@ -120,9 +120,11 @@ public abstract class TermFunction<O> extends Operator  {
         }
 
         //2. try to parse as term
+
         Term t = nar.term(ys);
-        if (t!=null)
+        if (t != null)
             return result(operation, t, x0, lastTerm);
+
 
         throw new RuntimeException(this + " return value invalid: " + y);
     }

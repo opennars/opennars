@@ -120,7 +120,6 @@ public class TextOutput extends Output {
         stop();
     }
 
-    final StringBuilder buffer = new StringBuilder();
 
     /**
      * Process the next chunk of output data
@@ -137,23 +136,23 @@ public class TextOutput extends Output {
             throw new RuntimeException("why does this TextOuput exist?");
         }
 
-        synchronized (buffer) {
-            final CharSequence s = process(channel, oo);
-            if (s != null) {
-                if (outExp != null) {
-                    if (prefix != null)
-                        outExp.print(prefix);
-                    outExp.println(s);
-                    outExp.flush();
-                }
-                if (outExp2 != null) {
-                    if (prefix != null)
-                        outExp2.println(prefix + s);
-                    else
-                        outExp2.println(s);
-                }
+        final StringBuilder buffer = new StringBuilder();
+        final CharSequence s = process(channel, oo);
+        if (s != null) {
+            if (outExp != null) {
+                if (prefix != null)
+                    outExp.print(prefix);
+                outExp.println(s);
+                outExp.flush();
+            }
+            if (outExp2 != null) {
+                if (prefix != null)
+                    outExp2.println(prefix + s);
+                else
+                    outExp2.println(s);
             }
         }
+
     }
 
 
@@ -162,7 +161,7 @@ public class TextOutput extends Output {
             if (!allowTask((Task) o[0]))
                 return null;
         }
-        return getOutputString(c, o, true, showStamp, nar, buffer, outputPriorityMin);
+        return getOutputString(c, o, true, showStamp, nar, new StringBuilder(), outputPriorityMin);
     }
 
     /**
