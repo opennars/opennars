@@ -2,6 +2,7 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import jurls.reinforcementlearning.domains.tetris.Tetris;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
@@ -18,7 +19,10 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
-import nars.rl.*;
+import nars.rl.AEPerception;
+import nars.rl.Perception;
+import nars.rl.QLAgent;
+import nars.rl.RawPerception;
 
 import javax.swing.*;
 import java.awt.*;
@@ -155,9 +159,9 @@ public class TestSOMAgent extends JPanel {
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
-        //RLEnvironment d = new Tetris(10, 8);
+        RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 

@@ -11,10 +11,9 @@ import java.util.Map;
 import java.util.Set;
 
 /** uses a predefined set of terms that will be mapped */
-abstract public class SetConceptMap<T extends Term> extends ConceptMap implements Iterable<T> {
+abstract public class SetConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
 
-    public final Set<T> inclusions = Global.newHashSet(16);
 
     public final Map<T,Concept> values = new LinkedHashMap();
 
@@ -31,28 +30,22 @@ abstract public class SetConceptMap<T extends Term> extends ConceptMap implement
         Concept removed = values.put((T) c.term, c);
         return removed!=c; //different instance
     }
+    public boolean exclude(Concept c) {
+        return values.remove(c.term)!=null;
+    }
+
 
     public boolean contains(final T t) {
         if (!values.containsKey(t)) {
-            return inclusions.contains(t);
+            return super.contains(t);
         }
         return true;
     }
 
-    @Override
-    protected boolean onConceptNew(Concept c) {
-        return include(c);
-    }
-
-    @Override
-    protected boolean onConceptForget(Concept c) {
-        if (inclusions.contains(c.term)) return false;
-        return values.remove(c.term)!=null;
-    }
 
     /** set a term to be present always in this map, even if the conept disappears */
     public void include(T a) {
-        inclusions.add(a);
+        super.include(a);
         values.put(a, null);
     }
 

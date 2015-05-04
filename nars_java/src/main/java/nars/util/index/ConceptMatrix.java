@@ -1,7 +1,6 @@
 package nars.util.index;
 
 import com.google.common.collect.HashBasedTable;
-import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.Global;
 import nars.NAR;
 import nars.event.ConceptReaction;
@@ -10,6 +9,7 @@ import nars.nal.term.Term;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Maintains a growing/sparse matrix consisting of a mapping of R row label concepts (ex: states),
@@ -20,6 +20,8 @@ import java.util.Collection;
 abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Term, V extends ConceptMatrix.EntryValue> {
 
     private final ConceptReaction entries;
+    private boolean checkForEmptyColumns = true;
+    private boolean checkForEmptyRows = true;
 
     /** base type for cell entries in the matrix. subclass to add additional information per cell */
     public static class EntryValue {
@@ -35,17 +37,18 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
             return concept;
         }
 
-        public void setConcept(Concept concept) {
+        /** returns true if the nullity changed */
+        public boolean setConcept(Concept concept) {
+            boolean b = false;
+            if (this.concept == null && concept!=null) b = true;
+            if (this.concept != null && concept==null) b = true;
             this.concept = concept;
+            return b;
         }
     }
 
     public final NAR nar;
 
-
-
-    /** active entries */
-    //public final ConceptMap entries;
 
     /** q-value matrix:  q[state][action] */
     public final HashBasedTable<R,C, V> table = HashBasedTable.create();
@@ -53,64 +56,12 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     public final SetConceptMap<C> cols;
     public final SetConceptMap<R> rows;
 
-    //TODO merge into a MapConceptMap<C,ConceptStatistics> instance
-    final ObjectIntHashMap<R> rowConcepts = new ObjectIntHashMap<>();
-    final ObjectIntHashMap<C> colConcepts = new ObjectIntHashMap<>();
 
     boolean uninitialized = true;
 
 
-    protected static void ensureValidCount(final int x) {
-        if (x < 0) throw new RuntimeException("concept count underflow");
-    }
-
-    protected int addColCount(C col, int d) {
-        int x = colConcepts.addToValue(col, d);
-        ensureValidCount(x);
-
-        if (Global.DEBUG) {
-            if (x > table.rowKeySet().size()) {
-                throw new RuntimeException("concept count overflow");
-            }
-        }
-
-        //remove the col if no entries referencing concepts remain
-        //even if the index label concept is removed, there may still be entries referring to it
-        if (x == 0) {
-            //no concepts remain in this column, remove it
-            table.columnMap().remove(col);
-            colConcepts.remove(col);
-            onColumnRemove(col);
-        }
-
-        return x;
-    }
-    protected int addRowCount(R row, int d) {
-        int x = rowConcepts.addToValue(row, d);
-        ensureValidCount(x);
-
-        if (Global.DEBUG) {
-            if (x > table.columnKeySet().size()) {
-                throw new RuntimeException("concept count overflow");
-            }
-        }
-
-        //remove the row if no entries referencing concepts remain
-        //even if the index label concept is removed, there may still be entries referring to it
-        if (x == 0) {
-            //no concepts remain in this column, remove it
-            table.rowMap().remove(row);
-            rowConcepts.remove(row);
-            onRowRemove(row);
-        }
-
-        return x;
-    }
-
-    protected void addCount(R r, C c, int d) {
-        addRowCount(r, d);
-        addColCount(c, d);
-    }
+    protected Set<R> rowsMaybeEmpty = Global.newHashSet(1);
+    protected Set<C> colsMaybeEmpty = Global.newHashSet(1);
 
     public ConceptMatrix(NAR nar) {
         super();
@@ -125,6 +76,18 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 if (uninitialized) {
                     ConceptMatrix.this.init();
                     uninitialized = false;
+                }
+
+                if (checkForEmptyRows) {
+                    for (R r : rowsMaybeEmpty)
+                        updateRow(r);
+                    rowsMaybeEmpty.clear();
+                }
+
+                if (checkForEmptyColumns) {
+                    for (C c : colsMaybeEmpty)
+                        updateCol(c);
+                    colsMaybeEmpty.clear();
                 }
             }
 
@@ -165,15 +128,16 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                     if (v == null) {
                         v = newEntry(c);
                         table.put(rr, cc, v);
-                        addCount(rr, cc, 1);
                     }
                     else {
-                        if (v.getConcept() == null) {
-                            addCount(rr, cc, 1);
-                        }
-
                         v.setConcept(c);
                     }
+
+                    if (checkForEmptyRows)
+                        rowsMaybeEmpty.remove(rr);
+
+                    if (checkForEmptyColumns)
+                        colsMaybeEmpty.remove(cc);
 
                     onEntryAdd(rr, cc, v);
                 }
@@ -187,9 +151,12 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                     C cc = getCol(i);
 
                     V v = getEntry(rr, cc);
-                    if ((v != null) && (v.getConcept()!=null)) {
-                        v.setConcept(null);
-                        addCount(rr, cc, -1);
+                    if ((v != null) && (v.setConcept(null))) {
+                        if (checkForEmptyRows)
+                            rowsMaybeEmpty.add(rr);
+
+                        if (checkForEmptyColumns)
+                            colsMaybeEmpty.add(cc);
                     }
                 }
             }
@@ -201,6 +168,19 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
         };
 
 
+    }
+
+    protected void updateRow(R r) {
+        if (!hasConcepts(table.row(r).values())) {
+            table.rowMap().remove(r);
+            onRowRemove(r);
+        }
+    }
+    protected void updateCol(C col) {
+        if (!hasConcepts(table.column(col).values())) {
+            table.columnMap().remove(col);
+            onColumnRemove(col);
+        }
     }
 
     public static boolean hasConcepts(final Collection<? extends EntryValue> values) {
@@ -245,5 +225,13 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
         cols.off();
         rows.off();
         entries.off();
+    }
+
+    public void setCheckForEmptyColumns(boolean checkForEmptyColumns) {
+        this.checkForEmptyColumns = checkForEmptyColumns;
+    }
+
+    public void setCheckForEmptyRows(boolean checkForEmptyRows) {
+        this.checkForEmptyRows = checkForEmptyRows;
     }
 }

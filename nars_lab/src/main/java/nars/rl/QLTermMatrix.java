@@ -78,6 +78,9 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     public QLTermMatrix(NAR nar) {
         super(nar);
 
+        //disable checking for empty action columns; this is an optimization since actions should not be rmeoved from the table
+        setCheckForEmptyColumns(false);
+
         brain = new AbstractHaiQBrain<S, A>() {
 
 

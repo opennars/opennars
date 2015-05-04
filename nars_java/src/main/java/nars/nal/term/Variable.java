@@ -278,8 +278,6 @@ public class Variable extends Atom {
             else {
                 return Texts.compare(a.getScope().name(), b.getScope().name());
             }
-
-
         }
         return i;
     }
