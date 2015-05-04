@@ -137,14 +137,14 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
          };
     }
 
-    public void applyPriority(JComponent p, float priority) {
+    public void applyPriority(Class channel, JComponent p, float priority) {
         //setFont(Video.monofont.deriveFont(12.0f + priority * 4f));
 
         p.setOpaque(true);
 
-        final float hue = 0.3f + 0.5f * priority;
+        final float hue = Video.hashFloat(channel.hashCode());
 
-        Color c = Color.getHSBColor(hue, 0.4f, 0.2f + priority * 0.2f);
+        Color c = Color.getHSBColor(hue, 0.4f + priority * 0.2f, 0.2f + priority * 0.2f);
 
         p.setBackground(c);
 
@@ -175,12 +175,12 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
             }
         }
 
-        CharSequence s = TextOutput.getOutputString(channel, o, showStamp, nar, new StringBuilder());
+        CharSequence s = TextOutput.getOutputString(channel, o, true, showStamp, nar, new StringBuilder(), 0f);
         JLabel jl = new JLabel(s.toString());
         jl.setDoubleBuffered(true);
         jl.setIgnoreRepaint(true);
 
-        applyPriority(jl, priority);
+        applyPriority(channel, jl, priority);
         append(jl);
 
     }
@@ -189,7 +189,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     protected void updateConcept(Concept c, float priority, String status) {
         ConceptPanelBuilder.ConceptPanel cp = b.getFirstPanelOrCreateNew(c, true, false, 64);
         //cp.setMessage(...)
-        applyPriority(cp, priority);
+        applyPriority(c.term.getClass(), cp, priority);
         append(cp);
     }
 

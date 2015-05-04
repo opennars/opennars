@@ -121,14 +121,20 @@ public abstract class Operator extends Atom implements IOperator {
 //                if (b!=null)
 //                    sb.append(b.toStringExternal()).append(' ');
 
-                sb.append(operator).append('(');
+                //sb.append(operator).append('(');
+
+                /*
                 if (args.length > 0) {
                     String argString = Arrays.toString(args);
                     sb.append(argString.substring(1, argString.length()-1)); //remove '[' and ']'
                 }
-                sb.append(')');
+                */
+
+                //sb.append(')');
+
                 if (feedback!=null)
-                    sb.append(": ").append(feedback);
+                    sb.append("  ").append(feedback);
+
                 return sb.toString();
             }
         }
