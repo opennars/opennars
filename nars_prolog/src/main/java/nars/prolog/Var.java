@@ -558,17 +558,5 @@ public class Var extends Term {
     }
     /**/
 
-    @Override
-    public CharSequence name() {
-        return completeName;
-    }
-
-    @Override
-    public int compareTo(nars.nal.term.Term o) {
-        if (!(o instanceof Var)) {
-            return -1;
-        }
-        return name.compareTo(((Var) o).name);
-    }
 
 }

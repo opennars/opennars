@@ -506,7 +506,7 @@ public class NARPrologMirror extends AbstractMirror {
         if (term instanceof Struct) {
             Struct s = (Struct)term;
             int arity = s.getArity();
-            String predicate = s.name().toString();
+            String predicate = s.toString();
             if (arity == 0) {
                 return Atom.get(unpescape(predicate));
             }

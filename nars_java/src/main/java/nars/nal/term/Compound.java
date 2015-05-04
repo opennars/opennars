@@ -29,6 +29,7 @@ import nars.nal.NALOperator;
 import nars.nal.Statement;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
+import nars.util.data.Utf8;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
@@ -42,10 +43,6 @@ import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 public abstract class Compound implements Term, Iterable<Term>, IPair {
 
 
-    @Override
-    public final String toString() {
-        return name().toString();
-    }
 
     /**
      * list of (direct) term
@@ -103,7 +100,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         int size = 2; // beginning and end parens
         String opString = op.toString();
         size += opString.length();
-        final CharSequence tString = singleTerm.name();
+        final CharSequence tString = singleTerm.toString();
         size += tString.length();
         return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
@@ -120,8 +117,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
         String opString = op.toString();
         size += opString.length();
-        for (final Term t : arg)
-            size += 1 + t.name().length();
+        /*for (final Term t : arg)
+            size += 1 + t.name().length();*/
 
 
         final StringBuilder n = new StringBuilder(size)
@@ -233,11 +230,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
-    public int compareSubterms(final Compound otherCompoundOfEqualType) {
-        //this is what we want to avoid - generating string names
-        //override in subclasses where a different non-string comparison can be made
-        return Texts.compare(name(), otherCompoundOfEqualType.name());
-    }
+    abstract public int compareSubterms(final Compound otherCompoundOfEqualType);
 
     @Override
     abstract public boolean equals(final Object that);
@@ -276,11 +269,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     public interface VariableTransform  {
-        public Variable apply(Compound containingCompound, Variable v);
+        public Variable apply(Compound containingCompound, Variable v, int depth);
     }
 
     public static class VariableNormalization implements VariableTransform {
-        Map<CharSequence, Variable> rename = Global.newHashMap();
+        Map<Variable, Variable> rename = Global.newHashMap();
 
         final Compound result;
         boolean renamed = false;
@@ -292,17 +285,17 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         }
 
         @Override
-        public Variable apply(Compound ct, Variable v) {
-            CharSequence vname = v.name();
-            if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
-                vname = vname.toString() + v.getScope().name();
+        public Variable apply(final Compound ct, final Variable v, int depth) {
+            Variable vname = v;
+            /*if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
+                vname = vname.toString() + v.getScope().name();*/
 
             Variable vv = rename.get(vname);
 
             if (vv == null) {
                 //type + id
                 String n = Variable.getName(v.getType(), rename.size() + 1);
-                vv = new Variable(n, result);
+                vv = new Variable(n, true);
                 rename.put(vname, vv);
                 if (!n.equals(v.name()))
                     renamed = true;
@@ -504,7 +497,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
 
-    abstract public CharSequence name();
+    abstract public byte[] name();
 
  
 
@@ -639,6 +632,10 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     protected void transformVariableTermsDeep(VariableTransform variableTransform) {
+        transformVariableTermsDeep(variableTransform, 0);
+    }
+
+    protected void transformVariableTermsDeep(VariableTransform variableTransform, int depth) {
         for (int i = 0; i < term.length; i++) {
             Term t = term[i];
 
@@ -646,7 +643,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
                 if (t instanceof Compound) {
                     ((Compound)t).transformVariableTermsDeep(variableTransform);
                 } else if (t instanceof Variable) {  /* it's a variable */
-                    term[i] = variableTransform.apply(this, (Variable)t);
+                    term[i] = variableTransform.apply(this, (Variable)t, depth+1);
                 }
             }
         }
@@ -1108,7 +1105,12 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         }
     }
 
-    public CharSequence nameCached() {
+    @Override
+    public String toString() {
+        return Utf8.fromUtf8(name());
+    }
+
+    @Deprecated public CharSequence nameCached() {
         return null;
     }
 

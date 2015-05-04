@@ -18,6 +18,8 @@
 package nars.prolog;
 
 
+import nars.util.data.Utf8;
+
 import java.nio.CharBuffer;
 import java.util.*;
 
@@ -929,17 +931,5 @@ public class Struct extends Term {
 	}
     /**/
 
-    @Override
-    public CharSequence name() {
-        return name;
-    }
 
-    @Override
-    public int compareTo(nars.nal.term.Term o) {
-        if (!(o instanceof Struct)) {
-            return -1;
-        }
-        return name.compareTo(((Struct)o).name);
-    }
-    
 }

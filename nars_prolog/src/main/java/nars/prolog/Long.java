@@ -186,16 +186,13 @@ public class Long extends Number {
      * @author Paolo Contessi
      */
     @Override
-    public int compareTo(nars.nal.term.Term o) {
+    public int compareTo(Term o) {
         if (o instanceof Number)
             return (new java.lang.Long(value)).compareTo(((Number)o).longValue());
         else
             return -1;
     }
 
-    @Override
-    public CharSequence name() {
-        return toString();
-    }
+
     
 }

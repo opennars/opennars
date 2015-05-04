@@ -42,6 +42,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     public static final String fromUtf8(final byte[] bytes, final int length) {
         return new String(bytes, 0, length, utf8Charset);
     }
+    public static final String fromUtf8(final byte[] bytes) {
+        return new String(bytes, utf8Charset);
+    }
 
     public static final byte[] toUtf8(final String str) {
         return str.getBytes(utf8Charset);

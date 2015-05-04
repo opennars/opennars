@@ -44,6 +44,6 @@ abstract public class ImmediateOperation extends Operation {
     }
 
     @Override
-    public CharSequence name() { return getClass().getSimpleName(); }
+    public String toString() { return getClass().getSimpleName(); }
 
 }

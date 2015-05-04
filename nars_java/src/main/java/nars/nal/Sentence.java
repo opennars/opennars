@@ -43,6 +43,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
+//TODO: make Named<byte[]>
 public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termed, TruthValue.Truthable, Stamped {
 
 
@@ -508,7 +509,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      *      2. if the stamp or other component changes, it would need to be re-calculated
      */
     public CharSequence getKey() {
-        final CharSequence contentName = term.name();
+        final String contentName = term.toString();
 
         final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
         //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
@@ -553,9 +554,9 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
+    @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
     
-        CharSequence contentName = term.name();
+        String contentName = term.toString();
 
         final CharSequence tenseString;
         if (memory!=null) {

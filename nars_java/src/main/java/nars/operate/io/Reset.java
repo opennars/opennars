@@ -16,7 +16,7 @@ public class Reset extends ImmediateOperation {
     }
 
     @Override
-    public CharSequence name() {
+    public String toString() {
         return "Reset[" + (hard ? "hard" : "soft") + ']';
     }
 

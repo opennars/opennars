@@ -1,9 +1,15 @@
 package nars.nal.term;
 
+import nars.util.data.Utf8;
+
+import java.util.Arrays;
+
 /** implementation of a compound which generates and stores its name as a CharSequence, which is used for equality and hash*/
 abstract public class DefaultCompound extends Compound {
 
-    @Deprecated protected CharSequence name = null;
+    @Deprecated protected String cachedName = null;
+    byte[] name = null;
+    int hash = 0;
 
     public DefaultCompound(Term... components) {
         super(components);
@@ -34,6 +40,10 @@ abstract public class DefaultCompound extends Compound {
         return false;
     }
 
+    @Override
+    public int compareSubterms(Compound otherCompoundOfEqualType) {
+        return Integer.compare(name.hashCode(), ((DefaultCompound)otherCompoundOfEqualType).name.hashCode());
+    }
 
     protected void share(DefaultCompound equivalent) {
         super.share(equivalent);
@@ -58,23 +68,29 @@ abstract public class DefaultCompound extends Compound {
 
 
     @Override
-    public CharSequence name() {
+    public byte[] name() {
         //new Exception().printStackTrace(); //for debugging when this is called
 
         if (this.name == null) {
-            this.name = makeName();
+            this.cachedName = makeName().toString();
+
+            name = Utf8.toUtf8(cachedName);
+            hash = Arrays.hashCode(name);
         }
         return this.name;
     }
 
-    @Override
-    public CharSequence nameCached() {
-        return this.name;
+    @Deprecated @Override
+    public String nameCached() {
+        return this.cachedName;
     }
 
     @Override
     public int hashCode() {
-        return name().hashCode();
+        if (this.name == null) {
+            name();
+        }
+        return hash;
     }
 
 

@@ -23,24 +23,18 @@ package nars.nal.term;
 
 import nars.Memory;
 import nars.io.Symbols;
-import nars.io.Texts;
 import nars.nal.NALOperator;
 import nars.nal.Named;
 import nars.nal.nal7.TemporalRules;
+import sun.misc.Unsafe;
 
-import java.lang.reflect.Type;
+import java.lang.reflect.Field;
+import java.nio.ByteOrder;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
-public interface Term extends Cloneable, Comparable<Term>, Named<CharSequence>, Termed {
+public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed {
 
-
-    /**
-     * Reporting the name of the current Term.
-     *
-     * @return The name of the term as a String
-     */
-    default CharSequence name() {
-        return toString();
-    }
 
     default Term getTerm() {
         return this;

@@ -435,7 +435,7 @@ public class PrologQueryOperator extends Operator {
         }
         else if( term instanceof nars.prolog.Var ) {
             nars.prolog.Var termAsVar = (nars.prolog.Var)term;
-            String nameOfVar = termAsVar.name().toString();
+            String nameOfVar = termAsVar.toString();
             
             if( nameOfVar.equals(name) ) {
                 return termAsVar;

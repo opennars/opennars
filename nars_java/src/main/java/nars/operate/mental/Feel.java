@@ -45,7 +45,7 @@ public abstract class Feel extends Operator implements Mental {
         super(name);
         
         // remove the "^feel" prefix from name
-        this.feelingTerm = get(((String) name()).substring(5));
+        this.feelingTerm = get(toString().substring(5));
     }
 
     final static Term self = get(Symbols.SELF);

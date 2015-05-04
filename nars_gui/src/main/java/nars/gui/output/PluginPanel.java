@@ -97,7 +97,7 @@ public class PluginPanel extends VerticalPanel {
             super(new BorderLayout());
             
             this.plugin = p;
-            final JLabel j = new JLabel(p.IOperator.name().toString());
+            final JLabel j = new JLabel(p.IOperator.toString());
             j.setFont(Video.monofont);            
             add(j, BorderLayout.NORTH);
             

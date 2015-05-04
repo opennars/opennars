@@ -32,7 +32,7 @@ public interface SetTensional extends Term {
         int size = 1 + 1 - 1; //opener + closer - 1 [no preceding separator for first element]
 
         for (final Term t : arg)
-            size += 1 + t.name().length();
+            size += 1 + t.toString().length();
 
 
         final StringBuilder n = new StringBuilder(size);

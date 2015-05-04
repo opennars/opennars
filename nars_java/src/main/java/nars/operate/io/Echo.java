@@ -19,7 +19,7 @@ public class Echo extends ImmediateOperation {
 
     
     @Override
-    public CharSequence name() {
+    public String toString() {
         return channel.getSimpleName() + ": " + signal.toString();
     }
 

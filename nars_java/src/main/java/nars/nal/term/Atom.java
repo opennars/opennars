@@ -1,25 +1,28 @@
 package nars.nal.term;
 
 import nars.Global;
-import nars.Memory;
-import nars.io.Texts;
 import nars.nal.NALOperator;
-import nars.nal.Statement;
+import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.util.data.sorted.SortedList;
+import nars.util.data.Utf8;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.TreeSet;
 
 /**
  * Created by me on 4/25/15.
  */
 public class Atom implements Term {
 
-    protected final String name;
+    protected final byte[] name;
+    protected final int hash;
 
     private static final Map<String,Atom> atoms = Global.newHashMap(8192);
+
+    @Override
+    public byte[] name() {
+        return name;
+    }
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Atom quoted(String t) {
@@ -49,12 +52,16 @@ public class Atom implements Term {
             if (that.getClass() == Variable.class)
                 return 1;
 
-            return Texts.compare(name(), (/*(Atom)*/that).name());
+            return compareName(that);
         }
         else {
             return -1;
         }
 
+    }
+
+    public int compareName(Term that) {
+        return Integer.compare(hashCode(), ((Atom)that).hashCode());
     }
 
 //    /**
@@ -69,15 +76,19 @@ public class Atom implements Term {
      * @param name A String as the name of the Term
      */
     protected Atom(final String name) {
+        this(Utf8.toUtf8(name));
+    }
+
+    protected Atom(final byte[] name) {
         this.name = name;
+        this.hash = Arrays.hashCode(name);
     }
 
     /** gets the atomic term given a name */
     public final static Atom get(final String name) {
         Atom x = atoms.get(name);
         if (x != null) return x;
-        x = new Atom(name);
-        atoms.put(name, x);
+        atoms.put(name, x = new Atom(name));
         return x;
     }
 
@@ -107,16 +118,10 @@ public class Atom implements Term {
         return get(Integer.toString(i));
     }
 
-
-    /**
-     * Reporting the name of the current Term.
-     *
-     * @return The name of the term as a String
-     */
-    @Override
-    public String name() {
-        return name;
+    @Override public String toString() {
+        return Utf8.fromUtf8(name());
     }
+
 
     /**
      * Make a new Term with the same name.
@@ -125,7 +130,8 @@ public class Atom implements Term {
      */
     @Override
     public Term clone() {
-        return new Atom(name());
+        return this;
+        //return new Atom(name());
     }
 
     /** attempts to return cloneNormalize result,
@@ -152,7 +158,15 @@ public class Atom implements Term {
         if (this == that) return true;
         if (!(that instanceof Atom)) return false;
         final Atom t = (Atom)that;
-        return name().equals(t.name());
+        return equalsType(t) && equalsName(t);
+    }
+
+    public boolean equalsType(final Term t) {
+        return Terms.equalType(this, t);
+    }
+
+    public boolean equalsName(final Term t) {
+        return hashCode() == t.hashCode() && Arrays.equals(name(), t.name());
     }
 
     /**
@@ -162,7 +176,7 @@ public class Atom implements Term {
      */
     @Override
     public int hashCode() {
-        return name().hashCode();
+        return hash;
     }
 
     /**
@@ -227,15 +241,6 @@ public class Atom implements Term {
     }
 
 
-    /**
-     * The same as getName by default, used in display only.
-     *
-     * @return The name of the term as a String
-     */
-    @Override
-    public final String toString() {
-        return name().toString();
-    }
 
 
     /**

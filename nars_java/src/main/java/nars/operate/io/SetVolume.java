@@ -15,7 +15,7 @@ public class SetVolume extends ImmediateOperation {
     }
 
     @Override
-    public CharSequence name() {
+    public String toString() {
         return "SetVolume(" + volume + ')';
     }
 

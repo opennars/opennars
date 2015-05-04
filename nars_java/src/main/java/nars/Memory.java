@@ -99,7 +99,7 @@ public class Memory implements Serializable {
         return level;
     }
 
-    public Concept concept(CharSequence t) {
+    public Concept concept(final String t) {
         return concept(Atom.get(t));
     }
 
@@ -239,7 +239,7 @@ public class Memory implements Serializable {
     public final EventEmitter event;
 
     /* InnateOperator registry. Containing all registered operators of the system */
-    public final Map<CharSequence, Operator> operators;
+    public final LinkedHashMap<String, Operator> operators;
 
     private long currentStampSerial = 1;
 
@@ -287,7 +287,7 @@ public class Memory implements Serializable {
 
         this.self = Symbols.DEFAULT_SELF; //default value
 
-        this.operators = Global.newHashMap();
+        this.operators = new LinkedHashMap();
         this.event = new EventEmitter.DefaultEventEmitter();
 
 
@@ -831,7 +831,7 @@ public class Memory implements Serializable {
     }
 
     /** returns the operate identified by its name, or null if none such exists */
-    public Operator operator(final CharSequence name) {
+    public Operator operator(final String name) {
         return operators.get(name);
     }
 
@@ -839,7 +839,7 @@ public class Memory implements Serializable {
      * external code is through a NAR's Plugin registry (since Operator extends Plugin)*
      */
     Operator operatorAdd(final Operator op) {
-        operators.put(op.name(), op);
+        operators.put(op.toString(), op);
         return op;
     }
 

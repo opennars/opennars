@@ -21,7 +21,7 @@
 package nars.nal.term;
 
 
-import nars.io.Texts;
+import nars.util.data.Utf8;
 
 import static nars.io.Symbols.*;
 
@@ -42,32 +42,37 @@ public class Variable extends Atom {
     /** caches the type character for faster lookup than charAt(0) */
     private transient char type = 0;
     
-    private final Term scope;
+    private final boolean scope;
 
-    private transient int hash;
-    
 
     public Variable(final String name) {
-        this(name, null);        
+        this(name, false);
     }
-    
+
+    public Variable(final byte[] n, final boolean scope) {
+        super(n);
+        this.type = ensureValidVariableType((char)n[0]);
+        this.scope = scope;
+
+    }
     /**
      * Constructor, from a given variable name
      *
      * @param name A String read from input
      */
-    public Variable(final String n, final Term scope) {
-        super(n);
-        this.type = n.charAt(0);
-        if (!validVariableType(type))
-            throw new RuntimeException("Invalid variable type: " + n);
-        this.scope = scope != null ? scope : this;
-        this.hash = 0; //calculate lazily
+    public Variable(final String n, final boolean scope) {
+        super( n  ); //last character holds the scope number
+        this.type = ensureValidVariableType(n.charAt(0));
+        this.scope = scope;
+    }
+
+    public final static char ensureValidVariableType(final char c) {
+        if (!validVariableType(c))
+            throw new RuntimeException("Invalid variable type: " + c);
+        return c;
     }
 
 
-
-    
     /**
      * Clone a Variable
      * If this is unscoped, the result will be unscoped also.
@@ -77,16 +82,19 @@ public class Variable extends Atom {
      */
     @Override
     public Variable clone() {
-        return new Variable(name(), scope == this ? null : scope);
+        //return new Variable(name(), scope == this ? null : scope);
+        return this;
     }
 
-    public Variable clone(Compound newScope) {
-        return new Variable(name(), newScope);
+    public Variable clone(boolean newScope) {
+        if (newScope!=scope)
+            return new Variable(name(), newScope);
+        return this;
     }
 
     /** clones the variable with its scope removed/reset */
     public Variable cloneUnscoped() {
-        return new Variable(name(), null);
+        return clone(false);
     }
 
     /**
@@ -127,61 +135,61 @@ public class Variable extends Atom {
         if (this == that) return true;
         if (!(that instanceof Variable)) return false;
 
-        if (!hasScope()) return false;
-        if (!((Variable) that).hasScope()) return false;
-
-        Variable v = (Variable)that;
-        if (!name().equals(v.name())) return false;
-        /*if (getScope() == this) {
-            if (v.getScope()!=v) return false;
-        }*/
+        if (!isScoped()) return false;
+        if (!((Variable) that).isScoped()) return false;
 
 
-        //return (v.getScope().equals(getScope()));
-
-        //this must compare by an immutable key because it can cause a circular loop
-        return (v.getScope().name().equals(getScope().name()));
+        return equalsName((Variable)that);
     }
-    
-    public boolean equalsTerm(Object that) {
-        //TODO factor these comparisons into 2 nested if's
-        Variable v = (Variable)that;
-        if ((v.scope == v) && (scope == this))
-            //both are unscoped, so compare by name only
-            return name().equals(v.name());
-        else if ((v.scope!=v) && (scope==this))
-            return false;
-        else if ((v.scope==v) && (scope!=this))
-            return false;
+    public static int compare(final Variable a, final Variable b) {
+        boolean ascoped = a.isScoped();
+        boolean bscoped = b.isScoped();
+        if (!ascoped && !bscoped) {
+            //if the two variables are each without scope, they are not equal.
+            //so use their identityHashCode to determine a stable ordering
+            int as = System.identityHashCode(a.scope);
+            int bs = System.identityHashCode(b.scope);
+            return Integer.compare(as, bs);
+        }
+        else if (ascoped && !bscoped) {
+            return -1;
+        }
+        else if (bscoped && !ascoped) {
+            return 1;
+        }
         else {
-            if (!name().equals(v.name()))
-                return false;
-
-            if (scope == v.scope) return true;
-
-            if (scope.hashCode()!=v.scope.hashCode())
-                return false;
-
-            //WARNING infinnite loop can happen if the two scopes start equaling echother
-            //we need a special equals comparison which ignores variable scope when recursively
-            //called from this
-            //until then, we'll use the name for comparison because it wont 
-            //invoke infinite recursion
-
-            return scope.equals(v.scope);
+            return a.compareName(b);
         }
     }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            if (hasScope())
-                this.hash = 31 * name.hashCode() + scope.operator().hashCode(); //scope.hashCode(); //this can cause a circular loop of hashcode caluclating, so just use the operator as the hash component
-            else
-                this.hash = name.hashCode();
-        }
-        return hash;
-    }
+//    public boolean equalsTerm(Object that) {
+//        //TODO factor these comparisons into 2 nested if's
+//        Variable v = (Variable)that;
+//
+//        if ((v.scope == v) && (scope == this))
+//            //both are unscoped, so compare by name only
+//            return name().equals(v.name());
+//        else if ((v.scope!=v) && (scope==this))
+//            return false;
+//        else if ((v.scope==v) && (scope!=this))
+//            return false;
+//        else {
+//            if (!name().equals(v.name()))
+//                return false;
+//
+//            if (scope == v.scope) return true;
+//
+//            if (scope.hashCode()!=v.scope.hashCode())
+//                return false;
+//
+//            //WARNING infinnite loop can happen if the two scopes start equaling echother
+//            //we need a special equals comparison which ignores variable scope when recursively
+//            //called from this
+//            //until then, we'll use the name for comparison because it wont
+//            //invoke infinite recursion
+//
+//            return scope.equals(v.scope);
+//        }
+//    }
 
     
     
@@ -201,16 +209,14 @@ public class Variable extends Atom {
     }
 
     public boolean isCommon() {
-        CharSequence n = name();
+        //TODO there is a faster way to make this test rather than forming the String
+        String n = toString();
         int l = n.length();        
         return n.charAt(l - 1) == '$';
     }
 
-    public Term getScope() {
-        return scope;
-    }
 
-    public boolean hasScope() { return scope != this; }
+    public boolean isScoped() { return scope; }
 
 
     public static boolean validVariableType(final char c) {
@@ -257,29 +263,6 @@ public class Variable extends Atom {
 
     }
 
-    public static int compare(final Variable a, final Variable b) {
-        int i = a.name().compareTo(b.name());
-        if (i == 0) {
-            boolean ascoped = a.hasScope();
-            boolean bscoped = b.hasScope();
-            if (!ascoped && !bscoped) {
-                //if the two variables are each without scope, they are not equal.
-                //so use their identityHashCode to determine a stable ordering
-                int as = System.identityHashCode(a.scope);
-                int bs = System.identityHashCode(b.scope);
-                return Integer.compare(as, bs);
-            }
-            else if (ascoped && !bscoped) {
-                return -1;
-            }
-            else if (bscoped && !ascoped) {
-                return 1;
-            }
-            else {
-                return Texts.compare(a.getScope().name(), b.getScope().name());
-            }
-        }
-        return i;
-    }
+
 
 }

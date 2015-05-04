@@ -184,7 +184,7 @@ public class Float extends Number {
     /**
      * @author Paolo Contessi
      */    
-    public int compareTo(nars.nal.term.Term o) {
+    public int compareTo(Term o) {
         if (o instanceof Number)
             return (new java.lang.Float(value)).compareTo(((Number)o).floatValue());
         else

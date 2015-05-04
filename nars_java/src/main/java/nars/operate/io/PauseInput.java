@@ -16,7 +16,7 @@ public class PauseInput extends ImmediateOperation {
     }
 
     @Override
-    public CharSequence name() {
+    public String toString() {
         return "PauseInput(" + cycles + ')';
     }
 

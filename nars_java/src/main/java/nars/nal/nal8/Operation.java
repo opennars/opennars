@@ -113,7 +113,7 @@ public class Operation extends Inheritance {
             if (!(getSubject() instanceof Product && getPredicate() instanceof Operator))
                 throw new RuntimeException("Invalid Operation contents: " + this); //should never happen
 
-       return makeName(getPredicate().name(), ((Product)getSubject()).term);
+       return makeName(getPredicate().toString(), ((Product)getSubject()).term);
     }
 
     
@@ -163,7 +163,7 @@ public class Operation extends Inheritance {
             return null;
         }
 
-        String operator = raw[0].name().toString();
+        String operator = raw[0].toString();
         if (operator.charAt(0)!= NALOperator.OPERATION.ch) {
             //prepend '^' if missing
             operator = NALOperator.OPERATION.symbol + operator;

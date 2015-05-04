@@ -1,10 +1,15 @@
 package nars.nal.term;
 
+import nars.util.data.Utf8;
+
+import java.util.Arrays;
+
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound2 extends Compound {
 
-    private CharSequence cachedName = null;
-    private int cachedHash = 0;
+    @Deprecated private String cachedName = null;
+    private int hash = 0;
+    private byte[] name;
 
     protected Compound2(Term a, Term b) {
         super(a, b);
@@ -17,17 +22,20 @@ abstract public class Compound2 extends Compound {
         return term[1];
     }
 
-    @Override
-    public int hashCode() {
-        int h = this.cachedHash;
-        if (h == 0) {
-            h = a().hashCode();
-            h = h * 31 + b().hashCode();
-            h = h * 31 + operator().hashCode();
-            this.cachedHash = h;
-        }
-        return h;
-    }
+//    @Override
+//    public int hashCode() {
+//        int h = this.cachedHash;
+//        if (h == 0) {
+//            h = a().hashCode();
+//            h = h * 31 + b().hashCode();
+//            h = h * 31 + operator().hashCode();
+//            this.cachedHash = h;
+//        }
+//        return h;
+//    }
+
+
+
 
     @Override
     public boolean equals(final Object that) {
@@ -77,7 +85,7 @@ abstract public class Compound2 extends Compound {
     public void invalidate() {
         if (hasVar()) {
             this.cachedName = null; //invalidate name so it will be (re-)created lazily
-            this.cachedHash = 0;
+            this.hash = 0;
             for (final Term t : term) {
                 if (t instanceof Compound)
                     ((Compound) t).invalidate();
@@ -92,14 +100,28 @@ abstract public class Compound2 extends Compound {
     }
 
     @Override
-    public CharSequence name() {
-        if (cachedName == null)
-            cachedName = makeName();
-        return cachedName;
+    public byte[] name() {
+        if (cachedName == null) {
+            cachedName = makeName().toString();
+
+            name = Utf8.toUtf8(cachedName);
+            hash = Arrays.hashCode(name);
+        }
+        return name;
     }
 
     @Override
+    public int hashCode() {
+        if (cachedName == null) {
+            name();
+        }
+        return hash;
+    }
+
+    @Deprecated @Override
     public CharSequence nameCached() {
         return cachedName;
     }
+
+
 }

@@ -157,8 +157,8 @@ public abstract class Statement extends Compound2 {
      * @return The nameStr of the term
      */
     final protected static CharSequence makeStatementNameSB(final Term subject, final NALOperator relation, final Term predicate) {
-        final CharSequence subjectName = subject.name();
-        final CharSequence predicateName = predicate.name();
+        final CharSequence subjectName = subject.toString();
+        final CharSequence predicateName = predicate.toString();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
         
         StringBuilder sb = new StringBuilder(length)
@@ -175,8 +175,8 @@ public abstract class Statement extends Compound2 {
     }
     
     final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
-        final CharSequence subjectName = subject.name();
-        final CharSequence predicateName = predicate.name();
+        final CharSequence subjectName = subject.toString();
+        final CharSequence predicateName = predicate.toString();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
 
         StringBuilder cb = new StringBuilder(length);

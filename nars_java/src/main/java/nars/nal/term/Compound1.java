@@ -1,9 +1,15 @@
 package nars.nal.term;
 
+import nars.util.data.Utf8;
+
+import java.util.Arrays;
+
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound1 extends Compound {
 
-    private CharSequence cachedName = null;
+    private String cachedName = null;
+    byte[] name = null;
+    int hash;
 
     public Compound1(Term the) {
         super(the);
@@ -13,9 +19,14 @@ abstract public class Compound1 extends Compound {
         return term[0];
     }
 
+
+
     @Override
     public int hashCode() {
-        return the().hashCode() + operator().hashCode() * 31;
+        if (cachedName == null) {
+            name();
+        }
+        return hash;
     }
 
     @Override
@@ -58,10 +69,14 @@ abstract public class Compound1 extends Compound {
 
 
     @Override
-    public CharSequence name() {
-        if (cachedName == null)
-            cachedName = makeName();
-        return cachedName;
+    public byte[] name() {
+        if (cachedName == null) {
+            cachedName = makeName().toString();
+
+            name = Utf8.toUtf8(cachedName);
+            hash = Arrays.hashCode(name);
+        }
+        return name;
     }
 
     @Override

@@ -62,7 +62,7 @@ public class Idea implements Iterable<Concept> {
             }
         }
         else {
-            return t.name();
+            return t.toString();
         }
     }
     
