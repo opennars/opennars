@@ -184,6 +184,18 @@ abstract public class AbstractHaiQBrain<S,A> {
             }
         }
 
+        /*
+        //https://github.com/davidrobles/reinforcement-learning/blob/master/src/net/davidrobles/rl/algorithms/QLearning.java
+        double updateValue = reward + (gamma * nextStateNextActionValue) - table.getValue(state, action);
+        double newValue = table.getValue(state, action) + (alpha * updateValue);
+
+
+        //https://github.com/davidrobles/reinforcement-learning/blob/master/src/net/davidrobles/rl/algorithms/TabularSARSA.java
+        double updateValue = reward + (gamma * nextStateNextActionValue) - table.getValue(state, action);
+        double newValue = table.getValue(state, action) + (alpha * updateValue);
+        table.setValue(new QPair<S, A>(state, action), newValue);
+         */
+
         lastAction = nextAction;
         return nextAction;
     }

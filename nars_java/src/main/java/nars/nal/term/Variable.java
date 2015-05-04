@@ -259,8 +259,26 @@ public class Variable extends Atom {
 
     public static int compare(final Variable a, final Variable b) {
         int i = a.name().compareTo(b.name());
-        if (i == 0)
-            return Texts.compare(a.getScope().name(), b.getScope().name());
+        if (i == 0) {
+            boolean ascoped = a.hasScope();
+            boolean bscoped = b.hasScope();
+            if (!ascoped && !bscoped) {
+                int as = System.identityHashCode(a.scope);
+                int bs = System.identityHashCode(b.scope);
+                return Integer.compare(as, bs);
+            }
+            else if (ascoped && !bscoped) {
+                return -1;
+            }
+            else if (bscoped && !ascoped) {
+                return 1;
+            }
+            else {
+                return Texts.compare(a.getScope().name(), b.getScope().name());
+            }
+
+
+        }
         return i;
     }
 

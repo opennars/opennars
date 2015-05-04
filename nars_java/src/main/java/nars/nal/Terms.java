@@ -585,7 +585,7 @@ public class Terms {
                     //verify consistency of compareTo() and equals()
                     boolean equal = a.equals(b);
                     if ((equal && (c!=0)) || (!equal && (c==0))) {
-                        throw new RuntimeException("invalid order: " + a + " = " + b);
+                        throw new RuntimeException("invalid order (" + c + "): " + a + " = " + b);
                     }
                 }
 

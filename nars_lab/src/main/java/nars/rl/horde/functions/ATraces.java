@@ -32,7 +32,7 @@ public class ATraces implements Traces {
 
     protected ATraces(RealVector prototype, double threshold, int size) {
         this.prototype = prototype;
-        vector = size > 0 ? prototype.copy() : null;
+        vector = prototype.copy(); //size > 0 ? prototype.copy() : null;
         this.threshold = threshold;
     }
 
@@ -54,8 +54,12 @@ public class ATraces implements Traces {
     }
 
     protected void updateVector(double lambda, RealVector phi) {
-        vector.mapMultiplyToSelf(lambda);
-        vector.combineToSelf(1, 1, phi);
+        if (vector.getDimension()!=phi.getDimension())
+            vector = phi.copy();
+        else {
+            vector.mapMultiplyToSelf(lambda);
+            vector.combineToSelf(1, 1, phi);
+        }
     }
 
     private boolean clearRequired(RealVector phi, double lambda) {

@@ -93,7 +93,8 @@ public class Horde<A> implements Serializable {
         return afterFunctions.add(function);
     }
 
-    public boolean addDemon(Demon<A> demon) {
-        return demons.add(demon);
+    public Horde<A> addDemon(Demon<A> demon) {
+        demons.add(demon);
+        return this;
     }
 }

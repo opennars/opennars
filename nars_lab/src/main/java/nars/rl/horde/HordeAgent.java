@@ -55,6 +55,27 @@ public class HordeAgent<A> {
 
     }
 
+    public static class Direct implements Projector {
+
+        private RealVector obs;
+
+        @Override
+        public RealVector project(RealVector obs) {
+            this.obs= obs;
+            return obs;
+        }
+
+        @Override
+        public int vectorSize() {
+            return obs.getDimension();
+        }
+
+        @Override
+        public double vectorNorm() {
+            return obs.getNorm();
+        }
+    }
+
     private static final long serialVersionUID = -8430893512617299110L;
 
     protected final ControlLearner<A> control;

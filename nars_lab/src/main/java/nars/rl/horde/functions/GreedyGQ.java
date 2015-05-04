@@ -83,13 +83,9 @@ public class GreedyGQ<A> implements HordeAgent.OffPolicyLearner<A> {
 
     @Override
     public A proposeAction(RealVector x_t) {
-        return decide(target, x_t);
+        return Policy.decide(target, x_t);
     }
 
-    public A decide(Policy<A> policy, RealVector x) {
-        policy.update(x);
-        return policy.sampleAction();
-    }
 
     @Override
     public GQ predictor() {
