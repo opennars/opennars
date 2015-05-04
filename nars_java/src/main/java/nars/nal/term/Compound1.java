@@ -73,4 +73,9 @@ abstract public class Compound1 extends Compound {
         }
         return hash;
     }
+
+    @Override
+    public byte[] nameCached() {
+        return name;
+    }
 }

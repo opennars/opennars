@@ -1134,9 +1134,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return Utf8.fromUtf8(name());
     }
 
-    @Deprecated public CharSequence nameCached() {
-        return null;
-    }
+    abstract public byte[] nameCached();
 
 //    @Deprecated public static class UnableToCloneException extends RuntimeException {
 //

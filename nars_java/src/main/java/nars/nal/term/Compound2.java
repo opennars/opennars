@@ -7,9 +7,8 @@ import java.util.Arrays;
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound2 extends Compound {
 
-    @Deprecated private String cachedName = null;
     private int hash = 0;
-    private byte[] name;
+    private byte[] name = null;
 
     protected Compound2(Term a, Term b) {
         super(a, b);
@@ -43,15 +42,24 @@ abstract public class Compound2 extends Compound {
         if (that == null) return false;
 
         if (getClass()!=that.getClass()) return false;
+
         Compound2 c = (Compound2)that;
-        //if (operator()!=c.operator()) return false;
 
-        if (getTemporalOrder() != c.getTemporalOrder()) return false;
-        if (getComplexity() != c.getComplexity()) return false;
+        if ((nameCached()!=null && c.nameCached()!=null)) {
+            return Arrays.equals(name(), c.name());
+        }
+        else {
+            //compare components without generating name
 
-        if (a().equals(c.a()) && b().equals(c.b())) {
-            share(c);
-            return true;
+            //if (operator()!=c.operator()) return false;
+
+            if (getTemporalOrder() != c.getTemporalOrder()) return false;
+            if (getComplexity() != c.getComplexity()) return false;
+
+            if (a().equals(c.a()) && b().equals(c.b())) {
+                share(c);
+                return true;
+            }
         }
         return false;
 
@@ -84,7 +92,7 @@ abstract public class Compound2 extends Compound {
     @Override
     public void invalidate() {
         if (hasVar()) {
-            this.cachedName = null; //invalidate name so it will be (re-)created lazily
+            this.name = null; //invalidate name so it will be (re-)created lazily
             this.hash = 0;
             for (final Term t : term) {
                 if (t instanceof Compound)
@@ -101,10 +109,8 @@ abstract public class Compound2 extends Compound {
 
     @Override
     public byte[] name() {
-        if (cachedName == null) {
-            cachedName = makeName().toString();
-
-            name = Utf8.toUtf8(cachedName);
+        if (name == null) {
+            name = makeKey();
             hash = Arrays.hashCode(name);
         }
         return name;
@@ -112,15 +118,15 @@ abstract public class Compound2 extends Compound {
 
     @Override
     public int hashCode() {
-        if (cachedName == null) {
+        if (name == null) {
             name();
         }
         return hash;
     }
 
     @Deprecated @Override
-    public CharSequence nameCached() {
-        return cachedName;
+    public byte[] nameCached() {
+        return name;
     }
 
 

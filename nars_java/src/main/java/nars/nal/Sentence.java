@@ -236,7 +236,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      */
     @Override
     public int hashCode() {
-        if ((this.hash == 0) && (stamp!=null)) {
+        if ((this.hash == 0) /*&& (stamp!=null)*/) {
             this.hash = Objects.hash(term, punctuation, truth, stamp);
         }
         return hash;
@@ -262,9 +262,6 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
             if (!this.stamp.equals(that.stamp, true, true, false, true))
                 return false;
         }
-        if (term) {
-            if (!equalTerms(that)) return false;
-        }
         if (truth) {
             if (this.truth==null) {
                 if (that.truth!=null) return false;
@@ -272,6 +269,9 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
             else {
                 if (!this.truth.equals(that.truth)) return false;
             }
+        }
+        if (term) {
+            if (!equalTerms(that)) return false;
         }
 
         return true;
@@ -547,6 +547,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     public CharSequence toString(final Memory memory, final boolean showStamp) {
         return toString(new StringBuilder(), memory, showStamp);
     }
+
     /**
      * Get a String representation of the sentence for display purpose
      *

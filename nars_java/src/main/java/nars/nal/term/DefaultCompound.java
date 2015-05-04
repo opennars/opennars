@@ -100,4 +100,8 @@ abstract public class DefaultCompound extends Compound {
     }
 
 
+    @Override
+    public byte[] nameCached() {
+        return name;
+    }
 }
