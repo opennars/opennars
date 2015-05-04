@@ -1,0 +1,20 @@
+//Javascript declaration, then reset (won't reset javascript context, that's what we make use of)
+//the cards (what NARS needs to find out): (E,4), (K,1), (K,4), (K,7)
+js("this.lookCard=function(a){ a=a.toString(); if(a.indexOf('#')==-1) { return; } javax.swing.JOptionPane.showMessageDialog(null, 'I will look at the other side of the card '+a+' now'); if(a.indexOf('(*,{E}') != -1){ nar.addInput('<(*,{E},{4}) --> card>.'); } if(a.indexOf('(*,{K}') != -1){ nar.addInput('<(*,{K},{1}) --> card>.'); } if(a.indexOf(',{4})') != -1){ nar.addInput('<(*,{A},{4}) --> card>.'); } if(a.indexOf(',{7})') != -1){ nar.addInput('<(*,{K},{7}) --> card>.'); } }")!
+*decisionthreshold=0.05
+
+***Wason Selection Task
+//The cards E, K, 4, 7 are present, each card has a symbol on one side, and a number on the other:
+(&&,<#n1 --> num>,<#n2 --> num>,<#s1 --> sym>,<#s2 --> sym>,<{(*,{E},#n1),(*,{K},#n2),(*,#s1,{4}),(*,#s2,{7})} --> card>).
+//E is vocalic:
+<{E} --> [vocalic]>.
+//K is not vocalic:
+(--,<{K} --> [vocalic]>).
+//4 is even:
+<{4} --> [even]>.
+//7 is not even:
+(--,<{7} --> [even]>).
+//If there is a vocal on one side, is there a even number on the other?
+<(&&,<#voc --> [vocalic]>,<(*,#voc,$num) --> card>) ==> <$num --> [even]>>?
+//If you wonder whether something is a card, pick it:
+<wonder(<$sth --> card>) =|> js("this.lookCard(arg[0])",$sth)>!
