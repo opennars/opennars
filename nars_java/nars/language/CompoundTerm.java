@@ -137,31 +137,28 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
         return (CompoundTerm)c;
     }
     
-    protected void transformIndependentVariableToDependent(HashMap<String,Variable> vars, CompoundTerm T, Term Scope) { //a special instance of transformVariableTermsDeep in 1.7
+    protected void transformIndependentVariableToDependent(HashMap<String,Variable> vars, CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
         Term[] term=T.term;
         for (int i = 0; i < term.length; i++) {
             Term t = term[i];
             if (t.hasVar()) {
                 if (t instanceof CompoundTerm) {
-                    transformIndependentVariableToDependent(vars, (CompoundTerm) t, Scope);
+                    transformIndependentVariableToDependent(vars, (CompoundTerm) t);
                 } else if (t instanceof Variable) {  /* it's a variable */
-                    Term varscope=((Variable) t).getScope();
-                    if(varscope.equals(Scope)) {
-                        term[i] = vars.get(t.toString());
-                    }
+                    term[i] = vars.get(t.toString());
                 }
             }
         }
     }
     
-    public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T, Term Scope) {
+    public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
         T=T.cloneDeep(); //we will operate on a copy
         int counter = (int) (T.toString().chars().filter(num -> num == Symbols.VAR_INDEPENDENT).count()); //if we only add some more as needed its fine as long as its not less
         HashMap<String,Variable> vars = new HashMap<>();
         for(int i=1;i<=counter;i++) {
             vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
         }
-        transformIndependentVariableToDependent(vars, T, Scope);
+        transformIndependentVariableToDependent(vars, T);
         return T;
     }
 
