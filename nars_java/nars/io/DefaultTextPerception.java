@@ -27,6 +27,7 @@ import nars.operator.io.Echo;
 import nars.operator.io.PauseInput;
 import nars.operator.io.Reboot;
 import nars.operator.io.Reset;
+import nars.operator.io.SetDecisionThreshold;
 import nars.operator.io.SetVolume;
 
 /**
@@ -145,7 +146,7 @@ public class DefaultTextPerception implements Plugin, EventObserver {
         //reset
         parsers.add(new TextReaction() {
             @Override public Object react(String input) {                
-                if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start") 
+                if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start") && !input.startsWith("*decisionthreshold") 
                         && !input.startsWith("*stop") && !input.startsWith("*volume"))) //TODO!
                     return new Reset(input);
                 return null;
@@ -202,6 +203,13 @@ public class DefaultTextPerception implements Plugin, EventObserver {
                     if (p.length == 2) {
                         int noiseLevel = Integer.parseInt(p[1].trim());
                         return new SetVolume(noiseLevel);
+                    }
+                }
+                if (input.indexOf(Symbols.SET_DECISION_LEVEL_COMMAND)==0) {
+                    String[] p = input.split("=");
+                    if (p.length == 2) {
+                        double threshold = Double.parseDouble(p[1].trim());
+                        return new SetDecisionThreshold(threshold);
                     }
                 }
                 return null;                
