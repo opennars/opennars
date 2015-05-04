@@ -62,9 +62,11 @@ public class RLNario extends NARio  {
         nar.param.shortTermMemoryHistory.set(5);
 
         new RLNario(nar,
-                new RawPerception("r", 0.8f),
-                new HaiSOMPerception("s", 3, 0.4f),
-                new AEPerception("a", 0.5f, 5, 1)
+                //new RawPerception("r", 0.8f),
+                new RawPerception.BipolarDirectPerception("r", 0.6f)
+                //,new HaiSOMPerception("s", 2, 0.4f),
+                //new AEPerception("a", 0.5f, 15, 2).setLearningRate(0.002).setSigmoid(true),
+                //new AEPerception("b", 0.3f, 15).setLearningRate(0.02).setSigmoid(false)
         );
 
     }

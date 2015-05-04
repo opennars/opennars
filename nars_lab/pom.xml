@@ -54,6 +54,17 @@
             <version>2.7.8</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>visualize</artifactId>
+            <version>0.18</version>
+        </dependency>
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>WebcamCapture</artifactId>
+            <version>0.18</version>
+        </dependency>
+
 
         <!--
         <dependency>

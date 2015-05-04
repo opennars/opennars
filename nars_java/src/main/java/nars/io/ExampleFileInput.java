@@ -4,7 +4,6 @@
  */
 package nars.io;
 
-import com.sun.xml.internal.ws.util.QNameMap;
 import nars.NAR;
 import nars.ProtoNAR;
 import nars.io.condition.OutputCondition;

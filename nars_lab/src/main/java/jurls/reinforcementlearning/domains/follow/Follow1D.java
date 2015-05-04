@@ -10,6 +10,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class Follow1D implements RLEnvironment {
     private final int history = 64;
 
 
-    final int historyPoints = 3; //includes current value
+    final int historyPoints = 1; //includes current value
     
     final int historyInterval = history / (historyPoints+1); //how many history points to skip for each observation
     
@@ -108,16 +109,14 @@ public class Follow1D implements RLEnvironment {
     @Override
     public double[] observe() {
         if (observation == null) {
-            observation = new double[historyPoints];
+            observation = new double[historyPoints*2];
         }
         //Arrays.fill(observation, -1);
         double my = 0, target = 0;
-        for (int i = 0; i < historyPoints; i++) {
+        for (int i = 0; i < historyPoints;) {
             int j = positions.size() - 1 - (i * historyInterval);
-            if (j >= 0) {
-                my = positions.get(j);
-                target = targets.get(j);
-            }
+            my = positions.get(j);
+            target = targets.get(j);
             //observation[i+historyPoints] = my - 0.5;
             //int index = Discretize.i(target, discretization);
 
@@ -125,16 +124,16 @@ public class Follow1D implements RLEnvironment {
 //                double v = Discretize.pSmoothDiscrete(target, k, discretization);
 //                observation[i * discretization + k] = v;
 //            }
-            observation[i] = target; // - my;
+            observation[i++] = 2 * ( target - 0.5 );
+            observation[i++] = 2 * ( my - 0.5 );
         }
-        //System.out.println(Arrays.toString(observation));
         return observation;
     }
 
     @Override
     public double getReward() {
         double dist = Math.abs(myPos - targetPos) / maxPos;
-        return (0.5 - dist) * 2;
+        return 0.05 - dist;
     }
 
     public void updateTarget(int time) {        
@@ -211,13 +210,13 @@ public class Follow1D implements RLEnvironment {
 
         if (myPos > maxPos) {
             myPos = maxPos;
-            //myV = 0;
-            myV = -myV/2; //bounce
+            myV = 0;
+            //myV = -myV/2; //bounce
         }
         if (myPos < 0) {
             myPos = 0;
-            //myV = 0;
-            myV = -myV/2; //bounce
+            myV = 0;
+            //myV = -myV/2; //bounce -- may not work well, if it oscillates
         }
 
 

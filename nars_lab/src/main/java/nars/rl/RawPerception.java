@@ -8,6 +8,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /** inputs the perceived data directly as unipolar frequency data
@@ -22,6 +23,9 @@ public class RawPerception implements Perception {
     private QLAgent agent;
     final List<Compound> states = new ArrayList();
 
+    double min = -1;
+    double max = 1.0;
+
     public RawPerception(String id, float confidence) {
         this.confidence = confidence;
         this.id = id;
@@ -32,6 +36,22 @@ public class RawPerception implements Perception {
         this.env = env;
         this.agent = agent;
 
+    }
+
+    public void setMin(double min) {
+        this.min = min;
+    }
+
+    public void setMax(double max) {
+        this.max = max;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public double getMax() {
+        return max;
     }
 
     @Override
@@ -58,15 +78,20 @@ public class RawPerception implements Perception {
     }
 
     public String getStateTerm(int s) {
-        return getStateTermBinaryProduct(s);
+        return getStateTermRadix(s, 2);
     }
 
-    public String getStateTermBinaryProduct(int t) {
+    public String getStateTermRadix(int t, int radix) {
         if (t == 0) return "(0)";
 
         String x = "(";
-        //String bin = Integer.toBinaryString(t);
-        String bin = Integer.toOctalString(t);
+
+        String bin;
+        switch(radix) {
+            case 2: bin = Integer.toBinaryString(t); break;
+            case 8: bin = Integer.toOctalString(t); break;
+            default: bin = Integer.toString(t); break;
+        }
 
         for (char c : bin.toCharArray()) {
             x += c + ",";
@@ -82,11 +107,9 @@ public class RawPerception implements Perception {
         return (Compound) nar.term("<" + id + " --> [" + getStateTerm(i) + "]>");
     }
 
-    public float getFrequency(double d) {
-        float f = (float)(d / 2f) + 0.5f;
-        f = Math.min(1.0f, f);
-        f = Math.max(0.0f, f);
-        return f;
+    public float getFrequency(final double d) {
+        double f = (d - min) / (max - min);
+        return (float)f;
     }
 
     @Override
@@ -100,5 +123,36 @@ public class RawPerception implements Perception {
             }
         }
         return false;
+    }
+
+    public static class BipolarDirectPerception extends RawPerception {
+
+        public BipolarDirectPerception(String id, float confidence) {
+            super(id, confidence);
+            setMin(0);
+            setMax(1.0);
+        }
+
+        @Override
+        public Iterable<Task> perceive(NAR nar, double[] input, double t) {
+            double[] r = new double[input.length*2];
+            int i = 0;
+            for (int j = 0; j < input.length; j++) {
+                double x = input[j];
+                double pos, neg;
+                if (x > 0) {
+                    pos = x;
+                    neg = 0;
+                }
+                else {
+                    neg = -x;
+                    pos = 0;
+                }
+
+                r[i++] = pos;
+                r[i++] = neg;
+            }
+            return super.perceive(nar, r, t);
+        }
     }
 }

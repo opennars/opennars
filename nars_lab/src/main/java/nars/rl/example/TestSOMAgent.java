@@ -2,8 +2,7 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.tetris.Tetris;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import jurls.reinforcementlearning.domains.follow.Follow1D;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -19,7 +18,6 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
-import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -158,26 +156,25 @@ public class TestSOMAgent extends JPanel {
 
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
-        //RLEnvironment d = new Follow1D();
+        RLEnvironment d = new Follow1D();
         //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
-        RLEnvironment d = new Tetris(10, 8);
+        //RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
         Global.DEBUG = false;
         Global.DEBUG_BAG = false;
-        //Global.TRUTH_EPSILON = 0.01f;
+        //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 25;
-        final int cyclesPerFrame = 20;
-        float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
+        int conceptsPerCycle = 50;
+        final int cyclesPerFrame = 10;
+        float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
 
-        //Perception p = new GNGPerception(64);
-        //Perception p = new AEPerception(18,2);
 
+        //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
 
         Default dd = new Default(concepts, conceptsPerCycle, 4) {
 
@@ -235,7 +232,7 @@ public class TestSOMAgent extends JPanel {
             }
         };
 
-        dd.setTaskLinkBagSize(32);
+        dd.setTaskLinkBagSize(24);
         dd.setInternalExperience(null);
 
 
@@ -246,8 +243,11 @@ public class TestSOMAgent extends JPanel {
         dd.param.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.5f),
-                new AEPerception("A", 0.6f, 32)
+                new RawPerception.BipolarDirectPerception("L", 0.5f)
+
+                //new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
+                //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
+
                 /*new RawPerception("P", 0.8f) {
                     @Override
                     public float getFrequency(double d) {
