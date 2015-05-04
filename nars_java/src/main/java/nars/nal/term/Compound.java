@@ -301,27 +301,32 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         public Variable apply(Compound containingCompound, Variable v, int depth);
     }
 
-    final static class VariableID {
-        final byte[] name;
-        final int hash;
 
-        public VariableID(final Variable v) {
-            this.name = v.name();
-            this.hash = v.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return Arrays.equals(((VariableID) obj).name, name);
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-    }
 
     public static class VariableNormalization implements VariableTransform {
+
+        /** necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap */
+        final static class VariableID {
+
+            final Variable v;
+
+            public VariableID(final Variable v) {
+                this.v = v;
+            }
+
+            @Override
+            public boolean equals(final Object obj) {
+                return Arrays.equals(((VariableID) obj).name(), name());
+            }
+
+            public byte[] name() { return v.name(); }
+
+            @Override
+            public int hashCode() {
+                return v.hashCode();
+            }
+        }
+
         Map<VariableID, Variable> rename = Global.newHashMap();
 
         final Compound result;
@@ -343,15 +348,16 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
             if (vv == null) {
                 //type + id
-                String n = Variable.getName(v.getType(), rename.size() + 1);
-                vv = new Variable(n, true);
+                vv = new Variable(
+                    Variable.getName(v.getType(), rename.size() + 1),
+                    true
+                );
                 rename.put(vname, vv);
-                if (!n.equals(v.name()))
+                if (!vv.name().equals(v.name()))
                     renamed = true;
             }
 
             return vv;
-
         }
 
         public boolean hasRenamed() {
