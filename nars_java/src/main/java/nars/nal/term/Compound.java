@@ -24,16 +24,16 @@ import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.Memory;
 import nars.io.Symbols;
-import nars.io.Texts;
 import nars.nal.NALOperator;
 import nars.nal.Statement;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
+import nars.util.ByteBuf;
 import nars.util.data.Utf8;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
-import java.lang.reflect.Type;
+import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
@@ -103,6 +103,25 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         final CharSequence tString = singleTerm.toString();
         size += tString.length();
         return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
+    }
+    protected static byte[] makeCompoundKey(final NALOperator op, final Term singleTerm) {
+
+        String opString = op.toString();
+
+        final byte[] tString = singleTerm.name();
+
+        //return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
+
+        byte[] x = ByteBuf.create(1 + opString.length() + 1 + tString.length + 1)
+                .add((byte)COMPOUND_TERM_OPENER.ch)
+                .add(opString)
+                .add((byte) Symbols.ARGUMENT_SEPARATOR)
+                .add(tString)
+                .add((byte) COMPOUND_TERM_CLOSER.ch)
+                .toBytes();
+
+
+        return x;
     }
 
     /**
@@ -492,8 +511,16 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      *
      * @return the oldName of the term
      */
-    protected CharSequence makeName() {
+    @Deprecated protected CharSequence makeName() {
         return makeCompoundName(operator(), term);
+    }
+
+    protected byte[] makeKey() {
+        return makeCompoundKey(operator(), term);
+    }
+
+    protected byte[] makeCompoundKey(NALOperator operator, Term[] term) {
+        return Utf8.toUtf8( makeName().toString() );
     }
 
 

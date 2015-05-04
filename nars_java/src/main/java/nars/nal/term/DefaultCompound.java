@@ -1,5 +1,6 @@
 package nars.nal.term;
 
+import nars.util.FastByteComparisons;
 import nars.util.data.Utf8;
 
 import java.util.Arrays;
@@ -7,7 +8,6 @@ import java.util.Arrays;
 /** implementation of a compound which generates and stores its name as a CharSequence, which is used for equality and hash*/
 abstract public class DefaultCompound extends Compound {
 
-    @Deprecated protected String cachedName = null;
     byte[] name = null;
     int hash = 0;
 
@@ -41,8 +41,20 @@ abstract public class DefaultCompound extends Compound {
     }
 
     @Override
-    public int compareSubterms(Compound otherCompoundOfEqualType) {
-        return Integer.compare(name.hashCode(), ((DefaultCompound)otherCompoundOfEqualType).name.hashCode());
+    public int compareSubterms(final Compound otherCompoundOfEqualType) {
+        DefaultCompound o = ((DefaultCompound) otherCompoundOfEqualType);
+        int h = Integer.compare(hashCode(), o.hashCode());
+        if (h == 0) {
+            byte[] n1 = name();
+            byte[] n2 = o.name();
+            int c = FastByteComparisons.compare(n1, n2);
+            if ((c == 0) && (n1!=n2)) {
+                //equal string, ensure that the same byte[] instance is shared to accelerate equality comparison
+                share(o);
+            }
+            return c;
+        }
+        return h;
     }
 
     protected void share(DefaultCompound equivalent) {
@@ -72,18 +84,12 @@ abstract public class DefaultCompound extends Compound {
         //new Exception().printStackTrace(); //for debugging when this is called
 
         if (this.name == null) {
-            this.cachedName = makeName().toString();
-
-            name = Utf8.toUtf8(cachedName);
+            name = makeKey();
             hash = Arrays.hashCode(name);
         }
         return this.name;
     }
 
-    @Deprecated @Override
-    public String nameCached() {
-        return this.cachedName;
-    }
 
     @Override
     public int hashCode() {

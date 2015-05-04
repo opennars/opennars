@@ -45,6 +45,10 @@ public class Negation extends Compound1 {
         return makeCompoundName(NALOperator.NEGATION, negated());
     }
 
+    @Override
+    protected byte[] makeKey() {
+        return makeCompoundKey(NALOperator.NEGATION, negated());
+    }
 
     /**
      * Clone an object

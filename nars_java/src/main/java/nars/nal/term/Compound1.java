@@ -7,7 +7,6 @@ import java.util.Arrays;
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound1 extends Compound {
 
-    private String cachedName = null;
     byte[] name = null;
     int hash;
 
@@ -17,16 +16,6 @@ abstract public class Compound1 extends Compound {
 
     public Term the() {
         return term[0];
-    }
-
-
-
-    @Override
-    public int hashCode() {
-        if (cachedName == null) {
-            name();
-        }
-        return hash;
     }
 
     @Override
@@ -47,8 +36,8 @@ abstract public class Compound1 extends Compound {
     @Override
     public void invalidate() {
         if (hasVar()) {
+            name = null;
             Term n = the();
-            cachedName = null;
             if (n instanceof Compound) {
                 ((Compound)n).invalidate();
             }
@@ -70,17 +59,18 @@ abstract public class Compound1 extends Compound {
 
     @Override
     public byte[] name() {
-        if (cachedName == null) {
-            cachedName = makeName().toString();
-
-            name = Utf8.toUtf8(cachedName);
+        if (name == null) {
+            name = makeKey();
             hash = Arrays.hashCode(name);
         }
         return name;
     }
 
     @Override
-    public CharSequence nameCached() {
-        return cachedName;
+    public int hashCode() {
+        if (name == null) {
+            name();
+        }
+        return hash;
     }
 }
