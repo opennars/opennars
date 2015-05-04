@@ -1,0 +1,20 @@
+''js("  javax.swing.JOptionPane.showMessageDialog(null, 'pay attention!') ")!
+
+
+
+js(" '<random --> [' + parseInt(Math.random()*0) + ']>. :|:' ")!
+''outputMustContain('<random --> [0]>. :|:')
+
+
+''produces a task
+js("'<a --> b>.'")!
+''outputMustContain('<a --> b>.')
+
+
+''produces a term implication
+js("'<a --> term>'")!
+''outputMustContain('<js("'<a --> term>'",$1,SELF) =/> <$1 <-> <a --> term>>>. :|: %1.00;0.90%')
+
+
+
+20
