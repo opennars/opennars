@@ -456,8 +456,11 @@ abstract public class Concept extends Item<Term> implements Termed {
         List<Task> existing = ques.isQuestion() ? questions : quests;
 
         if (Global.DEBUG) {
-            if (newTask.sentence.truth!=null)
+            if (newTask.sentence.truth!=null) {
+                System.err.println(newTask.sentence + " has non-null truth");
+                System.err.println(newTask.getExplanation());
                 throw new RuntimeException(newTask.sentence + " has non-null truth");
+            }
         }
 
 

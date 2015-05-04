@@ -35,10 +35,6 @@ abstract public class Image extends DefaultCompound {
 //        return relationIndex == ((Image)other).relationIndex;
 //    }
 
-    
-    
-    
-    
 
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
@@ -57,25 +53,27 @@ abstract public class Image extends DefaultCompound {
      * @return the oldName of the term
      */
     protected static CharSequence makeImageName(final NALOperator op, final Term[] arg, final int relationIndex) {
-        final int sizeEstimate = 24 * arg.length + 2;
-        
-        StringBuilder name = new StringBuilder(sizeEstimate)
-            .append(COMPOUND_TERM_OPENER.ch)
-            .append(op)
-            .append(Symbols.ARGUMENT_SEPARATOR)
-            .append(arg[relationIndex].toString());
-        
-        for (int i = 0; i < arg.length; i++) {
-            name.append(Symbols.ARGUMENT_SEPARATOR);
-            if (i == relationIndex) {
-                name.append(Symbols.IMAGE_PLACE_HOLDER);                
-            } else {
-                name.append(arg[i].toString());
-            }
-        }
-        name.append(COMPOUND_TERM_CLOSER.ch);
-        return name.toString();
+        throw new RuntimeException("should not be used, utf8 instead");
+//        final int sizeEstimate = 24 * arg.length + 2;
+//
+//        StringBuilder name = new StringBuilder(sizeEstimate)
+//            .append(COMPOUND_TERM_OPENER.ch)
+//            .append(op)
+//            .append(Symbols.ARGUMENT_SEPARATOR)
+//            .append(arg[relationIndex].toString());
+//
+//        for (int i = 0; i < arg.length; i++) {
+//            name.append(Symbols.ARGUMENT_SEPARATOR);
+//            if (i == relationIndex) {
+//                name.append(Symbols.IMAGE_PLACE_HOLDER);
+//            } else {
+//                name.append(arg[i].toString());
+//            }
+//        }
+//        name.append(COMPOUND_TERM_CLOSER.ch);
+//        return name.toString();
     }
+
     protected static byte[] makeImageKey(final NALOperator op, final Term[] arg, final int relationIndex) {
         final int sizeEstimate = 24 * arg.length + 2;
         ByteBuf b = ByteBuf.create(sizeEstimate)
