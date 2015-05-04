@@ -212,12 +212,9 @@ public class Conjunction extends Junction {
         return make(argument, temporalOrder);
     }
 
-    @Override
-    protected CharSequence makeName() {
-        return makeCompoundName( operator(),  term);
-    }
 
-    
+
+
     // overload this method by term type?
     /**
      * Try to make a new compound from two term. Called by the logic rules.

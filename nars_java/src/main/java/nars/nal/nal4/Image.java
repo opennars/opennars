@@ -6,6 +6,7 @@ import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
+import nars.util.ByteBuf;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
@@ -75,7 +76,25 @@ abstract public class Image extends DefaultCompound {
         name.append(COMPOUND_TERM_CLOSER.ch);
         return name.toString();
     }
-    
+    protected static byte[] makeImageKey(final NALOperator op, final Term[] arg, final int relationIndex) {
+        final int sizeEstimate = 24 * arg.length + 2;
+        ByteBuf b = ByteBuf.create(sizeEstimate)
+                .add((byte)COMPOUND_TERM_OPENER.ch)
+                .add(op.toBytes())
+                .add((byte) Symbols.ARGUMENT_SEPARATOR)
+                .add(arg[relationIndex].name());
+
+
+        for (int i = 0; i < arg.length; i++) {
+            b.add((byte) Symbols.ARGUMENT_SEPARATOR);
+            if (i == relationIndex) {
+                b.add((byte)Symbols.IMAGE_PLACE_HOLDER);
+            } else {
+                b.add(arg[i].name());
+            }
+        }
+        return b.add((byte)COMPOUND_TERM_CLOSER.ch).toBytes();
+    }
     
     /**
      * Get the other term in the Image
@@ -84,11 +103,15 @@ abstract public class Image extends DefaultCompound {
      */
     @Override
     public CharSequence makeName() {
+
         return makeImageName(operator(), term, relationIndex);
     }
 
 
-    
+    @Override
+    protected byte[] makeKey() {
+        return makeImageKey(operator(), term, relationIndex);
+    }
 
     /**
      * Get the relation term in the Image

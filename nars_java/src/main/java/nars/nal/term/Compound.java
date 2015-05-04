@@ -33,7 +33,6 @@ import nars.util.data.Utf8;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
-import java.io.ByteArrayOutputStream;
 import java.util.*;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
@@ -104,13 +103,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         size += tString.length();
         return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
-    protected static byte[] makeCompoundKey(final NALOperator op, final Term singleTerm) {
+    protected static byte[] makeCompound1Key(final NALOperator op, final Term singleTerm) {
 
         final byte[] opString = op.toBytes();
 
         final byte[] tString = singleTerm.name();
-
-        //return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
 
         return ByteBuf.create(1 + opString.length + 1 + tString.length + 1)
                 .add((byte)COMPOUND_TERM_OPENER.ch)
@@ -121,6 +118,20 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
                 .toBytes();
     }
 
+    protected static byte[] makeCompoundNKey(final NALOperator op, final Term... arg) {
+
+        ByteBuf b = ByteBuf.create(64)
+                .add((byte)COMPOUND_TERM_OPENER.ch)
+                .add(op.toBytes());
+
+        for  (final Term t : arg) {
+            b.add((byte)Symbols.ARGUMENT_SEPARATOR).add(t.name());
+        }
+
+        return b.add((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
+
+    }
+
     /**
      * default method to make the oldName of a compound term from given fields
      *
@@ -129,24 +140,26 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * @return the oldName of the term
      */
     protected static CharSequence makeCompoundName(final NALOperator op, final Term... arg) {
-        int size = 1 + 1;
-
-        String opString = op.toString();
-        size += opString.length();
-        /*for (final Term t : arg)
-            size += 1 + t.name().length();*/
-
-
-        final StringBuilder n = new StringBuilder(size)
-                .append(COMPOUND_TERM_OPENER.ch).append(opString);
-
-        for (final Term t : arg) {
-            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.toString());
-        }
-
-        n.append(COMPOUND_TERM_CLOSER.ch);
-
-        return n.toString();
+        throw new RuntimeException("Not necessary, utf8 keys should be used instead");
+//
+//        int size = 1 + 1;
+//
+//        String opString = op.toString();
+//        size += opString.length();
+//        /*for (final Term t : arg)
+//            size += 1 + t.name().length();*/
+//
+//
+//        final StringBuilder n = new StringBuilder(size)
+//                .append(COMPOUND_TERM_OPENER.ch).append(opString);
+//
+//        for (final Term t : arg) {
+//            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.toString());
+//        }
+//
+//        n.append(COMPOUND_TERM_CLOSER.ch);
+//
+//        return n.toString();
     }
 
     /**
@@ -513,12 +526,10 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     protected byte[] makeKey() {
-        return makeCompoundKey(operator(), term);
+        return makeCompoundNKey(operator(), term);
     }
 
-    protected byte[] makeCompoundKey(NALOperator operator, Term[] term) {
-        return Utf8.toUtf8( makeName().toString() );
-    }
+
 
 
     abstract public byte[] name();

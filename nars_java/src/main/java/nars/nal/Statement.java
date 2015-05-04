@@ -21,6 +21,7 @@
 package nars.nal;
 
 import nars.Global;
+import nars.io.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.InstanceProperty;
@@ -33,11 +34,11 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
 import nars.nal.term.Compound2;
 import nars.nal.term.Term;
+import nars.util.ByteBuf;
 
 import java.util.Arrays;
 
-import static nars.nal.NALOperator.STATEMENT_CLOSER;
-import static nars.nal.NALOperator.STATEMENT_OPENER;
+import static nars.nal.NALOperator.*;
 
 /**
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
@@ -145,7 +146,13 @@ public abstract class Statement extends Compound2 {
      */
     @Override
     protected CharSequence makeName() {
+
         return makeStatementName(getSubject(), operator(), getPredicate());
+    }
+
+    @Override
+    protected byte[] makeKey() {
+        return makeStatementKey(getSubject(), operator(), getPredicate());
     }
 
     /**
@@ -174,28 +181,41 @@ public abstract class Statement extends Compound2 {
         return sb.toString();
     }
     
-    final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
-        final CharSequence subjectName = subject.toString();
-        final CharSequence predicateName = predicate.toString();
-        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
+    @Deprecated final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
+        throw new RuntimeException("Not necessary, utf8 keys should be used instead");
+//        final CharSequence subjectName = subject.toString();
+//        final CharSequence predicateName = predicate.toString();
+//        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
+//
+//        StringBuilder cb = new StringBuilder(length);
+//
+//        cb.append(STATEMENT_OPENER.ch);
+//
+//        //Texts.append(cb, subjectName);
+//        cb.append(subjectName);
+//
+//        cb.append(' ').append(relation).append(' ');
+//        //cb.append(relation);
+//
+//        //Texts.append(cb, predicateName);
+//        cb.append(predicateName);
+//
+//        cb.append(STATEMENT_CLOSER.ch);
+//
+//        return cb.toString();
+    }
 
-        StringBuilder cb = new StringBuilder(length);
-        
-        cb.append(STATEMENT_OPENER.ch);
-        
-        //Texts.append(cb, subjectName);
-        cb.append(subjectName);
-                
-        cb.append(' ').append(relation).append(' ');
-        //cb.append(relation);
-        
-        //Texts.append(cb, predicateName);
-        cb.append(predicateName);
-                
-        cb.append(STATEMENT_CLOSER.ch);
-                        
-        return cb.toString();
-    }    
+
+    final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate) {
+        return ByteBuf.create(64)
+                .add((byte)STATEMENT_OPENER.ch)
+                .add(subject.name())
+                .add((byte) ' ' ).add(relation.toBytes()).add((byte) ' ' )
+                .add(predicate.name())
+                .add((byte)STATEMENT_CLOSER.ch)
+                .toBytes();
+    }
+
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>

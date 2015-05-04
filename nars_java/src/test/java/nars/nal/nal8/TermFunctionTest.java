@@ -23,7 +23,7 @@ public class TermFunctionTest extends JavaNALTest {
 
     public void testIO(String input, String output) {
 
-        TextOutput.out(nar);
+        //TextOutput.out(nar);
 
         nar.mustOutput(16, output);
         nar.input(input);

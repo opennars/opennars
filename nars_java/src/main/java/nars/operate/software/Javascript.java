@@ -14,7 +14,7 @@ import javax.script.SimpleBindings;
  */
 public class Javascript extends TermFunction implements Mental {
     
-    ScriptEngine js = null;      
+    ScriptEngine js = null;
 
     public Javascript() {
         super("^js");
@@ -36,8 +36,10 @@ public class Javascript extends TermFunction implements Mental {
         System.arraycopy(args, 1, scriptArguments, 0, args.length-1);
         
         Bindings bindings = new SimpleBindings();
-        bindings.put("scriptArguments", scriptArguments);
+        bindings.put("arg", scriptArguments);
         bindings.put("memory", getMemory());
+        bindings.put("nar", nar);
+
         
         String input = (args[0].name()).toString();
         if (input.charAt(0) == '"') {

@@ -21,7 +21,6 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
 import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
@@ -47,7 +46,7 @@ public class Negation extends Compound1 {
 
     @Override
     protected byte[] makeKey() {
-        return makeCompoundKey(NALOperator.NEGATION, negated());
+        return makeCompound1Key(NALOperator.NEGATION, negated());
     }
 
     /**

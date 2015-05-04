@@ -288,7 +288,7 @@ public class NarseseParserTest {
         assertNotNull(x);
         assertEquals(Variable.class, x.getClass());
         Variable i = (Variable)x;
-        assertEquals(prefix + "x", i.name());
+        assertEquals(prefix + "x", i.toString());
         return i;
     }
 

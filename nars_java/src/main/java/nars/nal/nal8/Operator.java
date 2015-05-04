@@ -61,7 +61,7 @@ public abstract class Operator extends Atom implements IOperator {
 
 
 
-    @Override public boolean setEnabled(NAR n, boolean enabled) {
+    @Override public boolean setEnabled(final NAR n, final boolean enabled) {
         if (enabled)
             this.nar = n;
         else
