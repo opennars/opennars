@@ -17,7 +17,6 @@
 
 package nars.operate.mental;
 
-import nars.Memory;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
@@ -39,13 +38,12 @@ public class Hesitate extends Operator implements Mental {
      * To activate a concept as if a question has been asked about it
      *
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args) {
         Term term = args[0];
-        Concept concept = memory.conceptualize(Consider.budgetMentalConcept(operation), term);
+        Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(false);
         return null;
     }

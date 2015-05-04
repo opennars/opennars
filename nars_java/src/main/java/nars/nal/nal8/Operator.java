@@ -26,7 +26,6 @@ import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.nal.Task;
 import nars.nal.TruthValue;
 import nars.nal.nal7.Tense;
@@ -78,11 +77,10 @@ public abstract class Operator extends Atom implements IOperator {
      * operation
      *
      * @param args Arguments of the operation, both input (constant) and output (variable)
-     * @param memory The memory to work on
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation operation, Term[] args, Memory memory);
+    protected abstract List<Task> execute(Operation operation, Term[] args);
 
 
     @Override
@@ -156,7 +154,7 @@ public abstract class Operator extends Atom implements IOperator {
 
         List<Task> feedback;
         try {
-            feedback = execute(op, args, memory);
+            feedback = execute(op, args);
         }
         catch (Exception e) {
             feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());

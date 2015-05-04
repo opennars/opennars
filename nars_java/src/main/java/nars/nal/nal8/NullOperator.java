@@ -20,7 +20,6 @@
  */
 package nars.nal.nal8;
 
-import nars.Memory;
 import nars.Global;
 import nars.nal.Task;
 import nars.nal.term.Term;
@@ -44,9 +43,9 @@ public class NullOperator extends Operator {
 
     /** called from Operator */
     @Override 
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
         if (Global.DEBUG) {
-            memory.emit(getClass(), Arrays.toString(args));
+            nar.memory.emit(getClass(), Arrays.toString(args));
         }
         return null;
     }

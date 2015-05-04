@@ -8,6 +8,7 @@ import nars.operate.math.Add;
 import nars.operate.math.Count;
 import nars.operate.mental.*;
 import nars.operate.meta.Reflect;
+import nars.operate.software.Javascript;
 import nars.operate.software.NumericCertainty;
 import nars.operate.software.Scheme;
 
@@ -70,6 +71,7 @@ public class DefaultOperators {
 
             new Schizo(),     //change Memory's SELF term (default: SELF)
 
+            new Javascript()
          /* 
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)

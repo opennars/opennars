@@ -236,4 +236,15 @@ public class Symbols {
     */
 
     public static final String SELF = "SELF";
+
+    public static boolean isPunctuation(final char c) {
+        switch (c) {
+            case Symbols.JUDGMENT:
+            case Symbols.GOAL:
+            case Symbols.QUEST:
+            case Symbols.QUESTION:
+                return true;
+        }
+        return false;
+    }
 }

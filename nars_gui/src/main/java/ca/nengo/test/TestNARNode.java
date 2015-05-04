@@ -16,7 +16,6 @@ import ca.nengo.ui.model.widget.SliderNode;
 import nars.nal.term.Atom;
 import nars.prototype.Default;
 import nars.Events;
-import nars.Memory;
 import nars.NAR;
 import nars.Global;
 import nars.gui.NARSwing;
@@ -108,7 +107,7 @@ public class TestNARNode  {
             nar.on(new Operator("^object") {
 
                 @Override
-                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                protected List<Task> execute(Operation operation, Term[] args) {
                     return null;
                 }
             });
@@ -193,7 +192,7 @@ public class TestNARNode  {
             nar.on(new Operator("^move") {
 
                 @Override
-                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                protected List<Task> execute(Operation operation, Term[] args) {
 
                     double dx = 64;
                     boolean error = true;
@@ -224,7 +223,7 @@ public class TestNARNode  {
             nar.on(new Operator("^turn") {
 
                 @Override
-                protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                protected List<Task> execute(Operation operation, Term[] args) {
                     double dA = Math.PI / 4; //radians
 
                     boolean error = true;

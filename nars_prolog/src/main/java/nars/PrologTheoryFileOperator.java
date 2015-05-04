@@ -36,7 +36,7 @@ public class PrologTheoryFileOperator extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
         if (args.length != 3) {
             return null;
         }
@@ -94,7 +94,7 @@ public class PrologTheoryFileOperator extends Operator {
         }
         
         
-        memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryPath );
+        nar.memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryPath );
 
         return null;
     }

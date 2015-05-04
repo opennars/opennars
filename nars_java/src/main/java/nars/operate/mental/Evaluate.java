@@ -18,7 +18,6 @@
 package nars.operate.mental;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
 import nars.io.Symbols;
@@ -45,14 +44,13 @@ public class Evaluate extends Operator implements Mental {
     /**
      * To create a quest with a given statement
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args) {
         Compound content = Sentence.termOrException(args[0]);
 
-        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, memory, Tense.Present));
+        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, nar.memory, Tense.Present));
         Budget budget = new Budget(Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
         
         return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );

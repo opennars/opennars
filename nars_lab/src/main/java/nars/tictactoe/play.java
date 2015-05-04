@@ -18,7 +18,6 @@
 package nars.tictactoe;
 
 import automenta.vivisect.Video;
-import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nal.Task;
@@ -295,7 +294,7 @@ class play extends javax.swing.JFrame {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          

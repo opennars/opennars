@@ -3,7 +3,6 @@ package nars.rl.example;
 import automenta.vivisect.Video;
 import nars.Events;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
 import nars.gui.NARSwing;
@@ -72,7 +71,7 @@ public class TwoPointRegulator extends JPanel {
         }
 
         @Override
-        protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected java.util.List<Task> execute(Operation operation, Term[] args) {
 
             if (args.length == 3) {
                 throw new RuntimeException("how did this get derived");

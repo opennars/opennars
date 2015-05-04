@@ -26,7 +26,7 @@ public class PrologFact extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
 
         Prolog p = context.getProlog(null); //default
 

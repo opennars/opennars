@@ -2,7 +2,6 @@ package nars.rl;
 
 import com.google.common.collect.Iterables;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import nars.Memory;
 import nars.NAR;
 import nars.event.FrameReaction;
 import nars.nal.DirectProcess;
@@ -98,7 +97,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
             @Override
-            protected java.util.List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected java.util.List<Task> execute(Operation operation, Term[] args) {
 
                 if (args.length != 2) { // || args.length==3) { //left, self
                     //System.err.println(this + " ?? " + Arrays.toString(args));

@@ -38,7 +38,7 @@ public class PrologTheoryStringOperator extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
         if (args.length != 3) {
             return null;
         }
@@ -61,7 +61,7 @@ public class PrologTheoryStringOperator extends Operator {
             return null;
         }
         
-        memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryContent );
+        nar.memory.emit(Prolog.class, prologInterpreterKey + "=" + theoryContent );
 
         return null;
     }

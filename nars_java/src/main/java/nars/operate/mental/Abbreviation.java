@@ -65,11 +65,10 @@ public class Abbreviation extends AbstractOperator {
         /**
          * To create a judgment with a given statement
          * @param args Arguments, a Statement followed by an optional tense
-         * @param memory The memory in which the operation is executed
          * @return Immediate results as Tasks
          */
         @Override
-        protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected ArrayList<Task> execute(Operation operation, Term[] args) {
             
             Term compound = args[0];
             
@@ -79,7 +78,7 @@ public class Abbreviation extends AbstractOperator {
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT,
                     new TruthValue(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamp(operation, memory, Tense.Present));
+                    new Stamp(operation, nar.memory, Tense.Present));
             
             float quality = BudgetFunctions.truthToQuality(sentence.truth);
             

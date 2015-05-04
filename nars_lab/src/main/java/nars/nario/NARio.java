@@ -5,7 +5,6 @@ import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Events;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.event.Reaction;
 import nars.gui.NARSwing;
@@ -21,7 +20,6 @@ import nars.prototype.Default;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -288,7 +286,7 @@ public class NARio extends Run implements RLEnvironment {
                 nar.on(new NullOperator("^" + "keyboard" + kk) {
 
                     @Override
-                    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                    protected List<Task> execute(Operation operation, Term[] args) {
 
                         String state = args[0].toString();
 
@@ -299,7 +297,7 @@ public class NARio extends Run implements RLEnvironment {
 
                         mario.keys[kk] = state.equals("on");
 
-                        return super.execute(operation, args, memory);
+                        return super.execute(operation, args);
                     }
 
                 });

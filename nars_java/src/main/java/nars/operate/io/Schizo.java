@@ -1,7 +1,6 @@
 package nars.operate.io;
 
 
-import nars.Memory;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
@@ -17,8 +16,8 @@ public class Schizo extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-        memory.setSelf(args[0]);
+    protected List<Task> execute(Operation operation, Term[] args) {
+        nar.memory.setSelf(args[0]);
         return null;
     }
 

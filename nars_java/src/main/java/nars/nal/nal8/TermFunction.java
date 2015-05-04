@@ -1,7 +1,8 @@
 package nars.nal.nal8;
 
-import nars.Memory;
+import com.google.common.collect.Lists;
 import nars.Global;
+import nars.io.Symbols;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Implication;
@@ -12,15 +13,13 @@ import nars.nal.term.Variable;
 
 import java.util.ArrayList;
 
-import static com.google.common.collect.Lists.newArrayList;
-
 
 /** 
  * Superclass of functions that execute synchronously (blocking, in thread) and take
  * N input parameters and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class TermFunction extends Operator implements TermEval {
+public abstract class TermFunction<O> extends Operator  {
 
     static final Variable var=new Variable("$y");
 
@@ -33,12 +32,54 @@ public abstract class TermFunction extends Operator implements TermEval {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    @Override abstract public Term function(Term[] x);
+    abstract public O function(Term[] x);
 
 
+    protected ArrayList<Task> result(Operation operation, Term y, Term[] x0, Term lastTerm) {
+        //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
+        //which wont happen on temporal induction with dependent variable for good rule,
+        //because in general the two dependent variables of event1 and event2
+        //can not be assumed to be related, but here we have to assume
+        //it if we don't want to use the "resultof"-relation.
 
 
-    protected static Compound[] executeTerm(Operation operation) {
+        Compound actual = Implication.make(
+                operation.cloneWithArguments(x0, var),
+                Similarity.make(var, y),
+                TemporalRules.ORDER_FORWARD);
+
+        if (actual == null) return null;
+
+        Compound actual_dep_part = lastTerm!=null ? Similarity.make(lastTerm, y) : null;
+
+
+        float confidence = operation.getTask().sentence.truth.getConfidence();
+        //TODO add a delay discount/projection for executions that happen further away from creation time
+
+        return Lists.newArrayList(
+
+                nar.memory.newTask(actual).judgment()
+                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+                        .truth(1f, confidence)
+                        .present()
+                        .parent(operation.getTask())
+                        .get(),
+
+                actual_dep_part != null ?
+                        nar.memory.newTask(actual_dep_part).judgment()
+                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+                                .truth(1f, confidence)
+                                .present()
+                                .parent(operation.getTask())
+                                .get() : null
+
+        );
+
+    }
+
+    @Override
+    protected ArrayList<Task> execute(final Operation operation, final Term[] args) {
+
         TermFunction op = (TermFunction) operation.getOperator();
 
         Term[] rawArgs = operation.getArguments().term;
@@ -56,61 +97,34 @@ public abstract class TermFunction extends Operator implements TermEval {
         Term[] x0 = operation.getArgumentTerms(false);
         Term[] x = operation.getArgumentTerms(true);
 
-        Term y = op.function(x);
-        if (y == null) {
-            return null;
+        final Object y = function(x);
+
+        if (y == null) return null;
+
+        if (y instanceof Task) {
+            return Lists.newArrayList((Task)y);
+        }
+        else if (y instanceof Term) {
+            return result(operation, (Term) y, x0, lastTerm);
         }
 
-        //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
-        //which wont happen on temporal induction with dependent variable for good rule,
-        //because in general the two dependent variables of event1 and event2
-        //can not be assumed to be related, but here we have to assume
-        //it if we don't want to use the "resultof"-relation.
+        String ys = y.toString();
+        char ysz = ys.charAt(ys.length() - 1);
 
+        //1. try to parse as task
+        try {
+            Task t = nar.task(ys);
+            if (t != null)
+                return Lists.newArrayList(t);
+        } catch (Throwable t) {
+        }
 
-        return new Compound[] {
+        //2. try to parse as term
+        Term t = nar.term(ys);
+        if (t!=null)
+            return result(operation, t, x0, lastTerm);
 
-                Implication.make(
-                            operation.cloneWithArguments(x0, var),
-                            Similarity.make(var, y),
-                        TemporalRules.ORDER_FORWARD),
-
-                lastTerm!=null ? Similarity.make(lastTerm, y) : null
-        };
-    }
-
-    @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory m) {
-
-
-
-        Compound[] e = executeTerm(operation);
-        Compound actual = e[0];
-        Compound actual_dep_part = e[1];
-        if (actual == null) return null;
-
-
-        float confidence = operation.getTask().sentence.truth.getConfidence();
-        //TODO add a delay discount/projection for executions that happen further away from creation time
-
-        return newArrayList(
-
-                m.newTask(actual).judgment()
-                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                        .truth(1f, confidence)
-                        .present()
-                        .parent(operation.getTask())
-                        .get(),
-
-                actual_dep_part!=null?
-                        m.newTask(actual_dep_part).judgment()
-                        .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
-                        .truth(1f, confidence)
-                        .present()
-                        .parent(operation.getTask())
-                        .get() : null
-
-        );
+        throw new RuntimeException(this + " return value invalid: " + y);
     }
 
     /** the term that the output will inherit from; analogous to the 'Range' of a function in mathematical terminology */

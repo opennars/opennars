@@ -1,6 +1,5 @@
 package nars.operate.mental;
 
-import nars.Memory;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
@@ -36,7 +35,7 @@ abstract public class Decision extends Operator {
         reset();
     }    
     
-    @Override protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    @Override protected List<Task> execute(Operation operation, Term[] args) {
         Term x = args[0];        
         vote.put(x, vote.getOrDefault(x, 0)+1);
         if (first == null)

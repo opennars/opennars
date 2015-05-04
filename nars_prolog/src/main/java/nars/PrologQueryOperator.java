@@ -43,7 +43,7 @@ public class PrologQueryOperator extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
         if (args.length < 2) {
             // TODO< error report >
             return null;
@@ -92,11 +92,11 @@ public class PrologQueryOperator extends Operator {
         
         
         // TODO< convert the result from the prolog to strings >
-        memory.emit(Prolog.class, query + " | TODO");
+        nar.memory.emit(Prolog.class, query + " | TODO");
         //memory.output(Prolog.class, query + " | " + result);
        
         // set result values
-        Term[] resultTerms = getResultVariablesFromPrologVariables(variableInfos, memory);
+        Term[] resultTerms = getResultVariablesFromPrologVariables(variableInfos, nar.memory);
        
         // create evaluation result
         int i;
@@ -121,7 +121,7 @@ public class PrologQueryOperator extends Operator {
         );
         
         
-        memory.emit(Task.class, resultInheritance);
+        nar.memory.emit(Task.class, resultInheritance);
         
         ArrayList<Task> results = new ArrayList<>(1);
         throw new RuntimeException("API Upgrade not finished here:");

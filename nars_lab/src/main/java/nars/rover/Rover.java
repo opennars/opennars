@@ -1,7 +1,6 @@
 package nars.rover;
 
 import automenta.vivisect.Video;
-import nars.Memory;
 import nars.NAR;
 import nars.io.ChangedTextInput;
 import nars.io.Texts;
@@ -9,7 +8,6 @@ import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
-import nars.operate.app.plan.TemporalParticlePlanner;
 import nars.prototype.Default;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
@@ -512,7 +510,7 @@ public class Rover extends PhysicsModel {
     protected void addOperators() {
         nar.on(new NullOperator("^motor") {
             @Override
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args) {
                 Term t1 = args[0];
                 float priority = operation.getTask().getPriority();
 

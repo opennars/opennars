@@ -45,16 +45,15 @@ public class Want extends Operator implements Mental {
     /**
      * To create a goal with a given statement
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args) {
 
         Term content = args[0];                
         
         TruthValue truth = new TruthValue(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, memory, Tense.Present));
+        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, nar.memory, Tense.Present));
         
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
 

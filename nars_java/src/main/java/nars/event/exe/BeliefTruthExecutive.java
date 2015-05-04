@@ -86,7 +86,7 @@ public class BeliefTruthExecutive extends AbstractExecutive {
 
         this.operator = new Operator(operatorName) {
             @Override
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args) {
                 BeliefTruthExecutive.this.execute(operator, args);
                 return null;
             }

@@ -17,7 +17,6 @@
 
 package nars.operate.mental;
 
-import nars.Memory;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.NullOperator;
@@ -39,11 +38,10 @@ public class Register extends Operator implements Mental {
     /**
      * To register a new operate
      * @param args Arguments, a Statement followed by an optional tense
-     * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args) {
         Operator op=new NullOperator(args[0].toString());
         nar.on(op);  // add error checking
         return null;

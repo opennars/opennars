@@ -27,7 +27,6 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.event.AbstractReaction;
-import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
@@ -78,7 +77,7 @@ public class Say extends Operator {
     }
 
     @Override
-    protected synchronized List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected synchronized List<Task> execute(Operation operation, Term[] args) {
 
         this.memory = memory;
         this.currentOperation = operation;

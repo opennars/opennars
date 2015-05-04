@@ -17,7 +17,6 @@
 
 package nars.operate.mental;
 
-import nars.Memory;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
@@ -36,11 +35,10 @@ public class FeelHappy extends Feel implements Mental {
     /**
      * To get the current value of an internal sensor
      * @param args Arguments, a set and a variable
-     * @param memory The memory in which the operation is executed
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
-        return feeling(memory.emotion.happy(), memory);
+    protected ArrayList<Task> execute(Operation operation, Term[] args) {
+        return feeling(nar.memory.emotion.happy(), nar.memory);
     }    
 }

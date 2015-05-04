@@ -20,7 +20,6 @@
  */
 package nars.grid2d.operator;
 
-import nars.Memory;
 import nars.grid2d.TestChamber;
 import nars.nal.Task;
 import nars.nal.term.Term;
@@ -42,7 +41,7 @@ public class Goto extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected List<Task> execute(Operation operation, Term[] args) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          

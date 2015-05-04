@@ -26,7 +26,6 @@ import automenta.vivisect.swing.NWindow;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.NARPrologMirror;
 import nars.budget.Budget;
@@ -233,7 +232,7 @@ public class TicTacToeWithProlog extends JPanel {
         }
 
         @Override
-        protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected List<Task> execute(Operation operation, Term[] args) {
             
             int i = -1;
             try {

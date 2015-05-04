@@ -10,6 +10,6 @@ public interface TermEval {
 
 
     /** Term[] is the argument tuple.  returns a value Term, or null if non-evaluable */
-    public Term function(Term[] x);
+    public Object function(Term[] x);
 
 }

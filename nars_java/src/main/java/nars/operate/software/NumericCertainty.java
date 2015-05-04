@@ -1,6 +1,5 @@
 package nars.operate.software;
 
-import nars.Memory;
 import nars.nal.term.Compound;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -19,7 +18,7 @@ public class NumericCertainty extends Operator implements Mental{
     }
     
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args, Memory memory) {
+    protected ArrayList<Task> execute(Operation operation, Term[] args) {
         if (args.length != 4) {
             // TODO< error report >
             return null;

@@ -256,7 +256,7 @@ abstract public class VNCControl extends VNCClient {
     }
     private void addOperators() {
         nar.on(new NullOperator("^keyboard") {
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args) {
 
 
                 if (!narsCanType || operation.getTask().isInput()) return null;

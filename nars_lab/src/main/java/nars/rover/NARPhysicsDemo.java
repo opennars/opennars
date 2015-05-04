@@ -1,6 +1,5 @@
 package nars.rover;
 
-import nars.Memory;
 import nars.NAR;
 import nars.prototype.Default;
 import nars.io.ChangedTextInput;
@@ -56,7 +55,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         arm = getModel();
         nar.on(new NullOperator("^joint") {
             @Override
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args) {
 
                 if ((autonomous) || (operation.getTask().isInput())) {
 
@@ -88,7 +87,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
                     }
                 }
 
-                return super.execute(operation, args, memory);
+                return super.execute(operation, args);
             }
         });
         

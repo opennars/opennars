@@ -107,33 +107,33 @@ public class Operation extends Inheritance {
         return (Operator)getPredicate();
     }
     
-    @Override
-    protected CharSequence makeName() {
-        if (Global.DEBUG)
-            if (!(getSubject() instanceof Product && getPredicate() instanceof Operator))
-                throw new RuntimeException("Invalid Operation contents: " + this); //should never happen
-
-       return makeName(getPredicate().toString(), ((Product)getSubject()).term);
-    }
-
-    
-    public static CharSequence makeName(final CharSequence op, final Term[] arg) {
-        final StringBuilder nameBuilder = new StringBuilder(16) //estimate
-                .append(COMPOUND_TERM_OPENER.ch).append(op);
-        
-        int n=0;
-        for (final Term t : arg) {
-            /*if(n==arg.length-1) {
-                break;
-            }*/
-            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-            nameBuilder.append(t.toString());
-            n++;
-        }
-        
-        nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
-        return nameBuilder.toString();
-    }
+//    @Override
+//    protected CharSequence makeName() {
+//        if (Global.DEBUG)
+//            if (!(getSubject() instanceof Product && getPredicate() instanceof Operator))
+//                throw new RuntimeException("Invalid Operation contents: " + this); //should never happen
+//
+//       return makeName(getPredicate().toString(), ((Product)getSubject()).term);
+//    }
+//
+//
+//    public static CharSequence makeName(final CharSequence op, final Term[] arg) {
+//        final StringBuilder nameBuilder = new StringBuilder(16) //estimate
+//                .append(COMPOUND_TERM_OPENER.ch).append(op);
+//
+//        int n=0;
+//        for (final Term t : arg) {
+//            /*if(n==arg.length-1) {
+//                break;
+//            }*/
+//            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
+//            nameBuilder.append(t.toString());
+//            n++;
+//        }
+//
+//        nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
+//        return nameBuilder.toString();
+//    }
     
     
     /*public Operator getOperator() {
@@ -210,13 +210,14 @@ public class Operation extends Inheritance {
 
         Term[] x;
 
-        if (evaluate) {
+        /*if (evaluate) {
+
             x = new Term[numInputs];
             for (int i = 0; i < numInputs; i++) {
                 x[i] = evaluate(getOperator().getMemory(), rawArgs[i]);
             }
         }
-        else {
+        else */ {
             x = Arrays.copyOfRange(rawArgs, 0, numInputs);
         }
 
@@ -224,16 +225,13 @@ public class Operation extends Inheritance {
     }
 
     protected static Term evaluate(final Memory m, final Term x) {
-        if (x instanceof Operation) {
-            final Operation o = (Operation)x;
-            final Operator op = o.getOperator();
-            if (op instanceof TermEval) {
-//                CompoundTerm[] ee = ((TermFunction) op).executeTerm(o);
-//                if ((ee!=null) && (ee[0]!=null))
-//                    return ee[0];
-                return ((TermFunction)op).function(o.getArgumentTerms(true));
-            }
-        }
+//        if (x instanceof Operation) {
+//            final Operation o = (Operation)x;
+//            final Operator op = o.getOperator();
+//            if (op instanceof TermEval) {
+//                return ((TermFunction)op).function(o.getArgumentTerms(true));
+//            }
+//        }
 
         if (x instanceof Compound) {
             Compound ct = (Compound)x;

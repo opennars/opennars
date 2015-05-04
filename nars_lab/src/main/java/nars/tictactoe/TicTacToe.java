@@ -25,7 +25,6 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
-import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.event.Reaction;
@@ -225,7 +224,7 @@ public class TicTacToe extends JPanel {
         }
 
         @Override
-        protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+        protected List<Task> execute(Operation operation, Term[] args) {
             
             int i = -1;
             try {

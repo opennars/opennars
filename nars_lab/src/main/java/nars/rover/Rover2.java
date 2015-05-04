@@ -2,14 +2,12 @@ package nars.rover;
 
 import automenta.vivisect.Video;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
 import nars.prototype.Default;
-import nars.prototype.Neuromorphic;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
@@ -457,7 +455,7 @@ public class Rover2 extends PhysicsModel {
         nar.on(new NullOperator("^motor") {
 
             @Override
-            protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+            protected List<Task> execute(Operation operation, Term[] args) {
 
                 Term t1 = args[0];
 

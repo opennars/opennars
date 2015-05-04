@@ -27,21 +27,21 @@ public abstract class SynchronousSentenceFunction extends Operator {
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    abstract protected Collection<Sentence> function(Memory memory, Term[] x);
+    abstract protected Collection<Sentence> function(@Deprecated Memory memory, Term[] x);
     
 
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args, Memory m) {
+    protected List<Task> execute(Operation operation, Term[] args) {
 
-        Collection<Sentence> y = function(m, args);
+        Collection<Sentence> y = function(nar.memory, args);
         if (y == null) {
                 return null;
             }
 
         List<Task> result = new ArrayList(y.size());
         for (Sentence s : y) {
-            result.add( m.newTask(s).parent( operation.getTask() ).get() );
+            result.add( nar.memory.newTask(s).parent( operation.getTask() ).get() );
         }
 
         return result;
