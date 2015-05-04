@@ -125,7 +125,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
                 .append(COMPOUND_TERM_OPENER.ch).append(opString);
 
         for (final Term t : arg) {
-            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.name());
+            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.toString());
         }
 
         n.append(COMPOUND_TERM_CLOSER.ch);
@@ -273,7 +273,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     public static class VariableNormalization implements VariableTransform {
-        Map<Variable, Variable> rename = Global.newHashMap();
+        Map<String, Variable> rename = Global.newHashMap();
 
         final Compound result;
         boolean renamed = false;
@@ -286,9 +286,9 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
         @Override
         public Variable apply(final Compound ct, final Variable v, int depth) {
-            Variable vname = v;
-            /*if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
-                vname = vname.toString() + v.getScope().name();*/
+            String vname = v.toString();
+//            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
+//                vname = vname.toString() + v.getScope().name();
 
             Variable vv = rename.get(vname);
 

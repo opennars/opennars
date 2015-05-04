@@ -37,6 +37,7 @@ import java.util.TreeSet;
 
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -58,11 +59,11 @@ public class TermTest {
 
             assertTrue(term1 instanceof Compound);
             assertTrue(term2 instanceof Compound);
-            assert(!term1String.equals(term2String));
+            assertNotEquals(term1String,term2String);
 
-            assert(term1.hashCode() == term2.hashCode());
-            assert(term1.equals(term2));
-            assert(term1.compareTo(term2)==0);        
+            assertEquals(term1,term2);
+            assertEquals(term1,term2);
+            assertEquals(0, term1.compareTo(term2));
         }
         catch (Exception e) { assertTrue(e.toString(), false); }
     }
@@ -108,7 +109,7 @@ public class TermTest {
         // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
         Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
 
-        assertTrue(term1.toString().equals( term1a.toString() ));
+        assertEquals(term1a.toString(), term1.toString());
         assertTrue(term1.getComplexity() > 1);
         assertTrue(term1.getComplexity() == term2.getComplexity());
 

@@ -61,7 +61,7 @@ public class Variable extends Atom {
      * @param name A String read from input
      */
     public Variable(final String n, final boolean scope) {
-        super( n  ); //last character holds the scope number
+        super( n  );
         this.type = ensureValidVariableType(n.charAt(0));
         this.scope = scope;
     }

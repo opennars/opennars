@@ -33,7 +33,7 @@ abstract public class DefaultCompound extends Compound {
             if (/*operator()!=t.operator()|| */ getComplexity() != t.getComplexity() )
                 return false;
         }
-        if (name().equals(t.name())) {
+        if (equalsName(t)) {
             share(t);
             return true;
         }

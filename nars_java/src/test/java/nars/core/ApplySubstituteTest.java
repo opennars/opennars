@@ -34,9 +34,9 @@ public class ApplySubstituteTest {
                 
         assertTrue(c.getComplexity() > originalComplexity);
         
-        assertTrue(ab.name().toString().equals(abS)); //ab unmodified
+        assertTrue(ab.toString().equals(abS)); //ab unmodified
         
-        assertTrue(!c.name().equals(abS)); //c is actually different
+        assertTrue(!c.toString().equals(abS)); //c is actually different
         assertTrue(!c.equals(ab));
         
     }

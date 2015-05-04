@@ -161,13 +161,7 @@ public class Atom implements Term {
         return equalsType(t) && equalsName(t);
     }
 
-    public boolean equalsType(final Term t) {
-        return Terms.equalType(this, t);
-    }
 
-    public boolean equalsName(final Term t) {
-        return hashCode() == t.hashCode() && Arrays.equals(name(), t.name());
-    }
 
     /**
      * Produce a hash code for the term

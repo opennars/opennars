@@ -127,7 +127,7 @@ public class Operation extends Inheritance {
                 break;
             }*/
             nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-            nameBuilder.append(t.name());
+            nameBuilder.append(t.toString());
             n++;
         }
         

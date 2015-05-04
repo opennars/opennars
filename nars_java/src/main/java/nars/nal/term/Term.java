@@ -25,6 +25,7 @@ import nars.Memory;
 import nars.io.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Named;
+import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import sun.misc.Unsafe;
 
@@ -32,6 +33,7 @@ import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Arrays;
 
 public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed {
 
@@ -125,6 +127,14 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     public boolean hasVarDep();
 
     public boolean hasVarQuery();
+
+    default public boolean equalsType(final Term t) {
+        return Terms.equalType(this, t);
+    }
+
+    default public boolean equalsName(final Term t) {
+        return hashCode() == t.hashCode() && Arrays.equals(name(), t.name());
+    }
 
 
 }

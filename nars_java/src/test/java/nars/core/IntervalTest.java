@@ -29,24 +29,24 @@ public class IntervalTest {
         
         Interval i1 = Interval.interval(1, dur5);
         assertTrue(i1.magnitude == 0);
-        assertTrue(i1.name().toString().equals("+1"));
+        assertTrue(i1.toString().equals("+1"));
         assertTrue(i1.cycles(dur5) == 1);
 
         //testing 2 = floor(dur5/2)
         Interval i2 = Interval.interval(2, dur5);
         assertEquals(1, i2.magnitude);
-        assertTrue(i2.name().toString().equals("+2"));
+        assertTrue(i2.toString().equals("+2"));
         assertEquals(3, i2.cycles(dur5));
         
         ////testing 2 = floor(dur5/2)
         Interval i3 = Interval.interval(3, dur5);
         assertEquals(1, i3.magnitude);
-        assertTrue(i3.name().toString().equals("+2"));
+        assertTrue(i3.toString().equals("+2"));
         assertEquals(3, i3.cycles(dur5));
         
         Interval i5 = Interval.interval(5, dur5);
         assertEquals(2, i5.magnitude);
-        assertTrue(i5.name().toString().equals("+3"));
+        assertTrue(i5.toString().equals("+3"));
         assertEquals(6, i5.cycles(dur5));
         
         /*for (int i = 0; i < 100; i++) {

@@ -28,7 +28,7 @@ public interface SetTensional extends Term {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    public static CharSequence makeSetName(final char opener, final char closer, final Term... arg) {
+    @Deprecated public static CharSequence makeSetName(final char opener, final char closer, final Term... arg) {
         int size = 1 + 1 - 1; //opener + closer - 1 [no preceding separator for first element]
 
         for (final Term t : arg)
@@ -40,7 +40,7 @@ public interface SetTensional extends Term {
         n.append(opener);
         for (int i = 0; i < arg.length; i++) {
             if (i!=0) n.append(Symbols.ARGUMENT_SEPARATOR);
-            n.append(arg[i].name());
+            n.append(arg[i].toString());
         }
         n.append(closer);
 

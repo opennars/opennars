@@ -62,14 +62,14 @@ abstract public class Image extends DefaultCompound {
             .append(COMPOUND_TERM_OPENER.ch)
             .append(op)
             .append(Symbols.ARGUMENT_SEPARATOR)
-            .append(arg[relationIndex].name());
+            .append(arg[relationIndex].toString());
         
         for (int i = 0; i < arg.length; i++) {
             name.append(Symbols.ARGUMENT_SEPARATOR);
             if (i == relationIndex) {
                 name.append(Symbols.IMAGE_PLACE_HOLDER);                
             } else {
-                name.append(arg[i].name());
+                name.append(arg[i].toString());
             }
         }
         name.append(COMPOUND_TERM_CLOSER.ch);
