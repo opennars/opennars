@@ -4,8 +4,8 @@
 (--,<{K} --> [vocalic]>).
 <{4} --> [even]>.
 (--,<{7} --> [even]>).
-<(&&,<$voc --> [vocalic]>,<(*,$voc,$var) --> card>) =|> <$var --> [even]>>?
-<pick(look,$card) =|> <$card --> card>>.
+<(&&,<#voc --> [vocalic]>,<(*,#voc,$num) --> card>) =|> <$num --> [even]>>?
+<wonder(<$sth --> card>) =|> pick($sth)>!
 //
 //Input was: The cards E, K, 4, 7 are observed like usual in Wason Selection task, each card has a symbol on one side, a number on the other
 //E is a vocal, K is not a vocal, 4 is even,  7 is not even.
@@ -17,5 +17,4 @@
 //Result 1.6.4:
 //
 // EXE $0.15;0.01;0.54$ ^pick([look, (*,#1,#2), SELF])=null
-// EXE $0.02;0.02;0.55$ ^pick([look, (*,{E},#1), SELF])=null
-   
+// EXE $0.02;0.02;0.55$ ^pick([look, (*,{4},#1), SELF])=null
