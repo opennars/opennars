@@ -1,0 +1,8 @@
+*decisionthreshold=0.05
+<{(*,{E},#n1),(*,{K},#n2),(*,#s1,{4}),(*,#s2,{7})} --> card>.
+<{E} --> [vocalic]>.
+(--,<{K} --> [vocalic]>).
+<{4} --> [even]>.
+(--,<{7} --> [even]>).
+<(&&,<#voc --> [vocalic]>,<(*,#voc,$var) --> card>) =|> <$var --> [even]>>?
+<(^wonder,$1) =|> pick($1)>!

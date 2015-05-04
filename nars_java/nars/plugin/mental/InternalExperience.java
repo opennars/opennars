@@ -34,6 +34,7 @@ import nars.operator.Operator;
 public class InternalExperience implements Plugin, EventObserver {
         
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER=0.1f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
@@ -63,6 +64,13 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     public void setMinimumCreationBudgetSummary(double val) {
         MINIMUM_BUDGET_SUMMARY_TO_CREATE=(float) val;
+    }
+    
+    public double getMinimumCreationBudgetSummaryWonder() {
+        return MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER;
+    }
+    public void setMinimumCreationBudgetSummaryWonder(double val) {
+        MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER=(float) val;
     }
     
     private Memory memory;
@@ -137,6 +145,12 @@ public class InternalExperience implements Plugin, EventObserver {
 
             Task task = (Task)a[0];                
 
+            if(task.sentence.punctuation == Symbols.QUESTION_MARK) {
+                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER) {
+                    return;
+                }
+            }
+            else
             if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
             }
