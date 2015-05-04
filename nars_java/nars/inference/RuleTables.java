@@ -154,9 +154,9 @@ public class RuleTables {
                             if (taskTerm instanceof Statement) {
                                 SyllogisticRules.detachment(taskSentence, belief, bIndex, nal);
                             }
-                        } else {
+                        } //else {
                             goalFromQuestion(task, taskTerm, nal);
-                        }
+                        //}
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
@@ -301,11 +301,13 @@ public class RuleTables {
                     }
                 }
             TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE*Parameters.CURIOSITY_DESIRE_CONFIDENCE_MUL);
-            if(goalterm!=null && !(goalterm instanceof Variable) && !goalterm.hasVarIndep()) {
+            if(goalterm!=null && !(goalterm instanceof Variable) && goalterm instanceof CompoundTerm) {
+                goalterm=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm, taskTerm);
                 Sentence sent=new Sentence(goalterm,Symbols.GOAL_MARK,truth,new Stamp(task.sentence.stamp,nal.memory.time()));
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
             }
-            if(goalterm2!=null && !(goalterm2 instanceof Variable) && !goalterm2.hasVarIndep()) {
+            if(goalterm2!=null && !(goalterm2 instanceof Variable) && goalterm2 instanceof CompoundTerm) {
+                goalterm2=((CompoundTerm)goalterm).transformIndependentVariableToDependentVar((CompoundTerm) goalterm2, taskTerm);
                 Sentence sent=new Sentence(goalterm2,Symbols.GOAL_MARK,truth.clone(),new Stamp(task.sentence.stamp,nal.memory.time()));
                 nal.singlePremiseTask(sent, new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)));
             }
