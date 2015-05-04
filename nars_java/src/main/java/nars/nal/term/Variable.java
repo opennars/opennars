@@ -263,6 +263,8 @@ public class Variable extends Atom {
             boolean ascoped = a.hasScope();
             boolean bscoped = b.hasScope();
             if (!ascoped && !bscoped) {
+                //if the two variables are each without scope, they are not equal.
+                //so use their identityHashCode to determine a stable ordering
                 int as = System.identityHashCode(a.scope);
                 int bs = System.identityHashCode(b.scope);
                 return Integer.compare(as, bs);

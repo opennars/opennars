@@ -254,11 +254,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     public void recurseSubtermsContainingVariables(final TermVisitor v, Term parent) {
         if (hasVar()) {
             v.visit(this, parent);
-            if (this instanceof Compound) {
-                for (Term t : ((Compound) this).term) {
+            //if (this instanceof Compound) {
+                for (Term t : term) {
                     t.recurseSubtermsContainingVariables(v, this);
                 }
-            }
+            //}
         }
     }
 
@@ -275,7 +275,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return (X) ptr;
     }
 
-    public static class VariableNormalization  {
+    public interface VariableTransform  {
+        public Variable apply(Compound containingCompound, Variable v);
+    }
+
+    public static class VariableNormalization implements VariableTransform {
         Map<CharSequence, Variable> rename = Global.newHashMap();
 
         final Compound result;
@@ -287,6 +291,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
                 this.result.transformVariableTermsDeep(this);
         }
 
+        @Override
         public Variable apply(Compound ct, Variable v) {
             CharSequence vname = v.name();
             if (!v.hasVarIndep() && v.hasScope()) //include the scope as part of its uniqueness
@@ -305,8 +310,6 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
             return vv;
 
-            //also use the instance of the previously normalized variable
-            //return vv;
         }
 
         public boolean hasRenamed() {
@@ -317,6 +320,22 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
             return result;
         }
     }
+
+/* UNTESTED
+    public Compound clone(VariableTransform t) {
+        if (!hasVar())
+            throw new RuntimeException("this VariableTransform clone should not have been necessary");
+
+        Compound result = cloneVariablesDeep();
+        if (result == null)
+            throw new RuntimeException("unable to clone: " + this);
+
+        result.transformVariableTermsDeep(t);
+
+        result.invalidate();
+
+        return result;
+    } */
 
     /**
      * Normalizes if contain variables which need to be finalized for use in a Sentence
@@ -407,7 +426,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
         return ((Compound) c);
     }
-    
+
 
 
 
@@ -619,14 +638,14 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return l;
     }
 
-    protected void transformVariableTermsDeep(VariableNormalization variableTransform) {
+    protected void transformVariableTermsDeep(VariableTransform variableTransform) {
         for (int i = 0; i < term.length; i++) {
             Term t = term[i];
 
             if (t.hasVar()) {
                 if (t instanceof Compound) {
                     ((Compound)t).transformVariableTermsDeep(variableTransform);
-                } else {  /* it's a variable */
+                } else if (t instanceof Variable) {  /* it's a variable */
                     term[i] = variableTransform.apply(this, (Variable)t);
                 }
             }
@@ -998,7 +1017,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return normalized;
     }
 
-    
+
 
     protected void setNormalized() {
         this.normalized = true;
