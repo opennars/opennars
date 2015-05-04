@@ -2,6 +2,7 @@ package nars.nal;
 
 
 import nars.io.Symbols;
+import nars.util.data.Utf8;
 
 public enum NALOperator {
 
@@ -87,6 +88,7 @@ public enum NALOperator {
 
     /** minimum NAL level required to use this operate, or 0 for N/A */
     public final int level;
+    private final byte[] symbolBytes;
 
     private NALOperator(String string, int minLevel) {
         this(string, minLevel, false);
@@ -98,6 +100,7 @@ public enum NALOperator {
 
     private NALOperator(String string, int minLevel, boolean relation, boolean innate) {
         this.symbol = string;
+        this.symbolBytes = Utf8.toUtf8(string);
         this.level = minLevel;
         this.relation = relation;
         this.isNative = innate;
@@ -106,6 +109,8 @@ public enum NALOperator {
         this.opener = name().endsWith("_OPENER");
         this.closer = name().endsWith("_CLOSER");
     }
+
+    public byte[] toBytes() { return symbolBytes; }
 
     @Override
     public String toString() { return symbol; }

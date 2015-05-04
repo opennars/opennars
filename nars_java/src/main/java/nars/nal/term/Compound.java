@@ -106,22 +106,19 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
     protected static byte[] makeCompoundKey(final NALOperator op, final Term singleTerm) {
 
-        String opString = op.toString();
+        final byte[] opString = op.toBytes();
 
         final byte[] tString = singleTerm.name();
 
         //return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
 
-        byte[] x = ByteBuf.create(1 + opString.length() + 1 + tString.length + 1)
+        return ByteBuf.create(1 + opString.length + 1 + tString.length + 1)
                 .add((byte)COMPOUND_TERM_OPENER.ch)
                 .add(opString)
                 .add((byte) Symbols.ARGUMENT_SEPARATOR)
                 .add(tString)
                 .add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
-
-
-        return x;
     }
 
     /**

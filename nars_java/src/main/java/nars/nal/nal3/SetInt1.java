@@ -32,4 +32,10 @@ public class SetInt1 extends Compound1 implements SetInt, SetTensional {
     protected CharSequence makeName() {
         return SetTensional.makeSetName(NALOperator.SET_INT_OPENER.ch, NALOperator.SET_INT_CLOSER.ch, the());
     }
+
+    @Override
+    protected byte[] makeKey() {
+        return SetTensional.makeKey(NALOperator.SET_INT_OPENER.ch, NALOperator.SET_INT_CLOSER.ch, the());
+    }
+
 }

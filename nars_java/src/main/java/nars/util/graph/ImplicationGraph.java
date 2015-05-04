@@ -203,7 +203,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
     }
     
-    public static class PostCondition extends Negation {
+    @Deprecated public static class PostCondition extends Negation {
         public PostCondition(final Term t) {
             super(t);                
             init(term);

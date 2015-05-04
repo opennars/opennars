@@ -73,6 +73,11 @@ public class SetIntN extends AbstractSetN implements SetInt {
     public CharSequence makeName() {
         return SetTensional.makeSetName(SET_INT_OPENER.ch, SET_INT_CLOSER.ch, term);
     }
-    
+
+    @Override
+    protected byte[] makeKey() {
+        return SetTensional.makeKey(NALOperator.SET_INT_OPENER.ch, NALOperator.SET_INT_CLOSER.ch, term);
+    }
+
 }
 

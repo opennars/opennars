@@ -32,4 +32,10 @@ public class SetExt1 extends Compound1 implements SetExt, SetTensional {
     protected CharSequence makeName() {
         return SetTensional.makeSetName(NALOperator.SET_EXT_OPENER.ch, NALOperator.SET_EXT_CLOSER.ch, the());
     }
+
+    @Override
+    protected byte[] makeKey() {
+        return SetTensional.makeKey(NALOperator.SET_EXT_OPENER.ch, NALOperator.SET_EXT_CLOSER.ch, the());
+    }
+
 }

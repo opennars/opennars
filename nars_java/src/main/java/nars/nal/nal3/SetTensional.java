@@ -4,6 +4,10 @@ package nars.nal.nal3;
 import nars.io.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.term.Term;
+import nars.util.ByteBuf;
+
+import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
+import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 public interface SetTensional extends Term {
 
@@ -28,7 +32,7 @@ public interface SetTensional extends Term {
      * @param arg the list of term
      * @return the oldName of the term
      */
-    @Deprecated public static CharSequence makeSetName(final char opener, final char closer, final Term... arg) {
+    public static CharSequence makeSetName(final char opener, final char closer, final Term... arg) {
         int size = 1 + 1 - 1; //opener + closer - 1 [no preceding separator for first element]
 
         for (final Term t : arg)
@@ -48,4 +52,16 @@ public interface SetTensional extends Term {
         return n.toString();
     }
 
+    public static byte[] makeKey(final char opener, final char closer, final Term... arg) {
+
+        final int initialSize = 64;
+
+        ByteBuf b = ByteBuf.create(initialSize).add((byte) opener);
+        for (int i = 0; i < arg.length; i++) {
+            if (i!=0) b.add((byte)Symbols.ARGUMENT_SEPARATOR);
+            b.add(arg[i].name());
+        }
+        return b.add((byte)closer).toBytes();
+
+    }
 }

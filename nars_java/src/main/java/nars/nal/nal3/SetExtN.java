@@ -75,5 +75,10 @@ public class SetExtN extends AbstractSetN implements SetExt {
     public CharSequence makeName() {
         return SetTensional.makeSetName(SET_EXT_OPENER.ch, SET_EXT_CLOSER.ch, term);
     }
+
+    @Override
+    protected byte[] makeKey() {
+        return SetTensional.makeKey(NALOperator.SET_EXT_OPENER.ch, NALOperator.SET_EXT_CLOSER.ch, term);
+    }
 }
 
