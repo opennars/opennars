@@ -1,6 +1,8 @@
 package nars.util.index;
 
 import com.google.common.collect.HashBasedTable;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import nars.Global;
 import nars.NAR;
 import nars.event.ConceptReaction;
 import nars.nal.concept.Concept;
@@ -8,7 +10,6 @@ import nars.nal.term.Term;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Maintains a growing/sparse matrix consisting of a mapping of R row label concepts (ex: states),
@@ -52,8 +53,64 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     public final SetConceptMap<C> cols;
     public final SetConceptMap<R> rows;
 
+    //TODO merge into a MapConceptMap<C,ConceptStatistics> instance
+    final ObjectIntHashMap<R> rowConcepts = new ObjectIntHashMap<>();
+    final ObjectIntHashMap<C> colConcepts = new ObjectIntHashMap<>();
+
     boolean uninitialized = true;
 
+
+    protected static void ensureValidCount(final int x) {
+        if (x < 0) throw new RuntimeException("concept count underflow");
+    }
+
+    protected int addColCount(C col, int d) {
+        int x = colConcepts.addToValue(col, d);
+        ensureValidCount(x);
+
+        if (Global.DEBUG) {
+            if (x > table.rowKeySet().size()) {
+                throw new RuntimeException("concept count overflow");
+            }
+        }
+
+        //remove the col if no entries referencing concepts remain
+        //even if the index label concept is removed, there may still be entries referring to it
+        if (x == 0) {
+            //no concepts remain in this column, remove it
+            table.columnMap().remove(col);
+            colConcepts.remove(col);
+            onColumnRemove(col);
+        }
+
+        return x;
+    }
+    protected int addRowCount(R row, int d) {
+        int x = rowConcepts.addToValue(row, d);
+        ensureValidCount(x);
+
+        if (Global.DEBUG) {
+            if (x > table.columnKeySet().size()) {
+                throw new RuntimeException("concept count overflow");
+            }
+        }
+
+        //remove the row if no entries referencing concepts remain
+        //even if the index label concept is removed, there may still be entries referring to it
+        if (x == 0) {
+            //no concepts remain in this column, remove it
+            table.rowMap().remove(row);
+            rowConcepts.remove(row);
+            onRowRemove(row);
+        }
+
+        return x;
+    }
+
+    protected void addCount(R r, C c, int d) {
+        addRowCount(r, d);
+        addColCount(c, d);
+    }
 
     public ConceptMatrix(NAR nar) {
         super();
@@ -77,25 +134,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 return isCol(c.term);
             }
 
-            @Override
-            protected boolean onConceptForget(final Concept c) {
-                if (super.onConceptForget(c)) {
-                    C col = (C) c.term;
 
-                    //remove the col if no entries referencing concepts remain
-                    //even if the index label concept is removed, there may still be entries referring to it
-
-                    Map<R, V> cm = table.column(col);
-                    if (cm != null && !hasConcepts(cm.values())) {
-                        cm.remove(col);
-                        onColumnRemove(col);
-                    }
-
-                    return true;
-
-                }
-                return false;
-            }
 
         };
 
@@ -106,28 +145,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 return isRow(c.term);
             }
 
-            @Override
-            protected boolean onConceptForget(final Concept c) {
-                if (super.onConceptForget(c)) {
 
-                    R r = (R) c.term;
-
-                    //remove the row if no entries referencing concepts remain
-                    //even if the index label concept is removed, there may still be entries referring to it
-                    Map<R, Map<C, V>> rm = table.rowMap();
-                    if (rm != null) {
-                        Map<C, V> mr = rm.get(r);
-                        if (mr != null && !hasConcepts(mr.values())) {
-                            rm.remove(r);
-                            onRowRemove(r);
-                        }
-                    }
-
-                    return true;
-                }
-
-                return false;
-            }
 
         };
 
@@ -147,9 +165,15 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                     if (v == null) {
                         v = newEntry(c);
                         table.put(rr, cc, v);
+                        addCount(rr, cc, 1);
                     }
-                    else
+                    else {
+                        if (v.getConcept() == null) {
+                            addCount(rr, cc, 1);
+                        }
+
                         v.setConcept(c);
+                    }
 
                     onEntryAdd(rr, cc, v);
                 }
@@ -163,7 +187,10 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                     C cc = getCol(i);
 
                     V v = getEntry(rr, cc);
-                    if (v != null) v.setConcept(null);
+                    if ((v != null) && (v.getConcept()!=null)) {
+                        v.setConcept(null);
+                        addCount(rr, cc, -1);
+                    }
                 }
             }
 
