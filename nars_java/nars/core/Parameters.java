@@ -27,6 +27,8 @@ package nars.core;
  */
 public class Parameters {
     
+    public static boolean SHOW_REASONING_ERRORS=false; //currently false because the sentence constructor is the only one
+                                                       //who creates them but is not doing it because of an error.
     public static int DURATION = 5;
     
     /** use this for advanced error checking, at the expense of lower performance.

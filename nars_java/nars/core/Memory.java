@@ -845,7 +845,9 @@ public class Memory implements Serializable {
     }
  
     protected void error(Throwable ex) {
-        emit(ERR.class, ex);
+        if(Parameters.SHOW_REASONING_ERRORS) {
+            emit(ERR.class, ex);
+        }
         
         if (Parameters.DEBUG) {
             ex.printStackTrace();            
