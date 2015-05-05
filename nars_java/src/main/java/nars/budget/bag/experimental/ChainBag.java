@@ -38,6 +38,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
 
     private final Mean mean; //priority mean, continuously calculated
+
     private int capacity;
     private float mass;
     DD<V> current = null;
@@ -46,7 +47,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     double minMaxMomentum = 0.98;
 
-    private final DDNodePool<V> nodePool;
+    private final DDNodePool<? extends Item> nodePool;
 
     V nextRemoval = null;
 
@@ -66,16 +67,21 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     private double estimatedMean;
 
 
-    public ChainBag(int capacity) {
+    public ChainBag(final DDNodePool<V> nodePool, int capacity) {
         super();
 
         this.capacity = capacity;
         this.mass = 0;
-        this.index = new CuckooMap(capacity);
-        nodePool = new DDNodePool(capacity);
+        this.index = new CuckooMap(capacity * 2);
+
+        this.nodePool = nodePool;
+
         this.chain = new DDList(0, nodePool);
         this.mean = new Mean();
+    }
 
+    public ChainBag(int capacity) {
+        this(new DDNodePool(capacity), capacity);
     }
 
 

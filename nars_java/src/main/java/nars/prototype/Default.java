@@ -13,6 +13,7 @@ import nars.event.exe.DesireThresholdExecutive;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
+import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -21,6 +22,7 @@ import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.operate.app.STMInduction;
 import nars.operate.mental.*;
+import nars.util.data.linkedlist.DDNodePool;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +32,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import nars.nal.filter.ConstantDerivationLeak;
-
 import static nars.operate.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.operate.mental.InternalExperience.InternalExperienceMode.Minimal;
 
@@ -40,7 +40,7 @@ import static nars.operate.mental.InternalExperience.InternalExperienceMode.Mini
  */
 public class Default extends ProtoNAR implements ConceptBuilder {
 
-    
+
 
 
     final NALParam nalParam = new NALParam();
@@ -213,10 +213,14 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     }
 
+    //public final DDNodePool<Sentence> sentenceNodes = new DDNodePool(1024);
+    //public final DDNodePool<TermLinkKey> termlinkKeyNodes = new DDNodePool(1024);
+
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
-        Bag<Sentence, TaskLink> taskLinks = new ChainBag<>(getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag<>(getConceptTermLinks());
+
+        Bag<Sentence, TaskLink> taskLinks = new ChainBag(/*sentenceNodes,*/ getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(/*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }

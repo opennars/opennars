@@ -243,7 +243,8 @@ public class TestSOMAgent extends JPanel {
         dd.param.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception.BipolarDirectPerception("L", 0.5f)
+                new RawPerception("L", 0.5f)
+                //new RawPerception.BipolarDirectPerception("L", 0.5f)
 
                 //new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)

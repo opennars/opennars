@@ -133,9 +133,30 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     }
 
     default public boolean equalsName(final Term t) {
-        return hashCode() == t.hashCode() && Arrays.equals(name(), t.name());
+        final byte[] a = name();
+        final byte[] b = t.name();
+        if (a == b) return true;
+        return (hashCode() == t.hashCode() && equals2(a, b));
     }
 
+    /** ordinary array equals comparison with some conditions removed */
+    static boolean equals2(final byte[] a, final byte[] a2) {
+        /*if (a==a2)
+            return true;
+        if (a==null || a2==null)
+            return false;*/
+
+        int length = a.length;
+        if (a2.length != length)
+            return false;
+
+        //backwards
+        for (int i=length-1; i>=0; i--)
+            if (a[i] != a2[i])
+                return false;
+
+        return true;
+    }
 
 }
 

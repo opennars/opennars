@@ -14,8 +14,8 @@ abstract public class DequePool<X> {
     }
     public DequePool(int preallocate) {
         data = new ArrayDeque(preallocate);
-        for (int i = 0; i < preallocate; i++)
-            put(create());
+        /*for (int i = 0; i < preallocate; i++)
+            put(create());*/
     }
 
     public void put(X i) {

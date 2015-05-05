@@ -108,11 +108,16 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 
         this.punctuation = punctuation;
 
-        if ( (truth == null) && (!isQuestion() && !isQuest()) ) {
+        boolean isQuestionOrQuest = isQuestion() || isQuest();
+        if (isQuestionOrQuest) {
+            this.truth = null;
+        }
+        else if ( truth == null ) {
             throw new RuntimeException("Judgment and Goal sentences require non-null truth value");
         }
-
-
+        else {
+            this.truth = truth;
+        }
 
         Stamp st = stamp.build();
         if ((isQuestion() || isQuest()) && !st.isEternal()) {
@@ -122,7 +127,6 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
                 throw new RuntimeException("Questions and Quests require eternal tense");
         }
 
-        this.truth = truth;
 
         //HACK special handling for conjunctions which may have a trailing interval
         if ((seedTerm instanceof Conjunction) && (seedTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {

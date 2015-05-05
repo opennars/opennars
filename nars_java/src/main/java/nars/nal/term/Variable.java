@@ -21,8 +21,6 @@
 package nars.nal.term;
 
 
-import nars.util.data.Utf8;
-
 import static nars.io.Symbols.*;
 
 /**
@@ -158,7 +156,7 @@ public class Variable extends Atom {
             return 1;
         }
         else {
-            return a.compareName(b);
+            return a.compareHash(b);
         }
     }
 //    public boolean equalsTerm(Object that) {

@@ -31,7 +31,6 @@ import nars.nal.TruthValue;
 import java.util.Objects;
 
 import static nars.Global.BUDGET_EPSILON;
-import static nars.Global.TRUTH_EPSILON;
 import static nars.nal.BudgetFunctions.m;
 import static nars.nal.UtilityFunctions.*;
 
@@ -160,25 +159,22 @@ public class Budget implements Cloneable, BudgetTarget {
 
     /**
      * Change priority value
-     * @param v The new priority
+     * @param p The new priority
      * @return whether the operation had any effect
      */
-    public final boolean setPriority(float v) {
-        if(v>1.0) {
-            v=1.0f;
-            //throw new RuntimeException("priority value above 1");
-        }
-        else if (v < 0) {
-            throw new RuntimeException("negative priority value");
-        }
+    public final boolean setPriority(float p) {
+        if(p>1.0)
+            p=1.0f;
+        else if (p < 0)
+            p = 0;
 
-        final float dp;
-        if (priority >= v) dp = priority - v;
-        else dp = v - priority;
+
+        final float current = priority;
+        final float dp = (current >= p) ? (current - p) : (p - current);
         if (dp < BUDGET_EPSILON)
             return false;
 
-        priority = v;
+        this.priority = p;
         return true;
     }
 
@@ -187,50 +183,44 @@ public class Budget implements Cloneable, BudgetTarget {
      * @param d The new durability
      */
     public boolean setDurability(float d) {
-        if (Global.DEBUG) ensureBetweenZeroAndOne(d);
+        if (d>=1.0f)
+            d = (1.0f-BUDGET_EPSILON); //max value
+        else if (d < 0)
+            d = 0; //min value
 
-        if(d>=1.0f) {
-            d = (1.0f-TRUTH_EPSILON);
-            //throw new RuntimeException("durability value above or equal 1");
-        }
-        /*else if (d < BUDGET_EPSILON) {
-            System.err.println("zero durability");
-        }*/
-
-        final float dp;
-        if (durability >= d) dp = durability - d;
-        else dp = d - durability;
+        final float current = durability;
+        final float dp = (current >= d) ? (current - d) : (d - current);
         if (dp < BUDGET_EPSILON)
             return false;
 
-        durability = d;
+        this.durability = d;
         return true;
     }
 
     /**
      * Change quality value
-     * @param v The new quality
+     * @param q The new quality
      */
-    public boolean setQuality(final float v) {
-        if (Global.DEBUG) ensureBetweenZeroAndOne(v);
+    public boolean setQuality(float q) {
+        if (q > 1.0f) q = 1.0f;
+        else if (q < 0f) q = 0f;
 
-        final float dp;
-        if (quality >= v) dp = quality - v;
-        else dp = v - quality;
+        final float current = quality;
+        final float dp = (current >= q) ? (current - q) : (q - current);
         if (dp < BUDGET_EPSILON)
             return false;
 
-        quality = v;
+        quality = q;
         return true;
     }
 
     public static void ensureBetweenZeroAndOne(float v) {
         if (Float.isNaN(v))
-            throw new RuntimeException("Priority is NaN");
+            throw new RuntimeException("value is NaN");
         if (v > 1.0f)
-            throw new RuntimeException("Priority > 1.0: " + v);
+            throw new RuntimeException("value > 1.0: " + v);
         if (v < 0.0f)
-            throw new RuntimeException("Priority < 1.0: " + v);
+            throw new RuntimeException("value < 1.0: " + v);
     }
 
     /**

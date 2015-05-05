@@ -2,7 +2,6 @@ package nars.nal.term;
 
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.util.data.Utf8;
 
@@ -14,7 +13,7 @@ import java.util.Map;
  */
 public class Atom implements Term {
 
-    protected final byte[] name;
+    protected byte[] name;
     protected final int hash;
 
     private static final Map<String,Atom> atoms = Global.newHashMap(8192);
@@ -52,7 +51,7 @@ public class Atom implements Term {
             if (that.getClass() == Variable.class)
                 return 1;
 
-            return compareName(that);
+            return compareHash(that);
         }
         else {
             return -1;
@@ -60,8 +59,8 @@ public class Atom implements Term {
 
     }
 
-    public int compareName(Term that) {
-        return Integer.compare(hashCode(), ((Atom)that).hashCode());
+    public int compareHash(final Term that) {
+        return Integer.compare(hashCode(), that.hashCode());
     }
 
 //    /**
@@ -85,11 +84,15 @@ public class Atom implements Term {
     }
 
     /** gets the atomic term given a name */
+//    public final static Atom get(final String name) {
+//        Atom x = atoms.get(name);
+//        if (x != null) return x;
+//        atoms.put(name, x = new Atom(name));
+//        return x;
+//    }
+
     public final static Atom get(final String name) {
-        Atom x = atoms.get(name);
-        if (x != null) return x;
-        atoms.put(name, x = new Atom(name));
-        return x;
+        return new Atom(name);
     }
 
     public final static Term get(Object o) {
@@ -158,7 +161,11 @@ public class Atom implements Term {
         if (this == that) return true;
         if (!(that instanceof Atom)) return false;
         final Atom t = (Atom)that;
-        return equalsType(t) && equalsName(t);
+        if (equalsType(t) && equalsName(t)) {
+            t.name = name; //share
+            return true;
+        }
+        return false;
     }
 
 
