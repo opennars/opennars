@@ -35,7 +35,7 @@ public class NARio extends Run implements RLEnvironment {
 
     int movementStatusPeriod = 1;
     int commandPeriod = 50;
-    int radarPeriod = 6;
+    int radarPeriod = 2;
 
     private int[] keyTime = new int[256];
     private float lastMX;
@@ -70,6 +70,60 @@ public class NARio extends Run implements RLEnvironment {
         run();
     }
 
+
+    /** should not be used if RL has its own keyboard operation that calls takeAction */
+    protected void initKeyboardOperators() {
+        for (final int kk : keys) {
+            String ko = "^keyboard" + kk;
+            if (nar.memory.operator(ko) == null) {
+                nar.on(new NullOperator("^" + "keyboard" + kk) {
+
+                    @Override
+                    protected List<Task> execute(Operation operation, Term[] args) {
+
+                        String state = args[0].toString();
+
+                        Task task = operation.getTask();
+                        Task parent = task.getParentTask();
+                        Task root = task.getRootTask();
+
+
+                        mario.keys[kk] = state.equals("on");
+
+                        return super.execute(operation, args);
+                    }
+
+                });
+            }
+
+            int currentKeyTime, nextKeyTime;
+            currentKeyTime = nextKeyTime = keyTime[kk];
+            boolean wasPressed = currentKeyTime > 0;
+            boolean pressed;
+
+            if (!mario.keys[kk]) {
+                nextKeyTime = 0;
+                pressed = false;
+            } else {
+                nextKeyTime++;
+                pressed = true;
+            }
+
+            if (pressed != wasPressed) {
+                            /*String budget = (nextKeyTime > 0) ?
+                                    "$" + (1.0 / (1.0 + nextKeyTime)) + "$" :
+                                    "";*/
+                String state = nextKeyTime > 0 ? "on" : "off";
+                //String budget = "$0.8;0.1$";
+                String budget = "";
+                //nar.addInput(budget + "(^" + ko + "," + state + ")!");
+            }
+
+            keyTime[kk] = nextKeyTime;
+        }
+
+
+    }
     public static String n(int x) {
         if (x == 0) return "z";
         if (x < 0) return "n" + (-x);
@@ -91,7 +145,9 @@ public class NARio extends Run implements RLEnvironment {
     @Deprecated synchronized public double[] observe() {
         o.clear();
 
-        o.addAll(dx/12.0, dy/12.0);
+        o.addAll(dx/6.0, dy/6.0); //higher resolution velocity
+        o.addAll(dx/12.0, dy/12.0); //coarse velocity
+
         o.addAll(radar);
         for (boolean b : mario.keys)
             o.add(b ? 1 : -1);
@@ -100,8 +156,17 @@ public class NARio extends Run implements RLEnvironment {
 
     @Override
     public double getReward() {
-        double r = -1.0f +  dx / 10.0 + bonus;
-        bonus *= 0.9; //decay
+
+        double horizontalMotionReward = 0.15;
+        double verticalMotionReward =   0.01;
+
+        double r = -1.0 +
+                Math.abs(dx) * horizontalMotionReward +
+                Math.abs(dy) * verticalMotionReward +
+                bonus;
+
+        bonus *= 0.5; //decay
+
         return r;
     }
 
@@ -116,7 +181,7 @@ public class NARio extends Run implements RLEnvironment {
 
     @Override
     public void frame() {
-        nar.memory.timeSimulationAdd(1);
+        //nar.memory.timeSimulationAdd(1);
 
         cycle(gameRate);
 
@@ -280,55 +345,6 @@ public class NARio extends Run implements RLEnvironment {
         }
 
 
-        for (final int kk : keys) {
-            String ko = "^keyboard" + kk;
-            if (nar.memory.operator(ko) == null) {
-                nar.on(new NullOperator("^" + "keyboard" + kk) {
-
-                    @Override
-                    protected List<Task> execute(Operation operation, Term[] args) {
-
-                        String state = args[0].toString();
-
-                        Task task = operation.getTask();
-                        Task parent = task.getParentTask();
-                        Task root = task.getRootTask();
-
-
-                        mario.keys[kk] = state.equals("on");
-
-                        return super.execute(operation, args);
-                    }
-
-                });
-            }
-
-            int currentKeyTime, nextKeyTime;
-            currentKeyTime = nextKeyTime = keyTime[kk];
-            boolean wasPressed = currentKeyTime > 0;
-            boolean pressed;
-
-            if (!mario.keys[kk]) {
-                nextKeyTime = 0;
-                pressed = false;
-            } else {
-                nextKeyTime++;
-                pressed = true;
-            }
-
-            if (pressed != wasPressed) {
-                            /*String budget = (nextKeyTime > 0) ?
-                                    "$" + (1.0 / (1.0 + nextKeyTime)) + "$" :
-                                    "";*/
-                String state = nextKeyTime > 0 ? "on" : "off";
-                //String budget = "$0.8;0.1$";
-                String budget = "";
-                //nar.addInput(budget + "(^" + ko + "," + state + ")!");
-            }
-
-            keyTime[kk] = nextKeyTime;
-        }
-
 
         t++;
         cycle++;
@@ -354,17 +370,17 @@ public class NARio extends Run implements RLEnvironment {
         //nar.input("<SELF --> [" + direction(+1, 0) + "]>! %1.0;0.2%");
 
         //dont remain still
-        nar.input("<SELF --> [" + direction(0, 0) + "]>! :|: %0.05;0.6%");
+        //nar.input("<SELF --> [" + direction(0, 0) + "]>! :|: %0.05;0.6%");
 
         nar.input("<SELF --> [died]>! %0.00;0.95%");
         nar.input("<SELF --> [died]>. :|: %0.00;0.9%");
         nar.input("<SELF --> [stomp]>! :|: %1.00;0.5%");
         nar.input("<SELF --> [coin]>! :|: %1.00;0.45%");
 
-        for (int i= 0; i < 5; i++) {
-            nar.input("keyboard" + i + "(on)! :|: %0.75;0.5%");
-            nar.input("keyboard" + i + "(off)! :|: %0.75;0.5%");
-        }
+//        for (int i= 0; i < 5; i++) {
+//            nar.input("keyboard" + i + "(on)! :|: %0.75;0.5%");
+//            nar.input("keyboard" + i + "(off)! :|: %0.75;0.5%");
+//        }
 
     }
 
@@ -438,7 +454,7 @@ public class NARio extends Run implements RLEnvironment {
         //NAR nar = new Default().realtime().build();
 
         NAR nar = new NAR(new Default().setInternalExperience(null)
-                .simulationTime().setConceptBagSize(3500));
+                .setConceptBagSize(3500));
 
         Global.EXIT_ON_EXCEPTION = true;
         //Global.TRUTH_EPSILON = 0.01f;

@@ -1,7 +1,8 @@
 package jurls.reinforcementlearning.domains.wander;
 
-import java.awt.Color;
-import jurls.reinforcementlearning.domains.wander.World;
+import automenta.vivisect.Video;
+
+import java.awt.*;
 
 
 public class Obstacle {
@@ -24,23 +25,26 @@ public class Obstacle {
 		x = d(-World.SIZE, World.SIZE);
 		y = d(-World.SIZE, World.SIZE);
 		r = d(MIN_SIZE, MAX_SIZE);
-		c = Color.orange;
+		c = new Color( Video.colorHSB( 0.7f  + 0.1f * (float)((r - MIN_SIZE) / (MAX_SIZE - MIN_SIZE)), 0.65f, 0.85f ) );
 	}
 
 	public boolean circleCollides(double x2, double y2, double r2) {
-		double dist = getDistance(x2, y2);
-		return dist - r2 < r;
+		double dist = getDistanceSq(x2, y2);
+		return dist - (r2*r2) < (r*r);
 	}
 
 	public boolean pointCollides(double x2, double y2) {
 		return circleCollides(x2, y2, 0);
 	}
 
-	private double getDistance(double x2, double y2) {
+	private double getDistanceSq(final double x2, final double y2) {
 		double xd = (x2-x);
 		double yd = (y2-y);
-		double dist = Math.sqrt(xd*xd + yd*yd);
+		double dist = (xd*xd + yd*yd);
 		return dist;
+	}
+	private double getDistance(final double x2, final double y2) {
+		return Math.sqrt( getDistanceSq(x2, y2) );
 	}
 	
 }

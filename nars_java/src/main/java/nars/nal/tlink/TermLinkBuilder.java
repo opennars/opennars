@@ -236,9 +236,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return template.size();
     }
 
-    public void clear() {
-        template.clear();
+    public void delete() {
+        if (template!=null)
+            template.clear();
         nonTransforms = 0;
+        currentTemplate = null;
     }
 
     /** count of how many templates are non-transforms */

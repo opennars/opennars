@@ -421,7 +421,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         }
     }
 
-    public void setqAutonomicGoalConfidence(float qAutonomicGoalConfidence) {
+    public void setAutonomicGoalConfidence(float qAutonomicGoalConfidence) {
         this.qAutonomicGoalConfidence = qAutonomicGoalConfidence;
     }
 

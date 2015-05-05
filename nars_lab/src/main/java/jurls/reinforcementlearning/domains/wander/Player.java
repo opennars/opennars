@@ -11,8 +11,9 @@ import jurls.reinforcementlearning.domains.wander.brain.actions.MoveBackward;
 
 public class Player {
 
-    public static final double TURNING_ANGLE = MyPerception.RADAR_R/16f; //velocity actually
+    public static final double TURNING_ANGLE = MyPerception.RADAR_R/32f; //velocity actually
     public static final double STEP_SIZE = MyPerception.RADAR_D/2d;
+    double acceleration = 0.02;
     private static final int MOVE_FORWARD = 0;
     private static final int MOVE_BACKWARD = 1;
     private static final int TURN_LEFT = 2;
@@ -30,7 +31,7 @@ public class Player {
     private int currentAction;
     private double yOld;
     private double xOld;
-    double acceleration = 0.02;
+
     private double vangle = 0;
 
     public Player(World world) {

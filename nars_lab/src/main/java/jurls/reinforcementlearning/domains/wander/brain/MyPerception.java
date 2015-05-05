@@ -5,11 +5,11 @@ import org.apache.commons.math3.util.MathUtils;
 
 public class MyPerception  {
 
-    public static final int RADAR_ANGLES = 3;
-    public static final int RADAR_DISTS = 2; //rows
+    public static final int RADAR_ANGLES = 12;
+    public static final int RADAR_DISTS = 4; //rows
     private static final long serialVersionUID = 1L;
-    public static final double RADAR_R = 0.8; //0.6 = mostly front
-    public static final double RADAR_D = 20;
+    public static final double RADAR_R = Math.PI*2.0 / RADAR_ANGLES; //0.6 = mostly front
+    public static final double RADAR_D = 15;
     public static final int RADAR_D0 = 1;
     private Player player;
 
@@ -34,7 +34,7 @@ public class MyPerception  {
             for (int a = -RADAR_ANGLES; a <= RADAR_ANGLES; a++) {
                 double xPerc = xPerc(d, a);
                 double yPerc = yPerc(d, a);
-                input[j++] = player.getWorld().pointInObstacle(xPerc, yPerc) ? 1.0 : 0.0;
+                input[j++] = player.getWorld().pointInObstacle(xPerc, yPerc) ? 1.0 : -1.0;
             }
         }
         return input;

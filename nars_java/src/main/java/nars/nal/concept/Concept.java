@@ -948,7 +948,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         taskLinks.clear();
 
         if (termLinkBuilder != null)
-            termLinkBuilder.clear();
+            termLinkBuilder.delete();
     }
 //
 //

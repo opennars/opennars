@@ -10,6 +10,7 @@ import nars.nal.term.Term;
 import nars.rl.QEntry;
 import nars.rl.QLAgent;
 
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -42,20 +43,6 @@ public class QVis extends MatrixImage implements Runnable {
 
     @Override
     public void run() {
-        repaint();
-
-
-        //if (xstates.size() != states.size()) {
-        xstates.clear();
-        Iterables.addAll(xstates, agent.rows);
-        //}
-        //if (xactions.size() != actions.size()) {
-        xactions.clear();
-        Iterables.addAll(xactions, agent.cols);
-        //}
-
-        repaint();
-
 
         draw(mid, xstates.size(), xactions.size(), -1, 1);
 
@@ -150,6 +137,20 @@ public class QVis extends MatrixImage implements Runnable {
         );
                 //val2col(value, -1, 1, 0.5f + 0.5f * pri));
 
+    }
+
+    public void frame() {
+
+        //if (xstates.size() != states.size()) {
+        xstates.clear();
+        Iterables.addAll(xstates, agent.rows);
+        //}
+        //if (xactions.size() != actions.size()) {
+        xactions.clear();
+        Iterables.addAll(xactions, agent.cols);
+        //}
+
+        SwingUtilities.invokeLater(this::run);
     }
 
 //    @Override

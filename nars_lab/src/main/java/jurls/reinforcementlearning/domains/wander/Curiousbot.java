@@ -12,7 +12,7 @@ public class Curiousbot extends JComponent implements RLEnvironment {
 
     private World world;
     double[] inputs;
-    int drawEvery = 40; //milliseconds
+    int drawEvery = 30; //milliseconds
     long lastFrameTime = -1;
 
     public Curiousbot() {
@@ -86,7 +86,7 @@ public class Curiousbot extends JComponent implements RLEnvironment {
         clear();
         drawObstacles();
         drawPlayer();
-        drawChart();
+        //drawChart();
 
     }
 
@@ -150,33 +150,33 @@ public class Curiousbot extends JComponent implements RLEnvironment {
         g.setColor(Color.red);
         g.fillPolygon(x, y, 3);
 
-         drawRadar(player);
-         //drawOutput(player);
-         //drawCuriosity(player.getPerception().getCuriosity());
+        drawRadar(player);
+        //drawOutput(player);
+        //drawCuriosity(player.getPerception().getCuriosity());
     }
 
-     private void drawCuriosity(Curiosity curiosity) {
-     int ySize = 10;
-     g.setColor(Color.blue);
-     drawArray("Curiosity NN input", curiosity.getInputBkp(), 100, 0, 5, ySize);
-     g.setColor(Color.green);
-     drawArray("Curiosity NN desired output", curiosity.getDesOutputBkp(), 100, 40, 5, ySize);
-     g.setColor(Color.red);
-     drawArray("Curiosity NN actual output", curiosity.getOutputBkp(), 100, 80, 5, ySize);
-     }
+    private void drawCuriosity(Curiosity curiosity) {
+        int ySize = 10;
+        g.setColor(Color.blue);
+        drawArray("Curiosity NN input", curiosity.getInputBkp(), 100, 0, 5, ySize);
+        g.setColor(Color.green);
+        drawArray("Curiosity NN desired output", curiosity.getDesOutputBkp(), 100, 40, 5, ySize);
+        g.setColor(Color.red);
+        drawArray("Curiosity NN actual output", curiosity.getOutputBkp(), 100, 80, 5, ySize);
+    }
 
-     private void drawArray(String title, double[] output, int x0, int y0, int xSize, int ySize) {
-     g.drawString(title, x0, y0 + ySize + 15);
-     for (int i = 0; i < output.length; i++) {
-     double o = output[i];
-     int x = i*xSize + x0;
-     if(o>0) {
-     g.fillRect(x, (int)(y0 + ySize - o*ySize*2)+5, xSize-1, (int)(o*ySize));
-     } else {
-     g.fillRect(x, (y0 + ySize), xSize-1, (int)(-o*ySize));
-     }
-     }
-     }
+    private void drawArray(String title, double[] output, int x0, int y0, int xSize, int ySize) {
+        g.drawString(title, x0, y0 + ySize + 15);
+        for (int i = 0; i < output.length; i++) {
+            double o = output[i];
+            int x = i * xSize + x0;
+            if (o > 0) {
+                g.fillRect(x, (int) (y0 + ySize - o * ySize * 2) + 5, xSize - 1, (int) (o * ySize));
+            } else {
+                g.fillRect(x, (y0 + ySize), xSize - 1, (int) (-o * ySize));
+            }
+        }
+    }
 
 //     private void drawOutput(Player player) {
 //     double[] output = player.getBrain().getOutput();
@@ -201,30 +201,35 @@ public class Curiousbot extends JComponent implements RLEnvironment {
 //     g.fillRect(i*10, (int)(100-reward*100), 10, (int)(reward*100));
 //     }
 
-     private void drawRadar(Player player) {
-     int xp;
-     int yp;
-     int i = 1;
-     for (int d = MyPerception.RADAR_D0; d <= MyPerception.RADAR_DISTS; d++) {
-     for (int a = -MyPerception.RADAR_ANGLES; a <= MyPerception.RADAR_ANGLES; a++) {
-     MyPerception perc = player.getPerception();
-     xp = scaledX(perc.xPerc(d, a));
-     yp = scaledY(perc.yPerc(d, a));
-     //double out = perc.getOutput()[i++];
-     //g.setColor(out > 0.5 ? Color.red : Color.blue);
-         g.setColor( Color.blue);
-     g.drawOval(xp-1, yp-1, 3, 3);
-     }
-     }
-     }
+    Color grayAlpha = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+
+    private void drawRadar(Player player) {
+        int xp;
+        int yp;
+        int i = 1;
+        for (int d = MyPerception.RADAR_D0; d <= MyPerception.RADAR_DISTS; d++) {
+            for (int a = -MyPerception.RADAR_ANGLES; a <= MyPerception.RADAR_ANGLES; a++) {
+                MyPerception perc = player.getPerception();
+                xp = scaledX(perc.xPerc(d, a));
+                yp = scaledY(perc.yPerc(d, a));
+
+                //double out = perc.getOutput()[i++];
+                //g.setColor(out > 0.5 ? Color.red : Color.blue);
+                g.setColor(grayAlpha);
+
+                int rad = 8;
+                g.fillOval(xp - rad/2, yp - rad/2, rad, rad);
+            }
+        }
+    }
 
 
     private void makeBufferedImage() {
         width = World.SIZE * 2;
         height = World.SIZE * 2;
         setSize(WINDOW_W, WINDOW_H);
-        bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        biChart = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        biChart = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         g = bi.getGraphics();
         gChart = biChart.getGraphics();
         g.setColor(Color.white);

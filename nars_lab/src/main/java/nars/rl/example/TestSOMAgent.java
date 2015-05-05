@@ -18,6 +18,7 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.prototype.Default;
+import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -111,14 +112,12 @@ public class TestSOMAgent extends JPanel {
 
         agent = new QLAgent(nar, "act", "<nar --> [good]>", env, p) {
 
-            final QVis qvis = new QVis(this);
-
-            final Runnable swingUpdate = new Runnable() {
+            final QVis qvis = new QVis(this) {
 
                 @Override
-                public void run() {
+                public void frame() {
                     env.component().repaint();
-                    qvis.run();
+                    super.frame();
                 }
             };
 
@@ -127,7 +126,7 @@ public class TestSOMAgent extends JPanel {
             public void onFrame() {
                 super.onFrame();
 
-                SwingUtilities.invokeLater(swingUpdate);
+                qvis.frame();
             }
 
         };
@@ -243,11 +242,11 @@ public class TestSOMAgent extends JPanel {
         dd.param.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.5f)
+                new RawPerception("L", 0.6f),
                 //new RawPerception.BipolarDirectPerception("L", 0.5f)
 
-                //new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
-                //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
+                new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
+                new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
                     @Override
@@ -263,7 +262,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        a.agent.brain.setEpsilon(0.10);
+        a.agent.brain.setEpsilon(0.05);
 
 
     }

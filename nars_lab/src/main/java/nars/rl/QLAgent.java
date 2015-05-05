@@ -41,7 +41,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
 
-
+    private float initialPossibleDesireConfidence = 0.85f;
+    private float initialAutonomicGoalConfidence = 0.55f;
 
     /**
      * corresponds to the numeric operation as specified by the environment
@@ -138,9 +139,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             cols.include(a);
         }
 
-        possibleDesire(0.75f);
-
-        setqAutonomicGoalConfidence(0.55f);
+        possibleDesire(initialPossibleDesireConfidence);
+        setAutonomicGoalConfidence(initialAutonomicGoalConfidence);
     }
 
     @Override
