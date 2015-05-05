@@ -118,7 +118,7 @@ public class OptimizeLeak {
                              @Override
                              protected void initDerivationFilters() {
 
-                                 getNALParam().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
+                                 getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
                                      @Override
                                      protected void leak(Task derived) {
                                          switch (derived.getPunctuation()) {
@@ -174,7 +174,7 @@ public class OptimizeLeak {
                     protected void initDerivationFilters() {
                         final float DERIVATION_PRIORITY_LEAK = (float)finalP; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
                         final float DERIVATION_DURABILITY_LEAK = (float)finalD; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-                        getNALParam().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+                        getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                     }
                 };
 

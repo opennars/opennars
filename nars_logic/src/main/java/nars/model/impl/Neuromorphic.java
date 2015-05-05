@@ -2,6 +2,7 @@ package nars.model.impl;
 
 import nars.Memory;
 import nars.NAR;
+import nars.NARSeed;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.bag.impl.experimental.DelayBag;
@@ -38,11 +39,11 @@ public class Neuromorphic extends Curve {
     @Override
     public ControlCycle newControlCycle() {
         if (numAnts == -1)
-            numAnts = param.conceptsFiredPerCycle.get();
+            numAnts = conceptsFiredPerCycle.get();
         return new AntCore(numAnts, 2.0f, getConceptBagSize());
     }
 
-    
+
     @Override
     public Bag<Term, Concept> newConceptBag() {
         /** created by AntAttention */
@@ -67,10 +68,10 @@ public class Neuromorphic extends Curve {
 
         if (fairdelaybag) {
             DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(
-                    param.taskLinkForgetDurations, getConceptTaskLinks());
+                    taskLinkForgetDurations, getConceptTaskLinks());
             taskLinks.setMemory(m);
             DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(
-                    param.termLinkForgetDurations, getConceptTermLinks());
+                    termLinkForgetDurations, getConceptTermLinks());
             termLinks.setMemory(m);
             return new DefaultConcept(t, b, taskLinks, termLinks, m);
         }

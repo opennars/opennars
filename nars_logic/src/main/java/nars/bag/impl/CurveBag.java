@@ -25,7 +25,7 @@ import java.util.Set;
  *
  * TODO make a CurveSampling interface with at least 2 implementations: Random and LinearScanning. it will use this instead of the 'boolean random' constructor argument
  */
-public class CurveBag<E extends Item<K>, K> extends Bag<K, E> {
+public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     final float MASS_EPSILON = 1.0e-5f;
 

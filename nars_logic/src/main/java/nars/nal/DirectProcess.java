@@ -82,11 +82,11 @@ public class DirectProcess extends NAL {
     /** create and execute a direct process immediately */
     public static DirectProcess run(Memory m, Task task) {
 
-        if (Global.DEBUG) {
-            if (!task.aboveThreshold())
-                return null;
-                //throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
-        }
+
+        if (!task.aboveThreshold())
+            return null;
+            //throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
+
 
         //System.err.println("direct: " + task);
         DirectProcess d = new DirectProcess(m, task);

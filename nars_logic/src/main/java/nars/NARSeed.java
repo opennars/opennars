@@ -14,8 +14,6 @@ import nars.nal.term.Term;
  */
 abstract public class NARSeed extends Param {
 
-    @Deprecated public final Param param = this;
-
     abstract public ControlCycle newControlCycle();
 
     public NARSeed() {
@@ -55,7 +53,7 @@ abstract public class NARSeed extends Param {
     }
 
 
-    abstract public LogicPolicy getNALParam();
+    abstract public LogicPolicy getLogicPolicy();
 
     public static interface ConceptBuilder {
         public Concept newConcept(Term t, Budget b, Memory m);

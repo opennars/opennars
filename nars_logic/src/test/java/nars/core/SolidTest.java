@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Memory;
 import nars.io.qa.Answered;
 import nars.io.LibraryInput;
+import nars.nal.filter.ConstantDerivationLeak;
 import nars.testing.TestNAR;
 import nars.nal.Sentence;
 import nars.nal.term.Term;
@@ -22,12 +23,26 @@ public class SolidTest {
     public void testDetective() throws Exception {
 
         int time = 256; //should solve the example in few cycles
+        int timePeriod = 8;
 
         Memory.resetStatic(1);
-        Global.DEBUG = true;
+        Global.DEBUG = false;
 
-        Solid s = new Solid(1, 800, 1, 1, 2, 5);
+        final int numConcepts = 800;
+        final float leakRate = 0.4f;
+        Solid s = new Solid(3, numConcepts, 1, 6, 1, 6) {
+
+            @Override
+            protected void initDerivationFilters() {
+                //TODO tune this based on # concepts fired, termlnks etc
+                final float DERIVATION_PRIORITY_LEAK = leakRate; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                final float DERIVATION_DURABILITY_LEAK = leakRate; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+            }
+        };
+
         s.setInternalExperience(null);
+        //s.setMaxTasksPerCycle(numConcepts);
 
         TestNAR n = new TestNAR(s);
 
@@ -36,7 +51,6 @@ public class SolidTest {
         Set<Term> solutionTerms = new HashSet();
         Set<Sentence> solutions = new HashSet();
 
-        n.input(LibraryInput.get(n, "app/detective.nal"));
 
         new Answered(n) {
 
@@ -50,8 +64,14 @@ public class SolidTest {
             }
 
         };
+        for (int i = 0; i < time; i+=timePeriod) {
+            n.input(LibraryInput.get(n, "app/detective.nal"));
+            n.frame(timePeriod);
+            if (solutionTerms.size() >= 2)
+                break;
+        }
 
-        n.frame(time);
+
 
         //System.out.println(solutions);
         assertTrue("at least 2 unique solutions: " + solutions.toString(), 2 <= solutions.size());

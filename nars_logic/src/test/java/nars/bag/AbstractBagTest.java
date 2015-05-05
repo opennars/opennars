@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractBagTest {
     public static int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedIndex<BagPerf.NullItem> items) {
-        CurveBag<BagPerf.NullItem,CharSequence> f = new CurveBag(capacity, CurveBagTest.curve, random, items);
+        CurveBag<CharSequence, BagPerf.NullItem> f = new CurveBag(capacity, CurveBagTest.curve, random, items);
         return testRemovalPriorityDistribution(8, capacity, 0.2f, 0.2f, f);
     }
 

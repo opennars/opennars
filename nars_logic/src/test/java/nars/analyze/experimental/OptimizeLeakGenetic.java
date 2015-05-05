@@ -96,7 +96,7 @@ public class OptimizeLeakGenetic {
             @Override
             protected void initDerivationFilters() {
 
-                getNALParam().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
+                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
                     @Override
                     protected void leak(Task derived) {
                         switch (derived.getPunctuation()) {

@@ -19,7 +19,7 @@ then it removes the item at this index
  * @param <I>
  * @param <K>
  */
-public class AdaptiveContinuousBag<I extends Item<K>, K> extends CurveBag<I, K> {
+public class AdaptiveContinuousBag<I extends Item<K>, K> extends CurveBag<K, I> {
 
     boolean stabilize = false;
     float minForgetAdjustment = 0.5f;

@@ -3,10 +3,7 @@ package nars.rl.example;
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.NARSeed;
+import nars.*;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.gui.NARSwing;
@@ -236,10 +233,10 @@ public class TestSOMAgent extends JPanel {
 
 
         dd.setCyclesPerFrame(cyclesPerFrame);
-        dd.param.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.param.shortTermMemoryHistory.set(3);
-        dd.param.decisionThreshold.set(0.65);
-        dd.param.outputVolume.set(5);
+        dd.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.shortTermMemoryHistory.set(3);
+        dd.decisionThreshold.set(0.65);
+        dd.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 new RawPerception("L", 0.6f),

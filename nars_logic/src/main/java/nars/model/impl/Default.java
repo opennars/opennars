@@ -103,16 +103,16 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
         setConceptBagSize(maxConcepts);
         setSubconceptBagSize(maxConcepts * 2);
-        param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
-        param.termLinkMaxReasoned.set(termLinksPerCycle);
-        param.termLinkMaxMatched.set((termLinksPerCycle*3));
+        conceptsFiredPerCycle.set(conceptsFirePerCycle);
+        termLinkMaxReasoned.set(termLinksPerCycle);
+        termLinkMaxMatched.set((termLinksPerCycle*3));
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
         this.internalExperience =
                 maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
 
-        param.setDerivationMerging(TaskComparator.Merging.Or);
+        setDerivationMerging(TaskComparator.Merging.Or);
 
         setTaskLinkBagSize(32);
 
@@ -125,40 +125,40 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
         //Runtime Initial Values
 
-        param.duration.set(5);
-        param.duration.set(5);
+        duration.set(5);
+        duration.set(5);
 
-        param.confidenceThreshold.set(0.01);
+        confidenceThreshold.set(0.01);
 
-        param.shortTermMemoryHistory.set(1);
-        param.temporalRelationsMax.set(7);
+        shortTermMemoryHistory.set(1);
+        temporalRelationsMax.set(7);
 
-        param.conceptActivationFactor.set(1.0);
-        param.conceptFireThreshold.set(0.0);
+        conceptActivationFactor.set(1.0);
+        conceptFireThreshold.set(0.0);
 
-        param.conceptForgetDurations.set(2.0);
-        param.taskLinkForgetDurations.set(4.0);
-        param.termLinkForgetDurations.set(10.0);
-        param.novelTaskForgetDurations.set(2.0);
+        conceptForgetDurations.set(2.0);
+        taskLinkForgetDurations.set(4.0);
+        termLinkForgetDurations.set(10.0);
+        novelTaskForgetDurations.set(2.0);
 
         //param.budgetThreshold.set(0.01f);
 
-        param.conceptBeliefsMax.set(7);
-        param.conceptGoalsMax.set(7);
-        param.conceptQuestionsMax.set(5);
+        conceptBeliefsMax.set(7);
+        conceptGoalsMax.set(7);
+        conceptQuestionsMax.set(5);
 
-        param.inputsMaxPerCycle.set(1);
+        inputsMaxPerCycle.set(1);
 
-        param.termLinkRecordLength.set(10);
-        param.noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
+        termLinkRecordLength.set(10);
+        noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
 
-        param.setForgetting(Forgetting.Periodic);
-        param.setTiming(Timing.Cycle);
-        param.outputVolume.set(100);
+        setForgetting(Forgetting.Periodic);
+        setTiming(Timing.Cycle);
+        outputVolume.set(100);
 
-        param.reliance.set(0.9f);
+        reliance.set(0.9f);
 
-        param.decisionThreshold.set(0.60);
+        decisionThreshold.set(0.60);
 
 
         policy = new LogicPolicy(
@@ -370,9 +370,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
     protected void initDerivationFilters() {
         final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
         final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        getNALParam().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
-
-
+        getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
     }
 
     //public final DDNodePool<Sentence> sentenceNodes = new DDNodePool(1024);
@@ -388,7 +386,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
     }
 
     @Override
-    public LogicPolicy getNALParam() {
+    public LogicPolicy getLogicPolicy() {
         return policy;
     }
 
@@ -468,13 +466,13 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
     
     public Default realTime() {
-        param.setTiming(Timing.RealMS);
-        param.setForgetting(Forgetting.Periodic);
+        setTiming(Timing.RealMS);
+        setForgetting(Forgetting.Periodic);
         return this;
     }
     public Default simulationTime() {
-        param.setTiming(Timing.Simulation);
-        param.setForgetting(Forgetting.Periodic);
+        setTiming(Timing.Simulation);
+        setForgetting(Forgetting.Periodic);
         return this;
     }
 
@@ -502,12 +500,12 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 if ("--silence".equals(arg)) {
                     arg = args[++i];
                     int sl = Integer.parseInt(arg);                
-                    param.outputVolume.set(100-sl);
+                    outputVolume.set(100-sl);
                 }
                 else if ("--noise".equals(arg)) {
                     arg = args[++i];
                     int sl = Integer.parseInt(arg);                
-                    param.outputVolume.set(sl);
+                    outputVolume.set(sl);
                 }    
                 else {
                     filesToLoad.add(arg);

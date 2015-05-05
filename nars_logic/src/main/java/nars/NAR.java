@@ -664,7 +664,7 @@ public class NAR implements Runnable {
 
     /** normal way to construct a NAR, using a particular Build instance */
     public NAR(NARSeed b) {
-        this(b.newMemory(b.param, b.getNALParam()));
+        this(b.newMemory(b, b.getLogicPolicy()));
         b.init(this);
     }
 

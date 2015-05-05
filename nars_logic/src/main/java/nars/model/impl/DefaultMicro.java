@@ -1,6 +1,7 @@
 package nars.model.impl;
 
 import nars.Memory;
+import nars.NARSeed;
 
 /**
  * Created by me on 5/5/15.
@@ -24,28 +25,28 @@ public class DefaultMicro extends Default {
 
         //Runtime Initial Values
 
-        param.confidenceThreshold.set(0.05);
+        confidenceThreshold.set(0.05);
 
-        param.temporalRelationsMax.set(4);
-
-
-        param.conceptBeliefsMax.set(7);
-        param.conceptGoalsMax.set(5);
-        param.conceptQuestionsMax.set(3);
+        temporalRelationsMax.set(4);
 
 
-        param.termLinkMaxReasoned.set(3);
-        param.termLinkMaxMatched.set(5);
-        param.termLinkRecordLength.set(6);
-        param.noveltyHorizon.set(6);
+        conceptBeliefsMax.set(7);
+        conceptGoalsMax.set(5);
+        conceptQuestionsMax.set(3);
 
-        param.setForgetting(Memory.Forgetting.Periodic);
-        param.setTiming(Memory.Timing.Cycle);
-        param.outputVolume.set(100);
 
-        param.reliance.set(0.9f);
+        termLinkMaxReasoned.set(3);
+        termLinkMaxMatched.set(5);
+        termLinkRecordLength.set(6);
+        noveltyHorizon.set(6);
 
-        param.decisionThreshold.set(0.60);
+        setForgetting(Memory.Forgetting.Periodic);
+        setTiming(Memory.Timing.Cycle);
+        outputVolume.set(100);
+
+        reliance.set(0.9f);
+
+        decisionThreshold.set(0.60);
 
         //add derivation filters here:
         //param.getDefaultDerivationFilters().add(new BeRational());

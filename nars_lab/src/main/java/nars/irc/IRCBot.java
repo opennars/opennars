@@ -6,11 +6,9 @@ import automenta.vivisect.swing.ReflectPanel;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import nars.Memory;
+import nars.*;
 import nars.nal.term.Atom;
 import nars.model.impl.Default;
-import nars.NAR;
-import nars.Global;
 import nars.event.NARReaction;
 import nars.io.Texts;
 import nars.util.language.Twokenize;
@@ -48,13 +46,13 @@ public class IRCBot {
         Default d = new Default();
         //Default d = new Solid(4, 64, 0,5, 0,3);
         d.setConceptBagSize(2048);
-        d.param.decisionThreshold.set(0.7);
-        d.param.temporalRelationsMax.set(2);
-        d.param.shortTermMemoryHistory.set(4);
-        d.param.duration.set(200);
-        d.param.termLinkMaxReasoned.set(6);
-        d.param.conceptsFiredPerCycle.set(3);
-        d.param.setTiming(Memory.Timing.RealMS);
+        d.decisionThreshold.set(0.7);
+        d.temporalRelationsMax.set(2);
+        d.shortTermMemoryHistory.set(4);
+        d.duration.set(200);
+        d.termLinkMaxReasoned.set(6);
+        d.conceptsFiredPerCycle.set(3);
+        d.setTiming(Memory.Timing.RealMS);
 
 
         //d.temporalPlanner(16f,8,8,2);
