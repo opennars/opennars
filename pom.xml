@@ -25,7 +25,7 @@
 
     <modules>
         <module>nars_util</module>
-        <module>nars_java</module>
+        <module>nars_logic</module>
         <module>nars_lab</module>
         <module>nars_prolog</module>
         <module>nars_gui</module>

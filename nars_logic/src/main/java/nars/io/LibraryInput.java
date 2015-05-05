@@ -80,7 +80,7 @@ public class LibraryInput extends TextInput {
 
     public static String getExamplePath(String path) {
         if (path.startsWith("/")) return path; //dont modify, it's already absolute
-        if (cwd.endsWith("nars_java") || cwd.endsWith("nars_prolog"))
+        if (cwd.endsWith("nars_logic") || cwd.endsWith("nars_lab"))
             return "../nal/" + path;
         else
             return "nal/" + path;

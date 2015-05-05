@@ -91,18 +91,18 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	public Prolog() {
 		this(false,true);
 		try {
-			loadLibrary("nars.prolog.lib.BasicLibrary");
+			loadLibrary("nars.tuprolog.lib.BasicLibrary");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		try {
-			loadLibrary("nars.prolog.lib.ISOLibrary");
+			loadLibrary("nars.tuprolog.lib.ISOLibrary");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 
 		try {
-			loadLibrary("nars.prolog.lib.IOLibrary");
+			loadLibrary("nars.tuprolog.lib.IOLibrary");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -111,7 +111,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 			if (System.getProperty("java.vm.name").equals("IKVM.NET"))
 				loadLibrary("OOLibrary.OOLibrary, OOLibrary");
 			else
-				loadLibrary("nars.prolog.lib.JavaLibrary");
+				loadLibrary("nars.tuprolog.lib.JavaLibrary");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

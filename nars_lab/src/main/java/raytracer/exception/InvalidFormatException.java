@@ -1,7 +1,7 @@
 package raytracer.exception;
 
 /**
- * Diese Exception signalisiert ein ungültiges Format.
+ * Diese Exception signalisiert ein ungsltiges Format.
  * 
  * @author Mathias Kosch
  *
@@ -17,7 +17,7 @@ public class InvalidFormatException extends Exception
      */
     public InvalidFormatException()
     {
-        super("Das Format ist ungültig!");
+        super("Das Format ist ungltig!");
     }
     
     /**

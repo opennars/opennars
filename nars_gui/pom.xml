@@ -94,7 +94,14 @@
 
         <dependency>
             <groupId>opennars</groupId>
-            <artifactId>opennars-core</artifactId>
+            <artifactId>opennars-util</artifactId>
+            <version>1.7-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>opennars</groupId>
+            <artifactId>opennars-logic</artifactId>
             <version>1.7-SNAPSHOT</version>
         </dependency>
 

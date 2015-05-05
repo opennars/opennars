@@ -1,7 +1,7 @@
 package raytracer.exception;
 
 /**
- * Diese Exception signalisiert eine unzulässige lineare Abhängigkeit.
+ * Diese Exception signalisiert eine unzulssige lineare Abhngigkeit.
  * 
  * @author Mathias Kosch
  *
@@ -17,7 +17,7 @@ public class LinearlyDependentException extends RuntimeException
      */
     public LinearlyDependentException()
     {
-        super("Das Format ist ungültig!");
+        super("Das Format ist ungltig!");
     }
     
     /**

@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
-import com.sun.istack.internal.Nullable;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -22,6 +21,8 @@ import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
 
 import java.util.List;
+
+
 
 /**
  * QL Agent coprocessor "Brain" operating in terms of (unprocessed) discrete Q-states
@@ -288,7 +289,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     public void possibleDesire(float goalConf, Iterable<String> actions) {
         possibleDesire(Iterables.transform(actions, new Function<String, A>() {
-            @Nullable
             @Override
             public A apply(String t) {
                 return (A) nar.term(t);

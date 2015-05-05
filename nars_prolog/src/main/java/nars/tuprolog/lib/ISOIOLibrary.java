@@ -1923,10 +1923,10 @@ public class ISOIOLibrary extends Library{
         
         Library library=null;
         
-        library = engine.getLibrary("nars.prolog.lib.IOLibrary");
+        library = engine.getLibrary("nars.tuprolog.lib.IOLibrary");
         if(library == null){
             try {
-                library = engine.loadLibrary("nars.prolog.lib.IOLibrary");
+                library = engine.loadLibrary("nars.tuprolog.lib.IOLibrary");
             } catch (InvalidLibraryException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

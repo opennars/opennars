@@ -61,7 +61,7 @@ public class NARPrologMirrorTest {
         
         
         //nal1.multistep.nal
-        NALPerformance nts = new NALPerformance(nar, LibraryInput.get(nar, "test/nars_multistep_1.nal").getSource()) {
+        NALPerformance nts = new NALPerformance(nar, LibraryInput.get(nar, "other/nars_multistep_1.nal").getSource()) {
 //            
 //            
 //            @Override

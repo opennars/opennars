@@ -30,7 +30,7 @@ public class CUIConsole extends Automaton implements Serializable, OutputListene
          * Added the method setExecution to conform
          * the operation of CUIConsole as that of JavaIDE
          */
-        IOLibrary IO = (IOLibrary)engine.getLibrary("nars.prolog.lib.IOLibrary");
+        IOLibrary IO = (IOLibrary)engine.getLibrary("nars.tuprolog.lib.IOLibrary");
         IO.setExecutionType(IOLibrary.consoleExecution);
         /***/
         stdin = new BufferedReader(new InputStreamReader(System.in));

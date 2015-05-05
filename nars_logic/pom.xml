@@ -6,10 +6,10 @@
         <artifactId>opennars</artifactId>
         <version>1.7-SNAPSHOT</version>
     </parent>
-    <artifactId>opennars-core</artifactId>
+    <artifactId>opennars-logic</artifactId>
     <packaging>jar</packaging>
 
-    <name>OpenNARS Core</name>
+    <name>OpenNARS Logic Reasoner</name>
     <url>https://github.com/opennars/opennars</url>
 
 
@@ -267,6 +267,7 @@
             <version>5.2</version>
             <scope>test</scope>
         </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>

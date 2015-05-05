@@ -161,7 +161,7 @@ public class JavaIDE
         setIconImage(icon.getImage());
         
         //Aggiunto Mastrovito 12/2013
-        IOLibrary IO = (IOLibrary)engine.getLibrary("nars.prolog.lib.IOLibrary");
+        IOLibrary IO = (IOLibrary)engine.getLibrary("nars.tuprolog.lib.IOLibrary");
         IO.setExecutionType(IOLibrary.graphicExecution); // changed from IO.graphicExecution to IOLibrary.graphicExecution
         /**
          * consoleDialog is registered as a listener for a read operation

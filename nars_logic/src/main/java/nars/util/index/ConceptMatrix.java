@@ -1,7 +1,6 @@
 package nars.util.index;
 
 import com.google.common.collect.HashBasedTable;
-import com.sun.istack.internal.Nullable;
 import nars.Global;
 import nars.NAR;
 import nars.event.ConceptReaction;

@@ -192,7 +192,7 @@ public class ConsoleManager
     
     public void resetInputStream()
     {
-    	IOLibrary IO = (IOLibrary)engine.getLibrary("nars.prolog.lib.IOLibrary");
+    	IOLibrary IO = (IOLibrary)engine.getLibrary("nars.tuprolog.lib.IOLibrary");
     	IO.getUserContextInputStream().setCounter();
     }
 
