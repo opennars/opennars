@@ -1,7 +1,7 @@
 package ca.nengo.model;
 
 import ca.nengo.model.impl.ObjectSource;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 
 public class AtomicDoubleSource extends ObjectSource<Double> {

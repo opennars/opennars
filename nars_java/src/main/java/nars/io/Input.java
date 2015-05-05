@@ -20,11 +20,11 @@
 package nars.io;
 
 import nars.nal.Task;
-import reactor.function.Supplier;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 /**
  * 

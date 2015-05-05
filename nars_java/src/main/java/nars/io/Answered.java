@@ -11,7 +11,6 @@ import nars.io.narsese.InvalidInputException;
 import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import reactor.event.registry.Registration;
 
 /**
  *
@@ -24,7 +23,7 @@ public abstract class Answered extends AbstractReaction {
     
     final static Class[] events = new Class[] { Answer.class
  };
-    private Registration answering;
+
 
     /** reacts to all questions */
     public Answered(NAR n) {

@@ -7,7 +7,7 @@ package nars.budget.bag.experimental;
 import nars.budget.Budget;
 import nars.nal.Item;
 import nars.util.math.Distributor;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * TODO add a strict probability mode which excludes low priority items from exceeding

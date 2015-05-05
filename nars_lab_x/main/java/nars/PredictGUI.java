@@ -9,7 +9,7 @@ import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 import javafx.scene.chart.BarChart;
 import nars.core.Events;
 import nars.core.Events.TaskAdd;

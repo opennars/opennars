@@ -19,7 +19,7 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.operate.AbstractOperator;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;

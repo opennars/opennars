@@ -1,16 +1,18 @@
 package nars.budget;
 
 import com.google.common.base.Predicate;
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
 import nars.Memory;
 import nars.budget.tx.ForgetNext;
 import nars.nal.BudgetFunctions;
 import nars.nal.Item;
 
-
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 
 /**

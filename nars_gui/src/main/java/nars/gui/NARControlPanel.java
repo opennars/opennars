@@ -38,7 +38,7 @@ import nars.gui.output.chart.MeterNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.io.TextOutput;
 import nars.nal.meta.NARMetrics;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;
 import java.awt.*;

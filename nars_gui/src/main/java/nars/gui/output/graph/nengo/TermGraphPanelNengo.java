@@ -9,7 +9,7 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 import nars.NAR;
 import nars.gui.WrapLayout;
 import nars.prototype.Default;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;
 import java.awt.*;

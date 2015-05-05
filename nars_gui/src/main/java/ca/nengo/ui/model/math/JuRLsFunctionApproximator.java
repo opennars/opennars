@@ -8,7 +8,7 @@
 //import ca.nengo.util.ScriptGenException;
 //import jurls.core.approximation.*;
 //import jurls.examples.approximation.RenderArrayFunction;
-//import reactor.jarjar.jsr166e.extra.AtomicDouble;
+//import com.google.common.util.concurrent.AtomicDouble;
 //
 //import java.awt.*;
 //import java.util.HashMap;

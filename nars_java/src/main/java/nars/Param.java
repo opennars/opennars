@@ -1,7 +1,7 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import com.google.gson.*;
+import jdk.nashorn.internal.ir.debug.JSONWriter;
 import nars.nal.TaskComparator;
 import nars.nal.nal7.Interval.AtomicDuration;
 
@@ -40,9 +40,7 @@ public class Param implements Serializable {
     Memory.Timing timing;
     Memory.Forgetting forgetting;
 
-    public static Param fromJSON(String json) {
-        return Param.json.fromJson(json, Param.class);
-    }
+
     
 
     /** converts durations to cycles */
@@ -154,11 +152,14 @@ public class Param implements Serializable {
     }
 
 
-    
-    @Override
-    public String toString() {
-        return json.toJson(this);
-    }
+
+/*    public static Param fromJSON(String json) {
+        return Param.json.fromJson(json, Param.class);
+    }*/
+//    @Override
+//    public String toString() {
+//        return Json.toJson(this);
+//    }
     
 //    public double[] toGenome(String... excludeFields) {
 //        JsonObject j = json.toJsonTree(this).getAsJsonObject();
@@ -185,42 +186,42 @@ public class Param implements Serializable {
 //        return Doubles.toArray(l);
 //    }
     
-    static public final Gson json;
-    static { 
-        GsonBuilder b = new GsonBuilder();
-        b.setPrettyPrinting();
-        b.disableHtmlEscaping();
-        b.serializeNulls();
-        
-        final JsonSerializer<AtomicDouble> atomicDoubleSerializer = new JsonSerializer<AtomicDouble>() {
-            @Override public JsonElement serialize(AtomicDouble t, Type type, JsonSerializationContext jsc) {
-                return new JsonPrimitive(t.get());
-            }
-        };
-        
-        JsonDeserializer<AtomicDouble> atomicDoubleDeserializer = new JsonDeserializer<AtomicDouble>() {
-            @Override public AtomicDouble deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-                return new AtomicDouble(je.getAsDouble());
-            }
-        };
-        
-        b.registerTypeAdapter(AtomicDouble.class, atomicDoubleSerializer);
-        b.registerTypeAdapter(AtomicDouble.class, atomicDoubleDeserializer);
-        
-        b.registerTypeAdapter(AtomicInteger.class, new JsonSerializer<AtomicInteger>() {
-            @Override public JsonElement serialize(AtomicInteger t, Type type, JsonSerializationContext jsc) {
-                return new JsonPrimitive(t.get());
-            }            
-        });
-        b.registerTypeAdapter(AtomicInteger.class, new JsonDeserializer<AtomicInteger>() {
-            @Override public AtomicInteger deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
-                return new AtomicInteger(je.getAsInt());
-            }           
-        });
-
-        
-        json = b.create();            
-    }
+//    static public final Gson json;
+//    static {
+//        GsonBuilder b = new GsonBuilder();
+//        b.setPrettyPrinting();
+//        b.disableHtmlEscaping();
+//        b.serializeNulls();
+//
+//        final JsonSerializer<AtomicDouble> atomicDoubleSerializer = new JsonSerializer<AtomicDouble>() {
+//            @Override public JsonElement serialize(AtomicDouble t, Type type, JsonSerializationContext jsc) {
+//                return new JsonPrimitive(t.get());
+//            }
+//        };
+//
+//        JsonDeserializer<AtomicDouble> atomicDoubleDeserializer = new JsonDeserializer<AtomicDouble>() {
+//            @Override public AtomicDouble deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
+//                return new AtomicDouble(je.getAsDouble());
+//            }
+//        };
+//
+//        b.registerTypeAdapter(AtomicDouble.class, atomicDoubleSerializer);
+//        b.registerTypeAdapter(AtomicDouble.class, atomicDoubleDeserializer);
+//
+//        b.registerTypeAdapter(AtomicInteger.class, new JsonSerializer<AtomicInteger>() {
+//            @Override public JsonElement serialize(AtomicInteger t, Type type, JsonSerializationContext jsc) {
+//                return new JsonPrimitive(t.get());
+//            }
+//        });
+//        b.registerTypeAdapter(AtomicInteger.class, new JsonDeserializer<AtomicInteger>() {
+//            @Override public AtomicInteger deserialize(JsonElement je, Type type, JsonDeserializationContext jdc) throws JsonParseException {
+//                return new AtomicInteger(je.getAsInt());
+//            }
+//        });
+//
+//
+//        json = b.create();
+//    }
 
     public TaskComparator.Duplication getDerivationDuplicationMode() {
         return derivationDuplicationMode;

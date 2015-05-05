@@ -4,7 +4,7 @@ import automenta.vivisect.Audio;
 import automenta.vivisect.Sound;
 import automenta.vivisect.audio.SoundListener;
 import automenta.vivisect.swing.NPanel;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

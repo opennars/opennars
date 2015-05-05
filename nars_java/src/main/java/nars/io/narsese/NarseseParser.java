@@ -1,5 +1,13 @@
 package nars.io.narsese;
 
+import com.github.fge.grappa.Grappa;
+import com.github.fge.grappa.parsers.BaseParser;
+import com.github.fge.grappa.rules.Rule;
+import com.github.fge.grappa.run.ListeningParseRunner;
+import com.github.fge.grappa.run.ParseRunner;
+import com.github.fge.grappa.run.ParsingResult;
+import com.github.fge.grappa.stack.ValueStack;
+import com.github.fge.grappa.support.Var;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -21,17 +29,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.prototype.Default;
-import org.parboiled.BaseParser;
-import org.parboiled.Parboiled;
-import org.parboiled.Rule;
-import org.parboiled.annotations.BuildParseTree;
-import org.parboiled.errors.InvalidInputError;
-import org.parboiled.errors.ParseError;
-import org.parboiled.parserunners.ParseRunner;
-import org.parboiled.parserunners.RecoveringParseRunner;
-import org.parboiled.support.MatcherPath;
-import org.parboiled.support.ParsingResult;
-import org.parboiled.support.Var;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -41,25 +38,23 @@ import java.util.function.Consumer;
 
 import static nars.io.Symbols.IMAGE_PLACE_HOLDER;
 import static nars.nal.NALOperator.*;
-import static org.parboiled.support.ParseTreeUtils.printNodeTree;
 
 /**
  * NARese, syntax and language for interacting with a NAR in NARS.
  * https://code.google.com/p/open-nars/wiki/InputOutputFormat
  */
-@BuildParseTree
 public class NarseseParser extends BaseParser<Object> {
 
     private final int level;
 
     //These should be set to something like RecoveringParseRunner for performance
-    public final ParseRunner inputParser = new RecoveringParseRunner(Input(), 0);
-    public final ParseRunner singleTaskParser = new RecoveringParseRunner(Task(true), 0);
+    public final ParseRunner inputParser = new ListeningParseRunner(Input());
+    public final ParseRunner singleTaskParser = new ListeningParseRunner(Task(true));
 
     //use a parameter or something to avoid this extra instance
-    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new RecoveringParseRunner(Task(false), 0);
+    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ListeningParseRunner(Task(false));
 
-    public final ParseRunner singleTermParser = new RecoveringParseRunner(Term()); //new ErrorReportingParseRunner(Term(), 0);
+    public final ParseRunner singleTermParser = new ListeningParseRunner(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
     public Memory memory;
 
@@ -502,13 +497,13 @@ public class NarseseParser extends BaseParser<Object> {
                         CONJUNCTION.symbol,
                         SEQUENCE.symbol,
                         PARALLEL.symbol,
-                        DIFFERENCE_EXT.symbol,
-                        DIFFERENCE_INT.symbol,
-                        INTERSECTION_EXT.symbol,
-                        INTERSECTION_INT.symbol,
-                        PRODUCT.symbol,
-                        IMAGE_EXT.symbol,
-                        IMAGE_INT.symbol
+
+                        anyOf(
+                                INTERSECTION_EXT.symbol +
+                                INTERSECTION_INT.symbol +
+                                DIFFERENCE_EXT.symbol +
+                                DIFFERENCE_INT.symbol +  PRODUCT.symbol + IMAGE_EXT.symbol + IMAGE_INT.symbol
+                        )
 
 
                         //OPERATION.ch
@@ -579,14 +574,19 @@ public class NarseseParser extends BaseParser<Object> {
         return MultiArgTerm(open, open, close, allowInitialOp, allowInternalOp, allowSpaceToSeparate, false);
     }
 
+    boolean OperationPrefixTerm() {
+        return push( new Object[] { term("^" + pop()), (Compound.class) } );
+    }
+
     /**
      * list of terms prefixed by a particular compound term operate
      */
     Rule MultiArgTerm(NALOperator defaultOp, NALOperator open, NALOperator close, boolean initialOp, boolean allowInternalOp, boolean spaceSeparates, boolean operatorPrecedes) {
 
+
         return sequence(
 
-                operatorPrecedes ? pushAll( term("^" + pop()), Compound.class) : push(Compound.class),
+                operatorPrecedes ?  OperationPrefixTerm() : push(Compound.class),
 
                 open != null ? sequence(open.ch, s()) : s(),
 
@@ -615,7 +615,7 @@ public class NarseseParser extends BaseParser<Object> {
     Rule EmptyOperationParens() {
         return sequence(
 
-                pushAll(term("^" + pop()), Compound.class),
+                OperationPrefixTerm(),
 
                 s(), NALOperator.COMPOUND_TERM_OPENER.ch, s(), NALOperator.COMPOUND_TERM_CLOSER.ch,
 
@@ -684,8 +684,22 @@ public class NarseseParser extends BaseParser<Object> {
 
         //System.err.println(getContext().getValueStack());
 
-        while (!getContext().getValueStack().isEmpty()) {
+        ValueStack<Object> stack = getContext().getValueStack();
+        while (!stack.isEmpty()) {
             Object p = pop();
+
+            if (p instanceof Object[]) {
+                //it's an array so unpack by pushing everything back onto the stack except the last item which will be used as normal below
+                Object[] pp = (Object[])p;
+                if (pp.length > 1) {
+                    for (int i = pp.length-1; i >= 1; i--) {
+                    //for (int i = 0; i < pp.length-1; i++) {
+                        stack.push(pp[i]);
+                    }
+                }
+
+                p = pp[0];
+            }
 
             if (p == Compound.class) break; //beginning of stack frame for this term
 
@@ -701,7 +715,7 @@ public class NarseseParser extends BaseParser<Object> {
                     if ((!allowInternalOp) && (!p.equals(op)))
                         throw new RuntimeException("Internal operator " + p + " not allowed here; default op=" + op);
 
-                    throw new InvalidInputException("Too many operators involved: " + op + "," + p + " in " + getContext().getValueStack() + ":" + vectorterms);
+                    throw new InvalidInputException("Too many operators involved: " + op + "," + p + " in " + stack + ":" + vectorterms);
                 }
 
                 op = (NALOperator)p;
@@ -760,7 +774,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public static NarseseParser newParser(Memory m) {
-        NarseseParser np = Parboiled.createParser(NarseseParser.class);
+        NarseseParser np = Grappa.createParser(NarseseParser.class);
         np.memory = m;
         return np;
     }
@@ -794,7 +808,7 @@ public class NarseseParser extends BaseParser<Object> {
                 r = singleTaskParserNonNewStamp.run(input);
         }
         catch (Throwable ge) {
-            throw new InvalidInputException(ge.toString() + " parsing: " + input);
+            throw new InvalidInputException(ge.toString() + " " + ge.getCause() + ": parsing: " + input);
         }
 
         if (r == null)
@@ -833,15 +847,19 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public static InvalidInputException newParseException(String input, ParsingResult r) {
-        if (r.parseErrors.isEmpty())
-            return new InvalidInputException("No parse result for: " + input);
 
-        String all = "\n";
-        for (Object o : r.getParseErrors()) {
-            ParseError pe = (ParseError)o;
-            all += pe.getClass().getSimpleName() + ": " + pe.getErrorMessage() + " @ " + pe.getStartIndex() + "\n";
-        }
-        return new InvalidInputException(all + " for input: " + input);
+        //if (!r.isSuccess()) {
+            return new InvalidInputException("input: " + input + " (" + r.toString() + ')');
+        //}
+//        if (r.parseErrors.isEmpty())
+//            return new InvalidInputException("No parse result for: " + input);
+//
+//        String all = "\n";
+//        for (Object o : r.getParseErrors()) {
+//            ParseError pe = (ParseError)o;
+//            all += pe.getClass().getSimpleName() + ": " + pe.getErrorMessage() + " @ " + pe.getStartIndex() + "\n";
+//        }
+//        return new InvalidInputException(all + " for input: " + input);
     }
 
 
@@ -860,42 +878,41 @@ public class NarseseParser extends BaseParser<Object> {
             if (input == null)
                 input = sc.nextLine();
 
-            ParseRunner rpr = new RecoveringParseRunner(p.Input());
+            ParseRunner rpr = new ListeningParseRunner<>(p.Input());
             //TracingParseRunner rpr = new TracingParseRunner(p.Input());
 
             ParsingResult r = rpr.run(input);
 
-            p.printDebugResultInfo(r);
+            //p.printDebugResultInfo(r);
             input = null;
         }
 
     }
 
-    public void printDebugResultInfo(ParsingResult r) {
-
-        System.out.println("valid? " + (r.isSuccess() && (r.getParseErrors().isEmpty())));
-        r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + ' ' + x));
-
-        for (Object e : r.getParseErrors()) {
-            if (e instanceof InvalidInputError) {
-                InvalidInputError iie = (InvalidInputError) e;
-                System.err.println(e);
-                if (iie.getErrorMessage() != null)
-                    System.err.println(iie.getErrorMessage());
-                for (MatcherPath m : iie.getFailedMatchers()) {
-                    System.err.println("  ?-> " + m);
-                }
-                System.err.println(" at: " + iie.getStartIndex() + " to " + iie.getEndIndex());
-            } else {
-                System.err.println(e);
-            }
-
-        }
-
-        System.out.println(printNodeTree(r));
-
-
-    }
+//    public void printDebugResultInfo(ParsingResult r) {
+//
+//        System.out.println("valid? " + (r.isSuccess() && (r.getParseErrors().isEmpty())));
+//        r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + ' ' + x));
+//
+//        for (Object e : r.getParseErrors()) {
+//            if (e instanceof InvalidInputError) {
+//                InvalidInputError iie = (InvalidInputError) e;
+//                System.err.println(e);
+//                if (iie.getErrorMessage() != null)
+//                    System.err.println(iie.getErrorMessage());
+//                for (MatcherPath m : iie.getFailedMatchers()) {
+//                    System.err.println("  ?-> " + m);
+//                }
+//                System.err.println(" at: " + iie.getStartIndex() + " to " + iie.getEndIndex());
+//            } else {
+//                System.err.println(e);
+//            }
+//
+//        }
+//
+//        System.out.println(printNodeTree(r));
+//
+//    }
 
 
 }

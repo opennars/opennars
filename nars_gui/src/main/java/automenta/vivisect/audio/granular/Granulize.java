@@ -2,7 +2,7 @@ package automenta.vivisect.audio.granular;
 
 import automenta.vivisect.audio.SoundProducer;
 import automenta.vivisect.audio.sample.SonarSample;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 public class Granulize implements SoundProducer, SoundProducer.Amplifiable {
 

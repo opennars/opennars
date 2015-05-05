@@ -20,16 +20,16 @@ import static org.junit.Assert.assertTrue;
 public class EventTest {
 
 
-    @Test
-    public void testReactor() throws InterruptedException {
-        EventEmitter e = EventEmitter.ReactorEventEmitter.newSynchronous();
-        testEmitter(e);
-    }
-    @Test
-    public void testReactorException() throws InterruptedException {
-        EventEmitter e = EventEmitter.ReactorEventEmitter.newSynchronous();
-        testException(e);
-    }
+//    @Test
+//    public void testReactor() throws InterruptedException {
+//        EventEmitter e = EventEmitter.ReactorEventEmitter.newSynchronous();
+//        testEmitter(e);
+//    }
+//    @Test
+//    public void testReactorException() throws InterruptedException {
+//        EventEmitter e = EventEmitter.ReactorEventEmitter.newSynchronous();
+//        testException(e);
+//    }
 
     @Test
     public void testDefault() throws InterruptedException {

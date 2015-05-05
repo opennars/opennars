@@ -4,7 +4,7 @@ import nars.nal.DerivationFilter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 
 /**

@@ -11,7 +11,7 @@ import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.budget.Bag;
 import nars.util.data.sorted.ArraySortedIndex;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

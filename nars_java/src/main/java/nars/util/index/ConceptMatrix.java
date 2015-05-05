@@ -1,13 +1,13 @@
 package nars.util.index;
 
 import com.google.common.collect.HashBasedTable;
+import com.sun.istack.internal.Nullable;
 import nars.Global;
 import nars.NAR;
 import nars.event.ConceptReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 
@@ -26,8 +26,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     /** base type for cell entries in the matrix. subclass to add additional information per cell */
     public static class EntryValue {
 
-        @Nullable
-        private Concept concept;
+        private Concept concept; //may be null
 
         public EntryValue(Concept c) {
             this.concept = c;

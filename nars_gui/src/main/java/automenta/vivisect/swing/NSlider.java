@@ -18,7 +18,7 @@
 package automenta.vivisect.swing;
 
 import automenta.vivisect.Video;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

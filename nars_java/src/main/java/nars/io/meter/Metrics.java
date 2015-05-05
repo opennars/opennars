@@ -8,7 +8,6 @@ package nars.io.meter;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
-import com.google.gson.*;
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import nars.io.meter.event.DoubleMeter;
 import nars.io.meter.event.HitMeter;
@@ -29,33 +28,33 @@ import java.util.*;
 public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
 
     final static int PRECISION = 4;
-    public final static Gson json = new GsonBuilder()
-             .registerTypeAdapter(Double.class, new JsonSerializer<Double>()  { 
-                        @Override
-                        public JsonElement serialize(Double value, Type theType,
-JsonSerializationContext context) { 
-                                if (value.isNaN()) { 
-                                        return new JsonPrimitive("NaN");
-                                } else if (value.isInfinite()) { 
-                                        return new JsonPrimitive(value);
-                                } else { 
-                                        return new JsonPrimitive(
-                                                new BigDecimal(value).
-                                                    setScale(PRECISION,
-                                                    BigDecimal.ROUND_HALF_UP).stripTrailingZeros()); 
-                                } 
-                        } 
-                }) 
-                .create(); 
+//    public final static Gson json = new GsonBuilder()
+//             .registerTypeAdapter(Double.class, new JsonSerializer<Double>()  {
+//                        @Override
+//                        public JsonElement serialize(Double value, Type theType,
+//JsonSerializationContext context) {
+//                                if (value.isNaN()) {
+//                                        return new JsonPrimitive("NaN");
+//                                } else if (value.isInfinite()) {
+//                                        return new JsonPrimitive(value);
+//                                } else {
+//                                        return new JsonPrimitive(
+//                                                new BigDecimal(value).
+//                                                    setScale(PRECISION,
+//                                                    BigDecimal.ROUND_HALF_UP).stripTrailingZeros());
+//                                }
+//                        }
+//                })
+//                .create();
 
     
     public static void printJSONArray(PrintStream out, Object[] row, boolean includeBrackets) {
-        String r = json.toJson(row);
-        if (!includeBrackets) {
-            r = r.substring(1, r.length()-1);
-        }
-        out.println(r);
-        
+//        String r = json.toJson(row);
+//        if (!includeBrackets) {
+//            r = r.substring(1, r.length()-1);
+//        }
+//        out.println(r);
+        out.println(Arrays.toString(row));
     }
 
     

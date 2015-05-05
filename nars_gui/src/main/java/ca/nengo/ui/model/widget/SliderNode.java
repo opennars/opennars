@@ -9,7 +9,7 @@ import ca.nengo.ui.model.icon.EmptyIcon;
 import ca.nengo.util.ScriptGenException;
 import org.piccolo2d.event.PInputEvent;
 import org.piccolo2d.event.PInputEventListener;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

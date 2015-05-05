@@ -1,11 +1,11 @@
 package nars.rl;
 
 import com.google.common.base.Function;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
+import com.sun.istack.internal.Nullable;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -21,7 +21,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**

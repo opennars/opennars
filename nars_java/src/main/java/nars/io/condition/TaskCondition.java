@@ -1,7 +1,9 @@
 package nars.io.condition;
 
-import com.google.gson.*;
-import com.google.gson.annotations.Expose;
+
+import jdk.nashorn.internal.ir.debug.JSONWriter;
+import jdk.nashorn.internal.parser.JSONParser;
+import jdk.nashorn.internal.runtime.JSONFunctions;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
@@ -20,33 +22,33 @@ import java.util.*;
 
 public class TaskCondition extends OutputCondition implements Serializable {
 
-    @Expose
+    //@Expose
     public final Class channel;
-    @Expose
+    //@Expose
     public final Term term;
-    @Expose
+    //@Expose
     public final char punc;
 
-    @Expose
+    //@Expose
     public final float freqMin;
-    @Expose
+    //@Expose
     public final float freqMax;
-    @Expose
+    //@Expose
     public final float confMin;
-    @Expose
+    //@Expose
     public final float confMax;
-    @Expose
+    //@Expose
     public final long cycleStart; //-1 for not compared
-    @Expose
+    //@Expose
     public final long cycleEnd;  //-1 for not compared
 
     private final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
 
-    @Expose
+    //@Expose
     private long creationTime;
 
 
-    @Expose
+    //@Expose
     public Tense tense = Tense.Eternal;
 
     public final List<Task> exact = new ArrayList();
@@ -332,29 +334,29 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
 
 
-    public final static JsonSerializer asString = new JsonSerializer() {
-
-        @Override
-        public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
-            return new JsonPrimitive(o.toString());
-        }
-
-    };
-
-    public final static JsonSerializer classString = new JsonSerializer() {
-
-        @Override
-        public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
-            return new JsonPrimitive(((Class) o).getSimpleName());
-        }
-
-    };
-
-    final static Gson j = new GsonBuilder()
-            .disableHtmlEscaping()
-            .registerTypeAdapter(Class.class, classString)
-            .registerTypeAdapter(Term.class, asString)
-            .excludeFieldsWithoutExposeAnnotation().create();
+//    public final static JsonSerializer asString = new JsonSerializer() {
+//
+//        @Override
+//        public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
+//            return new JsonPrimitive(o.toString());
+//        }
+//
+//    };
+//
+//    public final static JsonSerializer classString = new JsonSerializer() {
+//
+//        @Override
+//        public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
+//            return new JsonPrimitive(((Class) o).getSimpleName());
+//        }
+//
+//    };
+//
+//    final static Gson j = new GsonBuilder()
+//            .disableHtmlEscaping()
+//            .registerTypeAdapter(Class.class, classString)
+//            .registerTypeAdapter(Term.class, asString)
+//            .excludeFieldsWithoutExposeAnnotation().create();
 
     @Override
     public String getFalseReason() {
@@ -399,12 +401,16 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public String toString() {
-        return succeeded  +": "  +j.toJson(this);
+        return succeeded  +": "  + json(this);
     }
 
     public long getCreationTime() {
         return creationTime;
     }
 
+
+    public String json(Object o) {
+        return "<json>";
+    }
 
 }

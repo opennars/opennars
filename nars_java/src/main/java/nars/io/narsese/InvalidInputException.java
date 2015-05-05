@@ -1,11 +1,11 @@
 package nars.io.narsese;
 
-import org.parboiled.errors.ParserRuntimeException;
+
 
 /**
  * All kinds of invalid addInput lines
  */
-public class InvalidInputException extends ParserRuntimeException {
+public class InvalidInputException extends RuntimeException {
 
     /**
      * An invalid addInput line.
@@ -15,7 +15,7 @@ public class InvalidInputException extends ParserRuntimeException {
         super(s);
     }
 
-    public InvalidInputException(String message, Exception cause) {
-        super(cause, message);
+    public InvalidInputException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

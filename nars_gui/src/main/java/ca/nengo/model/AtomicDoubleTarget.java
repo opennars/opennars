@@ -1,7 +1,7 @@
 package ca.nengo.model;
 
 import ca.nengo.model.impl.ObjectTarget;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
 * Created by me on 3/2/15.

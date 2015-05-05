@@ -394,16 +394,16 @@ public class Default extends ProtoNAR implements ConceptBuilder {
 
     
     
-    public static Default fromJSON(String filePath) {
-        
-        try {
-            String c = readFile(filePath, Charset.defaultCharset());                        
-            return Param.json.fromJson(c, Default.class);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
+//    public static Default fromJSON(String filePath) {
+//
+//        try {
+//            String c = readFile(filePath, Charset.defaultCharset());
+//            return Param.json.fromJson(c, Default.class);
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//            return null;
+//        }
+//    }
     
     static String readFile(String path, Charset encoding) 
         throws IOException  {

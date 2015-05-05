@@ -3,7 +3,7 @@ package nars.prolog;
 import junit.framework.TestCase;
 import nars.prolog.lib.InvalidObjectIdException;
 import nars.prolog.lib.JavaLibrary;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 import java.io.File;
 import java.io.IOException;

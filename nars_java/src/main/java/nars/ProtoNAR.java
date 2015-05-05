@@ -50,9 +50,6 @@ abstract public class ProtoNAR extends Global {
         return getClass().getSimpleName();
     }
 
-    public String toJSON() {
-        return Param.json.toJson(this);
-    }
 
     abstract public NALParam getNALParam();
 }

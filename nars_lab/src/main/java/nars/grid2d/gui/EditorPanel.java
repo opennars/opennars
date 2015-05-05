@@ -6,7 +6,7 @@ import nars.grid2d.Cell.Material;
 import nars.grid2d.*;
 import nars.grid2d.object.Key;
 import nars.grid2d.object.Pizza;
-import org.parboiled.common.FileUtils;
+import org.apache.commons.io.FileUtils;
 import processing.core.PVector;
 
 import javax.swing.*;
@@ -116,7 +116,12 @@ public class EditorPanel extends JPanel {
                         load.add(new EditorMode(name) {
                             @Override
                             public void run() {
-                                String allText = FileUtils.readAllText(path);
+                                String allText = null;
+                                try {
+                                    allText = FileUtils.readFileToString(new File(path));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 //todo: fill level according to read text
                                 String[] values=allText.split("OBJECTS")[0].split(";");
                                 for(String cell : values) {

@@ -43,6 +43,8 @@ import static nars.nal.nal8.Operation.make;
     private Term self;
 
 
+
+
     public OldNarseseParser(NAR n, NarseseParser newParser) {
 
         this.memory = n.memory;

@@ -5,7 +5,7 @@
  */
 package nars.io.meter.event;
 
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * Stores the latest provided value for retrieval by a Metrics 
