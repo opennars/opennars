@@ -9,6 +9,7 @@ import nars.rl.*;
 import nars.rl.example.QVis;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by me on 4/26/15.
@@ -34,6 +35,28 @@ public class RLNario extends NARio  {
 
         Video.themeInvert();
         new NARSwing(nar);
+    }
+
+    @Override
+    @Deprecated synchronized public double[] observe() {
+
+
+        o.clear();
+
+        o.addAll(dx/6.0, dy/6.0); //higher resolution velocity
+        o.addAll(dx/12.0, dy/12.0); //coarse velocity
+
+        for (boolean b : mario.keys)
+            o.add(b ? 1 : -1);
+
+
+        //o.addAll(radar);
+
+        Image screen = ((LevelScene) scene).layer.image;
+
+
+
+        return o.toArray();
     }
 
     @Override

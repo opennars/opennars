@@ -2,12 +2,12 @@ package nars.nal;
 
 import com.google.common.collect.Iterators;
 import nars.io.Source;
-import reactor.function.Consumer;
-import reactor.function.Supplier;
 
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Entry point for all new memory percepts

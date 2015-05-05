@@ -1,7 +1,7 @@
 package nars.io;
 
-import reactor.function.Supplier;
 
+import java.util.function.Supplier;
 
 /**
  * An attached Input supplier and Attention Allocation State

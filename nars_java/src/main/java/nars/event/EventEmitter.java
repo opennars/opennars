@@ -4,14 +4,7 @@ package nars.event;
 import com.google.common.collect.Lists;
 import nars.Events;
 import nars.Global;
-import reactor.core.Environment;
-import reactor.core.Reactor;
-import reactor.core.spec.Reactors;
-import reactor.event.Event;
-import reactor.event.registry.Registration;
-import reactor.event.selector.Selector;
-import reactor.event.selector.Selectors;
-import reactor.function.Consumer;
+
 
 import java.util.*;
 
@@ -24,142 +17,143 @@ abstract public class EventEmitter<E>  {
         public void off();
     }
 
-    /** more sophisticated event emitter which uses reactor.io */
-    public static class ReactorEventEmitter<E> extends EventEmitter<E> {
-
-        public final Reactor r;
-
-        public static class ReactorEventRegistration implements EventRegistration {
-
-            private final Registration registration;
-
-            ReactorEventRegistration(Registration r) {
-                this.registration = r;
-            }
-
-            @Override
-            public void off() {
-                registration.cancel();
-            }
-        }
-
-        public ReactorEventEmitter() {
-            this(Reactors.reactor().synchronousDispatcher().broadcastEventRouting().get());
-        }
-
-        public ReactorEventEmitter(Reactor r) {
-            this.r = r;
-
-            if (Global.DEBUG_TRACE_EVENTS) {
-            /*
-            System.out.println(r);
-            System.out.println(r.getDispatcher());
-            System.out.println(r.getRouter());
-            */
-
-                r.on(Selectors.matchAll(), x -> {
-                    System.out.println(x + " --> " +
-                            r.getConsumerRegistry().select(x.getKey()).size());
-                });
-            }
-        /*
-        r.on(T(Throwable.class), t -> {
-            Throwable e = (Throwable)t.getData();
-            //if (Parameters.DEBUG) {
-                if (e.getCause()!=null)
-                    e.getCause().printStackTrace();
-                else
-                    e.printStackTrace();
-
-                //throw new RuntimeException(e);
-            //}
-
-            //else {
-            //    System.err.println(e);
-            }///
-
-            //throw new RuntimeException(e.getCause());
-
-        });*/
-
-        }
-
-
-
-    /*public static Eventer newWorkQueue() {
-        return new Eventer(Reactors.reactor(new Environment(), Environment.WORK_QUEUE));
-    }*/
-
-        @Override
-        public void cycle() {
-        }
-
-
-
-        /** new Eventer with a dispatcher mode that runs in the same thread */
-        public static ReactorEventEmitter newSynchronous() {
-            return new ReactorEventEmitter(Reactors.reactor().env(new Environment()).synchronousDispatcher().firstEventRouting().get());
-        }
-
-        public void synch() {
-            r.getDispatcher().awaitAndShutdown();
-        }
-
-        public void shutdown() {
-            r.getDispatcher().shutdown();
-        }
-
-        public <X extends Event<?>> Registration on(Selector s, Consumer<X> c) {
-            return r.on(s, c);
-        }
-
-        @Override
-        public void notify(final Class channel, final Object[] arg) {
-            r.notify(channel, Event.wrap(arg));
-        }
-
-        public void notify(Object channel) {
-            r.notify(channel);
-        }
-
-        public void fire(Object event) {
-            r.notify(Event.wrap(event));
-        }
-
-        public void fire(Object channel, Event event) {
-            r.notify(channel, event);
-        }
-
-
-        @Override
-        public final boolean isActive(final Class event) {
-            return !r.getConsumerRegistry().select(event).isEmpty();
-        }
-
-        @Override
-        public EventRegistration on(Class<?> channel, Reaction obs) {
-
-            return new ReactorEventRegistration(on(Selectors.T(channel), obs));
-        }
-
-        Registration on(Selector s, Reaction obs) {
-            return on(s,  new Consumer<Event>() {
-                @Override public void accept(Event event) {
-                    try {
-                        Class channel = (Class) (event.getKey());
-                        Object o = event.getData();
-                        obs.event(channel, (Object[]) o);
-                    }
-                    catch (Throwable t) {
-                        if (Global.DEBUG) {
-                            t.printStackTrace();
-                        }
-                        emit(Events.ERR.class, t);
-                    }
-                }
-            });
-        }
-    }
+//    /** more sophisticated event emitter which uses reactor.io */
+//    public static class ReactorEventEmitter<E> extends EventEmitter<E> {
+//
+//
+//        public final Reactor r;
+//
+//        public static class ReactorEventRegistration implements EventRegistration {
+//
+//            private final Registration registration;
+//
+//            ReactorEventRegistration(Registration r) {
+//                this.registration = r;
+//            }
+//
+//            @Override
+//            public void off() {
+//                registration.cancel();
+//            }
+//        }
+//
+//        public ReactorEventEmitter() {
+//            this(Reactors.reactor().synchronousDispatcher().broadcastEventRouting().get());
+//        }
+//
+//        public ReactorEventEmitter(Reactor r) {
+//            this.r = r;
+//
+//            if (Global.DEBUG_TRACE_EVENTS) {
+//            /*
+//            System.out.println(r);
+//            System.out.println(r.getDispatcher());
+//            System.out.println(r.getRouter());
+//            */
+//
+//                r.on(Selectors.matchAll(), x -> {
+//                    System.out.println(x + " --> " +
+//                            r.getConsumerRegistry().select(x.getKey()).size());
+//                });
+//            }
+//        /*
+//        r.on(T(Throwable.class), t -> {
+//            Throwable e = (Throwable)t.getData();
+//            //if (Parameters.DEBUG) {
+//                if (e.getCause()!=null)
+//                    e.getCause().printStackTrace();
+//                else
+//                    e.printStackTrace();
+//
+//                //throw new RuntimeException(e);
+//            //}
+//
+//            //else {
+//            //    System.err.println(e);
+//            }///
+//
+//            //throw new RuntimeException(e.getCause());
+//
+//        });*/
+//
+//        }
+//
+//
+//
+//    /*public static Eventer newWorkQueue() {
+//        return new Eventer(Reactors.reactor(new Environment(), Environment.WORK_QUEUE));
+//    }*/
+//
+//        @Override
+//        public void cycle() {
+//        }
+//
+//
+//
+//        /** new Eventer with a dispatcher mode that runs in the same thread */
+//        public static ReactorEventEmitter newSynchronous() {
+//            return new ReactorEventEmitter(Reactors.reactor().env(new Environment()).synchronousDispatcher().firstEventRouting().get());
+//        }
+//
+//        public void synch() {
+//            r.getDispatcher().awaitAndShutdown();
+//        }
+//
+//        public void shutdown() {
+//            r.getDispatcher().shutdown();
+//        }
+//
+//        public <X extends Event<?>> Registration on(Selector s, Consumer<X> c) {
+//            return r.on(s, c);
+//        }
+//
+//        @Override
+//        public void notify(final Class channel, final Object[] arg) {
+//            r.notify(channel, Event.wrap(arg));
+//        }
+//
+//        public void notify(Object channel) {
+//            r.notify(channel);
+//        }
+//
+//        public void fire(Object event) {
+//            r.notify(Event.wrap(event));
+//        }
+//
+//        public void fire(Object channel, Event event) {
+//            r.notify(channel, event);
+//        }
+//
+//
+//        @Override
+//        public final boolean isActive(final Class event) {
+//            return !r.getConsumerRegistry().select(event).isEmpty();
+//        }
+//
+//        @Override
+//        public EventRegistration on(Class<?> channel, Reaction obs) {
+//
+//            return new ReactorEventRegistration(on(Selectors.T(channel), obs));
+//        }
+//
+//        Registration on(Selector s, Reaction obs) {
+//            return on(s,  new Consumer<Event>() {
+//                @Override public void accept(Event event) {
+//                    try {
+//                        Class channel = (Class) (event.getKey());
+//                        Object o = event.getData();
+//                        obs.event(channel, (Object[]) o);
+//                    }
+//                    catch (Throwable t) {
+//                        if (Global.DEBUG) {
+//                            t.printStackTrace();
+//                        }
+//                        emit(Events.ERR.class, t);
+//                    }
+//                }
+//            });
+//        }
+//    }
 
     /** simple single-thread synchronous (in-thread) event emitter.
      * stores lists of reactions as array for fast iteration

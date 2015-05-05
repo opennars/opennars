@@ -29,7 +29,7 @@ public class LevelScene extends Scene implements SpriteContext
     public static Image tmpImage;
     private int tick;
 
-    private LevelRenderer layer;
+    protected LevelRenderer layer;
     private BgRenderer[] bgLayer = new BgRenderer[2];
 
     private GraphicsConfiguration graphicsConfiguration;

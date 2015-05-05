@@ -243,13 +243,11 @@
 
 
     <repositories>
-        <repository>
-
-                <id>org.projectreactor</id>
-                <name>Project Reactor</name>
-                <url>http://repo.spring.io/libs-milestone</url>
-
-        </repository>
+        <!--<repository>
+            <id>spring-snapshot</id>
+            <name>Spring</name>
+            <url>https://repo.spring.io/libs-snapshot</url>
+        </repository> -->
     </repositories>
 
     <properties>
@@ -258,12 +256,17 @@
 
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.projectreactor</groupId>
+        <!-- <dependency>
+            <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>2.0.0.M1</version>
+            <version>2.1.0.BUILD-SNAPSHOT</version>
+        </dependency>-->
+        <dependency>
+            <groupId>com.goldmansachs</groupId>
+            <artifactId>gs-collections</artifactId>
+            <version>6.1.0</version>
         </dependency>
+
 
 
         <dependency>

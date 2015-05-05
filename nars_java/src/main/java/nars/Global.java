@@ -26,7 +26,6 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
-import org.apache.commons.math3.util.MathUtils;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;

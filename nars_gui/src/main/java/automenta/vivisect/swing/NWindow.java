@@ -29,11 +29,12 @@ import java.awt.event.WindowEvent;
  * Specify shared properties of NARS windows
  */
 public class NWindow extends JFrame {
-    //http://paletton.com/#uid=70u0u0kllllaFw0g0qFqFg0w0aF
-    //http://www.javacodegeeks.com/2013/07/java-7-swing-creating-translucent-and-shaped-windows.html
-    //http://docs.oracle.com/javase/tutorial/displayCode.html?code=http://docs.oracle.com/javase/tutorial/uiswing/examples/misc/GradientTranslucentWindowDemoProject/src/misc/GradientTranslucentWindowDemo.java
-
     //static final Font NarsFont = new Font("Arial", Font.PLAIN, 13);
+
+    public static class TransparentNWindow extends NWindow {
+        //http://paletton.com/#uid=70u0u0kllllaFw0g0qFqFg0w0aF
+        //http://www.javacodegeeks.com/2013/07/java-7-swing-creating-translucent-and-shaped-windows.html
+        //http://docs.oracle.com/javase/tutorial/displayCode.html?code=http://docs.oracle.com/javase/tutorial/uiswing/examples/misc/GradientTranslucentWindowDemoProject/src/misc/GradientTranslucentWindowDemo.java
 
 //    static {
 //        // Determine what the GraphicsDevice can support.
@@ -63,8 +64,55 @@ public class NWindow extends JFrame {
 //
 //        JFrame.setDefaultLookAndFeelDecorated(false);
 //    }
+        boolean transparent = true;
+        final JPanel background = new JPanel(new BorderLayout()) {
 
-    boolean transparent = false;
+
+            @Override protected void paintComponent(Graphics g) {
+
+                if (transparent) {
+                    if (g instanceof Graphics2D) {
+
+                        Graphics2D g2d = (Graphics2D) g;
+                        g2d.setPaint(transparentColor);
+                        g2d.fillRect(0, 0, getWidth(), getHeight());
+                    }
+                }
+                else {
+                    super.paintComponent(g);
+                }
+            }
+        };
+
+        /** on linux, transparent windows requries the the XComposite display extension enabled,
+         * usually provided by a compositing engine like Compiz or xcompmgr */
+        void setTransparent(boolean b) {
+
+            if (this.transparent == b) return;
+
+            this.transparent = b;
+
+            if (b) {
+                setDefaultLookAndFeelDecorated(false);
+                ((JPanel)getContentPane()).setOpaque(false);
+                setUndecorated(true);
+
+                getContentPane().setBackground(transparentColor);
+                setBackground(transparentColor);
+
+                //setOpacity(0.25f);
+
+            }
+            else {
+                setBackground(Color.BLACK);
+            }
+
+
+            repaint();
+        }
+
+    }
+
 
     /**
      * Default constructor
@@ -104,51 +152,8 @@ public class NWindow extends JFrame {
 
     final Color transparentColor = new Color(0,0,0,0);
 
-    final JPanel background = new JPanel(new BorderLayout()) {
 
 
-        @Override protected void paintComponent(Graphics g) {
-
-            if (transparent) {
-                if (g instanceof Graphics2D) {
-
-                    Graphics2D g2d = (Graphics2D) g;
-                    g2d.setPaint(transparentColor);
-                    g2d.fillRect(0, 0, getWidth(), getHeight());
-                }
-            }
-            else {
-                super.paintComponent(g);
-            }
-        }
-    };
-
-    /** on linux, transparent windows requries the the XComposite display extension enabled,
-     * usually provided by a compositing engine like Compiz or xcompmgr */
-    void setTransparent(boolean b) {
-
-        if (this.transparent == b) return;
-
-        this.transparent = b;
-
-        if (b) {
-            setDefaultLookAndFeelDecorated(false);
-            ((JPanel)getContentPane()).setOpaque(false);
-            setUndecorated(true);
-
-            getContentPane().setBackground(transparentColor);
-            setBackground(transparentColor);
-
-            //setOpacity(0.25f);
-
-        }
-        else {
-            setBackground(Color.BLACK);
-        }
-
-
-        repaint();
-    }
 
     protected void close() {
         getContentPane().removeAll();

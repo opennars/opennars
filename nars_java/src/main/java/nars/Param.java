@@ -1,9 +1,9 @@
 package nars;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import com.google.gson.*;
 import nars.nal.TaskComparator;
 import nars.nal.nal7.Interval.AtomicDuration;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;

@@ -1,7 +1,8 @@
 package nars.io;
 
 import nars.nal.Task;
-import reactor.function.Supplier;
+
+import java.util.function.Supplier;
 
 /** input port for external, ex: sensory events */
 public class TaskSource extends Source<Task> {
@@ -20,7 +21,8 @@ public class TaskSource extends Source<Task> {
             ((Input)input).stop();
     }
 
-    @Override
+
+
     public Task get() {
         return input.get();
     }

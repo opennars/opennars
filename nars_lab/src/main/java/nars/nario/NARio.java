@@ -54,7 +54,7 @@ public class NARio extends Run implements RLEnvironment {
     /*int mx, my;
     float dmx, dmy;*/
 
-    private Mario mario;
+    protected Mario mario;
     static double gameRate;
 
     boolean offKeys = false;
@@ -141,17 +141,10 @@ public class NARio extends Run implements RLEnvironment {
     final int rad = 3;
     final DoubleArrayList radar = DoubleArrayList.newWithNValues((rad*2+1)*(rad*2+1), 0);
 
+
     @Override
-    @Deprecated synchronized public double[] observe() {
-        o.clear();
-
-        o.addAll(dx/6.0, dy/6.0); //higher resolution velocity
-        o.addAll(dx/12.0, dy/12.0); //coarse velocity
-
-        o.addAll(radar);
-        for (boolean b : mario.keys)
-            o.add(b ? 1 : -1);
-        return o.toArray();
+    public double[] observe() {
+        return new double[0];
     }
 
     @Override

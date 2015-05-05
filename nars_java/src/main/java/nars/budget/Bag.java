@@ -6,9 +6,7 @@ import nars.Memory;
 import nars.budget.tx.ForgetNext;
 import nars.nal.BudgetFunctions;
 import nars.nal.Item;
-import reactor.function.Consumer;
-import reactor.function.Supplier;
-import reactor.jarjar.jsr166e.extra.AtomicDouble;
+
 
 import java.io.PrintStream;
 import java.util.Iterator;
