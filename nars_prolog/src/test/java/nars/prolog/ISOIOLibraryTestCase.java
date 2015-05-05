@@ -3,6 +3,7 @@ package nars.prolog;
 import nars.prolog.event.OutputEvent;
 import nars.prolog.event.OutputListener;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
@@ -10,6 +11,7 @@ import java.io.*;
 import static org.junit.Assert.*;
 
 // Based on the work of Sara Sabioni
+@Ignore
 public class ISOIOLibraryTestCase {
 
 	static Prolog engine = null;
@@ -31,16 +33,16 @@ public class ISOIOLibraryTestCase {
 
 			File file = new File("/tmp");
 			writePath = file.getCanonicalPath() 
-					+ File.separator + "test"
-					+ File.separator + "unit"
+					//+ File.separator + "test"
+					//+ File.separator + "unit"
 					+ File.separator + "writeFile.txt";
 			readPath = file.getCanonicalPath() 
-					+ File.separator + "test"
-					+ File.separator + "unit"
+					//+ File.separator + "test"
+					//+ File.separator + "unit"
 					+ File.separator + "readFile.txt";
 			binPath = file.getCanonicalPath() 
-					+ File.separator + "test"
-					+ File.separator + "unit"
+					//+ File.separator + "test"
+					//+ File.separator + "unit"
 					+ File.separator + "binFile.bin";
 		}
 		catch(Exception e)

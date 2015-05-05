@@ -474,9 +474,9 @@ public class ThreadLibraryTestCase {
                             "fact1(N,X):-M is N-1,fact1(M,Y),X is Y*N.";
             engine.setTheory(new Theory(theory));
             
-            SolveInfo sinfo = engine.solve("start(7,X,8,Y).");
+            SolveInfo sinfo = engine.solve("start(7,X,8,Y).", 2.0);
             assertTrue(sinfo.isSuccess());
-            
+
             Term X = sinfo.getVarValue("X");
             assertEquals(new Int(5040), X);
             

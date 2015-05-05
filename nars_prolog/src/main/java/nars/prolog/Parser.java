@@ -17,10 +17,12 @@
  */
 package nars.prolog;
 
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.prolog.interfaces.IParser;
 
 import java.io.*;
-import java.util.HashMap;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -56,7 +58,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     private Tokenizer tokenizer;
     private OperatorManager opManager = defaultOperatorManager;
     /*Castagna 06/2011*/
-    private HashMap<Term, Integer> offsetsMap;
+    private ObjectIntHashMap<Term> offsetsMap;
     private int tokenStart;
     /**/
 
@@ -76,7 +78,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * creating a Parser specifing how to handle operators and what text to
      * parse
      */
-    public Parser(OperatorManager op, String theoryText, HashMap<Term, Integer> mapping) {
+    public Parser(OperatorManager op, String theoryText, ObjectIntHashMap<Term> mapping) {
         this(theoryText, mapping);
         if (op != null) {
             opManager = op;
@@ -99,7 +101,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     /**
      * creating a parser with default operate interpretation
      */
-    public Parser(String theoryText, HashMap<Term, Integer> mapping) {
+    public Parser(String theoryText, ObjectIntHashMap<Term>  mapping) {
         tokenizer = new Tokenizer(theoryText);
         offsetsMap = mapping;
     }
@@ -478,7 +480,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             if (!t2.isType(Tokenizer.LPAR)) {
                 throw new InvalidTermException("Something identified as functor misses its first left parenthesis");//todo check can be skipped
             }
-            LinkedList<Term> a = expr0_arglist();     //reading arguments
+            Deque<Term> a = expr0_arglist();     //reading arguments
             Token t3 = tokenizer.readToken();
             if (t3.isType(Tokenizer.RPAR)) //reading right par
             /*Castagna 06/2011*/ {
@@ -585,17 +587,17 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
     //todo make non-recursive
-    private LinkedList<Term> expr0_arglist() throws InvalidTermException, IOException {
+    private Deque<Term> expr0_arglist() throws InvalidTermException, IOException {
         Term head = expr(true);
         Token t = tokenizer.readToken();
         switch (t.seq) {
             case ",":
-                LinkedList<Term> l = expr0_arglist();
+                Deque<Term> l = expr0_arglist();
                 l.addFirst(head);
                 return l;
             case ")":
                 tokenizer.unreadToken(t);
-                LinkedList<Term> x = new LinkedList<>();
+                Deque<Term> x = new ArrayDeque<>();
                 x.add(head);
                 return x;
         }
@@ -650,7 +652,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
         }
     }
 
-    public HashMap<Term, Integer> getTextMapping() {
+    public ObjectIntHashMap<Term>  getTextMapping() {
         return offsetsMap;
     }
 

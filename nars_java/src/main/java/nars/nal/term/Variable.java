@@ -261,6 +261,8 @@ public class Variable extends Atom {
 
     }
 
-
-
+    /** returns the part of the variable name beyond the intial type indicator character */
+    public String getIdentifier() {
+        return toString().substring(1);
+    }
 }

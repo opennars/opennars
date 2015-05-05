@@ -95,7 +95,7 @@ public class BasicLibrary extends Library {
     public boolean get_theory_1(Term arg) {
         arg = arg.getTerm();
         try {
-            Term theory = new Struct(getEngine().getTheory().toString());
+            Term theory = new Struct(getEngine().getDynamicTheoryCopy().toString());
             return (unify(arg, theory));
         } catch (Exception ex) {
             return false;

@@ -194,5 +194,8 @@ public class Long extends Number {
     }
 
 
-    
+    @Override
+    public int hashCode() {
+        return (int) value;
+    }
 }

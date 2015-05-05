@@ -234,7 +234,7 @@ public class TheoryTabbedPane
     }
     public void getTheory()
     {
-        FileIDE fileIDE = new FileIDE(engine.getTheory().toString(),null);
+        FileIDE fileIDE = new FileIDE(engine.getDynamicTheoryCopy().toString(),null);
         JavaEditArea editArea = new JavaEditArea();
         addTab("Theory loaded", editArea);
         theoryFileNames.add(fileIDE);

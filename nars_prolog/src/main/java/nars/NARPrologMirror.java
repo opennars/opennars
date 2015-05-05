@@ -405,7 +405,17 @@ public class NARPrologMirror extends AbstractMirror {
         return new Struct("negation", t);
     }
 
-    public static String pescape(String p) {
+    public static String pquote(final String x) {
+        return "'" + x + '\'';
+    }
+
+    public static String pescape(final String p) {
+        if (!Parser.isAtom(p)) {
+            return pquote(p);
+        }
+        if (Character.isDigit(p.charAt(0))) {
+            return pquote(p);
+        }
         return p;
     }
     public static String unpescape(String p) {
@@ -438,8 +448,13 @@ public class NARPrologMirror extends AbstractMirror {
         return false;
     }
 
-    protected static String classPredicate(Class c) {
-        return c.getSimpleName().toLowerCase();
+    protected static String classPredicate(final Class c) {
+        String s = c.getSimpleName();
+        switch (s) {
+            case "SetInt1": s = "setint"; break;
+            case "SetExt1": s = "setext"; break;
+        }
+        return s.toLowerCase();
     }
     
     //NARS term -> Prolog term
@@ -471,14 +486,14 @@ public class NARPrologMirror extends AbstractMirror {
         else if (term.getClass().equals(Variable.class)) {
             return getVariable((Variable)term);
         }
-        else if (term.getClass().equals(Term.class)) {
-            return new Struct(pescape(term.name().toString()));
+        else if (term.getClass().equals(Atom.class)) {
+            return new Struct(pescape(term.toString()));
         }
         else if (term instanceof Compound) {
             //unhandled type of compound term, store as an atomic string            
             //NOT ready yet
             if (allTerms) {
-                return new Struct('_' + pescape(term.name().toString()));
+                return new Struct('_' + pescape(term.toString()));
             }
         }
         
@@ -492,11 +507,11 @@ public class NARPrologMirror extends AbstractMirror {
 
     private static Var getVariable(Variable v) {
         if (v.hasVarIndep())
-            return new Var('I' + pescape(v.name().toString()));
+            return new Var('I' + v.getIdentifier());
         if (v.hasVarQuery())
             return new Var("Q" + nextQueryID++);
         if (v.hasVarDep()) //check this
-            return new Var("D" + (variableContext) + '_' + pescape(v.name().toString()));
+            return new Var("D" + (variableContext) + '_' + v.getIdentifier());
         return null;
     }
 
@@ -506,7 +521,7 @@ public class NARPrologMirror extends AbstractMirror {
         if (term instanceof Struct) {
             Struct s = (Struct)term;
             int arity = s.getArity();
-            String predicate = s.toString();
+            String predicate = s.getName();
             if (arity == 0) {
                 return Atom.get(unpescape(predicate));
             }
@@ -514,24 +529,27 @@ public class NARPrologMirror extends AbstractMirror {
                 switch (predicate) {
                     case "negation":
                         return Negation.make(nterm(s.getArg(0)));
+//                    default:
+//                        throw new RuntimeException("Unknown 1-arity nars predicate: " + predicate);
                 }
             }
-            if (predicate.equals("product")) {
-                Term[] a = nterm(s.getArg());
-                if (a!=null) return new Product(a);
-                else return null;
+            switch (predicate) {
+                case "product":
+                    Term[] a = nterm(s.getArg());
+                    if (a != null) return Product.make(a);
+                    else return null;
+                case "setint":
+                    Term[] b = nterm(s.getArg());
+                    if (b!=null) return SetInt.make(b);
+                    else return null;
+                case "setext":
+                    Term[] c = nterm(s.getArg());
+                    if (c!=null) return SetExt.make(c);
+                    else return null;
+
             }
-            if (predicate.equals("setint")) {
-                Term[] a = nterm(s.getArg());
-                if (a!=null) return SetInt.make(nterm(s.getArg()));
-                else return null;
-            }
-            if (predicate.equals("setext")) {
-                Term[] a = nterm(s.getArg());
-                if (a!=null) return SetExt.make(nterm(s.getArg()));
-                else return null;
-            }
-            if (arity == 2) {                
+
+            if (arity == 2) {
                 Term a = nterm(s.getArg(0));
                 Term b = nterm(s.getArg(1));
                 if ((a!=null) && (b!=null)) {
@@ -545,7 +563,10 @@ public class NARPrologMirror extends AbstractMirror {
                         case "equivalence":
                             return Equivalence.makeTerm(a, b);
                         //TODO more types
-                            
+//                        default:
+//                            throw new RuntimeException("Unknown 2-arity nars predicate: " + predicate);
+
+
                     }
                 }
             }

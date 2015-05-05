@@ -176,6 +176,11 @@ public class Int extends Number {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return value;
+    }
     
     public String toString() {
         return Integer.toString(value);

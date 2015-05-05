@@ -74,11 +74,7 @@ public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/
         return isEqual((Term) t);
     }
 
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
-    
+
     
     
     
@@ -174,11 +170,15 @@ public abstract class Term  implements Comparable<Term>, /*nars.nal.term.Term,*/
     }
 
 
+    @Override
+    abstract public String toString();
 
-    
-    
-    
-    
+    @Override
+    abstract public int hashCode();
+
+
+
+
     /**
      * gets a copy (with renamed variables) of the term.
      *

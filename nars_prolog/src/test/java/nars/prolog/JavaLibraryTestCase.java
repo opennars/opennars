@@ -3,6 +3,7 @@ package nars.prolog;
 import junit.framework.TestCase;
 import nars.prolog.lib.InvalidObjectIdException;
 import nars.prolog.lib.JavaLibrary;
+import reactor.jarjar.jsr166e.extra.AtomicDouble;
 
 import java.io.File;
 import java.io.IOException;
@@ -230,28 +231,42 @@ public class JavaLibraryTestCase extends TestCase {
 //		info = engine.solve("demo(S).");
 //		assertEquals(true, info.isSuccess());
 	}
-	
+
+
+	public static class Counter extends AtomicDouble {
+
+		public void inc() {
+			addAndGet(1);
+		}
+
+
+	}
+
+	public static final String theory1 =
+			"demo(Obj) :- \n" +
+			"java_object('" + Counter.class.getName() + "', [], Obj), \n" +
+			"Obj <- inc, \n" +
+			"Obj <- inc, \n" +
+			"register(Obj)";
+
 	public void test_register_1() throws PrologException, IOException
 	{
-		setPath(true);
-		theory = "demo(Obj) :- \n" +
-				"set_classpath([" + paths + "]), \n" +
-				"java_object('Counter', [], Obj), \n" +
-				"Obj <- inc, \n" +
-				"Obj <- inc, \n" +
-				"register(Obj).";
+
+
+		//setPath(true);
+		theory = theory1 + '.';
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(R).");
 		assertEquals(true, info.isSuccess());
 		
 		theory = "demo2(Obj, Val) :- \n"
 				+ "Obj <- inc, \n"
-				+ "Obj <- getValue returns Val.";
+				+ "Obj <- get returns Val.";
 		engine.addTheory(new Theory(theory));
 		String obj =  info.getTerm("R").toString();
 		SolveInfo info2 = engine.solve("demo2(" + obj + ", V).");
 		assertEquals(true, info2.isSuccess());
-		assertEquals(3, Integer.parseInt(info2.getVarValue("V").toString()));
+		assertEquals(3.0, java.lang.Double.parseDouble(info2.getVarValue("V").toString()));
 	
 		// Test invalid object_id registration
 		theory = "demo(Obj1) :- register(Obj1).";
@@ -269,20 +284,17 @@ public class JavaLibraryTestCase extends TestCase {
 		info = engine.solve("demo(Res).");
 		assertEquals(true, info.isHalted());	
 		
-		setPath(true);
-		theory = "demo(Obj) :- \n" +
-				"set_classpath([" + paths + "]), \n" +
-				"java_object('Counter', [], Obj), \n" +
-				"Obj <- inc, \n" +
-				"Obj <- inc, \n" +
-				"register(Obj), unregister(Obj).";
+		theory = theory1 + ", unregister(Obj).";
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Res).");
 		assertEquals(true, info.isSuccess());
-		JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
-		Struct id = (Struct) info.getTerm("Res");
-		Object obj = lib.getRegisteredObject(id);
-		assertNull(obj);
+
+
+
+		//JavaLibrary lib = (JavaLibrary) engine.getLibrary("nars.prolog.lib.JavaLibrary");
+		//Struct id = (Struct) info.getTerm("Res");
+		//Object obj = lib.getRegisteredObject(id);
+		//assertNull(obj);
 	}
 	
 	public void test_java_catch() throws PrologException, IOException

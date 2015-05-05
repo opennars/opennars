@@ -186,11 +186,17 @@ public class Double extends Number {
 
  
     @Override
-    public int compareTo(Term o) {
-        if (o instanceof Number)
-            return (new java.lang.Double(value)).compareTo(((Number)o).doubleValue());
+    public int compareTo(final Term o) {
+        if (o instanceof Number) {
+            return java.lang.Double.compare(value, ((Number)o).doubleValue());
+        }
         else
             return -1;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.lang.Double.hashCode(value);
     }
     
 }

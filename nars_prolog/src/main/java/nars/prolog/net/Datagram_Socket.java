@@ -61,9 +61,4 @@ public class Datagram_Socket extends AbstractSocket {
         }
 	}
 	
-	@Override
-	public String toString(){
-		return socket.toString();
-	}
-
 }

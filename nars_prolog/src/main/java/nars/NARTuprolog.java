@@ -34,7 +34,7 @@ public class NARTuprolog extends NARProlog implements OutputListener, WarningLis
 
     @Override
     public void printRules(PrintStream out) {
-        out.println( prolog.getTheory().toString() );
+        out.println( prolog.getDynamicTheoryCopy().toString() );
     }
 
     @Override

@@ -1,7 +1,8 @@
 package nars;
 
-import nars.prototype.Default;
 import nars.io.TextOutput;
+import nars.prototype.Default;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -11,22 +12,31 @@ import static org.junit.Assert.assertTrue;
  */
 public class NARPrologTest {
 
-    NAR n = new NAR(new Default());
-    PrologContext p = new PrologContext(n);
+    NAR n;
+    PrologContext p;
+
+    @Before
+    public void start() {
+        n = new NAR(new Default());
+        p = new PrologContext(n);
+
+        TextOutput.out(n);
+    }
 
     @Test
     public void testFact() {
 
         n.input("fact(<x --> y>)!");
         n.run(5);
-        assertTrue(p.getProlog(null).getTheory().toString().contains("inheritance(x,y)."));
+        String s = p.getProlog(null).getDynamicTheoryCopy().toString();
+        assertTrue("contains: " + s, s.contains("inheritance(x,y)."));
 
     }
 
     @Test
     public void testFactual() {
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.input("fact(<a --> y>)!");
         n.input("fact(<b --> y>)!");

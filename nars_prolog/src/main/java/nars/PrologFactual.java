@@ -1,8 +1,8 @@
 package nars;
 
-import nars.nal.term.Term;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Term;
 import nars.prolog.NoMoreSolutionException;
 import nars.prolog.Prolog;
 import nars.prolog.SolveInfo;
@@ -14,8 +14,8 @@ import java.util.Set;
 import static nars.NARPrologMirror.nterm;
 
 /**
- *  usage: factual(termexpression, #resultSet)!
-*/
+ * usage: factual(termexpression, #resultSet)!
+ */
 public class PrologFactual extends TermFunction {
 
 
@@ -30,66 +30,67 @@ public class PrologFactual extends TermFunction {
     final int maxAnswers = 16;
 
     @Override
-    public Term function(Term[] x) {
+    public Object function(Term[] x) {
         Prolog p = context.getProlog(null); //default
 
-            nars.prolog.Term factTerm = NARPrologMirror.pterm(x[0]);
-            if (factTerm instanceof Struct)
-                try {
-                    SolveInfo si = p.solve(factTerm, solveTime);
+        nars.prolog.Term factTerm = NARPrologMirror.pterm(x[0]);
 
-                    nars.prolog.Term lastSolution = null;
+        if (factTerm == null)
+            return "prolog_invalid";
 
-                    int a = 0;
-                    Set<Term> answers = new HashSet();
-                    do {
-                        if (si == null) break;
+        if (factTerm instanceof Struct)
+            try {
+                SolveInfo si = p.solve(factTerm, solveTime);
 
-                        nars.prolog.Term solution = si.getSolution();
-                        if (solution == null)
-                            break;
+                nars.prolog.Term lastSolution = null;
 
-                        if (lastSolution!=null && solution.equals(lastSolution))
-                            continue;
+                int a = 0;
+                Set<Term> answers = new HashSet();
+                do {
+                    if (si == null) break;
 
-                        lastSolution = solution;
+                    nars.prolog.Term solution = si.getSolution();
+                    if (solution == null)
+                        break;
 
-                        try {
-                            Term n = nterm(solution);
-                            if (n!=null)
-                                answers.add(n);
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    if (lastSolution != null && solution.equals(lastSolution))
+                        continue;
 
-                        try {
-                            si = p.solveNext(solveTime);
-                        }
-                        catch (NoMoreSolutionException e) {
-                            break;
-                        }
+                    lastSolution = solution;
 
-                        //solveTime /= 2d;
-                    }
-                    while ((a++) < maxAnswers);
-
-                    p.solveEnd();
-
-                    if (answers.isEmpty()) {
-                        return get("null");
-                    }
-                    else {
-                        return SetExt.make(answers);
+                    try {
+                        Term n = nterm(solution);
+                        if (n != null)
+                            answers.add(n);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                } catch (Exception e) {
-                    System.out.println(e);
-                    throw new RuntimeException(e);
+                    try {
+                        si = p.solveNext(solveTime);
+                    } catch (NoMoreSolutionException e) {
+                        break;
+                    }
+
+                    //solveTime /= 2d;
                 }
-            else {
-                throw new RuntimeException("Could not assert non-struct: " + factTerm);
+                while ((a++) < maxAnswers);
+
+                p.solveEnd();
+
+                if (answers.isEmpty()) {
+                    return get("null");
+                } else {
+                    return SetExt.make(answers);
+                }
+
+            } catch (Exception e) {
+                System.out.println(e);
+                throw new RuntimeException(e);
             }
+        else {
+            throw new RuntimeException("Could not assert non-struct: " + factTerm);
+        }
 
     }
 

@@ -100,11 +100,13 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+
 		try {
 			loadLibrary("nars.prolog.lib.IOLibrary");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+
 		try {
 			if (System.getProperty("java.vm.name").equals("IKVM.NET"))
 				loadLibrary("OOLibrary.OOLibrary, OOLibrary");
@@ -226,7 +228,7 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
      * Gets the last Element of the path list
      */
     public String getCurrentDirectory() {
-        String directory = "";
+        String directory;
         if(absolutePathList.isEmpty()) {
         	if(this.lastPath!=null)
         	{
@@ -281,20 +283,20 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
         }
         
 	public SolveInfo addTheory(final Iterator<? extends Term> i) throws InvalidTheoryException {	//no syn
-		Theory oldTh = getTheory();
+		Theory oldTh = getDynamicTheoryCopy();
 		theoryManager.consult(i, true, null);
 		SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
-		Theory newTh = getTheory();
+		Theory newTh = getDynamicTheoryCopy();
 		TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);    
 		this.notifyChangedTheory(ev);
                 return theoryGoal;
 	}
         
 	public SolveInfo addTheory(final Struct s) throws InvalidTheoryException {	//no syn
-		Theory oldTh = getTheory();
+		Theory oldTh = getDynamicTheoryCopy();
 		theoryManager.consult(s, true, null);
 		SolveInfo theoryGoal = theoryManager.solveTheoryGoal();
-		Theory newTh = getTheory();
+		Theory newTh = getDynamicTheoryCopy();
 		TheoryEvent ev = new TheoryEvent(this, oldTh, newTh);    
 		this.notifyChangedTheory(ev);
                 return theoryGoal;
@@ -305,11 +307,13 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 *
 	 * @return current(dynamic) theory
 	 */
-	public Theory getTheory() {	//no syn
+	public Theory getDynamicTheoryCopy() {	//no syn
 		try {
 			return new Theory(theoryManager.getTheory(true));
 		} catch (Exception ex){
-			return null;
+			ex.printStackTrace();
+			throw new RuntimeException(ex);
+			//return null;
 		}
 	}
 
@@ -458,9 +462,10 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 		return sinfo;
 
 	}
-        public SolveInfo solve(Term g) {
-            return solve(g, 0);
-        }
+
+	public SolveInfo solve(Term g) {
+		return solve(g, 0);
+	}
 
 	/**
 	 * Solves a query
@@ -469,14 +474,18 @@ public class Prolog implements /*Castagna 06/2011*/IProlog,/**/ Serializable {
 	 * @return the result of the demonstration
 	 * @see SolveInfo
 	 **/
-	public SolveInfo solve(String st) throws MalformedGoalException {
+	public SolveInfo solve(String st, double time) throws MalformedGoalException {
 		try {
 			Parser p = new Parser(opManager, st);
 			Term t = p.nextTerm(true);
-			return solve(t);
+			return solve(t, time);
 		} catch (Exception ex) {
 			throw new MalformedGoalException(ex.toString());
 		}
+	}
+
+	public SolveInfo solve(String st) throws MalformedGoalException {
+		return solve(st, 0);
 	}
 	
 	/**

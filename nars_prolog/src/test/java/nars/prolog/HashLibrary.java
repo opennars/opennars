@@ -20,15 +20,17 @@
  */
 package nars.prolog;
 
-import java.util.HashMap;
+import nars.Global;
+
+import java.util.Map;
 
 public class HashLibrary extends Library {
 	private static final long serialVersionUID = 1L;
 
-	private HashMap<String, Term> dict;
+	private Map<String, Term> dict;
 		
 	public boolean hashtable_0(){
-		dict = new HashMap<>();
+		dict = Global.newHashMap();
 		return true;
 	} 
 	

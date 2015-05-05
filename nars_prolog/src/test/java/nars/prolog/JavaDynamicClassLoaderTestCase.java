@@ -96,7 +96,7 @@ public class JavaDynamicClassLoaderTestCase {
 		assertEquals(1, loader.getLoadedClasses().length);*/
 	}
 	
-	@Ignore
+	//@Ignore
 	@Test(expected = ClassNotFoundException.class)
 	public void TestNestedPackage() throws ClassNotFoundException, IOException
 	{

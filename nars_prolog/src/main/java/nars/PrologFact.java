@@ -33,6 +33,9 @@ public class PrologFact extends Operator {
         Sentence s = operation.getTask().sentence;
         if (s.punctuation == Symbols.GOAL) {
             nars.prolog.Term factTerm = NARPrologMirror.pterm(args[0]);
+
+            if (factTerm == null) return null;
+
             if (factTerm instanceof Struct)
                 try {
                     p.addTheory((Struct)factTerm);

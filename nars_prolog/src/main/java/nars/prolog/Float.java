@@ -186,9 +186,13 @@ public class Float extends Number {
      */    
     public int compareTo(Term o) {
         if (o instanceof Number)
-            return (new java.lang.Float(value)).compareTo(((Number)o).floatValue());
+            return java.lang.Float.compare(value, ((Number)o).floatValue());
         else
             return -1;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return java.lang.Float.hashCode(value);
+    }
 }

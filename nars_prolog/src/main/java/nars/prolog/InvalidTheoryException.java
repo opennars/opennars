@@ -53,6 +53,8 @@ public class InvalidTheoryException extends PrologException {
 	}
 	/**/
 
-        
-        
+    @Override
+    public String toString() {
+        return super.toString() + ", " + clause + " (" + line + " @ " + pos + ')';
+    }
 }

@@ -71,7 +71,7 @@ public class JavaThrowCatchTestCase extends TestCase {
 	// verifico che il finally venga eseguito in caso di successo di JavaGoal
 	public void test_java_catch_3_5() throws Exception {
 		Prolog engine = new Prolog();
-		String goal = "java_catch(java_object('java.other.ArrayList', [], l), [(E, true)], (X is 2+3, Y is 3+5)).";
+		String goal = "java_catch(java_object('java.util.ArrayList', [], l), [(E, true)], (X is 2+3, Y is 3+5)).";
 		SolveInfo info = engine.solve(goal);
 		assertTrue(info.isSuccess());
 		Term e = info.getTerm("E");

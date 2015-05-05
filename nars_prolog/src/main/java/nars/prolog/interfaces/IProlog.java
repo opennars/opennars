@@ -24,7 +24,7 @@ public interface IProlog {
 	 * Gets current theory
 	 * @return   current(dynamic) theory
 	 */
-	Theory getTheory();
+	Theory getDynamicTheoryCopy();
 	
 	/**
 	 * Adds (appends) a theory

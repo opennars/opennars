@@ -23,9 +23,9 @@ import java.util.*;
 @SuppressWarnings("serial")
 public class ISOIOLibrary extends Library{
     
-    protected static final int files = 1000; //numero casuale abbastanza alto per evitare eccezioni sulle dimensioni delle hashtable
-    protected Hashtable<InputStream, Hashtable<String, Term>> inputStreams = new Hashtable<>(files);
-    protected Hashtable<OutputStream, Hashtable<String, Term>> outputStreams = new Hashtable<>(files);
+    protected static final int files = 1000; //numero casuale abbastanza alto per evitare eccezioni sulle dimensioni delle HashMap
+    protected Map<InputStream, HashMap<String, Term>> inputStreams = new HashMap<>(files);
+    protected Map<OutputStream, HashMap<String, Term>> outputStreams = new HashMap<>(files);
     
     protected InputStream inputStream = null;
     protected OutputStream outputStream = null;
@@ -65,7 +65,7 @@ public class ISOIOLibrary extends Library{
             throw PrologError.type_error(engine.getEngineManager(), 3, "variable", stream);
         }
         
-        Hashtable<String, Term> properties = new Hashtable<>(10);
+        HashMap<String, Term> properties = new HashMap<>(10);
         boolean result = inizialize_properties(properties);
         BufferedOutputStream output = null;
         BufferedInputStream input = null;        
@@ -90,7 +90,7 @@ public class ISOIOLibrary extends Library{
                         //controllo che alias non sia gia' associato ad uno stream aperto
                         if(option.getName().equals("alias")){ 
                         //ciclo su inputStreams
-                            for(Map.Entry<InputStream, Hashtable<String, Term>> currentElement : inputStreams.entrySet()){
+                            for(Map.Entry<InputStream, HashMap<String, Term>> currentElement : inputStreams.entrySet()){
                                 for(Map.Entry<String, Term> currentElement2 : currentElement.getValue().entrySet()){
                                     if(currentElement2.getKey().equals("alias")){
                                         Term alias = currentElement2.getValue();
@@ -111,7 +111,7 @@ public class ISOIOLibrary extends Library{
                             }
                         //ciclo su outputStreams (alias deve essere unico in tutti gli stream aperti
                         //sia che siano di input o di output)
-                            for(Map.Entry<OutputStream, Hashtable<String, Term>> currentElement : outputStreams.entrySet()){
+                            for(Map.Entry<OutputStream, HashMap<String, Term>> currentElement : outputStreams.entrySet()){
                                 for(Map.Entry<String, Term> currentElement2 : currentElement.getValue().entrySet()){
                                     if(currentElement2.getKey().equals("alias")){
                                         Term alias = currentElement2.getValue();
@@ -246,7 +246,7 @@ public class ISOIOLibrary extends Library{
         
         //siccome ? una open con la lista delle opzioni vuota, inizializzo comunque le opzioni
         //e inoltre inserisco i valori che gi? conosco come file_name,mode,input,output e type.
-        Hashtable<String, Term> properties = new Hashtable<>(10);
+        HashMap<String, Term> properties = new HashMap<>(10);
         boolean result = inizialize_properties(properties);
         
         BufferedOutputStream output = null;
@@ -468,7 +468,7 @@ public class ISOIOLibrary extends Library{
     public boolean set_input_1(Term stream_or_alias)throws PrologError{
         initLibrary();
         InputStream stream = find_input_stream(stream_or_alias);
-        Hashtable<String,Term> entry = inputStreams.get(stream);
+        HashMap<String,Term> entry = inputStreams.get(stream);
         Struct name = (Struct)entry.get("file_name");
         inputStream = stream;
         inputStreamName = name.getName();
@@ -478,7 +478,7 @@ public class ISOIOLibrary extends Library{
     public boolean set_output_1(Term stream_or_alias)throws PrologError{
         initLibrary();
         OutputStream stream = find_output_stream(stream_or_alias);
-        Hashtable<String,Term> entry = outputStreams.get(stream);
+        HashMap<String,Term> entry = outputStreams.get(stream);
         Struct name = (Struct)entry.get("file_name");
         outputStream = stream;
         outputStreamName = name.getName();
@@ -507,21 +507,21 @@ public class ISOIOLibrary extends Library{
         List<Struct> resultList = new ArrayList<>(); //object generico perche' sono sia inputStream che outputStream
             
         if(propertyName.equals("input")){
-            for(Map.Entry<InputStream,Hashtable<String, Term>> stream:inputStreams.entrySet()){
+            for(Map.Entry<InputStream,HashMap<String, Term>> stream:inputStreams.entrySet()){
                 resultList.add(new Struct(stream.getKey().toString()));
             }
             Struct result = new Struct(resultList.toArray(new Struct[1]));
             return unify(list,result);
         }
         else if(propertyName.equals("output")){
-            for(Map.Entry<OutputStream,Hashtable<String, Term>> stream:outputStreams.entrySet()){
+            for(Map.Entry<OutputStream,HashMap<String, Term>> stream:outputStreams.entrySet()){
                 resultList.add(new Struct(stream.getKey().toString()));
             }
             Struct result = new Struct(resultList.toArray(new Struct[1]));
             return unify(list,result);
         }
         else{
-            for(Map.Entry<InputStream, Hashtable<String, Term>> currentElement : inputStreams.entrySet()){
+            for(Map.Entry<InputStream, HashMap<String, Term>> currentElement : inputStreams.entrySet()){
                 for(Map.Entry<String, Term> currentElement2 : currentElement.getValue().entrySet()){
                     if(currentElement2.getKey().equals(propertyName)){
                         if(propertyName.equals("alias")){
@@ -546,7 +546,7 @@ public class ISOIOLibrary extends Library{
                 }
             }
             
-            for(Map.Entry<OutputStream, Hashtable<String, Term>> currentElement : outputStreams.entrySet()){
+            for(Map.Entry<OutputStream, HashMap<String, Term>> currentElement : outputStreams.entrySet()){
                 for(Map.Entry<String, Term> currentElement2 : currentElement.getValue().entrySet()){
                     if(currentElement2.getKey().equals(propertyName)){
                         if(propertyName.equals("alias")){
@@ -583,7 +583,7 @@ public class ISOIOLibrary extends Library{
     
     public boolean at_end_of_stream_0()throws PrologError{
         initLibrary();
-        Hashtable<String,Term> entry = inputStreams.get(inputStream);
+        HashMap<String,Term> entry = inputStreams.get(inputStream);
         Term value = entry.get("end_of_stream");
         Struct eof = (Struct) value;
         return !eof.getName().equals("not");
@@ -592,7 +592,7 @@ public class ISOIOLibrary extends Library{
     public boolean at_end_of_stream_1(Term stream_or_alias) throws PrologError{
         initLibrary();
         InputStream stream = find_input_stream(stream_or_alias);
-        Hashtable<String,Term> entry = inputStreams.get(stream);
+        HashMap<String,Term> entry = inputStreams.get(stream);
         Term value = entry.get("end_of_stream");
         Struct eof = (Struct) value;
         return !eof.getName().equals("not");
@@ -615,7 +615,7 @@ public class ISOIOLibrary extends Library{
             }
         }
         
-        Hashtable<String,Term> entry = inputStreams.get(in);
+        HashMap<String,Term> entry = inputStreams.get(in);
         reposition = entry.get("reposition");
             
         Struct value = (Struct)reposition;
@@ -692,7 +692,7 @@ public class ISOIOLibrary extends Library{
             throw PrologError.instantiation_error(engine.getEngineManager(), 1);
         }
         
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         
         Struct struct_name = (Struct) element.get("file_name");
         String file_name = struct_name.toString();
@@ -787,7 +787,7 @@ public class ISOIOLibrary extends Library{
             throw PrologError.instantiation_error(engine.getEngineManager(), 1);
         }
         
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("binary")){
             throw PrologError.permission_error(engine.getEngineManager(), "input", "binary_stream", stream_or_alias, new Struct("The target stream is associated with a binary stream."));
@@ -891,7 +891,7 @@ public class ISOIOLibrary extends Library{
         //come la get_char soltanto non cambio la posizione di lettura
         initLibrary();
         InputStream stream = find_input_stream(stream_or_alias);
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         String file_name = ((Struct)element.get("file_name")).getName();
         
         if(file_name.equals("stdin")){
@@ -984,7 +984,7 @@ public class ISOIOLibrary extends Library{
         initLibrary();
         //come la get_char soltanto non cambio la posizione di lettura
         InputStream stream = find_input_stream(stream_or_alias);
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         String file_name = ((Struct)element.get("file_name")).getName();
         
         FileInputStream stream2=null;
@@ -1047,7 +1047,7 @@ public class ISOIOLibrary extends Library{
         OutputStream stream = find_output_stream(stream_or_alias);
         String stream_name = get_output_name(stream);
         
-        Hashtable<String,Term> element = outputStreams.get(stream);
+        HashMap<String,Term> element = outputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("binary")){
             throw PrologError.permission_error(engine.getEngineManager(), "input", "binary_stream", stream_or_alias, new Struct("Target stream is associated with a binary stream."));
@@ -1094,7 +1094,7 @@ public class ISOIOLibrary extends Library{
         OutputStream stream = find_output_stream(stream_or_alias);
         String stream_name = get_output_name(stream);
         
-        Hashtable<String,Term> element = outputStreams.get(stream);
+        HashMap<String,Term> element = outputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("binary")){
             throw PrologError.permission_error(engine.getEngineManager(), "input", "binary_stream", stream_or_alias, new Struct("Target stream is associated with a binary stream."));
@@ -1156,7 +1156,7 @@ public class ISOIOLibrary extends Library{
         initLibrary();
         InputStream stream = find_input_stream(stream_or_alias);
         Byte b = null;
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("text")){
             throw PrologError.permission_error(engine.getEngineManager(), "input", "text_stream", stream_or_alias, new Struct("Target stream is associated with a text stream."));
@@ -1223,7 +1223,7 @@ public class ISOIOLibrary extends Library{
         initLibrary();
         InputStream stream = find_input_stream(stream_or_alias);
         Byte b = null;
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("text")){
             throw PrologError.permission_error(engine.getEngineManager(), "input", "text_stream", stream_or_alias, new Struct("Target stream is associated with a text stream."));
@@ -1287,7 +1287,7 @@ public class ISOIOLibrary extends Library{
         out_byte = out_byte.getTerm();
         Number b = (Number)out_byte.getTerm();
         
-        Hashtable<String,Term> element = outputStreams.get(stream);
+        HashMap<String,Term> element = outputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("text")){
             throw PrologError.permission_error(engine.getEngineManager(), "output", "text_stream", stream_or_alias, new Struct("Target stream is associated with a text stream."));
@@ -1335,7 +1335,7 @@ public class ISOIOLibrary extends Library{
             throw PrologError.instantiation_error(engine.getEngineManager(), 3); 
         }
         
-        Hashtable<String,Term> element = inputStreams.get(stream);
+        HashMap<String,Term> element = inputStreams.get(stream);
         Struct type =(Struct) element.get("type");
         Struct eof = (Struct) element.get("end_of_stream");
         Struct action = (Struct) element.get("eof_action");
@@ -1439,12 +1439,12 @@ public class ISOIOLibrary extends Library{
             List<Term> variables_list = new ArrayList<>();
             analize_term(variables_list,input_term);
             
-            Hashtable<Term,String> associations_table = new Hashtable<>(variables_list.size());
+            HashMap<Term,String> associations_table = new HashMap<>(variables_list.size());
 
-            //la hashtable sottostante la costruisco per avere le associazioni 
+            //la HashMap sottostante la costruisco per avere le associazioni 
             //con le variabili '_' Queste infatti non andrebbero inserite all'interno della
             //read_option variable_name, ma vanno sostituite comunque da variabili nel termine letto.
-            Hashtable<Term,String> association_for_replace = new Hashtable<>(variables_list.size());
+            HashMap<Term,String> association_for_replace = new HashMap<>(variables_list.size());
             
             LinkedHashSet<Term> set = new LinkedHashSet<>(variables_list);
             List<Var> vars = new ArrayList<>();
@@ -1562,7 +1562,7 @@ public class ISOIOLibrary extends Library{
         boolean numbervars = false;
         Struct writeOption = null;
         
-        Hashtable<String,Term> element = outputStreams.get(output);
+        HashMap<String,Term> element = outputStreams.get(output);
         Struct type =(Struct) element.get("type");
         if(type.getName().equals("binary")){
             throw PrologError.permission_error(engine.getEngineManager(), "output", "binary_stream", stream_or_alias, new Struct("Target stream is associated with a binary stream."));
@@ -1647,7 +1647,7 @@ public class ISOIOLibrary extends Library{
             
             Struct term = (Struct)out_term;
             String result = "";
-            Hashtable<String,Boolean> options = new Hashtable<>(3);
+            HashMap<String,Boolean> options = new HashMap<>(3);
             options.put("numbervars", numbervars);
             options.put("ignore_ops", ignore_ops);
             options.put("quoted", quoted);
@@ -1668,7 +1668,7 @@ public class ISOIOLibrary extends Library{
         return true;
     }
     
-    private String create_string(Hashtable<String,Boolean> options, Struct term){
+    private String create_string(HashMap<String,Boolean> options, Struct term){
         
         boolean numbervars = options.get("numbervars");
         boolean quoted = options.get("quoted");
@@ -1810,7 +1810,7 @@ public class ISOIOLibrary extends Library{
     }
     
 
-    private String print_list(Struct term, Hashtable<String, Boolean> options) {
+    private String print_list(Struct term, HashMap<String, Boolean> options) {
         
         //boolean numbervars = options.get("numbervars");
         //boolean quoted = options.get("quoted");
@@ -1941,8 +1941,8 @@ public class ISOIOLibrary extends Library{
         outputStreamName = IOLib.outputStreamName;
         flag = 1;
         
-        //inserisco anche stdin e stdout all'interno dell'hashtable con le sue propriet?
-        Hashtable<String, Term> propertyInput = new Hashtable<>(10);
+        //inserisco anche stdin e stdout all'interno dell'HashMap con le sue propriet?
+        HashMap<String, Term> propertyInput = new HashMap<>(10);
         inizialize_properties(propertyInput);
         propertyInput.put("input", new Struct("true"));
         propertyInput.put("mode", new Struct("read"));
@@ -1951,7 +1951,7 @@ public class ISOIOLibrary extends Library{
         propertyInput.put("file_name", new Struct("stdin"));
         propertyInput.put("eof_action", new Struct("reset"));
         propertyInput.put("type", new Struct("text"));
-        Hashtable<String, Term> propertyOutput = new Hashtable<>(10);
+        HashMap<String, Term> propertyOutput = new HashMap<>(10);
         inizialize_properties(propertyOutput);
         propertyOutput.put("output", new Struct("true"));
         propertyOutput.put("mode", new Struct("append"));
@@ -1966,7 +1966,7 @@ public class ISOIOLibrary extends Library{
     }
     
     //serve per inizializzare la hashmap delle propriet?
-    private boolean inizialize_properties(Hashtable<String,Term> map){
+    private boolean inizialize_properties(HashMap<String,Term> map){
         Struct s = new Struct();
         map.put("file_name", s);
         map.put("mode", s);
@@ -1997,7 +1997,7 @@ public class ISOIOLibrary extends Library{
         }
         
         //Il nome del file che viene passato in input potrebbe essere il nome del file oppure il suo alias
-        for(Map.Entry<InputStream, Hashtable<String, Term>> currentElement : inputStreams.entrySet()){
+        for(Map.Entry<InputStream, HashMap<String, Term>> currentElement : inputStreams.entrySet()){
             for(Map.Entry<String, Term> currentElement2 : currentElement.getValue().entrySet()){
 
                 //Puo' anche essere che l'utente inserisca il nome della variabile a cui e' associato lo stream che gli serve
@@ -2041,14 +2041,14 @@ public class ISOIOLibrary extends Library{
             }
         }
         
-        //altrimenti vado a cercare lo stream nella hashtable.
+        //altrimenti vado a cercare lo stream nella HashMap.
         //Siccome gli stream di input o output possono essere invocati anche come "stdin" e "stdout"
         //faccio un controllo anche su quei nomi.
         if(stream_name.contains("Output") || stream_name.equals("stdout"))
                 throw PrologError.permission_error(engine.getEngineManager(), "output", "stream", stream_or_alias, new Struct("S_or_a is an output stream"));
 
         if(flag == 0)
-            //se lo stream non si trova all'interno della hashtable, significa che non ? mai stato aperto
+            //se lo stream non si trova all'interno della HashMap, significa che non ? mai stato aperto
                 throw PrologError.existence_error(engine.getEngineManager(), 1, "stream", stream_or_alias, new Struct("Perceive stream should be opened."));
         
         return result;
@@ -2066,7 +2066,7 @@ public class ISOIOLibrary extends Library{
             throw PrologError.instantiation_error(engine.getEngineManager(), 1);
         }
         
-        for(Map.Entry<OutputStream, Hashtable<String, Term>> currentElement : outputStreams.entrySet()){
+        for(Map.Entry<OutputStream, HashMap<String, Term>> currentElement : outputStreams.entrySet()){
             for(Map.Entry<String, Term> currentElement2 : currentElement.getValue().entrySet()){
                 
                 if((currentElement.getKey().toString()).equals(stream_name)){
@@ -2113,7 +2113,7 @@ public class ISOIOLibrary extends Library{
                 throw PrologError.permission_error(engine.getEngineManager(), "input", "stream", stream_or_alias, new Struct("S_or_a is an input stream."));
 
         if(flag == 0)
-            //se lo stream non si trova all'interno della hashtable, significa che non ? mai stato aperto
+            //se lo stream non si trova all'interno della HashMap, significa che non ? mai stato aperto
                 throw PrologError.existence_error(engine.getEngineManager(), 1, "stream", stream_or_alias, new Struct("Output stream should be opened."));
         
         return result;
@@ -2126,10 +2126,10 @@ public class ISOIOLibrary extends Library{
         Term file_name = null;
         //per reperire quello stream specifico devo per forza confrontare il nome degli stream ogni volta
         //perche' la get non fuziona in quanto non mi viene passato lo stesso oggetto 
-        //che e' all'interno dell'hashtable dall'esterno, quindi devo trovarlo scorrendo ogni membro dell'Hashtable
-        for(Map.Entry<OutputStream, Hashtable<String, Term>> element : outputStreams.entrySet()){
+        //che e' all'interno dell'HashMap dall'esterno, quindi devo trovarlo scorrendo ogni membro dell'HashMap
+        for(Map.Entry<OutputStream, HashMap<String, Term>> element : outputStreams.entrySet()){
             if((element.getKey().toString()).equals(output.toString())){
-                Hashtable<String,Term>properties = element.getValue();
+                HashMap<String,Term>properties = element.getValue();
                 file_name = properties.get("file_name");
                 break;
             }
@@ -2140,10 +2140,10 @@ public class ISOIOLibrary extends Library{
     
     private String get_input_name(InputStream input){
         Term file_name = null;
-        for(Map.Entry<InputStream, Hashtable<String, Term>> element : inputStreams.entrySet()){
+        for(Map.Entry<InputStream, HashMap<String, Term>> element : inputStreams.entrySet()){
             if((element.getKey().toString()).equals(input.toString())){
                 input = element.getKey();
-                Hashtable<String,Term>properties = element.getValue();
+                HashMap<String,Term>properties = element.getValue();
                 file_name = properties.get("file_name");
                 break;
             }

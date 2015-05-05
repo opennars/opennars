@@ -17,6 +17,7 @@
  */
 package nars.prolog.lib;
 
+import nars.Global;
 import nars.prolog.*;
 import nars.prolog.Number;
 import nars.prolog.util.*;
@@ -53,13 +54,13 @@ public class JavaLibrary extends Library {
     /**
      * java objects referenced by prolog terms (keys)
      */
-    private HashMap<String, Object> currentObjects = new HashMap<>();
+    private Map<String, Object> currentObjects = Global.newHashMap();
     /**
      * inverse map useful for implementation issue
      */
     private IdentityHashMap<Object, Struct> currentObjects_inverse = new IdentityHashMap<>();
 
-    private HashMap<String, Object> staticObjects = new HashMap<>();
+    private Map<String, Object> staticObjects = Global.newHashMap();
     private IdentityHashMap<Object, Struct> staticObjects_inverse = new IdentityHashMap<>();
 
     /**
@@ -156,8 +157,7 @@ public class JavaLibrary extends Library {
             bindDynamicObject(new Struct("stdout"), System.out);
             bindDynamicObject(new Struct("stderr"), System.err);
             bindDynamicObject(new Struct("runtime"), Runtime.getRuntime());
-            bindDynamicObject(new Struct("current_thread"), Thread
-                    .currentThread());
+            bindDynamicObject(new Struct("current_thread"), Thread.currentThread());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -323,7 +323,7 @@ public class JavaLibrary extends Library {
             String cp = "";
             while (it.hasNext()) {
                 if (cp.length() > 0) {
-                    cp += ";";
+                    cp += ';';
                 }
                 cp += Tools.removeApices(it.next()
                         .toString());
@@ -347,7 +347,7 @@ public class JavaLibrary extends Library {
                         "(creation of " + fullClassPath + ".java fail failed)");
                 throw new JavaException(ex);
             }
-            String cmd = "javac " + cp + " " + fullClassPath + ".java";
+            String cmd = "javac " + cp + ' ' + fullClassPath + ".java";
             // System.out.println("EXEC: "+cmd);
             try {
                 Process jc = Runtime.getRuntime().exec(cmd);
@@ -626,7 +626,7 @@ public class JavaLibrary extends Library {
 
                 for (URL url : urls) {
                     File file = new File(java.net.URLDecoder.decode(url.getFile(), "UTF-8"));
-                    stringURLs = stringURLs + "'" + file.getPath() + "',";
+                    stringURLs = stringURLs + '\'' + file.getPath() + "',";
                 }
 
                 stringURLs = stringURLs.substring(0, stringURLs.length() - 1);
@@ -1055,8 +1055,7 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [C")) {
-                Term value = new nars.prolog.Struct(""
-                        + Array.getChar(obj, index.intValue()));
+                Term value = new nars.prolog.Struct(Character.toString(Array.getChar(obj, index.intValue())));
                 if (unify(what, value)) {
                     return true;
                 } else {
@@ -1145,7 +1144,7 @@ public class JavaLibrary extends Library {
      *
      * @throws JavaException
      */
-    private URL[] getURLsFromStringArray(String[] paths) throws MalformedURLException {
+    private static URL[] getURLsFromStringArray(String[] paths) throws MalformedURLException {
         URL[] urls = null;
         if (paths != null) {
             urls = new URL[paths.length];
@@ -1170,7 +1169,7 @@ public class JavaLibrary extends Library {
      *
      * @throws JavaException
      */
-    private String[] getStringArrayFromStruct(Struct list) {
+    private static String[] getStringArrayFromStruct(Struct list) {
         String args[] = new String[list.listSize()];
         Iterator<? extends Term> it = list.listIterator();
         int count = 0;
@@ -1317,7 +1316,7 @@ public class JavaLibrary extends Library {
                     } else {
                         castTo_name = "[L"
                                 + castTo_name.substring(0,
-                                castTo_name.length() - 2) + ";";
+                                castTo_name.length() - 2) + ';';
                     }
                 }
                 if (!castWhat_name.equals("null")) {
@@ -1449,7 +1448,7 @@ public class JavaLibrary extends Library {
         }
     }
 
-    private Object[] getArrayFromList(Struct list) {
+    private static Object[] getArrayFromList(Struct list) {
         Object args[] = new Object[list.listSize()];
         Iterator<? extends Term> it = list.listIterator();
         int count = 0;
@@ -1745,7 +1744,7 @@ public class JavaLibrary extends Library {
      * serializable, 'nullyfing' eventually objects registered in maps
      */
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        HashMap<String, Object> bak00 = currentObjects;
+        Map<String, Object> bak00 = currentObjects;
         IdentityHashMap<Object, Struct> bak01 = currentObjects_inverse;
         try {
             currentObjects = null;

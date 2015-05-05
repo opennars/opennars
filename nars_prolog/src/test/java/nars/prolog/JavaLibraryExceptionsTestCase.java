@@ -93,7 +93,6 @@ public class JavaLibraryExceptionsTestCase extends TestCase {
 		Prolog engine = new Prolog();
 		String goal = "java_catch(java_object_bt('java.other.ArrayList', [a], c), [('java.lang.NoSuchMethodException'(Cause, Message, StackTrace), true)], true).";
 		SolveInfo info = engine.solve(goal);
-		System.out.println(info);
 		assertTrue(info.isSuccess());
 		Term cause = info.getTerm("Cause");
 		assertFalse(cause instanceof Var);

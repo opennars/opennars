@@ -18,7 +18,7 @@
 package nars.prolog;
 
 
-import nars.util.data.Utf8;
+import nars.Global;
 
 import java.nio.CharBuffer;
 import java.util.*;
@@ -165,15 +165,17 @@ public class Struct extends Term {
     /**
      * Builds a compound, with a linked list of arguments
      */
-    public Struct(String f, LinkedList<Term> al) {
+    public Struct(String f, Collection<Term> al) {
         name = f;
         arity = al.size();
         if (arity > 0) {
             arg = new Term[arity];
+            Iterator<Term> ali = al.iterator();
             for(int c = 0;c < arity;c++)
-                arg[c] = al.removeFirst();
+                arg[c] = ali.next();
         }
-        predicateIndicator = name + '/' + arity;
+
+        predicateIndicator = getPredicateString(name, arity);
         resolved = false;
     }
     
@@ -182,7 +184,7 @@ public class Struct extends Term {
         arg = new Term[arity];
     }
     
-    private Struct(String name_,int arity_) {
+    private Struct(final String name_, final int arity_) {
         if (name_ == null)
             throw new InvalidTermException("The functor of a Struct cannot be null");
         if (name_.length() == 0 && arity_ > 0)
@@ -192,10 +194,14 @@ public class Struct extends Term {
         if (arity > 0) {
             arg = new Term[arity];
         }
-        predicateIndicator = new StringBuilder(name.length() + 1 + 4).append(name).append('/').append(arity).toString();
+        predicateIndicator = getPredicateString(name, arity);
         resolved = false;
     }
-    
+
+    public static String getPredicateString(String name, int arity) {
+        return new StringBuilder(name.length() + 1 + 4).append(name).append('/').append(arity).toString();
+    }
+
     /** @deprecated Use Struct#getPredicateIndicator instead. */
     String getHashKey() {
         return getPredicateIndicator();
@@ -233,7 +239,7 @@ public class Struct extends Term {
      *
      * No bound check is done
      */
-    public Term getArg(int index) {
+    public Term getArg(final int index) {
         return arg[index];
     }
     
@@ -242,11 +248,11 @@ public class Struct extends Term {
      *
      * (Only for internal service)
      */
-    void setArg(int index, Term argument) {
+    void setArg(final int index, final Term argument) {
         arg[index] = argument;
     }
     
-    void setArg(Term[] newArgs) {
+    void setArg(final Term[] newArgs) {
         this.arity = newArgs.length;
         this.arg = newArgs;
     }
@@ -330,10 +336,12 @@ public class Struct extends Term {
      * @param name name of the structure 
      * @return the argument or null if not found
      */
-    public Struct getArg(String name) {
+    public Struct getArg(final String name) {
         if (arity == 0) {
             return null;
         }
+
+        //TODO combine these into one loop
         for (int i=0; i<arg.length; i++) {
             if (arg[i] instanceof Struct) {
                 Struct s = (Struct) arg[i];
@@ -370,9 +378,10 @@ public class Struct extends Term {
             if (arity > tarity) {
                 return true;
             } else if (arity == tarity) {
-            	if (name.compareTo(ts.name) > 0) {
+                final int nc = name.compareTo(ts.name);
+                if (nc > 0) {
                     return true;
-                } else if (name.compareTo(ts.name) == 0) {
+                } else if (nc == 0) {
                     for (int c = 0;c < arity;c++) {
                     	if (arg[c].isGreater(ts.arg[c])) {
                             return true;
@@ -397,9 +406,10 @@ public class Struct extends Term {
                 return true;
             } else if (arity == tarity) {
             	//System.out.println("Compare di "+name+" con "+ts.name);
-                if (name.compareTo(ts.name) > 0) {
+                int nc = name.compareTo(ts.name);
+                if (nc > 0) {
                     return true;
-                } else if (name.compareTo(ts.name) == 0) {
+                } else if (nc == 0) {
                     for (int c = 0;c < arity;c++) {
                     	//System.out.println("Compare di "+arg[c]+" con "+ts.arg[c]);
                         if (arg[c].isGreaterRelink(ts.arg[c],vorder)) {
@@ -418,6 +428,7 @@ public class Struct extends Term {
      * Test if a term is equal to other
      */
     public boolean isEqual(Term t) {
+        //TODO use a hashcode for the arguments to compare quickly
         t = t.getTerm();
         if (t instanceof Struct) {
             Struct ts = (Struct) t;
@@ -480,7 +491,7 @@ public class Struct extends Term {
         if (resolved) {
             return count;
         } else {
-            return resolveTerm(new HashMap(),count);
+            return resolveTerm(Global.newHashMap(),count);
         }
     }
     
@@ -617,12 +628,12 @@ public class Struct extends Term {
             return null;
         }
         Struct at = (Struct) arg[1].getTerm();
-        LinkedList<Term> al = new LinkedList<>();
+        List<Term> al = new ArrayList<>();
         while (!at.isEmptyList()) {
             if (!at.isList()) {
                 return null;
             }
-            al.addLast(at.getTerm(0));
+            al.add(at.getTerm(0));
             at = (Struct) at.getTerm(1);
         }
         return new Struct(((Struct) ft).name, al);
@@ -716,10 +727,8 @@ public class Struct extends Term {
     
     //
     
-    public static final CharSequence atomEscape(CharSequence n) {
-        CharBuffer cb = CharBuffer.allocate(n.length()+2);
-        cb.append('\'').append(n).append('\'');
-        return cb.compact().toString();
+    public static final String atomEscape(final CharSequence n) {
+        return "\'" + n + '\'';
     }
     
     /**
@@ -732,6 +741,7 @@ public class Struct extends Term {
         // empty list case
         if (isEmptyList()) return "[]";
         // list case
+
         if (name.equals(".") && arity == 2) {
             return ('[' + toString0() + ']');
         } else if (name.equals("{}")) {
@@ -757,7 +767,12 @@ public class Struct extends Term {
             return s.toString();
         }
     }
-    
+
+    @Override
+    public int hashCode() {
+        return getHashKey().hashCode();
+    }
+
     private String toString0() {
         Term h = arg[0].getTerm();
         Term t = arg[1].getTerm();

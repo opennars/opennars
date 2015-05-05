@@ -110,6 +110,17 @@ public abstract class AbstractSocket extends Term{
 		
 	}
 
+	@Override
+	public String toString(){
+		return getSocket().toString();
+	}
+
+	@Override
+	public int hashCode() {
+		return getSocket().hashCode();
+	}
+
+
 }
 
 

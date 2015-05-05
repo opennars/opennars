@@ -558,5 +558,9 @@ public class Var extends Term {
     }
     /**/
 
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 
 }

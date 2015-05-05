@@ -9,7 +9,7 @@ public class PrologTestCase extends TestCase {
 	
 	public void testEngineInitialization() {
 		Prolog engine = new Prolog();
-		assertEquals(4, engine.getCurrentLibraries().length);
+		assertEquals(String.join(",",engine.getCurrentLibraries()), 4, engine.getCurrentLibraries().length);
 		assertNotNull(engine.getLibrary("nars.prolog.lib.BasicLibrary"));
 		assertNotNull(engine.getLibrary("nars.prolog.lib.ISOLibrary"));
 		assertNotNull(engine.getLibrary("nars.prolog.lib.IOLibrary"));
@@ -53,7 +53,7 @@ public class PrologTestCase extends TestCase {
 			engine.addTheory(t);
 			fail();
 		} catch (InvalidTermException expected) {
-			assertEquals("", engine.getTheory().toString());
+			assertEquals("", engine.getDynamicTheoryCopy().toString());
 		}
 	}
 	
