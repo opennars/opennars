@@ -17,7 +17,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.prototype.Default;
 import nars.gui.output.JGraphXGraphPanel;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.condition.OutputCondition;
 import nars.io.condition.OutputContainsCondition;
 import nars.nal.nal8.Operation;
@@ -256,7 +256,7 @@ public class LogicPerformance {
         int analysisDepth = 5;
         NAR n = new NAR(new Default());
         
-        ExampleFileInput example = ExampleFileInput.get(n, "test/nal7.5");
+        LibraryInput example = LibraryInput.get(n, "test/nal7.5");
                 
         List<OutputCondition> conditions = example.enableConditions(n, 5);
 

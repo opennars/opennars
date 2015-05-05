@@ -6,10 +6,11 @@ import nars.Memory;
 import nars.NAR;
 import nars.ProtoNAR;
 import nars.Global;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.NALPerformance;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
@@ -27,7 +28,9 @@ import java.util.Map;
 
 /**
  * the original script test system (being replaced)
+ * DEPRECATED Use TestNAR instead
  */
+@Ignore
 @RunWith(Parameterized.class)
 @Deprecated public class NALTest extends TestCase {
 
@@ -64,7 +67,7 @@ import java.util.Map;
 
     @Parameterized.Parameters(name="{1} {0}")
     public static Collection params() {
-        Map<String, String> et = ExampleFileInput.getUnitTests();
+        Map<String, String> et = LibraryInput.getUnitTests();
         Collection<String> t = et.values();
         for (String x : et.keySet()) addTest(x);
 
@@ -202,7 +205,7 @@ import java.util.Map;
         String input;
         NAR nar;
 
-        NALPerformance test = new NALPerformance(nar = newNAR(), input = ExampleFileInput.getExample(path) );
+        NALPerformance test = new NALPerformance(nar = newNAR(), input = LibraryInput.getExample(path) );
 
 
         if (showOutput)

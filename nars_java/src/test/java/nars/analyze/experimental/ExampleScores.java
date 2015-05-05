@@ -3,10 +3,9 @@ package nars.analyze.experimental;
 import nars.Global;
 import nars.ProtoNAR;
 import nars.analyze.NALysis;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.test.TestNAR;
 import nars.nal.AbstractNALTest;
-import nars.prototype.Default;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class ExampleScores {
 
         AbstractNALTest.reset();
 
-        for (String dir : ExampleFileInput.directories) {
+        for (String dir : LibraryInput.directories) {
             List<TestNAR> x = NALysis.runDir(dir, cycleLimit, 0, p);
         }
 

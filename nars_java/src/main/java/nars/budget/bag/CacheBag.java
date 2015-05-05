@@ -63,13 +63,8 @@ public class CacheBag<K, I extends Item<K>> implements Memory.MemoryAware, Remov
     @Override
     public void onRemoval(RemovalNotification<K, I> rn) {
         if (rn.getCause()==RemovalCause.SIZE) {
-            if (memory!=null) {
-                Object v = rn.getValue();
-                if (v instanceof Concept)
-                    memory.emit(Events.ConceptForget.class, v);
-            }
             I v = rn.getValue();
-            if (v!=null) v.end();
+            if (v!=null) v.delete();
         }
     }
 

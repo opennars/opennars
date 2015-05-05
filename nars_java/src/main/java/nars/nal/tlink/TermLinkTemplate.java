@@ -1,5 +1,6 @@
 package nars.nal.tlink;
 
+import nars.budget.Budget;
 import nars.nal.term.Termed;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -22,6 +23,9 @@ public class TermLinkTemplate implements Termed {
     //cached names for new TermLinks
     protected String outgoing;
     protected String incoming;
+
+    /** accumulates budget to eventually apply to termlinks at a future time */
+    public final Budget pending = new Budget(0,0,0);
 
 
     /**

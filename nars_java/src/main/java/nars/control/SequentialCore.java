@@ -5,7 +5,6 @@ import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.BudgetFunctions;
-import nars.nal.TaskComparator;
 import nars.nal.concept.Concept;
 import nars.nal.ConceptProcess;
 import nars.budget.Bag;
@@ -17,7 +16,6 @@ import nars.nal.term.Term;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.TreeSet;
 import java.util.function.Consumer;
 
 /**
@@ -125,17 +123,16 @@ abstract public class SequentialCore implements Core {
 
         if (subcon!=null) {
             subcon.add(c);
-            //System.out.println("forget: " + c + "   con=" + concepts.size() + " subcon=" + subcon.size());
         }
         else {
-            memory.emit(Events.ConceptForget.class, c);
-
-
-            //explicitly destroy all concept data structures to free memory for GC
-            //c.end();
+            c.delete();
         }
+    }
 
+    protected void delete(Concept c) {
 
+        //explicitly destroy all concept data structures to free memory for GC
+        c.delete();
     }
 
     final ConceptActivator activator = new ConceptActivator() {

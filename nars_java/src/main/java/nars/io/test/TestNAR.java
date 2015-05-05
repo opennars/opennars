@@ -28,6 +28,8 @@ public class TestNAR extends NAR {
     boolean showExplanations = false;
     boolean showOutput = false;
 
+    boolean resetOnStop = true; //should help GC if successively run
+
 
     /** "must" requirement conditions specification */
     public final List<OutputCondition> requires = new ArrayList();
@@ -40,39 +42,54 @@ public class TestNAR extends NAR {
         super(b);
 
         if (exitOnAllSuccess) {
-            new AbstractReaction(this, Events.CycleEnd.class) {
-
-                final int checkResolution = 16; //every # cycles to check for completion
-                int cycle = 0;
-
-                @Override
-                public void event(Class event, Object[] args) {
-                    cycle++;
-                    if (cycle % checkResolution == 0) {
-
-                        if (requires.isEmpty())
-                            return;
-
-                        boolean finished = true;
-
-                        for (OutputCondition oc : requires) {
-                            if (!oc.isTrue()) {
-                                finished = false;
-                                break;
-                            }
-                        }
-
-//                        if (finished) {
-//                            stop();
-//                        }
-
-                    }
-                }
-            };
+            new EarlyExit();
         }
 
     }
 
+    class EarlyExit extends AbstractReaction {
+
+        final int checkResolution = 16; //every # cycles to check for completion
+        int cycle = 0;
+
+        public EarlyExit() {
+            super(TestNAR.this, Events.CycleEnd.class);
+        }
+
+        @Override
+        public void event(Class event, Object[] args) {
+            cycle++;
+            if (cycle % checkResolution == 0) {
+
+                if (requires.isEmpty())
+                    return;
+
+                boolean finished = true;
+
+                int nr = requires.size();
+                for (int i = 0; i < nr; i++) {
+                    final OutputCondition oc = requires.get(i);
+                    if (!oc.isTrue()) {
+                        finished = false;
+                        break;
+                    }
+                }
+
+                if (finished) {
+                    stop();
+
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        if (resetOnStop)
+            reset();
+    }
 
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
         return mustEmit(Events.OUT.class, cycleStart, cycleEnd, sentenceTerm, punc, freqMin, freqMax, confMin, confMax);

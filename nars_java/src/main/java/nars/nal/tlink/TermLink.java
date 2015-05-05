@@ -168,7 +168,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
         //}
     }
 
-    @Override public void end() {
+    @Override public void delete() {
         
     }
 

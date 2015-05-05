@@ -11,7 +11,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
-import static nars.io.ExampleFileInput.getParams;
+import static nars.io.LibraryInput.getParams;
 
 public class NAL1ScriptTests extends ScriptNALTest {
 

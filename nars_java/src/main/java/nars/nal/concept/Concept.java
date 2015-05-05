@@ -22,6 +22,7 @@ package nars.nal.concept;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import nars.Events;
 import nars.Events.*;
 import nars.Global;
 import nars.Memory;
@@ -103,27 +104,21 @@ abstract public class Concept extends Item<Term> implements Termed {
     private final TermLinkBuilder termLinkBuilder;
     private final TaskLinkBuilder taskLinkBuilder;
 
-    private final Map<TermLinkTemplate, Budget> nextTermBudget;
 
     /** parameter to experiment with */
-    private boolean linkPendingEveryCycle = false;
+    private static boolean linkPendingEveryCycle = false;
 
 
 
-    /** remaining unspent budget from previous cycle can be accumulated */
+    ///** remaining unspent budget from previous cycle can be accumulated */
     /*float taskBudgetBalance = 0;
     float termBudgetBalance = 0;*/
 
-    /**
-     * The display window
-     */
-
-    //public final ArrayList<ArrayList<Long>> evidentalDiscountBases=new ArrayList<ArrayList<Long>>();
 
     /* ---------- constructor and initialization ---------- */
     /**
      * Constructor, called in Memory.getConcept only
-     *  @param term A term corresponding to the concept
+     * @param term A term corresponding to the concept
      * @param memory A reference to the memory
      */
     public Concept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
@@ -145,11 +140,6 @@ abstract public class Concept extends Item<Term> implements Termed {
                 
         this.termLinkBuilder = new TermLinkBuilder(this);
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
-
-        this.nextTermBudget =
-                new HashMap();
-                //Global.newHashMap();
-                //new CuckooMap<>();
 
     }
 
@@ -678,10 +668,6 @@ abstract public class Concept extends Item<Term> implements Termed {
      */
     public boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
 
-        //if (termLinkBuilder == null) return false;
-        if (taskBudget == null && nextTermBudget.isEmpty()) return false; //no result would occurr
-
-        //System.out.println("link to terms: " + this + " + " + taskBudget + " " + queuedTermBudget + " " + updateTLinks);
 
         final float subPriority;
         int recipients = termLinkBuilder.getNonTransforms();
@@ -729,14 +715,17 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
 
-        if (updateTLinks || linkPendingEveryCycle ) {
-            HashMap<TermLinkTemplate,Budget> ntb = new HashMap(nextTermBudget); //clone because it may call itself recursively and it wont be able to modify this map while iterating it
-            nextTermBudget.clear();
-            for (Map.Entry<TermLinkTemplate,Budget> t : ntb.entrySet()) {
-                Budget pending = t.getValue();
-                if (pending!=null)
-                    if (linkTerm(t.getKey(), pending, updateTLinks))
+        List<TermLinkTemplate> tl = getTermLinkTemplates();
+        if (tl!=null && (updateTLinks || linkPendingEveryCycle )) {
+            int n = tl.size();
+            for (int i = 0; i < n; i++) {
+                TermLinkTemplate t = getTermLinkTemplates().get(i);
+                if (t.pending.aboveThreshold()) {
+                    if (linkTerm(t, t.pending, updateTLinks))
                         activity = true;
+
+                    t.pending.set(0,0,0); //reset having spent it
+                }
             }
         }
 
@@ -751,13 +740,14 @@ abstract public class Concept extends Item<Term> implements Termed {
     boolean linkTerm(TermLinkTemplate template, float priority, float durability, float quality, boolean updateTLinks) {
         Term otherTerm = termLinkBuilder.set(template).getOther();
 
-        Budget b = dequeNextTermBudget(template);
+
+        Budget b = template.pending;
         if (b!=null) {
             b.setPriority(b.getPriority() + priority);
             b.setDurability(Math.max(b.getDurability(), durability));
             b.setQuality(Math.max(b.getQuality(), quality));
             if (!b.aboveThreshold()) {
-                queueActivation(template, b);
+                accumulate(template, b);
                 return false;
             }
         }
@@ -770,7 +760,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         Concept otherConcept = memory.conceptualize(b, otherTerm);
         if (otherConcept == null) {
-            queueActivation(template, b);
+            accumulate(template, b);
             return false;
         }
 
@@ -781,7 +771,7 @@ abstract public class Concept extends Item<Term> implements Termed {
             otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
         }
         else {
-            queueActivation(template, b);
+            accumulate(template, b);
         }
 
         if (otherTerm instanceof Compound) {
@@ -791,24 +781,9 @@ abstract public class Concept extends Item<Term> implements Termed {
         return true;
     }
 
-    /** buffers activation from another Concept to be applied later */
-    void queueActivation(TermLinkTemplate from, Budget b) {
-        Budget accum = nextTermBudget.get(from);
-        if (accum == null) {
-            nextTermBudget.put(from, b.clone());
-        }
-        else {
-            accum.accumulate(b);
-        }
+    protected void accumulate(TermLinkTemplate template, Budget added) {
+        template.pending.accumulate(added);
     }
-
-    /** returns null if non-existing or not above threshold */
-    Budget dequeNextTermBudget(TermLinkTemplate from) {
-        Budget accum = nextTermBudget.remove(from);
-        if (accum == null) return null;
-        return accum;
-    }
-
 
 
     /**
@@ -957,23 +932,20 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
 
+    @Override public void delete() {
+        super.delete();
 
-    @Override
-    public void end() {
-    }
+        memory.emit(Events.ConceptDelete.class, this);
 
-    /** not to be used normally */
-    protected void delete() {
-        for (Task t : questions) t.end();
-        for (Task t : quests) t.end();
-        
+        //dont delete the tasks themselves because they may be referenced from othe concepts.
         questions.clear();
-        quests.clear();                
+        quests.clear();
+
         goals.clear();
-        //evidentalDiscountBases.clear();
-        termLinks.clear();
-        taskLinks.clear();        
         beliefs.clear();
+
+        termLinks.clear();
+        taskLinks.clear();
 
         if (termLinkBuilder != null)
             termLinkBuilder.clear();
@@ -1038,7 +1010,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         return getStrongestGoal(true, true);
     }
 
-    public List<TermLinkTemplate> getTermLinkTempltes() {
+    public List<TermLinkTemplate> getTermLinkTemplates() {
         return termLinkBuilder.templates();
     }
 

@@ -79,7 +79,7 @@ public class TermLinkTest {
         Concept c = n.concept(term);
         assertNotNull(c);
 
-        return c.getTermLinkTempltes();
+        return c.getTermLinkTemplates();
     }
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {

@@ -12,15 +12,9 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class JavaNALTest extends AbstractNALTest {
 
-
-
-
     public JavaNALTest(ProtoNAR b) {
         super(b);
-
-
     }
-
 
 //
 //    public void finish(Description test, String status, long nanos) {

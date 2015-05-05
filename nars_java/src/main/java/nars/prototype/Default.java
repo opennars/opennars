@@ -84,12 +84,11 @@ public class Default extends ProtoNAR implements ConceptBuilder {
     /** Default DEFAULTS */
     public Default() {
         this(1024, 1, 3);
-
     }
 
     public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
         setConceptBagSize(maxConcepts);
-        setSubconceptBagSize(maxConcepts * 8);
+        setSubconceptBagSize(maxConcepts * 2);
         param.conceptsFiredPerCycle.set(conceptsFirePerCycle);
         param.termLinkMaxReasoned.set(termLinksPerCycle);
         param.termLinkMaxMatched.set((termLinksPerCycle*3));

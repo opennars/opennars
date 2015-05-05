@@ -8,7 +8,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.ProtoNAR;
 import nars.Global;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.condition.OutputCondition;
 import nars.io.meter.Metrics;
 import nars.io.meter.event.DoubleMeter;
@@ -132,7 +132,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     public static long runScript(TestNAR nar, String path, int maxCycles) {
 
-        script = ExampleFileInput.getExample(path);
+        script = LibraryInput.getExample(path);
 
         if (NALysis.showInput)
             System.out.println(script);
@@ -177,6 +177,8 @@ abstract public class AbstractNALTest extends TestCase {
 
 
         assertTrue(report.toString(), suc);
+
+        nar.reset();
     }
 
 

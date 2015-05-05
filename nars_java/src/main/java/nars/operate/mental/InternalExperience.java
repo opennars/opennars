@@ -142,7 +142,7 @@ public class InternalExperience extends AbstractOperator {
 
             if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
 
-            if(task.summary() < MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+            if (!task.summaryNotLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
                 return;
             }
 

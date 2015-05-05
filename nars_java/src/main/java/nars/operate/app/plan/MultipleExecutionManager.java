@@ -225,7 +225,7 @@ public class MultipleExecutionManager extends AbstractReaction {
         public void end() {
             setMotivationFactor(0);
             if (t != null) {
-                t.end();
+                t.delete();
             }
         }
 

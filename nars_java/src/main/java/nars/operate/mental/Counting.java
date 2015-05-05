@@ -40,9 +40,10 @@ public class Counting implements IOperator {
                         return;
 
                     Task task = (Task)a[0];
-                    if (task.summary() < InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+                    if (!task.summaryNotLessThan(InternalExperience.MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
                         return;
                     }
+
 
                     if(task.sentence.punctuation==Symbols.JUDGMENT) {
                         //lets say we have <{...} --> M>.

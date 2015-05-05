@@ -3,7 +3,7 @@ package nars.evolve;
 import nars.prototype.Default;
 import nars.Memory;
 import nars.NAR;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.condition.OutputCondition;
 import nars.util.data.XORShiftRandom;
 import org.encog.Encog;
@@ -67,7 +67,7 @@ public class NALTestPerformance {
 
         public void run() {
 
-            final String input = ExampleFileInput.getExample(example);
+            final String input = LibraryInput.getExample(example);
 
             Memory.resetStatic(1);
 

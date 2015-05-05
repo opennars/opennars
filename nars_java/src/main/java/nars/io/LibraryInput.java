@@ -20,11 +20,14 @@ import java.util.*;
  * Access to library of examples/unit tests
  * TODO use getClass().getResource ?
  */
-public class ExampleFileInput extends TextInput {
+public class LibraryInput extends TextInput {
 
     public static final String[] directories =
-            new String[] { "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8", "testchamber", "other", "other/pattern_matching1", "test", "metacat" };
-            //new String[] { "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8", "testchamber", "conditioning", "decisionmaking", "other", "other/pattern_matching1", "test", "metacat" };
+            new String[] {
+                    "test1", "test2", "test3", "test4", "test4/depr", "test5", "test5/depr", "test6", "test7", "test8",
+                    "other",
+                    "app/testchamber", "app/pattern_matching1", "app/metacat"
+            };
 
     public static String load(String path) throws IOException {
         StringBuilder  sb  = new StringBuilder();
@@ -54,18 +57,18 @@ public class ExampleFileInput extends TextInput {
     /** narsese source code, one instruction per line */
     private final String source;
 
-    protected ExampleFileInput(TextPerception t, String input)  {
+    protected LibraryInput(TextPerception t, String input)  {
         super(t, input);
         this.source = input;
     }
     
-    public static ExampleFileInput get(NAR n, String id) throws Exception {
+    public static LibraryInput get(NAR n, String id) throws Exception {
         if (!id.endsWith(".nal"))
             id = id + ".nal";
 
         String path = getExamplePath(id);
                 
-        return new ExampleFileInput(n.textPerception, load(path));
+        return new LibraryInput(n.textPerception, load(path));
     }
 
     final static String cwd;
@@ -127,7 +130,7 @@ public class ExampleFileInput extends TextInput {
             if (existing!=null)
                 return existing;
 
-            existing = ExampleFileInput.load(path);
+            existing = LibraryInput.load(path);
 
             examples.put(path, existing);
             return existing;
@@ -137,7 +140,7 @@ public class ExampleFileInput extends TextInput {
     }
 
     public static Collection<String> getPaths(String... directories) {
-        Map<String, String> et = ExampleFileInput.getUnitTests(directories);
+        Map<String, String> et = LibraryInput.getUnitTests(directories);
         Collection<String> t = et.values();
         return t;
     }

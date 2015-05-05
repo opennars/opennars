@@ -71,8 +71,11 @@ public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
     abstract public K name();
 
 
-    /** called when the item has been discarded */
-    public void end() {
+    /** called when the item has been permanently discarded.
+     *  attempts to completely erase the item and all its contained
+     *  data structures.
+     *  helps garbage collection as much as possible.  */
+    public void delete() {
         
     }
 

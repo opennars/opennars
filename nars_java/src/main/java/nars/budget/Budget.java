@@ -341,9 +341,14 @@ public class Budget implements Cloneable, BudgetTarget {
         return aveGeo(priority, durability, quality);
     }
 
-    public float summary(float additionalPriority) {
-        return aveGeo(Math.min(1.0f, priority + additionalPriority), durability, quality);
+    /** uses optimized aveGeoNotLessThan to avoid a cube root operation */
+    public boolean summaryNotLessThan(float min) {
+        return aveGeoNotLessThan(min, priority, durability, quality);
     }
+
+//    public float summary(float additionalPriority) {
+//        return aveGeo(Math.min(1.0f, priority + additionalPriority), durability, quality);
+//    }
 
 
     public boolean equalsByPrecision(final Object that) {
@@ -372,18 +377,18 @@ public class Budget implements Cloneable, BudgetTarget {
      * @return The decision on whether to process the Item
      */
     public boolean aboveThreshold() {
-        return (summary() >= Global.BUDGET_THRESHOLD);
+        return summaryNotLessThan(Global.BUDGET_THRESHOLD);
     }
 
-    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
-     * @param additionalPriority saved credit to contribute to possibly push it over threshold
-     */
-    public boolean aboveThreshold(float additionalPriority) {
-        return (summary(additionalPriority) >= Global.BUDGET_THRESHOLD);
-    }
+//    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
+//     * @param additionalPriority saved credit to contribute to possibly push it over threshold
+//     */
+//    public boolean aboveThreshold(float additionalPriority) {
+//        return (summary(additionalPriority) >= Global.BUDGET_THRESHOLD);
+//    }
 
-    public static Budget budgetIfAboveThreshold(float pri, float dur, float qua) {
-        if (aveGeo(pri, dur, qua) >= Global.BUDGET_THRESHOLD)
+    public static Budget budgetIfAboveThreshold(final float pri, final float dur, final float qua) {
+        if (aveGeoNotLessThan(Global.BUDGET_THRESHOLD, pri, dur, qua))
             return new Budget(pri, dur, qua);
         return null;
     }

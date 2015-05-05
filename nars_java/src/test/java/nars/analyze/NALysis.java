@@ -2,9 +2,8 @@ package nars.analyze;
 
 
 import nars.Memory;
-import nars.NAR;
 import nars.ProtoNAR;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
 import nars.io.condition.OutputCondition;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static nars.io.ExampleFileInput.getPaths;
+import static nars.io.LibraryInput.getPaths;
 
 /**
  * Collects detailed telemetry for a test suite
@@ -87,12 +86,13 @@ public class NALysis extends AbstractNALTest {
 
                     System.out.println("FAIL: " + testName);
 
-                    System.out.println(ExampleFileInput.getExample(path).trim());
+                    System.out.println(LibraryInput.getExample(path).trim());
 
                     report(System.out, true, true, true);
 
                 }
 
+                stop();
             }
 
 

@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
-import static nars.io.ExampleFileInput.getParams;
+import static nars.io.LibraryInput.getParams;
 
 public class OtherTests extends ScriptNALTest {
 
@@ -18,7 +18,7 @@ public class OtherTests extends ScriptNALTest {
 
     @Parameterized.Parameters(name= "{1} {0}")
     public static Collection configurations() {
-        return getParams(new String[]{"operator"},
+        return getParams(new String[]{"operator", "other"},
                 new Default()
         );
     }

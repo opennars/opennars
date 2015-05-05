@@ -3,6 +3,7 @@ package nars.core;
 import nars.Global;
 import nars.Memory;
 import nars.io.Answered;
+import nars.io.LibraryInput;
 import nars.io.test.TestNAR;
 import nars.nal.Sentence;
 import nars.nal.term.Term;
@@ -20,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 public class SolidTest {
 
     @Test
-    public void testDetective() throws FileNotFoundException {
+    public void testDetective() throws Exception {
 
         int time = 256; //should solve the example in few cycles
 
@@ -37,7 +38,7 @@ public class SolidTest {
         Set<Term> solutionTerms = new HashSet();
         Set<Sentence> solutions = new HashSet();
 
-        n.input(new File("../nal/other/detective.nal"));
+        n.input(LibraryInput.get(n, "app/detective.nal"));
 
         new Answered(n) {
 

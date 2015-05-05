@@ -61,10 +61,14 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
      */
     public final DDList<V> chain;
 
-    private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f;
+    private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.4f; //slightly below half
     private double estimatedMax = 0.5f;
     private double estimatedMin = 0.5f;
-    private double estimatedMean;
+    private double estimatedMean = 0.5;
+
+    final short d[] = Distributor.get(10).order;
+    final int dLen = d.length;
+    int dp = 0;
 
 
     public ChainBag(final DDNodePool<V> nodePool, int capacity) {
@@ -345,10 +349,6 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         return selectPercentileDistributor(percentileEstimate);
     }
 
-    short d[] = Distributor.get(10).order;
-    int dLen = d.length;
-    int dp = 0;
-
     protected boolean selectPercentileDistributor(final double percentileEstimate) {
         final int dLen = this.dLen;
         return d[ (dp++)%dLen ]/((double)dLen) < (percentileEstimate);
@@ -393,6 +393,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         index.clear();
         mass = 0;
         current = null;
+        estimatedMin = estimatedMax = estimatedMean = 0.5;
+
     }
 
 

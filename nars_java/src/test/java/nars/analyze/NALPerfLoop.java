@@ -2,7 +2,7 @@ package nars.analyze;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.nal.NALTest;
 import nars.prototype.Default;
 
@@ -36,7 +36,7 @@ public class NALPerfLoop {
         //new NARPrologMirror(n,0.75f, true).temporal(true, true);              
         
         Collection c = NALTest.params();
-        c.addAll(ExampleFileInput.getAllExamples().values());
+        c.addAll(LibraryInput.getAllExamples().values());
 
         while (true) {
             for (Object o : c) {

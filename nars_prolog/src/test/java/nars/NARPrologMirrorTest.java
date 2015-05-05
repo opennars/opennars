@@ -5,7 +5,7 @@
 package nars;
 
 import nars.prototype.Default;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.term.Term;
@@ -59,7 +59,7 @@ public class NARPrologMirrorTest {
         
         
         //nal1.multistep.nal
-        NALPerformance nts = new NALPerformance(nar, ExampleFileInput.get(nar, "test/nars_multistep_1.nal").getSource()) {
+        NALPerformance nts = new NALPerformance(nar, LibraryInput.get(nar, "test/nars_multistep_1.nal").getSource()) {
 //            
 //            
 //            @Override

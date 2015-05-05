@@ -1,6 +1,6 @@
 Example experience files are in directory Examples. 
 
-- "test" contains individual unit tests
+- "test??" contains individual unit tests, generally organized by NAL level
 
 - "Example-NALn-*.txt" contains single step examples for most of the inference rules defined in NAL level n. The "edited" version contains English translations, and with the unrelated information removed; the "unedited" version contains the actual input/output data recorded by the "Save Experience" function of the GUI. The files can be loaded using the "Load Experience" function of the GUI. 
 
@@ -9,29 +9,28 @@ Example experience files are in directory Examples.
 - "Example-NLP-edited" contains an example of natural language processing described in the AGI-13 paper "Natural Language Processing by Reasoning and Learning".
 
 
-An HTML user manual is here:
-http://www.cis.temple.edu/~pwang/Implementation/NARS/NARS-GUI-Guide.html
-
-The project home page:
-http://code.google.com/p/open-nars/
-
-
-You can launch NARS from command window (shell) in several ways:
-
-- empty reasoner:
-java -jar NARS.jar
-
-- reasoner loaded from an experience file:
-java -jar NARS.jar Examples/Example-NAL1-edited.txt --silence 90
-
-- reasoner in batch:
-java -cp NARS.jar nars.main_nogui.NARSBatch Examples/Example-NAL1-edited.txt
 
 
 
 
-Community:
+These scripts are individual unit tests for verifying correct and 
+predictable operation with the original default NAR parameters.
 
-- mailing list at https://groups.google.com/forum/?fromgroups#!forum/open-nars
-- Meet us on IRC channel #nars on freenode.net.";
-- attend AGI conferences: http://www.agi-conference.org/2013/
+
+Lines beginning with:
+
+  [number]: # of cycles to process before continuing to next line
+
+  ' (apostrophe): comments; not interpreted, but instead are re-created as ECHO channel output
+
+  '' (apostrophe): embedded Javascript code evaluated during testing.  Examples:
+
+        ''print(out)
+            out is a reference to the current output buffer, containing a list of strings; one for each output
+
+        ''outputMustContain('...')
+            used for ensuring that the output buffer so far has a line containing the parameter string
+            
+            
+
+

@@ -2,7 +2,7 @@ package nars.nal.multistep;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.prototype.Default;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class TestMultistepEdited {
         Global.DEBUG = true;
 
         NAR n = new NAR(new Default());
-        n.input(ExampleFileInput.get(n, "example/Example-MultiStep-edited"));
+        n.input(LibraryInput.get(n, "original/Example-MultiStep-edited"));
         
         //new TextOutput(n, System.out);
         /*InferenceLogger logger = new InferenceLogger(System.out);

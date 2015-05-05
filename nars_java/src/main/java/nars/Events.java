@@ -29,10 +29,9 @@ public class Events {
             Task t = (Task)args[0];
             if (t.isInput()) return; //input events will already have been output via IN channel
 
-            final float budget = t.summary();
             final float noiseLevel = 1.0f - (this.volume.get() / 100.0f);
 
-            if (budget >= noiseLevel) {  // only report significant derived Tasks
+            if (t.summaryNotLessThan(noiseLevel)) {  // only report significant derived Tasks
                 nar.emit(Events.OUT.class, t);
             }
         }

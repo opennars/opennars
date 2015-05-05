@@ -693,7 +693,7 @@ public class Memory implements Serializable {
         if (Global.TASK_HISTORY && Global.DEBUG_DERIVATION_STACKTRACES)
             task.addHistory(NAL.getNALStack());
         emit(TaskRemove.class, task, removalReason);
-        task.end();
+        task.delete();
     }
 
 

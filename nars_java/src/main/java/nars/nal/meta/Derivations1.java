@@ -4,7 +4,7 @@ import nars.prototype.Default;
 import nars.Memory;
 import nars.NAR;
 import nars.Global;
-import nars.io.ExampleFileInput;
+import nars.io.LibraryInput;
 import nars.io.test.TestNAR;
 
 public class Derivations1  {
@@ -19,11 +19,11 @@ public class Derivations1  {
 
 
         for (int seed = 0; seed < 4; seed++) {
-            for (String s : ExampleFileInput.getPaths("test2")) {
+            for (String s : LibraryInput.getPaths("test2")) {
                 Memory.resetStatic(seed);
                 NAR n = new TestNAR(new Default().setInternalExperience(null).level(3));
                 d.record(n);
-                n.input(ExampleFileInput.getExample(s));
+                n.input(LibraryInput.getExample(s));
                 n.run(200);
             }
         }

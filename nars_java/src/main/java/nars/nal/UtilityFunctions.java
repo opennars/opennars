@@ -110,7 +110,12 @@ public class UtilityFunctions {
     public final static float aveGeo(final float a, final float b, final float c) {
         if ((a == 0)||(b==0)||(c==0)) return 0; //early result avoiding pow()
         return (float)pow(a*b*c, 1.0/3.0);
-    }    
+    }
+
+    public final static boolean aveGeoNotLessThan(final float min, final float a, final float b, final float c) {
+        final float minCubed = min*min*min; //cube both sides
+        return (a*b*c) >= minCubed;
+    }
     
     /**
      * A function to convert weight to confidence

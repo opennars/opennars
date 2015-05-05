@@ -53,7 +53,7 @@ public class Solid extends Default {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         param.duration.set(3);
-        param.noveltyHorizon.set(1);
+        param.noveltyHorizon.set(3);
     }
 
     @Override
