@@ -4,7 +4,7 @@
  */
 package automenta.vivisect.timeline;
 
-import nars.io.meter.SignalData;
+import nars.util.meter.SignalData;
 
 import java.util.List;
 

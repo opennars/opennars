@@ -6,8 +6,8 @@
 package nars.core;
 
 import nars.Events;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;

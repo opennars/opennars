@@ -1,6 +1,6 @@
 package nars.nal;
 
-import nars.ProtoNAR;
+import nars.NARSeed;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,7 +12,7 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class JavaNALTest extends AbstractNALTest {
 
-    public JavaNALTest(ProtoNAR b) {
+    public JavaNALTest(NARSeed b) {
         super(b);
     }
 

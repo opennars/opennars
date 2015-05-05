@@ -1,10 +1,10 @@
 package nars.evolve;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Memory;
 import nars.NAR;
 import nars.io.LibraryInput;
-import nars.io.condition.OutputCondition;
+import nars.testing.condition.OutputCondition;
 import nars.util.data.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;

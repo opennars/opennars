@@ -3,14 +3,14 @@ package nars.nal.tlink;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
-import nars.nal.Statement;
+import nars.nal.term.Statement;
 import nars.nal.nal1.Negation;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.budget.tx.BagActivator;
+import nars.bag.tx.BagActivator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 

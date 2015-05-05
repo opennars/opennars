@@ -4,11 +4,9 @@
  */
 package nars.analyze.experimental;
 
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.Global;
-import nars.event.Reaction;
 import nars.nal.NALTest;
 import org.junit.Ignore;
 

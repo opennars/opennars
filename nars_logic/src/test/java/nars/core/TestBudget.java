@@ -1,7 +1,7 @@
 package nars.core;
 
 
-import nars.nal.BudgetFunctions;
+import nars.budget.BudgetFunctions;
 import nars.budget.Budget;
 import org.junit.Ignore;
 import org.junit.Test;

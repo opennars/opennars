@@ -5,9 +5,9 @@
 
 package nars.nal.multistep;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
-import nars.operate.app.ClassicalConditioningHelper;
+import nars.op.app.ClassicalConditioningHelper;
 
 /**
  *

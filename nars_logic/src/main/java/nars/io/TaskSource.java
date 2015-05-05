@@ -1,5 +1,6 @@
 package nars.io;
 
+import nars.util.data.buffer.Source;
 import nars.nal.Task;
 
 import java.util.function.Supplier;

@@ -3,7 +3,8 @@ package nars.nal.rule;
 import nars.Events;
 import nars.Global;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
@@ -40,7 +41,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     Map<Term, Term> Values4 = null;*/
     Map<Term, Term> smap = null;
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, NAL.StampBuilder s, ArrayList<Term> terms_dependent, TruthValue truth, TruthValue t1, TruthValue t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, NAL.StampBuilder s, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
 
 
         final Sentence taskSentence = task.sentence;
@@ -171,7 +172,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             if (second_belief == null)
                 continue;
 
-            TruthValue truthSecond = second_belief.truth;
+            Truth truthSecond = second_belief.truth;
 
             if (terms_dependent == null) {
                 final int initialTermListSize = 8;
@@ -289,7 +290,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     continue;
                 }
 
-                TruthValue truth;
+                Truth truth;
 
                 char mark = Symbols.JUDGMENT;
                 if (taskSentence.isGoal() || second_belief.isGoal()) {

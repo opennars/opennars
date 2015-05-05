@@ -23,7 +23,7 @@ package nars.nal;
 import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.nal8.ImmediateOperation;
@@ -389,7 +389,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         }
     }
 
-    public TruthValue getDesire() { return sentence.truth; }
+    public Truth getDesire() { return sentence.truth; }
 
 
 //    /**

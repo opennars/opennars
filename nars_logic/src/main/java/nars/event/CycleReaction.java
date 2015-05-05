@@ -4,7 +4,7 @@ import nars.Events;
 import nars.NAR;
 
 /** default cycle reaction, called at end of cycle */
-abstract public class CycleReaction extends AbstractReaction {
+abstract public class CycleReaction extends NARReaction {
 
     public CycleReaction(NAR nar) {
         super(nar, Events.CycleEnd.class);

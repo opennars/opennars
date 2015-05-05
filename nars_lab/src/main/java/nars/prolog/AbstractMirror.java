@@ -7,7 +7,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.budget.Budget;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -19,7 +19,7 @@ import nars.nal.Task;
  * improved performance.  However these can be uesd for comparing results.
  * 
  */
-abstract public class AbstractMirror extends AbstractReaction {
+abstract public class AbstractMirror extends NARReaction {
 
     private final NAR nar;
 

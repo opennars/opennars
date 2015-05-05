@@ -14,7 +14,7 @@ import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 import nars.nal.term.Atom;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Events;
 import nars.NAR;
 import nars.Global;

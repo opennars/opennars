@@ -27,15 +27,14 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.operate.IOperator;
-import nars.operate.io.Echo;
+import nars.op.IOperator;
+import nars.op.io.Echo;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -173,7 +172,7 @@ public abstract class Operator extends Atom implements IOperator {
 
         //internal notice of the execution
         if (!isImmediate()) {
-            executedTask(op, new TruthValue(1f, Global.OPERATOR_EXECUTION_CONFIDENCE), memory);
+            executedTask(op, new Truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE), memory);
         }
 
         //feedback tasks as input
@@ -198,7 +197,7 @@ public abstract class Operator extends Atom implements IOperator {
      *
      * @param operation The operation just executed
      */
-    public void executedTask(final Operation operation, TruthValue truth, final Memory memory) {
+    public void executedTask(final Operation operation, Truth truth, final Memory memory) {
         final Task opTask = operation.getTask();
         memory.logic.TASK_EXECUTED.hit();
 

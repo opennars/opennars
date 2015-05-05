@@ -20,6 +20,7 @@ package nars.nal.nal7;
 import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
@@ -30,9 +31,10 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.operate.mental.Mental;
+import nars.op.mental.Mental;
 
 import java.util.List;
 
@@ -350,11 +352,11 @@ public class TemporalRules {
 
         int order = order(timeDiff, durationCycles);
 
-        TruthValue givenTruth1 = s1.truth;
-        TruthValue givenTruth2 = s2.truth;
-        TruthValue truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
-        TruthValue truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
-        TruthValue truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
+        Truth givenTruth1 = s1.truth;
+        Truth givenTruth2 = s2.truth;
+        Truth truth1 = TruthFunctions.induction(givenTruth1, givenTruth2);
+        Truth truth2 = TruthFunctions.induction(givenTruth2, givenTruth1);
+        Truth truth3 = TruthFunctions.comparison(givenTruth1, givenTruth2);
         Budget budget1 = BudgetFunctions.forward(truth1, nal);
         Budget budget2 = BudgetFunctions.forward(truth2, nal);
         Budget budget3 = BudgetFunctions.forward(truth3, nal);

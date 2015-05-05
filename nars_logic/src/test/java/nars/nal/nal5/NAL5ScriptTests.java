@@ -1,9 +1,9 @@
 package nars.nal.nal5;
 
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;
 
@@ -13,7 +13,7 @@ import static nars.io.LibraryInput.getParams;
 
 public class NAL5ScriptTests extends ScriptNALTest {
 
-    public NAL5ScriptTests(ProtoNAR b, String input) {
+    public NAL5ScriptTests(NARSeed b, String input) {
         super(b, input);
     }
 

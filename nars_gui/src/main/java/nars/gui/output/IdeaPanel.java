@@ -5,13 +5,13 @@
 package nars.gui.output;
 
 import nars.budget.Budget;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 import nars.Events.*;
 import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.graph.experimental.Idea;
@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import static nars.io.Symbols.JUDGMENT;
+import static nars.Symbols.JUDGMENT;
 
 /**
  *
@@ -211,7 +211,7 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
             
             switch (x.punc) {
                 case JUDGMENT:
-                    DescriptiveStatistics d = TruthValue.statistics(x.getSentences(), TruthValue.TruthComponent.Expectation);
+                    DescriptiveStatistics d = Truth.statistics(x.getSentences(), Truth.TruthComponent.Expectation);
                     float mean = (float) d.getMean();
                                         
                     float hue = 0.2f + mean*0.5f;

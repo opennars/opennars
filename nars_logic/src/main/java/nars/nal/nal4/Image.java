@@ -1,7 +1,6 @@
 package nars.nal.nal4;
 
-import nars.io.Symbols;
-import nars.io.narsese.NarseseParser;
+import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;

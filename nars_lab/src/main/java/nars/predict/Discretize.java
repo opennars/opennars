@@ -5,7 +5,7 @@
 package nars.predict;
 
 import nars.NAR;
-import nars.io.narsese.InvalidInputException;
+import nars.narsese.InvalidInputException;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Atom;

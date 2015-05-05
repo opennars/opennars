@@ -6,15 +6,15 @@ import nars.analyze.meter.CountDerivationCondition;
 import nars.analyze.meter.CountOutputEvents;
 import nars.Memory;
 import nars.NAR;
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.Global;
 import nars.io.LibraryInput;
-import nars.io.condition.OutputCondition;
-import nars.io.meter.Metrics;
-import nars.io.meter.event.DoubleMeter;
-import nars.io.meter.event.HitMeter;
-import nars.io.meter.event.ObjectMeter;
-import nars.io.test.TestNAR;
+import nars.testing.condition.OutputCondition;
+import nars.util.meter.Metrics;
+import nars.util.meter.event.DoubleMeter;
+import nars.util.meter.event.HitMeter;
+import nars.util.meter.event.ObjectMeter;
+import nars.testing.TestNAR;
 import org.junit.After;
 import org.junit.Ignore;
 
@@ -72,11 +72,11 @@ abstract public class AbstractNALTest extends TestCase {
 
 
     public final TestNAR nar;
-    public final ProtoNAR build;
+    public final NARSeed build;
 
 
 
-    public AbstractNALTest(ProtoNAR b) {
+    public AbstractNALTest(NARSeed b) {
         super();
 
         Memory.resetStatic(randomSeed);
@@ -104,7 +104,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     }
 
-    public static void endAnalysis(String label, TestNAR nar, ProtoNAR build, long nanos, long seed, boolean success) {
+    public static void endAnalysis(String label, TestNAR nar, NARSeed build, long nanos, long seed, boolean success) {
 
         testBuild.set(build.toString());
         testCost.set(OutputCondition.cost(nar.requires));

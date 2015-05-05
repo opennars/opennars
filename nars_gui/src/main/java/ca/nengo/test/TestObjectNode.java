@@ -5,9 +5,9 @@ import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.NengrowPanel;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 
 
 public class TestObjectNode {
@@ -19,7 +19,7 @@ public class TestObjectNode {
         NetworkImpl network = new DefaultNetwork<>();
 
         network.addNode(new ObjectNode("NAR", new NAR(new Default())));
-        network.addNode(new ObjectNode("The Whole Truth", new TruthValue()));
+        network.addNode(new ObjectNode("The Whole Truth", new Truth()));
 
         return network;
     }

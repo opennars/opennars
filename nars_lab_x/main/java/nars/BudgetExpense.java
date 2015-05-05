@@ -21,7 +21,7 @@ import automenta.vivisect.swing.PCanvas;
 import automenta.vivisect.timeline.LineChart;
 import automenta.vivisect.timeline.TimelineVis;
 import nars.core.NAR;
-import nars.prototype.Default;
+import nars.model.Default;
 import nars.util.NARTrace;
 
 /**

@@ -21,8 +21,7 @@
 package nars.nal.tlink;
 
 import nars.budget.Budget;
-import nars.io.Symbols;
-import nars.io.Texts;
+import nars.Symbols;
 import nars.nal.term.Termed;
 import nars.nal.Item;
 import nars.nal.term.Term;

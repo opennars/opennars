@@ -2,7 +2,6 @@ package nars.nal.nal8;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.io.Symbols;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal5.Implication;

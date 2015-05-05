@@ -3,7 +3,7 @@ package nars.gui.output;
 import nars.NAR;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -192,7 +192,7 @@ public class SentenceTablePanel extends TablePanel {
 
             float freq = -1;
             float conf = -1;
-            TruthValue truth = s.truth;
+            Truth truth = s.truth;
             if (truth != null) {
                 freq = truth.getFrequency();
                 conf = truth.getConfidence();

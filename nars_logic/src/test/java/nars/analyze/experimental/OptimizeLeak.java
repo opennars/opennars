@@ -1,12 +1,11 @@
 package nars.analyze.experimental;
 
 import nars.Global;
-import nars.ProtoNAR;
-import nars.io.Symbols;
-import nars.io.Texts;
+import nars.NARSeed;
+import nars.Symbols;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.optim.InitialGuess;
 import org.apache.commons.math3.optim.MaxEval;
@@ -15,8 +14,6 @@ import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
-
-import java.util.Arrays;
 
 import static nars.io.Texts.n4;
 
@@ -172,7 +169,7 @@ public class OptimizeLeak {
 
                 final double finalD = d;
                 final double finalP = p;
-                ProtoNAR b = new Default() {
+                NARSeed b = new Default() {
                     @Override
                     protected void initDerivationFilters() {
                         final float DERIVATION_PRIORITY_LEAK = (float)finalP; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs

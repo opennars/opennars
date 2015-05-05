@@ -22,11 +22,10 @@ package nars.gui;
 
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
-import nars.Global;
 import nars.NAR;
-import nars.control.experimental.AntCore;
+import nars.model.cycle.experimental.AntCore;
 import nars.io.TextOutput;
-import nars.prototype.Default.CommandLineNARBuilder;
+import nars.model.impl.Default.CommandLineNARBuilder;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;

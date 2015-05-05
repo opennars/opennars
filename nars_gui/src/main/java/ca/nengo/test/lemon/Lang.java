@@ -3,8 +3,8 @@ package ca.nengo.test.lemon;
 
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import nars.NAR;
-import nars.io.narsese.NarseseParser;
-import nars.prototype.Default;
+import nars.narsese.NarseseParser;
+import nars.model.impl.Default;
 
 /**
  * autocompletion and structural editing of narsese

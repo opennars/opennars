@@ -8,8 +8,8 @@ package nars.constraint.gui.panels;
 import nars.core.Eventer;
 import nars.core.Events.FrameEnd;
 import nars.gui.output.chart.MeterVis;
-import nars.io.meter.TemporalMetrics;
-import nars.io.meter.event.ValueMeter;
+import nars.util.meter.TemporalMetrics;
+import nars.util.meter.event.ValueMeter;
 import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.search.loop.monitors.IMonitorOpenNode;
 

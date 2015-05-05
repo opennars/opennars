@@ -2,11 +2,10 @@ package nars.nal;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.nal.term.Compound;
-import nars.util.data.CuckooMap;
 
 /** utility method for creating new tasks following a fluent builder pattern
  *  warning: does not correctly support parent stamps, use .stamp() to specify one
@@ -21,12 +20,12 @@ public class ProtoTask<T extends Compound> {
     private float pri;
     private float dur;
     private Stamp stamp = null;
-    private TruthValue truth;
+    private Truth truth;
     private Task parent;
     private Budget budget;
 
 
-    public ProtoTask<T> truth(TruthValue tv) {
+    public ProtoTask<T> truth(Truth tv) {
         this.truth = tv;
         return this;
     }
@@ -40,7 +39,7 @@ public class ProtoTask<T extends Compound> {
     }
 
     public ProtoTask<T> truth(float freq, float conf) {
-        this.truth = new TruthValue(freq, conf);
+        this.truth = new Truth(freq, conf);
         if (budget == null) {
             //set a default budget if none exists
             budget = new Budget(punc, truth);

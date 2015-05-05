@@ -4,7 +4,8 @@ import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
@@ -160,7 +161,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             Implication whole=Implication.make(S, C,order2);
 
             if(whole!=null) {
-                TruthValue truth = TruthFunctions.deduction(s1.truth, s2.truth);
+                Truth truth = TruthFunctions.deduction(s1.truth, s2.truth);
                 Budget budget = BudgetFunctions.forward(truth, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
 

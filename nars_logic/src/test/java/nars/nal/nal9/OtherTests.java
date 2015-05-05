@@ -1,9 +1,9 @@
 package nars.nal.nal9;
 
 
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.nal.ScriptNALTest;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import static nars.io.LibraryInput.getParams;
 
 public class OtherTests extends ScriptNALTest {
 
-    public OtherTests(ProtoNAR b, String input) {
+    public OtherTests(NARSeed b, String input) {
         super(b, input);
     }
 

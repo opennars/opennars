@@ -4,7 +4,7 @@ import automenta.vivisect.Video;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import nars.NAR;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 
 import java.util.HashMap;
 import java.util.Map;

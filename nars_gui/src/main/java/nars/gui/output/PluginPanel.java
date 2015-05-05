@@ -5,8 +5,8 @@ import automenta.vivisect.swing.ReflectPanel;
 import nars.Events;
 import nars.NAR;
 import nars.NAR.OperatorRegistration;
-import nars.operate.IOperator;
-import nars.event.AbstractReaction;
+import nars.op.IOperator;
+import nars.event.NARReaction;
 import nars.util.data.PackageUtility;
 
 import javax.swing.*;
@@ -28,14 +28,14 @@ import java.util.logging.Logger;
 public class PluginPanel extends VerticalPanel {
     private final NAR nar;
     private final JMenuBar menu;
-    final AbstractReaction observer;
+    final NARReaction observer;
     
 
     public PluginPanel(NAR nar) {
         super();
         
         this.nar = nar;
-        this.observer = new AbstractReaction(nar, false, Events.PluginsChange.class) {
+        this.observer = new NARReaction(nar, false, Events.PluginsChange.class) {
             @Override
             public void event(Class event, Object[] args) {
                 if (event == Events.PluginsChange.class)

@@ -5,10 +5,10 @@ import ca.nengo.model.StructuralException;
 import ca.nengo.model.impl.DefaultNetwork;
 import ca.nengo.ui.model.plot.LinePlot;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.event.FrameReaction;
-import nars.io.meter.Signal;
-import nars.io.meter.TemporalMetrics;
+import nars.util.meter.Signal;
+import nars.util.meter.TemporalMetrics;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class MeterNode extends DefaultNetwork {
 
     private final TemporalMetrics<Object> data;
     private final NAR nar;
-    private AbstractReaction frameHandler;
+    private NARReaction frameHandler;
 
     Map<Signal, LinePlot> plots = new LinkedHashMap<>();
     private boolean updatePending = false;

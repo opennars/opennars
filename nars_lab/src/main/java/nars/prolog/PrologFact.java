@@ -1,6 +1,6 @@
 package nars.prolog;
 
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.term.Term;

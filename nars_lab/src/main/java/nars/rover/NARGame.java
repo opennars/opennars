@@ -1,6 +1,6 @@
 package nars.rover;
 
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.Events;
 import nars.Memory;
 import nars.NAR;

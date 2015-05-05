@@ -1,12 +1,10 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
 import nars.nal.TaskComparator;
 import nars.nal.nal7.Interval.AtomicDuration;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -15,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Param implements Serializable {
 
 
-    private TaskComparator.Duplication derivationDuplicationMode = TaskComparator.Duplication.Or;
+    private TaskComparator.Merging merging = TaskComparator.Merging.Or;
 
     public Param() {    }
 
@@ -223,12 +221,12 @@ public class Param implements Serializable {
 //        json = b.create();
 //    }
 
-    public TaskComparator.Duplication getDerivationDuplicationMode() {
-        return derivationDuplicationMode;
+    public TaskComparator.Merging getMerging() {
+        return merging;
     }
 
     /** handling behavior for duplicate derivations in bulk processing */
-    public void setDerivationDuplicationMode(TaskComparator.Duplication derivationDuplicationMode) {
-        this.derivationDuplicationMode = derivationDuplicationMode;
+    public void setDerivationMerging(TaskComparator.Merging merging) {
+        this.merging = merging;
     }
 }

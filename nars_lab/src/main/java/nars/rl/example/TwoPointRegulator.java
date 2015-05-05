@@ -4,13 +4,13 @@ import automenta.vivisect.Video;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.gui.NARSwing;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 
 import javax.swing.*;
 import java.awt.*;
@@ -268,7 +268,7 @@ public class TwoPointRegulator extends JPanel {
         NARSwing s = new NARSwing(nar);
 
 
-        new AbstractReaction(nar, Events.CycleEnd.class) {
+        new NARReaction(nar, Events.CycleEnd.class) {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -315,7 +315,7 @@ public class TwoPointRegulator extends JPanel {
 
             }
         };
-        new AbstractReaction(nar, Events.FrameEnd.class) {
+        new NARReaction(nar, Events.FrameEnd.class) {
 
             @Override
             public void event(Class event, Object[] args) {

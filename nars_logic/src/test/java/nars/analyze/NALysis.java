@@ -2,15 +2,15 @@ package nars.analyze;
 
 
 import nars.Memory;
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.io.LibraryInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
-import nars.io.condition.OutputCondition;
-import nars.io.test.TestNAR;
+import nars.testing.condition.OutputCondition;
+import nars.testing.TestNAR;
 import nars.nal.AbstractNALTest;
-import nars.prototype.Curve;
-import nars.prototype.Default;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
 import org.junit.Ignore;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class NALysis extends AbstractNALTest {
     static boolean showTrace = false;
     public static boolean showFail = true; //failure report
 
-    public NALysis(ProtoNAR b) {
+    public NALysis(NARSeed b) {
         super(b);
     }
 
@@ -52,7 +52,7 @@ public class NALysis extends AbstractNALTest {
 
 
     /** run the test using the returned TestNAR's .run() method */
-    public static TestNAR analyze(ProtoNAR build, String path, int maxCycles, long seed) {
+    public static TestNAR analyze(NARSeed build, String path, int maxCycles, long seed) {
 
         String testName = path + "_" + build;
 
@@ -146,14 +146,14 @@ public class NALysis extends AbstractNALTest {
 
 
 
-    public synchronized static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, ProtoNAR... builds) {
+    public synchronized static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, NARSeed... builds) {
         Collection<String> paths = getPaths(dirPath);
 
         List<TestNAR> nars = new ArrayList(paths.size() * builds.length);
 
         for (String p : paths) {
             if (p.contains("README")) continue;
-            for (ProtoNAR b : builds) {
+            for (NARSeed b : builds) {
                 TestNAR n = analyze(b, p, maxCycles, seed);
                 nars.add(n);
                 n.run();
@@ -163,7 +163,7 @@ public class NALysis extends AbstractNALTest {
         return nars;
     }
 
-    public static void nal(String dirPath, String filter, ProtoNAR build, int maxCycles) {
+    public static void nal(String dirPath, String filter, NARSeed build, int maxCycles) {
         Collection<String> paths = getPaths(dirPath);
 
         for (String p : paths) {

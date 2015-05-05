@@ -5,10 +5,10 @@ import nars.Events.CycleEnd;
 import nars.Events.CycleStart;
 import nars.Memory;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.nal.concept.Concept;
 
-public abstract class MemoryObserver extends AbstractReaction {
+public abstract class MemoryObserver extends NARReaction {
 
     private final Memory memory;
 

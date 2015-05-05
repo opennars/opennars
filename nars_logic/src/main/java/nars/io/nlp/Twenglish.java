@@ -17,9 +17,10 @@
 package nars.io.nlp;
 
 import nars.Memory;
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.OldNarseseParser;
-import nars.io.nlp.Twokenize.Span;
+import nars.narsese.InvalidInputException;
+import nars.narsese.OldNarseseParser;
+import nars.util.language.Twokenize;
+import nars.util.language.Twokenize.Span;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.Sentence;

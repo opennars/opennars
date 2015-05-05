@@ -1,13 +1,10 @@
 package nars.nal.nal3;
 
 
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.term.Term;
 import nars.util.ByteBuf;
-
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 public interface SetTensional extends Term {
 

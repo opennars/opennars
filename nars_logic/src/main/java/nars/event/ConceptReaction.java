@@ -10,7 +10,7 @@ import nars.nal.ConceptProcess;
 import java.util.function.Consumer;
 
 /** watches for concept lifecycle (creation and forget) events */
-abstract public class ConceptReaction extends AbstractReaction {
+abstract public class ConceptReaction extends NARReaction {
 
     private final Memory memory;
 

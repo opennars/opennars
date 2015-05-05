@@ -1,7 +1,7 @@
 package nars.core;
 
 import nars.Global;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,25 +12,25 @@ public class TruthTest {
 
     @Test
     public void testFreqEquality() {
-        TruthValue a = new TruthValue(1.0f, 0.9f);
-        TruthValue aCopy = new TruthValue(1.0f, 0.9f);
+        Truth a = new Truth(1.0f, 0.9f);
+        Truth aCopy = new Truth(1.0f, 0.9f);
         assertEquals(a, aCopy);
 
-        TruthValue aEqualWithinThresh = new TruthValue(1.0f- Global.TRUTH_EPSILON/2f, 0.9f);
+        Truth aEqualWithinThresh = new Truth(1.0f- Global.TRUTH_EPSILON/2f, 0.9f);
         assertEquals(a, aEqualWithinThresh);
 
-        TruthValue aNotWithinThresh = new TruthValue(1.0f - Global.TRUTH_EPSILON*1f, 0.9f);
+        Truth aNotWithinThresh = new Truth(1.0f - Global.TRUTH_EPSILON*1f, 0.9f);
         assertNotEquals(a, aNotWithinThresh);
 
     }
     @Test
     public void testConfEquality() {
-        TruthValue a = new TruthValue(1.0f, 0.5f);
+        Truth a = new Truth(1.0f, 0.5f);
 
-        TruthValue aEqualWithinThresh = new TruthValue(1.0f, 0.5f- Global.TRUTH_EPSILON/2f);
+        Truth aEqualWithinThresh = new Truth(1.0f, 0.5f- Global.TRUTH_EPSILON/2f);
         assertEquals(a, aEqualWithinThresh);
 
-        TruthValue aNotWithinThresh = new TruthValue(1.0f, 0.5f - Global.TRUTH_EPSILON*1f);
+        Truth aNotWithinThresh = new Truth(1.0f, 0.5f - Global.TRUTH_EPSILON*1f);
         assertNotEquals(a, aNotWithinThresh);
     }
 

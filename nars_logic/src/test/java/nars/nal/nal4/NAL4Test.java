@@ -1,11 +1,11 @@
 package nars.nal.nal4;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
-import nars.io.narsese.InvalidInputException;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.NARSeed;
+import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
-import nars.prototype.Solid;
+import nars.model.impl.Solid;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -15,7 +15,7 @@ import java.util.Collection;
 
 public class NAL4Test extends JavaNALTest {
 
-    public NAL4Test(ProtoNAR b) { super(b); }
+    public NAL4Test(NARSeed b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {

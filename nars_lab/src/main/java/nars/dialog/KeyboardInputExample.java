@@ -9,7 +9,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.gui.input.KeyboardInputPanel;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 
 /**
  *

@@ -9,7 +9,7 @@ public class TaskComparator implements Comparator<Task> {
 
 
     /** duplication mode */
-    public enum Duplication {
+    public enum Merging {
 
         /** merges the tasks using Accumulate budget formulas (plus priority, merge durability, merge quality) */
         Plus,
@@ -21,11 +21,11 @@ public class TaskComparator implements Comparator<Task> {
         Duplicate
     }
 
-    Duplication duplication;
+    Merging merging;
 
-    public TaskComparator(Duplication mode) {
+    public TaskComparator(Merging mode) {
         super();
-        this.duplication = mode;
+        this.merging = mode;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class TaskComparator implements Comparator<Task> {
         if (o1 == o2) return 0;
 
         if (o1.sentence.equals(o2.sentence)) {
-            switch (duplication) {
+            switch (merging) {
                 case Duplicate:
                     return -1;
                 case Plus:

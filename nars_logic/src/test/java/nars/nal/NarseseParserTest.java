@@ -1,11 +1,11 @@
 package nars.nal;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
 import nars.Global;
-import nars.io.Symbols;
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.NarseseParser;
+import nars.Symbols;
+import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;

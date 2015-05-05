@@ -3,9 +3,9 @@ package nars.core;
 
 import nars.NAR;
 import nars.Global;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.io.TextOutput;
-import nars.io.condition.OutputCount;
+import nars.testing.condition.OutputCount;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

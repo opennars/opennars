@@ -5,7 +5,7 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NPanel;
 import automenta.vivisect.swing.NSlider;
 import nars.NAR;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.io.Output;
 import nars.nal.Task;
 

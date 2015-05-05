@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.nal.Item;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Conjunction;
@@ -15,7 +15,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.operate.app.plan.MultipleExecutionManager;
+import nars.op.app.plan.MultipleExecutionManager;
 import nars.util.graph.ImplicationGraph.Cause;
 
 import java.util.Objects;
@@ -69,7 +69,7 @@ public class ImplicationGraph extends SentenceGraph<Cause> {
         
         
         
-        public TruthValue getTruth() { return parent.truth; }
+        public Truth getTruth() { return parent.truth; }
         
         public Stamp getStamp() { return parent.stamp; }
      

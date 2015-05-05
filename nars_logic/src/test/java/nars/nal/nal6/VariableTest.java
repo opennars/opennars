@@ -4,12 +4,12 @@
  */
 package nars.nal.nal6;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
 import nars.Events.Answer;
-import nars.ProtoNAR;
-import nars.event.AbstractReaction;
-import nars.io.condition.OutputContainsCondition;
+import nars.NARSeed;
+import nars.event.NARReaction;
+import nars.testing.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ import java.util.Collection;
 public class VariableTest extends JavaNALTest {
 
 
-    public VariableTest(ProtoNAR b) {
+    public VariableTest(NARSeed b) {
         super(b);
     }
 
@@ -52,7 +52,7 @@ public class VariableTest extends JavaNALTest {
             A "Solved" solution of: <(&/,<a --> 3>,+3) =/> <a --> 4>>. %1.00;0.31%
             shouldn't happen because it should not unify #wat with 4 because its not a query variable      
         */        
-        new AbstractReaction(nar, true, Answer.class) {
+        new NARReaction(nar, true, Answer.class) {
             @Override public void event(Class event, Object[] args) {
                 //nothing should cause this event
                 assertTrue(Arrays.toString(args), false);

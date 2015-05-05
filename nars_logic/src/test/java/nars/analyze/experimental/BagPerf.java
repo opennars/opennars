@@ -18,15 +18,15 @@
 package nars.analyze.experimental;
 
 import com.google.common.collect.Lists;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Memory;
 import nars.NAR;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.Item;
-import nars.budget.Bag;
-import nars.budget.bag.CurveBag;
-import nars.budget.bag.LevelBag;
+import nars.bag.Bag;
+import nars.bag.impl.CurveBag;
+import nars.bag.impl.LevelBag;
 import nars.util.sort.ArraySortedIndex;
 import com.google.common.util.concurrent.AtomicDouble;
 

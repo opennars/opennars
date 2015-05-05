@@ -1,10 +1,10 @@
 package nars.analyze.experimental;
 
 import nars.Global;
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.analyze.NALysis;
 import nars.io.LibraryInput;
-import nars.io.test.TestNAR;
+import nars.testing.TestNAR;
 import nars.nal.AbstractNALTest;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public class ExampleScores {
 
     public final double totalCost;
 
-    public ExampleScores(ProtoNAR p, int cycleLimit) {
+    public ExampleScores(NARSeed p, int cycleLimit) {
         super();
 
         Global.DEBUG = false;

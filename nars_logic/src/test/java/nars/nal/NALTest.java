@@ -1,10 +1,10 @@
 package nars.nal;
 
 import junit.framework.TestCase;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Memory;
 import nars.NAR;
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.Global;
 import nars.io.LibraryInput;
 import nars.io.NALPerformance;
@@ -39,12 +39,12 @@ import java.util.Map;
         Global.THREADS = 1;
     }
 
-    static final ProtoNAR[] builds = new ProtoNAR[] {
+    static final NARSeed[] builds = new NARSeed[] {
             new Default()
             //new Neuromorphic(4).setMaxInputsPerCycle(1)
     };
 
-    private final ProtoNAR build;
+    private final NARSeed build;
 
     int minCycles = 1250; //TODO reduce this to one or zero to avoid wasting any extra time during tests
     static public long randomSeed = 1;
@@ -73,7 +73,7 @@ import java.util.Map;
 
         Collection<Object[]> params = new ArrayList(t.size() * builds.length);
         for (String script : t) {
-            for (ProtoNAR b : builds) {
+            for (NARSeed b : builds) {
                 params.add(new Object[] { b, script });
             }
         }
@@ -180,7 +180,7 @@ import java.util.Map;
     transient final String scriptPath;
 
     
-    public NALTest(ProtoNAR b, String scriptPath) {
+    public NALTest(NARSeed b, String scriptPath) {
         this.scriptPath = scriptPath;
         this.build = b;
     }

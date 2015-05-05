@@ -1,7 +1,7 @@
 package nars.rdfowl;
 
 import nars.NAR;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
 import nars.io.PrintWriterInput;

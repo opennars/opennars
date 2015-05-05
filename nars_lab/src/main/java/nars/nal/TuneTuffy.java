@@ -4,13 +4,13 @@
  */
 package nars.nal;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Events.Answer;
 import nars.Events.OUT;
 import nars.NAR;
-import nars.ProtoNAR;
-import nars.event.AbstractReaction;
-import nars.io.narsese.InvalidInputException;
+import nars.NARSeed;
+import nars.event.NARReaction;
+import nars.narsese.InvalidInputException;
 import nars.nal.term.Term;
 
 import java.io.File;
@@ -22,7 +22,7 @@ import java.io.FileNotFoundException;
  */
 public class TuneTuffy {
     
-    public static class SolutionMonitor extends AbstractReaction {
+    public static class SolutionMonitor extends NARReaction {
         private final Term term;
         Sentence mostConfident = null;
         
@@ -66,7 +66,7 @@ public class TuneTuffy {
     }
     
     public static void main(String[] args) throws FileNotFoundException, InvalidInputException {
-        ProtoNAR b = new Default().
+        NARSeed b = new Default().
                 setInternalExperience(null);
                 
         

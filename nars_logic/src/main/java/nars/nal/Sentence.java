@@ -23,7 +23,7 @@ package nars.nal;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.TruthFunctions.EternalizedTruthValue;
 import nars.nal.nal5.Conjunction;
@@ -44,7 +44,7 @@ import java.util.*;
  * It is used as the premises and conclusions of all logic rules.
  */
 //TODO: make Named<byte[]>
-public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termed, TruthValue.Truthable, Stamped {
+public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termed, Truth.Truthable, Stamped {
 
 
 
@@ -68,7 +68,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     /**
      * The truth value of Judgment, or desire value of Goal     
      */
-    public final TruthValue truth;
+    public final Truth truth;
     
     /**
      * Partial record of the derivation path
@@ -85,11 +85,11 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     transient private int hash;
 
 
-    public Sentence(Term invalidTerm, char punctuation, TruthValue newTruth, NAL.StampBuilder newStamp) {
+    public Sentence(Term invalidTerm, char punctuation, Truth newTruth, NAL.StampBuilder newStamp) {
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    public Sentence(T term, char punctuation, TruthValue newTruth, NAL.StampBuilder newStamp) {
+    public Sentence(T term, char punctuation, Truth newTruth, NAL.StampBuilder newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
 
@@ -102,7 +102,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(T seedTerm, final char punctuation, final TruthValue truth, final NAL.StampBuilder stamp, boolean normalize) {
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, final NAL.StampBuilder stamp, boolean normalize) {
         
 
 
@@ -357,7 +357,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 
     protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
-                truth!=null ? new TruthValue(truth) : null,
+                truth!=null ? new Truth(truth) : null,
                 stamp.clone());
     }
 
@@ -379,7 +379,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
       */    
     public Sentence projection(final long targetTime, final long currentTime) {
             
-        final TruthValue newTruth = projectionTruth(targetTime, currentTime);
+        final Truth newTruth = projectionTruth(targetTime, currentTime);
         
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
 
@@ -390,8 +390,8 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 
 
 
-    public TruthValue projectionTruth(final long targetTime, final long currentTime) {
-        TruthValue newTruth = null;
+    public Truth projectionTruth(final long targetTime, final long currentTime) {
+        Truth newTruth = null;
                         
         if (!isEternal()) {
             newTruth = TruthFunctions.eternalize(truth);
@@ -400,7 +400,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
+                    newTruth = new Truth(truth.getFrequency(), projectedConfidence);
                 }
             }
         }
@@ -428,7 +428,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
         }
 
         if (problemHasQueryVar) {
-            return TruthValue.expectation(freq, conf) / term.getComplexity();
+            return Truth.expectation(freq, conf) / term.getComplexity();
         } else {
             return conf;
         }
@@ -697,7 +697,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     }
 
     @Override
-    public TruthValue getTruth() {
+    public Truth getTruth() {
         return truth;
     }
 

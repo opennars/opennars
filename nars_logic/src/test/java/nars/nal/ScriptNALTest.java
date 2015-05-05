@@ -1,7 +1,7 @@
 package nars.nal;
 
 import junit.framework.TestCase;
-import nars.ProtoNAR;
+import nars.NARSeed;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,7 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
     private final String path;
 
-    public ScriptNALTest(ProtoNAR b, String path) {
+    public ScriptNALTest(NARSeed b, String path) {
         super(b);
 
         this.path = path;

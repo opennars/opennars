@@ -2,8 +2,10 @@ package nars.nal.rule;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
+import nars.nal.term.Statement;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.nal1.Negation;
@@ -59,7 +61,7 @@ public class Contraposition extends ConceptFireTask {
 
         if (content == null) return false;
 
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (content instanceof Implication) {

@@ -2,7 +2,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.io.TextOutput;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.junit.Before;
 import org.junit.Test;
 

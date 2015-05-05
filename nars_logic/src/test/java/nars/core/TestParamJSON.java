@@ -4,12 +4,6 @@
  */
 package nars.core;
 
-import nars.NAR;
-import nars.Param;
-import nars.ProtoNAR;
-import nars.prototype.Default;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 /**

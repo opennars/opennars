@@ -1,7 +1,7 @@
 package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 
 /**
  *

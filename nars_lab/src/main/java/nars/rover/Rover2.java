@@ -7,7 +7,7 @@ import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.DrawPhy2D;

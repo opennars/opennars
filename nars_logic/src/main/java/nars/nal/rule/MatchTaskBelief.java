@@ -1,6 +1,6 @@
 package nars.nal.rule;
 
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.*;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;

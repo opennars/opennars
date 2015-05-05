@@ -10,16 +10,16 @@ import javolution.util.FastMap;
 import nars.Events;
 import nars.Events.FrameEnd;
 import nars.NAR;
-import nars.budget.Bag;
+import nars.bag.Bag;
 import nars.budget.Budget.Budgetable;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.gui.VerticalLayout;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.nal.Item;
 import nars.nal.Named;
 import nars.nal.Sentence;
-import nars.nal.TruthValue.Truthable;
+import nars.nal.Truth.Truthable;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -40,7 +40,7 @@ import static java.awt.BorderLayout.WEST;
  * TODO use a minimum framerate for updating
  * TODO use ConceptMapSet and remove the MultiMap
  */
-public class ConceptPanelBuilder extends AbstractReaction {
+public class ConceptPanelBuilder extends NARReaction {
 
 
     private final NAR nar;

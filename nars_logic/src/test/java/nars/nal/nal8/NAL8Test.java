@@ -1,12 +1,13 @@
 package nars.nal.nal8;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.NARSeed;
 import nars.Global;
-import nars.io.narsese.InvalidInputException;
+import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
+import nars.model.impl.DefaultMicro;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
 
 public class NAL8Test extends JavaNALTest {
 
-    public NAL8Test(ProtoNAR b) { super(b); }
+    public NAL8Test(NARSeed b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
@@ -24,7 +25,7 @@ public class NAL8Test extends JavaNALTest {
                 {new Default()},
                 {new Default().setInternalExperience(null)},
                 {new Curve().setInternalExperience(null)},
-                {new Default.DefaultMicro() }
+                {new DefaultMicro() }
                 //{new Discretinuous() },
         });
     }

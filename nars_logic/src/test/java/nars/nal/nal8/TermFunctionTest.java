@@ -1,7 +1,6 @@
 package nars.nal.nal8;
 
-import nars.ProtoNAR;
-import nars.io.TextOutput;
+import nars.NARSeed;
 import nars.nal.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -10,7 +9,7 @@ import java.util.Collection;
 
 public class TermFunctionTest extends JavaNALTest {
 
-    public TermFunctionTest(ProtoNAR b) {
+    public TermFunctionTest(NARSeed b) {
         super(b);
     }
 

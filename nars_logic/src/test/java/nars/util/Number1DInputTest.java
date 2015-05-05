@@ -17,8 +17,8 @@
 
 package nars.util;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
 import nars.Memory;
 import nars.NAR;
 import nars.io.TextOutput;

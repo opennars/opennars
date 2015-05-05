@@ -17,15 +17,15 @@
 package nars.timeline;
 
 import com.google.common.collect.Iterators;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
 import nars.grid2d.TestChamber;
 import nars.gui.NARSwing;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.nal.Task;
-import nars.nal.meta.NARTrace;
-import nars.operate.io.PauseInput;
+import nars.meter.NARTrace;
+import nars.op.io.PauseInput;
 
 import java.io.File;
 import java.util.Iterator;

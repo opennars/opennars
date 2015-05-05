@@ -1,8 +1,8 @@
 package nars.core;
 
 import nars.NAR;
-import nars.prototype.Default;
-import nars.io.narsese.InvalidInputException;
+import nars.model.impl.Default;
+import nars.narsese.InvalidInputException;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import org.junit.Test;

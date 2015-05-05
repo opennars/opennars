@@ -1,9 +1,9 @@
 package nars.util;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Events.CycleStart;
 import nars.NAR;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
 import nars.util.math.DenoisingAutoencoder;

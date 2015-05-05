@@ -22,16 +22,15 @@ package nars.budget;
 
 import nars.Memory;
 import nars.Global;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.io.Texts;
-import nars.nal.BudgetFunctions;
 import nars.nal.Sentence;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 
 import java.util.Objects;
 
 import static nars.Global.BUDGET_EPSILON;
-import static nars.nal.BudgetFunctions.m;
+import static nars.budget.BudgetFunctions.m;
 import static nars.nal.UtilityFunctions.*;
 
 /**
@@ -67,7 +66,7 @@ public class Budget implements Cloneable, BudgetTarget {
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
     long lastForgetTime = -1;
 
-    public Budget(char punctuation, TruthValue qualityFromTruth) {
+    public Budget(char punctuation, Truth qualityFromTruth) {
         this(punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_PRIORITY :
                         (punctuation == Symbols.QUESTION ?  Global.DEFAULT_QUESTION_PRIORITY :
                                 (punctuation == Symbols.GOAL ? Global.DEFAULT_GOAL_PRIORITY :
@@ -75,7 +74,7 @@ public class Budget implements Cloneable, BudgetTarget {
                 punctuation, qualityFromTruth);
     }
 
-    public Budget(final float p, char punctuation, TruthValue qualityFromTruth) {
+    public Budget(final float p, char punctuation, Truth qualityFromTruth) {
         this(p,
                 punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_DURABILITY :
                         (punctuation == Symbols.QUESTION ?  Global.DEFAULT_QUESTION_DURABILITY :
@@ -84,7 +83,7 @@ public class Budget implements Cloneable, BudgetTarget {
                 qualityFromTruth);
     }
 
-    public Budget(final float p, final float d, final TruthValue qualityFromTruth) {
+    public Budget(final float p, final float d, final Truth qualityFromTruth) {
         this(p, d, qualityFromTruth !=
                 null ? BudgetFunctions.truthToQuality(qualityFromTruth) : 1.0f);
     }
@@ -354,9 +353,9 @@ public class Budget implements Cloneable, BudgetTarget {
     public boolean equalsByPrecision(final Object that) {
         if (that instanceof Budget) {
             final Budget t = ((Budget) that);
-            if (!TruthValue.isEqual(getPriority(), t.getPriority(), BUDGET_EPSILON)) return false;
-            if (!TruthValue.isEqual(getDurability(), t.getDurability(), BUDGET_EPSILON)) return false;
-            if (!TruthValue.isEqual(getQuality(), t.getQuality(), BUDGET_EPSILON)) return false;
+            if (!Truth.isEqual(getPriority(), t.getPriority(), BUDGET_EPSILON)) return false;
+            if (!Truth.isEqual(getDurability(), t.getDurability(), BUDGET_EPSILON)) return false;
+            if (!Truth.isEqual(getQuality(), t.getQuality(), BUDGET_EPSILON)) return false;
             return true;
         }
         return false;

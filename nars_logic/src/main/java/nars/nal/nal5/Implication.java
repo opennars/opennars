@@ -21,7 +21,7 @@
 package nars.nal.nal5;
 
 import nars.nal.NALOperator;
-import nars.nal.Statement;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;

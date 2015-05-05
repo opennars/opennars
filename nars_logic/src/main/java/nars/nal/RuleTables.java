@@ -22,7 +22,8 @@ package nars.nal;
 
 import nars.Global;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
+import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
@@ -32,6 +33,7 @@ import nars.nal.nal5.*;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.TLink;
@@ -40,7 +42,7 @@ import nars.nal.tlink.TermLink;
 
 import java.util.Arrays;
 
-import static nars.io.Symbols.*;
+import static nars.Symbols.*;
 
 /**
  * Table of logic rules, indexed by the TermLinks for the task and the
@@ -268,10 +270,10 @@ public class RuleTables {
                 }
             }
 
-            TruthValue truth=new TruthValue(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+            Truth truth=new Truth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
             if(goalterm!=null && (goalterm instanceof Compound) && !goalterm.hasVarIndep()) {
                 nal.singlePremiseTask((Compound) goalterm, Symbols.GOAL, truth,
-                        new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)),
+                        new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL, BudgetFunctions.truthToQuality(truth)),
                         nal.newStamp(task.sentence,nal.memory.time())
                 );
             }

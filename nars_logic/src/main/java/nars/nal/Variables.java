@@ -2,7 +2,7 @@ package nars.nal;
 
 import nars.Memory;
 import nars.Global;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;

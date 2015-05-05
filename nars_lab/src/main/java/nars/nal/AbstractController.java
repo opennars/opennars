@@ -2,8 +2,8 @@ package nars.nal;
 
 import nars.Events;
 import nars.NAR;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 
 
 public abstract class AbstractController implements Reaction {

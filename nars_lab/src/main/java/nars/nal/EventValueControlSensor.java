@@ -1,7 +1,7 @@
 package nars.nal;
 
 import nars.NAR;
-import nars.io.meter.event.DoubleMeter;
+import nars.util.meter.event.DoubleMeter;
 
 
 public class EventValueControlSensor extends ControlSensor {

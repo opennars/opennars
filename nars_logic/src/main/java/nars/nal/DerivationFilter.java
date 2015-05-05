@@ -1,7 +1,7 @@
 package nars.nal;
 
 import nars.NAR;
-import nars.operate.IOperator;
+import nars.op.IOperator;
 
 /**
  * Created by me on 5/1/15.

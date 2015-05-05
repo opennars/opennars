@@ -1,11 +1,11 @@
 package nars.predict;
 
 import automenta.vivisect.swing.NWindow;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.term.Term;
@@ -111,7 +111,7 @@ public class Predict2D extends JPanel {
 
     }
 
-    public static class ValuePrediction extends AbstractReaction {
+    public static class ValuePrediction extends NARReaction {
 
         private final String term;
         private final String prefix, suffix;

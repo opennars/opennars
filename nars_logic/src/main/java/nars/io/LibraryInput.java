@@ -5,8 +5,8 @@
 package nars.io;
 
 import nars.NAR;
-import nars.ProtoNAR;
-import nars.io.condition.OutputCondition;
+import nars.NARSeed;
+import nars.testing.condition.OutputCondition;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -145,17 +145,17 @@ public class LibraryInput extends TextInput {
         return t;
     }
 
-    public static Collection getParams(String directories, ProtoNAR... builds) {
+    public static Collection getParams(String directories, NARSeed... builds) {
         return getParams(new String[] { directories }, builds);
     }
 
     //@Parameterized.Parameters(name="{1} {0}")
-    public static Collection getParams(String[] directories, ProtoNAR... builds) {
+    public static Collection getParams(String[] directories, NARSeed... builds) {
         Collection<String> t = getPaths(directories);
 
         Collection<Object[]> params = new ArrayList(t.size() * builds.length);
         for (String script : t) {
-            for (ProtoNAR b : builds) {
+            for (NARSeed b : builds) {
                 params.add(new Object[] { b, script });
             }
         }

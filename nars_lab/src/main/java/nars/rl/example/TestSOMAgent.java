@@ -6,8 +6,8 @@ import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.ProtoNAR;
-import nars.budget.Bag;
+import nars.NARSeed;
+import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.gui.NARSwing;
 import nars.nal.Sentence;
@@ -17,7 +17,7 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
@@ -105,7 +105,7 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
-    public TestSOMAgent(RLEnvironment env, ProtoNAR dd, float qLearnedConfidence, Perception... p) {
+    public TestSOMAgent(RLEnvironment env, NARSeed dd, float qLearnedConfidence, Perception... p) {
         super();
 
         nar = new NAR(dd);

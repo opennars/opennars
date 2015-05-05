@@ -1,13 +1,14 @@
 package nars.io;
 
+import nars.Symbols;
 import nars.nal.Sentence;
-import nars.nal.Statement;
-import nars.nal.TruthValue;
+import nars.nal.term.Statement;
+import nars.nal.Truth;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
-import nars.io.narsese.InvalidInputException;
+import nars.narsese.InvalidInputException;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.util.data.rope.Rope;
@@ -90,7 +91,7 @@ public class TextsTest {
         
         //visualize(tr, System.out);
         
-        Sentence s = new Sentence(term1, '.', new TruthValue(1,1), new Stamp(n.memory, Tense.Eternal));
+        Sentence s = new Sentence(term1, '.', new Truth(1,1), new Stamp(n.memory, Tense.Eternal));
         
     }
     

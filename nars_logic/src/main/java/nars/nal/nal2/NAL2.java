@@ -1,10 +1,12 @@
 package nars.nal.nal2;
 
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Equivalence;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 /**
@@ -29,7 +31,7 @@ public class NAL2 {
         } else {
             content = Equivalence.make(t1, t2, s1.getTemporalOrder());
         }
-        TruthValue truth = TruthFunctions.intersection(judgment1.truth, judgment2.truth);
+        Truth truth = TruthFunctions.intersection(judgment1.truth, judgment2.truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,
                 nal.newStamp(judgment1, judgment2), false, true);

@@ -1,11 +1,11 @@
 package nars.nal.nal3;
 
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.NARSeed;
 import nars.nal.ScriptNALTest;
-import nars.prototype.Classic;
+import nars.model.impl.Classic;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -14,7 +14,7 @@ import static nars.io.LibraryInput.getParams;
 
 public class NAL3ScriptTests extends ScriptNALTest {
 
-    public NAL3ScriptTests(ProtoNAR b, String input) {
+    public NAL3ScriptTests(NARSeed b, String input) {
         super(b, input);
     }
 

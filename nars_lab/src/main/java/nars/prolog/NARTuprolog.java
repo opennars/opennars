@@ -2,7 +2,7 @@ package nars.prolog;
 
 import nars.NAR;
 import nars.io.TextOutput;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.tuprolog.*;
 import nars.tuprolog.event.*;
 import nars.tuprolog.lib.BasicLibrary;

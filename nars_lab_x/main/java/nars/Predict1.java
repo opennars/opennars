@@ -15,7 +15,7 @@ import nars.core.Events;
 import nars.core.Events.FrameStart;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.prototype.Default;
+import nars.model.Default;
 import nars.io.ChangedTextInput;
 import nars.nal.entity.Sentence;
 import nars.nal.entity.Task;

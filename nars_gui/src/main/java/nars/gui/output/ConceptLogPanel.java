@@ -4,7 +4,7 @@ import automenta.vivisect.Video;
 import javolution.util.FastSet;
 import nars.Events;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.io.TextOutput;
 import nars.nal.Named;
 import nars.nal.Task;
@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class ConceptLogPanel extends LogPanel implements Runnable {
 
 
-    private final AbstractReaction conceptReaction;
+    private final NARReaction conceptReaction;
     ConceptPanelBuilder b;
     VerticalPanel content = new VerticalPanel();
 
@@ -39,7 +39,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         super(c);
 
 
-        conceptReaction = new AbstractReaction(nar, Events.ConceptNew.class, Events.ConceptRemember.class) {
+        conceptReaction = new NARReaction(nar, Events.ConceptNew.class, Events.ConceptRemember.class) {
 
             @Override
             public void event(Class event, Object[] args) {

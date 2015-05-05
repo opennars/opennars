@@ -12,10 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package nars.io.meter.depr.sensor;
+package nars.util.meter.depr.sensor;
 
-import nars.io.meter.depr.Tracker;
-import nars.io.meter.depr.session.StatsSession;
+import nars.util.meter.depr.Tracker;
+import nars.util.meter.depr.session.StatsSession;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;

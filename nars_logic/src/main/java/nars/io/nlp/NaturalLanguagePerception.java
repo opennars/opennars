@@ -1,8 +1,9 @@
 package nars.io.nlp;
 
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.OldNarseseParser;
+import nars.narsese.InvalidInputException;
+import nars.narsese.OldNarseseParser;
 import nars.nal.Task;
+import nars.util.language.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class NaturalLanguagePerception {
     }
     
     static public ArrayList<LinePart> parseIntoLineParts(String input) {
-        String[] splitedInput = Utility.splitInclusive(input, splitSigns);
+        String[] splitedInput = StringUtil.splitInclusive(input, splitSigns);
         ArrayList<LinePart> lineParts = new ArrayList<LinePart>();
         
         for (int splitedI = 0; splitedI < splitedInput.length; splitedI++) {
@@ -91,7 +92,7 @@ public class NaturalLanguagePerception {
         }
         // else
         
-        if (Utility.isNumeric(inputPart)) {
+        if (StringUtil.isNumeric(inputPart)) {
             for (int i = 0; i < inputPart.length(); i++) {
                 lineParts.add(new LinePart(LinePart.EnumType.WORD, "" + inputPart.charAt(i)));
             }
@@ -187,7 +188,7 @@ public class NaturalLanguagePerception {
     }
     
     static private boolean isSplitSign(char sign) {
-        return Utility.containsChar(splitSigns, sign);
+        return StringUtil.containsChar(splitSigns, sign);
     }
     
     static private final char[] splitSigns = new char[]{' ', '.', ',', '?', '!', ';', ':', '/', '\\', '%', '(', ')', '-', '+', '*', '\'', '\"', '=', '{', '}', '(', ')', '<', '>'};

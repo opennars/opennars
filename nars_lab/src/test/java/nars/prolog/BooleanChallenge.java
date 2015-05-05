@@ -4,15 +4,15 @@ import nars.Events.CycleEnd;
 import nars.Events.OUT;
 import nars.Global;
 import nars.NAR;
-import nars.event.Reaction;
-import nars.io.narsese.InvalidInputException;
+import nars.util.event.Reaction;
+import nars.narsese.InvalidInputException;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 
 import java.util.HashMap;
 import java.util.HashSet;

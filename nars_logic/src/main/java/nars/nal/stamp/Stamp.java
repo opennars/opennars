@@ -22,14 +22,13 @@ package nars.nal.stamp;
 
 import nars.Memory;
 import nars.Global;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.NAL;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 import static nars.nal.nal7.TemporalRules.*;
 import static nars.nal.nal7.Tense.*;

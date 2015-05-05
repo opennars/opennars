@@ -1,8 +1,8 @@
 package nars.nal.nal8;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
-import nars.event.exe.BeliefTruthExecutive;
+import nars.exec.BeliefTruthExecutive;
 import org.apache.commons.math3.stat.Frequency;
 import org.junit.Test;
 

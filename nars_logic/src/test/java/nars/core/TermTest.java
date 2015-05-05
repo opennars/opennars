@@ -18,9 +18,9 @@ package nars.core;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.narsese.InvalidInputException;
+import nars.narsese.InvalidInputException;
 import nars.nal.NALOperator;
-import nars.nal.Statement;
+import nars.nal.term.Statement;
 import nars.nal.Task;
 import nars.nal.Terms;
 import nars.nal.concept.Concept;
@@ -30,7 +30,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.junit.Test;
 
 import java.util.TreeSet;

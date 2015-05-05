@@ -1,8 +1,8 @@
 package nars.nal.nal8;
 
 import nars.NAR;
-import nars.event.AbstractReaction;
-import nars.event.Reaction;
+import nars.event.NARReaction;
+import nars.util.event.Reaction;
 
 /**
  * ReactiveOperator combines Operator with a Reaction interface to
@@ -11,7 +11,7 @@ import nars.event.Reaction;
  */
 abstract public class ReactiveOperator extends Operator implements Reaction {
 
-    private AbstractReaction reaction;
+    private NARReaction reaction;
     private NAR nar;
 
     public ReactiveOperator(String name) {
@@ -30,7 +30,7 @@ abstract public class ReactiveOperator extends Operator implements Reaction {
         this.nar = n;
 
         if (reaction == null) {
-            reaction = new AbstractReaction(n, false, getEvents()) {
+            reaction = new NARReaction(n, false, getEvents()) {
 
                 @Override public void event(Class event, Object[] args) {
                     ReactiveOperator.this.event(event, args);

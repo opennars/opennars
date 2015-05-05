@@ -5,10 +5,10 @@
  */
 package nars.util;
 
-import nars.io.meter.FunctionMeter;
-import nars.io.meter.TemporalMetrics;
-import nars.io.meter.func.BasicStatistics;
-import nars.io.meter.func.FirstOrderDifference;
+import nars.util.meter.FunctionMeter;
+import nars.util.meter.TemporalMetrics;
+import nars.util.meter.func.BasicStatistics;
+import nars.util.meter.func.FirstOrderDifference;
 import org.junit.Test;
 
 import java.io.PrintStream;

@@ -4,11 +4,10 @@ import automenta.vivisect.Video;
 import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.rl.*;
 import nars.rl.example.QVis;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**

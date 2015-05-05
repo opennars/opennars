@@ -7,12 +7,12 @@ import nars.Events.FrameEnd;
 import nars.Events.TaskAdd;
 import nars.Events.TaskRemove;
 import nars.NAR;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -397,7 +397,7 @@ public class TaskTree extends ReactionPanel implements Reaction, Runnable {
                 conPri = con.getPriority();
             }
             float taskPri = t.getPriority();
-            TruthValue desire = t.getDesire();
+            Truth desire = t.getDesire();
 
             Color iColor;
             if (desire != null) {

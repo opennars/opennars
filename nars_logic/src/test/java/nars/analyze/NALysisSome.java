@@ -1,11 +1,11 @@
 package nars.analyze;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.Events;
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.Global;
-import nars.event.Reaction;
-import nars.io.test.TestNAR;
+import nars.util.event.Reaction;
+import nars.testing.TestNAR;
 import nars.nal.Task;
 import org.junit.Ignore;
 
@@ -19,7 +19,7 @@ public class NALysisSome extends NALysis {
 
 
 
-    public NALysisSome(ProtoNAR b) {
+    public NALysisSome(NARSeed b) {
         super(b);
     }
 
@@ -48,7 +48,7 @@ public class NALysisSome extends NALysis {
         //String test = "./nal/test7/nal7.2.nal";
         //String test = "./nal/test7/nal7.18.nal";
 
-        ProtoNAR build = new Default().setInternalExperience(null);
+        NARSeed build = new Default().setInternalExperience(null);
 
 
         //NewNAR build = new Solid(1, 256, 0, 9, 0, 3);

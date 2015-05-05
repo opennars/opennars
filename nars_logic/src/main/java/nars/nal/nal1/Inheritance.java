@@ -20,10 +20,9 @@
  */
 package nars.nal.nal1;
 
-import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.term.Compound;
-import nars.nal.Statement;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;

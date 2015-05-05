@@ -5,9 +5,9 @@
 package nars.core;
 
 import nars.NAR;
-import nars.prototype.Default;
-import nars.io.Answered;
-import nars.io.narsese.InvalidInputException;
+import nars.model.impl.Default;
+import nars.io.qa.Answered;
+import nars.narsese.InvalidInputException;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import org.junit.Test;

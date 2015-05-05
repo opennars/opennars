@@ -2,16 +2,14 @@ package nars.core;
 
 import nars.Global;
 import nars.Memory;
-import nars.io.Answered;
+import nars.io.qa.Answered;
 import nars.io.LibraryInput;
-import nars.io.test.TestNAR;
+import nars.testing.TestNAR;
 import nars.nal.Sentence;
 import nars.nal.term.Term;
-import nars.prototype.Solid;
+import nars.model.impl.Solid;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 

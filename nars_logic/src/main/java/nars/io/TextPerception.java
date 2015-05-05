@@ -1,23 +1,20 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
-import nars.Events;
-import nars.Memory;
-import nars.NAR;
-import nars.Global;
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.OldNarseseParser;
-import nars.io.narsese.NarseseParser;
+import nars.*;
+import nars.narsese.InvalidInputException;
+import nars.narsese.OldNarseseParser;
+import nars.narsese.NarseseParser;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal8.ImmediateOperation;
-import nars.operate.io.Echo;
-import nars.operate.io.PauseInput;
-import nars.operate.io.Reset;
-import nars.operate.io.SetVolume;
+import nars.op.io.Echo;
+import nars.op.io.PauseInput;
+import nars.op.io.Reset;
+import nars.op.io.SetVolume;
 
 import java.io.IOException;
 import java.util.ArrayList;

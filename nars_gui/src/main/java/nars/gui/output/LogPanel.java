@@ -7,10 +7,10 @@ import automenta.vivisect.swing.NSlider;
 import nars.Events.ERR;
 import nars.Events.EXE;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.gui.WrapLayout;
 import nars.io.Output;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.io.TraceWriter;
 import nars.io.TraceWriter.LogOutput;
 import nars.nal.Sentence;
@@ -32,7 +32,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
     protected final NAR nar;
     protected final JPanel menu;
 
-    private AbstractReaction out;
+    private NARReaction out;
     
     public static final int maxIOTextSize = (int) 3E5;
     public static final int clearMargin = (int) 3E4;
@@ -67,7 +67,7 @@ abstract public class LogPanel extends NPanel implements LogOutput {
 
         this.logger = new TraceWriter(nar, false);
 
-        out = new AbstractReaction(nar, false, events) {
+        out = new NARReaction(nar, false, events) {
             @Override public void event(final Class event, final Object[] arguments) {
                 LogPanel.this.output(event, arguments.length > 1 ? arguments : arguments[0]);
             }

@@ -27,9 +27,9 @@ import nars.Events.*;
 import nars.Global;
 import nars.Memory;
 import nars.Memory.MemoryAware;
-import nars.budget.Bag;
+import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.*;
 import nars.nal.term.Termed;
 import nars.nal.stamp.Stamp;
@@ -41,7 +41,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 import static com.google.common.collect.Iterators.*;
-import static nars.nal.BudgetFunctions.divide;
+import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
@@ -353,7 +353,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     public boolean isDesired(float threshold) {
-        TruthValue desire=this.getDesire();
+        Truth desire=this.getDesire();
         if(desire==null) {
             return false;
         }
@@ -923,11 +923,11 @@ abstract public class Concept extends Item<Term> implements Termed {
     /**
      * Get the current overall desire value. TODO to be refined
      */
-    public TruthValue getDesire() {
+    public Truth getDesire() {
         if (goals.isEmpty()) {
             return null;
         }
-        TruthValue topValue = goals.get(0).truth;
+        Truth topValue = goals.get(0).truth;
         return topValue;
     }
 

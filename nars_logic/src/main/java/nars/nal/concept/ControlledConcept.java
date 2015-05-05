@@ -1,12 +1,12 @@
 package nars.nal.concept;
 
 import nars.Memory;
-import nars.budget.Bag;
+import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.tlink.TaskLink;
@@ -22,15 +22,15 @@ public class ControlledConcept extends AxiomaticConcept {
         super(t, b, m, ttaskLinks, ttermLinks);
     }
 
-    public void setEternal(boolean reset, TruthValue t, char punctuation, Budget b) {
+    public void setEternal(boolean reset, Truth t, char punctuation, Budget b) {
         set(reset, t, punctuation, memory.time(), Stamp.ETERNAL, b);
     }
 
-    public void setPresent(boolean reset, TruthValue t, char punctuation, Budget b) {
+    public void setPresent(boolean reset, Truth t, char punctuation, Budget b) {
         set(reset, t, punctuation, memory.time(), memory.time(), b);
     }
 
-    public void set(boolean reset, TruthValue t, char punctuation, long creationTime, long occurrenceTime, Budget b) {
+    public void set(boolean reset, Truth t, char punctuation, long creationTime, long occurrenceTime, Budget b) {
         if ((punctuation == Symbols.QUESTION) || (punctuation == Symbols.QUEST))
             throw new RuntimeException("Invalid punctuation: " + punctuation);
 

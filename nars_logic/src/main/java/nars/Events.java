@@ -1,10 +1,9 @@
 package nars;
 
-import nars.budget.Budget;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.operate.AbstractOperator;
+import nars.op.AbstractOperator;
 
 import java.util.Arrays;
 import java.util.List;

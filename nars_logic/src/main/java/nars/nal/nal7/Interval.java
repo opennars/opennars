@@ -19,7 +19,7 @@ package nars.nal.nal7;
 
 import com.google.common.collect.Lists;
 import nars.Memory;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.term.Atom;
 
 import java.util.ArrayList;

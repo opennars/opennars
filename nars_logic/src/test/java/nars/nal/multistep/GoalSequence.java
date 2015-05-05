@@ -1,9 +1,9 @@
 package nars.nal.multistep;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
-import nars.io.condition.OutputContainsCondition;
-import nars.io.narsese.InvalidInputException;
+import nars.testing.condition.OutputContainsCondition;
+import nars.narsese.InvalidInputException;
 import nars.nal.nal7.Tense;
 
 /**

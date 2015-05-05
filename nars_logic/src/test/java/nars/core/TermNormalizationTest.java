@@ -1,7 +1,7 @@
 package nars.core;
 
 import nars.NAR;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.nal.term.Compound;
 import nars.nal.Task;
 import nars.nal.term.Variable;

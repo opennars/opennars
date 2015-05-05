@@ -30,14 +30,14 @@ import nars.Events.FrameEnd;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.gui.input.KeyboardInputPanel;
 import nars.gui.input.TextInputPanel;
 import nars.gui.output.*;
 import nars.gui.output.chart.MeterNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.io.TextOutput;
-import nars.nal.meta.NARMetrics;
+import nars.meter.NARMetrics;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;

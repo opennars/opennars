@@ -6,7 +6,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.nal.Task;
@@ -16,7 +16,7 @@ import nars.nal.term.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 
 import javax.swing.*;
 import java.awt.*;

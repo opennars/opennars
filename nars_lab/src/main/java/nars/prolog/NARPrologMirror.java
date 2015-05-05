@@ -5,9 +5,9 @@ import nars.Events.*;
 import nars.Global;
 import nars.NAR;
 import nars.nal.Sentence;
-import nars.nal.Statement;
+import nars.nal.term.Statement;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -330,7 +330,7 @@ public class NARPrologMirror extends AbstractMirror {
 
     protected void processBelief(Sentence s, Task task, boolean addOrRemove) {
             
-        TruthValue tv = s.truth;
+        Truth tv = s.truth;
         if (believable(tv)) {
 
             boolean exists = beliefs.containsKey(s.term);
@@ -395,7 +395,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
     //NOT yet working
-    public Struct pInfer(nars.tuprolog.Term t, TruthValue tv) {
+    public Struct pInfer(nars.tuprolog.Term t, Truth tv) {
         double freq = tv.getFrequency();
         double conf = tv.getConfidence();
         Struct lt = new Struct(new nars.tuprolog.Term[] { t,
@@ -428,7 +428,7 @@ public class NARPrologMirror extends AbstractMirror {
         return p.toString();
     }
 
-    public boolean believable(TruthValue tv) {
+    public boolean believable(Truth tv) {
         return (tv.getConfidence() > confidenceThreshold) && ((tv.getFrequency() > trueThreshold) || (tv.getFrequency() < falseThreshold));
     }
 
@@ -444,7 +444,7 @@ public class NARPrologMirror extends AbstractMirror {
     }
 
 
-    public boolean similarTruth(TruthValue a, TruthValue b) {
+    public boolean similarTruth(Truth a, Truth b) {
         float af = a.getFrequency();
         float bf = b.getFrequency();
         if ((af < falseThreshold) && (bf < falseThreshold))
@@ -609,7 +609,7 @@ public class NARPrologMirror extends AbstractMirror {
 
         //TODO use derivation of prolog result to create a correct stamp
 
-        return new Sentence(belief, '.', new TruthValue(freq, conf),
+        return new Sentence(belief, '.', new Truth(freq, conf),
                 new Stamp(nar.memory, tense));
     }
     

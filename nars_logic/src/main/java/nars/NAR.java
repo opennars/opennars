@@ -4,19 +4,21 @@ import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
 import nars.Memory.Timing;
 import nars.budget.Budget;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
+import nars.budget.BudgetFunctions;
+import nars.io.Input;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 import nars.io.*;
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.OldNarseseParser;
-import nars.io.narsese.NarseseParser;
+import nars.narsese.InvalidInputException;
+import nars.narsese.OldNarseseParser;
+import nars.narsese.NarseseParser;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
-import nars.operate.IOperator;
+import nars.op.IOperator;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -77,7 +79,7 @@ public class NAR implements Runnable {
 
     /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
     public class OperatorRegistration implements Serializable {
-        final public nars.operate.IOperator IOperator;
+        final public nars.op.IOperator IOperator;
         boolean enabled = false;
 
         public OperatorRegistration(IOperator IOperator) {
@@ -264,13 +266,13 @@ public class NAR implements Runnable {
 
     public Task goal(float pri, float dur, String goalTerm, float freq, float conf) throws InvalidInputException {
         final Task t;
-        final TruthValue tv;
+        final Truth tv;
         input(
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(goalTerm),
                                 Symbols.GOAL,
-                                tv = new TruthValue(freq, conf),
+                                tv = new Truth(freq, conf),
                                 new Stamp(memory, Stamp.UNPERCEIVED, Stamp.ETERNAL)),
                         new Budget(
                                 pri,
@@ -285,13 +287,13 @@ public class NAR implements Runnable {
     }
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         final Task t;
-        final TruthValue tv;
+        final Truth tv;
         input(
                 t = new Task(
                         new Sentence(
                                 narsese.parseCompoundTerm(beliefTerm),
                                 Symbols.JUDGMENT,
-                                tv = new TruthValue(freq, conf),
+                                tv = new Truth(freq, conf),
                                 new Stamp(memory, time(), occurrenceTime)),
                         new Budget(
                                 pri,
@@ -651,7 +653,7 @@ public class NAR implements Runnable {
 
 
     /** create a NAR given the class of a Build.  its default constructor will be used */
-    public static NAR build(Class<? extends ProtoNAR> g) {
+    public static NAR build(Class<? extends NARSeed> g) {
         try {
             return new NAR(g.newInstance());
         } catch (Exception ex) {
@@ -661,7 +663,7 @@ public class NAR implements Runnable {
     }
 
     /** normal way to construct a NAR, using a particular Build instance */
-    public NAR(ProtoNAR b) {
+    public NAR(NARSeed b) {
         this(b.newMemory(b.param, b.getNALParam()));
         b.init(this);
     }

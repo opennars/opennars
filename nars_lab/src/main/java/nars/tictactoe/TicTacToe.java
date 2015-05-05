@@ -27,7 +27,7 @@ import nars.Events.FrameEnd;
 import nars.Events.OUT;
 import nars.NAR;
 import nars.budget.Budget;
-import nars.event.Reaction;
+import nars.util.event.Reaction;
 import nars.gui.NARSwing;
 import nars.nal.Task;
 import nars.nal.concept.AxiomaticConcept;
@@ -36,7 +36,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.prototype.Classic;
+import nars.model.impl.Classic;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,9 +1,9 @@
 package nars.nal.nal6;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
-import nars.io.narsese.InvalidInputException;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.NARSeed;
+import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -14,7 +14,7 @@ import java.util.Collection;
 
 public class QueryVariableTest extends JavaNALTest {
 
-    public QueryVariableTest(ProtoNAR b) { super(b); }
+    public QueryVariableTest(NARSeed b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {

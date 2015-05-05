@@ -11,7 +11,7 @@ import nars.io.NALPerformance;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.term.Term;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

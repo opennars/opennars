@@ -8,12 +8,11 @@ import nars.NAR;
 import nars.io.TextOutput;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 import javax.swing.*;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayDeque;
@@ -178,7 +177,7 @@ public class SwingLogText extends SwingText {
                     priority = t.getPriority();
                     printBlock(LogPanel.getPriorityColor(priority), "  ");
 
-                    TruthValue tv = s.truth;
+                    Truth tv = s.truth;
                     if (tv != null) {
                         printBlock(LogPanel.getFrequencyColor(tv.getFrequency()), "  ");
                         printBlock(LogPanel.getConfidenceColor(tv.getConfidence()), "  ");

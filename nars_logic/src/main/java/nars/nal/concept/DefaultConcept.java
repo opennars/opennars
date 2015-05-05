@@ -1,7 +1,7 @@
 package nars.nal.concept;
 
 import nars.Memory;
-import nars.budget.Bag;
+import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.term.Term;

@@ -1,15 +1,11 @@
 package nars.analyze.experimental;
 
 import nars.Global;
-import nars.ProtoNAR;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
-import nars.prototype.Default;
-import org.apache.commons.math3.analysis.MultivariateFunction;
+import nars.model.impl.Default;
 import org.apache.commons.math3.genetics.*;
-import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-import org.junit.Test;
 
 import java.util.LinkedList;
 import java.util.List;

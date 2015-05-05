@@ -30,7 +30,7 @@ public abstract class NAL  implements Runnable {
 
     public final Memory memory;
     protected final Task currentTask;
-    protected final NALParam reasoner;
+    protected final LogicPolicy reasoner;
     protected Sentence currentBelief;
 
 
@@ -239,11 +239,11 @@ public abstract class NAL  implements Runnable {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final Budget newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
         return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentTask(), allowOverlap);
     }
 
-    public boolean doublePremiseTask(Compound newTaskContent, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
 
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
@@ -287,11 +287,11 @@ public abstract class NAL  implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public boolean singlePremiseTask(Compound newContent, TruthValue newTruth, Budget newBudget) {
+    public boolean singlePremiseTask(Compound newContent, Truth newTruth, Budget newBudget) {
         return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
-    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget) {
+    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
         return singlePremiseTask(newContent, punctuation, newTruth, newBudget, null);
     }
     /**
@@ -303,7 +303,7 @@ public abstract class NAL  implements Runnable {
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public boolean singlePremiseTask(Compound newContent, final char punctuation, final TruthValue newTruth, final Budget newBudget, StampBuilder stamp) {
+    public boolean singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, StampBuilder stamp) {
 
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {

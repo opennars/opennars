@@ -4,7 +4,7 @@
  */
 package nars.nal.filter;
 
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.NAL;
 import nars.nal.DerivationFilter;
 import nars.nal.Sentence;

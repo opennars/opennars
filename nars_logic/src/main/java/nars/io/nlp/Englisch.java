@@ -16,8 +16,8 @@
  */
 package nars.io.nlp;
 
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.OldNarseseParser;
+import nars.narsese.InvalidInputException;
+import nars.narsese.OldNarseseParser;
 import nars.nal.Task;
 
 import java.util.ArrayList;

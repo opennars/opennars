@@ -1,11 +1,12 @@
 package nars.nal.nal2;
 
 
-import nars.ProtoNAR;
+import nars.NARSeed;
 import nars.nal.ScriptNALTest;
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.prototype.Classic;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.model.impl.Classic;
+import nars.model.impl.DefaultMicro;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
@@ -14,7 +15,7 @@ import static nars.io.LibraryInput.getParams;
 
 public class NAL2ScriptTests extends ScriptNALTest {
 
-    public NAL2ScriptTests(ProtoNAR b, String input) {
+    public NAL2ScriptTests(NARSeed b, String input) {
         super(b, input);
     }
 
@@ -25,7 +26,7 @@ public class NAL2ScriptTests extends ScriptNALTest {
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(3), //needs 3 for sets
                 new Curve(),
-                new Default.DefaultMicro(),
+                new DefaultMicro(),
                 new Classic()
         );
     }

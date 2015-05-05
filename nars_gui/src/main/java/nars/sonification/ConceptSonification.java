@@ -7,7 +7,7 @@ import automenta.vivisect.audio.granular.Granulize;
 import automenta.vivisect.audio.synth.SineWave;
 import nars.Events;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.nal.ConceptProcess;
 import nars.nal.concept.Concept;
 
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Sonifies the activity of concepts being activated and forgotten
  */
-public class ConceptSonification extends AbstractReaction {
+public class ConceptSonification extends NARReaction {
 
     List<String> samples;
 

@@ -1,7 +1,7 @@
 package nars.rover;
 
 import nars.NAR;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.io.ChangedTextInput;
 import nars.nal.Task;
 import nars.nal.term.Term;

@@ -1,7 +1,7 @@
 package nars.nal;
 
 
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.util.data.Utf8;
 
 public enum NALOperator {

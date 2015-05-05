@@ -22,6 +22,7 @@ package nars.nal;
 
 import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.*;
@@ -31,6 +32,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import java.util.List;
@@ -98,7 +100,7 @@ public final class StructuralRules {
             return;
         
         Sentence sentence = nal.getCurrentTask().sentence;
-        TruthValue truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
+        Truth truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
         Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
         nal.singlePremiseTask(content, truth, budget);
     }
@@ -143,7 +145,7 @@ public final class StructuralRules {
         }
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -182,11 +184,11 @@ public final class StructuralRules {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
         
         final float reliance = nal.memory.param.reliance.floatValue();
-        TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
-        TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        Truth truthDed = TruthFunctions.deduction(truth, reliance);
+        Truth truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
@@ -235,15 +237,15 @@ public final class StructuralRules {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         int order = sentence.getTemporalOrder();
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
         
         if (truth == null) {
             return;
         }
         
         final float reliance = nal.memory.param.reliance.floatValue();
-        TruthValue truthDed = TruthFunctions.deduction(truth, reliance);
-        TruthValue truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        Truth truthDed = TruthFunctions.deduction(truth, reliance);
+        Truth truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
@@ -283,7 +285,7 @@ public final class StructuralRules {
      * @param truth The truth value of the new task
      * @param nal Reference to the memory
      */
-    private static void structuralStatement(Term subject, Term predicate, int order, TruthValue truth, NAL nal) {
+    private static void structuralStatement(Term subject, Term predicate, int order, Truth truth, NAL nal) {
         Task task = nal.getCurrentTask();
         Term oldContent = task.getTerm();
         if (oldContent instanceof Statement) {
@@ -331,7 +333,7 @@ public final class StructuralRules {
 
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isJudgment()) {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -368,7 +370,7 @@ public final class StructuralRules {
         Task task = nal.getCurrentTask();
 
         Sentence sentence = task.sentence;
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
 
         final float reliance = nal.memory.param.reliance.floatValue();
 
@@ -392,8 +394,8 @@ public final class StructuralRules {
 
                 truth = TruthFunctions.deduction(truth, reliance);
             } else {
-                TruthValue v1 = TruthFunctions.negation(truth);
-                TruthValue v2 = TruthFunctions.deduction(v1, reliance);
+                Truth v1 = TruthFunctions.negation(truth);
+                Truth v2 = TruthFunctions.deduction(v1, reliance);
                 truth = TruthFunctions.negation(v2);
             }
 
@@ -416,7 +418,7 @@ public final class StructuralRules {
     public static boolean transformNegation(final Compound content, final NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
 
         Budget budget;
         

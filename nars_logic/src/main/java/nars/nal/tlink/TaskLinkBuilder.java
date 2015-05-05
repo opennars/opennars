@@ -3,7 +3,7 @@ package nars.nal.tlink;
 import nars.Memory;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.budget.tx.BagActivator;
+import nars.bag.tx.BagActivator;
 
 /** adjusts budget of items in a Bag. ex: merge */
 public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {

@@ -24,7 +24,7 @@ import com.google.common.collect.Iterators;
 import nars.Events;
 import nars.Global;
 import nars.nal.Task;
-import nars.operate.io.Echo;
+import nars.op.io.Echo;
 
 import java.io.*;
 import java.net.URL;

@@ -4,7 +4,7 @@
  */
 package nars.util;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
 import nars.Global;
 import nars.util.graph.experimental.Idea.IdeaSet;

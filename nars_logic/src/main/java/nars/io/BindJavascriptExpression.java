@@ -9,8 +9,8 @@ import nars.Events.ERR;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.io.narsese.InvalidInputException;
-import nars.io.narsese.OldNarseseParser;
+import nars.narsese.InvalidInputException;
+import nars.narsese.OldNarseseParser;
 import nars.nal.Sentence;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
@@ -24,6 +24,7 @@ import javax.script.ScriptException;
 import java.util.Collection;
 
 /**
+ * Not fully tested yet, and will not function until it is integrated with the new parser
  * @author me
  */
 public class BindJavascriptExpression implements TextReaction {

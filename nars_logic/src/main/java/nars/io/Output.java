@@ -4,16 +4,16 @@ import nars.Events;
 import nars.Events.Answer;
 import nars.Memory;
 import nars.NAR;
-import nars.event.AbstractReaction;
-import nars.event.EventEmitter;
+import nars.event.NARReaction;
+import nars.util.event.EventEmitter;
 import nars.nal.nal8.ImmediateOperation;
-import nars.operate.io.Echo;
-import nars.operate.io.Say;
+import nars.op.io.Echo;
+import nars.op.io.Say;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
  */
-public abstract class Output extends AbstractReaction {
+public abstract class Output extends NARReaction {
 
 
     public static final Class[] DefaultOutputEvents = new Class[] {

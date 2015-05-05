@@ -8,11 +8,11 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.TruthValue;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -167,7 +167,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
         Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
-        TruthValue t = s.truth;
+        Truth t = s.truth;
         if (t == null) return 0f;
 
         //TODO try expectation

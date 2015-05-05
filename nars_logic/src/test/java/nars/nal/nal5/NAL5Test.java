@@ -1,10 +1,11 @@
 package nars.nal.nal5;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
-import nars.ProtoNAR;
-import nars.io.narsese.InvalidInputException;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
+import nars.NARSeed;
+import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
+import nars.model.impl.DefaultMicro;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -16,7 +17,7 @@ import static nars.nal.nal7.Tense.Eternal;
 
 public class NAL5Test extends JavaNALTest {
 
-    public NAL5Test(ProtoNAR b) { super(b); }
+    public NAL5Test(NARSeed b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
@@ -25,7 +26,7 @@ public class NAL5Test extends JavaNALTest {
                 { new Default().setInternalExperience(null) },
                 { new Default().level(5) },
                 { new Default().level(6) },
-                { new Default.DefaultMicro().level(5) },
+                { new DefaultMicro().level(5) },
                 //{ new Neuromorphic(4) },
                 //{ new DefaultBuffered().setInternalExperience(null) },
                 {new Curve().setInternalExperience(null)}

@@ -3,7 +3,7 @@ package nars.util.graph;
 import nars.Memory;
 import nars.nal.Item;
 import nars.nal.Sentence;
-import nars.nal.Statement;
+import nars.nal.term.Statement;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 

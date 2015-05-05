@@ -1,6 +1,6 @@
 package nars.nal.multistep;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
 
 

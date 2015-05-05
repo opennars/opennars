@@ -21,12 +21,14 @@
 package nars.nal.nal5;
 
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import static nars.nal.Terms.reduceComponents;
@@ -60,10 +62,10 @@ public final class SyllogisticRules {
         if (order == ORDER_INVALID) {
             return;
         }
-        TruthValue value1 = sentence.truth;
-        TruthValue value2 = belief.truth;
-        TruthValue truth1 = null;
-        TruthValue truth2 = null;
+        Truth value1 = sentence.truth;
+        Truth value2 = belief.truth;
+        Truth truth1 = null;
+        Truth truth2 = null;
         Budget budget1, budget2;
         if (sentence.isQuestion()) {
             budget1 = BudgetFunctions.backwardWeak(value2, nal);
@@ -118,12 +120,12 @@ public final class SyllogisticRules {
             return;
         }
         Statement taskContent = (Statement) sentence1.term;
-        TruthValue truth1 = null;
-        TruthValue truth2 = null;
-        TruthValue truth3 = null;
+        Truth truth1 = null;
+        Truth truth2 = null;
+        Truth truth3 = null;
         Budget budget1, budget2, budget3;
-        TruthValue value1 = sentence1.truth;
-        TruthValue value2 = sentence2.truth;
+        Truth value1 = sentence1.truth;
+        Truth value2 = sentence2.truth;
         if (sentence1.isQuestion()) {
             budget1 = BudgetFunctions.backward(value2, nal);
             budget2 = BudgetFunctions.backwardWeak(value2, nal);
@@ -184,7 +186,7 @@ public final class SyllogisticRules {
             return false;
 
         Statement st = (Statement) asym.term;
-        TruthValue truth = null;
+        Truth truth = null;
         Budget budget;
         Sentence sentence = nal.getCurrentTask().sentence;
         Compound taskTerm = sentence.term;
@@ -245,7 +247,7 @@ public final class SyllogisticRules {
             return false;
         }
         Statement st = (Statement) belief.term;
-        TruthValue truth = null;
+        Truth truth = null;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.backward(belief.truth, nal);
@@ -325,10 +327,10 @@ public final class SyllogisticRules {
             st = nal.newStamp(mainSentence, subSentence);
         }
 
-        TruthValue beliefTruth = beliefSentence.truth;
-        TruthValue truth1 = mainSentence.truth;
-        TruthValue truth2 = subSentence.truth;
-        TruthValue truth = null;
+        Truth beliefTruth = beliefSentence.truth;
+        Truth truth1 = mainSentence.truth;
+        Truth truth2 = subSentence.truth;
+        Truth truth = null;
         Budget budget;
 
         boolean strong = false;
@@ -513,9 +515,9 @@ public final class SyllogisticRules {
             sb = nal.newStamp(taskSentence, belief, Stamp.ETERNAL);
         }
         
-        TruthValue truth1 = taskSentence.truth;
-        TruthValue truth2 = belief.truth;
-        TruthValue truth = null;
+        Truth truth1 = taskSentence.truth;
+        Truth truth2 = belief.truth;
+        Truth truth = null;
         Budget budget;
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
@@ -622,9 +624,9 @@ public final class SyllogisticRules {
                 return false;
         }
 
-        TruthValue truth1 = taskSentence.truth;
-        TruthValue truth2 = belief.truth;
-        TruthValue truth = null;
+        Truth truth1 = taskSentence.truth;
+        Truth truth2 = belief.truth;
+        Truth truth = null;
         Budget budget;
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.backwardWeak(truth2, nal);
@@ -688,13 +690,13 @@ public final class SyllogisticRules {
         Task task = nal.getCurrentTask();
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
-        TruthValue value1 = sentence.truth;
-        TruthValue value2 = belief.truth;
+        Truth value1 = sentence.truth;
+        Truth value2 = belief.truth;
         Term content;
         
         boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm());
         
-        TruthValue truth = null;
+        Truth truth = null;
         Budget budget;
         
         //is this correct because the second term2!=null condition may overwrite the first
@@ -780,9 +782,9 @@ public final class SyllogisticRules {
         final Sentence sentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
 
-        TruthValue v1 = sentence.truth;
-        TruthValue v2 = belief.truth;
-        TruthValue truth = null;
+        Truth v1 = sentence.truth;
+        Truth v2 = belief.truth;
+        Truth truth = null;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = (compoundTask ? BudgetFunctions.backward(v2, nal) : BudgetFunctions.backwardWeak(v2, nal));

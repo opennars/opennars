@@ -2,10 +2,11 @@ package nars.util.graph;
 
 import nars.Events;
 import nars.Memory;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -19,7 +20,7 @@ import java.util.Map;
 //TODO extends a new abstract ReactionGraph
 abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
     public final Memory memory;
-    private final AbstractReaction reaction;
+    private final NARReaction reaction;
 
     public static class GraphChange { }
     
@@ -33,7 +34,7 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
         super(/*null*/new NullEdgeFactory());
         
         this.memory = memory;
-        this.reaction = new AbstractReaction(memory.event, false,
+        this.reaction = new NARReaction(memory.event, false,
                 Events.FrameEnd.class,
                 Events.ConceptForget.class,
                 Events.ConceptBeliefAdd.class,

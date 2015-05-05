@@ -22,18 +22,11 @@ package nars.nal.term;
 
 
 import nars.Memory;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import sun.misc.Unsafe;
-
-import java.lang.reflect.Field;
-import java.nio.ByteOrder;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Arrays;
 
 public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed {
 

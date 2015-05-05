@@ -1,6 +1,7 @@
 package nars.nal.rule;
 
 import nars.nal.*;
+import nars.nal.term.Statement;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.nal1.Negation;
@@ -10,7 +11,7 @@ import nars.nal.nal5.SyllogisticRules;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
-import static nars.io.Symbols.VAR_INDEPENDENT;
+import static nars.Symbols.VAR_INDEPENDENT;
 import static nars.nal.RuleTables.goalFromQuestion;
 
 

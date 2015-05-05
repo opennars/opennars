@@ -24,12 +24,14 @@ import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
 import nars.budget.Budget;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
-import nars.io.Symbols;
-import nars.io.meter.EmotionMeter;
-import nars.io.meter.LogicMetrics;
-import nars.io.meter.ResourceMeter;
+import nars.budget.BudgetFunctions;
+import nars.model.ControlCycle;
+import nars.util.data.buffer.Perception;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
+import nars.meter.EmotionMeter;
+import nars.meter.LogicMetrics;
+import nars.util.meter.ResourceMeter;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
@@ -84,9 +86,9 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private int level;
-    final List<ConceptBuilder> conceptBuilders;
+    final List<NARSeed.ConceptBuilder> conceptBuilders;
 
-    public NALParam rules;
+    public LogicPolicy rules;
     private Term self;
 
     public void setLevel(int nalLevel) {
@@ -152,17 +154,17 @@ public class Memory implements Serializable {
     }
 
     /** prepend a conceptbuilder to the conceptbuilder handler chain */
-    public void on(ConceptBuilder c) {
+    public void on(NARSeed.ConceptBuilder c) {
         conceptBuilders.add(0, c);
     }
 
     /** remove a conceptbuilder which has been added; return true if successfully removed or false if it wasnt present */
-    public boolean off(ConceptBuilder c) {
+    public boolean off(NARSeed.ConceptBuilder c) {
         return conceptBuilders.remove(c);
     }
 
     /** conceptbuilder handler chain */
-    public List<ConceptBuilder> getConceptBuilders() {
+    public List<NARSeed.ConceptBuilder> getConceptBuilders() {
         return conceptBuilders;
     }
 
@@ -172,11 +174,11 @@ public class Memory implements Serializable {
         Concept concept = null;
 
         /** use the concept created by the first conceptbuilder to return non-null */
-        List<ConceptBuilder> cb = getConceptBuilders();
+        List<NARSeed.ConceptBuilder> cb = getConceptBuilders();
         int cbn = cb.size();
 
         for (int i = 0; i < cbn; i++) {
-            ConceptBuilder c  =  cb.get(i);
+            NARSeed.ConceptBuilder c  =  cb.get(i);
             concept = c.newConcept(term, budget, this);
             if (concept != null) break;
         }
@@ -230,8 +232,8 @@ public class Memory implements Serializable {
 
     private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
 
-    public final Perception perception;
-    public final Core concepts;
+    public final Perception<Task> perception;
+    public final ControlCycle concepts;
     private final Set<Concept> questionConcepts = Global.newHashSet(16);
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
@@ -270,14 +272,14 @@ public class Memory implements Serializable {
      * Create a new memory
      *
      * @param narParam reasoner paramerters
-     * @param nalParam logic parameters
+     * @param policy logic parameters
      */
-    public Memory(int nalLevel, Param narParam, NALParam nalParam, Core core) {
+    public Memory(int nalLevel, Param narParam, LogicPolicy policy, ControlCycle core) {
 
         this.level = nalLevel;
 
         this.param = narParam;
-        this.rules = nalParam;
+        this.rules = policy;
 
         this.perception = new Perception();
 
@@ -814,7 +816,7 @@ public class Memory implements Serializable {
         int originalSize = nextTasks.size();
         if (originalSize == 0) return;
 
-        Core.run(nextTasks, originalSize);
+        ControlCycle.run(nextTasks, originalSize);
     }
 
     /** signals an error through one or more event notification systems */

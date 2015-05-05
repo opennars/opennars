@@ -2,8 +2,8 @@ package nars.gui;
 
 import automenta.vivisect.swing.NPanel;
 import nars.NAR;
-import nars.event.EventEmitter;
-import nars.event.Reaction;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 
 import java.awt.*;
 

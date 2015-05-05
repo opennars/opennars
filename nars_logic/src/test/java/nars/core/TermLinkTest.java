@@ -1,14 +1,14 @@
 package nars.core;
 
 import nars.NAR;
-import nars.prototype.Default;
-import nars.io.Symbols;
+import nars.model.impl.Default;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.nal.tlink.TermLinkTemplate;
-import nars.budget.Bag;
+import nars.bag.Bag;
 import org.junit.Test;
 
 import java.util.List;

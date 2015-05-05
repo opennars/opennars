@@ -2,10 +2,10 @@ package nars.nal.concept;
 
 import nars.Global;
 import nars.Memory;
-import nars.budget.Bag;
+import nars.NARSeed;
+import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.budget.bag.CurveBag;
-import nars.nal.ConceptBuilder;
+import nars.bag.impl.CurveBag;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -78,14 +78,14 @@ public class AxiomaticConcept extends Concept {
         System.out.println(this + " rejected: " + t);
     }
 
-    public static ConceptBuilder add(Memory m, Task... defaultAxioms) {
+    public static NARSeed.ConceptBuilder add(Memory m, Task... defaultAxioms) {
 
         Set<Term> terms = new HashSet();
         for (Task d : defaultAxioms) {
             terms.add(d.getTerm());
         }
 
-        ConceptBuilder cb = new ConceptBuilder() {
+        NARSeed.ConceptBuilder cb = new NARSeed.ConceptBuilder() {
 
             @Override
             public Concept newConcept(Term t, Budget b, Memory m) {

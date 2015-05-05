@@ -8,14 +8,14 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.Memory;
 import nars.nal.term.Atom;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
 import nars.Global;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.io.Texts;
-import nars.io.nlp.Twokenize;
+import nars.util.language.Twokenize;
 import nars.nal.term.Term;
-import nars.operate.io.Say;
+import nars.op.io.Say;
 
 import java.io.*;
 import java.net.Socket;
@@ -243,7 +243,7 @@ public class IRCBot {
         new NWindow("Say", new ReflectPanel(this)).show(500,300);
 
         this.nar = n;
-        new AbstractReaction(nar, Say.class) {
+        new NARReaction(nar, Say.class) {
 
             public String last = "";
 

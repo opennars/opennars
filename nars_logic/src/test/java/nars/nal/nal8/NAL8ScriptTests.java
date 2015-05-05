@@ -1,8 +1,8 @@
 package nars.nal.nal8;
 
 
-import nars.prototype.Default;
-import nars.ProtoNAR;
+import nars.model.impl.Default;
+import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;
 
@@ -12,7 +12,7 @@ import static nars.io.LibraryInput.getParams;
 
 public class NAL8ScriptTests extends ScriptNALTest {
 
-    public NAL8ScriptTests(ProtoNAR b, String input) {
+    public NAL8ScriptTests(NARSeed b, String input) {
         super(b, input);
     }
 

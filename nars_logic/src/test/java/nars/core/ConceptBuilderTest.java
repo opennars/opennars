@@ -3,7 +3,7 @@ package nars.core;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.concept.AxiomaticConcept;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

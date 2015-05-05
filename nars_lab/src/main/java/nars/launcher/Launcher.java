@@ -21,7 +21,7 @@ import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.nario.NARio;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.web.NARServer;
 
 import javax.imageio.ImageIO;

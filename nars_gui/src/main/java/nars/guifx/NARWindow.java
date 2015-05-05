@@ -21,7 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nars.Events;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.gui.NARControlPanel;
 
 import javax.swing.*;
@@ -83,7 +83,7 @@ public class NARWindow extends Stage {
     }
 
     //TODO detect when component is hidden and disable the event
-    abstract public static class FXReaction extends AbstractReaction implements ChangeListener {
+    abstract public static class FXReaction extends NARReaction implements ChangeListener {
 
         private final Node fx;
 

@@ -1,6 +1,7 @@
 package nars.nal.rule;
 
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
@@ -119,14 +120,14 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
             if (Variables.containVarDepOrIndep(conj.name()))
                 continue;
              */
-                TruthValue truthT = nal.getCurrentTask().sentence.truth;
-                TruthValue truthB = nal.getCurrentBelief().truth;
+                Truth truthT = nal.getCurrentTask().sentence.truth;
+                Truth truthB = nal.getCurrentBelief().truth;
             /*if(truthT==null || truthB==null) {
                 //continue; //<- should this be return and not continue?
                 return;
             }*/
 
-                TruthValue truthAnd = intersection(truthT, truthB);
+                Truth truthAnd = intersection(truthT, truthB);
                 Budget budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
                 nal.doublePremiseTask(conj, truthAnd, budget,
                         nal.newStamp(sentence, belief),

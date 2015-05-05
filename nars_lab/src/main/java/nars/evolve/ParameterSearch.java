@@ -1,6 +1,6 @@
 package nars.evolve;
 
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.NAR;
 import org.encog.ml.data.MLDataPair;
 

@@ -14,12 +14,10 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal5.Junction;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
-import nars.nal.term.Variable;
 import nars.util.data.sorted.SortedList;
 
 import java.util.*;

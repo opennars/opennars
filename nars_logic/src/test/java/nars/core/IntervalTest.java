@@ -2,7 +2,7 @@ package nars.core;
 
 import nars.Memory;
 import nars.NAR;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Interval.AtomicDuration;
 import org.junit.Test;

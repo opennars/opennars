@@ -3,6 +3,7 @@ package nars.nal.rule;
 import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.ImageExt;
@@ -12,6 +13,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
@@ -172,7 +174,7 @@ public class TransformTask extends ConceptFireTask {
             return;
 
         Sentence sentence = nal.getCurrentTask().sentence;
-        TruthValue truth = sentence.truth;
+        Truth truth = sentence.truth;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -194,7 +196,7 @@ public class TransformTask extends ConceptFireTask {
      * @param nal Reference to the memory
      */
     private static void transformSubjectPI(Compound subject, Term predicate, NAL nal) {
-        TruthValue truth = nal.getCurrentTask().sentence.truth;
+        Truth truth = nal.getCurrentTask().sentence.truth;
         Budget budget;
         Inheritance inheritance;
         Term newSubj, newPred;
@@ -249,7 +251,7 @@ public class TransformTask extends ConceptFireTask {
      * @param nal Reference to the memory
      */
     private static void transformPredicatePI(Term subject, Compound predicate, NAL nal) {
-        TruthValue truth = nal.getCurrentTask().sentence.truth;
+        Truth truth = nal.getCurrentTask().sentence.truth;
         Budget budget;
         Inheritance inheritance;
         Term newSubj, newPred;

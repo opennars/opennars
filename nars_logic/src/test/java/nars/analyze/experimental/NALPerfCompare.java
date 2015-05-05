@@ -1,7 +1,7 @@
 package nars.analyze.experimental;
 
-import nars.prototype.Curve;
-import nars.prototype.Default;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
 import nars.NAR;
 import nars.Global;
 import nars.nal.NALTest;

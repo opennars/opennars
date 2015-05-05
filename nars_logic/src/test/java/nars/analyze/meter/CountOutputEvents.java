@@ -1,10 +1,10 @@
 package nars.analyze.meter;
 
-import nars.operate.AbstractOperator;
+import nars.op.AbstractOperator;
 import nars.Events;
 import nars.NAR;
-import nars.io.meter.Metrics;
-import nars.io.meter.event.HitMeter;
+import nars.util.meter.Metrics;
+import nars.util.meter.event.HitMeter;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,11 +1,11 @@
 package nars.grid2d;
 
-import nars.ProtoNAR;
-import nars.event.Reaction;
+import nars.NARSeed;
+import nars.util.event.Reaction;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.map.Maze;
@@ -15,9 +15,9 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
-import nars.operate.app.plan.TemporalParticlePlanner;
-import nars.operate.mental.FullInternalExperience;
-import nars.operate.mental.InternalExperience;
+import nars.op.app.plan.TemporalParticlePlanner;
+import nars.op.mental.FullInternalExperience;
+import nars.op.mental.InternalExperience;
 import processing.core.PVector;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class TestChamber {
 
     
     public static void main(String[] args) {
-        ProtoNAR builder = new Default();
+        NARSeed builder = new Default();
         
         //set NAR architecture parameters:
         //builder...

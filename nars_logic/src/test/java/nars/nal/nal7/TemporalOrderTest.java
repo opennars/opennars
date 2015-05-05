@@ -4,11 +4,11 @@
  */
 package nars.nal.nal7;
 
-import nars.ProtoNAR;
-import nars.io.condition.OutputContainsCondition;
+import nars.NARSeed;
+import nars.testing.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
-import nars.prototype.Curve;
-import nars.prototype.Default;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -18,7 +18,7 @@ import java.util.Collection;
 
 public class TemporalOrderTest extends JavaNALTest {
 
-    public TemporalOrderTest(ProtoNAR b) {
+    public TemporalOrderTest(NARSeed b) {
         super(b);
     }
 

@@ -11,11 +11,11 @@ import automenta.vivisect.timeline.TimelineVis;
 import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
-import nars.prototype.Default;
-import nars.control.NAL;
+import nars.model.Default;
+import nars.model.cycle.NAL;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
-import nars.io.narsese.Narsese;
+import nars.narsese.Narsese;
 import nars.nal.entity.Task;
 import nars.nal.language.Term;
 

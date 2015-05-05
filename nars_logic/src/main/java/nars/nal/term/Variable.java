@@ -21,7 +21,7 @@
 package nars.nal.term;
 
 
-import static nars.io.Symbols.*;
+import static nars.Symbols.*;
 
 /**
  * A variable term, which does not correspond to a concept

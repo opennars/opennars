@@ -3,7 +3,8 @@ package nars.nal.rule;
 
 import nars.Global;
 import nars.budget.Budget;
-import nars.io.Symbols;
+import nars.Symbols;
+import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
@@ -121,7 +122,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                         continue;
 
                     //todo add
-                    TruthValue truth = TruthFunctions.deduction(s.truth, taskLinkTask.sentence.truth);
+                    Truth truth = TruthFunctions.deduction(s.truth, taskLinkTask.sentence.truth);
 
 
                     Task newTask = new Task(

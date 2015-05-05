@@ -24,12 +24,11 @@ package nars.io;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
-import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.TruthValue;
-import nars.operate.io.Echo;
+import nars.nal.Truth;
+import nars.op.io.Echo;
 
 import java.io.*;
 import java.util.Arrays;
@@ -425,7 +424,7 @@ class HTMLOutput {
         
     }    
 
-    protected static StringBuilder getTruthHTML(TruthValue truth) {
+    protected static StringBuilder getTruthHTML(Truth truth) {
         StringBuilder b = new StringBuilder();
         
         //http://css-tricks.com/html5-meter-element/

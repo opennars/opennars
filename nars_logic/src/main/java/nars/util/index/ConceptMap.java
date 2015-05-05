@@ -1,18 +1,14 @@
 package nars.util.index;
 
 import nars.Events;
-import nars.Global;
 import nars.NAR;
-import nars.event.AbstractReaction;
+import nars.event.NARReaction;
 import nars.nal.concept.Concept;
-import nars.nal.term.Term;
-
-import java.util.*;
 
 /**
  * Created by me on 4/16/15.
  */
-abstract public class ConceptMap extends AbstractReaction {
+abstract public class ConceptMap extends NARReaction {
 
     int frame = -1;
     protected int cycleInFrame = -1;

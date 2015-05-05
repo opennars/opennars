@@ -23,12 +23,14 @@ package nars.nal.nal1;
 import nars.Events.Answer;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.io.Output;
-import nars.io.Symbols;
+import nars.Symbols;
 import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import java.util.Arrays;
@@ -80,9 +82,9 @@ public class LocalRules {
 
         final Task t = nal.getCurrentTask();
 
-        TruthValue newBeliefTruth = newBelief.truth;
-        TruthValue oldBeliefTruth = oldBelief.truth;
-        TruthValue truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+        Truth newBeliefTruth = newBelief.truth;
+        Truth oldBeliefTruth = oldBelief.truth;
+        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
         if (nal.deriveTask(new Task(new Sentence(newBelief.term,
@@ -246,7 +248,7 @@ public class LocalRules {
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return;
         
-        TruthValue truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
+        Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
         nal.doublePremiseTask(content, truth, budget,
                 nal.newStamp(asym, sym),
@@ -261,7 +263,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void conversion(final NAL nal) {
-        TruthValue truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
+        Truth truth = TruthFunctions.conversion(nal.getCurrentBelief().truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
         convertedJudgment(truth, budget, nal);
     }
@@ -273,7 +275,7 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static void convertRelation(final NAL nal) {
-        TruthValue truth = nal.getCurrentBelief().truth;
+        Truth truth = nal.getCurrentBelief().truth;
         if (((Compound) nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
@@ -292,7 +294,7 @@ public class LocalRules {
      * @param truth The truth value of the new task
      * @param nal Reference to the memory
      */
-    private static void convertedJudgment(final TruthValue newTruth, final Budget newBudget, final NAL nal) {
+    private static void convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
         Statement beliefContent = (Statement) nal.getCurrentBelief().term;
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());

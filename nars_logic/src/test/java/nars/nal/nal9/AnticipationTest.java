@@ -1,10 +1,10 @@
 package nars.nal.nal9;
 
-import nars.ProtoNAR;
-import nars.io.narsese.InvalidInputException;
+import nars.NARSeed;
+import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
-import nars.prototype.Default;
+import nars.model.impl.Default;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -16,7 +16,7 @@ import java.util.Collection;
  */
 public class AnticipationTest extends JavaNALTest {
 
-    public AnticipationTest(ProtoNAR b) { super(b); }
+    public AnticipationTest(NARSeed b) { super(b); }
 
     @Parameterized.Parameters(name= "{0}")
     public static Collection configurations() {
