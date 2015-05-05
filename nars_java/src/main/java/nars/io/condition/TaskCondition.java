@@ -49,7 +49,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
     @Expose
     public Tense tense = Tense.Eternal;
 
-    public final List<Task> trueAt = new ArrayList();
+    public final List<Task> exact = new ArrayList();
+    final int maxExact = 4;
+
     public final Deque<Task> removals = new ArrayDeque();
 
     final int maxClose = 7;
@@ -310,7 +312,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 if (match) {
                     //TODO record a different score for fine-tune optimization?
-                    trueAt.add(task);
+                    if (exact.size() < maxExact)
+                        exact.add(task);
                 }
 
                 if (distance > 0) {
@@ -391,7 +394,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                     }
                 }));
                 */
-        return trueAt;
+        return exact;
     }
 
     @Override

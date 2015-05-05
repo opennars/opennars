@@ -10,7 +10,7 @@ abstract public class Compound1 extends Compound {
     byte[] name = null;
     int hash;
 
-    public Compound1(Term the) {
+    public Compound1(final Term the) {
         super(the);
     }
 
@@ -33,6 +33,24 @@ abstract public class Compound1 extends Compound {
         return false;
     }
 
+
+
+    @Override
+    protected void init(Term[] term) {
+        super.init(term);
+
+        if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()
+            updateHash();
+    }
+
+
+    protected void updateHash() {
+        int h = getTemporalOrder();
+        h = h * 31 + the().hashCode();
+        h = h * 31 + operator().hashCode();
+        this.hash = h;
+    }
+
     @Override
     public void invalidate() {
         if (hasVar()) {
@@ -41,6 +59,8 @@ abstract public class Compound1 extends Compound {
             if (n instanceof Compound) {
                 ((Compound)n).invalidate();
             }
+
+            updateHash();
         }
         else {
             setNormalized();
@@ -61,16 +81,12 @@ abstract public class Compound1 extends Compound {
     public byte[] name() {
         if (name == null) {
             name = makeKey();
-            hash = Arrays.hashCode(name);
         }
         return name;
     }
 
     @Override
     public int hashCode() {
-        if (name == null) {
-            name();
-        }
         return hash;
     }
 

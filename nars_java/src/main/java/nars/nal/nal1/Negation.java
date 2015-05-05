@@ -41,12 +41,12 @@ public class Negation extends Compound1 {
 
     @Override
     protected CharSequence makeName() {
-        return makeCompoundName(NALOperator.NEGATION, negated());
+        return makeCompoundName(NALOperator.NEGATION, the());
     }
 
     @Override
     protected byte[] makeKey() {
-        return makeCompound1Key(NALOperator.NEGATION, negated());
+        return makeCompound1Key(NALOperator.NEGATION, the());
     }
 
     /**
@@ -63,12 +63,8 @@ public class Negation extends Compound1 {
     public Term clone(final Term[] replaced) {
         if (replaced.length!=1)
             return null;
+
         return make(replaced[0]);
-    }
-    
-    /** get the term which is negated by this */
-    public Term negated() {
-        return the();
     }
 
     /**
@@ -80,8 +76,8 @@ public class Negation extends Compound1 {
     public static Term make(final Term t) {
         if (t instanceof Negation) {
             // (--,(--,P)) = P
-            return ((Negation) t).negated();
-        }         
+            return ((Negation) t).the();
+        }
         return new Negation(t);
     }
 

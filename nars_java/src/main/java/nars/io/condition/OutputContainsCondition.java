@@ -79,6 +79,7 @@ public class OutputContainsCondition extends OutputCondition {
     final String containing;
 
     public final List<Task> exact = new ArrayList();
+    int maxExacts = 4;
 
     public final TreeSet<SimilarOutput> almost = new TreeSet();
     final boolean saveSimilar;
@@ -139,7 +140,7 @@ public class OutputContainsCondition extends OutputCondition {
                 Sentence s = t.sentence;
                 o = s.toString(nar, false).toString();
                 if (o.contains(containing)) {
-                    if (saveSimilar) {
+                    if ((saveSimilar) && (exact.size() < maxExacts)) {
                         exact.add(t);
                     }
                     return true;
@@ -153,7 +154,7 @@ public class OutputContainsCondition extends OutputCondition {
                 o = TextOutput.getOutputString(channel, signal, false, nar, buffer).toString();
 
                 if (o.contains(containing)) {
-                    if ((saveSimilar) && (t!=null)) {                        
+                    if ((saveSimilar) && (t!=null) && (exact.size() < maxExacts)) {
                         exact.add(t);
                     }
                     return true;

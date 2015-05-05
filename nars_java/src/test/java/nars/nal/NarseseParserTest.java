@@ -1,6 +1,5 @@
 package nars.nal;
 
-import nars.budget.Budget;
 import nars.prototype.Default;
 import nars.NAR;
 import nars.Global;
@@ -198,7 +197,7 @@ public class NarseseParserTest {
             Task t = task(s);
             Term tt = t.getTerm();
             assertTrue(tt instanceof Negation);
-            assertTrue(((Negation) tt).negated().toString().equals("negated"));
+            assertTrue(((Negation) tt).the().toString().equals("negated"));
             assertTrue(t.getPunctuation() == Symbols.GOAL);
         }
     }
@@ -206,7 +205,7 @@ public class NarseseParserTest {
     @Test public void testNegation3() {
         Negation nab = term("--(a & b)");
         assertTrue(nab instanceof Negation);
-        IntersectionExt ab = (IntersectionExt) nab.negated();
+        IntersectionExt ab = (IntersectionExt) nab.the();
         assertTrue(ab instanceof IntersectionExt);
 
         try {
