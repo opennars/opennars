@@ -18,11 +18,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-package nars.prolog;
+package nars.tuprolog;
 
-import nars.prolog.Library;
-import nars.prolog.Struct;
-import nars.prolog.Term;
+import nars.tuprolog.Library;
+import nars.tuprolog.Struct;
+import nars.tuprolog.Term;
 
 public class StringLibrary extends Library {
 	private static final long serialVersionUID = 1L;

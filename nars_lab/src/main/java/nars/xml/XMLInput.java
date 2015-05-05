@@ -4,7 +4,7 @@ import nars.prototype.Default;
 import nars.NAR;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
-import nars.util.data.PrintWriterInput;
+import nars.io.PrintWriterInput;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

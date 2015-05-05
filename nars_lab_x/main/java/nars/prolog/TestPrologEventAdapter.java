@@ -1,9 +1,9 @@
 package prolog;
 
-import nars.prolog.event.LibraryEvent;
-import nars.prolog.event.PrologEventAdapter;
-import nars.prolog.event.QueryEvent;
-import nars.prolog.event.TheoryEvent;
+import nars.tuprolog.event.LibraryEvent;
+import nars.tuprolog.event.PrologEventAdapter;
+import nars.tuprolog.event.QueryEvent;
+import nars.tuprolog.event.TheoryEvent;
 
 public class TestPrologEventAdapter extends PrologEventAdapter {
 	String firstMessage = "";

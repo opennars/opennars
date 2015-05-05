@@ -1,19 +1,16 @@
 package nars.io;
 
 import nars.util.data.rope.Rope;
-import nars.util.data.rope.impl.CharArrayRope;
+import nars.util.data.rope.StringHack;
 
-import java.lang.reflect.Field;
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 
  */
-public class Texts {
+abstract public class Texts  {
     //TODO find more appropriate symbol mapping
     //TODO escape any mapped characters if they appear in input during encoding
     //http://www.ssec.wisc.edu/~tomw/java/unicode.html
@@ -57,28 +54,7 @@ public class Texts {
 //            escapeMapReverse.put(e.getValue(), e.getKey());
 //    }
 
-    public static final Field sbval;
-    public static final Field val;
-    
-    //Add reflection for String value access
-    static {
-        Field sv = null, sbv = null;
-        try {
-            sv = String.class.getDeclaredField("value"); 
-            //o = String.class.getDeclaredField("offset");
-            sbv = StringBuilder.class.getSuperclass().getDeclaredField("value");
-            
-            sv.setAccessible(true); 
-            sbv.setAccessible(true);
-            //o.setAccessible(true);         
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            System.exit(1);
-        }
-        val = sv;        
-        sbval = sbv;
-    }    
-    
+
 
 //    protected static StringBuilder escape(CharSequence s, boolean unescape, boolean useQuotes) {
 //        StringBuilder b = new StringBuilder(s.length());
@@ -168,28 +144,13 @@ public class Texts {
 //        return escape(s, true, false);
 //    }
 
-    /**
-     * Warning: don't modify the return char[] because it will beinconsistent with s.hashCode()
-     * @param String to invade
-     * @return the private char[] field in String class
-     */
     public static char[] getCharArray(String s) {
-        try {
-            return (char[]) val.get(s);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
+        return Rope.getCharArray(s);
+    }
+    public static char[] getCharArray(StringBuilder s) {
+        return Rope.getCharArray(s);
     }
 
-    public static char[] getCharArray(StringBuilder s) {
-        try {
-            return (char[]) sbval.get(s);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
 
     /*
     public static void main(String[] args) {
@@ -240,7 +201,8 @@ public class Texts {
      */
     public static void overwrite(CharSequence s, CharSequence t) {
         try {
-            char[] value = (char[]) val.get(s);
+            char[] value = (char[]) StringHack.val.get(s);
+
             for (int i = 0; i < Math.min(s.length(), t.length()); i++) {
                 value[i] = t.charAt(i);
             }
@@ -294,7 +256,7 @@ public class Texts {
                     sb.append(s);
                 }
             }
-            return Texts.sequence(sb);
+            return Rope.sequence(sb);
         } else {
             Rope r = Rope.catFast(components);
             return r;
@@ -312,14 +274,8 @@ public class Texts {
         return false;
     }    
 
-    /**
-     * wraps a StringBuilder in CharArrayRope for use as a general purpose immutable CharSequence.
-     * StringBuilder lacks hashCode and other support that CharArrayRope provides.
-     * CharArrayRope can use the StringBuilder's underlying char[] directly without copy.
-     */
-    public static CharSequence sequence(StringBuilder b) {
-        return new CharArrayRope(b);
-    }
+
+
 
     final static Format fourDecimal = new DecimalFormat("0.0000");
     public static final String n4(final float x) { return fourDecimal.format(x);     }

@@ -3,8 +3,8 @@
  */
 package prolog;
 
-import nars.prolog.event.WarningEvent;
-import nars.prolog.event.WarningListener;
+import nars.tuprolog.event.WarningEvent;
+import nars.tuprolog.event.WarningListener;
 
 class TestWarningListener implements WarningListener {
 	public String warning;

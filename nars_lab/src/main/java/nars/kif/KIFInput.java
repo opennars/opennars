@@ -17,7 +17,7 @@
 package nars.kif;
 
 import nars.io.TextPerception;
-import nars.util.data.PrintWriterInput;
+import nars.io.PrintWriterInput;
 
 import java.io.IOException;
 import java.util.HashMap;

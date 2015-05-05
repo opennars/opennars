@@ -24,6 +24,7 @@
     </licenses>
 
     <modules>
+        <module>nars_util</module>
         <module>nars_java</module>
         <module>nars_lab</module>
         <module>nars_prolog</module>
@@ -33,89 +34,6 @@
 
 
 
-    <!--
-        <dependencies>
-            <dependency>
-                <groupId>processing</groupId>
-                <artifactId>core</artifactId>
-                <version>3.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>18.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.javolution</groupId>
-                <artifactId>javolution-core-java</artifactId>
-                <version>6.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jgrapht</groupId>
-                <artifactId>jgrapht-core</artifactId>
-                <version>0.9.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.tinyjee.jgraphx</groupId>
-                <artifactId>jgraphx</artifactId>
-                <version>2.3.0.5</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jgrapht</groupId>
-                <artifactId>jgrapht-ext</artifactId>
-                <version>0.9.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.abego.treelayout</groupId>
-                <artifactId>org.abego.treelayout.core</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jbox2d</groupId>
-                <artifactId>jbox2d-library</artifactId>
-                <version>2.2.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-core</artifactId>
-                <version>1.2.0.Beta6</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.parboiled1</groupId>
-                <artifactId>grappa</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-math3</artifactId>
-                <version>3.4</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.encog</groupId>
-                <artifactId>encog-core</artifactId>
-                <version>3.3.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-math3</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-                <scope>test</scope>
-            </dependency>
-        </dependencies>
-      -->
 
 
     <reporting>

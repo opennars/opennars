@@ -2,10 +2,9 @@ package nars.budget.bag;
 
 import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
 import nars.nal.Item;
 import nars.budget.Bag;
-import nars.util.data.sorted.ArraySortedIndex;
+import nars.util.sort.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
 
 import java.util.Collection;

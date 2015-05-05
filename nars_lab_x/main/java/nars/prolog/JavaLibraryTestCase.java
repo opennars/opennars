@@ -1,8 +1,8 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.lib.InvalidObjectIdException;
-import nars.prolog.lib.JavaLibrary;
+import nars.tuprolog.lib.InvalidObjectIdException;
+import nars.tuprolog.lib.JavaLibrary;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(true, info.isSuccess());
-		nars.prolog.Number result2 = (nars.prolog.Number) info.getVarValue("Value");
+		nars.tuprolog.Number result2 = (nars.tuprolog.Number) info.getVarValue("Value");
 		assertEquals(2, result2.intValue());
 
 		// Testing URLClassLoader with java.lang.String class
@@ -94,7 +94,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo_hierarchy(Res).");
 		assertEquals(false, info.isHalted());
-		nars.prolog.Number result2 = (nars.prolog.Number) info.getVarValue("Res");
+		nars.tuprolog.Number result2 = (nars.tuprolog.Number) info.getVarValue("Res");
 		assertEquals(8, result2.intValue());
 	}
 	
@@ -162,7 +162,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(info.toString(), true, info.isSuccess());
-		nars.prolog.Number resultInt = (nars.prolog.Number) info.getVarValue("Value");
+		nars.tuprolog.Number resultInt = (nars.tuprolog.Number) info.getVarValue("Value");
 		assertEquals(10, resultInt.intValue());
 
 		//Testing java_array_set and java_array_get
@@ -177,7 +177,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(true, info.isSuccess());
-		nars.prolog.Number resultInt2 = (nars.prolog.Number) info.getVarValue("Value");
+		nars.tuprolog.Number resultInt2 = (nars.tuprolog.Number) info.getVarValue("Value");
 		assertEquals(1, resultInt2.intValue());
 	}
 
@@ -194,7 +194,7 @@ public class JavaLibraryTestCase extends TestCase {
 		engine.setTheory(new Theory(theory));
 		info = engine.solve("demo(Value).");
 		assertEquals(true, info.isSuccess());
-		nars.prolog.Number resultInt = (nars.prolog.Number) info.getVarValue("Value");
+		nars.tuprolog.Number resultInt = (nars.tuprolog.Number) info.getVarValue("Value");
 		assertEquals(10, resultInt.intValue());
 	}
 	

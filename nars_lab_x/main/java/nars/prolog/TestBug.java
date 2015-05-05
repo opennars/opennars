@@ -6,11 +6,11 @@
  */
 package prolog;
 
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
-import nars.prolog.event.SpyEvent;
-import nars.prolog.event.SpyListener;
+import nars.tuprolog.Prolog;
+import nars.tuprolog.SolveInfo;
+import nars.tuprolog.Theory;
+import nars.tuprolog.event.SpyEvent;
+import nars.tuprolog.event.SpyListener;
 
 /**
  * @author aricci

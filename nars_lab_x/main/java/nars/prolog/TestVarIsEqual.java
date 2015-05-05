@@ -1,8 +1,8 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.event.OutputEvent;
-import nars.prolog.event.OutputListener;
+import nars.tuprolog.event.OutputEvent;
+import nars.tuprolog.event.OutputListener;
 
 
 

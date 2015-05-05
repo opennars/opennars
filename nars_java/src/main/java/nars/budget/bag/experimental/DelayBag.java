@@ -5,12 +5,11 @@ import nars.Core;
 import nars.Core.CoreAware;
 import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
 import nars.nal.BudgetFunctions;
 import nars.nal.concept.Concept;
 import nars.nal.Item;
 import nars.budget.Bag;
-import nars.util.data.sorted.ArraySortedIndex;
+import nars.util.sort.ArraySortedIndex;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.*;

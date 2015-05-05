@@ -20,8 +20,8 @@
  */
 package prolog;
 
-import nars.prolog.Library;
-import nars.prolog.Term;
+import nars.tuprolog.Library;
+import nars.tuprolog.Term;
 
 import java.util.HashMap;
 

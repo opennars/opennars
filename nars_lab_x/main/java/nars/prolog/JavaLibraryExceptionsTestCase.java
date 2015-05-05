@@ -1,10 +1,10 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Term;
-import nars.prolog.Var;
+import nars.tuprolog.Prolog;
+import nars.tuprolog.SolveInfo;
+import nars.tuprolog.Term;
+import nars.tuprolog.Var;
 
 import java.io.File;
 

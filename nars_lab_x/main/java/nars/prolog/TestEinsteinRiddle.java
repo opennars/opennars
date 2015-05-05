@@ -1,6 +1,6 @@
 package prolog;
 
-import nars.prolog.Agent;
+import nars.tuprolog.Agent;
 
 public class TestEinsteinRiddle {
     

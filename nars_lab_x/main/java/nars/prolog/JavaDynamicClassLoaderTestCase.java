@@ -1,6 +1,6 @@
 package prolog;
 
-import nars.prolog.util.JavaDynamicClassLoader;
+import nars.tuprolog.util.JavaDynamicClassLoader;
 import org.junit.Test;
 
 import java.io.File;

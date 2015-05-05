@@ -4,13 +4,13 @@
  */
 package prolog;
 
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
-import nars.prolog.event.LibraryEvent;
-import nars.prolog.event.PrologEventAdapter;
-import nars.prolog.event.QueryEvent;
-import nars.prolog.event.TheoryEvent;
+import nars.tuprolog.Prolog;
+import nars.tuprolog.SolveInfo;
+import nars.tuprolog.Theory;
+import nars.tuprolog.event.LibraryEvent;
+import nars.tuprolog.event.PrologEventAdapter;
+import nars.tuprolog.event.QueryEvent;
+import nars.tuprolog.event.TheoryEvent;
 
 class MyListener extends PrologEventAdapter {
     

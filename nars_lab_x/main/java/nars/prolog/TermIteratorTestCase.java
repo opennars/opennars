@@ -1,10 +1,10 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.Struct;
-import nars.prolog.Term;
+import nars.tuprolog.Int;
+import nars.tuprolog.InvalidTermException;
+import nars.tuprolog.Struct;
+import nars.tuprolog.Term;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

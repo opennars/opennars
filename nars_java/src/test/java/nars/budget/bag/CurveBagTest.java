@@ -9,7 +9,7 @@ import nars.Param;
 import nars.Global;
 import nars.nal.Item;
 import nars.budget.bag.CurveBag.BagCurve;
-import nars.util.data.sorted.ArraySortedIndex;
+import nars.util.sort.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
 import org.junit.Test;
 

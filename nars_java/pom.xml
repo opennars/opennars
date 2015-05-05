@@ -242,84 +242,18 @@
     </reporting>
 
 
-    <repositories>
-        <!--<repository>
-            <id>spring-snapshot</id>
-            <name>Spring</name>
-            <url>https://repo.spring.io/libs-snapshot</url>
-        </repository> -->
-    </repositories>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 
     <dependencies>
-        <!-- <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
-            <version>2.1.0.BUILD-SNAPSHOT</version>
-        </dependency>-->
-        <dependency>
-            <groupId>com.goldmansachs</groupId>
-            <artifactId>gs-collections</artifactId>
-            <version>6.1.0</version>
-        </dependency>
-
-
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <groupId>opennars</groupId>
+            <artifactId>opennars-util</artifactId>
+            <version>1.7-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.javolution</groupId>
-            <artifactId>javolution-core-java</artifactId>
-            <version>6.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.compendium</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.javabits.jgrapht</groupId>
-            <artifactId>jgrapht-core</artifactId>
-            <version>0.9.3</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.javabits.jgrapht</groupId>
-            <artifactId>jgrapht-ext</artifactId>
-            <version>0.9.3</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.tinyjee.jgraphx</groupId>
-                    <artifactId>jgraphx</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
-        </dependency>
-
-
-
-
-
 
         <dependency>
             <groupId>com.github.fge</groupId>
@@ -327,19 +261,17 @@
             <version>2.0.0-beta.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.bcel</groupId>
+            <artifactId>bcel</artifactId>
+            <version>5.2</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <version>5.2</version>
             <scope>test</scope>
         </dependency>
 

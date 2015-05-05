@@ -1,8 +1,8 @@
 package prolog;
 
-import nars.prolog.Prolog;
-import nars.prolog.SolveInfo;
-import nars.prolog.Theory;
+import nars.tuprolog.Prolog;
+import nars.tuprolog.SolveInfo;
+import nars.tuprolog.Theory;
 
 class PrologThread extends Thread {
 	Prolog core;

@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.prototype.Default;
 import nars.io.TextOutput;
 import nars.io.TextPerception;
-import nars.util.data.PrintWriterInput;
+import nars.io.PrintWriterInput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

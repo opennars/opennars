@@ -27,7 +27,7 @@ import nars.nal.Item;
 import nars.budget.Bag;
 import nars.budget.bag.CurveBag;
 import nars.budget.bag.LevelBag;
-import nars.util.data.sorted.ArraySortedIndex;
+import nars.util.sort.ArraySortedIndex;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.io.PrintStream;

@@ -1,7 +1,7 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Var;
+import nars.tuprolog.Var;
 
 public class VarTestCase extends TestCase {
 	

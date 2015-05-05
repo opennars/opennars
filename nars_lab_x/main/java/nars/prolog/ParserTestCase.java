@@ -100,7 +100,7 @@ public class ParserTestCase extends TestCase {
 	public void testIntegerBinaryRepresentation() throws InvalidTermException {
 		String n = "0b101101";
 		Parser p = new Parser(n);
-		nars.prolog.Number result = new Int(45);
+		nars.tuprolog.Number result = new Int(45);
 		assertEquals(result, p.nextTerm(false));
 		String invalid = "0b101201";
 		try {
@@ -112,7 +112,7 @@ public class ParserTestCase extends TestCase {
 	public void testIntegerOctalRepresentation() throws InvalidTermException {
 		String n = "0o77351";
 		Parser p = new Parser(n);
-		nars.prolog.Number result = new Int(32489);
+		nars.tuprolog.Number result = new Int(32489);
 		assertEquals(result, p.nextTerm(false));
 		String invalid = "0o78351";
 		try {
@@ -124,7 +124,7 @@ public class ParserTestCase extends TestCase {
 	public void testIntegerHexadecimalRepresentation() throws InvalidTermException {
 		String n = "0xDECAF";
 		Parser p = new Parser(n);
-		nars.prolog.Number result = new Int(912559);
+		nars.tuprolog.Number result = new Int(912559);
 		assertEquals(result, p.nextTerm(false));
 		String invalid = "0xG";
 		try {

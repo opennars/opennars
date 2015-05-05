@@ -2,8 +2,8 @@ package prolog;
 
 
 import junit.framework.TestCase;
-import nars.prolog.event.SpyEvent;
-import nars.prolog.event.SpyListener;
+import nars.tuprolog.event.SpyEvent;
+import nars.tuprolog.event.SpyListener;
 
 public class PrologTestCase extends TestCase {
 	
@@ -27,7 +27,7 @@ public class PrologTestCase extends TestCase {
 		Library stringLibrary = new StringLibrary();
 		engine.loadLibrary(stringLibrary);
 		assertNotNull(engine.getLibrary("nars.prolog.StringLibrary"));
-		Library javaLibrary = new nars.prolog.lib.JavaLibrary();
+		Library javaLibrary = new nars.tuprolog.lib.JavaLibrary();
 		engine.loadLibrary(javaLibrary);
 		assertSame(javaLibrary, engine.getLibrary("nars.prolog.lib.JavaLibrary"));
 	}

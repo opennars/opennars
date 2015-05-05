@@ -1,10 +1,10 @@
 package prolog;
 
 import junit.framework.TestCase;
-import nars.prolog.Int;
-import nars.prolog.InvalidTermException;
-import nars.prolog.Struct;
-import nars.prolog.Var;
+import nars.tuprolog.Int;
+import nars.tuprolog.InvalidTermException;
+import nars.tuprolog.Struct;
+import nars.tuprolog.Var;
 
 public class IntTestCase extends TestCase {
 	
@@ -46,7 +46,7 @@ public class IntTestCase extends TestCase {
 	
 	public void testEqualsToDouble() {
 		Int integerOne = new Int(1);
-		nars.prolog.Double doubleOne = new nars.prolog.Double(1);
+		nars.tuprolog.Double doubleOne = new nars.tuprolog.Double(1);
 		assertFalse(integerOne.equals(doubleOne));
 	}
 	
