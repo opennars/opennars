@@ -31,7 +31,7 @@ import nars.nal.nal4.Image;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.util.ByteBuf;
+import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
 

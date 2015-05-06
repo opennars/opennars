@@ -8,8 +8,6 @@ import java.util.RandomAccess;
 /* High-performance Circular (Ring) Buffer. Not thread safe, and sacrifices safety for speed in other ways. */
 public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E> {
 
-    private final E e = null;
-
     private final int n; // buffer length
     public final E[] array;
     private int head = 0;
@@ -20,6 +18,11 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         n = capacity;
         //buf = (E[])Array.newInstance(clazz, capacity);
         array = (E[])new Object[capacity];
+    }
+
+    @Override
+    public void clear() {
+        head = tail = size = 0;
     }
 
     @Override

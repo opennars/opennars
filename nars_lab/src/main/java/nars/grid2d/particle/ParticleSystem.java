@@ -4,7 +4,7 @@ import javolution.util.FastTable;
 import nars.grid2d.Cell;
 import nars.grid2d.Grid2DSpace;
 import nars.grid2d.Hauto;
-import nars.util.data.XORShiftRandom;
+import objenome.util.random.XORShiftRandom;
 
 import java.awt.*;
 import java.util.List;

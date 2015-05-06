@@ -2,7 +2,7 @@
 package nars.rl.dl;
 
 import nars.rl.elsy.Perception;
-import nars.util.math.DenoisingAutoencoder;
+import nars.util.signal.DenoisingAutoencoder;
 
 import java.util.Random;
 

@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.io.LibraryInput;
 import nars.testing.condition.OutputCondition;
-import nars.util.data.XORShiftRandom;
+import objenome.util.random.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.mathutil.randomize.factory.RandomFactory;

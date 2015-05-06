@@ -1134,9 +1134,6 @@ abstract public class Concept extends Item<Term> implements Termed {
 
 
     public Term getTerm() {
-        if (Global.DEBUG) {
-            term.ensureNormalized("Concept term");
-        }
         return term;
     }
 

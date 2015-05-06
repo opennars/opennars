@@ -56,7 +56,7 @@ import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.data.XORShiftRandom;
+import objenome.util.random.XORShiftRandom;
 
 import java.io.Serializable;
 import java.util.*;

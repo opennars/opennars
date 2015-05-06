@@ -4,7 +4,7 @@ package nars.nal.nal3;
 import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.term.Term;
-import nars.util.ByteBuf;
+import nars.util.utf8.ByteBuf;
 
 public interface SetTensional extends Term {
 

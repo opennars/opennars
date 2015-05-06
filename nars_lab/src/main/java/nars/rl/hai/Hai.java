@@ -1,6 +1,6 @@
 package nars.rl.hai;
 
-import nars.util.data.XORShiftRandom;
+import objenome.util.random.XORShiftRandom;
 
 /** Original Q-Learning + SOM agent by patham9 */
 public class Hai {

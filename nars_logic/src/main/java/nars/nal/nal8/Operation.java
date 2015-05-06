@@ -33,7 +33,7 @@ import nars.nal.nal4.Product;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.ByteBuf;
+import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
 

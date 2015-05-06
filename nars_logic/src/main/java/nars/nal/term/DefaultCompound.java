@@ -1,7 +1,6 @@
 package nars.nal.term;
 
-import nars.util.FastByteComparisons;
-import nars.util.data.Utf8;
+import nars.util.utf8.FastByteComparisons;
 
 import java.util.Arrays;
 

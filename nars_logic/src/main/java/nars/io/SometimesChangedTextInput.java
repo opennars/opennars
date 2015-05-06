@@ -6,7 +6,7 @@
 package nars.io;
 
 import nars.NAR;
-import nars.util.data.XORShiftRandom;
+import objenome.util.random.XORShiftRandom;
 
 /**
  * probability parameter determines the possibility that it re-input

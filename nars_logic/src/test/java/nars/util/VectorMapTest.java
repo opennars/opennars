@@ -6,7 +6,7 @@ import nars.NAR;
 import nars.util.event.Reaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
-import nars.util.math.DenoisingAutoencoder;
+import nars.util.signal.DenoisingAutoencoder;
 import org.junit.Test;
 
 /**

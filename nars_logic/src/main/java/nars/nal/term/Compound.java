@@ -27,7 +27,7 @@ import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.util.ByteBuf;
+import nars.util.utf8.ByteBuf;
 import nars.util.data.Utf8;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;

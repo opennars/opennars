@@ -1,4 +1,11 @@
 #!/bin/sh
 
-java -cp dist/OpenNARS_GUI.jar nars.gui.NARSwing $1 $2
+echo
+echo 'start ------------------- NARS Swing GUI'
+echo
 
+mvn -q -f nars_gui/pom.xml  exec:java -Dexec.mainClass="nars.gui.NARSwing"
+
+echo
+echo 'NARS Swing GUI --------------------- end'
+echo

@@ -18,7 +18,7 @@ import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.gui.output.graph.nengo.UIEdge;
 import nars.gui.output.graph.nengo.UIVertex;
-import nars.util.data.XORShiftRandom;
+import objenome.util.random.XORShiftRandom;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 

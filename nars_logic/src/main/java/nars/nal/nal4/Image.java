@@ -5,7 +5,7 @@ import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
-import nars.util.ByteBuf;
+import nars.util.utf8.ByteBuf;
 
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
