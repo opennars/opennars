@@ -52,7 +52,14 @@ public class InternalExperience implements Plugin, EventObserver {
     public static boolean AllowWantBelieve=true; 
     
     //
-    public static boolean OLD_BELIEVE_WANT_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=true; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    
+    public boolean isAllowNewStrategy() {
+        return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
+    }
+    public void setAllowNewStrategy(boolean val) {
+        OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=!val;
+    }
     
     public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
@@ -144,27 +151,12 @@ public class InternalExperience implements Plugin, EventObserver {
     public void event(Class event, Object[] a) {
         
         if (event==Events.ConceptDirectProcessedTask.class) {
-
-
             Task task = (Task)a[0];  
             
-            //new strategy only for QUESTION and QUEST:
-            if(!OLD_BELIEVE_WANT_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK)) {
+            //old strategy always, new strategy only for QUESTION and QUEST:
+            if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK))) {
                 InternalExperienceFromTaskInternal(memory,task,isFull());
-                return;
             }
-
-            //old strategy involves budget threshold:
-            if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
-                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
-                    return;
-                }
-            }
-            else
-            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
-                return;
-            }
-            InternalExperienceFromTaskInternal(memory,task,isFull());
         }
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal
@@ -182,7 +174,7 @@ public class InternalExperience implements Plugin, EventObserver {
     }
     
     public static void InternalExperienceFromTask(Memory memory, Task task, boolean full) {
-        if(!OLD_BELIEVE_WANT_STRATEGY) {
+        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
             InternalExperienceFromTaskInternal(memory,task,full);
         }
     }
@@ -191,6 +183,17 @@ public class InternalExperience implements Plugin, EventObserver {
         if(!enabled) {
             return false;
         }
+        
+        if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
+            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+                return false;
+            }
+        }
+        else
+        if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+            return false;
+        }
+        
         Term content=task.getTerm();
         // to prevent infinite recursions
         if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/) {
@@ -210,9 +213,9 @@ public class InternalExperience implements Plugin, EventObserver {
                 Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth));
         
-        if(!OLD_BELIEVE_WANT_STRATEGY) {
-            newbudget.setPriority(task.getPriority());
-            newbudget.setDurability(task.getDurability());
+        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
+            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
         }
         
         Task newTask = new Task(j, (BudgetValue) newbudget,
