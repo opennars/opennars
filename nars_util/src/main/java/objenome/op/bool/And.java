@@ -21,6 +21,7 @@
  */
 package objenome.op.bool;
 
+import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.util.TypeUtil;
 
@@ -30,7 +31,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class And extends Node {
+public class And extends BooleanNode {
 
     public static final String IDENTIFIER = "AND";
 
@@ -102,5 +103,37 @@ public class And extends Node {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+        Node b = getChild(1);
+        if (a.equals(b)) return a;
+
+        int an = getChildConstantValue(0);
+        int bn = getChildConstantValue(1);
+
+        if (an == 0) return False;
+        if (bn == 0) return False;
+
+        if (an == 1) return b;
+        if (bn == 1) return a;
+
+        /*
+        while (exprs.remove(yep())) {}
+        if (exprs.isEmpty()) return yep();
+        if (exprs.size() == 1) return exprs.get(0);
+
+        ArrayList<Expr> ors = new ArrayList<Expr>();
+        for (Expr expr : exprs) {
+            ors.add(objenome.op.cas.Not.make(expr));
+        }
+        return objenome.op.cas.Not.make(Or.make(ors));
+        */
+
+        //TODO other minifications, eX; demorgans
+
+        return this;
     }
 }

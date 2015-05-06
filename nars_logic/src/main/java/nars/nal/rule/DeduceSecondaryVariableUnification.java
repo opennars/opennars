@@ -154,7 +154,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
 
         for (int k = 0; k < maxUnificationAttempts; k++) {
-            Concept secondConcept = nal.memory.conceptNext();
+            Concept secondConcept = nal.memory.nextConcept();
             if (secondConcept == null) {
                 //no more concepts, stop
                 break;

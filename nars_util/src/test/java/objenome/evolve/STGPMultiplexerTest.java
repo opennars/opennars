@@ -10,8 +10,10 @@ import org.junit.Test;
 public class STGPMultiplexerTest extends TestCase {
 
 	@Test public void testSTGPMultiplexer() {                                   
-            
-            STGPBoolean e = new STGPBoolean(BenchmarkSolutions.multiplexerProblem(6));
+
+        final int popSize = 100;
+        final int generations = 50;
+            STGPBoolean e = new STGPBoolean(BenchmarkSolutions.multiplexerProblem(6), popSize, generations);
             
             Population<STGPIndividual> p = e.run();
             
@@ -22,8 +24,8 @@ public class STGPMultiplexerTest extends TestCase {
             System.out.println(p);            
             System.out.println(best.evaluate());
             
-            assertTrue(best.depth() > 3);            
-            assertEquals(100, p.size());
+            assertTrue(best.depth() > 1);
+            assertEquals(popSize, p.size());
             assertNotNull(p.fittest());
             
             

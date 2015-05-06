@@ -925,7 +925,7 @@ public class Memory implements Serializable {
      * samples a next concept for processing;
      * may return null if no concept is available depending on the control system
      */
-    public Concept conceptNext() {
+    public Concept nextConcept() {
         return concepts.nextConcept();
     }
 

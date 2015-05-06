@@ -21,25 +21,6 @@
  */
 package objenome.goal;
 
-import static com.google.common.collect.Lists.newArrayList;
-import java.util.ArrayList;
-import java.util.List;
-import objenome.solver.evolve.BranchedBreeder;
-import objenome.solver.evolve.Breeder;
-import objenome.solver.evolve.EvolutionaryStrategy;
-import objenome.solver.evolve.FitnessEvaluator;
-import objenome.solver.evolve.GenerationalStrategy;
-import objenome.solver.evolve.Initialiser;
-import objenome.solver.evolve.MaximumGenerations;
-import objenome.solver.evolve.Operator;
-import objenome.solver.evolve.Population;
-import objenome.solver.evolve.RandomSequence;
-import objenome.solver.evolve.STGPIndividual;
-import objenome.solver.evolve.TerminationCriteria;
-import objenome.solver.evolve.TerminationFitness;
-import objenome.solver.evolve.fitness.DoubleFitness;
-import objenome.solver.evolve.fitness.HitsCount;
-import objenome.solver.evolve.init.Full;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
@@ -47,10 +28,20 @@ import objenome.op.bool.And;
 import objenome.op.bool.Not;
 import objenome.op.bool.Or;
 import objenome.op.lang.If;
+import objenome.solver.evolve.*;
+import objenome.solver.evolve.fitness.DoubleFitness;
+import objenome.solver.evolve.fitness.HitsCount;
+import objenome.solver.evolve.fitness.HitsCountAndMinified;
+import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
-import objenome.util.random.MersenneTwisterFast;
 import objenome.solver.evolve.selection.TournamentSelector;
+import objenome.util.random.MersenneTwisterFast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 
 /**
  * This template sets up EpochX to run the 6-bit multiplexer benchmark with the
@@ -114,23 +105,23 @@ public class STGPBoolean extends ProblemSTGP {
         
     }
  
-    public STGPBoolean(BooleanCases c) {
-        this(c.inputValues, c.expectedOutputs);        
+    public STGPBoolean(BooleanCases c, int populationSize, int maxGenerations) {
+        this(c.inputValues, c.expectedOutputs, populationSize, maxGenerations);
     }
 
-    public STGPBoolean(Boolean[][] inputValues, Boolean[] expectedOutputs) {
+    public STGPBoolean(Boolean[][] inputValues, Boolean[] expectedOutputs, int populationSize, int maxGenerations) {
         super();
         
 
-        the(Population.SIZE, 100);
+        the(Population.SIZE, populationSize);
         
         
         the(EvolutionaryStrategy.TERMINATION_CRITERIA, newArrayList(new TerminationCriteria[] {
-            new TerminationFitness(new DoubleFitness.Minimise(0.0)),
+            //new TerminationFitness(new DoubleFitness.Minimise(0.0)),
             new MaximumGenerations()
         }));
         
-        the(MaximumGenerations.MAXIMUM_GENERATIONS, 50);
+        the(MaximumGenerations.MAXIMUM_GENERATIONS, maxGenerations);
         the(STGPIndividual.MAXIMUM_DEPTH, 6);
 
         the(Breeder.SELECTOR, new TournamentSelector());
@@ -165,7 +156,7 @@ public class STGPBoolean extends ProblemSTGP {
 
 
         // Setup fitness function
-        the(FitnessEvaluator.FUNCTION, new HitsCount());
+        the(FitnessEvaluator.FUNCTION, new HitsCountAndMinified());
         the(HitsCount.INPUT_VALUE_SETS, inputValues);
         the(HitsCount.EXPECTED_OUTPUTS, expectedOutputs);
     }

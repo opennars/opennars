@@ -30,7 +30,7 @@ import java.util.Objects;
  * An <code>STGPIndividual</code> is a candidate solution which uses a strongly
  * typed tree representation to represent a computer program. This class
  * provides several convenient methods for obtaining information about the
- * program tree (such as {@link #length()} and {@link #depth()}), but more
+ * program tree (such as {@link #size()} and {@link #depth()}), but more
  * information is available directly from the tree. Use {@link #getRoot()} to
  * get access to the tree.
  *
@@ -174,7 +174,7 @@ public class STGPIndividual extends AbstractIndividual {
      *
      * @return the number of nodes in the program tree.
      */
-    public int length() {
+    public int size() {
         return getRoot().length();
     }
 

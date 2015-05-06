@@ -21,6 +21,7 @@
  */
 package objenome.op.bool;
 
+import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.util.TypeUtil;
 
@@ -29,7 +30,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Not extends Node {
+public class Not extends BooleanNode {
 
     public static final String IDENTIFIER = "NOT";
 
@@ -89,5 +90,34 @@ public class Not extends Node {
         } else {
             return null;
         }
+    }
+
+
+    @Override
+    public Node normalize() {
+        Node c = getChild(0);
+        if (c instanceof Not) {
+            return c.getChild(0);
+        }
+        int n = getChildConstantValue(0);
+        if (n == 0) return False;
+        else if (n == 1) return True;
+
+        /*
+        if (notExpr.equalsExpr(yep())) return nope();
+        if (notExpr.equalsExpr(nope())) return yep();
+        if (notExpr instanceof objenome.op.cas.Or && ((Operation) notExpr).getExprs().size() == 2
+                && ((Operation) notExpr).getExpr(0) instanceof LessThan
+                && ((Operation) notExpr).getExpr(1) instanceof Equals
+                && ((Operation) ((Operation) notExpr).getExpr(0)).getExpr(0).equalsExpr(
+                ((Operation) ((Operation) notExpr).getExpr(1)).getExpr(0))
+                && ((Operation) ((Operation) notExpr).getExpr(0)).getExpr(1).equalsExpr(
+                ((Operation) ((Operation) notExpr).getExpr(1)).getExpr(1)))
+            return new GreaterThan(((Operation) ((Operation) notExpr).getExpr(0)).getExpr(0),
+                    ((Operation) ((Operation) notExpr).getExpr(0)).getExpr(1));
+        return Sum.make(Num.make(1), Product.negative(notExpr));
+        */
+
+        return this;
     }
 }

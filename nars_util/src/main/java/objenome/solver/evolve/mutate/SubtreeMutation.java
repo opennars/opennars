@@ -144,7 +144,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
         STGPIndividual child = (STGPIndividual) parents[0];
 
         // Randomly choose a mutation point
-        int length = child.length();
+        int length = child.size();
         int mutationPoint = random.nextInt(length);
 
         // Calculate available depth

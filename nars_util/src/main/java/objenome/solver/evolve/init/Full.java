@@ -23,27 +23,19 @@ package objenome.solver.evolve.init;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import objenome.solver.evolve.GPContainer;
-import objenome.solver.evolve.InitialisationMethod;
-import objenome.solver.evolve.Population;
-import static objenome.solver.evolve.Population.SIZE;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
-import static objenome.solver.evolve.STGPIndividual.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.STGPIndividual.RETURN_TYPE;
-import static objenome.solver.evolve.STGPIndividual.SYNTAX;
+import objenome.op.Node;
+import objenome.op.cas.util.ArrayLists;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.InitialisationEvent;
 import objenome.solver.evolve.event.Listener;
-import objenome.op.Node;
 import objenome.util.TypeUtil;
+
+import java.util.*;
+
+import static objenome.solver.evolve.Population.SIZE;
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
+import static objenome.solver.evolve.STGPIndividual.*;
 
 /**
  * Initialisation method which produces <code>STGPIndividual</code>s with full
@@ -272,15 +264,24 @@ public class Full implements STGPInitialisation, Listener<ConfigEvent> {
             throw new IllegalStateException("Syntax is not able to produce full trees with the given return type (" + returnType + ") at depth " + depth + " =" + Arrays.toString(dataTypesTable));
         }
 
-        return createTree(returnType, 0);
+        return createTree(returnType);
+    }
+
+    private Node createTree(Class<?> requiredType) {
+        return createTree(requiredType, 0, null);
     }
 
     /*
      * Helper method for the createTree method. Recursively fills the children
      * of a node, to construct a full tree down to depth
      */
-    private Node createTree(Class<?> requiredType, int currentDepth) {
-        List<Node> validNodes = listValidNodes(depth - currentDepth, requiredType);
+    private Node createTree(Class<?> requiredType, int currentDepth, List<Node> validNodeTemporary) {
+        if (validNodeTemporary == null)
+            validNodeTemporary = new ArrayList();
+        else
+            validNodeTemporary.clear();
+
+        List<Node> validNodes = listValidNodes(depth - currentDepth, requiredType, validNodeTemporary);
 
         if (validNodes.isEmpty()) {
             throw new IllegalStateException("Syntax is unable to create full node trees of given depth.");
@@ -309,11 +310,11 @@ public class Full implements STGPInitialisation, Listener<ConfigEvent> {
             Class<?>[] argTypes = validArgTypeSets.get(random.nextInt(validArgTypeSets.size()));
 
             for (int i = 0; i < arity; i++) {
-                root.setChild(i, createTree(argTypes[i], currentDepth + 1));
+                root.setChild(i, createTree(argTypes[i], currentDepth + 1, validNodeTemporary));
             }
         }
 
-        return root;
+        return root.normalize();
     }
 
     /*
@@ -325,10 +326,17 @@ public class Full implements STGPInitialisation, Listener<ConfigEvent> {
      * sense to do so if we allow the update of the data-types table to be
      * overridden too.
      */
-    private List<Node> listValidNodes(int remainingDepth, Class<?> requiredType) {
-        List<Node> validNodes = new ArrayList<>();
+    private List<Node> listValidNodes(final int remainingDepth, final Class<?> requiredType, List<Node> validNodeTemporary) {
+
+        final List<Node> nonTerminals = this.nonTerminals;
+
+        final List<Node> validNodes = validNodeTemporary;
+        validNodes.clear();
+
         if (remainingDepth > 0) {
-            for (Node n : nonTerminals) {
+            int nts = nonTerminals.size();
+            for (int i = 0; i < nts; i++) {
+                Node n = nonTerminals.get(i);
                 Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[remainingDepth - 1]);
 
                 for (Class<?>[] argTypes : argTypeSets) {
@@ -340,7 +348,9 @@ public class Full implements STGPInitialisation, Listener<ConfigEvent> {
                 }
             }
         } else {
-            for (Node n : terminals) {
+            int nts = terminals.size();
+            for (int i = 0; i < nts; i++) {
+                Node n = terminals.get(i);
                 if (n.dataType().isAssignableFrom(requiredType)) {
                     validNodes.add(n);
                 }

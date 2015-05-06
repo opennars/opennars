@@ -29,7 +29,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Or extends Node {
+public class Or extends BooleanNode {
 
     public static final String IDENTIFIER = "OR";
 
@@ -99,5 +99,23 @@ public class Or extends Node {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+        Node b = getChild(1);
+        if (a.equals(b)) return a;
+
+        int an = getChildConstantValue(0);
+        int bn = getChildConstantValue(1);
+
+        if (an == 1) return True;
+        else if (bn == 1) return True;
+        else if ((an == 0) && (bn == 0)) return False;
+
+        //TODO other minifications, eX; demorgans
+
+        return this;
     }
 }

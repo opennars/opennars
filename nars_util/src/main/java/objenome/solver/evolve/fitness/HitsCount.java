@@ -70,6 +70,7 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
     private Double pointError;
     private final boolean autoConfig;
 
+
     /**
      * Constructs a <code>HitsCount</code> fitness function with control
      * parameters automatically loaded from the config.
@@ -152,7 +153,15 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
         //TODO validate number of inputs etc
         STGPIndividual program = (STGPIndividual) individual;
 
-        double noWrong = 0.0;
+        double cost = getCost(program);
+
+        return new DoubleFitness.Minimise(cost);
+    }
+
+
+    public double getCost(STGPIndividual program) {
+
+        double numWrong = 0;
 
         for (int i = 0; i < inputValueSets.length; i++) {
             // Update the variable values
@@ -164,11 +173,11 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
             Object output = program.evaluate();
 
             if (!isHit(output, expectedOutputs[i])) {
-                noWrong++;
+                numWrong++;
             }
         }
 
-        return new DoubleFitness.Minimise(noWrong);
+        return numWrong;
     }
 
     /**

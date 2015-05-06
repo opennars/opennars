@@ -240,7 +240,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
     protected int crossoverPoint(STGPIndividual individual) {
         double terminalProbability = getTerminalProbability();
 
-        int length = individual.length();
+        int length = individual.size();
         if (terminalProbability == -1.0) {
             return random.nextInt(length);
         }

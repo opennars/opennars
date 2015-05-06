@@ -157,7 +157,7 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
         List<Integer> points = new ArrayList<>();
         
         //TODO It would be more efficient to traverse the tree than use getNode
-        int length = program.length();
+        int length = program.size();
         for (int i = 0; i < length; i++) {
             if (random.nextDouble() < pointProbability) {
                 Node node = program.getNode(i);

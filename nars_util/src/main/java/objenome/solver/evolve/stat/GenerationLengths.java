@@ -63,7 +63,7 @@ public class GenerationLengths extends AbstractStat<EndGeneration> {
 
         for (Individual individual : population) {
             if (individual instanceof STGPIndividual) {
-                lengths[index++] = ((STGPIndividual) individual).length();
+                lengths[index++] = ((STGPIndividual) individual).size();
             }
         }
     }

@@ -47,7 +47,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             final int chainSamples = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
 
             //prevent duplicate inductions
-            Set<Object> alreadyInducted = Global.newHashSet(chainSamples);
+            Set<Term> alreadyInducted = null;
 
             for (int i = 0; i < chainSamples; i++) {
 
@@ -58,26 +58,36 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 Term t = next.getTerm();
 
-                if ((t instanceof Implication) && (alreadyInducted.add(t))) {
+                if (!(t instanceof Implication)) continue;
 
-                    Sentence temporalBelief = next.getStrongestBelief(true, true);
+                if (alreadyInducted == null) {
+                    alreadyInducted = Global.newHashSet(chainSamples);
+                    alreadyInducted.add(t);
+                }
+                else {
+                    if (!alreadyInducted.add(t)) continue;
+                }
 
-                    //TODO: make this work if it is needed, but i think it just implements a restore point that is not needed due to the refactor
+
+
+                Sentence temporalBelief = next.getStrongestBelief(true, true);
+
+                //TODO: make this work if it is needed, but i think it just implements a restore point that is not needed due to the refactor
 //                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
 //                    Stamp SVSTamp=nal.getNewStamp();
 //                    Sentence SVBelief=nal.getCurrentBelief();
 //                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
 
-                    //now set the current context:
+                //now set the current context:
 //                    f.setCurrentBelief(temporalBelief);
 
-                    if (temporalBelief!=null) {
-                        if(!taskSentence.isEternal() && !temporalBelief.isEternal()) {
-                            induct(f, task, taskSentence, memory, temporalBelief);
-                        }
+                if (temporalBelief!=null) {
+                    if(!taskSentence.isEternal() && !temporalBelief.isEternal()) {
+                        induct(f, task, taskSentence, memory, temporalBelief);
                     }
-
                 }
+
+
             }
         }
 
@@ -86,7 +96,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     }
 
     /** should only take non-eternalized beliefs? */
-    private void induct(ConceptProcess f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
+    private boolean induct(ConceptProcess f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
         Sentence current, prev;
 
         if(otherBelief.after(taskSentence, memory.duration())) {
@@ -97,15 +107,11 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             prev = otherBelief;
         }
 
-        temporalInductionProceed(current, prev, task, f);
-    }
-
-    public static boolean temporalInductionProceed(final Sentence currentBelief, final Sentence prevBelief, Task controllerTask, NAL nal) {
-        if(!controllerTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        if(!task.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
         }
 
-        if (currentBelief.isEternal() || !TemporalRules.isInputOrTriggeredOperation(controllerTask, nal.memory)) {
+        if (current.isEternal() || !TemporalRules.isInputOrTriggeredOperation(task, f.memory)) {
             return false;
         }
 
@@ -113,15 +119,15 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         /*if(!currentBelief.isJudgment() || !prevBelief.isJudgment())
             return false;*/
 
-        if (equalSubTermsInRespectToImageAndProduct(currentBelief.term, prevBelief.term)) {
+        if (equalSubTermsInRespectToImageAndProduct(current.term, prev.term)) {
             return false;
         }
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
-        TemporalRules.temporalInduction(currentBelief, prevBelief,
-                nal.newStamp(currentBelief, prevBelief),
-                nal, controllerTask);
-        return false;
+        TemporalRules.temporalInduction(current, prev,
+                f.newStamp(current, prev),
+                f, task);
+        return true;
     }
 
 

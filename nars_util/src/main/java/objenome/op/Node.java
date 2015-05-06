@@ -696,28 +696,28 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * @return {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
-        boolean equal = true;
-
+    public boolean equals(final Object obj) {
         if (obj instanceof Node) {
-            Node n = (Node) obj;
+            final Node n = (Node) obj;
 
             if (n.getArity() != getArity()) {
-                equal = false;
+                return false;
             } else if (!getIdentifier().equals(n.getIdentifier())) {
-                equal = false;
+                return false;
             } else {
-                for (int i = 0; (i < n.getArity()) && equal; i++) {
+                final int a = n.getArity();
+                for (int i = 0; i < a; i++) {
                     Node thatChild = n.getChild(i);
                     Node thisChild = getChild(i);
 
-                    equal = Objects.equals(thisChild, thatChild);
+                    if (!Objects.equals(thisChild, thatChild))
+                        return false;
                 }
             }
+            return true;
         } else {
-            equal = false;
+            return false;
         }
-        return equal;
     }
 
     /**
@@ -759,4 +759,10 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /** allows a node to apply reduction or simplification after is has been created.
+      * by default returns itself
+      */
+    public Node normalize() {
+        return this;
+    }
 }
