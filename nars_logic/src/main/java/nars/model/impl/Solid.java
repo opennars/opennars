@@ -120,7 +120,7 @@ public class Solid extends Default implements ControlCycle {
 
         @Override
         public int size() {
-            return 0;
+            return concepts.size();
         }
 
         protected int num(float p, int min, int max) {

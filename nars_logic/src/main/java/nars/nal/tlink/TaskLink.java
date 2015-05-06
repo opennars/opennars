@@ -66,8 +66,9 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
 
 
-        public void setTime(long t) {
+        public Recording setTime(long t) {
             this.time = t;
+            return this;
         }
 
         @Override
@@ -77,38 +78,19 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     }
 
     RecordingList records;
-    long newestRecordTime = -1;
+
 
     /** allows re-use of the Recording object since it would otherwise be instantiated frequently */
     public static class RecordingList extends CircularArrayList<Recording> {
-
-        /** recycled recording */
-        Recording spare = null;
 
         public RecordingList(int capacity) {
             super(capacity);
         }
 
-        @Override
-        public Recording remove(int i) {
-            Recording r = super.remove(i);
-            spare = r;
-            return r;
-        }
 
         public void add(final TermLink t, final long time) {
-
-            if (spare!=null) {
-                spare.link = t;
-                spare.time = time;
-                add(spare);
-                spare = null;
-            }
-            else {
-                add(new Recording(t, time));
-            }
+            add(new Recording(t, time));
         }
-
 
     }
 
@@ -204,7 +186,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      */
     public boolean novel(final TermLink termLink, final long currentTime, int noveltyHorizon, int recordLength) {
 
-
         final Term bTerm = termLink.target;
         if (bTerm.equals(targetTask.sentence.term)) {
             return false;
@@ -219,6 +200,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
 
         final long minTime = currentTime - noveltyHorizon;
+
+        long newestRecordTime =
+                (records.isEmpty()) ?
+                        currentTime : records.getLast().time;
 
         if (newestRecordTime <= minTime) {
             //just erase the entire record list because its newest entry is older than the noveltyHorizon
@@ -238,9 +223,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
                         return false;
                     } else {
                         //happened long enough ago that we have forgotten it somewhat, making it seem more novel
-                        r.setTime(currentTime);
                         records.removeFast(i);
-                        addRecord(r);
+                        addRecord(r.setTime(currentTime));
                         return true;
                     }
                 } else if (minTime > rtime) {
@@ -256,7 +240,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
             //keep recordedLinks queue a maximum finite size
             int toRemove = (records.size() + 1) - recordLength;
             for (int i = 0; i < toRemove; i++)
-                records.removeFirst();
+                records.removeFirstFast();
 
         }
 
@@ -268,7 +252,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     protected void addRecord(Recording r) {
         records.addLast(r);
-        newestRecordTime = r.time;
     }
 
     @Override

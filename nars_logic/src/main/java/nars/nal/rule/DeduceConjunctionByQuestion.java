@@ -73,7 +73,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
                 final Term pcontent = concept.term;
 
                 final List<Task> cQuestions = concept.questions;
-                if (cQuestions.isEmpty())
+                if (/*cQuestions == null || */ cQuestions.isEmpty())
                     throw new RuntimeException("Concept " + concept + " present in Concept Questions index, but has no questions");
 
 

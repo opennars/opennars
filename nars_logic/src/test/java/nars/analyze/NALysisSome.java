@@ -31,7 +31,7 @@ public class NALysisSome extends NALysis {
         Global.TASK_HISTORY = true;
         showInput = true;
         showOutput = true;
-        showTrace = false;
+        showTrace = true;
 
         //String test = "./nal/test8/nal8.1.16.nal";
         //String test = "./nal/test/nal_multistep_sequence.nal";
@@ -42,7 +42,7 @@ public class NALysisSome extends NALysis {
         //String test = "./nal/test8/nal8.1.0.nal";
         //String test = "./nal/test8/nal8.1.4.nal";
         //String test = "./nal/test8/nal8.1.21.nal";
-        String test = "./nal/test6/nal6.8.nal";
+        String test = "./nal/test6/nal6.4.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test5/nal5.18.1.nal";
         //String test = "./nal/test7/nal7.2.nal";

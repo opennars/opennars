@@ -25,13 +25,9 @@ import nars.Events.Restart;
 import nars.Events.TaskRemove;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.model.ControlCycle;
-import nars.util.data.buffer.Perception;
-import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
-import nars.util.meter.ResourceMeter;
+import nars.model.ControlCycle;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
@@ -56,6 +52,10 @@ import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.util.data.buffer.Perception;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
+import nars.util.meter.ResourceMeter;
 import objenome.util.random.XORShiftRandom;
 
 import java.io.Serializable;
@@ -113,7 +113,8 @@ public class Memory implements Serializable {
 
     /** provides fast iteration to concepts with goals */
     public Set<Concept> getGoalConcepts() {
-        return goalConcepts;
+        throw new RuntimeException("disabled until it is useful");
+        //return goalConcepts;
     }
 
 
@@ -222,7 +223,10 @@ public class Memory implements Serializable {
 
     private static long defaultRandomSeed = 1;
     public static final Random randomNumber = //new Random(defaultRandomSeed);
-            new XORShiftRandom(defaultRandomSeed); //not thread safe but faster
+            XORShiftRandom.global;  //not thread safe but faster
+    static {
+        randomNumber.setSeed(defaultRandomSeed);
+    }
 
 
     public static void resetStatic(long randomSeed) {
@@ -305,8 +309,10 @@ public class Memory implements Serializable {
 
         this.event.set(conceptIndices, true,
                 Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class,
-                Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class
-                /*Events.ConceptRemember.class, Events.ConceptForget.class, Events.ConceptNew.class*/);
+                //Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class
+                Events.ConceptRemember.class, Events.ConceptNew.class,
+                Events.ConceptForget.class
+        );
     }
 
 
@@ -324,17 +330,28 @@ public class Memory implements Serializable {
 //                else goalConcepts.add(c);
 //                return;
 //            }
+            Concept c = (Concept)args[0];
 
 
             //TODO this may also be triggered by Quests; may want to distinguish them with a different event for Quests
-            if ((event == Events.ConceptQuestionAdd.class) || (event == Events.ConceptQuestionRemove.class)) {
-                Concept c = (Concept)args[0];
-                Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
-                if (incoming==null && c.questions.isEmpty())
-                    questionConcepts.remove(c);
-                else if (c.questions.size() == 1)
+            if ((event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class) || (event == Events.ConceptQuestionAdd.class)) {
+                if (!c.questions.isEmpty())
                     questionConcepts.add(c);
             }
+            else if (event == Events.ConceptQuestionRemove.class) {
+                if (c.questions.isEmpty())
+                    questionConcepts.remove(c);
+            }
+            else if (event == Events.ConceptForget.class) {
+                questionConcepts.remove(c);
+            }
+
+
+            if (questionConcepts.size() > concepts.size()) {
+                throw new RuntimeException("more questionConcepts than concepts");
+            }
+
+            /*
             if ((event == Events.ConceptGoalAdd.class) || (event == Events.ConceptGoalRemove.class)) {
                 Concept c = (Concept)args[0];
                 Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
@@ -343,6 +360,7 @@ public class Memory implements Serializable {
                 else if (c.goals.size() == 1)
                     goalConcepts.add(c);
             }
+            */
 
         }
     };

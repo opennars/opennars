@@ -201,10 +201,12 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         return get(0);
     }
 
+
     @Override
     public E removeFirst() {
         return remove(0);
     }
+
 
     @Override
     public E removeLast() {

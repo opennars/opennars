@@ -87,7 +87,7 @@ public class TraceWriter extends MemoryObserver {
         public void traceAppend(final Class channel, final String s) {
             p.print(channel.getSimpleName());
             p.print(": ");
-            p.print(s);
+            p.println(s);
         }
     }
     
