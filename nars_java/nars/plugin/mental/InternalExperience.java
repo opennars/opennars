@@ -44,15 +44,15 @@ public class InternalExperience implements Plugin, EventObserver {
             INTERNAL_EXPERIENCE_PROBABILITY/4f;
     
     //internal experience has less durability?
-    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f;
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1 
     //internal experience has less priority?
-    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
     
     //dont use internal experience for want and believe if this setting is true
     public static boolean AllowWantBelieve=true; 
     
     //
-    public static boolean OLD_BELIEVE_WANT_STRATEGY=true; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public static boolean OLD_BELIEVE_WANT_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
     
     public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
@@ -161,32 +161,7 @@ public class InternalExperience implements Plugin, EventObserver {
             if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return;
             }
-            Term content = task.getTerm();
-
-            // to prevent infinite recursions
-            if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/)
-                return;
-
-            Sentence sentence = task.sentence;
-            TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-
-            Stamp stamp = task.sentence.stamp.clone();
-            stamp.setOccurrenceTime(memory.time());
-
-            Term ret=toTerm(sentence, memory);
-            if(ret==null) {
-                return;
-            }
-            Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
-            BudgetValue newbudget=new BudgetValue(
-                    Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                    Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL, 
-                    BudgetFunctions.truthToQuality(truth));
-
-            Task newTask = new Task(j, (BudgetValue) newbudget, 
-                    isFull() ? null : task);
-
-            memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+            InternalExperienceFromTaskInternal(memory,task,isFull());
         }
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal
@@ -196,6 +171,51 @@ public class InternalExperience implements Plugin, EventObserver {
             NAL nal = (NAL)a[3];
             beliefReason(belief, beliefTerm, taskTerm, nal);
         }
+    }
+    
+    public static void InternalExperienceFromBelief(Memory memory, Task task, Sentence belief) {
+        Task T=new Task(belief.clone(),task.budget.clone(),null);
+        InternalExperienceFromTask(memory,T,false);
+    }
+    
+    public static void InternalExperienceFromTask(Memory memory, Task task, boolean full) {
+        if(!OLD_BELIEVE_WANT_STRATEGY) {
+            InternalExperienceFromTaskInternal(memory,task,full);
+        }
+    }
+
+    public static boolean InternalExperienceFromTaskInternal(Memory memory, Task task, boolean full) {
+        if(!enabled) {
+            return false;
+        }
+        Term content=task.getTerm();
+        // to prevent infinite recursions
+        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+            return true;
+        }
+        Sentence sentence = task.sentence;
+        TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+        Stamp stamp = task.sentence.stamp.clone();
+        stamp.setOccurrenceTime(memory.time());
+        Term ret=toTerm(sentence, memory);
+        if (ret==null) {
+            return true;
+        }
+        Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
+        BudgetValue newbudget=new BudgetValue(
+                Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                BudgetFunctions.truthToQuality(truth));
+        
+        if(!OLD_BELIEVE_WANT_STRATEGY) { //we use the budget of the task, this should be better
+            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
+            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
+        }
+        
+        Task newTask = new Task(j, (BudgetValue) newbudget,
+                full ? null : task);
+        memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+        return false;
     }
 
     final static String[] nonInnateBeliefOperators = new String[] {

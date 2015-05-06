@@ -61,6 +61,7 @@ import nars.language.Terms.Termable;
 import nars.language.Variable;
 import nars.operator.Operation;
 import nars.operator.Operator;
+import nars.plugin.mental.InternalExperience;
 import nars.storage.Bag;
 import nars.storage.Bag.MemoryAware;
 
@@ -388,6 +389,9 @@ public class Concept extends Item<Term> implements Termable {
                 questionFromGoal(task, nal);
                 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                
+                InternalExperience.InternalExperienceFromTask(memory,task,false);
+                
                 if(!executeDecision(task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                 }
