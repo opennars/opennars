@@ -11,7 +11,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     private final E e = null;
 
     private final int n; // buffer length
-    public final E[] buf;
+    public final E[] array;
     private int head = 0;
     private int tail = 0;
     private int size = 0;
@@ -19,7 +19,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     public CircularArrayList(int capacity) {
         n = capacity;
         //buf = (E[])Array.newInstance(clazz, capacity);
-        buf = (E[])new Object[capacity];
+        array = (E[])new Object[capacity];
     }
 
     @Override
@@ -91,7 +91,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         //same as the original function below but avoid another function call to help guarante inlining
         int m = (head + i) % n;
         //if (m < 0) m += n;        
-        return buf[m];
+        return array[m];
 
         //original code:
         //return buf[wrapIndex(head + i)];
@@ -99,7 +99,7 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     public void setFast(final int i, final E e) {
         int m = (head + i) % n;
-        buf[m] = e;
+        array[m] = e;
     }
 
     @Override
@@ -111,8 +111,8 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
         int m = (head + i) % n;
         //if (m < 0) m += n;        
 
-        E existing = buf[m];
-        buf[m] = e;
+        E existing = array[m];
+        array[m] = e;
         return existing;
     }
 
@@ -263,17 +263,17 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     @Override
     public boolean offer(E e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return add(e);
     }
 
     @Override
     public E remove() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return removeLast();
     }
 
     @Override
     public E poll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return remove();
     }
 
     @Override

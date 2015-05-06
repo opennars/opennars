@@ -198,9 +198,14 @@ public class Solid extends Default implements ControlCycle {
         }
 
         @Override
-        public void reset() {
+        public void reset(boolean delete) {
             tasks.clear();
-            concepts.clear();
+
+            if (delete)
+                concepts.delete();
+            else
+                concepts.clear();
+
             subcon.clear();
         }
 

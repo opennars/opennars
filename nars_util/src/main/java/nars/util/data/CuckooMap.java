@@ -39,6 +39,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
     private static final int PRIME2 = 0xb4b82e39;
     private static final int PRIME3 = 0xced1c241;
 
+    //TODO allow setting this via constructor
     static Random random = XORShiftRandom.global;
 
     public int size;
@@ -465,12 +466,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
     public void clear () {
         K[] keyTable = this.keyTable;
         V[] valueTable = this.valueTable;
-        Arrays.fill(keyTable, null);
-        Arrays.fill(valueTable, null);
-//        for (int i = capacity + stashSize; i-- > 0;) {
-//            keyTable[i] = null;
-//            valueTable[i] = null;
-//        }
+        //Arrays.fill(keyTable, null);
+        //Arrays.fill(valueTable, null);
+        for (int i = capacity + stashSize; i-- > 0;) {
+            keyTable[i] = null;
+            valueTable[i] = null;
+        }
         size = 0;
         stashSize = 0;
     }

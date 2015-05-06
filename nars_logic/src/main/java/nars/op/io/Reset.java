@@ -22,6 +22,6 @@ public class Reset extends ImmediateOperation {
 
     @Override
     public void execute(Memory m) {
-        m.reset(hard);
+        m.reset(hard, false);
     }
 }

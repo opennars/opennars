@@ -68,6 +68,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
      * defined in different bags
      */
     final int capacity;
+
+    private final boolean ownsNodePool;
+
     /**
      * current sum of occupied level
      */
@@ -88,7 +91,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
     protected final boolean[] levelEmpty;
 
-    private final DDNodePool<E> nodePool = new DDNodePool(16);
+    private final DDNodePool<E> nodePool;
 
 
     /**
@@ -118,6 +121,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     public LevelBag(final int levels, final int capacity, final int thresholdLevel) {
         this.levels = levels;
 
+        this.nodePool = new DDNodePool(capacity / 8);
+        this.ownsNodePool = true;
+        
         this.fireCompleteLevelThreshold = thresholdLevel;
         //THRESHOLD = levels + 1; //fair/flat takeOut policy
 
@@ -125,8 +131,8 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         //nameTable = Parameters.THREADS == 1 ? Parameters.newHashMap(capacity+1+1) : new ConcurrentHashMap<>(capacity+1+1);
         index = Global.THREADS == 1 ?
-                new CuckooMap(capacity * 2) :
-                new ConcurrentHashMap<>(capacity * 2);
+                new CuckooMap(capacity * 3 / 2) :
+                new ConcurrentHashMap<>(capacity * 3 / 2);
 
         levelEmpty = new boolean[levels];
 
@@ -208,6 +214,10 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override public void delete() {
+
+        if (ownsNodePool)
+            nodePool.delete();
+
         index.clear();
         for (int i = 0; i < levels; i++) {
             if (level[i] != null) {
@@ -317,7 +327,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     /** returns whether there is available item; if so then currentLevel will be set to the next level of it */
-    protected synchronized boolean nextNonEmptyLevel() {
+    protected boolean nextNonEmptyLevel() {
         if (size() == 0)
             return false; // empty bag
 

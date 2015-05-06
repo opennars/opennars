@@ -38,10 +38,10 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
     public void cycle();
 
 
-
-
-    /** Invoked during a memory reset to empty all concepts */
-    public void reset();
+    /** Invoked during a memory reset to empty all concepts
+     *  @param delete  whether to finalize everything (deallocate as much as possible)
+     * */
+    public void reset(boolean delete);
 
     /** Maps Term to associated Concept. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known */

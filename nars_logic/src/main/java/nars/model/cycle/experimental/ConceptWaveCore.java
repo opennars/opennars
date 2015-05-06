@@ -47,7 +47,8 @@ abstract public class ConceptWaveCore implements ControlCycle {
 
 
     @Override
-    public void reset() {
+    public void reset(boolean delete) {
+        //TODO complete this
         concepts.clear();
     }
 

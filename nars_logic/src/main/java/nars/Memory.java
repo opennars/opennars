@@ -301,7 +301,7 @@ public class Memory implements Serializable {
 
         //after this line begins actual logic, now that the essential data strucures are allocated
         //------------------------------------ 
-        reset(false);
+        reset(false, false);
 
         this.event.set(conceptIndices, true,
                 Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class,
@@ -347,14 +347,27 @@ public class Memory implements Serializable {
         }
     };
 
-    public void reset(boolean resetInputs) {
+    public void delete() {
+
+    }
+
+    public void reset(boolean resetInputs, boolean delete) {
+
+        nextTasks.clear();
+
+        if (laterTasks!=null) {
+            laterTasks.shutdown();
+            laterTasks = null;
+        }
 
         if (resetInputs)
             perception.reset();
 
         event.emit(ResetStart.class);
 
-        concepts.reset();
+        concepts.reset(delete);
+
+
 
         timing = param.getTiming();
         cycle = 0;

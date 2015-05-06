@@ -209,10 +209,16 @@ public class DefaultCore extends SequentialCore {
 
 
     @Override
-    public void reset() {
-        super.reset();
-        novelTasks.clear();
+    public void reset(boolean delete) {
+        super.reset(delete);
+
+        if (delete)
+            novelTasks.delete();
+        else
+            novelTasks.clear();
+
         newTasks.clear();
+        incoming.clear();
     }
 
 

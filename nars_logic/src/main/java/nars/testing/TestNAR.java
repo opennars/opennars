@@ -88,7 +88,7 @@ public class TestNAR extends NAR {
     public void stop() {
         super.stop();
         if (resetOnStop)
-            reset();
+            memory.reset(true, true /*finalize completely*/);
     }
 
     public ExplainableTask mustOutput(long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {

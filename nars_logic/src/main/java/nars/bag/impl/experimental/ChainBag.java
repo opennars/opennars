@@ -38,6 +38,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     private final Mean mean; //priority mean, continuously calculated
 
+    private boolean ownsNodePool = false;
+
     private int capacity;
     private float mass;
     DD<V> current = null;
@@ -60,12 +62,12 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
      */
     public final DDList<V> chain;
 
-    private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.4f; //slightly below half
+    private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f; //slightly below half
     private double estimatedMax = 0.5f;
     private double estimatedMin = 0.5f;
     private double estimatedMean = 0.5;
 
-    final short d[] = Distributor.get(10).order;
+    final short d[] = Distributor.get(32).order;
     final int dLen = d.length;
     int dp = 0;
 
@@ -75,7 +77,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
         this.capacity = capacity;
         this.mass = 0;
-        this.index = new CuckooMap(capacity * 2);
+        this.index = new CuckooMap(capacity*3/2);
 
         this.nodePool = nodePool;
 
@@ -84,7 +86,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     public ChainBag(int capacity) {
-        this(new DDNodePool(capacity), capacity);
+        this(new DDNodePool(capacity/8), capacity);
+        this.ownsNodePool = true;
     }
 
 
@@ -193,13 +196,14 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
                 getNextRemoval();
             }
             overflow = remove(nextRemoval.name());
-            if (overflow == null)
-                throw new RuntimeException(this + " error removing nextRemoval=" + nextRemoval);
+            if (overflow == null) {
+                //TODO not sure why this happens
+                if (Global.DEBUG_BAG) size();
+                //throw new RuntimeException(this + " error removing nextRemoval=" + nextRemoval);
+            }
             nextRemoval = null;
         }
-        else {
-            //bag will remain over-budget until a removal candidate is decided
-        }
+
 
         updatePercentile(newItem.getPriority());
 
@@ -328,7 +332,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         final float p = item.getPriority();
         final V nr = nextRemoval;
         if (nr==null) {
-            if (percentileEstimate < PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL) {
+            if (percentileEstimate <= PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL) {
                 nextRemoval = item;
                 return true;
             }
@@ -375,6 +379,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             final int s2 = chain.size();
             if (s1 != s2)
                 throw new RuntimeException(this + " bag fault; inconsistent index (" + s1 + " index != " + s2 + " chain)");
+            if (s1 > capacity())
+                throw new RuntimeException(this + " has exceeded capacity: " + s1 + " > " + capacity());
         }
         return s1;
     }
@@ -400,6 +406,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     @Override
     public void delete() {
+
+        if (ownsNodePool)
+            nodePool.delete();
 
         index.clear();
         chain.delete();

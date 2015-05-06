@@ -101,8 +101,14 @@ abstract public class SequentialCore implements ControlCycle {
     }
 
     @Override
-    public void reset() {
-        concepts.clear();
+    public void reset(boolean delete) {
+        run.clear();
+
+        if (delete)
+            concepts.delete();
+        else
+            concepts.clear();
+
         if (subcon!=null)
             subcon.clear();
     }
@@ -130,7 +136,6 @@ abstract public class SequentialCore implements ControlCycle {
     }
 
     protected void delete(Concept c) {
-
         //explicitly destroy all concept data structures to free memory for GC
         c.delete();
     }

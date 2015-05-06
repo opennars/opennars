@@ -39,7 +39,8 @@ public class DDList<E> implements Iterable<E> {
     
     protected void _clear() {
 
-        if (size > 0) {
+        if ((size > 0) && (pool.isEnabled())) {
+            //TODO items may not need to be detached in this iterative loop if the endpoints can be attached to their conclusions
             DD current = getFirstNode();
             do {
                 final DD next = current.next;

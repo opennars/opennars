@@ -141,7 +141,7 @@ public class NAR implements Runnable {
      * reactivated, a signal for them to empty their state (if necessary).
      */
     public void reset() {
-        memory.reset(true);
+        memory.reset(true, false);
     }
 
     final Reaction togglePluginOnReset = new Reaction() {

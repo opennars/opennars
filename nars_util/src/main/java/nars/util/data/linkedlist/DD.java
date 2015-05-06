@@ -15,7 +15,11 @@ public class DD<E> {
 
     @Override
     public String toString() {
-        return item + "[" + prev.item + "<<" + owner + ">>" + next.item + ']';
+        return item + "[" +
+                (prev!=null ? prev.item : "null")
+                + "<<" + owner + ">>" +
+                (next!=null ? next.item : "null") +
+                ']';
     }
 
     public int owner() {

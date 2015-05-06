@@ -20,6 +20,7 @@
  */
 package nars.nal;
 
+import com.google.common.primitives.Floats;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
@@ -221,8 +222,6 @@ public class Truth implements Cloneable { // implements Cloneable {
         int h = 0;
         h += Float.floatToRawIntBits(frequency);
         h += 31 * Float.floatToRawIntBits(confidence);
-        if (analytic)
-            h += 31;
         return h;
     }
 

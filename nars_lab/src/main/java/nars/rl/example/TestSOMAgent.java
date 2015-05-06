@@ -159,8 +159,7 @@ public class TestSOMAgent extends JPanel {
 
         d.newWindow();
 
-        Global.DEBUG = false;
-        Global.DEBUG_BAG = false;
+        Global.DEBUG = Global.DEBUG_BAG = false;
         //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
