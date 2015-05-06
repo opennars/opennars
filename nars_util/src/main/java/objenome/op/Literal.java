@@ -21,8 +21,8 @@
  */
 package objenome.op;
 
-import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.Objects;
 
 /**
  * Literal values are terminal nodes with a specific value. Typically the value
@@ -145,7 +145,7 @@ public class Literal<X extends Object> extends Node<Void,X> {
         Object objVal = ((Literal) obj).value;
         Object thisVal = value;
 
-        return ObjectUtils.equals(objVal, thisVal);
+        return Objects.equals(objVal, thisVal);
     }
 
     /**

@@ -1,5 +1,5 @@
 // CHECKSTYLE:OFF
-package nars.obj.util.bytecode;
+package objenome.util.bytecode;
 
 import org.junit.Assert;
 import org.junit.Test;

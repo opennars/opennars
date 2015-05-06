@@ -1,11 +1,12 @@
-package nars.obj.util.bean;
+package objenome.util.bean;
 
+import objenome.util.bean.BeanProxyBuilder;
 import objenome.util.bean.anno.Initializer;
 import objenome.util.bean.anno.InitializerMethod;
+import org.junit.Test;
+
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 public class InitializerTest {
 

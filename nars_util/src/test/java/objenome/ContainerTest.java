@@ -1,13 +1,15 @@
-package nars.obj;
+package objenome;
 
-import java.util.Date;
 import objenome.MultitainerTest.Part;
 import objenome.MultitainerTest.Part0;
 import objenome.solution.dependency.Scope;
 import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /** TODO convert this into unit tests */
 public class ContainerTest {

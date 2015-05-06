@@ -21,7 +21,8 @@
  */
 package objenome.util;
 
-import org.apache.commons.lang3.ArrayUtils;
+import com.gs.collections.api.set.primitive.CharSet;
+import com.gs.collections.impl.set.mutable.primitive.CharHashSet;
 
 /**
  * This class provides static utility methods for working with
@@ -42,12 +43,12 @@ public final class StringUtils {
      * characters from the <code>chrs</code> array, and <code>false</code> if it
      * contains none
      */
-    public static boolean containsAny(String str, char[] chrs) {
+    public static boolean containsAny(final String str, final char[] chrs) {
+        CharSet x = new CharHashSet(chrs);
+
         for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (ArrayUtils.contains(chrs, c)) {
+            if (x.contains(str.charAt(i)))
                 return true;
-            }
         }
         return false;
     }

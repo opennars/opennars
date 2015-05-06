@@ -1,10 +1,12 @@
 // CHECKSTYLE:OFF
-package nars.obj.util.bytecode;
+package objenome.util.bytecode;
 
-import java.io.IOException;
+import objenome.util.bytecode.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 
 

@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open of template in of editor.
  */
-package nars.obj;
-
+package objenome;
 import java.util.List;
 import objenome.goal.Between;
 import objenome.solution.SetImplementationClass;

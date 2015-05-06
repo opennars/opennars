@@ -21,9 +21,10 @@
  */
 package objenome.solver.evolve;
 
-import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.op.Node;
-import org.apache.commons.lang3.ObjectUtils;
+import objenome.solver.evolve.GPContainer.GPKey;
+
+import java.util.Objects;
 
 /**
  * An <code>STGPIndividual</code> is a candidate solution which uses a strongly
@@ -41,7 +42,6 @@ import org.apache.commons.lang3.ObjectUtils;
  */
 public class STGPIndividual extends AbstractIndividual {
 
-    private static final long serialVersionUID = -1428100428151029601L;
 
     /**
      * The key for setting and retrieving the set of nodes that individuals are
@@ -241,7 +241,7 @@ public class STGPIndividual extends AbstractIndividual {
         boolean equal = false;
         if ((obj != null) && (obj instanceof STGPIndividual)) {
             STGPIndividual p = (STGPIndividual) obj;
-            if (ObjectUtils.equals(root, p.root)) {
+            if (Objects.equals(root, p.root)) {
                 equal = true;
             }
         }

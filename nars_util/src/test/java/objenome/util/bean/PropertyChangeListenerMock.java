@@ -1,4 +1,4 @@
-package nars.obj.util.bean;
+package objenome.util.bean;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

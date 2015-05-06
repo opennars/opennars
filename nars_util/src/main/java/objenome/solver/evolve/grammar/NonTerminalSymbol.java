@@ -23,7 +23,7 @@ package objenome.solver.evolve.grammar;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.ObjectUtils;
+import java.util.Objects;
 
 /**
  * A non-terminal node of a parse tree, that was constructed to satisfy a
@@ -694,7 +694,7 @@ public class NonTerminalSymbol implements Symbol {
                     Symbol thatChild = otherSymbol.getChild(i);
                     Symbol thisChild = getChild(i);
 
-                    if (!ObjectUtils.equals(thisChild, thatChild)) {
+                    if (!Objects.equals(thisChild, thatChild)) {
                         equal = false;
                         break;
                     }

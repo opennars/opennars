@@ -3,14 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nars.obj;
+package objenome;
+
+import objenome.Container;
+import objenome.util.bean.util.DefaultPropertyChangeEventProvider;
+import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.concurrent.atomic.AtomicBoolean;
-import objenome.util.bean.util.DefaultPropertyChangeEventProvider;
+
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
 /**
  * @see: http://beanproxy.sourceforge.net/

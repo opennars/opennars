@@ -1,16 +1,15 @@
-package nars.obj.util.bean;
+package objenome.util.bean;
 
-import static org.junit.Assert.*;
+import objenome.util.bean.BeanProxyBuilder;
+import objenome.util.bean.util.DefaultPropertyChangeEventProvider;
+import objenome.util.bean.util.DefaultVetoablePropertyChangeEventProvider;
+import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyVetoException;
 import java.beans.VetoableChangeListener;
-import objenome.util.bean.util.DefaultPropertyChangeEventProvider;
-import objenome.util.bean.util.DefaultVetoablePropertyChangeEventProvider;
 
-
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class TestPropertyChange {
 

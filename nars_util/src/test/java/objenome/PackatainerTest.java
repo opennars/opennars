@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nars.obj;
-
+package objenome;
 import com.google.common.collect.SetMultimap;
 import java.util.Set;
 import objenome.solution.dependency.Builder;

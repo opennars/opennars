@@ -17,9 +17,11 @@
  */
 package nars.obj.util.bytecode;
 
-import java.lang.reflect.Modifier;
+import objenome.util.bytecode.SgUtils;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.lang.reflect.Modifier;
 
 
 // CHECKSTYLE:OFF

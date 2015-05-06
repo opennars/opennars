@@ -1,4 +1,4 @@
-package nars.obj.util.bean;
+package objenome.util.bean;
 
 import static org.junit.Assert.assertEquals;
 

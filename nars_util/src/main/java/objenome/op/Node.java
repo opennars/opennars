@@ -21,14 +21,10 @@
  */
 package objenome.op;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import objenome.util.TypeUtil;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
+
 
 /**
  * A <code>Node</code> is a vertex in a tree structure which represents a
@@ -107,7 +103,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * @return an array of this node's children
      */
     public X[] getChildren() {
-        return ArrayUtils.clone(children);
+        return Arrays.copyOf(children, children.length);
     }
 
     /**
@@ -715,7 +711,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
                     Node thatChild = n.getChild(i);
                     Node thisChild = getChild(i);
 
-                    equal = ObjectUtils.equals(thisChild, thatChild);
+                    equal = Objects.equals(thisChild, thatChild);
                 }
             }
         } else {
