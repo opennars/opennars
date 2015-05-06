@@ -173,7 +173,7 @@ public class LocalRules {
             st.chainAdd(belief.term);
         }
 
-        task.setBestSolution(belief);
+        task.setBestSolution(memory,belief);
         
         memory.logic.SOLUTION_BEST.commit(task.getPriority());
 

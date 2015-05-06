@@ -25,11 +25,13 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import nars.core.Memory;
 import nars.core.control.AbstractTask;
 import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.language.Terms.Termable;
 import nars.operator.Operation;
+import nars.plugin.mental.InternalExperience;
 
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
@@ -223,7 +225,8 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
      *
      * @param judg The solution to be remembered
      */
-    public void setBestSolution(final Sentence judg) {
+    public void setBestSolution(final Memory memory,final Sentence judg) {
+        InternalExperience.InternalExperienceFromBelief(memory, this, judg);
         bestSolution = judg;
     }
 
