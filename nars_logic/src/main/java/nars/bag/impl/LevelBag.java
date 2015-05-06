@@ -207,6 +207,17 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         currentCounter = 0;
     }
 
+    @Override public void delete() {
+        index.clear();
+        for (int i = 0; i < levels; i++) {
+            if (level[i] != null) {
+                level[i].delete();
+                level[i] = null;
+            }
+        }
+
+    }
+
     /**
      * The number of items in the bag
      *
@@ -475,6 +486,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
     @Override
     public E pop() {
+        if (size() == 0)
+            return null;
+
         if (!nextNonEmptyLevel())
             return null;
 
@@ -560,7 +574,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     /** removal of the bagged item from its level and the index */
-    public synchronized   E extract(DD<E> node) {
+    public E extract(final DD<E> node) {
         if (node == null)
             throw new RuntimeException("OUT must not be null");
         int lev = node.owner();

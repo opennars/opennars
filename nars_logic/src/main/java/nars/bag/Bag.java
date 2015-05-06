@@ -79,6 +79,11 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
      */
     abstract public V pop();
 
+    /** called when the bag should be entirely deallocated; differs from clear in that after a clear, the bag should be read yto use again immediately.  here, the bag is being discarded so its data structures should be disassembled thoroughly.  */
+    public void delete() {
+
+    }
+
     /**
      * The number of items in the bag
      *

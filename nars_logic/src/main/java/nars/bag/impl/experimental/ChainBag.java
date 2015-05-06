@@ -388,8 +388,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     @Override
     public void clear() {
 
-        chain.clear();
         index.clear();
+        chain.clear();
+
         mass = 0;
         current = null;
         estimatedMin = estimatedMax = estimatedMean = 0.5;
@@ -397,6 +398,13 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
 
+    @Override
+    public void delete() {
+
+        index.clear();
+        chain.delete();
+
+    }
 
     @Override
     public V remove(K key) {

@@ -230,9 +230,11 @@ public class CuckooMap<K, V> implements Map<K,V> {
     }
 
     private void push (K insertKey, V insertValue, int index1, K key1, int index2, K key2, int index3, K key3) {
-        K[] keyTable = this.keyTable;
-        V[] valueTable = this.valueTable;
-        int mask = this.mask;
+        final K[] keyTable = this.keyTable;
+        final V[] valueTable = this.valueTable;
+        final int mask = this.mask;
+
+        final int capacity = this.capacity;
 
         // Push keys until an empty bucket is found.
         K evictedKey;
@@ -299,7 +301,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         putStash(evictedKey, evictedValue);
     }
 
-    private void putStash (K key, V value) {
+    private void putStash (final K key, final V value) {
         if (stashSize == stashCapacity) {
             // Too many pushes occurred and the stash is full, increase the table size.
             resize(capacity << 1);
@@ -318,6 +320,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
     public V get (Object key) {
         if (key == null) return null;
 
+        final K[] keyTable = this.keyTable;
+
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         if (!key.equals(keyTable[index])) {
@@ -330,17 +334,20 @@ public class CuckooMap<K, V> implements Map<K,V> {
         return valueTable[index];
     }
 
-    private V getStash (K key) {
-        K[] keyTable = this.keyTable;
+    private V getStash (final K key) {
+        final K[] keyTable = this.keyTable;
+        final int stashSize = this.stashSize;
         for (int i = capacity, n = i + stashSize; i < n; i++)
             if (key.equals(keyTable[i])) return valueTable[i];
         return null;
     }
 
     /** Returns the value for the specified key, or the default value if the key is not in the map. */
-    public V get (K key, V defaultValue) {
+    public V get (final K key, final V defaultValue) {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
+        final K[] keyTable = this.keyTable;
+
         if (!key.equals(keyTable[index])) {
             index = hash2(hashCode);
             if (!key.equals(keyTable[index])) {
@@ -351,8 +358,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
         return valueTable[index];
     }
 
-    private V getStash (K key, V defaultValue) {
-        K[] keyTable = this.keyTable;
+    private V getStash (final K key, final V defaultValue) {
+        final K[] keyTable = this.keyTable;
+        final int stashSize = this.stashSize;
         for (int i = capacity, n = i + stashSize; i < n; i++)
             if (key.equals(keyTable[i])) return valueTable[i];
         return defaultValue;
@@ -364,6 +372,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
     public V remove (Object key) {
         if (key == null)
             throw new RuntimeException("can not remover key null");
+
+        final K[] keyTable = this.keyTable;
+        final V[] valueTable = this.valueTable;
 
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -396,11 +407,14 @@ public class CuckooMap<K, V> implements Map<K,V> {
         return removeStash((K)key);
     }
 
-    V removeStash (K key) {
+    V removeStash (final K key) {
         if (key == null)
             throw new RuntimeException("can not remover key null");
 
-        K[] keyTable = this.keyTable;
+        final K[] keyTable = this.keyTable;
+        final V[] valueTable = this.valueTable;
+        final int stashSize = this.stashSize;
+
         for (int i = capacity, n = i + stashSize; i < n; i++) {
             if (key.equals(keyTable[i])) {
                 V oldValue = valueTable[i];
@@ -412,10 +426,13 @@ public class CuckooMap<K, V> implements Map<K,V> {
         return null;
     }
 
-    void removeStashIndex (int index) {
+    void removeStashIndex(final int index) {
         // If the removed location was not last, move the last tuple to the removed location.
-        stashSize--;
-        int lastIndex = capacity + stashSize;
+        int lastIndex = capacity + (--stashSize);
+
+        final K[] keyTable = this.keyTable;
+        final V[] valueTable = this.valueTable;
+
         if (index < lastIndex) {
             keyTable[index] = keyTable[lastIndex];
             valueTable[index] = valueTable[lastIndex];
@@ -448,10 +465,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
     public void clear () {
         K[] keyTable = this.keyTable;
         V[] valueTable = this.valueTable;
-        for (int i = capacity + stashSize; i-- > 0;) {
-            keyTable[i] = null;
-            valueTable[i] = null;
-        }
+        Arrays.fill(keyTable, null);
+        Arrays.fill(valueTable, null);
+//        for (int i = capacity + stashSize; i-- > 0;) {
+//            keyTable[i] = null;
+//            valueTable[i] = null;
+//        }
         size = 0;
         stashSize = 0;
     }
@@ -472,10 +491,14 @@ public class CuckooMap<K, V> implements Map<K,V> {
      * an expensive operation.
      * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
      *           {@link #equals(Object)}. */
-    public boolean containsValue (Object value, boolean identity) {
-        V[] valueTable = this.valueTable;
+    public boolean containsValue(final Object value, final boolean identity) {
+        final V[] valueTable = this.valueTable;
+
+        final int capacity = this.capacity;
+        final int stashSize = this.stashSize;
+
         if (value == null) {
-            K[] keyTable = this.keyTable;
+            final K[] keyTable = this.keyTable;
             for (int i = capacity + stashSize; i-- > 0;)
                 if (keyTable[i] != null && valueTable[i] == null) return true;
         } else if (identity) {
@@ -489,7 +512,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
     }
 
     @Override
-    public boolean containsKey (Object key) {
+    public boolean containsKey(final Object key) {
+        final K[] keyTable = this.keyTable;
+
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         if (!key.equals(keyTable[index])) {
@@ -502,8 +527,11 @@ public class CuckooMap<K, V> implements Map<K,V> {
         return true;
     }
 
-    private boolean containsKeyStash (K key) {
-        K[] keyTable = this.keyTable;
+    private boolean containsKeyStash (final K key) {
+        final K[] keyTable = this.keyTable;
+
+        final int stashSize = this.stashSize;
+
         for (int i = capacity, n = i + stashSize; i < n; i++)
             if (key.equals(keyTable[i])) return true;
         return false;
@@ -513,7 +541,11 @@ public class CuckooMap<K, V> implements Map<K,V> {
      * every value, which may be an expensive operation.
      * @param identity If true, uses == to compare the specified value with values in the map. If false, uses
      *           {@link #equals(Object)}. */
-    public K findKey (Object value, boolean identity) {
+    public K findKey (final Object value, final boolean identity) {
+
+        final int capacity = this.capacity;
+        final int stashSize = this.stashSize;
+
         V[] valueTable = this.valueTable;
         if (value == null) {
             K[] keyTable = this.keyTable;
@@ -563,12 +595,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
         }
     }
 
-    private int hash2 (int h) {
+    private int hash2(int h) {
         h *= PRIME2;
         return (h ^ h >>> hashShift) & mask;
     }
 
-    private int hash3 (int h) {
+    private int hash3(int h) {
         h *= PRIME3;
         return (h ^ h >>> hashShift) & mask;
     }

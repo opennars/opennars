@@ -18,7 +18,7 @@ abstract public class DequePool<X> {
             put(create());*/
     }
 
-    public void put(X i) {
+    public void put(final X i) {
         data.offer(i);
     }
 

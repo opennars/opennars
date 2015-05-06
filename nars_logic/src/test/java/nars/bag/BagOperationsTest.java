@@ -23,17 +23,29 @@ import static org.junit.Assert.assertTrue;
  */
 public class BagOperationsTest {
 
-    public static class NullConcept extends Concept {
+    public static class NullConcept extends Item<String> {
+
+        private final String id;
 
         public NullConcept(String id, float priority) {
-            super(Atom.get(id), new Budget(priority, priority, priority), null, null, null);
+            super(new Budget(priority, priority, priority));
+            this.id= id;
         }    
 
         @Override
         public float getQuality() {
             return 0;
         }
-        
+
+        @Override
+        public String name() {
+            return id;
+        }
+
+        @Override
+        public String toString() {
+            return id;
+        }
     }
 
     @Test public void testLevelBag() {
@@ -46,7 +58,7 @@ public class BagOperationsTest {
     }
 
     /** test with a bag of capacity 2 */
-    public static void testBagSequence(Bag b) {
+    public static void testBagSequence(Bag<String,Item<String>> b) {
 
         assertEquals(0, b.size());
         assertEquals(2, b.capacity());
@@ -56,7 +68,9 @@ public class BagOperationsTest {
         b.put(new NullConcept("b", 0.15f));
         assertEquals(2, b.size());
         b.clear();
-        
+        assertEquals(0, b.size());
+        assertTrue(b.isEmpty());
+
         //same priority, different id
         b.put(new NullConcept("a", 0.1f));
         b.put(new NullConcept("b", 0.1f));
@@ -69,8 +83,9 @@ public class BagOperationsTest {
         
 
         //if (b instanceof GearBag()) return;
-        
-        b.put(new NullConcept("b", 0.4f));
+
+        NullConcept B;
+        b.put(B = new NullConcept("b", 0.4f));
 
         assertEquals(2, b.size());
 
@@ -79,9 +94,9 @@ public class BagOperationsTest {
         assertEquals(0.4f, b.getMaxPriority(),0.001f);
         
         
-        Item tb = b.remove(Atom.get("b"));
-        assertTrue(tb!=null);
+        Item tb = b.remove(B.name());
         assertEquals(1, b.size());
+        assertTrue(tb!=null);
         assertEquals(0.4f, tb.getPriority(), 0.001f);
         
         Item tc = b.pop();
@@ -108,7 +123,7 @@ public class BagOperationsTest {
             assertNull(null, zzz);
 
             assertEquals(0.4f, b.getMaxPriority(),0.001f); //affected, 0.4 highest
-            assertNotNull(b.get(Atom.get("a")));
+            assertNotNull(b.get("a"));
         }
         
     }

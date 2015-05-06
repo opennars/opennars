@@ -3,6 +3,7 @@ package nars.util.data.linkedlist;
 /** from: http://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html */
 public class DDList<E> implements Iterable<E> {
 
+
     static class Sentinel<E> extends DD<E> {
         public Sentinel(int id) { this.owner = id; }
     }
@@ -37,10 +38,27 @@ public class DDList<E> implements Iterable<E> {
     }
     
     protected void _clear() {
+
+        if (size > 0) {
+            DD current = getFirstNode();
+            do {
+                final DD next = current.next;
+                pool.put(detach(current));
+                current = next;
+            } while (size > 0);
+        }
+
         size = 0;
         pre.next = post;
         post.prev = pre;
     }
+
+    public void delete() {
+        clear();
+//        pre.next = null;
+//        post.prev = null;
+    }
+
 
     /** called when this list is changed in any way */
     protected void changed() {
@@ -74,7 +92,9 @@ public class DDList<E> implements Iterable<E> {
     public DD<E> getFirstNode() {
         //if (isEmpty()) return null;
         final DD<E> x = pre.next;
-        if (x instanceof Sentinel) return x.next;
+        if (x instanceof Sentinel) {
+            return x.next;
+        }
         return x;
     }
     public DD<E> getLastNode() {
@@ -116,7 +136,7 @@ public class DDList<E> implements Iterable<E> {
     }
 
     /** unlinks the node from this list; partial removal only used for transferring between levels without pool involvement */
-    public synchronized DD<E> detach(DD<E> i) {
+    public DD<E> detach(DD<E> i) {
         if (size == 0) {
             throw new RuntimeException("How are you going to remove " + i + " from a level with size=0");
         }
@@ -139,8 +159,8 @@ public class DDList<E> implements Iterable<E> {
     }
 
     /** detaches and then returns the node to the pool; a complete removal / deletion */
-    final public synchronized E remove(final DD<E> i) {
-        pool.put( detach(i) );
+    final public E remove(final DD<E> i) {
+        pool.put(detach(i));
         return i.item;
     }
 
