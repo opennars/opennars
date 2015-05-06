@@ -34,7 +34,7 @@ import nars.operator.Operator;
 public class InternalExperience implements Plugin, EventObserver {
         
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
-    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER=0.1f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.1f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
@@ -49,7 +49,10 @@ public class InternalExperience implements Plugin, EventObserver {
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f;
     
     //dont use internal experience for want and believe if this setting is true
-    public static boolean AllowWantBelieve=true;
+    public static boolean AllowWantBelieve=true; 
+    
+    //
+    public static boolean OLD_BELIEVE_WANT_STRATEGY=true; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
     
     public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
@@ -59,18 +62,18 @@ public class InternalExperience implements Plugin, EventObserver {
     }
 
     
-    public double getMinimumCreationBudgetSummary() {
+    public double getMinCreationBudgetSummary() {
         return MINIMUM_BUDGET_SUMMARY_TO_CREATE;
     }
-    public void setMinimumCreationBudgetSummary(double val) {
+    public void setMinCreationBudgetSummary(double val) {
         MINIMUM_BUDGET_SUMMARY_TO_CREATE=(float) val;
     }
     
-    public double getMinimumCreationBudgetSummaryWonder() {
-        return MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER;
+    public double getMinCreationBudgetSummaryWonderEvaluate() {
+        return MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE;
     }
-    public void setMinimumCreationBudgetSummaryWonder(double val) {
-        MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER=(float) val;
+    public void setMinCreationBudgetSummaryWonderEvaluate(double val) {
+        MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=(float) val;
     }
     
     private Memory memory;
@@ -143,10 +146,14 @@ public class InternalExperience implements Plugin, EventObserver {
         if (event==Events.ConceptDirectProcessedTask.class) {
 
 
-            Task task = (Task)a[0];                
+            Task task = (Task)a[0];  
+            
+            if(!OLD_BELIEVE_WANT_STRATEGY && (task.sentence.punctuation==Symbols.JUDGMENT_MARK || task.sentence.punctuation==Symbols.GOAL_MARK)) {
+                return; //we wont allow believe and wonder here in the new strategy
+            }
 
-            if(task.sentence.punctuation == Symbols.QUESTION_MARK) {
-                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER) {
+            if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
+                if(OLD_BELIEVE_WANT_STRATEGY && task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
                     return;
                 }
             }
