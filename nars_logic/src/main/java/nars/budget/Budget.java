@@ -41,7 +41,7 @@ import static nars.nal.UtilityFunctions.*;
  *      some subclasses / adapter classes for statistics,
  * monitoring or event notification on changes
  */
-public class Budget implements Cloneable, BudgetTarget {
+public class Budget implements Cloneable, BudgetTarget, Prioritized {
 
     /** The character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
@@ -152,6 +152,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * Get priority value
      * @return The current priority
      */
+    @Override
     public float getPriority() {
         return priority;
     }
@@ -161,6 +162,7 @@ public class Budget implements Cloneable, BudgetTarget {
      * @param p The new priority
      * @return whether the operation had any effect
      */
+    @Override
     public final boolean setPriority(float p) {
         if(p>1.0)
             p=1.0f;
@@ -231,13 +233,12 @@ public class Budget implements Cloneable, BudgetTarget {
         setPriority( Math.min(1.0f, or(priority, v)));
     }
 
+    @Override
     public boolean addPriority(final float v) {
         return setPriority( v + getPriority() );
     }
 
-    public boolean maxPriority(final float otherPriority) {
-        return setPriority(m(getPriority(), otherPriority)); //max durab
-    }
+
     public boolean maxDurability(final float otherDurability) {
         return setDurability(m(getDurability(), otherDurability)); //max durab
     }
@@ -314,7 +315,8 @@ public class Budget implements Cloneable, BudgetTarget {
      * @param that The other Budget
      * @return whether the merge had any effect
      */
-    public boolean merge(final Budget that) {
+    @Override
+    public boolean merge(final Prioritized that) {
         return BudgetFunctions.merge(this, that);
     }
 
@@ -478,6 +480,7 @@ public class Budget implements Cloneable, BudgetTarget {
     }*/
 
     /** returns the period in time: currentTime - lastForgetTime and sets the lastForgetTime to currentTime */
+    @Override
     public long setLastForgetTime(final long currentTime) {
         long period;
         if (this.lastForgetTime == -1)
@@ -490,6 +493,7 @@ public class Budget implements Cloneable, BudgetTarget {
         return period;
     }
 
+    @Override
     public long getLastForgetTime() {
         return lastForgetTime;
     }
@@ -534,6 +538,7 @@ public class Budget implements Cloneable, BudgetTarget {
 
     /** call this after an item has been used (ex: fired) to distinguish it from being
         new. this allows new items to remain unforgotten until they are first used.  */
+    @Override
     public void setUsed(long now) {
         if (isNew())
             setLastForgetTime(now);
@@ -549,6 +554,7 @@ public class Budget implements Cloneable, BudgetTarget {
         return amount - received;
     }
 
+    @Override
     public boolean mulPriority(float factor) {
         return setPriority(getPriority() * factor);
     }

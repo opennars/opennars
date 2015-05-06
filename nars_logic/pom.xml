@@ -54,122 +54,136 @@
                 </configuration>-->
             </plugin>
 
+            <!--<plugin>-->
+            <!--&lt;!&ndash; https://github.com/chrischristo/capsule-maven-plugin &ndash;&gt;-->
+            <!--<groupId>com.github.chrischristo</groupId>-->
+            <!--<artifactId>capsule-maven-plugin</artifactId>-->
+            <!--<version>0.10.1</version>-->
+            <!--<configuration>-->
+            <!--<appClass>nars.core.NARRun</appClass>-->
+            <!--<manifest>-->
+            <!--<entry>-->
+            <!--<key>Min-Java-Version</key>-->
+            <!--<value>1.8.0</value>-->
+            <!--</entry>-->
+            <!--</manifest>-->
+            <!--&lt;!&ndash;-->
+            <!--<fileSets>-->
+            <!--<fileSet>-->
+            <!--<directory>../nal/</directory>-->
+            <!--<outputDirectory>nal/</outputDirectory>-->
+            <!--<includes>-->
+            <!--<include>*</include>-->
+            <!--</includes>-->
+            <!--</fileSet>-->
+            <!--</fileSets>-->
+            <!--&ndash;&gt;-->
+            <!--</configuration>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<goals>-->
+            <!--<goal>build</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--</plugin>-->
+
+
             <plugin>
-                <!-- https://github.com/chrischristo/capsule-maven-plugin -->
-                <groupId>com.github.chrischristo</groupId>
-                <artifactId>capsule-maven-plugin</artifactId>
-                <version>0.10.1</version>
-                <configuration>
-                    <appClass>nars.core.NARRun</appClass>
-                    <manifest>
-                        <entry>
-                            <key>Min-Java-Version</key>
-                            <value>1.8.0</value>
-                        </entry>
-                    </manifest>
-                    <!--
-                    <fileSets>
-                        <fileSet>
-                            <directory>../nal/</directory>
-                            <outputDirectory>nal/</outputDirectory>
-                            <includes>
-                                <include>*</include>
-                            </includes>
-                        </fileSet>
-                    </fileSets>
-                    -->
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
-                            <goal>build</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>nars.main.NARRun</mainClass>
+                                </transformer>
+                            </transformers>
+                            <!--<minimizeJar>true</minimizeJar>-->
+                            <filters>
+                                <!-- TODO: apache commons math: geometry, etc... -->
+                                <filter>
+                                    <artifact>com.goldmansachs:gs-collections</artifact>
+                                    <excludes>
+                                        <!-- primitive types we dont use but take up lots of space -->
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Byte*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Char*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Short*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Int*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Long*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Float*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Double*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Synchronized*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Unmodifiable*</exclude>
+                                        <exclude>com/gs/collections/impl/map/mutable/primitive/Immutable*</exclude>
+                                        <exclude>com/gs/collections/impl/map/immutable/**</exclude>
+                                        <exclude>com/gs/collections/impl/block/**</exclude>
+                                        <exclude>com/gs/collections/impl/bag/**</exclude>
+                                        <exclude>com/gs/collections/impl/stack/**</exclude>
+                                        <exclude>com/gs/collections/impl/multimap/**</exclude>
+                                        <exclude>com/gs/collections/impl/bimap/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
 
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-shade-plugin</artifactId>-->
-                <!--<version>2.4</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>shade</goal>-->
-                        <!--</goals>-->
-                            <!--<configuration>-->
-                                <!--<transformers>-->
-                                    <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-                                        <!--<mainClass>nars.run.NARRun</mainClass>-->
-                                    <!--</transformer>-->
-                                <!--</transformers>-->
-                                <!--<minimizeJar>true</minimizeJar>-->
-                                <!--<artifactSet>-->
-                                    <!--<excludes>-->
-                                        <!--&lt;!&ndash;-->
-                                        <!--<exclude>classworlds:classworlds</exclude>-->
-                                        <!--<exclude>junit:junit</exclude>-->
-                                        <!--<exclude>jmock:*</exclude>-->
-                                        <!--<exclude>*:xml-apis</exclude>-->
-                                        <!--<exclude>org.apache.maven:lib:tests</exclude>-->
-                                        <!--<exclude>log4j:log4j:jar:</exclude>-->
-                                        <!--&ndash;&gt;-->
-                                    <!--</excludes>-->
-                                <!--</artifactSet>-->
-                            <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
-
-            <!-- Proguard SOMEWHAT WORKING -->
-                    <!--<plugin>-->
-                        <!--<groupId>com.github.wvengen</groupId>-->
-                        <!--<artifactId>proguard-maven-plugin</artifactId>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<phase>package</phase>-->
-                                <!--<goals><goal>proguard</goal></goals>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                        <!--<configuration>-->
-                            <!--<obfuscate>true</obfuscate>-->
-                            <!--&lt;!&ndash;<injar>${project.build.finalName}${project.build.finalName}-capsule-fat.jar</injar>&ndash;&gt;-->
-                            <!--<injar>${project.build.finalName}.jar</injar>-->
-                            <!--<outjar>${project.build.finalName}-small.jar</outjar>-->
-                            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
-                            <!--<proguardInclude>${basedir}/proguard.conf</proguardInclude>-->
-                            <!--<includeDependency>true</includeDependency>-->
-                            <!--<includeDependencyInjar>true</includeDependencyInjar>-->
-                            <!--<libs>-->
-                                <!--<lib>${java.home}/lib/rt.jar</lib>-->
-                                <!--<lib>${java.home}/lib/jsse.jar</lib>-->
-                            <!--</libs>-->
-                        <!--</configuration>-->
-                    <!--</plugin>-->
-
+             <!--Proguard SOMEWHAT WORKING-->
+            <plugin>
+            <groupId>com.github.wvengen</groupId>
+            <artifactId>proguard-maven-plugin</artifactId>
+            <executions>
+            <execution>
+            <phase>package</phase>
+            <goals><goal>proguard</goal></goals>
+            </execution>
+            </executions>
+            <configuration>
+            <obfuscate>true</obfuscate>
+            <!--<injar>${project.build.finalName}${project.build.finalName}-capsule-fat.jar</injar>-->
+            <injar>${project.build.finalName}.jar</injar>
+            <outjar>${project.build.finalName}-small.jar</outjar>
+            <outputDirectory>${project.build.directory}</outputDirectory>
+            <proguardInclude>${basedir}/proguard.conf</proguardInclude>
+            <includeDependency>true</includeDependency>
+            <includeDependencyInjar>true</includeDependencyInjar>
+            <libs>
+            <lib>${java.home}/lib/rt.jar</lib>
+            <lib>${java.home}/lib/jsse.jar</lib>
+            </libs>
+            </configuration>
+            </plugin>
 
 
             <!--<plugin>-->
-                <!--<groupId>net.ju-n.maven.plugins</groupId>-->
-                <!--<artifactId>soot-maven-plugin</artifactId>-->
-                <!--<version>0.1.1</version>-->
-                <!--&lt;!&ndash; http://nicoulaj.github.io/soot-maven-plugin/soot-mojo.html &ndash;&gt;-->
-                <!--<configuration>-->
-                    <!--<debug>true</debug>-->
+            <!--<groupId>net.ju-n.maven.plugins</groupId>-->
+            <!--<artifactId>soot-maven-plugin</artifactId>-->
+            <!--<version>0.1.1</version>-->
+            <!--&lt;!&ndash; http://nicoulaj.github.io/soot-maven-plugin/soot-mojo.html &ndash;&gt;-->
+            <!--<configuration>-->
+            <!--<debug>true</debug>-->
 
-                    <!--<sootClasspath>${java.class.path}:${java.home}/jre/lib:${java.home}/lib:${project.build.outputDirectory}</sootClasspath>-->
-                    <!--<applicationMode>true</applicationMode>-->
-                    <!--<wholeProgram>true</wholeProgram>-->
-                    <!--&lt;!&ndash;<prependClasspath>-->
-                        <!--target/classes-->
-                    <!--</prependClasspath>&ndash;&gt;-->
-                    <!--<mainClass>nars.core.NARRun</mainClass>-->
-                    <!--&lt;!&ndash;<interactiveMode>true</interactiveMode>&ndash;&gt;-->
-                    <!--&lt;!&ndash; put your configurations here &ndash;&gt;-->
-                <!--</configuration>-->
+            <!--<sootClasspath>${java.class.path}:${java.home}/jre/lib:${java.home}/lib:${project.build.outputDirectory}</sootClasspath>-->
+            <!--<applicationMode>true</applicationMode>-->
+            <!--<wholeProgram>true</wholeProgram>-->
+            <!--&lt;!&ndash;<prependClasspath>-->
+            <!--target/classes-->
+            <!--</prependClasspath>&ndash;&gt;-->
+            <!--<mainClass>nars.core.NARRun</mainClass>-->
+            <!--&lt;!&ndash;<interactiveMode>true</interactiveMode>&ndash;&gt;-->
+            <!--&lt;!&ndash; put your configurations here &ndash;&gt;-->
+            <!--</configuration>-->
             <!--</plugin>-->
 
             <!-- mvn org.pitest:pitest-maven:mutationCoverage -->
@@ -224,22 +238,22 @@
 
     </build>
 
-    <reporting>
-        <plugins>
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0</version>
-            </plugin>
-            -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
-            </plugin>
-        </plugins>
-    </reporting>
+    <!--<reporting>-->
+    <!--<plugins>-->
+    <!--&lt;!&ndash;-->
+    <!--<plugin>-->
+    <!--<groupId>org.codehaus.mojo</groupId>-->
+    <!--<artifactId>jdepend-maven-plugin</artifactId>-->
+    <!--<version>2.0</version>-->
+    <!--</plugin>-->
+    <!--&ndash;&gt;-->
+    <!--<plugin>-->
+    <!--<groupId>org.codehaus.mojo</groupId>-->
+    <!--<artifactId>cobertura-maven-plugin</artifactId>-->
+    <!--<version>2.6</version>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</reporting>-->
 
 
     <properties>
@@ -277,8 +291,7 @@
         </dependency>
 
     </dependencies>
-  
-  
-  
+
+
 </project>
 

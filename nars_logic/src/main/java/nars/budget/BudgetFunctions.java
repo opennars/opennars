@@ -265,11 +265,16 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param a The budget adjustValue doing the adjusting
      * @return whether the merge had any effect in changing any of the budget components
      */
-    public final static boolean merge(final Budget b, final Budget a) {
-        return
-            b.maxPriority(a.getPriority()) ||
-            b.maxDurability(a.getDurability()) ||
-            b.maxQuality(a.getQuality());
+    public final static boolean merge(final Budget b, final Prioritized a0) {
+        if (a0 instanceof Budget) {
+            Budget a = (Budget)a0;
+            return
+                    b.maxPriority(a.getPriority()) ||
+                            b.maxDurability(a.getDurability()) ||
+                            b.maxQuality(a.getQuality());
+        }
+        else
+            return b.maxPriority(a0.getPriority());
     }
 
     /** maximum, simpler and faster than Math.max without its additional tests */
