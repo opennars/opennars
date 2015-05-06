@@ -746,6 +746,8 @@ public class RuleTables {
         switch (figure) {
             case 11:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), u)) {
+                    asymSt = (Statement) u[0];
+                    symSt = (Statement) u[1];
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getPredicate();
                     
@@ -760,6 +762,8 @@ public class RuleTables {
                 break;
             case 12:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), u)) {
+                    asymSt = (Statement) u[0];
+                    symSt = (Statement) u[1];
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getSubject();
                     
@@ -772,6 +776,8 @@ public class RuleTables {
                 break;
             case 21:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), u)) {
+                    asymSt = (Statement) u[0];
+                    symSt = (Statement) u[1];
                     t1 = asymSt.getSubject();
                     t2 = symSt.getPredicate();
                     
@@ -784,6 +790,8 @@ public class RuleTables {
                 break;
             case 22:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u)) {
+                    asymSt = (Statement) u[0];
+                    symSt = (Statement) u[1];
                     t1 = asymSt.getSubject();
                     t2 = symSt.getSubject();                    
                     
@@ -843,7 +851,6 @@ public class RuleTables {
         
         Term[] u = new Term[] { s1, s2 };
         if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u)) {
-            
             //recalculate rt1, rt2 from above:
             switch (figure) {
                 case 11: rt1 = s1.getPredicate();   rt2 = s2.getPredicate(); break;
