@@ -33,7 +33,7 @@ import nars.operator.Operator;
  */
 public class InternalExperience implements Plugin, EventObserver {
         
-    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f; //0.92
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.1f;
     
     //internal experience has less durability?
@@ -148,12 +148,15 @@ public class InternalExperience implements Plugin, EventObserver {
 
             Task task = (Task)a[0];  
             
-            if(!OLD_BELIEVE_WANT_STRATEGY && (task.sentence.punctuation==Symbols.JUDGMENT_MARK || task.sentence.punctuation==Symbols.GOAL_MARK)) {
-                return; //we wont allow believe and wonder here in the new strategy
+            //new strategy only for QUESTION and QUEST:
+            if(!OLD_BELIEVE_WANT_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK)) {
+                InternalExperienceFromTaskInternal(memory,task,isFull());
+                return;
             }
 
+            //old strategy involves budget threshold:
             if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
-                if(OLD_BELIEVE_WANT_STRATEGY && task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
                     return;
                 }
             }
@@ -207,9 +210,9 @@ public class InternalExperience implements Plugin, EventObserver {
                 Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 BudgetFunctions.truthToQuality(truth));
         
-        if(!OLD_BELIEVE_WANT_STRATEGY) { //we use the budget of the task, this should be better
-            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
-            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
+        if(!OLD_BELIEVE_WANT_STRATEGY) {
+            newbudget.setPriority(task.getPriority());
+            newbudget.setDurability(task.getDurability());
         }
         
         Task newTask = new Task(j, (BudgetValue) newbudget,
