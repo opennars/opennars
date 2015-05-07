@@ -5,6 +5,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
 import nars.event.FrameReaction;
+import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
@@ -37,7 +38,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
 
-    private float initialPossibleDesireConfidence = 0.85f;
+    private float initialPossibleDesireConfidence = 0.75f;
 
     final float actedConfidence = 0.9f; //similar to Operator.exec
 
@@ -55,6 +56,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     private Operation lastAction;
     double lastReward = 0;
+    private Concept operatorConcept;
 
 
     /**
@@ -65,7 +67,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         if (o == null) {
             //TODO avoid String here
             o = operationCache[i] =
-                    (Operation)nar.term("(^" + operationTerm + "," + i + ")");
+                    (Operation)nar.term(operationTerm + "(" + i + ")");
         }
         return o;
     }
@@ -132,6 +134,13 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             }
         });
 
+
+    }
+
+    public Concept getOperatorConcept() {
+        if ((operatorConcept ==null || getOperatorConcept().isDeleted()))
+            operatorConcept = nar.concept(operator);
+        return operatorConcept;
     }
 
     public void off() {
@@ -156,11 +165,18 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         spontaneous(initialPossibleDesireConfidence);
         setActedBeliefConfidence(actedConfidence);
         setActedGoalConfidence(actedConfidence);
-        brain.setAlpha(0.05f);
+        brain.setAlpha(0.5f);
+    }
+
+    /** fast immediate checks to discount terms which are definitely not representative of a state */
+    public boolean isRowPrefilter(Term s) {
+        //TODO use a standard subject for all state data that can be tested quickly
+        return (s.operator()== NALOperator.INHERITANCE);
     }
 
     @Override
     public boolean isRow(Term s) {
+        if (!isRowPrefilter(s)) return false;
         for (Perception p : perceptions) {
             if (p.isState(s))
                 return true;
@@ -182,6 +198,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     public int getNumActions() {
         return env.numActions();
+    }
+
+    public Concept getActionConcept(int i) {
+        return cols.values.get( getAction(i) );
     }
 
 
@@ -360,25 +380,59 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
      * @param confidence
      * @return
      */
-    public synchronized void learn(final Operation nextAction, final Iterable<Task> state, final double reward) {
+    public void learn(final Operation nextAction, final Iterable<Task> stateTasks, final double reward) {
 
 
         // System.out.println(confidence + " " + Arrays.toString(state));
 
-        for (Task i : state) {
+        double alpha = brain.getAlpha();
+        double gamma = brain.getGamma();
+        double lambda = brain.getLambda();
+
+        double sumDeltaQ = 0;
+        final double GammaLambda = gamma * lambda;
+
+        for (Task i : stateTasks) {
 
             float freq = i.sentence.truth.getFrequency();
             float confidence = i.sentence.truth.getConfidence();
+            float expect = freq * confidence;
+
+            S state = (S)i.sentence.getTerm();
+
+            //brain.qlearn(lastAction, , reward, nextAction, freq * confidence);
 
 
-            brain.qlearn(lastAction, (S)i.sentence.getTerm(), reward, nextAction, freq * confidence);
+            double qLast;
+            if (lastAction!=null)
+                qLast = q(state, lastAction);
+            else
+                qLast = 0;
+
+            if (!Double.isFinite(qLast)) {
+                // the entry does not exist.
+                // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
+                input(i);
+                qLast = 0;
+            }
 
 
-            //act.addToValue(action, confidence);
+            //TODO compare: q(state, nextAction) with q(i.sentence)
+            //double deltaQ = reward + gamma * q(state, nextAction) - qLast;
+            double deltaQ = reward + gamma * q(i.sentence) - qLast;
 
-            //act.put(action, Math.max(act.get(action), confidence));
+            if (lastAction!=null)
+                brain.qUpdate(state, lastAction, Double.NaN, 1, confidence);
 
+            final double alphaDeltaQ = confidence * alpha * deltaQ;
+            sumDeltaQ += alphaDeltaQ;
 
+        }
+
+        for (S i : brain.getStates()) {
+            for (Operation k : brain.getActions()) {
+                brain.qUpdate(i, k, sumDeltaQ, GammaLambda, 0);
+            }
         }
 
 

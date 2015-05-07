@@ -35,7 +35,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     boolean uninitialized = true;
 
 
-    private Map<C, Concept> columnToConcepts = new LinkedHashMap();
 
     public ConceptMatrix(NAR nar) {
         super();
@@ -53,7 +52,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 }
 
             }
-
 
             @Override
             public boolean contains(Concept c) {
@@ -109,7 +107,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     }
 
     public void deleteEntry(V m) {
-        columnToConcepts.remove(getCol(m));
+        cols.exclude(getCol(m));
     }
 
 
@@ -117,9 +115,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
     }
 
-    public Set<Map.Entry<C, Concept>> columns() {
-        return columnToConcepts.entrySet();
-    }
 
     /**
      * get existing entry or attempt to create one. if fails, returns null
@@ -133,19 +128,20 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
         }
 
         v = newEntry(c, row, col);
-        columnToConcepts.put(col, c);
         c.put(this, v);
         return v;
     }
 
-    protected V getEntry(R row, C col) {
+    public V getEntry(R row, C col) {
         E qt = qterm(row, col);
-        if (qt == null) return null;
+        if (qt != null) {
+            Concept c = nar.concept(qt);
+            if (c != null) {
+                return getEntry(c, row, col);
+            }
+        }
 
-        Concept c = nar.concept(qt);
-        if (c == null) return null;
-
-        return getEntry(c, row, col);
+        return null;
     }
 
     abstract public E qterm(R r, C c);

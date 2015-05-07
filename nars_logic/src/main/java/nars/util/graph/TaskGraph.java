@@ -38,7 +38,7 @@ public class TaskGraph  {
             }
 
             @Override
-            public void onConceptAdd(Concept concept) {
+            public void onConceptActive(Concept concept) {
 
             }
 

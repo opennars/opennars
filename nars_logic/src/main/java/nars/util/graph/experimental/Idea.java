@@ -277,7 +277,7 @@ public class Idea implements Iterable<Concept> {
 
         @Override
         public void event(Class event, Object[] args) {
-            if ((event == ConceptNew.class) || (event == Events.ConceptActive.class)) {
+            if (event == Events.ConceptActive.class) {
                 add((Concept)args[0]);
             }
             else if (event == ConceptForget.class) {
@@ -294,7 +294,7 @@ public class Idea implements Iterable<Concept> {
             if (enabled) {
                 clear();
 
-                reg = nar.memory.event.on(this, ConceptNew.class, ConceptForget.class, Events.ConceptActive.class, Events.TaskImmediateProcessed.class);
+                reg = nar.memory.event.on(this, ConceptForget.class, Events.ConceptActive.class, Events.TaskImmediateProcessed.class);
 
                 //add existing
                 for (Concept c : nar.memory.concepts)

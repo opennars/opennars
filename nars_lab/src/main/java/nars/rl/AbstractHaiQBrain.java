@@ -1,7 +1,6 @@
 package nars.rl;
 
 import nars.Memory;
-import nars.nal.term.Term;
 
 import java.util.AbstractList;
 import java.util.List;
@@ -78,7 +77,7 @@ abstract public class AbstractHaiQBrain<S,A> {
         }
 
         @Override
-        public void qAdd(Integer state, Integer action, double dqDivE, double eMult, double eAdd) {
+        public void qUpdate(Integer state, Integer action, double dqDivE, double eMult, double eAdd) {
             final double e = et[state][action];
             if (Double.isFinite(dqDivE))
                 Q[state][action] += dqDivE * e;
@@ -105,7 +104,7 @@ abstract public class AbstractHaiQBrain<S,A> {
     abstract public double eligibility(S state, A action);
 
 
-    abstract public void qAdd(S state, A action, double dqDivE, double eMult, double eAdd);
+    abstract public void qUpdate(S state, A action, double dqDivE, double eMult, double eAdd);
     abstract public double q(S state, A action);
 
 
@@ -121,7 +120,7 @@ abstract public class AbstractHaiQBrain<S,A> {
     abstract public Iterable<S> getStates();
     abstract public Iterable<A> getActions();
 
-    protected void qlearn(A lastAction, final S state, final double reward, A nextAction, double confidence) {
+    @Deprecated protected void qlearn(A lastAction, final S state, final double reward, A nextAction, double confidence) {
 
         /*
         Q-learning
@@ -144,16 +143,16 @@ abstract public class AbstractHaiQBrain<S,A> {
         else
             qLast = 0;
 
-        double DeltaQ = reward + gamma * q(state, nextAction) - qLast;
+        double deltaQ = reward + gamma * q(state, nextAction) - qLast;
 
         if (lastAction!=null)
-            qAdd(state, lastAction, Double.NaN, 1, confidence);
+            qUpdate(state, lastAction, Double.NaN, 1, confidence);
 
-        final double AlphaDeltaQ = /* confidence * */ alpha * DeltaQ;
+        final double AlphaDeltaQ = /* confidence * */ alpha * deltaQ;
         final double GammaLambda = gamma * lambda;
         for (S i : getStates()) {
             for (A k : getActions()) {
-                qAdd(i, k, AlphaDeltaQ, GammaLambda, 0);
+                qUpdate(i, k, AlphaDeltaQ, GammaLambda, 0);
             }
         }
 

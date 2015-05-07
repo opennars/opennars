@@ -39,11 +39,11 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         super(c);
 
 
-        conceptReaction = new NARReaction(nar, Events.ConceptNew.class, Events.ConceptActive.class) {
+        conceptReaction = new NARReaction(nar, Events.ConceptActive.class) {
 
             @Override
             public void event(Class event, Object[] args) {
-                if (event == Events.ConceptNew.class) {
+                if (event == Events.ConceptActive.class) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {

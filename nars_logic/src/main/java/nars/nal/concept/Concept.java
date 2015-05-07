@@ -175,7 +175,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     public String getInstanceString() {
-        return "instance " + this + "#" + System.identityHashCode(this) + "," + getState();
+        return this + "#" + System.identityHashCode(this) + ":" + getState().toString().toLowerCase();
     }
 
 

@@ -36,7 +36,7 @@ public class NARTrace extends MemoryObserver {
     }
 
     
-    public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
+    //public final Map<Concept, List<InferenceEvent>> concept = new HashMap();
     public final TreeMap<Long, List<InferenceEvent>> time = new TreeMap();
         
 
@@ -126,7 +126,7 @@ public class NARTrace extends MemoryObserver {
 
     public void reset() {
         time.clear();
-        concept.clear();
+        //concept.clear();
     }
 
     //TODO use MemoryObserver's event dispatcher
@@ -144,14 +144,14 @@ public class NARTrace extends MemoryObserver {
     }
     
     @Override
-    public void onConceptAdd(Concept concept) {
-        ConceptNew cc = new ConceptNew(concept, t);
-        addEvent(cc);
-
-        List<InferenceEvent> lc = new ArrayList(1);
-        lc.add(cc);
-                
-        this.concept.put(concept, lc);
+    public void onConceptActive(Concept concept) {
+//        ConceptNew cc = new ConceptNew(concept, t);
+//        addEvent(cc);
+//
+//        List<InferenceEvent> lc = new ArrayList(1);
+//        lc.add(cc);
+//
+//        this.concept.put(concept, lc);
     }
 
     

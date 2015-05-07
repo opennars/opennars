@@ -68,7 +68,7 @@ public class DefaultCycle extends SequentialCycle {
      * concept
      **/
     @Override
-    public void cycle() {
+    public synchronized void cycle() {
 
         //inputs
         memory.perceiveNext(memory.param.inputsMaxPerCycle.get());

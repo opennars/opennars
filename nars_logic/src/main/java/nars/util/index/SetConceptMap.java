@@ -33,6 +33,9 @@ abstract public class SetConceptMap<T extends Term> extends MutableConceptMap<T>
     public boolean exclude(Concept c) {
         return values.remove(c.term)!=null;
     }
+    public boolean exclude(Term t) {
+        return values.remove(t)!=null;
+    }
 
 
     public boolean contains(final T t) {

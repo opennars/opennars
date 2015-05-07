@@ -4,10 +4,12 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.follow.Follow1D;
 import nars.Global;
 import nars.NAR;
+import nars.io.TextOutput;
 import nars.model.impl.Default;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by me on 5/7/15.
@@ -17,24 +19,61 @@ public class QLAgentTest {
 
 
     @Test
-    public void testQLAgent() {
+    public void testQLAgents() {
+        testQLAgent(4);
+        testQLAgent(16);
+        testMatrixState(testQLAgent(128));
+    }
+
+    private NAR testMatrixState(NAR n) {
+        //n.memory.concepts.forEach(x -> System.out.println(x));
+
+
+        return n;
+    }
+
+    public NAR testQLAgent(int conceptCapacity) {
 
         Global.DEBUG = true;
 
         RLEnvironment env = new Follow1D();
 
-        int concepts = 16;
-        NAR n = new NAR( new Default(concepts, 1, 1) );
+        NAR n = new NAR( new Default(conceptCapacity, 1, 1) );
 
         QLAgent a = new QLAgent(n, "act", "<good --> be>", env,
-                new RawPerception("s", 0.5f));
+                new RawPerception.BipolarDirectPerception("s", 0.5f));
 
-        n.frame();
-        n.frame();
+        //TODO fluent api to define perceptual hierarchy:
+        //new QLAgent(n).in(env).in(new RawPerception, new SOM, ..)
 
-        System.out.println("Columns: " + a.columns());
+        //allow the concept memory to reach capacity
+        for (int i = 0; i < conceptCapacity / 4; i++)
+            n.frame();
 
-        //n.memory.concepts.forEach(x -> System.out.println(x));
-        assertEquals(concepts, n.memory.concepts.size());
+
+        if (conceptCapacity < 20) {
+            //TODO ideally we want the capacity and max size to be equal, but for now it's 1 less than capacity
+            assertTrue(n.memory.concepts.size() + " concepts for capacity=" + conceptCapacity, Math.abs(conceptCapacity - n.memory.concepts.size()) <= 1);
+        }
+        else {
+
+            TextOutput.out(n);
+
+            for (int i = 0; i < 64; i++)
+                n.frame();
+
+
+            //a.getOperatorConcept().termLinks.printAll(System.out);
+            //a.getActionConcept(0).termLinks.printAll(System.out);
+            a.getActionConcept(0).print(System.out);
+
+            //check that the agent knows all the actions
+            assertEquals(a.cols.toString(), a.cols.size(), env.numActions());
+
+
+            assertTrue(a.rows.toString(), a.rows.size() > 0);
+        }
+
+        return n;
     }
 }

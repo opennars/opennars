@@ -20,6 +20,7 @@
  */
 package nars.io;
 
+import nars.Events;
 import nars.Events.ConceptNew;
 import nars.Events.TaskAdd;
 import nars.Events.TaskRemove;
@@ -137,8 +138,8 @@ public class TraceWriter extends MemoryObserver {
     }
     
     @Override
-    public void onConceptAdd(Concept concept) {        
-        output(ConceptNew.class, concept);
+    public void onConceptActive(Concept concept) {
+        output(Events.ConceptActive.class, concept);
     }    
     
     

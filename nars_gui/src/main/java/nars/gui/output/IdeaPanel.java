@@ -54,7 +54,6 @@ public class IdeaPanel extends VerticalPanel implements Reaction {
     protected void visibility(boolean appearedOrDisappeared) {
         if (appearedOrDisappeared) {
             reg = nar.on(this,
-                    ConceptNew.class,
                     ConceptActive.class,
                     ConceptForget.class,
                     ConceptBeliefAdd.class,

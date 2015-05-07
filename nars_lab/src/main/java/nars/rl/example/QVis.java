@@ -24,34 +24,36 @@ public class QVis extends JPanel implements Runnable {
     final java.util.List<Operation> xactions = new ArrayList();
     private final QLAgent<Term> agent;
 
-    final MatrixImage mi = new MatrixImage(400,400) {
+    public final MatrixImage mi = new MatrixImage(400,400) {
 
 
         @Override
         protected void pixel(final BufferedImage image, final int j, final int i, final double value) {
 
-//            float pri = 0;
-//            float elig = 0;
-//
-//            QEntry v = agent.table.get(xstates.get(j), xactions.get(i));
-//            if (v != null) {
-//                Concept c = v.getConcept();
-//                if (c != null) {
-//                    pri = c.getPriority();
-//                }
-//                elig = (float) v.getE();
-//            }
-//
-//
-//            image.setRGB(j, i,
-//                    Video.colorHSB(
-//                            0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
-//                            Math.min(1.0f, 0.8f + elig*0.2f),
-//                            0.75f + 0.25f * pri
-//                    )
-//            );
-//            //val2col(value, -1, 1, 0.5f + 0.5f * pri));
-//
+            float pri = 0;
+            float elig = 0;
+
+
+
+            QEntry v = agent.getEntry(xstates.get(j), xactions.get(i));
+            if (v != null) {
+                Concept c = v.concept;
+                if (c != null) {
+                    pri = c.getPriority();
+                }
+                elig = (float) v.getE();
+            }
+
+
+            image.setRGB(j, i,
+                    Video.colorHSB(
+                            0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
+                            Math.min(1.0f, 0.8f + elig*0.2f),
+                            0.75f + 0.25f * pri
+                    )
+            );
+            //val2col(value, -1, 1, 0.5f + 0.5f * pri));
+
         }
 
     };

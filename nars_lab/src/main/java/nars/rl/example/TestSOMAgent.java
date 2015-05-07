@@ -159,14 +159,14 @@ public class TestSOMAgent extends JPanel {
 
         d.newWindow();
 
-        Global.DEBUG = Global.DEBUG_BAG = false;
+        Global.DEBUG = Global.DEBUG_BAG = true;
         //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
         int conceptsPerCycle = 10;
         final int cyclesPerFrame = 20;
-        float qLearnedConfidence = 0.2f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -227,7 +227,7 @@ public class TestSOMAgent extends JPanel {
             }
         };
 
-        dd.setTaskLinkBagSize(24);
+        dd.setTaskLinkBagSize(16);
         dd.setInternalExperience(null);
 
 
@@ -238,8 +238,8 @@ public class TestSOMAgent extends JPanel {
         dd.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.3f)
-                //new RawPerception.BipolarDirectPerception("L", 0.5f)
+                //new RawPerception("L", 0.3f)
+                new RawPerception.BipolarDirectPerception("L", 0.5f)
 
                 //new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)

@@ -36,7 +36,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /** pending tasks to execute to prevent CME */
     transient private final List<Task> stateActionImplications = Global.newArrayList();
 
-    final int implicationOrder = TemporalRules.ORDER_FORWARD; //TemporalRules.ORDER_FORWARD;
+    final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
 
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
@@ -96,12 +96,14 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             }
 
             @Override
-            public void qAdd(S state, A action, double dqDivE, double eMult, double eAdd) {
+            public void qUpdate(S state, A action, double dqDivE, double eMult, double eAdd) {
 
                 if (qUpdateConfidence == 0) return;
 
                 QEntry v = getEntry(state, action);
                 if (v == null) return;
+
+                System.out.println(v);
 
                 if (Double.isFinite(dqDivE))
                     v.addDQ(dqDivE);
@@ -162,14 +164,17 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     public double q(final S state, final A action) {
 
         QEntry v = getEntry(state, action);
-        if (v == null) return 0;
+        if (v == null) return Double.NaN;
 
         Concept c = v.concept;
-        if (c == null) return 0;
 
         Sentence s = implicationPunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
 
+        return q(s);
+    }
+
+    public double q(Sentence s) {
         Truth t = s.truth;
         if (t == null) return 0f;
 
@@ -302,7 +307,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     /** fire all actions (ex: to teach them at the beginning) */
     public void spontaneous(float goalConf) {
-        spontaneous(columns(), goalConf);
+        spontaneous(cols, goalConf);
     }
 
     public void spontaneous(float goalConf, Iterable<String> actions) {

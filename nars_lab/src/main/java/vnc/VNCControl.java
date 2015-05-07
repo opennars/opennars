@@ -192,7 +192,7 @@ abstract public class VNCControl extends VNCClient {
         }
 
         @Override
-        protected boolean onConceptNew(Concept c) {
+        protected boolean onConceptActive(Concept c) {
 
             return incoming.add(c);
 

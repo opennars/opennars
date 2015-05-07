@@ -20,7 +20,7 @@ public abstract class MemoryObserver extends NARReaction {
         super(m.event, active,
                 Events.CycleStart.class,
                 Events.CycleEnd.class,
-                Events.ConceptNew.class,
+                //Events.ConceptNew.class,
                 Events.ConceptForget.class,
                 Events.ConceptBeliefAdd.class,
                 Events.ConceptBeliefRemove.class,
@@ -48,8 +48,8 @@ public abstract class MemoryObserver extends NARReaction {
 
     @Override
     public void event(final Class event, final Object[] arguments) {
-        if (event == Events.ConceptNew.class) {
-            onConceptAdd((Concept) arguments[0]);
+        if (event == Events.ConceptActive.class) {
+            onConceptActive((Concept) arguments[0]);
         } else if (event == Events.OUT.class) {
             output(event, arguments[0].toString());
         } else if (event == Events.Restart.class) {
@@ -82,7 +82,7 @@ public abstract class MemoryObserver extends NARReaction {
     /**
      * when a concept is instantiated
      */
-    abstract public void onConceptAdd(Concept concept);
+    abstract public void onConceptActive(Concept concept);
 
     /**
      * called at the beginning of each logic clock cycle

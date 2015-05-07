@@ -155,6 +155,11 @@ abstract public class EventEmitter<E>  {
 
     /** simple single-thread synchronous (in-thread) event emitter.
      * stores lists of reactions as array for fast iteration
+     *
+     * NOTE: event reactions will not be available until cycle() is called (ex: at the beginning of each memory cycle)
+     * this could be surprising if you expect the handler to be immediately available.
+     *
+     * TODO investigate if CopyOnWriteArrayList can eliminate the need for the pending addition/removal queues
      * */
     public static class DefaultEventEmitter<E> extends EventEmitter<E> {
 

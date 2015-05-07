@@ -772,7 +772,7 @@ public class Memory implements Serializable {
     }
 
     /** executes one complete memory cycle (if not disabled) */
-    public synchronized void cycle(boolean newFrame) {
+    public void cycle(final boolean newFrame) {
 
         event.cycle();
 

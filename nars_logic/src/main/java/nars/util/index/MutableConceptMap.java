@@ -28,7 +28,7 @@ abstract public class MutableConceptMap<T extends Term> extends ConceptMap imple
     abstract public boolean exclude(Concept c);
 
     @Override
-    protected boolean onConceptNew(Concept c) {
+    protected boolean onConceptActive(Concept c) {
         return include(c);
     }
 
