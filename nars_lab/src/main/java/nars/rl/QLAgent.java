@@ -5,7 +5,6 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.io.Texts;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
@@ -73,7 +72,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
 
-    public QLAgent(NAR nar, String operationTerm, String rewardTerm, RLEnvironment env, Perception... perceptions) {
+    public QLAgent(NAR nar, String operationTerm, String rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         this(nar, operationTerm, nar.term(rewardTerm), env, perceptions);
     }
 
@@ -83,7 +82,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
      * @param p
 
      */
-    public QLAgent(NAR nar, String operationTerm, Term rewardTerm, RLEnvironment env, Perception... perceptions) {
+    public QLAgent(NAR nar, String operationTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         super(nar);
 
         this.operationTerm = operationTerm;
@@ -329,7 +328,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         learn(nextAction, incoming, r);
 
 
-        qCommit();
+        //qCommit();
 
 
         incoming.clear();
@@ -347,9 +346,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         input(environmentState);
     }
 
+
     @Override
-    public QEntry newEntry(Concept concept) {
-        return new QEntry(concept);
+    public QEntry newEntry(Concept concept, Term state, Operation action) {
+        return new QEntry(concept, this);
     }
 
 

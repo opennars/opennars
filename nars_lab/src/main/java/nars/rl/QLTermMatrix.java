@@ -3,7 +3,6 @@ package nars.rl;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
@@ -19,6 +18,8 @@ import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 
@@ -27,7 +28,7 @@ import java.util.WeakHashMap;
  * S = state
  * A = action
  */
-abstract public class QLTermMatrix<S extends Term, A extends Term> extends ConceptMatrix<S,A,Implication, QEntry> {
+abstract public class QLTermMatrix<S extends Term, A extends Term> extends ConceptMatrix<S,A, Implication, QEntry> {
 
     public AbstractHaiQBrain<S,A> brain;
 
@@ -83,8 +84,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     public QLTermMatrix(NAR nar) {
         super(nar);
 
-        //disable checking for empty action columns; this is an optimization since actions should not be rmeoved from the table
-        setCheckForEmptyColumns(false);
 
         brain = new AbstractHaiQBrain<S, A>() {
 
@@ -102,16 +101,12 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                 if (qUpdateConfidence == 0) return;
 
                 QEntry v = getEntry(state, action);
-                if (v == null) {
-                    v = newEntry(null);
-                    table.put(state, action, v);
-                }
+                if (v == null) return;
 
                 if (Double.isFinite(dqDivE))
                     v.addDQ(dqDivE);
                 if (Double.isFinite(eMult))
                     v.updateE(eMult, eAdd);
-
             }
 
             @Override
@@ -163,15 +158,18 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
 
+
     public double q(final S state, final A action) {
+
         QEntry v = getEntry(state, action);
         if (v == null) return 0;
 
-        Concept c = v.getConcept();
+        Concept c = v.concept;
         if (c == null) return 0;
 
         Sentence s = implicationPunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
+
         Truth t = s.truth;
         if (t == null) return 0f;
 
@@ -242,25 +240,25 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
 
-    protected synchronized void qCommit() {
-        if (qUpdateConfidence == 0) return;
-
-
-        //input all dQ values
-        for (Table.Cell<S, A, QEntry> c : table.cellSet()) {
-            S state = c.getRowKey();
-            A action = c.getColumnKey();
-            Task t = qCommit(state, action, c.getValue());
-            if (t!=null)
-                stateActionImplications.add(t);
-        }
-
-        for (int i = 0; i< stateActionImplications.size(); i++) {
-            Task t = stateActionImplications.get(i);
-            input(t);
-        }
-        stateActionImplications.clear();
-    }
+//    protected synchronized void qCommit() {
+//        if (qUpdateConfidence == 0) return;
+//
+//
+//        //input all dQ values
+//        for (Table.Cell<S, A, QEntry> c : table.cellSet()) {
+//            S state = c.getRowKey();
+//            A action = c.getColumnKey();
+//            Task t = qCommit(state, action, c.getValue());
+//            if (t!=null)
+//                stateActionImplications.add(t);
+//        }
+//
+//        for (int i = 0; i< stateActionImplications.size(); i++) {
+//            Task t = stateActionImplications.get(i);
+//            input(t);
+//        }
+//        stateActionImplications.clear();
+//    }
 
     protected Task qCommit(S state, A action, QEntry c) {
 
@@ -304,7 +302,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     /** fire all actions (ex: to teach them at the beginning) */
     public void spontaneous(float goalConf) {
-        spontaneous(table.columnKeySet(), goalConf);
+        spontaneous(columns(), goalConf);
     }
 
     public void spontaneous(float goalConf, Iterable<String> actions) {
@@ -315,10 +313,18 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             }
         }), goalConf);
     }
+
     /** fire all actions (ex: to teach them at the beginning) */
     public void spontaneous(Iterable<A> actions, float goalConf) {
-        for (Term a : actions) {
+        for (A a : actions) {
             spontaneous(goalConf, a);
+        }
+    }
+
+    /** fire all actions (ex: to teach them at the beginning) */
+    public void spontaneous(Set<Map.Entry<A, Concept>> actions, float goalConf) {
+        for (Map.Entry<A, Concept> a : actions) {
+            spontaneous(goalConf, a.getKey());
         }
     }
 
@@ -341,7 +347,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
     public void acted(Term action, char punctuation, float freq, float conf, float priority, float durability) {
-
         Task t = nar.memory.newTask((Compound)action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).present().get();
         input(t);
     }

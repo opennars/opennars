@@ -10,7 +10,7 @@ import nars.budget.Budget;
 import nars.exec.AbstractExecutive;
 import nars.exec.DesireThresholdExecutive;
 import nars.model.ControlCycle;
-import nars.model.cycle.DefaultCore;
+import nars.model.cycle.DefaultCycle;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
@@ -36,7 +36,6 @@ import nars.op.meta.Reflect;
 import nars.op.software.Javascript;
 import nars.op.software.NumericCertainty;
 import nars.op.software.Scheme;
-import nars.util.data.linkedlist.DDNodePool;
 
 import java.io.File;
 import java.io.IOException;
@@ -406,7 +405,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
     @Override
     public ControlCycle newControlCycle() {
-        return new DefaultCore(newConceptBag(), newSubconceptBag(), newNovelTaskBag());
+        return new DefaultCycle(newConceptBag(), newSubconceptBag(), newNovelTaskBag());
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {

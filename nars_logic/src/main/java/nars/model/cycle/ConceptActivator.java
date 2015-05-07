@@ -58,6 +58,10 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         if (getSubConcepts()!=null) {
             Concept concept = getSubConcepts().take(getKey());
             if (concept!=null) {
+                if (concept.isDeleted())
+                    return null;
+
+                //reactivate
                 return concept.setState(Concept.State.Active);
             }
         }
@@ -78,10 +82,13 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     @Override
     public void overflow(Concept c) {
         if (getMemory().concepts.conceptRemoved(c)) {
-            c.delete();
+            //make sure it's deleted
+            if (c.getState()!= Concept.State.Deleted)
+                c.delete();
         }
         else {
             c.setState(Concept.State.Forgotten);
         }
     }
+
 }

@@ -39,7 +39,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         super(c);
 
 
-        conceptReaction = new NARReaction(nar, Events.ConceptNew.class, Events.ConceptRemember.class) {
+        conceptReaction = new NARReaction(nar, Events.ConceptNew.class, Events.ConceptActive.class) {
 
             @Override
             public void event(Class event, Object[] args) {

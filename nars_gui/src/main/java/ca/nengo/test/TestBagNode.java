@@ -13,7 +13,7 @@ import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
 import nars.model.impl.Default;
-import nars.model.cycle.DefaultCore;
+import nars.model.cycle.DefaultCycle;
 import nars.NAR;
 import nars.io.Output;
 import nars.nal.Item;
@@ -130,7 +130,7 @@ public class TestBagNode extends Nengrow {
         }
 
         public Bag/*<Term,Concept>*/ concepts() {
-            return ((DefaultCore) n.memory.concepts).concepts;
+            return ((DefaultCycle) n.memory.concepts).concepts;
         }
     }
 

@@ -20,7 +20,7 @@ abstract public class ConceptMap extends NARReaction {
     public void reset() { }
 
     public ConceptMap(NAR nar) {
-        super(nar, Events.ConceptNew.class, Events.ConceptRemember.class,
+        super(nar, Events.ConceptNew.class, Events.ConceptActive.class,
                 Events.ConceptForget.class, Events.CycleEnd.class, Events.FrameEnd.class, Events.ResetStart.class);
     }
 
@@ -45,7 +45,7 @@ abstract public class ConceptMap extends NARReaction {
         if (event == Events.ResetStart.class) {
             frame = 0;
             reset();
-        } else if ((event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
+        } else if ((event == Events.ConceptNew.class) || (event == Events.ConceptActive.class)) {
             Concept c = (Concept) args[0];
             if (contains(c))
                 onConceptNew(c);

@@ -16,7 +16,7 @@ import java.util.*;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultCore extends SequentialCycle {
+public class DefaultCycle extends SequentialCycle {
 
     /**
      * New tasks with novel composed terms, for delayed and selective processing
@@ -34,7 +34,7 @@ public class DefaultCore extends SequentialCycle {
 
 
 
-    public DefaultCore(Bag<Term, Concept> concepts, CacheBag<Term,Concept> subcon, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+    public DefaultCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
         super(concepts, subcon);
 
 

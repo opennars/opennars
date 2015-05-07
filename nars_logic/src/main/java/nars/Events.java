@@ -97,8 +97,8 @@ public class Events {
         }        
     }
 
-    /** when remembered a previously forgotten concept from subconcepts */
-    public static class ConceptRemember {    }
+    /** when remembered a previously forgotten concept from subconcepts, and after first intialized */
+    public static class ConceptActive {    }
 
     /** when a concept leaves main memory and is either moved to subconcepts or ConceptDelete */
     public static class ConceptForget { }

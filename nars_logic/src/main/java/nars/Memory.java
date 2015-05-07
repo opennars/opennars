@@ -54,7 +54,6 @@ import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
 import nars.util.meter.ResourceMeter;
 import objenome.util.random.XORShiftRandom;
 
@@ -64,6 +63,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+
+import static nars.nal.concept.Concept.*;
+import static nars.nal.concept.Concept.State.New;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -468,9 +470,17 @@ public class Memory implements Serializable {
             return null;
 
         Concept c = concepts.conceptualize(budget, term, true);
+        if (c == null)
+            return null;
 
-        if (c.getState() != Concept.State.Active)
-            c.setState(Concept.State.Active);
+        switch (c.getState()) {
+            case New:
+                c.setState(State.Active);
+                break;
+            case Forgotten:
+            case Deleted:
+                return null;
+        }
 
         return c;
     }

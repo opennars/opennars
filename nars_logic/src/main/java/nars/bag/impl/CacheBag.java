@@ -53,7 +53,9 @@ public class CacheBag<K, I extends Item<K>> implements Memory.MemoryAware, Remov
     }
     
     public void add(I i) {
+
         data.put(i.name(), i);
+
     }
 
     public long size() {

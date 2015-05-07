@@ -1,20 +1,23 @@
 package nars.rl;
 
-import nars.nal.Task;
 import nars.nal.concept.Concept;
+import nars.nal.nal5.Implication;
+import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
+import nars.util.index.ConceptMatrixEntry;
 
 /**
- * Created by me on 5/2/15.
+ * Represents a 'row' in the q-matrix
  */
-public class QEntry extends ConceptMatrix.EntryValue {
+public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S,A,Implication,QEntry> {
 
-    double dq = 0; //delta-Q, temporary
+    double dq = 0; //delta-Q; current q = q0 + dq, temporary
+    double q0 = 0; //previous Q value, for comparing nar vs. QL influence
+
     double e = 0; //eligibility trace
 
-
-    public QEntry(Concept c) {
-        super(c);
+    public QEntry(Concept c, ConceptMatrix matrix) {
+        super(matrix, c);
     }
 
 
@@ -48,5 +51,12 @@ public class QEntry extends ConceptMatrix.EntryValue {
         dq += dqDivE * e;
     }
 
+
+    public double commit() {
+        double nextQ = q0 + dq;
+
+        dq = 0;
+        return q0 = nextQ;
+    }
 
 }

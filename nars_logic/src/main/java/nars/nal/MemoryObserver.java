@@ -30,7 +30,7 @@ public abstract class MemoryObserver extends NARReaction {
                 Events.ConceptQuestionAdd.class,
                 Events.ConceptQuestionRemove.class,
                 Events.ConceptUnification.class,
-                Events.ConceptRemember.class,
+                Events.ConceptActive.class,
                 Events.PluginsChange.class,
                 Events.TaskAdd.class,
                 Events.TaskRemove.class,

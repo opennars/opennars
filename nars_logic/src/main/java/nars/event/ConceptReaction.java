@@ -19,7 +19,7 @@ abstract public class ConceptReaction extends NARReaction {
     }
 
     public ConceptReaction(Memory m) {
-        super(m.event, true, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class, Events.ConceptRemember.class);
+        super(m.event, true, Events.ConceptNew.class, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class, Events.ConceptActive.class);
 
         this.memory = m;
         memory.taskLater(this::init);
@@ -39,13 +39,17 @@ abstract public class ConceptReaction extends NARReaction {
 
     @Override
     public void event(final Class event, final Object[] args) {
-        if ((event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
+        if (event == Events.ConceptActive.class) {
             Concept c = (Concept)args[0];
             onConceptRemember(c);
         }
         else if (event == Events.ConceptForget.class) {
             Concept c = (Concept)args[0];
             onConceptForget(c);
+        }
+        else if (event == Events.ConceptDelete.class) {
+            Concept c = (Concept)args[0];
+            onConceptDelete(c);
         }
         else if (event == Events.ConceptFired.class) {
             Concept c = ((ConceptProcess)args[0]).getCurrentConcept();
@@ -69,4 +73,10 @@ abstract public class ConceptReaction extends NARReaction {
 
     /** called if a concept is processed during ConceptProcessed */
     abstract public void onConceptProcessed(Concept c);
+
+    /** called before a concept instance dies permanently */
+    public void onConceptDelete(Concept c) {
+
+    }
+
 }

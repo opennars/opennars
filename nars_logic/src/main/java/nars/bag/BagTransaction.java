@@ -47,7 +47,9 @@ public interface BagTransaction<K,V extends Item<K>> extends Budget.Budgetable {
 
     /** called when a bag operation produces an overflow (displaced item) */
     default void overflow(V overflow) {
-
+        //System.err.println(this + " unhandled overflow: " + overflow);
+        //new Exception().printStackTrace();
+        overflow.delete();
     }
 
     /** returns a reference to the budgetvalue; not a clone */

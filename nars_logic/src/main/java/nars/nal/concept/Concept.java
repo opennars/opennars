@@ -82,6 +82,8 @@ abstract public class Concept extends Item<Term> implements Termed {
      */
     public final Bag<TermLinkKey, TermLink> termLinks;
 
+    /** metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated */
+    protected Map<Object,ConceptMeta> meta = null;
 
 
     /**
@@ -173,7 +175,26 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     public String getInstanceString() {
-        return "instance " + this + "(" + System.identityHashCode(this) + ")";
+        return "instance " + this + "#" + System.identityHashCode(this) + "," + getState();
+    }
+
+
+    /** like Map.put for storing data in meta map
+     *  @param value if null will perform a removal
+     * */
+    public ConceptMeta put(Object key, ConceptMeta value) {
+        if (meta == null) meta = Global.newHashMap();
+
+        if (value != null)
+            return meta.put(key, value);
+        else
+            return meta.remove(key);
+    }
+
+    /** like Map.gett for getting data stored in meta map */
+    public <C extends ConceptMeta> C get(Object key) {
+        if (meta == null) return null;
+        return (C) meta.get(key);
     }
 
 
@@ -189,6 +210,10 @@ abstract public class Concept extends Item<Term> implements Termed {
         return deletionTime;
     }
 
+    public boolean isDeleted() {
+        return getState() == Concept.State.Deleted;
+    }
+
     /** returns the same instance, used for fluency */
     public Concept setState(State s) {
 
@@ -198,7 +223,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         State lastState = this.state;
 
         if (lastState == State.Deleted)
-            throw new RuntimeException(getInstanceString() + " can not return leave Deleted state ");
+            throw new RuntimeException(getInstanceString() + " can not exit from Deleted state");
 
         if (this.state == s)
             throw new RuntimeException(this + " already in state " + s);
@@ -222,7 +247,7 @@ abstract public class Concept extends Item<Term> implements Termed {
                 break;
 
             case Active:
-                memory.emit(Events.ConceptRemember.class, this);
+                memory.emit(ConceptActive.class, this);
                 break;
         }
 
@@ -814,7 +839,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      */
     protected boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
 
-        if (!ensureActiveTo("linkTerms")) return false;
+        //if (!ensureActiveTo("linkTerms")) return false;
 
         final float subPriority;
         int recipients = termLinkBuilder.getNonTransforms();
@@ -1081,9 +1106,10 @@ abstract public class Concept extends Item<Term> implements Termed {
 
 
     @Override public void delete() {
-        super.delete();
-
+        //called first to allow listeners to have a final attempt to interact with this concept before it dies
         setState(State.Deleted);
+
+        super.delete();
 
         //dont delete the tasks themselves because they may be referenced from othe concepts.
         questions.clear();
@@ -1091,6 +1117,11 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         goals.clear();
         beliefs.clear();
+
+        if (meta!=null) {
+            meta.clear();
+            meta = null;
+        }
 
         termLinks.delete();
         taskLinks.delete();
@@ -1366,4 +1397,13 @@ abstract public class Concept extends Item<Term> implements Termed {
         out.println();
     }
 
+    /**
+     * Methods to be implemented by Concept meta instances
+     */
+    public static interface ConceptMeta {
+
+        /** called before the state changes to the given nextState */
+        public void onState(State nextState);
+
+    }
 }

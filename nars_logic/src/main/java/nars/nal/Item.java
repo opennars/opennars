@@ -23,6 +23,7 @@ package nars.nal;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Budget.Budgetable;
+import nars.nal.concept.Concept;
 
 import java.util.Comparator;
 
@@ -33,6 +34,8 @@ import java.util.Comparator;
  * It has a key and a budget. Cannot be cloned
  */
 public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
+
+
 
     public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
 

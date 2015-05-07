@@ -1,16 +1,17 @@
 package nars.model.cycle;
 
-import nars.model.ControlCycle;
 import nars.Memory;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
-import nars.nal.concept.Concept;
-import nars.nal.ConceptProcess;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.LevelBag;
-import nars.nal.tlink.TaskLink;
+import nars.bag.impl.experimental.ChainBag;
+import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
+import nars.model.ControlCycle;
+import nars.nal.ConceptProcess;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -124,11 +125,14 @@ abstract public class SequentialCycle implements ControlCycle {
         return concepts.get(term);
     }
 
-    @Override
-    public boolean conceptRemoved(Concept c) {
+    /** @return true = deleted, false = forgotten */
+    @Override public boolean conceptRemoved(Concept c) {
         if (subcon != null) {
             subcon.add(c);
-            return false;
+
+            //it may have been set deleted inside the CacheBag processes's so check for it here
+            return (c.getState()== Concept.State.Deleted);
+
         }
         return true;
     }
@@ -192,9 +196,11 @@ abstract public class SequentialCycle implements ControlCycle {
         //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
         if (concepts instanceof LevelBag)
             ((LevelBag) concepts).forEach(action);
+//        if (concepts instanceof ChainBag)
+//            ((ChainBag) concepts).forEach(action);
 
         //use default iterator
-        //iterator().forEachRemaining(action);
+        iterator().forEachRemaining(action);
     }
 
     public void conceptPriorityHistogram(double[] bins) {

@@ -8,7 +8,7 @@ import nars.bag.Bag;
 import nars.bag.BagTransaction;
 
 /**
-* Created by me on 2/4/15.
+* Applies forgetting to the next sequence of sampled bag items
 */
 public class ForgetNext<K, V extends Item<K>> implements BagTransaction<K,V> {
 

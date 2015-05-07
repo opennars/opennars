@@ -1,13 +1,12 @@
 package nars.util.index;
 
-import com.google.common.collect.HashBasedTable;
-import nars.Global;
 import nars.NAR;
 import nars.event.ConceptReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
-import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,40 +15,18 @@ import java.util.Set;
  * action) -- according to a specified pattern that matches concepts as they become
  * active and removes them when forgotten.
  */
-abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Term, V extends ConceptMatrix.EntryValue> {
+abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Term, V extends ConceptMatrixEntry> {
 
     private final ConceptReaction entries;
-    private boolean checkForEmptyColumns = true;
-    private boolean checkForEmptyRows = true;
 
-    /** base type for cell entries in the matrix. subclass to add additional information per cell */
-    public static class EntryValue {
-
-        private Concept concept; //may be null
-
-        public EntryValue(Concept c) {
-            this.concept = c;
-        }
-
-        public Concept getConcept() {
-            return concept;
-        }
-
-        /** returns true if the nullity changed */
-        public boolean setConcept(Concept concept) {
-            boolean b = false;
-            if (this.concept == null && concept!=null) b = true;
-            if (this.concept != null && concept==null) b = true;
-            this.concept = concept;
-            return b;
-        }
-    }
 
     public final NAR nar;
 
 
-    /** q-value matrix:  q[state][action] */
-    public final HashBasedTable<R,C, V> table = HashBasedTable.create();
+    /**
+     * q-value matrix:  q[state][action]
+     */
+    //public final HashBasedTable<R,C, V> table = HashBasedTable.create();
 
     public final SetConceptMap<C> cols;
     public final SetConceptMap<R> rows;
@@ -58,8 +35,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     boolean uninitialized = true;
 
 
-    protected Set<R> rowsMaybeEmpty = Global.newHashSet(1);
-    protected Set<C> colsMaybeEmpty = Global.newHashSet(1);
+    private Map<C, Concept> columnToConcepts = new LinkedHashMap();
 
     public ConceptMatrix(NAR nar) {
         super();
@@ -76,17 +52,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                     uninitialized = false;
                 }
 
-                if (checkForEmptyRows) {
-                    for (R r : rowsMaybeEmpty)
-                        updateRow(r);
-                    rowsMaybeEmpty.clear();
-                }
-
-                if (checkForEmptyColumns) {
-                    for (C c : colsMaybeEmpty)
-                        updateCol(c);
-                    colsMaybeEmpty.clear();
-                }
             }
 
 
@@ -94,7 +59,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
             public boolean contains(Concept c) {
                 return isCol(c.term);
             }
-
 
 
         };
@@ -106,57 +70,33 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
                 return isRow(c.term);
             }
 
-
-
         };
 
         entries = new ConceptReaction(nar) {
 
 
-
             @Override
             public void onConceptRemember(Concept c) {
                 if (isEntry(c.term)) {
-                    E i = (E)c.term;
+                    E i = (E) c.term;
 
                     R rr = getRow(i);
                     C cc = getCol(i);
 
-                    V v = getEntry(rr, cc);
-                    if (v == null) {
-                        v = newEntry(c);
-                        table.put(rr, cc, v);
-                    }
-                    else {
-                        v.setConcept(c);
-                    }
+                    V v = getEntry(c, rr, cc);
 
-                    if (checkForEmptyRows)
-                        rowsMaybeEmpty.remove(rr);
-
-                    if (checkForEmptyColumns)
-                        colsMaybeEmpty.remove(cc);
-
-                    onEntryAdd(rr, cc, v);
+                    //onEntryAdd(rr, cc, v);
                 }
             }
 
             @Override
             public void onConceptForget(Concept c) {
-                if (isEntry(c.term)) {
-                    E i = (E)c.term;
-                    R rr = getRow(i);
-                    C cc = getCol(i);
+            }
 
-                    V v = getEntry(rr, cc);
-                    if ((v != null) && (v.setConcept(null))) {
-                        if (checkForEmptyRows)
-                            rowsMaybeEmpty.add(rr);
+            @Override
+            public void onConceptDelete(Concept c) {
 
-                        if (checkForEmptyColumns)
-                            colsMaybeEmpty.add(cc);
-                    }
-                }
+
             }
 
             @Override
@@ -168,55 +108,66 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
     }
 
-    protected void updateRow(R r) {
-        if (!hasConcepts(table.row(r).values())) {
-            table.rowMap().remove(r);
-            onRowRemove(r);
-        }
-    }
-    protected void updateCol(C col) {
-        if (!hasConcepts(table.column(col).values())) {
-            table.columnMap().remove(col);
-            onColumnRemove(col);
-        }
+    public void deleteEntry(V m) {
+        columnToConcepts.remove(getCol(m));
     }
 
-    public static boolean hasConcepts(final Collection<? extends EntryValue> values) {
-        for (EntryValue v : values) {
-            if (v.getConcept()!=null) return true;
-        }
-        return false;
-    }
-
-    protected void onRowRemove(R r) {
-
-    }
-    protected void onColumnRemove(C c) {
-
-    }
-
-    protected void onEntryAdd(R r, C c, V v) {
-
-    }
-
-    protected void onEntryRemove(R r, C c) {
-
-    }
 
     protected void init() {
 
     }
 
-    protected V getEntry(R row, C col) {
-        return table.get(row, col);
+    public Set<Map.Entry<C, Concept>> columns() {
+        return columnToConcepts.entrySet();
     }
 
-    abstract public V newEntry(Concept concept);
+    /**
+     * get existing entry or attempt to create one. if fails, returns null
+     *
+     * @return
+     */
+    protected V getEntry(Concept c, R row, C col) {
+        V v = c.get(this);
+        if (v != null) {
+            return v;
+        }
+
+        v = newEntry(c, row, col);
+        columnToConcepts.put(col, c);
+        c.put(this, v);
+        return v;
+    }
+
+    protected V getEntry(R row, C col) {
+        E qt = qterm(row, col);
+        if (qt == null) return null;
+
+        Concept c = nar.concept(qt);
+        if (c == null) return null;
+
+        return getEntry(c, row, col);
+    }
+
+    abstract public E qterm(R r, C c);
+
+
+    //v = new ConceptMatrixEntry<>(c, this);
+    abstract public V newEntry(Concept c, R row, C col);
 
     abstract public R getRow(E entry);
     abstract public C getCol(E entry);
+
+    public C getCol(V v) {
+        return getCol((E) v.concept.term);
+    }
+    public C getCol(Concept c) {
+        return getCol((E)c.term);
+    }
+
     abstract public boolean isRow(Term s);
+
     abstract public boolean isCol(Term a);
+
     abstract public boolean isEntry(Term c);
 
     public void off() {
@@ -225,11 +176,4 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
         entries.off();
     }
 
-    public void setCheckForEmptyColumns(boolean checkForEmptyColumns) {
-        this.checkForEmptyColumns = checkForEmptyColumns;
-    }
-
-    public void setCheckForEmptyRows(boolean checkForEmptyRows) {
-        this.checkForEmptyRows = checkForEmptyRows;
-    }
 }
