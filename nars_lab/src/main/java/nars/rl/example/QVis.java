@@ -4,6 +4,7 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.collect.Iterables;
 import jurls.core.utils.MatrixImage;
+import nars.Symbols;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
@@ -28,7 +29,7 @@ public class QVis extends JPanel implements Runnable {
 
 
         @Override
-        protected void pixel(final BufferedImage image, final int j, final int i, final double value) {
+        protected void pixel(final BufferedImage image, final int j, final int i, double value) {
 
             float pri = 0;
             float elig = 0;
@@ -42,6 +43,8 @@ public class QVis extends JPanel implements Runnable {
                     pri = c.getPriority();
                 }
                 elig = (float) v.getE();
+                value = v.getQNar(Symbols.JUDGMENT);
+                System.out.println(v.concept + " " + value);
             }
 
 
@@ -64,7 +67,8 @@ public class QVis extends JPanel implements Runnable {
 
         @Override
         public double getValue(final int y, final int x) {
-            return agent.q(xstates.get(x), xactions.get(y));
+            return 0;
+            //return agent.qNAL(xstates.get(x), xactions.get(y));
         }
 
     };

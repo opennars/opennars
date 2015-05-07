@@ -3,10 +3,14 @@ package nars.rl.example;
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
-import nars.*;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
+import nars.NARSeed;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.gui.NARSwing;
+import nars.model.impl.Default;
 import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
@@ -14,7 +18,6 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.model.impl.Default;
 import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
@@ -164,9 +167,9 @@ public class TestSOMAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 10;
+        int conceptsPerCycle = 40;
         final int cyclesPerFrame = 20;
-        float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.75f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -227,21 +230,21 @@ public class TestSOMAgent extends JPanel {
             }
         };
 
-        dd.setTaskLinkBagSize(16);
+        dd.setTaskLinkBagSize(32);
         dd.setInternalExperience(null);
 
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
         dd.shortTermMemoryHistory.set(3);
-        dd.decisionThreshold.set(0.51);
+        dd.decisionThreshold.set(1.0);
         dd.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 //new RawPerception("L", 0.3f)
-                new RawPerception.BipolarDirectPerception("L", 0.5f)
+                new RawPerception("L", 0.6f),
 
-                //new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
+                new AEPerception("A", 0.5f, 4).setLearningRate(0.104).setSigmoid(true)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {

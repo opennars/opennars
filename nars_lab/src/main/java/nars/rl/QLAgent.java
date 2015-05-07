@@ -405,7 +405,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
             double qLast;
             if (lastAction!=null)
-                qLast = q(state, lastAction);
+                qLast = qNAL(state, lastAction);
             else
                 qLast = 0;
 
@@ -419,7 +419,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
             //TODO compare: q(state, nextAction) with q(i.sentence)
             //double deltaQ = reward + gamma * q(state, nextAction) - qLast;
-            double deltaQ = reward + gamma * q(i.sentence) - qLast;
+            double deltaQ = reward + gamma * QEntry.getQNar(i.sentence) - qLast;
 
             if (lastAction!=null)
                 brain.qUpdate(state, lastAction, Double.NaN, 1, confidence);

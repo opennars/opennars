@@ -36,16 +36,16 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /** pending tasks to execute to prevent CME */
     transient private final List<Task> stateActionImplications = Global.newArrayList();
 
-    final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
+    final int implicationOrder = TemporalRules.ORDER_CONCURRENT; //TemporalRules.ORDER_FORWARD;
 
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char implicationPunctuation = Symbols.JUDGMENT;
+    char implicationPunctuation = Symbols.GOAL;
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
-    float sensedStatePrioritySame = 0.25f; //scales priority by this amount
+    float sensedStatePrioritySame = 0.75f; //scales priority by this amount
 
     /**
      * min threshold of q-update necessary to cause an effect
@@ -103,8 +103,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                 QEntry v = getEntry(state, action);
                 if (v == null) return;
 
-                System.out.println(v);
-
                 if (Double.isFinite(dqDivE))
                     v.addDQ(dqDivE);
                 if (Double.isFinite(eMult))
@@ -113,7 +111,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
             @Override
             public double q(S state, A action) {
-                return QLTermMatrix.this.q(state,action);
+                return QLTermMatrix.this.qNAL(state, action);
             }
 
 //            @Deprecated @Override
@@ -161,27 +159,12 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
 
-    public double q(final S state, final A action) {
-
+    public double qNAL(final S state, final A action) {
         QEntry v = getEntry(state, action);
         if (v == null) return Double.NaN;
-
-        Concept c = v.concept;
-
-        Sentence s = implicationPunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
-        if (s == null) return 0f;
-
-        return q(s);
+        return v.getQNar(implicationPunctuation);
     }
 
-    public double q(Sentence s) {
-        Truth t = s.truth;
-        if (t == null) return 0f;
-
-        //TODO try expectation
-
-        return ((t.getFrequency() - 0.5f) * 2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
-    }
 
 
 
@@ -270,7 +253,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         double dq = c.clearDQ(updateThresh);
         if (dq == 0) return null;
 
-        double q = q(state, action);
+        double q = qNAL(state, action);
         double nq = q + dq;
         if (nq > 1d) nq = 1d;
         if (nq < -1d) nq = -1d;

@@ -78,7 +78,8 @@ public class RawPerception implements Perception {
     }
 
     public String getStateTerm(int s) {
-        return getStateTermRadix(s, 2);
+        //return getStateTermRadix(s, 2);
+        return getStateTermOrdinal(s);
     }
 
     public String getStateTermRadix(int t, int radix) {

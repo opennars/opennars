@@ -1,5 +1,8 @@
 package nars.rl;
 
+import nars.Symbols;
+import nars.nal.Sentence;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.term.Term;
@@ -59,4 +62,38 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         return q0 = nextQ;
     }
 
+    /** q according to the concept's best belief / goal & its truth/desire */
+    public double getQNar(char implicationPunctuation) {
+
+
+        Sentence s = implicationPunctuation == Symbols.GOAL ? concept.getStrongestGoal(true, true) : concept.getStrongestBelief();
+        if (s == null) return 0f;
+
+        return getQNar(s);
+    }
+
+    /** gets the Q-value scalar from the best belief or goal of a state=/>action concept */
+    public static double getQNar(Sentence s) {
+
+        Truth t = s.truth;
+        if (t == null) return 0f;
+
+        //TODO try expectation
+
+        return ((t.getFrequency() - 0.5f) * 2.0f); // (t.getFrequency() - 0.5f) * 2f * t.getConfidence();
+    }
+
+    /** current delta */
+    public double getDq() {
+        return dq;
+    }
+
+    /** previous q-value */
+    public double getQ0() {
+        return q0;
+    }
+
+    public double getQ() {
+        return q0 + dq;
+    }
 }
