@@ -272,11 +272,11 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
         return forgetNext.current;
     }
 
-    public double[] getPriorityDistribution(int bins) {
-        return getPriorityDistribution(new double[bins]);
+    public double[] getPriorityHistogram(int bins) {
+        return getPriorityHistogram(new double[bins]);
     }
 
-    public double[] getPriorityDistribution(double[] x) {
+    public double[] getPriorityHistogram(double[] x) {
         int bins = x.length;
         double total = 0;
         for (V e : values()) {

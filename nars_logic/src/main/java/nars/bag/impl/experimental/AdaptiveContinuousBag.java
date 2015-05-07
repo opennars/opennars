@@ -69,7 +69,7 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends CurveBag<K, I> 
             
             if (stabilize) {
                 if (cycle % distributeCycles == 0) {
-                    getPriorityDistribution(distribution);                
+                    getPriorityHistogram(distribution);
                 }                
             }
 

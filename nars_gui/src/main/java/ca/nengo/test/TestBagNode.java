@@ -171,7 +171,7 @@ public class TestBagNode extends Nengrow {
 
         public double[] getHistogram() {
             if (bag!=null)
-                return bag.getPriorityDistribution(6); //TODO re-use pre-allocated array
+                return bag.getPriorityHistogram(6); //TODO re-use pre-allocated array
             return null;
         }
 

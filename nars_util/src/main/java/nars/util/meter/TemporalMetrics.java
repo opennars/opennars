@@ -19,25 +19,6 @@ public class TemporalMetrics<O> extends Metrics<Double,O> {
         super(historySize);
     }
 
-    /** adds all meters which exist as fields of a given object (via reflection) */
-    public void addMeters(Object obj) {
-        Class c = obj.getClass();
-        Class meter = Meter.class;
-        for (Field f : c.getFields()) {
-            
-//System.out.println("field: " + f.getType() + " " + f.isAccessible() + " " + Meter.class.isAssignableFrom( f.getType() ));
-            
-            if ( meter.isAssignableFrom( f.getType() ) ) {
-                Meter m = null;
-                try {
-                    m = (Meter)f.get(obj);
-                } catch (IllegalAccessException e) {
-                    //TODO ignore or handle errors?
-                }
-                addMeter(m);
-            }
-        }
-    }
 
     public List<SignalData> getSignalDatas() {
         List<SignalData> l = new ArrayList();

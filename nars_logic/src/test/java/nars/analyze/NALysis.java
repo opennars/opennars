@@ -6,16 +6,17 @@ import nars.NARSeed;
 import nars.io.LibraryInput;
 import nars.io.TextOutput;
 import nars.io.TraceWriter;
-import nars.testing.condition.OutputCondition;
-import nars.testing.TestNAR;
-import nars.nal.AbstractNALTest;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
+import nars.nal.AbstractNALTest;
+import nars.testing.TestNAR;
+import nars.testing.condition.OutputCondition;
 import org.junit.Ignore;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static nars.io.LibraryInput.getPaths;
 
@@ -147,6 +148,10 @@ public class NALysis extends AbstractNALTest {
 
 
     public synchronized static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, NARSeed... builds) {
+        return runDir(dirPath, maxCycles, seed, null, builds);
+    }
+
+    public synchronized static List<TestNAR> runDir(String dirPath, int maxCycles, long seed, Consumer<TestNAR> eachNewNAR, NARSeed... builds) {
         Collection<String> paths = getPaths(dirPath);
 
         List<TestNAR> nars = new ArrayList(paths.size() * builds.length);
@@ -155,6 +160,8 @@ public class NALysis extends AbstractNALTest {
             if (p.contains("README")) continue;
             for (NARSeed b : builds) {
                 TestNAR n = analyze(b, p, maxCycles, seed);
+                if (eachNewNAR!=null)
+                    eachNewNAR.accept(n);
                 nars.add(n);
                 n.run();
             }

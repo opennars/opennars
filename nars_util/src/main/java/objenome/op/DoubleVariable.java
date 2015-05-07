@@ -26,4 +26,7 @@ public class DoubleVariable extends Variable<Double> {
         return this.value;
     }
 
+    public float getFloat() {
+        return (float)get();
+    }
 }

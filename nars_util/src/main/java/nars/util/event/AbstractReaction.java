@@ -30,6 +30,10 @@ abstract public class AbstractReaction implements Reaction {
 
     }
 
+    public void on() {
+        setActive(true);
+    }
+
     public void off() { setActive(false); }
 
     protected void emit(Class channel, Object... signal) {
@@ -39,4 +43,5 @@ abstract public class AbstractReaction implements Reaction {
     public boolean isActive() {
         return active!=null;
     }
+
 }

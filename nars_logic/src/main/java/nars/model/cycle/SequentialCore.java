@@ -47,19 +47,20 @@ abstract public class SequentialCore implements ControlCycle {
         return concepts.mass();
     }
 
-    /** for removing a specific concept (if it's not putBack) */
+    /**
+     * for removing a specific concept (if it's not putBack)
+     */
     /*@Deprecated public Concept takeOut(Term t) {
         return concepts.remove(t);
     }*/
-
     @Override
     public void init(Memory m) {
         this.memory = m;
         if (concepts instanceof CoreAware)
-            ((CoreAware)concepts).setCore(this);
+            ((CoreAware) concepts).setCore(this);
         if (concepts instanceof Memory.MemoryAware)
-            ((Memory.MemoryAware)concepts).setMemory(m);
-        if (subcon!=null)
+            ((Memory.MemoryAware) concepts).setMemory(m);
+        if (subcon != null)
             subcon.setMemory(m);
 
 
@@ -73,6 +74,7 @@ abstract public class SequentialCore implements ControlCycle {
             super(concept, taskLink);
             this.bag = bag;
         }
+
         @Override
         public void beforeFinish() {
         }
@@ -90,7 +92,7 @@ abstract public class SequentialCore implements ControlCycle {
     protected Concept nextConceptToProcess() {
         Concept currentConcept = concepts.forgetNext(memory.param.conceptForgetDurations, memory);
 
-        if (currentConcept==null)
+        if (currentConcept == null)
             return null;
 
         if (currentConcept.getPriority() < memory.param.conceptFireThreshold.get()) {
@@ -109,7 +111,7 @@ abstract public class SequentialCore implements ControlCycle {
         else
             concepts.clear();
 
-        if (subcon!=null)
+        if (subcon != null)
             subcon.clear();
     }
 
@@ -127,10 +129,9 @@ abstract public class SequentialCore implements ControlCycle {
     public void conceptRemoved(Concept c) {
         memory.emit(Events.ConceptForget.class, c);
 
-        if (subcon!=null) {
+        if (subcon != null) {
             subcon.add(c);
-        }
-        else {
+        } else {
             c.delete();
         }
     }
@@ -163,7 +164,9 @@ abstract public class SequentialCore implements ControlCycle {
     }
 
 
-    @Deprecated @Override public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
+    @Deprecated
+    @Override
+    public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
         concepts.remove(c.name());
         BudgetFunctions.activate(c, b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
@@ -195,10 +198,14 @@ abstract public class SequentialCore implements ControlCycle {
     public void forEach(Consumer<? super Concept> action) {
         //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
         if (concepts instanceof LevelBag)
-            ((LevelBag)concepts).forEach(action);
+            ((LevelBag) concepts).forEach(action);
 
         //use default iterator
         //iterator().forEachRemaining(action);
     }
 
+    public void conceptPriorityHistogram(double[] bins) {
+        if (bins!=null)
+            concepts.getPriorityHistogram(bins);
+    }
 }

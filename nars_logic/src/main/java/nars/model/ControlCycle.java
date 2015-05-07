@@ -22,6 +22,10 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     public double conceptMass();
 
+    default public void conceptPriorityHistogram(double[] bins) {
+
+    }
+
 
     public interface CoreAware {
         public void setCore(ControlCycle a);

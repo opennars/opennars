@@ -13,6 +13,7 @@ import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
 
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -114,6 +115,27 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         s.setMin(min);
         s.setMax(max);
     }
+
+    /** adds all meters which exist as fields of a given object (via reflection) */
+    public void addMeters(Object obj) {
+        Class c = obj.getClass();
+        Class meter = Meter.class;
+        for (Field f : c.getFields()) {
+
+//System.out.println("field: " + f.getType() + " " + f.isAccessible() + " " + Meter.class.isAssignableFrom( f.getType() ));
+
+            if ( meter.isAssignableFrom( f.getType() ) ) {
+                Meter m = null;
+                try {
+                    m = (Meter)f.get(obj);
+                } catch (IllegalAccessException e) {
+                    //TODO ignore or handle errors?
+                }
+                addMeter(m);
+            }
+        }
+    }
+
 
     public SignalData newSignalData(String n) {
         Signal s = getSignal(n);

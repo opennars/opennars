@@ -4,10 +4,11 @@ import nars.Global;
 import nars.NARSeed;
 import nars.analyze.NALysis;
 import nars.io.LibraryInput;
-import nars.testing.TestNAR;
 import nars.nal.AbstractNALTest;
+import nars.testing.TestNAR;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by me on 4/24/15.
@@ -18,6 +19,10 @@ public class ExampleScores {
     public final double totalCost;
 
     public ExampleScores(NARSeed p, int cycleLimit) {
+        this(p, cycleLimit, null, LibraryInput.directories);
+    }
+
+    public ExampleScores(NARSeed p, int cycleLimit, Consumer<TestNAR> eachNewNAR, String... directories) {
         super();
 
         Global.DEBUG = false;
@@ -26,8 +31,8 @@ public class ExampleScores {
 
         AbstractNALTest.reset();
 
-        for (String dir : LibraryInput.directories) {
-            List<TestNAR> x = NALysis.runDir(dir, cycleLimit, 0, p);
+        for (String dir : directories) {
+            List<TestNAR> x = NALysis.runDir(dir, cycleLimit, 0, eachNewNAR, p);
         }
 
         //AbstractNALTest.results.printCSV(System.out);

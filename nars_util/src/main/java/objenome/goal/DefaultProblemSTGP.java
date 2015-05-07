@@ -26,7 +26,7 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
     public DefaultProblemSTGP(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
         super();
 
-        double elitismRate = 0.05;
+        double elitismRate = 0.1;
 
         the(Population.SIZE, populationSize);
 
@@ -99,7 +99,7 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
     abstract protected FitnessFunction initFitness();
     abstract protected Iterable<Variable> initVariables();
 
-    public static Variable doubleVariable(String n) {
+    public static DoubleVariable doubleVariable(String n) {
         return new DoubleVariable(n);
     }
 
