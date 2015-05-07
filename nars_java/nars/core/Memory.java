@@ -372,7 +372,8 @@ public class Memory implements Serializable {
         
         concepts.reset();
         novelTasks.clear();
-        newTasks.clear();     
+        newTasks.clear();    
+        stm.clear();
         
         timing = param.getTiming();      
         cycle = 0;
