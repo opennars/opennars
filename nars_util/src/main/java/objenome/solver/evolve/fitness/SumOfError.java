@@ -153,7 +153,9 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
 
         
         int i = 0;
-        Double errorSum = 0.0;
+        double errorSum = 0.0;
+
+        final Variable[] inputVariables = this.inputVariables;
         for (Observation<I[], O> o : obs) {
             I[] input = o.input;
             // Update the variable values
@@ -169,7 +171,8 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
                     double d = (Double) result;
 
                     if (!Double.isNaN(d)) {
-                        double error = Math.abs(d - ((Double)o.output)); 
+                        double error = (d - ((Double)o.output));
+                        if (error < 0) error = -error; //abs
                         errorSum += error * o.weight;
                     } else {
                         errorSum = nanFitnessScore();
@@ -182,6 +185,8 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
                 throw new RuntimeException("Unimplemented error evaluation for non-numeric values");
             }
         }
+
+        onEvaluate(program, errorSum);
 
         return new DoubleFitness.Minimise(errorSum);
     }
@@ -220,6 +225,19 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
     }
 
 
+    double minError = Double.MAX_VALUE;
+    STGPIndividual best = null;
 
+    protected void onEvaluate(STGPIndividual i, double error) {
+        if (minError > error) {
+            minError = error;
+            best = i;
+            onNextBest(i, error);
+        }
+    }
+
+    protected void onNextBest(STGPIndividual i, double error) {
+
+    }
 
 }

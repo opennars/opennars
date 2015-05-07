@@ -108,7 +108,7 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
         return fittest;
     }
 
-    public Individual[] elites(float percent) {
+    public Individual[] elites(double percent) {
         return elites((int)(percent * size()));
     }
     
@@ -116,7 +116,7 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
         individuals.clear();
     }
     
-   public Population<I> cullThis(float percent) {
+   public Population<I> cullThis(double percent) {
         return cullThis((int)(percent * size()));
     }    
     
@@ -210,4 +210,6 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
             throw new InternalError();
         }
     }
+
+
 }

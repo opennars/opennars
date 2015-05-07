@@ -1,4 +1,4 @@
-package nars.obj.evolve;
+package objenome.evolve;
 
 import com.google.common.collect.Lists;
 
@@ -15,16 +15,26 @@ public class STGPFunctionApproximationTest extends TestCase {
 
 	@Test public void testRegression() {            
             
-            int individuals = 50;
+            int individuals = 100;
+            double cullRate = 0.95;
             
-            STGPFunctionApproximation e = new STGPFunctionApproximation(individuals, 6, true, true, true, true);
+            STGPFunctionApproximation e = new STGPFunctionApproximation(individuals, 5, true, true, false, true) {
+                @Override
+                public Population<STGPIndividual> run() {
+                    Population<STGPIndividual> p = super.run();
+
+                    System.out.println(getBestError() + " = " + getBest());
+
+                    return p;
+                }
+            };
             
             //setup function
             int j =0;
             for (double x = 0; x < 4.0; x+=0.1) {
                 e.samples.add(new Observation<Double[], Double>( 
                         new Double[] { x },
-                        (j ^ (j+1000)) * ( Math.sin(x))
+                        /*(j ^ (j+10)) * */ ( Math.sin(x) * Math.tan(x * 0.5))
                 ));
                 j++;
             }
@@ -43,25 +53,26 @@ public class STGPFunctionApproximationTest extends TestCase {
             System.out.println(p.size());            
             System.out.println(p);            
             System.out.println(best.evaluate());
-                        
-            p.cullThis(0.25f);
-            
-            //System.out.println(p.size());
-            
-            assertTrue(p.size() < (individuals * 0.8));
+
+
+            int sizeBefore = p.size();
+            p.cullThis(cullRate);
+            int sizeAfter = p.size();
+
+            assertTrue(sizeAfter < sizeBefore);
             
             p = e.run();
             
             assertEquals(individuals, p.size());
-            
-            for (int i = 0; i < 3; i++) {
-                p.cullThis(0.8f);
+
+            int loops = 150;
+            for (int i = 0; i < loops; i++) {
+                p.cullThis(cullRate);
                 p = e.run();
             }
             
             List<Individual> nextBest = Lists.newArrayList(p.elites(0.5f));
             
-            System.out.println(firstBest);
             System.out.println(nextBest);
             
             //show some evolution in change of elites

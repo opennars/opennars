@@ -1,4 +1,4 @@
-package nars.obj.evolve;
+package objenome.evolve;
 
 import objenome.solver.evolve.STGPIndividual;
 import objenome.goal.ProblemSTGP;

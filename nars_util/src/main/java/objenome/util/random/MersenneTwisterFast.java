@@ -989,8 +989,8 @@ public class MersenneTwisterFast implements Serializable, Cloneable, RandomSeque
      */
     @Override
     public final int nextInt(final int n) {
-        if (n <= 0) {
-            throw new IllegalArgumentException("n must be positive");
+        if (n < 0) {
+            throw new IllegalArgumentException("n must be positive or zero");
         } else if (n == 1) {
             // Will always be the value 0.
             return 0;

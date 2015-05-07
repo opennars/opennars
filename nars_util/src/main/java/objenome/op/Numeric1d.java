@@ -10,7 +10,7 @@ import objenome.util.TypeUtil;
 /**
  * Returns Double, specifically
  */
-abstract public class Numeric1d<X extends Node,Y extends Number> extends Numeric1<X,Y> {
+abstract public class Numeric1d<X extends Node,Y extends Number> extends Numeric1<X> {
 
     public Numeric1d() {
         super();
@@ -42,4 +42,14 @@ abstract public class Numeric1d<X extends Node,Y extends Number> extends Numeric
     public double value() {
         return (double) evaluate();
     }
+
+    @Override
+    public Node normalize() {
+
+        double a = getChildConstantValue(0);
+        if (Double.isFinite(a)) return new Literal(value(a));
+
+        return this;
+    }
+
 }

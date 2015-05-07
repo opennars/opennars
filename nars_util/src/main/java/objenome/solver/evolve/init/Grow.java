@@ -270,6 +270,11 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
     private Node createTree(Class<?> requiredType, int currentDepth) {
         // Choose a node with correct data-type and obtainable arg types
         List<Node> validNodes = listValidNodes(maxDepth - currentDepth, requiredType);
+
+        if (validNodes.isEmpty()) {
+            throw new RuntimeException("no valid nodes for " + requiredType);
+        }
+
         int randomIndex = random.nextInt(validNodes.size());
         Node root = validNodes.get(randomIndex).newInstance();
         int arity = root.getArity();

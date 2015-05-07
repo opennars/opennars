@@ -5,18 +5,19 @@
  */
 package objenome.op;
 
-import java.util.function.Function;
-import objenome.op.Node;
+import objenome.op.math.ArithmeticNode;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 import org.apache.commons.math3.analysis.UnivariateFunction;
+
+import java.util.function.Function;
 
 /**
  * 1-input numeric function.
  * Takes all numeric inputs
  * Produces numeric output of the same type as input
  */
-abstract public class Numeric1<X extends Node, Y extends Number> extends Node<X,Number> implements UnivariateFunction, Function<Double,Double> {
+abstract public class Numeric1<X extends Node> extends ArithmeticNode<X,Number> implements UnivariateFunction, Function<Double,Number> {
     
     protected Numeric1() {
         super(null);
@@ -61,7 +62,7 @@ abstract public class Numeric1<X extends Node, Y extends Number> extends Node<X,
         } else if (c instanceof Double) {
             return result;
         } else {
-            return null;
+            return Double.NaN;
         }
     }
     

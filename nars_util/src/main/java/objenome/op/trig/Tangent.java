@@ -22,6 +22,7 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
+import objenome.op.Numeric1;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -30,64 +31,26 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Tangent extends Node {
+public class Tangent extends Numeric1<Node> {
 
     public static final String IDENTIFIER = "TAN";
 
-    /**
-     * Constructs an TangentFunction with one <code>null</code> child.
-     */
-    public Tangent() {
-        this(null);
-    }
-
-    /**
-     * Constructs a TangentFunction with one numerical child node.
-     *
-     * @param child the child node.
-     */
     public Tangent(Node child) {
         super(child);
     }
 
-    /**
-     * Evaluates this function. The child node is evaluated, the result of which
-     * must be a numeric type (one of Double, Float, Long, Integer). The tangent
-     * of this value becomes the result of this method as a double value.
-     *
-     * @return tangent of the value returned by the child
-     */
-    @Override
-    public Double evaluate() {
-        Object c = getChild(0).evaluate();
-
-        return Math.tan(NumericUtils.asDouble(c));
+    public Tangent() {
+        this(null);
     }
 
-    /**
-     * Returns the identifier of this function which is TAN
-     *
-     * @return this node's identifier
-     */
+    @Override
+    public double value(double x) {
+        return Math.tan(x);
+    }
+
     @Override
     public String getIdentifier() {
         return IDENTIFIER;
     }
 
-    /**
-     * Returns this function node's return type for the given child input types.
-     * If there is one input type of a numeric type then the return type will be
-     * Double. In all other cases this method will return <code>null</code> to
-     * indicate that the inputs are invalid.
-     *
-     * @return the Double class or null if the input type is invalid.
-     */
-    @Override
-    public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0])) {
-            return Double.class;
-        } else {
-            return null;
-        }
-    }
 }

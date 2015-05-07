@@ -21,6 +21,7 @@
  */
 package objenome.op.math;
 
+import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
@@ -44,7 +45,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class DivisionProtected extends Node {
+public class DivisionProtected extends ArithmeticNode {
 
     public static final String IDENTIFIER = "DIV";
 
@@ -190,5 +191,24 @@ public class DivisionProtected extends Node {
      */
     public Double getProtectionValue() {
         return protectionValue;
+    }
+
+
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+        Node b = getChild(1);
+        if (a.equals(b)) return one;
+
+        double an = getChildConstantValue(0);
+        double bn = getChildConstantValue(1);
+
+        if (bn == 1) return a;
+        //if (bn == 0) return new Negate
+
+        if (Double.isFinite(an) && Double.isFinite(bn))
+            return new Literal(an / bn);
+
+        return this;
     }
 }

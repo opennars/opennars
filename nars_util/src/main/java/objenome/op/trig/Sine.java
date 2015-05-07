@@ -21,6 +21,7 @@
  */
 package objenome.op.trig;
 
+import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.op.Numeric1d;
 
@@ -39,9 +40,6 @@ public class Sine<X extends Node> extends Numeric1d<X,Number>  {
         this(null);
     }
 
-    
-    
-
     @Override
     public double value(double x) {
         return Math.sin(x);
@@ -54,6 +52,5 @@ public class Sine<X extends Node> extends Numeric1d<X,Number>  {
     public String getIdentifier() {
         return IDENTIFIER;
     }
-
 
 }

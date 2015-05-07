@@ -60,4 +60,13 @@ public class Max2 extends Max {
         return IDENTIFIER;
     }
 
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+        Node b = getChild(1);
+
+        if (a.equals(b)) return a;
+
+        return this;
+    }
 }

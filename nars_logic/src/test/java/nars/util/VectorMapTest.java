@@ -1,12 +1,12 @@
 package nars.util;
 
-import nars.model.impl.Default;
 import nars.Events.CycleStart;
 import nars.NAR;
-import nars.util.event.Reaction;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
-import nars.util.signal.DenoisingAutoencoder;
+import nars.model.impl.Default;
+import nars.util.event.Reaction;
+import nars.util.signal.Autoencoder;
 import org.junit.Test;
 
 /**
@@ -49,13 +49,13 @@ public class VectorMapTest {
         
         VectorMap v = new VectorMap(n, "d", 8, 0.25f, 2, 0.75f) {
         
-            DenoisingAutoencoder d;
+            Autoencoder d;
             
             @Override protected void map(double[] in, double[] out) {
                 if (d == null)
-                    d = new DenoisingAutoencoder(in.length, out.length);
+                    d = new Autoencoder(in.length, out.length);
                 
-                d.train(in, 0.05, 0);
+                d.train(in, 0, 0.05, 0, true);
                 d.encode(in, out, true, true);                
             }          
         };

@@ -21,6 +21,7 @@
  */
 package objenome.op.math;
 
+import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
@@ -41,7 +42,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Subtract extends Node {
+public class Subtract extends ArithmeticNode {
 
     public static final String IDENTIFIER = "SUB";
 
@@ -133,5 +134,24 @@ public class Subtract extends Node {
             return TypeUtil.widestNumberType(inputTypes);
         }
         return null;
+    }
+
+
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+        Node b = getChild(1);
+        if (a.equals(b)) return zero;
+
+        double an = getChildConstantValue(0);
+        double bn = getChildConstantValue(1);
+
+        if (an == 0) return b;
+        //if (bn == 0) return new Negate
+
+        if (Double.isFinite(an) && Double.isFinite(bn))
+            return new Literal(an - bn);
+
+        return this;
     }
 }

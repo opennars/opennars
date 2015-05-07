@@ -1,12 +1,16 @@
 package nars.util.signal;
 
 
-import objenome.util.random.XORShiftRandom;
 
 import java.util.Random;
 
-/** Denoising Autoencoder (from DeepLearning.net) */
-public class DenoisingAutoencoder {
+
+/** Denoising Autoencoder (from DeepLearning.net) 
+ 
+   TODO parameter for activation function (linear, sigmoid, etc..)
+ */
+public class Autoencoder {
+
 
     public int n_visible;
     public int n_hidden;
@@ -24,6 +28,7 @@ public class DenoisingAutoencoder {
         return rng.nextDouble() * (max - min) + min;
     }
 
+    /*
     public double binomial(final int n, final double p) {
         if (p < 0 || p > 1) {
             return 0;
@@ -41,21 +46,22 @@ public class DenoisingAutoencoder {
 
         return c;
     }
+    */
 
     final public static double sigmoid(final double x) {
         return 1.0 / (1.0 + Math.pow(Math.E, -x));
     }
     
-    public DenoisingAutoencoder(int n_visible, int n_hidden) {
+    public Autoencoder(int n_visible, int n_hidden) {
         this(n_visible, n_hidden, null, null, null, null);
     }
 
-    public DenoisingAutoencoder(int n_visible, int n_hidden, double[][] W, double[] hbias, double[] vbias, Random rng) {
+    public Autoencoder(int n_visible, int n_hidden, double[][] W, double[] hbias, double[] vbias, Random rng) {
         this.n_visible = n_visible;
         this.n_hidden = n_hidden;
 
         if (rng == null) {
-            this.rng = new XORShiftRandom();
+            this.rng = new Random(); //XORShiftRandom();
         } else {
             this.rng = rng;
         }
@@ -92,57 +98,80 @@ public class DenoisingAutoencoder {
         }
     }
 
-    public void get_corrupted_input(double[] x, double[] tilde_x, double p) {
+    public void addNoise(double[] x, double[] tilde_x, double maxNoiseAmount, double corruptionRate) {
         for (int i = 0; i < n_visible; i++) {
-            if (x[i] == 0) {
+            if ((corruptionRate > 0) && (rng.nextDouble() < corruptionRate)) {
                 tilde_x[i] = 0;
-            } else {
-                tilde_x[i] = binomial(1, p);
+            }
+            else if (maxNoiseAmount > 0) {
+                double nx = x[i] + (rng.nextDouble() - 0.5) * maxNoiseAmount;
+                if (nx < 0) nx = 0;
+                if (nx > 1) nx = 1;
+                tilde_x[i] = nx;
             }
         }
     }
+    
+
 
     // Encode
-    public void encode(double[] x, double[] y, boolean sigmoid, boolean normalize) {
+    public double[] encode(double[] x, double[] y, boolean sigmoid, boolean normalize) {
+
+        final double[][] W = this.W;
+
+        if (y == null)
+            y = new double[n_hidden];
+                    
         double max=0, min=0;
         for (int i = 0; i < n_hidden; i++) {
-            y[i] = 0;
+            double yi = hbias[i];
             for (int j = 0; j < n_visible; j++) {
-                y[i] += W[i][j] * x[j];
+                yi += W[i][j] * x[j];
             }
-            y[i] += hbias[i];
             
             if (sigmoid)
-                y[i] = sigmoid(y[i]);
+                yi = sigmoid(yi);
             
             if (i == 0)
-                max = min = y[i];
+                max = min = yi;
             else {
-                if (y[i] > max) max = y[i];
-                if (y[i] < min) min = y[i];
+                if (yi > max) max = yi;
+                if (yi < min) min = yi;
             }
+            y[i] = yi;
                 
         }
-        if (normalize) {
+        
+        if ((normalize) && (max!=min)) {
             for (int i = 0; i < n_hidden; i++) {
                 y[i] = (y[i]-min)/(max-min);
             }            
         }
+                    
+
+        return y;
     }
 
     // Decode
     public void get_reconstructed_input(double[] y, double[] z) {
         for (int i = 0; i < n_visible; i++) {
-            z[i] = 0;
+            double zi = vbias[i];
+            
             for (int j = 0; j < n_hidden; j++) {
-                z[i] += W[j][i] * y[j];
+                zi += W[j][i] * y[j];
             }
-            z[i] += vbias[i];
-            z[i] = sigmoid(z[i]);
+            
+            zi = sigmoid(zi);
+            
+            z[i] = zi;
         }
     }
 
-    public void train(double[] x, double lr, double corruption_level) {
+    public double[] getOutput() {
+        return y;
+    }
+    
+    public double train(double[] x, double learningRate, double noiseLevel, double corruptionRate, boolean sigmoid) {
         if ((tilde_x == null) || (tilde_x.length!=n_visible)) {
             tilde_x = new double[n_visible];
             y = new double[n_hidden];
@@ -152,44 +181,91 @@ public class DenoisingAutoencoder {
             L_hbias = new double[n_hidden];            
         }
 
-        if (corruption_level > 0) {        
-            get_corrupted_input(x, tilde_x, 1 - corruption_level);
+        final double[][] W = this.W;
+        final double[] L_hbias = this.L_hbias;
+        final double[] L_vbias = this.L_vbias;
+        final double[] vbias = this.vbias;
+
+
+        if (noiseLevel > 0) {        
+            addNoise(x, tilde_x, noiseLevel, corruptionRate);
         }
         else {
-            tilde_x = x;
+            this.tilde_x = x;
         }
-        encode(tilde_x, y, true, false);
+
+        final double[] tilde_x = this.tilde_x;
+
+        encode(tilde_x, y, sigmoid, true);                
+        
         get_reconstructed_input(y, z);
 
+        double error = 0;
+        
         // vbias
         for (int i = 0; i < n_visible; i++) {
-            L_vbias[i] = x[i] - z[i];
-            vbias[i] += lr * L_vbias[i];
+            
+            
+            double lv = L_vbias[i] = x[i] - z[i];
+            
+            error += lv*lv; //square of difference
+            
+            vbias[i] += learningRate * lv;
         }
+
+        
+        error /= n_visible;
+
+        final int n = n_visible;
+        final double[] y = this.y;
+        final double[] hbias = this.hbias;
 
         // hbias
         for (int i = 0; i < n_hidden; i++) {
             L_hbias[i] = 0;
-            for (int j = 0; j < n_visible; j++) {
+            for (int j = 0; j < n; j++) {
                 L_hbias[i] += W[i][j] * L_vbias[j];
             }
-            L_hbias[i] *= y[i] * (1 - y[i]);
-            hbias[i] += lr * L_hbias[i];
+            double yi = y[i];
+            L_hbias[i] *= yi * (1 - yi);
+            hbias[i] += learningRate * L_hbias[i];
         }
+
 
         // W
         for (int i = 0; i < n_hidden; i++) {
-            for (int j = 0; j < n_visible; j++) {
-                W[i][j] += lr * (L_hbias[i] * tilde_x[j] + L_vbias[j] * y[i]);
+            double yi = y[i];
+            double lhb = L_hbias[i];
+            for (int j = 0; j < n; j++) {
+                W[i][j] += learningRate * (lhb * tilde_x[j] + L_vbias[j] * yi);
             }
         }
+                    
+        return error;
     }
 
-    public void reconstruct(double[] x, double[] z) {
+    public double[] reconstruct(double[] x, double[] z) {
         double[] y = new double[n_hidden];
 
         encode(x, y, true, false);
         get_reconstructed_input(y, z);
+        
+        return z;
     }
 
+    /** finds the index of the highest output value, or returns a random one if none are */
+    public int getMax() {
+
+        double m = Double.MIN_VALUE;
+        int best = -1;
+        for (int i = 0; i < y.length; i++) {
+            double Y = y[i];
+            if (Y > m) {
+                m = Y;
+                best = i;
+            }
+        }
+        if (best == -1) return (int)(Math.random() * y.length);
+        return best;
+    }
 }

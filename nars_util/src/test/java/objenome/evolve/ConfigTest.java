@@ -20,7 +20,7 @@
  * The latest version is available from: http://www.epochx.org
  */
 
-package nars.obj.evolve;
+package objenome.evolve;
 
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.GPContainer;

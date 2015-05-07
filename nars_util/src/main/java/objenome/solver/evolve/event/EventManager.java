@@ -36,8 +36,10 @@ import java.util.List;
  *
  * @see Listener
  * @see Event
+ *
+ * TODO use EventEmitter
  */
-public class EventManager {
+@Deprecated public class EventManager {
 
     /**
      * The mapping of listeners per event.

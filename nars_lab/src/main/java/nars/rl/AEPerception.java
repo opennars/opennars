@@ -1,13 +1,11 @@
 package nars.rl;
 
 import automenta.vivisect.swing.NWindow;
-import jurls.core.learning.Autoencoder;
 import jurls.core.utils.MatrixImage;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.nal.Task;
-
-import java.util.Arrays;
+import nars.util.signal.Autoencoder;
 
 
 /**

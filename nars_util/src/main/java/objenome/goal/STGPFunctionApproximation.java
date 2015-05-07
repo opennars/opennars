@@ -21,42 +21,25 @@
  */
 package objenome.goal;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
-import objenome.solver.evolve.Breeder;
-import objenome.solver.evolve.EvolutionaryStrategy;
-import objenome.solver.evolve.FitnessEvaluator;
-import objenome.solver.evolve.Initialiser;
-import objenome.solver.evolve.MaximumGenerations;
-import objenome.solver.evolve.Operator;
-import objenome.solver.evolve.Population;
-import objenome.solver.evolve.RandomSequence;
-import objenome.solver.evolve.STGPIndividual;
-import objenome.solver.evolve.TerminationCriteria;
-import objenome.solver.evolve.TerminationFitness;
-import objenome.solver.evolve.fitness.DoubleFitness;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
-import objenome.op.math.Add;
-import objenome.op.math.DivisionProtected;
-import objenome.op.math.DoubleERC;
-import objenome.op.math.Max2;
-import objenome.op.math.Min2;
-import objenome.op.math.Multiply;
-import objenome.op.math.Power;
-import objenome.op.math.Subtract;
+import objenome.op.math.*;
 import objenome.op.trig.Sine;
 import objenome.op.trig.Tangent;
-import objenome.solver.evolve.BranchedBreeder;
+import objenome.solver.evolve.*;
+import objenome.solver.evolve.fitness.DoubleFitness;
 import objenome.solver.evolve.fitness.SumOfError;
 import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.PointMutation;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
-import objenome.util.random.MersenneTwisterFast;
 import objenome.solver.evolve.selection.TournamentSelector;
+import objenome.util.random.MersenneTwisterFast;
+
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 /**
  * Evolves a function that minimizes the total error of an expression
@@ -68,7 +51,13 @@ public class STGPFunctionApproximation extends ProblemSTGP {
     
     public final Variable x;
     public final Deque<Observation<Double[], Double>> samples;
-    
+
+    final SumOfError<Double,Double> fitness = new SumOfError() {
+        @Override public void onNextBest(STGPIndividual s, double error) {
+            nextBest = s;
+            nextBestError = error;
+        }
+    };
  
     public STGPFunctionApproximation(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {        
         super();
@@ -114,7 +103,7 @@ public class STGPFunctionApproximation extends ProblemSTGP {
         }
         if (trig) {
             syntax.add(new Sine());
-            syntax.add(new Tangent());
+            //syntax.add(new Tangent());
         }
         if (exp) {
             //syntax.add(new LogNatural());
@@ -122,7 +111,6 @@ public class STGPFunctionApproximation extends ProblemSTGP {
             syntax.add(new Power());
         }
         if (piecewise) {
-            syntax.add(new Max2());
             syntax.add(new Min2());
         }
         
@@ -133,14 +121,22 @@ public class STGPFunctionApproximation extends ProblemSTGP {
             
         
         the(STGPIndividual.RETURN_TYPE, Double.class);
-        
-        SumOfError<Double,Double> fitness;
 
 
         // Setup fitness function
-        the(FitnessEvaluator.FUNCTION, fitness = new SumOfError<Double,Double>());
+        the(FitnessEvaluator.FUNCTION, fitness);
 
         samples = fitness.obs;
     }
-    
+
+    STGPIndividual nextBest = null;
+    double nextBestError = Double.NaN;
+
+    public double getBestError() {
+        return nextBestError;
+    }
+
+    public STGPIndividual getBest() {
+        return nextBest;
+    }
 }

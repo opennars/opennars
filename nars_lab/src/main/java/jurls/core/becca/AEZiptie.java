@@ -5,7 +5,8 @@
  */
 package jurls.core.becca;
 
-import jurls.core.learning.Autoencoder;
+
+import nars.util.signal.Autoencoder;
 
 /**
  * Ziptie implemented as a raw internal Autoencoder

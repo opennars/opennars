@@ -1,6 +1,7 @@
 package nars.rl.dl;
 
-import nars.util.signal.DenoisingAutoencoder;
+
+import nars.util.signal.Autoencoder;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -19,11 +20,11 @@ public class TestDenoisingAutoencoder {
         int n_hidden = 5;
         double learning_rate = 0.1 / train_N;
         double[][] train_X = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1}, {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0}};
-        DenoisingAutoencoder da = new DenoisingAutoencoder(n_visible, n_hidden, null, null, null, rng);
+        Autoencoder da = new Autoencoder(n_visible, n_hidden, null, null, null, rng);
         // train
         for (int epoch = 0; epoch < training_epochs; epoch++) {
             for (int i = 0; i < train_N; i++) {
-                da.train(train_X[i], learning_rate, corruption_level);
+                da.train(train_X[i], learning_rate, 0, corruption_level, false);
             }
         }
         // test data
