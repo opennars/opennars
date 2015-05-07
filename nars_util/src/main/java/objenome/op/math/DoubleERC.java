@@ -21,11 +21,12 @@
  */
 package objenome.op.math;
 
+import objenome.op.Doubliteral;
+import objenome.op.bool.BooleanERC;
+import objenome.solver.evolve.RandomSequence;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
-import objenome.solver.evolve.RandomSequence;
-import objenome.op.Literal;
-import objenome.op.bool.BooleanERC;
 
 /**
  * Defines a double ephemeral random constant (ERC). An ERC is a literal with a
@@ -48,7 +49,7 @@ import objenome.op.bool.BooleanERC;
  *
  * @since 2.0
  */
-public class DoubleERC extends Literal {
+public class DoubleERC extends Doubliteral {
 
     private RandomSequence random;
 
@@ -71,7 +72,7 @@ public class DoubleERC extends Literal {
      * @param precision the non-negative <code>int</code> precision.
      */
     public DoubleERC(RandomSequence random, double lower, double upper, int precision) {
-        super(null);
+        super(Double.NaN);
 
         if (random == null) {
             throw new IllegalArgumentException("random generator must not be null");
@@ -86,6 +87,11 @@ public class DoubleERC extends Literal {
         setValue(generateValue());
     }
 
+    public DoubleERC(RandomSequence random, double lower, double upper, int precision, double v) {
+        this(random, lower, upper, precision);
+        setValue(v);
+    }
+
     /**
      * Constructs a new <code>DoubleERC</code> node with a randomly generated
      * value, selected using the random number generator. The value will be
@@ -97,11 +103,7 @@ public class DoubleERC extends Literal {
      */
     @Override
     public DoubleERC newInstance() {
-        DoubleERC erc = (DoubleERC) super.newInstance();
-
-        erc.setValue(generateValue());
-
-        return erc;
+        return new DoubleERC(random, lower, upper, precision, generateValue());
     }
     
     public DoubleERC mutated(double percentChange) {

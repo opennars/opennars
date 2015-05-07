@@ -91,7 +91,7 @@ public class GPContainer<I extends Individual> extends Container {
      * pipeline of components, as returned by the final component in that
      * pipeline
      */
-    public Population<I> run() {
+    public Population<I> cycle() {
         if (pipeline == null) {
             pipeline = new Pipeline();
             /* Initialises the supplied <code>Pipeline</code> with the components that

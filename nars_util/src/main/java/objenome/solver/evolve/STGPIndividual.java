@@ -95,6 +95,10 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
         return root.evaluate();
     }
 
+    public double eval() {
+        return root.eval();
+    }
+
     /**
      * Returns the <code>Node</code> that is set as the root of the program tree
      *

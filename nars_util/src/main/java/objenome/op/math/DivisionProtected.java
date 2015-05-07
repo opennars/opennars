@@ -21,9 +21,8 @@
  */
 package objenome.op.math;
 
-import objenome.op.Literal;
+import objenome.op.Doubliteral;
 import objenome.op.Node;
-import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
 /**
@@ -45,7 +44,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class DivisionProtected extends ArithmeticNode {
+public class DivisionProtected extends MathNode {
 
     public static final String IDENTIFIER = "DIV";
 
@@ -97,53 +96,53 @@ public class DivisionProtected extends ArithmeticNode {
         this.protectionValue = protectionValue;
     }
 
-    /**
-     * Evaluates this function. Both child nodes are evaluated, the result of
-     * both must be of numeric type. If necessary, the inputs are widened to
-     * both be of the same type, then division is performed and the return value
-     * will be of that wider type. If the divisor resolves to zero then the
-     * result returned will be the protection value to avoid the divide by zero
-     * issue.
-     *
-     * @return the result of dividing the value returned from the first child by
-     * the value from the second child, or the protected value if the divisor is
-     * zero
-     */
-    @Override
-    public Object evaluate() {
-        Object c1 = getChild(0).evaluate();
-        Object c2 = getChild(1).evaluate();
-
-        Class<?> returnType = TypeUtil.widestNumberType(c1.getClass(), c2.getClass());
-
-        if (returnType == Double.class) {
-            // Divide as doubles.
-            double d1 = NumericUtils.asDouble(c1);
-            double d2 = NumericUtils.asDouble(c2);
-
-            return (d2 == 0) ? NumericUtils.asDouble(protectionValue) : (d1 / d2);
-        } else if (returnType == Float.class) {
-            // Divide as floats.
-            float f1 = NumericUtils.asFloat(c1);
-            float f2 = NumericUtils.asFloat(c2);
-
-            return (f2 == 0) ? NumericUtils.asFloat(protectionValue) : (f1 / f2);
-        } else if (returnType == Long.class) {
-            // Divide as longs.
-            long l1 = NumericUtils.asLong(c1);
-            long l2 = NumericUtils.asLong(c2);
-
-            return (l2 == 0) ? NumericUtils.asLong(protectionValue) : (l1 / l2);
-        } else if (returnType == Integer.class) {
-            // Divide as integers.
-            int i1 = NumericUtils.asInteger(c1);
-            int i2 = NumericUtils.asInteger(c2);
-
-            return (i2 == 0) ? NumericUtils.asInteger(protectionValue) : (i1 / i2);
-        }
-
-        return null;
-    }
+//    /**
+//     * Evaluates this function. Both child nodes are evaluated, the result of
+//     * both must be of numeric type. If necessary, the inputs are widened to
+//     * both be of the same type, then division is performed and the return value
+//     * will be of that wider type. If the divisor resolves to zero then the
+//     * result returned will be the protection value to avoid the divide by zero
+//     * issue.
+//     *
+//     * @return the result of dividing the value returned from the first child by
+//     * the value from the second child, or the protected value if the divisor is
+//     * zero
+//     */
+//    @Override
+//    public Object evaluate() {
+//        Object c1 = getChild(0).evaluate();
+//        Object c2 = getChild(1).evaluate();
+//
+//        Class<?> returnType = TypeUtil.widestNumberType(c1.getClass(), c2.getClass());
+//
+//        if (returnType == Double.class) {
+//            // Divide as doubles.
+//            double d1 = NumericUtils.asDouble(c1);
+//            double d2 = NumericUtils.asDouble(c2);
+//
+//            return (d2 == 0) ? NumericUtils.asDouble(protectionValue) : (d1 / d2);
+//        } else if (returnType == Float.class) {
+//            // Divide as floats.
+//            float f1 = NumericUtils.asFloat(c1);
+//            float f2 = NumericUtils.asFloat(c2);
+//
+//            return (f2 == 0) ? NumericUtils.asFloat(protectionValue) : (f1 / f2);
+//        } else if (returnType == Long.class) {
+//            // Divide as longs.
+//            long l1 = NumericUtils.asLong(c1);
+//            long l2 = NumericUtils.asLong(c2);
+//
+//            return (l2 == 0) ? NumericUtils.asLong(protectionValue) : (l1 / l2);
+//        } else if (returnType == Integer.class) {
+//            // Divide as integers.
+//            int i1 = NumericUtils.asInteger(c1);
+//            int i2 = NumericUtils.asInteger(c2);
+//
+//            return (i2 == 0) ? NumericUtils.asInteger(protectionValue) : (i1 / i2);
+//        }
+//
+//        return null;
+//    }
 
     /**
      * Returns the identifier of this function which is PDIV
@@ -205,7 +204,7 @@ public class DivisionProtected extends ArithmeticNode {
 
 
         if (Double.isFinite(an) && Double.isFinite(bn)) {
-            return new Literal(an / bn);
+            return new Doubliteral(eval());
         }
         else {
             if (bn == 1) return a;
@@ -216,4 +215,12 @@ public class DivisionProtected extends ArithmeticNode {
 
         return this;
     }
+
+    @Override
+    public double eval() {
+        double a = getChildEvaluated(0);
+        double b = getChildEvaluated(1);
+        return a/b;
+    }
+
 }

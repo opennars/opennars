@@ -1,20 +1,22 @@
 package objenome.op.math;
 
+import objenome.op.Doubliteral;
 import objenome.op.Literal;
 import objenome.op.Node;
 
 /**
  * Created by me on 5/6/15.
  */
-abstract public class ArithmeticNode<X extends Node, Y extends Number> extends Node<X, Y> {
+abstract public class MathNode extends Node<Node, Double> {
 
-    public final Literal zero = new Literal(0.0);
-    public final Literal one = new Literal(1.0);
-    public final Literal two = new Literal(2.0);
+    public final Literal zero = new Doubliteral(0.0);
+    public final Literal one = new Doubliteral(1.0);
+    public final Literal two = new Doubliteral(2.0);
 
-    public ArithmeticNode(X... x) {
+    public MathNode(Node... x) {
         super(x);
     }
+
 
     /** returns the constant (literal) double value
      * return Double.NaN if the child is not a literal
@@ -30,6 +32,15 @@ abstract public class ArithmeticNode<X extends Node, Y extends Number> extends N
         return Double.NaN;
     }
 
+    public double getChildEvaluated(final int childNum) {
+        return getChild(childNum).eval();
+    }
 
+    /** the fast double-only version that should be implemented */
+    abstract public double eval();
 
+    @Override
+    final public Double evaluate() {
+        return eval();
+    }
 }

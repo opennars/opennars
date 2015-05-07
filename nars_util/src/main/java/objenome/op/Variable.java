@@ -31,12 +31,67 @@ package objenome.op;
  *
  * @since 2.0
  */
-public class Variable<X> {
+abstract public class Variable<X> {
 
-    private final Class datatype;
-    private final String name;
+    public final Class datatype;
+    public final String name;
 
-    protected X value;
+    public static Variable make(String name, Class datatype) {
+        if (datatype == Double.class) {
+            return new DoubleVariable(name);
+        }
+
+        return new ObjectVariable(name, datatype);
+    }
+    public static <X> Variable<X> make(String name, X value) {
+        return new ObjectVariable(name, value);
+    }
+
+    public void set(double valueForDoubleVariable) {
+        setValue((X)((Double)valueForDoubleVariable));
+        //throw new RuntimeException("this is not a DoubleVariable");
+    }
+
+    public static class ObjectVariable<X> extends Variable<X> {
+        protected X value;
+
+        ObjectVariable(String name, Class datatype) {
+            super(name, datatype);
+
+            if (datatype == Double.class) {
+                throw new RuntimeException("use DoubleVariable");
+            }
+        }
+
+        /**
+         * Constructs a new variable with the given value. The variable's name is
+         * provided but the data-type is determined by the type of the given value.
+         * The given <code>name</code> and <code>value</code> must be
+         * non-<code>null</code>. If the value is unknown then use the alternative
+         * constructor to provide the data-type instead of a value.
+         *
+         * @param name a name for the variable
+         * @param value the initial value of the variable
+         */
+        ObjectVariable(String name, X value) {
+            this(name, value.getClass());
+
+            this.value = value;
+        }
+
+        public void setValue(X value) {
+            if (value != null && !datatype.isAssignableFrom(value.getClass())) {
+                throw new IllegalArgumentException("variables may not change data-type");
+            }
+
+            this.value = value;
+        }
+
+        public X getValue() {
+            return value;
+        }
+    }
+
 
     /**
      * Constructs a new variable with a <code>null</code> value. The variable's
@@ -56,32 +111,18 @@ public class Variable<X> {
         this.datatype = datatype;
     }
 
-    /**
-     * Constructs a new variable with the given value. The variable's name is
-     * provided but the data-type is determined by the type of the given value.
-     * The given <code>name</code> and <code>value</code> must be
-     * non-<code>null</code>. If the value is unknown then use the alternative
-     * constructor to provide the data-type instead of a value.
-     *
-     * @param name a name for the variable
-     * @param value the initial value of the variable
-     */
-    public Variable(String name, X value) {
-        if (name == null || value == null) {
-            throw new IllegalArgumentException("identifier and value must be non-null");
-        }
 
-        this.name = name;
-        this.value = value;
-        datatype = value.getClass();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
+    /** does not compare value */
+    @Override public boolean equals(Object obj) {
         if (obj instanceof Variable) {
             return name.equals(((Variable)obj).name);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 
     /**
@@ -93,13 +134,7 @@ public class Variable<X> {
      *
      * @param value the value to set for the variable
      */
-    public void setValue(X value) {
-        if (value != null && !datatype.isAssignableFrom(value.getClass())) {
-            throw new IllegalArgumentException("variables may not change data-type");
-        }
-
-        this.value = value;
-    }
+    abstract public void setValue(X value);
 
     /**
      * Returns the data-type of this variable
@@ -115,9 +150,8 @@ public class Variable<X> {
      *
      * @return this variable's value
      */
-    public X getValue() {
-        return value;
-    }
+    abstract public X getValue();
+
 
     /**
      * Returns the name of this variable

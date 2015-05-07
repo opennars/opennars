@@ -20,8 +20,8 @@ public class STGPFunctionApproximationTest extends TestCase {
             
             STGPFunctionApproximation e = new STGPFunctionApproximation(individuals, 5, true, true, false, true) {
                 @Override
-                public Population<STGPIndividual> run() {
-                    Population<STGPIndividual> p = super.run();
+                public Population<STGPIndividual> cycle() {
+                    Population<STGPIndividual> p = super.cycle();
 
                     //System.out.println(getBestError() + " = " + getBest());
 
@@ -39,7 +39,7 @@ public class STGPFunctionApproximationTest extends TestCase {
                 j++;
             }
             
-            Population<STGPIndividual> p = e.run();
+            Population<STGPIndividual> p = e.cycle();
             
             STGPIndividual best = p.fittest();
             
@@ -61,14 +61,14 @@ public class STGPFunctionApproximationTest extends TestCase {
 
             assertTrue(sizeAfter < sizeBefore);
             
-            p = e.run();
+            p = e.cycle();
             
             assertEquals(individuals, p.size());
 
             int loops = 25;
             for (int i = 0; i < loops; i++) {
                 p.cullThis(cullRate);
-                p = e.run();
+                p = e.cycle();
             }
             
             List<Individual> nextBest = Lists.newArrayList(p.elites(0.5f));

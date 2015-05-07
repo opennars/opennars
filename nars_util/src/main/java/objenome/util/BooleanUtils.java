@@ -70,10 +70,10 @@ public final class BooleanUtils {
      * with the given number of elements. There will be 2<sup>noBits</sup>
      * combinations and so the returned array will have this many elements.
      */
-    public static Boolean[][] generateBoolSequences(int noBits) {
+    public static boolean[][] generateBoolSequences(int noBits) {
         int noInputs = (int) Math.pow(2, noBits);
 
-        Boolean[][] inputs = new Boolean[noInputs][noBits];
+        boolean[][] inputs = new boolean[noInputs][noBits];
 
         for (int i = 0; i < noBits; i++) {
             int rep = (int) Math.pow(2, i + 1);

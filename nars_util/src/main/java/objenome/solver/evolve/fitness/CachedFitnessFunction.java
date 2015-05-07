@@ -83,6 +83,9 @@ public class CachedFitnessFunction<I extends Individual> extends AbstractFitness
             fitness = delegate.evaluate(population, individual);
             cache.put(key, fitness);
         }
+        else {
+            //System.out.println("cache hit: " + cache.size());
+        }
 
         return fitness;
     }

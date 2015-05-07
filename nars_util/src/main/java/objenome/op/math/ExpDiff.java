@@ -5,21 +5,21 @@
  */
 package objenome.op.math;
 
-import objenome.op.Scalar;
 import objenome.op.DiffableFunction;
-import objenome.op.ScalarFunction;
+import objenome.op.Node;
+import objenome.op.Scalar;
 
 /**
- *
+ * TODO
  * @author thorsten
  */
-public class ExpDiff extends Exp<ScalarFunction> implements DiffableFunction{
+public class ExpDiff extends Exp implements DiffableFunction{
 
     private final DiffableFunction x;
 
-    public ExpDiff(ScalarFunction x) {
+    public ExpDiff(Node x) {
         super(x);
-        this.x = x;
+        this.x = (DiffableFunction) x;
     }
     
     @Override

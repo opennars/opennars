@@ -132,7 +132,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
                 parents = new Individual[operator.inputSize()];
 
                 for (int i = 0; i < parents.length; i++) {
-                    parents[i] = selector.select().clone();
+                    parents[i] = selector.select();
                 }
                 
                 parents = operator.apply(population, parents);

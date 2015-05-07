@@ -116,7 +116,7 @@ public class EpoxInterpreter<T extends Individual> implements Computer<Object,T,
 
         // Declare and initialise the variables
         for (int j = 0; j < noParams; j++) {
-            declaredVariables[j] = new VariableNode(new Variable(argNames[j], argValues[0][j]));
+            declaredVariables[j] = new VariableNode(Variable.make(argNames[j], argValues[0][j]));
             parser.declare(declaredVariables[j]);
         }
 

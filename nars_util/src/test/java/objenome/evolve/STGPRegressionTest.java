@@ -14,7 +14,7 @@ public class STGPRegressionTest extends TestCase {
             
             ProblemSTGP e = new STGPRegression(20, BenchmarkSolutions.XpXXpXXX);
             
-            Population<STGPIndividual> p = e.run();
+            Population<STGPIndividual> p = e.cycle();
             
             STGPIndividual best = p.fittest();
             

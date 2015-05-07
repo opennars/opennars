@@ -1,60 +1,76 @@
 package objenome.evolve;
 
 import com.google.common.collect.Lists;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import junit.framework.TestCase;
 import objenome.goal.DefaultProblemSTGP;
 import objenome.op.Variable;
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.fitness.CachedFitnessFunction;
 import objenome.solver.evolve.fitness.DoubleFitness;
 import objenome.solver.evolve.fitness.STGPFitnessFunction;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
-public class STGPMultivarTest extends TestCase {
+@Ignore
+public class STGPMultivarTest {
 
-    int individuals = 150;
-    int generations = 2024;
-
-    @Test
-    public void testRegression() {
+    static int individuals = 4096;
+    static int generations = 202400;
 
 
-        DefaultProblemSTGP e = new DefaultProblemSTGP(individuals, 5, true, true, false, true) {
+    public static void main(String[] a) {
+
+
+        DefaultProblemSTGP e = new DefaultProblemSTGP(individuals, 6, true, true, true, true) {
 
             Variable va, vb;
 
             @Override
             protected FitnessFunction initFitness() {
-                return new CachedFitnessFunction(new STGPFitnessFunction() {
+                return
+                //new CachedFitnessFunction(
+                        new STGPFitnessFunction() {
                     @Override
                     public Fitness evaluate(Population population, STGPIndividual individual) {
 
-                        double score = 0;
+                        double cost = 0;
+                        double range = 1;
 
-                        for (double a = -1; a<=1; a+=0.1) {
+                        int samples = 0;
 
-                            va.setValue(a);
+                        for (double a = -range; a<=range; a+=0.05) {
 
-                            for (double b = -1; b<=1; b+=0.1) {
+                            va.set(a);
 
-                                vb.setValue(b);
+                            for (double b = -range; b<=range; b+=0.05) {
 
-                                double w = (Double)individual.evaluate();
+                                vb.set(b);
 
-                                double z = Math.sin(a) * Math.tan(b * Math.abs(a - b));
+                                double w = individual.eval();
 
-                                score += 1.0 / (1.0 + Math.abs(w-z));
+                                double z = ((a*10)%2 - 0.5) + (b*7)%3 - 1;
+                                //double z = a * (a + b);
+
+                                cost += Math.abs(w-z);
+                                samples++;
                             }
                         }
 
+                        cost/=samples;
+
+                        double score = 1.0 / (1.0 + cost);
+
                         evaluated(individual, score);
+
 
                         return new DoubleFitness.Maximise(score);
                     }
 
-                });
+                };
+
+
 
 
             }
@@ -67,14 +83,7 @@ public class STGPMultivarTest extends TestCase {
                 );
             }
 
-            @Override
-            public Population<STGPIndividual> run() {
-                Population<STGPIndividual> p = super.run();
 
-                //System.out.println(getBestError() + " = " + getBest());
-
-                return p;
-            }
         };
 
 
@@ -82,12 +91,11 @@ public class STGPMultivarTest extends TestCase {
         Population p = null;
 
         for ( ; 0 <= generations; generations--) {
-            p = e.run();
-            System.out.println("generation: " + generations);
-            System.out.println(p.size());
+            p = e.cycle();
+            //System.out.println(Arrays.toString(p.elites(1.0)));
         }
 
-        List<Individual> nextBest = Lists.newArrayList(p.elites(0.5f));
+        List<Individual> nextBest = Lists.newArrayList(p.elites(0.1f));
 
         System.out.println(nextBest);
 
@@ -97,10 +105,10 @@ public class STGPMultivarTest extends TestCase {
     }
 
 
-    double bestVal = Double.MIN_VALUE;
-    STGPIndividual best = null;
+    static double bestVal = Double.MIN_VALUE;
+    static STGPIndividual best = null;
 
-    protected void evaluated(STGPIndividual i, double score) {
+    static protected void evaluated(STGPIndividual i, double score) {
         if (score > bestVal) {
             bestVal = score;
             best = i;

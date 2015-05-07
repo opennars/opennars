@@ -36,7 +36,7 @@ public abstract class STGPFitnessFunction extends AbstractFitnessFunction<STGPIn
     /**
      * The key for setting the program's input variables
      */
-    public static final GPContainer.GPKey<Variable[]> INPUT_VARIABLES = new GPContainer.GPKey<>();
+    public static final GPContainer.GPKey<Object[]> INPUT_VARIABLES = new GPContainer.GPKey<>();
 
     /**
      * The key for setting the sets of values to use as inputs

@@ -1,19 +1,29 @@
 package objenome.op;
 
-/** optimized variation of Variable for double values, avoids some tests
- * TODO make a superclass abstract to avoid any Double boxing
-
- * */
+/** optimized for math */
 public class DoubleVariable extends Variable<Double> {
+
+    protected double value;
 
     public DoubleVariable(String name) {
         super(name, Double.class);
     }
 
-    @Override
-    public void setValue(final Double value) {
-        //skip superclass's type checking
-        this.value = value;
+    public void setValue(Double value) {
+        throw new RuntimeException("use set(double v) to avoid boxing");
+        //this.value = value;
+    }
+
+    public Double getValue() {
+        throw new RuntimeException("use get() to avoid boxing");
+        //return value;
+    }
+
+    public void set(double v) {
+        this.value = v;
+    }
+    public double get() {
+        return this.value;
     }
 
 }

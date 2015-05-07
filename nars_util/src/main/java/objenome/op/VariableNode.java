@@ -34,16 +34,16 @@ package objenome.op;
  *
  * @since 2.0
  */
-public class VariableNode extends Node {
+public class VariableNode<V> extends Node {
 
-    private Variable variable;
+    private Variable<V> variable;
 
     /**
      * Constructs a new <code>VariableNode</code> wrapper for the given variable
      *
      * @param variable the <code>Variable</code> object to wrap
      */
-    public VariableNode(Variable variable) {
+    public VariableNode(Variable<V> variable) {
         if (variable == null) {
             throw new IllegalArgumentException("variable cannot be null");
         }
@@ -66,8 +66,14 @@ public class VariableNode extends Node {
      * @return the variable's value
      */
     @Override
-    public Object evaluate() {
+    public V evaluate() {
         return variable.getValue();
+    }
+
+    /** default "fast" evaluation method, which should be overrided in math-related subclasses */
+    public double eval() {
+        //if (variable instanceof DoubleVariable)
+        return ((DoubleVariable)variable).get();
     }
 
     /**

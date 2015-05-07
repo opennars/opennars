@@ -29,13 +29,13 @@ import objenome.op.Numeric1d;
  *
  * @since 2.0
  */
-public class Cosine<X extends Node> extends Numeric1d<X,Number>  {
+public class Cosine extends Numeric1d  {
 
     public Cosine() {
         super();
     }
 
-    public Cosine(X child) {
+    public Cosine(Node child) {
         super(child);
     }
 

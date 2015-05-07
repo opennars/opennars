@@ -30,9 +30,9 @@ import objenome.op.Numeric1d;
  *
  * @since 2.0
  */
-public class Sine<X extends Node> extends Numeric1d<X,Number>  {
+public class Sine extends Numeric1d  {
 
-    public Sine(X child) {
+    public Sine(Node child) {
         super(child);
     }
 

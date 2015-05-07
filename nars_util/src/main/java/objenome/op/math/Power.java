@@ -22,6 +22,7 @@
 package objenome.op.math;
 
 import objenome.op.Node;
+import objenome.op.Numeric1d;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -30,7 +31,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Power extends Node {
+public class Power extends MathNode {
 
     public static final String IDENTIFIER = "POW";
 
@@ -61,27 +62,11 @@ public class Power extends Node {
      * always be <code>1.0</code> and the first child will not be evaluated at
      * all.
      */
-    /**
-     * Evaluates this function lazily. The second child is evaluated. If its
-     * value is 0.0 then 1.0 will be returned without evaluating the first child
-     * at all. Otherwise the value of the first child will be raised to the
-     * power of the second child. The result is returned as a double value.
-     *
-     * @return the result of raising the value from the first child to the power
-     * of the value returned from the second child
-     */
     @Override
-    public Double evaluate() {
-        double c2 = NumericUtils.asDouble(getChild(1).evaluate());
-
-        if (c2 == 0.0) {
-            return 1.0;
-        } else {
-            double c1 = NumericUtils.asDouble(getChild(0).evaluate());
-
-            return Math.pow(c1, c2);
-        }
+    public double eval() {
+        return Math.pow(getChildEvaluated(0), getChildEvaluated(1));
     }
+
 
     /**
      * Returns the identifier of this function which is POW

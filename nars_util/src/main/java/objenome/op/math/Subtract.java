@@ -21,9 +21,8 @@
  */
 package objenome.op.math;
 
-import objenome.op.Literal;
+import objenome.op.Doubliteral;
 import objenome.op.Node;
-import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
 /**
@@ -42,7 +41,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Subtract extends ArithmeticNode {
+public class Subtract extends MathNode {
 
     public static final String IDENTIFIER = "SUB";
 
@@ -64,51 +63,51 @@ public class Subtract extends ArithmeticNode {
     public Subtract(Node child1, Node child2) {
         super(child1, child2);
     }
-
-    /**
-     * Evaluates this function. Both child nodes are evaluated, the result of
-     * both must be of numeric type. If necessary, the inputs are widened to
-     * both be of the same type, then subtraction is performed and the return
-     * value will be of that wider type.
-     *
-     * @return the result returned from the second child subtracted from the
-     * value returned by the first child
-     */
-    @Override
-    public Object evaluate() {
-        Object c1 = getChild(0).evaluate();
-        Object c2 = getChild(1).evaluate();
-
-        Class<?> returnType = TypeUtil.widestNumberType(c1.getClass(), c2.getClass());
-
-        if (returnType == Double.class) {
-            // Subtract as doubles.
-            double d1 = NumericUtils.asDouble(c1);
-            double d2 = NumericUtils.asDouble(c2);
-
-            return d1 - d2;
-        } else if (returnType == Float.class) {
-            // Subtract as floats.
-            float f1 = NumericUtils.asFloat(c1);
-            float f2 = NumericUtils.asFloat(c2);
-
-            return f1 - f2;
-        } else if (returnType == Long.class) {
-            // Subtract as longs.
-            long l1 = NumericUtils.asLong(c1);
-            long l2 = NumericUtils.asLong(c2);
-
-            return l1 - l2;
-        } else if (returnType == Integer.class) {
-            // Subtract as integers.
-            int i1 = NumericUtils.asInteger(c1);
-            int i2 = NumericUtils.asInteger(c2);
-
-            return i1 - i2;
-        }
-
-        return null;
-    }
+//
+//    /**
+//     * Evaluates this function. Both child nodes are evaluated, the result of
+//     * both must be of numeric type. If necessary, the inputs are widened to
+//     * both be of the same type, then subtraction is performed and the return
+//     * value will be of that wider type.
+//     *
+//     * @return the result returned from the second child subtracted from the
+//     * value returned by the first child
+//     */
+//    @Override
+//    public Object evaluate() {
+//        Object c1 = getChild(0).evaluate();
+//        Object c2 = getChild(1).evaluate();
+//
+//        Class<?> returnType = TypeUtil.widestNumberType(c1.getClass(), c2.getClass());
+//
+//        if (returnType == Double.class) {
+//            // Subtract as doubles.
+//            double d1 = NumericUtils.asDouble(c1);
+//            double d2 = NumericUtils.asDouble(c2);
+//
+//            return d1 - d2;
+//        } else if (returnType == Float.class) {
+//            // Subtract as floats.
+//            float f1 = NumericUtils.asFloat(c1);
+//            float f2 = NumericUtils.asFloat(c2);
+//
+//            return f1 - f2;
+//        } else if (returnType == Long.class) {
+//            // Subtract as longs.
+//            long l1 = NumericUtils.asLong(c1);
+//            long l2 = NumericUtils.asLong(c2);
+//
+//            return l1 - l2;
+//        } else if (returnType == Integer.class) {
+//            // Subtract as integers.
+//            int i1 = NumericUtils.asInteger(c1);
+//            int i2 = NumericUtils.asInteger(c2);
+//
+//            return i1 - i2;
+//        }
+//
+//        return null;
+//    }
 
     /**
      * Returns the identifier of this function which is SUB
@@ -150,8 +149,16 @@ public class Subtract extends ArithmeticNode {
         //if (bn == 0) return new Negate
 
         if (Double.isFinite(an) && Double.isFinite(bn))
-            return new Literal(an - bn);
+            return new Doubliteral(an - bn);
 
         return this;
     }
+
+    @Override
+    public double eval() {
+        double a = getChildEvaluated(0);
+        double b = getChildEvaluated(1);
+        return a - b;
+    }
+
 }

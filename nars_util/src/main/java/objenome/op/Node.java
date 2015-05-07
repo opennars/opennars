@@ -770,4 +770,10 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
     public Node normalize() {
         return this;
     }
+
+
+    /** default "fast" evaluation method, which should be overrided in math-related subclasses */
+    public double eval() {
+        return ((Double)evaluate());
+    }
 }

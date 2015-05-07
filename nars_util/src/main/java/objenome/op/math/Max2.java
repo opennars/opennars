@@ -29,7 +29,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class Max2 extends Max {
+public class Max2 extends MathNode {
 
     public static final String IDENTIFIER = "MAX2";
 
@@ -67,6 +67,24 @@ public class Max2 extends Max {
 
         if (a.equals(b)) return a;
 
+        double an = getChildConstantValue(0);
+        double bn = getChildConstantValue(1);
+
+        if (Double.isFinite(an) && Double.isFinite(bn)) {
+            if (an > bn) return a;
+            return b;
+        }
+
         return this;
     }
+
+    @Override
+    public double eval() {
+        double a = getChildEvaluated(0);
+        double b = getChildEvaluated(1);
+        if (a > b) return a;
+        return b;
+    }
+
+
 }

@@ -29,7 +29,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class Min2 extends Min {
+public class Min2 extends MathNode {
 
     public static final String IDENTIFIER = "MIN2";
 
@@ -76,5 +76,13 @@ public class Min2 extends Min {
         }
 
         return this;
+    }
+
+    @Override
+    public double eval() {
+        double a = getChildEvaluated(0);
+        double b = getChildEvaluated(1);
+        if (a < b) return a;
+        return b;
     }
 }

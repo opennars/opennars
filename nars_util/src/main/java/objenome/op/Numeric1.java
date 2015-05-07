@@ -5,8 +5,7 @@
  */
 package objenome.op;
 
-import objenome.op.math.ArithmeticNode;
-import objenome.util.NumericUtils;
+import objenome.op.math.MathNode;
 import objenome.util.TypeUtil;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 
@@ -17,13 +16,13 @@ import java.util.function.Function;
  * Takes all numeric inputs
  * Produces numeric output of the same type as input
  */
-abstract public class Numeric1<X extends Node> extends ArithmeticNode<X,Number> implements UnivariateFunction, Function<Double,Number> {
+abstract public class Numeric1 extends MathNode implements UnivariateFunction, Function<Double,Number> {
     
     protected Numeric1() {
         super(null);
     }
     
-    protected Numeric1(X child) {
+    protected Numeric1(Node child) {
         super(child);
     }
     
@@ -36,7 +35,7 @@ abstract public class Numeric1<X extends Node> extends ArithmeticNode<X,Number> 
     abstract public double value(double x);
     
     /** returns the one scalar input */
-    public X input() {
+    public Node input() {
         return getChild(0);
     }
     
@@ -48,22 +47,21 @@ abstract public class Numeric1<X extends Node> extends ArithmeticNode<X,Number> 
      * @return the result of evaluating the child squared
      */
     @Override
-    public Number evaluate() {
-        Object c = input().evaluate();
+    public double eval() {
 
-        double result = apply( NumericUtils.asDouble(c) );
-
-        if (c instanceof Long) {
-            return (long) result;
-        } else if (c instanceof Float) {
-            return (float) result;
-        } else if (c instanceof Integer) {
-            return (int) result;
-        } else if (c instanceof Double) {
-            return result;
-        } else {
-            return Double.NaN;
-        }
+        return value( input().eval() );
+//
+//        if (c instanceof Long) {
+//            return (long) result;
+//        } else if (c instanceof Float) {
+//            return (float) result;
+//        } else if (c instanceof Integer) {
+//            return (int) result;
+//        } else if (c instanceof Double) {
+//            return result;
+//        } else {
+//            return Double.NaN;
+//        }
     }
     
     /**
@@ -82,7 +80,8 @@ abstract public class Numeric1<X extends Node> extends ArithmeticNode<X,Number> 
             return null;
         }
     }
-    
+
+    /** it's better to use value(x) directly and not this since it involves boxing */
     @Override public Double apply(Double x) {
         return value(x);
     }

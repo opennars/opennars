@@ -53,14 +53,7 @@ public class STGPFunctionApproximation extends DefaultProblemSTGP {
 
 
     public final Deque<Observation<Double[], Double>> samples;
-
-
-    final SumOfError<Double,Double> fitness = new SumOfError() {
-        @Override public void onNextBest(STGPIndividual s, double error) {
-            nextBest = s;
-            nextBestError = error;
-        }
-    };
+    private SumOfError fitness;
 
 
     public STGPFunctionApproximation(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
@@ -71,6 +64,16 @@ public class STGPFunctionApproximation extends DefaultProblemSTGP {
 
     @Override
     protected FitnessFunction initFitness() {
+
+        if (this.fitness == null) {
+            this.fitness = new SumOfError() {
+                @Override public void onNextBest(STGPIndividual s, double error) {
+                    nextBest = s;
+                    nextBestError = error;
+                }
+            };
+        }
+
         return fitness;
     }
 

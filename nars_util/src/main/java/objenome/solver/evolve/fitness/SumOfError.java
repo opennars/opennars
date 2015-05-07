@@ -145,7 +145,7 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
         setConfig(population.getConfig());
 
         //TODO validate number of inputs etc
-        STGPIndividual program = (STGPIndividual) individual;
+        STGPIndividual program = individual;
 
         if (program.dataType() != Double.class) {
             throw new IllegalArgumentException("Unsupported data-type");

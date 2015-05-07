@@ -147,8 +147,8 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
      */
     @Override
     public STGPIndividual[] perform(EndOperator event, Individual... parents) {
-        STGPIndividual program1 = (STGPIndividual) parents[0];
-        STGPIndividual program2 = (STGPIndividual) parents[1];
+        STGPIndividual program1 = (STGPIndividual) parents[0].clone();
+        STGPIndividual program2 = (STGPIndividual) parents[1].clone();
 
         // Select first swap point
         int swapPoint1 = crossoverPoint(program1);

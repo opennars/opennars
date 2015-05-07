@@ -178,4 +178,5 @@ public class Literal<X extends Object> extends Node<Void,X> {
     public Literal newInstance() {
         return clone();
     }
+
 }

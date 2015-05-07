@@ -129,7 +129,7 @@ public class STGPRegression extends ProblemSTGP {
             new Subtract(),
             new Multiply(),
             new DivisionProtected(),
-            new VariableNode( x = new Variable("X", Double.class) )
+            new VariableNode( x = Variable.make("X", Double.class) )
         });
         the(STGPIndividual.RETURN_TYPE, Double.class);
 

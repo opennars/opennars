@@ -22,15 +22,15 @@
 package objenome.solver.evolve.fitness;
 
 
+import objenome.op.DoubleVariable;
+import objenome.op.Variable;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.STGPIndividual;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
-import objenome.op.Variable;
 
 /**
  * A fitness function for <code>STGPIndividual</code>s that calculates and
@@ -64,9 +64,12 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
     public static final GPKey<Double> POINT_ERROR = new GPKey<>();
 
     // Configuration settings
-    private Object[] expectedOutputs;
-    private Variable[] inputVariables;
+
+    private Variable<Double>[] inputVariables;
+
     private Object[][] inputValueSets;
+    private Object[] expectedOutputs;
+
     private Double pointError;
     private final boolean autoConfig;
 
@@ -166,7 +169,7 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
         for (int i = 0; i < inputValueSets.length; i++) {
             // Update the variable values
             for (int j = 0; j < inputVariables.length; j++) {
-                inputVariables[j].setValue(inputValueSets[i][j]);
+                inputVariables[j].set((double)inputValueSets[i][j]);
             }
 
             // Run the program

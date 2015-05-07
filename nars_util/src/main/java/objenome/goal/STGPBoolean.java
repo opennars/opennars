@@ -95,10 +95,10 @@ public class STGPBoolean extends ProblemSTGP {
    
     public static class BooleanCases {
         
-        public final Boolean[][] inputValues;
-        public final Boolean[] expectedOutputs;
+        public final boolean[][] inputValues;
+        public final boolean[] expectedOutputs;
 
-        public BooleanCases(Boolean[][] inputValues, Boolean[] expectedOutputs) {
+        public BooleanCases(boolean[][] inputValues, boolean[] expectedOutputs) {
             this.inputValues = inputValues;
             this.expectedOutputs = expectedOutputs;
         }
@@ -109,7 +109,7 @@ public class STGPBoolean extends ProblemSTGP {
         this(c.inputValues, c.expectedOutputs, populationSize, maxGenerations);
     }
 
-    public STGPBoolean(Boolean[][] inputValues, Boolean[] expectedOutputs, int populationSize, int maxGenerations) {
+    public STGPBoolean(boolean[][] inputValues, boolean[] expectedOutputs, int populationSize, int maxGenerations) {
         super();
         
 
@@ -146,7 +146,7 @@ public class STGPBoolean extends ProblemSTGP {
         }};
         
         for (int i = 0; i < inputValues[0].length; i++) {
-            syntaxList.add(new VariableNode(new Variable("b" + i, Boolean.class)));
+            syntaxList.add(new VariableNode(Variable.make("b" + i, Boolean.class)));
         }
 
 

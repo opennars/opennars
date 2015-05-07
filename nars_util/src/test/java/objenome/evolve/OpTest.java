@@ -23,10 +23,7 @@
 package objenome.evolve;
 
 import junit.framework.TestCase;
-import objenome.op.Literal;
-import objenome.op.Node;
-import objenome.op.Variable;
-import objenome.op.VariableNode;
+import objenome.op.*;
 import objenome.op.math.*;
 import org.junit.Test;
 
@@ -41,7 +38,7 @@ public class OpTest extends TestCase {
 
 	}
 
-	public static Literal l(double v) { return new Literal(v); }
+	public static Doubliteral l(double v) { return new Doubliteral(v); }
 
 	public void eq(Node n, double v) {
         Node nn = n.normalize();
@@ -49,20 +46,21 @@ public class OpTest extends TestCase {
 		if (Double.isFinite(v)) {
 
 
-			assertEquals(Literal.class, nn.getClass());
+			assertEquals(Doubliteral.class, nn.getClass());
 
 			double d = ((Double)(nn.evaluate())).doubleValue();
 			assertEquals(d, v, 0.001);
 
 		}
         else {
+            assertNotEquals(Doubliteral.class, nn.getClass());
             assertNotEquals(Literal.class, nn.getClass());
         }
 	}
 
 	public static VariableNode v(String name) {
 		return new VariableNode(
-				new Variable(name, Double.class)
+				Variable.make(name, Double.class)
 		);
 	}
 

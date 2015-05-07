@@ -32,7 +32,7 @@ import objenome.op.Numeric1d;
  *
  * @since 2.0
  */
-public class Exp<X extends Node> extends Numeric1d<X,Number>  {
+public class Exp extends Numeric1d  {
 
     public static final String IDENTIFIER = "EXP";
 
@@ -48,7 +48,7 @@ public class Exp<X extends Node> extends Numeric1d<X,Number>  {
      *
      * @param exponent the child node.
      */
-    public Exp(X exponent) {
+    public Exp(Node exponent) {
         super(exponent);
     }
 
@@ -61,12 +61,6 @@ public class Exp<X extends Node> extends Numeric1d<X,Number>  {
      * @return <code>e</code> raised to the power of the value returned by the
      * child
      */
-    @Override
-    public Double evaluate() {
-        Object c = getChild(0).evaluate();
-
-        return value(NumericUtils.asDouble(c));
-    }
 
     @Override
     public double value(double x) {

@@ -15,7 +15,7 @@ public class STGPMultiplexerTest extends TestCase {
         final int generations = 50;
             STGPBoolean e = new STGPBoolean(BenchmarkSolutions.multiplexerProblem(6), popSize, generations);
             
-            Population<STGPIndividual> p = e.run();
+            Population<STGPIndividual> p = e.cycle();
             
             STGPIndividual best = p.fittest();
             

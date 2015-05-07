@@ -110,7 +110,7 @@ public final class NodeUtils {
         for (int i = 0; i < quantity; i++) {
             int value = (i * interval) + start;
 
-            range.add(new Literal(value));
+            range.add(new Doubliteral(value));
         }
 
         return range;
@@ -170,7 +170,7 @@ public final class NodeUtils {
         for (int i = 0; i < quantity; i++) {
             double value = (i * interval) + start;
 
-            range.add(new Literal(value));
+            range.add(new Doubliteral(value));
         }
 
         return range;
@@ -200,7 +200,7 @@ public final class NodeUtils {
         for (int i = 0; i < quantity; i++) {
             float value = (i * interval) + start;
 
-            range.add(new Literal(value));
+            range.add(new Doubliteral(value));
         }
 
         return range;
@@ -225,7 +225,7 @@ public final class NodeUtils {
         List<Variable> variables = new ArrayList<>();
 
         for (String name : variableNames) {
-            variables.add(new Variable(name, datatype));
+            variables.add(Variable.make(name, datatype));
         }
 
         return variables;

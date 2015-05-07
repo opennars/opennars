@@ -31,7 +31,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Tangent extends Numeric1<Node> {
+public class Tangent extends Numeric1 {
 
     public static final String IDENTIFIER = "TAN";
 

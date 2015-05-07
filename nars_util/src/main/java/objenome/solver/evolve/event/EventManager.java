@@ -89,16 +89,18 @@ import java.util.List;
      */
     @SuppressWarnings("unchecked")
     public <T extends Event, V extends T> void fire(T event) {
-        for (Class<?> key : mapping.keySet()) {
-            if (key.isAssignableFrom(event.getClass())) {
+        //for (Class<?> key : mapping.keySet()) {
+            /*if (key.isAssignableFrom(event.getClass())) {
                 if (key!=event.getClass())
-                    System.err.println(key + " subclass of " + event.getClass());
-
-                for (Listener<?> listener : mapping.get(key)) {
+                    System.err.println(key + " subclass of " + event.getClass());*/
+            List<Listener<?>> s = mapping.get(event.getClass());
+            if (s!=null) {
+                for (Listener<?> listener : s) {
                     ((Listener<T>) listener).onEvent(event);
                 }
             }
-        }
+
+
     }
 
     /**

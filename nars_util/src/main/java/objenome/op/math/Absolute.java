@@ -21,8 +21,8 @@
  */
 package objenome.op.math;
 
+import objenome.op.Doubliteral;
 import objenome.op.Node;
-import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
 /**
@@ -38,7 +38,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Absolute extends Node {
+public class Absolute extends MathNode {
 
     public static final String IDENTIFIER = "ABS";
 
@@ -66,28 +66,28 @@ public class Absolute extends Node {
      *
      * @return a positive value of equal magnitude to its child's value
      */
-    @Override
-    public Object evaluate() {
-        Object c = getChild(0).evaluate();
-
-        Class<?> returnType = TypeUtil.widestNumberType(c.getClass());
-
-        if (returnType == Double.class) {
-            // Perform absolute on double.
-            return Math.abs(NumericUtils.asDouble(c));
-        } else if (returnType == Float.class) {
-            // Perform absolute on float.
-            return Math.abs(NumericUtils.asFloat(c));
-        } else if (returnType == Long.class) {
-            // Perform absolute on long.
-            return Math.abs(NumericUtils.asLong(c));
-        } else if (returnType == Integer.class) {
-            // Perform absolute on integer.
-            return Math.abs(NumericUtils.asInteger(c));
-        }
-
-        return null;
-    }
+//    @Override
+//    public Object evaluate() {
+//        Object c = getChild(0).evaluate();
+//
+//        Class<?> returnType = TypeUtil.widestNumberType(c.getClass());
+//
+//        if (returnType == Double.class) {
+//            // Perform absolute on double.
+//            return Math.abs(NumericUtils.asDouble(c));
+//        } else if (returnType == Float.class) {
+//            // Perform absolute on float.
+//            return Math.abs(NumericUtils.asFloat(c));
+//        } else if (returnType == Long.class) {
+//            // Perform absolute on long.
+//            return Math.abs(NumericUtils.asLong(c));
+//        } else if (returnType == Integer.class) {
+//            // Perform absolute on integer.
+//            return Math.abs(NumericUtils.asInteger(c));
+//        }
+//
+//        return null;
+//    }
 
     /**
      * Returns the identifier of this function which is ABS
@@ -114,4 +114,26 @@ public class Absolute extends Node {
         }
         return null;
     }
+
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+
+        double an = getChildConstantValue(0);
+
+        if (Double.isFinite(an)) {
+            return new Doubliteral(Math.abs(an));
+        }
+
+        return this;
+    }
+
+
+    @Override
+    public double eval() {
+        double c = getChildEvaluated(0);
+        if (c >= 0) return c;
+        return -c;
+    }
+
 }
