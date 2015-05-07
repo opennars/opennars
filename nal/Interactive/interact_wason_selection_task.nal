@@ -3,11 +3,9 @@ js("this.inp={}; this.lookCard=function(a){ a=a.toString(); if(this.inp[a]=="che
 *decisionthreshold=0.05
 
 ***Wason Selection Task
-//If there is a vocal on one side, is there a even number on the other?
-<<$num --> (/,card,[vocalic],_)> ==> <$num --> [even]>>?
-//The cards E, K, 4, 7 are present:
-<{(*,{E},#n1),(*,{K},#n2),(*,#s1,{4}),(*,#s2,{7})} --> card>.
-//each card has a symbol on one side, and a number on the other:
+//The cards E, K, 4, 7 are present, each card has a symbol on one side, and a number on the other:
+(&&,<#n1 --> num>,<#n2 --> num>,<#s1 --> sym>,<#s2 --> sym>,<{(*,{E},#n1),(*,{K},#n2),(*,#s1,{4}),(*,#s2,{7})} --> card>).
+//each card has a symbol on one side, and a number on the 
 <<(*,$1,$2) --> card> ==> (&&,<$1 --> sym>,<$2 --> num>)>.
 //E is vocalic:
 <{E} --> [vocalic]>.
