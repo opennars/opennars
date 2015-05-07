@@ -5,7 +5,6 @@
 package nars.nal;
 
 import nars.Events;
-import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -40,10 +39,13 @@ public class ConceptProcess extends NAL {
 
     public ConceptProcess(Concept concept, TaskLink taskLink, int termLinkCount) {
         super(concept.memory, taskLink.getTask());
+
+
         this.currentTaskLink = taskLink;
         this.currentConcept = concept;
-
         this.termLinksToFire = termLinkCount;
+
+
     }
 
 
@@ -113,7 +115,7 @@ public class ConceptProcess extends NAL {
         currentConcept.taskLinks.printAll(System.out);*/
     }
 
-    final Concept.TermLinkNovel termLinkNovel = new Concept.TermLinkNovel();
+    final Concept.TermLinkNoveltyFilter termLinkNovel = new Concept.TermLinkNoveltyFilter();
 
     /**
      * Replace default to prevent repeated logic, by checking TaskLink
@@ -168,6 +170,8 @@ public class ConceptProcess extends NAL {
 
     @Override
     protected void process() {
+
+        if (!currentConcept.ensureActiveTo("ConceptProcess")) return;
 
         currentConcept.setUsed(memory.time());
 

@@ -127,19 +127,15 @@ abstract public class SequentialCore implements ControlCycle {
 
     @Override
     public void conceptRemoved(Concept c) {
-        memory.emit(Events.ConceptForget.class, c);
 
         if (subcon != null) {
+            c.setState(Concept.State.Forgotten);
             subcon.add(c);
         } else {
             c.delete();
         }
     }
 
-    protected void delete(Concept c) {
-        //explicitly destroy all concept data structures to free memory for GC
-        c.delete();
-    }
 
     final ConceptActivator activator = new ConceptActivator() {
         @Override

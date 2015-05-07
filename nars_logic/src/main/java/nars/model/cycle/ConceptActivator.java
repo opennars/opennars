@@ -58,10 +58,7 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         if (getSubConcepts()!=null) {
             Concept concept = getSubConcepts().take(getKey());
             if (concept!=null) {
-
-                getMemory().emit(Events.ConceptRemember.class, concept);
-
-                return concept;
+                return concept.setState(Concept.State.Active);
             }
         }
 
@@ -69,15 +66,8 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         if (createIfMissing) {
             Concept concept = getMemory().newConcept(budget, getKey());
 
-            if ( concept == null) {
-                throw new RuntimeException("No ConceptBuilder will build: " + getKey() + " " + budget + ", builders=" + getMemory().getConceptBuilders());
-            }
-
-
-            if (getMemory().logic!=null)
-                getMemory().logic.CONCEPT_NEW.hit();
-
-            getMemory().emit(Events.ConceptNew.class, concept);
+            if ( concept == null)
+                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + budget + ", builders=" + getMemory().getConceptBuilders());
 
             return concept;
         }

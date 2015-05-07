@@ -307,63 +307,35 @@ public class Memory implements Serializable {
         //------------------------------------ 
         reset(false, false);
 
-        this.event.set(conceptIndices, true,
-                Events.ConceptQuestionAdd.class, Events.ConceptQuestionRemove.class,
-                //Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class
-                Events.ConceptRemember.class, Events.ConceptNew.class,
-                Events.ConceptForget.class
-        );
+
     }
 
+    /** called when a Concept's lifecycle has changed */
+    public void updateConceptState(Concept c) {
 
-    /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events */
-    private final Reaction conceptIndices = new Reaction() {
+    }
 
-        @Override
-        public void event(Class event, Object[] args) {
-//
-//            if ((event == Events.ConceptForget.class) || (event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class)) {
-//                Concept c = (Concept)args[0];
-//                if (c.questions.isEmpty()) questionConcepts.remove(c);
-//                else questionConcepts.add(c);
-//                if (c.goals.isEmpty())  goalConcepts.remove(c);
-//                else goalConcepts.add(c);
-//                return;
-//            }
-            Concept c = (Concept)args[0];
-
-
-            //TODO this may also be triggered by Quests; may want to distinguish them with a different event for Quests
-            if ((event == Events.ConceptNew.class) || (event == Events.ConceptRemember.class) || (event == Events.ConceptQuestionAdd.class)) {
-                if (!c.questions.isEmpty())
-                    questionConcepts.add(c);
+    /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events
+        called by a Concept when its questions state changes (becomes empty or becomes un-empty) */
+    public void updateConceptQuestions(Concept c) {
+        if (c.questions.isEmpty()) {
+            if (!questionConcepts.remove(c))
+                throw new RuntimeException("Concept " + c + " never registered any questions");
+        }
+        else {
+            if (!questionConcepts.add(c)) {
+                throw new RuntimeException("Concept " + c + " aready registered existing questions");
             }
-            else if (event == Events.ConceptQuestionRemove.class) {
-                if (c.questions.isEmpty())
-                    questionConcepts.remove(c);
-            }
-            else if (event == Events.ConceptForget.class) {
-                questionConcepts.remove(c);
-            }
-
 
             if (questionConcepts.size() > concepts.size()) {
-                throw new RuntimeException("more questionConcepts than concepts");
+                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + concepts.size());
             }
-
-            /*
-            if ((event == Events.ConceptGoalAdd.class) || (event == Events.ConceptGoalRemove.class)) {
-                Concept c = (Concept)args[0];
-                Task incoming = args.length > 2 ? (Task)args[2] : null; //non-null indicates that a Add will be following this removal event
-                if (incoming==null && c.goals.isEmpty())
-                    goalConcepts.remove(c);
-                else if (c.goals.size() == 1)
-                    goalConcepts.add(c);
-            }
-            */
-
         }
-    };
+    }
+
+    public void updateConceptGoals(Concept c) {
+        //TODO
+    }
 
     public void delete() {
 
@@ -492,17 +464,15 @@ public class Memory implements Serializable {
         if ((term instanceof Variable) || (term instanceof Interval))
             return null;
 
-        if (!term.isNormalized() && term.hasVar()) {
-            term = ((Compound) term).cloneNormalized();
-            if (term == null) return null;
-        }
+        if ((term = term.normalized()) == null)
+            return null;
 
+        Concept c = concepts.conceptualize(budget, term, true);
 
-        /*Concept c = concept(term);
-         if (c!=null)
-         System.out.print(c.budget + "   ");
-         System.out.println(term + " conceptualize: " + budget);*/
-        return concepts.conceptualize(budget, term, true);
+        if (c.getState() != Concept.State.Active)
+            c.setState(Concept.State.Active);
+
+        return c;
     }
 
     /**

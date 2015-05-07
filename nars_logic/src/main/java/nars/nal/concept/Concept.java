@@ -48,6 +48,25 @@ import static nars.nal.nal7.TemporalRules.solutionQuality;
 
 abstract public class Concept extends Item<Term> implements Termed {
 
+    public enum State {
+
+        /** created but not added to memory */
+        New,
+
+        /** in memory */
+        Active,
+
+        /** in sub-concepts */
+        Forgotten,
+
+        /** unrecoverable, will be garbage collected eventually */
+        Deleted
+    }
+
+    State state;
+    final long creationTime;
+    long deletionTime;
+
     /**
      * The term is the unique ID of the concept
      */
@@ -123,9 +142,14 @@ abstract public class Concept extends Item<Term> implements Termed {
      */
     public Concept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);        
-        
+
+        this.state = State.New;
+
         this.term = term;
         this.memory = memory;
+
+        this.creationTime = memory.time();
+        this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
 
         this.questions = Global.newArrayList();
         this.beliefs = Global.newArrayList();
@@ -141,8 +165,71 @@ abstract public class Concept extends Item<Term> implements Termed {
         this.termLinkBuilder = new TermLinkBuilder(this);
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
 
+        memory.emit(Events.ConceptNew.class, this);
+        if (memory.logic!=null)
+            memory.logic.CONCEPT_NEW.hit();
+
+
     }
 
+    public String getInstanceString() {
+        return "instance " + this + "(" + System.identityHashCode(this) + ")";
+    }
+
+
+    public State getState() {
+        return state;
+    }
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public long getDeletionTime() {
+        return deletionTime;
+    }
+
+    /** returns the same instance, used for fluency */
+    public Concept setState(State s) {
+
+        if (s == State.New)
+            throw new RuntimeException(getInstanceString() + " can not return to New state ");
+
+        State lastState = this.state;
+
+        if (lastState == State.Deleted)
+            throw new RuntimeException(getInstanceString() + " can not return leave Deleted state ");
+
+        if (this.state == s)
+            throw new RuntimeException(this + " already in state " + s);
+
+
+        this.state = s;
+
+        //ok set the state ------
+        switch (this.state) {
+            case Forgotten:
+                memory.emit(Events.ConceptForget.class, this);
+                break;
+
+            case Deleted:
+
+                if (lastState!=State.Forgotten) //emit forget event if it came directly to delete
+                    memory.emit(Events.ConceptForget.class, this);
+
+                deletionTime = memory.time();
+                memory.emit(Events.ConceptDelete.class, this);
+                break;
+
+            case Active:
+                memory.emit(Events.ConceptRemember.class, this);
+                break;
+        }
+
+        memory.updateConceptState(this);
+
+        return this;
+    }
 
     @Override public boolean equals(final Object obj) {
         if (this == obj) return true;
@@ -157,6 +244,15 @@ abstract public class Concept extends Item<Term> implements Termed {
         return term;
     }
 
+    public boolean ensureActiveTo(String activity) {
+        if (this.state != State.Active) {
+            System.err.println(activity + " fail: " + this + " (state=" + getState() + ')');
+            new Exception().printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /* ---------- direct processing of tasks ---------- */
     /**
      * Directly process a new task. Called exactly once on each task. Using
@@ -169,7 +265,9 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public boolean directProcess(final DirectProcess nal) {
+    public boolean process(final DirectProcess nal) {
+
+        if (!ensureActiveTo("DirectProcess")) return false;
 
         final Task task = nal.getCurrentTask();
 
@@ -227,7 +325,11 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     /** for batch processing a collection of tasks; more efficient than processing them individually */
+    //TODO untested
     public void link(Collection<Task> tasks) {
+
+        if (!ensureActiveTo("link(Collection<Task>)")) return;
+
         final int s = tasks.size();
         if (s == 0) return;
 
@@ -256,6 +358,28 @@ abstract public class Concept extends Item<Term> implements Termed {
 
 
     /**
+     * whether a concept's desire exceeds decision threshold
+     */
+    public boolean isDesired() {
+        return isDesired(memory.param.decisionThreshold.floatValue());
+    }
+
+    public boolean isDesired(float threshold) {
+        Truth desire=this.getDesire();
+        if(desire==null) {
+            return false;
+        }
+        return desire.getExpectation() > threshold;
+    }
+
+
+    /** by default, any Task is valid */
+    public boolean valid(Task t) {
+        return true;
+    }
+
+
+    /**
      * To accept a new judgment as belief, and check for revisions and solutions
      *
      * @param judg The judgment to be accepted
@@ -266,7 +390,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
 
-        oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
+        oldBelief = getSentence(judg, beliefs);   // only revise with the strongest -- how about projection?
 
         if ((oldBelief != null) && (oldBelief!=judg)) {
             final Stamp newStamp = judg.stamp;
@@ -275,7 +399,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 //                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
-                
+
                 memory.removed(task, "Duplicated");
                 return false;
             } else if (revisible(judg, oldBelief)) {
@@ -313,8 +437,8 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         /*if (task.aboveThreshold())*/ {
-            int nnq = questions.size();       
-            for (int i = 0; i < nnq; i++) {                
+            int nnq = questions.size();
+            for (int i = 0; i < nnq; i++) {
                 trySolution(judg, questions.get(i), nal);
             }
 
@@ -328,43 +452,8 @@ abstract public class Concept extends Item<Term> implements Termed {
         return true;
     }
 
-    protected boolean addToTable(final Task task, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
-        final Sentence newSentence = task.sentence;
-        int preSize = table.size();
-
-        Sentence removed = addToTable(memory, newSentence, table, max);
-
-        if (removed != null) {
-            if (removed == newSentence) return false;
-
-            memory.event.emit(eventRemove, this, removed, task);
-        }
-        if ((preSize != table.size()) || (removed != null)) {
-            memory.event.emit(eventAdd, this, task);
-        }
-        return true;
-    }
-
-    /**
-     * whether a concept's desire exceeds decision threshold
-     */
-    public boolean isDesired() {
-        return isDesired(memory.param.decisionThreshold.floatValue());
-    }
-
-    public boolean isDesired(float threshold) {
-        Truth desire=this.getDesire();
-        if(desire==null) {
-            return false;
-        }
-        return desire.getExpectation() > threshold;
-    }
 
 
-    /** by default, any Task is valid */
-    public boolean valid(Task t) {
-        return true;
-    }
 
     /**
      * To accept a new goal, and check for revisions and realization, then
@@ -379,7 +468,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         final Sentence goal = task.sentence, oldGoal;
 
-        oldGoal = selectCandidate(goal, goals); // revise with the existing desire values
+        oldGoal = getSentence(goal, goals); // revise with the existing desire values
 
         if (oldGoal != null) {
             final Stamp newStamp = goal.stamp;
@@ -415,7 +504,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 
 
         // check if the Goal is already satisfied
-        trySolution(selectCandidate(goal, beliefs), task, nal);
+        trySolution(getSentence(goal, beliefs), task, nal);
 
         // still worth pursuing?
         if (!task.aboveThreshold()) {
@@ -443,7 +532,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         Sentence ques = newTask.sentence;
 
-        List<Task> existing = ques.isQuestion() ? questions : quests;
+        List<Task> table = ques.isQuestion() ? questions : quests;
 
         if (Global.DEBUG) {
             if (newTask.sentence.truth!=null) {
@@ -454,9 +543,10 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
 
-        boolean newQuestion = existing.isEmpty();
+        boolean newQuestion = table.isEmpty();
+        final int presize = table.size();
 
-        for (final Task t : existing) {
+        for (final Task t : table) {
 
             //equality test only needs to considers parent
             // (truth==null in all cases, and term will be equal)
@@ -474,23 +564,151 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         if (newQuestion) {
-            if (existing.size() + 1 > memory.param.conceptQuestionsMax.get()) {
-                Task removed = existing.remove(0);    // FIFO
+            if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+                Task removed = table.remove(0);    // FIFO
                 memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
             }
 
-            existing.add(newTask);
+            table.add(newTask);
             memory.event.emit(ConceptQuestionAdd.class, this, newTask);
         }
 
+        onTableUpdated(newTask.getPunctuation(), presize);
+
 
         if (ques.isQuest()) {
-            trySolution(selectCandidate(ques, goals), newTask, nal);
+            trySolution(getSentence(ques, goals), newTask, nal);
         }
         else {
-            trySolution(selectCandidate(ques, beliefs), newTask, nal);
+            trySolution(getSentence(ques, beliefs), newTask, nal);
         }
     }
+
+    /**
+     * Add a new belief (or goal) into the table Sort the beliefs/desires by
+     * rank, and remove redundant or low rank one
+     *
+     * @param newSentence The judgment to be processed
+     * @param table The table to be revised
+     * @param capacity The capacity of the table
+     * @return whether table was modified
+     */
+    public Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
+
+        if (!ensureActiveTo("addToTable")) return null;
+
+        long now = memory.time();
+
+        float rank1 = rankBelief(newSentence, now);    // for the new isBelief
+
+        float rank2;
+        int i;
+
+        int originalSize = table.size();
+
+
+
+        //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
+        for (i = 0; i < table.size(); i++) {
+            Sentence existingSentence = table.get(i);
+
+            rank2 = rankBelief(existingSentence, now);
+
+            if (rank1 >= rank2) {
+                if (newSentence.equivalentTo(existingSentence, false, false, true, true)) {
+                    //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
+                    return newSentence;
+                }
+                table.add(i, newSentence);
+                break;
+            }
+        }
+
+        if (table.size() == capacity) {
+            // no change
+            return null;
+        }
+
+        Sentence removed = null;
+
+        final int ts = table.size();
+        if (ts > capacity) {
+            removed = table.remove(ts - 1);
+        }
+        else if (i == table.size()) { // branch implies implicit table.size() < capacity
+            table.add(newSentence);
+            //removed = nothing
+        }
+
+        return removed;
+    }
+
+    protected void onTableUpdated(char punctuation, int originalSize) {
+        switch (punctuation) {
+            /*case Symbols.GOAL:
+                break;*/
+            case Symbols.QUESTION:
+                if (questions.isEmpty()) {
+                    if (originalSize > 0) //became empty
+                        memory.updateConceptQuestions(this);
+                } else {
+                    if (originalSize == 0) { //became non-empty
+                        memory.updateConceptQuestions(this);
+                    }
+                }
+                break;
+        }
+    }
+
+    protected boolean addToTable(final Task goalOrJudgment, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
+        final Sentence newSentence = goalOrJudgment.sentence;
+        int preSize = table.size();
+
+        Sentence removed = addToTable(memory, newSentence, table, max);
+
+        onTableUpdated(newSentence.punctuation, preSize);
+
+        if (removed != null) {
+            if (removed == newSentence) return false;
+
+            memory.event.emit(eventRemove, this, removed, goalOrJudgment);
+
+            if (preSize != table.size()) {
+                memory.event.emit(eventAdd, this, goalOrJudgment);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Select a belief value or desire value for a given query
+     *
+     * @param query The query to be processed
+     * @param list The list of beliefs or desires to be used
+     * @return The best candidate selected
+     */
+    public Sentence getSentence(final Sentence query, final List<Sentence>... lists) {
+        float currentBest = 0;
+        float beliefQuality;
+        Sentence candidate = null;
+
+        final long now = memory.time();
+        for (List<Sentence> list : lists) {
+            int lsv = list.size();
+            for (int i = 0; i < lsv; i++) {
+                Sentence judg = list.get(i);
+                beliefQuality = solutionQuality(query, judg, now);
+                if (beliefQuality > currentBest) {
+                    currentBest = beliefQuality;
+                    candidate = judg;
+                }
+            }
+        }
+
+        return candidate;
+    }
+
 
 
     /**
@@ -501,7 +719,10 @@ abstract public class Concept extends Item<Term> implements Termed {
      *
      * @param task The task to be linked
      */
-    public boolean linkTask(final Task task) {
+    protected boolean linkTask(final Task task) {
+
+        if (!ensureActiveTo("linkTask(task)")) return false;
+
         Budget taskBudget = task;
         taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
@@ -565,81 +786,6 @@ abstract public class Concept extends Item<Term> implements Termed {
         return true;
     }
 
-    /**
-     * Add a new belief (or goal) into the table Sort the beliefs/desires by
-     * rank, and remove redundant or low rank one
-     *
-     * @param newSentence The judgment to be processed
-     * @param table The table to be revised
-     * @param capacity The capacity of the table
-     * @return whether table was modified
-     */
-    public Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
-
-        long now = memory.time();
-
-        float rank1 = rankBelief(newSentence, now);    // for the new isBelief
-
-        float rank2;
-        int i;
-
-
-        //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
-        for (i = 0; i < table.size(); i++) {
-            Sentence existingSentence = table.get(i);
-
-            rank2 = rankBelief(existingSentence, now);
-
-            if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(existingSentence, false, false, true, true)) {
-                    //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
-                    return newSentence;
-                }
-                table.add(i, newSentence);
-                break;
-            }            
-        }
-        
-        if (table.size() == capacity) {
-            // nothing
-        }
-        else if (table.size() > capacity) {
-            Sentence removed = table.remove(table.size() - 1);
-            return removed;
-        }
-        else if (i == table.size()) { // branch implies implicit table.size() < capacity
-            table.add(newSentence);
-        }
-        
-        return null;
-    }
-
-    /**
-     * Select a belief value or desire value for a given query
-     *
-     * @param query The query to be processed
-     * @param list The list of beliefs or desires to be used
-     * @return The best candidate selected
-     */
-    private Sentence selectCandidate(final Sentence query, final List<Sentence>... lists) {
-        float currentBest = 0;
-        float beliefQuality;
-        Sentence candidate = null;
-
-        final long now = memory.time();
-        for (List<Sentence> list : lists) {
-            for (int i = 0; i < list.size(); i++) {
-                Sentence judg = list.get(i);
-                beliefQuality = solutionQuality(query, judg, now);
-                if (beliefQuality > currentBest) {
-                    currentBest = beliefQuality;
-                    candidate = judg;
-                }
-            }
-        }
-
-        return candidate;
-    }
 
     /* ---------- insert Links for indirect processing ---------- */
     /**
@@ -666,8 +812,9 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
-    public boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
+    protected boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
 
+        if (!ensureActiveTo("linkTerms")) return false;
 
         final float subPriority;
         int recipients = termLinkBuilder.getNonTransforms();
@@ -738,6 +885,8 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     boolean linkTerm(TermLinkTemplate template, float priority, float durability, float quality, boolean updateTLinks) {
+
+
         Term otherTerm = termLinkBuilder.set(template).getOther();
 
 
@@ -814,7 +963,6 @@ abstract public class Concept extends Item<Term> implements Termed {
      */
     public float rankBelief(final Sentence s, final long now) {
         return rankBeliefOriginal(s);
-
     }
 
 
@@ -935,7 +1083,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     @Override public void delete() {
         super.delete();
 
-        memory.emit(Events.ConceptDelete.class, this);
+        setState(State.Deleted);
 
         //dont delete the tasks themselves because they may be referenced from othe concepts.
         questions.clear();
@@ -1050,7 +1198,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
 
-    public static final class TermLinkNovel implements Predicate<TermLink>    {
+    public static final class TermLinkNoveltyFilter implements Predicate<TermLink>    {
 
         TaskLink taskLink;
         private long now;
@@ -1173,7 +1321,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         final String indent = "\t";
         long now = memory.time();
 
-        out.println("CONCEPT: " + term + " @ " + now);
+        out.println("CONCEPT: " + getInstanceString() + " @ " + now);
 
         if (showbeliefs) {
             out.print(" Beliefs:");

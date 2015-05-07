@@ -5,7 +5,6 @@
 package nars.nal;
 
 import nars.Events;
-import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
@@ -61,7 +60,7 @@ public class DirectProcess extends NAL {
     }
 
     protected void process(Concept c) {
-        if (c.directProcess(this)) {
+        if (c.process(this)) {
 
             c.link(currentTask);
 
