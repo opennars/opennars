@@ -21,8 +21,10 @@ public interface RLEnvironment {
     /** current reward */
     public double getReward();
 
-    /** set the next action (0 <= action < numActions) */
-    public void takeAction(int action);
+    /** set the next action (0 <= action < numActions)
+     *  returns false if the action was not successfully applied
+     * */
+    public boolean takeAction(int action);
 
     /** advance world simulation by 1 frame */
     public void frame();

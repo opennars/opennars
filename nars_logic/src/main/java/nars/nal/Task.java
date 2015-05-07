@@ -558,4 +558,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
             }
         }
     }
+
+    public Truth getTruth() {
+        return sentence.getTruth();
+    }
 }

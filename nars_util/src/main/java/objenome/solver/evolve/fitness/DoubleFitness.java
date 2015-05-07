@@ -47,7 +47,7 @@ public abstract class DoubleFitness implements Fitness {
     };
 
     /**
-     * The comparator used by the {@link Minimise} double fitness
+     * The comparator used by the {@link Minimize} double fitness
      * implementation.
      */
     private static final Comparator<Double> MINIMISE = new Comparator<Double>() {
@@ -131,10 +131,10 @@ public abstract class DoubleFitness implements Fitness {
      */
     @Override
     public String toString() {
-        return Double.toString(fitness);
+        return getClass().getSimpleName() + '(' + fitness + ')';
     }
 
-    /**
+    /*
      * Returns a <code>Comparator</code> that provides the ordering of fitness
      * values.
      *
@@ -179,14 +179,14 @@ public abstract class DoubleFitness implements Fitness {
      * A <code>Fitness</code> score with a <code>double</code> value and a
      * minimising natural ordering.
      */
-    public static class Minimise extends DoubleFitness {
+    public static class Minimize extends DoubleFitness {
 
         /**
          * Constructs a <code>DoubleFitness</code> with a minimising ordering.
          *
          * @param fitness {@inheritDoc}
          */
-        public Minimise(double fitness) {
+        public Minimize(double fitness) {
             super(fitness);
         }
 
@@ -204,8 +204,9 @@ public abstract class DoubleFitness implements Fitness {
 
         @Override
         public boolean equals(Object obj) {
-            return (obj instanceof Minimise) && super.equals(obj);
+            return (obj instanceof Minimize) && super.equals(obj);
         }
     }
+
 
 }

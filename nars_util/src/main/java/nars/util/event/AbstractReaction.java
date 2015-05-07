@@ -9,6 +9,10 @@ abstract public class AbstractReaction implements Reaction {
     protected EventEmitter.Registrations active;
     protected final Class[] events;
 
+    public AbstractReaction(EventEmitter source, Class... events) {
+        this(source, true, events);
+    }
+
     public AbstractReaction(EventEmitter source, boolean active, Class... events) {
         super();
 

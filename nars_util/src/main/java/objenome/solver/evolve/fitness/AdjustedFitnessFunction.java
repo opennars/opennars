@@ -147,11 +147,11 @@ public class AdjustedFitnessFunction extends AbstractFitnessFunction implements 
 
         Fitness fitness = delegate.evaluate(population, individual);
 
-        if (!(fitness instanceof DoubleFitness.Minimise)) {
+        if (!(fitness instanceof DoubleFitness.Minimize)) {
             throw new IllegalStateException("Delegate must return instances of DoubleFitness.Minimise");
         }
 
-        DoubleFitness.Minimise minimised = (DoubleFitness.Minimise) fitness;
+        DoubleFitness.Minimize minimised = (DoubleFitness.Minimize) fitness;
 
         // Convert to standardised fitness (minimised with 0.0 as lowest value)
         double standardised = minimised.getValue() - minFitnessScore;

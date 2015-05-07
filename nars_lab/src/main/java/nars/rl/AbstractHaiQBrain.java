@@ -19,12 +19,11 @@ abstract public class AbstractHaiQBrain<S,A> {
     double gamma = 0.5;
 
     /** value of λ=1.0 effectively makes algorithm run an online Monte Carlo in which the effects of all future interactions are fully considered in updating each Q-value of an episode." */
-    double lambda = 0.9; //0.1 0.5 0.9
+    double lambda = 0.25; //0.1 0.5 0.9
 
     /** random rate */
-    double epsilon = 0.01;
+    double epsilon = 0;
 
-    protected A lastAction = null;
 
     public AbstractHaiQBrain() {
     }
@@ -43,13 +42,6 @@ abstract public class AbstractHaiQBrain<S,A> {
         };
     }
 
-    public A getLastAction() {
-        return lastAction;
-    }
-
-    public void setLastAction(A a) {
-        this.lastAction = a;
-    }
 
     public static class ArrayHaiQBrain extends AbstractHaiQBrain<Integer,Integer> {
 
@@ -117,38 +109,19 @@ abstract public class AbstractHaiQBrain<S,A> {
     abstract public double q(S state, A action);
 
 
-    /** learn a discrete state */
-    public A learn(final S state, final double reward) {
-        return learn(state, reward, 1f);
-    }
-
-    public A learn(final S state, final double reward, double confidence) {
-        return learn(state, reward, null, confidence);
-    }
+//    /** learn a discrete state */
+//    public A learn(final S state, final double reward) {
+//        return learn(state, reward, 1f);
+//    }
+//
+//    public A learn(final S state, final double reward, double confidence) {
+//        return learn(state, reward, null, confidence);
+//    }
 
     abstract public Iterable<S> getStates();
     abstract public Iterable<A> getActions();
 
-    protected A qlearn(final S state, final double reward, A nextAction, double confidence) {
-
-
-        if (nextAction == null) {
-            A maxk = null;
-            double maxval = Double.NEGATIVE_INFINITY;
-            for (A k : getActions()) {
-                double v = q(state, k);
-                if (v > maxval) {
-                    maxk = k;
-                    maxval = v;
-                }
-            }
-
-            if (epsilon > 0 && random(1.0) < epsilon) {
-                nextAction = getRandomAction();
-            } else {
-                nextAction = maxk;
-            }
-        }
+    protected void qlearn(A lastAction, final S state, final double reward, A nextAction, double confidence) {
 
         /*
         Q-learning
@@ -196,22 +169,17 @@ abstract public class AbstractHaiQBrain<S,A> {
         table.setValue(new QPair<S, A>(state, action), newValue);
          */
 
-        lastAction = nextAction;
-        return nextAction;
     }
 
-    /**
-     * returns action #
-     */
-    public A learn(final S state, final double reward, A nextAction, double confidence) {
-        return qlearn(state, reward, nextAction, confidence);
-    }
+//    /**
+//     * returns action #
+//     */
+//    public A learn(final S state, final double reward, A nextAction, double confidence) {
+//        return qlearn(state, reward, nextAction, confidence);
+//    }
 
     abstract public A getRandomAction();
 
-    public A getNextAction() {
-        return lastAction;
-    }
 
     public void setAlpha(double Alpha) {
         this.alpha = Alpha;

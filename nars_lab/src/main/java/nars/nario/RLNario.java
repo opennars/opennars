@@ -20,14 +20,13 @@ public class RLNario extends NARio  {
     public RLNario(NAR nar, Perception... p) {
         super(nar);
 
-        float fps = 50f;
+        float fps = 20f;
         gameRate = 1.0f / fps;
 
         QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p);
 
-        agent.brain.setEpsilon(0.15);
+        agent.brain.setEpsilon(0.1);
 
-        //agent.setqAutonomicGoalConfidence(0.1f);
 
         mi = new QVis(agent);
 
@@ -72,22 +71,21 @@ public class RLNario extends NARio  {
 
     public static void main(String[] args) {
 
-        Global.TRUTH_EPSILON = 0.02f;
 
-        NAR nar = new NAR(new Default(3500, 50, 4).setInternalExperience(null) );
+        NAR nar = new NAR(new Default(2000, 50, 3).setInternalExperience(null) );
 
         nar.param.duration.set(memoryCyclesPerFrame * 3);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.65);
+        nar.param.decisionThreshold.set(0.51);
         nar.param.shortTermMemoryHistory.set(5);
 
         new RLNario(nar,
                 //new RawPerception("r", 0.1f)
-                new RawPerception.BipolarDirectPerception("r", 0.6f)
-                //new HaiSOMPerception("s", 2, 0.3f),
-                //new AEPerception("a", 0.2f, 15, 2).setLearningRate(0.002).setSigmoid(true),
+                new RawPerception("r", 0.3f),
+                new HaiSOMPerception("s", 2, 0.3f),
+                new AEPerception("a", 0.2f, 15, 2).setLearningRate(0.02).setSigmoid(true)
                 //new AEPerception("b", 0.2f, 15).setLearningRate(0.02).setSigmoid(false)
         );
 

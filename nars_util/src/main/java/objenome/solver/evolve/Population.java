@@ -21,12 +21,11 @@
  */
 package objenome.solver.evolve;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 import objenome.solver.evolve.GPContainer.GPKey;
+import objenome.solver.evolve.fitness.DoubleFitness;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
+import java.util.*;
 
 /**
  * A <code>Population</code> is an ordered collection of {@link Individual}s.
@@ -212,4 +211,12 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
     }
 
 
+    public SummaryStatistics getStatistics() {
+        SummaryStatistics s = new SummaryStatistics();
+        for (I i : this) {
+            double d = ((DoubleFitness)i.getFitness()).getValue();
+            s.addValue(d);
+        }
+        return s;
+    }
 }

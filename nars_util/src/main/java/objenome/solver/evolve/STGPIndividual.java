@@ -226,7 +226,7 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
         if (root == null) {
             return null;
         } else {
-            return root.toString();
+            return getFitness() + " " + root.toString();
         }
     }
 

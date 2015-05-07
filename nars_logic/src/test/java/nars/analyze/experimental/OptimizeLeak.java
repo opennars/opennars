@@ -120,7 +120,7 @@ public class OptimizeLeak {
 
                                  getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
                                      @Override
-                                     protected void leak(Task derived) {
+                                     protected boolean leak(Task derived) {
                                          switch (derived.getPunctuation()) {
 
                                              case Symbols.JUDGMENT:
@@ -138,7 +138,10 @@ public class OptimizeLeak {
                                                  derived.mulPriority(qLeakPri);
                                                  derived.mulDurability(qLeakDur);
                                                  break;
+
                                          }
+                                         return true;
+
                                      }
                                  });
                              }

@@ -1,10 +1,11 @@
 package nars.rl;
 
 import com.google.common.collect.Iterables;
+import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import nars.Memory;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.nal.DirectProcess;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
@@ -25,16 +26,12 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     private final RLEnvironment env;
     private final EnvironmentReaction io;
 
-    private final ArrayRealVector actByExpectation;
-    private final ArrayRealVector actByPriority;
     private final Perception[] perceptions;
     private final Term rewardTerm;
     private final String operationTerm;
     private final Operator operator;
     private final NAR.OperatorRegistration opReg;
 
-    public Operation actByQStrongest = null; //default q-action if NARS does not specify one by the next frame
-    double lastReward = 0;
 
     final java.util.List<Task> incoming = new ArrayList();
 
@@ -42,7 +39,24 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     final Operation[] operationCache;
 
     private float initialPossibleDesireConfidence = 0.85f;
-    private float initialAutonomicGoalConfidence = 0.55f;
+
+    final float actedConfidence = 0.9f; //similar to Operator.exec
+
+    final float actionDesireDecay = 0.1f;
+    private final ArrayRealVector actByExpectation;
+    private final ArrayRealVector actByPriority;
+    private RealVector normalizedActionDesire;
+
+
+    /** if NARS does not specify one by the next frame,
+     *  whether to invoke an action in the environment
+     *  decided by q-values directly
+     */
+    private boolean autopilot = true;
+
+    private Operation lastAction;
+    double lastReward = 0;
+
 
     /**
      * corresponds to the numeric operation as specified by the environment
@@ -67,7 +81,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
      * @param nar
      * @param env
      * @param p
-     * @param epsilon randomness factor
+
      */
     public QLAgent(NAR nar, String operationTerm, Term rewardTerm, RLEnvironment env, Perception... perceptions) {
         super(nar);
@@ -92,6 +106,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         this.actByPriority = new ArrayRealVector(env.numActions());
         this.actByExpectation = new ArrayRealVector(env.numActions());
+        this.normalizedActionDesire = new ArrayRealVector(env.numActions());
 
 
         opReg = nar.on(operator = new Operator("^" + operationTerm) {
@@ -139,8 +154,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             cols.include(a);
         }
 
-        possibleDesire(initialPossibleDesireConfidence);
-        setAutonomicGoalConfidence(initialAutonomicGoalConfidence);
+        spontaneous(initialPossibleDesireConfidence);
+        setActedBeliefConfidence(actedConfidence);
+        setActedGoalConfidence(actedConfidence);
+        brain.setAlpha(0.1f);
     }
 
     @Override
@@ -157,6 +174,15 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         if (a instanceof Operation)
             return cols.contains((Operation)a);
         return false;
+    }
+
+    /* action desire value, as aggregated between frames from NARS executions */
+    public double getActionDesire(int action) {
+        return actByExpectation.getEntry(action);
+    }
+
+    public int getNumActions() {
+        return env.numActions();
     }
 
 
@@ -220,22 +246,42 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     /**
      * decides which action, TODO make this configurable
      */
-    public synchronized Term decide() {
+    public synchronized Operation decide() {
 
-        double m = actByExpectation.getL1Norm();
+
+        double e = brain.getEpsilon();
+        if (e > 0) {
+            if (Memory.randomNumber.nextDouble() < e) {
+//                /*A l = brain.getRandomAction();
+//                brain.setLastAction(l);
+//                return l;*/
+//                spontaneous((float) (initialPossibleDesireConfidence));
+
+                int a = (int)(Math.random() * getNumActions());
+                float v = initialPossibleDesireConfidence;
+                actByExpectation.addToEntry(a, v);
+            }
+
+        }
+
+        System.out.println(actByExpectation);
+
+
+        double m = actByExpectation.getL1Norm(); //sum of absolute value of elements, to detect a zero vector
         if (m == 0) return null;
 
         int winner = actByExpectation.getMaxIndex();
         if (winner == -1) return null; //no winner?
 
-        RealVector normalized = actByExpectation.unitVector();
-        double alignment = normalized.dotProduct(actByExpectation);
+        normalizedActionDesire = actByExpectation.unitVector();
+        double alignment = normalizedActionDesire.dotProduct(actByExpectation);
 
         //System.out.print("NARS exec: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
         //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
 
-        actByExpectation.mapMultiplyToSelf(0); //zero
-        actByPriority.mapMultiplyToSelf(0); //zero
+        actByExpectation.mapMultiplyToSelf(actionDesireDecay); //zero
+        actByPriority.mapMultiplyToSelf(actionDesireDecay); //zero
+
 
         return getAction(winner);
     }
@@ -243,72 +289,101 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     protected void onFrame() {
         long now = nar.time();
 
-        Term action = decide();
 
-        if ((action == null) && ((qAutonomicGoalConfidence > 0) || ((qAutonomicBeliefConfidence > 0)))) {
-            action = actByQStrongest;
-            //System.out.print("QL auto: " + action);
+        Operation nextAction = decide();
 
-            if (action == null) {
-                //no qAction specified either, choose random
-                action = getAction((int) (Math.random() * env.numActions()));
+        if (nextAction != null) {
+            int i = Integer.parseInt((nextAction).getArgument(0).toString());
+
+            boolean actionSucceeded = env.takeAction(i);
+
+            if (actionSucceeded) {
+                acted(nextAction);
             }
+            else {
 
-            /** introduce belief or goal for a QL action */
-
-            autonomic(action);  //provides faster action but may cause illogical feedback loops
-            //act(action, Symbols.JUDGMENT); //maybe more "correct" probably because it just notices the "autonomic" QL reaction that was executed
-        }
-
-        if (action != null) {
-            int i = Integer.parseInt(((Operation) action).getArgument(0).toString());
-            env.takeAction(i);
+            }
         }
 
         env.frame();
 
 
-        double r = env.getReward();
-
-        //double dr = r - lastReward;
-
-
         double[] o = env.observe();
 
-        //System.out.println(Arrays.toString(o) + " " + r);
-
-        //System.out.println("  reward=" + Texts.n4(r));
-
-        learn(o, nar.time(), r);
-
-        actByQStrongest = brain.getNextAction();
-
-        lastReward = r;
-    }
-
-    private void learn(final double[] o, final long time, final double reward) {
         for (final Perception p : perceptions) {
-            Iterables.addAll(incoming, p.perceive(nar, o, time));
+            Iterables.addAll(incoming, p.perceive(nar, o, nar.time()));
         }
 
 
         for (Task t : incoming) {
-            DirectProcess.run(nar, t);
+            sense(t);
         }
 
-        believeReward((float) reward);
+        double r = env.getReward();
+        believeReward((float) r);
         goalReward();
 
-        learn(incoming, reward);
+
+        learn(nextAction, incoming, r);
+
 
         qCommit();
 
+
         incoming.clear();
 
+
+    }
+
+    public void sense(Task environmentState) {
+        if (stateChanged(environmentState)) {
+            environmentState.mulPriority(sensedStatePriorityChanged);
+        }
+        else {
+            environmentState.mulPriority(sensedStatePrioritySame);
+        }
+        input(environmentState);
     }
 
     @Override
     public QEntry newEntry(Concept concept) {
         return new QEntry(concept);
     }
+
+
+    /**
+     * learn an entire input vector. each entry in state should be between 0 and 1 reprsenting the degree to which that state is active
+     * @param state - set of input Tasks (beliefs) which will be input to the belief, and also interpreted by the qlearning system according to their freq/conf
+     * @param reward
+     * @param confidence
+     * @return
+     */
+    public synchronized void learn(final Operation nextAction, final Iterable<Task> state, final double reward) {
+
+
+        // System.out.println(confidence + " " + Arrays.toString(state));
+
+        for (Task i : state) {
+
+            float freq = i.sentence.truth.getFrequency();
+            float confidence = i.sentence.truth.getConfidence();
+
+
+            brain.qlearn(lastAction, (S)i.sentence.getTerm(), reward, nextAction, freq * confidence);
+
+
+            //act.addToValue(action, confidence);
+
+            //act.put(action, Math.max(act.get(action), confidence));
+
+
+        }
+
+
+        lastAction = nextAction;
+        lastReward = reward;
+
+    }
+
+
 }

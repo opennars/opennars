@@ -25,7 +25,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.STGPIndividual;
 import objenome.solver.evolve.event.ConfigEvent;
@@ -136,7 +135,7 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
      * STGPIndividual or the individual's data-type is not Double.
      */
     @Override
-    public DoubleFitness.Minimise evaluate(Population population, STGPIndividual individual) {
+    public DoubleFitness.Minimize evaluate(Population population, STGPIndividual individual) {
 
         if (!(individual instanceof STGPIndividual)) {
             throw new IllegalArgumentException("Unsupported representation");
@@ -188,7 +187,7 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
 
         onEvaluate(program, errorSum);
 
-        return new DoubleFitness.Minimise(errorSum);
+        return new DoubleFitness.Minimize(errorSum);
     }
 
     /**

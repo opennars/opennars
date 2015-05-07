@@ -104,7 +104,7 @@ public class STGPRegression extends ProblemSTGP {
         
         the(Population.SIZE, 100);
         List<TerminationCriteria> criteria = new ArrayList<>();
-        criteria.add(new TerminationFitness(new DoubleFitness.Minimise(0.0)));
+        criteria.add(new TerminationFitness(new DoubleFitness.Minimize(0.0)));
         criteria.add(new MaximumGenerations());
         the(EvolutionaryStrategy.TERMINATION_CRITERIA, criteria);
         the(MaximumGenerations.MAXIMUM_GENERATIONS, 150);

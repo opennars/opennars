@@ -33,6 +33,13 @@ public class ProtoTask<T extends Compound> {
         this.budget = bv;
         return this;
     }
+    public ProtoTask<T> priority(float p) {
+        if (budget == null)
+            pri = p;
+        else
+            budget.setPriority(p);
+        return this;
+    }
 
     public ProtoTask<T> truth(boolean freqAsBoolean, float conf) {
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);

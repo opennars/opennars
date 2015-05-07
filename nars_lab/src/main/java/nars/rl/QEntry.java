@@ -1,5 +1,6 @@
 package nars.rl;
 
+import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.util.index.ConceptMatrix;
 
@@ -10,6 +11,7 @@ public class QEntry extends ConceptMatrix.EntryValue {
 
     double dq = 0; //delta-Q, temporary
     double e = 0; //eligibility trace
+
 
     public QEntry(Concept c) {
         super(c);
@@ -45,5 +47,6 @@ public class QEntry extends ConceptMatrix.EntryValue {
     public void addDQ(final double dqDivE) {
         dq += dqDivE * e;
     }
+
 
 }

@@ -181,8 +181,9 @@ public class MartialArts implements RLEnvironment {
     }
 
     @Override
-    public void takeAction(int action) {
+    public boolean takeAction(int action) {
         takeAction(action, world.rlPlayer);
+        return true;
     }
 
     private void takeAction(int action, Player player) {

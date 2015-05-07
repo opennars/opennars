@@ -6,9 +6,9 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
-import nars.util.event.Reaction;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
+import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
@@ -16,11 +16,12 @@ import nars.nal.term.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.model.impl.Default;
+import nars.util.event.Reaction;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.log;
@@ -164,12 +165,19 @@ public class NARio extends Run implements RLEnvironment {
     }
 
     @Override
-    public void takeAction(int action) {
+    public boolean takeAction(int action) {
         boolean pressed;
         if (action > 5) { pressed = false; action -=5; }
         else pressed = true;
 
+
+        if (mario.keys[action] == pressed)
+            return false;
+
+        //System.out.println('@' + nar.time() + " " + Arrays.toString(mario.keys));
         mario.keys[action] = pressed;
+        //System.out.println("  " + action + " " + Arrays.toString(mario.keys));
+        return true;
     }
 
     @Override

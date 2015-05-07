@@ -22,7 +22,6 @@
 package objenome.solver.evolve.fitness;
 
 
-import objenome.op.DoubleVariable;
 import objenome.op.Variable;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
@@ -146,7 +145,7 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
      * STGPIndividual
      */
     @Override
-    public DoubleFitness.Minimise evaluate(Population population, STGPIndividual individual) {
+    public DoubleFitness.Minimize evaluate(Population population, STGPIndividual individual) {
         setConfig(population.getConfig());
 
         if (!(individual instanceof STGPIndividual)) {
@@ -158,7 +157,7 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
 
         double cost = getCost(program);
 
-        return new DoubleFitness.Minimise(cost);
+        return new DoubleFitness.Minimize(cost);
     }
 
 

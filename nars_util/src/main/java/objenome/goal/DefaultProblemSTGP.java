@@ -8,12 +8,12 @@ import objenome.op.math.*;
 import objenome.op.trig.Sine;
 import objenome.solver.evolve.*;
 import objenome.solver.evolve.init.Full;
+import objenome.solver.evolve.mutate.OnePointCrossover;
 import objenome.solver.evolve.mutate.PointMutation;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
 import objenome.solver.evolve.selection.RouletteSelector;
 import objenome.util.random.MersenneTwisterFast;
-import org.apache.commons.math3.analysis.function.Abs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
     public DefaultProblemSTGP(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
         super();
 
-        double elitismRate = 0.1;
+        double elitismRate = 0.2;
 
         the(Population.SIZE, populationSize);
 
@@ -42,9 +42,17 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
         //the(Breeder.SELECTOR, new TournamentSelector(7));
 
         List<Operator> operators = new ArrayList<>();
-        operators.add(new PointMutation()); the(PointMutation.PROBABILITY, 0.1);
-        operators.add(new SubtreeCrossover()); the(SubtreeCrossover.PROBABILITY, 0.1);
-        operators.add(new SubtreeMutation()); the(SubtreeMutation.PROBABILITY, 0.1);
+        {
+            operators.add(new PointMutation());
+            the(PointMutation.PROBABILITY, 0.1);
+            the(PointMutation.POINT_PROBABILITY, 0.02);
+            operators.add(new OnePointCrossover());
+            the(OnePointCrossover.PROBABILITY, 0.1);
+            operators.add(new SubtreeCrossover());
+            the(SubtreeCrossover.PROBABILITY, 0.1);
+            operators.add(new SubtreeMutation());
+            the(SubtreeMutation.PROBABILITY, 0.1);
+        }
         the(Breeder.OPERATORS, operators);
 
         the(BranchedBreeder.ELITISM, (int)Math.ceil(populationSize * elitismRate));

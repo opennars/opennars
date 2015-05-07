@@ -94,7 +94,7 @@ public final class SyllogisticRules {
             return;
 
         final NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
-        nal.doublePremiseTask(content1, truth1, budget1, stamp, false, true);
+        nal.doublePremiseTask(content1, truth1, budget1, stamp, false, false);
         nal.doublePremiseTask(content2, truth2, budget2, stamp, false, false);
     }
 

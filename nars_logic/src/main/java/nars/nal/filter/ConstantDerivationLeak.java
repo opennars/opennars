@@ -8,7 +8,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 
 /**
- * Created by me on 5/1/15.
+ * TODO make abstract and put the AtomicDouble params in a DefaultLeak class
  */
 public class ConstantDerivationLeak implements DerivationFilter {
 
@@ -29,14 +29,16 @@ public class ConstantDerivationLeak implements DerivationFilter {
     public String reject(final NAL nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
         if (!solution) {
             final Task derived = task;
-            leak(derived);
+            if (!leak(derived))
+                return "Leak";
         }
         return null;
     }
 
-    protected void leak(Task derived) {
+    protected boolean leak(Task derived) {
         derived.mulPriority(priorityMultiplier.floatValue());
         derived.mulDurability(durabilityMultiplier.floatValue());
+        return true;
     }
 
 

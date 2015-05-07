@@ -68,8 +68,9 @@ public class PoleBalancing2D implements RLEnvironment {
     }
 
     @Override
-    public void takeAction(int action) {
+    public boolean takeAction(int action) {
         takeAction3(action);
+        return true;
     }
 
 //    public void takeAction2(int action) {

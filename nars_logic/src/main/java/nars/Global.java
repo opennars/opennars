@@ -88,16 +88,19 @@ public class Global {
     public static float TRUTH_EPSILON = 0.01f;
     public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
 
-    /** minimum difference necessary to cause a modifciation in budget components */
-    public static float BUDGET_EPSILON = 0.005f;
-    
+
+
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted.
      *   Increasing this value decreases the resolution with which
      *   budgets are propagated or otherwise measured, which can result
      *   in a performance gain.
      * */
-    public static final float BUDGET_THRESHOLD = 0.01f;
+    public static final float BUDGET_THRESHOLD = 0.015f;
+
+    /** minimum difference necessary to cause a modifciation in budget components */
+    public static float BUDGET_EPSILON = BUDGET_THRESHOLD/2f;
+
 
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */

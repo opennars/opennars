@@ -11,20 +11,54 @@ import nars.rl.QEntry;
 import nars.rl.QLAgent;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
  * Created by me on 5/2/15.
  */
-public class QVis extends MatrixImage implements Runnable {
+public class QVis extends JPanel implements Runnable {
 
     final java.util.List<Term> xstates = new ArrayList();
     final java.util.List<Operation> xactions = new ArrayList();
     private final QLAgent<Term> agent;
+
+    final MatrixImage mi = new MatrixImage(400,400) {
+
+
+        @Override
+        protected void pixel(final BufferedImage image, final int j, final int i, final double value) {
+
+            float pri = 0;
+            float elig = 0;
+
+            QEntry v = agent.table.get(xstates.get(j), xactions.get(i));
+            if (v != null) {
+                Concept c = v.getConcept();
+                if (c != null) {
+                    pri = c.getPriority();
+                }
+                elig = (float) v.getE();
+            }
+
+
+            image.setRGB(j, i,
+                    Video.colorHSB(
+                            0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
+                            Math.min(1.0f, 0.8f + elig*0.2f),
+                            0.75f + 0.25f * pri
+                    )
+            );
+            //val2col(value, -1, 1, 0.5f + 0.5f * pri));
+
+        }
+
+    };
+    final MatrixImage ai = new MatrixImage(50,400);
     private final NWindow nmi;
 
-    Data2D mid = new Data2D() {
+    MatrixImage.Data2D qData = new MatrixImage.Data2D() {
 
         @Override
         public double getValue(final int y, final int x) {
@@ -32,11 +66,23 @@ public class QVis extends MatrixImage implements Runnable {
         }
 
     };
+    MatrixImage.Data2D aData = new MatrixImage.Data2D() {
+
+        @Override
+        public double getValue(final int y, final int x) {
+            return agent.getActionDesire(y);
+        }
+
+    };
 
 
     public QVis(QLAgent agent) {
-        super(400, 400);
+        super(new BorderLayout());
         this.agent = agent;
+
+        add(ai, BorderLayout.WEST);
+        add(mi, BorderLayout.CENTER);
+
 
         nmi = new NWindow("Q", this).show(400, 400);
     }
@@ -44,7 +90,11 @@ public class QVis extends MatrixImage implements Runnable {
     @Override
     public void run() {
 
-        draw(mid, xstates.size(), xactions.size(), -1, 1);
+        int ac = agent.getNumActions();
+
+        mi.draw(qData, xstates.size(), xactions.size(), -1, 1);
+        ai.draw(aData, 1, ac, 0, 1);
+
 
         nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
 
@@ -111,33 +161,6 @@ public class QVis extends MatrixImage implements Runnable {
         return 255 << 24 | ib << 16 | ig << 8 | ir;
     }
 
-
-    @Override
-    protected void pixel(final BufferedImage image, final int j, final int i, final double value) {
-
-        float pri = 0;
-        float elig = 0;
-
-        QEntry v = agent.table.get(xstates.get(j), xactions.get(i));
-        if (v != null) {
-            Concept c = v.getConcept();
-            if (c != null) {
-                pri = c.getPriority();
-            }
-            elig = (float) v.getE();
-        }
-
-
-        image.setRGB(j, i,
-                Video.colorHSB(
-                        0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
-                        Math.min(1.0f, 0.8f + elig*0.2f),
-                        0.75f + 0.25f * pri
-                        )
-        );
-                //val2col(value, -1, 1, 0.5f + 0.5f * pri));
-
-    }
 
     public void frame() {
 

@@ -46,8 +46,9 @@ public class Curiousbot extends JComponent implements RLEnvironment {
     }
 
     @Override
-    public void takeAction(int action) {
+    public boolean takeAction(int action) {
         world.getPlayer().act(action);
+        return true;
     }
 
     @Override

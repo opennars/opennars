@@ -4,9 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
-import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.nal.DirectProcess;
@@ -21,7 +19,7 @@ import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
 
 import java.util.List;
-
+import java.util.WeakHashMap;
 
 
 /**
@@ -35,14 +33,18 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
     /** pending tasks to execute to prevent CME */
-    transient private final List<Task> pending = Global.newArrayList();
+    transient private final List<Task> stateActionImplications = Global.newArrayList();
 
-    final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
+    final int implicationOrder = TemporalRules.ORDER_FORWARD; //TemporalRules.ORDER_FORWARD;
 
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char statePunctuation = Symbols.GOAL;
+    char implicationPunctuation = Symbols.JUDGMENT;
+
+
+    float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
+    float sensedStatePrioritySame = 0.25f; //scales priority by this amount
 
     /**
      * min threshold of q-update necessary to cause an effect
@@ -68,10 +70,13 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     //TODO reward goal priority, durability etc
 
 
-    protected float qAutonomicGoalConfidence = 0; //set to 0 to disable qAutonomous
-    protected float qAutonomicBeliefConfidence = 0; //set to 0 to disable qAutonomous
+    protected float actedGoalConfidence = 0; //set to 0 to disable qAutonomous
+    protected float actedBeliefConfidence = 0; //set to 0 to disable qAutonomous
     float actionPriority = Global.DEFAULT_GOAL_PRIORITY;
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
+
+
+    WeakHashMap<S,Task> lastState = new WeakHashMap();
 
 
 
@@ -114,17 +119,17 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                 return QLTermMatrix.this.q(state,action);
             }
 
-            @Override
-            protected A qlearn(S state, double reward, A nextAction, double confidence) {
-                //belief about current state
-                if (stateUpdateConfidence > 0) {
-
-                    //TODO avoid using String
-                    DirectProcess.run(nar, (state) + ". :|: %" + confidence + ";" + stateUpdateConfidence + "%");
-                }
-
-                return super.qlearn(state, reward, nextAction, confidence);
-            }
+//            @Deprecated @Override
+//            protected A qlearn(S state, double reward, A nextAction, double confidence) {
+//                //belief about current state
+//                if (stateUpdateConfidence > 0) {
+//
+//                    //TODO avoid using String
+//                    input(nar.task((state) + ". :|: %" + confidence + ";" + stateUpdateConfidence + "%"));
+//                }
+//
+//                return super.qlearn(state, reward, nextAction, confidence);
+//            }
 
             @Override
             public Iterable<S> getStates() {
@@ -165,7 +170,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         Concept c = v.getConcept();
         if (c == null) return 0;
 
-        Sentence s = statePunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
+        Sentence s = implicationPunctuation == Symbols.GOAL ? c.getStrongestGoal(true, true) : c.getStrongestBelief();
         if (s == null) return 0f;
         Truth t = s.truth;
         if (t == null) return 0f;
@@ -247,14 +252,14 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             A action = c.getColumnKey();
             Task t = qCommit(state, action, c.getValue());
             if (t!=null)
-                pending.add(t);
+                stateActionImplications.add(t);
         }
 
-        for (int i = 0; i< pending.size(); i++) {
-            Task t = pending.get(i);
-            DirectProcess.run(nar, t);
+        for (int i = 0; i< stateActionImplications.size(); i++) {
+            Task t = stateActionImplications.get(i);
+            input(t);
         }
-        pending.clear();
+        stateActionImplications.clear();
     }
 
     protected Task qCommit(S state, A action, QEntry c) {
@@ -275,20 +280,35 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
         //String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
-        Task t = nar.memory.newTask((Compound)qt).punctuation(statePunctuation).present().truth(nextFreq, qUpdateConfidence).get();
+        Task t = nar.memory.newTask((Compound)qt).punctuation(
+                implicationPunctuation
+        ).present().truth(nextFreq, qUpdateConfidence).get();
 
         return t;
 
     }
 
 
-    /** fire all actions (ex: to teach them at the beginning) */
-    public void possibleDesire(float goalConf) {
-        possibleDesire(table.columnKeySet(), goalConf);
+    public boolean stateChanged(Task newState) {
+        S state = (S)newState.getTerm();
+        Task last = lastState.get(state);
+        boolean changed = (last == null ||
+                !newState.getTruth().equals(last.getTruth())
+                //TODO compare time?
+                //TODO compare priority? (before it was scaled?)
+        );
+        lastState.put(state, newState);
+        last = newState;
+        return changed;
     }
 
-    public void possibleDesire(float goalConf, Iterable<String> actions) {
-        possibleDesire(Iterables.transform(actions, new Function<String, A>() {
+    /** fire all actions (ex: to teach them at the beginning) */
+    public void spontaneous(float goalConf) {
+        spontaneous(table.columnKeySet(), goalConf);
+    }
+
+    public void spontaneous(float goalConf, Iterable<String> actions) {
+        spontaneous(Iterables.transform(actions, new Function<String, A>() {
             @Override
             public A apply(String t) {
                 return (A) nar.term(t);
@@ -296,110 +316,58 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         }), goalConf);
     }
     /** fire all actions (ex: to teach them at the beginning) */
-    public void possibleDesire(Iterable<A> actions, float goalConf) {
+    public void spontaneous(Iterable<A> actions, float goalConf) {
         for (Term a : actions) {
-            possibleDesire(goalConf, a);
+            spontaneous(goalConf, a);
         }
     }
 
     /** fire all actions (ex: to teach them at the beginning) */
-    public void possibleDesire(float goalConf, Term... actions) {
+    public void spontaneous(float goalConf, Term... actions) {
         for (Term a : actions) {
-            autonomic(a, Symbols.GOAL, goalConf);
+            acted(a, Symbols.GOAL, goalConf);
         }
     }
 
 
-    public void autonomic(Term action) {
-        autonomic(action, Symbols.GOAL, qAutonomicGoalConfidence);
-        autonomic(action, Symbols.JUDGMENT, qAutonomicBeliefConfidence);
-
+    public void acted(Term action) {
+        System.out.println("acted: " + action);
+        acted(action, Symbols.GOAL, actedGoalConfidence);
+        acted(action, Symbols.JUDGMENT, actedBeliefConfidence);
     }
-    public void autonomic(Term action, char punctuation, float conf) {
+
+    public void acted(Term action, char punctuation, float conf) {
         if (conf > 0)
-            autonomic(action, punctuation, 1.0f, conf, actionPriority, actionDurability);
+            acted(action, punctuation, 1.0f, conf, actionPriority, actionDurability);
     }
 
-    public void autonomic(Term action, char punctuation, float freq, float conf, float priority, float durability) {
+    public void acted(Term action, char punctuation, float freq, float conf, float priority, float durability) {
 
-        //TODO avoid using String to build the task
-        Task t = nar.memory.newTask((Compound)action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).get();
-        DirectProcess.run(nar, t);
+        Task t = nar.memory.newTask((Compound)action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).present().get();
+        input(t);
     }
 
 //    public void react() {
 //        act(getNextAction(), Symbols.GOAL);
 //    }
 
-    /**
-     * learn an entire input vector. each entry in state should be between 0 and 1 reprsenting the degree to which that state is active
-     * @param state - set of input Tasks (beliefs) which will be input to the belief, and also interpreted by the qlearning system according to their freq/conf
-     * @param reward
-     * @param confidence
-     * @return
-     */
-    public synchronized Term learn(final Iterable<Task> state, final double reward) {
-
-        ObjectDoubleHashMap<Term> act = new ObjectDoubleHashMap();
-
-        //HACK - allow learn to update lastAction but restore to the value before this method was called, and then set the final value after all learning completed
-        A actualLastAction = brain.getLastAction();
-
-        // System.out.println(confidence + " " + Arrays.toString(state));
-
-        for (Task i : state) {
-            brain.setLastAction(actualLastAction);
-
-            float freq = i.sentence.truth.getFrequency();
-            float confidence = i.sentence.truth.getConfidence();
 
 
-            Term action = brain.qlearn((S)i.sentence.getTerm(), reward, null, freq * confidence);
-
-
-            //act.addToValue(action, confidence);
-
-            act.put(action, Math.max(act.get(action), confidence));
-
-
-        }
-
-        double e = brain.getEpsilon();
-        if (e > 0) {
-            if (Memory.randomNumber.nextDouble() < e) {
-                A l = brain.getRandomAction();
-                brain.setLastAction(l);
-                return l;
-            }
-        }
-
-        //choose maximum action
-        if (!act.isEmpty())
-            return act.keysView().max();
-        else
-            return null;
-    }
-
-
-
-
-    public Term learn(S state, final double reward, A nextAction, double confidence) {
-        believeReward((float) reward);
-        goalReward();
-
-        Term l = brain.learn(state, reward, nextAction, confidence);
-        qCommit();
-        return l;
-    }
+//    public Term learn( S state, final double reward, A nextAction, double confidence) {
+//        believeReward((float) reward);
+//        goalReward();
+//
+//        Term l = brain.learn(state, reward, nextAction, confidence);
+//        qCommit();
+//        return l;
+//    }
 
 
 
     protected void goalReward() {
         //seek reward goal
         if (rewardGoalConfidence > 0) {
-            DirectProcess.run(nar,
-                nar.memory.newTask((Compound)getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence).get()
-            );
+            input(nar.memory.newTask((Compound) getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence).get());
         }
     }
 
@@ -414,18 +382,21 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             if (rFreq < 0) rFreq = 0;
             if (rFreq > 1f) rFreq = 1f;
 
-            DirectProcess.run(nar,
-                    nar.memory.newTask((Compound)getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence).get()
-            );
+            input(nar.memory.newTask((Compound) getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence).get());
         }
     }
 
-    public void setAutonomicGoalConfidence(float qAutonomicGoalConfidence) {
-        this.qAutonomicGoalConfidence = qAutonomicGoalConfidence;
+    public void setActedGoalConfidence(float qAutonomicGoalConfidence) {
+        this.actedGoalConfidence = qAutonomicGoalConfidence;
     }
 
-    public void setqAutonomicBeliefConfidence(float qAutonomicBeliefConfidence) {
-        this.qAutonomicBeliefConfidence = qAutonomicBeliefConfidence;
+    public void setActedBeliefConfidence(float actedBeliefConfidence) {
+        this.actedBeliefConfidence = actedBeliefConfidence;
+    }
+
+    protected void input(Task t) {
+        //System.out.println("ql: " + t);
+        DirectProcess.run(nar, t);
     }
 
 }

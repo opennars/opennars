@@ -63,9 +63,11 @@ public class Tetris implements RLEnvironment {
     }
 
     @Override
-    public void takeAction(int action) {
+    public boolean takeAction(int action) {
         nextAction = action;
+        return true;
     }
+
     @Override
     public double[] observe() {
         return gameState.asVector(false);
