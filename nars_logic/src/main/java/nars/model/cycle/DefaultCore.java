@@ -16,7 +16,7 @@ import java.util.*;
  * The original deterministic memory cycle implementation that is currently used as a standard
  * for development and testing.
  */
-public class DefaultCore extends SequentialCore {
+public class DefaultCore extends SequentialCycle {
 
     /**
      * New tasks with novel composed terms, for delayed and selective processing

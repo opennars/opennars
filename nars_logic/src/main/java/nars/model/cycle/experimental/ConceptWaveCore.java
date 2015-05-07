@@ -24,7 +24,9 @@ import java.util.List;
  * Designed for use in parallel processing
  * 
  * Named "Wave" core because its concept-firing timing resembles spiking
- * brainwaves 
+ * brainwaves
+ *
+ * TODO not tested
  */
 abstract public class ConceptWaveCore implements ControlCycle {
     
@@ -102,8 +104,8 @@ abstract public class ConceptWaveCore implements ControlCycle {
     }
 
     @Override
-    public void conceptRemoved(Concept c) {
-    
+    public boolean conceptRemoved(Concept c) {
+        return true;
     }
 
     @Override

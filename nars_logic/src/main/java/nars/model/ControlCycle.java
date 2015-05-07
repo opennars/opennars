@@ -72,8 +72,11 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     public void init(Memory m);
 
-    /** used by the bag to explicitly forget an item asynchronously */
-    public void conceptRemoved(Concept c);
+    /** used by the bag to explicitly forget an item asynchronously
+     *  returns true if the concept was completely deleted,
+     *  false if it was forgotten (in subconcepts)
+     * */
+    public boolean conceptRemoved(Concept c);
     
     public Memory getMemory();
     

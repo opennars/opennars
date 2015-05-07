@@ -76,7 +76,12 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     }
 
     @Override
-    public void overflow(Concept overflow) {
-        getMemory().concepts.conceptRemoved(overflow);
+    public void overflow(Concept c) {
+        if (getMemory().concepts.conceptRemoved(c)) {
+            c.delete();
+        }
+        else {
+            c.setState(Concept.State.Forgotten);
+        }
     }
 }

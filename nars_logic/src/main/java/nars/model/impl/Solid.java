@@ -2,12 +2,9 @@ package nars.model.impl;
 
 import nars.Memory;
 import nars.NAR;
-import nars.NARSeed;
-import nars.Param;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.CurveBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
@@ -15,7 +12,6 @@ import nars.model.cycle.ConceptActivator;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
-import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
@@ -238,8 +234,9 @@ public class Solid extends Default implements ControlCycle {
         }
 
         @Override
-        public void conceptRemoved(Concept c) {
+        public boolean conceptRemoved(Concept c) {
             subcon.add(c);
+            return false;
         }
 
         @Override

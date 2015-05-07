@@ -1,7 +1,6 @@
 package nars.model.cycle;
 
 import nars.model.ControlCycle;
-import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -19,9 +18,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * Base class for single-threaded Cores
+ * Base class for single-threaded Cores based on the original NARS design
  */
-abstract public class SequentialCore implements ControlCycle {
+abstract public class SequentialCycle implements ControlCycle {
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
@@ -35,7 +34,7 @@ abstract public class SequentialCore implements ControlCycle {
 
     protected Memory memory;
 
-    public SequentialCore(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon) {
+    public SequentialCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon) {
 
         this.concepts = concepts;
         this.subcon = subcon;
@@ -126,14 +125,12 @@ abstract public class SequentialCore implements ControlCycle {
     }
 
     @Override
-    public void conceptRemoved(Concept c) {
-
+    public boolean conceptRemoved(Concept c) {
         if (subcon != null) {
-            c.setState(Concept.State.Forgotten);
             subcon.add(c);
-        } else {
-            c.delete();
+            return false;
         }
+        return true;
     }
 
 
