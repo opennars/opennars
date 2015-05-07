@@ -21,6 +21,7 @@
  */
 package objenome.op.math;
 
+import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
@@ -41,7 +42,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Multiply<X extends Node> extends Node {
+public class Multiply<X extends Node> extends ArithmeticNode {
 
     public static final String IDENTIFIER = "MUL";
 
@@ -135,5 +136,31 @@ public class Multiply<X extends Node> extends Node {
             return TypeUtil.widestNumberType(inputTypes);
         }
         return null;
+    }
+
+    @Override
+    public Node normalize() {
+        Node a = getChild(0);
+        Node b = getChild(1);
+        //if (a.equals(b)) //sqr(x) ? pow(x, 2) ?
+
+        double an = getChildConstantValue(0);
+        double bn = getChildConstantValue(1);
+
+        if (an == 0) return zero;
+        if (bn == 0) return zero;
+
+        if (Double.isFinite(an) && Double.isFinite(bn)) {
+            return new Literal(an * bn);
+        }
+        else {
+            if (an == 1) return b;
+            if (bn == 1) return a;
+
+            //if (an == -1) return negate(b)
+            //if (bn == -1) return negate(a)
+        }
+
+        return this;
     }
 }

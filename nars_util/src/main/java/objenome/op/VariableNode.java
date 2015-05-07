@@ -114,6 +114,6 @@ public class VariableNode extends Node {
      */
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof VariableNode) && (((VariableNode) obj).variable == this.variable);
+        return (obj instanceof VariableNode) && (((VariableNode) obj).variable.equals(this.variable));
     }
 }

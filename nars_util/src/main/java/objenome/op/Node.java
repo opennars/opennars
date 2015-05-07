@@ -511,6 +511,9 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         if (arity > 0) {
             for (int i = 0; i < arity; i++) {
                 Node childNode = rootNode.getChild(i);
+                if (childNode == rootNode) {
+                    throw new RuntimeException("recursive node, error");
+                }
                 depth = depth(childNode, (currentDepth + 1), depth);
             }
         }
@@ -537,6 +540,8 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         if (arity > 0) {
             for (int i = 0; i < arity; i++) {
                 Node childNode = rootNode.getChild(i);
+                if (childNode == rootNode)
+                    throw new RuntimeException("recursive subnode");
                 length = length(childNode, length);
             }
         }

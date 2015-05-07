@@ -27,7 +27,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
  * An implementation of this interface is used to generate a stream of numbers
  * with pseudo random qualities, in different data types.
  */
-public interface RandomSequence {
+@Deprecated public interface RandomSequence {
 
     /**
      * The key for setting and retrieving the random number generator.

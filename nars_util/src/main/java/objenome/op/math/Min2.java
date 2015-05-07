@@ -67,6 +67,14 @@ public class Min2 extends Min {
 
         if (a.equals(b)) return a;
 
+        double an = getChildConstantValue(0);
+        double bn = getChildConstantValue(1);
+
+        if (Double.isFinite(an) && Double.isFinite(bn)) {
+            if (an < bn) return a;
+            return b;
+        }
+
         return this;
     }
 }

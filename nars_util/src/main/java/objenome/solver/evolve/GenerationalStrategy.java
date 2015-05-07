@@ -89,14 +89,14 @@ public class GenerationalStrategy extends Pipeline implements EvolutionaryStrate
         config.on(ConfigEvent.class, this);
 
         int generation = 1;
-        while (!terminate()) {
+        do {
             config.fire(new StartGeneration(generation, population));
 
             population = super.process(population);
 
             config.fire(new EndGeneration(generation, population));
             generation++;
-        }
+        } while (!terminate());
 
         return population;
     }
@@ -108,12 +108,13 @@ public class GenerationalStrategy extends Pipeline implements EvolutionaryStrate
      * <code>false</code> otherwise.
      */
     protected boolean terminate() {
-        for (TerminationCriteria tc : criteria) {
-            if (tc.terminate(config)) {
-                return true;
+        if (criteria!=null)
+            for (TerminationCriteria tc : criteria) {
+                if (tc.terminate(config)) {
+                    return true;
+                }
             }
-        }
-        return false;
+        return true;
     }
 
     /**
@@ -122,9 +123,10 @@ public class GenerationalStrategy extends Pipeline implements EvolutionaryStrate
      */
     protected void setup() {
         criteria = config.get(EvolutionaryStrategy.TERMINATION_CRITERIA);
-        for (TerminationCriteria x : criteria) {
-            GPContainer.setContainerAware(config, x);
-        }
+        if (criteria!=null)
+            for (TerminationCriteria x : criteria) {
+                GPContainer.setContainerAware(config, x);
+            }
     }
 
     /**

@@ -59,7 +59,7 @@ public class GPContainer<I extends Individual> extends Container {
      * stats repository, TODO rename
      */
     public final HashMap<Class<?>, Object> stat = new HashMap<>();
-    private Pipeline pipeline;
+    protected Pipeline pipeline;
     private Population<I> population = null;
 
     /**

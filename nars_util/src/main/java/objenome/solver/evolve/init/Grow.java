@@ -114,7 +114,7 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
      * <code>true</code>)
      * </ul>
      */
-    protected void setup(GPContainer config) {
+    public void setup(GPContainer config) {
         random = config.get(RANDOM_SEQUENCE);
         populationSize = config.get(SIZE);
         syntax = config.get(SYNTAX);

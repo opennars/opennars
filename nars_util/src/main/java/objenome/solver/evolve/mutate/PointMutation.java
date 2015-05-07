@@ -23,6 +23,7 @@ package objenome.solver.evolve.mutate;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import objenome.op.Literal;
 import objenome.solver.evolve.AbstractOperator;
@@ -95,6 +96,8 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
      * configuration settings from the config
      */
     public PointMutation(boolean autoConfig) {
+        super();
+
         // Default config values
         pointProbability = 0.01;
         this.autoConfig = autoConfig;
@@ -154,12 +157,15 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
         STGPIndividual program = (STGPIndividual) parents[0];
         STGPIndividual child = program.clone();
 
-        List<Integer> points = new ArrayList<>();
+        List<Integer> points = null;
         
         //TODO It would be more efficient to traverse the tree than use getNode
         int length = program.size();
         for (int i = 0; i < length; i++) {
             if (random.nextDouble() < pointProbability) {
+
+                if (points == null) points = new ArrayList<>();
+
                 Node node = program.getNode(i);
                 int arity = node.getArity();
 
@@ -180,6 +186,8 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
                 }
             }
         }
+
+        if (points == null) points = Collections.EMPTY_LIST;
 
         ((EndEvent) event).setMutationPoints(points);
 

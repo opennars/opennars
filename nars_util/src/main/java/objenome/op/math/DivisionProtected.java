@@ -203,11 +203,16 @@ public class DivisionProtected extends ArithmeticNode {
         double an = getChildConstantValue(0);
         double bn = getChildConstantValue(1);
 
-        if (bn == 1) return a;
-        //if (bn == 0) return new Negate
 
-        if (Double.isFinite(an) && Double.isFinite(bn))
+        if (Double.isFinite(an) && Double.isFinite(bn)) {
             return new Literal(an / bn);
+        }
+        else {
+            if (bn == 1) return a;
+            if (an == 0) return zero;
+
+            //if (bn == 0) return new Negate
+        }
 
         return this;
     }

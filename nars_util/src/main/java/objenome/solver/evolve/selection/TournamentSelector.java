@@ -21,7 +21,6 @@
  */
 package objenome.solver.evolve.selection;
 
-import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.solver.evolve.Individual;
 import objenome.solver.evolve.IndividualSelector;
 import objenome.solver.evolve.Population;
@@ -35,10 +34,7 @@ import objenome.solver.evolve.Population;
  */
 public class TournamentSelector implements IndividualSelector {
 
-    /**
-     * The key for setting and retrieving the tournament size.
-     */
-    public static final GPKey<Integer> TOURNAMENT_SIZE = new GPKey<>();
+
 
     /**
      * The random selector used to select the individuals participating in the
@@ -54,14 +50,14 @@ public class TournamentSelector implements IndividualSelector {
     /**
      * Constructs a <code>TournamentSelector</code>.
      */
-    public TournamentSelector() {
-        randomSelector = new RandomSelector();
+    public TournamentSelector(int size) {
+        this.size = size;
+        this.randomSelector = new RandomSelector();
     }
 
     @Override
-    public void setup(Population population) {
-        randomSelector.setup(population);
-        size = population.getConfig().get(TOURNAMENT_SIZE);
+    public void init(Population population) {
+        randomSelector.init(population);
     }
 
     /**

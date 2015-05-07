@@ -61,6 +61,8 @@ public class Pipeline implements PopulationProcess {
         this.container = population.getConfig();
         for (PopulationProcess component : pipeline) {            
             population = component.process(population);
+            if (population == null)
+                throw new RuntimeException("population null");
         }
 
         return population;

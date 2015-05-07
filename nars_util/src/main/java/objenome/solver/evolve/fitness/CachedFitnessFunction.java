@@ -37,13 +37,13 @@ import objenome.solver.evolve.Population;
  *
  * @since 2.0
  */
-public class CachedFitnessFunction extends AbstractFitnessFunction {
+public class CachedFitnessFunction<I extends Individual> extends AbstractFitnessFunction<I> {
 
     // The cache of fitness scores
-    private Map<Object, Fitness> cache;
+    private Map<I, Fitness> cache;
 
     // The fitness function to delegate to when not in cache
-    private AbstractFitnessFunction delegate;
+    private AbstractFitnessFunction<I> delegate;
 
     /**
      * Constructs a <code>CachedFitnessFunction</code> fitness function. Fitness
@@ -53,10 +53,12 @@ public class CachedFitnessFunction extends AbstractFitnessFunction {
      * @param delegate the fitness function the fitness calculations should be
      * delegated to
      */
-    public CachedFitnessFunction(AbstractFitnessFunction delegate) {
+    public CachedFitnessFunction(AbstractFitnessFunction<I> delegate) {
         this.delegate = delegate;
         cache = new HashMap<>();
     }
+
+
 
     /**
      * Returns the fitness of the given individual. If the cache contains a
@@ -72,8 +74,8 @@ public class CachedFitnessFunction extends AbstractFitnessFunction {
      * @return the fitness of the given individual
      */
     @Override
-    public Fitness evaluate(Population population, Individual individual) {
-        Object key = individual.hashCode();
+    public Fitness evaluate(Population<I> population, I individual) {
+        I key = individual;
 
         //TODO Use source generator if one is set
         Fitness fitness = cache.get(key);

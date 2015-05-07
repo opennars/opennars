@@ -95,7 +95,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
 
         population.getConfig().on(ConfigEvent.class, this);
 
-        selector.setup(population);
+        selector.init(population);
 
         Population newPopulation = new Population(population.getConfig());
         int size = population.size();
@@ -111,7 +111,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
             Individual[] elite = population.elites(elitism);
 
             for (Individual individual : elite) {
-                newPopulation.add(individual.clone());
+                newPopulation.add(individual);
                 size--;
             }
         }

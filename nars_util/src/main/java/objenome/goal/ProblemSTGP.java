@@ -35,24 +35,26 @@ public abstract class ProblemSTGP extends GPContainer<STGPIndividual> {
      */
     public ProblemSTGP() {
         super();
-        
+
+
+        FitnessEvaluator fe = new FitnessEvaluator();
+
         the(COMPONENTS, Lists.newArrayList(new PopulationProcess[] {
             new Initialiser(),
-            new FitnessEvaluator(),
-            new GenerationalStrategy(new BranchedBreeder(), new FitnessEvaluator())            
+            new GenerationalStrategy(fe, new BranchedBreeder())
         }));
         
     }
-   public ProblemSTGP(FitnessFunction f) {
-        super();
-        
-        the(COMPONENTS, Lists.newArrayList(new PopulationProcess[] {
-            new Initialiser(),
-            new GenerationalStrategy(
-                    new BranchedBreeder(), 
-                    new FitnessEvaluator(f))            
-        }));
-        
-    }
+//   public ProblemSTGP(FitnessFunction f) {
+//        super();
+//
+//        the(COMPONENTS, Lists.newArrayList(new PopulationProcess[] {
+//            new Initialiser(),
+//            new GenerationalStrategy(
+//                    new BranchedBreeder(),
+//                    new FitnessEvaluator(f))
+//        }));
+//
+//    }
 
 }

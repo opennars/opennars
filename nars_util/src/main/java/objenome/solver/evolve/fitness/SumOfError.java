@@ -55,7 +55,7 @@ import static objenome.solver.evolve.fitness.HitsCount.EXPECTED_OUTPUTS;
  *
  * @since 2.0
  */
-public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<ConfigEvent> {
+public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<ConfigEvent>, GPContainer.GPContainerAware {
 
     /**
      * The key for setting the program's input variables
@@ -136,7 +136,7 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
      * STGPIndividual or the individual's data-type is not Double.
      */
     @Override
-    public DoubleFitness.Minimise evaluate(Population population, Individual individual) {
+    public DoubleFitness.Minimise evaluate(Population population, STGPIndividual individual) {
 
         if (!(individual instanceof STGPIndividual)) {
             throw new IllegalArgumentException("Unsupported representation");

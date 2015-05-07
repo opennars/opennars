@@ -45,14 +45,14 @@ public abstract class AbstractFitnessFunction<I extends Individual> implements F
      * @param individual
      * @return the fitness of the given individual
      */
-    public abstract Fitness evaluate(Population population, Individual individual);
+    public abstract Fitness evaluate(Population<I> population, I individual);
 
     /**
      *
      * @param fitness
      * @param individual
      */
-    protected void assignFitness(Fitness fitness, Individual individual) {
+    protected void assignFitness(Fitness fitness, I individual) {
         if (individual instanceof AbstractIndividual) {
             AbstractIndividual abstractIndividual = (AbstractIndividual) individual;
             abstractIndividual.setFitness(fitness);

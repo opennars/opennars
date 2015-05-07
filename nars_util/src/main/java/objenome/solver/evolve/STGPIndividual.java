@@ -40,7 +40,7 @@ import java.util.Objects;
  *
  * @since 2.0
  */
-public class STGPIndividual extends AbstractIndividual {
+public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
 
 
     /**
@@ -62,7 +62,7 @@ public class STGPIndividual extends AbstractIndividual {
     public static final GPKey<Integer> MAXIMUM_DEPTH = new GPKey<>();
 
     // The root node of the program tree
-    private Node root;
+    private Node<X,Y> root;
     
     transient private Class dataType; //caches data type
 
@@ -91,7 +91,7 @@ public class STGPIndividual extends AbstractIndividual {
      *
      * @return the result of evaluating the program tree
      */
-    public Object evaluate() {
+    public Y evaluate() {
         return root.evaluate();
     }
 
@@ -100,7 +100,7 @@ public class STGPIndividual extends AbstractIndividual {
      *
      * @return the root node of the program tree.
      */
-    public Node getRoot() {
+    public Node<X,Y> getRoot() {
         return root;
     }
 
@@ -110,7 +110,7 @@ public class STGPIndividual extends AbstractIndividual {
      *
      * @param root the <code>Node</code> to set as the root
      */
-    public void setRoot(Node root) {
+    public void setRoot(Node<X,Y> root) {
         dataType = null;        
         this.root = root;
     }
@@ -145,6 +145,7 @@ public class STGPIndividual extends AbstractIndividual {
      */
     public Node setNode(int index, Node node) {
         dataType = null;
+
         if (index > 0) {
             return root.setNode(index, node);
         } else if (index == 0) {
@@ -197,7 +198,7 @@ public class STGPIndividual extends AbstractIndividual {
      * @return a clone of this <code>STGPIndividual</code> instance
      */
     @Override
-    public STGPIndividual clone() {
+    public STGPIndividual<X,Y> clone() {
         STGPIndividual clone = (STGPIndividual) super.clone();
 
         // Deep copy node tree

@@ -36,7 +36,7 @@ public class Variable<X> {
     private final Class datatype;
     private final String name;
 
-    private X value;
+    protected X value;
 
     /**
      * Constructs a new variable with a <code>null</code> value. The variable's
@@ -73,7 +73,15 @@ public class Variable<X> {
 
         this.name = name;
         this.value = value;
-        datatype = (Class<? extends X>) value.getClass();
+        datatype = value.getClass();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Variable) {
+            return name.equals(((Variable)obj).name);
+        }
+        return false;
     }
 
     /**
@@ -129,4 +137,5 @@ public class Variable<X> {
     public String toString() {
         return name;
     }
+
 }

@@ -110,8 +110,8 @@ public class STGPRegression extends ProblemSTGP {
         the(MaximumGenerations.MAXIMUM_GENERATIONS, 150);
         the(STGPIndividual.MAXIMUM_DEPTH, 6);
 
-        the(Breeder.SELECTOR, new TournamentSelector());
-        the(TournamentSelector.TOURNAMENT_SIZE, 7);
+        the(Breeder.SELECTOR, new TournamentSelector(7));
+
         List<Operator> operators = new ArrayList<>();
         operators.add(new SubtreeCrossover());
         operators.add(new SubtreeMutation());

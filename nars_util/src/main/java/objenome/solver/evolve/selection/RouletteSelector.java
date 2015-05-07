@@ -21,14 +21,11 @@
  */
 package objenome.solver.evolve.selection;
 
-import objenome.solver.evolve.AbstractSelector;
-import objenome.solver.evolve.Fitness;
-import objenome.solver.evolve.Individual;
-import objenome.solver.evolve.IndividualSelector;
-import objenome.solver.evolve.Population;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.fitness.DoubleFitness;
+import objenome.util.random.XORShiftRandom;
+
+import java.util.Random;
 
 /**
  * This class represents an {@link IndividualSelector} that selects individuals
@@ -36,6 +33,8 @@ import objenome.solver.evolve.fitness.DoubleFitness;
  * probability, individuals must have a {@link DoubleFitness} value.
  */
 public class RouletteSelector extends AbstractSelector {
+
+    final static Random rng = XORShiftRandom.global;
 
     /**
      * The individuals' selection probabilities.
@@ -48,7 +47,7 @@ public class RouletteSelector extends AbstractSelector {
      * @param population the current population.
      */
     @Override
-    public void setup(Population population) {
+    public void init(Population population) {
         Fitness best = population.get(0).getFitness();
         Fitness worst = best;
 
@@ -56,7 +55,7 @@ public class RouletteSelector extends AbstractSelector {
             throw new IllegalArgumentException("Fitness not supported: " + best.getClass());
         }
 
-        roulette = new double[population.size()];
+        final double[] rr = roulette = new double[population.size()];
         double total = 0.0;
 
         for (int i = 0; i < population.size(); i++) {
@@ -67,8 +66,8 @@ public class RouletteSelector extends AbstractSelector {
                 worst = fitness;
             }
 
-            roulette[i] = ((DoubleFitness) fitness).getValue();
-            total += roulette[i];
+            rr[i] = ((DoubleFitness) fitness).getValue();
+            total += rr[i];
         }
 
         double bestValue = ((DoubleFitness) best).getValue();
@@ -79,20 +78,20 @@ public class RouletteSelector extends AbstractSelector {
             total = 0.0;
             double delta = (bestValue < 0) ? Math.abs(bestValue) : 0.0;
             for (int i = 0; i < population.size(); i++) {
-                roulette[i] = 1 / (1 + delta + roulette[i]);
-                total += roulette[i];
+                rr[i] = 1 / (1 + delta + rr[i]);
+                total += rr[i];
             }
         }
 
         // normalise roulette values and accumulate.
         double cumulative = 0.0;
         for (int i = 0; i < population.size(); i++) {
-            roulette[i] = cumulative + (roulette[i] / total);
-            cumulative = roulette[i];
+            rr[i] = cumulative + (rr[i] / total);
+            cumulative = rr[i];
         }
-        roulette[population.size() - 1] = 1.0;
+        rr[population.size() - 1] = 1.0;
 
-        super.setup(population);
+        super.init(population);
     }
 
     /**
@@ -102,10 +101,14 @@ public class RouletteSelector extends AbstractSelector {
      */
     @Override
     public Individual select() {
-        double random = ((RandomSequence)population.getConfig().get(RANDOM_SEQUENCE)).nextDouble();
+        //double random = ((RandomSequence)population.getConfig().get(RANDOM_SEQUENCE)).nextDouble();
 
-        for (int i = 0; i < roulette.length; i++) {
-            if (random < roulette[i]) {
+        double random = rng.nextDouble();
+
+        final double[] rr = this.roulette;
+        int nr = rr.length;
+        for (int i = 0; i < nr; i++) {
+            if (random < rr[i]) {
                 return population.get(i);
             }
         }

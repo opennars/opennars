@@ -35,7 +35,7 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class Min extends Node {
+public class Min extends ArithmeticNode {
 
     public static final String IDENTIFIER = "MIN";
 

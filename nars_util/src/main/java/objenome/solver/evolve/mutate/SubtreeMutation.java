@@ -84,7 +84,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
      * configuration settings from the config
      */
     public SubtreeMutation(boolean autoConfig) {
-        grower = new Grow(false);
+        grower = new Grow(autoConfig);
         this.autoConfig = autoConfig;
 
     }
@@ -151,19 +151,26 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
         int mutationPointDepth = nodeDepth(child.getRoot(), 0, mutationPoint, 0);
         int maxSubtreeDepth = maxDepth - mutationPointDepth;
 
-        // Grow a new subtree using the GrowInitialisation
-        Node originalSubtree = child.getNode(mutationPoint);
-        // TODO This should be using the parent's required type not the subtree's type
-        grower.setReturnType(originalSubtree.dataType());
-        grower.setMaximumDepth(maxSubtreeDepth);
-        Node subtree = grower.createTree();
+        if (maxSubtreeDepth > 0) {
+            // Grow a new subtree using the GrowInitialisation
+            Node originalSubtree = child.getNode(mutationPoint);
+            // TODO This should be using the parent's required type not the subtree's type
+            grower.setReturnType(originalSubtree.dataType());
+            grower.setMaximumDepth(maxSubtreeDepth);
+            Node subtree = grower.createTree();
 
-        child.setNode(mutationPoint, subtree);
+            child.setNode(mutationPoint, subtree);
 
-        ((SubtreeMutationEndEvent) event).setMutationPoint(mutationPoint);
-        ((SubtreeMutationEndEvent) event).setSubtree(subtree);
+            ((SubtreeMutationEndEvent) event).setMutationPoint(mutationPoint);
+            ((SubtreeMutationEndEvent) event).setSubtree(subtree);
+
+        }
+        /*else {
+            return (STGPIndividual[]) parents; //TODO make AbstractOperator generic to allow returning STGPIndividual[]
+        }*/
 
         return new STGPIndividual[]{child};
+
     }
 
     /**

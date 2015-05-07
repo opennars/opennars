@@ -10,6 +10,7 @@ abstract public class ArithmeticNode<X extends Node, Y extends Number> extends N
 
     public final Literal zero = new Literal(0.0);
     public final Literal one = new Literal(1.0);
+    public final Literal two = new Literal(2.0);
 
     public ArithmeticNode(X... x) {
         super(x);

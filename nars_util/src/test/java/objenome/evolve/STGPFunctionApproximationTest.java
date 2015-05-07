@@ -15,7 +15,7 @@ public class STGPFunctionApproximationTest extends TestCase {
 
 	@Test public void testRegression() {            
             
-            int individuals = 100;
+            int individuals = 25;
             double cullRate = 0.95;
             
             STGPFunctionApproximation e = new STGPFunctionApproximation(individuals, 5, true, true, false, true) {
@@ -23,7 +23,7 @@ public class STGPFunctionApproximationTest extends TestCase {
                 public Population<STGPIndividual> run() {
                     Population<STGPIndividual> p = super.run();
 
-                    System.out.println(getBestError() + " = " + getBest());
+                    //System.out.println(getBestError() + " = " + getBest());
 
                     return p;
                 }
@@ -65,7 +65,7 @@ public class STGPFunctionApproximationTest extends TestCase {
             
             assertEquals(individuals, p.size());
 
-            int loops = 150;
+            int loops = 25;
             for (int i = 0; i < loops; i++) {
                 p.cullThis(cullRate);
                 p = e.run();

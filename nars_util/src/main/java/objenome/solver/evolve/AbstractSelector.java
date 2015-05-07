@@ -37,7 +37,7 @@ public abstract class AbstractSelector implements IndividualSelector {
      * @param population the current population.
      */
     @Override
-    public void setup(Population population) {
+    public void init(Population population) {
         this.population = population;
     }
 

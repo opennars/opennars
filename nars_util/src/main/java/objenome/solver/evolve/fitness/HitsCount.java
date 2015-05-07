@@ -143,7 +143,7 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
      * STGPIndividual
      */
     @Override
-    public DoubleFitness.Minimise evaluate(Population population, Individual individual) {
+    public DoubleFitness.Minimise evaluate(Population population, STGPIndividual individual) {
         setConfig(population.getConfig());
 
         if (!(individual instanceof STGPIndividual)) {

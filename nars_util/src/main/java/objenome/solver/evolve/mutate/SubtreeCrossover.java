@@ -170,33 +170,39 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
             Node subtree2 = matchingNodes.get(index);
             int swapPoint2 = matchingIndexes.get(index);
 
-            program1.setNode(swapPoint1, subtree2);
-            program2.setNode(swapPoint2, subtree1);
+            if (swapPoint2 < program2.size()) {
+                program1.setNode(swapPoint1, subtree2);
+                program2.setNode(swapPoint2, subtree1);
 
-            // Check the depths are valid
-            int depth1 = program1.depth();
-            int depth2 = program2.depth();
+                // Check the depths are valid
+                int depth1 = program1.depth();
+                int depth2 = program2.depth();
 
-            children = new STGPIndividual[2];
+                children = new STGPIndividual[2];
 
-            if (depth1 <= maxDepth && depth2 <= maxDepth) {
-                children = new STGPIndividual[]{program1, program2};
-            } else if (depth1 <= maxDepth) {
-                children = new STGPIndividual[]{program1};
-            } else if (depth2 <= maxDepth) {
-                children = new STGPIndividual[]{program2};
-            } else {
-                children = new STGPIndividual[0];
+                if (depth1 <= maxDepth && depth2 <= maxDepth) {
+                    children = new STGPIndividual[]{program1, program2};
+                } else if (depth1 <= maxDepth) {
+                    children = new STGPIndividual[]{program1};
+                } else if (depth2 <= maxDepth) {
+                    children = new STGPIndividual[]{program2};
+                } else {
+                    children = new STGPIndividual[0];
+                }
+
+                swapPoints = new int[]{swapPoint1, swapPoint2};
+                subtrees = new Node[]{subtree1, subtree2};
+
+                ((EndEvent) event).setCrossoverPoints(swapPoints);
+                ((EndEvent) event).setSubtrees(subtrees);
+
+                return children;
+
             }
-
-            swapPoints = new int[]{swapPoint1, swapPoint2};
-            subtrees = new Node[]{subtree1, subtree2};
         }
 
-        ((EndEvent) event).setCrossoverPoints(swapPoints);
-        ((EndEvent) event).setSubtrees(subtrees);
+        return new STGPIndividual[] { program1, program2 };
 
-        return children;
     }
 
     /**

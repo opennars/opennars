@@ -26,7 +26,6 @@ import objenome.op.Variable;
 import objenome.op.VariableNode;
 import objenome.op.math.*;
 import objenome.op.trig.Sine;
-import objenome.op.trig.Tangent;
 import objenome.solver.evolve.*;
 import objenome.solver.evolve.fitness.DoubleFitness;
 import objenome.solver.evolve.fitness.SumOfError;
@@ -38,6 +37,7 @@ import objenome.solver.evolve.selection.TournamentSelector;
 import objenome.util.random.MersenneTwisterFast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
@@ -46,11 +46,14 @@ import java.util.List;
  * evaluated according to a set of sampled points.
  * @since 2.0
  */
-public class STGPFunctionApproximation extends ProblemSTGP {
+public class STGPFunctionApproximation extends DefaultProblemSTGP {
 
     
-    public final Variable x;
+
+
+
     public final Deque<Observation<Double[], Double>> samples;
+
 
     final SumOfError<Double,Double> fitness = new SumOfError() {
         @Override public void onNextBest(STGPIndividual s, double error) {
@@ -58,75 +61,23 @@ public class STGPFunctionApproximation extends ProblemSTGP {
             nextBestError = error;
         }
     };
- 
-    public STGPFunctionApproximation(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {        
-        super();
-        
-        
-        double elitismRate = 0.5 * populationSize;
-        
-        the(Population.SIZE, populationSize);
-        List<TerminationCriteria> criteria = new ArrayList<>();
-        criteria.add(new TerminationFitness(new DoubleFitness.Minimise(0.0)));
-        criteria.add(new MaximumGenerations());
-        the(EvolutionaryStrategy.TERMINATION_CRITERIA, criteria);
-        the(MaximumGenerations.MAXIMUM_GENERATIONS, 150);
-        the(STGPIndividual.MAXIMUM_DEPTH, expressionDepth);
-
-        the(Breeder.SELECTOR, new TournamentSelector());
-        the(TournamentSelector.TOURNAMENT_SIZE, 7);
-        List<Operator> operators = new ArrayList<>();
-        operators.add(new PointMutation());
-        operators.add(new SubtreeCrossover());
-        operators.add(new SubtreeMutation());
-        the(Breeder.OPERATORS, operators);
-        the(BranchedBreeder.ELITISM, (int)(populationSize * elitismRate));
-        the(PointMutation.PROBABILITY, 0.3);
-        the(SubtreeCrossover.PROBABILITY, 0.3);
-        the(SubtreeMutation.PROBABILITY, 0.3);
-        the(Initialiser.METHOD, new Full());
-        //the(Initialiser.METHOD, new RampedHalfAndHalf());
-
-        RandomSequence randomSequence = new MersenneTwisterFast();
-        the(RandomSequence.RANDOM_SEQUENCE, randomSequence);
-
-        List<Node> syntax = new ArrayList();
-        
-        //+2.0 allows it to grow
-        syntax.add( new DoubleERC(randomSequence, -1.0, 2.0, 4));
-        
-        if (arith) {
-            syntax.add(new Add());
-            syntax.add(new Subtract());
-            syntax.add(new Multiply());
-            syntax.add(new DivisionProtected());            
-        }
-        if (trig) {
-            syntax.add(new Sine());
-            //syntax.add(new Tangent());
-        }
-        if (exp) {
-            //syntax.add(new LogNatural());
-            //syntax.add(new Exp());
-            syntax.add(new Power());
-        }
-        if (piecewise) {
-            syntax.add(new Min2());
-        }
-        
-        syntax.add( new VariableNode( x = new Variable("X", Double.class) ) );
-                
-        // Setup syntax        
-        the(STGPIndividual.SYNTAX, syntax.toArray(new Node[syntax.size()]));
-            
-        
-        the(STGPIndividual.RETURN_TYPE, Double.class);
 
 
-        // Setup fitness function
-        the(FitnessEvaluator.FUNCTION, fitness);
+    public STGPFunctionApproximation(int populationSize, int expressionDepth, boolean arith, boolean trig, boolean exp, boolean piecewise) {
+        super(populationSize, expressionDepth, arith, trig, exp, piecewise);
 
         samples = fitness.obs;
+    }
+
+    @Override
+    protected FitnessFunction initFitness() {
+        return fitness;
+    }
+
+
+    @Override
+    protected Iterable<Variable> initVariables() {
+        return Collections.singleton(doubleVariable("X"));
     }
 
     STGPIndividual nextBest = null;
@@ -139,4 +90,8 @@ public class STGPFunctionApproximation extends ProblemSTGP {
     public STGPIndividual getBest() {
         return nextBest;
     }
+
+
+
+
 }

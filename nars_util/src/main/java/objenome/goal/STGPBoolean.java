@@ -124,8 +124,7 @@ public class STGPBoolean extends ProblemSTGP {
         the(MaximumGenerations.MAXIMUM_GENERATIONS, maxGenerations);
         the(STGPIndividual.MAXIMUM_DEPTH, 6);
 
-        the(Breeder.SELECTOR, new TournamentSelector());
-        the(TournamentSelector.TOURNAMENT_SIZE, 7);
+        the(Breeder.SELECTOR, new TournamentSelector(7));
 
         the(SubtreeCrossover.PROBABILITY, 1.0);
         the(SubtreeMutation.PROBABILITY, 0.0);

@@ -67,18 +67,18 @@ public abstract class AbstractOperator implements Operator {
         this.config = population.getConfig();
         setConfig(population.getConfig());
 
-        Individual[] parents = clone(individuals);
+        Individual[] parents = individuals; //clone(individuals);
 
         // fires the start event
         StartOperator start = getStartEvent(individuals);
         population.getConfig().fire(start);
 
         EndOperator end = getEndEvent(individuals);
-        parents = perform(end, parents);
+        Individual[] newParents = perform(end, parents);
 
         // fires the end event only if the operator was successful
         if (parents != null) {
-            end.setChildren(clone(parents));
+            end.setChildren(newParents);
             population.getConfig().fire(end);
         }
 

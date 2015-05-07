@@ -21,26 +21,26 @@
  */
 package objenome.solver.evolve.fitness;
 
-import objenome.solver.evolve.AbstractFitnessFunction;
-import objenome.solver.evolve.GPContainer.GPContainerAware;
-import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.op.Variable;
+import objenome.solver.evolve.AbstractFitnessFunction;
+import objenome.solver.evolve.GPContainer;
+import objenome.solver.evolve.STGPIndividual;
 
 /**
  * A fitness function for evaluating STGP individuals.
  *
  * @since 2.0
  */
-public abstract class STGPFitnessFunction extends AbstractFitnessFunction implements GPContainerAware {
+public abstract class STGPFitnessFunction extends AbstractFitnessFunction<STGPIndividual>  {
 
     /**
      * The key for setting the program's input variables
      */
-    public static final GPKey<Variable[]> INPUT_VARIABLES = new GPKey<>();
+    public static final GPContainer.GPKey<Variable[]> INPUT_VARIABLES = new GPContainer.GPKey<>();
 
     /**
      * The key for setting the sets of values to use as inputs
      */
-    public static final GPKey<Object[][]> INPUT_VALUE_SETS = new GPKey<>();
+    public static final GPContainer.GPKey<Object[][]> INPUT_VALUE_SETS = new GPContainer.GPKey<>();
 
 }

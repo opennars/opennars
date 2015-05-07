@@ -34,7 +34,7 @@ public interface IndividualSelector {
      *
      * @param population the current population.
      */
-    public void setup(Population population);
+    public void init(Population population);
 
     /**
      * Returns an individual.
