@@ -149,7 +149,7 @@ abstract public class AbstractHaiQBrain<S,A> {
         if (lastAction!=null)
             qAdd(state, lastAction, Double.NaN, 1, confidence);
 
-        final double AlphaDeltaQ = confidence * alpha * DeltaQ;
+        final double AlphaDeltaQ = /* confidence * */ alpha * DeltaQ;
         final double GammaLambda = gamma * lambda;
         for (S i : getStates()) {
             for (A k : getActions()) {

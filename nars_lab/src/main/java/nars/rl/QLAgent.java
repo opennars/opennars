@@ -1,11 +1,11 @@
 package nars.rl;
 
 import com.google.common.collect.Iterables;
-import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
 import nars.event.FrameReaction;
+import nars.io.Texts;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
@@ -157,7 +157,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         spontaneous(initialPossibleDesireConfidence);
         setActedBeliefConfidence(actedConfidence);
         setActedGoalConfidence(actedConfidence);
-        brain.setAlpha(0.1f);
+        brain.setAlpha(0.05f);
     }
 
     @Override
@@ -246,8 +246,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     /**
      * decides which action, TODO make this configurable
      */
-    public synchronized Operation decide() {
+    public Operation decide() {
 
+        final int actions = getNumActions();
 
         double e = brain.getEpsilon();
         if (e > 0) {
@@ -257,26 +258,27 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 //                return l;*/
 //                spontaneous((float) (initialPossibleDesireConfidence));
 
-                int a = (int)(Math.random() * getNumActions());
-                float v = initialPossibleDesireConfidence;
+                int a = (int) (Math.random() * getNumActions());
+
+                float v = initialPossibleDesireConfidence / (2 * actions);
+
                 actByExpectation.addToEntry(a, v);
             }
 
         }
 
-        System.out.println(actByExpectation);
-
-
         double m = actByExpectation.getL1Norm(); //sum of absolute value of elements, to detect a zero vector
         if (m == 0) return null;
 
         int winner = actByExpectation.getMaxIndex();
-        if (winner == -1) return null; //no winner?
+        if (winner == -1) {
+            return null; //no winner?
+        }
 
         normalizedActionDesire = actByExpectation.unitVector();
         double alignment = normalizedActionDesire.dotProduct(actByExpectation);
 
-        //System.out.print("NARS exec: '" + winner + "' (from " + actByExpectation + " total executions) vs. '" + actByQStrongest + "' qAct");
+        //System.out.print("NARS exec: '" + winner + "' -> " + winner);
         //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
 
         actByExpectation.mapMultiplyToSelf(actionDesireDecay); //zero
@@ -289,6 +291,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     protected void onFrame() {
         long now = nar.time();
 
+        env.frame();
 
         Operation nextAction = decide();
 
@@ -305,7 +308,6 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             }
         }
 
-        env.frame();
 
 
         double[] o = env.observe();

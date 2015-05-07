@@ -26,7 +26,7 @@ public class RLNario extends NARio  {
         QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p);
 
         agent.brain.setEpsilon(0.1);
-
+        agent.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
 
@@ -79,13 +79,13 @@ public class RLNario extends NARio  {
 
         nar.param.outputVolume.set(0);
         nar.param.decisionThreshold.set(0.51);
-        nar.param.shortTermMemoryHistory.set(5);
+        nar.param.shortTermMemoryHistory.set(3);
 
         new RLNario(nar,
                 //new RawPerception("r", 0.1f)
-                new RawPerception("r", 0.3f),
-                new HaiSOMPerception("s", 2, 0.3f),
-                new AEPerception("a", 0.2f, 15, 2).setLearningRate(0.02).setSigmoid(true)
+                new RawPerception.BipolarDirectPerception("r", 0.3f),
+                new HaiSOMPerception("s", 2, 0.3f)
+                //new AEPerception("a", 0.2f, 15, 2).setLearningRate(0.02).setSigmoid(true)
                 //new AEPerception("b", 0.2f, 15).setLearningRate(0.02).setSigmoid(false)
         );
 

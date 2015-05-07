@@ -331,7 +331,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
     public void acted(Term action) {
-        System.out.println("acted: " + action);
         acted(action, Symbols.GOAL, actedGoalConfidence);
         acted(action, Symbols.JUDGMENT, actedBeliefConfidence);
     }

@@ -164,9 +164,9 @@ public class TestSOMAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 50;
-        final int cyclesPerFrame = 10;
-        float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
+        int conceptsPerCycle = 10;
+        final int cyclesPerFrame = 20;
+        float qLearnedConfidence = 0.2f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -232,17 +232,17 @@ public class TestSOMAgent extends JPanel {
 
 
         dd.setCyclesPerFrame(cyclesPerFrame);
-        dd.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
         dd.shortTermMemoryHistory.set(3);
-        dd.decisionThreshold.set(0.65);
+        dd.decisionThreshold.set(0.51);
         dd.outputVolume.set(5);
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.6f),
+                new RawPerception("L", 0.3f)
                 //new RawPerception.BipolarDirectPerception("L", 0.5f)
 
-                new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
-                new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
+                //new AEPerception("A", 0.5f, 16).setLearningRate(0.004).setSigmoid(true),
+                //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
                     @Override
@@ -258,7 +258,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        a.agent.brain.setEpsilon(0.05);
+        a.agent.brain.setEpsilon(0.15);
 
 
     }
