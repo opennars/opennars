@@ -34,7 +34,7 @@ import nars.operator.Operator;
 public class InternalExperience implements Plugin, EventObserver {
         
     public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f; //0.92
-    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.1f;
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.92f;
     
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.0001f;
@@ -52,7 +52,7 @@ public class InternalExperience implements Plugin, EventObserver {
     public static boolean AllowWantBelieve=true; 
     
     //
-    public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=true; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
     
     public boolean isAllowNewStrategy() {
         return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
@@ -184,14 +184,18 @@ public class InternalExperience implements Plugin, EventObserver {
             return false;
         }
         
-        if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
-            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+        if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
+                (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
+        
+            if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
+                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+                    return false;
+                }
+            }
+            else
+            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
                 return false;
             }
-        }
-        else
-        if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
-            return false;
         }
         
         Term content=task.getTerm();
