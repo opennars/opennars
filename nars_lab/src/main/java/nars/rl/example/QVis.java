@@ -37,23 +37,40 @@ public class QVis extends JPanel implements Runnable {
 
 
             QEntry v = agent.getEntry(xstates.get(j), xactions.get(i));
+            int color;
             if (v != null) {
                 Concept c = v.concept;
-                if (c != null) {
-                    pri = c.getPriority();
+                float p = 0.8f + 0.2f * pri;
+
+                float goalValue = (float) v.getQNar(Symbols.GOAL);
+                float beliefValue = (float) v.getQNar(Symbols.JUDGMENT);
+                float qValue = (float) v.getQ();
+
+                if (goalValue > 1f) goalValue = 1f;
+                if (beliefValue > 1f) beliefValue = 1f;
+                if (qValue < 0f) {
+                    qValue = -qValue;
+                    goalValue = 1f - goalValue;
+                    beliefValue = 1f - beliefValue;
                 }
-                elig = (float) v.getE();
-                value = v.getQNar(Symbols.GOAL);
+                if (qValue > 1f) qValue = 1f;
+
+                color = new Color( goalValue * p, beliefValue * p, qValue * p).getRGB();
+
+//                color = Video.colorHSB(
+//                        0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
+//                        Math.min(1.0f, 0.8f + elig*0.2f),
+//                        0.75f + 0.25f * pri
+//                );
+
+            }
+            else {
+                color = Color.BLACK.getRGB();
             }
 
 
-            image.setRGB(j, i,
-                    Video.colorHSB(
-                            0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
-                            Math.min(1.0f, 0.8f + elig*0.2f),
-                            0.75f + 0.25f * pri
-                    )
-            );
+            image.setRGB(j, i, color);
+
             //val2col(value, -1, 1, 0.5f + 0.5f * pri));
 
         }

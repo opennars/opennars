@@ -1,8 +1,8 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -14,13 +14,12 @@ import nars.model.impl.Default;
 import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
+import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.rl.Perception;
-import nars.rl.QLAgent;
-import nars.rl.RawPerception;
+import nars.rl.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +34,7 @@ import static nars.nal.UtilityFunctions.or;
  * TODO use concept desire in accumulating votes\
  * TODO abstract the voting execution into an abstract Operator
  */
-public class TestSOMAgent extends JPanel {
+public class RunQLAgent extends JPanel {
 
 
     private final QLAgent agent;
@@ -104,7 +103,7 @@ public class TestSOMAgent extends JPanel {
     public final NAR nar;
 
 
-    public TestSOMAgent(RLEnvironment env, NARSeed dd, float qLearnedConfidence, Perception... p) {
+    public RunQLAgent(RLEnvironment env, NARSeed dd, float qLearnedConfidence, Perception... p) {
         super();
 
         nar = new NAR(dd);
@@ -153,22 +152,22 @@ public class TestSOMAgent extends JPanel {
 
 
         /* Create and display the form */
-        RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        //RLEnvironment d = new Curiousbot();
+        RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
-        Global.DEBUG = Global.DEBUG_BAG = true;
+        Global.DEBUG = Global.DEBUG_BAG = false;
         //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 512;
+        int concepts = 2048;
         int conceptsPerCycle = 40;
         final int cyclesPerFrame = 40;
-        float qLearnedConfidence = 0.75f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -227,25 +226,34 @@ public class TestSOMAgent extends JPanel {
 //                    }
                 };
             }
+
+//            @Override
+//            protected void initDerivationFilters() {
+//                final float DERIVATION_PRIORITY_LEAK=0.1f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+//                final float DERIVATION_DURABILITY_LEAK=0.1f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+//                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+//            }
         };
 
-        dd.setSubconceptBagSize(4);
+        dd.setSubconceptBagSize(1000);
 
-        dd.setTaskLinkBagSize(32);
+        //dd.setTaskLinkBagSize(32);
         dd.setInternalExperience(null);
+
+        dd.inputsMaxPerCycle.set(1000);
 
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
         dd.shortTermMemoryHistory.set(3);
-        dd.decisionThreshold.set(0.95);
+        dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
 
-        TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
-                //new RawPerception("L", 0.3f)
-                new RawPerception.BipolarDirectPerception("L", 0.75f)
+        RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
+                new RawPerception("L", 0.7f),
+                //new RawPerception.BipolarDirectPerception("L", 0.75f),
 
-                //new AEPerception("A", 0.5f, 4).setLearningRate(0.104).setSigmoid(true)
+                //new AEPerception("A", 0.5f, 4).setLearningRate(0.104),//.setSigmoid(true)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
@@ -256,13 +264,13 @@ public class TestSOMAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                //new HaiSOMPerception("A", 2, 0.7f)
+                new HaiSOMPerception("A", 4, 0.7f)
                 //new HaiSOMPerception("B", 2, 0.8f)
         );
 
 
 
-        a.agent.brain.setEpsilon(0);
+        a.agent.brain.setEpsilon(0.1);
 
 
     }

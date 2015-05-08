@@ -4,9 +4,9 @@ import automenta.vivisect.Video;
 import javolution.util.FastSet;
 import nars.Events;
 import nars.NAR;
-import nars.event.ConceptReaction;
 import nars.event.NARReaction;
 import nars.io.TextOutput;
+import nars.meter.ConceptLifeCycleLog;
 import nars.nal.Named;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
@@ -38,39 +38,6 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
     public ConceptLogPanel(NAR c) {
         super(c);
-
-
-        new ConceptReaction(nar) {
-
-            int active = 0;
-            int deleted = 0;
-
-            public void printStat() {
-                int bagActive = nar.memory.concepts.size();
-                System.out.print(bagActive + "," + active + "-" + deleted + ":\t");
-            }
-            @Override
-            public void onConceptActive(Concept c) {
-                printStat();
-                System.out.println("active: " + c.toInstanceString());
-                active++;
-            }
-
-            @Override
-            public void onConceptForget(Concept c) {
-                printStat();
-                System.out.println("forget: " + c.toInstanceString());
-                active--;
-            }
-
-            @Override
-            public void onConceptDelete(Concept c) {
-                printStat();
-                System.out.println("delete: " + c.toInstanceString());
-                deleted++;
-            }
-
-        };
 
         conceptReaction = new NARReaction(nar, Events.ConceptActive.class) {
 
@@ -270,4 +237,5 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     void limitBuffer(int incomingDataSize) {
 
     }
+
 }

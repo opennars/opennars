@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 /** watches for concept lifecycle (creation and forget) events */
 abstract public class ConceptReaction extends NARReaction {
 
-    private final Memory memory;
+    public final Memory memory;
 
     public ConceptReaction(NAR n) {
         this(n.memory);

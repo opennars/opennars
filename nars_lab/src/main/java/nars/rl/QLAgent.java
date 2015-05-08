@@ -1,6 +1,7 @@
 package nars.rl;
 
 import com.google.common.collect.Iterables;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
@@ -11,8 +12,6 @@ import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
-import org.apache.commons.math3.exception.MathArithmeticException;
-import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -39,12 +38,13 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
+    final ObjectIntHashMap<Operation> operationToAction = new ObjectIntHashMap();
 
     private float initialPossibleDesireConfidence = 0.85f;
 
     final float actedConfidence = 0.75f; //similar to Operator.exec
 
-    final float actionDesireDecay = 0.1f;
+
     private final ArrayRealVector actByExpectation;
     private final ArrayRealVector actByPriority;
     private RealVector normalizedActionDesire;
@@ -70,8 +70,12 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             //TODO avoid String here
             o = operationCache[i] =
                     (Operation)nar.term(operationTerm + "(" + i + ")");
+            operationToAction.put(o, i);
         }
         return o;
+    }
+    protected int getAction(final Operation o) {
+        return operationToAction.getIfAbsent(o, -1);
     }
 
 
@@ -124,13 +128,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 }
 
                 Term ta = ((Operation) operation.getTerm()).getArgument(0);
-                String tas = ta.toString();
-                for (int cc = 0; cc < tas.length(); cc++)
-                    if (!Character.isDigit(tas.charAt(cc))) //only accept numbers
-                        return null;
-
-                int a = Integer.parseInt(ta.toString());
-                io.desire(a, operation);
+                int a = getAction(operation);
+                if (a !=-1)
+                    io.desire(a, operation);
 
                 return null;
             }
@@ -167,7 +167,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         spontaneous(initialPossibleDesireConfidence);
         setActedBeliefConfidence(actedConfidence);
         setActedGoalConfidence(actedConfidence);
-        brain.setAlpha(0.9f);
+        brain.setAlpha(0.1f);
     }
 
     /** fast immediate checks to discount terms which are definitely not representative of a state */
@@ -289,24 +289,26 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         final int actions = getNumActions();
 
+        final double epsilon = brain.getEpsilon();
+        //do not apply epsilon random decisions if decisionThreshold=1f
+        float decisionThreshold = nar.param.decisionThreshold.floatValue();
+        if (decisionThreshold < 1.0f && epsilon > 0 && Memory.randomNumber.nextFloat() < epsilon) {
+            int a = Memory.randomNumber.nextInt(actions);
+
+            //for display purposes:
+            normalizedActionDesire.set(0);
+            normalizedActionDesire.setEntry(a, 0.5f);
+
+            return getAction(a);
+        }
+
 
         final double m = actByExpectation.getNorm();
         if (m != 0) {
             normalizedActionDesire = actByExpectation.mapDivide(m);
         }
         else {
-            normalizedActionDesire.mapMultiplyToSelf(0); //zero reset
-        }
-
-        double epsilon = brain.getEpsilon();
-        if (epsilon > 0) {
-            double epsilonFraction = epsilon / actions;
-            for (int i = 0; i < actions; i++)
-                normalizedActionDesire.addToEntry(i, ( (Math.random()) * epsilonFraction));
-
-            //renormalize, for display purposes
-            if (actByExpectation.getL1Norm()!=0)
-                normalizedActionDesire = normalizedActionDesire.unitVector();
+            normalizedActionDesire.set(0);
         }
 
         int winner = getMaxDesiredAction();
@@ -319,10 +321,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         //System.out.print("NARS exec: '" + winner + "' -> " + winner);
         //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
 
-        actByExpectation.mapMultiplyToSelf(actionDesireDecay); //zero
-        actByPriority.mapMultiplyToSelf(actionDesireDecay); //zero
-
-
+        actByExpectation.set(0);
+        actByPriority.set(0);
 
         return getAction(winner);
     }
@@ -382,6 +382,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             environmentState.mulPriority(sensedStatePriorityChanged);
         }
         else {
+            //float sensedStatePrioritySame = 1.0f - environmentState.getTruth().getConfidence();
             environmentState.mulPriority(sensedStatePrioritySame);
         }
         input(environmentState);
@@ -435,11 +436,11 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             if (!Double.isFinite(qLast)) {
                 // the entry does not exist.
                 // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
+                //System.out.println("qState missing: " + i);
                 input(i);
                 //qLast = Math.random();
                 qLast = 0;
             }
-
 
             //TODO compare: q(state, nextAction) with q(i.sentence)
             //double deltaQ = reward + gamma * q(state, nextAction) - qLast;

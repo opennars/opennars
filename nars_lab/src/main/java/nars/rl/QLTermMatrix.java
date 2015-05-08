@@ -6,10 +6,9 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.nal.DirectProcess;
-import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -45,7 +44,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
-    float sensedStatePrioritySame = 0.75f; //scales priority by this amount
+    float sensedStatePrioritySame = 0.3f; //scales priority by this amount
 
     /**
      * min threshold of q-update necessary to cause an effect
@@ -101,12 +100,30 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                 if (qUpdateConfidence == 0) return;
 
                 QEntry v = getEntry(state, action);
-                if (v == null) return;
+                if (v == null) {
+                    //attempt conceptualization of the term
+                    Concept c = nar.memory.conceptualize(
+                            new Budget(0.8f, 0.8f, 0.8f),
+                            qterm(state,action)
+                    );
+                    if (c != null) {
+                        v = getEntry(c, state, action);
+                    }
 
-                if (Double.isFinite(dqDivE))
-                    v.addDQ(dqDivE);
-                if (Double.isFinite(eMult))
-                    v.updateE(eMult, eAdd);
+                    /*input(
+                            nar.memory.newTask(qterm(state, action))
+                                    .present()
+                                    .judgment()
+                                    .truth(0.5f, 0.5f)
+                                    .get());*/
+                }
+                if (v != null) {
+
+                    if (Double.isFinite(dqDivE))
+                        v.addDQ(dqDivE);
+                    if (Double.isFinite(eMult))
+                        v.updateE(eMult, eAdd);
+                }
             }
 
             @Override
