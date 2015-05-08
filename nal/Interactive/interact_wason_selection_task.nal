@@ -16,6 +16,6 @@ js("this.inp={}; this.lookCard=function(a){ a=a.toString(); if(this.inp[a]=="che
 //7 is not even:
 (--,<{7} --> [even]>).
 //If there is a vocal on one side of a lookedat card, is there a even number on the other?
-<<$num --> (/,[lookedat],[vocalic],_)> ==> <$num --> [even]>>?
-//If lookCard is applied on a card, then it is looked at:
-<(&/,<#sth --> card>,js("this.lookCard(arg[0])",#sth)) =/> <#sth2 --> [lookedat]>>.
+<(&/,<$num --> (/,card,[vocalic],_)>) ==> <$num --> [even]>>?
+//if you know some interesting card, look at it
+<<$sth --> card> =/> js("this.lookCard(arg[0])",$sth)>!
