@@ -252,10 +252,10 @@ public class NARio extends Run {
                             return "right";
                         }
                     } else {
-                        if(j<0) {
+                        if(j>0) {
                             return "down";
                         } else 
-                        if(i<0) {
+                        if(j<0) {
                             return "up";
                         }
                     }
@@ -322,13 +322,13 @@ public class NARio extends Run {
                     {
                         setKey(3, isPressed);
                         scene.toggleKey(Mario.KEY_JUMP, isPressed);
-                        if(rightmoved) { //compound action is helpful
+                        /*if(rightmoved) { //compound action is helpful
                            setKey(1, isPressed);
                            scene.toggleKey(Mario.KEY_RIGHT, isPressed); 
                         } else {
                            setKey(0, isPressed);
                            scene.toggleKey(Mario.KEY_LEFT, isPressed); 
-                        }
+                        }*/
                        // setKey(1, isPressed);
                       //  scene.toggleKey(Mario.KEY_RIGHT, isPressed);
                     }
@@ -336,13 +336,13 @@ public class NARio extends Run {
                     {
                         setKey(4, isPressed);
                         scene.toggleKey(Mario.KEY_UP, isPressed);
-                        if(rightmoved) { //compound action is helpful
+                        /*if(rightmoved) { //compound action is helpful
                            setKey(1, isPressed);
                            scene.toggleKey(Mario.KEY_RIGHT, isPressed); 
                         } else {
                            setKey(0, isPressed);
                            scene.toggleKey(Mario.KEY_LEFT, isPressed); 
-                        }
+                        }*/
                     }
                     if (keyCode == KeyEvent.VK_A) //wat
                     {
@@ -385,13 +385,16 @@ public class NARio extends Run {
 
                         if (movement) {
 
-                            if (!((mx==0) && (my==0))) {
-                                String dir=direction(mx,my);
-                                if (right!=false) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
+                           /* if (!((mx==0) && (my==0)))*/ {
+                                String dir=direction(dx,dy);
+                                if ("right".equals(dir)) { // && moveInput.set(/*"$" + movementPriority + "$"*/"<"+dir+" --> moved>. :|:")) {
                                     //if significantly changed block position, record it for next difference
                                     nar.addInput("<right --> moved>. :|:");
                                     lastMX = x;
                                     lastMY = y;
+                                }
+                                if("left".equals(dir))  {
+                                    nar.addInput("<right --> moved>. :|: %0.00;0.90%");
                                 }
                             }
                             //this one is wrong like when getting stuck indicates:
