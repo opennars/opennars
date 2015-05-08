@@ -107,12 +107,12 @@ public class Concept extends Item<Term> implements Termable {
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
-    public final ArrayList<Sentence> beliefs;
+    public final ArrayList<Task> beliefs;
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public final ArrayList<Sentence> desires;
+    public final ArrayList<Task> desires;
 
     /**
      * Reference to the memory to which the Concept belongs
@@ -284,13 +284,17 @@ public class Concept extends Item<Term> implements Termable {
         }
     }
 
-    protected void addToTable(final Task task, final ArrayList<Sentence> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
+    protected void addToTable(final Task task, final ArrayList<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
         final Sentence newSentence = task.sentence;
         int preSize = table.size();
 
-        Sentence removed;
+        Task removedT;
+        Sentence removed = null;
         synchronized (table) {
-            removed = addToTable(newSentence, table, max);
+            removedT = addToTable(task, table, max);
+            if(removedT != null) {
+                removed=removedT.sentence;
+            }
         }
 
         if (removed != null) {
@@ -522,19 +526,20 @@ public class Concept extends Item<Term> implements Termable {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public static Sentence addToTable(final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    public static Task addToTable(final Task newTask, final List<Task> table, final int capacity) {
+        Sentence newSentence = newTask.sentence;
         final float rank1 = rankBelief(newSentence);    // for the new isBelief
         float rank2;        
         int i;
         for (i = 0; i < table.size(); i++) {
-            Sentence judgment2 = table.get(i);
+            Sentence judgment2 = table.get(i).sentence;
             rank2 = rankBelief(judgment2);
             if (rank1 >= rank2) {
                 if (newSentence.equivalentTo(judgment2)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return null;
                 }
-                table.add(i, newSentence);
+                table.add(i, newTask);
                 break;
             }            
         }
@@ -543,11 +548,11 @@ public class Concept extends Item<Term> implements Termable {
             // nothing
         }
         else if (table.size() > capacity) {
-            Sentence removed = table.remove(table.size() - 1);
+            Task removed = table.remove(table.size() - 1);
             return removed;
         }
         else if (i == table.size()) { // branch implies implicit table.size() < capacity
-            table.add(newSentence);
+            table.add(newTask);
         }
         
         return null;
@@ -560,7 +565,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    private Sentence selectCandidate(final Sentence query, final List<Sentence> list) {
+    private Sentence selectCandidate(final Sentence query, final List<Task> list) {
  //        if (list == null) {
         //            return null;
         //        }
@@ -569,7 +574,7 @@ public class Concept extends Item<Term> implements Termable {
         Sentence candidate = null;
         synchronized (list) {            
             for (int i = 0; i < list.size(); i++) {
-                Sentence judg = list.get(i);
+                Sentence judg = list.get(i).sentence;
                 beliefQuality = solutionQuality(query, judg, memory);
                 if (beliefQuality > currentBest) {
                     currentBest = beliefQuality;
@@ -756,7 +761,8 @@ public class Concept extends Item<Term> implements Termable {
         final Stamp taskStamp = task.sentence.stamp;
         final long currentTime = memory.time();
 
-        for (final Sentence belief : beliefs) {            
+        for (final Task beliefT : beliefs) {  
+            Sentence belief = beliefT.sentence;
             nal.emit(BeliefSelect.class, belief);
 
             nal.setTheNewStamp(taskStamp, belief.stamp, currentTime);
@@ -782,7 +788,7 @@ public class Concept extends Item<Term> implements Termable {
         if (desires.isEmpty()) {
             return null;
         }
-        TruthValue topValue = desires.get(0).truth;
+        TruthValue topValue = desires.get(0).sentence.truth;
         return topValue;
     }
 
@@ -813,8 +819,8 @@ public class Concept extends Item<Term> implements Termable {
         final StringBuilder buffer = new StringBuilder(18);
         buffer.append("\n  Beliefs:\n");
         if (!beliefs.isEmpty()) {
-            for (Sentence s : beliefs) {
-                buffer.append(s).append('\n');
+            for (Task t : beliefs) {
+                buffer.append(t.sentence).append('\n');
             }
         }
         if (!questions.isEmpty()) {
@@ -868,12 +874,12 @@ public class Concept extends Item<Term> implements Termable {
 
     public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
-            for (final Sentence s : beliefs) {
-                s.discountConfidence();
+            for (final Task t : beliefs) {
+                t.sentence.discountConfidence();
             }
         } else {
-            for (final Sentence s : desires) {
-                s.discountConfidence();
+            for (final Task t : desires) {
+                t.sentence.discountConfidence();
             }
         }
     }
@@ -887,7 +893,7 @@ public class Concept extends Item<Term> implements Termable {
                 
         Sentence s = null;
         for (int i = 0; i < beliefs.size(); i++) {
-            s = beliefs.get(i);            
+            s = beliefs.get(i).sentence;            
             r -= s.truth.getConfidence();
             if (r < 0)
                 return s;
@@ -898,16 +904,16 @@ public class Concept extends Item<Term> implements Termable {
     
     public float getBeliefConfidenceSum() {
         float t = 0;
-        for (final Sentence s : beliefs)
-            t += s.truth.getConfidence();
+        for (final Task ts : beliefs)
+            t += ts.sentence.truth.getConfidence();
         return t;
     }
     public float getBeliefFrequencyMean() {
         if (beliefs.isEmpty()) return 0.5f;
         
         float t = 0;
-        for (final Sentence s : beliefs)
-            t += s.truth.getFrequency();
+        for (final Task s : beliefs)
+            t += s.sentence.truth.getFrequency();
         return t / beliefs.size();        
     }
 
@@ -916,16 +922,16 @@ public class Concept extends Item<Term> implements Termable {
         if (beliefs.isEmpty())
             return "0 beliefs";        
         StringBuilder sb = new StringBuilder();
-        for (Sentence s : beliefs)
-            sb.append(s.toString()).append('\n');       
+        for (Task ts : beliefs)
+            sb.append(ts.toString()).append('\n');       
         return sb;
     }
     public CharSequence getDesiresSummary() {
         if (desires.isEmpty())
             return "0 desires";        
         StringBuilder sb = new StringBuilder();
-        for (Sentence s : desires)
-            sb.append(s.toString()).append('\n');       
+        for (Task ts : desires)
+            sb.append(ts.sentence.toString()).append('\n');       
         return sb;
     }
 
@@ -933,12 +939,12 @@ public class Concept extends Item<Term> implements Termable {
         return term.operator();
     }
 
-    public Collection<Sentence> getSentences(char punc) {
+    public Collection<Task> getSentences(char punc) {
         switch(punc) {
             case Symbols.JUDGMENT_MARK: return beliefs;
             case Symbols.GOAL_MARK: return desires;                
-            case Symbols.QUESTION_MARK: return Task.getSentences(questions);
-            case Symbols.QUEST_MARK: return Task.getSentences(quests);
+            case Symbols.QUESTION_MARK: return Task.getTasks(questions);
+            case Symbols.QUEST_MARK: return Task.getTasks(quests);
         }
         throw new RuntimeException("Invalid punctuation: " + punc);
     }
@@ -948,7 +954,7 @@ public class Concept extends Item<Term> implements Termable {
     }
 
     /** returns unmodifidable collection wrapping beliefs */
-    public List<Sentence> getBeliefs() {
+    public List<Task> getBeliefs() {
         return Collections.unmodifiableList(beliefs);
     }
 

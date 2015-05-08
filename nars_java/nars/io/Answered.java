@@ -40,8 +40,8 @@ public abstract class Answered implements EventObserver {
         Concept c = (Concept)nar.memory.concept( question.getTerm() );
         if (c == null) return;        
         
-        for (Sentence s : c.beliefs) {
-            onSolution(s);
+        for (Task ts : c.beliefs) {
+            onSolution(ts.sentence);
         }
     }
     

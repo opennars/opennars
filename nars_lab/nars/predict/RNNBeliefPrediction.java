@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import org.apache.commons.math3.util.MathArrays;
 
 /** predicts the beliefs of a set of concepts */
@@ -108,7 +109,8 @@ abstract public class RNNBeliefPrediction extends BeliefPrediction {
         int cc = 0;
         int hd = Math.round(predictionTimeSpanFactor * nar.memory.getDuration() / 2f / downSample);
         for (Concept c : concepts) {
-            for (Sentence s : c.beliefs) {
+            for (Task ts : c.beliefs) {
+                Sentence s = ts.sentence;
                 if (s.isEternal()) {
                     continue;
                 }

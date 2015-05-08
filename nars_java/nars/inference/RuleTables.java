@@ -342,7 +342,7 @@ public class RuleTables {
                         //END
                         //now set the current context:
                         
-                        Sentence s=next.beliefs.get(0);
+                        Sentence s=next.beliefs.get(0).sentence;
                         if(nal.memory.isNovelInRegardTo(s,belief.term)) {
                             nal.memory.setNotNovelAnymore(s,belief.term);
                             //this one needs an dummy task..
@@ -383,7 +383,7 @@ public class RuleTables {
                 
                 if (!next.beliefs.isEmpty()) {
                     
-                    Sentence s=next.beliefs.get(0);
+                    Sentence s=next.beliefs.get(0).sentence;
                     
                     ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
                     Stamp SVSTamp=nal.getNewStamp();
@@ -447,10 +447,10 @@ public class RuleTables {
                     
                     Sentence s=null;
                     if(task.sentence.punctuation==Symbols.JUDGMENT_MARK && !next.beliefs.isEmpty()) {
-                        s=next.beliefs.get(0);
+                        s=next.beliefs.get(0).sentence;
                     }
                     if(task.sentence.punctuation==Symbols.GOAL_MARK && !next.desires.isEmpty()) {
-                        s=next.desires.get(0);
+                        s=next.desires.get(0).sentence;
                     }
                     
                     if (s!=null && !alreadyInducted.contains(t) && (t instanceof Conjunction)) {

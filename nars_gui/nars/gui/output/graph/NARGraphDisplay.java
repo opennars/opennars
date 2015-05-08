@@ -77,7 +77,7 @@ public class NARGraphDisplay<V,E> implements GraphDisplay<V,E> {
             
             
             if (!co.beliefs.isEmpty()) {
-                float confidence = co.beliefs.get(0).truth.getConfidence();
+                float confidence = co.beliefs.get(0).sentence.truth.getConfidence();
                 alpha = 0.5f + 0.5f * confidence;
             }
             

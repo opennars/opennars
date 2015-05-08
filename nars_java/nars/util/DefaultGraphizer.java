@@ -106,7 +106,8 @@ public class DefaultGraphizer implements NARGraph.Graphize {
             
         }
         if (includeBeliefs) {
-            for (final Sentence belief : c.beliefs) {
+            for (final Task beliefT : c.beliefs) {
+                Sentence belief = beliefT.sentence;
                 onBelief(belief);
                 sentenceTerms.put(belief, c);
                 //g.addVertex(c);

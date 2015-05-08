@@ -363,7 +363,7 @@ public class NARTrace extends MemoryObserver implements Serializable {
                     return concept.getDurability();
                 case BeliefConfidenceMax:
                     if (concept.beliefs.size() > 0) {
-                        return concept.beliefs.get(0).truth.getConfidence();
+                        return concept.beliefs.get(0).sentence.truth.getConfidence();
                     }
                     return 0;
             }

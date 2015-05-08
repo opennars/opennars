@@ -407,6 +407,7 @@ public class TemporalRules {
         Statement statement2 = Implication.make(t2, t1, reverseOrder(order));
         Statement statement3 = Equivalence.make(t1, t2, order);
         
+        
         //maybe this way is also the more flexible and intelligent way to introduce variables for the case above
         //TODO: rethink this for 1.6.3
         //"Perception Variable Introduction Rule" - https://groups.google.com/forum/#!topic/open-nars/uoJBa8j7ryE
@@ -476,12 +477,53 @@ public class TemporalRules {
                     success.add(t);
                     
                     Task task=t;
+                    
+                    
+                            /*
+                        IN <SELF --> [good]>! %1.00;0.90%
+                        IN (^pick,left). :|: %1.00;0.90%
+                        IN  PauseInput(3)
+                        IN <SELF --> [good]>. :|: %0.00;0.90%
+                           <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. :|: %0.00;0.45%
+                           <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. %0.00;0.31%
+                           <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. :|: %0.00;0.45%
+                           <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. %0.00;0.31%
+                           <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. :|: %0.00;0.45%
+                           <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. %0.00;0.31%
+                           <(&/,(^pick,left),+3) </> <SELF --> [good]>>. :|: %0.00;0.45%
+                           <(&/,(^pick,left),+3) </> <SELF --> [good]>>. %0.00;0.31%
+
+                    It takes the system sometimes like 1000 steps to go from
+                    "(^pick,left) leads to SELF not being good"
+                    to
+                    "since <SELF --> good> is a goal, (^pick,left) is not desired"
+                    making it bad for RL tasks but this will change, maybe with the following principle:
+
+
+                    task: <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>.
+                    belief: <SELF --> [good]>!
+                    |-
+                    (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
+
+                    */
+
+                    /*Concept S1_State_C=nal.memory.concept(s1.term);
+                    if(S1_State_C.desires.size() > 0) {
+                        Sentence strongest_desire = S1_State_C.desires.get(0).sentence;
+                        //
+                    }*/
+
+                    //PRINCIPLE END
+                    
+                    
+                    
+                    
                     //micropsi inspired strive for knowledge
                     //get strongest belief of that concept and use the revison truth, if there is no, use this truth
                     double conf=task.sentence.truth.getConfidence();
                     Concept C=nal.memory.concept(task.sentence.term);
                     if(C!=null && C.beliefs!=null && C.beliefs.size()>0) {
-                        Sentence bel=C.beliefs.get(0);
+                        Sentence bel=C.beliefs.get(0).sentence;
                         TruthValue cur=bel.truth;
                         conf=Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                         //if there is no overlapping evidental base, use revision:
