@@ -359,9 +359,9 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            if (newStamp.equals(oldStamp,false,true,true,false)) {
-                return; // duplicate
-            } else if (revisible(goal, oldGoal)) {
+            //if (newStamp.equals(oldStamp,false,true,true,false)) {
+            //    return; // duplicate
+            /*if (revisible(goal, oldGoal)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
@@ -376,7 +376,7 @@ public class Concept extends Item<Term> implements Termable {
                         return; // with higher/lower desire
                     } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                 }
-            } 
+            } */
         } 
         
         if (task.aboveThreshold()) {
@@ -388,7 +388,7 @@ public class Concept extends Item<Term> implements Termable {
             }
 
             // still worth pursuing?
-            if (task.aboveThreshold()) {
+            if (task.aboveThreshold() && task.sentence.truth.getExpectation()>nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
                 
