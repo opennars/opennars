@@ -38,9 +38,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
 
-    private float initialPossibleDesireConfidence = 0.75f;
+    private float initialPossibleDesireConfidence = 0.85f;
 
-    final float actedConfidence = 0.9f; //similar to Operator.exec
+    final float actedConfidence = 0.75f; //similar to Operator.exec
 
     final float actionDesireDecay = 0.1f;
     private final ArrayRealVector actByExpectation;
@@ -165,7 +165,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         spontaneous(initialPossibleDesireConfidence);
         setActedBeliefConfidence(actedConfidence);
         setActedGoalConfidence(actedConfidence);
-        brain.setAlpha(0.5f);
+        brain.setAlpha(0.9f);
     }
 
     /** fast immediate checks to discount terms which are definitely not representative of a state */
@@ -176,7 +176,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     @Override
     public boolean isRow(Term s) {
-        if (!isRowPrefilter(s)) return false;
+        //if (!isRowPrefilter(s)) return false;
         for (Perception p : perceptions) {
             if (p.isState(s))
                 return true;
@@ -407,13 +407,13 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             if (lastAction!=null)
                 qLast = qNAL(state, lastAction);
             else
-                qLast = 0;
+                qLast = Math.random();
 
             if (!Double.isFinite(qLast)) {
                 // the entry does not exist.
                 // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
                 input(i);
-                qLast = 0;
+                qLast = Math.random();
             }
 
 

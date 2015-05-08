@@ -43,7 +43,7 @@ public class QVis extends JPanel implements Runnable {
                     pri = c.getPriority();
                 }
                 elig = (float) v.getE();
-                value = v.getQNar(Symbols.JUDGMENT);
+                value = v.getQNar(Symbols.GOAL);
                 System.out.println(v.concept + " " + value);
             }
 
@@ -178,6 +178,7 @@ public class QVis extends JPanel implements Runnable {
         xactions.clear();
         Iterables.addAll(xactions, agent.cols);
         //}
+
 
         SwingUtilities.invokeLater(this::run);
     }

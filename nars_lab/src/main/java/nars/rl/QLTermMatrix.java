@@ -388,7 +388,8 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     protected void input(Task t) {
         //System.out.println("ql: " + t);
-        DirectProcess.run(nar, t);
+        //DirectProcess.run(nar, t);
+        nar.input(t);
     }
 
 }
