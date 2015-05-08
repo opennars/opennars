@@ -55,6 +55,7 @@ public class drawPanel extends JPanel {
             if (args.length == 2 || args.length==3) { //left, self
                 prevy.add(y);
                 prevx.add(x);
+                prevsy.add(setpoint);
                 long now = nar.time();
                /* if (now - lastMovementAt < minCyclesPerMovement) {
                     moving();
@@ -144,6 +145,7 @@ public class drawPanel extends JPanel {
                     y+=1;
                     prevy.add(y);
                     prevx.add(x);
+                    prevsy.add(setpoint);
                 }
                 
                 if (hasMoved || nar.time() % feedbackCycles == 0) {
@@ -193,20 +195,25 @@ public class drawPanel extends JPanel {
     List<Integer> prevx=new ArrayList<>();
     List<Integer> prevy=new ArrayList<>();
     
+    List<Integer> prevsy=new ArrayList<>();
+    
     private void doDrawing(Graphics g) {
         
        
         //nar.step(10);
         Graphics2D g2d = (Graphics2D) g;
  
-        g2d.setColor(Color.blue);
         for(int i=0;i<prevx.size();i++) {
+            g2d.setColor(Color.blue);
             g2d.fillRect(prevy.get(i), prevx.get(i), 10, 10);
+            g2d.setColor(Color.red);
+            g2d.fillRect(prevy.get(i), prevsy.get(i), 10, 10);
         }
+        g2d.setColor(Color.blue);
         
         g2d.fillRect(y, x, 10, 10);
         g2d.setColor(Color.red);
-        g2d.drawLine(0, setpoint+5, 2000, setpoint+5);
+        //g2d.drawLine(0, setpoint+5, 2000, setpoint+5);
     }
  
     @Override

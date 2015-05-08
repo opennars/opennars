@@ -359,24 +359,29 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
-            //if (newStamp.equals(oldStamp,false,true,true,false)) {
-            //    return; // duplicate
-            /*if (revisible(goal, oldGoal)) {
+            
+            if (newStamp.equals(oldStamp,false,true,true,false)) {
+                return; // duplicate
+            }
+            if (revisible(goal, oldGoal)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
                 Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
                 if (projectedGoal!=null) {
-                    if (projectedGoal.getOccurenceTime()!=oldGoal.getOccurenceTime()) {
-                       // nal.singlePremiseTask(projectedGoal, task.budget);
-                    }
+                    //if (goal.after(oldGoal, nal.memory.param.duration.get())) {
+                   //     nal.singlePremiseTask(projectedGoal, task.budget);
+                   //     return;
+                   // }
                     nal.setCurrentBelief(projectedGoal);
-                    boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
-                    if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                        return; // with higher/lower desire
-                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+                    if(!(task.sentence.term instanceof Operation)) {
+                        boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
+                        if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                            return; // with higher/lower desire
+                        } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+                    }
                 }
-            } */
+            }
         } 
         
         if (task.aboveThreshold()) {
