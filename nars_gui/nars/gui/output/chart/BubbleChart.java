@@ -12,6 +12,7 @@ import nars.core.Events;
 import nars.core.NAR;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Task;
 
 
 /**
@@ -97,7 +98,8 @@ public class BubbleChart extends NPanel implements EventObserver {
                 int maxY = Integer.MIN_VALUE;
                 //Color cc = Video.getColor(c.term.toString(), 0.5f, 0.6f);
 
-                for (Sentence s : c.beliefs) {
+                for (Task ts : c.beliefs) {
+                    Sentence s = ts.sentence;
                     if (s.truth!=null) {
                         float freq = s.truth.getFrequency();
                         float conf = s.truth.getConfidence();                        

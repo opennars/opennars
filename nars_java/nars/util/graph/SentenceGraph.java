@@ -86,8 +86,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
             Concept c = (Concept)a[0];
             
             //create a clone of the list for thread safety
-            for (Sentence b : new ArrayList<Sentence>(c.beliefs)) {
-                remove(b);
+            for (Task b : new ArrayList<Task>(c.beliefs)) {
+                remove(b.sentence);
             }            
         }
         else if (event == Events.ConceptBeliefAdd.class) {
@@ -173,8 +173,8 @@ abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E> imple
 
         try {
             for (final Concept c : memory.concepts) {
-                for (final Sentence s : c.beliefs) {                
-                    add(s, c);
+                for (final Task ts : c.beliefs) {                
+                    add(ts.sentence, c);
                 }
             }        
         }

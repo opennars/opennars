@@ -91,7 +91,8 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
             }
 
             /*if (includeConceptBeliefs)*/ {
-                for (Sentence s : c.beliefs) {
+                for (Task ts : c.beliefs) {
+                    Sentence s = ts.sentence;
                     Term target = s.term;
                     if (!containsVertex(target)) {
                         addVertex(target);

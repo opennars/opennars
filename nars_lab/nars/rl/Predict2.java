@@ -143,12 +143,12 @@ public class Predict2 {
             Concept c = memory.concept(beliefTerm);
 
             //1. clear any eternal beliefs
-            Iterator<Sentence> b = c.beliefs.iterator();
+            Iterator<Task> b = c.beliefs.iterator();
             while (b.hasNext())
-                if (b.next().isEternal())
+                if (b.next().sentence.isEternal())
                     b.remove();
             
-            Concept.addToTable(belief, c.beliefs, maxBeliefs);
+            //Concept.addToTable(belief, c.beliefs, maxBeliefs); //TODO fix, manual adding of beliefs that way doesnt work anymore now without wrapping into a task
             
             System.err.println(memory.time() + ": " + belief);
         }

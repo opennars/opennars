@@ -157,10 +157,10 @@ public class Idea implements Iterable<Concept> {
                             sentences.addAll(c.beliefs);
                             break;
                         case Symbols.QUESTION_MARK:
-                            sentences.addAll(Task.getSentences(c.questions));
+                            sentences.addAll(Task.getTasks(c.questions));
                             break;
                         case Symbols.QUEST_MARK:
-                            sentences.addAll(Task.getSentences(c.quests));
+                            sentences.addAll(Task.getTasks(c.quests));
                             break;
                         case Symbols.GOAL_MARK:
                             sentences.addAll(c.desires);
@@ -177,7 +177,9 @@ public class Idea implements Iterable<Concept> {
         List<Sentence> s = new ArrayList();
         for (Concept c : this) {
             if (c.term.operator() == o.op) {
-                s.addAll(c.getSentences(o.punc));
+                for(Task t : c.getSentences(o.punc)) {
+                    s.add(t.sentence);
+                }
             }
         }
         return s;

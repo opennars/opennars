@@ -393,11 +393,11 @@ public class Task<T extends Term> extends AbstractTask<Sentence<T>> implements T
     }
 
     
-    public static Set<Sentence> getSentences(Collection<Task> tasks) {
-        Set<Sentence> s = new HashSet();
+    public static Set<Task> getTasks(Collection<Task> tasks) {
+        Set<Task> tl = new HashSet();
         for (Task t : tasks)
-            s.add(t.sentence);
-        return s;
+            tl.add(t);
+        return tl;
     }
 
     @Override

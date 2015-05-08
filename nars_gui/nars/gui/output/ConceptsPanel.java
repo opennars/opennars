@@ -16,6 +16,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import static java.util.Collections.unmodifiableList;
@@ -31,6 +32,7 @@ import nars.core.NAR;
 import nars.entity.BudgetValue.Budgetable;
 import nars.entity.Concept;
 import nars.entity.Sentence;
+import nars.entity.Task;
 import nars.entity.TruthValue.Truthable;
 import nars.gui.WrapLayout;
 import nars.gui.output.graph.TermSyntaxVis;
@@ -189,7 +191,11 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
         public void update(long time) {
 
             if (!concept.beliefs.isEmpty()) {
-                List<Sentence> bb = concept.getBeliefs();
+                List<Task> bbT = concept.getBeliefs();
+                List<Sentence> bb=new ArrayList<Sentence>();
+                for(Task ts : bbT) {
+                    bb.add(ts.sentence);
+                }
                 beliefChart.update(time, bb);
                 subtitle.setText("truth: " + bb.get(0).truth.toString());
                 
@@ -208,8 +214,12 @@ public class ConceptsPanel extends NPanel implements EventObserver, Runnable {
             
             if (!concept.desires.isEmpty()) {
                 String s=subtitle.getText();
-                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.desires.get(0).truth.toString());
-                desireChart.update( time, unmodifiableList( concept.desires ));
+                subtitle.setText(s+(s.equals("") ? "" : " ")+"desire: "+concept.desires.get(0).sentence.truth.toString());
+                ArrayList<Sentence> desir=new ArrayList();
+                for(Task ts: concept.desires) {
+                    desir.add(ts.sentence);
+                }
+                desireChart.update( time, unmodifiableList( desir ));
             }
 
             updateUI();
