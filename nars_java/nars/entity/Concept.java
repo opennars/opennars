@@ -47,6 +47,8 @@ import static nars.inference.LocalRules.revision;
 import static nars.inference.LocalRules.trySolution;
 import nars.inference.TemporalRules;
 import static nars.inference.TemporalRules.solutionQuality;
+import nars.inference.TruthFunctions;
+import nars.inference.UtilityFunctions;
 import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
 import static nars.inference.UtilityFunctions.or;
@@ -285,9 +287,8 @@ public class Concept extends Item<Term> implements Termable {
     }
 
     protected void addToTable(final Task task, final ArrayList<Task> table, final int max, final Class eventAdd, final Class eventRemove, final Object... extraEventArguments) {
-        final Sentence newSentence = task.sentence;
+        
         int preSize = table.size();
-
         Task removedT;
         Sentence removed = null;
         synchronized (table) {
@@ -389,16 +390,21 @@ public class Concept extends Item<Term> implements Termable {
 
             final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
-            if (belief != null) {
-                trySolution(belief, task, nal); // check if the Goal is already satisfied
-            }
-
+            double AntiSatisfaction = 1; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             Sentence projectedGoal = task.sentence.projection(task.sentence.stamp.getOccurrenceTime(), memory.time());
-            // still worth pursuing?
+            if (belief != null) {
+                trySolution(belief, task, nal); // check if the Goal is already satisfied (manipulate budget)
+                AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
+                if(belief.getTruth().getExpectation() > task.sentence.truth.getExpectation()) {
+                    AntiSatisfaction = 0; //it is not needed since it is more fullfilled than desired
+                }
+            }    
+            double Satisfaction=1.0-AntiSatisfaction;
             
-            //if the goal which for example can be a temporal goal, is currently desired enough, execute
-            //this way time is considered
-            if (task.aboveThreshold() && projectedGoal.truth.getExpectation()>nal.memory.param.decisionThreshold.get()) {
+            TruthValue T=projectedGoal.truth.clone();
+            T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
+
+            if (task.aboveThreshold() && projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && AntiSatisfaction >= 0) {
 
                 questionFromGoal(task, nal);
                 
