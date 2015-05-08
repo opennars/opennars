@@ -15,10 +15,10 @@ abstract public class AbstractHaiQBrain<S,A> {
     double alpha = 0.1;
 
     /** farsight */
-    double gamma = 0.5;
+    double gamma = 0.8;
 
     /** value of λ=1.0 effectively makes algorithm run an online Monte Carlo in which the effects of all future interactions are fully considered in updating each Q-value of an episode." */
-    double lambda = 0.25; //0.1 0.5 0.9
+    double lambda = 0.1; //0.1 0.5 0.9
 
     /** random rate */
     double epsilon = 0;

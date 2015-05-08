@@ -1,6 +1,7 @@
 package nars.rl;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
@@ -16,6 +17,7 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Additional interfaces for interacting with RL environment,
@@ -45,9 +47,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     final float actedConfidence = 0.75f; //similar to Operator.exec
 
 
-    private final ArrayRealVector actByExpectation;
+    private final ArrayRealVector actByExpectation, actByQ;
     private final ArrayRealVector actByPriority;
-    private RealVector normalizedActionDesire;
+    private RealVector normalizedDesire;
 
 
     /** if NARS does not specify one by the next frame,
@@ -112,8 +114,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         this.io = new EnvironmentReaction();
 
         this.actByPriority = new ArrayRealVector(env.numActions());
+        this.actByQ = new ArrayRealVector(env.numActions());
         this.actByExpectation = new ArrayRealVector(env.numActions());
-        this.normalizedActionDesire = new ArrayRealVector(env.numActions());
+        this.normalizedDesire = new ArrayRealVector(env.numActions());
 
 
         opReg = nar.on(operator = new Operator("^" + operationTerm) {
@@ -195,26 +198,13 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     /* the effective action desire value, as aggregated between frames from NARS executions */
     public double getDesire(int action) {
-        return normalizedActionDesire.getEntry(action);
+        return normalizedDesire.getEntry(action);
     }
     public double getNARDesire(int action) {
         return actByExpectation.getEntry(action);
     }
     public double getQDesire(int action) {
-        Operation oa = getAction(action);
-
-        double qSum = 0;
-        for (S s : rows) {
-            QEntry v = getEntry(s, oa);
-            if (v!=null) {
-                double qv = v.getQ() * v.getE();
-                if (Double.isFinite(qv)) {
-                    qSum += qv;
-                }
-            }
-        }
-
-        return qSum;
+        return actByQ.getEntry(action);
     }
 
     public int getNumActions() {
@@ -287,7 +277,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         //TODO check fairness of the equal value conditions
         for (int i = 0; i < getNumActions(); i++) {
-            double  v = normalizedActionDesire.getEntry(i);
+            double  v = normalizedDesire.getEntry(i);
             if ((v > highest) ||
                     //if equal, decide randomly if it should replace it, to be fair
                     ((v >= highest) && (Memory.randomNumber.nextBoolean()))
@@ -315,27 +305,37 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             int a = Memory.randomNumber.nextInt(actions);
 
             //for display purposes:
-            normalizedActionDesire.set(0);
-            normalizedActionDesire.setEntry(a, 0.5f);
+            normalizedDesire.set(0);
+            normalizedDesire.setEntry(a, 0.5f);
 
             return getAction(a);
         }
 
 
-        final double m = actByExpectation.getNorm();
-        if (m != 0) {
-            normalizedActionDesire = actByExpectation.mapDivide(m);
+        double me = actByExpectation.getNorm();
+        double mq = actByQ.getNorm();
+        if (me != 0) me = 1/me;
+        else me = 0;
+        if (mq != 0) mq = 1/mq;
+        else mq = 0;
+
+        for (int i = 0; i < normalizedDesire.getDimension(); i++) {
+            //50%/50% q and nars
+
+            double d = 0.5f *
+                    (actByExpectation.getEntry(i) * me +
+                     actByQ.getEntry(i) * mq);
+
+            normalizedDesire.setEntry(i, d);
         }
-        else {
-            normalizedActionDesire.set(0);
-        }
+
 
         int winner = getMaxDesiredAction();
         if (winner == -1) {
             return null; //no winner?
         }
 
-        double alignment = normalizedActionDesire.dotProduct(actByExpectation);
+        double alignment = normalizedDesire.dotProduct(actByExpectation);
 
         //System.out.print("NARS exec: '" + winner + "' -> " + winner);
         //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
@@ -471,15 +471,44 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             final double alphaDeltaQ = confidence * alpha * deltaQ;
             sumDeltaQ += alphaDeltaQ;
 
+            brain.qUpdate(state, nextAction, sumDeltaQ, GammaLambda, 0);
+
         }
 
         //System.out.println("deltaQ = " + sumDeltaQ);
 
-        for (S i : brain.getStates()) {
+        /*
+        List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
+        for (S i : s) {
             for (Operation k : brain.getActions()) {
                 brain.qUpdate(i, k, sumDeltaQ, GammaLambda, 0);
             }
         }
+        */
+
+
+        for (int i = 0; i < getNumActions(); i++) {
+            Operation oa = getAction(i);
+
+            double qSum = 0;
+            for (S state : rows) {
+                QEntry v = getEntry(state, oa);
+                if (v!=null) {
+                    double q = v.getQ();
+                    if (Double.isFinite(q)) {
+                        double e = v.getE();
+                        if (e != 0) {
+                            double qv = q;
+                            qSum += qv;
+                        }
+                    }
+                }
+            }
+
+            actByQ.setEntry(i, qSum);
+        }
+        if (actByQ.getNorm() > 0)
+            actByQ.unitize();
 
 
         lastAction = nextAction;
@@ -488,4 +517,5 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     }
 
 
+    public Iterable<S> getStates() { return rows; }
 }

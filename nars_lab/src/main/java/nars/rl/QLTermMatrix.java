@@ -40,7 +40,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char implicationPunctuation = Symbols.JUDGMENT;
+    char implicationPunctuation = Symbols.GOAL;
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount

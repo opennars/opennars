@@ -165,9 +165,9 @@ public class RunQLAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 20;
-        final int cyclesPerFrame = 20;
-        float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
+        int conceptsPerCycle = 50;
+        final int cyclesPerFrame = 10;
+        float qLearnedConfidence = 0.8f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -250,7 +250,7 @@ public class RunQLAgent extends JPanel {
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.7f),
+                new RawPerception("L", 0.7f)
                 //new RawPerception.BipolarDirectPerception("L", 0.75f),
 
                 //new AEPerception("A", 0.5f, 4).setLearningRate(0.104),//.setSigmoid(true)
@@ -264,13 +264,14 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("A", 4, 0.7f)
+                //new HaiSOMPerception("A", 4, 0.5f)
                 //new HaiSOMPerception("B", 2, 0.8f)
         );
 
 
 
         a.agent.brain.setEpsilon(0.1);
+        a.agent.brain.setAlpha(0.1);
 
 
     }
