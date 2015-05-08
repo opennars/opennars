@@ -322,7 +322,8 @@ public class Concept extends Item<Term> implements Termable {
      */
     public boolean executeDecision(final Task t) {
 
-        if (isDesired()) {
+        //if (isDesired()) 
+        {
 
             Term content = term;
 
@@ -369,10 +370,10 @@ public class Concept extends Item<Term> implements Termable {
                 
                 Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
                 if (projectedGoal!=null) {
-                    //if (goal.after(oldGoal, nal.memory.param.duration.get())) {
-                   //     nal.singlePremiseTask(projectedGoal, task.budget);
-                   //     return;
-                   // }
+                    /*if (goal.after(oldGoal, nal.memory.param.duration.get())) {
+                        nal.singlePremiseTask(projectedGoal, task.budget); //it has to be projected
+                        return;
+                    }*/
                     nal.setCurrentBelief(projectedGoal);
                     if(!(task.sentence.term instanceof Operation)) {
                         boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
@@ -392,8 +393,12 @@ public class Concept extends Item<Term> implements Termable {
                 trySolution(belief, task, nal); // check if the Goal is already satisfied
             }
 
+            Sentence projectedGoal = task.sentence.projection(task.sentence.stamp.getOccurrenceTime(), memory.time());
             // still worth pursuing?
-            if (task.aboveThreshold() && task.sentence.truth.getExpectation()>nal.memory.param.decisionThreshold.get()) {
+            
+            //if the goal which for example can be a temporal goal, is currently desired enough, execute
+            //this way time is considered
+            if (task.aboveThreshold() && projectedGoal.truth.getExpectation()>nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
                 
