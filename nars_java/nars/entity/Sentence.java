@@ -147,9 +147,12 @@ public class Sentence<T extends Term> implements Cloneable, Termable, Truthable 
         
         if (Parameters.DEBUG && Parameters.DEBUG_INVALID_SENTENCES && punctuation!=Symbols.TERM_NORMALIZING_WORKAROUND_MARK) {
             if (!Term.valid(_content)) {
-                CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
-                ntc.printStackTrace();
-                throw ntc;
+                this.truth.setConfidence(0.0f);
+                if(Parameters.DEBUG) {
+                    CompoundTerm.UnableToCloneException ntc = new CompoundTerm.UnableToCloneException("Invalid Sentence term: " + _content);
+                    ntc.printStackTrace();
+                    throw ntc;
+                }
             }
         }
         
