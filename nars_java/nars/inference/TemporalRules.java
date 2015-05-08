@@ -360,7 +360,7 @@ public class TemporalRules {
         
         long timeDiff = time2 - time1;
         
-        List<Interval> interval;
+        List<Interval> interval=null;
         
         if (!concurrent(time1, time2, durationCycles)) {
             
@@ -507,11 +507,46 @@ public class TemporalRules {
 
                     */
 
-                    /*Concept S1_State_C=nal.memory.concept(s1.term);
-                    if(S1_State_C.desires.size() > 0) {
-                        Sentence strongest_desire = S1_State_C.desires.get(0).sentence;
-                        //
-                    }*/
+                    if(s1.punctuation==Symbols.JUDGMENT_MARK) { //necessary check?
+                        Sentence belief=task.sentence;
+                        Concept S1_State_C=nal.memory.concept(s1.term);
+                        if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0) {
+                            Task strongest_desire = S1_State_C.desires.get(0);
+                            TruthValue T=TruthFunctions.abduction(belief.truth, strongest_desire.sentence.truth);
+                            //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
+                            Stamp st=belief.stamp.clone();
+                            
+                            if(strongest_desire.sentence.getOccurenceTime()==Stamp.ETERNAL) {
+                                st.setEternal();
+                            } else {
+                                int shift=0;
+                                if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                                    shift=nal.memory.getDuration();
+                                }
+                                st.setOccurrenceTime(strongest_desire.sentence.stamp.getOccurrenceTime()-shift);
+                            }
+                            
+                            ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+                            Stamp SVSTamp=nal.getNewStamp();
+                            Task SVTask=nal.getCurrentTask();
+                            NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
+                            //END
+                            
+                            nal.setCurrentBelief(belief);
+                            nal.setCurrentTask(strongest_desire);
+                            
+                            Sentence W=new Sentence(s2.term,Symbols.GOAL_MARK,T,st);
+                            BudgetValue val=BudgetFunctions.forward(T, nal);
+                            Task TD=new Task(W,val,strongest_desire);
+                            nal.derivedTask(TD, false, false, strongest_desire, null, false);
+                            
+                            //RESTORE CONTEXT
+                            nal.setNewStamp(SVSTamp);
+                            nal.setCurrentTask(SVTask);
+                            nal.newStampBuilder=SVstampBuilder; //also restore this one
+                            //END
+                        }
+                    }
 
                     //PRINCIPLE END
                     
