@@ -19,6 +19,7 @@ import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.nal.Item;
 import nars.nal.Named;
 import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.Truth.Truthable;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -366,9 +367,9 @@ public class ConceptPanelBuilder extends NARReaction {
                 beliefGoalChart.update(time, concept.beliefs, concept.goals);
 
                 if (!concept.beliefs.isEmpty())
-                    st += (concept.beliefs.get(0).truth.toString()) + ' ';
+                    st += (concept.beliefs.get(0).getTruth().toString()) + ' ';
                 if (!concept.goals.isEmpty()) {
-                    st += " desire: " + concept.goals.get(0).truth.toString();
+                    st += " desire: " + concept.goals.get(0).getTruth().toString();
                 }
 
                 beliefGoalTime.setVisible(
@@ -462,17 +463,17 @@ public class ConceptPanelBuilder extends NARReaction {
             return ((when - minTime) / timeFactor);
         }
 
-        public boolean update(long time, Collection<Sentence> belief, Collection<Sentence> goal) {
+        public boolean update(long time, Collection<Task> belief, Collection<Task> goal) {
 
             minTime = maxTime = time;
-            for (Sentence s : belief) {
-                if (s == null || s.isEternal()) continue;
+            for (Task s : belief) {
+                if (s == null || s.getStamp().isEternal()) continue;
                 long when = s.getOccurrenceTime();
                 if (minTime > when) minTime = when;
                 if (maxTime < when) maxTime = when;
             }
-            for (Sentence s : goal) {
-                if (s == null || s.isEternal()) continue;
+            for (Task s : goal) {
+                if (s == null || s.getStamp().isEternal()) continue;
                 long when = s.getOccurrenceTime();
                 if (minTime > when) minTime = when;
                 if (maxTime < when) maxTime = when;
@@ -497,10 +498,10 @@ public class ConceptPanelBuilder extends NARReaction {
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
-            for (Sentence s : belief)
-                draw(g, s, true);
-            for (Sentence s : goal)
-                draw(g, s, false);
+            for (Task s : belief)
+                draw(g, s.sentence, true);
+            for (Task s : goal)
+                draw(g, s.sentence, false);
 
 
             // "now" axis

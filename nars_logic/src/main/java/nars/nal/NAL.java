@@ -249,38 +249,48 @@ public abstract class NAL  implements Runnable {
     }
 
     public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
-
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
             return false;
 
         final Stamp newStamp = stamp.build();
 
-        boolean derived = false;
+
+        return doublePremiseTask(
+                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
+                newBudget, temporalAdd, subbedTask, allowOverlap
+        )!=null;
+    }
+
+    public Task doublePremiseTask(Sentence newSentence, final Budget newBudget, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
+
+        Stamp stamp = newSentence.stamp;
+
+        boolean derived;
+
+        Task task = new Task(newSentence, newBudget, subbedTask, getCurrentBelief());
 
         try {
-            derived = deriveTask(new Task(
-                    new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
-                    newBudget, subbedTask, getCurrentBelief()), false, false, subbedTask, allowOverlap);
+            derived = deriveTask(task, false, false, subbedTask, allowOverlap);
         } catch (RuntimeException e) {
             if (Global.DEBUG) throw e;
-            return false;
+            return null;
         }
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (derived && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
             //temporal induction generated ones get eternalized directly
-            derived |= deriveTask(
+            deriveTask(
                     new Task(
-                            new Sentence(newTaskContent,
+                            new Sentence(newSentence.term,
                                     subbedTask.sentence.punctuation,
-                                    TruthFunctions.eternalize(newTruth),
-                                    newStamp.cloneEternal()),
+                                    TruthFunctions.eternalize(newSentence.truth),
+                                    stamp.cloneEternal()),
                             newBudget, subbedTask, getCurrentBelief()),
                     false, false, subbedTask, allowOverlap);
         }
 
-        return derived;
+        return task;
     }
 
 

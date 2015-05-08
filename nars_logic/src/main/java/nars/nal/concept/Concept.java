@@ -27,18 +27,21 @@ import nars.Events.*;
 import nars.Global;
 import nars.Memory;
 import nars.Memory.MemoryAware;
+import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.Symbols;
 import nars.nal.*;
-import nars.nal.term.Termed;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.nal.term.Termed;
 import nars.nal.tlink.*;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Iterators.*;
 import static nars.budget.BudgetFunctions.divide;
@@ -47,6 +50,9 @@ import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
 abstract public class Concept extends Item<Term> implements Termed {
+
+
+
 
 
 
@@ -106,14 +112,14 @@ abstract public class Concept extends Item<Term> implements Termed {
      * Judgments directly made about the term Use ArrayList because of access
      * and insertion in the middle
      */
-    public final List<Sentence> beliefs;
+    public final List<Task> beliefs;
 
 
 
     /**
      * Desire values on the term, similar to the above one
      */
-    public final List<Sentence> goals;
+    public final List<Task> goals;
 
     /**
      * Reference to the memory to which the Concept belongs
@@ -200,7 +206,18 @@ abstract public class Concept extends Item<Term> implements Termed {
         return (C) meta.get(key);
     }
 
-
+    public boolean hasGoals() {
+        return !goals.isEmpty();
+    }
+    public boolean hasBeliefs() {
+        return !beliefs.isEmpty();
+    }
+    public boolean hasQuestions() {
+        return !questions.isEmpty();
+    }
+    public boolean hasQuests() {
+        return !quests.isEmpty();
+    }
     public State getState() {
         return state;
     }
@@ -601,11 +618,11 @@ abstract public class Concept extends Item<Term> implements Termed {
         if (newQuestion) {
             if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
                 Task removed = table.remove(0);    // FIFO
-                memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
+                memory.event.emit(ConceptQuestionRemove.class, this, removed.sentence, newTask);
             }
 
             table.add(newTask);
-            memory.event.emit(ConceptQuestionAdd.class, this, newTask);
+            memory.event.emit(ConceptQuestionAdd.class, this, newTask.sentence);
         }
 
         onTableUpdated(newTask.getPunctuation(), presize);
@@ -628,7 +645,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param capacity The capacity of the table
      * @return whether table was modified
      */
-    public Sentence addToTable(final Memory memory, final Sentence newSentence, final List<Sentence> table, final int capacity) {
+    public Task addToTable(final Memory memory, final Task newSentence, final List<Task> table, final int capacity) {
 
         if (!ensureActiveTo("addToTable")) return null;
 
@@ -645,12 +662,12 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
         for (i = 0; i < table.size(); i++) {
-            Sentence existingSentence = table.get(i);
+            Sentence existingSentence = table.get(i).sentence;
 
             rank2 = rankBelief(existingSentence, now);
 
             if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(existingSentence, false, false, true, true, false)) {
+                if (newSentence.sentence.equivalentTo(existingSentence, false, false, true, true, false)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return newSentence;
                 }
@@ -664,7 +681,7 @@ abstract public class Concept extends Item<Term> implements Termed {
             return null;
         }
 
-        Sentence removed = null;
+        Task removed = null;
 
         final int ts = table.size();
         if (ts > capacity) {
@@ -695,21 +712,20 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
     }
 
-    protected boolean addToTable(final Task goalOrJudgment, final List<Sentence> table, final int max, final Class eventAdd, final Class eventRemove) {
-        final Sentence newSentence = goalOrJudgment.sentence;
+    protected boolean addToTable(final Task goalOrJudgment, final List<Task> table, final int max, final Class eventAdd, final Class eventRemove) {
         int preSize = table.size();
 
-        Sentence removed = addToTable(memory, newSentence, table, max);
+        Task removed = addToTable(memory, goalOrJudgment, table, max);
 
-        onTableUpdated(newSentence.punctuation, preSize);
+        onTableUpdated(goalOrJudgment.getPunctuation(), preSize);
 
         if (removed != null) {
-            if (removed == newSentence) return false;
+            if (removed == goalOrJudgment) return false;
 
-            memory.event.emit(eventRemove, this, removed, goalOrJudgment);
+            memory.event.emit(eventRemove, this, removed.sentence, goalOrJudgment.sentence);
 
             if (preSize != table.size()) {
-                memory.event.emit(eventAdd, this, goalOrJudgment);
+                memory.event.emit(eventAdd, this, goalOrJudgment.sentence);
             }
         }
 
@@ -723,16 +739,16 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    public Sentence getSentence(final Sentence query, final List<Sentence>... lists) {
+    public Sentence getSentence(final Sentence query, final List<Task>... lists) {
         float currentBest = 0;
         float beliefQuality;
         Sentence candidate = null;
 
         final long now = memory.time();
-        for (List<Sentence> list : lists) {
+        for (List<Task> list : lists) {
             int lsv = list.size();
             for (int i = 0; i < lsv; i++) {
-                Sentence judg = list.get(i);
+                Sentence judg = list.get(i).sentence;
                 beliefQuality = solutionQuality(query, judg, now);
                 if (beliefQuality > currentBest) {
                     currentBest = beliefQuality;
@@ -999,6 +1015,9 @@ abstract public class Concept extends Item<Term> implements Termed {
     public float rankBelief(final Sentence s, final long now) {
         return rankBeliefOriginal(s);
     }
+    public float rankBelief(final Task s, final long now) {
+        return rankBelief(s.sentence, now);
+    }
 
 
 
@@ -1089,7 +1108,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         final int b = beliefs.size();
         for (int i = 0; i < b; i++) {
-            Sentence belief = beliefs.get(i);
+            Sentence belief = beliefs.get(i).sentence;
 
             //if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
@@ -1110,7 +1129,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         if (goals.isEmpty()) {
             return null;
         }
-        Truth topValue = goals.get(0).truth;
+        Truth topValue = goals.get(0).getTruth();
         return topValue;
     }
 
@@ -1179,17 +1198,18 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     /** temporary until goal is separated into goalEternal, goalTemporal */
-    @Deprecated public Sentence getStrongestSentence(List<Sentence> table, boolean eternal, boolean temporal) {
-        for (Sentence s : table) {
+    @Deprecated public Sentence getStrongestSentence(List<Task> table, boolean eternal, boolean temporal) {
+        for (Task t : table) {
+            Sentence s = t.sentence;
             boolean e = s.isEternal();
             if (e && eternal) return s;
             if (!e && temporal) return s;
         }
         return null;
     }
-    protected static Sentence getStrongestSentence(List<Sentence> table) {
+    protected static Sentence getStrongestSentence(List<Task> table) {
         if (table.isEmpty()) return null;
-        return table.get(0);
+        return table.get(0).sentence;
     }
 
     public Sentence getStrongestBelief() {
@@ -1271,11 +1291,11 @@ abstract public class Concept extends Item<Term> implements Termed {
 
     public void discountConfidence(final boolean onBeliefs) {
         if (onBeliefs) {
-            for (final Sentence s : beliefs)
-                s.discountConfidence();
+            for (final Task s : beliefs)
+                s.getTruth().discountConfidence();
         } else {
-            for (final Sentence s : goals) {
-                s.discountConfidence();
+            for (final Task s : goals) {
+                s.getTruth().discountConfidence();
             }
         }
     }
@@ -1290,7 +1310,7 @@ abstract public class Concept extends Item<Term> implements Termed {
                 
         Sentence s = null;
         for (int i = 0; i < beliefs.size(); i++) {
-            s = beliefs.get(i);            
+            s = beliefs.get(i).sentence;
             r -= s.truth.getConfidence();
             if (r < 0)
                 return s;
@@ -1298,20 +1318,21 @@ abstract public class Concept extends Item<Term> implements Termed {
         
         return s;
     }
-    
-    public static float getConfidenceSum(Iterable<Sentence> beliefs) {
+
+
+    public static float getConfidenceSum(Iterable<? extends Truth.Truthable> beliefs) {
         float t = 0;
-        for (final Sentence s : beliefs)
-            t += s.truth.getConfidence();
+        for (final Truth.Truthable s : beliefs)
+            t += s.getTruth().getConfidence();
         return t;
     }
 
-    public static float getMeanFrequency(Collection<Sentence> beliefs) {
+    public static float getMeanFrequency(Collection<? extends Truth.Truthable> beliefs) {
         if (beliefs.isEmpty()) return 0.5f;
         
         float t = 0;
-        for (final Sentence s : beliefs)
-            t += s.truth.getFrequency();
+        for (final Truth.Truthable s : beliefs)
+            t += s.getTruth().getFrequency();
         return t / beliefs.size();        
     }
 
@@ -1368,7 +1389,7 @@ abstract public class Concept extends Item<Term> implements Termed {
             out.print(" Beliefs:");
             if (beliefs.isEmpty()) out.println(" none");
             else out.println();
-            for (Sentence s : beliefs) {
+            for (Task s : beliefs) {
                 out.print(indent);
                 out.println((int) (rankBelief(s, now) * 100.0) + "%: " + s);
             }
@@ -1378,7 +1399,7 @@ abstract public class Concept extends Item<Term> implements Termed {
             out.print(" Goals:");
             if (goals.isEmpty()) out.println(" none");
             else out.println();
-            for (Sentence s : goals) {
+            for (Task s : goals) {
                 out.print(indent);
                 out.println((int) (rankBelief(s, now) * 100.0) + "%: " + s);
             }

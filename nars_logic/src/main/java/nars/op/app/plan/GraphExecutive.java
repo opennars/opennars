@@ -459,7 +459,7 @@ public class GraphExecutive {
         Concept c = memory.concept(t);
         if (c!=null) {
             if (!c.beliefs.isEmpty()) {
-                Sentence bestBelief = c.beliefs.get(0);
+                Sentence bestBelief = c.beliefs.get(0).sentence;
                 if (bestBelief != null)
                     return bestBelief.truth.getExpectation();
             }

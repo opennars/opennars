@@ -39,7 +39,7 @@ public class ConceptBuilderTest {
         n.run(10);
 
         assertEquals(1, n.concept(term).beliefs.size());
-        assertEquals(0.78f, n.concept(term).beliefs.get(0).truth.getFrequency(), 0.001); //the original truthvalue, unchanged
+        assertEquals(0.78f, n.concept(term).beliefs.get(0).getTruth().getFrequency(), 0.001); //the original truthvalue, unchanged
     }
 
     @Test

@@ -20,14 +20,14 @@
  */
 package nars.nal;
 
-import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
+import nars.Memory;
 import nars.Symbols;
-import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamped;
+import nars.budget.Budget;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
+import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamped;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
@@ -46,7 +46,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed,Budget.Budgetable, Stamped {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed,Budget.Budgetable, Stamped, Truth.Truthable {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();

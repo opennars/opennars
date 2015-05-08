@@ -204,9 +204,10 @@ public class NARPrologMirror extends AbstractMirror {
 
     /** remove belief unless there are other similar beliefs remaining in 'c' */
     private void remove(Concept c, Sentence forgotten) {
-        for (Sentence x : c.beliefs) {
+        for (Task x : c.beliefs) {
             if (x.equals(forgotten)) continue;
-            if (believable(x.truth) && similarTruth(x.truth, forgotten.truth) && similarTense(x, forgotten)) {
+            if (believable(x.getTruth()) && similarTruth(x.getTruth(), forgotten.truth)
+                    && similarTense(x.sentence, forgotten)) {
                 //there still remains evidence for this belief in the concept
                 return;
             }

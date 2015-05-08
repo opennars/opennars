@@ -358,4 +358,16 @@ public class Truth implements Cloneable { // implements Cloneable {
         }
         return d;
     }
+
+    /**
+     * Get the truth value (or desire value) of the sentence
+     *
+     * Should only be used in Concept's sentences, not in other location where Sentence is expected to be immutable
+     * TODO make a distinct superclass between Mutable & ImmutableSentence for the different places Sentence are used (ex: Task vs. Concept)
+     *
+     * @return Truth value, null for question
+     */
+    public void discountConfidence() {
+        setConfidence(getConfidence() * Global.DISCOUNT_RATE).setAnalytic(false);
+    }
 }

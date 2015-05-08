@@ -53,7 +53,7 @@ public class Workspace {
         n_concepts=0;
         for(Concept node : nar.memory.concepts) {
             if(!node.goals.isEmpty()) {
-                s+=node.getPriority()*node.goals.get(0).truth.getExpectation();
+                s+=node.getPriority()*node.goals.get(0).getTruth().getExpectation();
             }
             n_concepts++;
         }

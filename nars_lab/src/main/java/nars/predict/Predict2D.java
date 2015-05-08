@@ -1,15 +1,16 @@
 package nars.predict;
 
 import automenta.vivisect.swing.NWindow;
-import nars.model.impl.Default;
 import nars.Events;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.concept.Concept;
+import nars.model.impl.Default;
 import nars.nal.Sentence;
-import nars.nal.term.Term;
+import nars.nal.Task;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
+import nars.nal.term.Term;
 
 import javax.swing.*;
 import java.awt.*;
@@ -181,12 +182,9 @@ public class Predict2D extends JPanel {
                 int level = e.getValue();
 
                 if (!c.beliefs.isEmpty()) {
-                    for (Sentence s : c.beliefs) {
-                        if (s == null) {
-                            throw new RuntimeException(c.beliefs.toString());
-                        }
+                    for (Task s : c.beliefs) {
 
-                        if (s.isEternal()) continue;
+                        if (s.getStamp().isEternal()) continue;
                         long o = s.getOccurrenceTime();
                         if (o < whenStart) continue;
                         if (o > whenStop) continue;
@@ -194,7 +192,9 @@ public class Predict2D extends JPanel {
                         //float futureFactor = 1.0f / (1.0f + Math.abs(o - when));
                         //expect[level] += s.truth.getFrequency() * s.truth.getConfidence() * futureFactor;
                         float value =  ((float) disc.continuous(level) - 0.5f) * 2f;
-                        p.onPrediction(term, o, value, s.truth.getFrequency(), s.truth.getConfidence());
+                        p.onPrediction(term, o, value,
+                                s.getTruth().getFrequency(),
+                                s.getTruth().getConfidence());
                     }
                 }
 
@@ -218,10 +218,8 @@ public class Predict2D extends JPanel {
                 int level = e.getValue();
 
                 if (!c.beliefs.isEmpty()) {
-                    for (Sentence s : c.beliefs) {
-                        if (s == null) {
-                            throw new RuntimeException(c.beliefs.toString());
-                        }
+                    for (Task t : c.beliefs) {
+                        final Sentence s = t.sentence;
 
                         if (s.isEternal()) continue;
                         long o = s.getOccurrenceTime();
