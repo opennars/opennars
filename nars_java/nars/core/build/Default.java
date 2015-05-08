@@ -76,7 +76,7 @@ public class Default extends Build implements ConceptBuilder {
         None, Minimal, Full
     }
     
-    InternalExperienceMode internalExperience = InternalExperienceMode.None;
+    InternalExperienceMode internalExperience = InternalExperienceMode.Minimal;
         
     
     transient TemporalParticlePlanner pluginPlanner = null;

@@ -184,9 +184,9 @@ public class InternalExperience implements Plugin, EventObserver {
             return false;
         }
         
-        if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
-                (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
-        
+       // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
+       //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
+        {
             if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
                 if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
                     return false;
