@@ -48,6 +48,8 @@ import static nars.nal.nal7.TemporalRules.solutionQuality;
 
 abstract public class Concept extends Item<Term> implements Termed {
 
+
+
     public enum State {
 
         /** created but not added to memory */
@@ -174,8 +176,9 @@ abstract public class Concept extends Item<Term> implements Termed {
 
     }
 
-    public String getInstanceString() {
-        return this + "#" + System.identityHashCode(this) + ":" + getState().toString().toLowerCase();
+    public String toInstanceString() {
+        String id = Integer.toString(System.identityHashCode(this), 16);
+        return this + "::" + id + "." + getState().toString().toLowerCase();
     }
 
 
@@ -214,22 +217,26 @@ abstract public class Concept extends Item<Term> implements Termed {
         return getState() == Concept.State.Deleted;
     }
 
-    /** returns the same instance, used for fluency */
-    public Concept setState(State s) {
+    public boolean isActive() {
+        return getState() == State.Active;
+    }
 
-        if (s == State.New)
-            throw new RuntimeException(getInstanceString() + " can not return to New state ");
+    /** returns the same instance, used for fluency */
+    public Concept setState(State nextState) {
+
+        if (nextState == State.New)
+            throw new RuntimeException(toInstanceString() + " can not return to New state ");
 
         State lastState = this.state;
 
         if (lastState == State.Deleted)
-            throw new RuntimeException(getInstanceString() + " can not exit from Deleted state");
+            throw new RuntimeException(toInstanceString() + " can not exit from Deleted state");
 
-        if (this.state == s)
-            throw new RuntimeException(this + " already in state " + s);
+        if (lastState == nextState)
+            throw new RuntimeException(this + " already in state " + nextState);
 
 
-        this.state = s;
+        this.state = nextState;
 
         //ok set the state ------
         switch (this.state) {
@@ -239,7 +246,7 @@ abstract public class Concept extends Item<Term> implements Termed {
 
             case Deleted:
 
-                if (lastState!=State.Forgotten) //emit forget event if it came directly to delete
+                if (lastState==State.Active) //emit forget event if it came directly to delete
                     memory.emit(Events.ConceptForget.class, this);
 
                 deletionTime = memory.time();
@@ -1352,7 +1359,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         final String indent = "\t";
         long now = memory.time();
 
-        out.println("CONCEPT: " + getInstanceString() + " @ " + now);
+        out.println("CONCEPT: " + toInstanceString() + " @ " + now);
 
         if (showbeliefs) {
             out.print(" Beliefs:");

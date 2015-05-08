@@ -143,6 +143,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
                 if (overflow!=null)
                     selector.overflow(overflow);
+
+                if (overflow == n)
+                    return null;
+
                 return n; //return the new instance
             }
             //no instance provided, nothing to do

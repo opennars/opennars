@@ -5,10 +5,6 @@ import nars.event.ConceptReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Maintains a growing/sparse matrix consisting of a mapping of R row label concepts (ex: states),
  * C column label concepts (ex: actions), and E entry concepts (ex: implication of a state to an
@@ -74,7 +70,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
 
             @Override
-            public void onConceptRemember(Concept c) {
+            public void onConceptActive(Concept c) {
                 if (isEntry(c.term)) {
                     E i = (E) c.term;
 
@@ -97,10 +93,6 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             }
 
-            @Override
-            public void onConceptProcessed(Concept c) {
-
-            }
         };
 
 

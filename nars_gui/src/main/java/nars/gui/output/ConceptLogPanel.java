@@ -4,6 +4,7 @@ import automenta.vivisect.Video;
 import javolution.util.FastSet;
 import nars.Events;
 import nars.NAR;
+import nars.event.ConceptReaction;
 import nars.event.NARReaction;
 import nars.io.TextOutput;
 import nars.nal.Named;
@@ -39,17 +40,49 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         super(c);
 
 
+        new ConceptReaction(nar) {
+
+            int active = 0;
+            int deleted = 0;
+
+            public void printStat() {
+                int bagActive = nar.memory.concepts.size();
+                System.out.print(bagActive + "," + active + "-" + deleted + ":\t");
+            }
+            @Override
+            public void onConceptActive(Concept c) {
+                printStat();
+                System.out.println("active: " + c.toInstanceString());
+                active++;
+            }
+
+            @Override
+            public void onConceptForget(Concept c) {
+                printStat();
+                System.out.println("forget: " + c.toInstanceString());
+                active--;
+            }
+
+            @Override
+            public void onConceptDelete(Concept c) {
+                printStat();
+                System.out.println("delete: " + c.toInstanceString());
+                deleted++;
+            }
+
+        };
+
         conceptReaction = new NARReaction(nar, Events.ConceptActive.class) {
 
             @Override
             public void event(Class event, Object[] args) {
                 if (event == Events.ConceptActive.class) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
+//                    SwingUtilities.invokeLater(new Runnable() {
+//                        @Override
+//                        public void run() {
                             updateConcept((Concept) args[0], 1.0f, "Conceptualized");
-                        }
-                    });
+//                        }
+//                    });
                 }
             }
         };

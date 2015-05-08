@@ -67,7 +67,7 @@ public class ConceptProcess extends NAL {
         beforeFinish();
 
 
-        emit(Events.ConceptFired.class, this);
+        emit(Events.ConceptProcessed.class, this);
         memory.logic.TASKLINK_FIRE.hit();
 
     }
@@ -169,9 +169,14 @@ public class ConceptProcess extends NAL {
     }
 
     @Override
-    protected void process() {
-
+    public void run() {
         if (!currentConcept.ensureActiveTo("ConceptProcess")) return;
+
+        super.run();
+    }
+
+    @Override
+    protected void process() {
 
         currentConcept.setUsed(memory.time());
 
@@ -182,8 +187,6 @@ public class ConceptProcess extends NAL {
             processTerms();
 
         }
-                
-
     }
 
 

@@ -7,7 +7,7 @@ package nars.nal;
 import automenta.vivisect.swing.NWindow;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import nars.Events.ConceptFired;
+import nars.Events.ConceptProcessed;
 import nars.Events.TaskImmediateProcessed;
 import nars.NAR;
 import nars.Global;
@@ -273,14 +273,14 @@ public class LogicPerformance {
                 //process.explain(t, analysisDepth, nal.produced);
             }
         }, TaskImmediateProcessed.class);
-         n.on(new ConceptFired() {
+         n.on(new ConceptProcessed() {
 
             @Override
             public void onFire(ConceptProcess f) {
 
                 process.explain(n.time(), f);
             }
-        }, ConceptFired.class);
+        }, ConceptProcessed.class);
         
         n.run(1);
         

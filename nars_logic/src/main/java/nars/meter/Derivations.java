@@ -167,7 +167,7 @@ public class Derivations extends DirectedMultigraph {
 
     public NARReaction record(NAR n) {
         return new NARReaction(n, Events.TermLinkTransformed.class,
-                Events.ConceptFired.class, Events.TermLinkSelected.class, Events.TaskDerive.class) {
+                Events.ConceptProcessed.class, Events.TermLinkSelected.class, Events.TaskDerive.class) {
 
             @Override
             public void event(Class event, Object[] args) {

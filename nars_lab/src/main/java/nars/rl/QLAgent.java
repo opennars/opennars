@@ -11,6 +11,8 @@ import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
+import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -193,7 +195,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     /* action desire value, as aggregated between frames from NARS executions */
     public double getActionDesire(int action) {
-        return actByExpectation.getEntry(action);
+        return normalizedActionDesire.getEntry(action);
     }
 
     public int getNumActions() {
@@ -260,6 +262,24 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     }
 
+    protected int getMaxDesiredAction() {
+        int best = -1;
+        double highest = Double.MIN_VALUE;
+
+        //TODO check fairness of the equal value conditions
+        for (int i = 0; i < getNumActions(); i++) {
+            double  v = normalizedActionDesire.getEntry(i);
+            if ((v > highest) ||
+                    //if equal, decide randomly if it should replace it, to be fair
+                    ((v >= highest) && (Memory.randomNumber.nextBoolean()))
+                    ) {
+                highest = v;
+                best = i;
+            }
+        }
+
+        return best;
+    }
 
 
     /**
@@ -269,32 +289,31 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         final int actions = getNumActions();
 
-        double e = brain.getEpsilon();
-        if (e > 0) {
-            if (Memory.randomNumber.nextDouble() < e) {
-//                /*A l = brain.getRandomAction();
-//                brain.setLastAction(l);
-//                return l;*/
-//                spontaneous((float) (initialPossibleDesireConfidence));
 
-                int a = (int) (Math.random() * getNumActions());
-
-                float v = initialPossibleDesireConfidence / (2 * actions);
-
-                actByExpectation.addToEntry(a, v);
-            }
-
+        final double m = actByExpectation.getNorm();
+        if (m != 0) {
+            normalizedActionDesire = actByExpectation.mapDivide(m);
+        }
+        else {
+            normalizedActionDesire.mapMultiplyToSelf(0); //zero reset
         }
 
-        double m = actByExpectation.getL1Norm(); //sum of absolute value of elements, to detect a zero vector
-        if (m == 0) return null;
+        double epsilon = brain.getEpsilon();
+        if (epsilon > 0) {
+            double epsilonFraction = epsilon / actions;
+            for (int i = 0; i < actions; i++)
+                normalizedActionDesire.addToEntry(i, ( (Math.random()) * epsilonFraction));
 
-        int winner = actByExpectation.getMaxIndex();
+            //renormalize, for display purposes
+            if (actByExpectation.getL1Norm()!=0)
+                normalizedActionDesire = normalizedActionDesire.unitVector();
+        }
+
+        int winner = getMaxDesiredAction();
         if (winner == -1) {
             return null; //no winner?
         }
 
-        normalizedActionDesire = actByExpectation.unitVector();
         double alignment = normalizedActionDesire.dotProduct(actByExpectation);
 
         //System.out.print("NARS exec: '" + winner + "' -> " + winner);
@@ -302,6 +321,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         actByExpectation.mapMultiplyToSelf(actionDesireDecay); //zero
         actByPriority.mapMultiplyToSelf(actionDesireDecay); //zero
+
 
 
         return getAction(winner);
@@ -313,6 +333,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         env.frame();
 
         Operation nextAction = decide();
+
 
         if (nextAction != null) {
             int i = Integer.parseInt((nextAction).getArgument(0).toString());
@@ -406,14 +427,17 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             double qLast;
             if (lastAction!=null)
                 qLast = qNAL(state, lastAction);
-            else
-                qLast = Math.random();
+            else {
+                //qLast = Math.random();
+                qLast = 0;
+            }
 
             if (!Double.isFinite(qLast)) {
                 // the entry does not exist.
                 // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
                 input(i);
-                qLast = Math.random();
+                //qLast = Math.random();
+                qLast = 0;
             }
 
 
@@ -428,6 +452,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             sumDeltaQ += alphaDeltaQ;
 
         }
+
+        //System.out.println("deltaQ = " + sumDeltaQ);
 
         for (S i : brain.getStates()) {
             for (Operation k : brain.getActions()) {

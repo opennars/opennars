@@ -314,7 +314,8 @@ public class Memory implements Serializable {
 
     /** called when a Concept's lifecycle has changed */
     public void updateConceptState(Concept c) {
-
+        updateConceptQuestions(c);
+        updateConceptGoals(c);
     }
 
     /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events

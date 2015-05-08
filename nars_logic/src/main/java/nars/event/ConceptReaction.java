@@ -19,7 +19,7 @@ abstract public class ConceptReaction extends NARReaction {
     }
 
     public ConceptReaction(Memory m) {
-        super(m.event, true, Events.ConceptForget.class, Events.ConceptFired.class, Events.ResetStart.class, Events.ConceptActive.class);
+        super(m.event, true, Events.ConceptForget.class, Events.ResetStart.class, Events.ConceptActive.class);
 
         this.memory = m;
         memory.taskLater(this::init);
@@ -32,7 +32,7 @@ abstract public class ConceptReaction extends NARReaction {
         memory.concepts.forEach(new Consumer<Concept>() {
             @Override
             public void accept(Concept concept) {
-                onConceptRemember(concept);
+                onConceptActive(concept);
             }
         });
     }
@@ -41,7 +41,7 @@ abstract public class ConceptReaction extends NARReaction {
     public void event(final Class event, final Object[] args) {
         if (event == Events.ConceptActive.class) {
             Concept c = (Concept)args[0];
-            onConceptRemember(c);
+            onConceptActive(c);
         }
         else if (event == Events.ConceptForget.class) {
             Concept c = (Concept)args[0];
@@ -50,10 +50,6 @@ abstract public class ConceptReaction extends NARReaction {
         else if (event == Events.ConceptDelete.class) {
             Concept c = (Concept)args[0];
             onConceptDelete(c);
-        }
-        else if (event == Events.ConceptFired.class) {
-            Concept c = ((ConceptProcess)args[0]).getCurrentConcept();
-            onConceptProcessed(c);
         }
         else if (event == Events.ResetStart.class) {
             memory.concepts.forEach(new Consumer<Concept>() {
@@ -66,13 +62,10 @@ abstract public class ConceptReaction extends NARReaction {
     }
 
     /** called for concepts newly created or remembered (from subconcepts) */
-    abstract public void onConceptRemember(Concept c);
+    abstract public void onConceptActive(Concept c);
 
     /** called if concept leaves main memory (either removed entirely, or moved to subconcepts) */
     abstract public void onConceptForget(Concept c);
-
-    /** called if a concept is processed during ConceptProcessed */
-    abstract public void onConceptProcessed(Concept c);
 
     /** called before a concept instance dies permanently */
     public void onConceptDelete(Concept c) {

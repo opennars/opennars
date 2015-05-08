@@ -190,6 +190,9 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
         if (overflow != null)
             selector.overflow(overflow);
 
+        if (overflow == item)
+            return null;
+
         return item;
     }
 

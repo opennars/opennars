@@ -30,7 +30,7 @@ public class ConceptSonification extends NARReaction {
 
 
     public ConceptSonification(NAR nar, Audio sound) throws IOException {
-        super(nar, true, Events.ConceptFired.class, Events.ConceptForget.class, Events.FrameEnd.class);
+        super(nar, true, Events.ConceptProcessed.class, Events.ConceptForget.class, Events.FrameEnd.class);
 
         this.sound = sound;
 
@@ -106,7 +106,7 @@ public class ConceptSonification extends NARReaction {
             updateConceptsPlaying();
         }
 
-        else if (event == Events.ConceptFired.class) {
+        else if (event == Events.ConceptProcessed.class) {
             ConceptProcess f = (ConceptProcess)args[0];
             update(f.getCurrentConcept());
         }

@@ -1,8 +1,8 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -153,22 +153,22 @@ public class TestSOMAgent extends JPanel {
 
 
         /* Create and display the form */
-        //RLEnvironment d = new PoleBalancing2D();
+        RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 
         d.newWindow();
 
-        Global.DEBUG = Global.DEBUG_BAG = false;
+        Global.DEBUG = Global.DEBUG_BAG = true;
         //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 2048;
+        int concepts = 512;
         int conceptsPerCycle = 40;
         final int cyclesPerFrame = 40;
-        float qLearnedConfidence = 0.55f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.75f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -229,6 +229,8 @@ public class TestSOMAgent extends JPanel {
             }
         };
 
+        dd.setSubconceptBagSize(4);
+
         dd.setTaskLinkBagSize(32);
         dd.setInternalExperience(null);
 
@@ -241,7 +243,7 @@ public class TestSOMAgent extends JPanel {
 
         TestSOMAgent a = new TestSOMAgent(d, dd, qLearnedConfidence,
                 //new RawPerception("L", 0.3f)
-                new RawPerception("L", 0.75f)
+                new RawPerception.BipolarDirectPerception("L", 0.75f)
 
                 //new AEPerception("A", 0.5f, 4).setLearningRate(0.104).setSigmoid(true)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
@@ -260,7 +262,7 @@ public class TestSOMAgent extends JPanel {
 
 
 
-        a.agent.brain.setEpsilon(0.25);
+        a.agent.brain.setEpsilon(0);
 
 
     }

@@ -151,7 +151,7 @@ public class Events {
 
     
     /** fired at the END of a ConceptFire task */
-    abstract public static class ConceptFired implements Reaction {
+    abstract public static class ConceptProcessed implements Reaction {
         
         /**
          * use:

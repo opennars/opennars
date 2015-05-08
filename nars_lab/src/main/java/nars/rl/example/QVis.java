@@ -44,7 +44,6 @@ public class QVis extends JPanel implements Runnable {
                 }
                 elig = (float) v.getE();
                 value = v.getQNar(Symbols.GOAL);
-                System.out.println(v.concept + " " + value);
             }
 
 
@@ -76,6 +75,7 @@ public class QVis extends JPanel implements Runnable {
 
         @Override
         public double getValue(final int y, final int x) {
+
             return agent.getActionDesire(y);
         }
 

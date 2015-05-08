@@ -95,6 +95,9 @@ abstract public class SequentialCycle implements ControlCycle {
         if (currentConcept == null)
             return null;
 
+        if (!currentConcept.isActive())
+            return null;
+
         if (currentConcept.getPriority() < memory.param.conceptFireThreshold.get()) {
             return null;
         }
@@ -127,11 +130,11 @@ abstract public class SequentialCycle implements ControlCycle {
 
     /** @return true = deleted, false = forgotten */
     @Override public boolean conceptRemoved(Concept c) {
-        if (subcon != null) {
+        if ((subcon != null) && (!c.isDeleted())) {
             subcon.add(c);
 
             //it may have been set deleted inside the CacheBag processes's so check for it here
-            return (c.getState()== Concept.State.Deleted);
+            return (c.isDeleted());
 
         }
         return true;

@@ -22,6 +22,8 @@ abstract public class AbstractReaction implements Reaction {
         setActive(active);
     }
 
+
+
     public void setActive(boolean b) {
 
         if (b && (this.active==null)) {
