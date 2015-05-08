@@ -46,7 +46,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     public Frequency removal = new Frequency();
 
-    double minMaxMomentum = 0.98;
+    float minMaxMomentum = 0.98f;
 
     private final DDNodePool<? extends Item> nodePool;
 
@@ -63,9 +63,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     public final DDList<V> chain;
 
     private float PERCENTILE_THRESHOLD_FOR_EMERGENCY_REMOVAL = 0.5f; //slightly below half
-    private double estimatedMax = 0.5f;
-    private double estimatedMin = 0.5f;
-    private double estimatedMean = 0.5;
+    private float estimatedMax = 0.5f;
+    private float estimatedMin = 0.5f;
+    private float estimatedMean = 0.5f;
 
     final short d[] = Distributor.get(32).order;
     final int dLen = d.length;
@@ -265,6 +265,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
             final double percentileEstimate = getPercentile(ni.getPriority());
 
+
             if (!byPriority) {
                 if (nextRemoval == null)
                     considerRemoving(next, percentileEstimate);
@@ -293,22 +294,22 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         //approximate percentile using max/mean/min
 
         this.mean.increment(priority);
-        final double mean = this.mean.getResult();
+        final float  mean = (float)this.mean.getResult();
 
-        final double momentum = minMaxMomentum;
+        final float momentum = minMaxMomentum;
 
 
-        estimatedMax = (estimatedMax < priority) ? priority : (1.0 - momentum) * mean + (momentum) * estimatedMax;
-        estimatedMin = (estimatedMin > priority) ? priority : (1.0 - momentum) * mean + (momentum) * estimatedMin;
-        estimatedMean = this.mean.getResult();
+        estimatedMax = (estimatedMax < priority) ? priority : (1.0f - momentum) * mean + (momentum) * estimatedMax;
+        estimatedMin = (estimatedMin > priority) ? priority : (1.0f - momentum) * mean + (momentum) * estimatedMin;
+        estimatedMean = mean;
     }
 
     /** uses the adaptive percentile data to estimate a percentile of a given priority */
     private double getPercentile(final float priority) {
 
-        final double mean = this.estimatedMean;
+        final float mean = this.estimatedMean;
 
-        final double upper, lower;
+        final float upper, lower;
         if (priority < mean) {
             lower = estimatedMin;
             upper = mean;
@@ -321,9 +322,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             lower = mean;
         }
 
-        final double perc = (priority - lower) / (upper-lower);
+        final float perc = (priority - lower) / (upper-lower);
 
-        final double minPerc = 1.0 / size();
+        final float minPerc = 1.0f / size();
 
         if (perc < minPerc) return minPerc;
 
@@ -403,7 +404,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
         mass = 0;
         current = null;
-        estimatedMin = estimatedMax = estimatedMean = 0.5;
+        estimatedMin = estimatedMax = estimatedMean = 0.5f;
 
     }
 

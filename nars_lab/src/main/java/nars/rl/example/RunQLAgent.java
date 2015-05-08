@@ -165,8 +165,8 @@ public class RunQLAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 40;
-        final int cyclesPerFrame = 40;
+        int conceptsPerCycle = 20;
+        final int cyclesPerFrame = 20;
         float qLearnedConfidence = 0.6f; //0.85f; //0 to disable
 
 

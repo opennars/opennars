@@ -40,7 +40,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char implicationPunctuation = Symbols.GOAL;
+    char implicationPunctuation = Symbols.JUDGMENT;
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
@@ -128,7 +128,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
             @Override
             public double q(S state, A action) {
-                return QLTermMatrix.this.qNAL(state, action);
+                return QLTermMatrix.this.qSentence(state, action);
             }
 
 //            @Deprecated @Override
@@ -176,10 +176,16 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
 
 
-    public double qNAL(final S state, final A action) {
+    public double qSentence(final S state, final A action) {
         QEntry v = getEntry(state, action);
         if (v == null) return Double.NaN;
-        return v.getQNar(implicationPunctuation);
+        return v.getQSentence(implicationPunctuation);
+    }
+
+    public double q(final S state, final A action) {
+        QEntry v = getEntry(state, action);
+        if (v == null) return Double.NaN;
+        return v.getQ();
     }
 
 
@@ -270,7 +276,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         double dq = c.clearDQ(updateThresh);
         if (dq == 0) return null;
 
-        double q = qNAL(state, action);
+        double q = qSentence(state, action);
         double nq = q + dq;
         if (nq > 1d) nq = 1d;
         if (nq < -1d) nq = -1d;

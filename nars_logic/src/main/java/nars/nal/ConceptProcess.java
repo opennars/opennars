@@ -170,7 +170,7 @@ public class ConceptProcess extends NAL {
 
     @Override
     public void run() {
-        if (!currentConcept.ensureActiveTo("ConceptProcess")) return;
+        if (!currentConcept.isActive()) return;
 
         super.run();
     }

@@ -193,9 +193,28 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         return false;
     }
 
-    /* action desire value, as aggregated between frames from NARS executions */
-    public double getActionDesire(int action) {
+    /* the effective action desire value, as aggregated between frames from NARS executions */
+    public double getDesire(int action) {
         return normalizedActionDesire.getEntry(action);
+    }
+    public double getNARDesire(int action) {
+        return actByExpectation.getEntry(action);
+    }
+    public double getQDesire(int action) {
+        Operation oa = getAction(action);
+
+        double qSum = 0;
+        for (S s : rows) {
+            QEntry v = getEntry(s, oa);
+            if (v!=null) {
+                double qv = v.getQ() * v.getE();
+                if (Double.isFinite(qv)) {
+                    qSum += qv;
+                }
+            }
+        }
+
+        return qSum;
     }
 
     public int getNumActions() {
@@ -427,7 +446,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
             double qLast;
             if (lastAction!=null)
-                qLast = qNAL(state, lastAction);
+                qLast = qSentence(state, lastAction);
             else {
                 //qLast = Math.random();
                 qLast = 0;
@@ -444,7 +463,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
             //TODO compare: q(state, nextAction) with q(i.sentence)
             //double deltaQ = reward + gamma * q(state, nextAction) - qLast;
-            double deltaQ = reward + gamma * QEntry.getQNar(i.sentence) - qLast;
+            double deltaQ = reward + gamma * QEntry.getQSentence(i.sentence) - qLast;
 
             if (lastAction!=null)
                 brain.qUpdate(state, lastAction, Double.NaN, 1, confidence);

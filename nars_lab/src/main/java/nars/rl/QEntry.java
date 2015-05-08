@@ -19,6 +19,9 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
     double e = 0; //eligibility trace
 
+    //TODO modes: average, nar, q
+    boolean defaultQMode = true;
+
     public QEntry(Concept c, ConceptMatrix matrix) {
         super(matrix, c);
     }
@@ -63,17 +66,16 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     }
 
     /** q according to the concept's best belief / goal & its truth/desire */
-    public double getQNar(char implicationPunctuation) {
-
+    public double getQSentence(char implicationPunctuation) {
 
         Sentence s = implicationPunctuation == Symbols.GOAL ? concept.getStrongestGoal(true, true) : concept.getStrongestBelief();
         if (s == null) return 0f;
 
-        return getQNar(s);
+        return getQSentence(s);
     }
 
     /** gets the Q-value scalar from the best belief or goal of a state=/>action concept */
-    public static double getQNar(Sentence s) {
+    public static double getQSentence(Sentence s) {
 
         Truth t = s.truth;
         if (t == null) return 0f;
@@ -95,5 +97,12 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
     public double getQ() {
         return q0 + dq;
+    }
+
+    public double getQ(Sentence sentence) {
+        if (!defaultQMode)
+            return getQ();
+        else
+            return getQSentence(sentence);
     }
 }

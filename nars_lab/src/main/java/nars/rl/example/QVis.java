@@ -10,6 +10,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
 import nars.rl.QEntry;
 import nars.rl.QLAgent;
+import org.apache.commons.math3.util.FastMath;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,26 +43,22 @@ public class QVis extends JPanel implements Runnable {
                 Concept c = v.concept;
                 float p = 0.8f + 0.2f * pri;
 
-                float goalValue = (float) v.getQNar(Symbols.GOAL);
-                float beliefValue = (float) v.getQNar(Symbols.JUDGMENT);
+                //float goalValue = (float) v.getQNar(Symbols.GOAL);
+                float beliefValue = (float) v.getQSentence(Symbols.JUDGMENT);
                 float qValue = (float) v.getQ();
+                float qAvg = (beliefValue + qValue) /2f;
 
-                if (goalValue > 1f) goalValue = 1f;
-                if (beliefValue > 1f) beliefValue = 1f;
-                if (qValue < 0f) {
-                    qValue = -qValue;
-                    goalValue = 1f - goalValue;
-                    beliefValue = 1f - beliefValue;
-                }
-                if (qValue > 1f) qValue = 1f;
+                if (qAvg < -1) qAvg = -1;
+                if (qAvg > 1) qAvg = 1;
 
-                color = new Color( goalValue * p, beliefValue * p, qValue * p).getRGB();
+                float difference = -0.5f + (float)FastMath.tanh(beliefValue - qValue)/2f;
+                float hue = difference;
+                float sat = difference;
+                if (sat > 1f) sat = 1f;
+                float bri = qAvg;
 
-//                color = Video.colorHSB(
-//                        0.05f + 0.95f * ((float)(-value)/2f + 0.5f),
-//                        Math.min(1.0f, 0.8f + elig*0.2f),
-//                        0.75f + 0.25f * pri
-//                );
+
+                color = Video.colorHSB(hue, sat, bri);
 
             }
             else {
@@ -76,7 +73,8 @@ public class QVis extends JPanel implements Runnable {
         }
 
     };
-    final MatrixImage ai = new MatrixImage(50,400);
+    final MatrixImage ai = new MatrixImage(30,400);
+    final MatrixImage aqi = new MatrixImage(30,400);
     private final NWindow nmi;
 
     MatrixImage.Data2D qData = new MatrixImage.Data2D() {
@@ -92,8 +90,15 @@ public class QVis extends JPanel implements Runnable {
 
         @Override
         public double getValue(final int y, final int x) {
+            return agent.getDesire(y);
+        }
 
-            return agent.getActionDesire(y);
+    };
+    MatrixImage.Data2D qActData = new MatrixImage.Data2D() {
+
+        @Override
+        public double getValue(final int y, final int x) {
+            return agent.getQDesire(y);
         }
 
     };
@@ -103,7 +108,10 @@ public class QVis extends JPanel implements Runnable {
         super(new BorderLayout());
         this.agent = agent;
 
-        add(ai, BorderLayout.WEST);
+        JPanel x = new JPanel(new FlowLayout());
+        x.add(ai);
+        x.add(aqi);
+        add(x, BorderLayout.WEST);
         add(mi, BorderLayout.CENTER);
 
 
@@ -117,6 +125,7 @@ public class QVis extends JPanel implements Runnable {
 
         mi.draw(qData, xstates.size(), xactions.size(), -1, 1);
         ai.draw(aData, 1, ac, 0, 1);
+        aqi.draw(qActData, 1, ac, 0, 1);
 
 
         nmi.setTitle(xstates.size() + " states, " + xactions.size() + " actions");
