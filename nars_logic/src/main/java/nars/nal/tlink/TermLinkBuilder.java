@@ -21,7 +21,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     public final Concept concept;
 
-    List<TermLinkTemplate> template;
+    final List<TermLinkTemplate> template;
 
 
     int nonTransforms;
@@ -50,6 +50,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             prepareComponentLinks((Compound)host);
         }
         else {
+            template = null;
         }
 
 
@@ -157,18 +158,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             nonTransforms++;
     }
 
-    public Budget set(Budget b) {
-        this.budget = b;
-        return b;
-    }
 
     /** configures this selector's current budget for the next bag operation */
     public Budget set(float subBudget, float durability, float quality) {
-        if (budget == null)
-            this.budget = new Budget(subBudget, durability, quality);
-        else
-            this.budget.set(subBudget, durability, quality);
-        return budget;
+        return super.set(subBudget, durability, quality);
     }
 
     /** configures this selector's current bag key for the next bag operation */

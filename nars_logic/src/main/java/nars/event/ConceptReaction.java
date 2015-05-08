@@ -19,7 +19,7 @@ abstract public class ConceptReaction extends NARReaction {
     }
 
     public ConceptReaction(Memory m) {
-        super(m.event, true, Events.ConceptForget.class, Events.ResetStart.class, Events.ConceptActive.class);
+        super(m.event, true, Events.ConceptForget.class, Events.ResetStart.class, Events.ConceptActive.class, Events.ConceptDelete.class);
 
         this.memory = m;
         memory.taskLater(this::init);

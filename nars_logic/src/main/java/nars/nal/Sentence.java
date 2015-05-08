@@ -230,7 +230,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     /** compares all sentence fields, after comparing hash (which includes them all) */
     private boolean equivalentTo(Sentence that) {
         if (that.hashCode()!=hashCode()) return false;
-        return equivalentTo(that, true, true, true, true);
+        return equivalentTo(that, true, true, true, true, false);
     }
 
     /**
@@ -252,20 +252,16 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
      * @param that The other judgment
      * @return Whether the two are equivalent
      */
-    public boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp) {
+    public boolean equivalentTo(final Sentence that, final boolean punctuation, final boolean term, final boolean truth, final boolean stamp, final boolean creationTime) {
 
         final char thisPunc = this.punctuation;
 
         if (this == that) return true;
+
         if (punctuation) {
             if (thisPunc!=that.punctuation) return false;
         }
-        if (stamp) {
-            //uniqueness includes every aspect of stamp except creation time
-            //<patham9> if they are only different in creation time, then they are the same
-            if (!this.stamp.equals(that.stamp, true, true, false, true))
-                return false;
-        }
+
         if (truth) {
             if (this.truth==null) {
                 if (that.truth!=null) return false;
@@ -274,6 +270,14 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
                 if (!this.truth.equals(that.truth)) return false;
             }
         }
+
+        if (stamp) {
+            //uniqueness includes every aspect of stamp except creation time
+            //<patham9> if they are only different in creation time, then they are the same
+            if (!this.stamp.equals(that.stamp, true, true, creationTime, true))
+                return false;
+        }
+
         if (term) {
             if (!equalTerms(that)) return false;
         }

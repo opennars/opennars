@@ -3,16 +3,20 @@ package nars.bag.tx;
 import nars.budget.Budget;
 import nars.nal.Item;
 import nars.bag.BagTransaction;
+import nars.nal.Truth;
 
 /**
 * Created by me on 1/19/15.
 */
-abstract public class BagActivator<K,V extends Item<K>> implements BagTransaction<K,V> {
+abstract public class BagActivator<K,V extends Item<K>> extends Budget implements BagTransaction<K,V> {
 
-    protected Budget budget;
+
 
     protected K key;
 
+    public BagActivator() {
+        super(0,0,0);
+    }
 
     public K getKey() {
         return key;
@@ -20,7 +24,7 @@ abstract public class BagActivator<K,V extends Item<K>> implements BagTransactio
 
 
     public void setBudget(Budget budget) {
-        this.budget = budget;
+        set(budget);
     }
 
     public void setKey(K key) {
@@ -35,11 +39,16 @@ abstract public class BagActivator<K,V extends Item<K>> implements BagTransactio
 
     @Override
     public Budget getBudget() {
-        return budget.clone();
+        return clone();
     }
 
     /** returns a reference to the budgetvalue; not a clone */
-    public Budget getBudgetRef() {
-        return budget;
+    @Deprecated public Budget getBudgetRef() {
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "BagActivator[" + key + ',' + super.toString() + ']';
     }
 }

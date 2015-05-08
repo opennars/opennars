@@ -31,12 +31,12 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         long cyclesSinceLastForgotten = now - c.getLastForgetTime();
         getMemory().forget(c, cyclesSinceLastForgotten, relativeThreshold);
 
-        if (budget!=null) {
+        //if (budget!=null) {
             Budget cb = c;
 
             final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
             BudgetFunctions.activate(cb, getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
-        }
+        //}
 
         return c;
     }
@@ -68,10 +68,10 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
 
         //create new concept, with the applied budget
         if (createIfMissing) {
-            Concept concept = getMemory().newConcept(budget, getKey());
+            Concept concept = getMemory().newConcept(/*(Budget)*/this, getKey());
 
             if ( concept == null)
-                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + budget + ", builders=" + getMemory().getConceptBuilders());
+                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
 
             return concept;
         }
@@ -83,11 +83,12 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     public void overflow(Concept c) {
         if (getMemory().concepts.conceptRemoved(c)) {
             //make sure it's deleted
-            if (c.getState()!= Concept.State.Deleted)
+            if (!c.isDeleted())
                 c.delete();
         }
         else {
-            c.setState(Concept.State.Forgotten);
+            if (c.isActive())
+                c.setState(Concept.State.Forgotten);
         }
     }
 

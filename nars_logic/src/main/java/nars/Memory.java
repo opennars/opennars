@@ -314,8 +314,20 @@ public class Memory implements Serializable {
 
     /** called when a Concept's lifecycle has changed */
     public void updateConceptState(Concept c) {
-        updateConceptQuestions(c);
-        updateConceptGoals(c);
+        boolean hasQuestions = !c.questions.isEmpty();
+        boolean hasGoals = !c.goals.isEmpty();
+
+        if (c.isActive()) {
+            //index an incoming concept with existing questions or goals
+            if (hasQuestions) updateConceptQuestions(c);
+            if (hasGoals) updateConceptGoals(c);
+        }
+        else {
+            //unindex an outgoing concept with questions or goals
+            if (hasQuestions) questionConcepts.remove(c);
+            //..
+        }
+
     }
 
     /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events

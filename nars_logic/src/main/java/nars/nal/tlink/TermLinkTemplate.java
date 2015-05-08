@@ -132,4 +132,9 @@ public class TermLinkTemplate implements Termed {
     public Term getTerm() {
         return target;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((TermLinkTemplate)obj).toString().equals(toString());
+    }
 }

@@ -220,6 +220,9 @@ abstract public class Concept extends Item<Term> implements Termed {
     public boolean isActive() {
         return getState() == State.Active;
     }
+    public boolean isForgotten() {
+        return getState() == State.Forgotten;
+    }
 
     /** returns the same instance, used for fluency */
     public Concept setState(State nextState) {
@@ -277,7 +280,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     }
 
     public boolean ensureActiveTo(String activity) {
-        if (this.state != State.Active) {
+        if (!this.isActive()) {
             System.err.println(activity + " fail: " + this + " (state=" + getState() + ')');
             new Exception().printStackTrace();
             return false;
@@ -647,7 +650,7 @@ abstract public class Concept extends Item<Term> implements Termed {
             rank2 = rankBelief(existingSentence, now);
 
             if (rank1 >= rank2) {
-                if (newSentence.equivalentTo(existingSentence, false, false, true, true)) {
+                if (newSentence.equivalentTo(existingSentence, false, false, true, true, false)) {
                     //System.out.println(" ---------- Equivalent Belief: " + newSentence + " == " + judgment2);
                     return newSentence;
                 }

@@ -142,9 +142,10 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
 
     /** set all quantities to zero */
     public Budget zero() {
-        setPriority(0);
-        setDurability(0);
-        setQuality(0);
+        /* avoids tests, slightly faster than set(0,0,0) */
+        this.priority = 0;
+        this.durability = 0;
+        this.quality = 0;
         return this;
     }
 
@@ -529,8 +530,13 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
     }
 
     public Budget set(final Budget b) {
-        return set(b.getPriority(), b.getDurability(), b.getQuality());
+        if (b == null)
+            return zero();
+        else
+            return set(b.getPriority(), b.getDurability(), b.getQuality());
     }
+
+
 
     public boolean isNew() {
         return this.lastForgetTime==-1;

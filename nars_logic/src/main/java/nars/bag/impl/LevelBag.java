@@ -440,8 +440,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             E n = selector.newItem();
             if (n!=null) {
                 E overflow = put(n);
+
                 if (overflow!=null)
                     selector.overflow(overflow);
+
+                if (overflow == n)
+                    return null;
+
                 return n; //return the new instance
             }
             //no instance provided, nothing to do

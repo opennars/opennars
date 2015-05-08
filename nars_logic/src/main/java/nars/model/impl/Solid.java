@@ -212,10 +212,10 @@ public class Solid extends Default implements ControlCycle {
 
         @Override
         public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
-            synchronized(activator) {
+            //synchronized(activator) {
                 activator.set(term, budget, true, getMemory().time());
                 return concepts.update(activator);
-            }
+            //}
         }
 
         @Override
