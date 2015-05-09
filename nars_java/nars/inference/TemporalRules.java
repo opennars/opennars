@@ -510,7 +510,8 @@ public class TemporalRules {
                     if(s1.punctuation==Symbols.JUDGMENT_MARK) { //necessary check?
                         Sentence belief=task.sentence;
                         Concept S1_State_C=nal.memory.concept(s1.term);
-                        if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0) {
+                        if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0 &&
+                                !(((Statement)belief.term).getPredicate() instanceof Operation)) {
                             Task strongest_desire = S1_State_C.desires.get(0);
                             TruthValue T=TruthFunctions.abduction(belief.truth, strongest_desire.sentence.truth);
                             //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
@@ -538,6 +539,7 @@ public class TemporalRules {
                             Sentence W=new Sentence(s2.term,Symbols.GOAL_MARK,T,st);
                             BudgetValue val=BudgetFunctions.forward(T, nal);
                             Task TD=new Task(W,val,strongest_desire);
+                            
                             nal.derivedTask(TD, false, false, strongest_desire, null, false);
                             
                             //RESTORE CONTEXT
