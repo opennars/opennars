@@ -291,12 +291,12 @@ public class Rover extends PhysicsModel {
                         if(good) {
                             goods++;
                             double stat=goods/bads;
-                            nar.emit(Output.OUT.class, "good : bad = "+stat);
+                            nar.emit(Output.OUT.class, "good : bad = "+stat+" total: "+((Integer)((int)(goods+bads))).toString());
                             sight.set("<goal --> reached>. :|:"); 
                         } else {
                             bads++;
                             double stat=goods/bads;
-                            nar.emit(Output.OUT.class, "good : bad = "+stat);
+                            nar.emit(Output.OUT.class, "good : bad = "+stat+" total: "+((Integer)((int)(goods+bads))).toString());
                             sight.set("<goal --> reached>. :|: %0.0;0.90%"); 
                         }
                         
