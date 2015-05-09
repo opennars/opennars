@@ -275,8 +275,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
                 if (selectPercentile(percentileEstimate))
                     break;
 
-                if (atCapacity)
-                    considerRemoving(next, percentileEstimate);
+                considerRemoving(next, percentileEstimate);
             }
 
             next = after(next);
@@ -384,7 +383,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             final int s2 = chain.size();
             if (s1 != s2)
                 throw new RuntimeException(this + " bag fault; inconsistent index (" + s1 + " index != " + s2 + " chain)");
-            if (s1 > capacity())
+            if (s1 > capacity()+1)
                 throw new RuntimeException(this + " has exceeded capacity: " + s1 + " > " + capacity());
         }
         return s1;

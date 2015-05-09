@@ -21,7 +21,7 @@ public class NARPrologTest {
         n = new NAR(new Default());
         p = new PrologContext(n);
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
     }
 
     @Test

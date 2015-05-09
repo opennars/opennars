@@ -621,11 +621,11 @@ abstract public class Concept extends Item<Term> implements Termed {
         if (newQuestion) {
             if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
                 Task removed = table.remove(0);    // FIFO
-                memory.event.emit(ConceptQuestionRemove.class, this, removed.sentence, newTask);
+                memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
             }
 
             table.add(newTask);
-            memory.event.emit(ConceptQuestionAdd.class, this, newTask.sentence);
+            memory.event.emit(ConceptQuestionAdd.class, this, newTask);
         }
 
         onTableUpdated(newTask.getPunctuation(), presize);

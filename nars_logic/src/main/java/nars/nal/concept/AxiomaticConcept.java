@@ -17,7 +17,10 @@ import nars.nal.tlink.TermLinkKey;
 import java.util.HashSet;
 import java.util.Set;
 
-/** concept which holds a fixed set of beliefs or goals, and rejects others */
+/** concept which holds a fixed set of beliefs or goals, and rejects others
+ *  UNTESTED
+ * */
+
 public abstract class AxiomaticConcept extends Concept {
 
     public Set<Task> goalAxioms = Global.newHashSet(4);
@@ -120,6 +123,8 @@ public abstract class AxiomaticConcept extends Concept {
 
 
         m.on(cb);
+
+
 
 
         return cb;

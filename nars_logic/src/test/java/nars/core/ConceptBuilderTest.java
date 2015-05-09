@@ -1,17 +1,18 @@
 package nars.core;
 
 import nars.NAR;
+import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.concept.AxiomaticConcept;
-import nars.model.impl.Default;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by me on 4/17/15.
- */
+
+//UNTESTED
+@Ignore
 public class ConceptBuilderTest {
 
     @Test
