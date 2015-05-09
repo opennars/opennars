@@ -5,6 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.BudgetFunctions.Activating;
 import nars.budget.Budget;
+import nars.nal.NALOperator;
 import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.term.Term;
@@ -24,6 +25,21 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     default public void conceptPriorityHistogram(double[] bins) {
 
+    }
+
+    /** sample concepts for a specific operator type
+     *
+     * @param implication
+     * @param v percentage of bag size # of attempts to search before returning null
+     */
+    default Concept nextConcept(NALOperator op, float v) {
+        int attempts = (int) Math.ceil(size() * v);
+        for (int i = 0; i < attempts; i++) {
+            Concept c = nextConcept();
+            if (c.getTerm().operator() == op)
+                return c;
+        }
+        return null;
     }
 
 

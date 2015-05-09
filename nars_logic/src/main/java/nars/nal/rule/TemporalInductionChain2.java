@@ -45,6 +45,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 (beliefTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
 
             final int chainSamples = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
+            final float chainSampleSearchSize = 0.0f + 0.05f * taskLink.getPriority();
 
             //prevent duplicate inductions
             Set<Term> alreadyInducted = null;
@@ -53,12 +54,14 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
-                Concept next = memory.concepts.nextConcept();
-                if (next == null || next.equals(concept)) continue;
+                Concept next = memory.concepts.nextConcept(NALOperator.IMPLICATION, chainSampleSearchSize);
+                if (next == null || next.equals(concept))
+                    continue;
 
                 Term t = next.getTerm();
 
-                if (!(t instanceof Implication)) continue;
+                if (!(t instanceof Implication))
+                    throw new RuntimeException("nextConcept should have returned implication");
 
                 if (alreadyInducted == null) {
                     alreadyInducted = Global.newHashSet(chainSamples);
@@ -127,8 +130,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         TemporalRules.temporalInduction(current, prev,
                 f.newStamp(current, prev),
                 f, task,
-
-                true //succeeding events induction
+                false
         );
         return true;
     }

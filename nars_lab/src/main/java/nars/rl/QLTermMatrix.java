@@ -41,6 +41,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
     char implicationPunctuation = Symbols.GOAL;
+    float updateThresh = Global.TRUTH_EPSILON * 3;
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
@@ -49,19 +50,19 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /**
      * min threshold of q-update necessary to cause an effect
      */
-    float updateThresh = Global.TRUTH_EPSILON;
+
 
     //boolean updateEachFrame = false; //TODO specify as a frequency either in # per frame or cycle (ex: hz)
 
     //OPERATING PARAMETERS ------------------------
     /** confidence of update beliefs (a learning rate); set to zero to disable */
-    float qUpdateConfidence = 0.55f;
+    float qUpdateConfidence = 0.25f;
 
     /** confidence of reward update beliefs; set to zero to disable reward beliefs */
-    float rewardBeliefConfidence = 0.9f;
+    float rewardBeliefConfidence = 0.75f;
 
     /** confidence of reward command goal; set to zero to disable reward beliefs */
-    float rewardGoalConfidence = 0.9f;
+    float rewardGoalConfidence = 0.75f;
 
     /** confidence of state belief updates */
     @Deprecated protected float stateUpdateConfidence = 0.9f;
@@ -98,6 +99,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             public void qUpdate(S state, A action, double dqDivE, double eMult, double eAdd) {
 
                 if (qUpdateConfidence == 0) return;
+                if (action == null) return;
 
                 QEntry v = getEntry(state, action);
                 if (v == null) {
@@ -119,10 +121,27 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                 }
                 if (v != null) {
 
-                    if (Double.isFinite(dqDivE))
-                        v.addDQ(dqDivE);
-                    if (Double.isFinite(eMult))
+                    boolean changed = false;
+
+                    if (Double.isFinite(dqDivE)) {
+                        if (dqDivE != 0) {
+                            v.addDQ(dqDivE);
+                            changed = true;
+                        }
+                    }
+
+
+                    if (Double.isFinite(eMult)) {
                         v.updateE(eMult, eAdd);
+                        changed = true;
+                    }
+
+
+
+
+                    if (changed) {
+                        v.commit(qUpdateConfidence, updateThresh);
+                    }
                 }
             }
 
@@ -271,31 +290,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 //        stateActionImplications.clear();
 //    }
 
-    protected Task qCommit(S state, A action, QEntry c) {
-
-        double dq = c.clearDQ(updateThresh);
-        if (dq == 0) return null;
-
-        double q = qSentence(state, action);
-        double nq = q + dq;
-        if (nq > 1d) nq = 1d;
-        if (nq < -1d) nq = -1d;
-
-        Term qt = qterm(state, action);
-        //System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
-
-        float nextFreq = (float)((nq / 2f) + 0.5f);
-
-
-
-        //String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
-        Task t = nar.memory.newTask((Compound)qt).punctuation(
-                implicationPunctuation
-        ).present().truth(nextFreq, qUpdateConfidence).get();
-
-        return t;
-
-    }
 
 
     public boolean stateChanged(Task newState) {

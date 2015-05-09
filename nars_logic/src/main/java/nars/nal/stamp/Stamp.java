@@ -575,6 +575,17 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     }
 
 
+    public static boolean isOverlapping(final Stamp a, final Stamp b) {
+        for (long l : a.evidentialBase) {
+            for (long h : b.evidentialBase) {
+                if (l == h) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }
 
 

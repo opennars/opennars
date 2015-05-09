@@ -18,7 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** concept which holds a fixed set of beliefs or goals, and rejects others */
-public class AxiomaticConcept extends Concept {
+public abstract class AxiomaticConcept extends Concept {
 
     public Set<Task> goalAxioms = Global.newHashSet(4);
     public Set<Task> beliefAxioms = Global.newHashSet(4);
@@ -94,7 +94,15 @@ public class AxiomaticConcept extends Concept {
 
 
                 if (terms.contains(t)) {
-                    AxiomaticConcept fbc = new AxiomaticConcept(t, b, m, ttermLinks, ttaskLinks);
+                    AxiomaticConcept fbc = new AxiomaticConcept(t, b, m, ttermLinks, ttaskLinks) {
+
+                        @Override public void onActive() {
+                            //conceptualize the concept
+                            for (Task d : defaultAxioms) {
+                                new DirectProcess(m, d).run();
+                            }
+                        }
+                    };
 
 
 
@@ -110,13 +118,12 @@ public class AxiomaticConcept extends Concept {
             }
         };
 
+
         m.on(cb);
 
-        //conceptualize the concept
-        for (Task d : defaultAxioms) {
-            new DirectProcess(m, d).run();
-        }
 
         return cb;
     }
+
+
 }

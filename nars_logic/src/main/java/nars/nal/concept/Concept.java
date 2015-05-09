@@ -260,6 +260,8 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         //ok set the state ------
         switch (this.state) {
+
+
             case Forgotten:
                 memory.emit(Events.ConceptForget.class, this);
                 break;
@@ -274,6 +276,7 @@ abstract public class Concept extends Item<Term> implements Termed {
                 break;
 
             case Active:
+                onActive();
                 memory.emit(ConceptActive.class, this);
                 break;
         }
@@ -1135,6 +1138,9 @@ abstract public class Concept extends Item<Term> implements Termed {
 
 
     @Override public void delete() {
+
+        if (isDeleted()) return;
+
         //called first to allow listeners to have a final attempt to interact with this concept before it dies
         setState(State.Deleted);
 
@@ -1426,6 +1432,11 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         out.println();
+    }
+
+    /** called when concept is activated; empty and subclassable */
+    protected void onActive() {
+
     }
 
     /**

@@ -446,7 +446,7 @@ public class TemporalRules {
 
         final int inductionLimit = nal.memory.param.temporalRelationsMax.get();
 
-        List<Task> success = new ArrayList<Task>();
+        //List<Task> success = new ArrayList<Task>();
         if (t11 != null && t22 != null) {
             Statement statement11 = Implication.make(t11, t22, order);
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
@@ -516,11 +516,11 @@ public class TemporalRules {
                         if (strongest_desire.sentence.getOccurrenceTime() == Stamp.ETERNAL) {
                             st.setEternal();
                         } else {
-                            int shift = 0;
+                            int shiftToPast = 0;
                             if (((Implication) task.sentence.term).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                                shift = nal.memory.duration();
+                                shiftToPast = nal.memory.duration();
                             }
-                            st.setOccurrenceTime(strongest_desire.sentence.stamp.getOccurrenceTime() - shift);
+                            st.setOccurrenceTime(strongest_desire.sentence.stamp.getOccurrenceTime() - shiftToPast);
                         }
 
 
@@ -541,20 +541,13 @@ public class TemporalRules {
                 //get strongest belief of that concept and use the revison truth, if there is no, use this truth
                 double conf = task.sentence.truth.getConfidence();
                 Concept C = nal.memory.concept(task.sentence.term);
-                if (C != null && C.beliefs != null && C.beliefs.size() > 0) {
+                if (C != null && C.hasBeliefs()) {
                     Sentence bel = C.beliefs.get(0).sentence;
                     Truth cur = bel.truth;
                     conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                     //if there is no overlapping evidental base, use revision:
                     boolean revisable = true;
-                    for (long l : bel.stamp.evidentialBase) {
-                        for (long h : task.sentence.stamp.evidentialBase) {
-                            if (l == h) {
-                                revisable = false;
-                                break;
-                            }
-                        }
-                    }
+                    revisable = !Stamp.isOverlapping(bel.stamp, task.sentence.stamp);
                     if (revisable) {
                         conf = TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
                     }
@@ -573,19 +566,21 @@ public class TemporalRules {
 
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
+        if(!(task.sentence.term instanceof Implication)) return;
+
         if(nal.memory.emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
                 && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
                 && task.sentence.punctuation==Symbols.JUDGMENT
                 && conf<Global.CURIOSITY_CONFIDENCE_THRESHOLD
                 && task.getPriority()>Global.CURIOSITY_PRIORITY_THRESHOLD) {
-            if(task.sentence.term instanceof Implication) {
+
                 boolean valid=false;
-                if(task.sentence.term instanceof Implication) {
-                    Implication equ=(Implication) task.sentence.term;
-                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-                        valid=true;
-                    }
+
+                Implication equ=(Implication) task.sentence.term;
+                if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+                    valid=true;
                 }
+
                 if(valid) {
                     Sentence tt2 = new Sentence(task.sentence.term, Symbols.QUESTION, null,
                             nal.newStamp(task.sentence, nal.memory.time())
@@ -594,7 +589,7 @@ public class TemporalRules {
                     task.mulDurability(Global.CURIOSITY_DESIRE_DURABILITY_MUL);
                     nal.singlePremiseTask(tt2, task);
                 }
-            }
+
         }
     }
 

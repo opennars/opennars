@@ -36,6 +36,8 @@ public class QVis extends JPanel implements Runnable {
             float elig = 0;
 
 
+            if (i >= xactions.size()) return;
+            if (j >= xstates.size()) return;
 
             QEntry v = agent.getEntry(xstates.get(j), xactions.get(i));
             int color;
@@ -43,21 +45,16 @@ public class QVis extends JPanel implements Runnable {
                 Concept c = v.concept;
                 float p = 0.5f + 0.5f * pri;
 
-                float goalValue = (float) v.getQSentence(Symbols.GOAL);
-                //float beliefValue = (float) v.getQSentence(Symbols.JUDGMENT);
+
+                float beliefValue = (float) v.getQSentence(Symbols.GOAL);
                 float qValue = (float) v.getQ() / agent.getNumActions();
-                float qAvg = (goalValue + qValue) /2f;
 
-                float difference = -0.5f + (float)FastMath.tanh((goalValue - qValue) / qAvg / 2.0f)/2f;
-                if (difference > 1f) difference = 1f;
-                if (difference < 0f) difference = 0f;
-                float hue = difference;
+                float hue = (float)(FastMath.sin(qValue) + 1.0)/2f;
 
-                float sat = (float)FastMath.tanh(Math.abs(difference));
-                if (sat > 1f) sat = 1f;
-                if (sat < 0) sat = 0;
 
-                float bri = (float)FastMath.tanh(qAvg) * p;
+                float sat = 0.5f + 0.5f * beliefValue;
+
+                float bri = p;
 
                 color = Video.colorHSB(hue, sat, bri);
 

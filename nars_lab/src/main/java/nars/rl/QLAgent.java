@@ -42,7 +42,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     final Operation[] operationCache;
     final ObjectIntHashMap<Operation> operationToAction = new ObjectIntHashMap();
 
-    private float initialPossibleDesireConfidence = 0.85f;
+    private float initialPossibleDesireConfidence = 0.25f;
 
     final float actedConfidence = 0.75f; //similar to Operator.exec
 
@@ -167,9 +167,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             cols.include(a);
         }
 
-        spontaneous(initialPossibleDesireConfidence);
-        setActedBeliefConfidence(actedConfidence);
-        setActedGoalConfidence(actedConfidence);
+        //spontaneous(initialPossibleDesireConfidence);
+        setActedBeliefConfidence(actedConfidence / getNumActions());
+        setActedGoalConfidence(actedConfidence / getNumActions());
         brain.setAlpha(0.1f);
     }
 
@@ -181,7 +181,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     @Override
     public boolean isRow(Term s) {
-        //if (!isRowPrefilter(s)) return false;
+        if (!isRowPrefilter(s)) return false;
         for (Perception p : perceptions) {
             if (p.isState(s))
                 return true;
@@ -388,9 +388,6 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         learn(nextAction, incoming, r);
 
 
-        //qCommit();
-
-
         incoming.clear();
 
 
@@ -433,6 +430,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         double sumDeltaQ = 0;
         final double GammaLambda = gamma * lambda;
 
+        int numTasks = 0;
         for (Task i : stateTasks) {
 
             float freq = i.sentence.truth.getFrequency();
@@ -456,35 +454,35 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 // the entry does not exist.
                 // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
                 //System.out.println("qState missing: " + i);
-                input(i);
                 //qLast = Math.random();
                 qLast = 0;
             }
 
+            double sq = QEntry.getQSentence(i.sentence) * confidence;
+
             //TODO compare: q(state, nextAction) with q(i.sentence)
             //double deltaQ = reward + gamma * q(state, nextAction) - qLast;
-            double deltaQ = reward + gamma * QEntry.getQSentence(i.sentence) - qLast;
+            double deltaQ = reward + gamma * sq - qLast;
 
             if (lastAction!=null)
-                brain.qUpdate(state, lastAction, Double.NaN, 1, confidence);
+                brain.qUpdate(state, lastAction, Double.NaN, 1, sq);
 
-            final double alphaDeltaQ = confidence * alpha * deltaQ;
+            final double alphaDeltaQ = alpha * deltaQ;
             sumDeltaQ += alphaDeltaQ;
 
-            brain.qUpdate(state, nextAction, sumDeltaQ, GammaLambda, 0);
-
+            //brain.qUpdate(state, nextAction, sumDeltaQ, GammaLambda, 0);
+            numTasks++;
         }
 
         //System.out.println("deltaQ = " + sumDeltaQ);
 
-        /*
         List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
         for (S i : s) {
             for (Operation k : brain.getActions()) {
                 brain.qUpdate(i, k, sumDeltaQ, GammaLambda, 0);
             }
         }
-        */
+
 
 
         for (int i = 0; i < getNumActions(); i++) {
@@ -496,11 +494,11 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 if (v!=null) {
                     double q = v.getQ();
                     if (Double.isFinite(q)) {
-                        double e = v.getE();
-                        if (e != 0) {
+                        //double e = v.getE();
+                        //if (e != 0) {
                             double qv = q;
                             qSum += qv;
-                        }
+                        //}
                     }
                 }
             }

@@ -117,8 +117,10 @@ public class RawPerception implements Perception {
     public boolean isState(Term t) {
         //TODO better pattern recognizer
         String s = t.toString();
-        if ((t instanceof Inheritance) /*&& (t.getComplexity() == 4)*/ ) {
+
+        if ((t instanceof Inheritance) && (t.getComplexity() == 4) ) {
             if (s.startsWith("<" + id + " --> [") && s.endsWith("]>")) {
+                //System.out.println(s + " " + t.getComplexity());
             //if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
                 return true;
             }

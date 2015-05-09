@@ -38,9 +38,9 @@ public class Curiousbot extends JComponent implements RLEnvironment {
     @Override
     public double getReward() {
         double f = world.getPlayer().speed();
-        if (f < world.getPlayer().acceleration) return -0.25f; //too slow, penalize
+        if (f < 10f * world.getPlayer().acceleration) return -0.25f; //too slow, penalize
         else {
-            double c = world.getPlayer().collides() ? -1.0 : 1.0;
+            double c = world.getPlayer().collides() ? -2.0 : 2.0;
             return f * c;
         }
     }

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class Follow1D implements RLEnvironment {
 
-    final int numActions = 3;
+    final int numActions = 2;
 
     //final int discretization = 3;
 
@@ -27,7 +27,7 @@ public class Follow1D implements RLEnvironment {
     
     final double acceleration = 0.06;
     final double decelerationFactor = 0.25;
-    double speed = 0.9;
+    double speed = 0.1;
 
 
     private final int history = 64;
@@ -112,6 +112,8 @@ public class Follow1D implements RLEnvironment {
         }
         //Arrays.fill(observation, -1);
         double my = 0, target = 0;
+        if (positions.isEmpty()) return observation;
+
         for (int i = 0; i < historyPoints;) {
             int j = positions.size() - 1 - (i * historyInterval);
             my = positions.get(j);
@@ -132,7 +134,7 @@ public class Follow1D implements RLEnvironment {
     @Override
     public double getReward() {
         double dist = Math.abs(myPos - targetPos) / maxPos;
-        return 0.05 - dist;
+        return -(dist*dist)*4;
     }
 
     public void updateTarget(int time) {        
@@ -164,14 +166,24 @@ public class Follow1D implements RLEnvironment {
     @Override
     public boolean takeAction(int action) {
         //takeActionPosition(action);
-        return takeActionVelocity(action);
+        if (numActions == 3)
+            return takeActionVelocity3(action);
+        else //if (numActions == 2)
+            return takeActionVelocity2(action);
+
         //takeActionAccelerate(action);
     }
     protected void takeActionPosition(int action) {
         myPos = (action / ((double)(numActions-1))) * maxPos;
     }
 
-    protected boolean takeActionVelocity(int action) {
+    protected boolean takeActionVelocity2(int action) {
+        if (action == 0) takeActionVelocity3(0);
+        else takeActionVelocity3(2);
+        return true;
+    }
+
+    protected boolean takeActionVelocity3(int action) {
         double a = Math.round(action - (numActions/2d));
         double direction = (a)/(numActions/2d);
 

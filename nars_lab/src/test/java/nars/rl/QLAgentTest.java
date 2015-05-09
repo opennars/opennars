@@ -57,9 +57,9 @@ public class QLAgentTest {
         }
         else {
 
-            TextOutput.out(n);
+            //TextOutput.out(n);
 
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < 8; i++)
                 n.frame();
 
 
