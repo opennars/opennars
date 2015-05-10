@@ -44,7 +44,6 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     /**
      * list of (direct) term
-     * TODO make final again
      */
     public final Term[] term;
 
