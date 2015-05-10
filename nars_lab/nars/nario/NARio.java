@@ -35,7 +35,7 @@ import nars.plugin.mental.InternalExperience;
  */
 public class NARio extends Run {
 
-    static int memoryCyclesPerFrame = 10;
+    static int memoryCyclesPerFrame = 50;
     
     private final NAR nar;
     private LevelScene level;
