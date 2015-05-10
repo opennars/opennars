@@ -540,12 +540,15 @@ public class WAMToString {
     }
 
     public static int deref(int address, int[] storage) {
-        int value = WAM.cell_value(storage[address]);					// Get the cell value
-        if (WAM.cell_tag(storage[address]) == WAM.REF && value != address) // If tag is REF and is not unbound...
-        {
-            return deref(value, storage);									// ... then return the dereffered value
+        while (true) {
+            int value = WAM.cell_value(storage[address]);                    // Get the cell value
+            if (WAM.cell_tag(storage[address]) == WAM.REF && value != address) // If tag is REF and is not unbound...
+            {
+                address = value;
+                continue;
+            }
+            return address;
         }
-        return address;
     }
 
     public static String numToString(int n, Strings strings, Numbers nums) {

@@ -51,19 +51,19 @@ public class Agent {
      *
      * @param theory the text representing the theory
      */
-    public Agent(String theory){
+    public Agent(String theory) throws InvalidLibraryException {
         theoryText=theory;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     
     /**
      * Builds a prolog agent providing it a theory and a goal
      */
-    public Agent(String theory,String goal){
+    public Agent(String theory,String goal) throws InvalidLibraryException {
         theoryText=theory;
         goalText=goal;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     
@@ -71,9 +71,9 @@ public class Agent {
      * Constructs the Agent with a theory provided
      * by an input stream
      */
-    public Agent(InputStream is){
+    public Agent(InputStream is) throws InvalidLibraryException {
         theoryInputStream=is;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     
@@ -81,10 +81,10 @@ public class Agent {
      * Constructs the Agent with a theory provided
      * by an input stream and a goal
      */
-    public Agent(InputStream is,String goal){
+    public Agent(InputStream is,String goal) throws InvalidLibraryException {
         theoryInputStream=is;
         goalText=goal;
-        core=new Prolog();
+        core=new DefaultProlog();
         core.addOutputListener(defaultOutputListener);
     }
     

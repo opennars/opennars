@@ -29,7 +29,7 @@ import nars.tuprolog.SolveInfo;
 @SuppressWarnings("serial")
 public class QueryEvent extends PrologEvent {
 
-   private SolveInfo info;
+   private final SolveInfo info;
     
     public QueryEvent(Prolog source, SolveInfo info){
         super(source);

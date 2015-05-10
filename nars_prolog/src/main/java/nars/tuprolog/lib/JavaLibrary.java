@@ -17,8 +17,8 @@
  */
 package nars.tuprolog.lib;
 
+import nars.nal.term.Term;
 import nars.tuprolog.*;
-import nars.tuprolog.Number;
 import nars.tuprolog.util.*;
 
 import java.io.File;
@@ -184,7 +184,7 @@ public class JavaLibrary extends Library {
             // check for array type
             if (clName.endsWith("[]")) {
                 Object[] list = getArrayFromList(arg);
-                int nargs = ((Number) list[0]).intValue();
+                int nargs = ((PNum) list[0]).intValue();
                 if (java_array(clName, nargs, id)) {
                     return true;
                 } else {
@@ -292,9 +292,11 @@ public class JavaLibrary extends Library {
     public boolean destroy_object_1(Term id) throws JavaException {
         id = id.getTerm();
         try {
-            if (id.isGround()) {
-                unregisterDynamic((Struct) id);
-            }
+            if (id instanceof PTerm && !((PTerm)id).isGround())
+                return false;
+
+            unregisterDynamic((Struct) id);
+
             return true;
         } catch (Exception ex) {
             // ex.printStackTrace();
@@ -420,8 +422,8 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
                 Struct sel = (Struct) objId;
-                if (sel.getName().equals(".") && sel.getArity() == 2
-                        && method.getArity() == 1) {
+                if (sel.getName().equals(".") && sel.size() == 2
+                        && method.size() == 1) {
                     if (methodName.equals("set")) {
                         return java_set(sel.getTerm(0), sel.getTerm(1), method
                                 .getTerm(0));
@@ -481,10 +483,10 @@ public class JavaLibrary extends Library {
                 if (objId.isCompound()) {
                     Struct id = (Struct) objId;
 
-                    if (id.getArity() == 1 && id.getName().equals("class")) {
+                    if (id.size() == 1 && id.getName().equals("class")) {
                         try {
                             String clName = Tools
-                                    .removeApices(id.getArg(0).toString());
+                                    .removeApices(id.getTermX(0).toString());
                             Class<?> cl = Class.forName(clName, true, dynamicLoader);
 
 //							Method m = cl.getMethod(methodName, args.getTypes());
@@ -634,7 +636,7 @@ public class JavaLibrary extends Library {
                 stringURLs = "[]";
             }
 //        	pathTerm = orderPathList(Term.createTerm(stringURLs));
-            pathTerm = Term.createTerm(stringURLs);
+            pathTerm = PTerm.createTerm(stringURLs);
 //        	if(paths.isList())
 //          		paths = orderPathList(paths);
             return unify(paths, pathTerm);
@@ -700,8 +702,8 @@ public class JavaLibrary extends Library {
                 String clName = null;
 //            	String[] listOfPaths = null;
                 // Case: class(className)
-                if (((Struct) objId).getArity() == 1) {
-                    clName = Tools.removeApices(((Struct) objId).getArg(0).toString());
+                if (((Struct) objId).size() == 1) {
+                    clName = Tools.removeApices(((Struct) objId).getTermX(0).toString());
                 }
 
                 /*
@@ -731,7 +733,7 @@ public class JavaLibrary extends Library {
                                         + " not found in class "
                                         + Tools
                                         .removeApices(((Struct) objId)
-                                                .getArg(0).toString()));
+                                                .getTermX(0).toString()));
                         return false;
                     }
                     /*
@@ -755,8 +757,8 @@ public class JavaLibrary extends Library {
 
             // first check for primitive data field
             Field field = cl.getField(fieldName);
-            if (what instanceof Number) {
-                Number wn = (Number) what;
+            if (what instanceof PNum) {
+                PNum wn = (PNum) what;
                 if (wn instanceof Int) {
                     field.setInt(obj, wn.intValue());
                 } else if (wn instanceof nars.tuprolog.Double) {
@@ -806,9 +808,9 @@ public class JavaLibrary extends Library {
                 String clName = null;
 //            	String[] listOfPaths = null;
                 // Case: class(className)
-                if (((Struct) objId).getArity() == 1) {
+                if (((Struct) objId).size() == 1) {
                     clName = Tools.removeApices(((Struct) objId)
-                            .getArg(0).toString());
+                            .getTermX(0).toString());
                 }
                 /*
                  * Deprecated in 2.8, see the manual.
@@ -838,7 +840,7 @@ public class JavaLibrary extends Library {
                                         + " not found in class "
                                         + Tools
                                         .removeApices(((Struct) objId)
-                                                .getArg(0).toString()));
+                                                .getTermX(0).toString()));
                         return false;
                     }
                     /*
@@ -901,7 +903,7 @@ public class JavaLibrary extends Library {
     public boolean java_array_set_primitive_3(Term obj_id, Term i, Term what)
             throws JavaException {
         Struct objId = (Struct) obj_id.getTerm();
-        Number index = (Number) i.getTerm();
+        PNum index = (PNum) i.getTerm();
         what = what.getTerm();
         // System.out.println("SET "+objId+" "+fieldTerm+" "+what);
         Object obj = null;
@@ -926,32 +928,32 @@ public class JavaLibrary extends Library {
             }
             String name = cl.toString();
             if (name.equals("class [I")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                byte v = (byte) ((Number) what).intValue();
+                byte v = (byte) ((PNum) what).intValue();
                 Array.setInt(obj, index.intValue(), v);
             } else if (name.equals("class [D")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                double v = ((Number) what).doubleValue();
+                double v = ((PNum) what).doubleValue();
                 Array.setDouble(obj, index.intValue(), v);
             } else if (name.equals("class [F")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                float v = ((Number) what).floatValue();
+                float v = ((PNum) what).floatValue();
                 Array.setFloat(obj, index.intValue(), v);
             } else if (name.equals("class [L")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                long v = ((Number) what).longValue();
+                long v = ((PNum) what).longValue();
                 Array.setFloat(obj, index.intValue(), v);
             } else if (name.equals("class [C")) {
                 String s = what.toString();
@@ -967,18 +969,18 @@ public class JavaLibrary extends Library {
                             .toString()));
                 }
             } else if (name.equals("class [B")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                int v = ((Number) what).intValue();
+                int v = ((PNum) what).intValue();
                 Array.setByte(obj, index.intValue(), (byte) v);
             } else if (name.equals("class [S")) {
-                if (!(what instanceof Number)) {
+                if (!(what instanceof PNum)) {
                     throw new JavaException(new IllegalArgumentException(what
                             .toString()));
                 }
-                short v = (short) ((Number) what).intValue();
+                short v = (short) ((PNum) what).intValue();
                 Array.setShort(obj, index.intValue(), v);
             } else {
                 throw new JavaException(new Exception());
@@ -993,7 +995,7 @@ public class JavaLibrary extends Library {
     public boolean java_array_get_primitive_3(Term obj_id, Term i, Term what)
             throws JavaException {
         Struct objId = (Struct) obj_id.getTerm();
-        Number index = (Number) i.getTerm();
+        PNum index = (PNum) i.getTerm();
         what = what.getTerm();
         // System.out.println("SET "+objId+" "+fieldTerm+" "+what);
         Object obj = null;
@@ -1064,14 +1066,14 @@ public class JavaLibrary extends Library {
             } else if (name.equals("class [Z")) {
                 boolean b = Array.getBoolean(obj, index.intValue());
                 if (b) {
-                    if (unify(what, nars.tuprolog.Term.TRUE)) {
+                    if (unify(what, PTerm.TRUE)) {
                         return true;
                     } else {
                         throw new JavaException(new IllegalArgumentException(
                                 what.toString()));
                     }
                 } else {
-                    if (unify(what, nars.tuprolog.Term.FALSE)) {
+                    if (unify(what, PTerm.FALSE)) {
                         return true;
                     } else {
                         throw new JavaException(new IllegalArgumentException(
@@ -1183,9 +1185,9 @@ public class JavaLibrary extends Library {
      * creation of method signature from prolog data
      */
     private Signature parseArg(Struct method) {
-        Object[] values = new Object[method.getArity()];
-        Class<?>[] types = new Class[method.getArity()];
-        for (int i = 0; i < method.getArity(); i++) {
+        Object[] values = new Object[method.size()];
+        Class<?>[] types = new Class[method.size()];
+        for (int i = 0; i < method.size(); i++) {
             if (!parse_arg(values, types, i, method.getTerm(i))) {
                 return null;
             }
@@ -1226,8 +1228,8 @@ public class JavaLibrary extends Library {
                     }
                     types[i] = values[i].getClass();
                 }
-            } else if (term instanceof Number) {
-                Number t = (Number) term;
+            } else if (term instanceof PNum) {
+                PNum t = (PNum) term;
                 if (t instanceof Int) {
                     values[i] = t.intValue();
                     types[i] = java.lang.Integer.TYPE;
@@ -1279,7 +1281,7 @@ public class JavaLibrary extends Library {
     private boolean parse_as(Object[] values, Class<?>[] types, int i,
                              Term castWhat, Term castTo) {
         try {
-            if (!(castWhat instanceof Number)) {
+            if (!(castWhat instanceof PNum)) {
                 String castTo_name = Tools
                         .removeApices(((Struct) castTo).getName());
                 String castWhat_name = Tools.removeApices(castWhat
@@ -1373,7 +1375,7 @@ public class JavaLibrary extends Library {
                     }
                 }
             } else {
-                Number num = (Number) castWhat;
+                PNum num = (PNum) castWhat;
                 String castTo_name = ((Struct) castTo).getName();
                 if (castTo_name.equals("byte")) {
                     values[i] = (byte) num.intValue();
@@ -1416,9 +1418,9 @@ public class JavaLibrary extends Library {
         try {
             if (Boolean.class.isInstance(obj)) {
                 if ((Boolean) obj) {
-                    return unify(id, Term.TRUE);
+                    return unify(id, PTerm.TRUE);
                 } else {
-                    return unify(id, Term.FALSE);
+                    return unify(id, PTerm.FALSE);
                 }
             } else if (Byte.class.isInstance(obj)) {
                 return unify(id, new Int(((Byte) obj).intValue()));

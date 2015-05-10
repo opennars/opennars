@@ -7,9 +7,9 @@ package nars.tuprolog;
  */
 public class DefaultSubGoalId implements SubGoalId {
     
-    private SubGoalTree root;
-    private int index;
-    private DefaultSubGoalId parent; 
+    private final SubGoalTree root;
+    private final int index;
+    private final DefaultSubGoalId parent;
     
     DefaultSubGoalId(DefaultSubGoalId parent, SubGoalTree root, int index) {
         this.parent = parent;

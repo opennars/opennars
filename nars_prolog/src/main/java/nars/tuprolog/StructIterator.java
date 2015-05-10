@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -36,7 +38,8 @@ class StructIterator implements java.util.Iterator<Term>, java.io.Serializable {
     public boolean hasNext() {
         return !list.isEmptyList();
     }
-    
+
+
     public Term next() {
         final Struct list = this.list;
         if (list.isEmptyList())

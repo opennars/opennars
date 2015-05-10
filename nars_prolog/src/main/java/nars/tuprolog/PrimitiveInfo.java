@@ -58,7 +58,7 @@ public class PrimitiveInfo {
         primitive_key = key;
         source = lib;
         method = m;
-        primitive_args=new Term[arity];
+        primitive_args=new PTerm[arity];
     }
     
     
@@ -118,7 +118,7 @@ public class PrimitiveInfo {
      */
     public synchronized boolean evalAsPredicate(Struct g) throws Throwable {
         for (int i=0; i<primitive_args.length; i++) {
-            primitive_args[i] = g.getArg(i);
+            primitive_args[i] = g.getTermX(i);
         }
         try {
         	//System.out.println("PRIMITIVE INFO evalAsPredicate sto invocando metodo "+method.getName());
@@ -133,12 +133,12 @@ public class PrimitiveInfo {
      * evaluates the primitive as a functor
      * @throws Throwable 
      */
-    public synchronized Term evalAsFunctor(Struct g) throws Throwable {
+    public synchronized PTerm evalAsFunctor(Struct g) throws Throwable {
         try {
             for (int i=0; i<primitive_args.length; i++) {
                 primitive_args[i] = g.getTerm(i);
             }
-            return ((Term)method.invoke(source,primitive_args));
+            return ((PTerm)method.invoke(source,primitive_args));
         } catch (Exception ex) {
             throw ex.getCause();
         }

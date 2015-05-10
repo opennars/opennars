@@ -118,7 +118,7 @@ public class ExecutionContext {
      * got TAIL RECURSION OPTIMIZATION!   
      */
    
-    void performTailRecursionOptimization(Engine e){
+    void performTailRecursionOptimization(Engine.State e){
         	
     	 	if(!haveAlternatives && e.currentContext.goalsToEval.getCurSGId() == null && !e.currentContext.goalsToEval.haveSubGoals() && !(e.currentContext.currentGoal.getName().equalsIgnoreCase("catch") || e.currentContext.currentGoal.getName().equalsIgnoreCase("java_catch")))
         		{

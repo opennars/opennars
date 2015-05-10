@@ -23,4 +23,12 @@ package nars.tuprolog;
  * @see SolveInfo
  */
 @SuppressWarnings("serial")
-public class NoSolutionException extends PrologException {}
+public class NoSolutionException extends PrologException {
+
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        //no stack trace necessary here so avoid building it
+        return null;
+    }
+
+}

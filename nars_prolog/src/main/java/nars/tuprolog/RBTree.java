@@ -299,7 +299,7 @@ public class RBTree<K extends Comparable<? super K>,V>
         }
     }
 
-    public void delete(K key, ClauseInfo c) {
+    public void delete(K key, Clause c) {
     	
         Node<K,V> n = lookupNode(key);
         if (n == null)
@@ -307,7 +307,7 @@ public class RBTree<K extends Comparable<? super K>,V>
         
         /*must be check if node is a list of clause*/
 		@SuppressWarnings("unchecked")
-		LinkedList<ClauseInfo> nodeClause= (LinkedList<ClauseInfo>)n.value;
+		LinkedList<Clause> nodeClause= (LinkedList<Clause>)n.value;
         if(nodeClause.size()>1){
         	
         	nodeClause.remove(c);

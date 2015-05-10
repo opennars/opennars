@@ -18,6 +18,7 @@
 package nars.tuprolog;
 
 import com.google.common.collect.Lists;
+import nars.nal.term.Term;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,24 +83,25 @@ public class Theory implements Serializable, PrologTermIterator {
      */
     public Theory(Struct clauseList) throws InvalidTheoryException {
         if (clauseList==null || !clauseList.isList()) {
-            throw new InvalidTheoryException();
+            clauseList = new Struct(new PTerm[] { clauseList } ); //wrap as list
+            //throw new InvalidTheoryException();
         }
         this.clauseList = clauseList;
     }
 
-    public Theory(Term[] t) throws InvalidTheoryException {
+    public Theory(PTerm[] t) throws InvalidTheoryException {
         this(new Struct(t));
     }
 
     public static Theory parse(Prolog engine, String input) throws InvalidTheoryException {
-       Deque<Term> tc = Lists.newLinkedList(new Parser(engine.getOperatorManager(), input));
+       Deque<Term> tc = Lists.newLinkedList(new Parser(engine.getOperators(), input));
        return new Theory(new Struct(".", tc));       
     }
     
     @Override
-    public Iterator<? extends nars.tuprolog.Term> iterator(Prolog engine) {
+    public Iterator<? extends Term> iterator(Prolog engine) {
         if (isTextual())
-            return new Parser(engine.getOperatorManager(), theory).iterator();
+            return new Parser(engine.getOperators(), theory).iterator();
         else
             return clauseList.listIterator();
     }
@@ -122,9 +124,9 @@ public class Theory implements Serializable, PrologTermIterator {
                 clauseList = otherClauseList;
             else {
                 Struct p = clauseList, q;
-                while (!(q = (Struct) p.getArg(1)).isEmptyList())
+                while (!(q = (Struct) p.getTermX(1)).isEmptyList())
                     p = q;
-                p.setArg(1, otherClauseList);
+                p.setTerm(1, otherClauseList);
             }
         } else if (!isTextual() && th.isTextual()) {
             theory = theory + '\n' + th;

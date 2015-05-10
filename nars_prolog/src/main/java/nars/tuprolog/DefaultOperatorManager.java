@@ -23,7 +23,7 @@ package nars.tuprolog;
  *
  */
 @SuppressWarnings("serial")
-public class DefaultOperatorManager extends OperatorManager {
+public class DefaultOperatorManager extends Operators {
     
     public DefaultOperatorManager() {
         opNew(":-", "xfx", 1200);

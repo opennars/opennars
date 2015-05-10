@@ -1,5 +1,7 @@
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
 import java.util.Iterator;
 
 /**
@@ -9,5 +11,5 @@ import java.util.Iterator;
 
 
 public interface PrologTermIterator  {
-    public Iterator<? extends Term> iterator(Prolog engine);        
+    public Iterator<? extends Term> iterator(Prolog engine);
 }

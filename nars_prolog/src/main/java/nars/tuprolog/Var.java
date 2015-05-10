@@ -18,24 +18,27 @@
 package nars.tuprolog;
 
 
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
 import nars.tuprolog.net.AbstractSocket;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class represents a variable term. Variables are identified by a name
  * (which must starts with an upper case letter) or the anonymous ('_') name.
  *
- * @see Term
+ * @see PTerm
  *
  */
-public class Var extends Term {
+public class Var implements PTerm {
 
-    private static final long serialVersionUID = 1L;
     final static String ANY = "_";
+
     // the name identifying the var
+
     private String name;
     private StringBuilder completeName;     /* Reviewed by Paolo Contessi: String -> StringBuilder */
 
@@ -69,6 +72,8 @@ public class Var extends Term {
             throw new InvalidTermException("Illegal variable name: " + n);
         }
     }
+
+
 
     /**
      * Creates an anonymous variable
@@ -113,20 +118,16 @@ public class Var extends Term {
 
         id = idExecCtx;
 
+        completeName.setLength(0);
         if (id > -1) {
             //completeName = name + "_e" + idExecCtx;
-            completeName = completeName
-                    .delete(0, completeName.length())
-                    .append(name).append("_e").append(id);
+            completeName.append(name).append("_e").append(id);
         } else if (id == ORIGINAL) { //completeName = name;
-            completeName = completeName
-                    .delete(0, completeName.length())
-                    .append(name);
+            completeName.append(name);
         } else if (id == PROGRESSIVE) { //completeName = "_"+count;
-            completeName = completeName
-                    .delete(0, completeName.length())
-                    .append('_').append(count);
+            completeName.append('_').append(count);
         }
+
     }
 
     /**
@@ -137,7 +138,7 @@ public class Var extends Term {
      * with the same time identifier is found in the list, then the variable in
      * the list is returned.
      */
-    public Term copy(AbstractMap<Var, Var> vMap, int idExecCtx) {
+    public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
         Term tt = getTerm();
         if (tt == this) {
             Var v = vMap.get(this);
@@ -148,16 +149,18 @@ public class Var extends Term {
             }
             return v;
         } else {
-            return tt.copy(vMap, idExecCtx);
+            if (tt instanceof PTerm)
+                return ((PTerm)tt).copy(vMap, idExecCtx);
+            throw new RuntimeException("copy resulted in a non-PTerm");
         }
     }
 
     /**
      * Gets a copy of this variable.
      */
-    public Term copy(final AbstractMap<Var, Var> vMap, final AbstractMap<Term, Var> substMap) {
+    public PTerm copy(final Map<Var, Var> vMap, final Map<PTerm, Var> substMap) {
         Var v;
-        Object temp = vMap.get(this);
+        Var temp = vMap.get(this);
         if (temp == null) {
             v = new Var(null, Var.PROGRESSIVE, vMap.size(), timestamp);
                 //name,Var.PROGRESSIVE,vMap.size(),timestamp);
@@ -167,18 +170,17 @@ public class Var extends Term {
         }
         Term t = getTerm();
         if (t instanceof Var) {
-            Object tt = substMap.get(t);
+            Object tt = substMap.putIfAbsent((Var)t, v);
             if (tt == null) {
-                substMap.put(t, v);
                 v.link = null;
             } else {
                 v.link = (tt != v) ? (Var) tt : null;
             }
         }
         else if (t instanceof Struct) {
-            v.link = t.copy(vMap, substMap);
+            v.link = ((Struct)t).copy(vMap, substMap);
         }
-        else if (t instanceof Number) {
+        else if (t instanceof PNum) {
             v.link = t;
         }
         return v;
@@ -197,6 +199,13 @@ public class Var extends Term {
     public final static void free(final List<Var> varsUnified) {
         for (final Var v : varsUnified) {
             v.free();
+        }
+    }
+    /** faster version for arraylist which doesnt involve iterator */
+    public final static void free(final ArrayList<Var> varsUnified) {
+        final int size = varsUnified.size();
+        for (int i = 0; i < size; i++) {
+            varsUnified.get(i).free();
         }
     }
 
@@ -243,6 +252,8 @@ public class Var extends Term {
         }
         return tt;
     }
+
+
 
     /**
      * Gets the term which is direct referred by the variable.
@@ -328,7 +339,7 @@ public class Var extends Term {
         if (t == this) {
             return false;
         } else {
-            return t.isGround();
+            return (t instanceof PTerm) && ((PTerm)t).isGround();
         }
     }
 
@@ -354,7 +365,7 @@ public class Var extends Term {
      * @param vl TODO
      */
     private boolean occurCheck(final List<Var> vl, final Struct t) {
-        int arity = t.getArity();
+        int arity = t.size();
         for (int c = 0; c < arity; c++) {
             Term at = t.getTerm(c);
             if (at instanceof Struct) {
@@ -381,8 +392,8 @@ public class Var extends Term {
      */
     public long resolveTerm(long count) {
         Term tt = getTerm();
-        if (tt != this) {
-            return tt.resolveTerm(count);
+        if ((tt != this) && (tt instanceof PTerm)) {
+            return ((PTerm)tt).resolveTerm(count);
         } else {
             timestamp = count;
             return count++;
@@ -421,11 +432,12 @@ public class Var extends Term {
             t = t.getTerm();
             if (t instanceof Var) {
                 if (this == t) {
-                    try {
+                    //try {
                         vl1.add(this);
-                    } catch (NullPointerException e) {/* vl1==null mean nothing intresting for the caller */
+                    /* vl1==null mean nothing intresting for the caller */
+                    /*} catch (NullPointerException e) {
 
-                    }
+                    }*/
                     return true;
                 }
             } else if (t instanceof Struct) {
@@ -433,19 +445,20 @@ public class Var extends Term {
                 if (occurCheck(vl2, (Struct) t)) {
                     return false;
                 }
-            } else if (!(t instanceof Number) && !(t instanceof AbstractSocket)) {
+            } else if (!(t instanceof PNum) && !(t instanceof AbstractSocket)) {
                 return false;
             }
             link = t;
-            try {
+            //try {
                 vl1.add(this);
-            } catch (NullPointerException e) {/* vl1==null mean nothing intresting for the caller */
+            /* vl1==null mean nothing intresting for the caller */
+            /*} catch (NullPointerException e) {
 
-            }
+            }*/
             //System.out.println("VAR "+name+" BOUND to "+tlink+" - time: "+time+" - mark: "+mark);
             return true;
         } else {
-            return (tt.unify(vl1, vl2, t));
+            return (tt instanceof PTerm) && ( ((PTerm)tt).unify(vl1, vl2, t));
         }
     }
 
@@ -471,7 +484,7 @@ public class Var extends Term {
             }
             return timestamp > ((Var) t).timestamp;
         } else {
-            return tt.isGreater(t);
+            return (tt instanceof PTerm) && ((PTerm)tt).isGreater(t);
         }
     }
 
@@ -488,7 +501,7 @@ public class Var extends Term {
             //return timestamp > ((Var)t).timestamp;
             return vorder.indexOf(((Var) tt).getName()) > vorder.indexOf(((Var) t).getName());
         } else {
-            return tt.isGreaterRelink(t, vorder);
+            return (tt instanceof PTerm) && ((PTerm)tt).isGreaterRelink(t, vorder);
         }
     }
 
@@ -498,12 +511,22 @@ public class Var extends Term {
             t = t.getTerm();
             return (t instanceof Var && timestamp == ((Var) t).timestamp);
         } else {
-            return tt.isEqual(t);
+            return (tt instanceof PTerm) && (t instanceof PTerm) && ((PTerm)tt).isEqual((PTerm)t);
         }
     }
 
     public void setName(String s) {
         this.name = s;
+    }
+
+    @Override
+    public PTerm clone() {
+        return new Var();
+    }
+
+    @Override
+    public Term cloneDeep() {
+        return null;
     }
 
     /**
@@ -563,4 +586,25 @@ public class Var extends Term {
         return getName().hashCode();
     }
 
+    @Override
+    public boolean equals(Object t) {
+        if (t instanceof PTerm)
+            return isEqual((PTerm)t);
+        return false;
+    }
+
+    @Override
+    public NALOperator operator() {
+        return NALOperator.PVAR;
+    }
+
+    @Override
+    public short getComplexity() {
+        return 1;
+    }
+
+    @Override
+    public void recurseSubterms(nars.nal.term.TermVisitor v, Term parent) {
+        //do nothing
+    }
 }

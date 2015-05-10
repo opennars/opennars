@@ -1,17 +1,19 @@
 package nars.tuprolog.net;
 
-import nars.tuprolog.Term;
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.TermVisitor;
 import nars.tuprolog.Var;
 
 import java.net.InetAddress;
-import java.util.AbstractMap;
+import java.util.Map;
 import java.util.ArrayList;
 @SuppressWarnings("serial")
 
 
 
-public abstract class AbstractSocket extends Term{
+public abstract class AbstractSocket implements PTerm {
 	
 	public abstract boolean isClientSocket();
 	
@@ -93,12 +95,12 @@ public abstract class AbstractSocket extends Term{
 	}
 
 	@Override
-	public Term copy(AbstractMap<Var, Var> vMap, int idExecCtx) {
+	public PTerm copy(Map<Var, Var> vMap, int idExecCtx) {
 		return this;
 	}
 
 	@Override
-	public Term copy(AbstractMap<Var, Var> vMap, AbstractMap<Term, Var> substMap) {
+	public PTerm copy(Map<Var, Var> vMap, Map<PTerm, Var> substMap) {
 		return this;
 	}
 
@@ -120,7 +122,37 @@ public abstract class AbstractSocket extends Term{
 		return getSocket().hashCode();
 	}
 
+	@Override
+	public PTerm clone() {
+		return null;
+	}
 
+	@Override
+	public Term cloneDeep() {
+		return null;
+	}
+
+	@Override
+	public NALOperator operator() {
+		return null;
+	}
+
+
+	@Override
+	public short getComplexity() {
+		return 1;
+	}
+
+	@Override
+	public void recurseSubterms(nars.nal.term.TermVisitor v) {
+
+	}
+
+	@Override
+	public void recurseSubterms(nars.nal.term.TermVisitor v, Term parent) {
+
+	}
 }
+
 
 

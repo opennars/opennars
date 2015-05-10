@@ -110,7 +110,7 @@ public final class LibraryManager
             throw new ClassNotFoundException();
 
 //        Class<?> library = getClass().getClassLoader().loadClass(libraryClassname);
-//        if (library.getSuperclass().equals(nars.prolog.library.class))
+//        if (library.getSuperclass().equals(nars.tuprolog.library.class))
 //            libraries.add(libraryClassname);
 //        else
 //            throw new InvalidLibraryException(libraryClassname,-1,-1);

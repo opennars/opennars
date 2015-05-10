@@ -17,6 +17,8 @@
  */
 package nars.tuprolog.gui.ide;
 
+import nars.tuprolog.DefaultProlog;
+import nars.tuprolog.InvalidLibraryException;
 import nars.tuprolog.Prolog;
 import nars.tuprolog.event.OutputEvent;
 import nars.tuprolog.event.SpyEvent;
@@ -47,8 +49,11 @@ public class JavaIDE
     private TheoryTabbedPane tabbedPane;
     private static ConsoleManager consoleManager;
 
-    public JavaIDE() {
+    final Prolog engine;
+
+    public JavaIDE() throws InvalidLibraryException {
         super("tuProlog IDE");
+        engine = new DefaultProlog();
         initComponents();
     }
 
@@ -58,7 +63,7 @@ public class JavaIDE
     private void initComponents() {
         System.out.println("tuProlog/NARS - " + Prolog.getVersion());
 
-        Prolog engine = new Prolog();
+
         
         tabbedPane = new TheoryTabbedPane();
         tabbedPane.setEngine(engine);

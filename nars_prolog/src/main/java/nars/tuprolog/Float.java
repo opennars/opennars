@@ -18,6 +18,8 @@
 package nars.tuprolog;
 
 
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +31,9 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
-public class Float extends Number {
+public class Float extends PNum {
     
-    private float value;
+    private final float value;
     
     public Float(float v) {
         value=v;
@@ -134,16 +136,16 @@ public class Float extends Number {
      */
     public boolean isGreater(Term t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).floatValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).floatValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
     }
     public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).floatValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).floatValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -155,8 +157,8 @@ public class Float extends Number {
      */
     public boolean isEqual(Term t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value == ( (Number) t ).floatValue();
+        if (t instanceof PNum) {
+            return value == ( (PNum) t ).floatValue();
         } else {
             return false;
         }
@@ -169,14 +171,19 @@ public class Float extends Number {
     public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
         t = t.getTerm();
         if (t instanceof Var) {
-            return t.unify(vl2, vl1, this);
-        } else if (t instanceof Number && ((Number) t).isReal()) {
-            return value == ((Number) t).floatValue();
+            return ((Var)t).unify(vl2, vl1, this);
+        } else if (t instanceof PNum && ((PNum) t).isReal()) {
+            return value == ((PNum) t).floatValue();
         } else {
             return false;
         }
     }
-    
+
+    @Override
+    public PTerm clone() {
+        return null;
+    }
+
     public String toString() {
         return java.lang.Float.toString(value);
     }
@@ -184,9 +191,9 @@ public class Float extends Number {
     /**
      * @author Paolo Contessi
      */    
-    public int compareTo(Term o) {
-        if (o instanceof Number)
-            return java.lang.Float.compare(value, ((Number)o).floatValue());
+    public int compareTo(PTerm o) {
+        if (o instanceof PNum)
+            return java.lang.Float.compare(value, ((PNum)o).floatValue());
         else
             return -1;
     }

@@ -17,11 +17,12 @@
  */
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import nars.nal.term.Term;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -43,12 +44,12 @@ import java.util.Map;
  * <p>
  */
 @SuppressWarnings("serial")
-public abstract class Library implements Serializable, IPrimitives {
+public abstract class Library<E extends Prolog> implements Serializable, IPrimitives {
     
     /**
 	 * prolog core which loaded the library
 	 */
-    protected Prolog engine;
+    protected E engine;
     
     /**
 	 * operate mapping
@@ -95,14 +96,14 @@ public abstract class Library implements Serializable, IPrimitives {
 	 * Gets the engine to which the library is bound
 	 * @return  the engine
 	 */
-    public Prolog getEngine() {
+    public E getEngine() {
         return engine;
     }
     
     /**
 	 * @param en
 	 */
-    public void setEngine(Prolog en) {	
+    public void setEngine(E en) {
         engine = en;
     }
     
@@ -113,7 +114,9 @@ public abstract class Library implements Serializable, IPrimitives {
      * is deployed and altered.
      */
     protected boolean unify(Term a0,Term a1) {
-        return engine.unify(a0,a1);
+        if (a0 instanceof PTerm)
+            return engine.unify((PTerm)a0,a1);
+        return false;
     }
     
     /**
@@ -122,10 +125,10 @@ public abstract class Library implements Serializable, IPrimitives {
      * The runtime (demonstration) context currently used by the engine
      * is deployed and altered.
      */
-    protected boolean match(Term a0,Term a1) {
-        return engine.match(a0,a1);
+    protected boolean match(PTerm a0,Term a1, long now, ArrayList<Var> v1, ArrayList<Var> v2) {
+        return engine.match(a0,a1,now,v1,v2);
     }
-    
+
     
     /**
      * Evaluates an expression. Returns null value if the argument
@@ -150,7 +153,7 @@ public abstract class Library implements Serializable, IPrimitives {
                 if (bt.isFunctor())
                     return bt.evalAsFunctor(t);
             }
-        } else if (val instanceof Number) {
+        } else if (val instanceof PNum) {
             return val;
         }
         return null;
@@ -181,10 +184,10 @@ public abstract class Library implements Serializable, IPrimitives {
     /**
      * gets the list of predicates defined in the library
      */
-    public Map<Integer,List<PrimitiveInfo>> getPrimitives() {
+    public IntObjectHashMap<List<PrimitiveInfo>> getPrimitives() {
         try {
             java.lang.reflect.Method[] mlist = this.getClass().getMethods();
-            Map<Integer,List<PrimitiveInfo>> mapPrimitives = new HashMap<>();
+            IntObjectHashMap<List<PrimitiveInfo>> mapPrimitives = new IntObjectHashMap<List<PrimitiveInfo>>();
             mapPrimitives.put(PrimitiveInfo.DIRECTIVE,new ArrayList<>());
             mapPrimitives.put(PrimitiveInfo.FUNCTOR,new ArrayList<>());
             mapPrimitives.put(PrimitiveInfo.PREDICATE,new ArrayList<>());
@@ -199,7 +202,7 @@ public abstract class Library implements Serializable, IPrimitives {
                                 
                 int type;
                 if (returnTypeName.equals("boolean")) type = PrimitiveInfo.PREDICATE;
-                else if (returnTypeName.equals("nars.prolog.Term")) type = PrimitiveInfo.FUNCTOR;
+                else if (returnTypeName.equals("nars.tuprolog.Term")) type = PrimitiveInfo.FUNCTOR;
                 else if (returnTypeName.equals("void")) type = PrimitiveInfo.DIRECTIVE;
                 else continue;
                 
@@ -211,7 +214,7 @@ public abstract class Library implements Serializable, IPrimitives {
                         if (clist.length == arity) {
                             boolean valid = true;
                             for (int j=0; j<arity; j++) {
-                                if (!(Term.class.isAssignableFrom(clist[j]))) {
+                                if (!(PTerm.class.isAssignableFrom(clist[j]))) {
                                     valid = false;
                                     break;
                                 }

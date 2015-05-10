@@ -1,4 +1,4 @@
-//package nars.prolog.store;
+//package nars.tuprolog.store;
 //
 //import alice.tuprolog.ClauseInfo;
 //import alice.tuprolog.Struct;

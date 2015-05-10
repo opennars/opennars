@@ -1,5 +1,6 @@
 package nars.tuprolog.store;
 
+import nars.nal.term.Term;
 import nars.tuprolog.*;
 import nars.tuprolog.lib.JavaLibrary;
 
@@ -16,7 +17,7 @@ public class MapEntriesStore extends ClauseStore
 	private Iterator<?> iter;
 	private JavaLibrary jl;
 	private Prolog engine;
-	private Term key, value;
+	private PTerm key, value;
 	private List varList;
 	private Term currentKey = null, currentValue = null;
 	
@@ -37,7 +38,7 @@ public class MapEntriesStore extends ClauseStore
 		}
 	}
 	
-	public MapEntriesStore(Prolog engine, Map map, Term key, Term value, List varList, JavaLibrary lib)
+	public MapEntriesStore(Prolog engine, Map map, PTerm key, PTerm value, List varList, JavaLibrary lib)
 	{
         super(null, varList);
 		iter = map.entrySet().iterator();
@@ -53,7 +54,7 @@ public class MapEntriesStore extends ClauseStore
 	
 	public void close() { /* nothing to do here */ }
 	
-	public ClauseInfo fetch()
+	public Clause fetch()
 	{	
 		if (currentValue == null)
 			return null;

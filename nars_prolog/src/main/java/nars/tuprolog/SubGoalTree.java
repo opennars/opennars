@@ -1,11 +1,15 @@
 package nars.tuprolog;
+
+import nars.nal.AbstractSubGoalTree;
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 
-public class SubGoalTree extends AbstractSubGoalTree implements Iterable<AbstractSubGoalTree> {
+public class SubGoalTree implements AbstractSubGoalTree, Iterable<AbstractSubGoalTree> {
     
-    private ArrayList<AbstractSubGoalTree> terms;
+    private final ArrayList<AbstractSubGoalTree> terms;
         //private LinkedList terms;
     
     public SubGoalTree() {
@@ -18,8 +22,7 @@ public class SubGoalTree extends AbstractSubGoalTree implements Iterable<Abstrac
     }
     
     public void addChild(Term term) {
-        SubGoalElement l = new SubGoalElement(term);
-        terms.add(l);
+        terms.add(term);
     }
     
     public SubGoalTree addChild() {
@@ -62,6 +65,7 @@ public class SubGoalTree extends AbstractSubGoalTree implements Iterable<Abstrac
             return false;
         }
     }
+
     public SubGoalTree copy(){
         return new SubGoalTree(terms);
     }

@@ -18,6 +18,9 @@
 package nars.tuprolog;
 
 
+import nars.nal.term.*;
+import nars.nal.term.TermVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +30,9 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
-public class Double extends Number {
+public class Double extends PNum {
     
-    private double value;
+    private final double value;
     
     public Double(double v) {
         value = v;
@@ -130,8 +133,8 @@ public class Double extends Number {
      */
     public boolean isGreater(Term t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).doubleValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).doubleValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -139,8 +142,8 @@ public class Double extends Number {
     
     public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).doubleValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).doubleValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -151,8 +154,8 @@ public class Double extends Number {
      */
     public boolean isEqual(Term t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            Number n = (Number) t;
+        if (t instanceof PNum) {
+            PNum n = (PNum) t;
             if (!n.isReal())
                 return false;
             return value == n.doubleValue();
@@ -168,14 +171,21 @@ public class Double extends Number {
     public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
         t = t.getTerm();
         if (t instanceof Var) {
-            return t.unify(vl2, vl1, this);
-        } else if (t instanceof Number && ((Number) t).isReal()) {
-            return value == ((Number) t).doubleValue();
+            return ((Var)t).unify(vl2, vl1, this);
+        } else if (t instanceof PNum && ((PNum) t).isReal()) {
+            return value == ((PNum) t).doubleValue();
         } else {
             return false;
         }
     }
-    
+
+
+
+    @Override
+    public PTerm clone() {
+        return new Double(value);
+    }
+
     public String toString() {
         return java.lang.Double.toString(value);
     }
@@ -185,18 +195,12 @@ public class Double extends Number {
     }
 
  
-    @Override
-    public int compareTo(final Term o) {
-        if (o instanceof Number) {
-            return java.lang.Double.compare(value, ((Number)o).doubleValue());
-        }
-        else
-            return -1;
-    }
+
 
     @Override
     public int hashCode() {
         return java.lang.Double.hashCode(value);
     }
-    
+
+
 }

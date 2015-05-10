@@ -1,8 +1,10 @@
 package nars.tuprolog.gui.spyframe;
 
 
+import nars.nal.term.Term;
+import nars.tuprolog.PNum;
+import nars.tuprolog.PTerm;
 import nars.tuprolog.Struct;
-import nars.tuprolog.Term;
 import nars.tuprolog.Var;
 
 import javax.swing.*;
@@ -38,15 +40,15 @@ public class TermPanel extends JPanel implements ActionListener{
           node.kids=new Node[1];
           node.kids[0]=makeTreeFrom(var.getTerm());
         }
-      } else if(term instanceof nars.tuprolog.Number){
+      } else if(term instanceof PNum){
         node.textcolor=node.bordercolor=Color.MAGENTA;
       } else if(term instanceof Struct){
         Struct struct=(Struct)term;
         node.text=struct.getName();
-        int n=struct.getArity();
+        int n=struct.size();
         node.kids=new Node[n];
         for(int i=0; i<n; i++)
-          node.kids[i]=makeTreeFrom(struct.getArg(i));
+          node.kids[i]=makeTreeFrom(struct.getTermX(i));
       }
       return node;
     }
@@ -75,7 +77,7 @@ public class TermPanel extends JPanel implements ActionListener{
   /**Sets a new prolog term.
    * @param term to be displayed.
    */
-  public void setTerm(Term term){
+  public void setTerm(PTerm term){
     ptt.setStructure(term);
     input.setText(""+term);
     validate();
@@ -85,10 +87,10 @@ public class TermPanel extends JPanel implements ActionListener{
    * @param sterm to be displayed.
    */
   public void setTerm(String sterm){
-    Term term;
-    try{term=Term.createTerm(sterm);}
+    PTerm term;
+    try{term= PTerm.createTerm(sterm);}
     catch(Exception ex){
-      term=Term.createTerm("'>illegal prolog term<'");
+      term= PTerm.createTerm("'>illegal prolog term<'");
     }
     setTerm(term);
   }

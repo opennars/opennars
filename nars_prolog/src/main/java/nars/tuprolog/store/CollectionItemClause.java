@@ -1,19 +1,19 @@
 package nars.tuprolog.store;
 
 
-import nars.tuprolog.ClauseInfo;
+import nars.tuprolog.Clause;
 import nars.tuprolog.Struct;
 import nars.tuprolog.SubGoalTree;
 
-public class CollectionItemClause extends ClauseInfo
+public class CollectionItemClause extends Clause
 {
-	private Object x;
-	private SubGoalTree body = new SubGoalTree();
+	//private Object x;
+	private final SubGoalTree body = new SubGoalTree();
 
 	public CollectionItemClause(Struct clause) 	{
         super(clause, null);
 	//	this.x = x;
-		this.clause = clause;
+
 	}
 	
 	public SubGoalTree getBody()

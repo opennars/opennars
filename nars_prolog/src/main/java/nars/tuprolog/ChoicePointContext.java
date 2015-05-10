@@ -59,13 +59,13 @@ public class ChoicePointContext {
         return indexSubGoal;
     }
     
-    public List<List<Var>> getVarsToDeunify() {
-        ArrayList<List<Var>> l = new ArrayList<>();
-        OneWayList<List<Var>> t = varsToDeunify;
-        while (t != null) {
-            l.add(t.getHead());
-            t = t.getTail();
-        }
-        return l;
-    }
+//    public List<List<Var>> getVarsToDeunify() {
+//        ArrayList<List<Var>> l = new ArrayList<>();
+//        OneWayList<List<Var>> t = varsToDeunify;
+//        while (t != null) {
+//            l.add(t.getHead());
+//            t = t.getTail();
+//        }
+//        return l;
+//    }
 }

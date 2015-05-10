@@ -17,6 +17,8 @@
  */
 package nars.tuprolog.gui.ide;
 
+import nars.tuprolog.InvalidLibraryException;
+
 import javax.swing.*;
 import java.awt.event.WindowListener;
 
@@ -33,16 +35,24 @@ import java.awt.event.WindowListener;
 public class Applet extends JApplet {
 
     public void init() {
-        JavaIDE ide = new JavaIDE();
 
-        // Remove the attached window listener, causing the applet to
-        // exit and the browser to close due to a System.exit() call.
-        WindowListener[] listeners = ide.getWindowListeners();
-        for (int i = 0; i < listeners.length; i++)
-            ide.removeWindowListener(listeners[i]);
 
-        ide.pack();
-        ide.setVisible(true);
+
+        try {
+            JavaIDE ide = new JavaIDE();
+
+            // Remove the attached window listener, causing the applet to
+            // exit and the browser to close due to a System.exit() call.
+            WindowListener[] listeners = ide.getWindowListeners();
+            for (int i = 0; i < listeners.length; i++)
+                ide.removeWindowListener(listeners[i]);
+
+            ide.pack();
+            ide.setVisible(true);
+
+        } catch (InvalidLibraryException e) {
+            e.printStackTrace();
+        }
     }
 
 } // end Applet class

@@ -1,11 +1,12 @@
 package nars.tuprolog.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 public class OneWayList<E> {
     
-    private E head;
+    final private E head;
     private OneWayList<E> tail;
     
     public OneWayList(E head, OneWayList<E> tail){
@@ -17,7 +18,10 @@ public class OneWayList<E> {
         if(list.isEmpty()) return null;
         return new OneWayList<>(list.remove(0),transform(list));
     }
-    
+
+    public static <T> OneWayList<T> transform2(Iterable<T> list){
+        return transform2(list.iterator());
+    }
     /**
      * Transforms given list into a OneWayList without any modification
      * to it
@@ -27,11 +31,18 @@ public class OneWayList<E> {
      * @param list  Perceive list to be transformed
      * @return      An equivalent OneWayList
      */
-    public static <T> OneWayList<T> transform2(List<T> list){
+    public static <T> OneWayList<T> transform2(Iterator<T> list){
         OneWayList<T> result = null;
         OneWayList<T> p = null;
 
-        for(T obj : list){
+        if (list == null) {
+            return null;// Collections.EMPTY_LIST;
+        }
+
+        T obj;
+        while (list.hasNext()) {
+            obj = list.next();
+
             OneWayList<T> l = new OneWayList<>(obj, null);
 
             if(result == null){
@@ -49,9 +60,9 @@ public class OneWayList<E> {
         return head;
     }
     
-    public void setHead(E head) {
+    /*    public void setHead(E head) {
         this.head = head;
-    }
+    }*/
 
 
     public OneWayList<E> getTail() {
@@ -70,7 +81,7 @@ public class OneWayList<E> {
         tail.addLast(newTail);
     }
     
-    public OneWayList<E> get(int index){
+    public OneWayList<E> get(final int index){
         if(tail == null) throw new NoSuchElementException();
         if(index <= 0) return this;
         return tail.get(index-1);

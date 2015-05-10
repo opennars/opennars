@@ -1,6 +1,6 @@
 package nars.tuprolog.interfaces;
 
-import nars.tuprolog.Term;
+import nars.tuprolog.PTerm;
 
 public interface IParser {
 	
@@ -10,7 +10,7 @@ public interface IParser {
      * (a period), <tt>false</tt> otherwise.
      * @throws InvalidTermException if a syntax error is found. 
      */
-    Term nextTerm(boolean endNeeded) throws Exception;
+    PTerm nextTerm(boolean endNeeded) throws Exception;
     
     /**
      * @return the current line number

@@ -17,6 +17,9 @@
  */
 package nars.tuprolog;
 
+import nars.nal.term.Term;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -27,8 +30,8 @@ class Flag implements java.io.Serializable {
     
     private String name;
     private Struct valueList;
-    private Term   value;
-    private Term   defaultValue;
+    private PTerm value;
+    private PTerm defaultValue;
     private boolean modifiable;
     private String  libraryName;
     
@@ -41,7 +44,7 @@ class Flag implements java.io.Serializable {
      * @param modifiable states if the flag is modifiable
      * @param library is the library defining the flag
      */
-    public Flag(String name, Struct valueSet, Term defValue, boolean modifiable, String library) {
+    public Flag(String name, Struct valueSet, PTerm defValue, boolean modifiable, String library) {
         this.name = name;
         this.valueList = valueSet;
         defaultValue = defValue;
@@ -62,12 +65,14 @@ class Flag implements java.io.Serializable {
         Flag f = new Flag();
         f.name=name;
         f.valueList=(Struct)valueList.copy(new HashMap<>(),Var.ORIGINAL);
-        f.value=value.copy(new HashMap<>(),Var.ORIGINAL);
-        f.defaultValue=defaultValue.copy(new HashMap<>(),Var.ORIGINAL);
+        f.value=PTerm.copyp(value);
+        f.defaultValue=PTerm.copyp(defaultValue);
         f.modifiable=modifiable;
         f.libraryName=libraryName;
         return f;
     }
+
+
     
     /**
      * Checks if a value is valid according to flag description
@@ -75,11 +80,15 @@ class Flag implements java.io.Serializable {
      * @param value the possible value of the flag
      * @return flag validity
      */
-    public boolean isValidValue(Term value) {
+    public boolean isValidValue(PTerm value) {
         java.util.Iterator<? extends Term> it=valueList.listIterator();
+
+        ArrayList<Var> v1 = new ArrayList(), v2 = new ArrayList();
+        long now = System.currentTimeMillis();
+
         while (it.hasNext()) {
             Term t= it.next();
-            if (value.match(t)) {
+            if (value.match(t, now, v1, v2)) {
                 return true;
             }
         }
@@ -108,8 +117,8 @@ class Flag implements java.io.Serializable {
      * @param value new value of the flag
      * @return true if the value is valid
      */
-    public boolean setValue(Term value) {
-        if (isValidValue(value) && modifiable) {
+    public boolean setValue(PTerm value) {
+        if (modifiable && isValidValue(value)) {
             this.value = value;
             return true;
         } else {
@@ -121,7 +130,7 @@ class Flag implements java.io.Serializable {
 	 * Gets the current value of the flag
 	 * @return  flag current value
 	 */
-    public Term getValue() {
+    public PTerm getValue() {
         return value;
     }
     

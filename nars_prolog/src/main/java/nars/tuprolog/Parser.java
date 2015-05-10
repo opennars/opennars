@@ -39,25 +39,25 @@ import java.util.regex.Pattern;
  * op(type,n) ::= atom | { symbol }+
  */
 @SuppressWarnings("serial")
-public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, Iterable<Term> {
+public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, Iterable<PTerm> {
 
     private static class IdentifiedTerm {
 
         private final int priority;
-        private final Term result;
+        private final PTerm result;
 
-        public IdentifiedTerm(int priority, Term result) {
+        public IdentifiedTerm(int priority, PTerm result) {
             this.priority = priority;
             this.result = result;
         }
     }
 
-    private static OperatorManager defaultOperatorManager = new DefaultOperatorManager();
+    private static Operators defaultOperatorManager = new DefaultOperatorManager();
 
     private Tokenizer tokenizer;
-    private OperatorManager opManager = defaultOperatorManager;
+    private Operators opManager = defaultOperatorManager;
     /*Castagna 06/2011*/
-    private ObjectIntHashMap<Term> offsetsMap;
+    private ObjectIntHashMap<PTerm> offsetsMap;
     private int tokenStart;
     /**/
 
@@ -65,7 +65,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * creating a Parser specifing how to handle operators and what text to
      * parse
      */
-    public Parser(OperatorManager op, InputStream theoryText) {
+    public Parser(Operators op, InputStream theoryText) {
         this(theoryText);
         if (op != null) {
             opManager = op;
@@ -77,7 +77,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * creating a Parser specifing how to handle operators and what text to
      * parse
      */
-    public Parser(OperatorManager op, String theoryText, ObjectIntHashMap<Term> mapping) {
+    public Parser(Operators op, String theoryText, ObjectIntHashMap<PTerm> mapping) {
         this(theoryText, mapping);
         if (op != null) {
             opManager = op;
@@ -89,7 +89,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * creating a Parser specifing how to handle operators and what text to
      * parse
      */
-    public Parser(OperatorManager op, String theoryText) {
+    public Parser(Operators op, String theoryText) {
         this(theoryText);
         if (op != null) {
             opManager = op;
@@ -100,7 +100,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     /**
      * creating a parser with default operate interpretation
      */
-    public Parser(String theoryText, ObjectIntHashMap<Term>  mapping) {
+    public Parser(String theoryText, ObjectIntHashMap<PTerm>  mapping) {
         tokenizer = new Tokenizer(theoryText);
         offsetsMap = mapping;
     }
@@ -124,7 +124,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
 	//  user interface
-    public Iterator<Term> iterator() {
+    public Iterator<PTerm> iterator() {
         return new TermIterator(this);
     }
 
@@ -135,7 +135,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * (a period), <tt>false</tt> otherwise.
      * @throws InvalidTermException if a syntax error is found.
      */
-    public Term nextTerm(boolean endNeeded) throws InvalidTermException {
+    public PTerm nextTerm(boolean endNeeded) throws InvalidTermException {
         try {
             Token t = tokenizer.readToken();
             if (t.isEOF()) {
@@ -143,7 +143,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             }
 
             tokenizer.unreadToken(t);
-            Term term = expr(false);
+            PTerm term = expr(false);
             if (term == null) /*Castagna 06/2011*/ //throw new InvalidTermException("The parser is unable to finish");
             {
                 throw new InvalidTermException("The parser is unable to finish.",
@@ -175,7 +175,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     /**
      * Static service to get a term from its string representation
      */
-    public static Term parseSingleTerm(String st) throws InvalidTermException {
+    public static PTerm parseSingleTerm(String st) throws InvalidTermException {
         return parseSingleTerm(st, null);
     }
 
@@ -183,7 +183,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * Static service to get a term from its string representation, providing a
      * specific operate manager
      */
-    public static Term parseSingleTerm(String st, OperatorManager op) throws InvalidTermException {
+    public static PTerm parseSingleTerm(String st, Operators op) throws InvalidTermException {
         try {
             Parser p = new Parser(op, st);
             Token t = p.tokenizer.readToken();
@@ -192,7 +192,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             }
 
             p.tokenizer.unreadToken(t);
-            Term term = p.expr(false);
+            PTerm term = p.expr(false);
             if (term == null) {
                 throw new InvalidTermException("Term is null");
             }
@@ -207,8 +207,8 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
 	// internal parsing procedures
-    private Term expr(boolean commaIsEndMarker) throws InvalidTermException, IOException {
-        return exprA(OperatorManager.OP_HIGH, commaIsEndMarker).result;
+    private PTerm expr(boolean commaIsEndMarker) throws InvalidTermException, IOException {
+        return exprA(Operators.OP_HIGH, commaIsEndMarker).result;
     }
 
     private IdentifiedTerm exprA(int maxPriority, boolean commaIsEndMarker) throws InvalidTermException, IOException {
@@ -235,7 +235,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             }
 
             //YFX has priority over YF
-            if (YFX >= YF && YFX >= OperatorManager.OP_LOW) {
+            if (YFX >= YF && YFX >= Operators.OP_LOW) {
                 IdentifiedTerm ta = exprA(YFX - 1, commaIsEndMarker);
                 if (ta != null) {
                     /*Castagna 06/2011*/
@@ -246,7 +246,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 }
             }
             //either YF has priority over YFX or YFX failed
-            if (YF >= OperatorManager.OP_LOW) {
+            if (YF >= Operators.OP_LOW) {
                 /*Castagna 06/2011*/
                 //leftSide = new IdentifiedTerm(YF, new Struct(t.seq, leftSide.result));
                 leftSide = identifyTerm(YF, new Struct(t.seq, leftSide.result), tokenStart);
@@ -273,13 +273,13 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
 
 			//check that no operate has a priority higher than permitted
             //or a lower priority than the left side expression
-            if (XFX > maxPriority || XFX < OperatorManager.OP_LOW) {
+            if (XFX > maxPriority || XFX < Operators.OP_LOW) {
                 XFX = -1;
             }
-            if (XFY > maxPriority || XFY < OperatorManager.OP_LOW) {
+            if (XFY > maxPriority || XFY < Operators.OP_LOW) {
                 XFY = -1;
             }
-            if (XF > maxPriority || XF < OperatorManager.OP_LOW) {
+            if (XF > maxPriority || XF < Operators.OP_LOW) {
                 XF = -1;
             }
 
@@ -376,7 +376,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
 
             //FX has priority over FY
             boolean haveAttemptedFX = false;
-            if (FX >= FY && FX >= OperatorManager.OP_LOW) {
+            if (FX >= FY && FX >= Operators.OP_LOW) {
                 IdentifiedTerm found = exprA(FX - 1, commaIsEndMarker);    //op(fx, n) exprA(n - 1)
                 if (found != null) /*Castagna 06/2011*/ //return new IdentifiedTerm(FX, new Struct(f.seq, found.result));
                 {
@@ -386,7 +386,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 }
             }
             //FY has priority over FX, or FX has failed
-            if (FY >= OperatorManager.OP_LOW) {
+            if (FY >= Operators.OP_LOW) {
                 IdentifiedTerm found = exprA(FY, commaIsEndMarker); //op(fy,n) exprA(1200)  or   op(fy,n) exprA(n)
                 if (found != null) /*Castagna 06/2011*/ //return new IdentifiedTerm(FY, new Struct(f.seq, found.result));
                 {
@@ -395,7 +395,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
                 /**/
             }
             //FY has priority over FX, but FY failed
-            if (!haveAttemptedFX && FX >= OperatorManager.OP_LOW) {
+            if (!haveAttemptedFX && FX >= Operators.OP_LOW) {
                 IdentifiedTerm found = exprA(FX - 1, commaIsEndMarker);    //op(fx, n) exprA(n - 1)
                 if (found != null) /*Castagna 06/2011*/ //return new IdentifiedTerm(FX, new Struct(f.seq, found.result));
                 {
@@ -414,7 +414,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * exprA(1200) }* ) | '[' exprA(1200) { , exprA(1200) }* [ | exprA(1200) ]
      * ']' | '{' [ exprA(1200) ] '}' | '(' exprA(1200) ')'
      */
-    private Term expr0() throws InvalidTermException, IOException {
+    private PTerm expr0() throws InvalidTermException, IOException {
         Token t1 = tokenizer.readToken();
 
         /*Castagna 06/2011*/
@@ -447,19 +447,19 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
 //            }
 //        }
         if (t1.isType(Tokenizer.INTEGER)) {
-            Term i = Parser.parseInteger(t1.seq);
+            PTerm i = Parser.parseInteger(t1.seq);
             map(i, tokenizer.tokenStart());
             return i; //todo moved method to Number
         }
 
         if (t1.isType(Tokenizer.FLOAT)) {
-            Term f = Parser.parseFloat(t1.seq);
+            PTerm f = Parser.parseFloat(t1.seq);
             map(f, tokenizer.tokenStart());
             return f;   //todo moved method to Number
         }
 
         if (t1.isType(Tokenizer.VARIABLE)) {
-            Term v = new Var(t1.seq);
+            PTerm v = new Var(t1.seq);
             map(v, tokenizer.tokenStart());
             return v;             //todo switched to use the internal check for "_" in Var(String)
         }
@@ -468,7 +468,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
         if (t1.isType(Tokenizer.ATOM) || t1.isType(Tokenizer.SQ_SEQUENCE) || t1.isType(Tokenizer.DQ_SEQUENCE)) {
             if (!t1.isFunctor()) /*Castagna 06/2011*/ {
                 //return new Struct(t1.seq);
-                Term f = new Struct(t1.seq);
+                PTerm f = new Struct(t1.seq);
                 map(f, tokenizer.tokenStart());
                 return f;
             }
@@ -479,12 +479,12 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             if (!t2.isType(Tokenizer.LPAR)) {
                 throw new InvalidTermException("Something identified as functor misses its first left parenthesis");//todo check can be skipped
             }
-            Deque<Term> a = expr0_arglist();     //reading arguments
+            Deque<PTerm> a = expr0_arglist();     //reading arguments
             Token t3 = tokenizer.readToken();
             if (t3.isType(Tokenizer.RPAR)) //reading right par
             /*Castagna 06/2011*/ {
                 //return new Struct(functor, a);
-                Term c = new Struct(functor, a);
+                PTerm c = new Struct(functor, a);
                 map(c, tempStart);
                 return c;
             }
@@ -498,7 +498,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
         }
 
         if (t1.isType(Tokenizer.LPAR)) {
-            Term term = expr(false);
+            PTerm term = expr(false);
             if (tokenizer.readToken().isType(Tokenizer.RPAR)) {
                 return term;
             }
@@ -517,7 +517,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             }
 
             tokenizer.unreadToken(t2);
-            Term term = expr0_list();
+            PTerm term = expr0_list();
             if (tokenizer.readToken().isType(Tokenizer.RBRA)) {
                 return term;
             }
@@ -533,17 +533,17 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
             Token t2 = tokenizer.readToken();
             if (t2.isType(Tokenizer.RBRA2)) /*Castagna 06/2011*/ {
                 //return new Struct("{}");
-                Term b = new Struct("{}");
+                PTerm b = new Struct("{}");
                 map(b, tempStart);
                 return b;
             }
             /**/
             tokenizer.unreadToken(t2);
-            Term arg = expr(false);
+            PTerm arg = expr(false);
             t2 = tokenizer.readToken();
             if (t2.isType(Tokenizer.RBRA2)) /*Castagna 06/2011*/ {
                 //return new Struct("{}", arg);
-                Term b = new Struct("{}", arg);
+                PTerm b = new Struct("{}", arg);
                 map(b, tempStart);
                 return b;
             }
@@ -563,8 +563,8 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
     //todo make non-recursive?
-    private Term expr0_list() throws InvalidTermException, IOException {
-        Term head = expr(true);
+    private PTerm expr0_list() throws InvalidTermException, IOException {
+        PTerm head = expr(true);
         Token t = tokenizer.readToken();
         if (",".equals(t.seq)) {
             return new Struct(head, expr0_list());
@@ -586,17 +586,17 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
     //todo make non-recursive
-    private Deque<Term> expr0_arglist() throws InvalidTermException, IOException {
-        Term head = expr(true);
+    private Deque<PTerm> expr0_arglist() throws InvalidTermException, IOException {
+        PTerm head = expr(true);
         Token t = tokenizer.readToken();
         switch (t.seq) {
             case ",":
-                Deque<Term> l = expr0_arglist();
+                Deque<PTerm> l = expr0_arglist();
                 l.addFirst(head);
                 return l;
             case ")":
                 tokenizer.unreadToken(t);
-                Deque<Term> x = new ArrayDeque<>();
+                Deque<PTerm> x = new ArrayDeque<>();
                 x.add(head);
                 return x;
         }
@@ -612,7 +612,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
     }
 
 	// commodity methods to parse numbers
-    static Number parseInteger(String s) {
+    static PNum parseInteger(String s) {
         long num = java.lang.Long.parseLong(s);
         if (num > Integer.MIN_VALUE && num < Integer.MAX_VALUE) {
             return new Int((int) num);
@@ -626,7 +626,7 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
         return new Double(num);
     }
 
-    static Number createNumber(String s) {
+    static PNum createNumber(String s) {
         try {
             return parseInteger(s);
         } catch (Exception e) {
@@ -640,18 +640,18 @@ public class Parser implements /*Castagna 06/2011*/ IParser,/**/ Serializable, I
      * 18/04/2011
      * Mapping terms on text
      */
-    private IdentifiedTerm identifyTerm(int priority, Term term, int offset) {
+    private IdentifiedTerm identifyTerm(int priority, PTerm term, int offset) {
         map(term, offset);
         return new IdentifiedTerm(priority, term);
     }
 
-    private void map(Term term, int offset) {
+    private void map(PTerm term, int offset) {
         if (offsetsMap != null) {
             offsetsMap.put(term, offset);
         }
     }
 
-    public ObjectIntHashMap<Term>  getTextMapping() {
+    public ObjectIntHashMap<PTerm>  getTextMapping() {
         return offsetsMap;
     }
 

@@ -147,6 +147,26 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
         // and it is also not possible to use StreamTokenizer#whitespaceChars for ' '
     }
 
+    static public String readStringFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+        byte[] byteChunk = new byte[4096];
+
+        try {
+            int n;
+
+            while ( (n = inputStream.read(byteChunk)) > 0 ) {
+                byteOutputStream.write(byteChunk, 0, n);
+            }
+        }
+        finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+
+        return byteOutputStream.toString();
+    }
+
     /**
      * reads next available token
      */
@@ -162,246 +182,247 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
     }
 
     Token readNextToken() throws IOException, InvalidTermException {
-        int typea;
-        String svala;
-        if (pushBack2 != null) {
-            typea = pushBack2.typea;
-            svala = pushBack2.svala;
-            pushBack2 = null;
-        } else {
-        	/*Castagna 06/2011*/
-            //typea = super.nextToken();
-            typea = tokenConsume();
-            /**/
-            svala = sval;
-        }
-
-        // skips whitespace
-        // could be simplified if lookahead for blank space in functors wasn't necessary
-        // and if '.' in numbers could be written with blank space
-        while (Tokenizer.isWhite(typea)) {
-        	/*Castagna 06/2011*/
-            //typea = super.nextToken();
-            typea = tokenConsume();
-            /**/
-            svala = sval;
-        }
-
-        // skips single line comments
-        // could be simplified if % was not a legal character in quotes
-        if (typea == '%'){
-            do {
-            	/*Castagna 06/2011*/
-                //typea = super.nextToken();
-                typea = tokenConsume();
-                /**/
-            } while (typea != '\r' && typea != '\n' && typea != TT_EOF);
-            /*Castagna 06/2011*/
-            //pushBack();  // pushes back \r or \n. These are whitespace, so when readNextToken() finds them, they are marked as whitespace
-            tokenPushBack();  // pushes back \r or \n. These are whitespace, so when readNextToken() finds them, they are marked as whitespace
-            /**/
-            return readNextToken();
-        }
-
-        // skips /* comments */
-        if (typea == '/'){
-        	/*Castagna 06/2011*/
-            //int typeb = super.nextToken();
-        	int typeb = tokenConsume();
-        	/**/
-            if (typeb == '*'){
-                do {
-                    typea = typeb;
-                	/*Castagna 06/2011*/
-                    //typeb = super.nextToken();
-                    typeb = tokenConsume();
-                    if (typea == -1 && typeb == -1)		
-                    	throw new InvalidTermException("Invalid multi-line comment statement");
-                    /**/
-                } while (typea != '*' || typeb != '/');
-                return readNextToken();
+        Tokenizer other = this;
+        while (true) {
+            int typea;
+            String svala;
+            if (other.pushBack2 != null) {
+                typea = other.pushBack2.typea;
+                svala = other.pushBack2.svala;
+                other.pushBack2 = null;
             } else {
-            	/*Castagna 06/2011*/
-                //pushBack();
-            	tokenPushBack();
-            	/**/
+            /*Castagna 06/2011*/
+                //typea = super.nextToken();
+                typea = other.tokenConsume();
+            /**/
+                svala = other.sval;
             }
-        }
+
+            // skips whitespace
+            // could be simplified if lookahead for blank space in functors wasn't necessary
+            // and if '.' in numbers could be written with blank space
+            while (Tokenizer.isWhite(typea)) {
+        	/*Castagna 06/2011*/
+                //typea = super.nextToken();
+                typea = other.tokenConsume();
+            /**/
+                svala = other.sval;
+            }
+
+            // skips single line comments
+            // could be simplified if % was not a legal character in quotes
+            if (typea == '%') {
+                do {
+            	/*Castagna 06/2011*/
+                    //typea = super.nextToken();
+                    typea = other.tokenConsume();
+                /**/
+                } while (typea != '\r' && typea != '\n' && typea != other.TT_EOF);
+            /*Castagna 06/2011*/
+                //pushBack();  // pushes back \r or \n. These are whitespace, so when readNextToken() finds them, they are marked as whitespace
+                other.tokenPushBack();  // pushes back \r or \n. These are whitespace, so when readNextToken() finds them, they are marked as whitespace
+            /**/
+                continue;
+            }
+
+            // skips /* comments */
+            if (typea == '/') {
+        	/*Castagna 06/2011*/
+                //int typeb = super.nextToken();
+                int typeb = other.tokenConsume();
+        	/**/
+                if (typeb == '*') {
+                    do {
+                        typea = typeb;
+                	/*Castagna 06/2011*/
+                        //typeb = super.nextToken();
+                        typeb = other.tokenConsume();
+                        if (typea == -1 && typeb == -1)
+                            throw new InvalidTermException("Invalid multi-line comment statement");
+                    /**/
+                    } while (typea != '*' || typeb != '/');
+                    continue;
+                } else {
+            	/*Castagna 06/2011*/
+                    //pushBack();
+                    other.tokenPushBack();
+            	/**/
+                }
+            }
 
         /*Castagna 06/2011*/
-        // store the character offset of the current token
-        tokenStart = tokenOffset - tokenLength + 1;
+            // store the character offset of the current token
+            other.tokenStart = other.tokenOffset - other.tokenLength + 1;
         /**/
 
-        // syntactic charachters
-        if (typea == TT_EOF) return new Token("", Tokenizer.EOF);
-        if (typea == '(') return new Token("(", Tokenizer.LPAR);
-        if (typea == ')') return new Token(")", Tokenizer.RPAR);
-        if (typea == '{') return new Token("{", Tokenizer.LBRA2);
-        if (typea == '}') return new Token("}", Tokenizer.RBRA2);
-        if (typea == '[') return new Token("[", Tokenizer.LBRA);
-        if (typea == ']') return new Token("]", Tokenizer.RBRA);
-        if (typea == '|') return new Token("|", Tokenizer.BAR);
+            // syntactic charachters
+            if (typea == other.TT_EOF) return new Token("", Tokenizer.EOF);
+            if (typea == '(') return new Token("(", Tokenizer.LPAR);
+            if (typea == ')') return new Token(")", Tokenizer.RPAR);
+            if (typea == '{') return new Token("{", Tokenizer.LBRA2);
+            if (typea == '}') return new Token("}", Tokenizer.RBRA2);
+            if (typea == '[') return new Token("[", Tokenizer.LBRA);
+            if (typea == ']') return new Token("]", Tokenizer.RBRA);
+            if (typea == '|') return new Token("|", Tokenizer.BAR);
 
-        if (typea == '!') return new Token("!", Tokenizer.ATOM);
-        if (typea == ',') return new Token(",", Tokenizer.OPERATOR);
+            if (typea == '!') return new Token("!", Tokenizer.ATOM);
+            if (typea == ',') return new Token(",", Tokenizer.OPERATOR);
 
-        if (typea == '.')  { // check that '.' as end token is followed by a layout character, see ISO Standard 6.4.8 endnote
+            if (typea == '.') { // check that '.' as end token is followed by a layout character, see ISO Standard 6.4.8 endnote
         	/*Castagna 06/2011*/
-            //int typeb = super.nextToken();
-        	int typeb = tokenConsume();
+                //int typeb = super.nextToken();
+                int typeb = other.tokenConsume();
         	/**/
-            if (Tokenizer.isWhite(typeb) || typeb == '%' || typeb == StreamTokenizer.TT_EOF)
-                return new Token(".", Tokenizer.END);
-            else
-            	/*Castagna 06/2011*/
-                //pushBack();
-            	tokenPushBack();
-            	/**/
-        }
-
-        boolean isNumber = false;
-
-        // variable, atom or number
-        if (typea == TT_WORD) {
-            char firstChar = svala.charAt(0);
-            // variable
-            if (Character.isUpperCase(firstChar) || '_' == firstChar)
-                return new Token(svala, Tokenizer.VARIABLE);
-
-            else if (firstChar >= '0' && firstChar <= '9')	// all words starting with 0 or 9 must be a number
-                isNumber = true;                           	// set type to number and handle later
-
-            else {                                         	// otherwise, it must be an atom (or wrong)
-            	/*Castagna 06/2011*/
-                //int typeb = super.nextToken();			// lookahead 1 to identify what type of atom
-                //pushBack();								// this does not skip whitespaces, only readNext does so.
-            	int typeb = tokenConsume();					// lookahead 1 to identify what type of atom
-                tokenPushBack();      						// this does not skip whitespaces, only readNext does so.
-            	/**/
-                if (typeb == '(')
-                    return new Token(svala, Tokenizer.ATOM | Tokenizer.FUNCTOR);
-                if (Tokenizer.isWhite(typeb))
-                    return new Token(svala, Tokenizer.ATOM | Tokenizer.OPERATOR);
-                return new Token(svala, Tokenizer.ATOM);
-            }
-        }
-
-        // quotes
-        if (typea == '\'' || typea == '\"' || typea == '`' ) {
-            int qType = typea;
-            StringBuilder quote = new StringBuilder();
-            while (true) { // run through entire quote and added body to quote buffer
-            	/*Castagna 06/2011*/
-                //typea = super.nextToken();
-            	typea = tokenConsume();
-            	/**/
-                svala = sval;
-                // continuation escape sequence
-                if (typea == '\\'){
-                	/*Castagna 06/2011*/
-                    //int typeb = super.nextToken();
-                	int typeb = tokenConsume();
-                	/**/
-                    if (typeb == '\n') // continuation escape sequence marker \\n
-                        continue;
-                    if (typeb == '\r'){
-                    	/*Castagna 06/2011*/
-                        //int typec = super.nextToken();
-                    	int typec = tokenConsume();
-                    	/**/
-                        if (typec == '\n')
-                            continue; // continuation escape sequence marker \\r\n
-                    	/*Castagna 06/2011*/
-                        //pushBack();
-                    	tokenPushBack();
-                    	/**/
-                        continue; // continuation escape sequence marker \\r
-                    }
-                    /*Castagna 06/2011*/
-                    //pushBack(); // pushback typeb
-                    tokenPushBack(); // pushback typeb
-                    /**/
-                }
-                // double '' or "" or ``
-                if (typea == qType){
-                	/*Castagna 06/2011*/
-                    //int typeb = super.nextToken();
-                	int typeb = tokenConsume();
-                	/**/
-                    if (typeb == qType) { // escaped '' or "" or ``
-                        quote.append((char) qType);
-                        continue;
-                    } else {
-                    	/*Castagna 06/2011*/
-                        //pushBack();
-                    	 tokenPushBack();
-                    	/**/
-                        break; // otherwise, break on single quote
-                    }
-                }
-                if (typea == '\n' || typea == '\r')
-                	/*Castagna 06/2011*/
-                    //throw new InvalidTermException("line break in quote not allowed (unless they are escaped \\ first)");
-                	throw new InvalidTermException("Line break in quote not allowed");
-                	/**/
-
-                if (svala != null)
-                    quote.append(svala);
+                if (Tokenizer.isWhite(typeb) || typeb == '%' || typeb == StreamTokenizer.TT_EOF)
+                    return new Token(".", Tokenizer.END);
                 else
-                /*Castagna 06/2011*/
-                {
-                    if (typea < 0)
-						throw new InvalidTermException("Invalid string");
-                	
-                	quote.append((char) typea);
+            	/*Castagna 06/2011*/
+                    //pushBack();
+                    other.tokenPushBack();
+            	/**/
+            }
+
+            boolean isNumber = false;
+
+            // variable, atom or number
+            if (typea == other.TT_WORD) {
+                char firstChar = svala.charAt(0);
+                // variable
+                if (Character.isUpperCase(firstChar) || '_' == firstChar)
+                    return new Token(svala, Tokenizer.VARIABLE);
+
+                else if (firstChar >= '0' && firstChar <= '9')    // all words starting with 0 or 9 must be a number
+                    isNumber = true;                            // set type to number and handle later
+
+                else {                                            // otherwise, it must be an atom (or wrong)
+            	/*Castagna 06/2011*/
+                    //int typeb = super.nextToken();			// lookahead 1 to identify what type of atom
+                    //pushBack();								// this does not skip whitespaces, only readNext does so.
+                    int typeb = other.tokenConsume();                    // lookahead 1 to identify what type of atom
+                    other.tokenPushBack();                            // this does not skip whitespaces, only readNext does so.
+            	/**/
+                    if (typeb == '(')
+                        return new Token(svala, Tokenizer.ATOM | Tokenizer.FUNCTOR);
+                    if (Tokenizer.isWhite(typeb))
+                        return new Token(svala, Tokenizer.ATOM | Tokenizer.OPERATOR);
+                    return new Token(svala, Tokenizer.ATOM);
                 }
-                /**/
             }
 
-            String quoteBody = quote.toString();
+            // quotes
+            if (typea == '\'' || typea == '\"' || typea == '`') {
+                int qType = typea;
+                StringBuilder quote = new StringBuilder();
+                while (true) { // run through entire quote and added body to quote buffer
+            	/*Castagna 06/2011*/
+                    //typea = super.nextToken();
+                    typea = other.tokenConsume();
+            	/**/
+                    svala = other.sval;
+                    // continuation escape sequence
+                    if (typea == '\\') {
+                	/*Castagna 06/2011*/
+                        //int typeb = super.nextToken();
+                        int typeb = other.tokenConsume();
+                	/**/
+                        if (typeb == '\n') // continuation escape sequence marker \\n
+                            continue;
+                        if (typeb == '\r') {
+                    	/*Castagna 06/2011*/
+                            //int typec = super.nextToken();
+                            int typec = other.tokenConsume();
+                    	/**/
+                            if (typec == '\n')
+                                continue; // continuation escape sequence marker \\r\n
+                    	/*Castagna 06/2011*/
+                            //pushBack();
+                            other.tokenPushBack();
+                    	/**/
+                            continue; // continuation escape sequence marker \\r
+                        }
+                    /*Castagna 06/2011*/
+                        //pushBack(); // pushback typeb
+                        other.tokenPushBack(); // pushback typeb
+                    /**/
+                    }
+                    // double '' or "" or ``
+                    if (typea == qType) {
+                	/*Castagna 06/2011*/
+                        //int typeb = super.nextToken();
+                        int typeb = other.tokenConsume();
+                	/**/
+                        if (typeb == qType) { // escaped '' or "" or ``
+                            quote.append((char) qType);
+                            continue;
+                        } else {
+                    	/*Castagna 06/2011*/
+                            //pushBack();
+                            other.tokenPushBack();
+                    	/**/
+                            break; // otherwise, break on single quote
+                        }
+                    }
+                    if (typea == '\n' || typea == '\r')
+                	/*Castagna 06/2011*/
+                        //throw new InvalidTermException("line break in quote not allowed (unless they are escaped \\ first)");
+                        throw new InvalidTermException("Line break in quote not allowed");
+                	/**/
 
-            qType = qType == '\'' ? SQ_SEQUENCE : qType == '\"' ? DQ_SEQUENCE : SQ_SEQUENCE;
-            if (qType == SQ_SEQUENCE) {
-                if (Parser.isAtom(quoteBody))
-                    qType = ATOM;
+                    if (svala != null)
+                        quote.append(svala);
+                    else
+                /*Castagna 06/2011*/ {
+                        if (typea < 0)
+                            throw new InvalidTermException("Invalid string");
+
+                        quote.append((char) typea);
+                    }
+                /**/
+                }
+
+                String quoteBody = quote.toString();
+
+                qType = qType == '\'' ? other.SQ_SEQUENCE : qType == '\"' ? other.DQ_SEQUENCE : other.SQ_SEQUENCE;
+                if (qType == other.SQ_SEQUENCE) {
+                    if (Parser.isAtom(quoteBody))
+                        qType = other.ATOM;
                 /*Castagna 06/2011*/
-                //int typeb = super.nextToken(); // lookahead 1 to identify what type of quote
-                //pushBack();                    // nextToken() does not skip whitespaces, only readNext does so.
-                int typeb = tokenConsume(); // lookahead 1 to identify what type of quote
-                tokenPushBack();                    // nextToken() does not skip whitespaces, only readNext does so.
+                    //int typeb = super.nextToken(); // lookahead 1 to identify what type of quote
+                    //pushBack();                    // nextToken() does not skip whitespaces, only readNext does so.
+                    int typeb = other.tokenConsume(); // lookahead 1 to identify what type of quote
+                    other.tokenPushBack();                    // nextToken() does not skip whitespaces, only readNext does so.
                 /**/
-                if (typeb == '(')
-                    return new Token(quoteBody, qType | FUNCTOR);
+                    if (typeb == '(')
+                        return new Token(quoteBody, qType | other.FUNCTOR);
+                }
+                return new Token(quoteBody, qType);
             }
-            return new Token(quoteBody, qType);
-        }
 
-        // symbols
-        if (Arrays.binarySearch(Tokenizer.GRAPHIC_CHARS, (char) typea) >= 0) {
+            // symbols
+            if (Arrays.binarySearch(Tokenizer.GRAPHIC_CHARS, (char) typea) >= 0) {
 
             /*Castagna 06/2011*/
-        	// the symbols are parsed individually by the super.nextToken(), so accumulate symbollist
-        	// the symbols are parsed individually by the tokenConsume(), so accumulate symbollist
+                // the symbols are parsed individually by the super.nextToken(), so accumulate symbollist
+                // the symbols are parsed individually by the tokenConsume(), so accumulate symbollist
         	/**/
 
-            symbols.setLength(0);
-            int typeb = typea;
-            // String svalb = null;
-            while (Arrays.binarySearch(Tokenizer.GRAPHIC_CHARS, (char) typeb) >= 0) {
-                symbols.append((char) typeb);
+                other.symbols.setLength(0);
+                int typeb = typea;
+                // String svalb = null;
+                while (Arrays.binarySearch(Tokenizer.GRAPHIC_CHARS, (char) typeb) >= 0) {
+                    other.symbols.append((char) typeb);
                 /*Castagna 06/2011*/
-            	//typeb = super.nextToken();
-                typeb = tokenConsume();
+                    //typeb = super.nextToken();
+                    typeb = other.tokenConsume();
                 /**/
-                // svalb = sval;
-            }
+                    // svalb = sval;
+                }
             /*Castagna 06/2011*/
-        	//pushBack();
-            tokenPushBack();
+                //pushBack();
+                other.tokenPushBack();
             /**/
-            
-            // special symbols: unary + and unary -
+
+                // special symbols: unary + and unary -
 //            try {
 //                if (symbols.length() == 1 && typeb == TT_WORD && java.lang.Long.parseLong(svalb) > 0) {
 //                    if (typea == '+')                         //todo, issue of handling + and -. I don't think this is ISO..
@@ -414,123 +435,124 @@ public class Tokenizer extends StreamTokenizer implements Serializable {
 //                }                                             //ps. the rule why the number isn't returned right away, but through nextToken(), is because the number might be for instance a float
 //            } catch (NumberFormatException e) {
 //            }
-            return new Token(symbols.toString(), Tokenizer.OPERATOR);
-        }
+                return new Token(other.symbols.toString(), Tokenizer.OPERATOR);
+            }
 
-        // numbers: 1. integer, 2. float
-        if (isNumber) {
-            try { // the various parseInt checks will throw exceptions when parts of numbers are written illegally
+            // numbers: 1. integer, 2. float
+            if (isNumber) {
+                try { // the various parseInt checks will throw exceptions when parts of numbers are written illegally
 
-                // 1.a. complex integers
-                if (svala.startsWith("0")) {
-                    if (svala.indexOf('b') == 1)
-                        return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 2)), Tokenizer.INTEGER); // try binary
-                    if (svala.indexOf('o') == 1)
-                        return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 8)), Tokenizer.INTEGER); // try octal
-                    if (svala.indexOf('x') == 1)
-                        return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 16)), Tokenizer.INTEGER); // try hex
-                }
+                    // 1.a. complex integers
+                    if (svala.startsWith("0")) {
+                        if (svala.indexOf('b') == 1)
+                            return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 2)), Tokenizer.INTEGER); // try binary
+                        if (svala.indexOf('o') == 1)
+                            return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 8)), Tokenizer.INTEGER); // try octal
+                        if (svala.indexOf('x') == 1)
+                            return new Token(String.valueOf(java.lang.Long.parseLong(svala.substring(2), 16)), Tokenizer.INTEGER); // try hex
+                    }
 
-                // lookahead 1
+                    // lookahead 1
                 /*Castagna 06/2011*/
-            	//int typeb = super.nextToken();
-                int typeb = tokenConsume();
+                    //int typeb = super.nextToken();
+                    int typeb = other.tokenConsume();
                 /**/
-                String svalb = sval;
+                    String svalb = other.sval;
 
-                // 1.b ordinary integers
-                if (typeb != '.' && typeb != '\'') { // i.e. not float or character constant
+                    // 1.b ordinary integers
+                    if (typeb != '.' && typeb != '\'') { // i.e. not float or character constant
                 	 /*Castagna 06/2011*/
-                	//pushBack(); // lookahead 0
-                	tokenPushBack(); // lookahead 0
+                        //pushBack(); // lookahead 0
+                        other.tokenPushBack(); // lookahead 0
                 	/**/
-                    return new Token(String.valueOf(java.lang.Long.parseLong(svala)), Tokenizer.INTEGER);
-                }
+                        return new Token(String.valueOf(java.lang.Long.parseLong(svala)), Tokenizer.INTEGER);
+                    }
 
-                // 1.c character code constant
-                if (typeb == '\'' && "0".equals(svala)) {
+                    // 1.c character code constant
+                    if (typeb == '\'' && "0".equals(svala)) {
                 	 /*Castagna 06/2011*/
-                	//int typec = super.nextToken(); // lookahead 2
-                	int typec = tokenConsume(); // lookahead 2
+                        //int typec = super.nextToken(); // lookahead 2
+                        int typec = other.tokenConsume(); // lookahead 2
                 	/**/
-                    String svalc = sval;
-                    int intVal;
-                    if ((intVal = isCharacterCodeConstantToken(typec, svalc)) != -1)
-                        return new Token(String.valueOf(intVal), Tokenizer.INTEGER);
+                        String svalc = other.sval;
+                        int intVal;
+                        if ((intVal = other.isCharacterCodeConstantToken(typec, svalc)) != -1)
+                            return new Token(String.valueOf(intVal), Tokenizer.INTEGER);
 
-                    // this is an invalid character code constant int
+                        // this is an invalid character code constant int
                     /*Castagna 06/2011*/
-                	//throw new InvalidTermException("Character code constant starting with 0'<X> at line: " + super.lineno() + " cannot be recognized.");
-                    throw new InvalidTermException("Character code constant starting with 0'<X> cannot be recognized.");
+                        //throw new InvalidTermException("Character code constant starting with 0'<X> at line: " + super.lineno() + " cannot be recognized.");
+                        throw new InvalidTermException("Character code constant starting with 0'<X> cannot be recognized.");
                     /**/
-                }
+                    }
 
-                // 2.a check that the value of the word prior to period is a valid long
-                java.lang.Long.parseLong(svala); // throws an exception if not
+                    // 2.a check that the value of the word prior to period is a valid long
+                    java.lang.Long.parseLong(svala); // throws an exception if not
 
-                // 2.b first int is followed by a period
-                if (typeb != '.')
+                    // 2.b first int is followed by a period
+                    if (typeb != '.')
                 	 /*Castagna 06/2011*/
-                	//throw new InvalidTermException("A number starting with 0-9 cannot be rcognized as an int and does not have a fraction '.' at line: " + super.lineno() );
-                	throw new InvalidTermException("A number starting with 0-9 cannot be rcognized as an int and does not have a fraction '.'");
+                        //throw new InvalidTermException("A number starting with 0-9 cannot be rcognized as an int and does not have a fraction '.' at line: " + super.lineno() );
+                        throw new InvalidTermException("A number starting with 0-9 cannot be rcognized as an int and does not have a fraction '.'");
                 	/**/
 
-                // lookahead 2
+                    // lookahead 2
                 /*Castagna 06/2011*/
-            	//int typec = super.nextToken();
-                int typec = tokenConsume();
+                    //int typec = super.nextToken();
+                    int typec = other.tokenConsume();
                 /**/
-                String svalc = sval;
+                    String svalc = other.sval;
 
-                // 2.c check that the next token after '.' is a possible fraction
-                if (typec != TT_WORD) { // if its not, the period is an End period
+                    // 2.c check that the next token after '.' is a possible fraction
+                    if (typec != other.TT_WORD) { // if its not, the period is an End period
                 	/*Castagna 06/2011*/
-                	//pushBack(); // pushback 1 the token after period
-                	tokenPushBack(); // pushback 1 the token after period
+                        //pushBack(); // pushback 1 the token after period
+                        other.tokenPushBack(); // pushback 1 the token after period
                 	/**/
-                    pushBack2 = new PushBack(typeb, svalb); // pushback 2 the period token
-                    return new Token(svala, INTEGER); // return what must be an int
-                }
+                        other.pushBack2 = new PushBack(typeb, svalb); // pushback 2 the period token
+                        return new Token(svala, other.INTEGER); // return what must be an int
+                    }
 
-                // 2.d checking for exponent
-                int exponent = svalc.indexOf('E');
-                if (exponent == -1)
-                    exponent = svalc.indexOf('e');
+                    // 2.d checking for exponent
+                    int exponent = svalc.indexOf('E');
+                    if (exponent == -1)
+                        exponent = svalc.indexOf('e');
 
-                if (exponent >= 1) {                                  // the float must have a valid exponent
-                    if (exponent == svalc.length() - 1) {             // the exponent must be signed exponent
+                    if (exponent >= 1) {                                  // the float must have a valid exponent
+                        if (exponent == svalc.length() - 1) {             // the exponent must be signed exponent
                     	/*Castagna 06/2011*/
-                    	//int typeb2 = super.nextToken();
-                    	int typeb2 = tokenConsume();
+                            //int typeb2 = super.nextToken();
+                            int typeb2 = other.tokenConsume();
                     	/**/
-                        if (typeb2 == '+' || typeb2 == '-') {
+                            if (typeb2 == '+' || typeb2 == '-') {
                         	/*Castagna 06/2011*/
-                        	//int typec2 = super.nextToken();
-                        	int typec2 = tokenConsume();
+                                //int typec2 = super.nextToken();
+                                int typec2 = other.tokenConsume();
                         	/**/
-                            String svalc2 = sval;
-                            if (typec2 == TT_WORD){
-                                // verify the remaining parts of the float and return
-                                java.lang.Long.parseLong(svalc.substring(0, exponent));
-                                java.lang.Integer.parseInt(svalc2);
-                                return new Token(svala + '.' + svalc + (char) typeb2 + svalc2, Tokenizer.FLOAT);
+                                String svalc2 = other.sval;
+                                if (typec2 == other.TT_WORD) {
+                                    // verify the remaining parts of the float and return
+                                    java.lang.Long.parseLong(svalc.substring(0, exponent));
+                                    Integer.parseInt(svalc2);
+                                    return new Token(svala + '.' + svalc + (char) typeb2 + svalc2, Tokenizer.FLOAT);
+                                }
                             }
                         }
                     }
-                }
-                // 2.e verify lastly that ordinary floats and unsigned exponent floats are Java legal and return them
-                java.lang.Double.parseDouble(svala + '.' + svalc);
-                return new Token(svala + '.' + svalc, Tokenizer.FLOAT);
+                    // 2.e verify lastly that ordinary floats and unsigned exponent floats are Java legal and return them
+                    java.lang.Double.parseDouble(svala + '.' + svalc);
+                    return new Token(svala + '.' + svalc, Tokenizer.FLOAT);
 
-            } catch (NumberFormatException e) {
-                // TODO return more info on what was wrong with the number given
+                } catch (NumberFormatException e) {
+                    // TODO return more info on what was wrong with the number given
             	/*Castagna 06/2011*/
-            	//throw new InvalidTermException("A term starting with 0-9 cannot be parsed as a number at line: "+ lineno());
-            	throw new InvalidTermException("A term starting with 0-9 cannot be parsed as a number");
+                    //throw new InvalidTermException("A term starting with 0-9 cannot be parsed as a number at line: "+ lineno());
+                    throw new InvalidTermException("A term starting with 0-9 cannot be parsed as a number");
             	/**/
+                }
             }
+            throw new InvalidTermException("Unknown Unicode character: " + typea + "  (" + svala + ')');
         }
-        throw new InvalidTermException("Unknown Unicode character: " + typea + "  (" + svala + ')');
     }
 
     /*Castagna 06/2011*/

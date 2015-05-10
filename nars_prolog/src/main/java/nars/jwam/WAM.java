@@ -986,22 +986,28 @@ public class WAM {
     ///////////////////////// 
     // Follow a trail of references until either the variable is bound or you reach an unbound variable.
     public int deref(int address) {
-        int value = cell_value(storage[address]);					// Get the cell value
-        if (cell_tag(storage[address]) == REF && value != address) // If tag is REF and is not unbound...
-        {
-            return deref(value);									// ... then return the dereffered value
+        while (true) {
+            int value = cell_value(storage[address]);                    // Get the cell value
+            if (cell_tag(storage[address]) == REF && value != address) // If tag is REF and is not unbound...
+            {
+                address = value;
+                continue;
+            }
+            return address;                                                // Otherwise return the argument address
         }
-        return address;												// Otherwise return the argument address
     }
 
     // Follow a trail of references until either the variable is bound or you reach an unbound variable.
     public static int external_deref(int[] source, int address) {
-        int value = cell_value(source[address]);					// Get the cell value
-        if (cell_tag(source[address]) == REF && value != address) // If tag is REF and is not unbound...
-        {
-            return external_deref(source, value);									// ... then return the dereffered value
+        while (true) {
+            int value = cell_value(source[address]);                    // Get the cell value
+            if (cell_tag(source[address]) == REF && value != address) // If tag is REF and is not unbound...
+            {
+                address = value;
+                continue;
+            }
+            return address;                                                // Otherwise return the argument address
         }
-        return address;												// Otherwise return the argument address
     }
 
     // Bind two addresses, one of them has to be an unbound REF. This is assumed in the method so check for this property before calling.

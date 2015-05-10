@@ -6,7 +6,7 @@ import java.util.EventObject;
 @SuppressWarnings("serial")
 public class ExceptionEvent extends EventObject{
 
-	private String msg;
+	private final String msg;
 
 	public ExceptionEvent(Object source, String msg_) {
 		super(source);

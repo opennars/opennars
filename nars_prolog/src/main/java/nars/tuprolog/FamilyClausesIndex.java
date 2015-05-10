@@ -8,15 +8,15 @@ import java.util.List;
 
 /**
  * <code>FamilyClausesIndex</code> enables family clauses indexing
- * in {@link ClauseDatabase}.
+ * in {@link MutableClauses}.
  *
  * @author Paolo Contessi
  * @since 2.2
  */
 class FamilyClausesIndex<K extends Comparable<? super K>> {
-    private final ListMultimap<K, ClauseInfo> data;
+    private final ListMultimap<K, Clause> data;
 
-    final List<ClauseInfo> preShared = new ArrayList();
+    final List<Clause> preShared = new ArrayList();
 
     //extends RBTree<K, List<ClauseInfo>> {
         //extends HashMap<K, List<ClauseInfo>> {
@@ -54,12 +54,12 @@ class FamilyClausesIndex<K extends Comparable<? super K>> {
      * Se l'indice non ha nodi?
      * Se aggiungo un nuovo nodo
      */
-    public void insertAsShared(ClauseInfo clause, boolean first) {
+    public void insertAsShared(Clause clause, boolean first) {
 
         if (data.isEmpty())
             preShared.add(clause);
 
-        List<ClauseInfo> varsClauses;
+        List<Clause> varsClauses;
         for (K k : data.keySet()) {
             varsClauses = data.get(k);
             if (first) {
@@ -81,9 +81,9 @@ class FamilyClausesIndex<K extends Comparable<? super K>> {
      * @param clause The value to be binded to the given key
      * @param first  If the clause must be binded as first or last element
      */
-    public void insert(K key, ClauseInfo clause, boolean first) {
+    public void insert(K key, Clause clause, boolean first) {
         if (data.containsKey(key)) {
-            List<ClauseInfo> l = data.get(key);
+            List<Clause> l = data.get(key);
             if (first) {
                 l.add(0, clause);
             } else {
@@ -96,7 +96,7 @@ class FamilyClausesIndex<K extends Comparable<? super K>> {
         }
 
         if (!preShared.isEmpty()) {
-            for (ClauseInfo i : preShared)
+            for (Clause i : preShared)
                 insertAsShared(i, true); //to add prior to the one just added above
             preShared.clear();
         }
@@ -107,11 +107,11 @@ class FamilyClausesIndex<K extends Comparable<? super K>> {
      *
      * @param key The key
      */
-    public void remove(K key, ClauseInfo clause) {
+    public void remove(K key, Clause clause) {
         data.remove(key, clause);
     }
 
-    public void removeShared(ClauseInfo clause) {
+    public void removeShared(Clause clause) {
         if (preShared.isEmpty()) {
             for (K k : data.keySet()) {
                 data.get(k).remove(clause);
@@ -129,8 +129,8 @@ class FamilyClausesIndex<K extends Comparable<? super K>> {
      * @param key The key
      * @return The related clauses
      */
-    public List<ClauseInfo> get(K key) {
-        List<ClauseInfo> n = data.get(key);
+    public List<Clause> get(K key) {
+        List<Clause> n = data.get(key);
         if (n != null && !n.isEmpty())
             return n;
 

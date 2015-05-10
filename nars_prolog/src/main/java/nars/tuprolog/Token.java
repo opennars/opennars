@@ -27,9 +27,9 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 class Token implements Serializable {
     // token textual representation
-    String seq;
+    final String seq;
     // token type and attribute
-    int type;
+    final int type;
     
     public Token(String seq_,int type_) {
         seq = seq_;

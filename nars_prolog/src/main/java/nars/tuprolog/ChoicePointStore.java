@@ -50,9 +50,14 @@ public class ChoicePointStore {
     protected boolean existChoicePoint() {
         if (pointer == null) return false;
         ClauseStore clauses;
+
+        //v1 and v2 will be re-used during the loop
+        ArrayList<nars.tuprolog.Var> v1 = new ArrayList(), v2 = new ArrayList();
+        long now = System.currentTimeMillis();
+
         do {
             clauses = pointer.compatibleGoals;
-            if (clauses.existCompatibleClause()) return true;
+            if (clauses.existCompatibleClause(v1, v2, now)) return true;
             pointer = pointer.prevChoicePointContext;
         } while (pointer != null);            
         return false;

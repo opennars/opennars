@@ -208,38 +208,41 @@ public final class JoProlog {
     }
 
     private static Term eval(Term term, HashMap<String, Term> env) throws ParseException {
-        if (Util.getOperators().contains(term.getPred())) {
-            Integer a = Integer.parseInt(eval(term.getArgs().get(0), env).getPred());
-            Integer b = Integer.parseInt(eval(term.getArgs().get(1), env).getPred());
-            if (term.getPred().equals("+")) {
-                return new Term(Integer.toString(a + b), null);
+        while (true) {
+            if (Util.getOperators().contains(term.getPred())) {
+                Integer a = Integer.parseInt(eval(term.getArgs().get(0), env).getPred());
+                Integer b = Integer.parseInt(eval(term.getArgs().get(1), env).getPred());
+                if (term.getPred().equals("+")) {
+                    return new Term(Integer.toString(a + b), null);
+                }
+                if (term.getPred().equals("-")) {
+                    return new Term(Integer.toString(a - b), null);
+                }
+                if (term.getPred().equals("*")) {
+                    return new Term(Integer.toString(a * b), null);
+                }
             }
-            if (term.getPred().equals("-")) {
-                return new Term(Integer.toString(a - b), null);
+            // TODO: How to set types for lt, eq, original uses booleans
+            if (isConstant(term)) {
+                return term;
             }
-            if (term.getPred().equals("*")) {
-                return new Term(Integer.toString(a * b), null);
+            if (isVariable(term)) {
+                Term ans = env.get(term.getPred());
+                if (ans == null) {
+                    return null;
+                }
+                term = ans;
+                continue;
             }
+            ArrayList<Term> args = new ArrayList<>();
+            for (Term arg : term.getArgs()) {
+                Term a = eval(arg, env);
+                if (a == null) {
+                    return null;
+                }
+                args.add(a);
+            }
+            return new Term(term.getPred(), args);
         }
-        // TODO: How to set types for lt, eq, original uses booleans
-        if (isConstant(term)) {
-            return term;
-        }
-        if (isVariable(term)) {
-            Term ans = env.get(term.getPred());
-            if (ans == null) {
-                return null;
-            }
-            return eval(ans, env);
-        }
-        ArrayList<Term> args = new ArrayList<>();
-        for (Term arg : term.getArgs()) {
-            Term a = eval(arg, env);
-            if (a == null) {
-                return null;
-            }
-            args.add(a);
-        }
-        return new Term(term.getPred(), args);
     }
 }

@@ -27,4 +27,11 @@ package nars.tuprolog;
  *
  */
 @SuppressWarnings("serial")
-public class NoMoreSolutionException extends PrologException {}
+public class NoMoreSolutionException extends PrologException {
+
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        //no stack trace necessary here so avoid building it
+        return null;
+    }
+}

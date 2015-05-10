@@ -17,6 +17,9 @@
  */
 package nars.tuprolog;
 
+import nars.nal.NALOperator;
+import nars.nal.term.Term;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +29,15 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
-public class Int extends Number {
+public class Int extends PNum {
     
-   private int      value;
+    final private int      value;
     
     public Int(int v) {
         value = v;
     }
-    
+
+
     /**
      *  Returns the value of the Integer as int
      *
@@ -133,16 +137,16 @@ public class Int extends Number {
      */
     public boolean isGreater(Term t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).intValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).intValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
     }
     public boolean isGreaterRelink(Term t, ArrayList<String> vorder) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            return value>((Number)t).intValue();
+        if (t instanceof PNum) {
+            return value>((PNum)t).intValue();
         } else if (t instanceof Struct) {
             return false;
         } else return t instanceof Var;
@@ -153,8 +157,8 @@ public class Int extends Number {
      */
     public boolean isEqual(Term t) {
         t = t.getTerm();
-        if (t instanceof Number) {
-            Number n = (Number) t;
+        if (t instanceof PNum) {
+            PNum n = (PNum) t;
             if (!n.isInteger())
                 return false;
             return (long) value == n.longValue();
@@ -169,28 +173,26 @@ public class Int extends Number {
     public boolean unify(List<Var> vl1, List<Var> vl2, Term t) {
         t = t.getTerm();
         if (t instanceof Var) {
-            return t.unify(vl2, vl1, this);
-        } else if (t instanceof Number && ((Number) t).isInteger()) {
-            return value == ((Number) t).intValue();
+            return ((Var)t).unify(vl2, vl1, this);
+        } else if (t instanceof PNum && ((PNum) t).isInteger()) {
+            return value == ((PNum) t).intValue();
         } else {
             return false;
         }
     }
 
+
+
     @Override
-    public int hashCode() {
-        return value;
+    public PTerm clone() {
+        return this;
     }
-    
+
     public String toString() {
         return Integer.toString(value);
     }
 
-    /**
-     * @author Paolo Contessi
-     */
-    public int compareTo(Number o) {
-        return (new java.lang.Integer(value)).compareTo(o.intValue());
-    }
+
+
     
 }

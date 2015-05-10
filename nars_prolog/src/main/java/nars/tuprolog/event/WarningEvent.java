@@ -16,6 +16,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package nars.tuprolog.event;
+
+import java.util.Arrays;
 import java.util.EventObject;
 
 /**
@@ -29,11 +31,11 @@ public class WarningEvent extends EventObject {
     /**
 	 * event description
 	 */
-    private String msg;
+    private final String msg;
 
     public WarningEvent(Object source,String msg_){
         super(source);
-        msg=msg_;
+        msg=msg_; // + " " + Arrays.toString( Thread.currentThread().getStackTrace() );
     }
 
     public String getMsg(){

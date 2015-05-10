@@ -9,16 +9,22 @@ import nars.tuprolog.event.SpyListener;
  * @author  ale
  */
 public interface IProlog {
-	
+
+	Libraries getLibraries();
+
 	/**
 	 * Gets the component managing operators
 	 */
-	IOperatorManager getOperatorManager();
-		
+	IOperators getOperators();
+
+	Flags getFlags();
+
+	Theories getTheories();
+
 	/**
 	 * Gets the component managing primitives
 	 */
-	IPrimitiveManager getPrimitiveManager();
+	IPrimitives getPrimitives();
 	
 	/**
 	 * Gets current theory
@@ -119,7 +125,7 @@ public interface IProlog {
 	 * @param term      the term to be represented as a string
 	 * @return the string representing the term
 	 */
-	String toString(Term term);
+	String toString(PTerm term);
 		
 	/**
 	 * Adds a listener to ouput events

@@ -33,13 +33,13 @@ public abstract class PrologEventAdapter implements TheoryListener, QueryListene
     }
 
     /* (non-Javadoc)
-     * @see alice.tuprolog.PrologEventListener#libraryLoaded(nars.prolog.libraryEvent)
+     * @see alice.tuprolog.PrologEventListener#libraryLoaded(nars.tuprolog.libraryEvent)
      */
     public void libraryLoaded(LibraryEvent e) {
     }
 
     /* (non-Javadoc)
-     * @see alice.tuprolog.PrologEventListener#libraryUnloaded(nars.prolog.libraryEvent)
+     * @see alice.tuprolog.PrologEventListener#libraryUnloaded(nars.tuprolog.libraryEvent)
      */
     public void libraryUnloaded(LibraryEvent e) {
     }

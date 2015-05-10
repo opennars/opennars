@@ -1,6 +1,7 @@
 package nars.tuprolog.gui.ide;
 
 import nars.tuprolog.InvalidLibraryException;
+import nars.tuprolog.Libraries;
 import nars.tuprolog.event.LibraryEvent;
 import nars.tuprolog.event.LibraryListener;
 
@@ -514,10 +515,10 @@ public class LibraryDialogFrame extends GenericFrame implements LibraryListener
         {
             try
             {
-                nars.tuprolog.LibraryManager mainLibraryManager = libraryManager.getEngine().getLibraryManager();
-            	if(mainLibraryManager.isExternalLibrary(libraryName))
+                Libraries mainLibraries = libraryManager.getEngine().getLibraries();
+            	if(mainLibraries.isExternalLibrary(libraryName))
             	{
-            		URL url = mainLibraryManager.getExternalLibraryURL(libraryName);
+            		URL url = mainLibraries.getExternalLibraryURL(libraryName);
             		if(url.getProtocol().equals("jar"))
             		{
 	            		JarURLConnection connection =

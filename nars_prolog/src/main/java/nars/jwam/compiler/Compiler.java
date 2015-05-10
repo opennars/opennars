@@ -184,20 +184,22 @@ public class Compiler {
     }
 
     public static int getTopFN(int[] heap, int cursor, Strings strings) {
-        int tag = WAM.cell_tag(heap[cursor]);
-        if (tag == WAM.STR) {
-            int addr = WAM.cell_value(heap[cursor]); 								// Get functor address
-            int r = WAM.cell_value(heap[addr]);
-            String functor = strings.get(r); 									// Get functor 
-            if (functor.startsWith(":-/")) {
-                return getTopFN(heap, addr + 1, strings); 	// Rule with a body, so start at first argument
+        while (true) {
+            int tag = WAM.cell_tag(heap[cursor]);
+            if (tag == WAM.STR) {
+                int addr = WAM.cell_value(heap[cursor]);                                // Get functor address
+                int r = WAM.cell_value(heap[addr]);
+                String functor = strings.get(r);                                    // Get functor
+                if (functor.startsWith(":-/")) {
+                    cursor = addr + 1;
+                } else {
+                    return r;                                                            // Otherwise a fact, is its own and only bodypart
+                }
+            } else if (tag == WAM.CON) {
+                return WAM.cell_value(heap[cursor]) << 7;
             } else {
-                return r; 															// Otherwise a fact, is its own and only bodypart
+                return Integer.MIN_VALUE;
             }
-        } else if (tag == WAM.CON) {
-            return WAM.cell_value(heap[cursor]) << 7;
-        } else {
-            return Integer.MIN_VALUE;
         }
     }
 

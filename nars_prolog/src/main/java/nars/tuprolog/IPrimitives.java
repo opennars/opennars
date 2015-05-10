@@ -17,6 +17,8 @@
  */
 package nars.tuprolog;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,6 @@ public interface IPrimitives {
     /**
      * gets the list of primitives defined in the library
      */
-    Map<Integer,List<PrimitiveInfo>> getPrimitives();
+    IntObjectHashMap<List<PrimitiveInfo>> getPrimitives();
     
 }

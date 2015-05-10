@@ -24,14 +24,14 @@ public class JavaException extends Throwable {
         // java_exception
         String java_exception = e.getClass().getName();
         // Cause
-        Term causeTerm = null;
+        PTerm causeTerm = null;
         Throwable cause = e.getCause();
         if (cause != null)
             causeTerm = new Struct(cause.toString());
         else
             causeTerm = new Int(0);
         // Message
-        Term messageTerm = null;
+        PTerm messageTerm = null;
         String message = e.getMessage();
         if (message != null)
             messageTerm = new Struct(message);
