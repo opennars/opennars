@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
 
 /**
@@ -16,15 +16,15 @@ import org.projog.core.term.TermUtils;
  * This class provides a mechanism for "plugging in" or "injecting" implementations of {@link Calculatable} at runtime.
  * This mechanism provides an easy way to configure and extend the arithmetic operations supported by Projog.
  * <p>
- * Each {@link org.projog.core.KnowledgeBase} has a single unique {@code CalculatableFactory} instance.
+ * Each {@link KB} has a single unique {@code CalculatableFactory} instance.
  */
 public final class Calculatables {
-   private final KnowledgeBase kb;
+   private final KB kb;
    private final Object lock = new Object();
    private final Map<PredicateKey, String> calculatableClassNames = new HashMap<>();
    private final Map<PredicateKey, Calculatable> calculatableInstances = new HashMap<>();
 
-   public Calculatables(KnowledgeBase kb) {
+   public Calculatables(KB kb) {
       this.kb = kb;
    }
 
@@ -68,13 +68,13 @@ public final class Calculatables {
     * @throws ProjogException if the specified term does not represent an arithmetic expression
     */
    public Numeric getNumeric(PTerm t) {
-      TermType type = t.type();
+      PrologOperator type = t.type();
       switch (type) {
          case FRACTION:
          case INTEGER:
             return TermUtils.castToNumeric(t);
          case STRUCTURE:
-            return calculate(t, t.getArgs());
+            return calculate(t, t.terms());
          case ATOM:
             return calculate(t, TermUtils.EMPTY_ARRAY);
          default:

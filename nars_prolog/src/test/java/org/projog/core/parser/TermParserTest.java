@@ -8,32 +8,32 @@ import static org.junit.Assert.fail;
 import static org.projog.TestUtils.parseTerm;
 
 import org.junit.Test;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.DecimalFraction;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PList;
 import org.projog.core.term.ListFactory;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PrologOperator;
+import org.projog.core.term.PVar;
 
 public class TermParserTest {
    @Test
    public void testAtoms() {
-      testNonVariableTerm(new Atom("x"), "x");
-      testNonVariableTerm(new Atom("xyz"), "xyz");
-      testNonVariableTerm(new Atom("xYz"), "xYz");
-      testNonVariableTerm(new Atom("xYZ"), "xYZ");
-      testNonVariableTerm(new Atom("x_1"), "x_1");
-      testNonVariableTerm(new Atom("xttRytf_uiu"), "xttRytf_uiu");
-      testNonVariableTerm(new Atom("Abc"), "'Abc'");
-      testNonVariableTerm(new Atom("a B 1.2,3;4 !:$% c"), "'a B 1.2,3;4 !:$% c'");
-      testNonVariableTerm(new Atom("'"), "''''");
-      testNonVariableTerm(new Atom("Ab'c"), "'Ab''c'");
-      testNonVariableTerm(new Atom("A'b''c"), "'A''b''''c'");
-      testNonVariableTerm(new Atom("~"), "~");
+      testNonVariableTerm(new PAtom("x"), "x");
+      testNonVariableTerm(new PAtom("xyz"), "xyz");
+      testNonVariableTerm(new PAtom("xYz"), "xYz");
+      testNonVariableTerm(new PAtom("xYZ"), "xYZ");
+      testNonVariableTerm(new PAtom("x_1"), "x_1");
+      testNonVariableTerm(new PAtom("xttRytf_uiu"), "xttRytf_uiu");
+      testNonVariableTerm(new PAtom("Abc"), "'Abc'");
+      testNonVariableTerm(new PAtom("a B 1.2,3;4 !:$% c"), "'a B 1.2,3;4 !:$% c'");
+      testNonVariableTerm(new PAtom("'"), "''''");
+      testNonVariableTerm(new PAtom("Ab'c"), "'Ab''c'");
+      testNonVariableTerm(new PAtom("A'b''c"), "'A''b''''c'");
+      testNonVariableTerm(new PAtom("~"), "~");
    }
 
    @Test
@@ -78,7 +78,7 @@ public class TermParserTest {
    private void testPredicate(String syntax) {
       PTerm t = parseTerm(syntax);
       assertNotNull(t);
-      assertSame(Structure.class, t.getClass());
+      assertSame(PStruct.class, t.getClass());
    }
 
    @Test
@@ -91,12 +91,12 @@ public class TermParserTest {
 
    @Test
    public void testLists() {
-      Atom a = new Atom("a");
-      Atom b = new Atom("b");
-      Atom c = new Atom("c");
-      Atom d = new Atom("d");
-      Atom e = new Atom("e");
-      Atom f = new Atom("f");
+      PAtom a = new PAtom("a");
+      PAtom b = new PAtom("b");
+      PAtom c = new PAtom("c");
+      PAtom d = new PAtom("d");
+      PAtom e = new PAtom("e");
+      PAtom f = new PAtom("f");
       testList("[a,b,c]", new PTerm[] {a, b, c}, null);
       testList("[a,b,c|d]", new PTerm[] {a, b, c}, d);
       testList("[ a, b, c | d ]", new PTerm[] {a, b, c}, d);
@@ -113,7 +113,7 @@ public class TermParserTest {
          expected = ListFactory.createList(expectedArgs, expectedTail);
       }
       PTerm actual = parseTerm(input);
-      assertSame(TermType.LIST, actual.type());
+      assertSame(PrologOperator.LIST, actual.type());
       assertTrue(actual instanceof PList);
       assertTrue(expected.strictEquals(actual));
    }
@@ -143,9 +143,9 @@ public class TermParserTest {
       testPredicate(".(1)");
       testPredicate(".(1, 2, 3)");
 
-      Atom a = new Atom("a");
-      Atom b = new Atom("b");
-      Atom c = new Atom("c");
+      PAtom a = new PAtom("a");
+      PAtom b = new PAtom("b");
+      PAtom c = new PAtom("c");
       testList(".(a, b)", new PTerm[] {a}, b);
       testList(".(a, .(b, c))", new PTerm[] {a, b}, c);
       testList(".(a, .(b, .(c, [])))", new PTerm[] {a, b, c}, EmptyList.EMPTY_LIST);
@@ -155,18 +155,18 @@ public class TermParserTest {
 
    @Test
    public void testVariables() {
-      testVariableTerm(new Variable("X"), "X");
-      testVariableTerm(new Variable("XYZ"), "XYZ");
-      testVariableTerm(new Variable("Xyz"), "Xyz");
-      testVariableTerm(new Variable("XyZ"), "XyZ");
-      testVariableTerm(new Variable("X_1"), "X_1");
+      testVariableTerm(new PVar("X"), "X");
+      testVariableTerm(new PVar("XYZ"), "XYZ");
+      testVariableTerm(new PVar("Xyz"), "Xyz");
+      testVariableTerm(new PVar("XyZ"), "XyZ");
+      testVariableTerm(new PVar("X_1"), "X_1");
    }
 
    @Test
    public void testAnonymousVariable() {
-      testVariableTerm(new Variable("_"), "_");
-      testVariableTerm(new Variable("_123"), "_123");
-      testVariableTerm(new Variable("_Test"), "_Test");
+      testVariableTerm(new PVar("_"), "_");
+      testVariableTerm(new PVar("_123"), "_123");
+      testVariableTerm(new PVar("_Test"), "_Test");
    }
 
    private void testNonVariableTerm(PTerm expected, String input) {

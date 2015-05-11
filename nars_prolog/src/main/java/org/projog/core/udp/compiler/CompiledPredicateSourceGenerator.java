@@ -14,12 +14,13 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.MultipleRulesWithMultipleImmutableArgumentsPredicate;
 import org.projog.core.udp.MultipleRulesWithSingleImmutableArgumentPredicate;
 
@@ -282,7 +283,7 @@ final class CompiledPredicateSourceGenerator {
 
    /**
     * Constructs an implementation of
-    * {@link org.projog.core.PredicateFactory#setKnowledgeBase(org.projog.core.KnowledgeBase)}.
+    * {@link org.projog.core.PredicateFactory#setKB(KB)}.
     */
    private void outputSetKnowledgeBaseMethod() {
       w.beginMethod("public final void setKnowledgeBase(KnowledgeBase kb)");
@@ -622,13 +623,13 @@ final class CompiledPredicateSourceGenerator {
       PTerm consequent = currentClause().getConsequent();
       for (int i = 0; i < factMetaData().getNumberArguments(); i++) {
          boolean tailRecursiveArgument = factMetaData().isTailRecursiveArgument(i);
-         outputMatchConsequentArgument(consequent.arg(i), ARGUMENT_PREFIX + i, tailRecursiveArgument ? i : -1);
+         outputMatchConsequentArgument(consequent.term(i), ARGUMENT_PREFIX + i, tailRecursiveArgument ? i : -1);
       }
    }
 
    /** @param tailRecursiveArgumentIdx index of the tail recursive argument, or -1 if not tail recursive */
    private void outputMatchConsequentArgument(PTerm argument, String variableNameToCompareTo, int tailRecursiveArgumentIdx) {
-      final Set<Variable> newlyDeclaredVariables = declareArgumentVariabledNotAlreadyDeclared(argument);
+      final Set<PVar> newlyDeclaredVariables = declareArgumentVariabledNotAlreadyDeclared(argument);
 
       final boolean isTailRecursivePredicate = tailRecursiveArgumentIdx != -1;
       final boolean isFirstClauseOfTailRecursivePredicate = isTailRecursivePredicate && currentClause().getClauseIndex() == 0;
@@ -650,51 +651,51 @@ final class CompiledPredicateSourceGenerator {
          w.addLine("else {");
       }
 
-      if (argument.type() == TermType.NAMED_VARIABLE) {
+      if (argument.type() == PrologOperator.NAMED_VARIABLE) {
          outputMatchVariableConsequentArgument(argument, variableNameToCompareTo);
       } else if (isNoMoreThanTwoElementList(argument)) {
          if (isTailRecursivePredicate) {
             String placeholderVariableId = PLACEHOLDER_PREFIX + tailRecursiveArgumentIdx;
             String newListHead;
-            if (argument.arg(0).type() == TermType.NAMED_VARIABLE) {
-               newListHead = w.getVariableId(argument.arg(0));
+            if (argument.term(0).type() == PrologOperator.NAMED_VARIABLE) {
+               newListHead = w.getVariableId(argument.term(0));
             } else {
-               newListHead = w.outputCreateTermStatement(argument.arg(0), true);
+               newListHead = w.outputCreateTermStatement(argument.term(0), true);
             }
             String placeholderList = getNewListSyntax(newListHead, CompiledPredicateWriter.EMPTY_LIST_SYNTAX);
 
             if (currentClause().getClauseIndex() == 1) {
                w.beginIf(variableNameToCompareTo + "==" + placeholderVariableId);
-               if (newlyDeclaredVariables.contains(argument.arg(0))) {
-                  String variableId = w.getVariableId(argument.arg(0));
+               if (newlyDeclaredVariables.contains(argument.term(0))) {
+                  String variableId = w.getVariableId(argument.term(0));
                   if (!w.isAssigned(variableId)) {
-                     w.assign(variableId, getNewVariableSyntax(argument.arg(0)));
+                     w.assign(variableId, getNewVariableSyntax(argument.term(0)));
                   }
                }
                String tmpId = getNewTempoaryVariableName();
                w.assign("final List " + tmpId, placeholderList);
                w.writeStatement(placeholderVariableId + ".setTail(" + tmpId + ")");
                w.assign(placeholderVariableId, tmpId);
-               assignNullToVariableIfRequired(argument.arg(1), newlyDeclaredVariables);
+               assignNullToVariableIfRequired(argument.term(1), newlyDeclaredVariables);
 
                w.endBlock();
                w.addLine("else");
             }
 
             w.beginIf(variableNameToCompareTo + ".getType()==TermType.NAMED_VARIABLE");
-            if (newlyDeclaredVariables.contains(argument.arg(0))) {
-               w.assign(w.getVariableId(argument.arg(0)), getNewVariableSyntax(argument.arg(0)));
+            if (newlyDeclaredVariables.contains(argument.term(0))) {
+               w.assign(w.getVariableId(argument.term(0)), getNewVariableSyntax(argument.term(0)));
             }
             w.assign(placeholderVariableId, placeholderList);
             writeIfConsequentArgumentUnificationFailsReturnFalse(placeholderVariableId, variableNameToCompareTo);
-            assignNullToVariableIfRequired(argument.arg(1), newlyDeclaredVariables);
+            assignNullToVariableIfRequired(argument.term(1), newlyDeclaredVariables);
 
             w.elseIf(variableNameToCompareTo + ".getType()==TermType.LIST");
          } else {
             w.beginIf(variableNameToCompareTo + ".getType()==TermType.LIST");
          }
-         for (Variable v : newlyDeclaredVariables) {
-            if (argument.arg(0) != v && argument.arg(1) != v) {
+         for (PVar v : newlyDeclaredVariables) {
+            if (argument.term(0) != v && argument.term(1) != v) {
                String variableId = w.getVariableId(v);
                if (!w.isAssigned(variableId)) {
                   classVariables().addAssignedVariable(variableId);
@@ -711,7 +712,7 @@ final class CompiledPredicateSourceGenerator {
          if (!isTailRecursivePredicate) {
             w.elseIf(variableNameToCompareTo + ".getType()==TermType.NAMED_VARIABLE");
             // variable will of been declared above in if (out of scope of this else)
-            for (Variable v : newlyDeclaredVariables) {
+            for (PVar v : newlyDeclaredVariables) {
                classVariables().addAssignedVariable(w.getVariableId(v));
                w.assign(w.getVariableId(v), getNewVariableSyntax(v));
             }
@@ -731,22 +732,22 @@ final class CompiledPredicateSourceGenerator {
       }
    }
 
-   private void assignNullToVariableIfRequired(PTerm argument, Set<Variable> newlyDeclaredVariables) {
-      if (argument.type() == TermType.NAMED_VARIABLE && !currentClause().isIgnorableVariable(argument) && !classVariables().isAssignedVariable(w.getVariableId(argument))) {
+   private void assignNullToVariableIfRequired(PTerm argument, Set<PVar> newlyDeclaredVariables) {
+      if (argument.type() == PrologOperator.NAMED_VARIABLE && !currentClause().isIgnorableVariable(argument) && !classVariables().isAssignedVariable(w.getVariableId(argument))) {
          w.assign(w.getVariableId(argument), null);
       }
    }
 
-   private void assignArgument(PTerm argument, String variableNameToCompareTo, Set<Variable> newlyDeclaredVariables, int argumentIdx) {
+   private void assignArgument(PTerm argument, String variableNameToCompareTo, Set<PVar> newlyDeclaredVariables, int argumentIdx) {
       final String getArgumentMethod = ".getArgument(" + argumentIdx + ")";
-      if (newlyDeclaredVariables.contains(argument.arg(argumentIdx))) {
-         classVariables().addAssignedVariable(w.getVariableId(argument.arg(argumentIdx)));
-         w.assign(w.getVariableId(argument.arg(argumentIdx)), variableNameToCompareTo + getArgumentMethod);
+      if (newlyDeclaredVariables.contains(argument.term(argumentIdx))) {
+         classVariables().addAssignedVariable(w.getVariableId(argument.term(argumentIdx)));
+         w.assign(w.getVariableId(argument.term(argumentIdx)), variableNameToCompareTo + getArgumentMethod);
       } else {
          String tmpId = getNewTempoaryVariableName();
          w.classVariables().addAssignedVariable(tmpId);
          w.assign("final Term " + tmpId, variableNameToCompareTo + getArgumentMethod);
-         outputMatchConsequentArgument(argument.arg(argumentIdx), tmpId, -1);
+         outputMatchConsequentArgument(argument.term(argumentIdx), tmpId, -1);
       }
    }
 
@@ -759,11 +760,11 @@ final class CompiledPredicateSourceGenerator {
       return tmpId;
    }
 
-   private Set<Variable> declareArgumentVariabledNotAlreadyDeclared(PTerm argument) {
-      Set<Variable> variablesInTerm = TermUtils.getAllVariablesInTerm(argument);
+   private Set<PVar> declareArgumentVariabledNotAlreadyDeclared(PTerm argument) {
+      Set<PVar> variablesInTerm = TermUtils.getAllVariablesInTerm(argument);
       // LinkedSet so order predictable (makes unit tests easier)
-      Set<Variable> newlyDeclaredVariables = new LinkedHashSet<>();
-      for (Variable v : variablesInTerm) {
+      Set<PVar> newlyDeclaredVariables = new LinkedHashSet<>();
+      for (PVar v : variablesInTerm) {
          if (w.declareVariableIfNotAlready(v, false)) {
             newlyDeclaredVariables.add(v);
          }
@@ -772,7 +773,7 @@ final class CompiledPredicateSourceGenerator {
    }
 
    private void outputMatchVariableConsequentArgument(PTerm argument, String variableNameToCompareTo) {
-      Variable v = (Variable) argument;
+      PVar v = (PVar) argument;
 
       if (currentClause().isIgnorableVariable(v)) {
          // ignoring "argument" as only mentioned once in consequent and never in antecedant

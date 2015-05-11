@@ -59,7 +59,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
 
         //the conjunction must be of size > 2 in order for a smaller one to match its beginning subsequence
-        if (conj.size() <= 2)
+        if (conj.length() <= 2)
             return true;
 
         if (!((conj.getTemporalOrder() == ORDER_FORWARD) || (conj.getTemporalOrder() == ORDER_CONCURRENT)))

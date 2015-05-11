@@ -13,16 +13,16 @@ import org.projog.TestUtils;
 import org.projog.core.term.DecimalFraction;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.Numeric;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
 
 public class CalculatablesTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
    private final String dummyCalculatableName = "dummy_calculatable";
    private final PredicateKey dummyCalculatableKey = new PredicateKey(dummyCalculatableName, 1);
    private final int dummyTermArgument = 7;
-   private final Structure dummyTerm = structure(dummyCalculatableName, integerNumber(dummyTermArgument));
+   private final PStruct dummyTerm = structure(dummyCalculatableName, integerNumber(dummyTermArgument));
 
    @Test
    public void testGetNumericIntegerNumber() {
@@ -148,7 +148,7 @@ public class CalculatablesTest {
 
    /** Calculatable used to test that new calculatables can be added to the factory. */
    public static class DummyCalculatableDefaultConstructor implements Calculatable {
-      KnowledgeBase kb;
+      KB kb;
 
       /**
        * @return an IntegerNumber with a value of the first input argument + 1
@@ -165,14 +165,14 @@ public class CalculatablesTest {
       }
 
       @Override
-      public void setKnowledgeBase(KnowledgeBase kb) {
+      public void setKnowledgeBase(KB kb) {
          this.kb = kb;
       }
    }
 
    /** Calculatable used to test that new calculatables can be created using a static method. */
    public static class DummyCalculatableNoPublicConstructor implements Calculatable {
-      KnowledgeBase kb;
+      KB kb;
 
       public static DummyCalculatableNoPublicConstructor getInstance() {
          return new DummyCalculatableNoPublicConstructor();
@@ -197,7 +197,7 @@ public class CalculatablesTest {
       }
 
       @Override
-      public void setKnowledgeBase(KnowledgeBase kb) {
+      public void setKnowledgeBase(KB kb) {
          this.kb = kb;
       }
    }

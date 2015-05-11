@@ -2,8 +2,8 @@ package org.projog.core.function.list;
 
 import static org.projog.core.term.ListFactory.createList;
 import static org.projog.core.term.ListUtils.toJavaUtilList;
-import static org.projog.core.term.TermType.EMPTY_LIST;
-import static org.projog.core.term.TermType.LIST;
+import static org.projog.core.term.PrologOperator.EMPTY_LIST;
+import static org.projog.core.term.PrologOperator.LIST;
 
 import java.util.Collections;
 

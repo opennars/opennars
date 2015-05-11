@@ -548,9 +548,9 @@ public class RuleTables {
      */
     public static boolean compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
         if (Terms.equalType(taskTerm, beliefTerm)) {
-            if (taskTerm.size() >= beliefTerm.size()) {
+            if (taskTerm.length() >= beliefTerm.length()) {
                 return compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
-            } else if (taskTerm.size() < beliefTerm.size()) {
+            } else if (taskTerm.length() < beliefTerm.length()) {
                 return compoundAndSelf(beliefTerm, taskTerm, false, index, nal);
             }
         }

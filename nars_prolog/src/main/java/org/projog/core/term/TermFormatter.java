@@ -2,7 +2,7 @@ package org.projog.core.term;
 
 import static org.projog.core.KnowledgeBaseUtils.getOperands;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Operands;
 
 /**
@@ -15,7 +15,7 @@ import org.projog.core.Operands;
 public class TermFormatter {
    private final Operands operands;
 
-   public TermFormatter(KnowledgeBase kb) {
+   public TermFormatter(KB kb) {
       this(getOperands(kb));
    }
 
@@ -70,7 +70,7 @@ public class TermFormatter {
             sb.append("[]");
             break;
          case NAMED_VARIABLE:
-            sb.append(((Variable) t).getId());
+            sb.append(((PVar) t).getId());
             break;
          default:
             sb.append(t.toString());
@@ -79,17 +79,17 @@ public class TermFormatter {
 
    private void writeList(PTerm p, StringBuilder sb) {
       sb.append('[');
-      PTerm head = p.arg(0);
-      PTerm tail = p.arg(1);
+      PTerm head = p.term(0);
+      PTerm tail = p.term(1);
       write(head, sb);
       PTerm list;
       while ((list = getList(tail)) != null) {
          sb.append(',');
-         write(list.arg(0), sb);
-         tail = list.arg(1);
+         write(list.term(0), sb);
+         tail = list.term(1);
       }
 
-      if (tail.type() != TermType.EMPTY_LIST) {
+      if (tail.type() != PrologOperator.EMPTY_LIST) {
          sb.append('|');
          write(tail, sb);
       }
@@ -97,7 +97,7 @@ public class TermFormatter {
    }
 
    private static PTerm getList(PTerm t) {
-      if (t.type() == TermType.LIST) {
+      if (t.type() == PrologOperator.LIST) {
          return t;
       } else {
          return null;
@@ -117,11 +117,11 @@ public class TermFormatter {
    }
 
    private boolean isInfixOperator(PTerm t) {
-      return t.type() == TermType.STRUCTURE && t.getArgs().length == 2 && operands.infix(t.getName());
+      return t.type() == PrologOperator.STRUCTURE && t.terms().length == 2 && operands.infix(t.getName());
    }
 
    private void writeInfixOperator(PTerm p, StringBuilder sb) {
-      PTerm[] args = p.getArgs();
+      PTerm[] args = p.terms();
       write(args[0], sb);
       sb.append(' ').append(p.getName()).append(' ');
       // if second argument is an infix operand then add brackets around it so:
@@ -144,26 +144,26 @@ public class TermFormatter {
    }
 
    private boolean isPrefixOperator(PTerm t) {
-      return t.type() == TermType.STRUCTURE && t.getArgs().length == 1 && operands.prefix(t.getName());
+      return t.type() == PrologOperator.STRUCTURE && t.terms().length == 1 && operands.prefix(t.getName());
    }
 
    private void writePrefixOperator(PTerm p, StringBuilder sb) {
       sb.append(p.getName()).append(' ');
-      write(p.getArgs()[0], sb);
+      write(p.terms()[0], sb);
    }
 
    private boolean isPostfixOperator(PTerm t) {
-      return t.type() == TermType.STRUCTURE && t.getArgs().length == 1 && operands.postfix(t.getName());
+      return t.type() == PrologOperator.STRUCTURE && t.terms().length == 1 && operands.postfix(t.getName());
    }
 
    private void writePostfixOperator(PTerm p, StringBuilder sb) {
-      write(p.getArgs()[0], sb);
+      write(p.terms()[0], sb);
       sb.append(' ').append(p.getName());
    }
 
    private void writeNonOperatorPredicate(PTerm p, StringBuilder sb) {
       String name = p.getName();
-      PTerm[] args = p.getArgs();
+      PTerm[] args = p.terms();
       sb.append(name);
       sb.append("(");
       for (int i = 0; i < args.length; i++) {

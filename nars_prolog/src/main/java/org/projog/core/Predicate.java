@@ -10,7 +10,7 @@ import org.projog.core.term.PTerm;
  * {@link org.projog.core.function.AbstractRetryablePredicate}.
  * 
  * @see PredicateFactory
- * @see KnowledgeBase#addPredicateFactory(PredicateKey, String)
+ * @see KB#addFactory(PredicateKey, String)
  */
 public interface Predicate {
    /**

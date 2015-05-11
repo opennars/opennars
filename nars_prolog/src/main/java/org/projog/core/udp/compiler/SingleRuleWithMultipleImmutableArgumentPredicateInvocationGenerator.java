@@ -18,7 +18,7 @@ final class SingleRuleWithMultipleImmutableArgumentPredicateInvocationGenerator 
       PTerm[] data = ((SingleRuleWithMultipleImmutableArgumentsPredicate) ef).data;
       Runnable r = g.createOnBreakCallback(functionVariableName, function, null);
       for (int i = 0; i < data.length; i++) {
-         g.outputEqualsEvaluation(function.arg(i), data[i], r);
+         g.outputEqualsEvaluation(function.term(i), data[i], r);
       }
       g.logInlinedPredicatePredicate("Exit", functionVariableName, function);
    }

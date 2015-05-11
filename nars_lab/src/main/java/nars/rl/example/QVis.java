@@ -43,7 +43,7 @@ public class QVis extends JPanel implements Runnable {
             int color;
             if (v != null) {
                 Concept c = v.concept;
-                float p = 0.5f + 0.5f * pri;
+                float p = 0.2f + 0.8f * pri;
 
 
                 float beliefValue = (float) v.getQSentence(Symbols.GOAL);
@@ -52,7 +52,7 @@ public class QVis extends JPanel implements Runnable {
                 float hue = (float)(FastMath.sin(qValue) + 1.0)/2f;
 
 
-                float sat = 0.5f + 0.5f * beliefValue;
+                float sat = beliefValue;
 
                 float bri = p;
 

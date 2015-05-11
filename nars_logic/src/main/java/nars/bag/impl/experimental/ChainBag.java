@@ -67,10 +67,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     private float estimatedMin = 0.5f;
     private float estimatedMean = 0.5f;
 
-    final short d[] = Distributor.get(32).order;
+    final short d[] = Distributor.get(64).order;
     final int dLen = d.length;
     int dp = 0;
-
 
     public ChainBag(final DDNodePool<V> nodePool, int capacity) {
         super();
@@ -79,11 +78,13 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         this.mass = 0;
         this.index = new CuckooMap(capacity*3/2);
 
+
         this.nodePool = nodePool;
 
         this.chain = new DDList(0, nodePool);
         this.mean = new Mean();
     }
+
 
     public ChainBag(int capacity) {
         this(new DDNodePool(capacity/8), capacity);

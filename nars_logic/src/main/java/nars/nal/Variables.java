@@ -90,7 +90,7 @@ public class Variables {
         } else if ((term1HasVar || term2HasVar) && (term1 instanceof Compound) && (Terms.equalType(term1, term2, true))) {
             final Compound cTerm1 = (Compound) term1;
             final Compound cTerm2 = (Compound) term2;
-            if (cTerm1.size() != cTerm2.size()) {
+            if (cTerm1.length() != cTerm2.length()) {
                 return false;
             }
             //TODO simplify comparison with Image base class
@@ -101,7 +101,7 @@ public class Variables {
             if (cTerm1.isCommutative()) {
                 Compound.shuffle(list, Memory.randomNumber);
             }
-            for (int i = 0; i < cTerm1.size(); i++) {
+            for (int i = 0; i < cTerm1.length(); i++) {
                 Term t1 = list[i];
                 Term t2 = cTerm2.term[i];
                 if (!findSubstitute(type, t1, t2, map)) {

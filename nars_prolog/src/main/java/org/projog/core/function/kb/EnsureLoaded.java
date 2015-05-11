@@ -34,9 +34,9 @@ public final class EnsureLoaded extends AbstractSingletonPredicate {
       synchronized (lock) {
          if (loadedResources.contains(resourceName)) {
             ProjogEvent event = new ProjogEvent(ProjogEventType.INFO, "Already loaded: " + resourceName, this);
-            getProjogEventsObservable(getKnowledgeBase()).notifyObservers(event);
+            getProjogEventsObservable(getKB()).notifyObservers(event);
          } else {
-            ProjogSourceReader.parseResource(getKnowledgeBase(), resourceName);
+            ProjogSourceReader.parseResource(getKB(), resourceName);
             loadedResources.add(resourceName);
          }
       }

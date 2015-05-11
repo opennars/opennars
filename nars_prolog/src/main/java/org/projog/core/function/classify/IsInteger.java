@@ -2,7 +2,7 @@ package org.projog.core.function.classify;
 
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %TRUE integer(1)
@@ -29,6 +29,6 @@ import org.projog.core.term.TermType;
 public final class IsInteger extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm arg) {
-      return arg.type() == TermType.INTEGER;
+      return arg.type() == PrologOperator.INTEGER;
    }
 }

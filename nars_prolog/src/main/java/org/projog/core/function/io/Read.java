@@ -29,8 +29,8 @@ public final class Read extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
-      operands = getOperands(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
+      operands = getOperands(getKB());
    }
 
    @Override

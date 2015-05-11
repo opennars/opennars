@@ -18,7 +18,7 @@ import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 abstract public class Image extends DefaultCompound {
     /** The index of relation in the component list */
-    public final short relationIndex;
+    transient public final short relationIndex;
 
     protected Image(Term[] components, short relationIndex) {
         super(components);

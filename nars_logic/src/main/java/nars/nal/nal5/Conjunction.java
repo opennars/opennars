@@ -94,7 +94,7 @@ public class Conjunction extends Junction {
             Term a=args[i];
             Conjunction c = isConjunction(a, order);
             if (c != null)
-                sz+=c.size();
+                sz+=c.length();
             else
                 sz+=1;
         }
@@ -239,7 +239,7 @@ public class Conjunction extends Junction {
         } else {
             if (term1 instanceof Conjunction) {
                 Compound ct1 = ((Compound) term1);
-                final List<Term> set = Global.newArrayList(ct1.size() + 1);
+                final List<Term> set = Global.newArrayList(ct1.length() + 1);
                 Collections.addAll(set, ct1.term);
                 if (term2 instanceof Conjunction) {
                     // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
@@ -252,7 +252,7 @@ public class Conjunction extends Junction {
                 return make(set, temporalOrder);
             } else if (term2 instanceof Conjunction) {
                 Compound ct2 = ((Compound) term2);
-                final List<Term> set = Global.newArrayList(ct2.size() + 1);
+                final List<Term> set = Global.newArrayList(ct2.length() + 1);
                 Collections.addAll(set, ct2.term);
                 set.add(term1);                              // (&,R,(&,P,Q)) = (&,P,Q,R)
                 return make(set, temporalOrder);
@@ -271,7 +271,7 @@ public class Conjunction extends Junction {
 
             Compound cterm1 = (Compound) term1;
 
-            ArrayList<Term> list = new ArrayList<>(cterm1.size());
+            ArrayList<Term> list = new ArrayList<>(cterm1.length());
             cterm1.addTermsTo(list);
 
             if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
@@ -287,9 +287,9 @@ public class Conjunction extends Junction {
 
         } else if ((term2 instanceof Conjunction) && (term2.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
             Compound cterm2 = (Compound) term2;
-            components = new Term[((Compound) term2).size() + 1];
+            components = new Term[((Compound) term2).length() + 1];
             components[0] = term1;
-            arraycopy(cterm2.term, 0, components, 1, cterm2.size());
+            arraycopy(cterm2.term, 0, components, 1, cterm2.length());
         } else {
             components = new Term[] { term1, term2 };
         }

@@ -3,9 +3,9 @@ package org.projog.core;
 /**
  * Collection of configuration properties.
  * <p>
- * Each {@link org.projog.core.KnowledgeBase} has a single {@code ProjogProperties} instance.
+ * Each {@link KB} has a single {@code ProjogProperties} instance.
  * 
- * @see KnowledgeBaseUtils#getProjogProperties(KnowledgeBase)
+ * @see KnowledgeBaseUtils#getProjogProperties(KB)
  */
 public interface ProjogProperties {
    /**

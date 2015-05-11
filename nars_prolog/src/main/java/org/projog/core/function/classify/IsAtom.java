@@ -2,7 +2,7 @@ package org.projog.core.function.classify;
 
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %TRUE atom(abc)
@@ -21,6 +21,6 @@ import org.projog.core.term.TermType;
 public final class IsAtom extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm arg) {
-      return arg.type() == TermType.ATOM;
+      return arg.type() == PrologOperator.ATOM;
    }
 }

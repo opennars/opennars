@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import org.projog.core.ProjogException;
 import org.projog.core.term.PList;
 import org.projog.core.term.ListFactory;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PrologOperator;
+import org.projog.core.term.PVar;
 
 /**
  * Provides support for Definite Clause Grammars (DCG).
@@ -21,7 +21,7 @@ import org.projog.core.term.Variable;
  */
 final class DefiniteClauseGrammerConvertor {
    static boolean isDCG(PTerm dcgTerm) { // should this be moved to KnowledgeBaseUtils?
-      return dcgTerm.type() == TermType.STRUCTURE && dcgTerm.args() == 2 && dcgTerm.getName().equals("-->");
+      return dcgTerm.type() == PrologOperator.STRUCTURE && dcgTerm.length() == 2 && dcgTerm.getName().equals("-->");
    }
 
    /**
@@ -46,17 +46,17 @@ final class DefiniteClauseGrammerConvertor {
 
    private static PTerm convertSingleListTermAntecedant(PTerm consequent, PTerm antecedant) {
       String consequentName = consequent.getName();
-      Variable variable = new Variable("A");
-      PList list = ListFactory.createList(antecedant.arg(0), variable);
+      PVar variable = new PVar("A");
+      PList list = ListFactory.createList(antecedant.term(0), variable);
       PTerm[] args = {list, variable};
-      return Structure.createStructure(consequentName, args);
+      return PStruct.make(consequentName, args);
    }
 
    // TODO this method is too long - refactor
    private static PTerm convertConjunctionOfAtomsAntecedant(PTerm consequent, PTerm[] conjunctionOfAtoms) {
       ArrayList<PTerm> newSequence = new ArrayList<>();
 
-      Variable lastArg = new Variable("A0");
+      PVar lastArg = new PVar("A0");
 
       int varctr = 1;
       PTerm previous = lastArg;
@@ -64,23 +64,23 @@ final class DefiniteClauseGrammerConvertor {
       for (int i = conjunctionOfAtoms.length - 1; i > -1; i--) {
          PTerm term = conjunctionOfAtoms[i];
          if (term.getName().equals("{")) {
-            PTerm newAntecedantArg = term.arg(0).arg(0);
+            PTerm newAntecedantArg = term.term(0).term(0);
             newSequence.add(0, newAntecedantArg);
-         } else if (term.type() == TermType.LIST) {
+         } else if (term.type() == PrologOperator.LIST) {
             if (previousList != null) {
                term = appendToEndOfList(term, previousList);
             }
             previousList = term;
          } else {
             if (previousList != null) {
-               Variable next = new Variable("A" + (varctr++));
-               PTerm newAntecedantArg = Structure.createStructure("=", new PTerm[] {next, appendToEndOfList(previousList, previous)});
+               PVar next = new PVar("A" + (varctr++));
+               PTerm newAntecedantArg = PStruct.make("=", new PTerm[]{next, appendToEndOfList(previousList, previous)});
                newSequence.add(0, newAntecedantArg);
                previousList = null;
                previous = next;
             }
 
-            Variable next = new Variable("A" + (varctr++));
+            PVar next = new PVar("A" + (varctr++));
             PTerm newAntecedantArg = createNewPredicate(term, next, previous);
             previous = next;
             newSequence.add(0, newAntecedantArg);
@@ -93,7 +93,7 @@ final class DefiniteClauseGrammerConvertor {
       } else {
          newAntecedant = newSequence.get(0);
          for (int i = 1; i < newSequence.size(); i++) {
-            newAntecedant = Structure.createStructure(CONJUNCTION_PREDICATE_NAME, new PTerm[] {newAntecedant, newSequence.get(i)});
+            newAntecedant = PStruct.make(CONJUNCTION_PREDICATE_NAME, new PTerm[]{newAntecedant, newSequence.get(i)});
          }
       }
 
@@ -105,38 +105,38 @@ final class DefiniteClauseGrammerConvertor {
       if (newAntecedant == null) {
          return newConsequent;
       } else {
-         return Structure.createStructure(IMPLICATION_PREDICATE_NAME, new PTerm[] {newConsequent, newAntecedant});
+         return PStruct.make(IMPLICATION_PREDICATE_NAME, new PTerm[]{newConsequent, newAntecedant});
       }
    }
 
    private static PTerm appendToEndOfList(PTerm list, PTerm newTail) {
       ArrayList<PTerm> terms = new ArrayList<>();
-      while (list.type() == TermType.LIST) {
-         terms.add(list.arg(0));
-         list = list.arg(1);
+      while (list.type() == PrologOperator.LIST) {
+         terms.add(list.term(0));
+         list = list.term(1);
       }
       return ListFactory.createList(terms.toArray(new PTerm[terms.size()]), newTail);
    }
 
    private static PTerm createNewPredicate(PTerm original, PTerm previous, PTerm next) {
-      PTerm[] args = new PTerm[original.args() + 2];
-      for (int a = 0; a < original.args(); a++) {
-         args[a] = original.arg(a);
+      PTerm[] args = new PTerm[original.length() + 2];
+      for (int a = 0; a < original.length(); a++) {
+         args[a] = original.term(a);
       }
-      args[original.args()] = previous;
-      args[original.args() + 1] = next;
-      return Structure.createStructure(original.getName(), args);
+      args[original.length()] = previous;
+      args[original.length() + 1] = next;
+      return PStruct.make(original.getName(), args);
    }
 
    private static PTerm getConsequent(PTerm dcgTerm) {
-      return dcgTerm.arg(0);
+      return dcgTerm.term(0);
    }
 
    private static PTerm getAntecedant(PTerm dcgTerm) {
-      return dcgTerm.arg(1);
+      return dcgTerm.term(1);
    }
 
    private static boolean hasSingleListWithSingleAtomElement(PTerm[] terms) {
-      return terms.length == 1 && terms[0].type() == TermType.LIST && terms[0].arg(0).type() == TermType.ATOM && terms[0].arg(1).type() == TermType.EMPTY_LIST;
+      return terms.length == 1 && terms[0].type() == PrologOperator.LIST && terms[0].term(0).type() == PrologOperator.ATOM && terms[0].term(1).type() == PrologOperator.EMPTY_LIST;
    }
 }

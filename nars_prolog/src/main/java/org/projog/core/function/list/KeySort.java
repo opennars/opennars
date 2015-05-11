@@ -11,7 +11,7 @@ import java.util.List;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %QUERY keysort([a - 1,b - 3,c - 2], X)
@@ -64,7 +64,7 @@ public final class KeySort extends AbstractSingletonPredicate {
    private static final Comparator<PTerm> KEY_VALUE_PAIR_COMPARATOR = new Comparator<PTerm>() {
       @Override
       public int compare(PTerm kvp1, PTerm kvp2) {
-         return TERM_COMPARATOR.compare(kvp1.arg(0), kvp2.arg(0));
+         return TERM_COMPARATOR.compare(kvp1.term(0), kvp2.term(0));
       }
    };
 
@@ -89,6 +89,6 @@ public final class KeySort extends AbstractSingletonPredicate {
    }
 
    private boolean assertKeyValuePair(PTerm t) {
-      return t.type() == TermType.STRUCTURE && KEY_VALUE_PAIR_FUNCTOR.equals(t.getName()) && t.args() == 2;
+      return t.type() == PrologOperator.STRUCTURE && KEY_VALUE_PAIR_FUNCTOR.equals(t.getName()) && t.length() == 2;
    }
 }

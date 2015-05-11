@@ -16,8 +16,8 @@ public class UnifierTest {
    /** [a] unified with [a] */
    @Test
    public void testExactMatchSingleImmutableArguments() {
-      Atom inputArg = new Atom("a");
-      Atom consequentArg = new Atom("a");
+      PAtom inputArg = new PAtom("a");
+      PAtom consequentArg = new PAtom("a");
       PTerm[] input = {inputArg};
       PTerm[] consequent = {consequentArg};
       assertPreMatch(input, consequent);
@@ -28,8 +28,8 @@ public class UnifierTest {
    /** [a] unified with [b] */
    @Test
    public void testNoMatchSingleImmutableArguments() {
-      Atom a = new Atom("a");
-      Atom b = new Atom("b");
+      PAtom a = new PAtom("a");
+      PAtom b = new PAtom("b");
       assertPreMatchFailed(new PTerm[] {a}, new PTerm[] {b});
    }
 
@@ -57,8 +57,8 @@ public class UnifierTest {
    /** [X] unified with [a] */
    @Test
    public void testSingleVariableInInput() {
-      Atom a = atom("a");
-      Variable v = variable("X");
+      PAtom a = atom("a");
+      PVar v = variable("X");
       PTerm[] input = {v};
       PTerm[] consequent = {a};
       assertPreMatch(input, consequent);
@@ -70,8 +70,8 @@ public class UnifierTest {
    /** [a] unified with [X] */
    @Test
    public void testSingleVariableInConsequent() {
-      Atom a = atom("a");
-      Variable v = variable("X");
+      PAtom a = atom("a");
+      PVar v = variable("X");
       PTerm[] input = {a};
       PTerm[] consequent = {v};
       assertPreMatch(input, consequent);
@@ -82,8 +82,8 @@ public class UnifierTest {
    /** [X] unified with [Y] */
    @Test
    public void testVariableInInputAndConsequent() {
-      Variable v1 = variable("X");
-      Variable v2 = variable("Y");
+      PVar v1 = variable("X");
+      PVar v2 = variable("Y");
       PTerm[] input = {v1};
       PTerm[] consequent = {v2};
       assertPreMatch(input, consequent);
@@ -94,9 +94,9 @@ public class UnifierTest {
    /** [X] unified with [Y] when X already unified to a */
    @Test
    public void testSingleAssignedVariableInInput_1() {
-      Variable x = variable("X");
-      Variable y = variable("Y");
-      Atom a = atom();
+      PVar x = variable("X");
+      PVar y = variable("Y");
+      PAtom a = atom();
 
       x.unify(a);
 
@@ -113,9 +113,9 @@ public class UnifierTest {
    /** [X] unified with [a] when X already unified to a */
    @Test
    public void testSingleAssignedVariableInInput_2() {
-      Variable x = variable("X");
-      Atom a1 = atom("a");
-      Atom a2 = atom("a");
+      PVar x = variable("X");
+      PAtom a1 = atom("a");
+      PAtom a2 = atom("a");
 
       x.unify(a1);
 
@@ -132,9 +132,9 @@ public class UnifierTest {
    /** [X] unified with [b] when X already unified to a */
    @Test
    public void testSingleAssignedVariableInInput_3() {
-      Variable x = variable("X");
-      Atom a = atom("a");
-      Atom b = atom("b");
+      PVar x = variable("X");
+      PAtom a = atom("a");
+      PAtom b = atom("b");
 
       x.unify(a);
 
@@ -151,12 +151,12 @@ public class UnifierTest {
    /** [a, X] unified with [Y, b] */
    @Test
    public void testPrematch_1() {
-      Atom a = atom("a");
-      Variable x = variable("X");
+      PAtom a = atom("a");
+      PVar x = variable("X");
       PTerm[] input = {a, x};
 
-      Variable y = variable("Y");
-      Atom b = atom("b");
+      PVar y = variable("Y");
+      PAtom b = atom("b");
       PTerm[] consequent = {y, b};
 
       assertPreMatch(input, consequent);
@@ -172,13 +172,13 @@ public class UnifierTest {
    /** [a, X, 1] unified with [Y, b, 2] */
    @Test
    public void testPrematch_2() {
-      Atom a = atom("a");
-      Variable x = variable("X");
+      PAtom a = atom("a");
+      PVar x = variable("X");
       IntegerNumber i1 = integerNumber(1);
       PTerm[] input = {a, x, i1};
 
-      Variable y = variable("Y");
-      Atom b = atom("b");
+      PVar y = variable("Y");
+      PAtom b = atom("b");
       IntegerNumber i2 = integerNumber(2);
       PTerm[] consequent = {y, b, i2};
 
@@ -191,12 +191,12 @@ public class UnifierTest {
    /** [p(X), a] unified with [p(Y), Y] */
    @Test
    public void testPrematch_3() {
-      Variable x = variable("X");
+      PVar x = variable("X");
       PTerm inputArg1 = structure("p", x);
       PTerm inputArg2 = atom("a");
       PTerm[] input = {inputArg1, inputArg2};
 
-      Variable y = variable("Y");
+      PVar y = variable("Y");
       PTerm consequentArg1 = structure("p", y);
       PTerm consequentArg2 = y;
       PTerm[] consequent = {consequentArg1, consequentArg2};
@@ -212,11 +212,11 @@ public class UnifierTest {
 
       // predicate that is first argument of consquent should now have an atom as 
       // it's single argument rather than a variable
-      assertSame(inputArg2, consequent[0].arg(0));
+      assertSame(inputArg2, consequent[0].term(0));
 
       // predicate that is first argument of input should still be a variable 
       // but now it should be unified with an atom
-      assertSame(x, input[0].arg(0));
+      assertSame(x, input[0].term(0));
       assertSame(inputArg2, x.get());
 
       // unification of input argument should be undone on backtrack
@@ -227,12 +227,12 @@ public class UnifierTest {
    /** [p(Y), Y] unified with [p(X), a] */
    @Test
    public void testPrematch_4() {
-      Variable y = variable("Y");
+      PVar y = variable("Y");
       PTerm inputArg1 = structure("p", y);
       PTerm inputArg2 = y;
       PTerm[] input = {inputArg1, inputArg2};
 
-      Variable x = variable("X");
+      PVar x = variable("X");
       PTerm consequentArg1 = structure("p", x);
       PTerm consequentArg2 = atom("a");
       PTerm[] consequent = {consequentArg1, consequentArg2};
@@ -241,43 +241,43 @@ public class UnifierTest {
 
       assertSame(inputArg1, input[0]);
       assertSame(inputArg2, input[1]);
-      assertSame(y, input[0].arg(0));
+      assertSame(y, input[0].term(0));
       assertSame(y, input[1]);
       assertSame(consequentArg2, y.get());
 
-      assertSame(consequentArg2, consequent[0].arg(0));
+      assertSame(consequentArg2, consequent[0].term(0));
       assertSame(consequentArg2, consequent[1]);
 
       // unification of input arguments should be undone on backtrack
       TermUtils.backtrack(input);
       assertSame(y, y.get());
-      assertSame(y, input[0].arg(0));
+      assertSame(y, input[0].term(0));
       assertSame(y, input[1]);
    }
 
    /** [p(Y), Y] unified with [p(a), b] */
    @Test
    public void testPrematch_5() {
-      Variable y = variable("Y");
-      Structure inputArg1 = structure("p", y);
+      PVar y = variable("Y");
+      PStruct inputArg1 = structure("p", y);
       PTerm[] input = {inputArg1, y};
 
-      Structure consequentArg1 = structure("p", atom("a"));
-      Atom consequentArg2 = atom("b");
+      PStruct consequentArg1 = structure("p", atom("a"));
+      PAtom consequentArg2 = atom("b");
       PTerm[] consequent = {consequentArg1, consequentArg2};
 
       assertPreMatchFailed(input, consequent);
 
       assertSame(inputArg1, input[0]);
       assertSame(y, input[1]);
-      assertSame(y, input[0].arg(0));
+      assertSame(y, input[0].term(0));
       assertSame(y, y.get());
    }
 
    /** [p(a), b] unified with [p(Y), Y] */
    @Test
    public void testPrematch_6() {
-      Variable y = variable("Y");
+      PVar y = variable("Y");
 
       assertPreMatchFailed(new PTerm[] {structure("p", atom("a")), atom("b")}, new PTerm[] {structure("p", y), y});
    }

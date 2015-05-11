@@ -2,7 +2,7 @@ package org.projog.core.udp.compiler;
 
 import java.util.Set;
 
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /**
  * Outputs java code that matches functionality of {@link org.projog.core.function.compare.Equal}
@@ -10,7 +10,7 @@ import org.projog.core.term.Variable;
 final class EqualPredicateInvocationGenerator implements PredicateInvocationGenerator {
    @Override
    public void generate(CompiledPredicateWriter g) {
-      Set<Variable> variables = g.currentClause().getVariablesInCurrentFunction();
+      Set<PVar> variables = g.currentClause().getVariablesInCurrentFunction();
       g.currentClause().addVariablesToBackTrack(variables);
       g.outputEqualsEvaluation();
    }

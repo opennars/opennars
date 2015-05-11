@@ -19,18 +19,18 @@ import org.projog.core.term.TermFormatter;
  * {@link ProjogEventType} is generated every time the predicate is executed, fails or succeeds.
  * </p>
  * <p>
- * Each {@link org.projog.core.KnowledgeBase} has a single unique {@code SpyPoints} instance.
+ * Each {@link KB} has a single unique {@code SpyPoints} instance.
  * </p>
  * 
- * @see KnowledgeBaseUtils#getSpyPoints(KnowledgeBase)
+ * @see KnowledgeBaseUtils#getSpyPoints(KB)
  */
 public final class SpyPoints {
    private final Object lock = new Object();
    private final Map<PredicateKey, SpyPoint> spyPoints = new TreeMap<>();
-   private final KnowledgeBase kb;
+   private final KB kb;
    private boolean traceEnabled;
 
-   public SpyPoints(KnowledgeBase kb) {
+   public SpyPoints(KB kb) {
       this.kb = kb;
    }
 

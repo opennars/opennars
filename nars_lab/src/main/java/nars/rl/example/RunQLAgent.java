@@ -2,7 +2,7 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.follow.Follow1D;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -155,8 +155,8 @@ public class RunQLAgent extends JPanel {
 
         /* Create and display the form */
         ////RLEnvironment d = new PoleBalancing2D();
-        RLEnvironment d = new Follow1D();
-        //RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Follow1D();
+        RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 
@@ -167,9 +167,9 @@ public class RunQLAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 25;
+        int conceptsPerCycle = 35;
         final int cyclesPerFrame = 10;
-        float qLearnedConfidence = 0.5f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -267,13 +267,13 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("B", 4, 0.8f)
+                new HaiSOMPerception("B", 3, 0.8f)
         );
 
 
 
-        a.agent.brain.setEpsilon(0.1);
-        a.agent.brain.setAlpha(0.2);
+        a.agent.brain.setEpsilon(0.2);
+        a.agent.brain.setAlpha(0.1);
 
 
     }

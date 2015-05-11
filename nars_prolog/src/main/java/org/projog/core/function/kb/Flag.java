@@ -48,7 +48,7 @@ public final class Flag extends AbstractSingletonPredicate {
 
    @Override
    public void init() {
-      calculatables = getCalculatables(getKnowledgeBase());
+      calculatables = getCalculatables(getKB());
    }
 
    @Override

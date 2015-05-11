@@ -25,8 +25,8 @@ public final class Debugging extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      spyPoints = getSpyPoints(getKnowledgeBase());
-      fileHandles = getFileHandles(getKnowledgeBase());
+      spyPoints = getSpyPoints(getKB());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override

@@ -13,11 +13,11 @@ import java.util.Iterator;
 
 import org.junit.Test;
 import org.projog.TestUtils;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 public class DynamicUserDefinedPredicateFactoryTest {
    private static final String TEST_PREDICATE_NAME = "test";
@@ -185,7 +185,7 @@ public class DynamicUserDefinedPredicateFactoryTest {
       assertTrue(e.isRetryable());
       for (String d : data) {
          assertTrue(e.evaluate(args));
-         assertSame(TermType.ATOM, args[0].type());
+         assertSame(PrologOperator.ATOM, args[0].type());
          assertEquals(d, args[0].getName());
       }
       assertFalse(e.evaluate(args));
@@ -194,7 +194,7 @@ public class DynamicUserDefinedPredicateFactoryTest {
    }
 
    private DynamicUserDefinedPredicateFactory createDynamicPredicate() {
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
+      KB kb = TestUtils.createKnowledgeBase();
       PredicateKey key = new PredicateKey(TEST_PREDICATE_NAME, 1);
       DynamicUserDefinedPredicateFactory dp = new DynamicUserDefinedPredicateFactory(kb, key);
       assertEquals(key, dp.getPredicateKey());

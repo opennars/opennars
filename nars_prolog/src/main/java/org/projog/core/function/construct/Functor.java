@@ -6,9 +6,9 @@ import static org.projog.core.term.TermUtils.toInt;
 
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -64,7 +64,7 @@ public final class Functor extends AbstractSingletonPredicate {
          case STRUCTURE:
          case LIST:
          case EMPTY_LIST:
-            return f.unify(new Atom(t.getName())) && n.unify(new IntegerNumber(t.args()));
+            return f.unify(new PAtom(t.getName())) && n.unify(new IntegerNumber(t.length()));
          case NAMED_VARIABLE:
             int numArgs = toInt(n);
             PTerm[] a = new PTerm[numArgs];
@@ -72,7 +72,7 @@ public final class Functor extends AbstractSingletonPredicate {
                a[i] = createAnonymousVariable();
             }
             String functorName = getAtomName(f);
-            return t.unify(Structure.createStructure(functorName, a));
+            return t.unify(PStruct.make(functorName, a));
          default:
             throw new ProjogException("Invalid type for first argument of Functor command: " + t.type());
       }

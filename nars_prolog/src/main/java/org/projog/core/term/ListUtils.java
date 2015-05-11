@@ -24,27 +24,27 @@ public class ListUtils {
    /**
     * Returns a new {@code java.util.List} containing the contents of the specified {@code org.projog.core.term.List}.
     * <p>
-    * Will return {@code null} if {@code list} is neither of type {@link TermType#LIST} or {@link TermType#EMPTY_LIST},
+    * Will return {@code null} if {@code list} is neither of type {@link PrologOperator#LIST} or {@link PrologOperator#EMPTY_LIST},
     * or if {@code list} represents a partial list (i.e. a list that does not have an empty list as its tail).
     * </p>
     * 
     * @see #toSortedJavaUtilList(PTerm)
     */
    public static List<PTerm> toJavaUtilList(PTerm list) {
-      if (list.type() == TermType.LIST) {
+      if (list.type() == PrologOperator.LIST) {
          final List<PTerm> result = new ArrayList<PTerm>();
          do {
-            result.add(list.arg(0));
-            list = list.arg(1);
-         } while (list.type() == TermType.LIST);
+            result.add(list.term(0));
+            list = list.term(1);
+         } while (list.type() == PrologOperator.LIST);
 
-         if (list.type() == TermType.EMPTY_LIST) {
+         if (list.type() == PrologOperator.EMPTY_LIST) {
             return result;
          } else {
             // partial list
             return null;
          }
-      } else if (list.type() == TermType.EMPTY_LIST) {
+      } else if (list.type() == PrologOperator.EMPTY_LIST) {
          return Collections.emptyList();
       } else {
          // not a list
@@ -60,7 +60,7 @@ public class ListUtils {
     * {@link TermComparator}.
     * </p>
     * <p>
-    * Will return {@code null} if {@code list} is neither of type {@link TermType#LIST} or {@link TermType#EMPTY_LIST},
+    * Will return {@code null} if {@code list} is neither of type {@link PrologOperator#LIST} or {@link PrologOperator#EMPTY_LIST},
     * or if {@code list} represents a partial list (i.e. a list that does not have an empty list as its tail).
     * </p>
     * 
@@ -85,16 +85,16 @@ public class ListUtils {
     * @throws IllegalArgumentException if {@code list} is not of type {@code TermType#LIST} or {@code TermType#EMPTY_LIST}
     */
    public static boolean isMember(PTerm element, PTerm list) {
-      if (list.type() != TermType.LIST && list.type() != TermType.EMPTY_LIST) {
+      if (list.type() != PrologOperator.LIST && list.type() != PrologOperator.EMPTY_LIST) {
          throw new IllegalArgumentException("Expected list but got: " + list);
       }
-      while (list.type() == TermType.LIST) {
-         if (element.unify(list.arg(0))) {
+      while (list.type() == PrologOperator.LIST) {
+         if (element.unify(list.term(0))) {
             return true;
          }
          element.backtrack();
          list.backtrack();
-         list = list.arg(1);
+         list = list.term(1);
       }
       return false;
    }

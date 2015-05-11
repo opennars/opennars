@@ -3,17 +3,17 @@ package org.projog.core.event;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.KnowledgeBaseUtils;
 
 /**
- * Controls the registering and notification of observers of a {@link org.projog.core.KnowledgeBase}.
+ * Controls the registering and notification of observers of a {@link KB}.
  * <p>
  * Each {@code ProjogEventsObservable} has it's own internal {@code java.util.Observable} that it delegates to.
  * <p>
- * Each {@link org.projog.core.KnowledgeBase} has a single unique {@code ProjogEventsObservable} instance.
+ * Each {@link KB} has a single unique {@code ProjogEventsObservable} instance.
  * 
- * @see KnowledgeBaseUtils#getProjogEventsObservable(KnowledgeBase)
+ * @see KnowledgeBaseUtils#getProjogEventsObservable(KB)
  */
 public class ProjogEventsObservable {
    private final Observable observable = new Observable() {

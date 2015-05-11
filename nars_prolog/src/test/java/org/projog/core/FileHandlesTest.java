@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 
 import org.junit.Test;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 public class FileHandlesTest {
@@ -41,7 +41,7 @@ public class FileHandlesTest {
    @Test
    public void testDefaultInputHandle() {
       FileHandles fh = new FileHandles();
-      PTerm expected = new Atom("user_input");
+      PTerm expected = new PAtom("user_input");
       PTerm actual = fh.getCurrentInputHandle();
       assertTrue(expected.strictEquals(actual));
    }
@@ -49,7 +49,7 @@ public class FileHandlesTest {
    @Test
    public void testDefaultOutputHandle() {
       FileHandles fh = new FileHandles();
-      PTerm expected = new Atom("user_output");
+      PTerm expected = new PAtom("user_output");
       PTerm actual = fh.getCurrentOutputHandle();
       assertTrue(expected.strictEquals(actual));
    }

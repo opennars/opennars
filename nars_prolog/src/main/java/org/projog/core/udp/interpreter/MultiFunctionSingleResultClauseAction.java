@@ -4,10 +4,10 @@ import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
 import java.util.Map;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 
 /**
@@ -19,8 +19,8 @@ public final class MultiFunctionSingleResultClauseAction extends AbstractSingleA
    private final PredicateFactory[] predicateFactories;
    private final PTerm[] originalTerms;
 
-   MultiFunctionSingleResultClauseAction(KnowledgeBase kb, ClauseModel ci) {
-      super(kb, ci.getConsequent().getArgs());
+   MultiFunctionSingleResultClauseAction(KB kb, ClauseModel ci) {
+      super(kb, ci.getConsequent().terms());
       originalTerms = toArrayOfConjunctions(ci.getAntecedant());
       predicateFactories = new PredicateFactory[originalTerms.length];
       for (int i = 0; i < originalTerms.length; i++) {
@@ -29,10 +29,10 @@ public final class MultiFunctionSingleResultClauseAction extends AbstractSingleA
    }
 
    @Override
-   protected boolean evaluateAntecedant(Map<Variable, Variable> sharedVariables) {
+   protected boolean evaluateAntecedant(Map<PVar, PVar> sharedVariables) {
       for (int i = 0; i < originalTerms.length; i++) {
          PTerm t = originalTerms[i].copy(sharedVariables);
-         if (!predicateFactories[i].getPredicate(t.getArgs()).evaluate(t.getArgs())) {
+         if (!predicateFactories[i].getPredicate(t.terms()).evaluate(t.terms())) {
             return false;
          }
       }

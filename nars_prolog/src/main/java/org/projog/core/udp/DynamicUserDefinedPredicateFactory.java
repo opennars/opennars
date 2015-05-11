@@ -5,7 +5,7 @@ import static org.projog.core.KnowledgeBaseUtils.getSpyPoints;
 
 import java.util.Iterator;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateKey;
 import org.projog.core.SpyPoints;
@@ -29,12 +29,12 @@ public final class DynamicUserDefinedPredicateFactory implements UserDefinedPred
    private static final int LAST = 1;
 
    private final Object LOCK = new Object();
-   private final KnowledgeBase kb;
+   private final KB kb;
    private final PredicateKey predicateKey;
    private final SpyPoints.SpyPoint spyPoint;
    private final ClauseActionMetaData[] ends = new ClauseActionMetaData[2];
 
-   public DynamicUserDefinedPredicateFactory(KnowledgeBase kb, PredicateKey predicateKey) {
+   public DynamicUserDefinedPredicateFactory(KB kb, PredicateKey predicateKey) {
       this.kb = kb;
       this.predicateKey = predicateKey;
       if (getProjogProperties(kb).isSpyPointsEnabled()) {
@@ -45,7 +45,7 @@ public final class DynamicUserDefinedPredicateFactory implements UserDefinedPred
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
+   public void setKB(KB kb) {
       throw new UnsupportedOperationException();
    }
 
@@ -212,12 +212,12 @@ public final class DynamicUserDefinedPredicateFactory implements UserDefinedPred
    }
 
    private static class ClauseActionMetaData {
-      final KnowledgeBase kb;
+      final KB kb;
       final ClauseModel clauseModel;
       ClauseActionMetaData previous;
       ClauseActionMetaData next;
 
-      ClauseActionMetaData(KnowledgeBase kb, ClauseModel clauseModel) {
+      ClauseActionMetaData(KB kb, ClauseModel clauseModel) {
          this.kb = kb;
          this.clauseModel = clauseModel;
       }

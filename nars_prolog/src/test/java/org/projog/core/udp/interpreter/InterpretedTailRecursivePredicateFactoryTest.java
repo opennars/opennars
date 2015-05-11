@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
@@ -51,7 +51,7 @@ public class InterpretedTailRecursivePredicateFactoryTest {
    }
 
    private InterpretedTailRecursivePredicateFactory createFactory(String firstClauseSyntax, String secondClauseSyntax) {
-      KnowledgeBase kb = createKnowledgeBase();
+      KB kb = createKnowledgeBase();
       List<ClauseModel> clauses = createClauseModels(firstClauseSyntax, secondClauseSyntax);
       TailRecursivePredicateMetaData metaData = TailRecursivePredicateMetaData.create(kb, clauses);
       return new InterpretedTailRecursivePredicateFactory(kb, metaData);

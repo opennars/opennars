@@ -2,10 +2,10 @@ package org.projog.core.udp.interpreter;
 
 import java.util.Map;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 
 /**
@@ -18,8 +18,8 @@ public final class SingleFunctionMultiResultClauseAction extends AbstractMultiAn
    private PTerm antecedant;
    private Predicate predicate;
 
-   SingleFunctionMultiResultClauseAction(KnowledgeBase kb, ClauseModel ci) {
-      super(kb, ci.getConsequent().getArgs());
+   SingleFunctionMultiResultClauseAction(KB kb, ClauseModel ci) {
+      super(kb, ci.getConsequent().terms());
       originalAntecedant = ci.getAntecedant();
    }
 
@@ -29,15 +29,15 @@ public final class SingleFunctionMultiResultClauseAction extends AbstractMultiAn
    }
 
    @Override
-   protected boolean evaluateAntecedant(Map<Variable, Variable> sharedVariables) {
+   protected boolean evaluateAntecedant(Map<PVar, PVar> sharedVariables) {
       antecedant = originalAntecedant.copy(sharedVariables);
-      predicate = kb.getPredicateFactory(antecedant).getPredicate(antecedant.getArgs());
-      return predicate.evaluate(antecedant.getArgs());
+      predicate = kb.getPredicateFactory(antecedant).getPredicate(antecedant.terms());
+      return predicate.evaluate(antecedant.terms());
    }
 
    @Override
    protected boolean reEvaluateAntecedant() {
-      return predicate.isRetryable() && predicate.evaluate(antecedant.getArgs());
+      return predicate.isRetryable() && predicate.evaluate(antecedant.terms());
    }
 
    @Override

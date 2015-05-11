@@ -1,16 +1,16 @@
 package org.projog.core.function.construct;
 
-import static org.projog.core.term.TermType.ATOM;
+import static org.projog.core.term.PrologOperator.ATOM;
 import static org.projog.core.term.TermUtils.getAtomName;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  % Examples of when all three terms are atoms:
@@ -142,8 +142,8 @@ public final class AtomConcat implements PredicateFactory {
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
-      singleton.setKnowledgeBase(kb);
+   public void setKB(KB kb) {
+      singleton.setKB(kb);
    }
 
    private static class Singleton extends AbstractSingletonPredicate {
@@ -156,16 +156,16 @@ public final class AtomConcat implements PredicateFactory {
          final boolean isArg1Atom = isAtom(arg1);
          final boolean isArg2Atom = isAtom(arg2);
          if (isArg1Atom && isArg2Atom) {
-            final Atom concat = new Atom(arg1.getName() + arg2.getName());
+            final PAtom concat = new PAtom(arg1.getName() + arg2.getName());
             return arg3.unify(concat);
          } else {
             final String atomName = getAtomName(arg3);
             if (isArg1Atom) {
                String prefix = arg1.getName();
-               return (atomName.startsWith(prefix) && arg2.unify(new Atom(atomName.substring(prefix.length()))));
+               return (atomName.startsWith(prefix) && arg2.unify(new PAtom(atomName.substring(prefix.length()))));
             } else if (isArg2Atom) {
                String suffix = arg2.getName();
-               return (atomName.endsWith(suffix) && arg1.unify(new Atom(atomName.substring(0, (atomName.length() - suffix.length())))));
+               return (atomName.endsWith(suffix) && arg1.unify(new PAtom(atomName.substring(0, (atomName.length() - suffix.length())))));
             } else {
                throw new ProjogException("If third argument is not an atom then both first and second arguments must be: " + arg1 + " " + arg2 + " " + arg3);
             }
@@ -173,8 +173,8 @@ public final class AtomConcat implements PredicateFactory {
       }
 
       private void assertAtomOrVariable(PTerm t) {
-         final TermType type = t.type();
-         if (type != TermType.ATOM && !type.isVariable()) {
+         final PrologOperator type = t.type();
+         if (type != PrologOperator.ATOM && !type.isVariable()) {
             throw new ProjogException("Expected an atom or variable but got: " + type + " with value: " + t);
          }
       }
@@ -202,8 +202,8 @@ public final class AtomConcat implements PredicateFactory {
             arg1.backtrack();
             arg2.backtrack();
 
-            Atom prefix = new Atom(combined.substring(0, ctr));
-            Atom suffix = new Atom(combined.substring(ctr));
+            PAtom prefix = new PAtom(combined.substring(0, ctr));
+            PAtom suffix = new PAtom(combined.substring(ctr));
             ctr++;
 
             return arg1.unify(prefix) && arg2.unify(suffix);

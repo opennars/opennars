@@ -24,17 +24,17 @@ import org.projog.core.term.PTerm;
  * <a href="doc-files/PredicateFactory.png">View Class Diagram</a>
  * </p>
  * 
- * @see KnowledgeBase#addPredicateFactory(PredicateKey, String)
+ * @see KB#addFactory(PredicateKey, String)
  */
 public interface PredicateFactory {
    /**
     * Provides a reference to a {@code KnowledgeBase}.
     * <p>
-    * This method will be called by {@link KnowledgeBase#addPredicateFactory(PredicateKey, String)} when this class is
+    * This method will be called by {@link KB#addFactory(PredicateKey, String)} when this class is
     * registered with a {@code KnowledgeBase} - meaning this object will always have access to a {@code KnowledgeBase}
     * by the time it's {@code getPredicate} method is invoked.
     */
-   void setKnowledgeBase(KnowledgeBase kb);
+   void setKB(KB kb);
 
    /**
     * Returns a {@link Predicate} to be used in the evaluation of a goal.

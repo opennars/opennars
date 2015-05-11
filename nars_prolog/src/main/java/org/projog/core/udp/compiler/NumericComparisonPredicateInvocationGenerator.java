@@ -8,7 +8,7 @@ import org.projog.core.term.PTerm;
 abstract class NumericComparisonPredicateInvocationGenerator implements PredicateInvocationGenerator {
    protected void ouputNumericComparison(CompiledPredicateWriter g, String logic) {
       PTerm function = g.currentClause().getCurrentFunction();
-      String args = g.outputCreateTermStatement(function.arg(0), true) + ", " + g.outputCreateTermStatement(function.arg(1), true);
+      String args = g.outputCreateTermStatement(function.term(0), true) + ", " + g.outputCreateTermStatement(function.term(1), true);
       g.setNeedsCalculatablesStaticVariable(true);
       String eval = "NUMERIC_TERM_COMPARATOR.compare(" + args + ", c)" + logic;
       // NOTE: no need to backtrack args in numeric term comparator evaluation (as no assignments made)

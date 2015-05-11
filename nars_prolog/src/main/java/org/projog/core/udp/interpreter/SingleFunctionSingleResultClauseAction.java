@@ -2,10 +2,10 @@ package org.projog.core.udp.interpreter;
 
 import java.util.Map;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 
 /**
@@ -17,15 +17,15 @@ public final class SingleFunctionSingleResultClauseAction extends AbstractSingle
    private final PTerm originalAntecedant;
    private final PredicateFactory ef;
 
-   SingleFunctionSingleResultClauseAction(KnowledgeBase kb, ClauseModel ci) {
-      super(kb, ci.getConsequent().getArgs());
+   SingleFunctionSingleResultClauseAction(KB kb, ClauseModel ci) {
+      super(kb, ci.getConsequent().terms());
       originalAntecedant = ci.getAntecedant();
       ef = kb.getPredicateFactory(originalAntecedant);
    }
 
    @Override
-   protected boolean evaluateAntecedant(Map<Variable, Variable> sharedVariables) {
+   protected boolean evaluateAntecedant(Map<PVar, PVar> sharedVariables) {
       PTerm antecedant = originalAntecedant.copy(sharedVariables);
-      return ef.getPredicate(antecedant.getArgs()).evaluate(antecedant.getArgs());
+      return ef.getPredicate(antecedant.terms()).evaluate(antecedant.terms());
    }
 }

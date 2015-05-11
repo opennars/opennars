@@ -1,6 +1,6 @@
 package org.projog.core.function;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
@@ -22,7 +22,7 @@ import org.projog.core.term.PTerm;
  * @see Predicate#evaluate(PTerm[])
  */
 public abstract class AbstractSingletonPredicate extends AbstractPredicate implements PredicateFactory {
-   private KnowledgeBase knowledgeBase;
+   private KB KB;
 
    /**
     * Returns {@code this}.
@@ -33,23 +33,23 @@ public abstract class AbstractSingletonPredicate extends AbstractPredicate imple
    }
 
    @Override
-   public final void setKnowledgeBase(KnowledgeBase knowledgeBase) {
-      this.knowledgeBase = knowledgeBase;
+   public final void setKB(KB KB) {
+      this.KB = KB;
       init();
    }
 
    /**
-    * This method is called by {@link #setKnowledgeBase(KnowledgeBase)}.
+    * This method is called by {@link #setKB(KB)}.
     * <p>
     * Can be overridden by subclasses to perform initialisation before any calls to {@link #evaluate(PTerm...)} are made.
-    * As {@link #setKnowledgeBase(KnowledgeBase)} will have already been called before this method is invoked,
-    * overridden versions will be able to access the {@code KnowledgeBase} using {@link #getKnowledgeBase()}.
+    * As {@link #setKB(KB)} will have already been called before this method is invoked,
+    * overridden versions will be able to access the {@code KnowledgeBase} using {@link #getKB()}.
     */
    protected void init() {
    }
 
-   protected final KnowledgeBase getKnowledgeBase() {
-      return knowledgeBase;
+   protected final KB getKB() {
+      return KB;
    }
 
    @Override

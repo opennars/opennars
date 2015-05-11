@@ -11,11 +11,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.projog.TestUtils;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 
 public class TailRecursivePredicateMetaDataTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
    private List<ClauseModel> clauses;
 
    @Before
@@ -73,12 +73,12 @@ public class TailRecursivePredicateMetaDataTest {
 
    private void assertSingleResultTailRecursive(String input) {
       PTerm parsedSentence = TestUtils.parseSentence(input);
-      assertTrue(isSingleResultTailRecursive(copyClauses(), parsedSentence.getArgs()));
+      assertTrue(isSingleResultTailRecursive(copyClauses(), parsedSentence.terms()));
    }
 
    private void assertMultipleResultsTailRecursive(String input) {
       PTerm parsedSentence = TestUtils.parseSentence(input);
-      assertFalse(isSingleResultTailRecursive(copyClauses(), parsedSentence.getArgs()));
+      assertFalse(isSingleResultTailRecursive(copyClauses(), parsedSentence.terms()));
    }
 
    private boolean isSingleResultTailRecursive(List<ClauseModel> facts, PTerm[] args) {

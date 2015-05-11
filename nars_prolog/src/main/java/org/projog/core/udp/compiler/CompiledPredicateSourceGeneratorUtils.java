@@ -2,8 +2,8 @@ package org.projog.core.udp.compiler;
 
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PrologOperator;
+import org.projog.core.term.PVar;
 
 /**
  * Contains static methods which aid the construction of {@link CompiledPredicate} source code.
@@ -34,11 +34,11 @@ final class CompiledPredicateSourceGeneratorUtils {
    }
 
    static boolean isNoMoreThanTwoElementList(PTerm t) {
-      if (t.type() != TermType.LIST) {
+      if (t.type() != PrologOperator.LIST) {
          return false;
       }
-      PTerm tail = t.arg(1);
-      return tail.type() != TermType.LIST;
+      PTerm tail = t.term(1);
+      return tail.type() != PrologOperator.LIST;
    }
 
    static String getUnifyStatement(String variable1, String variable2) {
@@ -46,7 +46,7 @@ final class CompiledPredicateSourceGeneratorUtils {
    }
 
    static String getNewVariableSyntax(PTerm variable) {
-      return "new Variable(\"" + ((Variable) variable).getId() + "\")";
+      return "new Variable(\"" + ((PVar) variable).getId() + "\")";
    }
 
    static String getNewListSyntax(String head, String tail) {

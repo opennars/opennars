@@ -5,9 +5,9 @@ import static org.projog.core.term.TermUtils.createAnonymousVariable;
 import java.util.Arrays;
 
 import org.projog.core.PredicateKey;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.IntegerNumber;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 
 /** Represents a record stored in a {@code RecordedDatabase}. */
@@ -26,11 +26,11 @@ class Record {
       String name = key.getName();
       int numArgs = key.getNumArgs();
       if (numArgs == 0) {
-         return new Atom(name);
+         return new PAtom(name);
       } else {
          PTerm[] args = new PTerm[numArgs];
          Arrays.fill(args, createAnonymousVariable());
-         return Structure.createStructure(name, args);
+         return PStruct.make(name, args);
       }
    }
 

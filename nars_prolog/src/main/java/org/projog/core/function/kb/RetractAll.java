@@ -69,7 +69,7 @@ public final class RetractAll extends AbstractSingletonPredicate {
    @Override
    protected void init() {
       retractPredicateFactory = Inspect.retract();
-      retractPredicateFactory.setKnowledgeBase(getKnowledgeBase());
+      retractPredicateFactory.setKB(getKB());
    }
 
    @Override

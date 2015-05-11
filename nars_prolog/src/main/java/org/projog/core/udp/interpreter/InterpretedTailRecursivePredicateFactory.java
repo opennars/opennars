@@ -2,7 +2,7 @@ package org.projog.core.udp.interpreter;
 
 import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.udp.ClauseModel;
@@ -31,13 +31,13 @@ public final class InterpretedTailRecursivePredicateFactory implements Predicate
    private final PTerm[] secondClauseConsequentArgs;
    private final PTerm[] secondClauseOriginalTerms;
 
-   public InterpretedTailRecursivePredicateFactory(KnowledgeBase kb, TailRecursivePredicateMetaData metaData) {
+   public InterpretedTailRecursivePredicateFactory(KB kb, TailRecursivePredicateMetaData metaData) {
       this.metaData = metaData;
       ClauseModel firstClause = metaData.getFirstClause();
       ClauseModel secondClause = metaData.getSecondClause();
 
-      this.firstClauseConsequentArgs = firstClause.getConsequent().getArgs();
-      this.secondClauseConsequentArgs = secondClause.getConsequent().getArgs();
+      this.firstClauseConsequentArgs = firstClause.getConsequent().terms();
+      this.secondClauseConsequentArgs = secondClause.getConsequent().terms();
 
       this.firstClauseOriginalTerms = toArrayOfConjunctions(firstClause.getAntecedant());
       this.secondClauseOriginalTerms = toArrayOfConjunctions(secondClause.getAntecedant());
@@ -68,6 +68,6 @@ public final class InterpretedTailRecursivePredicateFactory implements Predicate
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
+   public void setKB(KB kb) {
    }
 }

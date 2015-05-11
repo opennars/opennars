@@ -61,8 +61,8 @@ public final class TermComparator implements Comparator<PTerm> {
          return 0;
       }
 
-      TermType type1 = v1.type();
-      TermType type2 = v2.type();
+      PrologOperator type1 = v1.type();
+      PrologOperator type2 = v2.type();
 
       if (type1.isStructure() && type2.isStructure()) {
          return compareStructures(v1, v2);
@@ -87,8 +87,8 @@ public final class TermComparator implements Comparator<PTerm> {
 
    private int compareStructures(PTerm t1, PTerm t2) {
       // compare number of arguments
-      int t1Length = t1.args();
-      int t2Length = t2.args();
+      int t1Length = t1.length();
+      int t2Length = t2.length();
       if (t1Length != t2Length) {
          return t1Length > t2Length ? 1 : -1;
       }
@@ -101,7 +101,7 @@ public final class TermComparator implements Comparator<PTerm> {
 
       // compare arguments one at a time
       for (int i = 0; i < t1Length; i++) {
-         int argComparison = compare(t1.arg(i), t2.arg(i));
+         int argComparison = compare(t1.term(i), t2.term(i));
          if (argComparison != 0) {
             return argComparison;
          }

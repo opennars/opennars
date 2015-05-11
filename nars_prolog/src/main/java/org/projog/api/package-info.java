@@ -9,7 +9,7 @@
  * <li>Create a {@link org.projog.api.QueryStatement} by using {@link org.projog.api.Projog#query(String)}.</li>
  * <li>Create a {@link org.projog.api.QueryResult} by using {@link org.projog.api.QueryStatement#get()}.</li>
  * <li>Iterate through all possible solutions to the query by using {@link org.projog.api.QueryResult#next()}.</li>
- * <li>For each solution get the {@link org.projog.core.term.PTerm} instantiated to a {@link org.projog.core.term.Variable} in the query by calling {@link org.projog.api.QueryResult#getTerm(String)}.</li>
+ * <li>For each solution get the {@link org.projog.core.term.PTerm} instantiated to a {@link org.projog.core.term.PVar} in the query by calling {@link org.projog.api.QueryResult#getTerm(String)}.</li>
  * </ul>
  */
 package org.projog.api;

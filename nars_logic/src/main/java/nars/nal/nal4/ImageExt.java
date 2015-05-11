@@ -98,7 +98,7 @@ public class ImageExt extends Image {
     public static Term make(Product product, Term relation, short index) {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
-            if ((product.size() == 2) && (p2.size() == 2)) {
+            if ((product.length() == 2) && (p2.length() == 2)) {
                 if ((index == 0) && product.term[1].equals(p2.term[1])) { // (/,_,(*,a,b),b) is reduced to a
                     return p2.term[0];
                 }

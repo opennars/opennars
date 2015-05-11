@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.projog.core.ProjogException;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.Numeric;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 
 public class AbstractCalculatableTest {
@@ -131,7 +131,7 @@ public class AbstractCalculatableTest {
          }
       };
       c.setKnowledgeBase(createKnowledgeBase());
-      Structure arithmeticFunction = structure("*", integerNumber(3), integerNumber(7));
+      PStruct arithmeticFunction = structure("*", integerNumber(3), integerNumber(7));
       Numeric result = c.calculate(new PTerm[] {arithmeticFunction});
       assertEquals(26, result.getLong()); // 26 = (3*7)+5
    }
@@ -145,8 +145,8 @@ public class AbstractCalculatableTest {
          }
       };
       c.setKnowledgeBase(createKnowledgeBase());
-      Structure f1 = structure("*", integerNumber(3), integerNumber(7));
-      Structure f2 = structure("/", integerNumber(12), integerNumber(2));
+      PStruct f1 = structure("*", integerNumber(3), integerNumber(7));
+      PStruct f2 = structure("/", integerNumber(12), integerNumber(2));
       Numeric result = c.calculate(new PTerm[] {f1, f2});
       assertEquals(15, result.getLong()); // 26 = (3*7)-(12/2)
    }

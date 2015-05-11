@@ -3,9 +3,9 @@ package org.projog.core.udp.interpreter;
 import java.util.Map;
 
 import org.projog.core.CutException;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /**
  * A clause whose body consists of a single cut ({@code !}) predicate.
@@ -15,7 +15,7 @@ import org.projog.core.term.Variable;
  * @see org.projog.core.function.flow.Cut
  */
 public final class CutClauseAction extends AbstractMultiAnswerClauseAction {
-   CutClauseAction(KnowledgeBase kb, PTerm[] consequentArgs) {
+   CutClauseAction(KB kb, PTerm[] consequentArgs) {
       super(kb, consequentArgs);
    }
 
@@ -24,7 +24,7 @@ public final class CutClauseAction extends AbstractMultiAnswerClauseAction {
    }
 
    @Override
-   protected boolean evaluateAntecedant(Map<Variable, Variable> sharedVariables) {
+   protected boolean evaluateAntecedant(Map<PVar, PVar> sharedVariables) {
       return true;
    }
 

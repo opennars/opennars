@@ -443,8 +443,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
             double qLast;
-            if (lastAction!=null)
-                qLast = qSentence(state, lastAction);
+            if (lastAction!=null) {
+                //qLast = qSentence(state, lastAction);
+                qLast = q(state, lastAction);
+            }
             else {
                 //qLast = Math.random();
                 qLast = 0;
@@ -458,14 +460,15 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 qLast = 0;
             }
 
-            double sq = QEntry.getQSentence(i.sentence) * confidence;
+            //double sq = QEntry.getQSentence(i.sentence) * confidence;
+            double nq = q(state, nextAction);
 
             //TODO compare: q(state, nextAction) with q(i.sentence)
             //double deltaQ = reward + gamma * q(state, nextAction) - qLast;
-            double deltaQ = reward + gamma * sq - qLast;
+            double deltaQ = reward + gamma * nq - qLast;
 
             if (lastAction!=null)
-                brain.qUpdate(state, lastAction, Double.NaN, 1, sq);
+                brain.qUpdate(state, lastAction, Double.NaN, 1, nq);
 
             final double alphaDeltaQ = alpha * deltaQ;
             sumDeltaQ += alphaDeltaQ;
@@ -474,15 +477,18 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             numTasks++;
         }
 
-        //System.out.println("deltaQ = " + sumDeltaQ);
+        if (numTasks > 0) {
 
-        List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
-        for (S i : s) {
-            for (Operation k : brain.getActions()) {
-                brain.qUpdate(i, k, sumDeltaQ, GammaLambda, 0);
+            //System.out.println("deltaQ = " + sumDeltaQ);
+
+            List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
+            for (S i : s) {
+                for (Operation k : brain.getActions()) {
+                    brain.qUpdate(i, k, sumDeltaQ, GammaLambda, 0);
+                }
             }
-        }
 
+        }
 
 
         for (int i = 0; i < getNumActions(); i++) {

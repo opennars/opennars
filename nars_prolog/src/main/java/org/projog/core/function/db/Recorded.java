@@ -39,7 +39,7 @@ public final class Recorded extends AbstractRetryablePredicate {
 
    @Override
    public Recorded getPredicate(PTerm key, PTerm value, PTerm reference) {
-      RecordedDatabase database = getServiceLocator(getKnowledgeBase()).getInstance(RecordedDatabase.class);
+      RecordedDatabase database = getServiceLocator(getKB()).getInstance(RecordedDatabase.class);
       Iterator<Record> itr = getIterator(key, database);
       return new Recorded(itr);
    }

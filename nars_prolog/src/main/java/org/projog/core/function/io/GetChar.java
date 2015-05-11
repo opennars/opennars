@@ -5,7 +5,7 @@ import static org.projog.core.KnowledgeBaseUtils.getFileHandles;
 import org.projog.core.FileHandles;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -75,22 +75,22 @@ public final class GetChar extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm argument) {
       try {
          int c = fileHandles.getCurrentInputStream().read();
-         Atom next = toAtom(c);
+         PAtom next = toAtom(c);
          return argument.unify(next);
       } catch (Exception e) {
          throw new ProjogException("Could not read next character from input stream", e);
       }
    }
 
-   private Atom toAtom(int c) {
-      return new Atom(toString(c));
+   private PAtom toAtom(int c) {
+      return new PAtom(toString(c));
    }
 
    private String toString(int c) {

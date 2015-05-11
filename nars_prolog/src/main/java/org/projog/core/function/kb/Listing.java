@@ -58,14 +58,14 @@ public final class Listing extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      termFormatter = getTermFormatter(getKnowledgeBase());
-      fileHandles = getFileHandles(getKnowledgeBase());
+      termFormatter = getTermFormatter(getKB());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm arg) {
       String predicateName = getAtomName(arg);
-      List<PredicateKey> keys = getPredicateKeysByName(getKnowledgeBase(), predicateName);
+      List<PredicateKey> keys = getPredicateKeysByName(getKB(), predicateName);
       for (PredicateKey key : keys) {
          listClauses(key);
       }
@@ -80,7 +80,7 @@ public final class Listing extends AbstractSingletonPredicate {
    }
 
    private Iterator<ClauseModel> getClauses(PredicateKey key) {
-      Map<PredicateKey, UserDefinedPredicateFactory> userDefinedPredicates = getKnowledgeBase().getUserDefinedPredicates();
+      Map<PredicateKey, UserDefinedPredicateFactory> userDefinedPredicates = getKB().getDefined();
       UserDefinedPredicateFactory userDefinedPredicate = userDefinedPredicates.get(key);
       return userDefinedPredicate.getImplications();
    }

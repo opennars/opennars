@@ -20,7 +20,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.api.Projog;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
@@ -59,12 +59,12 @@ public class CompiledPredicateSourceGeneratorTest {
    private static final String DUBUG_SUFFIX = "_debug";
 
    private final File outputDir = new File("build", getClass().getName());
-   private final KnowledgeBase debugEnabledKnowledgeBase;
-   private final KnowledgeBase debugDisabledKnowledgeBase;
+   private final KB debugEnabledKB;
+   private final KB debugDisabledKB;
 
    public CompiledPredicateSourceGeneratorTest() {
-      debugEnabledKnowledgeBase = TestUtils.createKnowledgeBase();
-      debugDisabledKnowledgeBase = TestUtils.createKnowledgeBase(new ProjogSystemProperties() {
+      debugEnabledKB = TestUtils.createKnowledgeBase();
+      debugDisabledKB = TestUtils.createKnowledgeBase(new ProjogSystemProperties() {
          @Override
          public boolean isSpyPointsEnabled() {
             return false;
@@ -158,7 +158,7 @@ public class CompiledPredicateSourceGeneratorTest {
 
    private String getFunctionName(PTerm t) {
       if (t.getName().equals(IMPLICATION_PREDICATE_NAME)) {
-         return t.arg(0).getName();
+         return t.term(0).getName();
       } else {
          return t.getName();
       }
@@ -183,17 +183,17 @@ public class CompiledPredicateSourceGeneratorTest {
    }
 
    private void assertContentMatches(String filenamePrefix, PTerm[] terms) {
-      assertContentMatches(debugDisabledKnowledgeBase, filenamePrefix + FILE_SUFFIX, terms);
-      assertContentMatches(debugEnabledKnowledgeBase, filenamePrefix + DUBUG_SUFFIX + FILE_SUFFIX, terms);
+      assertContentMatches(debugDisabledKB, filenamePrefix + FILE_SUFFIX, terms);
+      assertContentMatches(debugEnabledKB, filenamePrefix + DUBUG_SUFFIX + FILE_SUFFIX, terms);
    }
 
-   private void assertContentMatches(KnowledgeBase kb, String exampleSourceFilename, PTerm[] terms) {
+   private void assertContentMatches(KB kb, String exampleSourceFilename, PTerm[] terms) {
       File exampleSourceFile = new File(RESOURCE_DIR, exampleSourceFilename);
       File newlyGeneratedSourceFile = getGeneratedSourceFile(kb, terms);
       assertContentsMatch(exampleSourceFile, newlyGeneratedSourceFile);
    }
 
-   private File getGeneratedSourceFile(KnowledgeBase kb, PTerm[] terms) {
+   private File getGeneratedSourceFile(KB kb, PTerm[] terms) {
       try {
          List<ClauseModel> implications = createClauseModels(terms);
          return getGeneratedSourceFile(kb, implications);
@@ -217,7 +217,7 @@ public class CompiledPredicateSourceGeneratorTest {
     * @param implications the Prolog clauses to convert
     * @return newly created file containing Java source code
     */
-   private File getGeneratedSourceFile(KnowledgeBase kb, List<ClauseModel> implications) {
+   private File getGeneratedSourceFile(KB kb, List<ClauseModel> implications) {
       CompiledPredicateWriter writer = new CompiledPredicateWriter(kb, implications);
       // Note: as we are only generating the java source code here
       // we are not testing that it would actually compile.
@@ -333,7 +333,7 @@ public class CompiledPredicateSourceGeneratorTest {
    private void addUserDefinedPredicate(String keySyntax) {
       addPredicateFactory(keySyntax, new CompiledPredicate() {
          @Override
-         public void setKnowledgeBase(KnowledgeBase kb) {
+         public void setKB(KB kb) {
          };
 
          @Override
@@ -362,8 +362,8 @@ public class CompiledPredicateSourceGeneratorTest {
       PTerm t = TestUtils.parseSentence(keySyntax + ".");
       PredicateKey key = PredicateKey.createFromNameAndArity(t);
       DummyUserDefinedPredicateFactory cp = new DummyUserDefinedPredicateFactory(key, ef);
-      debugEnabledKnowledgeBase.addUserDefinedPredicate(cp);
-      debugDisabledKnowledgeBase.addUserDefinedPredicate(cp);
+      debugEnabledKB.addDefined(cp);
+      debugDisabledKB.addDefined(cp);
    }
 
    private class DummyUserDefinedPredicateFactory extends StaticUserDefinedPredicateFactory {

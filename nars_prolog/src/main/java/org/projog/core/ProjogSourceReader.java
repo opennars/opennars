@@ -16,12 +16,12 @@ import java.util.Map;
 import static org.projog.core.KnowledgeBaseUtils.*;
 
 /**
- * Populates a {@link KnowledgeBase} with clauses parsed from Prolog syntax.
+ * Populates a {@link KB} with clauses parsed from Prolog syntax.
  * <p>
  * <img src="doc-files/ProjogSourceReader.png">
  */
 public final class ProjogSourceReader {
-   private final KnowledgeBase kb;
+   private final KB kb;
    private final Map<PredicateKey, UserDefinedPredicateFactory> userDefinedPredicates = new LinkedHashMap<>();
 
    /**
@@ -31,7 +31,7 @@ public final class ProjogSourceReader {
     * @param prologSourceFile source of the prolog syntax defining clauses to add to the KnowledgeBase
     * @throws ProjogException if there is any problem parsing the syntax or adding the new clauses to the KnowledgeBase
     */
-   public static void parseFile(KnowledgeBase kb, File prologSourceFile) {
+   public static void parseFile(KB kb, File prologSourceFile) {
       notifyReadingFromFileSystem(kb, prologSourceFile);
       try (Reader reader = new FileReader(prologSourceFile)) {
          ProjogSourceReader projogSourceReader = new ProjogSourceReader(kb);
@@ -51,7 +51,7 @@ public final class ProjogSourceReader {
     * @param prologSourceResourceName source of the prolog syntax defining clauses to add to the KnowledgeBase
     * @throws ProjogException if there is any problem parsing the syntax or adding the new clauses to the KnowledgeBase
     */
-   public static void parseResource(KnowledgeBase kb, String prologSourceResourceName) {
+   public static void parseResource(KB kb, String prologSourceResourceName) {
       try (Reader reader = getReader(kb, prologSourceResourceName)) {
          ProjogSourceReader projogSourceReader = new ProjogSourceReader(kb);
          projogSourceReader.parse(reader);
@@ -70,7 +70,7 @@ public final class ProjogSourceReader {
     * @param reader source of the prolog syntax defining clauses to add to the KnowledgeBase
     * @throws ProjogException if there is any problem parsing the syntax or adding the new clauses to the KnowledgeBase
     */
-   public static void parseReader(KnowledgeBase kb, Reader reader) {
+   public static void parseReader(KB kb, Reader reader) {
       try {
          ProjogSourceReader projogSourceReader = new ProjogSourceReader(kb);
          projogSourceReader.parse(reader);
@@ -84,7 +84,7 @@ public final class ProjogSourceReader {
       }
    }
 
-   public static void parse(KnowledgeBase kb, String s) {
+   public static void parse(KB kb, String s) {
       parseReader(kb, new StringReader(s));
    }
 
@@ -95,7 +95,7 @@ public final class ProjogSourceReader {
     * {@code Reader}. If there is no existing file on the filesystem matching {@code resourceName} then an attempt is
     * made to read the resource from the classpath.
     */
-   private static Reader getReader(KnowledgeBase kb, String resourceName) throws IOException {
+   private static Reader getReader(KB kb, String resourceName) throws IOException {
       File f = new File(resourceName);
       if (f.exists()) {
          notifyReadingFromFileSystem(kb, f);
@@ -110,17 +110,17 @@ public final class ProjogSourceReader {
       }
    }
 
-   private static void notifyReadingFromFileSystem(KnowledgeBase kb, File file) {
+   private static void notifyReadingFromFileSystem(KB kb, File file) {
       ProjogEvent event = new ProjogEvent(ProjogEventType.INFO, "Reading prolog source in: " + file + " from file system", ProjogSourceReader.class);
       getProjogEventsObservable(kb).notifyObservers(event);
    }
 
-   private static void notifyReadingFromClasspath(KnowledgeBase kb, String resourceName) {
+   private static void notifyReadingFromClasspath(KB kb, String resourceName) {
       ProjogEvent event = new ProjogEvent(ProjogEventType.INFO, "Reading prolog source in: " + resourceName + " from classpath", ProjogSourceReader.class);
       getProjogEventsObservable(kb).notifyObservers(event);
    }
 
-   private ProjogSourceReader(KnowledgeBase kb) {
+   private ProjogSourceReader(KB kb) {
       this.kb = kb;
    }
 
@@ -152,12 +152,12 @@ public final class ProjogSourceReader {
     * @param t structure with name of {@code ?-} and a single argument.
     */
    private void processQuestion(PTerm t) {
-      PTerm query = t.arg(0);
+      PTerm query = t.term(0);
       if (isDynamicFunctionCall(query)) {
-         declareDynamicPredicate(query.arg(0));
+         declareDynamicPredicate(query.term(0));
       } else {
          Predicate e = KnowledgeBaseUtils.getPredicate(kb, query);
-         while (e.evaluate(query.getArgs()) && e.isRetryable()) {
+         while (e.evaluate(query.terms()) && e.isRetryable()) {
             // keep re-evaluating until fail
          }
       }
@@ -195,7 +195,7 @@ public final class ProjogSourceReader {
       UserDefinedPredicateFactory userDefinedPredicate = userDefinedPredicates.get(key);
       if (userDefinedPredicate == null) {
          userDefinedPredicate = new StaticUserDefinedPredicateFactory(key);
-         userDefinedPredicate.setKnowledgeBase(kb);
+         userDefinedPredicate.setKB(kb);
          userDefinedPredicates.put(key, userDefinedPredicate);
       }
       return userDefinedPredicate;
@@ -203,7 +203,7 @@ public final class ProjogSourceReader {
 
    private void addUserDefinedPredicatesToKnowledgeBase() {
       for (UserDefinedPredicateFactory userDefinedPredicate : userDefinedPredicates.values()) {
-         kb.addUserDefinedPredicate(userDefinedPredicate);
+         kb.addDefined(userDefinedPredicate);
       }
       for (UserDefinedPredicateFactory userDefinedPredicate : userDefinedPredicates.values()) {
          if (userDefinedPredicate instanceof StaticUserDefinedPredicateFactory) {

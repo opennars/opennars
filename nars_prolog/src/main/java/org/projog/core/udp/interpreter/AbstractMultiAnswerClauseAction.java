@@ -3,10 +3,10 @@ package org.projog.core.udp.interpreter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.Unifier;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /**
  * A clause that can succeed more than once.
@@ -14,11 +14,11 @@ import org.projog.core.term.Variable;
  * e.g. {@code p(X) :- repeat(X).}
  */
 abstract class AbstractMultiAnswerClauseAction implements ClauseAction {
-   protected KnowledgeBase kb;
+   protected KB kb;
    private final PTerm[] originalConsequentArgs;
-   private Map<Variable, Variable> sharedVariables;
+   private Map<PVar, PVar> sharedVariables;
 
-   AbstractMultiAnswerClauseAction(KnowledgeBase kb, PTerm[] consequentArgs) {
+   AbstractMultiAnswerClauseAction(KB kb, PTerm[] consequentArgs) {
       this.kb = kb;
       this.originalConsequentArgs = consequentArgs;
    }
@@ -46,7 +46,7 @@ abstract class AbstractMultiAnswerClauseAction implements ClauseAction {
       }
    }
 
-   protected abstract boolean evaluateAntecedant(Map<Variable, Variable> sharedVariables);
+   protected abstract boolean evaluateAntecedant(Map<PVar, PVar> sharedVariables);
 
    protected abstract boolean reEvaluateAntecedant();
 }

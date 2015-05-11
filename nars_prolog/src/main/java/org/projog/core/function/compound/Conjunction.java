@@ -2,14 +2,14 @@ package org.projog.core.function.compound;
 
 import java.util.HashMap;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
 import org.projog.core.term.Unifier;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /* TEST
  %TRUE true, true
@@ -136,26 +136,26 @@ public final class Conjunction extends AbstractRetryablePredicate {
    public Conjunction() {
    }
 
-   private Conjunction(KnowledgeBase knowledgeBase) {
-      setKnowledgeBase(knowledgeBase);
+   private Conjunction(KB KB) {
+      setKB(KB);
    }
 
    @Override
    public Conjunction getPredicate(PTerm arg1, PTerm arg2) {
-      return new Conjunction(getKnowledgeBase());
+      return new Conjunction(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm inputArg1, PTerm inputArg2) {
       if (firstGo) {
-         firstPredicate = getKnowledgeBase().getPredicateFactory(inputArg1).getPredicate(inputArg1.getArgs());
+         firstPredicate = getKB().getPredicateFactory(inputArg1).getPredicate(inputArg1.terms());
 
-         while ((firstGo || firstPredicate.isRetryable()) && firstPredicate.evaluate(inputArg1.getArgs())) {
+         while ((firstGo || firstPredicate.isRetryable()) && firstPredicate.evaluate(inputArg1.terms())) {
             firstGo = false;
-            if (preMatch(inputArg2) && secondPredicate.evaluate(secondArg.getArgs())) {
+            if (preMatch(inputArg2) && secondPredicate.evaluate(secondArg.terms())) {
                return true;
             }
-            TermUtils.backtrack(tmpInputArg2.getArgs());
+            TermUtils.backtrack(tmpInputArg2.terms());
          }
 
          return false;
@@ -169,25 +169,25 @@ public final class Conjunction extends AbstractRetryablePredicate {
             evaluateSecondPredicate = secondPredicate.isRetryable();
          }
 
-         if (evaluateSecondPredicate && secondPredicate.evaluate(secondArg.getArgs())) {
+         if (evaluateSecondPredicate && secondPredicate.evaluate(secondArg.terms())) {
             return true;
          }
 
-         TermUtils.backtrack(tmpInputArg2.getArgs());
+         TermUtils.backtrack(tmpInputArg2.terms());
          secondArg = null;
-      } while (firstPredicate.isRetryable() && firstPredicate.evaluate(inputArg1.getArgs()));
+      } while (firstPredicate.isRetryable() && firstPredicate.evaluate(inputArg1.terms()));
 
       return false;
    }
 
    private boolean preMatch(PTerm inputArg2) {
       tmpInputArg2 = inputArg2.get();
-      secondArg = tmpInputArg2.copy(new HashMap<Variable, Variable>());
-      if (Unifier.preMatch(tmpInputArg2.getArgs(), secondArg.getArgs())) {
+      secondArg = tmpInputArg2.copy(new HashMap<PVar, PVar>());
+      if (Unifier.preMatch(tmpInputArg2.terms(), secondArg.terms())) {
          if (secondPredicateFactory == null) {
-            secondPredicateFactory = getKnowledgeBase().getPredicateFactory(secondArg);
+            secondPredicateFactory = getKB().getPredicateFactory(secondArg);
          }
-         secondPredicate = secondPredicateFactory.getPredicate(secondArg.getArgs());
+         secondPredicate = secondPredicateFactory.getPredicate(secondArg.terms());
          return true;
       } else {
          return false;

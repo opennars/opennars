@@ -10,7 +10,7 @@ import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /* TEST
  z(r).
@@ -72,8 +72,8 @@ import org.projog.core.term.Variable;
 public final class FindAll extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm template, PTerm goal, PTerm output) {
-      final Predicate predicate = KnowledgeBaseUtils.getPredicate(getKnowledgeBase(), goal);
-      final PTerm[] goalArguments = goal.getArgs();
+      final Predicate predicate = KnowledgeBaseUtils.getPredicate(getKB(), goal);
+      final PTerm[] goalArguments = goal.terms();
       final PTerm solutions;
       if (predicate.evaluate(goalArguments)) {
          solutions = createListOfAllSolutions(template, predicate, goalArguments);
@@ -88,7 +88,7 @@ public final class FindAll extends AbstractSingletonPredicate {
    private PTerm createListOfAllSolutions(PTerm template, final Predicate predicate, final PTerm[] goalArguments) {
       final List<PTerm> solutions = new ArrayList<>();
       do {
-         solutions.add(template.copy(new HashMap<Variable, Variable>()));
+         solutions.add(template.copy(new HashMap<PVar, PVar>()));
       } while (hasFoundAnotherSolution(predicate, goalArguments));
       final PTerm output = ListFactory.createList(solutions);
       output.backtrack();

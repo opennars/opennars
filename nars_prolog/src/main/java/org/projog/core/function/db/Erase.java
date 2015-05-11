@@ -38,7 +38,7 @@ public final class Erase extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      database = getServiceLocator(getKnowledgeBase()).getInstance(RecordedDatabase.class);
+      database = getServiceLocator(getKB()).getInstance(RecordedDatabase.class);
    }
 
    @Override

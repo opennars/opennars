@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.projog.core.term.Numeric;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
 
 /**
@@ -33,14 +33,14 @@ final class IsPredicateInvocationGenerator implements PredicateInvocationGenerat
       PTerm function = g.currentClause().getCurrentFunction();
 
       // only add arg1 variables to currentClause.variablesToBackTrack as arg2's will not be updated
-      PTerm arg1 = function.arg(0);
+      PTerm arg1 = function.term(0);
       g.currentClause().addVariablesToBackTrack(TermUtils.getAllVariablesInTerm(arg1));
 
-      PTerm arg2 = function.arg(1);
+      PTerm arg2 = function.term(1);
 
       String numeric = getCalculatableExpression(g, arg2);
 
-      if (arg1.type() == TermType.NAMED_VARIABLE && g.declareVariableIfNotAlready(arg1, false)) {
+      if (arg1.type() == PrologOperator.NAMED_VARIABLE && g.declareVariableIfNotAlready(arg1, false)) {
          String variableId = g.getVariableId(arg1);
          g.classVariables().addAssignedVariable(variableId);
          g.assign(variableId, numeric);
@@ -55,24 +55,24 @@ final class IsPredicateInvocationGenerator implements PredicateInvocationGenerat
    private String getCalculatableExpression(CompiledPredicateWriter g, PTerm t) {
       if (t.constant()) {
          return g.outputCreateTermStatement(getNumeric(g, t), true);
-      } else if (t.type() == TermType.STRUCTURE && t.args() == 2 && ops.containsKey(t.getName())) {
+      } else if (t.type() == PrologOperator.STRUCTURE && t.length() == 2 && ops.containsKey(t.getName())) {
          String op = ops.get(t.getName());
-         PTerm arg1 = t.arg(0);
-         PTerm arg2 = t.arg(1);
-         boolean isResultDouble = arg1.type() == TermType.FRACTION || arg2.type() == TermType.FRACTION;
+         PTerm arg1 = t.term(0);
+         PTerm arg2 = t.term(1);
+         boolean isResultDouble = arg1.type() == PrologOperator.FRACTION || arg2.type() == PrologOperator.FRACTION;
          String string1;
          if (arg1.type().isVariable() == false && arg1.type().isNumeric() == false) {
             string1 = "num" + g.currentClause().getNextNumericIndex();
             g.assign("Numeric " + string1, getNumeric(getCalculatableExpression(g, arg1), g));
          } else {
-            string1 = g.outputCreateTermStatement(t.arg(0), true);
+            string1 = g.outputCreateTermStatement(t.term(0), true);
          }
          String string2;
          if (arg2.type().isVariable() == false && arg2.type().isNumeric() == false) {
             string2 = "num" + g.currentClause().getNextNumericIndex();
             g.assign("Numeric " + string2, getNumeric(getCalculatableExpression(g, arg2), g));
          } else {
-            string2 = g.outputCreateTermStatement(t.arg(1), true);
+            string2 = g.outputCreateTermStatement(t.term(1), true);
          }
          StringBuilder s = new StringBuilder();
          String arg1TempNumericPlaceholder = null;

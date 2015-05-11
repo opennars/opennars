@@ -1,25 +1,6 @@
 package org.projog.api;
 
-import static org.projog.core.KnowledgeBaseUtils.getOperands;
-import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
-import static org.projog.core.term.TermUtils.createAnonymousVariable;
-
-import java.io.File;
-import java.io.PrintStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Observer;
-
-import org.projog.core.KnowledgeBase;
-import org.projog.core.KnowledgeBaseUtils;
-import org.projog.core.PredicateFactory;
-import org.projog.core.PredicateKey;
-import org.projog.core.ProjogException;
-import org.projog.core.ProjogProperties;
-import org.projog.core.ProjogSourceReader;
-import org.projog.core.ProjogSystemProperties;
+import org.projog.core.*;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermFormatter;
 import org.projog.core.udp.ClauseModel;
@@ -27,10 +8,23 @@ import org.projog.core.udp.StaticUserDefinedPredicateFactory;
 import org.projog.core.udp.UserDefinedPredicateFactory;
 import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
 
+import java.io.File;
+import java.io.PrintStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Observer;
+
+import static org.projog.core.KnowledgeBaseUtils.getOperands;
+import static org.projog.core.KnowledgeBaseUtils.getProjogEventsObservable;
+import static org.projog.core.term.TermUtils.createAnonymousVariable;
+
 /**
  * Provides an entry point for other Java code to interact with Projog.
  * <p>
- * Contains a single instance of {@link org.projog.core.KnowledgeBase}.
+ * Contains a single instance of {@link KB}.
  * <p>
  * <h3>Example usage</h3> Contents of {@code ProjogExample.java}:
  * 
@@ -118,14 +112,19 @@ import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
  * <img src="doc-files/Projog.png">
  */
 public class Projog {
-   private final KnowledgeBase kb;
-   private final TermFormatter tf;
+   public final KB kb;
+   public final TermFormatter tf;
 
    /**
     * Constructs a new {@code Projog} object using {@link ProjogSystemProperties} and the specified {@code Observer}s.
     */
    public Projog(Observer... observers) {
-      this(new ProjogSystemProperties(), observers);
+      this(new ProjogSystemProperties()  {
+         @Override
+         public boolean isRuntimeCompilationEnabled() {
+            return false;
+         }
+      }, observers);
    }
 
    /**
@@ -158,6 +157,10 @@ public class Projog {
     */
    public void consultReader(Reader reader) {
       ProjogSourceReader.parseReader(kb, reader);
+   }
+
+   public void consult(String s) {
+      consultReader(new StringReader(s));
    }
 
    /**
@@ -291,7 +294,7 @@ public class Projog {
    }
 
    private StaticUserDefinedPredicateFactory getCompiledPredicateForClass(String className) {
-      for (Map.Entry<PredicateKey, UserDefinedPredicateFactory> e : kb.getUserDefinedPredicates().entrySet()) {
+      for (Map.Entry<PredicateKey, UserDefinedPredicateFactory> e : kb.getDefined().entrySet()) {
          UserDefinedPredicateFactory udp = e.getValue();
          if (isCompiledPredicateForClass(className, udp)) {
             return (StaticUserDefinedPredicateFactory) udp;

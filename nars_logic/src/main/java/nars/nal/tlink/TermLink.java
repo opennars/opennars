@@ -20,11 +20,11 @@
  */
 package nars.nal.tlink;
 
-import nars.budget.Budget;
 import nars.Symbols;
-import nars.nal.term.Termed;
+import nars.budget.Budget;
 import nars.nal.Item;
 import nars.nal.term.Term;
+import nars.nal.term.Termed;
 
 /**
  * A tlink between a compound term and a component term
@@ -66,17 +66,19 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     
     /** The linked Term */
     public final Term target;
-    
+
+    public final Term source;
+
     /** The type of tlink, one of the above */
     public final short type;
     
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
 
-    private final String prefix;
+    String key;
 
-    transient final int hash;
-    private final Term source;
+    //final int hash;
+
 
 
     /**
@@ -88,26 +90,26 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(boolean incoming, Term host, TermLinkTemplate template, String name, Budget v) {
+    public TermLink(boolean incoming, Term host, TermLinkTemplate template, String key, Budget v) {
         super(v);
 
 
         if (incoming) {
             this.source = template.target;
-            this.target = host.ensureNormalized("Host term in TermLink");
+            this.target = host.normalized();
             type = template.type;
         }
         else {
             this.source = host;
-            this.target = template.target.ensureNormalized("Template target");
+            this.target = template.target.normalized();
             type = (short)(template.type - 1); //// point to component
         }
 
         index = template.index;
 
-        this.prefix = name;
+        this.key = key;
 
-        this.hash = termLinkHashCode();
+        //this.hash = termLinkHashCode();
     }
 
 
@@ -131,7 +133,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
     @Override
     public int hashCode() {
-        return hash;
+        return key.hashCode();
     }
 
 
@@ -147,7 +149,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
         return getPrefix() + Symbols.TLinkSeparator + getTarget();
     }
 
-    public String getPrefix() { return prefix; }
+    public String getPrefix() { return key; }
 
 
 

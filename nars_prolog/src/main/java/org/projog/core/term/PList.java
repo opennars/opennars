@@ -60,28 +60,28 @@ public final class PList implements PTerm {
    }
 
    @Override
-   public PTerm[] getArgs() {
+   public PTerm[] terms() {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   public int args() {
+   public int length() {
       return 2;
    }
 
    @Override
-   public PTerm arg(int index) {
+   public PTerm term(int index) {
       return index == 0 ? head : tail;
    }
 
    /**
-    * Returns {@link TermType#LIST}.
+    * Returns {@link PrologOperator#LIST}.
     * 
-    * @return {@link TermType#LIST}
+    * @return {@link PrologOperator#LIST}
     */
    @Override
-   public TermType type() {
-      return TermType.LIST;
+   public PrologOperator type() {
+      return PrologOperator.LIST;
    }
 
    @Override
@@ -105,7 +105,7 @@ public final class PList implements PTerm {
    }
 
    @Override
-   public PList copy(Map<Variable, Variable> sharedVariables) {
+   public PList copy(Map<PVar, PVar> sharedVariables) {
       if (immutable) {
          return this;
       } else {
@@ -124,19 +124,19 @@ public final class PList implements PTerm {
       // used to be implemented using recursion but caused stack overflow problems with long lists
       PTerm t2 = this;
       do {
-         TermType tType = t1.type();
-         if (tType == TermType.LIST) {
-            if (t2.arg(0).unify(t1.arg(0)) == false) {
+         PrologOperator tType = t1.type();
+         if (tType == PrologOperator.LIST) {
+            if (t2.term(0).unify(t1.term(0)) == false) {
                return false;
             }
-            t1 = t1.arg(1);
-            t2 = t2.arg(1);
+            t1 = t1.term(1);
+            t2 = t2.term(1);
          } else if (tType.isVariable()) {
             return t1.unify(t2);
          } else {
             return false;
          }
-      } while (t2.type() == TermType.LIST);
+      } while (t2.type() == PrologOperator.LIST);
       return t2.unify(t1);
    }
 
@@ -144,7 +144,7 @@ public final class PList implements PTerm {
     * Performs a strict comparison of this list to the specified term.
     * 
     * @param t1 the term to compare this list against
-    * @return {@code true} if the given term represents a {@link TermType#LIST} with a head and tail strictly equal to
+    * @return {@code true} if the given term represents a {@link PrologOperator#LIST} with a head and tail strictly equal to
     * the corresponding head and tail of this List object.
     */
    @Override
@@ -152,13 +152,13 @@ public final class PList implements PTerm {
       // used to be implemented using recursion but caused stack overflow problems with long lists
       PTerm t2 = this;
       do {
-         boolean equal = t1.type() == TermType.LIST && t1.arg(0).strictEquals(t2.arg(0));
+         boolean equal = t1.type() == PrologOperator.LIST && t1.term(0).strictEquals(t2.term(0));
          if (equal == false) {
             return false;
          }
-         t1 = t1.arg(1);
-         t2 = t2.arg(1);
-      } while (t2.type() == TermType.LIST);
+         t1 = t1.term(1);
+         t2 = t2.term(1);
+      } while (t2.type() == PrologOperator.LIST);
       return t1.strictEquals(t2);
    }
 
@@ -179,11 +179,11 @@ public final class PList implements PTerm {
       do {
          sb.append(ListFactory.LIST_PREDICATE_NAME);
          sb.append("(");
-         sb.append(t.arg(0));
+         sb.append(t.term(0));
          sb.append(", ");
-         t = t.arg(1);
+         t = t.term(1);
          listCtr++;
-      } while (t.type() == TermType.LIST);
+      } while (t.type() == PrologOperator.LIST);
       sb.append(t);
       for (int i = 0; i < listCtr; i++) {
          sb.append(")");

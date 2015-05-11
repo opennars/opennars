@@ -195,7 +195,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     public String getPrefix() {
         String p = this.prefix;
         if (p == null) {
-            p = this.prefix = currentTemplate.prefix(incoming);
+            p = this.prefix = currentTemplate.prefix(incoming, getTarget());
         }
         return p;
     }
@@ -217,7 +217,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public int hashCode() {
-        return termLinkHashCode();
+        return getPrefix().hashCode();
     }
 
     @Override

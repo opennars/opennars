@@ -14,10 +14,10 @@ import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 abstract class AbstractCollectionOf extends AbstractRetryablePredicate {
-   private List<Variable> variablesNotInTemplate;
+   private List<PVar> variablesNotInTemplate;
    private Iterator<Entry<Key, List<PTerm>>> itr;
 
    @Override
@@ -32,7 +32,7 @@ abstract class AbstractCollectionOf extends AbstractRetryablePredicate {
          bag.backtrack();
          bag.unify(ListFactory.createList(e.getValue()));
          for (int i = 0; i < variablesNotInTemplate.size(); i++) {
-            Variable v = variablesNotInTemplate.get(i);
+            PVar v = variablesNotInTemplate.get(i);
             v.backtrack();
             v.unify(e.getKey().terms.get(i));
          }
@@ -45,8 +45,8 @@ abstract class AbstractCollectionOf extends AbstractRetryablePredicate {
    private void init(PTerm template, PTerm goal) {
       variablesNotInTemplate = getVariablesNotInTemplate(template, goal);
 
-      Predicate predicate = KnowledgeBaseUtils.getPredicate(getKnowledgeBase(), goal);
-      PTerm[] goalArguments = goal.getArgs();
+      Predicate predicate = KnowledgeBaseUtils.getPredicate(getKB(), goal);
+      PTerm[] goalArguments = goal.terms();
 
       Map<Key, List<PTerm>> m = new LinkedHashMap<>();
       if (predicate.evaluate(goalArguments)) {
@@ -68,11 +68,11 @@ abstract class AbstractCollectionOf extends AbstractRetryablePredicate {
 
    protected abstract void add(List<PTerm> l, PTerm t);
 
-   private List<Variable> getVariablesNotInTemplate(PTerm template, PTerm goal) {
-      Set<Variable> variablesInGoal = TermUtils.getAllVariablesInTerm(goal);
-      Set<Variable> variablesInTemplate = TermUtils.getAllVariablesInTerm(template);
+   private List<PVar> getVariablesNotInTemplate(PTerm template, PTerm goal) {
+      Set<PVar> variablesInGoal = TermUtils.getAllVariablesInTerm(goal);
+      Set<PVar> variablesInTemplate = TermUtils.getAllVariablesInTerm(template);
       variablesInGoal.removeAll(variablesInTemplate);
-      return new ArrayList<Variable>(variablesInGoal);
+      return new ArrayList<PVar>(variablesInGoal);
    }
 
    private boolean hasFoundAnotherSolution(final Predicate predicate, final PTerm[] goalArguments) {
@@ -88,9 +88,9 @@ abstract class AbstractCollectionOf extends AbstractRetryablePredicate {
    private static class Key {
       final List<PTerm> terms;
 
-      Key(List<Variable> variables) {
+      Key(List<PVar> variables) {
          terms = new ArrayList<>(variables.size());
-         for (Variable v : variables) {
+         for (PVar v : variables) {
             terms.add(v.get());
          }
       }

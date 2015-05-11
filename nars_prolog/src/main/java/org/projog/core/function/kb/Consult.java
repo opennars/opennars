@@ -19,7 +19,7 @@ import org.projog.core.term.PTerm;
 public final class Consult extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm arg) {
-      ProjogSourceReader.parseResource(getKnowledgeBase(), getAtomName(arg));
+      ProjogSourceReader.parseResource(getKB(), getAtomName(arg));
       return true;
    }
 }

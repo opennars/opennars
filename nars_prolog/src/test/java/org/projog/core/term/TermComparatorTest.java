@@ -59,10 +59,10 @@ public class TermComparatorTest {
 
    @Test
    public void testVariablesAssignedToEachOther() {
-      Atom a = atom("a");
-      Variable x = new Variable("X");
-      Variable y = new Variable("Y");
-      Variable z = new Variable("Z");
+      PAtom a = atom("a");
+      PVar x = new PVar("X");
+      PVar y = new PVar("Y");
+      PVar z = new PVar("Z");
 
       testNotEqual(z, y);
       testNotEqual(z, x);

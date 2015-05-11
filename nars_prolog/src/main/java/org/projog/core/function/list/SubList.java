@@ -104,7 +104,7 @@ public final class SubList extends AbstractSingletonPredicate {
       }
 
       final List<PTerm> matches = new ArrayList<>();
-      final PredicateFactory pf = getPredicateFactory(getKnowledgeBase(), partiallyAppliedFunction);
+      final PredicateFactory pf = getPredicateFactory(getKB(), partiallyAppliedFunction);
       for (PTerm arg : toJavaUtilList(args)) {
          if (apply(pf, createArguments(partiallyAppliedFunction, arg))) {
             matches.add(arg);

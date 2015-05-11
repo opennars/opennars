@@ -19,7 +19,7 @@ public final class Trace extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      spyPoints = getSpyPoints(getKnowledgeBase());
+      spyPoints = getSpyPoints(getKB());
    }
 
    @Override

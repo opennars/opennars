@@ -3,8 +3,10 @@ package org.projog.core;
 import static org.projog.core.term.TermUtils.getAtomName;
 import static org.projog.core.term.TermUtils.toInt;
 
+import org.projog.core.term.PAtom;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /**
  * Represents the structure of a {@link PTerm}.
@@ -12,7 +14,7 @@ import org.projog.core.term.TermType;
  * Defines {@link PTerm}s by their name (functor) and number of arguments (arity). This "metadata" or
  * "descriptor information" allows rules whose heads (consequences) share the same structure to be grouped together.
  * <p>
- * As {@link org.projog.core.term.Atom} and {@link org.projog.core.term.Structure} are the only subclasses of
+ * As {@link PAtom} and {@link PStruct} are the only subclasses of
  * {@link PTerm} that can be the head (consequent) of a rule they are the only subclasses of
  * {@link PTerm} that {@code PredicateKey} is intended to describe.
  * <p>
@@ -26,9 +28,9 @@ public final class PredicateKey implements Comparable<PredicateKey> {
     * Returns a {@code PredicateKey} for the specified term.
     * 
     * @param t a term the returned {@code PredicateKey} should represent (needs to have a {@link PTerm#type()} value
-    * of {@link TermType#ATOM} or {@link TermType#STRUCTURE})
+    * of {@link PrologOperator#ATOM} or {@link PrologOperator#STRUCTURE})
     * @return a {@code PredicateKey} for the specified term.
-    * @throws ProjogException if {@code t} is not of type {@link TermType#ATOM} or {@link TermType#STRUCTURE}
+    * @throws ProjogException if {@code t} is not of type {@link PrologOperator#ATOM} or {@link PrologOperator#STRUCTURE}
     */
    public static PredicateKey createForTerm(PTerm t) {
       int numArgs;
@@ -37,7 +39,7 @@ public final class PredicateKey implements Comparable<PredicateKey> {
             numArgs = 0;
             break;
          case STRUCTURE:
-            numArgs = t.getArgs().length;
+            numArgs = t.terms().length;
             break;
          default:
             throw new ProjogException(getInvalidTypeExceptionMessage(t));
@@ -50,20 +52,20 @@ public final class PredicateKey implements Comparable<PredicateKey> {
     * argument is the name of the predicate to represent and the second (and final) argument is the arity.
     */
    public static PredicateKey createFromNameAndArity(PTerm t) {
-      if (t.type() == TermType.ATOM) {
+      if (t.type() == PrologOperator.ATOM) {
          return createForTerm(t);
       }
 
-      if (t.type() != TermType.STRUCTURE) {
+      if (t.type() != PrologOperator.STRUCTURE) {
          throw new ProjogException(getInvalidTypeExceptionMessage(t));
       }
 
-      if (!"/".equals(t.getName()) || t.getArgs().length != 2) {
+      if (!"/".equals(t.getName()) || t.terms().length != 2) {
          throw new ProjogException("Expected a predicate with two arguments and the name: '/' but got: " + t);
       }
 
-      String name = getAtomName(t.getArgs()[0]);
-      int arity = toInt(t.getArgs()[1]);
+      String name = getAtomName(t.terms()[0]);
+      int arity = toInt(t.terms()[1]);
       return new PredicateKey(name, arity);
    }
 

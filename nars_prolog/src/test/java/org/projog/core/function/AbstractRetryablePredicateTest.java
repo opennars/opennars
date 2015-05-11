@@ -8,7 +8,7 @@ import static org.projog.TestUtils.createArgs;
 
 import org.junit.Test;
 import org.projog.TestUtils;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.term.PTerm;
 
@@ -21,9 +21,9 @@ public class AbstractRetryablePredicateTest {
       assertTrue(INSTANCE.isRetryable());
       assertTrue(INSTANCE.couldReEvaluationSucceed());
 
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
-      INSTANCE.setKnowledgeBase(kb);
-      assertSame(kb, INSTANCE.getKnowledgeBase());
+      KB kb = TestUtils.createKnowledgeBase();
+      INSTANCE.setKB(kb);
+      assertSame(kb, INSTANCE.getKB());
    }
 
    @Test

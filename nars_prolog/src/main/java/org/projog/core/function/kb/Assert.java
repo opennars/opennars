@@ -1,6 +1,6 @@
 package org.projog.core.function.kb;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
@@ -71,8 +71,8 @@ public final class Assert extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm consequent) {
       PredicateKey key = PredicateKey.createForTerm(consequent);
-      KnowledgeBase kb = getKnowledgeBase();
-      UserDefinedPredicateFactory userDefinedPredicate = kb.createOrReturnUserDefinedPredicate(key);
+      KB kb = getKB();
+      UserDefinedPredicateFactory userDefinedPredicate = kb.getDefined(key);
       ClauseModel clauseModel = ClauseModel.createClauseModel(consequent);
       add(userDefinedPredicate, clauseModel);
       return true;

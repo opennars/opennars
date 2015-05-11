@@ -16,12 +16,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 
 /**
@@ -40,7 +40,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    private static final AtomicInteger ctr = new AtomicInteger();
 
    private final String className;
-   private final KnowledgeBase kb;
+   private final KB kb;
    private final PredicateMetaData factMetaData;
    private final CompiledPredicateVariables classVariables = new CompiledPredicateVariables();
    private ClauseMetaData currentClause;
@@ -48,7 +48,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    private boolean needsKnowledgeBaseStaticVariable;
    private boolean needsCalculatablesStaticVariable;
 
-   CompiledPredicateWriter(KnowledgeBase kb, List<ClauseModel> copyImplications) {
+   CompiledPredicateWriter(KB kb, List<ClauseModel> copyImplications) {
       this.kb = kb;
       this.factMetaData = new PredicateMetaData(kb, copyImplications);
       this.className = generateClassName();
@@ -90,7 +90,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
       return className;
    }
 
-   KnowledgeBase knowledgeBase() {
+   KB knowledgeBase() {
       return kb;
    }
 
@@ -113,15 +113,15 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
       } else if (reuseImmutableTerms && t.constant()) {
          String immutableTermVariableName = classVariables.getTermVariableName(t);
          return immutableTermVariableName;
-      } else if (t.type() == TermType.NAMED_VARIABLE) {
+      } else if (t.type() == PrologOperator.NAMED_VARIABLE) {
          declareVariableIfNotAlready(t, reuseImmutableTerms);
          return getVariableId(t);
-      } else if (t.type() == TermType.STRUCTURE) {
+      } else if (t.type() == PrologOperator.STRUCTURE) {
          StringBuilder sb = new StringBuilder("Structure.createStructure(");
          sb.append(encodeName(t));
          sb.append(", new Term[]{");
          boolean first = true;
-         for (PTerm arg : t.getArgs()) {
+         for (PTerm arg : t.terms()) {
             if (first) {
                first = false;
             } else {
@@ -134,23 +134,23 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
          }
          sb.append("})");
          return sb.toString();
-      } else if (t.type() == TermType.LIST) {
-         PTerm head = t.arg(0);
+      } else if (t.type() == PrologOperator.LIST) {
+         PTerm head = t.term(0);
          String headSyntax = outputCreateTermStatement(head, reuseImmutableTerms);
          if (head.constant() == false) {
             headSyntax += ".getTerm()";
          }
-         PTerm tail = t.arg(1);
+         PTerm tail = t.term(1);
          String tailSyntax = outputCreateTermStatement(tail, reuseImmutableTerms);
          if (tail.constant() == false) {
             tailSyntax += ".getTerm()";
          }
          return getNewListSyntax(headSyntax, tailSyntax);
-      } else if (t.type() == TermType.ATOM) {
+      } else if (t.type() == PrologOperator.ATOM) {
          return "new Atom(" + encodeName(t) + ")";
-      } else if (t.type() == TermType.INTEGER) {
+      } else if (t.type() == PrologOperator.INTEGER) {
          return "new IntegerNumber(" + t.getName() + "L)";
-      } else if (t.type() == TermType.FRACTION) {
+      } else if (t.type() == PrologOperator.FRACTION) {
          return "new DecimalFraction(" + t.getName() + ")";
       } else {
          throw new RuntimeException("unknown " + t.type() + " " + t);
@@ -187,7 +187,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    }
 
    final String getVariableId(PTerm variable) {
-      return classVariables.getVariableId(currentClause, (Variable) variable);
+      return classVariables.getVariableId(currentClause, (PVar) variable);
    }
 
    final void outputIfFailThenBreak(String eval) {
@@ -221,12 +221,12 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
       outputBacktrack(Collections.EMPTY_SET);
    }
 
-   final void outputBacktrack(Set<Variable> variablesToIgnore) {
+   final void outputBacktrack(Set<PVar> variablesToIgnore) {
       if (currentClause.isInRetryMethod() == false) {
          return;
       }
 
-      for (Variable v : currentClause.getVariablesToBackTrack()) {
+      for (PVar v : currentClause.getVariablesToBackTrack()) {
          String variableId = getVariableId(v);
          if (classVariables.isAssignedVariable(variableId) && variablesToIgnore.contains(v) == false) {
             outputBacktrack(variableId);
@@ -263,15 +263,15 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
 
    void callUserDefinedPredicate(String compiledPredicateName, boolean isRetryable) {
       PTerm function = currentClause.getCurrentFunction();
-      Set<Variable> variablesInCurrentFunction = currentClause.getVariablesInCurrentFunction();
+      Set<PVar> variablesInCurrentFunction = currentClause.getVariablesInCurrentFunction();
       boolean firstInMethod = currentClause.isFirstMutlipleResultFunctionInConjunction();
 
       StringBuilder constructorArgs = new StringBuilder();
-      for (int i = 0; i < function.args(); i++) {
+      for (int i = 0; i < function.length(); i++) {
          if (i != 0) {
             constructorArgs.append(", ");
          }
-         PTerm a = function.arg(i);
+         PTerm a = function.term(i);
          constructorArgs.append(outputCreateTermStatement(a, true));
       }
       currentClause.addVariablesToBackTrack(variablesInCurrentFunction);
@@ -281,9 +281,9 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
          if (currentClause.getCurrentPredicateFactory() instanceof CompiledTailRecursivePredicate) {
             CompiledTailRecursivePredicate marfe = (CompiledTailRecursivePredicate) currentClause.getCurrentPredicateFactory();
             boolean[] isSingleResultIfArgumentImmutable = marfe.isSingleResultIfArgumentImmutable();
-            for (int i = 0; i < function.args(); i++) {
-               PTerm arg = function.arg(i);
-               if (arg.type() == TermType.NAMED_VARIABLE) {
+            for (int i = 0; i < function.length(); i++) {
+               PTerm arg = function.term(i);
+               if (arg.type() == PrologOperator.NAMED_VARIABLE) {
                   if (isSingleResultIfArgumentImmutable[i] && classVariables.isAssignedVariable(getVariableId(arg))) {
                      if (sb.length() != 0) {
                         sb.append(" || ");
@@ -313,7 +313,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
 
          beginIf(compiledPredicateVariableName + "==null");
 
-         for (Variable v : variablesInCurrentFunction) {
+         for (PVar v : variablesInCurrentFunction) {
             String variableId = getVariableId(v);
             if (classVariables.addDeclaredVariable(variableId)) {
                classVariables.addAssignedVariable(variableId);
@@ -349,8 +349,8 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
 
    void outputEqualsEvaluation() {
       PTerm equalsFunction = currentClause.getCurrentFunction();
-      PTerm t1 = equalsFunction.arg(0);
-      PTerm t2 = equalsFunction.arg(1);
+      PTerm t1 = equalsFunction.term(0);
+      PTerm t2 = equalsFunction.term(1);
 
       outputEqualsEvaluation(t1, t2, DUMMY);
    }
@@ -362,7 +362,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    };
 
    void outputEqualsEvaluation(PTerm t1, PTerm t2, Runnable onBreakCallback) {
-      if (t2.type() == TermType.NAMED_VARIABLE) {
+      if (t2.type() == PrologOperator.NAMED_VARIABLE) {
          PTerm tmp = t1;
          t1 = t2;
          t2 = tmp;
@@ -370,13 +370,13 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
 
       // compare "t1" to "t2"
       if (isNoMoreThanTwoElementList(t1) && isNoMoreThanTwoElementList(t2)) {
-         outputEqualsEvaluation(t1.arg(0), t2.arg(0), onBreakCallback);
-         outputEqualsEvaluation(t1.arg(1), t2.arg(1), onBreakCallback);
-      } else if (t1.type() == TermType.NAMED_VARIABLE && isListOfTwoVariables(t2)) {
-         Set<Variable> variables = TermUtils.getAllVariablesInTerm(t1);
+         outputEqualsEvaluation(t1.term(0), t2.term(0), onBreakCallback);
+         outputEqualsEvaluation(t1.term(1), t2.term(1), onBreakCallback);
+      } else if (t1.type() == PrologOperator.NAMED_VARIABLE && isListOfTwoVariables(t2)) {
+         Set<PVar> variables = TermUtils.getAllVariablesInTerm(t1);
          variables.addAll(TermUtils.getAllVariablesInTerm(t2));
-         Set<Variable> newlyDeclaredVariables = new HashSet<>();
-         for (Variable v : variables) {
+         Set<PVar> newlyDeclaredVariables = new HashSet<>();
+         for (PVar v : variables) {
             if (declareVariableIfNotAlready(v, false)) {
                newlyDeclaredVariables.add(v);
             }
@@ -397,7 +397,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
          onBreakCallback.run();
          outputBacktrackAndExitClauseEvaluation();
          endBlock();
-      } else if (t1.type() == TermType.NAMED_VARIABLE) {
+      } else if (t1.type() == PrologOperator.NAMED_VARIABLE) {
          boolean firstUse = declareVariableIfNotAlready(t1, false);
          String variableId = getVariableId(t1);
          String arg2 = outputCreateTermStatement(t2, true);
@@ -415,7 +415,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    }
 
    private void outputAssignOfUnifyListElement(PTerm list, String listId, int elementId, Runnable onBreakCallback) {
-      String variableId = getVariableId(list.arg(elementId));
+      String variableId = getVariableId(list.term(elementId));
       String element = listId + ".getArgument(" + elementId + ").getTerm()";
       if (isAssigned(variableId)) {
          beginIf("!" + getUnifyStatement(variableId, element));
@@ -428,7 +428,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    }
 
    private boolean isListOfTwoVariables(PTerm t) {
-      return t.type() == TermType.LIST && t.arg(0).type().isVariable() && t.arg(1).type().isVariable();
+      return t.type() == PrologOperator.LIST && t.term(0).type().isVariable() && t.term(1).type().isVariable();
    }
 
    final Map<String, String> assignTempVariablesBackToTerm() {
@@ -465,15 +465,15 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
 
       // LinkedHashSet to make order predictable (makes unit tests easier)
       Set<String> alreadyDeclaredVariables = new LinkedHashSet<>();
-      Set<Variable> variables1 = TermUtils.getAllVariablesInTerm(currentClause.getConsequent());
-      for (Variable v : variables1) {
+      Set<PVar> variables1 = TermUtils.getAllVariablesInTerm(currentClause.getConsequent());
+      for (PVar v : variables1) {
          String variableId = getVariableId(v);
          alreadyDeclaredVariables.add(variableId);
       }
 
       for (int i = 0; i <= currentClause.getConjunctionIndex(); i++) {
-         Set<Variable> variables = currentClause.getVariablesInConjunction(i);
-         for (Variable v : variables) {
+         Set<PVar> variables = currentClause.getVariablesInConjunction(i);
+         for (PVar v : variables) {
             String variableId = getVariableId(v);
             alreadyDeclaredVariables.add(variableId);
          }
@@ -485,8 +485,8 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
       }
       Set<String> usedLaterVariables = new HashSet<>();
       for (int i = start; i < currentClause.getConjunctionCount(); i++) {
-         Set<Variable> variables = currentClause.getVariablesInConjunction(i);
-         for (Variable v : variables) {
+         Set<PVar> variables = currentClause.getVariablesInConjunction(i);
+         for (PVar v : variables) {
             String variableId = getVariableId(v);
             usedLaterVariables.add(variableId);
          }
@@ -503,12 +503,12 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    }
 
    final Map<PTerm, String> getTermsThatRequireBacktrack(PTerm function) {
-      Set<Variable> x = getTermArgumentsThatAreCurrentlyUnassignedAndNotReusedWithinTheTerm(function);
+      Set<PVar> x = getTermArgumentsThatAreCurrentlyUnassignedAndNotReusedWithinTheTerm(function);
       // use LinkedHashMap so order is predictable - purely so unit tests are easier 
       Map<PTerm, String> tempVars = new LinkedHashMap<>();
 
-      for (int i = 0; i < function.args(); i++) {
-         PTerm arg = function.arg(i);
+      for (int i = 0; i < function.length(); i++) {
+         PTerm arg = function.term(i);
          if (x.contains(arg)) {
             // ignore
          } else {
@@ -527,14 +527,14 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
     * <p>
     * e.g. <code>p(X,X,X)</code>
     */
-   final Set<Variable> getTermArgumentsThatAreCurrentlyUnassignedAndNotReusedWithinTheTerm(PTerm function) {
+   final Set<PVar> getTermArgumentsThatAreCurrentlyUnassignedAndNotReusedWithinTheTerm(PTerm function) {
       // LinkedHashSet so predictable order (makes unit tests easier)
-      final Set<Variable> result = new LinkedHashSet<>();
-      final Set<Variable> duplicates = new HashSet<>();
-      for (int i = 0; i < function.args(); i++) {
-         PTerm t = function.arg(i);
-         if (t.type() == TermType.NAMED_VARIABLE) {
-            Variable v = (Variable) t;
+      final Set<PVar> result = new LinkedHashSet<>();
+      final Set<PVar> duplicates = new HashSet<>();
+      for (int i = 0; i < function.length(); i++) {
+         PTerm t = function.term(i);
+         if (t.type() == PrologOperator.NAMED_VARIABLE) {
+            PVar v = (PVar) t;
             if (classVariables.isAssignedVariable(getVariableId(v)) == false && duplicates.contains(v) == false) {
                boolean newEntry = result.add(v);
                if (newEntry == false) {
@@ -596,7 +596,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    }
 
    final void logInlinedPredicatePredicate(String type, String functionVariableName, PTerm function) {
-      log(type, functionVariableName, function.getArgs());
+      log(type, functionVariableName, function.terms());
    }
 
    private void log(String type, String functionVariableName, PTerm... arguments) {
@@ -625,7 +625,7 @@ final class CompiledPredicateWriter extends JavaSourceWriter {
    }
 
    private String getLogArgument(PTerm arg) {
-      if (arg.type() == TermType.NAMED_VARIABLE) {
+      if (arg.type() == PrologOperator.NAMED_VARIABLE) {
          String variableId = getVariableId(arg);
          if (classVariables.isMemberVariable(variableId) == false && classVariables.isAssignedVariable(variableId) == false) {
             return "new Variable(\"_\")";

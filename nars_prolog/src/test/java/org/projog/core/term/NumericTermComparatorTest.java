@@ -13,11 +13,11 @@ import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.Calculatables;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.ProjogException;
 
 public class NumericTermComparatorTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
    private final Calculatables calculatables = getCalculatables(kb);
 
    @Test
@@ -71,7 +71,7 @@ public class NumericTermComparatorTest {
     * NumericTermComparator provides an overloaded version of {@link NumericTermComparator#compare(PTerm, PTerm)} that
     * also accepts a {@code KnowledgeBase} argument - this method tests that overloaded version.
     * 
-    * @see NumericTermComparator#compare(PTerm, PTerm, KnowledgeBase)
+    * @see NumericTermComparator#compare(PTerm, PTerm, KB)
     * @see #testStructuresRepresentingCalculatables
     */
    @Test
@@ -85,14 +85,14 @@ public class NumericTermComparatorTest {
    }
 
    /**
-    * Test that {@link NumericTermComparator#compare(PTerm, PTerm, KnowledgeBase)} tries to evaluate {@code Structure}s
+    * Test that {@link NumericTermComparator#compare(PTerm, PTerm, KB)} tries to evaluate {@code Structure}s
     * that represent arithmetic expressions but {@link NumericTermComparator#compare(PTerm, PTerm)} throws a
     * {@code ProjogException}
     */
    @Test
    public void testStructuresRepresentingCalculatables() {
-      Structure addition = structure("+", integerNumber(1), integerNumber(3));
-      Structure subtraction = structure("-", integerNumber(5), integerNumber(2));
+      PStruct addition = structure("+", integerNumber(1), integerNumber(3));
+      PStruct subtraction = structure("-", integerNumber(5), integerNumber(2));
 
       // test compare(Term, Term) throws a ProjogException for when
       // a parameter is a structure (even if it represents an arithmetic expression).
@@ -157,7 +157,7 @@ public class NumericTermComparatorTest {
       assertEquals(d2 + " " + d1, d2.compareTo(d1), NUMERIC_TERM_COMPARATOR.compare(t2, t1));
    }
 
-   private void compare(String s1, String s2, KnowledgeBase kb, int expected) {
+   private void compare(String s1, String s2, KB kb, int expected) {
       PTerm t1 = TestUtils.parseSentence(s1 + ".");
       PTerm t2 = TestUtils.parseSentence(s2 + ".");
       assertEquals(expected, NUMERIC_TERM_COMPARATOR.compare(t1, t2, calculatables));

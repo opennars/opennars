@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.projog.core.Calculatables;
 import org.projog.core.FileHandles;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.ListUtils;
 import org.projog.core.term.PTerm;
@@ -174,10 +174,10 @@ public final class Writef extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      KnowledgeBase knowledgeBase = getKnowledgeBase();
-      termFormatter = getTermFormatter(knowledgeBase);
-      fileHandles = getFileHandles(knowledgeBase);
-      calculatables = getCalculatables(knowledgeBase);
+      KB KB = getKB();
+      termFormatter = getTermFormatter(KB);
+      fileHandles = getFileHandles(KB);
+      calculatables = getCalculatables(KB);
    }
 
    @Override

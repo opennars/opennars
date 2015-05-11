@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.projog.core.function.AbstractRetryablePredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 public class RetryablePredicateExample extends AbstractRetryablePredicate {
@@ -22,7 +22,7 @@ public class RetryablePredicateExample extends AbstractRetryablePredicate {
          Entry<Object, Object> entry = systemProperties.next();
          String key = (String) entry.getKey();
          String value = (String) entry.getValue();
-         if (arg1.unify(new Atom(key)) && arg2.unify(new Atom(value))) {
+         if (arg1.unify(new PAtom(key)) && arg2.unify(new PAtom(value))) {
             return true;
          }
       }

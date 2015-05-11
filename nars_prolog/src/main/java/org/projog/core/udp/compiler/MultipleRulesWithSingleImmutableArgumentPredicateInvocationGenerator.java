@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.udp.MultipleRulesWithSingleImmutableArgumentPredicate;
 
 final class MultipleRulesWithSingleImmutableArgumentPredicateInvocationGenerator implements PredicateInvocationGenerator {
@@ -23,9 +23,9 @@ final class MultipleRulesWithSingleImmutableArgumentPredicateInvocationGenerator
 
       MultipleRulesWithSingleImmutableArgumentPredicate mrwsia = (MultipleRulesWithSingleImmutableArgumentPredicate) ef;
       String functionVariableName = g.classVariables().getPredicateFactoryVariableName(function, g.knowledgeBase());
-      PTerm arg = function.arg(0);
+      PTerm arg = function.term(0);
       String ctrVarName = g.classVariables().getNewInlinedCtrVariableName();
-      boolean firstUse = arg.type() == TermType.NAMED_VARIABLE && g.classVariables().isAssignedVariable(g.getVariableId(arg)) == false;
+      boolean firstUse = arg.type() == PrologOperator.NAMED_VARIABLE && g.classVariables().isAssignedVariable(g.getVariableId(arg)) == false;
       Runnable r = g.createOnBreakCallback(functionVariableName, function, ctrVarName);
       if (firstUse) {
          g.logMultipleRulesWithImmutableArgumentsPredicateCall(functionVariableName, ctrVarName, arg);

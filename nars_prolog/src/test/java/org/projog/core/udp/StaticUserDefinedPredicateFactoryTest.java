@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.projog.TestUtils;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
@@ -26,8 +26,8 @@ import org.projog.core.udp.interpreter.InterpretedUserDefinedPredicate;
  * @see org.projog.TestUtils#COMPILATION_ENABLED_PROPERTIES
  */
 public class StaticUserDefinedPredicateFactoryTest {
-   private static final KnowledgeBase COMPILATION_ENABLED_KB = TestUtils.createKnowledgeBase(TestUtils.COMPILATION_ENABLED_PROPERTIES);
-   private static final KnowledgeBase COMPILATION_DISABLED_KB = TestUtils.createKnowledgeBase(TestUtils.COMPILATION_DISABLED_PROPERTIES);
+   private static final KB COMPILATION_ENABLED_KB = TestUtils.createKnowledgeBase(TestUtils.COMPILATION_ENABLED_PROPERTIES);
+   private static final KB COMPILATION_DISABLED_KB = TestUtils.createKnowledgeBase(TestUtils.COMPILATION_DISABLED_PROPERTIES);
    private static final String[] RECURSIVE_PREDICATE_SYNTAX = {"concatenate([],L,L).", "concatenate([X|L1],L2,[X|L3]) :- concatenate(L1,L2,L3)."};
    private static final String[] NON_RECURSIVE_PREDICATE_SYNTAX = {"p(X,Y,Z) :- repeat(3), X<Y.", "p(X,Y,Z) :- X is Y+Z.", "p(X,Y,Z) :- X=a."};
 
@@ -62,7 +62,7 @@ public class StaticUserDefinedPredicateFactoryTest {
       PredicateFactory pf = getActualPredicateFactory(clause);
       assertSame(SingleRuleWithSingleImmutableArgumentPredicate.class, pf.getClass());
       SingleRuleWithSingleImmutableArgumentPredicate sr = (SingleRuleWithSingleImmutableArgumentPredicate) pf;
-      assertStrictEquality(clause.arg(0), sr.data);
+      assertStrictEquality(clause.term(0), sr.data);
    }
 
    @Test
@@ -73,7 +73,7 @@ public class StaticUserDefinedPredicateFactoryTest {
       MultipleRulesWithSingleImmutableArgumentPredicate mr = (MultipleRulesWithSingleImmutableArgumentPredicate) pf;
       assertEquals(clauses.length, mr.data.length);
       for (int i = 0; i < clauses.length; i++) {
-         assertStrictEquality(clauses[i].arg(0), mr.data[i]);
+         assertStrictEquality(clauses[i].term(0), mr.data[i]);
       }
    }
 
@@ -83,9 +83,9 @@ public class StaticUserDefinedPredicateFactoryTest {
       PredicateFactory pf = getActualPredicateFactory(clause);
       assertSame(SingleRuleWithMultipleImmutableArgumentsPredicate.class, pf.getClass());
       SingleRuleWithMultipleImmutableArgumentsPredicate sr = (SingleRuleWithMultipleImmutableArgumentsPredicate) pf;
-      assertEquals(clause.args(), sr.data.length);
-      for (int i = 0; i < clause.args(); i++) {
-         assertStrictEquality(clause.arg(i), sr.data[i]);
+      assertEquals(clause.length(), sr.data.length);
+      for (int i = 0; i < clause.length(); i++) {
+         assertStrictEquality(clause.term(i), sr.data[i]);
       }
    }
 
@@ -97,9 +97,9 @@ public class StaticUserDefinedPredicateFactoryTest {
       MultipleRulesWithMultipleImmutableArgumentsPredicate mr = (MultipleRulesWithMultipleImmutableArgumentsPredicate) pf;
       assertEquals(clauses.length, mr.data.length);
       for (int c = 0; c < clauses.length; c++) {
-         assertEquals(clauses[c].args(), mr.data[c].length);
-         for (int a = 0; a < clauses[c].args(); a++) {
-            assertStrictEquality(clauses[c].arg(a), mr.data[c][a]);
+         assertEquals(clauses[c].length(), mr.data[c].length);
+         for (int a = 0; a < clauses[c].length(); a++) {
+            assertStrictEquality(clauses[c].term(a), mr.data[c][a]);
          }
       }
    }
@@ -148,13 +148,13 @@ public class StaticUserDefinedPredicateFactoryTest {
       return getActualPredicateFactory(COMPILATION_DISABLED_KB, clauses);
    }
 
-   private PredicateFactory getActualPredicateFactory(KnowledgeBase kb, PTerm... clauses) {
+   private PredicateFactory getActualPredicateFactory(KB kb, PTerm... clauses) {
       StaticUserDefinedPredicateFactory f = null;
       for (PTerm clause : clauses) {
          if (f == null) {
             PredicateKey key = PredicateKey.createForTerm(clause);
             f = new StaticUserDefinedPredicateFactory(key);
-            f.setKnowledgeBase(kb);
+            f.setKB(kb);
          }
          ClauseModel clauseModel = ClauseModel.createClauseModel(clause);
          f.addLast(clauseModel);

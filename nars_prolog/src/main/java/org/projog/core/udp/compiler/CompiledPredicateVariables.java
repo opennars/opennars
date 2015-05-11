@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PrologOperator;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.StaticUserDefinedPredicateFactory;
 
 /**
@@ -45,7 +45,7 @@ final class CompiledPredicateVariables {
    private final Set<String> memberTerms = new LinkedHashSet<>();
    private final Set<String> declaredVariables = new HashSet<>();
    private final Set<String> assignedVariables = new HashSet<>();
-   private final Map<Variable, String> anonymousVariableIds = new HashMap<Variable, String>();
+   private final Map<PVar, String> anonymousVariableIds = new HashMap<PVar, String>();
 
    private int tempTermCtr;
    private int tempNumericCtr;
@@ -91,7 +91,7 @@ final class CompiledPredicateVariables {
          return;
       }
       for (int i = clauseMetaData.getIndexOfFirstMulipleResultConjuction(); i < clauseMetaData.getConjunctionCount(); i++) {
-         for (Variable v : clauseMetaData.getVariablesInConjunction(i)) {
+         for (PVar v : clauseMetaData.getVariablesInConjunction(i)) {
             memberVariables.add(getVariableId(clauseMetaData, v));
          }
       }
@@ -119,12 +119,12 @@ final class CompiledPredicateVariables {
       return staticMemberVariables.entrySet();
    }
 
-   String getPredicateFactoryVariableName(PTerm t, KnowledgeBase kb) {
+   String getPredicateFactoryVariableName(PTerm t, KB kb) {
       PredicateKey key = PredicateKey.createForTerm(t);
       PredicateFactory ef = kb.getPredicateFactory(key);
       String originalVariableName = getClassNameMinusPackage(ef);
-      if (t.type() == TermType.STRUCTURE) {
-         originalVariableName += "_" + t.args();
+      if (t.type() == PrologOperator.STRUCTURE) {
+         originalVariableName += "_" + t.length();
       }
       String variableName = originalVariableName;
       int ctr = 0;
@@ -189,7 +189,7 @@ final class CompiledPredicateVariables {
       return predicateVariableName;
    }
 
-   String getVariableId(ClauseMetaData clauseMetaData, Variable variable) {
+   String getVariableId(ClauseMetaData clauseMetaData, PVar variable) {
       String id;
       if (isAnonymousVariable(variable)) {
          id = getAnonymousVariableId(variable);
@@ -199,7 +199,7 @@ final class CompiledPredicateVariables {
       return VARIABLE_PREFIX + clauseMetaData.getClauseIndex() + "_" + id;
    }
 
-   private boolean isAnonymousVariable(Variable v) {
+   private boolean isAnonymousVariable(PVar v) {
       return v.getId().startsWith("_");
    }
 
@@ -209,7 +209,7 @@ final class CompiledPredicateVariables {
     * Anonymous variables may have the same name (normally {@code _}) - but they need to be treated as separate
     * instances (so we prefix the result to return with a number to make it unique).
     */
-   private String getAnonymousVariableId(Variable variable) {
+   private String getAnonymousVariableId(PVar variable) {
       if (anonymousVariableIds.containsKey(variable)) {
          return anonymousVariableIds.get(variable);
       } else {

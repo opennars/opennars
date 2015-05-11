@@ -11,7 +11,7 @@ import java.util.Set;
 import org.projog.core.PredicateKey;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.function.io.GetChar;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
 
@@ -219,10 +219,10 @@ import org.projog.core.term.TermUtils;
  */
 public final class CharType extends AbstractRetryablePredicate {
    private static final Type[] EMPTY_TYPES_ARRAY = new Type[] {};
-   private static final Atom[] ALL_CHARACTERS = new Atom[MAX_VALUE + 2];
+   private static final PAtom[] ALL_CHARACTERS = new PAtom[MAX_VALUE + 2];
    static {
       for (int i = -1; i <= MAX_VALUE; i++) {
-         ALL_CHARACTERS[i + 1] = new Atom(charToString(i));
+         ALL_CHARACTERS[i + 1] = new PAtom(charToString(i));
       }
    }
    private static final Map<PredicateKey, Type> CHARACTER_TYPES_MAP = new LinkedHashMap<>();
@@ -254,7 +254,7 @@ public final class CharType extends AbstractRetryablePredicate {
    }
 
    private static void addType(String id, Set<String> charIdxs) {
-      Atom a = new Atom(id);
+      PAtom a = new PAtom(id);
       PredicateKey key = PredicateKey.createForTerm(a);
       Type type = new Type(a, charIdxs);
       CHARACTER_TYPES_MAP.put(key, type);
@@ -377,10 +377,10 @@ public final class CharType extends AbstractRetryablePredicate {
    }
 
    private static class Type {
-      final Atom termId;
+      final PAtom termId;
       final Set<String> characters;
 
-      Type(Atom termId, Set<String> characters) {
+      Type(PAtom termId, Set<String> characters) {
          this.termId = termId;
          this.characters = characters;
       }

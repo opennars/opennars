@@ -6,7 +6,7 @@ import static org.projog.core.term.TermUtils.toInt;
 import java.util.Collections;
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractSingletonPredicate;
@@ -151,8 +151,8 @@ public final class Nth implements PredicateFactory {
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
-      singleton.setKnowledgeBase(kb);
+   public void setKB(KB kb) {
+      singleton.setKB(kb);
    }
 
    private class Singleton extends AbstractSingletonPredicate {

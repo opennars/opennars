@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.MultipleRulesWithMultipleImmutableArgumentsPredicate;
 
 final class MultipleRulesWithMultipleImmutableArgumentPredicateInvocationGenerator implements PredicateInvocationGenerator {
@@ -27,13 +27,13 @@ final class MultipleRulesWithMultipleImmutableArgumentPredicateInvocationGenerat
       String functionVariableName = g.classVariables().getPredicateFactoryVariableName(function, g.knowledgeBase());
       String ctrVarName = g.classVariables().getNewInlinedCtrVariableName();
       Runnable r = g.createOnBreakCallback(functionVariableName, function, ctrVarName);
-      Set<Variable> termsThatAreNotYetAssignedButReusedLater = g.getTermArgumentsThatAreCurrentlyUnassignedAndNotReusedWithinTheTerm(function);
-      if (termsThatAreNotYetAssignedButReusedLater.size() == function.args()) {
-         g.logMultipleRulesWithImmutableArgumentsPredicateCall(functionVariableName, ctrVarName, function.getArgs());
+      Set<PVar> termsThatAreNotYetAssignedButReusedLater = g.getTermArgumentsThatAreCurrentlyUnassignedAndNotReusedWithinTheTerm(function);
+      if (termsThatAreNotYetAssignedButReusedLater.size() == function.length()) {
+         g.logMultipleRulesWithImmutableArgumentsPredicateCall(functionVariableName, ctrVarName, function.terms());
          g.outputIfTrueThenBreak(ctrVarName + ">" + (mrwmia.data.length - 1), r);
          g.assign("final Term[] data" + ctrVarName, functionVariableName + ".data[" + ctrVarName + "++]");
-         for (int i = 0; i < function.args(); i++) {
-            PTerm arg = function.arg(i);
+         for (int i = 0; i < function.length(); i++) {
+            PTerm arg = function.term(i);
             String variableId = g.getVariableId(arg);
             g.classVariables().addAssignedVariable(variableId);
             g.assign(variableId, "data" + ctrVarName + "[" + i + "]");
@@ -42,14 +42,14 @@ final class MultipleRulesWithMultipleImmutableArgumentPredicateInvocationGenerat
       } else {
          Map<PTerm, String> tmpVars = g.getTermsThatRequireBacktrack(function);
          Map<String, String> variablesToKeepTempVersionOf = g.outputBacktrackTermArguments(tmpVars);
-         g.logMultipleRulesWithImmutableArgumentsPredicateCall(functionVariableName, ctrVarName, function.getArgs());
+         g.logMultipleRulesWithImmutableArgumentsPredicateCall(functionVariableName, ctrVarName, function.terms());
          g.addLine("do {");
          g.outputIfTrueThenBreak(ctrVarName + ">" + (mrwmia.data.length - 1), r);
          g.assign("final Term[] data" + ctrVarName, functionVariableName + ".data[" + ctrVarName + "++]");
          // LinkedHashSet so predictable order (makes unit tests easier)
          Set<String> varsToBacktrack = new LinkedHashSet<>();
-         for (int i = 0; i < function.args(); i++) {
-            PTerm arg = function.arg(i);
+         for (int i = 0; i < function.length(); i++) {
+            PTerm arg = function.term(i);
             if (termsThatAreNotYetAssignedButReusedLater.contains(arg) == false) {
                String termId = tmpVars.get(arg);
                if (arg.constant() == false) {
@@ -64,12 +64,12 @@ final class MultipleRulesWithMultipleImmutableArgumentPredicateInvocationGenerat
             }
          }
          g.addLine("{");
-         for (Variable v : termsThatAreNotYetAssignedButReusedLater) {
+         for (PVar v : termsThatAreNotYetAssignedButReusedLater) {
             String variableId = g.getVariableId(v);
             g.classVariables().addAssignedVariable(variableId);
             int i = 0;
-            for (; i < function.args(); i++) {
-               if (v == function.arg(i)) {
+            for (; i < function.length(); i++) {
+               if (v == function.term(i)) {
                   break;
                }
             }

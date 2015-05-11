@@ -111,7 +111,7 @@ public class NarseseParserTest {
     }
 
     protected void testProductABC(Product p) throws InvalidInputException {
-        assertEquals(p.toString() + " should have 3 sub-terms", 3, p.size());
+        assertEquals(p.toString() + " should have 3 sub-terms", 3, p.length());
         assertEquals("a", p.term[0].toString());
         assertEquals("b", p.term[1].toString());
         assertEquals("c", p.term[2].toString());
@@ -162,21 +162,21 @@ public class NarseseParserTest {
     @Test public void testInfix2() throws InvalidInputException {
         Intersect t = term("(x & y)");
         assertEquals(NALOperator.INTERSECTION_EXT, t.operator());
-        assertEquals(2, t.size());
+        assertEquals(2, t.length());
         assertEquals("x", t.term[0].toString());
         assertEquals("y", t.term[1].toString());
 
         IntersectionInt a = term("(x | y)");
         assertEquals(NALOperator.INTERSECTION_INT, a.operator());
-        assertEquals(2, a.size());
+        assertEquals(2, a.length());
 
         Product b = term("(x * y)");
         assertEquals(NALOperator.PRODUCT, b.operator());
-        assertEquals(2, b.size());
+        assertEquals(2, b.length());
 
         Compound c = term("(<a -->b> && y)");
         assertEquals(NALOperator.CONJUNCTION, c.operator());
-        assertEquals(2, c.size());
+        assertEquals(2, c.length());
         assertEquals(5, c.getComplexity());
         assertEquals(NALOperator.INHERITANCE, c.term[1].operator());
     }
@@ -217,7 +217,7 @@ public class NarseseParserTest {
 
 
     protected void testBelieveAB(Operation t) {
-        assertEquals(3, t.getArguments().size());
+        assertEquals(3, t.getArguments().length());
         assertEquals("^believe", t.getOperator().toString());
         assertEquals("a", t.getArgument(0).toString());
         assertEquals("b", t.getArgument(1).toString());
@@ -306,16 +306,16 @@ public class NarseseParserTest {
     @Test public void testSet() {
         Compound xInt = term("[x]");
         assertEquals(NALOperator.SET_INT_OPENER, xInt.operator());
-        assertEquals(1, xInt.size());
+        assertEquals(1, xInt.length());
         assertEquals("x", xInt.term[0].toString());
 
         Compound xExt = term("{x}");
         assertEquals(NALOperator.SET_EXT_OPENER, xExt.operator());
-        assertEquals(1, xExt.size());
+        assertEquals(1, xExt.length());
         assertEquals("x", xExt.term[0].toString());
 
         Compound abInt = term("[a,b]");
-        assertEquals(2, abInt.size());
+        assertEquals(2, abInt.length());
         assertEquals("a", abInt.term[0].toString());
         assertEquals("b", abInt.term[1].toString());
 
@@ -366,7 +366,7 @@ public class NarseseParserTest {
     @Test public void testImageIndex() {
         Compound t = term("(/,open,$1,_)");
         assertEquals("(/,open,$1,_)", t.toString());
-        assertEquals("index psuedo-term should not count toward its size", 2, t.size());
+        assertEquals("index psuedo-term should not count toward its size", 2, t.length());
     }
 
     private void taskEqualsOldParser(String s) {

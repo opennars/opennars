@@ -5,7 +5,7 @@ import static org.projog.core.term.NumericTermComparator.NUMERIC_TERM_COMPARATOR
 import static org.projog.core.term.TermUtils.toLong;
 
 import org.projog.core.Calculatables;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractSingletonPredicate;
@@ -82,7 +82,7 @@ public final class Between implements PredicateFactory {
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
+   public void setKB(KB kb) {
       calculatables = getCalculatables(kb);
       singleton = new Singleton(calculatables);
    }

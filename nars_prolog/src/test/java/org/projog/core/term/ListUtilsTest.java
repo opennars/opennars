@@ -41,9 +41,9 @@ public class ListUtilsTest {
 
    @Test
    public void testIsMember_Variable() {
-      Atom x = atom("x");
+      PAtom x = atom("x");
       PList list = TestUtils.list(x, atom("y"), atom("z"));
-      Variable v = variable();
+      PVar v = variable();
       assertTrue(ListUtils.isMember(v, list));
       assertSame(x, v.get());
    }
@@ -102,10 +102,10 @@ public class ListUtilsTest {
 
    @Test
    public void testToSortedJavaUtilList() {
-      Atom z = atom("z");
-      Atom a = atom("a");
-      Atom h = atom("h");
-      Atom q = atom("q");
+      PAtom z = atom("z");
+      PAtom a = atom("a");
+      PAtom h = atom("h");
+      PAtom q = atom("q");
       // include multiple 'a's to test duplicates are not removed
       final PList projogList = (PList) ListFactory.createList(new PTerm[] {z, a, a, h, a, q});
       final java.util.List<PTerm> javaUtilList = ListUtils.toSortedJavaUtilList(projogList);

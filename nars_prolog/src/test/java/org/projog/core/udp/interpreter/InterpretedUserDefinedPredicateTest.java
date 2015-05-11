@@ -12,14 +12,14 @@ import java.util.List;
 
 import org.junit.Test;
 import org.projog.TestUtils;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateKey;
 import org.projog.core.SpyPoints;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 public class InterpretedUserDefinedPredicateTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
    private final PredicateKey key = PredicateKey.createForTerm(atom("test"));
    private final SpyPoints.SpyPoint spyPoint = getSpyPoints(kb).getSpyPoint(key);
    private final DummyClauseAction singleResultA = new DummyClauseAction(atom("a"));
@@ -116,7 +116,7 @@ public class InterpretedUserDefinedPredicateTest {
 
    private void assertEvaluateWithVariableInputArgument(DummyClauseAction... rows) {
       InterpretedUserDefinedPredicate p = getInterpretedUserDefinedPredicate(rows);
-      Variable v = variable("X");
+      PVar v = variable("X");
       PTerm[] queryArgs = {v};
       for (DummyClauseAction row : rows) {
          for (PTerm t : row.terms) {

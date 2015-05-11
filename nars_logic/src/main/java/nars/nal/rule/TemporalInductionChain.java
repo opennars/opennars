@@ -102,7 +102,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
                 if(A instanceof Conjunction && A.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                     Conjunction ConjA=(Conjunction) A;
                     args=new ArrayList(CB2.term.length+ConjA.term.length);
-                    beginoffset=ConjA.size();
+                    beginoffset=ConjA.length();
 
                     Collections.addAll(args, ConjA.term);
                 } else {

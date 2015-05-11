@@ -33,10 +33,10 @@ public final class Arg extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm arg1, PTerm arg2, PTerm arg3) {
       int argIdx = toInt(arg1);
-      if (arg2.args() < argIdx) {
+      if (arg2.length() < argIdx) {
          throw new ProjogException("Cannot get argument at position: " + argIdx + " from: " + arg2);
       }
-      PTerm t = arg2.arg(argIdx - 1);
+      PTerm t = arg2.term(argIdx - 1);
       return arg3.unify(t);
    }
 }

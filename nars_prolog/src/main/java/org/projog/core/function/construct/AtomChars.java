@@ -1,6 +1,6 @@
 package org.projog.core.function.construct;
 
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 
 /* TEST
  %QUERY atom_chars(X,[a,p,p,l,e])
@@ -35,7 +35,7 @@ import org.projog.core.term.Atom;
  */
 public final class AtomChars extends AbstractTermSplitFunction {
    @Override
-   protected Atom toTerm(String s) {
-      return new Atom(s);
+   protected PAtom toTerm(String s) {
+      return new PAtom(s);
    }
 }

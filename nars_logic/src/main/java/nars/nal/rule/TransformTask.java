@@ -202,7 +202,7 @@ public class TransformTask extends ConceptFireTask {
         Term newSubj, newPred;
         if (subject instanceof Product) {
             Product product = (Product) subject;
-            for (short i = 0; i < product.size(); i++) {
+            for (short i = 0; i < product.length(); i++) {
                 newSubj = product.term[i];
                 newPred = ImageExt.make(product, predicate, i);
                 inheritance = Inheritance.make(newSubj, newPred);
@@ -218,7 +218,7 @@ public class TransformTask extends ConceptFireTask {
         } else if (subject instanceof ImageInt) {
             ImageInt image = (ImageInt) subject;
             int relationIndex = image.relationIndex;
-            for (short i = 0; i < image.size(); i++) {
+            for (short i = 0; i < image.length(); i++) {
                 Term iti = image.term[i];
                 if (i == relationIndex) {
                     newSubj = iti;
@@ -257,7 +257,7 @@ public class TransformTask extends ConceptFireTask {
         Term newSubj, newPred;
         if (predicate instanceof Product) {
             Product product = (Product) predicate;
-            for (short i = 0; i < product.size(); i++) {
+            for (short i = 0; i < product.length(); i++) {
                 newSubj = ImageInt.make(product, subject, i);
                 newPred = product.term[i];
                 inheritance = Inheritance.make(newSubj, newPred);
@@ -273,7 +273,7 @@ public class TransformTask extends ConceptFireTask {
         } else if (predicate instanceof ImageExt) {
             ImageExt image = (ImageExt) predicate;
             int relationIndex = image.relationIndex;
-            for (short i = 0; i < image.size(); i++) {
+            for (short i = 0; i < image.length(); i++) {
                 if (i == relationIndex) {
                     newSubj = Product.make(image, subject, relationIndex);
                     newPred = image.term[relationIndex];

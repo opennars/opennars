@@ -51,20 +51,20 @@ public class IntegerNumberTest {
    @Test
    public void testGetType() {
       IntegerNumber i = integerNumber();
-      assertSame(TermType.INTEGER, i.type());
+      assertSame(PrologOperator.INTEGER, i.type());
    }
 
    @Test
    public void testGetNumberOfArguments() {
       IntegerNumber i = integerNumber();
-      assertEquals(0, i.args());
+      assertEquals(0, i.length());
    }
 
    @Test
    public void testGetArgument() {
       try {
          IntegerNumber i = integerNumber();
-         i.arg(0);
+         i.term(0);
          fail();
       } catch (UnsupportedOperationException e) {
          // expected
@@ -74,6 +74,6 @@ public class IntegerNumberTest {
    @Test
    public void testGetArgs() {
       IntegerNumber i = integerNumber();
-      assertSame(TermUtils.EMPTY_ARRAY, i.getArgs());
+      assertSame(TermUtils.EMPTY_ARRAY, i.terms());
    }
 }

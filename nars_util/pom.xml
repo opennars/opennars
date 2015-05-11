@@ -320,6 +320,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>net.openhft</groupId>
+            <artifactId>collections</artifactId>
+            <version>3.2.2</version>
+        </dependency>
 
 
         <dependency>

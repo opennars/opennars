@@ -35,8 +35,8 @@ public final class Write extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      termFormatter = getTermFormatter(getKnowledgeBase());
-      fileHandles = getFileHandles(getKnowledgeBase());
+      termFormatter = getTermFormatter(getKB());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override

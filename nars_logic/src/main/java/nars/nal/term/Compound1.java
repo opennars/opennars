@@ -8,7 +8,7 @@ import java.util.Arrays;
 abstract public class Compound1 extends Compound {
 
     byte[] name = null;
-    int hash;
+    transient int hash;
 
     public Compound1(final Term the) {
         super(the);

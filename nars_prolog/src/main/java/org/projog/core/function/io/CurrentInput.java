@@ -21,7 +21,7 @@ public final class CurrentInput extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override

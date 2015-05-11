@@ -28,7 +28,10 @@ import nars.nal.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 
-public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed {
+import java.io.Serializable;
+
+public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed, Serializable {
+
 
 
     default Term getTerm() {
@@ -50,6 +53,8 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         recurseTerms(v, null);
     }
 
+    /** number of subterms. if atomic, length=1 */
+    public int length();
 
     /**
      * Check whether the current Term can name a Concept.

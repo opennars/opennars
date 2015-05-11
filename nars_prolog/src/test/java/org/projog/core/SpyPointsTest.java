@@ -26,7 +26,7 @@ import org.projog.core.term.EmptyList;
 import org.projog.core.term.PTerm;
 
 public class SpyPointsTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
 
    @Test
    public void testGetSameSpyPointForSamePredicateKey() {

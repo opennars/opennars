@@ -19,13 +19,13 @@ import java.util.List;
  */
 public class Follow1D implements RLEnvironment {
 
-    final int numActions = 2;
+    final int numActions = 3;
 
     //final int discretization = 3;
 
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
-    final double acceleration = 0.06;
+    final double acceleration = 0.005;
     final double decelerationFactor = 0.25;
     double speed = 0.1;
 
@@ -166,12 +166,15 @@ public class Follow1D implements RLEnvironment {
     @Override
     public boolean takeAction(int action) {
         //takeActionPosition(action);
-        if (numActions == 3)
-            return takeActionVelocity3(action);
-        else //if (numActions == 2)
-            return takeActionVelocity2(action);
 
-        //takeActionAccelerate(action);
+
+//        if (numActions == 3)
+//            return takeActionVelocity3(action);
+//        else //if (numActions == 2)
+//            return takeActionVelocity2(action);
+
+        takeActionAccelerate(action);
+        return true;
     }
     protected void takeActionPosition(int action) {
         myPos = (action / ((double)(numActions-1))) * maxPos;

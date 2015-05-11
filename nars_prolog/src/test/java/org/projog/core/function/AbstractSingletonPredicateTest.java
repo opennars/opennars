@@ -5,7 +5,7 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.projog.TestUtils;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
@@ -21,9 +21,9 @@ public class AbstractSingletonPredicateTest {
       assertFalse(p.couldReEvaluationSucceed());
       assertSame(pf, p);
 
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
-      pf.setKnowledgeBase(kb);
-      assertSame(kb, ((AbstractSingletonPredicate) pf).getKnowledgeBase());
+      KB kb = TestUtils.createKnowledgeBase();
+      pf.setKB(kb);
+      assertSame(kb, ((AbstractSingletonPredicate) pf).getKB());
    }
 
    /**
@@ -33,17 +33,17 @@ public class AbstractSingletonPredicateTest {
    @Test
    public void testInit() {
       class TestPredicate extends AbstractSingletonPredicate {
-         KnowledgeBase x;
+         KB x;
 
          @Override
          protected void init() {
-            x = getKnowledgeBase();
+            x = getKB();
          }
       };
       TestPredicate pf = new TestPredicate();
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
-      pf.setKnowledgeBase(kb);
+      KB kb = TestUtils.createKnowledgeBase();
+      pf.setKB(kb);
       assertSame(kb, pf.x);
-      assertSame(kb, ((AbstractSingletonPredicate) pf).getKnowledgeBase());
+      assertSame(kb, ((AbstractSingletonPredicate) pf).getKB());
    }
 }

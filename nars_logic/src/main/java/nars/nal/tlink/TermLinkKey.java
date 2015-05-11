@@ -12,10 +12,10 @@ public interface TermLinkKey {
 
     public String getPrefix();
 
-    default public int termLinkHashCode() {
-        //TODO cache this value while prefix and target remain the same; it is called more than necessary
-        return Objects.hash(getPrefix(), getTarget());
-    }
+//    default public int termLinkHashCode() {
+//        //TODO cache this value while prefix and target remain the same; it is called more than necessary
+//        return Objects.hash(getPrefix(), getTarget());
+//    }
 
     default public boolean termLinkEquals(Object obj) {
         if (obj == null) return false;

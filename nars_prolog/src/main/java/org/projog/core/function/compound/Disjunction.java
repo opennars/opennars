@@ -181,8 +181,8 @@ public final class Disjunction extends AbstractRetryablePredicate {
 
    @Override
    public Disjunction getPredicate(PTerm arg1, PTerm arg2) {
-      Predicate e1 = KnowledgeBaseUtils.getPredicate(getKnowledgeBase(), arg1);
-      Predicate e2 = KnowledgeBaseUtils.getPredicate(getKnowledgeBase(), arg2);
+      Predicate e1 = KnowledgeBaseUtils.getPredicate(getKB(), arg1);
+      Predicate e2 = KnowledgeBaseUtils.getPredicate(getKB(), arg2);
       return new Disjunction(e1, e2);
    }
 
@@ -192,23 +192,23 @@ public final class Disjunction extends AbstractRetryablePredicate {
          currentlyEvaluatedPredicateOrdinal = 1;
       } else if (currentlyEvaluatedPredicateOrdinal == 1) {
          if (!firstPredicate.isRetryable()) {
-            TermUtils.backtrack(inputArg1.getArgs());
+            TermUtils.backtrack(inputArg1.terms());
             currentlyEvaluatedPredicateOrdinal = 2;
          }
       } else {
          if (!secondPredicate.isRetryable()) {
-            TermUtils.backtrack(inputArg2.getArgs());
+            TermUtils.backtrack(inputArg2.terms());
             return false;
          }
       }
 
       if (currentlyEvaluatedPredicateOrdinal == 1) {
-         if (firstPredicate.evaluate(inputArg1.getArgs())) {
+         if (firstPredicate.evaluate(inputArg1.terms())) {
             return true;
          }
          currentlyEvaluatedPredicateOrdinal = 2;
       }
-      if (secondPredicate.evaluate(inputArg2.getArgs())) {
+      if (secondPredicate.evaluate(inputArg2.terms())) {
          return true;
       }
 

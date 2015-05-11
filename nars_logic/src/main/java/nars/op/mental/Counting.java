@@ -56,7 +56,7 @@ public class Counting implements IOperator {
                                 SetExt set_term=(SetExt) inh.getSubject();
 
                                 //this gets the cardinality of M
-                                int cardinality=set_term.size();   
+                                int cardinality=set_term.length();
 
                                 //now create term <(*,M,cardinality) --> CARDINALITY>.
                                 Term[] product_args = new Term[] {

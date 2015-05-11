@@ -2,7 +2,7 @@ package org.projog.core.udp.compiler;
 
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateKey;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
@@ -19,7 +19,7 @@ final class PredicateMetaData {
 
    private final int numberArguments;
 
-   PredicateMetaData(KnowledgeBase kb, List<ClauseModel> implications) {
+   PredicateMetaData(KB kb, List<ClauseModel> implications) {
       this.recursiveFunctionMetaData = TailRecursivePredicateMetaData.create(kb, implications);
       this.isTailRecursive = recursiveFunctionMetaData != null;
       this.clauses = new ClauseMetaData[implications.size()];
@@ -28,7 +28,7 @@ final class PredicateMetaData {
          clauses[i] = new ClauseMetaData(kb, i, clauseModel, isTailRecursive);
       }
       this.key = PredicateKey.createForTerm(clauses[0].getConsequent());
-      this.numberArguments = clauses[0].getConsequent().args();
+      this.numberArguments = clauses[0].getConsequent().length();
       this.isSingleResultPredicate = (clauses.length == 1 && clauses[0].isSingleResult());
    }
 

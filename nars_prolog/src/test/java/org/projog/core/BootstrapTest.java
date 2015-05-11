@@ -27,14 +27,14 @@ import org.projog.core.term.PTerm;
  * {@code etc/projog-bootstrap.pl} is used to configure the build-in predicates and arithmetic functions.
  */
 public class BootstrapTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
 
    @Test
    public void testBuiltInPredicates() throws Exception {
       List<PTerm> terms = getQueriesByKey(ADD_PREDICATE_KEY);
       assertFalse(terms.isEmpty());
       for (PTerm t : terms) {
-         assertBuiltInPredicate(t.arg(0));
+         assertBuiltInPredicate(t.term(0));
       }
    }
 
@@ -43,7 +43,7 @@ public class BootstrapTest {
       List<PTerm> terms = getQueriesByKey(ADD_CALCULATABLE_KEY);
       assertFalse(terms.isEmpty());
       for (PTerm t : terms) {
-         assertCalculatable(t.arg(1));
+         assertCalculatable(t.term(1));
       }
    }
 
@@ -52,7 +52,7 @@ public class BootstrapTest {
       PTerm[] terms = parseTermsFromFile(BOOTSTRAP_FILE);
       for (PTerm next : terms) {
          if (QUESTION_PREDICATE_NAME.equals(next.getName())) {
-            PTerm t = next.arg(0);
+            PTerm t = next.term(0);
             if (key.equals(PredicateKey.createForTerm(t))) {
                result.add(t);
             }

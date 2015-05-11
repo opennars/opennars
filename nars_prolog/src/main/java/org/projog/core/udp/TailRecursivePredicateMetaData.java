@@ -5,9 +5,9 @@ import static org.projog.core.KnowledgeBaseUtils.toArrayOfConjunctions;
 
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /**
  * Defines the characteristics of a tail recursive user defined predicate.
@@ -61,7 +61,7 @@ public final class TailRecursivePredicateMetaData {
     * @param clauses the clauses that the user defined predicate consists of
     * @return a new {@code TailRecursivePredicateMetaData} or {@code null} if the predicate is not tail recursive
     */
-   public static TailRecursivePredicateMetaData create(KnowledgeBase kb, List<ClauseModel> clauses) {
+   public static TailRecursivePredicateMetaData create(KB kb, List<ClauseModel> clauses) {
       if (isTailRecursive(kb, clauses)) {
          return new TailRecursivePredicateMetaData(clauses);
       } else {
@@ -69,7 +69,7 @@ public final class TailRecursivePredicateMetaData {
       }
    }
 
-   private static boolean isTailRecursive(KnowledgeBase kb, List<ClauseModel> terms) {
+   private static boolean isTailRecursive(KB kb, List<ClauseModel> terms) {
       if (terms.size() != 2) {
          return false;
       }
@@ -83,12 +83,12 @@ public final class TailRecursivePredicateMetaData {
       return isAntecedantRecursive(kb, secondTerm);
    }
 
-   private static boolean isAntecedantRecursive(KnowledgeBase kb, ClauseModel secondTerm) {
+   private static boolean isAntecedantRecursive(KB kb, ClauseModel secondTerm) {
       PTerm consequent = secondTerm.getConsequent();
       PTerm antecedant = secondTerm.getAntecedant();
       PTerm[] functions = toArrayOfConjunctions(antecedant);
       PTerm lastFunction = functions[functions.length - 1];
-      if (lastFunction.type() == TermType.STRUCTURE && lastFunction.getName().equals(consequent.getName()) && lastFunction.args() == consequent.args()) {
+      if (lastFunction.type() == PrologOperator.STRUCTURE && lastFunction.getName().equals(consequent.getName()) && lastFunction.length() == consequent.length()) {
          for (int i = 0; i < functions.length - 1; i++) {
             if (!isSingleAnswer(kb, functions[i])) {
                return false;
@@ -101,8 +101,8 @@ public final class TailRecursivePredicateMetaData {
    }
 
    private static boolean isTail(PTerm list, PTerm term) {
-      if (list.type() == TermType.LIST) {
-         PTerm actualTail = list.arg(1);
+      if (list.type() == PrologOperator.LIST) {
+         PTerm actualTail = list.term(1);
          return actualTail.strictEquals(term);
       } else {
          return false;
@@ -110,13 +110,13 @@ public final class TailRecursivePredicateMetaData {
    }
 
    /**
-    * @see TailRecursivePredicateMetaData#create(KnowledgeBase, List)
+    * @see TailRecursivePredicateMetaData#create(KB, List)
     */
    private TailRecursivePredicateMetaData(List<ClauseModel> clauses) {
       this.firstClause = clauses.get(0);
       this.secondClause = clauses.get(1);
 
-      int numberOfArguments = firstClause.getConsequent().args();
+      int numberOfArguments = firstClause.getConsequent().length();
 
       this.isTailRecursiveArgument = new boolean[numberOfArguments];
       this.isSingleResultIfArgumentImmutable = new boolean[numberOfArguments];
@@ -126,11 +126,11 @@ public final class TailRecursivePredicateMetaData {
       PTerm secondRuleAntecedantFinalFunction = getFinalFunction(secondClause.getAntecedant());
       boolean firstRuleConsequentHasEmptyListAsAnArgument = false;
       for (int i = 0; i < numberOfArguments; i++) {
-         PTerm secondRuleConsequentArgument = secondRuleConsequent.arg(i);
-         PTerm secondRuleAntecedantArgument = secondRuleAntecedantFinalFunction.arg(i);
+         PTerm secondRuleConsequentArgument = secondRuleConsequent.term(i);
+         PTerm secondRuleAntecedantArgument = secondRuleAntecedantFinalFunction.term(i);
          if (isTail(secondRuleConsequentArgument, secondRuleAntecedantArgument)) {
             isTailRecursiveArgument[i] = true;
-            if (firstRuleConsequent.arg(i).type() == TermType.EMPTY_LIST) {
+            if (firstRuleConsequent.term(i).type() == PrologOperator.EMPTY_LIST) {
                isSingleResultIfArgumentImmutable[i] = true;
                firstRuleConsequentHasEmptyListAsAnArgument = true;
             }

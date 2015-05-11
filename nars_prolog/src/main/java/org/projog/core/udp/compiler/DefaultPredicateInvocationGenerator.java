@@ -7,7 +7,7 @@ import java.util.Set;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 final class DefaultPredicateInvocationGenerator implements PredicateInvocationGenerator {
    // TODO consider ways to improve this class through refactoring
@@ -23,14 +23,14 @@ final class DefaultPredicateInvocationGenerator implements PredicateInvocationGe
       final boolean isRetryable = g.currentClause().isCurrentFunctionMulipleResult();
       final boolean inRetryMethod = g.currentClause().isInRetryMethod();
       final boolean firstInMethod = g.currentClause().isFirstMutlipleResultFunctionInConjunction();
-      final int numberOfArguments = function.args();
+      final int numberOfArguments = function.length();
 
       if (isRetryable) {
          if (inRetryMethod == false) {
             throw new RuntimeException("Should never have a retryable Predicate factory without out being in a retry method");
          }
 
-         Set<Variable> variablesInCurrentFunction = g.currentClause().getVariablesInCurrentFunction();
+         Set<PVar> variablesInCurrentFunction = g.currentClause().getVariablesInCurrentFunction();
 
          // only has to be unique per clause as can be reused
          String PredicateVariableName = g.classVariables().getNewMemberPredicateName(g.currentClause(), getPredicateReturnType(ef, numberOfArguments));
@@ -42,7 +42,7 @@ final class DefaultPredicateInvocationGenerator implements PredicateInvocationGe
             if (i != 0) {
                methodArgs.append(", ");
             }
-            PTerm arg = function.arg(i);
+            PTerm arg = function.term(i);
             String argValue = g.outputCreateTermStatement(arg, true);
             if (arg.constant()) {
                methodArgs.append(argValue);
@@ -70,14 +70,14 @@ final class DefaultPredicateInvocationGenerator implements PredicateInvocationGe
 
          g.assignTermToTempVariable(variablesToKeepTempVersionOf);
       } else {
-         Set<Variable> variables = g.currentClause().getVariablesInCurrentFunction();
+         Set<PVar> variables = g.currentClause().getVariablesInCurrentFunction();
          g.currentClause().addVariablesToBackTrack(variables);
          StringBuilder methodArgs = new StringBuilder();
          for (int i = 0; i < numberOfArguments; i++) {
             if (i != 0) {
                methodArgs.append(", ");
             }
-            methodArgs.append(g.outputCreateTermStatement(function.arg(i), true) + ".getTerm()");
+            methodArgs.append(g.outputCreateTermStatement(function.term(i), true) + ".getTerm()");
          }
          String functionVariableName = g.classVariables().getPredicateFactoryVariableName(function, g.knowledgeBase());
          final String eval;

@@ -90,7 +90,7 @@ public class TermTest {
    @Test
    public void testCopy() {
       for (PTerm t1 : IMMUTABLE_TERMS) {
-         Map<Variable, Variable> sharedVariables = new HashMap<>();
+         Map<PVar, PVar> sharedVariables = new HashMap<>();
          PTerm t2 = t1.copy(sharedVariables);
          assertSame(t1, t2);
          assertTrue(sharedVariables.isEmpty());
@@ -118,8 +118,8 @@ public class TermTest {
    public void testBacktrack() {
       for (PTerm t : IMMUTABLE_TERMS) {
          // keep track of the Term's current properties
-         TermType originalType = t.type();
-         int originalNumberOfArguments = t.args();
+         PrologOperator originalType = t.type();
+         int originalNumberOfArguments = t.length();
          String originalToString = t.toString();
 
          // perform the backtrack()
@@ -127,7 +127,7 @@ public class TermTest {
 
          // check properties are the same as prior to the backtrack()
          assertSame(originalType, t.type());
-         assertSame(originalNumberOfArguments, t.args());
+         assertSame(originalNumberOfArguments, t.length());
          assertEquals(originalToString, t.toString());
       }
    }
@@ -135,7 +135,7 @@ public class TermTest {
    @Test
    public void testUnifyAndStrictEqualityWithVariable() {
       for (PTerm t : IMMUTABLE_TERMS) {
-         Variable v = variable("X");
+         PVar v = variable("X");
 
          // check equal
          assertStrictEquality(t, v, false);
@@ -150,7 +150,7 @@ public class TermTest {
          v.backtrack();
 
          // check backtrack undid result of unification
-         assertSame(TermType.NAMED_VARIABLE, v.type());
+         assertSame(PrologOperator.NAMED_VARIABLE, v.type());
          assertStrictEquality(t, v, false);
 
          // check can unify again (but this time with unify called on v with t passed as a parameter)
@@ -163,7 +163,7 @@ public class TermTest {
          v.backtrack();
 
          // check backtrack undid result of unification
-         assertSame(TermType.NAMED_VARIABLE, v.type());
+         assertSame(PrologOperator.NAMED_VARIABLE, v.type());
          assertStrictEquality(t, v, false);
 
          // unify v to something else
@@ -183,7 +183,7 @@ public class TermTest {
       }
    }
 
-   private void assertVariableIsUnifiedToTerm(Variable v, PTerm t) {
+   private void assertVariableIsUnifiedToTerm(PVar v, PTerm t) {
       assertStrictEquality(t, v, true);
       assertEquals(t.toString(), v.toString());
       assertSame(t.type(), v.type());

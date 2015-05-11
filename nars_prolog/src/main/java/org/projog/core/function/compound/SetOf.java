@@ -4,7 +4,7 @@ import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
 
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermComparator;
 
@@ -80,13 +80,13 @@ public final class SetOf extends AbstractCollectionOf {
    public SetOf() {
    }
 
-   private SetOf(KnowledgeBase kb) {
-      setKnowledgeBase(kb);
+   private SetOf(KB kb) {
+      setKB(kb);
    }
 
    @Override
    public SetOf getPredicate(PTerm template, PTerm goal, PTerm bag) {
-      return new SetOf(getKnowledgeBase());
+      return new SetOf(getKB());
    }
 
    /** "setof" excludes duplicates and orders elements using {@link TermComparator}. */

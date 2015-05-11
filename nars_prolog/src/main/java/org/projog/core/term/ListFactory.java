@@ -89,7 +89,7 @@ public final class ListFactory {
    public static PTerm createListOfLength(final int length) {
       final java.util.List<PTerm> javaList = new ArrayList<PTerm>();
       for (int i = 0; i < length; i++) {
-         javaList.add(new Variable("E" + i));
+         javaList.add(new PVar("E" + i));
       }
       return createList(javaList);
    }

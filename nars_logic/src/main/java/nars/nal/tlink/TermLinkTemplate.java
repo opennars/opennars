@@ -109,23 +109,23 @@ public class TermLinkTemplate implements Termed {
 
 
 
-    public String prefix(boolean in) {
+    public String prefix(boolean in, Term target) {
         if (in) {
             if (incoming == null)
                 incoming = prefix(type, index, true);
-            return incoming;
+            return incoming + target.toString();
         }
         else {
             if (outgoing == null)
                 outgoing = prefix(type, index, false);
-            return outgoing;
+            return outgoing + target.toString();
         }
     }
 
 
     @Override
     public String toString() {
-        return concept.getTerm() + ":" + prefix(true) + '|' + prefix(false) + ':' + target;
+        return concept.getTerm() + ":" + prefix(true, target) + '|' + prefix(false,target) + ':' + target;
     }
 
     @Override

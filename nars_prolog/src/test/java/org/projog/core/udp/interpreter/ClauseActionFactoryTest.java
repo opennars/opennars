@@ -11,17 +11,17 @@ import static org.projog.TestUtils.variable;
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.CutException;
-import org.projog.core.KnowledgeBase;
-import org.projog.core.term.Atom;
+import org.projog.core.KB;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 
 public class ClauseActionFactoryTest {
-   private final KnowledgeBase kb = TestUtils.createKnowledgeBase();
+   private final KB kb = TestUtils.createKnowledgeBase();
 
    /** @see AlwaysMatchedClauseAction */
    @Test
@@ -80,9 +80,9 @@ public class ClauseActionFactoryTest {
       assertFalse(ca.couldReEvaluationSucceed());
 
       PTerm x = integerNumber(2);
-      Variable y = variable("Y");
+      PVar y = variable("Y");
       assertTrue(ca.getFree().evaluate(new PTerm[] {x, y}));
-      assertEquals(TermType.INTEGER, y.type());
+      assertEquals(PrologOperator.INTEGER, y.type());
       assertEquals(3, ((IntegerNumber) y.get()).getLong());
 
       assertFalse(ca.getFree().evaluate(new PTerm[] {integerNumber(4), y}));
@@ -161,14 +161,14 @@ public class ClauseActionFactoryTest {
       assertEquals(SingleFunctionMultiResultClauseAction.class, ca.getClass());
       assertTrue(ca.couldReEvaluationSucceed());
 
-      assertTrue(ca.evaluate(new PTerm[] {new Atom("true")}));
+      assertTrue(ca.evaluate(new PTerm[] {new PAtom("true")}));
       assertFalse(ca.couldReEvaluationSucceed());
 
       ca = ca.getFree();
-      assertFalse(ca.evaluate(new PTerm[] {new Atom("fail")}));
+      assertFalse(ca.evaluate(new PTerm[] {new PAtom("fail")}));
 
       ca = ca.getFree();
-      assertTrue(ca.evaluate(new PTerm[] {new Atom("repeat")}));
+      assertTrue(ca.evaluate(new PTerm[] {new PAtom("repeat")}));
       assertTrue(ca.couldReEvaluationSucceed());
    }
 
@@ -176,14 +176,14 @@ public class ClauseActionFactoryTest {
    private void testNonRetryableClauseActionSuccess(ClauseAction ca, String query, String output) {
       assertFalse(ca.couldReEvaluationSucceed());
       PTerm t = parseSentence(query + ".");
-      assertTrue(ca.getFree().evaluate(t.getArgs()));
+      assertTrue(ca.getFree().evaluate(t.terms()));
       assertEquals(output, t.toString());
    }
 
    private void testNonRetryableClauseActionFailure(ClauseAction ca, String query) {
       assertFalse(ca.couldReEvaluationSucceed());
       PTerm t = parseSentence(query + ".");
-      assertFalse(ca.getFree().evaluate(t.getArgs()));
+      assertFalse(ca.getFree().evaluate(t.terms()));
    }
 
    private ClauseAction getClauseAction(String prologSentenceSyntax) {
@@ -193,6 +193,6 @@ public class ClauseActionFactoryTest {
 
    private PTerm[] getArgs(String prologArgumentSyntax) {
       PTerm t = TestUtils.parseSentence("p(" + prologArgumentSyntax + ").");
-      return t.getArgs();
+      return t.terms();
    }
 }

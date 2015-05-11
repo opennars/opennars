@@ -138,7 +138,7 @@ public final class Inspect extends AbstractRetryablePredicate {
 
    private Inspect createInspect() {
       Inspect i = new Inspect(doRemoveMatches);
-      i.setKnowledgeBase(getKnowledgeBase());
+      i.setKB(getKB());
       return i;
    }
 
@@ -158,7 +158,7 @@ public final class Inspect extends AbstractRetryablePredicate {
    public boolean evaluate(PTerm clauseHead, PTerm clauseBody) {
       if (implications == null) {
          PredicateKey key = PredicateKey.createForTerm(clauseHead);
-         Map<PredicateKey, UserDefinedPredicateFactory> userDefinedPredicates = getKnowledgeBase().getUserDefinedPredicates();
+         Map<PredicateKey, UserDefinedPredicateFactory> userDefinedPredicates = getKB().getDefined();
          UserDefinedPredicateFactory userDefinedPredicate = userDefinedPredicates.get(key);
          if (userDefinedPredicate == null) {
             return false;

@@ -28,36 +28,36 @@ public class StructureTest {
    @Test
    public void testCreationWithArguments() {
       PTerm[] args = {atom(), structure(), integerNumber(), decimalFraction(), variable()};
-      Structure p = structure("test", args);
+      PStruct p = structure("test", args);
       assertEquals("test", p.getName());
-      assertArrayEquals(args, p.getArgs());
-      assertEquals(5, p.args());
+      assertArrayEquals(args, p.terms());
+      assertEquals(5, p.length());
       for (int i = 0; i < args.length; i++) {
-         assertSame(args[i], p.arg(i));
+         assertSame(args[i], p.term(i));
       }
-      assertSame(TermType.STRUCTURE, p.type());
+      assertSame(PrologOperator.STRUCTURE, p.type());
       assertEquals("test(test, test(test), 1, 1.0, X)", p.toString());
    }
 
    @Test
    public void testGetValueNoVariables() {
-      Structure p = structure("p", atom(), structure("p", atom()), list(integerNumber(), decimalFraction()));
-      Structure p2 = p.get();
+      PStruct p = structure("p", atom(), structure("p", atom()), list(integerNumber(), decimalFraction()));
+      PStruct p2 = p.get();
       assertSame(p, p2);
    }
 
    @Test
    public void testGetValueUnassignedVariables() {
-      Structure p = structure("p", variable(), structure("p", variable()), list(variable(), variable()));
+      PStruct p = structure("p", variable(), structure("p", variable()), list(variable(), variable()));
       assertSame(p, p.get());
    }
 
    @Test
    public void testGetValueAssignedVariable() {
-      Variable x = variable("X");
-      Structure p1 = structure("p", atom(), structure("p", atom(), x, integerNumber()), list(integerNumber(), decimalFraction()));
+      PVar x = variable("X");
+      PStruct p1 = structure("p", atom(), structure("p", atom(), x, integerNumber()), list(integerNumber(), decimalFraction()));
       x.unify(atom());
-      Structure p2 = p1.get();
+      PStruct p2 = p1.get();
       assertNotSame(p1, p2);
       assertEquals(p1.toString(), p2.toString());
       assertStrictEquality(p1, p2, true);
@@ -65,8 +65,8 @@ public class StructureTest {
 
    @Test
    public void testCreationList() {
-      PTerm t = Structure.createStructure(".", new PTerm[] {atom("a"), atom("b")});
-      assertEquals(TermType.LIST, t.type());
+      PTerm t = PStruct.make(".", new PTerm[]{atom("a"), atom("b")});
+      assertEquals(PrologOperator.LIST, t.type());
       assertTrue(t instanceof PList);
       PTerm l = parseSentence("[a | b].");
       assertEquals(l.toString(), t.toString());
@@ -75,9 +75,9 @@ public class StructureTest {
    @Test
    public void testUnifyWhenBothPredicatesHaveVariableArguments() {
       // test(x, Y)
-      Structure p1 = structure("test", new Atom("x"), new Variable("Y"));
+      PStruct p1 = structure("test", new PAtom("x"), new PVar("Y"));
       // test(X, y)
-      Structure p2 = structure("test", new Variable("X"), new Atom("y"));
+      PStruct p2 = structure("test", new PVar("X"), new PAtom("y"));
       assertTrue(p1.unify(p2));
       assertEquals("test(x, y)", p1.toString());
       assertEquals(p1.toString(), p2.toString());
@@ -86,10 +86,10 @@ public class StructureTest {
    @Test
    public void testUnifyWhenPredicateHasSameVariableTwiceAsArgument() {
       // test(x, y)
-      Structure p1 = structure("test", new Atom("x"), new Atom("y"));
+      PStruct p1 = structure("test", new PAtom("x"), new PAtom("y"));
       // test(X, X)
-      Variable v = new Variable("X");
-      Structure p2 = structure("test", v, v);
+      PVar v = new PVar("X");
+      PStruct p2 = structure("test", v, v);
 
       assertFalse(p2.unify(p1));
       assertEquals("test(x, y)", p1.toString());
@@ -111,30 +111,30 @@ public class StructureTest {
    @Test
    public void testUnifyVariableThatIsPredicateArgument() {
       // test(X, X)
-      Variable v = new Variable("X");
-      Structure p = structure("test", v, v);
+      PVar v = new PVar("X");
+      PStruct p = structure("test", v, v);
       assertEquals("test(X, X)", p.toString());
-      assertTrue(v.unify(new Atom("x")));
+      assertTrue(v.unify(new PAtom("x")));
       assertEquals("test(x, x)", p.toString());
    }
 
    @Test
    public void testUnifyDifferentNamesSameArguments() {
       PTerm[] args = {atom(), integerNumber(), decimalFraction()};
-      Structure p1 = structure("test1", args);
-      Structure p2 = structure("test2", args);
-      Structure p3 = structure("test", args);
+      PStruct p1 = structure("test1", args);
+      PStruct p2 = structure("test2", args);
+      PStruct p3 = structure("test", args);
       assertStrictEqualityAndUnify(p1, p2, false);
       assertStrictEqualityAndUnify(p1, p3, false);
    }
 
    @Test
    public void testSameNamesDifferentArguments() {
-      Structure[] predicates = {
-                  structure("test1", new Atom("a"), new Atom("b"), new Atom("c")),
-                  structure("test2", new Atom("a"), new Atom("b"), new Atom("d")),
-                  structure("test3", new Atom("a"), new Atom("c"), new Atom("b")),
-                  structure("test4", new Atom("a"), new Atom("b"))};
+      PStruct[] predicates = {
+                  structure("test1", new PAtom("a"), new PAtom("b"), new PAtom("c")),
+                  structure("test2", new PAtom("a"), new PAtom("b"), new PAtom("d")),
+                  structure("test3", new PAtom("a"), new PAtom("c"), new PAtom("b")),
+                  structure("test4", new PAtom("a"), new PAtom("b"))};
       for (int i = 0; i < predicates.length; i++) {
          for (int j = i; j < predicates.length; j++) {
             if (i == j) {
@@ -149,8 +149,8 @@ public class StructureTest {
 
    @Test
    public void testUnifyWrongType() {
-      Structure p = structure("1", new PTerm[] {atom()});
-      assertStrictEqualityAndUnify(p, new Atom("1"), false);
+      PStruct p = structure("1", new PTerm[] {atom()});
+      assertStrictEqualityAndUnify(p, new PAtom("1"), false);
       assertStrictEqualityAndUnify(p, new IntegerNumber(1), false);
       assertStrictEqualityAndUnify(p, new DecimalFraction(1), false);
    }
@@ -167,36 +167,36 @@ public class StructureTest {
 
    @Test
    public void testCopyWithoutVariablesOrNestedArguments() {
-      Structure p = structure("test", atom(), integerNumber(), decimalFraction());
-      Structure copy = p.copy(null);
+      PStruct p = structure("test", atom(), integerNumber(), decimalFraction());
+      PStruct copy = p.copy(null);
       assertSame(p, copy);
    }
 
    @Test
    public void testCopyWithVariables() {
-      Structure p = structure("test", atom(), integerNumber(), decimalFraction(), variable());
-      Structure copy = p.copy(new HashMap<Variable, Variable>());
+      PStruct p = structure("test", atom(), integerNumber(), decimalFraction(), variable());
+      PStruct copy = p.copy(new HashMap<PVar, PVar>());
       assertNotSame(p, copy);
       assertEquals("test", copy.getName());
-      assertEquals(TermType.STRUCTURE, copy.type());
-      assertEquals(p.args(), copy.args());
-      assertEquals(p.getArgs().length, copy.getArgs().length);
-      assertTrue(p.getArgs()[0] == copy.getArgs()[0]);
-      assertTrue(p.getArgs()[1] == copy.getArgs()[1]);
-      assertTrue(p.getArgs()[2] == copy.getArgs()[2]);
-      assertTrue(p.getArgs()[3] != copy.getArgs()[3]);
+      assertEquals(PrologOperator.STRUCTURE, copy.type());
+      assertEquals(p.length(), copy.length());
+      assertEquals(p.terms().length, copy.terms().length);
+      assertTrue(p.terms()[0] == copy.terms()[0]);
+      assertTrue(p.terms()[1] == copy.terms()[1]);
+      assertTrue(p.terms()[2] == copy.terms()[2]);
+      assertTrue(p.terms()[3] != copy.terms()[3]);
    }
 
    @Test
    public void testCopyWithAssignedVariable() {
-      Variable X = new Variable("X");
-      Structure arg = structure("p", X);
-      Structure original = structure("p", arg);
+      PVar X = new PVar("X");
+      PStruct arg = structure("p", X);
+      PStruct original = structure("p", arg);
 
       assertSame(original, original.get());
 
-      Map<Variable, Variable> sharedVariables = new HashMap<>();
-      Structure copy1 = original.copy(sharedVariables);
+      Map<PVar, PVar> sharedVariables = new HashMap<>();
+      PStruct copy1 = original.copy(sharedVariables);
       assertNotSame(original, copy1);
       assertStrictEquality(original, copy1, false);
       assertEquals(1, sharedVariables.size());
@@ -205,7 +205,7 @@ public class StructureTest {
 
       X.unify(atom("a"));
 
-      Structure copy2 = original.copy(null);
+      PStruct copy2 = original.copy(null);
       assertNotSame(original, copy2);
       assertStrictEquality(original, copy2, true);
       assertEquals(original.toString(), copy2.toString());
@@ -222,16 +222,16 @@ public class StructureTest {
 
    @Test
    public void testIsImmutable() {
-      Variable v = variable("X");
-      Atom a = atom("test");
-      Structure p1 = structure("p", atom(), structure("p", atom(), v, integerNumber()), list(integerNumber(), decimalFraction()));
+      PVar v = variable("X");
+      PAtom a = atom("test");
+      PStruct p1 = structure("p", atom(), structure("p", atom(), v, integerNumber()), list(integerNumber(), decimalFraction()));
       assertFalse(p1.constant());
       v.unify(a);
-      Structure p2 = p1.copy(null);
+      PStruct p2 = p1.copy(null);
       assertFalse(p1.constant());
       assertTrue(p2.constant());
-      assertSame(v, p1.arg(1).arg(1));
-      assertSame(a, p2.arg(1).arg(1));
+      assertSame(v, p1.term(1).term(1));
+      assertSame(a, p2.term(1).term(1));
    }
 
    private void assertStrictEqualityAndUnify(PTerm t1, PTerm t2, boolean expectedResult) {

@@ -4,7 +4,7 @@ import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /**
  * Extended by {@code Predicate}s that compares a term to a list of individual characters or digits.
@@ -72,15 +72,15 @@ abstract class AbstractTermSplitFunction extends AbstractSingletonPredicate {
    }
 
    private boolean isNotList(PTerm t) {
-      TermType tt = t.type();
-      return tt != TermType.LIST && tt != TermType.EMPTY_LIST;
+      PrologOperator tt = t.type();
+      return tt != PrologOperator.LIST && tt != PrologOperator.EMPTY_LIST;
    }
 
    private void appendListElementsToString(StringBuffer sb, PTerm t) {
-      if (t.type() == TermType.LIST) {
-         appendListElementsToString(sb, t.arg(0));
-         appendListElementsToString(sb, t.arg(1));
-      } else if (t.type() != TermType.EMPTY_LIST) {
+      if (t.type() == PrologOperator.LIST) {
+         appendListElementsToString(sb, t.term(0));
+         appendListElementsToString(sb, t.term(1));
+      } else if (t.type() != PrologOperator.EMPTY_LIST) {
          sb.append(t.toString());
       }
    }

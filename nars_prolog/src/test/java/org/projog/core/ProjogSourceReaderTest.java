@@ -73,7 +73,7 @@ public class ProjogSourceReaderTest {
 
    @Test
    public void testDynamicKeyword() {
-      KnowledgeBase kb = createKnowledgeBase();
+      KB kb = createKnowledgeBase();
       File f = writeToFile("?- dynamic(test_dynamic/3).\n"
                            + "test_dynamic(a,b).\n"
                            + "test_dynamic(a,b,c).\n"
@@ -94,17 +94,17 @@ public class ProjogSourceReaderTest {
       assertClauseModels(kb, new PredicateKey("test_dynamic2", 3), "1, 2, 3", "4, 5, 6", "7, 8, 9");
    }
 
-   private void assertDynamicUserDefinedPredicate(KnowledgeBase kb, PredicateKey key) {
+   private void assertDynamicUserDefinedPredicate(KB kb, PredicateKey key) {
       UserDefinedPredicateFactory udp = getUserDefinedPredicate(kb, key);
       assertSame(DynamicUserDefinedPredicateFactory.class, udp.getClass());
    }
 
-   private void assertStaticUserDefinedPredicate(KnowledgeBase kb, PredicateKey key) {
+   private void assertStaticUserDefinedPredicate(KB kb, PredicateKey key) {
       UserDefinedPredicateFactory udp = getUserDefinedPredicate(kb, key);
       assertSame(StaticUserDefinedPredicateFactory.class, udp.getClass());
    }
 
-   private void assertClauseModels(KnowledgeBase kb, PredicateKey key, String... expectedArgs) {
+   private void assertClauseModels(KB kb, PredicateKey key, String... expectedArgs) {
       UserDefinedPredicateFactory udp = getUserDefinedPredicate(kb, key);
       for (int i = 0; i < expectedArgs.length; i++) {
          String actual = udp.getClauseModel(i).getOriginal().toString();
@@ -114,10 +114,10 @@ public class ProjogSourceReaderTest {
       assertNull(udp.getClauseModel(expectedArgs.length));
    }
 
-   private UserDefinedPredicateFactory getUserDefinedPredicate(KnowledgeBase kb, PredicateKey key) {
+   private UserDefinedPredicateFactory getUserDefinedPredicate(KB kb, PredicateKey key) {
       PredicateFactory ef = kb.getPredicateFactory(key);
       assertNotNull(ef);
-      UserDefinedPredicateFactory udp = kb.createOrReturnUserDefinedPredicate(key);
+      UserDefinedPredicateFactory udp = kb.getDefined(key);
       assertSame(ef, udp);
       return udp;
    }

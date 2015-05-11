@@ -120,26 +120,11 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                                     .get());*/
                 }
                 if (v != null) {
-
-                    boolean changed = false;
-
-                    if (Double.isFinite(dqDivE)) {
-                        if (dqDivE != 0) {
-                            v.addDQ(dqDivE);
-                            changed = true;
-                        }
-                    }
-
-
-                    if (Double.isFinite(eMult)) {
+                    if (Double.isFinite(dqDivE) && Double.isFinite(eMult)) {
+                        double e = v.getE();
+                        v.addDQ(dqDivE * e);
                         v.updateE(eMult, eAdd);
-                        changed = true;
-                    }
 
-
-
-
-                    if (changed) {
                         v.commit(qUpdateConfidence, updateThresh);
                     }
                 }

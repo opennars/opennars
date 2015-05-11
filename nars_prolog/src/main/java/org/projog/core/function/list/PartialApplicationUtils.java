@@ -2,41 +2,41 @@ package org.projog.core.function.list;
 
 import static org.projog.core.term.TermUtils.backtrack;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.PredicateKey;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 // Moved methods to separate class so can be used by both MapList and SubList. If useful then move to TermUtils.
 class PartialApplicationUtils {
    static boolean isAtomOrStructure(PTerm arg) {
-      TermType type = arg.type();
-      return type == TermType.STRUCTURE || type == TermType.ATOM;
+      PrologOperator type = arg.type();
+      return type == PrologOperator.STRUCTURE || type == PrologOperator.ATOM;
    }
 
    static boolean isList(PTerm arg) {
-      TermType type = arg.type();
-      return type == TermType.EMPTY_LIST || type == TermType.LIST;
+      PrologOperator type = arg.type();
+      return type == PrologOperator.EMPTY_LIST || type == PrologOperator.LIST;
    }
 
-   static PredicateFactory getPredicateFactory(KnowledgeBase kb, PTerm partiallyAppliedFunction) {
+   static PredicateFactory getPredicateFactory(KB kb, PTerm partiallyAppliedFunction) {
       return getPredicateFactory(kb, partiallyAppliedFunction, 1);
    }
 
-   static PredicateFactory getPredicateFactory(KnowledgeBase kb, PTerm partiallyAppliedFunction, int numberOfExtraArguments) {
-      int numArgs = partiallyAppliedFunction.args() + numberOfExtraArguments;
+   static PredicateFactory getPredicateFactory(KB kb, PTerm partiallyAppliedFunction, int numberOfExtraArguments) {
+      int numArgs = partiallyAppliedFunction.length() + numberOfExtraArguments;
       PredicateKey key = new PredicateKey(partiallyAppliedFunction.getName(), numArgs);
       return kb.getPredicateFactory(key);
    }
 
    static PTerm[] createArguments(PTerm partiallyAppliedFunction, PTerm... extraArguments) {
-      int originalNumArgs = partiallyAppliedFunction.args();
+      int originalNumArgs = partiallyAppliedFunction.length();
       PTerm[] result = new PTerm[originalNumArgs + extraArguments.length];
 
       for (int i = 0; i < originalNumArgs; i++) {
-         result[i] = partiallyAppliedFunction.arg(i).get();
+         result[i] = partiallyAppliedFunction.term(i).get();
       }
 
       for (int i = 0; i < extraArguments.length; i++) {

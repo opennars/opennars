@@ -18,7 +18,7 @@ final class SingleRuleWithSingleImmutableArgumentPredicateInvocationGenerator im
       PTerm data = ((SingleRuleWithSingleImmutableArgumentPredicate) ef).data;
       Runnable r = g.createOnBreakCallback(functionVariableName, function, null);
       g.comment("SingleRuleWithSingleImmutableArgumentPredicateGenerator");
-      g.outputEqualsEvaluation(function.arg(0), data, r);
+      g.outputEqualsEvaluation(function.term(0), data, r);
       g.logInlinedPredicatePredicate("Exit", functionVariableName, function);
    }
 }

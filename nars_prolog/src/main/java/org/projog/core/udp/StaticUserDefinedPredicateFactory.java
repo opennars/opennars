@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.KnowledgeBaseUtils;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
@@ -34,7 +34,7 @@ public class StaticUserDefinedPredicateFactory implements UserDefinedPredicateFa
    private final Object lock = new Object();
    private final PredicateKey predicateKey;
    private final List<ClauseModel> implications;
-   private KnowledgeBase kb;
+   private KB kb;
    private PredicateFactory compiledPredicateFactory;
    private int setCompiledPredicateFactoryInvocationCtr;
 
@@ -44,7 +44,7 @@ public class StaticUserDefinedPredicateFactory implements UserDefinedPredicateFa
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
+   public void setKB(KB kb) {
       this.kb = kb;
    }
 
@@ -158,7 +158,7 @@ public class StaticUserDefinedPredicateFactory implements UserDefinedPredicateFa
    private PTerm[] createSingleDimensionTermArrayOfImplications() {
       PTerm data[] = new PTerm[implications.size()];
       for (int i = 0; i < implications.size(); i++) {
-         PTerm arg = implications.get(i).getConsequent().getArgs()[0];
+         PTerm arg = implications.get(i).getConsequent().terms()[0];
          data[i] = arg;
       }
       return data;
@@ -168,7 +168,7 @@ public class StaticUserDefinedPredicateFactory implements UserDefinedPredicateFa
       int numArgs = predicateKey.getNumArgs();
       PTerm data[][] = new PTerm[implications.size()][numArgs];
       for (int i = 0; i < implications.size(); i++) {
-         PTerm[] args = implications.get(i).getConsequent().getArgs();
+         PTerm[] args = implications.get(i).getConsequent().terms();
          data[i] = args;
       }
       return data;
@@ -361,7 +361,7 @@ public class StaticUserDefinedPredicateFactory implements UserDefinedPredicateFa
       }
 
       @Override
-      public void setKnowledgeBase(KnowledgeBase kb) {
+      public void setKB(KB kb) {
       }
    }
 }

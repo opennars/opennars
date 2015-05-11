@@ -24,8 +24,8 @@ import org.projog.TestUtils;
  * @see TermTest
  */
 public class ListTest {
-   private static final PTerm head = new Atom("a");
-   private static final PTerm tail = new Atom("b");
+   private static final PTerm head = new PAtom("a");
+   private static final PTerm tail = new PAtom("b");
    private static final PList testList = new PList(head, tail, true);
 
    @Test
@@ -46,24 +46,24 @@ public class ListTest {
 
    @Test
    public void testGetType() {
-      assertSame(TermType.LIST, testList.type());
+      assertSame(PrologOperator.LIST, testList.type());
    }
 
    @Test
    public void testGetNumberOfArguments() {
-      assertEquals(2, testList.args());
+      assertEquals(2, testList.length());
    }
 
    @Test
    public void testGetArgument() {
-      assertSame(head, testList.arg(0));
-      assertSame(tail, testList.arg(1));
+      assertSame(head, testList.term(0));
+      assertSame(tail, testList.term(1));
    }
 
    @Test
    public void testGetArgs() {
       try {
-         testList.getArgs();
+         testList.terms();
          fail();
       } catch (UnsupportedOperationException e) {
          // expected
@@ -77,17 +77,17 @@ public class ListTest {
 
    @Test
    public void testCopyVariableElements() {
-      Atom a = new Atom("a");
-      Atom b = new Atom("b");
-      Variable X = new Variable("X");
-      Variable Y = new Variable("Y");
-      Structure head = structure("p", X);
+      PAtom a = new PAtom("a");
+      PAtom b = new PAtom("b");
+      PVar X = new PVar("X");
+      PVar Y = new PVar("Y");
+      PStruct head = structure("p", X);
 
       PList original = new PList(head, Y, false); // [p(X), Y]
 
       assertSame(original, original.get());
 
-      Map<Variable, Variable> sharedVariables = new HashMap<Variable, Variable>();
+      Map<PVar, PVar> sharedVariables = new HashMap<PVar, PVar>();
       PList copy1 = original.copy(sharedVariables);
       assertNotSame(original, copy1);
       assertStrictEquality(original, copy1, false);
@@ -122,10 +122,10 @@ public class ListTest {
 
    @Test
    public void testListWithVariableArguments() {
-      Atom a = new Atom("a");
-      Atom b = new Atom("b");
-      Variable X = new Variable("X");
-      Variable Y = new Variable("Y");
+      PAtom a = new PAtom("a");
+      PAtom b = new PAtom("b");
+      PVar X = new PVar("X");
+      PVar Y = new PVar("Y");
       PList l1 = new PList(a, Y, false);
       PList l2 = new PList(X, b, false);
 
@@ -136,9 +136,9 @@ public class ListTest {
    @Test
    public void testUnifyWhenBothListsHaveVariableArguments_1() {
       // [x, Y]
-      PList l1 = new PList(new Atom("x"), new Variable("Y"), false);
+      PList l1 = new PList(new PAtom("x"), new PVar("Y"), false);
       // [X, y]
-      PList l2 = new PList(new Variable("X"), new Atom("y"), false);
+      PList l2 = new PList(new PVar("X"), new PAtom("y"), false);
       assertTrue(l1.unify(l2));
       assertEquals(".(x, y)", l1.toString());
       assertEquals(l1.toString(), l2.toString());
@@ -147,9 +147,9 @@ public class ListTest {
    @Test
    public void testUnifyWhenBothListsHaveVariableArguments_2() {
       // [x, z]
-      PList l1 = new PList(new Atom("x"), new Atom("z"), false);
+      PList l1 = new PList(new PAtom("x"), new PAtom("z"), false);
       // [X, y]
-      PList l2 = new PList(new Variable("X"), new Atom("y"), false);
+      PList l2 = new PList(new PVar("X"), new PAtom("y"), false);
       assertFalse(l1.unify(l2));
       assertEquals(".(x, z)", l1.toString());
       // Note: following is expected quirk - list doesn't automatically backtrack on failure
@@ -162,9 +162,9 @@ public class ListTest {
    @Test
    public void testUnifyWhenBothListsHaveVariableArguments_3() {
       // [X, z]
-      PList l1 = new PList(new Variable("X"), new Atom("z"), false);
+      PList l1 = new PList(new PVar("X"), new PAtom("z"), false);
       // [x, y]
-      PList l2 = new PList(new Atom("x"), new Atom("y"), false);
+      PList l2 = new PList(new PAtom("x"), new PAtom("y"), false);
       assertFalse(l1.unify(l2));
       // Note: following is expected quirk - list doesn't automatically backtrack on failure
       assertEquals(".(x, z)", l1.toString());
@@ -209,16 +209,16 @@ public class ListTest {
 
    @Test
    public void testIsImmutable() {
-      Variable v = variable("X");
-      Atom a = atom("test");
+      PVar v = variable("X");
+      PAtom a = atom("test");
       PList l1 = list(atom(), structure("p", atom(), v, integerNumber()), list(integerNumber(), decimalFraction()));
       assertFalse(l1.constant());
       v.unify(a);
       PList l2 = l1.copy(null);
       assertFalse(l1.constant());
       assertTrue(l2.toString(), l2.constant());
-      assertSame(v, l1.arg(1).arg(0).arg(1));
-      assertSame(a, l2.arg(1).arg(0).arg(1));
+      assertSame(v, l1.term(1).term(0).term(1));
+      assertSame(a, l2.term(1).term(0).term(1));
    }
 
    private void assertMatch(PList l1, PList l2, boolean expectMatch) {

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 import org.projog.core.PredicateKey;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /**
@@ -19,7 +19,7 @@ public class ProjogStackTraceElementTest {
    public void test() {
       final PredicateKey key = new PredicateKey("test", 1);
       final int clauseIdx = 9;
-      final PTerm term = new Atom("test");
+      final PTerm term = new PAtom("test");
       final ProjogStackTraceElement e = new ProjogStackTraceElement(key, clauseIdx, term);
       assertSame(key, e.getPredicateKey());
       assertSame(term, e.getTerm());

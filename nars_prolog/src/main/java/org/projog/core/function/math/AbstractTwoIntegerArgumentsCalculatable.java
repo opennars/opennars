@@ -1,14 +1,14 @@
 package org.projog.core.function.math;
 
-import static org.projog.core.term.TermType.INTEGER;
+import static org.projog.core.term.PrologOperator.INTEGER;
 
 import org.projog.core.ProjogException;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.Numeric;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /**
- * A template for {@code Calculatable}s that accept two arguments of type {@link TermType#INTEGER}.
+ * A template for {@code Calculatable}s that accept two arguments of type {@link PrologOperator#INTEGER}.
  */
 abstract class AbstractTwoIntegerArgumentsCalculatable extends AbstractCalculatable {
    @Override

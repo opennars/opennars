@@ -21,7 +21,7 @@ public final class CurrentOutput extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override

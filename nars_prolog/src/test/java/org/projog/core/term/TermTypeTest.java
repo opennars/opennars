@@ -9,49 +9,49 @@ import org.junit.Test;
 public class TermTypeTest {
    @Test
    public void testIsNumeric() {
-      assertTrue(TermType.FRACTION.isNumeric());
-      assertTrue(TermType.INTEGER.isNumeric());
+      assertTrue(PrologOperator.FRACTION.isNumeric());
+      assertTrue(PrologOperator.INTEGER.isNumeric());
 
-      assertFalse(TermType.ATOM.isNumeric());
-      assertFalse(TermType.EMPTY_LIST.isNumeric());
-      assertFalse(TermType.LIST.isNumeric());
-      assertFalse(TermType.STRUCTURE.isNumeric());
-      assertFalse(TermType.NAMED_VARIABLE.isNumeric());
+      assertFalse(PrologOperator.ATOM.isNumeric());
+      assertFalse(PrologOperator.EMPTY_LIST.isNumeric());
+      assertFalse(PrologOperator.LIST.isNumeric());
+      assertFalse(PrologOperator.STRUCTURE.isNumeric());
+      assertFalse(PrologOperator.NAMED_VARIABLE.isNumeric());
    }
 
    @Test
    public void testIsStructure() {
-      assertTrue(TermType.LIST.isStructure());
-      assertTrue(TermType.STRUCTURE.isStructure());
+      assertTrue(PrologOperator.LIST.isStructure());
+      assertTrue(PrologOperator.STRUCTURE.isStructure());
 
-      assertFalse(TermType.EMPTY_LIST.isStructure());
-      assertFalse(TermType.FRACTION.isStructure());
-      assertFalse(TermType.INTEGER.isStructure());
-      assertFalse(TermType.ATOM.isStructure());
-      assertFalse(TermType.NAMED_VARIABLE.isStructure());
+      assertFalse(PrologOperator.EMPTY_LIST.isStructure());
+      assertFalse(PrologOperator.FRACTION.isStructure());
+      assertFalse(PrologOperator.INTEGER.isStructure());
+      assertFalse(PrologOperator.ATOM.isStructure());
+      assertFalse(PrologOperator.NAMED_VARIABLE.isStructure());
    }
 
    @Test
    public void testIsVariable() {
-      assertTrue(TermType.NAMED_VARIABLE.isVariable());
+      assertTrue(PrologOperator.NAMED_VARIABLE.isVariable());
 
-      assertFalse(TermType.FRACTION.isVariable());
-      assertFalse(TermType.INTEGER.isVariable());
-      assertFalse(TermType.ATOM.isVariable());
-      assertFalse(TermType.EMPTY_LIST.isVariable());
-      assertFalse(TermType.LIST.isVariable());
-      assertFalse(TermType.STRUCTURE.isVariable());
+      assertFalse(PrologOperator.FRACTION.isVariable());
+      assertFalse(PrologOperator.INTEGER.isVariable());
+      assertFalse(PrologOperator.ATOM.isVariable());
+      assertFalse(PrologOperator.EMPTY_LIST.isVariable());
+      assertFalse(PrologOperator.LIST.isVariable());
+      assertFalse(PrologOperator.STRUCTURE.isVariable());
    }
 
    @Test
    public void testGetPrecedence() {
-      assertEquals(1, TermType.NAMED_VARIABLE.getPrecedence());
-      assertEquals(2, TermType.FRACTION.getPrecedence());
-      assertEquals(3, TermType.INTEGER.getPrecedence());
-      assertEquals(4, TermType.EMPTY_LIST.getPrecedence());
-      assertEquals(5, TermType.ATOM.getPrecedence());
+      assertEquals(1, PrologOperator.NAMED_VARIABLE.getPrecedence());
+      assertEquals(2, PrologOperator.FRACTION.getPrecedence());
+      assertEquals(3, PrologOperator.INTEGER.getPrecedence());
+      assertEquals(4, PrologOperator.EMPTY_LIST.getPrecedence());
+      assertEquals(5, PrologOperator.ATOM.getPrecedence());
       // all compound structures share the same precedence
-      assertEquals(6, TermType.STRUCTURE.getPrecedence());
-      assertEquals(6, TermType.LIST.getPrecedence());
+      assertEquals(6, PrologOperator.STRUCTURE.getPrecedence());
+      assertEquals(6, PrologOperator.LIST.getPrecedence());
    }
 }

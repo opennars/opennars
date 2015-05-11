@@ -594,7 +594,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      *
      * @return the size of the component list
      */
-    final public int size() {
+    @Override final public int length() {
         return term.length;
     }
 
@@ -1094,8 +1094,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      */
     public boolean equalsVariablesAsWildcards(final Compound c) {
         if (!Terms.equalType(this, c)) return false;
-        if (size() != c.size()) return false;
-        for (int i = 0; i < size(); i++) {
+        if (length() != c.length()) return false;
+        for (int i = 0; i < length(); i++) {
             Term a = term[i];
             Term b = c.term[i];
             if ((a instanceof Variable) /*&& (a.hasVarDep())*/ ||

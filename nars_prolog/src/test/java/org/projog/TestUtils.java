@@ -10,22 +10,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.KnowledgeBaseUtils;
 import org.projog.core.Operands;
 import org.projog.core.PredicateKey;
 import org.projog.core.ProjogProperties;
 import org.projog.core.ProjogSystemProperties;
 import org.projog.core.parser.SentenceParser;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.DecimalFraction;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PList;
 import org.projog.core.term.ListFactory;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermFormatter;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 
 /**
@@ -85,9 +85,9 @@ public class TestUtils {
       return tempFile;
    }
 
-   public static KnowledgeBase createKnowledgeBase() {
+   public static KB createKnowledgeBase() {
       try {
-         KnowledgeBase kb = KnowledgeBaseUtils.createKnowledgeBase();
+         KB kb = KnowledgeBaseUtils.createKnowledgeBase();
          KnowledgeBaseUtils.bootstrap(kb);
          return kb;
       } catch (Throwable t) {
@@ -96,9 +96,9 @@ public class TestUtils {
       }
    }
 
-   public static KnowledgeBase createKnowledgeBase(ProjogProperties projogProperties) {
+   public static KB createKnowledgeBase(ProjogProperties projogProperties) {
       try {
-         KnowledgeBase kb = KnowledgeBaseUtils.createKnowledgeBase(projogProperties);
+         KB kb = KnowledgeBaseUtils.createKnowledgeBase(projogProperties);
          KnowledgeBaseUtils.bootstrap(kb);
          return kb;
       } catch (Throwable t) {
@@ -107,20 +107,20 @@ public class TestUtils {
       }
    }
 
-   public static Atom atom() {
+   public static PAtom atom() {
       return atom("test");
    }
 
-   public static Atom atom(String name) {
-      return new Atom(name);
+   public static PAtom atom(String name) {
+      return new PAtom(name);
    }
 
-   public static Structure structure() {
+   public static PStruct structure() {
       return structure("test", new PTerm[] {atom()});
    }
 
-   public static Structure structure(String name, PTerm... args) {
-      return (Structure) Structure.createStructure(name, args);
+   public static PStruct structure(String name, PTerm... args) {
+      return (PStruct) PStruct.make(name, args);
    }
 
    public static PList list(PTerm... args) {
@@ -143,12 +143,12 @@ public class TestUtils {
       return new DecimalFraction(d);
    }
 
-   public static Variable variable() {
+   public static PVar variable() {
       return variable("X");
    }
 
-   public static Variable variable(String name) {
-      return new Variable(name);
+   public static PVar variable(String name) {
+      return new PVar(name);
    }
 
    public static PTerm[] createArgs(int numberOfArguments) {

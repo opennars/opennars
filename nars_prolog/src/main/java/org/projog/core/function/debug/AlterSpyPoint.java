@@ -49,14 +49,14 @@ public final class AlterSpyPoint extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      spyPoints = getSpyPoints(getKnowledgeBase());
+      spyPoints = getSpyPoints(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm t) {
       switch (t.type()) {
          case ATOM:
-            List<PredicateKey> keys = getPredicateKeysByName(getKnowledgeBase(), t.getName());
+            List<PredicateKey> keys = getPredicateKeysByName(getKB(), t.getName());
             setSpyPoints(keys);
             break;
          case STRUCTURE:

@@ -60,7 +60,7 @@ public class Count extends TermFunction implements Mental {
             throw new RuntimeException(requireMessage);
         }       
         
-        int n = ((Compound) content).size();
+        int n = ((Compound) content).length();
         return get((Object) n);
     }
 

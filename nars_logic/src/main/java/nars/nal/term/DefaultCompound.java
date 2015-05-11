@@ -8,7 +8,7 @@ import java.util.Arrays;
 abstract public class DefaultCompound extends Compound {
 
     byte[] name = null;
-    int hash = 0;
+    transient int hash = 0;
 
     public DefaultCompound(Term... components) {
         super(components);

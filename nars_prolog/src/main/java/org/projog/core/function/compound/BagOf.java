@@ -2,7 +2,7 @@ package org.projog.core.function.compound;
 
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -77,13 +77,13 @@ public final class BagOf extends AbstractCollectionOf {
    public BagOf() {
    }
 
-   private BagOf(KnowledgeBase kb) {
-      setKnowledgeBase(kb);
+   private BagOf(KB kb) {
+      setKB(kb);
    }
 
    @Override
    public BagOf getPredicate(PTerm template, PTerm goal, PTerm bag) {
-      return new BagOf(getKnowledgeBase());
+      return new BagOf(getKB());
    }
 
    /** "bagof" returns all elements (including duplicates) in the order they were found. */

@@ -127,7 +127,7 @@ public final class StructuralRules {
         
         Compound sub = (Compound) subj;
         Compound pre = (Compound) pred;
-        if (sub.size() != pre.size() || sub.size() <= index) {
+        if (sub.length() != pre.length() || sub.length() <= index) {
             return;
         }
         
@@ -252,7 +252,7 @@ public final class StructuralRules {
         if (compound.equals(subj)) {
             if (compound instanceof IntersectionInt) {
                 structuralStatement(component, pred, order, truthDed, nal);
-            } else if ((compound instanceof SetExt) && (compound.size() > 1)) {
+            } else if ((compound instanceof SetExt) && (compound.length() > 1)) {
                 Term[] t1 = new Term[]{component};
                 structuralStatement(SetExt.make(t1), pred, order, truthDed, nal);
             } else if (compound instanceof DifferenceInt) {
@@ -265,7 +265,7 @@ public final class StructuralRules {
         } else if (compound.equals(pred)) {
             if (compound instanceof IntersectionExt) {
                 structuralStatement(subj, component, order, truthDed, nal);
-            } else if ((compound instanceof SetInt) && (compound.size() > 1)) {
+            } else if ((compound instanceof SetInt) && (compound.length() > 1)) {
                 structuralStatement(subj, SetInt.make(component), order, truthDed, nal);
             } else if (compound instanceof DifferenceExt) {
                 if (index == 0) {
@@ -307,7 +307,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static void transformSetRelation(Compound compound, Statement statement, short side, NAL nal) {
-        if (compound.size() > 1) {
+        if (compound.length() > 1) {
             return;
         }
         if (statement instanceof Inheritance) {

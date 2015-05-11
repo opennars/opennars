@@ -27,7 +27,7 @@ public final class EmptyList implements PTerm {
    }
 
    @Override
-   public PTerm copy(Map<Variable, Variable> sharedVariables) {
+   public PTerm copy(Map<PVar, PVar> sharedVariables) {
       return EMPTY_LIST;
    }
 
@@ -45,17 +45,17 @@ public final class EmptyList implements PTerm {
     * @throws UnsupportedOperationException as this implementation of {@link PTerm} has no arguments
     */
    @Override
-   public PTerm[] getArgs() {
+   public PTerm[] terms() {
       throw new UnsupportedOperationException();
    }
 
    @Override
-   public int args() {
+   public int length() {
       return 0;
    }
 
    @Override
-   public PTerm arg(int index) {
+   public PTerm term(int index) {
       throw new UnsupportedOperationException();
    }
 
@@ -70,30 +70,30 @@ public final class EmptyList implements PTerm {
    }
 
    /**
-    * Returns {@link TermType#EMPTY_LIST}.
+    * Returns {@link PrologOperator#EMPTY_LIST}.
     * 
-    * @return {@link TermType#EMPTY_LIST}
+    * @return {@link PrologOperator#EMPTY_LIST}
     */
    @Override
-   public TermType type() {
-      return TermType.EMPTY_LIST;
+   public PrologOperator type() {
+      return PrologOperator.EMPTY_LIST;
    }
 
    /**
     * Performs a strict comparison of this term to the specified term.
     * 
     * @param t the term to compare this term against
-    * @return {@code true} if the given term represents a {@link TermType#EMPTY_LIST}
+    * @return {@code true} if the given term represents a {@link PrologOperator#EMPTY_LIST}
     */
    @Override
    public boolean strictEquals(PTerm t) {
-      return t.type() == TermType.EMPTY_LIST;
+      return t.type() == PrologOperator.EMPTY_LIST;
    }
 
    @Override
    public boolean unify(PTerm t) {
-      TermType tType = t.type();
-      if (tType == TermType.EMPTY_LIST) {
+      PrologOperator tType = t.type();
+      if (tType == PrologOperator.EMPTY_LIST) {
          return true;
       } else if (tType.isVariable()) {
          return t.unify(this);

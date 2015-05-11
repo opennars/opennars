@@ -3,7 +3,7 @@ package org.projog.core.function.list;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %TRUE_NO member(a, [a,b,c])
@@ -46,7 +46,7 @@ public final class Member extends AbstractRetryablePredicate {
    @Override
    public Member getPredicate(PTerm element, PTerm list) {
       final Member m = new Member();
-      if (list.type() != TermType.LIST && list.type() != TermType.EMPTY_LIST) {
+      if (list.type() != PrologOperator.LIST && list.type() != PrologOperator.EMPTY_LIST) {
          throw new ProjogException("Expected list but got: " + list);
       }
       m.list = list;
@@ -59,8 +59,8 @@ public final class Member extends AbstractRetryablePredicate {
          if (couldReEvaluationSucceed()) {
             element.backtrack();
             secondArg.backtrack();
-            PTerm head = list.arg(0);
-            list = list.arg(1);
+            PTerm head = list.term(0);
+            list = list.term(1);
             if (element.unify(head)) {
                return true;
             }
@@ -72,6 +72,6 @@ public final class Member extends AbstractRetryablePredicate {
 
    @Override
    public boolean couldReEvaluationSucceed() {
-      return list.type() == TermType.LIST;
+      return list.type() == PrologOperator.LIST;
    }
 }

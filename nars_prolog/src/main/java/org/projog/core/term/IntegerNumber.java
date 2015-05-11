@@ -28,12 +28,12 @@ public final class IntegerNumber implements Numeric {
    }
 
    @Override
-   public PTerm[] getArgs() {
+   public PTerm[] terms() {
       return TermUtils.EMPTY_ARRAY;
    }
 
    @Override
-   public int args() {
+   public int length() {
       return 0;
    }
 
@@ -41,18 +41,18 @@ public final class IntegerNumber implements Numeric {
     * @throws UnsupportedOperationException as this implementation of {@link PTerm} has no arguments
     */
    @Override
-   public PTerm arg(int index) {
+   public PTerm term(int index) {
       throw new UnsupportedOperationException();
    }
 
    /**
-    * Returns {@link TermType#INTEGER}.
+    * Returns {@link PrologOperator#INTEGER}.
     * 
-    * @return {@link TermType#INTEGER}
+    * @return {@link PrologOperator#INTEGER}
     */
    @Override
-   public TermType type() {
-      return TermType.INTEGER;
+   public PrologOperator type() {
+      return PrologOperator.INTEGER;
    }
 
    @Override
@@ -66,14 +66,14 @@ public final class IntegerNumber implements Numeric {
    }
 
    @Override
-   public IntegerNumber copy(Map<Variable, Variable> sharedVariables) {
+   public IntegerNumber copy(Map<PVar, PVar> sharedVariables) {
       return this;
    }
 
    @Override
    public boolean unify(PTerm t) {
-      TermType tType = t.type();
-      if (tType == TermType.INTEGER) {
+      PrologOperator tType = t.type();
+      if (tType == PrologOperator.INTEGER) {
          return value == ((IntegerNumber) t.get()).value;
       } else if (tType.isVariable()) {
          return t.unify(this);
@@ -86,12 +86,12 @@ public final class IntegerNumber implements Numeric {
     * Performs a strict comparison of this term to the specified term.
     * 
     * @param t the term to compare this term against
-    * @return {@code true} if the given term represents a {@link TermType#INTEGER} with a value equal to the value of
+    * @return {@code true} if the given term represents a {@link PrologOperator#INTEGER} with a value equal to the value of
     * this {@code IntegerNumber}
     */
    @Override
    public boolean strictEquals(PTerm t) {
-      return t.type() == TermType.INTEGER && value == ((IntegerNumber) t.get()).value;
+      return t.type() == PrologOperator.INTEGER && value == ((IntegerNumber) t.get()).value;
    }
 
    @Override

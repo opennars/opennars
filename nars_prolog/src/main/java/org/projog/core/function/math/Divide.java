@@ -3,7 +3,7 @@ package org.projog.core.function.math;
 import org.projog.core.term.DecimalFraction;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.Numeric;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %LINK prolog-arithmetic
@@ -30,7 +30,7 @@ public final class Divide extends AbstractCalculatable {
    }
 
    private static boolean containsFraction(Numeric n1, Numeric n2) {
-      return n1.type() == TermType.FRACTION || n2.type() == TermType.FRACTION;
+      return n1.type() == PrologOperator.FRACTION || n2.type() == PrologOperator.FRACTION;
    }
 
    private DecimalFraction divideFractions(Numeric n1, Numeric n2) {

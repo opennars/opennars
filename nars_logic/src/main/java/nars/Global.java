@@ -24,8 +24,12 @@ package nars;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
+import nars.nal.Item;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
+import nars.util.data.linkedlist.DD;
+import net.openhft.collections.HugeConfig;
+import net.openhft.collections.HugeHashMap;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -273,6 +277,17 @@ public class Global {
         Set<X> s = newHashSet(values.size());
         s.addAll(values);
         return s;
+    }
+
+
+    public static <X,Y> HugeHashMap<X,Y> newHugeMap(int size, Class<? extends X> xClass, Class<? extends Y> yClass) {
+
+        HugeConfig config = HugeConfig.DEFAULT.clone()
+                .setSegments(128)
+                .setSmallEntrySize(128)
+                .setCapacity(size);
+
+        return new HugeHashMap(config, xClass, yClass);
     }
 
     public static <K,V> Map<K, V> newHashMap() {

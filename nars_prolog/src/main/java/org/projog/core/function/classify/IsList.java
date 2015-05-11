@@ -2,7 +2,7 @@ package org.projog.core.function.classify;
 
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %TRUE is_list([1.0,2.0,3.0])
@@ -28,9 +28,9 @@ public final class IsList extends AbstractSingletonPredicate {
             return true;
          case LIST:
             PTerm tail = arg;
-            while ((tail = tail.arg(1)).type() == TermType.LIST) {
+            while ((tail = tail.term(1)).type() == PrologOperator.LIST) {
             }
-            return tail.type() == TermType.EMPTY_LIST;
+            return tail.type() == PrologOperator.EMPTY_LIST;
          default:
             return false;
       }

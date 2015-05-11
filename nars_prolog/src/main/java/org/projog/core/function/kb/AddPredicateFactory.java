@@ -32,7 +32,7 @@ public final class AddPredicateFactory extends AbstractSingletonPredicate {
    public boolean evaluate(PTerm arg1, PTerm arg2) {
       PredicateKey key = PredicateKey.createFromNameAndArity(arg1);
       String className = getAtomName(arg2);
-      getKnowledgeBase().addPredicateFactory(key, className);
+      getKB().addFactory(key, className);
       return true;
    }
 }

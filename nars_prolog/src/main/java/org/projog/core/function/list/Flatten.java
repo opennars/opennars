@@ -7,7 +7,7 @@ import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %QUERY flatten([a,[[b]],[c]], X)
@@ -71,17 +71,17 @@ public final class Flatten extends AbstractSingletonPredicate {
    private List<PTerm> flattenList(final PTerm input) {
       List<PTerm> result = new ArrayList<PTerm>();
       PTerm next = input;
-      while (next.type() == TermType.LIST) {
-         PTerm head = next.arg(0);
-         if (head.type() == TermType.LIST) {
+      while (next.type() == PrologOperator.LIST) {
+         PTerm head = next.term(0);
+         if (head.type() == PrologOperator.LIST) {
             result.addAll(flattenList(head));
-         } else if (head.type() != TermType.EMPTY_LIST) {
+         } else if (head.type() != PrologOperator.EMPTY_LIST) {
             result.add(head);
          }
 
-         next = next.arg(1);
+         next = next.term(1);
       }
-      if (next.type() != TermType.EMPTY_LIST) {
+      if (next.type() != PrologOperator.EMPTY_LIST) {
          result.add(next);
       }
       return result;

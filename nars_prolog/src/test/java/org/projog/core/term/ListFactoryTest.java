@@ -22,24 +22,24 @@ public class ListFactoryTest {
 
       for (PTerm arg : args) {
          testIsList(l);
-         assertEquals(arg, l.arg(0));
-         l = l.arg(1);
+         assertEquals(arg, l.term(0));
+         l = l.term(1);
       }
 
-      assertSame(TermType.EMPTY_LIST, l.type());
+      assertSame(PrologOperator.EMPTY_LIST, l.type());
       assertSame(EmptyList.EMPTY_LIST, l);
    }
 
    @Test
    public void testCreationWithTail() {
       final PTerm[] args = createArguments();
-      final PTerm tail = new Atom("tail");
+      final PTerm tail = new PAtom("tail");
       PTerm l = ListFactory.createList(args, tail);
 
       for (PTerm arg : args) {
          testIsList(l);
-         assertEquals(arg, l.arg(0));
-         l = l.arg(1);
+         assertEquals(arg, l.term(0));
+         l = l.term(1);
       }
 
       assertSame(tail, l);
@@ -64,8 +64,8 @@ public class ListFactoryTest {
    public void testCreateListOfLengthOne() {
       PTerm t = ListFactory.createListOfLength(1);
       assertSame(PList.class, t.getClass());
-      assertTrue(t.arg(0).type().isVariable());
-      assertSame(EmptyList.EMPTY_LIST, t.arg(1));
+      assertTrue(t.term(0).type().isVariable());
+      assertSame(EmptyList.EMPTY_LIST, t.term(1));
       assertEquals(".(E0, [])", t.toString());
    }
 
@@ -74,8 +74,8 @@ public class ListFactoryTest {
       PTerm t = ListFactory.createListOfLength(3);
       assertSame(PList.class, t.getClass());
       assertSame(PList.class, t.getClass());
-      assertTrue(t.arg(0).type().isVariable());
-      assertSame(PList.class, t.arg(1).getClass());
+      assertTrue(t.term(0).type().isVariable());
+      assertSame(PList.class, t.term(1).getClass());
       assertEquals(".(E0, .(E1, .(E2, [])))", t.toString());
    }
 
@@ -85,7 +85,7 @@ public class ListFactoryTest {
 
    private void testIsList(PTerm l) {
       assertEquals(".", l.getName());
-      assertEquals(TermType.LIST, l.type());
-      assertEquals(2, l.args());
+      assertEquals(PrologOperator.LIST, l.type());
+      assertEquals(2, l.length());
    }
 }

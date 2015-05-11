@@ -210,7 +210,7 @@ public class BooleanChallenge implements Reaction {
             Term subj = ((Inheritance) t).getSubject();
             Term pred = ((Inheritance) t).getPredicate();
 
-            if ((subj instanceof SetExt) && (((SetExt) subj).size() == 1))
+            if ((subj instanceof SetExt) && (((SetExt) subj).length() == 1))
                 subj = ((Compound) subj).term[0];
 
             if (subj instanceof Product) {

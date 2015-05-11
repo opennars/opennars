@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.ListFactory;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 /* TEST
  %QUERY p(a,b,c) =.. X
@@ -61,8 +61,8 @@ import org.projog.core.term.TermType;
 public final class Univ extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm arg1, PTerm arg2) {
-      TermType argType1 = arg1.type();
-      TermType argType2 = arg2.type();
+      PrologOperator argType1 = arg1.type();
+      PrologOperator argType2 = arg2.type();
       boolean isFirstArgumentVariable = argType1.isVariable();
       boolean isFirstArgumentPredicate = argType1.isStructure();
       boolean isSecondArgumentVariable = argType2.isVariable();
@@ -83,34 +83,34 @@ public final class Univ extends AbstractSingletonPredicate {
       }
    }
 
-   private boolean isList(TermType tt) {
-      return tt == TermType.LIST || tt == TermType.EMPTY_LIST;
+   private boolean isList(PrologOperator tt) {
+      return tt == PrologOperator.LIST || tt == PrologOperator.EMPTY_LIST;
    }
 
    private PTerm toPredicate(PTerm t) {
-      if (t.arg(0).type() != TermType.ATOM) {
+      if (t.term(0).type() != PrologOperator.ATOM) {
          throw new ProjogException("First argument is not an atom in list: " + t);
       }
-      String predicateName = t.arg(0).getName();
+      String predicateName = t.term(0).getName();
       ArrayList<PTerm> predicateArgs = new ArrayList<>();
-      PTerm arg = t.arg(1);
-      while (arg.type() == TermType.LIST) {
-         predicateArgs.add(arg.arg(0));
-         arg = arg.arg(1);
+      PTerm arg = t.term(1);
+      while (arg.type() == PrologOperator.LIST) {
+         predicateArgs.add(arg.term(0));
+         arg = arg.term(1);
       }
-      if (arg.type() != TermType.EMPTY_LIST) {
+      if (arg.type() != PrologOperator.EMPTY_LIST) {
          predicateArgs.add(arg);
       }
-      return Structure.createStructure(predicateName, predicateArgs.toArray(new PTerm[predicateArgs.size()]));
+      return PStruct.make(predicateName, predicateArgs.toArray(new PTerm[predicateArgs.size()]));
    }
 
    private PTerm toList(PTerm t) {
       String predicateName = t.getName();
-      int numArgs = t.args();
+      int numArgs = t.length();
       PTerm[] listArgs = new PTerm[numArgs + 1];
-      listArgs[0] = new Atom(predicateName);
+      listArgs[0] = new PAtom(predicateName);
       for (int i = 0; i < numArgs; i++) {
-         listArgs[i + 1] = t.arg(i);
+         listArgs[i + 1] = t.term(i);
       }
       return ListFactory.createList(listArgs);
    }

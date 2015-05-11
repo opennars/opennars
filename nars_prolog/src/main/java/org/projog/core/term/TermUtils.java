@@ -35,7 +35,7 @@ public final class TermUtils {
    public static PTerm[] copy(final PTerm... input) {
       final int numTerms = input.length;
       final PTerm[] output = new PTerm[numTerms];
-      final Map<Variable, Variable> vars = new HashMap<>();
+      final Map<PVar, PVar> vars = new HashMap<>();
       for (int i = 0; i < numTerms; i++) {
          output[i] = input[i].copy(vars);
       }
@@ -77,25 +77,25 @@ public final class TermUtils {
    }
 
    /**
-    * Returns all {@link Variable}s contained in the specified term.
+    * Returns all {@link PVar}s contained in the specified term.
     * 
     * @param argument the term to find variables for
-    * @return all {@link Variable}s contained in the specified term.
+    * @return all {@link PVar}s contained in the specified term.
     */
-   public static Set<Variable> getAllVariablesInTerm(final PTerm argument) {
-      final Set<Variable> variables = new LinkedHashSet<>();
+   public static Set<PVar> getAllVariablesInTerm(final PTerm argument) {
+      final Set<PVar> variables = new LinkedHashSet<>();
       getAllVariablesInTerm(argument, variables);
       return variables;
    }
 
-   private static void getAllVariablesInTerm(final PTerm argument, final Set<Variable> variables) {
+   private static void getAllVariablesInTerm(final PTerm argument, final Set<PVar> variables) {
       if (argument.constant()) {
          // ignore
-      } else if (argument.type() == TermType.NAMED_VARIABLE) {
-         variables.add((Variable) argument);
+      } else if (argument.type() == PrologOperator.NAMED_VARIABLE) {
+         variables.add((PVar) argument);
       } else {
-         for (int i = 0; i < argument.args(); i++) {
-            getAllVariablesInTerm(argument.arg(i), variables);
+         for (int i = 0; i < argument.length(); i++) {
+            getAllVariablesInTerm(argument.term(i), variables);
          }
       }
    }
@@ -136,11 +136,11 @@ public final class TermUtils {
     * 
     * @param t the term representing a long value
     * @return the {@code long} value represented by {@code t}
-    * @throws ProjogException if the specified {@link PTerm} does not represent a term of type {@link TermType#INTEGER}
+    * @throws ProjogException if the specified {@link PTerm} does not represent a term of type {@link PrologOperator#INTEGER}
     */
    public static long toLong(final Calculatables calculatables, final PTerm t) {
       final Numeric n = calculatables.getNumeric(t);
-      if (n.type() == TermType.INTEGER) {
+      if (n.type() == PrologOperator.INTEGER) {
          return n.getLong();
       } else {
          throw new ProjogException("Expected integer but got: " + n.type() + " with value: " + n);
@@ -148,20 +148,20 @@ public final class TermUtils {
    }
 
    /**
-    * Return the name of the {@link Atom} represented by the specified {@link Atom}.
+    * Return the name of the {@link PAtom} represented by the specified {@link PAtom}.
     * 
-    * @param t the term representing an {@link Atom}
-    * @return the name of {@link Atom} represented by the specified {@link PTerm}
-    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link Atom}
+    * @param t the term representing an {@link PAtom}
+    * @return the name of {@link PAtom} represented by the specified {@link PTerm}
+    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link PAtom}
     */
    public static String getAtomName(final PTerm t) {
-      if (t.type() != TermType.ATOM) {
+      if (t.type() != PrologOperator.ATOM) {
          throw new ProjogException("Expected an atom but got: " + t.type() + " with value: " + t);
       }
       return t.getName();
    }
 
-   public static Variable createAnonymousVariable() {
-      return new Variable("_");
+   public static PVar createAnonymousVariable() {
+      return new PVar("_");
    }
 }

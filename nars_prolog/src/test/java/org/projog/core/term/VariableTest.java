@@ -22,7 +22,7 @@ import org.projog.core.ProjogException;
 public class VariableTest {
    @Test
    public void testUnassignedVariableMethods() {
-      Variable v = new Variable("X");
+      PVar v = new PVar("X");
 
       assertEquals("X", v.getId());
       assertEquals("X", v.toString());
@@ -35,17 +35,17 @@ public class VariableTest {
       } catch (NullPointerException e) {
       }
       try {
-         v.getArgs();
+         v.terms();
          fail();
       } catch (NullPointerException e) {
       }
       try {
-         v.args();
+         v.length();
          fail();
       } catch (NullPointerException e) {
       }
       try {
-         v.arg(0);
+         v.term(0);
          fail();
       } catch (NullPointerException e) {
       }
@@ -64,8 +64,8 @@ public class VariableTest {
 
    @Test
    public void testUnifyVariables_1() {
-      Variable x = new Variable("X");
-      Variable y = new Variable("Y");
+      PVar x = new PVar("X");
+      PVar y = new PVar("Y");
       assertStrictEquality(x, y, false);
       assertTrue(x.unify(y));
       assertStrictEquality(x, y, true);
@@ -75,9 +75,9 @@ public class VariableTest {
 
    @Test
    public void testUnifyVariables_2() {
-      Atom a = atom();
-      Variable x = new Variable("X");
-      Variable y = new Variable("Y");
+      PAtom a = atom();
+      PVar x = new PVar("X");
+      PVar y = new PVar("Y");
       assertTrue(y.unify(a));
       assertTrue(x.unify(y));
       assertSame(a, x.get());
@@ -88,9 +88,9 @@ public class VariableTest {
 
    @Test
    public void testUnifyVariables_3() {
-      Atom a = atom();
-      Variable x = new Variable("X");
-      Variable y = new Variable("Y");
+      PAtom a = atom();
+      PVar x = new PVar("X");
+      PVar y = new PVar("Y");
       assertTrue(x.unify(y));
       assertTrue(y.unify(a));
       assertSame(a, x.get());
@@ -98,9 +98,9 @@ public class VariableTest {
 
    @Test
    public void testVariablesUnifiedToTheSameTerm() {
-      Atom a = atom();
-      Variable x = new Variable("X");
-      Variable y = new Variable("Y");
+      PAtom a = atom();
+      PVar x = new PVar("X");
+      PVar y = new PVar("Y");
       assertStrictEquality(x, y, false);
       assertTrue(x.unify(a));
       assertTrue(y.unify(a));
@@ -113,8 +113,8 @@ public class VariableTest {
 
    @Test
    public void testCopy() {
-      Variable v = variable();
-      Map<Variable, Variable> sharedVariables = new HashMap<>();
+      PVar v = variable();
+      Map<PVar, PVar> sharedVariables = new HashMap<>();
       PTerm copy = v.copy(sharedVariables);
       assertEquals(1, sharedVariables.size());
       assertSame(copy, sharedVariables.get(v));
@@ -124,7 +124,7 @@ public class VariableTest {
    }
 
    /**
-    * Tests that, when {@link Variable#copy(Map)} is called on a variable whose "copy" (contained in the specified Map)
+    * Tests that, when {@link PVar#copy(Map)} is called on a variable whose "copy" (contained in the specified Map)
     * is already instantiated, the term the "copy" is instantiated with gets returned rather than the "copy" itself.
     * <p>
     * This behaviour is required for things like
@@ -132,55 +132,55 @@ public class VariableTest {
     */
    @Test
    public void testCopy_2() {
-      Variable v = variable();
-      Atom a = atom();
-      Structure s1 = structure("name", v);
-      Structure s2 = structure("name", v);
+      PVar v = variable();
+      PAtom a = atom();
+      PStruct s1 = structure("name", v);
+      PStruct s2 = structure("name", v);
 
-      Map<Variable, Variable> sharedVariables = new HashMap<>();
+      Map<PVar, PVar> sharedVariables = new HashMap<>();
 
-      Structure c1 = s1.copy(sharedVariables);
+      PStruct c1 = s1.copy(sharedVariables);
       assertTrue(c1.unify(structure("name", a)));
 
-      Structure c2 = s2.copy(sharedVariables);
+      PStruct c2 = s2.copy(sharedVariables);
       // check that the single argument of the newly copied structure is the atom itself
       // rather than a variable assigned to the atom
-      assertSame(a, c2.arg(0));
+      assertSame(a, c2.term(0));
       // check that, while backtracking does affect the first copied structure,
       // it does not alter the second copied structure
       c1.backtrack();
       c2.backtrack();
-      assertSame(Variable.class, c1.arg(0).getClass());
-      assertSame(a, c2.arg(0));
+      assertSame(PVar.class, c1.term(0).getClass());
+      assertSame(a, c2.term(0));
    }
 
    @Test
    public void testIsImmutable() {
-      Variable v = new Variable("X");
+      PVar v = new PVar("X");
       assertFalse(v.constant());
-      Atom a = atom();
+      PAtom a = atom();
       assertTrue(v.unify(a));
       assertFalse(v.constant());
    }
 
    @Test
    public void testUnifyAnonymousVariable() {
-      Variable v = variable();
-      Variable anon = TermUtils.createAnonymousVariable();
+      PVar v = variable();
+      PVar anon = TermUtils.createAnonymousVariable();
       assertTrue(v.unify(anon));
       assertSame(anon, v.get());
    }
 
    @Test
    public void testVariableChain() {
-      final Variable v1 = variable();
-      Variable v2 = v1;
+      final PVar v1 = variable();
+      PVar v2 = v1;
       for (int i = 0; i < 10000; i++) {
-         Variable tmpVar = variable("V" + i);
+         PVar tmpVar = variable("V" + i);
          v2.unify(tmpVar);
          v2 = tmpVar;
       }
-      Structure t = structure("name", atom("a"), atom("b"), atom("c"));
+      PStruct t = structure("name", atom("a"), atom("b"), atom("c"));
       assertTrue(v2.unify(t));
 
       assertSame(t, v1.get());
@@ -188,9 +188,9 @@ public class VariableTest {
       assertEquals(t.toString(), v1.toString());
       assertSame(t.getName(), v1.getName());
       assertSame(t.type(), v1.type());
-      assertSame(t.args(), v1.args());
-      assertSame(t.getArgs(), v1.getArgs());
-      assertSame(t.arg(0), v1.arg(0));
+      assertSame(t.length(), v1.length());
+      assertSame(t.terms(), v1.terms());
+      assertSame(t.term(0), v1.term(0));
       assertTrue(t.strictEquals(v1));
       assertTrue(v1.strictEquals(t));
       assertTrue(v1.strictEquals(v1));

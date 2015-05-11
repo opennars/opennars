@@ -80,7 +80,7 @@ public final class MapList extends AbstractSingletonPredicate {
          return false;
       }
 
-      final PredicateFactory pf = getPredicateFactory(getKnowledgeBase(), partiallyAppliedFunction);
+      final PredicateFactory pf = getPredicateFactory(getKB(), partiallyAppliedFunction);
       for (PTerm arg : toJavaUtilList(args)) {
          if (!apply(pf, createArguments(partiallyAppliedFunction, arg))) {
             return false;
@@ -117,7 +117,7 @@ public final class MapList extends AbstractSingletonPredicate {
          return false;
       }
 
-      final PredicateFactory pf = getPredicateFactory(getKnowledgeBase(), partiallyAppliedFunction, 2);
+      final PredicateFactory pf = getPredicateFactory(getKB(), partiallyAppliedFunction, 2);
       for (int i = 0; i < listSize; i++) {
          if (!apply(pf, createArguments(partiallyAppliedFunction, list1.get(i), list2.get(i)))) {
             return false;

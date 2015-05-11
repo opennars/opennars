@@ -20,7 +20,7 @@ import org.projog.core.term.PTerm;
 public final class Once extends AbstractSingletonPredicate {
    @Override
    public boolean evaluate(PTerm t) {
-      Predicate e = KnowledgeBaseUtils.getPredicate(getKnowledgeBase(), t);
-      return e.evaluate(t.getArgs());
+      Predicate e = KnowledgeBaseUtils.getPredicate(getKB(), t);
+      return e.evaluate(t.terms());
    }
 }

@@ -11,7 +11,7 @@ final class CompiledPredicateInvocationGenerator implements PredicateInvocationG
       PTerm function = g.currentClause().getCurrentFunction();
       PredicateFactory ef = g.currentClause().getCurrentPredicateFactory();
 
-      boolean isRetryable = ef.getPredicate(function.getArgs()).isRetryable();
+      boolean isRetryable = ef.getPredicate(function.terms()).isRetryable();
       CompiledPredicate compiledPredicate = (CompiledPredicate) ef;
       String compiledPredicateName = getClassNameMinusPackage(compiledPredicate);
       g.callUserDefinedPredicate(compiledPredicateName, isRetryable);

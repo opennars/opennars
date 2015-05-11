@@ -12,7 +12,7 @@ final class RecursivePredicateInvocationGenerator implements PredicateInvocation
 
       if (g.factMetaData().isTailRecursive() && g.currentClause().getConjunctionIndex() == g.currentClause().getConjunctionCount() - 1) {
          for (int i = 0; i < g.factMetaData().getNumberArguments(); i++) {
-            PTerm tailRecursiveArgument = function.arg(i);
+            PTerm tailRecursiveArgument = function.term(i);
             String tailRecursiveArgumentSyntax = g.outputCreateTermStatement(tailRecursiveArgument, true);
             if (g.factMetaData().isTailRecursiveArgument(i)) {
                g.assign(ARGUMENT_PREFIX + i, tailRecursiveArgumentSyntax + "==null?" + PLACEHOLDER_PREFIX + i + ":" + tailRecursiveArgumentSyntax + ".getTerm()");

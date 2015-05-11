@@ -11,19 +11,19 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /**
  * Collection of input and output streams.
  * <p>
- * Each {@link org.projog.core.KnowledgeBase} has a single unique {@code FileHandles} instance.
+ * Each {@link KB} has a single unique {@code FileHandles} instance.
  * 
- * @see KnowledgeBaseUtils#getFileHandles(KnowledgeBase)
+ * @see KnowledgeBaseUtils#getFileHandles(KB)
  */
 public final class FileHandles {
-   public static final Atom USER_OUTPUT_HANDLE = new Atom("user_output");
-   public static final Atom USER_INPUT_HANDLE = new Atom("user_input");
+   public static final PAtom USER_OUTPUT_HANDLE = new PAtom("user_output");
+   public static final PAtom USER_INPUT_HANDLE = new PAtom("user_input");
 
    private final Object lock = new Object();
    private final Map<String, InputStream> inputHandles = new HashMap<>();
@@ -38,8 +38,8 @@ public final class FileHandles {
    private PrintStream out;
 
    FileHandles() {
-      Atom userInputHandle = USER_INPUT_HANDLE;
-      Atom userOutputHandle = USER_OUTPUT_HANDLE;
+      PAtom userInputHandle = USER_INPUT_HANDLE;
+      PAtom userOutputHandle = USER_OUTPUT_HANDLE;
       inputHandles.put(userInputHandle.getName(), System.in);
       outputHandles.put(userOutputHandle.getName(), System.out);
       setInput(userInputHandle);
@@ -85,7 +85,7 @@ public final class FileHandles {
    /**
     * Sets the current input stream to the input stream represented by the specified {@code Term}.
     * 
-    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link Atom}
+    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link PAtom}
     */
    public void setInput(PTerm handle) {
       String handleName = getAtomName(handle);
@@ -102,7 +102,7 @@ public final class FileHandles {
    /**
     * Sets the current output stream to the output stream represented by the specified {@code Term}.
     * 
-    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link Atom}
+    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link PAtom}
     */
    public void setOutput(PTerm handle) {
       String handleName = getAtomName(handle);
@@ -124,7 +124,7 @@ public final class FileHandles {
     * @throws ProjogException if this object's collection of input streams already includes the specified file
     * @throws IOException if the file cannot be opened for reading
     */
-   public Atom openInput(String fileName) throws IOException {
+   public PAtom openInput(String fileName) throws IOException {
       String handleName = fileName + "_input_handle";
       synchronized (lock) {
          if (inputHandles.containsKey(handleName)) {
@@ -134,7 +134,7 @@ public final class FileHandles {
             inputHandles.put(handleName, is);
          }
       }
-      return new Atom(handleName);
+      return new PAtom(handleName);
    }
 
    /**
@@ -145,7 +145,7 @@ public final class FileHandles {
     * @throws ProjogException if this object's collection of output streams already includes the specified file
     * @throws IOException if the file cannot be opened
     */
-   public Atom openOutput(String fileName) throws IOException {
+   public PAtom openOutput(String fileName) throws IOException {
       String handleName = fileName + "_output_handle";
       synchronized (lock) {
          if (outputHandles.containsKey(handleName)) {
@@ -155,13 +155,13 @@ public final class FileHandles {
             outputHandles.put(handleName, new PrintStream(os));
          }
       }
-      return new Atom(handleName);
+      return new PAtom(handleName);
    }
 
    /**
     * Closes the stream represented by the specified {@code Term}.
     * 
-    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link Atom}
+    * @throws ProjogException if the specified {@link PTerm} does not represent an {@link PAtom}
     * @throws IOException if an I/O error occurs
     */
    public void close(PTerm handle) throws IOException {

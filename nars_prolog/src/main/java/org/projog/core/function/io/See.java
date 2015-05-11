@@ -6,7 +6,7 @@ import static org.projog.core.term.TermUtils.getAtomName;
 import org.projog.core.FileHandles;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -23,7 +23,7 @@ public final class See extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override
@@ -31,7 +31,7 @@ public final class See extends AbstractSingletonPredicate {
       String fileName = getAtomName(source);
       try {
          if (!fileHandles.isHandle(fileName)) {
-            Atom handle = fileHandles.openInput(fileName);
+            PAtom handle = fileHandles.openInput(fileName);
             fileHandles.setInput(handle);
          } else {
             fileHandles.setInput(source);

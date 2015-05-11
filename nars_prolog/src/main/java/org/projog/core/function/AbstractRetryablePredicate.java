@@ -1,6 +1,6 @@
 package org.projog.core.function;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
@@ -20,7 +20,7 @@ import org.projog.core.term.PTerm;
  * @see org.projog.core.PredicateFactory#getPredicate(PTerm[])
  */
 public abstract class AbstractRetryablePredicate extends AbstractPredicate implements PredicateFactory {
-   private KnowledgeBase knowledgeBase;
+   private KB KB;
 
    @Override
    public Predicate getPredicate(PTerm... args) {
@@ -59,12 +59,12 @@ public abstract class AbstractRetryablePredicate extends AbstractPredicate imple
    }
 
    @Override
-   public final void setKnowledgeBase(KnowledgeBase knowledgeBase) {
-      this.knowledgeBase = knowledgeBase;
+   public final void setKB(KB KB) {
+      this.KB = KB;
    }
 
-   protected final KnowledgeBase getKnowledgeBase() {
-      return knowledgeBase;
+   protected final KB getKB() {
+      return KB;
    }
 
    @Override

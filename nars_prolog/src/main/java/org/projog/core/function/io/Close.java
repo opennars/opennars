@@ -22,7 +22,7 @@ public final class Close extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override

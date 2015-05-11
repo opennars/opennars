@@ -28,12 +28,12 @@ public final class DecimalFraction implements Numeric {
    }
 
    @Override
-   public PTerm[] getArgs() {
+   public PTerm[] terms() {
       return TermUtils.EMPTY_ARRAY;
    }
 
    @Override
-   public int args() {
+   public int length() {
       return 0;
    }
 
@@ -41,18 +41,18 @@ public final class DecimalFraction implements Numeric {
     * @throws UnsupportedOperationException as this implementation of {@link PTerm} has no arguments
     */
    @Override
-   public PTerm arg(int index) {
+   public PTerm term(int index) {
       throw new UnsupportedOperationException();
    }
 
    /**
-    * Returns {@link TermType#FRACTION}.
+    * Returns {@link PrologOperator#FRACTION}.
     * 
-    * @return {@link TermType#FRACTION}
+    * @return {@link PrologOperator#FRACTION}
     */
    @Override
-   public TermType type() {
-      return TermType.FRACTION;
+   public PrologOperator type() {
+      return PrologOperator.FRACTION;
    }
 
    @Override
@@ -61,7 +61,7 @@ public final class DecimalFraction implements Numeric {
    }
 
    @Override
-   public DecimalFraction copy(Map<Variable, Variable> sharedVariables) {
+   public DecimalFraction copy(Map<PVar, PVar> sharedVariables) {
       return this;
    }
 
@@ -72,8 +72,8 @@ public final class DecimalFraction implements Numeric {
 
    @Override
    public boolean unify(PTerm t) {
-      TermType tType = t.type();
-      if (tType == TermType.FRACTION) {
+      PrologOperator tType = t.type();
+      if (tType == PrologOperator.FRACTION) {
          return value == ((DecimalFraction) t.get()).value;
       } else if (tType.isVariable()) {
          return t.unify(this);
@@ -86,12 +86,12 @@ public final class DecimalFraction implements Numeric {
     * Performs a strict comparison of this term to the specified term.
     * 
     * @param t the term to compare this term against
-    * @return {@code true} if the given term represents a {@link TermType#FRACTION} with a value equal to the value of
+    * @return {@code true} if the given term represents a {@link PrologOperator#FRACTION} with a value equal to the value of
     * this {@code DecimalFraction}
     */
    @Override
    public boolean strictEquals(PTerm t) {
-      return t.type() == TermType.FRACTION && value == ((DecimalFraction) t.get()).value;
+      return t.type() == PrologOperator.FRACTION && value == ((DecimalFraction) t.get()).value;
    }
 
    @Override

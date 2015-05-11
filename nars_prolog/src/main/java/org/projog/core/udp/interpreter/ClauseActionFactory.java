@@ -6,12 +6,12 @@ import static org.projog.core.KnowledgeBaseUtils.isSingleAnswer;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.bool.True;
 import org.projog.core.function.flow.Cut;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.udp.ClauseModel;
 
 /**
@@ -21,7 +21,7 @@ public final class ClauseActionFactory {
    /**
     * Returns a new {@link ClauseAction} based on the specified {@link ClauseModel}.
     */
-   public static ClauseAction getClauseAction(KnowledgeBase kb, ClauseModel clauseModel) {
+   public static ClauseAction getClauseAction(KB kb, ClauseModel clauseModel) {
       PTerm consequent = clauseModel.getConsequent();
       PTerm antecedant = clauseModel.getAntecedant();
       if (antecedant.type().isVariable()) {
@@ -32,7 +32,7 @@ public final class ClauseActionFactory {
       if (ef.getClass() == True.class) {
          return createClauseActionWithNoAntecedant(consequent);
       } else if (ef.getClass() == Cut.class) {
-         return new CutClauseAction(kb, consequent.getArgs());
+         return new CutClauseAction(kb, consequent.terms());
       } else if (isSingleAnswer(kb, antecedant)) {
          if (isConjunction(antecedant)) {
             return new MultiFunctionSingleResultClauseAction(kb, clauseModel);
@@ -47,7 +47,7 @@ public final class ClauseActionFactory {
    }
 
    private static ClauseAction createClauseActionWithNoAntecedant(PTerm consequent) {
-      if (consequent.args() == 0) {
+      if (consequent.length() == 0) {
          return new AlwaysMatchedClauseAction(null);
       }
 
@@ -57,8 +57,8 @@ public final class ClauseActionFactory {
       boolean hasConcreteTerms = false;
       boolean hasSharedVariables = false;
       Set<PTerm> variables = new HashSet<>();
-      for (PTerm t : consequent.getArgs()) {
-         if (t.type() == TermType.NAMED_VARIABLE) {
+      for (PTerm t : consequent.terms()) {
+         if (t.type() == PrologOperator.NAMED_VARIABLE) {
             hasVariables = true;
             if (!variables.add(t)) {
                hasSharedVariables = true;
@@ -72,11 +72,11 @@ public final class ClauseActionFactory {
       }
 
       if (!hasSharedVariables && !hasConcreteTerms) {
-         return new AlwaysMatchedClauseAction(consequent.getArgs());
+         return new AlwaysMatchedClauseAction(consequent.terms());
       } else if (hasConcreteTerms && !hasVariables) {
-         return new ImmutableArgumentsClauseAction(consequent.getArgs());
+         return new ImmutableArgumentsClauseAction(consequent.terms());
       } else {
-         return new MutableArgumentsClauseAction(consequent.getArgs());
+         return new MutableArgumentsClauseAction(consequent.terms());
       }
    }
 }

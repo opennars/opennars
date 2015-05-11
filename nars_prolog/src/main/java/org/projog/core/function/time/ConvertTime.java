@@ -8,7 +8,7 @@ import java.util.TimeZone;
 
 import org.projog.core.Calculatables;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -31,13 +31,13 @@ public final class ConvertTime extends AbstractSingletonPredicate {
 
    @Override
    public void init() {
-      calculatables = getCalculatables(getKnowledgeBase());
+      calculatables = getCalculatables(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm timestamp, PTerm text) {
       Date d = createDate(timestamp);
-      Atom a = createAtom(d);
+      PAtom a = createAtom(d);
       return text.unify(a);
    }
 
@@ -45,10 +45,10 @@ public final class ConvertTime extends AbstractSingletonPredicate {
       return new Date(calculatables.getNumeric(timestamp).getLong());
    }
 
-   private Atom createAtom(Date d) {
+   private PAtom createAtom(Date d) {
       // TODO have overloaded versions of convert_time that allow the date format and timezone to be specified?
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
       sdf.setTimeZone(TimeZone.getTimeZone("GMT-0"));
-      return new Atom(sdf.format(d));
+      return new PAtom(sdf.format(d));
    }
 }

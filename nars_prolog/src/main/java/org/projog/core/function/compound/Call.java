@@ -1,6 +1,6 @@
 package org.projog.core.function.compound;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.KnowledgeBaseUtils;
 import org.projog.core.Predicate;
 import org.projog.core.function.AbstractRetryablePredicate;
@@ -64,20 +64,20 @@ public final class Call extends AbstractRetryablePredicate {
    public Call() {
    }
 
-   private Call(KnowledgeBase kb) {
-      setKnowledgeBase(kb);
+   private Call(KB kb) {
+      setKB(kb);
    }
 
    @Override
    public Call getPredicate(PTerm arg) {
-      return new Call(getKnowledgeBase());
+      return new Call(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm t) {
       if (predicateToCall == null) {
-         predicateToCall = KnowledgeBaseUtils.getPredicate(getKnowledgeBase(), t);
-         argumentsForPredicateToCall = t.getArgs();
+         predicateToCall = KnowledgeBaseUtils.getPredicate(getKB(), t);
+         argumentsForPredicateToCall = t.terms();
       } else if (predicateToCall.isRetryable() == false) {
          return false;
       }

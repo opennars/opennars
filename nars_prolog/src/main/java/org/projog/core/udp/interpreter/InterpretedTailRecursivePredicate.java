@@ -6,7 +6,7 @@ import java.util.Map;
 import org.projog.core.PredicateFactory;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.Unifier;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.TailRecursivePredicate;
 import org.projog.core.udp.TailRecursivePredicateMetaData;
 
@@ -53,7 +53,7 @@ final class InterpretedTailRecursivePredicate extends TailRecursivePredicate {
 
    @Override
    protected boolean matchFirstRule() {
-      final Map<Variable, Variable> sharedVariables = new HashMap<>();
+      final Map<PVar, PVar> sharedVariables = new HashMap<>();
       final PTerm[] newConsequentArgs = new PTerm[numArgs];
       for (int i = 0; i < numArgs; i++) {
          newConsequentArgs[i] = firstClauseConsequentArgs[i].copy(sharedVariables);
@@ -65,7 +65,7 @@ final class InterpretedTailRecursivePredicate extends TailRecursivePredicate {
 
       for (int i = 0; i < firstClauseOriginalTerms.length; i++) {
          PTerm t = firstClauseOriginalTerms[i].copy(sharedVariables);
-         if (!firstClausePredicateFactories[i].getPredicate(t.getArgs()).evaluate(t.getArgs())) {
+         if (!firstClausePredicateFactories[i].getPredicate(t.terms()).evaluate(t.terms())) {
             return false;
          }
       }
@@ -75,7 +75,7 @@ final class InterpretedTailRecursivePredicate extends TailRecursivePredicate {
 
    @Override
    protected boolean matchSecondRule() {
-      final Map<Variable, Variable> sharedVariables = new HashMap<>();
+      final Map<PVar, PVar> sharedVariables = new HashMap<>();
       final PTerm[] newConsequentArgs = new PTerm[numArgs];
       for (int i = 0; i < numArgs; i++) {
          newConsequentArgs[i] = secondClauseConsequentArgs[i].copy(sharedVariables);
@@ -87,12 +87,12 @@ final class InterpretedTailRecursivePredicate extends TailRecursivePredicate {
 
       for (int i = 0; i < secondClauseOriginalTerms.length - 1; i++) {
          PTerm t = secondClauseOriginalTerms[i].copy(sharedVariables);
-         if (!secondClausePredicateFactories[i].getPredicate(t.getArgs()).evaluate(t.getArgs())) {
+         if (!secondClausePredicateFactories[i].getPredicate(t.terms()).evaluate(t.terms())) {
             return false;
          }
       }
 
-      PTerm finalTermArgs[] = secondClauseOriginalTerms[secondClauseOriginalTerms.length - 1].getArgs();
+      PTerm finalTermArgs[] = secondClauseOriginalTerms[secondClauseOriginalTerms.length - 1].terms();
       for (int i = 0; i < numArgs; i++) {
          currentQueryArgs[i] = finalTermArgs[i].copy(sharedVariables);
       }

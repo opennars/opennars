@@ -8,8 +8,8 @@ import org.projog.core.term.PTerm;
  * <p>
  * Always fails to evaluate successfully.
  * 
- * @see KnowledgeBase#getPredicateFactory(PredicateKey)
- * @see KnowledgeBase#getPredicateFactory(PTerm)
+ * @see KB#getPredicateFactory(PredicateKey)
+ * @see KB#getPredicateFactory(PTerm)
  */
 public final class UnknownPredicate extends AbstractSingletonPredicate {
    /**

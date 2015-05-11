@@ -13,40 +13,40 @@ import org.junit.Test;
 public class AtomTest {
    @Test
    public void testGetName() {
-      Atom a = new Atom("test");
+      PAtom a = new PAtom("test");
       assertEquals("test", a.getName());
    }
 
    @Test
    public void testToString() {
-      Atom a = new Atom("test");
+      PAtom a = new PAtom("test");
       assertEquals("test", a.toString());
    }
 
    @Test
    public void testGetTerm() {
-      Atom a = atom();
-      Atom b = a.get();
+      PAtom a = atom();
+      PAtom b = a.get();
       assertSame(a, b);
    }
 
    @Test
    public void testGetType() {
-      Atom a = atom();
-      assertSame(TermType.ATOM, a.type());
+      PAtom a = atom();
+      assertSame(PrologOperator.ATOM, a.type());
    }
 
    @Test
    public void testGetNumberOfArguments() {
-      Atom a = atom();
-      assertEquals(0, a.args());
+      PAtom a = atom();
+      assertEquals(0, a.length());
    }
 
    @Test
    public void testGetArgument() {
       try {
-         Atom a = atom();
-         a.arg(0);
+         PAtom a = atom();
+         a.term(0);
          fail();
       } catch (UnsupportedOperationException e) {
          // expected
@@ -55,7 +55,7 @@ public class AtomTest {
 
    @Test
    public void testGetArgs() {
-      Atom a = atom();
-      assertSame(TermUtils.EMPTY_ARRAY, a.getArgs());
+      PAtom a = atom();
+      assertSame(TermUtils.EMPTY_ARRAY, a.terms());
    }
 }

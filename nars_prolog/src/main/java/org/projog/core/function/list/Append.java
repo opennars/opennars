@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.Predicate;
 import org.projog.core.PredicateFactory;
 import org.projog.core.ProjogException;
@@ -153,8 +153,8 @@ public final class Append implements PredicateFactory {
    }
 
    @Override
-   public void setKnowledgeBase(KnowledgeBase kb) {
-      singleton.setKnowledgeBase(kb);
+   public void setKB(KB kb) {
+      singleton.setKB(kb);
    }
 
    private static class Singleton extends AbstractSingletonPredicate {

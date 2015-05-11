@@ -261,7 +261,7 @@ public class Operation extends Inheritance {
 
         if (x instanceof Compound) {
             Compound ct = (Compound)x;
-            Term[] r = new Term[ct.size()];
+            Term[] r = new Term[ct.length()];
             boolean modified = false;
             int j = 0;
             for (final Term w : ct.term) {

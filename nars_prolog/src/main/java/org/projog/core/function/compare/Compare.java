@@ -3,7 +3,7 @@ package org.projog.core.function.compare;
 import static org.projog.core.term.TermComparator.TERM_COMPARATOR;
 
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -60,6 +60,6 @@ public final class Compare extends AbstractSingletonPredicate {
       } else {
          symbol = "=";
       }
-      return result.unify(new Atom(symbol));
+      return result.unify(new PAtom(symbol));
    }
 }

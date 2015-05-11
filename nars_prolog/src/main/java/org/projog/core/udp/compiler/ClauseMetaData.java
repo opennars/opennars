@@ -6,15 +6,15 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.function.AbstractRetryablePredicate;
 import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.function.flow.Cut;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 import org.projog.core.udp.ClauseModel;
 import org.projog.core.udp.StaticUserDefinedPredicateFactory;
 
@@ -35,7 +35,7 @@ final class ClauseMetaData {
    private final PTerm term;
    private final PTerm consequent;
    private final PTerm[] conjunctions;
-   private final Set<Variable>[] variablesInConjunction;
+   private final Set<PVar>[] variablesInConjunction;
    private final PredicateFactory[] predicateFactories;
    private final boolean[] isConjunctionMulipleResult;
    private final boolean isSingleResult;
@@ -48,8 +48,8 @@ final class ClauseMetaData {
     * <p>
     * Uses LinkedHashSet to ensure a predictable order (just to make unit tests easier).
     */
-   private final Set<Variable> variablesToBackTrack = new LinkedHashSet<>();
-   private final Set<Variable> ignorableVariables;
+   private final Set<PVar> variablesToBackTrack = new LinkedHashSet<>();
+   private final Set<PVar> ignorableVariables;
    private int conjunctionIndex = -1;
    private int lastBacktrackPoint;
    private int retryablePredicateCtr;
@@ -58,7 +58,7 @@ final class ClauseMetaData {
    private int numericCtr;
 
    @SuppressWarnings({"unchecked", "rawtypes"})
-   ClauseMetaData(KnowledgeBase kb, int clauseIndex, ClauseModel clauseModel, boolean isTailRecursive) {
+   ClauseMetaData(KB kb, int clauseIndex, ClauseModel clauseModel, boolean isTailRecursive) {
       this.clauseIndex = clauseIndex;
       this.term = clauseModel.getOriginal();
       this.consequent = clauseModel.getConsequent();
@@ -77,7 +77,7 @@ final class ClauseMetaData {
          PTerm c = conjunctions[i];
          variablesInConjunction[i] = TermUtils.getAllVariablesInTerm(c);
          boolean isRetryable;
-         if (consequentName.equals(c.getName()) && c.args() == consequent.args()) {
+         if (consequentName.equals(c.getName()) && c.length() == consequent.length()) {
             if (isTailRecursive && i == conjunctions.length - 1) {
                isRetryable = false;
             } else {
@@ -91,7 +91,7 @@ final class ClauseMetaData {
                containsCut = true;
                isRetryable = false;
             } else {
-               isRetryable = isRetryable(predicateFactories[i], c.getArgs());
+               isRetryable = isRetryable(predicateFactories[i], c.terms());
             }
          }
          if (isRetryable) {
@@ -127,7 +127,7 @@ final class ClauseMetaData {
       return true;
    }
 
-   private PredicateFactory getPredicateFactory(KnowledgeBase kb, PTerm c) {
+   private PredicateFactory getPredicateFactory(KB kb, PTerm c) {
       PredicateFactory ef = kb.getPredicateFactory(c);
       if (ef instanceof StaticUserDefinedPredicateFactory) {
          return ((StaticUserDefinedPredicateFactory) ef).getActualPredicateFactory();
@@ -136,14 +136,14 @@ final class ClauseMetaData {
       }
    }
 
-   private Set<Variable> getConsequentVariablesThatCanBeIgnored() {
-      Set<Variable> declaredOnce = new HashSet<>();
-      getSingletonVariables(consequent, declaredOnce, new HashSet<Variable>());
+   private Set<PVar> getConsequentVariablesThatCanBeIgnored() {
+      Set<PVar> declaredOnce = new HashSet<>();
+      getSingletonVariables(consequent, declaredOnce, new HashSet<PVar>());
 
-      Set<Variable> antecedantVariables = getAntecedantVariables();
+      Set<PVar> antecedantVariables = getAntecedantVariables();
 
-      Set<Variable> ignorableVariables = new HashSet<>();
-      for (Variable v : declaredOnce) {
+      Set<PVar> ignorableVariables = new HashSet<>();
+      for (PVar v : declaredOnce) {
          if (antecedantVariables.contains(v) == false) {
             ignorableVariables.add(v);
          }
@@ -151,9 +151,9 @@ final class ClauseMetaData {
       return ignorableVariables;
    }
 
-   private void getSingletonVariables(PTerm argument, Set<Variable> declaredOnce, Set<Variable> declaredMany) {
-      if (argument.type() == TermType.NAMED_VARIABLE) {
-         Variable v = (Variable) argument;
+   private void getSingletonVariables(PTerm argument, Set<PVar> declaredOnce, Set<PVar> declaredMany) {
+      if (argument.type() == PrologOperator.NAMED_VARIABLE) {
+         PVar v = (PVar) argument;
          if (declaredMany.contains(v) == false) {
             if (declaredOnce.add(v) == false) {
                declaredOnce.remove(v);
@@ -161,15 +161,15 @@ final class ClauseMetaData {
             }
          }
       } else {
-         for (int i = 0; i < argument.args(); i++) {
-            getSingletonVariables(argument.arg(i), declaredOnce, declaredMany);
+         for (int i = 0; i < argument.length(); i++) {
+            getSingletonVariables(argument.term(i), declaredOnce, declaredMany);
          }
       }
    }
 
-   private Set<Variable> getAntecedantVariables() {
-      final Set<Variable> antecedantVariables = new HashSet<>();
-      for (Set<Variable> v : variablesInConjunction) {
+   private Set<PVar> getAntecedantVariables() {
+      final Set<PVar> antecedantVariables = new HashSet<>();
+      for (Set<PVar> v : variablesInConjunction) {
          antecedantVariables.addAll(v);
       }
       return antecedantVariables;
@@ -223,11 +223,11 @@ final class ClauseMetaData {
       return isConjunctionMulipleResult(conjunctionIndex);
    }
 
-   Set<Variable> getVariablesInConjunction(int idx) {
+   Set<PVar> getVariablesInConjunction(int idx) {
       return variablesInConjunction[idx];
    }
 
-   Set<Variable> getVariablesInCurrentFunction() {
+   Set<PVar> getVariablesInCurrentFunction() {
       return getVariablesInConjunction(conjunctionIndex);
    }
 
@@ -316,7 +316,7 @@ final class ClauseMetaData {
       variablesToBackTrack.clear();
    }
 
-   void addVariablesToBackTrack(Set<Variable> variables) {
+   void addVariablesToBackTrack(Set<PVar> variables) {
       variablesToBackTrack.addAll(variables);
    }
 
@@ -324,7 +324,7 @@ final class ClauseMetaData {
       return variablesToBackTrack.isEmpty();
    }
 
-   Set<Variable> getVariablesToBackTrack() {
+   Set<PVar> getVariablesToBackTrack() {
       return variablesToBackTrack;
    }
 }

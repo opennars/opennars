@@ -5,7 +5,7 @@ import java.io.File;
 import org.projog.api.Projog;
 import org.projog.api.QueryResult;
 import org.projog.api.QueryStatement;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 
 public class ProjogExample {
    public static void main(String[] args) {
@@ -17,7 +17,7 @@ public class ProjogExample {
          System.out.println("X = " + r1.getTerm("X") + " Y = " + r1.getTerm("Y"));
       }
       QueryResult r2 = s1.get();
-      r2.setTerm("X", new Atom("d"));
+      r2.setTerm("X", new PAtom("d"));
       while (r2.next()) {
          System.out.println("Y = " + r2.getTerm("Y"));
       }

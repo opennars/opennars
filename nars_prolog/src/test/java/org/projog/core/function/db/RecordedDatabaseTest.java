@@ -12,17 +12,17 @@ import java.util.NoSuchElementException;
 
 import org.junit.Test;
 import org.projog.core.PredicateKey;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.TermType;
+import org.projog.core.term.PrologOperator;
 
 public class RecordedDatabaseTest {
    @Test
    public void testAdd() {
       RecordedDatabase d = new RecordedDatabase();
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value = new Atom("test");
+      PAtom value = new PAtom("test");
 
       assertEquals(0L, d.add(key, value, true).getLong());
       assertEquals(1L, d.add(key, value, true).getLong());
@@ -46,7 +46,7 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
 
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value = new Atom("test");
+      PAtom value = new PAtom("test");
       PTerm reference = d.add(key, value, true);
 
       Iterator<Record> itr = d.getAll();
@@ -61,9 +61,9 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
 
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value1 = new Atom("test1");
-      Atom value2 = new Atom("test2");
-      Atom value3 = new Atom("test3");
+      PAtom value1 = new PAtom("test1");
+      PAtom value2 = new PAtom("test2");
+      PAtom value3 = new PAtom("test3");
       IntegerNumber reference1 = d.add(key, value1, true);
       IntegerNumber reference2 = d.add(key, value2, true);
       IntegerNumber reference3 = d.add(key, value3, true);
@@ -82,9 +82,9 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
 
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value1 = new Atom("test1");
-      Atom value2 = new Atom("test2");
-      Atom value3 = new Atom("test3");
+      PAtom value1 = new PAtom("test1");
+      PAtom value2 = new PAtom("test2");
+      PAtom value3 = new PAtom("test3");
       IntegerNumber reference1 = d.add(key, value1, false);
       IntegerNumber reference2 = d.add(key, value2, false);
       IntegerNumber reference3 = d.add(key, value3, false);
@@ -103,9 +103,9 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
 
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value1 = new Atom("test1");
-      Atom value2 = new Atom("test2");
-      Atom value3 = new Atom("test3");
+      PAtom value1 = new PAtom("test1");
+      PAtom value2 = new PAtom("test2");
+      PAtom value3 = new PAtom("test3");
       IntegerNumber reference1 = d.add(key, value1, true);
       IntegerNumber reference2 = d.add(key, value2, false);
       IntegerNumber reference3 = d.add(key, value3, true);
@@ -124,9 +124,9 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
 
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value1 = new Atom("test1");
-      Atom value2 = new Atom("test2");
-      Atom value3 = new Atom("test3");
+      PAtom value1 = new PAtom("test1");
+      PAtom value2 = new PAtom("test2");
+      PAtom value3 = new PAtom("test3");
       IntegerNumber reference1 = d.add(key, value1, true);
       IntegerNumber reference2 = d.add(key, value2, true);
       IntegerNumber reference3 = d.add(key, value3, true);
@@ -160,9 +160,9 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
       PredicateKey key1 = new PredicateKey("a", 1);
       PredicateKey key2 = new PredicateKey("b", 1);
-      Atom value1 = new Atom("test1");
-      Atom value2 = new Atom("test2");
-      Atom value3 = new Atom("test3");
+      PAtom value1 = new PAtom("test1");
+      PAtom value2 = new PAtom("test2");
+      PAtom value3 = new PAtom("test3");
       IntegerNumber reference1 = d.add(key1, value1, true);
       IntegerNumber reference2 = d.add(key2, value2, true);
       IntegerNumber reference3 = d.add(key1, value3, true);
@@ -191,7 +191,7 @@ public class RecordedDatabaseTest {
    public void testGetChain_SingleElement() {
       RecordedDatabase d = new RecordedDatabase();
       PredicateKey key = new PredicateKey("a", 1);
-      Atom value = new Atom("test");
+      PAtom value = new PAtom("test");
       IntegerNumber reference = d.add(key, value, true);
 
       Iterator<Record> itr = d.getChain(key);
@@ -206,9 +206,9 @@ public class RecordedDatabaseTest {
       RecordedDatabase d = new RecordedDatabase();
       PredicateKey key1 = new PredicateKey("a", 1);
       PredicateKey key2 = new PredicateKey("b", 1);
-      Atom value1 = new Atom("test1");
-      Atom value2 = new Atom("test2");
-      Atom value3 = new Atom("test3");
+      PAtom value1 = new PAtom("test1");
+      PAtom value2 = new PAtom("test2");
+      PAtom value3 = new PAtom("test3");
       IntegerNumber reference1 = d.add(key1, value1, true);
       IntegerNumber reference2 = d.add(key2, value2, true);
       IntegerNumber reference3 = d.add(key1, value3, true);
@@ -234,12 +234,12 @@ public class RecordedDatabaseTest {
 
    private void assertKey(PredicateKey key, PTerm term) {
       int numberOfArguments = key.getNumArgs();
-      assertEquals(numberOfArguments, term.args());
+      assertEquals(numberOfArguments, term.length());
       HashSet<PTerm> uniqueTerms = new HashSet<>();
       for (int i = 0; i < numberOfArguments; i++) {
-         PTerm a = term.arg(i);
+         PTerm a = term.term(i);
          assertTrue(uniqueTerms.add(a));
-         assertSame(TermType.NAMED_VARIABLE, a.type());
+         assertSame(PrologOperator.NAMED_VARIABLE, a.type());
          assertEquals("_", a.toString());
       }
    }

@@ -7,8 +7,8 @@ import java.util.Arrays;
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound2 extends Compound {
 
-    private int hash = 0;
     private byte[] name = null;
+    transient private int hash = 0;
 
     protected Compound2(Term a, Term b) {
         super(a, b);

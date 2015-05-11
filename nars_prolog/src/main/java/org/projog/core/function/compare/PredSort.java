@@ -12,7 +12,7 @@ import org.projog.core.function.AbstractSingletonPredicate;
 import org.projog.core.term.ListFactory;
 import org.projog.core.term.ListUtils;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /* TEST
  %QUERY predsort(compare, [s,d,f,a,a,a,z], X)
@@ -49,7 +49,7 @@ public final class PredSort extends AbstractSingletonPredicate {
 
    private PredicateFactory getPredicateFactory(PTerm predicateName) {
       PredicateKey key = new PredicateKey(getAtomName(predicateName), 3);
-      return getKnowledgeBase().getPredicateFactory(key);
+      return getKB().getPredicateFactory(key);
    }
 
    private static final class PredSortComparator implements Comparator<PTerm> {
@@ -61,7 +61,7 @@ public final class PredSort extends AbstractSingletonPredicate {
 
       @Override
       public int compare(PTerm o1, PTerm o2) {
-         Variable result = new Variable("PredSortResult");
+         PVar result = new PVar("PredSortResult");
          PTerm[] args = new PTerm[] {result, o1, o2};
          if (pf.getPredicate(args).evaluate(args)) {
             String delta = getAtomName(result);

@@ -19,7 +19,7 @@ public interface SetTensional extends Term {
 
     abstract public NALOperator operator();
 
-    abstract public int size();
+
 
     /**
      * make the oldName of an ExtensionSet or IntensionSet

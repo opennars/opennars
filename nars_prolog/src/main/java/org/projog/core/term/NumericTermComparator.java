@@ -31,7 +31,7 @@ public final class NumericTermComparator implements Comparator<PTerm> {
     * less than, equal to, or greater than the second.
     * <p>
     * Unlike {@link #compare(PTerm, PTerm)} this method will work for arguments that represent arithmetic expressions
-    * (e.g. a {@link Structure} of the form {@code +(1,2)}) as well as {@link Numeric} terms.
+    * (e.g. a {@link PStruct} of the form {@code +(1,2)}) as well as {@link Numeric} terms.
     * 
     * @param t1 the first term to be compared
     * @param t2 the second term to be compared
@@ -54,7 +54,7 @@ public final class NumericTermComparator implements Comparator<PTerm> {
     * less than, equal to, or greater than the second.
     * <p>
     * Unlike {@link #compare(PTerm, PTerm, Calculatables)} this method only works for arguments that represent a
-    * {@link Numeric} (e.g. a {@link Structure} of the form {@code +(1,2)} would cause a {@code ProjogException}).
+    * {@link Numeric} (e.g. a {@link PStruct} of the form {@code +(1,2)} would cause a {@code ProjogException}).
     * 
     * @param t1 the first term to be compared
     * @param t2 the second term to be compared

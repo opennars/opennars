@@ -20,15 +20,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.projog.core.Operands;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.DecimalFraction;
 import org.projog.core.term.EmptyList;
 import org.projog.core.term.IntegerNumber;
 import org.projog.core.term.ListFactory;
-import org.projog.core.term.Structure;
+import org.projog.core.term.PStruct;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
 /**
  * Parses Prolog syntax representing rules including operators.
@@ -52,7 +52,7 @@ public class SentenceParser {
     * created - one for the variable name <code>X</code> and one that is shared between both references to the variable
     * name <code>Y</code>.
     */
-   private final HashMap<String, Variable> variables = new HashMap<>();
+   private final HashMap<String, PVar> variables = new HashMap<>();
    /**
     * Terms created, during the parsing of the current sentence, that were represented using infix notation.
     * <p>
@@ -154,16 +154,16 @@ public class SentenceParser {
    }
 
    /**
-    * Returns collection of {@link Variable} instances created by this {@code SentenceParser}.
+    * Returns collection of {@link PVar} instances created by this {@code SentenceParser}.
     * <p>
-    * Returns all {@link Variable}s created by this {@code SentenceParser} either since it was created or since the last
+    * Returns all {@link PVar}s created by this {@code SentenceParser} either since it was created or since the last
     * execution of {@link #parseTerm()}.
     * 
-    * @return collection of {@link Variable} instances created by this {@code SentenceParser}
+    * @return collection of {@link PVar} instances created by this {@code SentenceParser}
     */
    @SuppressWarnings("unchecked")
-   public Map<String, Variable> getParsedTermVariables() {
-      return (Map<String, Variable>) variables.clone();
+   public Map<String, PVar> getParsedTermVariables() {
+      return (Map<String, PVar>) variables.clone();
    }
 
    /**
@@ -220,21 +220,21 @@ public class SentenceParser {
       final PTerm secondArg = getPossiblePrefixArgument(level);
 
       if (isFirst) {
-         final PTerm t = Structure.createStructure(next, new PTerm[] {currentTerm, secondArg});
+         final PTerm t = PStruct.make(next, new PTerm[]{currentTerm, secondArg});
          return getTerm(t, level, maxLevel, false);
       } else if (level < currentLevel) {
          // compare previous.getArgs()[1] to level -
          // keep going until find right level to add this term to
          PTerm t = currentTerm;
-         while (isParsedInfixTerms(t.getArgs()[1]) && getInfixLevel(t.getArgs()[1]) > level) {
-            if (bracketedTerms.contains(t.getArgs()[1])) {
+         while (isParsedInfixTerms(t.terms()[1]) && getInfixLevel(t.terms()[1]) > level) {
+            if (bracketedTerms.contains(t.terms()[1])) {
                break;
             }
-            t = t.getArgs()[1];
+            t = t.terms()[1];
          }
-         PTerm predicate = Structure.createStructure(next, new PTerm[] {t.getArgs()[1], secondArg});
+         PTerm predicate = PStruct.make(next, new PTerm[]{t.terms()[1], secondArg});
          parsedInfixTerms.add(predicate);
-         t.getArgs()[1] = predicate;
+         t.terms()[1] = predicate;
          return getTerm(currentTerm, currentLevel, maxLevel, false);
       } else {
          if (level == currentLevel) {
@@ -242,7 +242,7 @@ public class SentenceParser {
                throw newParserException("Operand " + next + " has same precedence level as preceding operand: " + currentTerm);
             }
          }
-         PTerm predicate = Structure.createStructure(next, new PTerm[] {currentTerm, secondArg});
+         PTerm predicate = PStruct.make(next, new PTerm[]{currentTerm, secondArg});
          parsedInfixTerms.add(predicate);
          return getTerm(predicate, level, maxLevel, false);
       }
@@ -301,7 +301,7 @@ public class SentenceParser {
     * Returns a new {@code Term} representing the specified prefix operand and argument.
     */
    private PTerm createPrefixTerm(String prefixOperandName, PTerm argument) {
-      return Structure.createStructure(prefixOperandName, new PTerm[] {argument});
+      return PStruct.make(prefixOperandName, new PTerm[]{argument});
    }
 
    /**
@@ -315,20 +315,20 @@ public class SentenceParser {
     */
    private PTerm addPostfixOperand(String postfixOperand, PTerm original) {
       int level = operands.getPostfixPriority(postfixOperand);
-      if (original.args() == 2) {
+      if (original.length() == 2) {
          boolean higherLevelInfixOperand = operands.infix(original.getName()) && getInfixLevel(original) > level;
          if (higherLevelInfixOperand) {
             String name = original.getName();
-            PTerm firstArg = original.arg(0);
-            PTerm newSecondArg = addPostfixOperand(postfixOperand, original.arg(1));
-            return Structure.createStructure(name, new PTerm[] {firstArg, newSecondArg});
+            PTerm firstArg = original.term(0);
+            PTerm newSecondArg = addPostfixOperand(postfixOperand, original.term(1));
+            return PStruct.make(name, new PTerm[]{firstArg, newSecondArg});
          }
-      } else if (original.args() == 1) {
+      } else if (original.length() == 1) {
          if (operands.prefix(original.getName())) {
             if (getPrefixLevel(original) > level) {
                String name = original.getName();
-               PTerm newFirstArg = addPostfixOperand(postfixOperand, original.arg(0));
-               return Structure.createStructure(name, new PTerm[] {newFirstArg});
+               PTerm newFirstArg = addPostfixOperand(postfixOperand, original.term(0));
+               return PStruct.make(name, new PTerm[]{newFirstArg});
             }
          } else if (operands.postfix(original.getName())) {
             int levelToCompareTo = getPostfixLevel(original);
@@ -338,7 +338,7 @@ public class SentenceParser {
             }
          }
       }
-      return Structure.createStructure(postfixOperand, new PTerm[] {original});
+      return PStruct.make(postfixOperand, new PTerm[]{original});
    }
 
    private PTerm getDiscreteTerm() {
@@ -397,7 +397,7 @@ public class SentenceParser {
          do {
             token = popValue();
             if (isPredicateCloseBracket(token)) {
-               return Structure.createStructure(name, toArray(args));
+               return PStruct.make(name, toArray(args));
             } else if (isArgumentSeperator(token)) {
                args.add(getCommaSeparatedArgument());
             } else {
@@ -405,7 +405,7 @@ public class SentenceParser {
             }
          } while (true);
       } else {
-         return new Atom(name);
+         return new PAtom(name);
       }
    }
 
@@ -415,17 +415,17 @@ public class SentenceParser {
     * If this object already has an instance of {@code Variable} with the specified id then it will be returned else a
     * new {@code Variable} will be created.
     */
-   private Variable getVariable(String id) {
-      Variable v = variables.get(id);
+   private PVar getVariable(String id) {
+      PVar v = variables.get(id);
       if (v == null) {
-         v = new Variable(id);
+         v = new PVar(id);
          variables.put(id, v);
       }
       return v;
    }
 
-   private Variable getAnonymousVariable(String id) {
-      return new Variable(id);
+   private PVar getAnonymousVariable(String id) {
+      return new PVar(id);
    }
 
    /** Returns a newly created {@code List} with elements read from the parser. */

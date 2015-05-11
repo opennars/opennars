@@ -2,7 +2,7 @@ package org.projog.core.udp;
 
 import static org.projog.core.KnowledgeBaseUtils.IMPLICATION_PREDICATE_NAME;
 
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 import org.projog.core.term.TermUtils;
 
@@ -15,7 +15,7 @@ import org.projog.core.term.TermUtils;
  * Called {@code ClauseModel} to differentiate it from {@link org.projog.core.udp.interpreter.ClauseAction}.
  */
 public final class ClauseModel {
-   private static final PTerm TRUE = new Atom("true");
+   private static final PTerm TRUE = new PAtom("true");
 
    private final PTerm original;
    private final PTerm consequent;
@@ -30,7 +30,7 @@ public final class ClauseModel {
       }
 
       if (original.getName().equals(IMPLICATION_PREDICATE_NAME)) {
-         PTerm[] implicationArgs = original.getArgs();
+         PTerm[] implicationArgs = original.terms();
          consequent = implicationArgs[0];
          if (implicationArgs.length == 2) {
             antecedant = implicationArgs[1];

@@ -29,18 +29,18 @@ public class EmptyListTest {
 
    @Test
    public void testGetType() {
-      assertSame(TermType.EMPTY_LIST, EMPTY_LIST.type());
+      assertSame(PrologOperator.EMPTY_LIST, EMPTY_LIST.type());
    }
 
    @Test
    public void testGetNumberOfArguments() {
-      assertEquals(0, EMPTY_LIST.args());
+      assertEquals(0, EMPTY_LIST.length());
    }
 
    @Test
    public void testGetArgument() {
       try {
-         EMPTY_LIST.arg(0);
+         EMPTY_LIST.term(0);
          fail();
       } catch (UnsupportedOperationException e) {
          // expected
@@ -50,7 +50,7 @@ public class EmptyListTest {
    @Test
    public void testGetArgs() {
       try {
-         EMPTY_LIST.getArgs();
+         EMPTY_LIST.terms();
          fail();
       } catch (UnsupportedOperationException e) {
          // expected

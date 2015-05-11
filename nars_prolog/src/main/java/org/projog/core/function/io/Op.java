@@ -107,7 +107,7 @@ public final class Op extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      operands = getOperands(getKnowledgeBase());
+      operands = getOperands(getKB());
    }
 
    @Override

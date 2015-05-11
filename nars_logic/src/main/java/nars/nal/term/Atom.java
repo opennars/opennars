@@ -14,7 +14,7 @@ import java.util.Map;
 public class Atom implements Term {
 
     protected byte[] name;
-    protected final int hash;
+    transient protected final int hash;
 
     private static final Map<String,Atom> atoms = Global.newHashMap(8192);
 
@@ -38,6 +38,10 @@ public class Atom implements Term {
         return true;
     }
 
+    @Override
+    public int length() {
+        return 1;
+    }
 
     /**
      * @param that The Term to be compared with the current Term

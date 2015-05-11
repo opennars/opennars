@@ -73,7 +73,7 @@ public class Disjunction extends Junction {
 
         if (term1 instanceof Disjunction) {
             Compound ct1 = ((Compound) term1);
-            List<Term> l = Global.newArrayList(ct1.size());
+            List<Term> l = Global.newArrayList(ct1.length());
             Collections.addAll(l, ((Compound)term1).term);
             if (term2 instanceof Disjunction) {
                 // (&,(&,P,Q),(&,R,S)) = (&,P,Q,R,S)
@@ -87,7 +87,7 @@ public class Disjunction extends Junction {
         } else if (term2 instanceof Disjunction) {
             Compound ct2 = ((Compound) term2);
             // (&,R,(&,P,Q)) = (&,P,Q,R)
-            List<Term> l = Global.newArrayList(ct2.size());
+            List<Term> l = Global.newArrayList(ct2.length());
             Collections.addAll(l, ct2.term);
             l.add(term1);
             return make(l);

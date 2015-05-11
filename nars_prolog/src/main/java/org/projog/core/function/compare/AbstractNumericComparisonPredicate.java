@@ -12,7 +12,7 @@ abstract class AbstractNumericComparisonPredicate extends AbstractSingletonPredi
 
    @Override
    public final void init() {
-      calculatables = getCalculatables(getKnowledgeBase());
+      calculatables = getCalculatables(getKB());
    }
 
    protected int compare(PTerm arg1, PTerm arg2) {

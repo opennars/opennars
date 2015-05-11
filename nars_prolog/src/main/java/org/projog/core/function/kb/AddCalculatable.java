@@ -28,7 +28,7 @@ public final class AddCalculatable extends AbstractSingletonPredicate {
 
    @Override
    public void init() {
-      calculatables = getCalculatables(getKnowledgeBase());
+      calculatables = getCalculatables(getKB());
    }
 
    @Override

@@ -6,7 +6,7 @@ import org.projog.TestUtils;
 import org.projog.core.ProjogException;
 import org.projog.core.ProjogProperties;
 import org.projog.core.parser.ParserException;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 import java.io.ByteArrayOutputStream;
@@ -50,7 +50,7 @@ public class ProjogTest {
    @Test
    public void testQueryMultiResultsAfterSetTerm() {
       QueryResult r = createQueryResult();
-      Atom a = atom("a");
+      PAtom a = atom("a");
       assertTrue(r.setTerm("X", a));
       assertSame(a, r.getTerm("X"));
       assertTrue(r.next());
@@ -68,7 +68,7 @@ public class ProjogTest {
    @Test
    public void testQuerySingleResultsAfterSetTerm() {
       QueryResult r = createQueryResult();
-      Atom z = atom("z");
+      PAtom z = atom("z");
       assertTrue(r.setTerm("X", z));
       assertSame(z, r.getTerm("X"));
       assertTrue(r.next());
@@ -80,7 +80,7 @@ public class ProjogTest {
    @Test
    public void testQueryNoResultsAfterSetTerm() {
       QueryResult r = createQueryResult();
-      Atom y = atom("y");
+      PAtom y = atom("y");
       assertTrue(r.setTerm("X", y));
       assertSame(y, r.getTerm("X"));
       assertFalse(r.next());
@@ -89,7 +89,7 @@ public class ProjogTest {
    @Test
    public void testSetTermForUnknownVariable() {
       QueryResult r = createQueryResult();
-      Atom x = atom("x");
+      PAtom x = atom("x");
       try {
          r.setTerm("Z", x);
          fail();
@@ -101,7 +101,7 @@ public class ProjogTest {
    @Test
    public void testSetTermAfterNext() {
       QueryResult r = createQueryResult();
-      Atom x = atom("x");
+      PAtom x = atom("x");
       r.next();
       try {
          r.setTerm("X", x);

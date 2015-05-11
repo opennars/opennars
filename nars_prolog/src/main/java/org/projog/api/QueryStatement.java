@@ -1,14 +1,15 @@
 package org.projog.api;
 
-import nars.Global;
-import org.projog.core.KnowledgeBase;
+import jdk.nashorn.internal.objects.Global;
+import org.projog.core.KB;
 import org.projog.core.PredicateFactory;
 import org.projog.core.ProjogException;
 import org.projog.core.parser.ParserException;
 import org.projog.core.parser.SentenceParser;
 import org.projog.core.term.PTerm;
-import org.projog.core.term.Variable;
+import org.projog.core.term.PVar;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.projog.core.KnowledgeBaseUtils.getOperands;
@@ -19,18 +20,18 @@ import static org.projog.core.KnowledgeBaseUtils.getOperands;
 public final class QueryStatement  {
    private final PredicateFactory predicateFactory;
    private final PTerm parsedInput;
-   private final Map<String, Variable> variables;
+   private final Map<String, PVar> variables;
    private final int numVariables;
 
    /**
     * Creates a new {@code QueryStatement} representing a query specified by {@code prologQuery}.
-    * 
-    * @param kb the {@link org.projog.core.KnowledgeBase} to query against
+    *
+    * @param kb the {@link KB} to query against
     * @param prologQuery prolog syntax representing a query (do not prefix with a {@code ?-})
     * @throws ProjogException if an error occurs parsing {@code prologQuery}
     * @see Projog#query(String)
     */
-   QueryStatement(KnowledgeBase kb, String prologQuery) {
+   QueryStatement(KB kb, String prologQuery) {
       try {
          SentenceParser sp = SentenceParser.getInstance(prologQuery, getOperands(kb));
 
@@ -56,7 +57,7 @@ public final class QueryStatement  {
     * {@link QueryResult#next()} that the first attempt to evaluate the query will be made.
     * <p>
     * {@code getResult()} can be called multiple times on the same {@code QueryStatement} instance.
-    * 
+    *
     * @return a new {@link QueryResult} for the query represented by this object.
     */
    public QueryResult get() {
@@ -64,11 +65,11 @@ public final class QueryStatement  {
          return new QueryResult(predicateFactory, parsedInput, variables);
       }
 
-      Map<String, Variable> copyVariables = Global.newHashMap(numVariables);
-      Map<Variable, Variable> sharedVariables = Global.newHashMap(numVariables);
-      for (Map.Entry<String, Variable> e : variables.entrySet()) {
+      Map<String, PVar> copyVariables = new HashMap(numVariables);
+      Map<PVar, PVar> sharedVariables = new HashMap(numVariables);
+      for (Map.Entry<String, PVar> e : variables.entrySet()) {
          String id = e.getKey();
-         Variable v = new Variable(id);
+         PVar v = new PVar(id);
          copyVariables.put(id, v);
          sharedVariables.put(e.getValue(), v);
       }

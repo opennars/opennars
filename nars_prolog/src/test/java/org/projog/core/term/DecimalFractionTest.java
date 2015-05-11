@@ -52,20 +52,20 @@ public class DecimalFractionTest {
    @Test
    public void testGetType() {
       DecimalFraction d = decimalFraction();
-      assertSame(TermType.FRACTION, d.type());
+      assertSame(PrologOperator.FRACTION, d.type());
    }
 
    @Test
    public void testGetNumberOfArguments() {
       DecimalFraction d = decimalFraction();
-      assertEquals(0, d.args());
+      assertEquals(0, d.length());
    }
 
    @Test
    public void testGetArgument() {
       try {
          DecimalFraction d = decimalFraction();
-         d.arg(0);
+         d.term(0);
          fail();
       } catch (UnsupportedOperationException e) {
          // expected
@@ -75,6 +75,6 @@ public class DecimalFractionTest {
    @Test
    public void testGetArgs() {
       DecimalFraction d = decimalFraction();
-      assertSame(TermUtils.EMPTY_ARRAY, d.getArgs());
+      assertSame(TermUtils.EMPTY_ARRAY, d.terms());
    }
 }

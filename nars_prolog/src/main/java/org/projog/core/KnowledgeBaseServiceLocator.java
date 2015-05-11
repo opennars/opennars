@@ -18,7 +18,7 @@ import java.util.WeakHashMap;
  * </p>
  */
 public class KnowledgeBaseServiceLocator {
-   private static final Map<KnowledgeBase, KnowledgeBaseServiceLocator> CACHE = new WeakHashMap<>();
+   private static final Map<KB, KnowledgeBaseServiceLocator> CACHE = new WeakHashMap<>();
 
    /**
     * Returns the {@code KnowledgeBaseServiceLocator} associated with the specified {@code KnowledgeBase}.
@@ -27,7 +27,7 @@ public class KnowledgeBaseServiceLocator {
     * new {@code KnowledgeBaseServiceLocator} will be created.
     * </p>
     */
-   public static KnowledgeBaseServiceLocator getServiceLocator(KnowledgeBase kb) {
+   public static KnowledgeBaseServiceLocator getServiceLocator(KB kb) {
       KnowledgeBaseServiceLocator l = CACHE.get(kb);
       if (l == null) {
          l = createServiceLocator(kb);
@@ -35,7 +35,7 @@ public class KnowledgeBaseServiceLocator {
       return l;
    }
 
-   private static KnowledgeBaseServiceLocator createServiceLocator(KnowledgeBase kb) {
+   private static KnowledgeBaseServiceLocator createServiceLocator(KB kb) {
       synchronized (CACHE) {
          KnowledgeBaseServiceLocator l = CACHE.get(kb);
          if (l == null) {
@@ -46,11 +46,11 @@ public class KnowledgeBaseServiceLocator {
       }
    }
 
-   private final KnowledgeBase kb;
+   private final KB kb;
    private final Map<Class<?>, Object> services = new HashMap<>();
 
    /** @see #getServiceLocator */
-   private KnowledgeBaseServiceLocator(KnowledgeBase kb) {
+   private KnowledgeBaseServiceLocator(KB kb) {
       this.kb = kb;
    }
 
@@ -157,7 +157,7 @@ public class KnowledgeBaseServiceLocator {
    private Constructor<?> getKnowledgeBaseArgumentConstructor(Class<?> c) throws InstantiationException, IllegalAccessException, InvocationTargetException {
       for (Constructor<?> constructor : c.getConstructors()) {
          Class<?>[] parameterTypes = constructor.getParameterTypes();
-         if (parameterTypes.length == 1 && parameterTypes[0] == KnowledgeBase.class) {
+         if (parameterTypes.length == 1 && parameterTypes[0] == KB.class) {
             return constructor;
          }
       }

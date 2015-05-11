@@ -16,9 +16,9 @@ import java.util.Map;
  * A common use of operators is in the definition of arithmetic operations. By declaring {@code is} and {@code -} as
  * infix operators we can write valid prolog syntax like {@code X is 1 + 2.} instead of {@code is(X, +(1, 2)).}
  * <p>
- * Each {@link org.projog.core.KnowledgeBase} has a single unique {@code Operands} instance.
+ * Each {@link KB} has a single unique {@code Operands} instance.
  * 
- * @see KnowledgeBaseUtils#getOperands(KnowledgeBase)
+ * @see KnowledgeBaseUtils#getOperands(KB)
  */
 public final class Operands {
    private final Object LOCK = new Object();

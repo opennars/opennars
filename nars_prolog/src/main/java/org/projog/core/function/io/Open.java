@@ -6,7 +6,7 @@ import static org.projog.core.term.TermUtils.getAtomName;
 import org.projog.core.FileHandles;
 import org.projog.core.ProjogException;
 import org.projog.core.function.AbstractSingletonPredicate;
-import org.projog.core.term.Atom;
+import org.projog.core.term.PAtom;
 import org.projog.core.term.PTerm;
 
 /* TEST
@@ -29,14 +29,14 @@ public final class Open extends AbstractSingletonPredicate {
 
    @Override
    protected void init() {
-      fileHandles = getFileHandles(getKnowledgeBase());
+      fileHandles = getFileHandles(getKB());
    }
 
    @Override
    public boolean evaluate(PTerm fileNameAtom, PTerm operationAtom, PTerm variableToAssignTo) {
       String operation = getAtomName(operationAtom);
       String fileName = getAtomName(fileNameAtom);
-      Atom handle;
+      PAtom handle;
       if (READ.equals(operation)) {
          handle = openInput(fileName);
       } else if (WRITE.equals(operation)) {
@@ -48,7 +48,7 @@ public final class Open extends AbstractSingletonPredicate {
       return true;
    }
 
-   private Atom openInput(String fileName) {
+   private PAtom openInput(String fileName) {
       try {
          return fileHandles.openInput(fileName);
       } catch (Exception e) {
@@ -56,7 +56,7 @@ public final class Open extends AbstractSingletonPredicate {
       }
    }
 
-   private Atom openOutput(String fileName) {
+   private PAtom openOutput(String fileName) {
       try {
          return fileHandles.openOutput(fileName);
       } catch (Exception e) {

@@ -76,7 +76,7 @@ public final class InsertRecord extends AbstractSingletonPredicate {
 
    @Override
    public void init() {
-      database = getServiceLocator(getKnowledgeBase()).getInstance(RecordedDatabase.class);
+      database = getServiceLocator(getKB()).getInstance(RecordedDatabase.class);
    }
 
    @Override

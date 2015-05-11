@@ -19,7 +19,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.projog.TestUtils;
 import org.projog.core.Calculatables;
-import org.projog.core.KnowledgeBase;
+import org.projog.core.KB;
 import org.projog.core.ProjogException;
 
 public class TermUtilsTest {
@@ -31,12 +31,12 @@ public class TermUtilsTest {
    @Test
    public void testCopy() {
       // setup input terms
-      Atom a = atom("a");
-      Variable x = variable("X");
-      Variable y = variable("Y");
-      Variable z = variable("Z");
+      PAtom a = atom("a");
+      PVar x = variable("X");
+      PVar y = variable("Y");
+      PVar z = variable("Z");
       assertTrue(x.unify(a));
-      Structure p = structure("p", x, y);
+      PStruct p = structure("p", x, y);
       PTerm[] input = {a, p, x, y, z};
 
       // perform copy
@@ -48,11 +48,11 @@ public class TermUtilsTest {
       assertSame(a, output[0]);
 
       PTerm t = output[1];
-      assertSame(TermType.STRUCTURE, t.type());
+      assertSame(PrologOperator.STRUCTURE, t.type());
       assertSame(p.getName(), t.getName());
-      assertEquals(2, t.args());
-      assertSame(a, t.arg(0));
-      PTerm copyOfY = t.arg(1);
+      assertEquals(2, t.length());
+      assertSame(a, t.term(0));
+      PTerm copyOfY = t.term(1);
       assertVariable(copyOfY, "Y");
 
       assertSame(a, output[2]);
@@ -63,20 +63,20 @@ public class TermUtilsTest {
    }
 
    private void assertVariable(PTerm t, String id) {
-      assertSame(TermType.NAMED_VARIABLE, t.type());
+      assertSame(PrologOperator.NAMED_VARIABLE, t.type());
       assertSame(t, t.get());
-      assertEquals(id, ((Variable) t).getId());
+      assertEquals(id, ((PVar) t).getId());
    }
 
    @Test
    public void testBacktrack() {
       // setup input terms
-      Atom a = atom("a");
-      Atom b = atom("b");
-      Atom c = atom("c");
-      Variable x = variable("X");
-      Variable y = variable("Y");
-      Variable z = variable("Z");
+      PAtom a = atom("a");
+      PAtom b = atom("b");
+      PAtom c = atom("c");
+      PVar x = variable("X");
+      PVar y = variable("Y");
+      PVar z = variable("Z");
       assertTrue(x.unify(a));
       assertTrue(y.unify(b));
       assertTrue(z.unify(c));
@@ -100,12 +100,12 @@ public class TermUtilsTest {
    @Test
    public void testUnifySuccess() {
       // setup input terms
-      Variable x = variable("X");
-      Variable y = variable("Y");
-      Variable z = variable("Z");
-      Atom a = atom("a");
-      Atom b = atom("b");
-      Atom c = atom("c");
+      PVar x = variable("X");
+      PVar y = variable("Y");
+      PVar z = variable("Z");
+      PAtom a = atom("a");
+      PAtom b = atom("b");
+      PAtom c = atom("c");
       PTerm[] input1 = {x, b, z};
       PTerm[] input2 = {a, y, c};
 
@@ -121,12 +121,12 @@ public class TermUtilsTest {
    @Test
    public void testUnifyFailure() {
       // setup input terms
-      Variable x = variable("X");
-      Variable y = variable("Y");
-      Variable z = variable("Z");
-      Atom a = atom("a");
-      Atom b = atom("b");
-      Atom c = atom("c");
+      PVar x = variable("X");
+      PVar y = variable("Y");
+      PVar z = variable("Z");
+      PAtom a = atom("a");
+      PAtom b = atom("b");
+      PAtom c = atom("c");
       PTerm[] input1 = {x, b, z, b};
       PTerm[] input2 = {a, y, c, a};
 
@@ -143,22 +143,22 @@ public class TermUtilsTest {
 
    @Test
    public void testGetAllVariablesInTerm() {
-      Variable q = variable("Q");
-      Variable r = variable("R");
-      Variable s = variable("S");
-      Variable t = variable("T");
-      Variable v = variable("V");
-      Variable w = variable("W");
-      Variable x = variable("X");
-      Variable y = variable("Y");
-      Variable z = variable("Z");
-      Variable anon = TermUtils.createAnonymousVariable();
-      Variable[] variables = {q, r, s, t, v, w, x, y, z, anon};
-      Structure input = structure("p1", x, v, anon, EmptyList.EMPTY_LIST, y, q, integerNumber(1), structure("p2", y, decimalFraction(1.5), w), list(s, y, integerNumber(7), r, t),
+      PVar q = variable("Q");
+      PVar r = variable("R");
+      PVar s = variable("S");
+      PVar t = variable("T");
+      PVar v = variable("V");
+      PVar w = variable("W");
+      PVar x = variable("X");
+      PVar y = variable("Y");
+      PVar z = variable("Z");
+      PVar anon = TermUtils.createAnonymousVariable();
+      PVar[] variables = {q, r, s, t, v, w, x, y, z, anon};
+      PStruct input = structure("p1", x, v, anon, EmptyList.EMPTY_LIST, y, q, integerNumber(1), structure("p2", y, decimalFraction(1.5), w), list(s, y, integerNumber(7), r, t),
                   z);
-      Set<Variable> result = TermUtils.getAllVariablesInTerm(input);
+      Set<PVar> result = TermUtils.getAllVariablesInTerm(input);
       assertEquals(variables.length, result.size());
-      for (Variable variable : variables) {
+      for (PVar variable : variables) {
          assertTrue(result.contains(variable));
       }
    }
@@ -178,7 +178,7 @@ public class TermUtilsTest {
    @Test
    public void testAtomCastToNumeric() {
       try {
-         Atom a = atom("1");
+         PAtom a = atom("1");
          TermUtils.castToNumeric(a);
          fail();
       } catch (ProjogException e) {
@@ -188,7 +188,7 @@ public class TermUtilsTest {
 
    @Test
    public void testVariableCastToNumeric() {
-      Variable v = variable();
+      PVar v = variable();
       try {
          TermUtils.castToNumeric(v);
          fail();
@@ -204,7 +204,7 @@ public class TermUtilsTest {
    public void testStructureCastToNumeric() {
       // test that, even if it represents an arithmetic expression,
       // a structure causes an exception when passed to castToNumeric
-      Structure arithmeticExpression = structure("*", integerNumber(3), integerNumber(7));
+      PStruct arithmeticExpression = structure("*", integerNumber(3), integerNumber(7));
       try {
          TermUtils.castToNumeric(arithmeticExpression);
          fail();
@@ -215,7 +215,7 @@ public class TermUtilsTest {
 
    @Test
    public void testIntegerNumberToLong() {
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
+      KB kb = TestUtils.createKnowledgeBase();
       Calculatables calculatables = getCalculatables(kb);
       assertEquals(Integer.MAX_VALUE, TermUtils.toLong(calculatables, integerNumber(Integer.MAX_VALUE)));
       assertEquals(1, TermUtils.toLong(calculatables, integerNumber(1)));
@@ -225,22 +225,22 @@ public class TermUtilsTest {
 
    @Test
    public void testArithmeticFunctionToLong() {
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
+      KB kb = TestUtils.createKnowledgeBase();
       Calculatables calculatables = getCalculatables(kb);
-      Structure arithmeticExpression = structure("*", integerNumber(3), integerNumber(7));
+      PStruct arithmeticExpression = structure("*", integerNumber(3), integerNumber(7));
       assertEquals(21, TermUtils.toLong(calculatables, arithmeticExpression));
    }
 
    @Test
    public void testToLongExceptions() {
-      KnowledgeBase kb = TestUtils.createKnowledgeBase();
+      KB kb = TestUtils.createKnowledgeBase();
       assertTestToLongException(kb, atom("test"), "Cannot find calculatable: test");
       assertTestToLongException(kb, structure("p", integerNumber(1), integerNumber(1)), "Cannot find calculatable: p/2");
       assertTestToLongException(kb, decimalFraction(0), "Expected integer but got: FRACTION with value: 0.0");
       assertTestToLongException(kb, structure("+", decimalFraction(1.0), decimalFraction(1.0)), "Expected integer but got: FRACTION with value: 2.0");
    }
 
-   private void assertTestToLongException(KnowledgeBase kb, PTerm t, String expectedExceptionMessage) {
+   private void assertTestToLongException(KB kb, PTerm t, String expectedExceptionMessage) {
       Calculatables calculatables = getCalculatables(kb);
       try {
          TermUtils.toLong(calculatables, t);
@@ -252,13 +252,13 @@ public class TermUtilsTest {
 
    @Test
    public void testGetAtomName() {
-      Atom a = atom("testAtomName");
+      PAtom a = atom("testAtomName");
       assertEquals("testAtomName", TermUtils.getAtomName(a));
    }
 
    @Test
    public void testGetAtomNameException() {
-      Structure p = structure("testAtomName", atom());
+      PStruct p = structure("testAtomName", atom());
       try {
          assertEquals("testAtomName", TermUtils.getAtomName(p));
       } catch (ProjogException e) {
@@ -269,8 +269,8 @@ public class TermUtilsTest {
    @Test
    public void testCreateAnonymousVariable() {
       PTerm anon = TermUtils.createAnonymousVariable();
-      assertSame(Variable.class, anon.getClass());
-      assertSame(TermType.NAMED_VARIABLE, anon.type());
+      assertSame(PVar.class, anon.getClass());
+      assertSame(PrologOperator.NAMED_VARIABLE, anon.type());
       assertEquals("_", anon.toString());
       assertNotSame(anon, TermUtils.createAnonymousVariable());
    }
