@@ -47,10 +47,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     final float actedConfidence = 0.75f; //similar to Operator.exec
 
 
-    private final ArrayRealVector actByExpectation, actByQ;
+    private final ArrayRealVector actByExpectation, actByQ, lastActByQ;
     private final ArrayRealVector actByPriority;
-    private RealVector normalizedDesire;
-
+    private RealVector combinedDesire;
+    final double actionMomentum = 0.15; //smooths the action vectors
 
     /** if NARS does not specify one by the next frame,
      *  whether to invoke an action in the environment
@@ -115,8 +115,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         this.actByPriority = new ArrayRealVector(env.numActions());
         this.actByQ = new ArrayRealVector(env.numActions());
+        this.lastActByQ = new ArrayRealVector(env.numActions());
         this.actByExpectation = new ArrayRealVector(env.numActions());
-        this.normalizedDesire = new ArrayRealVector(env.numActions());
+        this.combinedDesire = new ArrayRealVector(env.numActions());
 
 
         opReg = nar.on(operator = new Operator("^" + operationTerm) {
@@ -170,7 +171,6 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         //spontaneous(initialPossibleDesireConfidence);
         setActedBeliefConfidence(actedConfidence / getNumActions());
         setActedGoalConfidence(actedConfidence / getNumActions());
-        brain.setAlpha(0.1f);
     }
 
     /** fast immediate checks to discount terms which are definitely not representative of a state */
@@ -198,13 +198,13 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     /* the effective action desire value, as aggregated between frames from NARS executions */
     public double getDesire(int action) {
-        return normalizedDesire.getEntry(action);
+        return combinedDesire.getEntry(action);
     }
     public double getNARDesire(int action) {
         return actByExpectation.getEntry(action);
     }
     public double getQDesire(int action) {
-        return actByQ.getEntry(action);
+        return lastActByQ.getEntry(action);
     }
 
     public int getNumActions() {
@@ -277,7 +277,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         //TODO check fairness of the equal value conditions
         for (int i = 0; i < getNumActions(); i++) {
-            double  v = normalizedDesire.getEntry(i);
+            double  v = combinedDesire.getEntry(i);
             if ((v > highest) ||
                     //if equal, decide randomly if it should replace it, to be fair
                     ((v >= highest) && (Memory.randomNumber.nextBoolean()))
@@ -305,41 +305,45 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             int a = Memory.randomNumber.nextInt(actions);
 
             //for display purposes:
-            normalizedDesire.set(0);
-            normalizedDesire.setEntry(a, 0.5f);
+            combinedDesire.set(0);
+            combinedDesire.setEntry(a, 0.5f);
 
             return getAction(a);
         }
 
 
-        double me = actByExpectation.getNorm();
-        double mq = actByQ.getNorm();
-        if (me != 0) me = 1/me;
-        else me = 0;
-        if (mq != 0) mq = 1/mq;
-        else mq = 0;
+        normalizeActionVector(actByExpectation);
+        normalizeActionVector(actByQ);
 
-        for (int i = 0; i < normalizedDesire.getDimension(); i++) {
+
+
+        for (int i = 0; i < combinedDesire.getDimension(); i++) {
+
             //50%/50% q and nars
+            double d = ( actByExpectation.getEntry(i) + actByQ.getEntry(i) );
 
-            double d = 0.5f *
-                    (actByExpectation.getEntry(i) * me +
-                     actByQ.getEntry(i) * mq);
+            double p = combinedDesire.getEntry(i);
 
-            normalizedDesire.setEntry(i, d);
+            double n = (p * actionMomentum) + (1.0 - actionMomentum) * d;
+            combinedDesire.setEntry(i, d);
         }
 
 
         int winner = getMaxDesiredAction();
+
+        //System.out.println(actByExpectation + " " + actByQ + " " + winner);
+
+
         if (winner == -1) {
             return null; //no winner?
         }
 
-        double alignment = normalizedDesire.dotProduct(actByExpectation);
+        //double alignment = normalizedDesire.dotProduct(actByExpectation);
 
         //System.out.print("NARS exec: '" + winner + "' -> " + winner);
         //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
 
+        //reset for next cycle
         actByExpectation.set(0);
         actByPriority.set(0);
 
@@ -491,6 +495,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         }
 
 
+
         for (int i = 0; i < getNumActions(); i++) {
             Operation oa = getAction(i);
 
@@ -499,6 +504,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 QEntry v = getEntry(state, oa);
                 if (v!=null) {
                     double q = v.getQ();
+
                     if (Double.isFinite(q)) {
                         //double e = v.getE();
                         //if (e != 0) {
@@ -509,10 +515,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 }
             }
 
+            lastActByQ.setEntry(i, actByQ.getEntry(i));
             actByQ.setEntry(i, qSum);
         }
-        if (actByQ.getNorm() > 0)
-            actByQ.unitize();
 
 
         lastAction = nextAction;
@@ -520,6 +525,31 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     }
 
+    protected static void normalizeActionVector(RealVector r) {
+        double sum = 0;
+        double min = Double.MAX_VALUE;
+        double max = Double.MIN_VALUE;
+
+        int dim = r.getDimension();
+        for (int i = 0; i < dim;i++) {
+            double v = r.getEntry(i);
+            sum += v;
+            if (v < min) min = v;
+            if (v > max) max = v;
+        }
+
+        for (int i = 0; i < dim;i++) {
+            if ((sum == 0) || (min == max)) {
+                r.setEntry(i, 1.0 / dim);
+                continue;
+            }
+
+            double v = r.getEntry(i);
+            v =  (v - min) / (max - min) / sum;
+            r.setEntry(i, v);
+        }
+
+    }
 
     public Iterable<S> getStates() { return rows; }
 }

@@ -43,7 +43,7 @@ public class QVis extends JPanel implements Runnable {
             int color;
             if (v != null) {
                 Concept c = v.concept;
-                float p = 0.2f + 0.8f * pri;
+                float p = 0.4f + 0.6f * pri;
 
 
                 float beliefValue = (float) v.getQSentence(Symbols.GOAL);
@@ -52,11 +52,12 @@ public class QVis extends JPanel implements Runnable {
                 float hue = (float)(FastMath.sin(qValue) + 1.0)/2f;
 
 
-                float sat = beliefValue;
+                float sat = 0.5f*p+0.5f;
 
-                float bri = p;
+                float bri = beliefValue;
 
                 color = Video.colorHSB(hue, sat, bri);
+                //System.out.println(hue + " " + sat + " " + bri);
 
             }
             else {
@@ -71,8 +72,8 @@ public class QVis extends JPanel implements Runnable {
         }
 
     };
-    final MatrixImage ai = new MatrixImage(30,400);
-    final MatrixImage aqi = new MatrixImage(30,400);
+    final MatrixImage ai = new MatrixImage(30,400, -1, 1);
+    final MatrixImage aqi = new MatrixImage(30,400, -1, 1);
     private final NWindow nmi;
 
     MatrixImage.Data2D qData = new MatrixImage.Data2D() {
@@ -96,7 +97,9 @@ public class QVis extends JPanel implements Runnable {
 
         @Override
         public double getValue(final int y, final int x) {
-            return agent.getQDesire(y);
+            double d = agent.getQDesire(y);
+
+            return d;
         }
 
     };

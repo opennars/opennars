@@ -1,11 +1,13 @@
 package nars.nario;
 
 import automenta.vivisect.Video;
-import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import nars.rl.*;
+import nars.rl.AEPerception;
+import nars.rl.HaiSOMPerception;
+import nars.rl.Perception;
+import nars.rl.QLAgent;
 import nars.rl.example.QVis;
 
 import java.awt.*;
@@ -20,13 +22,13 @@ public class RLNario extends NARio  {
     public RLNario(NAR nar, Perception... p) {
         super(nar);
 
-        float fps = 20f;
+        float fps = 60f;
         gameRate = 1.0f / fps;
 
         QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p);
 
-        agent.brain.setEpsilon(0.1);
-        agent.brain.setAlpha(0.5);
+        agent.brain.setEpsilon(0.15);
+        agent.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
 
@@ -72,21 +74,21 @@ public class RLNario extends NARio  {
     public static void main(String[] args) {
 
 
-        NAR nar = new NAR(new Default(2000, 400, 4).setInternalExperience(null) );
+        NAR nar = new NAR(new Default(2000, 100, 4).setInternalExperience(null) );
 
         nar.param.duration.set(memoryCyclesPerFrame * 3);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.5);
-        nar.param.shortTermMemoryHistory.set(3);
+        nar.param.decisionThreshold.set(0.8);
+        nar.param.shortTermMemoryHistory.set(2);
 
         new RLNario(nar,
-                new RawPerception("r", 0.5f),
+                //new RawPerception("r", 0.7f),
                 //new RawPerception.BipolarDirectPerception("r", 0.3f),
-                new HaiSOMPerception("s", 2, 0.3f)
-                //new AEPerception("a", 0.2f, 15, 2).setLearningRate(0.02).setSigmoid(true)
-                //new AEPerception("b", 0.2f, 15).setLearningRate(0.02).setSigmoid(false)
+                new HaiSOMPerception("s", 2, 0.6f),
+                new AEPerception("a", 0.6f, 3, 2).setLearningRate(0.02).setSigmoid(true),
+                new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
         );
 
     }

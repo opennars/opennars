@@ -20,7 +20,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     double dq = 0; //delta-Q; current q = q0 + dq, temporary
     double q0 = 0; //previous Q value, for comparing nar vs. QL influence
     double q = 0; //current q-value
-    double e = 0; //eligibility trace
+    double e = 1; //eligibility trace
 
     //TODO modes: average, nar, q
     boolean defaultQMode = true;
@@ -42,7 +42,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
         q0 = q;
 
-        q = q + dq * e;
+        q = q + dq;
 
         dq = 0;
     }
@@ -54,9 +54,9 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     /**
      * adds a deltaQ divided by E (meaning it must be multiplied by the eligiblity trace before adding to the accumulator
      */
-    public void addDQ(final double dqDivE) {
+    public void addDQ(final double dq) {
 
-        dq += dqDivE * e;
+        this.dq += dq;
     }
 
 
@@ -94,14 +94,11 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     public double getQ() { return q;    }
 
     public double getQ(Sentence sentence) {
-        if (!defaultQMode)
-            return getQ();
-        else
-            return getQSentence(sentence);
+        return getQSentence(sentence);
     }
 
     long lastCommit = -1;
-    long commitEvery = 5;
+    long commitEvery = 0;
     float lastFreq = -1;
 
     /** input to NAR */

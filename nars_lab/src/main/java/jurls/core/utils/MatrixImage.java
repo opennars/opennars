@@ -47,6 +47,11 @@ public class MatrixImage extends JComponent {
         setMinimumSize(new Dimension(width, height));
 
     }
+    public MatrixImage(int width, int height, double min, double max) {
+        this(width, height);
+        this.minValue = min;
+        this.maxValue = max;
+    }
 
     public int val2col(final double n, final double min, final double max) {
         final double mean = (max + min) / 2.0;

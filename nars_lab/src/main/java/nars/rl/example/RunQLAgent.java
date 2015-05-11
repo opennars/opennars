@@ -253,8 +253,8 @@ public class RunQLAgent extends JPanel {
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.8f),
-                //new RawPerception.BipolarDirectPerception("L", 0.75f),
+                //new RawPerception("L", 0.8f),
+                new RawPerception.BipolarDirectPerception("L", 0.75f),
 
                 //new AEPerception("A", 0.5f, 4).setLearningRate(0.104),//.setSigmoid(true)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
@@ -272,7 +272,7 @@ public class RunQLAgent extends JPanel {
 
 
 
-        a.agent.brain.setEpsilon(0.2);
+        a.agent.brain.setEpsilon(0.1);
         a.agent.brain.setAlpha(0.1);
 
 

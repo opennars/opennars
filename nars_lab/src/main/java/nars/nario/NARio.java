@@ -139,7 +139,7 @@ public class NARio extends Run implements RLEnvironment {
 
     final DoubleArrayList o = new DoubleArrayList();
 
-    final int rad = 3;
+    final int rad = 2;
     final DoubleArrayList radar = DoubleArrayList.newWithNValues((rad*2+1)*(rad*2+1), 0);
 
 
@@ -151,15 +151,18 @@ public class NARio extends Run implements RLEnvironment {
     @Override
     public double getReward() {
 
-        double horizontalMotionReward = 0.15;
-        double verticalMotionReward =   0.01;
+        double horizontalMotionReward = 0.35;
+        double verticalMotionReward =   0.04;
+
+        double adx = Math.abs(dx);
+        double ady = Math.abs(dy);
 
         double r = -1.0 +
-                Math.abs(dx) * horizontalMotionReward +
-                Math.abs(dy) * verticalMotionReward +
+                adx * horizontalMotionReward +
+                ady * verticalMotionReward +
                 bonus;
 
-        bonus *= 0.5; //decay
+        bonus *= 0.95; //decay
 
         return r;
     }
@@ -171,8 +174,8 @@ public class NARio extends Run implements RLEnvironment {
         else pressed = true;
 
 
-        if (mario.keys[action] == pressed)
-            return false;
+        /*if (mario.keys[action] == pressed)
+            return false;*/
 
         //System.out.println('@' + nar.time() + " " + Arrays.toString(mario.keys));
         mario.keys[action] = pressed;
@@ -395,7 +398,7 @@ public class NARio extends Run implements RLEnvironment {
         nar.input("<SELF --> [died]>. :|:");
         goals();
         System.out.println("OUCH");
-        bonus -= 1;
+        bonus -= 10;
     }
 
     public void stomp() {

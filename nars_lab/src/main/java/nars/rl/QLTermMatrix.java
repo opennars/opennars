@@ -35,17 +35,17 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /** pending tasks to execute to prevent CME */
     transient private final List<Task> stateActionImplications = Global.newArrayList();
 
-    final int implicationOrder = TemporalRules.ORDER_CONCURRENT; //TemporalRules.ORDER_FORWARD;
+    final int implicationOrder = TemporalRules.ORDER_FORWARD; //TemporalRules.ORDER_FORWARD;
 
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
     char implicationPunctuation = Symbols.GOAL;
-    float updateThresh = Global.TRUTH_EPSILON * 3;
+    float updateThresh = Global.TRUTH_EPSILON * 3; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
-    float sensedStatePrioritySame = 0.3f; //scales priority by this amount
+    float sensedStatePrioritySame = 0.75f; //scales priority by this amount
 
     /**
      * min threshold of q-update necessary to cause an effect
@@ -59,10 +59,10 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     float qUpdateConfidence = 0.25f;
 
     /** confidence of reward update beliefs; set to zero to disable reward beliefs */
-    float rewardBeliefConfidence = 0.75f;
+    float rewardBeliefConfidence = 0.8f;
 
     /** confidence of reward command goal; set to zero to disable reward beliefs */
-    float rewardGoalConfidence = 0.75f;
+    float rewardGoalConfidence = 0.8f;
 
     /** confidence of state belief updates */
     @Deprecated protected float stateUpdateConfidence = 0.9f;
@@ -98,7 +98,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             @Override
             public void qUpdate(S state, A action, double dqDivE, double eMult, double eAdd) {
 
-                if (qUpdateConfidence == 0) return;
+
                 if (action == null) return;
 
                 QEntry v = getEntry(state, action);
