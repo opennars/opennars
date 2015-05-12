@@ -156,10 +156,11 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
         //updateUI();
     }
 
-    @Override
-    void print(Class channel, Object o) {
 
+
+    void print(Class channel, Object o) {
         float priority = 0;
+
 
         if (o instanceof Task) {
 
@@ -189,11 +190,20 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
 
     protected void updateConcept(Concept c, float priority, String status) {
-        ConceptPanelBuilder.ConceptPanel cp = b.getFirstPanelOrCreateNew(c, true, false, 64);
-        //cp.setMessage(...)
-        applyPriority(c.term.getClass(), cp, priority);
-        append(cp);
+        //TODO execute at the end of the cycle, not in swing thread
+        //if it executes in-line with the cycle it can miss details that should be shown
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                ConceptPanelBuilder.ConceptPanel cp = b.getFirstPanelOrCreateNew(c, true, false, 64);
+                //cp.setMessage(...)
+                applyPriority(c.term.getClass(), cp, priority);
+                append(cp);
+            }
+        });
     }
+
 
     protected synchronized void append(JComponent j) {
         if (pendingDisplay.add(j))
