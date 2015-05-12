@@ -151,7 +151,7 @@ public class Subtract extends MathNode {
         if (Double.isFinite(an) && Double.isFinite(bn))
             return new Doubliteral(an - bn);
 
-        return this;
+        return super.normalize();
     }
 
     @Override

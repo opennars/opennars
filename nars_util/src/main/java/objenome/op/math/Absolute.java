@@ -125,7 +125,7 @@ public class Absolute extends MathNode {
             return new Doubliteral(Math.abs(an));
         }
 
-        return this;
+        return super.normalize();
     }
 
 

@@ -213,7 +213,7 @@ public class DivisionProtected extends MathNode {
             //if (bn == 0) return new Negate
         }
 
-        return this;
+        return super.normalize();
     }
 
     @Override

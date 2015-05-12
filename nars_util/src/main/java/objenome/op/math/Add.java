@@ -152,7 +152,7 @@ public class Add extends MathNode {
             if (bn == 0) return a;
         }
 
-        return this;
+        return super.normalize();
     }
 
     @Override

@@ -40,13 +40,5 @@ abstract public class Numeric1d<Y extends Number> extends Numeric1 {
     }
     
 
-    @Override
-    public Node normalize() {
-
-        double a = getChildConstantValue(0);
-        if (Double.isFinite(a)) return new Doubliteral(value(a));
-
-        return this;
-    }
 
 }

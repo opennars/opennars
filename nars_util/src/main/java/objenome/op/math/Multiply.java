@@ -160,7 +160,7 @@ public class Multiply<X extends Node> extends MathNode {
             //if (bn == -1) return negate(a)
         }
 
-        return this;
+        return super.normalize();
     }
 
     @Override

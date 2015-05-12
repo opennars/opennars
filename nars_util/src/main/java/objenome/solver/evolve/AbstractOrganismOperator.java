@@ -76,6 +76,9 @@ public abstract class AbstractOrganismOperator implements OrganismOperator {
         EndOperator end = getEndEvent(individuals);
         Organism[] newParents = perform(end, parents);
 
+        for (Organism o : newParents)
+            o.normalize();
+
         // fires the end event only if the operator was successful
         if (parents != null) {
             end.setChildren(newParents);

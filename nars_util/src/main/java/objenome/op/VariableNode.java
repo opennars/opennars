@@ -36,7 +36,7 @@ package objenome.op;
  */
 public class VariableNode<V> extends Node {
 
-    public final Variable<V> variable;
+    public Variable<V> variable;
 
     /**
      * Constructs a new <code>VariableNode</code> wrapper for the given variable
@@ -122,5 +122,9 @@ public class VariableNode<V> extends Node {
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof VariableNode) && (((VariableNode) obj).variable.equals(this.variable));
+    }
+
+    public boolean isVariable() {
+        return true;
     }
 }

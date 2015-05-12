@@ -75,7 +75,7 @@ public class Min2 extends MathNode {
             return b;
         }
 
-        return this;
+        return super.normalize();
     }
 
     @Override

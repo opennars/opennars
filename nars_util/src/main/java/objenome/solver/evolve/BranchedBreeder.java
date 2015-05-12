@@ -159,6 +159,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
             } while (parents == null);
 
             for (int i = 0; (i < parents.length) && (num > 0); i++) {
+                parents[i].normalize();
                 newPopulation.add(parents[i]);
                 num--;
             }

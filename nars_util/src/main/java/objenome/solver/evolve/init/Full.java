@@ -239,7 +239,9 @@ public class Full implements TypedInitialization, Listener<ConfigEvent>, GPConta
      */
     @Override
     public TypedOrganism newOrganism() {
-        return new TypedOrganism(createTree());
+        TypedOrganism t = new TypedOrganism(createTree());
+        t.normalize();
+        return t;
     }
 
     /**

@@ -22,6 +22,7 @@
 package objenome.op.trig;
 
 import objenome.op.Node;
+import objenome.op.Numeric1d;
 import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
@@ -31,25 +32,8 @@ import objenome.util.TypeUtil;
  *
  * @since 2.0
  */
-public class HyperbolicTangent extends Node {
+public class HyperbolicTangent extends Numeric1d {
 
-    public static final String IDENTIFIER = "TANH";
-
-    /**
-     * Constructs a HyperbolicTangentFunction with one <code>null</code> child.
-     */
-    public HyperbolicTangent() {
-        this(null);
-    }
-
-    /**
-     * Constructs a HyperbolicTangentFunction with one numerical child node.
-     *
-     * @param child the child node.
-     */
-    public HyperbolicTangent(Node child) {
-        super(child);
-    }
 
     /**
      * Evaluates this function. The child node is evaluated, the result of which
@@ -60,36 +44,26 @@ public class HyperbolicTangent extends Node {
      * @return hyperbolic tangent of the value returned by the child
      */
     @Override
-    public Double evaluate() {
-        Object c = getChild(0).evaluate();
-
-        return Math.tanh(NumericUtils.asDouble(c));
+    public double value(double x) {
+        return Math.tanh(NumericUtils.asDouble(x));
     }
 
-    /**
-     * Returns the identifier of this function which is TANH
-     *
-     * @return this node's identifier
-     */
+
+    public HyperbolicTangent(Node child) {
+        super(child);
+    }
+
+    public HyperbolicTangent() {
+        this(null);
+    }
+
+
+
+    public static final String IDENTIFIER = "TANH";
+
     @Override
     public String getIdentifier() {
         return IDENTIFIER;
     }
 
-    /**
-     * Returns this function node's return type for the given child input types.
-     * If there is one input type of a numeric type then the return type will be
-     * Double. In all other cases this method will return <code>null</code> to
-     * indicate that the inputs are invalid.
-     *
-     * @return the Double class or null if the input type is invalid.
-     */
-    @Override
-    public Class dataType(Class... inputTypes) {
-        if ((inputTypes.length == 1) && TypeUtil.isNumericType(inputTypes[0])) {
-            return Double.class;
-        } else {
-            return null;
-        }
-    }
 }

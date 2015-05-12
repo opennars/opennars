@@ -1,6 +1,8 @@
 package objenome.solver;
 
-import objenome.solver.evolve.TypedOrganism;
+import objenome.op.Variable;
+
+import java.util.Map;
 
 /**
  * Civliziation evolutionary objective

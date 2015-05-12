@@ -163,6 +163,15 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
         }
     }
 
+    @Override
+    public void normalize() {
+        Node nn = getRoot().normalize();
+        if (nn!=getRoot()) {
+            System.err.println(getRoot() + " normalized to " + nn);
+        }
+        setRoot(nn);
+    }
+
     /**
      * Returns the maximum depth of the program tree. The depth of a tree is
      * defined as the length of the path from the root to the deepest node in

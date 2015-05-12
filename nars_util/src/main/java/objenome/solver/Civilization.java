@@ -89,8 +89,8 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
 
 
-        the(TypedOrganism.MAXIMUM_DEPTH, 7);
-        the(Full.MAXIMUM_INITIAL_DEPTH, 4);
+        the(TypedOrganism.MAXIMUM_DEPTH, 5);
+        the(Full.MAXIMUM_INITIAL_DEPTH, 3);
         the(OrganismBuilder.class, new Full());
 
         the(Breeder.SELECTOR, new RouletteSelector());
@@ -246,46 +246,63 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         return ds;
     }
 
-    double maxSurvivalCostPercentile = 90;
-    double minReproductionCostPercentile = 25;
+    double minLifeSpan = 0.25;
+    double maxSurvivalCostPercentile = 80;
 
-    protected void reproduce(Life x) {
-        System.out.println(x + " reproduce");
+    protected void reproduce() {
+        //System.out.println(x + " reproduce");
         BranchedBreeder b = new BranchedBreeder();
-        b.update(getPopulation(), 1);
+        try {
+            b.update(getPopulation(), 1);
+        }
+        catch (Exception e) {
+            System.err.println("reproduction accident: " + e);
+        }
     }
 
     protected void die(Life x) {
         lives.remove(this);
         getPopulation().remove(x.i);
-        System.out.println(x + " die");
+        System.out.println(x + " die @ " + x.getAge() );
+
+        reproduce();
     }
 
+    int cycle = 0;
     protected synchronized void updatePopulation() {
         //maintain population level
         if (population.size() == 0) {
             getOrganismBuilder().populate(getPopulation(), populationSize);
         }
+
+        if (cycle % 64 == 0)
+            System.err.println( "\n" + population.size() + " organisms between " + getCostStatistics().getMin() + ":min .. max:" + getCostStatistics().getMax() + "\n" );
+
+        cycle++;
     }
 
     protected boolean shouldLive(Life x) {
         DescriptiveStatistics s = getCostStatistics();
-        double pp = (x.costRate());
-        double maxSurvivalCostPercentileEstimate = s.getPercentile(maxSurvivalCostPercentile);
+        double pp = (x.costRate()),  maxSurvivalCostPercentileEstimate = s.getPercentile(maxSurvivalCostPercentile * x.getAge());
 
         boolean result;
 
-        if (pp > maxSurvivalCostPercentileEstimate) {
-            die(x);
+        if (x.getAge() < minLifeSpan) {
+            result = true;
+        }
+        else if (pp > maxSurvivalCostPercentileEstimate) {
             result = false;
         }
         else {
-            double minReproductionCostPercentileEstimate = s.getPercentile(minReproductionCostPercentile);
-            if (population.size() < populationSize && pp <= minReproductionCostPercentileEstimate) {
-                reproduce(x);
-            }
+            //double minReproductionCostPercentileEstimate = s.getPercentile(minReproductionCostPercentile);
+//            if (population.size() < populationSize && pp <= minReproductionCostPercentileEstimate) {
+//                reproduce(x);
+//            }
             result = true;
         }
+
+        if (!result)
+            die(x);
 
         updatePopulation();
 
@@ -296,7 +313,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 
         final MutableObjectDoubleMap<EGoal<I>> cost = new ObjectDoubleHashMap<EGoal<I>>().asSynchronized();
 
-        double age = 1;
+        double age = 0;
 
         public final I i;
         private double totalCost = 0;
@@ -306,22 +323,28 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         }
 
 
+        @Override
+        public String toString() {
+            return i.toString() + "[" + age + ", " + (totalCost) + "]";
+        }
+
         /** rate: cost/time */
         public double costRate() {
+            if (age == 0) return 0.5;
             return totalCost / age;
         }
 
         protected void evaluate(EGoal<I> goal, double cost) {
             this.cost.put(goal, cost);
             totalCost = this.cost.sum();
-            i.setFitness(new DoubleFitness.Minimize(totalCost));
+            i.setFitness(new DoubleFitness.Minimize(costRate()));
         }
 
         /** returns true if still alive, false if dead */
         protected boolean age(double time) {
             //Thread.currentThread().setPriority(..);
 
-            age++;
+            age+=time;
 
             //shouldReproduce(this);
             return shouldLive(this);
@@ -346,7 +369,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 
                     evaluate(g, s);
 
-                    if (!age(1.0)) {
+                    if (!age(1.0 / goalSequence.size())) {
                         return;
                     }
                 } catch (Exception e) {
@@ -358,6 +381,11 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 
             die(this);
             updatePopulation();
+        }
+
+        /** age of the organism; 0=birth, 1=retired (finished all goals) */
+        public double getAge() {
+            return age;
         }
     }
 

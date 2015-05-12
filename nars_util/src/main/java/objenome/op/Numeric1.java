@@ -85,4 +85,14 @@ abstract public class Numeric1 extends MathNode implements UnivariateFunction, F
     @Override public Double apply(Double x) {
         return value(x);
     }
+
+
+    @Override
+    public Node normalize() {
+
+        double a = getChildConstantValue(0);
+        if (Double.isFinite(a)) return new Doubliteral(value(a));
+
+        return super.normalize();
+    }
 }

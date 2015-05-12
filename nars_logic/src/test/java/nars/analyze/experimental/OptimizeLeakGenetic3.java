@@ -13,16 +13,18 @@ import nars.testing.condition.OutputCondition;
 import objenome.op.DoubleVariable;
 import objenome.op.Node;
 import objenome.op.Variable;
+import objenome.op.VariableNode;
 import objenome.op.math.*;
+import objenome.op.trig.HyperbolicTangent;
 import objenome.solver.Civilization;
 import objenome.solver.EGoal;
-import objenome.solver.evolve.OrganismBuilder;
 import objenome.solver.evolve.RandomSequence;
 import objenome.solver.evolve.TypedOrganism;
-import objenome.solver.evolve.init.Full;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 
@@ -32,11 +34,13 @@ import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
 
+
+
     public static void main(String[] args) {
         Global.DEBUG = false;
 
-        final int threads = 3;
-        final int individuals = 8;
+        final int threads = 2;
+        final int individuals = 64;
         final int cycles = 750;
 
         Civilization c = new OptimizeLeakGenetic3(threads, individuals, cycles);
@@ -53,6 +57,18 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         l.add(new Subtract());
         l.add(new Multiply());
         l.add(new DivisionProtected());
+
+
+        l.add(new Min2());
+        l.add(new Max2());
+        l.add(new Absolute());
+
+        l.add(new HyperbolicTangent());
+
+        LibraryGoal prototype = new LibraryGoal();
+        for (Variable v : prototype.var)
+            l.add(new VariableNode(v));
+
         return l;
     }
 
@@ -98,34 +114,34 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
     public static class LibraryGoal extends EGoal<TypedOrganism> {
 
-        public final DoubleVariable derPri;
-        public final DoubleVariable derQua;
-        public final DoubleVariable derQuest;
-        public final DoubleVariable derJudge;
-        public final DoubleVariable derGoal;
+        public List<Variable> var;
+        public DoubleVariable derPri;
+        public DoubleVariable derQua;
+        public DoubleVariable derQuest;
+        public DoubleVariable derJudge;
+        public DoubleVariable derGoal;
 
-        public final DoubleVariable derComplex;
+        public DoubleVariable derComplex;
 
-        public final DoubleVariable c0;
-        public final DoubleVariable c1;
-        public final DoubleVariable c2;
+        public DoubleVariable c0;
+        public DoubleVariable c1;
+        public DoubleVariable c2;
 
-        private final String path;
-        private final int maxCycles;
+        private String path;
+        private int maxCycles;
 
-        public final List<Variable> var = Controls.reflect(LibraryGoal.class, this);
-        private final String script;
+        private String script;
 
         double[] conPri = new double[4];
 
-        public LibraryGoal(String path, int maxCycles) {
-            super(path);
+        public LibraryGoal() {
+            super(null);
 
-            this.path = path;
-            this.maxCycles = maxCycles;
-            this.script = LibraryInput.getExample(path);
+            initVar();
 
+        }
 
+        protected void initVar() {
             derPri = doubleVariable("derPri");
             derQua = doubleVariable("derQua");
             derQuest = doubleVariable("derQuest");
@@ -135,6 +151,19 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
             c0 = doubleVariable("c0");
             c1 = doubleVariable("c1");
             c2 = doubleVariable("c2");
+
+            var = Controls.reflect(LibraryGoal.class, this);
+        }
+
+        public LibraryGoal(String path, int maxCycles) {
+            super(path);
+
+            this.path = path;
+            this.maxCycles = maxCycles;
+            this.script = LibraryInput.getExample(path);
+
+            initVar();
+
         }
 
         protected void cycle(NAR n) {
@@ -165,6 +194,14 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
         @Override
         public double cost(TypedOrganism leakProgram) {
+
+            //bind all program variables to this instance
+//            Node root = (leakProgram.getRoot());
+//            Map<String, Variable> vars = new HashMap();
+//            for (Object o : root.listVariables()) {
+//                VariableNode v = (VariableNode)o;
+//                vars.put(v.getIdentifier(), v);
+//            }
 
             Default b = new Default() {
                 @Override
@@ -217,8 +254,9 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
             double cost = OutputCondition.cost(nar);
             if (Double.isInfinite(cost))
-                cost = maxCycles;
-            return cost;
+                cost = 1.0;
+
+            return cost / maxCycles;
         }
 
     }

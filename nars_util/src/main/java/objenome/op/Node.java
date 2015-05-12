@@ -21,9 +21,11 @@
  */
 package objenome.op;
 
-import java.util.*;
-
+import com.gs.collections.impl.list.mutable.FastList;
+import com.gs.collections.impl.set.mutable.UnifiedSet;
 import objenome.util.TypeUtil;
+
+import java.util.*;
 
 
 /**
@@ -413,7 +415,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         List<Node> terminals = listTerminals();
 
         // Remove duplicates.
-        Set<Node> terminalHash = new HashSet<>(terminals);
+        Set<Node> terminalHash = new UnifiedSet<>(terminals);
 
         return terminalHash.size();
     }
@@ -424,7 +426,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * @return a <code>List</code> of all the terminal nodes in this node tree
      */
     public List<Node> listTerminals() {
-        List<Node> terminals = new ArrayList<>();
+        List<Node> terminals = new FastList<>();
 
         int arity = getArity();
         if (isTerminal()) {
@@ -435,6 +437,24 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             }
         }
         return terminals;
+    }
+
+    public boolean isVariable() {
+        return false;
+    }
+
+    public Set<VariableNode> listVariables() {
+        Set<VariableNode> v = new UnifiedSet<>();
+
+        int arity = getArity();
+        if (isVariable()) {
+            v.add((VariableNode) this);
+        } else {
+            for (int i = 0; i < arity; i++) {
+                v.addAll(getChild(i).listVariables());
+            }
+        }
+        return v;
     }
 
     /**
@@ -697,7 +717,17 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
 
         return null;
     }
+    public Node newInstance(Node[] newChildren) {
+        try {
+            Node n = (Node) super.clone();
+            n.children = newChildren;
+            return n;
+        } catch (final CloneNotSupportedException e) {
+            assert false;
+        }
 
+        return null;
+    }
     /**
      * Compares an this node to another object for equality. Two nodes may be
      * considered equal if they have equal arity, equal identifiers, and their
@@ -775,7 +805,22 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
       * by default returns itself
       */
     public Node normalize() {
-        return this;
+        //continue with newChildren null, allocating a new Node[] only until necessary
+        boolean changed = false;
+        Node[] newChildren = null;
+        for (int i = 0; i < children.length; i++) {
+            Node c = children[i];
+            Node x = c.normalize();
+            if (c!=x) {
+                if (newChildren == null)
+                    newChildren = Arrays.copyOf(children, children.length);
+                newChildren[i] = x;
+                changed = true;
+            }
+        }
+        if (!changed) return this;
+
+        return this.newInstance(newChildren).normalize();
     }
 
 
