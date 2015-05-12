@@ -221,5 +221,7 @@ public class Parameters {
     
     public static float ANTICIPATION_CONFIDENCE=0.95f;
     
+    public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
+    
 }
 
