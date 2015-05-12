@@ -394,8 +394,10 @@ public class Concept extends Item<Term> implements Termable {
         s2.setOccurrenceTime(memory.time());
         if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
             Sentence projectedGoal = oldGoal.projection(memory.time(), nal.memory.param.duration.get());
-            nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
-            return;
+            if(projectedGoal!=null) {
+                nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
+                return;
+            }
         }
         
         if (task.aboveThreshold()) {
