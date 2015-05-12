@@ -375,10 +375,10 @@ public class Concept extends Item<Term> implements Termable {
                 
                 Sentence projectedGoal = oldGoal.projection(memory.time(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
-                    /*if (goal.after(oldGoal, nal.memory.param.duration.get())) {
-                        nal.singlePremiseTask(projectedGoal, task.budget); //it has to be projected
-                        return;
-                    }*/
+                   // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
+                       // nal.singlePremiseTask(projectedGoal, task.budget); 
+                        //return;
+                   // }
                     nal.setCurrentBelief(projectedGoal);
                     if(!(task.sentence.term instanceof Operation)) {
                         boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
@@ -390,21 +390,28 @@ public class Concept extends Item<Term> implements Termable {
             }
         } 
         
+        Stamp s2=goal.stamp.clone();
+        s2.setOccurrenceTime(memory.time());
+        if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
+            Sentence projectedGoal = oldGoal.projection(memory.time(), nal.memory.param.duration.get());
+            nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
+            return;
+        }
+        
         if (task.aboveThreshold()) {
 
             final Task beliefT = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-            Sentence projectedGoal = task.sentence.projection(memory.time(), task.sentence.getOccurenceTime());
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
                 trySolution(belief, task, nal); // check if the Goal is already satisfied (manipulate budget)
-                Sentence projectedBelief = belief.projection(memory.time(), belief.getOccurenceTime());
-                AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
+                AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
             }    
-            double Satisfaction=1.0-AntiSatisfaction;
             
-            TruthValue T=projectedGoal.truth.clone();
+            double Satisfaction=1.0-AntiSatisfaction;
+            TruthValue T=goal.truth.clone();
+            
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
             if (task.aboveThreshold() && AntiSatisfaction >= Parameters.SATISFACTION_TRESHOLD) {
@@ -415,7 +422,7 @@ public class Concept extends Item<Term> implements Termable {
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
-                if(projectedGoal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && !executeDecision(task)) {
+                if(goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && !executeDecision(task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                 }
             }
