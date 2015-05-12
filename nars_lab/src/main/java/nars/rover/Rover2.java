@@ -69,7 +69,7 @@ public class Rover2 extends PhysicsModel {
                     setNovelTaskBagSize(256));
             nar.param.inputsMaxPerCycle.set(100);
             nar.param.conceptsFiredPerCycle.set(64);
-            nar.setCyclesPerFrame(64);
+            nar.setCyclesPerFrame(16);
         }
 
         //NAR nar = new CurveBagNARBuilder().

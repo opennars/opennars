@@ -10,6 +10,7 @@ import nars.nal.concept.Concept;
  */
 abstract public class ConceptMap extends NARReaction {
 
+    public final NAR nar;
     int frame = -1;
     protected int cycleInFrame = -1;
 
@@ -22,6 +23,9 @@ abstract public class ConceptMap extends NARReaction {
     public ConceptMap(NAR nar) {
         super(nar, Events.ConceptActive.class,
                 Events.ConceptForget.class, Events.CycleEnd.class, Events.FrameEnd.class, Events.ResetStart.class);
+
+        this.nar = nar;
+
     }
 
     protected void onFrame() { }

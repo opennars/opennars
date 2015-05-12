@@ -8,10 +8,8 @@ import automenta.vivisect.swing.NWindow;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import nars.Events.ConceptProcessed;
-import nars.Events.TaskImmediateProcessed;
 import nars.NAR;
 import nars.Global;
-import nars.nal.concept.Concept;
 import nars.nal.tlink.TaskLink;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -267,12 +265,12 @@ public class LogicPerformance {
         TaskReasonGraph process = new TaskReasonGraph();
         
         
-        n.on(new TaskImmediateProcessed() {
-            @Override public void onProcessed(Task t, DirectProcess nal, Concept c) {
-                //TODO i broke this
-                //process.explain(t, analysisDepth, nal.produced);
-            }
-        }, TaskImmediateProcessed.class);
+//        n.on(new TaskImmediateProcessed() {
+//            @Override public void onProcessed(Task t, DirectProcess nal, Concept c) {
+//                //TODO i broke this
+//                //process.explain(t, analysisDepth, nal.produced);
+//            }
+//        }, TaskImmediateProcessed.class);
          n.on(new ConceptProcessed() {
 
             @Override

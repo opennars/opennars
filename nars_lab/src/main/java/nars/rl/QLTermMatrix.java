@@ -41,11 +41,11 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
     char implicationPunctuation = Symbols.GOAL;
-    float updateThresh = Global.TRUTH_EPSILON * 3; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
+    float updateThresh = Global.TRUTH_EPSILON * 2; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
-    float sensedStatePrioritySame = 0.75f; //scales priority by this amount
+    float sensedStatePrioritySame = 0.85f; //scales priority by this amount
 
     /**
      * min threshold of q-update necessary to cause an effect
@@ -187,8 +187,15 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
     public double q(final S state, final A action) {
+        return q(state, action, 0);
+    }
+
+    public double q(final S state, final A action, double deltaEligibility) {
         QEntry v = getEntry(state, action);
-        if (v == null) return Double.NaN;
+        if (v == null) return 0;
+        if (deltaEligibility!=0) {
+            v.addE(deltaEligibility);
+        }
         return v.getQ();
     }
 

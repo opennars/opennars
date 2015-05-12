@@ -36,7 +36,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     private final NAR.OperatorRegistration opReg;
 
 
-    final java.util.List<Task> incoming = new ArrayList();
+    java.util.List<Task> before = new ArrayList();
+    java.util.List<Task> now = new ArrayList();
 
     /** for fast lookup of operation terms, since they will be used frequently */
     final Operation[] operationCache;
@@ -50,7 +51,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     private final ArrayRealVector actByExpectation, actByQ, lastActByQ;
     private final ArrayRealVector actByPriority;
     private RealVector combinedDesire;
-    final double actionMomentum = 0.15; //smooths the action vectors
+    final double actionMomentum = 0.0; //smooths the action vectors
 
     /** if NARS does not specify one by the next frame,
      *  whether to invoke an action in the environment
@@ -183,8 +184,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     public boolean isRow(Term s) {
         if (!isRowPrefilter(s)) return false;
         for (Perception p : perceptions) {
-            if (p.isState(s))
+            if (p.isState(s)) {
+                System.out.println(s + " is row according to " + p);
                 return true;
+            }
         }
         return false;
     }
@@ -204,7 +207,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         return actByExpectation.getEntry(action);
     }
     public double getQDesire(int action) {
-        return lastActByQ.getEntry(action);
+        return actByQ.getEntry(action);
     }
 
     public int getNumActions() {
@@ -316,6 +319,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         normalizeActionVector(actByQ);
 
 
+        //System.out.println(actByQ + " " + actByExpectation);
 
         for (int i = 0; i < combinedDesire.getDimension(); i++) {
 
@@ -351,7 +355,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     }
 
     protected void onFrame() {
-        long now = nar.time();
+        long t = nar.time();
 
         env.frame();
 
@@ -371,17 +375,17 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             }
         }
 
-
-
         double[] o = env.observe();
 
+
+
         for (final Perception p : perceptions) {
-            Iterables.addAll(incoming, p.perceive(nar, o, nar.time()));
+            Iterables.addAll(this.now, p.perceive(nar, o, t));
         }
 
 
-        for (Task t : incoming) {
-            sense(t);
+        for (Task task : this.now) {
+            sense(task);
         }
 
         double r = env.getReward();
@@ -389,12 +393,16 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         goalReward();
 
 
-        learn(nextAction, incoming, r);
+        learn(nextAction, before, this.now, r);
 
 
-        incoming.clear();
+        //swap buffers
+        List<Task> tmp = before;
+        before = now;
 
 
+        now = tmp;
+        now.clear();
     }
 
     public void sense(Task environmentState) {
@@ -422,133 +430,154 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
      * @param confidence
      * @return
      */
-    public void learn(final Operation nextAction, final Iterable<Task> stateTasks, final double reward) {
+    public void learn(final Operation nextAction, final List<Task> lastStateTasks, final List<Task> currentStateTasks, final double reward) {
 
 
         // System.out.println(confidence + " " + Arrays.toString(state));
 
-        double alpha = brain.getAlpha();
+        //double alpha = brain.getAlpha();
         double gamma = brain.getGamma();
         double lambda = brain.getLambda();
 
         double sumDeltaQ = 0;
         final double GammaLambda = gamma * lambda;
 
-        int numTasks = 0;
-        for (Task i : stateTasks) {
 
-            float freq = i.sentence.truth.getFrequency();
-            float confidence = i.sentence.truth.getConfidence();
-            float expect = freq * confidence;
+        int numLastTasks = lastStateTasks.size();
+        int numTaskTransitions = currentStateTasks.size() * numLastTasks;
 
-            S state = (S)i.sentence.getTerm();
+        for (Task lastTask: lastStateTasks) {
 
-            //brain.qlearn(lastAction, , reward, nextAction, freq * confidence);
+            S lastState = (S) lastTask.getTerm();
+
+            double alpha = lastTask.getTruth().getConfidence();
+            double lastTaskExpectation = lastTask.getTruth().getExpectation();
+
+            double qLast = q(lastState, lastAction, lastTaskExpectation);
+
+            for (Task i : currentStateTasks) {
+
+                float freq = i.sentence.truth.getFrequency();
+                float confidence = i.sentence.truth.getConfidence();
+                double currentTaskExpectation = freq * confidence;
+
+                S state = (S) i.sentence.getTerm();
 
 
-            double qLast;
-            if (lastAction!=null) {
-                //qLast = qSentence(state, lastAction);
-                qLast = q(state, lastAction);
+                //brain.qlearn(lastAction, , reward, nextAction, freq * confidence);
+
+//
+//                double qLast;
+//                if (lastAction != null) {
+//                    //qLast = qSentence(state, lastAction);
+//                    qLast = q(state, lastAction);
+//                } else {
+//                    //qLast = Math.random();
+//                    qLast = 0;
+//                }
+
+//                if (!Double.isFinite(qLast)) {
+//                    // the entry does not exist.
+//                    // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
+//                    //System.out.println("qState missing: " + i);
+//                    //qLast = Math.random();
+//                    qLast = 0;
+//                }
+
+                //double sq = QEntry.getQSentence(i.sentence) * confidence;
+
+
+                //TODO compare: q(state, nextAction) with q(i.sentence)
+                //double DeltaQ = reward + Gamma * Q[StateX][StateY][Action] - Q[lastStateX][lastStateY][lastAction];
+                //double deltaQ = reward + gamma * q(state, nextAction) - q(lastState, lastAction);
+                double deltaQ = reward + (gamma * q(state, nextAction))
+
+                        //update eligiblity trace according to the expectation
+                        //et[lastStateX][lastStateY][lastAction] += 1;
+                        - qLast;
+
+                sumDeltaQ += alpha * deltaQ;
+
+                //brain.qUpdate(state, nextAction, sumDeltaQ, GammaLambda, 0);
             }
-            else {
-                //qLast = Math.random();
-                qLast = 0;
-            }
-
-            if (!Double.isFinite(qLast)) {
-                // the entry does not exist.
-                // input the task as a belief to create it, and maybe it will be available in a subsequent cycle
-                //System.out.println("qState missing: " + i);
-                //qLast = Math.random();
-                qLast = 0;
-            }
-
-            //double sq = QEntry.getQSentence(i.sentence) * confidence;
-            double nq = q(state, nextAction);
-
-            //TODO compare: q(state, nextAction) with q(i.sentence)
-            //double deltaQ = reward + gamma * q(state, nextAction) - qLast;
-            double deltaQ = reward + gamma * nq - qLast;
-
-            if (lastAction!=null)
-                brain.qUpdate(state, lastAction, Double.NaN, 1, nq);
-
-            final double alphaDeltaQ = alpha * deltaQ;
-            sumDeltaQ += alphaDeltaQ;
-
-            //brain.qUpdate(state, nextAction, sumDeltaQ, GammaLambda, 0);
-            numTasks++;
         }
 
-        if (numTasks > 0) {
+        if (numTaskTransitions == 0) numTaskTransitions = 1;
 
-            //System.out.println("deltaQ = " + sumDeltaQ);
-
-            List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
-            for (S i : s) {
-                for (Operation k : brain.getActions()) {
-                    brain.qUpdate(i, k, sumDeltaQ, GammaLambda, 0);
-                }
+        List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
+        for (S i : s) {
+            for (Operation k : brain.getActions()) {
+                brain.qUpdate(i, k, sumDeltaQ/numTaskTransitions, GammaLambda/numTaskTransitions, 0);
             }
-
         }
 
 
 
+
+
+
+        int numRows = rows.size();
         for (int i = 0; i < getNumActions(); i++) {
             Operation oa = getAction(i);
 
             double qSum = 0;
+
             for (S state : rows) {
                 QEntry v = getEntry(state, oa);
                 if (v!=null) {
                     double q = v.getQ();
 
                     if (Double.isFinite(q)) {
-                        //double e = v.getE();
-                        //if (e != 0) {
-                            double qv = q;
-                            qSum += qv;
-                        //}
+                           qSum += q;
                     }
                 }
             }
+
+            if (numRows == 0) numRows = 1;
+            qSum /= numRows;
 
             lastActByQ.setEntry(i, actByQ.getEntry(i));
             actByQ.setEntry(i, qSum);
         }
 
 
+
         lastAction = nextAction;
         lastReward = reward;
-
     }
 
     protected static void normalizeActionVector(RealVector r) {
-        double sum = 0;
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
+
+        if (r.getL1Norm()==0) {
+            return;
+        }
+
+        r.unitize();
 
         int dim = r.getDimension();
         for (int i = 0; i < dim;i++) {
             double v = r.getEntry(i);
-            sum += v;
             if (v < min) min = v;
             if (v > max) max = v;
         }
 
-        for (int i = 0; i < dim;i++) {
-            if ((sum == 0) || (min == max)) {
-                r.setEntry(i, 1.0 / dim);
-                continue;
-            }
+        if (min == max) {
+            r.set(1.0/dim);
+            return;
+        }
 
+        double sum = 0;
+
+        for (int i = 0; i < dim;i++) {
             double v = r.getEntry(i);
-            v =  (v - min) / (max - min) / sum;
+            v =  (v - min) / (max - min);
+            sum += v;
             r.setEntry(i, v);
         }
 
+        r.mapDivideToSelf(sum);
     }
 
     public Iterable<S> getStates() { return rows; }

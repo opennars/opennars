@@ -4,7 +4,6 @@
  */
 package nars.nal;
 
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
@@ -64,7 +63,7 @@ public class DirectProcess extends NAL {
 
             c.link(currentTask);
 
-            emit(Events.TaskImmediateProcessed.class, getCurrentTask(), this, c);
+            emit(DirectProcess.class, getCurrentTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         }
     }

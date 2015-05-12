@@ -47,14 +47,14 @@ public class QVis extends JPanel implements Runnable {
 
 
                 float beliefValue = (float) v.getQSentence(Symbols.GOAL);
-                float qValue = (float) v.getQ() / agent.getNumActions();
+                float qValue = (float) v.getQ();// / agent.getNumActions();
 
                 float hue = (float)(FastMath.sin(qValue) + 1.0)/2f;
 
 
-                float sat = 0.5f*p+0.5f;
+                float bri = 0.5f*p+0.5f;
 
-                float bri = beliefValue;
+                float sat = 0.5f + 0.5f * beliefValue;
 
                 color = Video.colorHSB(hue, sat, bri);
                 //System.out.println(hue + " " + sat + " " + bri);

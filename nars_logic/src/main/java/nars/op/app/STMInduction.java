@@ -32,7 +32,7 @@ public class STMInduction extends AbstractOperator {
 
     @Override
     public Class[] getEvents() {
-        return new Class[]{Events.TaskImmediateProcessed.class};
+        return new Class[]{DirectProcess.class};
     }
 
     @Override
@@ -47,7 +47,7 @@ public class STMInduction extends AbstractOperator {
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == Events.TaskImmediateProcessed.class) {
+        if (event == DirectProcess.class) {
             Task t = (Task) args[0];
             DirectProcess n = (DirectProcess) args[1];
             inductionOnSucceedingEvents(t, n);

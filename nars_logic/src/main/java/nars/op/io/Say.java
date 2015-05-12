@@ -79,7 +79,7 @@ public class Say extends Operator {
     @Override
     protected synchronized List<Task> execute(Operation operation, Term[] args) {
 
-        this.memory = memory;
+        this.memory = nar.memory;
         this.currentOperation = operation;
 
         if (this.reaction == null) {

@@ -7,16 +7,12 @@ package nars.util.graph.experimental;
 import com.google.common.base.Objects;
 import nars.Events;
 import nars.Events.ConceptForget;
-import nars.Events.ConceptNew;
 import nars.Global;
 import nars.NAR;
+import nars.nal.*;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.Symbols;
-import nars.nal.NALOperator;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.Terms;
 import nars.nal.concept.Concept;
 import nars.nal.nal4.Image;
 import nars.nal.term.Compound;
@@ -283,7 +279,7 @@ public class Idea implements Iterable<Concept> {
             else if (event == ConceptForget.class) {
                 remove((Concept) args[0]);
             }
-            else if (event == Events.TaskImmediateProcessed.class) {
+            else if (event == DirectProcess.class) {
                 update((Concept) args[2]);
             }
         }
@@ -294,7 +290,7 @@ public class Idea implements Iterable<Concept> {
             if (enabled) {
                 clear();
 
-                reg = nar.memory.event.on(this, ConceptForget.class, Events.ConceptActive.class, Events.TaskImmediateProcessed.class);
+                reg = nar.memory.event.on(this, ConceptForget.class, Events.ConceptActive.class, DirectProcess.class);
 
                 //add existing
                 for (Concept c : nar.memory.concepts)

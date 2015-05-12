@@ -18,10 +18,7 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.rl.HaiSOMPerception;
-import nars.rl.Perception;
-import nars.rl.QLAgent;
-import nars.rl.RawPerception;
+import nars.rl.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -154,7 +151,7 @@ public class RunQLAgent extends JPanel {
 
 
         /* Create and display the form */
-        ////RLEnvironment d = new PoleBalancing2D();
+        //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
         RLEnvironment d = new Curiousbot();
         //RLEnvironment d = new Tetris(10, 14);
@@ -169,7 +166,7 @@ public class RunQLAgent extends JPanel {
         int concepts = 2048;
         int conceptsPerCycle = 35;
         final int cyclesPerFrame = 10;
-        float qLearnedConfidence = 0.7f; //0.85f; //0 to disable
+        float qLearnedConfidence = 0.75f; //0.85f; //0 to disable feedback from Q to NARS in model update beliefs
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -253,10 +250,10 @@ public class RunQLAgent extends JPanel {
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                //new RawPerception("L", 0.8f),
-                new RawPerception.BipolarDirectPerception("L", 0.75f),
+                new RawPerception("L", 0.35f)
+                //new RawPerception.BipolarDirectPerception("L", 0.25f)
 
-                //new AEPerception("A", 0.5f, 4).setLearningRate(0.104),//.setSigmoid(true)
+                //new AEPerception("A", 0.05f, 7, 0).setLearningRate(0.01).setSigmoid(false)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
@@ -267,13 +264,12 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("B", 3, 0.8f)
+                //new HaiSOMPerception("B", 5, 0.1f)
         );
 
 
 
         a.agent.brain.setEpsilon(0.1);
-        a.agent.brain.setAlpha(0.1);
 
 
     }

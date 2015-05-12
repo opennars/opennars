@@ -20,7 +20,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     double dq = 0; //delta-Q; current q = q0 + dq, temporary
     double q0 = 0; //previous Q value, for comparing nar vs. QL influence
     double q = 0; //current q-value
-    double e = 1; //eligibility trace
+    double e = 0; //eligibility trace
 
     //TODO modes: average, nar, q
     boolean defaultQMode = true;
@@ -49,6 +49,10 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
     public void updateE(final double mult, final double add) {
         e = e * mult + add;
+    }
+
+    public void addE(final double add) {
+        e += add;
     }
 
     /**

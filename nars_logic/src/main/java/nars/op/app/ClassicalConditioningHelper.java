@@ -303,7 +303,7 @@ public class ClassicalConditioningHelper implements IOperator {
                 @Override
                 public void event(Class event, Object[] a) {
                     //is not working, keep for later:
-                    if (event!=Events.TaskImmediateProcessed.class)
+                    if (event!=DirectProcess.class)
                         return;
                     Task task = (Task)a[0];
                     HandleInput(task);
@@ -323,7 +323,7 @@ public class ClassicalConditioningHelper implements IOperator {
         }
         
         
-        n.memory.event.set(obs, enabled, Events.TaskImmediateProcessed.class);
+        n.memory.event.set(obs, enabled, DirectProcess.class);
         return true;
     }
     

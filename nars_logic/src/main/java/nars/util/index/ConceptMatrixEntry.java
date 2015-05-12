@@ -6,7 +6,7 @@ import nars.nal.term.Term;
 /**
  * base type for cell entries in the matrix. subclass to add additional information per cell
  */
-abstract public class ConceptMatrixEntry<R extends Term, C extends Term, E extends Term, V extends ConceptMatrixEntry> implements Concept.ConceptMeta {
+abstract public class ConceptMatrixEntry<R extends Term, C extends Term, E extends Term, V extends ConceptMatrixEntry> implements Concept.Meta {
 
     private ConceptMatrix matrix;
     public final Concept concept; //may be null
@@ -17,7 +17,7 @@ abstract public class ConceptMatrixEntry<R extends Term, C extends Term, E exten
     }
 
     @Override
-    public void onState(Concept.State nextState) {
+    public void onState(Concept c, Concept.State nextState) {
         if (nextState == Concept.State.Deleted) {
             this.matrix.deleteEntry(this);
         }

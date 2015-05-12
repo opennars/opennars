@@ -4,11 +4,11 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /** inputs the perceived data directly as unipolar frequency data
@@ -22,6 +22,7 @@ public class RawPerception implements Perception {
     private RLEnvironment env;
     private QLAgent agent;
     final List<Compound> states = new ArrayList();
+    final Term subjectTerm;
 
     double min = -1;
     double max = 1.0;
@@ -29,6 +30,7 @@ public class RawPerception implements Perception {
     public RawPerception(String id, float confidence) {
         this.confidence = confidence;
         this.id = id;
+        subjectTerm = Atom.get(id);
     }
 
     @Override
@@ -116,14 +118,18 @@ public class RawPerception implements Perception {
     @Override
     public boolean isState(Term t) {
         //TODO better pattern recognizer
-        String s = t.toString();
+
 
         if ((t instanceof Inheritance) && (t.getComplexity() == 4) ) {
-            if (s.startsWith("<" + id + " --> [") && s.endsWith("]>")) {
-                //System.out.println(s + " " + t.getComplexity());
-            //if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
+            Inheritance ii = (Inheritance)t;
+            if (ii.getSubject().equals(subjectTerm))
                 return true;
-            }
+//            String s = t.toString();
+//            if (s.startsWith("<" + id + " --> [") && s.endsWith("]>")) {
+//                //System.out.println(s + " " + t.getComplexity());
+//            //if (s.startsWith("<{" + id) && s.endsWith("} --> state>")) {
+//                return true;
+//            }
         }
         return false;
     }

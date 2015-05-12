@@ -12,7 +12,8 @@ import nars.util.event.Reaction;
  * different event classes as selector keys for event bus messages.
  */
 public abstract class NARReaction extends AbstractReaction {
-    
+
+
 
     public NARReaction(NAR n, Class... events) {
         this(n.memory.event, true, events);

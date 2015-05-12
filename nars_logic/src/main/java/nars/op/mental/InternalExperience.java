@@ -73,10 +73,10 @@ public class InternalExperience extends AbstractOperator {
     @Override
     public Class[] getEvents() {
         if (isFull()) {
-            return new Class[] { Events.TaskImmediateProcessed.class, Events.BeliefReason.class };
+            return new Class[] { DirectProcess.class, Events.BeliefReason.class };
         }
         else {
-            return new Class[] { Events.TaskImmediateProcessed.class };
+            return new Class[] { DirectProcess.class };
         }
     }
 
@@ -136,7 +136,7 @@ public class InternalExperience extends AbstractOperator {
     public void event(Class event, Object[] a) {
 
 
-        if (event==Events.TaskImmediateProcessed.class) {
+        if (event==DirectProcess.class) {
 
             Task task = (Task)a[0];
             NAL nal = (NAL)a[1];

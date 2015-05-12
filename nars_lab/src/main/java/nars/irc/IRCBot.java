@@ -1,19 +1,25 @@
 package nars.irc;
 
 
+import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import automenta.vivisect.swing.ReflectPanel;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import nars.*;
-import nars.nal.term.Atom;
-import nars.model.impl.Default;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
 import nars.event.NARReaction;
+import nars.gui.NARSwing;
 import nars.io.Texts;
-import nars.util.language.Twokenize;
+import nars.model.impl.Default;
+import nars.nal.concept.Concept;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.io.Say;
+import nars.rl.example.MarkovObservationsGraph;
+import nars.util.language.Twokenize;
 
 import java.io.*;
 import java.net.Socket;
@@ -23,7 +29,8 @@ import java.util.List;
 
 public class IRCBot {
 
-    boolean outputting = true;
+    private final MarkovObservationsGraph m;
+    boolean outputting = false;
 
     // The server to connect to and our details.
     String server = "irc.freenode.net";
@@ -49,10 +56,10 @@ public class IRCBot {
         d.decisionThreshold.set(0.7);
         d.temporalRelationsMax.set(2);
         d.shortTermMemoryHistory.set(4);
-        d.duration.set(200);
+        d.duration.set(5);
         d.termLinkMaxReasoned.set(6);
-        d.conceptsFiredPerCycle.set(3);
-        d.setTiming(Memory.Timing.RealMS);
+        d.conceptsFiredPerCycle.set(9);
+        //d.setTiming(Memory.Timing.RealMS);
 
 
         //d.temporalPlanner(16f,8,8,2);
@@ -69,12 +76,12 @@ public class IRCBot {
         }
         System.out.println("ok");
 
-        n.start(0, 1);
 
-        /*
+
+
         Video.themeInvert();
-        new NARSwing(n).controls.setSpeed(0.1f);
-        */
+        new NARSwing(n).setSpeed(0.1f);
+
 
         IRCBot i = new IRCBot(n);
 
@@ -107,7 +114,7 @@ public class IRCBot {
                         if (s.isEmpty())continue;
 
 
-                        nar.input("$0.5$ " + s);
+                        nar.input(s);
 
                         try {
                             Thread.sleep(lineDelay);
@@ -237,6 +244,14 @@ public class IRCBot {
     }
 
     public IRCBot(NAR n) throws Exception {
+
+        m = new MarkovObservationsGraph(n) {
+            @Override
+            public boolean contains(Concept c) {
+                return true;
+            }
+        };
+        m.setCyclesPerEpisode(5);
 
         new NWindow("Say", new ReflectPanel(this)).show(500,300);
 

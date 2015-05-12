@@ -91,7 +91,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     public final Bag<TermLinkKey, TermLink> termLinks;
 
     /** metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated */
-    protected Map<Object,ConceptMeta> meta = null;
+    protected Map<Object,Meta> meta = null;
 
 
     /**
@@ -191,17 +191,22 @@ abstract public class Concept extends Item<Term> implements Termed {
     /** like Map.put for storing data in meta map
      *  @param value if null will perform a removal
      * */
-    public ConceptMeta put(Object key, ConceptMeta value) {
+    public Meta put(Object key, Meta value) {
         if (meta == null) meta = Global.newHashMap();
 
-        if (value != null)
-            return meta.put(key, value);
+        if (value != null) {
+            Meta removed = meta.put(key, value);
+            if (removed!=value) {
+                value.onState(this, getState());
+            }
+            return removed;
+        }
         else
             return meta.remove(key);
     }
 
     /** like Map.gett for getting data stored in meta map */
-    public <C extends ConceptMeta> C get(Object key) {
+    public <C extends Meta> C get(Object key) {
         if (meta == null) return null;
         return (C) meta.get(key);
     }
@@ -282,6 +287,12 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         memory.updateConceptState(this);
+
+        if (meta!=null) {
+            for (Meta m : meta.values()) {
+                m.onState(this, getState());
+            }
+        }
 
         return this;
     }
@@ -1442,10 +1453,10 @@ abstract public class Concept extends Item<Term> implements Termed {
     /**
      * Methods to be implemented by Concept meta instances
      */
-    public static interface ConceptMeta {
+    public static interface Meta {
 
         /** called before the state changes to the given nextState */
-        public void onState(State nextState);
+        public void onState(Concept c, State nextState);
 
     }
 }

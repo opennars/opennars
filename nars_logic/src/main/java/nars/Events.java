@@ -166,17 +166,6 @@ public class Events {
         
     }
 
-    /** fired at the end of an ImmediateProcess task */
-    abstract public static class TaskImmediateProcessed implements Reaction {
-
-        abstract public void onProcessed(Task t, DirectProcess n, Concept c);
-        
-        @Override public void event(Class event, Object[] args) {
-            onProcessed((Task)args[0], (DirectProcess)args[1], (Concept)args[2] );
-        }
-        
-    }
-
     public static class TermLinkTransformed {    }
 
     /** emitted after a TermLink has been selected and reasoned */
