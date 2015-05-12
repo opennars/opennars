@@ -25,6 +25,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import objenome.op.Node;
 import objenome.solver.evolve.*;
+import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.InitialisationEvent;
 import objenome.solver.evolve.event.Listener;
@@ -51,14 +52,14 @@ import static objenome.solver.evolve.TypedOrganism.*;
  *
  * @since 2.0
  */
-public class Full implements TypedInitialization, Listener<ConfigEvent> {
+public class Full implements TypedInitialization, Listener<ConfigEvent>, GPContainerAware {
 
     // Configuration settings
     private Node[] syntax; // TODO We don't really need to store this
     private RandomSequence random;
     private Class<?> returnType;
     private Integer populationSize;
-    private Integer depth;
+    private Integer maxDepth;
     private Boolean allowDuplicates;
 
     // The contents of the syntax split
@@ -88,10 +89,12 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
      */
     public Full(boolean autoConfig) {
         // Default config values
-        allowDuplicates = true;
+        this.allowDuplicates = false;
 
         this.autoConfig = autoConfig;
     }
+
+
 
     /**
      * Sets up this operator with the appropriate configuration settings. This
@@ -113,17 +116,19 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
         populationSize = config.get(SIZE);
         syntax = config.get(SYNTAX);
         returnType = config.get(RETURN_TYPE);
-        allowDuplicates = config.the(ALLOW_DUPLICATES, allowDuplicates);
+        allowDuplicates = config.get(ALLOW_DUPLICATES, false);
 
-        Integer maxDepth = config.get(MAXIMUM_DEPTH);
+        Integer maxDepth = config.get(MAXIMUM_DEPTH, this.maxDepth);
         Integer maxInitialDepth = config.get(MAXIMUM_INITIAL_DEPTH);
 
         // Use max initial depth if possible, unless it is greater than max depth
         if (maxInitialDepth != null && (maxDepth == null || maxInitialDepth < maxDepth)) {
-            depth = maxInitialDepth;
+            this.maxDepth = maxInitialDepth;
         } else {
-            depth = (maxDepth == null) ? -1 : maxDepth;
+            this.maxDepth = (maxDepth == null) ? -1 : maxDepth;
         }
+
+        updateSyntax();
     }
 
     /*
@@ -186,7 +191,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
     @Override
     public Population<TypedOrganism> createPopulation(Population<TypedOrganism> survivors, GPContainer config) {
         setup(config);
-        updateSyntax();
+
 
         if (autoConfig) {
             config.on(ConfigEvent.class, this);
@@ -202,7 +207,16 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
         }
         
 
-        for (int i = 0; i < (populationSize - survivors.size()); i++) {
+        populate(population, (populationSize - survivors.size()));
+
+
+        config.fire(new InitialisationEvent.EndInitialisation(population));
+
+        return population;
+    }
+
+    public void populate(Population<TypedOrganism> population, int num) {
+        for (int i = 0; i < num; i++) {
             TypedOrganism individual;
 
             do {
@@ -211,10 +225,6 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
 
             population.add(individual);
         }
-
-        config.fire(new InitialisationEvent.EndInitialisation(population));
-
-        return population;
     }
 
     /**
@@ -247,11 +257,11 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
             throw new IllegalStateException("No random number generator has been set");
         } else if (returnType == null) {
             throw new IllegalStateException("No return type has been set");
-        } else if (depth < 0) {
+        } else if (maxDepth < 0) {
             throw new IllegalStateException("Depth must be 0 or greater");
         } else if (terminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of 0");
-        } else if ((depth > 0) && nonTerminals.isEmpty()) {
+        } else if ((maxDepth > 0) && nonTerminals.isEmpty()) {
             throw new IllegalStateException("Syntax must include nodes with arity of >=1 if a depth >0 is used");
         }
 
@@ -259,8 +269,8 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
             updateDataTypesTable();
         }
 
-        if (!TypeUtil.containsSub(dataTypesTable[depth], returnType)) {
-            throw new IllegalStateException("Syntax is not able to produce full trees with the given return type (" + returnType + ") at depth " + depth + " =" + Arrays.toString(dataTypesTable));
+        if (!TypeUtil.containsSub(dataTypesTable[maxDepth], returnType)) {
+            throw new IllegalStateException("Syntax is not able to produce full trees with the given return type (" + returnType + ") at depth " + maxDepth + " =" + Arrays.toString(dataTypesTable));
         }
 
         return createTree(returnType);
@@ -280,7 +290,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
         else
             validNodeTemporary.clear();
 
-        List<Node> validNodes = listValidNodes(depth - currentDepth, requiredType, validNodeTemporary);
+        List<Node> validNodes = listValidNodes(maxDepth - currentDepth, requiredType, validNodeTemporary);
 
         if (validNodes.isEmpty()) {
             throw new IllegalStateException("Syntax is unable to create full node trees of given depth.");
@@ -293,7 +303,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
         if (arity > 0) {
             // Construct list of arg sets that produce the right return type
             // TODO Surely we can cut down the number of calls to this?!
-            Class<?>[][] argTypeSets = dataTypeCombinations(arity, dataTypesTable[depth - currentDepth - 1]);
+            Class<?>[][] argTypeSets = dataTypeCombinations(arity, dataTypesTable[maxDepth - currentDepth - 1]);
             List<Class<?>[]> validArgTypeSets = new ArrayList<>();
             for (Class<?>[] argTypes : argTypeSets) {
                 Class<?> type = root.dataType(argTypes);
@@ -373,7 +383,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
      * type, as described by Montana
      */
     private void updateDataTypesTable() {
-        dataTypesTable = new List[depth+1];//new Class<?>[depth + 1][];
+        dataTypesTable = new List[maxDepth +1];//new Class<?>[depth + 1][];
 
         // Trees of depth 0 must be single terminal element
         Set<Class<?>> types = new TreeSet<>(classNameComparator);
@@ -383,7 +393,7 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
         dataTypesTable[0] = new ArrayList(types);
 
         // Handle depths above 1
-        for (int i = 1; i <= depth; i++) {
+        for (int i = 1; i <= maxDepth; i++) {
             types = new TreeSet<>(classNameComparator); //sorted
             for (Node n : nonTerminals) {
                 Class<?>[][] argTypeSets = dataTypeCombinations(n.getArity(), dataTypesTable[i - 1]);
@@ -535,8 +545,8 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
      *
      * @return the depth of the program trees constructed
      */
-    public int getDepth() {
-        return depth;
+    public int getMaxDepth() {
+        return maxDepth;
     }
 
     /**
@@ -547,16 +557,16 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
      * the next config event, or the {@link TypedOrganism#MAXIMUM_DEPTH}
      * setting if no initial maximum depth is set.
      *
-     * @param depth the depth of all program trees generated
+     * @param maxDepth the depth of all program trees generated
      */
-    public void setDepth(int depth) {
-        if (dataTypesTable != null && depth >= dataTypesTable.length) {
+    public void setMaxDepth(int maxDepth) {
+        if (dataTypesTable != null && maxDepth >= dataTypesTable.length) {
             // Types possibilities table needs extending
             // TODO No need to regenerate the whole table, just extend it
             dataTypesTable = null;
         }
 
-        this.depth = depth;
+        this.maxDepth = maxDepth;
     }
 
     /**
@@ -578,5 +588,10 @@ public class Full implements TypedInitialization, Listener<ConfigEvent> {
      */
     public void setRandomSequence(RandomSequence random) {
         this.random = random;
+    }
+
+    @Override
+    public void setConfig(GPContainer c) {
+        setup(c);
     }
 }

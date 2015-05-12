@@ -21,22 +21,28 @@
  */
 package objenome.solver;
 
-import objenome.Container;
+import com.gs.collections.api.map.primitive.MutableObjectDoubleMap;
+import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
+import objenome.goal.DoubleFitness;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.event.ConfigEvent;
-import objenome.solver.evolve.event.Event;
 import objenome.solver.evolve.event.EventManager;
-import objenome.solver.evolve.event.Listener;
-import objenome.solver.evolve.event.stat.AbstractStat;
+import objenome.solver.evolve.init.Full;
+import objenome.solver.evolve.mutate.OnePointCrossover;
+import objenome.solver.evolve.mutate.PointMutation;
+import objenome.solver.evolve.mutate.SubtreeCrossover;
+import objenome.solver.evolve.mutate.SubtreeMutation;
+import objenome.solver.evolve.selection.RouletteSelector;
+import objenome.util.random.MersenneTwisterFast;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  *
@@ -44,83 +50,139 @@ import java.util.concurrent.Executors;
  * a solution to a problem characterized by a set of goals defined
  * by the programmer.
  */
-abstract public class Civilization<I extends Organism> extends Container {
+abstract public class Civilization<I extends AbstractOrganism> extends GPContainer {
 
     /**
      * The key for setting and retrieving the list of components.
      */
     public static final GPKey<ArrayList<PopulationProcess>> COMPONENTS = new GPKey<>();
 
+    public final RandomSequence random = new MersenneTwisterFast();
+
+
     public final EventManager events = new EventManager();
 
-    /**
-     * stats repository, TODO rename
-     */
     public final HashMap<Class<?>, Object> stat = new HashMap<>();
+
     private final ExecutorService exe;
+    private final int threads;
+    private final int populationSize;
     protected Pipeline pipeline;
-    private Population<I> population = null;
+    public final Population<I> population;
 
+    public final List<EGoal<I>> goals = new ArrayList();
+    CopyOnWriteArrayList<Life> lives = new CopyOnWriteArrayList<>();
 
-    public Civilization(int threads) {
+    public Civilization(int threads, int populationSize) {
         super();
+        this.threads = threads;
+        this.populationSize = populationSize;
+
         exe = Executors.newFixedThreadPool(threads);
 
+        the(Population.SIZE, populationSize);
+        the(RandomSequence.RANDOM_SEQUENCE, random);
+        the(TypedOrganism.RETURN_TYPE, Double.class);
+
+        final ArrayList<Node> syntax = new ArrayList();
+        syntax.addAll( getOperators(random) );
+        the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
+
+
+        the(TypedOrganism.MAXIMUM_DEPTH, 7);
+        the(Full.MAXIMUM_INITIAL_DEPTH, 4);
+        the(OrganismBuilder.class, new Full());
+
+        the(Breeder.SELECTOR, new RouletteSelector());
+        //the(Breeder.SELECTOR, new TournamentSelector(7));
+
+        List<OrganismOperator> operators = new ArrayList<>();
+        {
+            operators.add(new PointMutation());
+            the(PointMutation.PROBABILITY, 0.1);
+            the(PointMutation.POINT_PROBABILITY, 0.02);
+            operators.add(new OnePointCrossover());
+            the(OnePointCrossover.PROBABILITY, 0.1);
+            operators.add(new SubtreeCrossover());
+            the(SubtreeCrossover.PROBABILITY, 0.1);
+            operators.add(new SubtreeMutation());
+            the(SubtreeMutation.PROBABILITY, 0.1);
+        }
+        the(Breeder.OPERATORS, operators);
+
+        population = new Population<I>(this) {
+
+            @Override
+            public void add(I individual) {
+                super.add(individual);
+                addLife(individual);
+            }
+
+        };
+
+    }
+
+    abstract public List<Node> getOperators(RandomSequence random);
+
+    public void add(EGoal goal) {
+        goals.add(goal);
     }
 
 
-    /** apply evolutionary pressure which characterize the creation of
-     *  new individuals desired by the civilization */
-    abstract void conceive(Object... evolutionaryPressures);
 
-    abstract I onBirth(I newborn);
-
-    abstract I onDeath(I newborn);
-
-    /** measures the raw cost to maintain an individual in the population.
-     *  this value can be interpreted as a rate
-     * */
-    abstract double cost(I individual);
-
-    /** measures the value an individual contributes to the population
-      *  towards a specific goal.  If unknown, the value returned
-      *  is Double.NaN which can be interpreted in some cases as zero.
-      *
-      *  even if dead, its genome can be saved for ressurrection in a
-      *  future era.
-     *
-      *  this value can be interpreted as a rate
-     *  */
-    abstract double value(I individual, Object goal);
-
-
-    /** specifies a component of evolutionary pressure which can
-     * be adjusted while a civilization executes.
-     */
-    public void setDemand(Object goal, double amount) {
-
-    }
-
-    /** performs a discrete evaluatation step of an individual.
-     * this is generally called repeatedly during
-     * an organism's lifetime.  each time it is given a new task to
-     * contribute to its performance evaluation.  before and afterwards
-     * certain actions may be applied to the individual:
-     *      --adjust its value estimates and compare with cost
-     *      --euthanize
-     *      --schedule for re-evaluation (increasing delay time lowers its priority and makes it more likely it will be euthanized in the meantime)
-     *
-     *
-     * */
-    public void live(I individual, double maxRealTime) {
-
-    }
+//    /** apply evolutionary pressure which characterize the creation of
+//     *  new individuals desired by the civilization and selects the
+//     *  individuals to eugenecize */
+//    abstract void update(Object... evolutionaryPressures);
+//
+//    abstract I onBirth(I newborn);
+//
+//    abstract I onDeath(I newborn);
+//
+//    /** measures the raw cost to maintain an individual in the population.
+//     *  this value can be interpreted as a rate
+//     * */
+//    abstract double cost(I individual);
+//
+//    /** measures the value an individual contributes to the population
+//      *  towards a specific goal.  If unknown, the value returned
+//      *  is Double.NaN which can be interpreted in some cases as zero.
+//      *
+//      *  even if dead, its genome can be saved for ressurrection in a
+//      *  future era.
+//     *
+//      *  this value can be interpreted as a rate
+//     *  */
+//    abstract double value(I individual, Object goal);
+//
+//
+//    /** specifies a component of evolutionary pressure which can
+//     * be adjusted while a civilization executes.
+//     */
+//    public void setDemand(Object goal, double amount) {
+//
+//    }
+//
+//    /** performs a discrete evaluatation step of an individual.
+//     * this is generally called repeatedly during
+//     * an organism's lifetime.  each time it is given a new task to
+//     * contribute to its performance evaluation.  before and afterwards
+//     * certain actions may be applied to the individual:
+//     *      --adjust its value estimates and compare with cost
+//     *      --euthanize
+//     *      --schedule for re-evaluation (increasing delay time lowers its priority and makes it more likely it will be euthanized in the meantime)
+//     *
+//     *
+//     * */
+//    public void live(I individual, double maxRealTime) {
+//
+//    }
 
 
 
     public void reset() {
         pipeline = null;
-        population = null;
+        population.clear();
     }
 
     /**
@@ -134,28 +196,177 @@ abstract public class Civilization<I extends Organism> extends Container {
      * pipeline of components, as returned by the final component in that
      * pipeline
      */
-    public Population<I> cycle() {
-        if (pipeline == null) {
-            pipeline = new Pipeline();
-            /* Initialises the supplied <code>Pipeline</code> with the components that
-             * an evolutionary run is composed of. The specific list of components used
-             * is obtained from the {@link Config}, using the appropriate <code>Class</code> */
-            for (PopulationProcess component : (Iterable<PopulationProcess>) the(COMPONENTS)) {
-                Civilization.setContainerAware(this, component);
-                pipeline.add(component);
-            }
-            
-            //population = new Population<I>(this);
+//    public Population<I> cycle() {
+//        if (pipeline == null) {
+//            pipeline = new Pipeline();
+//            /* Initialises the supplied <code>Pipeline</code> with the components that
+//             * an evolutionary run is composed of. The specific list of components used
+//             * is obtained from the {@link Config}, using the appropriate <code>Class</code> */
+//            for (PopulationProcess component : (Iterable<PopulationProcess>) the(COMPONENTS)) {
+//                Civilization.setContainerAware(this, component);
+//                pipeline.add(component);
+//            }
+//
+//            //population = new Population<I>(this);
+//        }
+//
+//        //config.fire(new StartRun(0));
+//
+//        population = pipeline.process(population);
+//
+//        //config.fire(new EndRun(0, population));
+//
+//        return population;
+//    }
+
+    public void run() {
+
+
+        updatePopulation();
+
+        try {
+            exe.awaitTermination(1000, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
-        //config.fire(new StartRun(0));
-        
-        population = pipeline.process(population);
-        
-        //config.fire(new EndRun(0, population));
-        
-        return population;
     }
+
+    protected void addLife(I i) {
+        Life l = new Life(i);
+        lives.add(l);
+        new Thread(l).start();
+    }
+
+    protected synchronized DescriptiveStatistics getCostStatistics() {
+        DescriptiveStatistics ds = new DescriptiveStatistics();
+        for (Life l : lives) {
+            ds.addValue(l.costRate());
+        }
+        return ds;
+    }
+
+    double maxSurvivalCostPercentile = 90;
+    double minReproductionCostPercentile = 25;
+
+    protected void reproduce(Life x) {
+        System.out.println(x + " reproduce");
+        BranchedBreeder b = new BranchedBreeder();
+        b.update(getPopulation(), 1);
+    }
+
+    protected void die(Life x) {
+        lives.remove(this);
+        getPopulation().remove(x.i);
+        System.out.println(x + " die");
+    }
+
+    protected synchronized void updatePopulation() {
+        //maintain population level
+        if (population.size() == 0) {
+            getOrganismBuilder().populate(getPopulation(), populationSize);
+        }
+    }
+
+    protected boolean shouldLive(Life x) {
+        DescriptiveStatistics s = getCostStatistics();
+        double pp = (x.costRate());
+        double maxSurvivalCostPercentileEstimate = s.getPercentile(maxSurvivalCostPercentile);
+
+        boolean result;
+
+        if (pp > maxSurvivalCostPercentileEstimate) {
+            die(x);
+            result = false;
+        }
+        else {
+            double minReproductionCostPercentileEstimate = s.getPercentile(minReproductionCostPercentile);
+            if (population.size() < populationSize && pp <= minReproductionCostPercentileEstimate) {
+                reproduce(x);
+            }
+            result = true;
+        }
+
+        updatePopulation();
+
+        return result;
+    }
+
+    class Life implements Runnable {
+
+        final MutableObjectDoubleMap<EGoal<I>> cost = new ObjectDoubleHashMap<EGoal<I>>().asSynchronized();
+
+        double age = 1;
+
+        public final I i;
+        private double totalCost = 0;
+
+        public Life(I i) {
+            this.i = i;
+        }
+
+
+        /** rate: cost/time */
+        public double costRate() {
+            return totalCost / age;
+        }
+
+        protected void evaluate(EGoal<I> goal, double cost) {
+            this.cost.put(goal, cost);
+            totalCost = this.cost.sum();
+            i.setFitness(new DoubleFitness.Minimize(totalCost));
+        }
+
+        /** returns true if still alive, false if dead */
+        protected boolean age(double time) {
+            //Thread.currentThread().setPriority(..);
+
+            age++;
+
+            //shouldReproduce(this);
+            return shouldLive(this);
+        }
+
+
+        @Override public void run() {
+            List<EGoal> goalSequence = new ArrayList(goals);
+            Collections.shuffle(goalSequence);
+
+            for (final EGoal g : goalSequence) {
+                try {
+                    double s = exe.submit(new Callable<Double>() {
+                        @Override
+                        public Double call() throws Exception {
+                            //System.out.println(i + " evaluating " + g);
+                            double s = g.cost(i);
+                            //System.out.println("SCORE=" + s);
+                            return s;
+                        }
+                    }).get();
+
+                    evaluate(g, s);
+
+                    if (!age(1.0)) {
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //evaluate(g, maxCycles)
+                    break;
+                }
+            }
+
+            die(this);
+            updatePopulation();
+        }
+    }
+
+
+
+    public OrganismBuilder<I> getOrganismBuilder() {
+        return the(OrganismBuilder.class);
+    }
+
 
     public Population<I> getPopulation() {
         return population;
@@ -166,12 +377,12 @@ abstract public class Civilization<I extends Organism> extends Container {
         public void setConfig(Civilization c);
     }
 
-    /**
-     * the involved syntax elements
-     */
-    public Node[] getSyntax() {
-        return get(TypedOrganism.SYNTAX);
-    }
+//    /**
+//     * the involved syntax elements
+//     */
+//    public Node[] getSyntax() {
+//        return get(TypedOrganism.SYNTAX);
+//    }
 
     /**
      * the involved variables, which are obtained by iterating syntax elements.
@@ -222,27 +433,6 @@ abstract public class Civilization<I extends Organism> extends Container {
 //        return the(type);
 //
 //    }
-    /**
-     * Removes all registered <code>AbstractStat</code> objects from the
-     * repository.
-     */
-    public <E extends Event> void resetStats() {
-        List<Class<?>> registered = new ArrayList<>(stat.keySet());
-
-        for (Class<?> type : registered) {
-            remove(type);
-        }
-
-        stat.clear();
-    }
-
-    public <X extends Object & Event> AbstractStat<X> stat(AbstractStat<X> a) {
-        if (!stat.containsKey(a.getClass())) {
-            stat.put(a.getClass(), a);
-            return the(a.getClass(), a);
-        }
-        return super.the(a.getClass());
-    }
 
     /**
      * Sets the value of the specified configuration key. If the given key
@@ -332,18 +522,6 @@ abstract public class Civilization<I extends Organism> extends Container {
         //prop.clear();
     }
 
-    public <T extends Event, V extends T> void fire(T event) {
-        events.fire(event);
-    }
-
-    public <E extends Object & Event> void on(Class<? extends E> key, Listener<E> listener) {
-        events.add(key, listener);
-    }
-
-    public <E extends Object & Event> Listener<E> off(Class<? extends E> key, Listener<E> listener) {
-        events.remove(key, listener);
-        return listener;
-    }
 
     /**
      * Instances of <code>ConfigKey</code> are used to uniquely identify

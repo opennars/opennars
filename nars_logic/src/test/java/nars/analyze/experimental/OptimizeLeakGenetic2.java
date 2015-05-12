@@ -17,6 +17,7 @@ import objenome.goal.DoubleFitness;
 import objenome.goal.TypedFitnessFunction;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import static objenome.goal.DefaultProblemSTGP.doubleVariable;
@@ -24,7 +25,7 @@ import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 /**
  * https://github.com/apache/commons-math/blob/master/src/test/java/org/apache/commons/math4/genetics/GeneticAlgorithmTestBinary.java
  */
-public class OptimizeLeakGenetic2 extends Controls {
+public class OptimizeLeakGenetic2 {
 
 
     final static int cycles = 750;
@@ -43,7 +44,7 @@ public class OptimizeLeakGenetic2 extends Controls {
     public final DoubleVariable c0 = doubleVariable("c0");
     public final DoubleVariable c1 = doubleVariable("c1");
     public final DoubleVariable c2 = doubleVariable("c2");
-
+    private final List<Variable> variables;
 
 
     double[] conPri = new double[4];
@@ -163,7 +164,7 @@ public class OptimizeLeakGenetic2 extends Controls {
 
         super();
 
-        reflect(this);
+        variables = Controls.reflect(OptimizeLeakGenetic2.class, this);
 
         DefaultProblemSTGP e = new DefaultProblemSTGP(individuals, 7, true, true, false, true) {
 
@@ -189,7 +190,7 @@ public class OptimizeLeakGenetic2 extends Controls {
 
             @Override
             protected Iterable<Variable> initVariables() {
-                return OptimizeLeakGenetic2.this.getVariables();
+                return variables;
             }
 
 

@@ -232,7 +232,7 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
         boolean growNext = true;
         for (int depth = startDepth; depth <= endDepth; depth++) {
             grow.setMaximumDepth(depth);
-            full.setDepth(depth);
+            full.setMaxDepth(depth);
             int noPrograms = programsPerDepth[depth - startDepth];
 
             for (int i = 0; i < noPrograms; i++) {
@@ -344,6 +344,12 @@ public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEv
         } else {
             return full.newOrganism();
         }
+    }
+
+    @Override
+    public void populate(Population<TypedOrganism> population, int populationSize) {
+        //TODO
+        throw new RuntimeException("TODO");
     }
 
     /**

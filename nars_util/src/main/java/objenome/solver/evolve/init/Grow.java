@@ -236,6 +236,11 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
         return new TypedOrganism(createTree());
     }
 
+    @Override
+    public void populate(Population<TypedOrganism> population, int populationSize) {
+        throw new RuntimeException("TODO");
+    }
+
     /**
      * Creates a program tree within the maximum depth as specified by the
      * <code>getMaximumDepth</code> method. The nodes in the tree are randomly

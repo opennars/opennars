@@ -11,22 +11,13 @@ import java.util.List;
  * Holds a set of parameters which can be controlled:
  *   --
  */
-public class Controls {
+public interface Controls {
 
-    private final List<Variable> variables = new ArrayList();
-
-    public Controls() {
-    }
-
-
-    public Controls(Object... components) {
-        for (Object o : components)
-            reflect(o);
-    }
 
     /** adds all meters which exist as fields of a given object (via reflection) */
-    public void reflect(Object obj) {
-        Class c = obj.getClass();
+    public static List<Variable> reflect(Class c, Object obj) {
+        final List<Variable> variables = new ArrayList();
+
         Class variable = DoubleVariable.class;
         for (Field f : c.getFields()) {
 
@@ -40,17 +31,10 @@ public class Controls {
                     //TODO ignore or handle errors?
                 }
                 if (m!=null)
-                    add(m);
+                    variables.add(m);
             }
         }
-    }
-
-    public Variable add(Variable v) {
-        variables.add(v);
-        return v;
-    }
-
-    public List<Variable> getVariables() {
         return variables;
     }
+
 }

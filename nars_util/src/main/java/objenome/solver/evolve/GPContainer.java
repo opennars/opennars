@@ -220,6 +220,13 @@ import objenome.op.VariableNode;
         return this;
     }
 
+    @Override
+    public <T> T the(Object key, Object value) {
+        T x = super.the(key, value);
+        setContainerAware(this, value);
+        return x;
+    }
+
     public static void setContainerAware(GPContainer config, Object value) {
         if (value instanceof GPContainerAware) {
             ((GPContainerAware) value).setConfig(config);

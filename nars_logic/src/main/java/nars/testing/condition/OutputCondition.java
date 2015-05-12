@@ -7,9 +7,10 @@ package nars.testing.condition;
 import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.narsese.InvalidInputException;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
+import nars.narsese.InvalidInputException;
+import nars.testing.TestNAR;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -202,6 +203,10 @@ public abstract class OutputCondition extends NARReaction {
         }
 
         return Double.POSITIVE_INFINITY;
+    }
+
+    public static double cost(TestNAR testNAR) {
+        return cost(testNAR.requires);
     }
 
     /** returns a function of the cost characterizing the optimality of the conditions

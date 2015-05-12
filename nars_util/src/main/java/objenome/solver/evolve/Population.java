@@ -21,11 +21,12 @@
  */
 package objenome.solver.evolve;
 
-import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.goal.DoubleFitness;
+import objenome.solver.evolve.GPContainer.GPKey;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A <code>Population</code> is an ordered collection of {@link Organism}s.
@@ -45,12 +46,14 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
     private List<I> individuals;
     private final GPContainer config;
 
+
     /**
      * Constructs an empty <code>Population</code>.
      */
     public Population(GPContainer config) {
         this.config = config;
-        individuals = new ArrayList<>(/*config.get(SIZE)*/);
+        //individuals = new ArrayList<>(/*config.get(SIZE)*/);
+        individuals = new CopyOnWriteArrayList();
     }
 
     public GPContainer getConfig() {
@@ -73,6 +76,9 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
      */
     public void add(I individual) {
         individuals.add(individual);
+    }
+    public void remove(I i) {
+        individuals.remove(i);
     }
 
     /**
@@ -219,4 +225,5 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
         }
         return s;
     }
+
 }

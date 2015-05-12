@@ -100,12 +100,6 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
         Population newPopulation = new Population(population.getConfig());
         int size = population.size();
 
-        double[] probabilities = new double[operators.size()];
-        double cumulative = 0.0;
-        for (int i = 0; i < operators.size(); i++) {
-            cumulative += operators.get(i).probability();
-            probabilities[i] = cumulative;
-        }
 
         if (elitism > 0) {
             Organism[] elite = population.elites(elitism);
@@ -116,7 +110,33 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
             }
         }
 
-        while (size > 0) {
+
+        add(population, newPopulation, size);
+        return newPopulation;
+    }
+
+    /** updates an existing population with X num to add */
+    public void update(Population population, int num) {
+        setup(population.getConfig());
+
+        population.getConfig().on(ConfigEvent.class, this);
+
+        selector.init(population);
+
+        add(population, population, num);
+
+    }
+
+    protected void add(Population population, Population newPopulation, int num) {
+
+        double[] probabilities = new double[operators.size()];
+        double cumulative = 0.0;
+        for (int i = 0; i < operators.size(); i++) {
+            cumulative += operators.get(i).probability();
+            probabilities[i] = cumulative;
+        }
+
+        while (num > 0) {
             double r = random.nextDouble() * cumulative;
             OrganismOperator operator = null;
             for (int i = 0; i < probabilities.length; i++) {
@@ -134,17 +154,16 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
                 for (int i = 0; i < parents.length; i++) {
                     parents[i] = selector.select();
                 }
-                
+
                 parents = operator.apply(population, parents);
             } while (parents == null);
 
-            for (int i = 0; (i < parents.length) && (size > 0); i++) {
+            for (int i = 0; (i < parents.length) && (num > 0); i++) {
                 newPopulation.add(parents[i]);
-                size--;
+                num--;
             }
         }
 
-        return newPopulation;
     }
 
     /**

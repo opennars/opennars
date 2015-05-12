@@ -49,4 +49,6 @@ public interface OrganismBuilder<I extends Organism> {
      */
     public Population<I> createPopulation(Population<I> survivors, GPContainer config);
 
+    void populate(Population<I> population, int populationSize);
+
 }
