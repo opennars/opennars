@@ -17,4 +17,13 @@ js("'<a --> term>'")!
 
 
 
+
+
+
+
+jsOp("abc", "function(x) { return '<it --> ' + x + '>.'; }")!
+abc(works)!
+''outputMustContain('<it --> works>.')
+
+
 20

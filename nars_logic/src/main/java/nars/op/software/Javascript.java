@@ -1,5 +1,6 @@
 package nars.op.software;
 
+import jdk.nashorn.internal.runtime.ScriptObject;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
@@ -35,21 +36,33 @@ public class Javascript extends TermFunction implements Mental {
     class DynamicFunction extends TermFunction {
 
         private final String function;
+        private Object fnCompiled;
 
         public DynamicFunction(String name, String function) {
             super("^" + name);
             this.function = function;
+
+            ensureJSLoaded();
+
+            try {
+                this.fnCompiled = js.eval(function);
+            }
+            catch (Throwable ex) {
+                ex.printStackTrace();
+            }
         }
 
         @Override public Object function(Term[] args) {
 
             Bindings bindings = newBindings(args);
-            String input = function + ".apply(this," + bindings.get("args").toString() + ")";
+            bindings.put("_o", fnCompiled);
+            String input = "_o.apply(this,arg)";
 
             Object result;
             try {
                 result = js.eval(input, bindings);
             } catch (Throwable ex) {
+                ex.printStackTrace();
                 throw new RuntimeException(ex);
             }
             return result;
@@ -68,9 +81,7 @@ public class Javascript extends TermFunction implements Mental {
         protected ArrayList<Task> execute(Operation operation, Term[] args) {
             ArrayList<Task> result = super.execute(operation, args);
 
-            //HACK prevent this from being re-executed
-            operation.getTask().delete();
-            //nar.concept(operation.getTerm()).goals.clear();
+            //prevent this task from being re-executed unless input again:
             nar.concept(operation.getTerm()).delete();
 
             return result;
@@ -102,35 +113,41 @@ public class Javascript extends TermFunction implements Mental {
 //        return d;
 //    }
 
-    public Bindings newBindings(Term[] operationArguments) {
-        // copy over all arguments
-        Term[] scriptArguments;
-        scriptArguments = new Term[operationArguments.length-1];
-        System.arraycopy(operationArguments, 1, scriptArguments, 0, operationArguments.length-1);
+    public Bindings newBindings(Term[] args) {
 
 
         Bindings bindings = new SimpleBindings();
         bindings.put("global", global);
         bindings.put("js", this);
-        bindings.put("arg", scriptArguments);
+        bindings.put("arg", args);
         bindings.put("memory", getMemory());
         bindings.put("nar", nar);
 
         return bindings;
     }
 
-    @Override public Object function(Term[] args) {
-        if (args.length < 1) {
-            return null;
-        }
-        
+    protected void ensureJSLoaded() {
         if (js == null) {
             ScriptEngineManager factory = new ScriptEngineManager();
             js = factory.getEngineByName("JavaScript");
         }
+    }
+
+    @Override public Object function(Term[] args) {
+        if (args.length < 1) {
+            return null;
+        }
+
+        ensureJSLoaded();
         
 
-        Bindings bindings = newBindings(args);
+
+        // copy over all arguments
+        Term[] scriptArguments;
+        scriptArguments = new Term[args.length-1];
+        System.arraycopy(args, 1, scriptArguments, 0, args.length-1);
+
+        Bindings bindings = newBindings(scriptArguments);
 
 
         
