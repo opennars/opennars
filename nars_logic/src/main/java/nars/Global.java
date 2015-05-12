@@ -202,6 +202,10 @@ public class Global {
 
     public static boolean IMMEDIATE_ETERNALIZATION=true;
 
+    public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
+    public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
+    public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
+
 
 //    /** how many maximum cycles difference in ocurrence time
 //     * are two non-eternal sentences considered equal, if all

@@ -281,4 +281,66 @@ public class InternalExperience extends AbstractOperator {
     public static enum InternalExperienceMode {
         None, Minimal, Full
     }
+
+
+    //TODO
+    public static void InternalExperienceFromBelief(Memory memory, Task task, Sentence belief) {
+        Task T=new Task(belief.clone(),new Budget(task),null);
+        ///InternalExperienceFromTask(memory,T,false);
+    }
+
+//    public static void InternalExperienceFromTask(Memory memory, Task task, boolean full) {
+//        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+//            InternalExperienceFromTaskInternal(memory,task,full);
+//        }
+//    }
+//
+//    public static boolean InternalExperienceFromTaskInternal(Memory memory, Task task, boolean full) {
+//        if(!enabled) {
+//            return false;
+//        }
+//
+//        // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
+//        //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
+//        {
+//            if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
+//                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+//                    return false;
+//                }
+//            }
+//            else
+//            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+//                return false;
+//            }
+//        }
+//
+//        Term content=task.getTerm();
+//        // to prevent infinite recursions
+//        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+//            return true;
+//        }
+//        Sentence sentence = task.sentence;
+//        TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+//        Stamp stamp = task.sentence.stamp.clone();
+//        stamp.setOccurrenceTime(memory.time());
+//        Term ret=toTerm(sentence, memory);
+//        if (ret==null) {
+//            return true;
+//        }
+//        Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
+//        BudgetValue newbudget=new BudgetValue(
+//                Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+//                Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+//                BudgetFunctions.truthToQuality(truth));
+//
+//        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+//            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
+//            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
+//        }
+//
+//        Task newTask = new Task(j, (BudgetValue) newbudget,
+//                full ? null : task);
+//        memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+//        return false;
+//    }
 }

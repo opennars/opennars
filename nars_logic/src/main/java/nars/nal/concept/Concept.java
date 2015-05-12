@@ -31,17 +31,19 @@ import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
+import nars.nal.nal5.Equivalence;
+import nars.nal.nal5.Implication;
+import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
+import nars.nal.term.Variable;
 import nars.nal.tlink.*;
+import nars.op.mental.InternalExperience;
 
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.google.common.collect.Iterators.*;
 import static nars.budget.BudgetFunctions.divide;
@@ -566,16 +568,35 @@ abstract public class Concept extends Item<Term> implements Termed {
                     }
                 }
             } 
-        } 
+        }
 
 
-        // check if the Goal is already satisfied
-        trySolution(getSentence(goal, beliefs), task, nal);
+        double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+        Sentence projectedGoal = task.sentence.projection(task.sentence.getOccurrenceTime(), memory.time());
+
+
+        Sentence sol = getSentence(goal, beliefs);
+        if (sol!=null) {
+            // check if the Goal is already satisfied
+
+            trySolution(sol, task, nal);
+            Sentence projectedBelief = sol.projection(sol.getOccurrenceTime(), memory.time());
+            AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
+        }
+
+        double Satisfaction=1.0-AntiSatisfaction;
+        Truth T=projectedGoal.truth.clone();
+        T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
+
 
         // still worth pursuing?
         if (!task.aboveThreshold()) {
             return false;
         }
+
+
+        questionFromGoal(task, nal);
+
 
 
         if (!addToTable(task, goals, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class)) {
@@ -584,8 +605,42 @@ abstract public class Concept extends Item<Term> implements Termed {
             return false;
         }
 
+        //TODO
+        //InternalExperience.InternalExperienceFromTask(memory, task, false);
+
         memory.decide(this, task);
+
         return true;
+    }
+
+    private void questionFromGoal(final Task task, final NAL nal) {
+        if(Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+            //ok, how can we achieve it? add a question of whether it is fullfilled
+            ArrayList<Term> qu=new ArrayList<Term>();
+            if(Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+                    Variable how=new Variable("?how");
+                    Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                    qu.add(imp);
+                    qu.add(imp2);
+                }
+            }
+            if(Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
+                qu.add(task.sentence.term);
+            }
+            for(Term q : qu) {
+                if(q!=null) {
+                    NAL.StampBuilder st = nal.newStamp(task.sentence, nal.time());
+                    st.setOccurrenceTime(task.sentence.getOccurrenceTime()); //set tense of question to goal tense
+                    Sentence s=new Sentence(q,Symbols.QUESTION,null,st);
+                    if(s!=null) {
+                        Budget budget=new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                        nal.singlePremiseTask(s, budget);
+                    }
+                }
+            }
+        }
     }
 
     /**
