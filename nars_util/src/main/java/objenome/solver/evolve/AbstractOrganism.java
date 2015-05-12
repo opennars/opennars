@@ -27,9 +27,8 @@ package objenome.solver.evolve;
  *
  * @since 2.0
  */
-public abstract class AbstractIndividual implements Individual {
+public abstract class AbstractOrganism implements Organism {
 
-    private static final long serialVersionUID = -4321760091640776785L;
 
     private Fitness fitness;
 
@@ -58,9 +57,9 @@ public abstract class AbstractIndividual implements Individual {
      * @return an individual which is a copy of this individual
      */
     @Override
-    public AbstractIndividual clone() {
+    public AbstractOrganism clone() {
         try {
-            AbstractIndividual clone = (AbstractIndividual) super.clone();
+            AbstractOrganism clone = (AbstractOrganism) super.clone();
             if (fitness != null) {
                 clone.fitness = fitness.clone();
             }

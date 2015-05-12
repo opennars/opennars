@@ -22,9 +22,9 @@
 package objenome.solver.evolve.stat;
 
 import java.util.Arrays;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.stat.AbstractStat;
 
@@ -61,9 +61,9 @@ public class GenerationTerminals extends AbstractStat<EndGeneration> {
         terminals = new int[population.size()];
         int index = 0;
 
-        for (Individual individual : population) {
-            if (individual instanceof STGPIndividual) {
-                terminals[index++] = ((STGPIndividual) individual).getRoot().countTerminals();
+        for (Organism individual : population) {
+            if (individual instanceof TypedOrganism) {
+                terminals[index++] = ((TypedOrganism) individual).getRoot().countTerminals();
             }
         }
     }

@@ -47,9 +47,9 @@ abstract public class Numeric1 extends MathNode implements UnivariateFunction, F
      * @return the result of evaluating the child squared
      */
     @Override
-    public double eval() {
+    public double asDouble() {
 
-        return value( input().eval() );
+        return value( input().asDouble() );
 //
 //        if (c instanceof Long) {
 //            return (long) result;

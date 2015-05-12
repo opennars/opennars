@@ -3,22 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package objenome.goal;
+package objenome.problem;
 
 import com.google.common.collect.Lists;
 import objenome.solver.evolve.BranchedBreeder;
 import objenome.solver.evolve.FitnessEvaluator;
-import objenome.solver.evolve.FitnessFunction;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GenerationalStrategy;
 import objenome.solver.evolve.Initialiser;
 import objenome.solver.evolve.PopulationProcess;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 
 /**
  * Static-typed Problem solvable by Evolution
  */
-public abstract class ProblemSTGP extends GPContainer<STGPIndividual> {
+public abstract class ProblemSTGP extends GPContainer<TypedOrganism> {
     /**
      * The key for setting <code>Template</code> parameter.
      */

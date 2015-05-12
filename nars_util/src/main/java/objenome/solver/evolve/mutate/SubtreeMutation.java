@@ -21,16 +21,16 @@
  */
 package objenome.solver.evolve.mutate;
 
-import objenome.solver.evolve.AbstractOperator;
+import objenome.solver.evolve.AbstractOrganismOperator;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
-import objenome.goal.ProblemSTGP;
+import objenome.solver.evolve.Organism;
+import objenome.problem.ProblemSTGP;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
-import static objenome.solver.evolve.STGPIndividual.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.STGPIndividual.SYNTAX;
+import objenome.solver.evolve.TypedOrganism;
+import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
+import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
@@ -50,7 +50,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class SubtreeMutation extends AbstractOperator implements Listener<ConfigEvent> {
+public class SubtreeMutation extends AbstractOrganismOperator implements Listener<ConfigEvent> {
 
     /**
      * The key for setting and retrieving the probability of this operator being
@@ -95,8 +95,8 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
      * in any of the following configuration parameters:
      * <ul>
      * <li>{@link RandomSequence#RANDOM_SEQUENCE}
-     * <li>{@link STGPIndividual#SYNTAX}
-     * <li>{@link STGPIndividual#MAXIMUM_DEPTH}
+     * <li>{@link TypedOrganism#SYNTAX}
+     * <li>{@link TypedOrganism#MAXIMUM_DEPTH}
      * <li>{@link #PROBABILITY}
      * </ul>
      */
@@ -140,8 +140,8 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
      * result of mutating the parent individual
      */
     @Override
-    public STGPIndividual[] perform(EndOperator event, Individual... parents) {
-        STGPIndividual child = (STGPIndividual) parents[0];
+    public TypedOrganism[] perform(EndOperator event, Organism... parents) {
+        TypedOrganism child = (TypedOrganism) parents[0];
 
         // Randomly choose a mutation point
         int length = child.size();
@@ -169,7 +169,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
             return (STGPIndividual[]) parents; //TODO make AbstractOperator generic to allow returning STGPIndividual[]
         }*/
 
-        return new STGPIndividual[]{child};
+        return new TypedOrganism[]{child};
 
     }
 
@@ -178,7 +178,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
      * parents set
      */
     @Override
-    protected EndOperator getEndEvent(Individual... parents) {
+    protected EndOperator getEndEvent(Organism... parents) {
         return new SubtreeMutationEndEvent(this, parents);
     }
 
@@ -270,7 +270,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
     /**
      * Sets the array of nodes to generate replacement subtrees from. If
      * automatic configuration is enabled then any value set here will be
-     * overwritten by the {@link STGPIndividual#SYNTAX} configuration setting on
+     * overwritten by the {@link TypedOrganism#SYNTAX} configuration setting on
      * the next config event.
      *
      * @param syntax an array of nodes to generate new program trees from
@@ -292,7 +292,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
     /**
      * Sets the maximum depth for program trees returned from this operator. If
      * automatic configuration is enabled then any value set here will be
-     * overwritten by the {@link STGPIndividual#MAXIMUM_DEPTH} configuration
+     * overwritten by the {@link TypedOrganism#MAXIMUM_DEPTH} configuration
      * setting on the next config event.
      *
      * @param maxDepth the maximum depth for program trees
@@ -320,7 +320,7 @@ public class SubtreeMutation extends AbstractOperator implements Listener<Config
          * @param operator the operator that performed the mutation
          * @param parents the individual that the operator was performed on
          */
-        public SubtreeMutationEndEvent(SubtreeMutation operator, Individual... parents) {
+        public SubtreeMutationEndEvent(SubtreeMutation operator, Organism... parents) {
             super(operator, parents);
         }
 

@@ -23,7 +23,7 @@ package objenome.solver.evolve.event.stat;
 
 import java.util.Arrays;
 import objenome.solver.evolve.Fitness;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 
@@ -55,7 +55,7 @@ public class GenerationFitnesses extends AbstractStat<EndGeneration> {
         fitnesses = new Fitness[population.size()];
         int index = 0;
 
-        for (Individual individual : population) {
+        for (Organism individual : population) {
             fitnesses[index++] = individual.getFitness();
         }
     }

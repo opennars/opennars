@@ -21,7 +21,7 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 
@@ -71,7 +71,7 @@ public class GenerationPopulation extends AbstractStat<EndGeneration> {
         StringBuffer buffer = new StringBuffer();
 
         boolean sep = false;
-        for (Individual individual : population) {
+        for (Organism individual : population) {
             if (sep) {
                 buffer.append(", ");
             }

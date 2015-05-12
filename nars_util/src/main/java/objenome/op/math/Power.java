@@ -63,7 +63,7 @@ public class Power extends MathNode {
      * all.
      */
     @Override
-    public double eval() {
+    public double asDouble() {
         return Math.pow(getChildEvaluated(0), getChildEvaluated(1));
     }
 

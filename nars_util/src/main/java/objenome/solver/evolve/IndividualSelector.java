@@ -41,6 +41,6 @@ public interface IndividualSelector {
      *
      * @return an individual.
      */
-    public Individual select();
+    public Organism select();
 
 }

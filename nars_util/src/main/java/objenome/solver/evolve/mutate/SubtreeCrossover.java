@@ -23,14 +23,14 @@ package objenome.solver.evolve.mutate;
 
 import java.util.ArrayList;
 import java.util.List;
-import objenome.solver.evolve.AbstractOperator;
+import objenome.solver.evolve.AbstractOrganismOperator;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
-import static objenome.solver.evolve.STGPIndividual.MAXIMUM_DEPTH;
+import objenome.solver.evolve.TypedOrganism;
+import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
@@ -51,7 +51,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class SubtreeCrossover extends AbstractOperator implements Listener<ConfigEvent> {
+public class SubtreeCrossover extends AbstractOrganismOperator implements Listener<ConfigEvent> {
 
     /**
      * The key for setting and retrieving the probability with which a terminal
@@ -104,7 +104,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
      * <li>{@link RandomSequence#RANDOM_SEQUENCE}
      * <li>{@link #TERMINAL_PROBABILITY} (default: <code>-1.0</code>)
      * <li>{@link #PROBABILITY}
-     * <li>{@link STGPIndividual#MAXIMUM_DEPTH}
+     * <li>{@link TypedOrganism#MAXIMUM_DEPTH}
      * </ul>
      */
     public void setConfig(GPContainer config) {
@@ -146,9 +146,9 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
      * result of the crossover
      */
     @Override
-    public STGPIndividual[] perform(EndOperator event, Individual... parents) {
-        STGPIndividual program1 = (STGPIndividual) parents[0].clone();
-        STGPIndividual program2 = (STGPIndividual) parents[1].clone();
+    public TypedOrganism[] perform(EndOperator event, Organism... parents) {
+        TypedOrganism program1 = (TypedOrganism) parents[0].clone();
+        TypedOrganism program2 = (TypedOrganism) parents[1].clone();
 
         // Select first swap point
         int swapPoint1 = crossoverPoint(program1);
@@ -160,7 +160,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
         List<Integer> matchingIndexes = new ArrayList<>();
         nodesOfType(program2.getRoot(), subtree1Type, 0, matchingNodes, matchingIndexes);
 
-        STGPIndividual[] children = new STGPIndividual[0];
+        TypedOrganism[] children = new TypedOrganism[0];
         int[] swapPoints = new int[0];
         Node[] subtrees = new Node[0];
 
@@ -178,16 +178,16 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
                 int depth1 = program1.depth();
                 int depth2 = program2.depth();
 
-                children = new STGPIndividual[2];
+                children = new TypedOrganism[2];
 
                 if (depth1 <= maxDepth && depth2 <= maxDepth) {
-                    children = new STGPIndividual[]{program1, program2};
+                    children = new TypedOrganism[]{program1, program2};
                 } else if (depth1 <= maxDepth) {
-                    children = new STGPIndividual[]{program1};
+                    children = new TypedOrganism[]{program1};
                 } else if (depth2 <= maxDepth) {
-                    children = new STGPIndividual[]{program2};
+                    children = new TypedOrganism[]{program2};
                 } else {
-                    children = new STGPIndividual[0];
+                    children = new TypedOrganism[0];
                 }
 
                 swapPoints = new int[]{swapPoint1, swapPoint2};
@@ -201,7 +201,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
             }
         }
 
-        return new STGPIndividual[] { program1, program2 };
+        return new TypedOrganism[] { program1, program2 };
 
     }
 
@@ -210,7 +210,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
      * parents set
      */
     @Override
-    protected EndEvent getEndEvent(Individual... parents) {
+    protected EndEvent getEndEvent(Organism... parents) {
         return new EndEvent(this, parents);
     }
 
@@ -243,7 +243,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
      * @return the index of the crossover point selected in the given
      * individual's program tree.
      */
-    protected int crossoverPoint(STGPIndividual individual) {
+    protected int crossoverPoint(TypedOrganism individual) {
         double terminalProbability = getTerminalProbability();
 
         int length = individual.size();
@@ -388,7 +388,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
     /**
      * Sets the maximum depth for program trees returned from this operator. If
      * automatic configuration is enabled then any value set here will be
-     * overwritten by the {@link STGPIndividual#MAXIMUM_DEPTH} configuration
+     * overwritten by the {@link TypedOrganism#MAXIMUM_DEPTH} configuration
      * setting on the next config event.
      *
      * @param maxDepth the maximum depth for program trees
@@ -417,7 +417,7 @@ public class SubtreeCrossover extends AbstractOperator implements Listener<Confi
          * @param parents an array of two individuals that the operator was
          * performed on
          */
-        public EndEvent(SubtreeCrossover operator, Individual[] parents) {
+        public EndEvent(SubtreeCrossover operator, Organism[] parents) {
             super(operator, parents);
         }
 

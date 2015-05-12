@@ -22,15 +22,15 @@
 package objenome.solver.evolve;
 
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.fitness.DoubleFitness;
+import objenome.goal.DoubleFitness;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;
 
 /**
- * A <code>Population</code> is an ordered collection of {@link Individual}s.
+ * A <code>Population</code> is an ordered collection of {@link Organism}s.
  */
-public class Population<I extends Individual> implements Iterable<I>, Cloneable {
+public class Population<I extends Organism> implements Iterable<I>, Cloneable {
 
     // TODO: make it serializable
     /**
@@ -95,7 +95,7 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
      * @return an <code>Individual</code> with the best fitness in this
      * population.
      */
-    public I fittest() {
+    public I best() {
         I fittest = null;
 
         for (I individual : individuals) {
@@ -107,7 +107,7 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
         return fittest;
     }
 
-    public Individual[] elites(double percent) {
+    public Organism[] elites(double percent) {
         return elites((int)(percent * size()));
     }
     
@@ -115,12 +115,12 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
         individuals.clear();
     }
     
-   public Population<I> cullThis(double percent) {
+   @Deprecated public Population<I> cullThis(double percent) {
         return cullThis((int)(percent * size()));
     }    
     
     /** modifies this population */
-    public Population<I> cullThis(int numToRemove) {
+    @Deprecated public Population<I> cullThis(int numToRemove) {
         int existing = size();
         if (existing <= numToRemove) {
             clear();
@@ -146,14 +146,14 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
      *
      * @return the group of best individuals of the population.
      */
-    public Individual[] elites(int size) {
+    public Organism[] elites(int size) {
         if (size() <= size)
             size = size()-1;
         
         Population<I> copy = this.clone();
         copy.sort();
 
-        Individual[] fittest = new Individual[size];
+        Organism[] fittest = new Organism[size];
 
         for (int i = 0; i < size; i++) {
             fittest[i] = copy.get(i);
@@ -167,10 +167,10 @@ public class Population<I extends Individual> implements Iterable<I>, Cloneable 
      * individuals' fitness from best to worst.
      */
     public void sort() {
-        Collections.sort(individuals, new Comparator<Individual>() {
+        Collections.sort(individuals, new Comparator<Organism>() {
 
             @Override
-            public int compare(Individual o1, Individual o2) {
+            public int compare(Organism o1, Organism o2) {
                 return o2.compareTo(o1);
             }
         });

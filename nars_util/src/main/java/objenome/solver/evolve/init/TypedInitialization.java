@@ -22,8 +22,8 @@
 package objenome.solver.evolve.init;
 
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.InitialisationMethod;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.OrganismBuilder;
+import objenome.solver.evolve.TypedOrganism;
 
 /**
  * Initialisation method for <code>STGPIndividual</code>s. It does not define
@@ -34,11 +34,11 @@ import objenome.solver.evolve.STGPIndividual;
  * Where appropriate, implementations should use the
  * <code>MAXIMUM_INITIAL_DEPTH</code> configuration parameter defined in this
  * interface to specify the maximum depth of the program trees they generate.
- * The {@link STGPIndividual#MAXIMUM_DEPTH} parameter should also be enforced.
+ * The {@link TypedOrganism#MAXIMUM_DEPTH} parameter should also be enforced.
  *
  * @since 2.0
  */
-public interface STGPInitialisation extends InitialisationMethod<STGPIndividual> {
+public interface TypedInitialization extends OrganismBuilder<TypedOrganism> {
 
     /**
      * The key for setting and retrieving the maximum initial depth setting for

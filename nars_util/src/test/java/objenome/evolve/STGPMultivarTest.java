@@ -2,15 +2,12 @@ package objenome.evolve;
 
 import com.google.common.collect.Lists;
 import jdk.nashorn.internal.ir.annotations.Ignore;
-import junit.framework.TestCase;
 import objenome.goal.DefaultProblemSTGP;
 import objenome.op.Variable;
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.fitness.DoubleFitness;
-import objenome.solver.evolve.fitness.STGPFitnessFunction;
-import org.junit.Test;
+import objenome.goal.DoubleFitness;
+import objenome.goal.TypedFitnessFunction;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Ignore
@@ -31,9 +28,9 @@ public class STGPMultivarTest {
             protected FitnessFunction initFitness() {
                 return
                 //new CachedFitnessFunction(
-                        new STGPFitnessFunction() {
+                        new TypedFitnessFunction() {
                     @Override
-                    public Fitness evaluate(Population population, STGPIndividual individual) {
+                    public Fitness evaluate(Population population, TypedOrganism individual) {
 
                         double cost = 0;
                         double range = 1;
@@ -95,7 +92,7 @@ public class STGPMultivarTest {
             //System.out.println(Arrays.toString(p.elites(1.0)));
         }
 
-        List<Individual> nextBest = Lists.newArrayList(p.elites(0.1f));
+        List<Organism> nextBest = Lists.newArrayList(p.elites(0.1f));
 
         System.out.println(nextBest);
 
@@ -106,9 +103,9 @@ public class STGPMultivarTest {
 
 
     static double bestVal = Double.MIN_VALUE;
-    static STGPIndividual best = null;
+    static TypedOrganism best = null;
 
-    static protected void evaluated(STGPIndividual i, double score) {
+    static protected void evaluated(TypedOrganism i, double score) {
         if (score > bestVal) {
             bestVal = score;
             best = i;

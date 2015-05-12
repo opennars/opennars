@@ -22,7 +22,7 @@
 package objenome.op.compute;
 
 import java.util.Arrays;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 
 /**
@@ -84,7 +84,7 @@ import objenome.solver.evolve.source.SourceGenerator;
  *
  * @since 2.0
  */
-public class BrainfuckInterpreter<T extends Individual> implements Computer<Byte,T,Object> {
+public class BrainfuckInterpreter<T extends Organism> implements Computer<Byte,T,Object> {
 
     // The indexable memory available to programs.
     private final byte[] memory;

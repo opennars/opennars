@@ -26,15 +26,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import objenome.op.Literal;
-import objenome.solver.evolve.AbstractOperator;
+import objenome.solver.evolve.AbstractOrganismOperator;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
-import static objenome.goal.ProblemSTGP.PROBLEM;
+import objenome.solver.evolve.Organism;
+import static objenome.problem.ProblemSTGP.PROBLEM;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
-import static objenome.solver.evolve.STGPIndividual.SYNTAX;
+import objenome.solver.evolve.TypedOrganism;
+import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
@@ -57,7 +57,7 @@ import objenome.op.math.DoubleERC;
  *
  * @since 2.0
  */
-public class PointMutation extends AbstractOperator implements Listener<ConfigEvent> {
+public class PointMutation extends AbstractOrganismOperator implements Listener<ConfigEvent> {
 
     /**
      * The key for setting and retrieving the probability of each node being
@@ -110,7 +110,7 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
      * in any of the following configuration parameters:
      * <ul>
      * <li>{@link RandomSequence#RANDOM_SEQUENCE}
-     * <li>{@link STGPIndividual#SYNTAX}
+     * <li>{@link TypedOrganism#SYNTAX}
      * <li>{@link #POINT_PROBABILITY} (defaults to <code>0.01</code>).
      * <li>{@link #PROBABILITY}
      * </ul>
@@ -153,9 +153,9 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
      * result of mutating the parent individual
      */
     @Override
-    public STGPIndividual[] perform(EndOperator event, Individual... parents) {
-        STGPIndividual program = (STGPIndividual) parents[0];
-        STGPIndividual child = program.clone();
+    public TypedOrganism[] perform(EndOperator event, Organism... parents) {
+        TypedOrganism program = (TypedOrganism) parents[0];
+        TypedOrganism child = program.clone();
 
         List<Integer> points = null;
         
@@ -191,7 +191,7 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
 
         ((EndEvent) event).setMutationPoints(points);
 
-        return new STGPIndividual[]{child};
+        return new TypedOrganism[]{child};
     }
 
     /**
@@ -199,7 +199,7 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
      * parents set
      */
     @Override
-    protected EndEvent getEndEvent(Individual... parents) {
+    protected EndEvent getEndEvent(Organism... parents) {
         return new EndEvent(this, parents);
     }
 
@@ -328,7 +328,7 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
     /**
      * Sets the array of nodes to generate replacement subtrees from. If
      * automatic configuration is enabled then any value set here will be
-     * overwritten by the {@link STGPIndividual#SYNTAX} configuration setting on
+     * overwritten by the {@link TypedOrganism#SYNTAX} configuration setting on
      * the next config event.
      *
      * @param syntax an array of nodes to generate new program trees from
@@ -377,7 +377,7 @@ public class PointMutation extends AbstractOperator implements Listener<ConfigEv
          * @param parent the individual that the operator was performed on
          *
          */
-        public EndEvent(PointMutation operator, Individual... parents) {
+        public EndEvent(PointMutation operator, Organism... parents) {
             super(operator, parents);
         }
 

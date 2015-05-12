@@ -22,7 +22,7 @@
 package objenome.util;
 
 import java.util.function.Function;
-import objenome.goal.STGPBoolean.BooleanCases;
+import objenome.problem.STGPBoolean.BooleanCases;
 
 /**
  * This class provides correct solutions to various benchmark problems that can

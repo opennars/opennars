@@ -21,7 +21,7 @@
  */
 package objenome.solver.evolve.event;
 
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 
 /**
@@ -75,7 +75,7 @@ public abstract class ElitismEvent implements Event {
         /**
          * The elitist individuals.
          */
-        private Individual[] elites;
+        private Organism[] elites;
 
         /**
          * Constructs an <code>EndElitism</code>.
@@ -83,7 +83,7 @@ public abstract class ElitismEvent implements Event {
          * @param population the current population.
          * @param elites the elitist individuals.
          */
-        public EndElitism(Population population, Individual[] elites) {
+        public EndElitism(Population population, Organism[] elites) {
             super(population);
 
             this.elites = elites;
@@ -94,7 +94,7 @@ public abstract class ElitismEvent implements Event {
          *
          * @return the elitist individuals.
          */
-        public Individual[] getElites() {
+        public Organism[] getElites() {
             return elites;
         }
     }

@@ -21,7 +21,7 @@
  */
 package objenome.op.compute;
 
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.op.EpoxParser;
 import objenome.op.Node;
 import objenome.op.Variable;
@@ -45,7 +45,7 @@ import objenome.solver.evolve.source.SourceGenerator;
  *
  * @since 2.0
  */
-public class EpoxInterpreter<T extends Individual> implements Computer<Object,T,Object> {
+public class EpoxInterpreter<T extends Organism> implements Computer<Object,T,Object> {
 
     // The Epox language parser.
     private EpoxParser parser;

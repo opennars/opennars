@@ -41,21 +41,21 @@ import objenome.solver.evolve.event.Listener;
  *  }
  * </pre>
  *
- * The {@link TerminationCriteria} is obtained from the {@link GPContainer}, using
+ * The {@link PopulationTermination} is obtained from the {@link GPContainer}, using
  * the appropriate <code>ConfigKey</code>. A new population is generated using
  * the pipeline's components, which typically will include a {@link Breeder} and
  * {@link FitnessEvaluator} instances.
  *
  * @see Breeder
  * @see FitnessEvaluator
- * @see TerminationCriteria
+ * @see PopulationTermination
  */
 public class GenerationalStrategy extends Pipeline implements EvolutionaryStrategy, Listener<ConfigEvent> {
 
     /**
      * The list of termination criteria.
      */
-    private List<TerminationCriteria> criteria;
+    private List<PopulationTermination> criteria;
     private GPContainer config;
 
     /**
@@ -109,7 +109,7 @@ public class GenerationalStrategy extends Pipeline implements EvolutionaryStrate
      */
     protected boolean terminate() {
         if (criteria!=null)
-            for (TerminationCriteria tc : criteria) {
+            for (PopulationTermination tc : criteria) {
                 if (tc.terminate(config)) {
                     return true;
                 }
@@ -118,13 +118,13 @@ public class GenerationalStrategy extends Pipeline implements EvolutionaryStrate
     }
 
     /**
-     * Looks up the {@link TerminationCriteria} and the {@link FitnessEvaluator}
+     * Looks up the {@link PopulationTermination} and the {@link FitnessEvaluator}
      * in the {@link GPContainer}.
      */
     protected void setup() {
         criteria = config.get(EvolutionaryStrategy.TERMINATION_CRITERIA);
         if (criteria!=null)
-            for (TerminationCriteria x : criteria) {
+            for (PopulationTermination x : criteria) {
                 GPContainer.setContainerAware(config, x);
             }
     }

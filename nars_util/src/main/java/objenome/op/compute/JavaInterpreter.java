@@ -21,9 +21,6 @@
  */
 package objenome.op.compute;
 
-import objenome.solver.evolve.Individual;
-import objenome.solver.evolve.source.SourceGenerator;
-
 /**
  * A <code>JavaInterpreter</code> provides the facility to evaluate individuals
  * that represent Java expressions and execute multi-line Java statements. Java

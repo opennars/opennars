@@ -23,14 +23,14 @@ package objenome.solver.evolve.mutate;
 
 import java.util.ArrayList;
 import java.util.List;
-import objenome.solver.evolve.AbstractOperator;
+import objenome.solver.evolve.AbstractOrganismOperator;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
-import static objenome.goal.ProblemSTGP.PROBLEM;
+import objenome.solver.evolve.Organism;
+import static objenome.problem.ProblemSTGP.PROBLEM;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
@@ -59,7 +59,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class OnePointCrossover extends AbstractOperator implements Listener<ConfigEvent> {
+public class OnePointCrossover extends AbstractOrganismOperator implements Listener<ConfigEvent> {
 
     /**
      * The key for setting and retrieving whether the strict form of one-point
@@ -157,9 +157,9 @@ public class OnePointCrossover extends AbstractOperator implements Listener<Conf
      * result of the crossover
      */
     @Override
-    public STGPIndividual[] perform(EndOperator event, Individual... parents) {
-        STGPIndividual program1 = (STGPIndividual) parents[0];
-        STGPIndividual program2 = (STGPIndividual) parents[1];
+    public TypedOrganism[] perform(EndOperator event, Organism... parents) {
+        TypedOrganism program1 = (TypedOrganism) parents[0];
+        TypedOrganism program2 = (TypedOrganism) parents[1];
 
         // List the points that align
         List<Integer> points1 = new ArrayList<>();
@@ -174,8 +174,8 @@ public class OnePointCrossover extends AbstractOperator implements Listener<Conf
         Node subtree2 = program2.getNode(swapPoint2);
 
         // Clone so children and parents remain distinct for event
-        STGPIndividual child1 = program1.clone();
-        STGPIndividual child2 = program2.clone();
+        TypedOrganism child1 = program1.clone();
+        TypedOrganism child2 = program2.clone();
 
         child1.setNode(swapPoint1, subtree2);
         child2.setNode(swapPoint2, subtree1);
@@ -183,7 +183,7 @@ public class OnePointCrossover extends AbstractOperator implements Listener<Conf
         ((EndEvent) event).setSubtrees(new Node[]{subtree1, subtree2});
         ((EndEvent) event).setCrossoverPoints(new int[]{swapPoint1, swapPoint2});
 
-        return new STGPIndividual[]{child1, child2};
+        return new TypedOrganism[]{child1, child2};
     }
 
     /**
@@ -191,7 +191,7 @@ public class OnePointCrossover extends AbstractOperator implements Listener<Conf
      * parents set
      */
     @Override
-    protected EndEvent getEndEvent(Individual... parents) {
+    protected EndEvent getEndEvent(Organism... parents) {
         return new EndEvent(this, parents);
     }
 
@@ -325,7 +325,7 @@ public class OnePointCrossover extends AbstractOperator implements Listener<Conf
          * @param parents an array of two individuals that the operator was
          * performed on
          */
-        public EndEvent(OnePointCrossover operator, Individual[] parents) {
+        public EndEvent(OnePointCrossover operator, Organism[] parents) {
             super(operator, parents);
         }
 

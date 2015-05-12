@@ -3,12 +3,12 @@ package objenome.evolve;
 import com.google.common.collect.Lists;
 
 import java.util.List;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.Population;
 import junit.framework.TestCase;
 import objenome.goal.Observation;
-import objenome.goal.STGPFunctionApproximation;
-import objenome.solver.evolve.Individual;
+import objenome.problem.STGPFunctionApproximation;
+import objenome.solver.evolve.Organism;
 import org.junit.Test;
 
 public class STGPFunctionApproximationTest extends TestCase {
@@ -20,8 +20,8 @@ public class STGPFunctionApproximationTest extends TestCase {
             
             STGPFunctionApproximation e = new STGPFunctionApproximation(individuals, 5, true, true, false, true) {
                 @Override
-                public Population<STGPIndividual> cycle() {
-                    Population<STGPIndividual> p = super.cycle();
+                public Population<TypedOrganism> cycle() {
+                    Population<TypedOrganism> p = super.cycle();
 
                     //System.out.println(getBestError() + " = " + getBest());
 
@@ -39,17 +39,17 @@ public class STGPFunctionApproximationTest extends TestCase {
                 j++;
             }
             
-            Population<STGPIndividual> p = e.cycle();
+            Population<TypedOrganism> p = e.cycle();
             
-            STGPIndividual best = p.fittest();
+            TypedOrganism best = p.best();
             
             //assertTrue(best.depth() > 1);            
             assertEquals(individuals, p.size());
-            assertNotNull(p.fittest());
+            assertNotNull(p.best());
 
-            List<Individual>  firstBest = Lists.newArrayList(p.elites(0.5f));
+            List<Organism>  firstBest = Lists.newArrayList(p.elites(0.5f));
             
-            System.out.println(p.fittest());
+            System.out.println(p.best());
             System.out.println(p.size());            
             System.out.println(p);            
             System.out.println(best.evaluate());
@@ -71,7 +71,7 @@ public class STGPFunctionApproximationTest extends TestCase {
                 p = e.cycle();
             }
             
-            List<Individual> nextBest = Lists.newArrayList(p.elites(0.5f));
+            List<Organism> nextBest = Lists.newArrayList(p.elites(0.5f));
             
             System.out.println(nextBest);
             

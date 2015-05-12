@@ -26,7 +26,7 @@ import java.util.List;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 import objenome.util.Utils;
 
@@ -54,7 +54,7 @@ import objenome.util.Utils;
  *
  * @since 2.0
  */
-public class ScriptingInterpreter<I,T extends Individual,O> implements Computer<I,T,O> {
+public class ScriptingInterpreter<I,T extends Organism,O> implements Computer<I,T,O> {
 
     // The language specific scripting engine.
     private ScriptEngine engine;

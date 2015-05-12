@@ -95,6 +95,9 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         return parent;
     }
 
+    /** alias for getParent() */
+    public final Node getOutput() { return getParent(); }
+
     /**
      * Returns an array of this node's children. Modifying this array will not
      * change the set of children, but modifying the nodes will alter the nodes
@@ -105,6 +108,10 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
     public X[] getChildren() {
         return Arrays.copyOf(children, children.length);
     }
+
+    /** alias for getChildren() */
+    public final X[] getInputs() { return getChildren(); }
+
 
     /**
      * Sets the child nodes of this node. Modifications to this array after
@@ -773,7 +780,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
 
 
     /** default "fast" evaluation method, which should be overrided in math-related subclasses */
-    public double eval() {
+    public double asDouble() {
         return ((Double)evaluate());
     }
 }

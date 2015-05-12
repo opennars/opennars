@@ -21,30 +21,32 @@
  */
 package objenome.solver.evolve;
 
-import java.io.Serializable;
+import objenome.solver.evolve.GPContainer.GPKey;
 
 /**
- * An instance of <code>Individual</code> represents one candidate solution to a
- * specific problem. The only responsibility of an individual is to provide a
- * fitness that is an indicator of the solution's quality. A typical
- * implementation would allow a fitness to be set by a {@link FitnessEvaluator}
- * during an evolutionary run.
+ * An instance of <code>Initialiser</code> is responsible for creating the
+ * individuals.
  */
-public interface Individual extends Serializable, Cloneable, Comparable<Individual> {
+public interface OrganismBuilder<I extends Organism> {
 
     /**
-     * Returns a fitness which is an indicator of this individual's quality or
-     * ability to solve a specific problem.
-     *
-     * @return the fitness of this individual
+     * The key for setting and retrieving whether the initialisation method
+     * should allow duplicate individuals or not
      */
-    public Fitness getFitness();
+    public static final GPKey<Boolean> ALLOW_DUPLICATES = new GPKey<>();
 
     /**
-     * Returns a copy of this individual.
+     * Returns a newly created individual.
      *
-     * @return a copy of this individual.
+     * @return a newly created individual.
      */
-    public Individual clone();
+    public I newOrganism();
+
+    /**
+     * Returns a population of new individuals.
+     *
+     * @return a population of new individuals.
+     */
+    public Population<I> createPopulation(Population<I> survivors, GPContainer config);
 
 }

@@ -204,7 +204,7 @@ public class DivisionProtected extends MathNode {
 
 
         if (Double.isFinite(an) && Double.isFinite(bn)) {
-            return new Doubliteral(eval());
+            return new Doubliteral(asDouble());
         }
         else {
             if (bn == 1) return a;
@@ -217,7 +217,7 @@ public class DivisionProtected extends MathNode {
     }
 
     @Override
-    public double eval() {
+    public double asDouble() {
         double a = getChildEvaluated(0);
         double b = getChildEvaluated(1);
         return a/b;

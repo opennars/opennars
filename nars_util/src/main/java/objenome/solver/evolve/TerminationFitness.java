@@ -30,7 +30,7 @@ import objenome.solver.evolve.event.Listener;
  * value. Given a threshold fitness value, the run is terminated when the
  * current fitness is equal to or greater than the threshold fitness.
  */
-public class TerminationFitness implements TerminationCriteria, Listener<EndGeneration>, GPContainerAware {
+public class TerminationFitness implements PopulationTermination, Listener<EndGeneration>, GPContainerAware {
 
     /**
      * The threshold fitness value.
@@ -76,7 +76,7 @@ public class TerminationFitness implements TerminationCriteria, Listener<EndGene
      */
     @Override
     public void onEvent(EndGeneration event) {
-        fittest = event.getPopulation().fittest().getFitness();
+        fittest = event.getPopulation().best().getFitness();
     }
 
 

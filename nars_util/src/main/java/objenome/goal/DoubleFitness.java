@@ -19,7 +19,7 @@
  * 
  * The latest version is available from: http://www.epochx.org
  */
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
 import java.util.Comparator;
 import objenome.solver.evolve.Fitness;

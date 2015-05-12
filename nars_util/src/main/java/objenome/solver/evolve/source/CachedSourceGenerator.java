@@ -23,12 +23,12 @@ package objenome.solver.evolve.source;
 
 import java.util.HashMap;
 import java.util.Map;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 
 /**
  *
  */
-public class CachedSourceGenerator<T extends Individual> implements SourceGenerator<T> {
+public class CachedSourceGenerator<T extends Organism> implements SourceGenerator<T> {
 
     // The cache of fitness scores
     private Map<Object, String> cache;

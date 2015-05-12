@@ -39,7 +39,7 @@ public interface Breeder extends PopulationProcess {
     /**
      * The key for setting and retrieving the genetic operators.
      */
-    public static final GPKey<List<Operator>> OPERATORS = new GPKey<>();
+    public static final GPKey<List<OrganismOperator>> OPERATORS = new GPKey<>();
 
     /**
      * The key for setting and retrieving the <code>IndividualSelector</code>.

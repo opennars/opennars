@@ -22,7 +22,7 @@
 package objenome.solver.evolve.event.stat;
 
 import java.util.Arrays;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.event.ElitismEvent.EndElitism;
 
 /**
@@ -33,7 +33,7 @@ public class ElitismElites extends AbstractStat<EndElitism> {
     /**
      * The elitist individuals.
      */
-    private Individual[] elites;
+    private Organism[] elites;
 
     /**
      * Constructs a <code>ElitismElites</code>.
@@ -57,7 +57,7 @@ public class ElitismElites extends AbstractStat<EndElitism> {
      *
      * @return the elitist individuals.
      */
-    public Individual[] getElites() {
+    public Organism[] getElites() {
         return elites;
     }
 

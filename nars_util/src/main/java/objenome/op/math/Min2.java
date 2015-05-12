@@ -79,7 +79,7 @@ public class Min2 extends MathNode {
     }
 
     @Override
-    public double eval() {
+    public double asDouble() {
         double a = getChildEvaluated(0);
         double b = getChildEvaluated(1);
         if (a < b) return a;

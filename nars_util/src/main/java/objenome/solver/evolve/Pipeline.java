@@ -57,7 +57,7 @@ public class Pipeline implements PopulationProcess {
      * provided as a parameter.
      */
     @Override
-    public <I extends Individual> Population<I> process(Population<I> population) {
+    public <I extends Organism> Population<I> process(Population<I> population) {
         this.container = population.getConfig();
         for (PopulationProcess component : pipeline) {            
             population = component.process(population);

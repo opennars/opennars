@@ -23,7 +23,7 @@ package objenome.op.compute;
 
 import javax.script.Invocable;
 import javax.script.ScriptException;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 
 /**
@@ -38,7 +38,7 @@ import objenome.solver.evolve.source.SourceGenerator;
  *
  * @since 2.0
  */
-public class GroovyInterpreter<T extends Individual> extends ScriptingInterpreter<Object,T,Object> {
+public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<Object,T,Object> {
 
     /**
      * Constructs a <code>GroovyInterpreter</code> with a source generator

@@ -35,6 +35,6 @@ public interface PopulationProcess {
      * @return a <code>Population</code> which is the result of some form of
      * processing of the provided population
      */
-    public <I extends Individual> Population<I> process(Population<I> population);
+    public <I extends Organism> Population<I> process(Population<I> population);
     
 }

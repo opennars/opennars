@@ -6,6 +6,7 @@ import objenome.op.Variable;
 import objenome.op.VariableNode;
 import objenome.op.math.*;
 import objenome.op.trig.Sine;
+import objenome.problem.ProblemSTGP;
 import objenome.solver.evolve.*;
 import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.OnePointCrossover;
@@ -36,12 +37,12 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
         //the(EvolutionaryStrategy.TERMINATION_CRITERIA, criteria);
         //the(MaximumGenerations.MAXIMUM_GENERATIONS, 1);
 
-        the(STGPIndividual.MAXIMUM_DEPTH, expressionDepth);
+        the(TypedOrganism.MAXIMUM_DEPTH, expressionDepth);
 
         the(Breeder.SELECTOR, new RouletteSelector());
         //the(Breeder.SELECTOR, new TournamentSelector(7));
 
-        List<Operator> operators = new ArrayList<>();
+        List<OrganismOperator> operators = new ArrayList<>();
         {
             operators.add(new PointMutation());
             the(PointMutation.PROBABILITY, 0.1);
@@ -97,8 +98,8 @@ abstract public class DefaultProblemSTGP extends ProblemSTGP {
             syntax.add(new VariableNode(v));
 
 
-        the(STGPIndividual.SYNTAX, syntax.toArray(new Node[syntax.size()]));
-        the(STGPIndividual.RETURN_TYPE, Double.class);
+        the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
+        the(TypedOrganism.RETURN_TYPE, Double.class);
 
         the(FitnessEvaluator.FUNCTION, initFitness());
     }

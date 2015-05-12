@@ -36,7 +36,7 @@ package objenome.op;
  */
 public class VariableNode<V> extends Node {
 
-    private Variable<V> variable;
+    public final Variable<V> variable;
 
     /**
      * Constructs a new <code>VariableNode</code> wrapper for the given variable
@@ -71,7 +71,8 @@ public class VariableNode<V> extends Node {
     }
 
     /** default "fast" evaluation method, which should be overrided in math-related subclasses */
-    public double eval() {
+    @Override
+    public double asDouble() {
         //if (variable instanceof DoubleVariable)
         return ((DoubleVariable)variable).get();
     }

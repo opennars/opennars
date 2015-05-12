@@ -20,7 +20,7 @@ import objenome.goal.DecideNumericValue.DecideBooleanValue;
 import objenome.goal.DecideNumericValue.DecideDoubleValue;
 import objenome.goal.DecideNumericValue.DecideIntegerValue;
 import objenome.goal.DevelopMethod;
-import objenome.goal.Problem;
+import objenome.problem.Problem;
 import objenome.solution.dependency.Builder;
 import objenome.solution.dependency.ClassBuilder;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;

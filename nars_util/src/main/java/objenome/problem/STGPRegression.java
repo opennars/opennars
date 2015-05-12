@@ -19,7 +19,7 @@
  * 
  * The latest version is available from: http:/www.epochx.org
  */
-package objenome.goal;
+package objenome.problem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +31,14 @@ import objenome.solver.evolve.FitnessEvaluator;
 import objenome.solver.evolve.GenerationalStrategy;
 import objenome.solver.evolve.Initialiser;
 import objenome.solver.evolve.MaximumGenerations;
-import objenome.solver.evolve.Operator;
+import objenome.solver.evolve.OrganismOperator;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.RandomSequence;
-import objenome.solver.evolve.STGPIndividual;
-import objenome.solver.evolve.TerminationCriteria;
+import objenome.solver.evolve.TypedOrganism;
+import objenome.solver.evolve.PopulationTermination;
 import objenome.solver.evolve.TerminationFitness;
-import objenome.solver.evolve.fitness.DoubleFitness;
-import objenome.solver.evolve.fitness.HitsCount;
+import objenome.goal.DoubleFitness;
+import objenome.goal.HitsCount;
 import objenome.solver.evolve.init.Full;
 import objenome.op.Node;
 import objenome.op.Variable;
@@ -63,7 +63,7 @@ import objenome.solver.evolve.selection.TournamentSelector;
  * <li>{@link GenerationalStrategy#TERMINATION_CRITERIA}:
  * <code>MaximumGenerations</code>, <code>TerminationFitness(0.0)</code>
  * <li>{@link MaximumGenerations#MAXIMUM_GENERATIONS}: <code>50</code>
- * <li>{@link STGPIndividual#MAXIMUM_DEPTH}: <code>6</code>
+ * <li>{@link TypedOrganism#MAXIMUM_DEPTH}: <code>6</code>
  * <li>{@link BranchedBreeder#SELECTOR}: <code>TournamentSelector</code>
  * <li>{@link TournamentSelector#TOURNAMENT_SIZE}: <code>7</code>
  * <li>{@link Breeder#OPERATORS}: <code>SubtreeCrossover</code>,
@@ -72,10 +72,10 @@ import objenome.solver.evolve.selection.TournamentSelector;
  * <li>{@link SubtreeCrossover#PROBABILITY}: <code>1.0</code>
  * <li>{@link Initialiser#METHOD}: <code>FullInitialisation</code>
  * <li>{@link RandomSequence#RANDOM_SEQUENCE}: <code>MersenneTwisterFast</code>
- * <li>{@link STGPIndividual#SYNTAX}: <code>AddFunction</code>,
+ * <li>{@link TypedOrganism#SYNTAX}: <code>AddFunction</code>,
  * <code>SubtractFunction</code>, <code>MultiplyFunction<code>,
  * <code>DivisionProtectedFunction<code>, <code>VariableNode("X", Double)<code>
- * <li>{@link STGPIndividual#RETURN_TYPE}: <code>Double</code>
+ * <li>{@link TypedOrganism#RETURN_TYPE}: <code>Double</code>
  * <li>{@link FitnessEvaluator#FUNCTION}: <code>HitsCount</code>
  * <li>{@link HitsCount#POINT_ERROR}: <code>0.01</code>
  * <li>{@link HitsCount#INPUT_VARIABLES}: <code>X</code>
@@ -103,16 +103,16 @@ public class STGPRegression extends ProblemSTGP {
         this.functionPoints = functionPoints;
         
         the(Population.SIZE, 100);
-        List<TerminationCriteria> criteria = new ArrayList<>();
+        List<PopulationTermination> criteria = new ArrayList<>();
         criteria.add(new TerminationFitness(new DoubleFitness.Minimize(0.0)));
         criteria.add(new MaximumGenerations());
         the(EvolutionaryStrategy.TERMINATION_CRITERIA, criteria);
         the(MaximumGenerations.MAXIMUM_GENERATIONS, 150);
-        the(STGPIndividual.MAXIMUM_DEPTH, 6);
+        the(TypedOrganism.MAXIMUM_DEPTH, 6);
 
         the(Breeder.SELECTOR, new TournamentSelector(7));
 
-        List<Operator> operators = new ArrayList<>();
+        List<OrganismOperator> operators = new ArrayList<>();
         operators.add(new SubtreeCrossover());
         operators.add(new SubtreeMutation());
         the(Breeder.OPERATORS, operators);
@@ -124,14 +124,14 @@ public class STGPRegression extends ProblemSTGP {
         the(RandomSequence.RANDOM_SEQUENCE, randomSequence);
 
         // Setup syntax        
-        the(STGPIndividual.SYNTAX, new Node[]{
+        the(TypedOrganism.SYNTAX, new Node[]{
             new Add(),
             new Subtract(),
             new Multiply(),
             new DivisionProtected(),
             new VariableNode( x = Variable.make("X", Double.class) )
         });
-        the(STGPIndividual.RETURN_TYPE, Double.class);
+        the(TypedOrganism.RETURN_TYPE, Double.class);
 
         // Generate inputs and expected outputs        
         Double[][] inputsGiven = new Double[functionPoints][1];

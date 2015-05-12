@@ -29,7 +29,7 @@ package objenome.solver.evolve;
  *
  * @see Fitness
  */
-public interface FitnessFunction<I extends Individual> {
+public interface FitnessFunction<I extends Organism> {
 
     /**
      * Evaluates the individuals in the specified population.

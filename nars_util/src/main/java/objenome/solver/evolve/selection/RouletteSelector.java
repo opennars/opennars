@@ -22,7 +22,7 @@
 package objenome.solver.evolve.selection;
 
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.fitness.DoubleFitness;
+import objenome.goal.DoubleFitness;
 import objenome.util.random.XORShiftRandom;
 
 import java.util.Random;
@@ -100,7 +100,7 @@ public class RouletteSelector extends AbstractSelector {
      * @return an individual using the fitness proportionate selection strategy.
      */
     @Override
-    public Individual select() {
+    public Organism select() {
         //double random = ((RandomSequence)population.getConfig().get(RANDOM_SEQUENCE)).nextDouble();
 
         double random = rng.nextDouble();

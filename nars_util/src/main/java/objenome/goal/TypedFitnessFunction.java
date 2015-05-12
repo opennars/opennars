@@ -19,19 +19,18 @@
  * 
  * The latest version is available from: http:/www.epochx.org
  */
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
-import objenome.op.Variable;
 import objenome.solver.evolve.AbstractFitnessFunction;
 import objenome.solver.evolve.GPContainer;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 
 /**
  * A fitness function for evaluating STGP individuals.
  *
  * @since 2.0
  */
-public abstract class STGPFitnessFunction extends AbstractFitnessFunction<STGPIndividual>  {
+public abstract class TypedFitnessFunction extends AbstractFitnessFunction<TypedOrganism>  {
 
     /**
      * The key for setting the program's input variables

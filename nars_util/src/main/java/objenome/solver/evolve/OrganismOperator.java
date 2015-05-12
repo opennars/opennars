@@ -29,7 +29,7 @@ import objenome.solver.evolve.GPContainer.GPContainerAware;
  * individuals as input and performs random modifications to generate new
  * individuals.
  */
-public interface Operator extends GPContainerAware {
+public interface OrganismOperator extends GPContainerAware {
 
     /**
      * Returns the number of individuals expected by the operator.
@@ -48,7 +48,7 @@ public interface Operator extends GPContainerAware {
      * @return the modified individuals; <code>null</code> when the operator
      * could not be applied.
      */
-    public Individual[] apply(Population population, Individual... individuals);
+    public Organism[] apply(Population population, Organism... individuals);
 
     /**
      * Returns the probability of the operator (the higher the value, the more

@@ -15,7 +15,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.CtNewConstructor;
 import javassist.NotFoundException;
-import objenome.goal.Problem;
+import objenome.problem.Problem;
 import objenome.solution.SetMethodsGPEvolved;
 import objenome.solution.dependency.Builder;
 import objenome.solver.Solution;

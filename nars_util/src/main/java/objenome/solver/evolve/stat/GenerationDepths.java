@@ -22,9 +22,9 @@
 package objenome.solver.evolve.stat;
 
 import java.util.Arrays;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.stat.AbstractStat;
 
@@ -61,9 +61,9 @@ public class GenerationDepths extends AbstractStat<EndGeneration> {
         depths = new int[population.size()];
         int index = 0;
 
-        for (Individual individual : population) {
-            if (individual instanceof STGPIndividual) {
-                depths[index++] = ((STGPIndividual) individual).depth();
+        for (Organism individual : population) {
+            if (individual instanceof TypedOrganism) {
+                depths[index++] = ((TypedOrganism) individual).depth();
             }
         }
     }

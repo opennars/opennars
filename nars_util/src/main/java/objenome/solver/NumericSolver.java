@@ -13,7 +13,7 @@ import java.util.function.Function;
 import objenome.Multitainer;
 import objenome.Objenome;
 import objenome.goal.DecideNumericValue;
-import objenome.goal.Problem;
+import objenome.problem.Problem;
 import objenome.solution.SetNumericValue;
 
 /**

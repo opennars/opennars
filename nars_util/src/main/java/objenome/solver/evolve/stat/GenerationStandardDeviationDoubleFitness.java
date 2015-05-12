@@ -25,7 +25,7 @@ import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.stat.AbstractStat;
 import objenome.solver.evolve.event.stat.GenerationFitnesses;
-import objenome.solver.evolve.fitness.DoubleFitness;
+import objenome.goal.DoubleFitness;
 
 /**
  * Stat that provides the standard deviation fitness value of the population at

@@ -23,7 +23,7 @@ package objenome.solver.evolve.event.stat;
 
 import java.util.ArrayList;
 import java.util.List;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 
@@ -35,7 +35,7 @@ public class GenerationBestIndividuals extends AbstractStat<EndGeneration> {
     /**
      * The list of best individuals.
      */
-    private List<Individual> best;
+    private List<Organism> best;
 
     /**
      * Constructs a <code>GenerationBestIndividuals</code>.
@@ -55,7 +55,7 @@ public class GenerationBestIndividuals extends AbstractStat<EndGeneration> {
 
         best = new ArrayList<>();
 
-        for (Individual individual : population) {
+        for (Organism individual : population) {
 
             if (best.isEmpty()) {
                 best.add(individual);
@@ -79,8 +79,8 @@ public class GenerationBestIndividuals extends AbstractStat<EndGeneration> {
      *
      * @return the best individuals.
      */
-    public Individual[] getBestIndividuals() {
-        return best.toArray(new Individual[best.size()]);
+    public Organism[] getBestIndividuals() {
+        return best.toArray(new Organism[best.size()]);
     }
 
     /**
@@ -88,7 +88,7 @@ public class GenerationBestIndividuals extends AbstractStat<EndGeneration> {
      *
      * @return an arbitrary best individual.
      */
-    public Individual getBest() {
+    public Organism getBest() {
         return (best == null || best.isEmpty()) ? null : best.get(0);
     }
 
@@ -99,7 +99,7 @@ public class GenerationBestIndividuals extends AbstractStat<EndGeneration> {
      */
     @Override
     public String toString() {
-        Individual individual = getBest();
+        Organism individual = getBest();
         return (individual == null) ? "" : individual.toString();
     }
 

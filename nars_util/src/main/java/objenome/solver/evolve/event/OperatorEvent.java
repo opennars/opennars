@@ -21,8 +21,8 @@
  */
 package objenome.solver.evolve.event;
 
-import objenome.solver.evolve.Individual;
-import objenome.solver.evolve.Operator;
+import objenome.solver.evolve.Organism;
+import objenome.solver.evolve.OrganismOperator;
 
 /**
  * The root class for operator events.
@@ -32,12 +32,12 @@ public abstract class OperatorEvent implements Event {
     /**
      * The <code>Operator</code> that fired the event.
      */
-    private Operator operator;
+    private OrganismOperator operator;
 
     /**
      * The array of individuals undergoing the operator.
      */
-    private Individual[] parents;
+    private Organism[] parents;
 
     /**
      * Constructs an <code>OperatorEvent</code>.
@@ -45,7 +45,7 @@ public abstract class OperatorEvent implements Event {
      * @param operator the operator that fired the event.
      * @param parents the array of individuals undergoing the operator.
      */
-    public OperatorEvent(Operator operator, Individual[] parents) {
+    public OperatorEvent(OrganismOperator operator, Organism[] parents) {
         this.operator = operator;
         this.parents = parents;
     }
@@ -55,7 +55,7 @@ public abstract class OperatorEvent implements Event {
      *
      * @return the operator that fired the event.
      */
-    public Operator getOperator() {
+    public OrganismOperator getOperator() {
         return operator;
     }
 
@@ -64,7 +64,7 @@ public abstract class OperatorEvent implements Event {
      *
      * @return the array of individuals undergoing the operator.
      */
-    public Individual[] getParents() {
+    public Organism[] getParents() {
         return parents;
     }
 
@@ -79,7 +79,7 @@ public abstract class OperatorEvent implements Event {
          * @param operator the operator that fired the event.
          * @param parents the array of individuals undergoing the operator.
          */
-        public StartOperator(Operator operator, Individual[] parents) {
+        public StartOperator(OrganismOperator operator, Organism[] parents) {
             super(operator, parents);
         }
 
@@ -93,7 +93,7 @@ public abstract class OperatorEvent implements Event {
         /**
          * The array of individuals produced by the operator.
          */
-        private Individual[] children;
+        private Organism[] children;
 
         /**
          * Constructs a <code>EndOperator</code>.
@@ -101,7 +101,7 @@ public abstract class OperatorEvent implements Event {
          * @param operator the operator that fired the event.
          * @param parents the array of individuals undergoing the operator.
          */
-        public EndOperator(Operator operator, Individual[] parents) {
+        public EndOperator(OrganismOperator operator, Organism[] parents) {
             super(operator, parents);
         }
 
@@ -110,7 +110,7 @@ public abstract class OperatorEvent implements Event {
          *
          * @return the array of individuals produced by the operator.
          */
-        public Individual[] getChildren() {
+        public Organism[] getChildren() {
             return children;
         }
 
@@ -119,7 +119,7 @@ public abstract class OperatorEvent implements Event {
          *
          * @param children the array of individuals produced by the operator.
          */
-        public void setChildren(Individual[] children) {
+        public void setChildren(Organism[] children) {
             this.children = children;
         }
 

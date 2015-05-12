@@ -33,14 +33,14 @@ abstract public class MathNode extends Node<Node, Double> {
     }
 
     public double getChildEvaluated(final int childNum) {
-        return getChild(childNum).eval();
+        return getChild(childNum).asDouble();
     }
 
     /** the fast double-only version that should be implemented */
-    abstract public double eval();
+    abstract public double asDouble();
 
     @Override
     final public Double evaluate() {
-        return eval();
+        return asDouble();
     }
 }

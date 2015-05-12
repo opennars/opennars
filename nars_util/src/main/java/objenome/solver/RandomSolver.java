@@ -9,7 +9,7 @@ import java.util.Map;
 import objenome.Multitainer;
 import objenome.goal.DecideNumericValue;
 import objenome.goal.DevelopMethod;
-import objenome.goal.Problem;
+import objenome.problem.Problem;
 import objenome.solution.SetMethodsGPEvolved;
 import objenome.solution.SetBooleanValue;
 import objenome.solution.SetDoubleValue;

@@ -23,7 +23,7 @@ package objenome.op.compute;
 
 import javax.script.Invocable;
 import javax.script.ScriptException;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 
 /**
@@ -37,7 +37,7 @@ import objenome.solver.evolve.source.SourceGenerator;
  *
  * @since 2.0
  */
-public class RubyInterpreter<T extends Individual> extends ScriptingInterpreter<Object,T,Object> {
+public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Object,T,Object> {
 
     /**
      * Constructs a <code>RubyInterpreter</code> with a source generator

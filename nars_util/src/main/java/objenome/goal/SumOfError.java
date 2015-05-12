@@ -19,19 +19,19 @@
  * 
  * The latest version is available from: http:/www.epochx.org
  */
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.solver.evolve.Population;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.op.Variable;
-import objenome.goal.Observation;
-import static objenome.solver.evolve.fitness.HitsCount.EXPECTED_OUTPUTS;
+
+import static objenome.goal.HitsCount.EXPECTED_OUTPUTS;
 
 /**
  * A fitness function for <code>STGPIndividual</code>s that calculates and
@@ -54,7 +54,7 @@ import static objenome.solver.evolve.fitness.HitsCount.EXPECTED_OUTPUTS;
  *
  * @since 2.0
  */
-public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<ConfigEvent>, GPContainer.GPContainerAware {
+public class SumOfError<I,O> extends TypedFitnessFunction implements Listener<ConfigEvent>, GPContainer.GPContainerAware {
 
     /**
      * The key for setting the program's input variables
@@ -135,16 +135,16 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
      * STGPIndividual or the individual's data-type is not Double.
      */
     @Override
-    public DoubleFitness.Minimize evaluate(Population population, STGPIndividual individual) {
+    public DoubleFitness.Minimize evaluate(Population population, TypedOrganism individual) {
 
-        if (!(individual instanceof STGPIndividual)) {
+        if (!(individual instanceof TypedOrganism)) {
             throw new IllegalArgumentException("Unsupported representation");
         }
 
         setConfig(population.getConfig());
 
         //TODO validate number of inputs etc
-        STGPIndividual program = individual;
+        TypedOrganism program = individual;
 
         if (program.dataType() != Double.class) {
             throw new IllegalArgumentException("Unsupported data-type");
@@ -225,9 +225,9 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
 
 
     double minError = Double.MAX_VALUE;
-    STGPIndividual best = null;
+    TypedOrganism best = null;
 
-    protected void onEvaluate(STGPIndividual i, double error) {
+    protected void onEvaluate(TypedOrganism i, double error) {
         if (minError > error) {
             minError = error;
             best = i;
@@ -235,7 +235,7 @@ public class SumOfError<I,O> extends STGPFitnessFunction implements Listener<Con
         }
     }
 
-    protected void onNextBest(STGPIndividual i, double error) {
+    protected void onNextBest(TypedOrganism i, double error) {
 
     }
 

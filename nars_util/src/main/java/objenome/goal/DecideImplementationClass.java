@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import objenome.AbstractContainer;
 import objenome.Prototainer;
-import objenome.goal.Problem;
+import objenome.problem.Problem;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;
 
 /**

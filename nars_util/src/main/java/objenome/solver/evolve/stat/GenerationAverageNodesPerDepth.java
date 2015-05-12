@@ -22,9 +22,9 @@
 package objenome.solver.evolve.stat;
 
 import java.util.Arrays;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.stat.AbstractStat;
 
@@ -66,9 +66,9 @@ public class GenerationAverageNodesPerDepth extends AbstractStat<EndGeneration> 
         for (int d = 0; d < maxDepth; d++) {
             // Get number of nodes for each program
             int noNodes = 0;
-            for (Individual individual : population) {
-                if (individual instanceof STGPIndividual) {
-                    noNodes += ((STGPIndividual) individual).getRoot().nodesAtDepth(d).size();
+            for (Organism individual : population) {
+                if (individual instanceof TypedOrganism) {
+                    noNodes += ((TypedOrganism) individual).getRoot().nodesAtDepth(d).size();
                 }
             }
             averages[d] = noNodes / (double) population.size();

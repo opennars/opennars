@@ -5,6 +5,8 @@
  */
 package objenome.goal;
 
+import objenome.problem.Problem;
+
 import java.lang.reflect.Method;
 
 /**

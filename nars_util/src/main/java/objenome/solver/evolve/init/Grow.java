@@ -27,16 +27,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import objenome.solver.evolve.GPContainer;
-import objenome.solver.evolve.InitialisationMethod;
+import objenome.solver.evolve.OrganismBuilder;
 import objenome.solver.evolve.Population;
 import static objenome.solver.evolve.Population.SIZE;
-import objenome.goal.ProblemSTGP;
+import objenome.problem.ProblemSTGP;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
-import static objenome.solver.evolve.STGPIndividual.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.STGPIndividual.RETURN_TYPE;
-import static objenome.solver.evolve.STGPIndividual.SYNTAX;
+import objenome.solver.evolve.TypedOrganism;
+import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
+import static objenome.solver.evolve.TypedOrganism.RETURN_TYPE;
+import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.InitialisationEvent;
 import objenome.solver.evolve.event.Listener;
@@ -57,7 +57,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
+public class Grow implements TypedInitialization, Listener<ConfigEvent> {
 
     // Configuration settings
     private Node[] syntax; //TODO We don't really need to store this
@@ -106,11 +106,11 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
      * <ul>
      * <li>{@link RandomSequence#RANDOM_SEQUENCE}
      * <li>{@link Population#SIZE}
-     * <li>{@link STGPIndividual#SYNTAX}
-     * <li>{@link STGPIndividual#RETURN_TYPE}
-     * <li>{@link STGPIndividual#MAXIMUM_DEPTH}
-     * <li>{@link STGPInitialisation#MAXIMUM_INITIAL_DEPTH}
-     * <li>{@link InitialisationMethod#ALLOW_DUPLICATES} (default:
+     * <li>{@link TypedOrganism#SYNTAX}
+     * <li>{@link TypedOrganism#RETURN_TYPE}
+     * <li>{@link TypedOrganism#MAXIMUM_DEPTH}
+     * <li>{@link TypedInitialization#MAXIMUM_INITIAL_DEPTH}
+     * <li>{@link OrganismBuilder#ALLOW_DUPLICATES} (default:
      * <code>true</code>)
      * </ul>
      */
@@ -182,11 +182,11 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
 
     /**
      * Creates a population of new <code>STGPIndividuals</code> from the
-     * <code>Node</code>s provided by the {@link STGPIndividual#SYNTAX} config
+     * <code>Node</code>s provided by the {@link TypedOrganism#SYNTAX} config
      * parameter. Each individual is created by a call to the
      * <code>createIndividual</code> method. The size of the population will be
      * equal to the {@link Population#SIZE} config parameter. If the
-     * {@link InitialisationMethod#ALLOW_DUPLICATES} config parameter is set to
+     * {@link OrganismBuilder#ALLOW_DUPLICATES} config parameter is set to
      * <code>false</code> then the individuals in the population will be unique
      * according to their <code>equals</code> methods. By default, duplicates
      * are allowed.
@@ -206,10 +206,10 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
         Population population = new Population(config);
 
         for (int i = 0; i < populationSize; i++) {
-            STGPIndividual individual;
+            TypedOrganism individual;
 
             do {
-                individual = createIndividual();
+                individual = newOrganism();
             } while (!allowDuplicates && population.contains(individual));
 
             population.add(individual);
@@ -223,7 +223,7 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
     /**
      * Constructs a new <code>STGPIndividual</code> instance with a grown
      * program tree composed of nodes provided by the
-     * {@link STGPIndividual#SYNTAX} config parameter. Each node in the tree is
+     * {@link TypedOrganism#SYNTAX} config parameter. Each node in the tree is
      * randomly chosen from those nodes with a valid data-type. If the maximum
      * depth has not been reached then the node is selected from all valid
      * terminals or non-terminals and at one less than the maximum depth only
@@ -232,8 +232,8 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
      * @return a new individual with a full program tree
      */
     @Override
-    public STGPIndividual createIndividual() {
-        return new STGPIndividual(createTree());
+    public TypedOrganism newOrganism() {
+        return new TypedOrganism(createTree());
     }
 
     /**
@@ -591,7 +591,7 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
     /**
      * Sets whether duplicates should be allowed in populations that are
      * generated. If automatic configuration is enabled then any value set here
-     * will be overwritten by the {@link InitialisationMethod#ALLOW_DUPLICATES}
+     * will be overwritten by the {@link OrganismBuilder#ALLOW_DUPLICATES}
      * configuration setting on the next config event.
      *
      * @param allowDuplicates whether duplicates should be allowed in
@@ -614,7 +614,7 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
     /**
      * Sets the array of nodes to generate program trees from. If automatic
      * configuration is enabled then any value set here will be overwritten by
-     * the {@link STGPIndividual#SYNTAX} configuration setting on the next
+     * the {@link TypedOrganism#SYNTAX} configuration setting on the next
      * config event.
      *
      * @param syntax an array of nodes to generate new program trees from
@@ -638,7 +638,7 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
     /**
      * Sets the required data-type of the program trees generated. If automatic
      * configuration is enabled then any value set here will be overwritten by
-     * the {@link STGPIndividual#RETURN_TYPE} configuration setting on the next
+     * the {@link TypedOrganism#RETURN_TYPE} configuration setting on the next
      * config event.
      *
      * @param returnType the data-type of the generated programs
@@ -686,8 +686,8 @@ public class Grow implements STGPInitialisation, Listener<ConfigEvent> {
      * Sets the maximum depth of the program trees created by the
      * <code>createIndividual</code> method. If automatic configuration is
      * enabled then any value set here will be overwritten by the
-     * {@link STGPInitialisation#MAXIMUM_INITIAL_DEPTH} configuration setting on
-     * the next config event, or the {@link STGPIndividual#MAXIMUM_DEPTH}
+     * {@link TypedInitialization#MAXIMUM_INITIAL_DEPTH} configuration setting on
+     * the next config event, or the {@link TypedOrganism#MAXIMUM_DEPTH}
      * setting if no initial maximum depth is set.
      *
      * @param maxDepth the maximum depth of all program trees generated

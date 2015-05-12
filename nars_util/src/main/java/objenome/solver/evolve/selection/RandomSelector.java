@@ -22,7 +22,7 @@
 package objenome.solver.evolve.selection;
 
 import objenome.solver.evolve.AbstractSelector;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.IndividualSelector;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
@@ -39,7 +39,7 @@ public class RandomSelector extends AbstractSelector {
      * @return a random individual from the current population.
      */
     @Override
-    public Individual select() {
+    public Organism select() {
         int index = ((RandomSequence)population.getConfig().get(RANDOM_SEQUENCE)).nextInt(population.size());
         return population.get(index);
     }

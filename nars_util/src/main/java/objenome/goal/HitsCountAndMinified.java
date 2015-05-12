@@ -1,6 +1,6 @@
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 
 /**
  * Created by me on 5/6/15.
@@ -8,7 +8,7 @@ import objenome.solver.evolve.STGPIndividual;
 public class HitsCountAndMinified extends HitsCount {
 
     @Override
-    public double getCost(STGPIndividual program) {
+    public double getCost(TypedOrganism program) {
         double d = super.getCost(program);
 
         //if fully matched, then apply a bonus for shorter programs

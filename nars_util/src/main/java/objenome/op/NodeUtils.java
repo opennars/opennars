@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * This class provides static utility methods for working with Epox nodes
- *
+ * TODO these can be replaced with iterators that avoid allocating collections
  * @since 2.0
  */
 public final class NodeUtils {

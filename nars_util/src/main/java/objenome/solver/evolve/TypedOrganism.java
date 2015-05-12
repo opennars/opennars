@@ -27,7 +27,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
 import java.util.Objects;
 
 /**
- * An <code>STGPIndividual</code> is a candidate solution which uses a strongly
+ * An TypedOrganism is a candidate solution which uses a strongly
  * typed tree representation to represent a computer program. This class
  * provides several convenient methods for obtaining information about the
  * program tree (such as {@link #size()} and {@link #depth()}), but more
@@ -40,7 +40,7 @@ import java.util.Objects;
  *
  * @since 2.0
  */
-public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
+public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
 
 
     /**
@@ -70,7 +70,7 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
      * Constructs an individual represented by a strongly typed tree, with a
      * <code>null</code> root node
      */
-    public STGPIndividual() {
+    public TypedOrganism() {
         this(null);
     }
 
@@ -80,7 +80,7 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
      *
      * @param root the <code>Node</code> to set as the root
      */
-    public STGPIndividual(Node root) {
+    public TypedOrganism(Node root) {
         this.root = root;
     }
 
@@ -96,7 +96,7 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
     }
 
     public double eval() {
-        return root.eval();
+        return root.asDouble();
     }
 
     /**
@@ -202,8 +202,8 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
      * @return a clone of this <code>STGPIndividual</code> instance
      */
     @Override
-    public STGPIndividual<X,Y> clone() {
-        STGPIndividual clone = (STGPIndividual) super.clone();
+    public TypedOrganism<X,Y> clone() {
+        TypedOrganism clone = (TypedOrganism) super.clone();
 
         // Deep copy node tree
         if (root == null) {
@@ -244,8 +244,8 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
     @Override
     public boolean equals(Object obj) {
         boolean equal = false;
-        if ((obj != null) && (obj instanceof STGPIndividual)) {
-            STGPIndividual p = (STGPIndividual) obj;
+        if ((obj != null) && (obj instanceof TypedOrganism)) {
+            TypedOrganism p = (TypedOrganism) obj;
             if (Objects.equals(root, p.root)) {
                 equal = true;
             }
@@ -280,7 +280,7 @@ public class STGPIndividual<X extends Node,Y> extends AbstractIndividual {
      * less fit than, equally fit as, or fitter than the specified object
      */
     @Override
-    public int compareTo(Individual other) {
+    public int compareTo(Organism other) {
         return getFitness().compareTo(other.getFitness());
     }
 }

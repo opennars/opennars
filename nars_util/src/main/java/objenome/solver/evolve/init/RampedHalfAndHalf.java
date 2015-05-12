@@ -26,16 +26,16 @@ import java.util.Arrays;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.InitialisationMethod;
+import objenome.solver.evolve.OrganismBuilder;
 import objenome.solver.evolve.Population;
 import static objenome.solver.evolve.Population.SIZE;
-import static objenome.goal.ProblemSTGP.PROBLEM;
+import static objenome.problem.ProblemSTGP.PROBLEM;
 import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.STGPIndividual;
-import static objenome.solver.evolve.STGPIndividual.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.STGPIndividual.RETURN_TYPE;
-import static objenome.solver.evolve.STGPIndividual.SYNTAX;
+import objenome.solver.evolve.TypedOrganism;
+import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
+import static objenome.solver.evolve.TypedOrganism.RETURN_TYPE;
+import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.InitialisationEvent;
 import objenome.solver.evolve.event.Listener;
@@ -59,7 +59,7 @@ import objenome.op.Node;
  *
  * @since 2.0
  */
-public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEvent>, GPContainerAware {
+public class RampedHalfAndHalf implements TypedInitialization, Listener<ConfigEvent>, GPContainerAware {
 
     /**
      * The key for setting and retrieving the smallest maximum depth setting
@@ -125,11 +125,11 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
      * <ul>
      * <li>{@link RandomSequence#RANDOM_SEQUENCE}
      * <li>{@link Population#SIZE}
-     * <li>{@link STGPIndividual#SYNTAX}
-     * <li>{@link STGPIndividual#RETURN_TYPE}
-     * <li>{@link STGPIndividual#MAXIMUM_DEPTH}
-     * <li>{@link STGPInitialisation#MAXIMUM_INITIAL_DEPTH}
-     * <li>{@link InitialisationMethod#ALLOW_DUPLICATES} (default:
+     * <li>{@link TypedOrganism#SYNTAX}
+     * <li>{@link TypedOrganism#RETURN_TYPE}
+     * <li>{@link TypedOrganism#MAXIMUM_DEPTH}
+     * <li>{@link TypedInitialization#MAXIMUM_INITIAL_DEPTH}
+     * <li>{@link OrganismBuilder#ALLOW_DUPLICATES} (default:
      * <code>true</code>)
      * <li>{@link #RAMPING_START_DEPTH}
      * </ul>
@@ -190,11 +190,11 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
 
     /**
      * Creates a population of new <code>STGPIndividuals</code> from the
-     * <code>Node</code>s provided by the {@link STGPIndividual#SYNTAX} config
+     * <code>Node</code>s provided by the {@link TypedOrganism#SYNTAX} config
      * parameter. Each individual is created with either a grow or a full
      * initialisation method, which is alternated. The size of the population
      * will be equal to the {@link Population#SIZE} config parameter. If the
-     * {@link InitialisationMethod#ALLOW_DUPLICATES} config parameter is set to
+     * {@link OrganismBuilder#ALLOW_DUPLICATES} config parameter is set to
      * <code>false</code> then the individuals in the population will be unique
      * according to their <code>equals</code> methods. By default, duplicates
      * are allowed.
@@ -236,14 +236,14 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
             int noPrograms = programsPerDepth[depth - startDepth];
 
             for (int i = 0; i < noPrograms; i++) {
-                STGPIndividual program;
+                TypedOrganism program;
 
                 do {
                     method[popIndex] = growNext ? GROW : FULL;
                     if (growNext) {
-                        program = grow.createIndividual();
+                        program = grow.newOrganism();
                     } else {
-                        program = full.createIndividual();
+                        program = full.newOrganism();
                     }
                     /*
                      * The effect is that if it's a duplicate then will use other
@@ -331,18 +331,18 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
 
     /**
      * Constructs a new <code>STGPIndividual</code> instance with a program tree
-     * composed of nodes provided by the {@link STGPIndividual#SYNTAX} config
+     * composed of nodes provided by the {@link TypedOrganism#SYNTAX} config
      * parameter. A grow or a full initialisation method is used, selected at
      * random
      *
      * @return a new individual
      */
     @Override
-    public STGPIndividual createIndividual() {
+    public TypedOrganism newOrganism() {
         if (random.nextBoolean()) {
-            return grow.createIndividual();
+            return grow.newOrganism();
         } else {
-            return full.createIndividual();
+            return full.newOrganism();
         }
     }
 
@@ -361,7 +361,7 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
     /**
      * Sets whether duplicates should be allowed in populations that are
      * generated. If automatic configuration is enabled then any value set here
-     * will be overwritten by the {@link InitialisationMethod#ALLOW_DUPLICATES}
+     * will be overwritten by the {@link OrganismBuilder#ALLOW_DUPLICATES}
      * configuration setting on the next config event.
      *
      * @param allowDuplicates whether duplicates should be allowed in
@@ -408,7 +408,7 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
     /**
      * Sets the array of nodes to generate program trees from. If automatic
      * configuration is enabled then any value set here will be overwritten by
-     * the {@link STGPIndividual#SYNTAX} configuration setting on the next
+     * the {@link TypedOrganism#SYNTAX} configuration setting on the next
      * config event.
      *
      * @param syntax an array of nodes to generate new program trees from
@@ -433,7 +433,7 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
     /**
      * Sets the required data-type of the program trees generated. If automatic
      * configuration is enabled then any value set here will be overwritten by
-     * the {@link STGPIndividual#RETURN_TYPE} configuration setting on the next
+     * the {@link TypedOrganism#RETURN_TYPE} configuration setting on the next
      * config event.
      *
      * @param returnType the data-type of the generated programs
@@ -480,9 +480,9 @@ public class RampedHalfAndHalf implements STGPInitialisation, Listener<ConfigEve
      * Sets the depth that the maximum depth will be ramped up to when a
      * population is created with the <code>createPopulation</code> method. If
      * automatic configuration is enabled, then any value set here will be
-     * overwritten by the {@link STGPInitialisation#MAXIMUM_INITIAL_DEPTH}
+     * overwritten by the {@link TypedInitialization#MAXIMUM_INITIAL_DEPTH}
      * configuration setting on the next config event, or the
-     * {@link STGPIndividual#MAXIMUM_DEPTH} setting if no initial maximum depth
+     * {@link TypedOrganism#MAXIMUM_DEPTH} setting if no initial maximum depth
      * is set.
      *
      * @param endDepth the maximum setting to ramp the depth to

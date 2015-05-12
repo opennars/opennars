@@ -7,7 +7,7 @@ package objenome.solver;
 
 import java.util.Arrays;
 import objenome.Multitainer;
-import objenome.goal.Problem;
+import objenome.problem.Problem;
 
 /**
  *

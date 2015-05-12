@@ -1,6 +1,5 @@
 package nars.analyze.experimental;
 
-import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
@@ -9,14 +8,13 @@ import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
 import nars.testing.TestNAR;
-import nars.util.event.AbstractReaction;
 import objenome.goal.DefaultProblemSTGP;
 import objenome.op.DoubleVariable;
 import objenome.op.Variable;
 import objenome.solver.evolve.FitnessFunction;
-import objenome.solver.evolve.STGPIndividual;
-import objenome.solver.evolve.fitness.DoubleFitness;
-import objenome.solver.evolve.fitness.STGPFitnessFunction;
+import objenome.solver.evolve.TypedOrganism;
+import objenome.goal.DoubleFitness;
+import objenome.goal.TypedFitnessFunction;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.function.Consumer;
@@ -76,7 +74,7 @@ public class OptimizeLeakGenetic2 extends Controls {
     }
 
 
-    public double cost(final STGPIndividual leakProgram) {
+    public double cost(final TypedOrganism leakProgram) {
 
         Default b = new Default() {
             @Override
@@ -174,9 +172,9 @@ public class OptimizeLeakGenetic2 extends Controls {
             protected FitnessFunction initFitness() {
                 return
                         //new CachedFitnessFunction(
-                        new STGPFitnessFunction() {
+                        new TypedFitnessFunction() {
                             @Override
-                            public objenome.solver.evolve.Fitness evaluate(objenome.solver.evolve.Population population, STGPIndividual individual) {
+                            public objenome.solver.evolve.Fitness evaluate(objenome.solver.evolve.Population population, TypedOrganism individual) {
 
                                 return new DoubleFitness.Minimize(
                                         cost(individual)
@@ -212,7 +210,7 @@ public class OptimizeLeakGenetic2 extends Controls {
                 SummaryStatistics stats = p.getStatistics();
                 System.out.println(g + " min=" + stats.getMin() + "..mean=" + stats.getMean() + "..max=" + stats.getMax() + "  (" + time + " ms) ");
 
-                System.out.println(p.fittest().toString());
+                System.out.println(p.best().toString());
             }
 
             g++;

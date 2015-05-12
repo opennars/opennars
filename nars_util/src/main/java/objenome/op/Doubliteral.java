@@ -19,12 +19,12 @@ public class Doubliteral extends Literal<Double> {
     }
 
     @Override
-    public double eval() {
+    public double asDouble() {
         return v;
     }
 
     @Override
     public Doubliteral clone() {
-        return new Doubliteral(eval());
+        return new Doubliteral(asDouble());
     }
 }

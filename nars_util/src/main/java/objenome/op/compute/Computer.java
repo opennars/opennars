@@ -22,7 +22,7 @@
 package objenome.op.compute;
 
 import java.util.function.Function;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.op.compute.Computer.ComputerInput;
 
 /**
@@ -48,7 +48,7 @@ import objenome.op.compute.Computer.ComputerInput;
  *
  * @since 2.0
  */
-public interface Computer<I,P extends Individual,O> extends Function<ComputerInput<I,P>,O[]> {
+public interface Computer<I,P extends Organism,O> extends Function<ComputerInput<I,P>,O[]> {
 
     public static class ComputerInput<I,P> {
         public final String[] argNames;

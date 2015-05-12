@@ -29,15 +29,15 @@ import objenome.solver.evolve.event.OperatorEvent.EndOperator;
 import objenome.solver.evolve.event.OperatorEvent.StartOperator;
 
 /**
- * A skeletal implementation of the {@link Operator} interface than fires events
+ * A skeletal implementation of the {@link OrganismOperator} interface than fires events
  * at the start (before) and end (after) the operator is performed. Typically,
  * subclasses will override one of the following methods:
  *
  * <ul>
  *
- * <li>{@link #perform(Individual...)}: when no custom end event is needed;
+ * <li>{@link #perform(Organism...)}: when no custom end event is needed;
  *
- * <li>{@link #perform(OperatorEvent.EndOperator, Individual...)}: when a custom
+ * <li>{@link #perform(OperatorEvent.EndOperator, Organism...)}: when a custom
  * end event is used, this method should be overridden to set the additional
  * information.
  *
@@ -47,7 +47,7 @@ import objenome.solver.evolve.event.OperatorEvent.StartOperator;
  * @see EventManager
  * @see Listener
  */
-public abstract class AbstractOperator implements Operator {
+public abstract class AbstractOrganismOperator implements OrganismOperator {
     private GPContainer config;
 
     /**
@@ -63,18 +63,18 @@ public abstract class AbstractOperator implements Operator {
 
     
     @Override
-    public final Individual[] apply(Population population, Individual... individuals) {
+    public final Organism[] apply(Population population, Organism... individuals) {
         this.config = population.getConfig();
         setConfig(population.getConfig());
 
-        Individual[] parents = individuals; //clone(individuals);
+        Organism[] parents = individuals; //clone(individuals);
 
         // fires the start event
         StartOperator start = getStartEvent(individuals);
         population.getConfig().fire(start);
 
         EndOperator end = getEndEvent(individuals);
-        Individual[] newParents = perform(end, parents);
+        Organism[] newParents = perform(end, parents);
 
         // fires the end event only if the operator was successful
         if (parents != null) {
@@ -89,11 +89,11 @@ public abstract class AbstractOperator implements Operator {
      * Performs the operator on the specified individuals. If the operator is
      * not successful, the specified individuals will not be changed and
      * <code>null</code> is returned. The default implementation calls the
-     * {@link #perform(Individual...)} method.
+     * {@link #perform(Organism...)} method.
      * <p>
      * When overriding this method, the specified <code>EndOperator</code> event
      * can be used to provide more information about the operator. In order to
-     * do so, the {@link #getEndEvent(Individual...)} method must return a
+     * do so, the {@link #getEndEvent(Organism...)} method must return a
      * custom event instance, enabling this method to set its properties.
      * </p>
      *
@@ -103,9 +103,9 @@ public abstract class AbstractOperator implements Operator {
      *
      * @return the indivuals produced by this operator.
      *
-     * @see #getEndEvent(Individual...)
+     * @see #getEndEvent(Organism...)
      */
-    public Individual[] perform(EndOperator event, Individual... individuals) {
+    public Organism[] perform(EndOperator event, Organism... individuals) {
         return perform(individuals);
     }
 
@@ -120,7 +120,7 @@ public abstract class AbstractOperator implements Operator {
      * @return the indivduals produced by this operator; <code>null</code> when
      * the operator could not be applied.
      */
-    public Individual[] perform(Individual... individuals) {
+    public Organism[] perform(Organism... individuals) {
         return individuals;
     }
 
@@ -132,21 +132,21 @@ public abstract class AbstractOperator implements Operator {
      *
      * @return the operator's start event.
      */
-    protected StartOperator getStartEvent(Individual... parents) {
+    protected StartOperator getStartEvent(Organism... parents) {
         return new StartOperator(this, parents);
     }
 
     /**
      * Returns the operator's end event. The default implementation returns a
      * <code>EndOperator</code> instance. The end event is passed to the
-     * {@link #perform(Individual...)} method to allow the operator to add
+     * {@link #perform(Organism...)} method to allow the operator to add
      * additional information.
      *
      * @param parents the individuals undergoing the operator.
      *
      * @return the operator's end event.
      */
-    protected EndOperator getEndEvent(Individual... parents) {
+    protected EndOperator getEndEvent(Organism... parents) {
         return new EndOperator(this, parents);
     }
 
@@ -157,8 +157,8 @@ public abstract class AbstractOperator implements Operator {
      *
      * @return a (deep) clone copy of the specified array of individuals.
      */
-    private Individual[] clone(Individual[] individuals) {
-        Individual[] clone = new Individual[individuals.length];
+    private Organism[] clone(Organism[] individuals) {
+        Organism[] clone = new Organism[individuals.length];
 
         for (int i = 0; i < clone.length; i++) {
             if (individuals[i] != null) {

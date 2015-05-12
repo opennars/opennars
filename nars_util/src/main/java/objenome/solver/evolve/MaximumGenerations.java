@@ -30,7 +30,7 @@ import objenome.solver.evolve.event.Listener;
  * This class represents a termination criteria based on the maximum number of
  * generations.
  */
-public class MaximumGenerations implements TerminationCriteria, Listener<EndGeneration>, GPContainerAware {
+public class MaximumGenerations implements PopulationTermination, Listener<EndGeneration>, GPContainerAware {
 
     /**
      * The key for setting and retrieving the maximum number of generations.

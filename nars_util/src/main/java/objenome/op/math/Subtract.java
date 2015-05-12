@@ -155,7 +155,7 @@ public class Subtract extends MathNode {
     }
 
     @Override
-    public double eval() {
+    public double asDouble() {
         double a = getChildEvaluated(0);
         double b = getChildEvaluated(1);
         return a - b;

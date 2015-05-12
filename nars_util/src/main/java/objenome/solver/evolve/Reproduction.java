@@ -26,7 +26,7 @@ import objenome.solver.evolve.GPContainer.GPKey;
 /**
  * This class implements the reproduction (copy) operator.
  */
-public class Reproduction extends AbstractOperator {
+public class Reproduction extends AbstractOrganismOperator {
 
     /**
      * The property key under which the reproduction probability is stored.
@@ -44,7 +44,7 @@ public class Reproduction extends AbstractOperator {
     }
 
     @Override
-    public Individual[] perform(Individual... individuals) {
+    public Organism[] perform(Organism... individuals) {
         return individuals;
     }
 

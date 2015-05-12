@@ -21,7 +21,7 @@
  */
 package objenome.solver.evolve.selection;
 
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.IndividualSelector;
 import objenome.solver.evolve.Population;
 
@@ -66,12 +66,12 @@ public class TournamentSelector implements IndividualSelector {
      * @return the selected individual using a tournament.
      */
     @Override
-    public Individual select() {
-        Individual best = null;
+    public Organism select() {
+        Organism best = null;
 
         // choose and compare randomly selected programs.
         for (int i = 0; i < size; i++) {
-            Individual individual = randomSelector.select();
+            Organism individual = randomSelector.select();
             if ((best == null) || (individual.compareTo(best) > 0)) {
                 best = individual;
             }

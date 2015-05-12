@@ -19,7 +19,7 @@
  * 
  * The latest version is available from: http:/www.epochx.org
  */
-package objenome.goal;
+package objenome.problem;
 
 import objenome.op.Node;
 import objenome.op.Variable;
@@ -29,9 +29,8 @@ import objenome.op.bool.Not;
 import objenome.op.bool.Or;
 import objenome.op.lang.If;
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.fitness.DoubleFitness;
-import objenome.solver.evolve.fitness.HitsCount;
-import objenome.solver.evolve.fitness.HitsCountAndMinified;
+import objenome.goal.HitsCount;
+import objenome.goal.HitsCountAndMinified;
 import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
@@ -66,7 +65,7 @@ import static com.google.common.collect.Lists.newArrayList;
  * <li>{@link GenerationalStrategy#TERMINATION_CRITERIA}:
  * <code>MaximumGenerations</code>, <code>TerminationFitness(0.0)</code>
  * <li>{@link MaximumGenerations#MAXIMUM_GENERATIONS}: <code>50</code>
- * <li>{@link STGPIndividual#MAXIMUM_DEPTH}: <code>6</code>
+ * <li>{@link TypedOrganism#MAXIMUM_DEPTH}: <code>6</code>
  * <li>{@link BranchedBreeder#SELECTOR}: <code>TournamentSelector</code>
  * <li>{@link TournamentSelector#TOURNAMENT_SIZE}: <code>7</code>
  * <li>{@link Breeder#OPERATORS}: <code>SubtreeCrossover</code>,
@@ -75,12 +74,12 @@ import static com.google.common.collect.Lists.newArrayList;
  * <li>{@link SubtreeCrossover#PROBABILITY}: <code>1.0</code>
  * <li>{@link Initialiser#METHOD}: <code>FullInitialisation</code>
  * <li>{@link RandomSequence#RANDOM_SEQUENCE}: <code>MersenneTwisterFast</code>
- * <li>{@link STGPIndividual#SYNTAX}: <code>AndFunction</code>,
+ * <li>{@link TypedOrganism#SYNTAX}: <code>AndFunction</code>,
  * <code>OrFunction</code>, <code>NotFunction<code>,
  * <code>IfFunction<code>, <code>VariableNode("A0", Boolean)<code>, <code>VariableNode("A1", Boolean)<code>,
  * <code>VariableNode("D2", Boolean)<code>, <code>VariableNode("D3", Boolean)<code>, <code>VariableNode("D4", Boolean)<code>,
  * <code>VariableNode("D5", Boolean)<code>
- * <li>{@link STGPIndividual#RETURN_TYPE}: <code>Boolean</code>
+ * <li>{@link TypedOrganism#RETURN_TYPE}: <code>Boolean</code>
  * <li>{@link FitnessEvaluator#FUNCTION}: <code>HitsCount</code>
  * <li>{@link HitsCount#INPUT_VARIABLES}: <code>A0</code>, <code>A1</code>,
  * <code>D2</code>, <code>D3</code>, <code>D4</code>, <code>D5</code>
@@ -116,20 +115,20 @@ public class STGPBoolean extends ProblemSTGP {
         the(Population.SIZE, populationSize);
         
         
-        the(EvolutionaryStrategy.TERMINATION_CRITERIA, newArrayList(new TerminationCriteria[] {
+        the(EvolutionaryStrategy.TERMINATION_CRITERIA, newArrayList(new PopulationTermination[] {
             //new TerminationFitness(new DoubleFitness.Minimise(0.0)),
             new MaximumGenerations()
         }));
         
         the(MaximumGenerations.MAXIMUM_GENERATIONS, maxGenerations);
-        the(STGPIndividual.MAXIMUM_DEPTH, 6);
+        the(TypedOrganism.MAXIMUM_DEPTH, 6);
 
         the(Breeder.SELECTOR, new TournamentSelector(7));
 
         the(SubtreeCrossover.PROBABILITY, 1.0);
         the(SubtreeMutation.PROBABILITY, 0.0);
         
-        the(Breeder.OPERATORS, newArrayList(new Operator[] {
+        the(Breeder.OPERATORS, newArrayList(new OrganismOperator[] {
             new SubtreeCrossover(),
             new SubtreeMutation()           
         }));
@@ -150,8 +149,8 @@ public class STGPBoolean extends ProblemSTGP {
         }
 
 
-        the(STGPIndividual.SYNTAX, syntaxList.toArray(new Node[syntaxList.size()]));
-        the(STGPIndividual.RETURN_TYPE, Boolean.class);
+        the(TypedOrganism.SYNTAX, syntaxList.toArray(new Node[syntaxList.size()]));
+        the(TypedOrganism.RETURN_TYPE, Boolean.class);
 
 
         // Setup fitness function

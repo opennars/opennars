@@ -19,27 +19,16 @@
  * 
  * The latest version is available from: http:/www.epochx.org
  */
-package objenome.goal;
+package objenome.problem;
 
-import objenome.op.Node;
+import objenome.goal.DefaultProblemSTGP;
+import objenome.goal.Observation;
 import objenome.op.Variable;
-import objenome.op.VariableNode;
-import objenome.op.math.*;
-import objenome.op.trig.Sine;
 import objenome.solver.evolve.*;
-import objenome.solver.evolve.fitness.DoubleFitness;
-import objenome.solver.evolve.fitness.SumOfError;
-import objenome.solver.evolve.init.Full;
-import objenome.solver.evolve.mutate.PointMutation;
-import objenome.solver.evolve.mutate.SubtreeCrossover;
-import objenome.solver.evolve.mutate.SubtreeMutation;
-import objenome.solver.evolve.selection.TournamentSelector;
-import objenome.util.random.MersenneTwisterFast;
+import objenome.goal.SumOfError;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.List;
 
 /**
  * Evolves a function that minimizes the total error of an expression
@@ -67,7 +56,7 @@ public class STGPFunctionApproximation extends DefaultProblemSTGP {
 
         if (this.fitness == null) {
             this.fitness = new SumOfError() {
-                @Override public void onNextBest(STGPIndividual s, double error) {
+                @Override public void onNextBest(TypedOrganism s, double error) {
                     nextBest = s;
                     nextBestError = error;
                 }
@@ -83,14 +72,14 @@ public class STGPFunctionApproximation extends DefaultProblemSTGP {
         return Collections.singleton(doubleVariable("X"));
     }
 
-    STGPIndividual nextBest = null;
+    TypedOrganism nextBest = null;
     double nextBestError = Double.NaN;
 
     public double getBestError() {
         return nextBestError;
     }
 
-    public STGPIndividual getBest() {
+    public TypedOrganism getBest() {
         return nextBest;
     }
 

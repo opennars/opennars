@@ -19,34 +19,32 @@
  * 
  * The latest version is available from: http://www.epochx.org
  */
-package objenome.solver.evolve;
+package objenome.solver;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import objenome.Container;
+import objenome.op.Node;
+import objenome.op.Variable;
+import objenome.op.VariableNode;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Event;
 import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.stat.AbstractStat;
-import objenome.op.Node;
-import objenome.op.Variable;
-import objenome.op.VariableNode;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * Provides a centralised store for configuration parameters. It uses a
- * singleton which is obtainable with the <code>getInstance</code> method. Each
- * parameter is referenced with a {@link GPKey} which is used to both set new
- * parameters and retrieve existing parameter values. the key also constrains
- * the data-type of the parameter value with its generic type.
  *
- * @see GPKey
- *
- * TODO subclass a Container and store properties with NORMAL, THREAD or
- * SINGLETON scope
+ * A managed population of evolving organisms, each of which represents
+ * a solution to a problem characterized by a set of goals defined
+ * by the programmer.
  */
-@Deprecated public class GPContainer<I extends Organism> extends Container {
+abstract public class Civilization<I extends Organism> extends Container {
 
     /**
      * The key for setting and retrieving the list of components.
@@ -59,21 +57,66 @@ import objenome.op.VariableNode;
      * stats repository, TODO rename
      */
     public final HashMap<Class<?>, Object> stat = new HashMap<>();
+    private final ExecutorService exe;
     protected Pipeline pipeline;
     private Population<I> population = null;
 
-    /**
-     * The key -&gt; value mapping.
-     */
-    //public final HashMap<GPKey<?>, Object> prop = new HashMap<GPKey<?>, Object>();
-    /**
-     * No instance are allowed, appart from the singleton.
-     *
-     */
-    public GPContainer() {
+
+    public Civilization(int threads) {
         super();
+        exe = Executors.newFixedThreadPool(threads);
 
     }
+
+
+    /** apply evolutionary pressure which characterize the creation of
+     *  new individuals desired by the civilization */
+    abstract void conceive(Object... evolutionaryPressures);
+
+    abstract I onBirth(I newborn);
+
+    abstract I onDeath(I newborn);
+
+    /** measures the raw cost to maintain an individual in the population.
+     *  this value can be interpreted as a rate
+     * */
+    abstract double cost(I individual);
+
+    /** measures the value an individual contributes to the population
+      *  towards a specific goal.  If unknown, the value returned
+      *  is Double.NaN which can be interpreted in some cases as zero.
+      *
+      *  even if dead, its genome can be saved for ressurrection in a
+      *  future era.
+     *
+      *  this value can be interpreted as a rate
+     *  */
+    abstract double value(I individual, Object goal);
+
+
+    /** specifies a component of evolutionary pressure which can
+     * be adjusted while a civilization executes.
+     */
+    public void setDemand(Object goal, double amount) {
+
+    }
+
+    /** performs a discrete evaluatation step of an individual.
+     * this is generally called repeatedly during
+     * an organism's lifetime.  each time it is given a new task to
+     * contribute to its performance evaluation.  before and afterwards
+     * certain actions may be applied to the individual:
+     *      --adjust its value estimates and compare with cost
+     *      --euthanize
+     *      --schedule for re-evaluation (increasing delay time lowers its priority and makes it more likely it will be euthanized in the meantime)
+     *
+     *
+     * */
+    public void live(I individual, double maxRealTime) {
+
+    }
+
+
 
     public void reset() {
         pipeline = null;
@@ -98,11 +141,11 @@ import objenome.op.VariableNode;
              * an evolutionary run is composed of. The specific list of components used
              * is obtained from the {@link Config}, using the appropriate <code>Class</code> */
             for (PopulationProcess component : (Iterable<PopulationProcess>) the(COMPONENTS)) {
-                GPContainer.setContainerAware(this, component);
+                Civilization.setContainerAware(this, component);
                 pipeline.add(component);
             }
             
-            population = new Population<I>(this);
+            //population = new Population<I>(this);
         }
 
         //config.fire(new StartRun(0));
@@ -120,7 +163,7 @@ import objenome.op.VariableNode;
 
     public static interface GPContainerAware {
 
-        public void setConfig(GPContainer c);
+        public void setConfig(Civilization c);
     }
 
     /**
@@ -212,15 +255,15 @@ import objenome.op.VariableNode;
      * that a new value is to be set for
      * @param value the new value to set for the specified configuration key
      */
-    public <T> GPContainer set(GPKey<T> key, T value) {
+    public <T> Civilization set(GPKey<T> key, T value) {
         setContainerAware(this, value);
         remove(key);
         the(key, value);
-        fire(new ConfigEvent(this, key));
+        //fire(new ConfigEvent(this, key));
         return this;
     }
 
-    public static void setContainerAware(GPContainer config, Object value) {
+    public static void setContainerAware(Civilization config, Object value) {
         if (value instanceof GPContainerAware) {
             ((GPContainerAware) value).setConfig(config);
         }
@@ -237,7 +280,7 @@ import objenome.op.VariableNode;
     /**
      * convenience method
      */
-    public <T> GPContainer with(GPKey<T> key, T value) {
+    public <T> Civilization with(GPKey<T> key, T value) {
         return set(key, value);
     }
 

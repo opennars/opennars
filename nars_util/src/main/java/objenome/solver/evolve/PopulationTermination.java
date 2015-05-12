@@ -1,4 +1,4 @@
-/*
+/* 
  * Copyright 2007-2013
  * Licensed under GNU Lesser General Public License
  * 
@@ -21,32 +21,23 @@
  */
 package objenome.solver.evolve;
 
-import objenome.solver.evolve.GPContainer.GPKey;
-
 /**
- * An instance of <code>Initialiser</code> is responsible for creating the
- * individuals.
+ * Implementations of this interface supply a stopping condition for
+ * evolutionary runs. Different evolutionary strategies may make use of
+ * termination criteria in different ways and at different points of execution.
+ *
+ * @see GenerationalStrategy
  */
-public interface InitialisationMethod<I extends Individual> {
+public interface PopulationTermination {
 
     /**
-     * The key for setting and retrieving whether the initialisation method
-     * should allow duplicate individuals or not
-     */
-    public static final GPKey<Boolean> ALLOW_DUPLICATES = new GPKey<>();
-
-    /**
-     * Returns a newly created individual.
+     * Indicates whether the given evolutionary run should terminate due to some
+     * stopping condition having been met. The exact point at which this method
+     * is called is determined by the specific evolutionary strategy in use.
      *
-     * @return a newly created individual.
+     * @return <code>true</code> if the current evolutionary run should
+     * terminate or <code>false</code> if it should continue.
      */
-    public I createIndividual();
-
-    /**
-     * Returns a population of new individuals.
-     *
-     * @return a population of new individuals.
-     */
-    public Population<I> createPopulation(Population<I> survivors, GPContainer config);
+    public boolean terminate(GPContainer config);
 
 }

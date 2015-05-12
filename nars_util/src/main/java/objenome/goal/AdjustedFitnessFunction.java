@@ -19,14 +19,14 @@
  * 
  * The latest version is available from: http://www.epochx.org
  */
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
 import objenome.solver.evolve.AbstractFitnessFunction;
 import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
@@ -142,7 +142,7 @@ public class AdjustedFitnessFunction extends AbstractFitnessFunction implements 
      * an instance of DoubleFitness.Minimise
      */
     @Override
-    public DoubleFitness.Maximise evaluate(Population population, Individual individual) {
+    public DoubleFitness.Maximise evaluate(Population population, Organism individual) {
         setConfig(population.getConfig());
 
         Fitness fitness = delegate.evaluate(population, individual);

@@ -19,13 +19,13 @@
  * 
  * The latest version is available from: http://www.epochx.org
  */
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
 import java.util.HashMap;
 import java.util.Map;
 import objenome.solver.evolve.AbstractFitnessFunction;
 import objenome.solver.evolve.Fitness;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 
 /**
@@ -37,7 +37,7 @@ import objenome.solver.evolve.Population;
  *
  * @since 2.0
  */
-public class CachedFitnessFunction<I extends Individual> extends AbstractFitnessFunction<I> {
+public class CachedFitnessFunction<I extends Organism> extends AbstractFitnessFunction<I> {
 
     // The cache of fitness scores
     private Map<I, Fitness> cache;

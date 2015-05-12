@@ -45,7 +45,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
     /**
      * The list of operators to be used to generate new individuals.
      */
-    private List<Operator> operators;
+    private List<OrganismOperator> operators;
 
     /**
      * The selection strategy used to select the individual that will survive a
@@ -108,9 +108,9 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
         }
 
         if (elitism > 0) {
-            Individual[] elite = population.elites(elitism);
+            Organism[] elite = population.elites(elitism);
 
-            for (Individual individual : elite) {
+            for (Organism individual : elite) {
                 newPopulation.add(individual);
                 size--;
             }
@@ -118,7 +118,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
 
         while (size > 0) {
             double r = random.nextDouble() * cumulative;
-            Operator operator = null;
+            OrganismOperator operator = null;
             for (int i = 0; i < probabilities.length; i++) {
                 if (r <= probabilities[i]) {
                     operator = operators.get(i);
@@ -126,10 +126,10 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
                 }
             }
 
-            Individual[] parents = null;
+            Organism[] parents = null;
 
             do {
-                parents = new Individual[operator.inputSize()];
+                parents = new Organism[operator.inputSize()];
 
                 for (int i = 0; i < parents.length; i++) {
                     parents[i] = selector.select();
@@ -164,7 +164,7 @@ public class BranchedBreeder implements Breeder, Listener<ConfigEvent> {
         random = config.get(RANDOM_SEQUENCE);
         elitism = config.get(ELITISM, 0);
         
-        for (Operator o : operators) {
+        for (OrganismOperator o : operators) {
             o.setConfig(config);
         }
         

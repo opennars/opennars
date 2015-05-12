@@ -130,7 +130,7 @@ public class Absolute extends MathNode {
 
 
     @Override
-    public double eval() {
+    public double asDouble() {
         double c = getChildEvaluated(0);
         if (c >= 0) return c;
         return -c;

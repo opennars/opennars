@@ -22,12 +22,12 @@
 package objenome.solver.evolve.source;
 
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 
 /**
  * Source generators take a candidate program and produce source code from it.
  */
-public interface SourceGenerator<T extends Individual> {
+public interface SourceGenerator<T extends Organism> {
 
     /**
      * The key for setting the source generator

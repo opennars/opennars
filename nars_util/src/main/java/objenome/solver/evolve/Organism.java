@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2007-2013
  * Licensed under GNU Lesser General Public License
  * 
@@ -21,23 +21,30 @@
  */
 package objenome.solver.evolve;
 
+import java.io.Serializable;
+
 /**
- * Implementations of this interface supply a stopping condition for
- * evolutionary runs. Different evolutionary strategies may make use of
- * termination criteria in different ways and at different points of execution.
- *
- * @see GenerationalStrategy
+ * An instance of <code>Individual</code> represents one candidate solution to a
+ * specific problem. The only responsibility of an individual is to provide a
+ * fitness that is an indicator of the solution's quality. A typical
+ * implementation would allow a fitness to be set by a {@link FitnessEvaluator}
+ * during an evolutionary run.
  */
-public interface TerminationCriteria {
+public interface Organism extends Serializable, Cloneable, Comparable<Organism> {
 
     /**
-     * Indicates whether the given evolutionary run should terminate due to some
-     * stopping condition having been met. The exact point at which this method
-     * is called is determined by the specific evolutionary strategy in use.
+     * Returns a fitness which is an indicator of this individual's quality or
+     * ability to solve a specific problem.
      *
-     * @return <code>true</code> if the current evolutionary run should
-     * terminate or <code>false</code> if it should continue.
+     * @return the fitness of this individual
      */
-    public boolean terminate(GPContainer config);
+    public Fitness getFitness();
+
+    /**
+     * Returns a copy of this individual.
+     *
+     * @return a copy of this individual.
+     */
+    public Organism clone();
 
 }

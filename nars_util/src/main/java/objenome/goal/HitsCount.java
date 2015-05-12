@@ -19,7 +19,7 @@
  * 
  * The latest version is available from: http://www.epochx.org
  */
-package objenome.solver.evolve.fitness;
+package objenome.goal;
 
 
 import objenome.op.Variable;
@@ -27,7 +27,7 @@ import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.solver.evolve.Population;
-import objenome.solver.evolve.STGPIndividual;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 
@@ -49,7 +49,7 @@ import objenome.solver.evolve.event.Listener;
  *
  * @since 2.0
  */
-public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEvent>, GPContainerAware {
+public class HitsCount extends TypedFitnessFunction implements Listener<ConfigEvent>, GPContainerAware {
 
     /**
      * The key for setting the expected output values from the programs being
@@ -145,15 +145,15 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
      * STGPIndividual
      */
     @Override
-    public DoubleFitness.Minimize evaluate(Population population, STGPIndividual individual) {
+    public DoubleFitness.Minimize evaluate(Population population, TypedOrganism individual) {
         setConfig(population.getConfig());
 
-        if (!(individual instanceof STGPIndividual)) {
+        if (!(individual instanceof TypedOrganism)) {
             throw new IllegalArgumentException("Unsupported representation");
         }
 
         //TODO validate number of inputs etc
-        STGPIndividual program = (STGPIndividual) individual;
+        TypedOrganism program = (TypedOrganism) individual;
 
         double cost = getCost(program);
 
@@ -161,7 +161,7 @@ public class HitsCount extends STGPFitnessFunction implements Listener<ConfigEve
     }
 
 
-    public double getCost(STGPIndividual program) {
+    public double getCost(TypedOrganism program) {
 
         double numWrong = 0;
 

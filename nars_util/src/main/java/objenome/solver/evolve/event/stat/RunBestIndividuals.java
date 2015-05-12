@@ -24,7 +24,7 @@ package objenome.solver.evolve.event.stat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import objenome.solver.evolve.Individual;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 
 /**
@@ -35,7 +35,7 @@ public class RunBestIndividuals extends AbstractStat<EndGeneration> {
     /**
      * The list of best individuals.
      */
-    private List<Individual> best;
+    private List<Organism> best;
 
     /**
      * Constructs a <code>RunBestIndividuals</code>.
@@ -52,7 +52,7 @@ public class RunBestIndividuals extends AbstractStat<EndGeneration> {
      */
     @Override
     public void refresh(EndGeneration event) {
-        Individual[] generationBest = getConfig().the(GenerationBestIndividuals.class).getBestIndividuals();
+        Organism[] generationBest = getConfig().the(GenerationBestIndividuals.class).getBestIndividuals();
         int comparison = generationBest[0].compareTo(best.get(0));
 
         if (comparison > 0) {
@@ -68,14 +68,14 @@ public class RunBestIndividuals extends AbstractStat<EndGeneration> {
      *
      * @return the best individuals of a run.
      */
-    public Individual[] getBestIndividuals() {
-        return best.toArray(new Individual[best.size()]);
+    public Organism[] getBestIndividuals() {
+        return best.toArray(new Organism[best.size()]);
     }
 
     /**
      * Returns an arbitrary best individual.
      */
-    public Individual getBest() {
+    public Organism getBest() {
         return (best == null || best.isEmpty()) ? null : best.get(0);
     }
 
