@@ -111,7 +111,11 @@ public class drawPanel extends JPanel {
     }
  
     public void target(String direction) {
-        nar.addInput("<target --> " + direction + ">. :|:");      
+        if(direction.equals("left1")) {
+            nar.addInput("<target --> right1>. :|: %0.00;0.90%");  
+        } else {
+            nar.addInput("<target --> " + direction + ">. :|:");  
+        }
     }
     
     NAR nar;
