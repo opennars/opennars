@@ -28,7 +28,7 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
     final Set<UIEdge<UIVertex<V>>> outgoing = new CopyOnWriteArraySet<>();//.atomic();
 
     public UIVertex(V vertex) {
-        super(vertex.name().toString());
+        super(vertex.toString());
         this.vertex = vertex;
         this.coords = new ArrayRealVector(2);
 

@@ -270,6 +270,14 @@ public class Atom implements Term {
         return false;
     }
 
+    public static String unquote(Term s) {
+        String x = s.toString();
+        if (x.startsWith("\"") && x.endsWith("\"")) {
+            return x.substring(1, x.length()-1);
+        }
+        return x;
+    }
+
 
     /** performs a thorough check of the validity of a term (by cloneDeep it) to see if it's valid */
 //    public static boolean valid(final Term content) {

@@ -5,20 +5,22 @@ import nars.Events.FrameStart;
 import nars.Memory.Timing;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.io.Input;
-import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
 import nars.io.*;
-import nars.narsese.InvalidInputException;
-import nars.narsese.OldNarseseParser;
-import nars.narsese.NarseseParser;
-import nars.nal.*;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
+import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
+import nars.narsese.OldNarseseParser;
 import nars.op.IOperator;
+import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -75,6 +77,10 @@ public class NAR implements Runnable {
         memory.think(delay);
     }
 
+    public NAR input(ImmediateOperation o) {
+        input(o.newTask());
+        return this;
+    }
 
 
     /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */

@@ -841,7 +841,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      */
     protected boolean linkTask(final Task task) {
 
-        if (!ensureActiveTo("linkTask(task)")) return false;
+        if (!isActive()) return false;
 
         Budget taskBudget = task;
         taskLinkBuilder.setTemplate(null);
@@ -1206,6 +1206,8 @@ abstract public class Concept extends Item<Term> implements Termed {
     @Override public void delete() {
 
         if (isDeleted()) return;
+
+        zero();
 
         //called first to allow listeners to have a final attempt to interact with this concept before it dies
         setState(State.Deleted);
