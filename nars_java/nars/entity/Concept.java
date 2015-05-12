@@ -237,8 +237,10 @@ public class Concept extends Item<Term> implements Termable {
      */
     protected void processJudgment(final NAL nal, final Task task) {
         final Sentence judg = task.sentence;
-        final Sentence oldBelief = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
-        if (oldBelief != null) {
+        final Task oldBeliefT = selectCandidate(judg, beliefs);   // only revise with the strongest -- how about projection?
+        Sentence oldBelief = null;
+        if (oldBeliefT != null) {
+            oldBelief = oldBeliefT.sentence;
             final Stamp newStamp = judg.stamp;
             final Stamp oldStamp = oldBelief.stamp;
             if (newStamp.equals(oldStamp,false,true,true,false)) {
@@ -266,7 +268,7 @@ public class Concept extends Item<Term> implements Termable {
 //                ) != null) {
                     
                 
-                Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), memory.time());
+                Sentence projectedBelief = oldBelief.projection(memory.time(), newStamp.getOccurrenceTime());
                 if (projectedBelief!=null) {
                     if (projectedBelief.getOccurenceTime()!=oldBelief.getOccurenceTime()) {
                        // nal.singlePremiseTask(projectedBelief, task.budget);
@@ -355,9 +357,11 @@ public class Concept extends Item<Term> implements Termable {
     protected void processGoal(final NAL nal, final Task task) {        
         
         final Sentence goal = task.sentence;
-        final Sentence oldGoal = selectCandidate(goal, desires); // revise with the existing desire values
+        final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
+        Sentence oldGoal = null;
         
-        if (oldGoal != null) {
+        if (oldGoalT != null) {
+            oldGoal = oldGoalT.sentence;
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
             
@@ -369,7 +373,7 @@ public class Concept extends Item<Term> implements Termable {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
-                Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), memory.time());
+                Sentence projectedGoal = oldGoal.projection(memory.time(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
                     /*if (goal.after(oldGoal, nal.memory.param.duration.get())) {
                         nal.singlePremiseTask(projectedGoal, task.budget); //it has to be projected
@@ -388,13 +392,14 @@ public class Concept extends Item<Term> implements Termable {
         
         if (task.aboveThreshold()) {
 
-            final Sentence belief = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            final Task beliefT = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-            Sentence projectedGoal = task.sentence.projection(task.sentence.getOccurenceTime(), memory.time());
-            if (belief != null) {
+            Sentence projectedGoal = task.sentence.projection(memory.time(), task.sentence.getOccurenceTime());
+            if (beliefT != null) {
+                Sentence belief = beliefT.sentence;
                 trySolution(belief, task, nal); // check if the Goal is already satisfied (manipulate budget)
-                Sentence projectedBelief = belief.projection(belief.getOccurenceTime(), memory.time());
+                Sentence projectedBelief = belief.projection(memory.time(), belief.getOccurenceTime());
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
             }    
             double Satisfaction=1.0-AntiSatisfaction;
@@ -477,12 +482,12 @@ public class Concept extends Item<Term> implements Termable {
             memory.event.emit(ConceptQuestionAdd.class, this, task);
         }
 
-        final Sentence newAnswer = (ques.isQuestion())
+        final Task newAnswerT = (ques.isQuestion())
                 ? selectCandidate(ques, beliefs)
                 : selectCandidate(ques, desires);
 
-        if (newAnswer != null) {
-            trySolution(newAnswer, task, nal);
+        if (newAnswerT != null) {
+            trySolution(newAnswerT.sentence, task, nal);
         }
     }
 
@@ -579,20 +584,21 @@ public class Concept extends Item<Term> implements Termable {
      * @param list The list of beliefs or desires to be used
      * @return The best candidate selected
      */
-    private Sentence selectCandidate(final Sentence query, final List<Task> list) {
+    public Task selectCandidate(final Sentence query, final List<Task> list) {
  //        if (list == null) {
         //            return null;
         //        }
         float currentBest = 0;
         float beliefQuality;
-        Sentence candidate = null;
+        Task candidate = null;
         synchronized (list) {            
             for (int i = 0; i < list.size(); i++) {
-                Sentence judg = list.get(i).sentence;
+                Task judgT = list.get(i);
+                Sentence judg = judgT.sentence;
                 beliefQuality = solutionQuality(query, judg, memory);
                 if (beliefQuality > currentBest) {
                     currentBest = beliefQuality;
-                    candidate = judg;
+                    candidate = judgT;
                 }
             }
         }
