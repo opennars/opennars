@@ -1,233 +1,128 @@
 package nars.util.graph;
 
-import nars.Events;
-import nars.Memory;
-import nars.event.NARReaction;
-import nars.nal.*;
+import nars.NAR;
 import nars.nal.concept.Concept;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.graph.DirectedMultigraph;
+import nars.util.index.ConceptSet;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Stores relationships of certain sentences that relate other concepts
+ * TODO store a set of 'missing' vertices that are not available
+ * when a relation edge is created. then watch for them to appear
+ * TODO when a vertex is removed and the superterm edge still exists,
+ * add it to the missing set.
+ */
+abstract public class SentenceGraph extends ConceptGraph<SentenceGraph.ConceptRelation> {
+
+    public final ConceptSet edgeConcepts;
+
+    public static class ConceptRelation {
+        public final Concept edge;
+        public final Concept from;
+        public final Concept to;
+        private final int hash;
+
+        public ConceptRelation(Concept relation, Concept from, Concept to) {
+            this.edge = relation;
+            this.from = from;
+            this.to = to;
+            this.hash = Objects.hash(relation, from, to);
+        }
+
+        @Override
+        public String toString() {
+            return edge.toString();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            ConceptRelation other = (ConceptRelation)obj;
+            return edge.equals(other.edge) && from.equals(other.from) && to.equals(other.to);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+    }
 
 
-//TODO extends a new abstract ReactionGraph
-abstract public class SentenceGraph<E> extends DirectedMultigraph<Term, E>  {
-    public final Memory memory;
-    private final NARReaction reaction;
 
-    public static class GraphChange { }
-    
-    private boolean needInitialConcepts;
-    private boolean started;
-    
-    public final Map<Sentence, List<E>> components = new HashMap();
-    
+    public SentenceGraph(NAR nar, boolean directed) {
+        super(nar);
+        edgeConcepts = new ConceptSet(nar) {
 
-    public SentenceGraph(Memory memory) {
-        super(/*null*/new NullEdgeFactory());
-        
-        this.memory = memory;
-        this.reaction = new NARReaction(memory.event, false,
-                Events.FrameEnd.class,
-                Events.ConceptForget.class,
-                Events.ConceptBeliefAdd.class,
-                Events.ConceptBeliefRemove.class,
-                Events.ConceptGoalAdd.class,
-                Events.ConceptGoalRemove.class,
-                Events.Restart.class) {
+            /** buffer the concepts until the end of the cycle to help ensure that subterms will also be conceptualized, otherwise edges will fail tot be created */
+            List<Concept> toAdd = new ArrayList();
 
             @Override
-            public void event(Class event, Object[] args) {
-                react(event,args);
+            protected void onCycle() {
+                super.onCycle();
+                for (Concept c : toAdd)
+                    addConcept(c);
             }
-        };
 
-
-        reset();
-        
-        start();
-        
-    }
-    
-
-    public void start() {
-        if (started) return;        
-        started = true;
-        reaction.setActive(true);
-    }
-    
-    public void stop() {
-        if (!started) return;
-        started = false;
-        reaction.setActive(false);
-    }
-
-    public void react(final Class event, final Object[] a) {
-//        if (event!=FrameEnd.class)
-//            System.out.println(event + " " + Arrays.toString(a));
-        
-        if (event == Events.ConceptForget.class) {
-            //remove all associated beliefs
-            Concept c = (Concept)a[0];
-            
-            //create a clone of the list for thread safety
-
-            for (Task b : c.beliefs)
-                remove(b.sentence);
-        }
-        else if (event == Events.ConceptBeliefAdd.class) {
-            Concept c = (Concept)a[0];
-            Sentence s = ((Task)a[1]).sentence;
-            add(s, c);
-        }
-        else if (event == Events.ConceptBeliefRemove.class) {
-            //Concept c = (Concept)a[0];
-            Sentence s = (Sentence)a[1];
-            remove(s);
-        }
-        else if (event == Events.ConceptGoalAdd.class) {
-            Concept c = (Concept)a[0];
-            Sentence s = ((Task)a[1]).sentence;
-            add(s, c);
-        }
-        else if (event == Events.ConceptGoalRemove.class) {
-            //Concept c = (Concept)a[0];
-            Sentence s = (Sentence)a[1];
-            remove(s);
-        }
-        else if (event == Events.FrameEnd.class) {
-            if (needInitialConcepts)
-                getInitialConcepts();
-        }
-        else if (event == Events.Restart.class) {
-            reset();
-        }
-    }    
-    
-
-    
-        
-    protected /*synchronized*/ boolean remove(Sentence s) {
-        List<E> componentList = components.get(s);
-        if (componentList!=null) {
-            for (E e : componentList) {
-                if (!containsEdge(e))
-                    continue;
-                Term source = getEdgeSource(e);
-                Term target = getEdgeTarget(e);
-                removeEdge(e);
-                ensureTermConnected(source);
-                ensureTermConnected(target);
-            }
-            componentList.clear();
-            components.remove(s);        
-            return true;
-        }
-        return false;
-    }
-    
-    public void reset() {
-
-        this.removeAllEdges( new ArrayList(edgeSet()) );
-        this.removeAllVertices( new ArrayList(vertexSet()) );
-
-        if (!edgeSet().isEmpty()) {
-            throw new RuntimeException(this + " edges not empty after reset()");
-        }
-        if (!vertexSet().isEmpty()) {
-            throw new RuntimeException(this + " vertices not empty after reset()");
-        }
-            
-        needInitialConcepts = true;
-    }
-    
-    private void getInitialConcepts() {
-        needInitialConcepts = false;
-
-        memory.concepts.forEach(c -> {
-            for (final Task s : c.beliefs)
-                add(s.sentence, c);
-        });
-
-    }
-    
-    protected final void ensureTermConnected(final Term t) {
-        if (inDegreeOf(t)+outDegreeOf(t) == 0)  removeVertex(t);        
-    }
-    
-        
-    abstract public boolean allow(Sentence s);
-    
-    abstract public boolean allow(Compound st);
-    
-    public boolean remove(final E s) {
-        if (!containsEdge(s))
-            return false;
-        
-        Term from = getEdgeSource(s);
-        Term to = getEdgeTarget(s);
-        
-        
-        boolean r = removeEdge(s);
-        
-        
-        ensureTermConnected(from);
-        ensureTermConnected(to);
-
-        //if (r)
-            //memory.event.emit(GraphChange.class, null, s);
-        return true;
-    }
-    
-   
-    protected void addComponents(final Sentence parentSentence, final E edge) {
-        List<E> componentList = components.get(parentSentence);
-        if (componentList == null) {
-            componentList = new ArrayList(1);
-            components.put(parentSentence, componentList);
-        }
-        componentList.add(edge);        
-    }
-    
-    public /*synchronized*/ boolean add(final Sentence s, final Item c) {
-
-        if (!allow(s))
-            return false;               
-        
-        Compound cs = s.term;
-
-        if (cs instanceof Statement) {
-
-
-            Statement st = (Statement) cs;
-            if (allow(st)) {
-
-                if (add(s, st, c)) {
-                    //event.emit(GraphChange.class, st, null);
+            @Override
+            public boolean contains(Concept c) {
+                if (SentenceGraph.this.containsRelation(c)) {
                     return true;
                 }
+                return false;
             }
-        }
-        
-        return false;
-    }    
-    
-    /** default behavior, may override in subclass */
-    abstract public boolean add(final Sentence s, final Compound ct, final Item c);
 
+            @Override
+            protected boolean onConceptActive(Concept c) {
+                if (super.onConceptActive(c)) {
+                    toAdd.add(c);
+                    return true;
+                }
+                return false;
+            }
 
-    private static class NullEdgeFactory implements EdgeFactory {
-
-        @Override public Object createEdge(Object v, Object v1) {
-            return null;
-        }
-
+            @Override
+            protected boolean onConceptForget(Concept c) {
+                if (super.onConceptForget(c)) {
+                    ConceptRelation[] cr = getRelations(c);
+                    for (ConceptRelation r : cr) {
+                        graph.removeEdge(r);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
     }
+
+    /** if returns true, the two concepts referred by the compound
+     * will be included in the graph.  the concept itself
+     * represents the edge(s) that will be created between them.
+     */
+    abstract boolean containsRelation(Concept c);
+
+
+    /**
+     * create the set of relation edges which represent the relationship
+     * concept.
+     */
+    abstract ConceptRelation[] getRelations(Concept c);
+
+    @Override
+    public boolean contains(Concept c) {
+        return graph.containsVertex(c);
+    }
+
+    protected void addConcept(Concept c) {
+        ConceptRelation[] cr = getRelations(c);
+        if (cr == null) return;
+        for (ConceptRelation r : cr) {
+            graph.addVertex(r.from);
+            graph.addVertex(r.to);
+            graph.addEdge(r.from, r.to, r);
+        }
+    }
+
+
 }

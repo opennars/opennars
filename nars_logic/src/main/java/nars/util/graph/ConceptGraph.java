@@ -1,10 +1,11 @@
-package nars.rl.example;
+package nars.util.graph;
 
 import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.util.index.ConceptMap;
-import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
@@ -12,10 +13,21 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  */
 abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<Concept,E> {
 
-    public final DirectedGraph<Concept,E> graph = new DefaultDirectedGraph<Concept, E>(this);
+    public final Graph<Concept,E> graph;
 
     public ConceptGraph(NAR nar) {
+        this(nar, true);
+    }
+
+    public ConceptGraph(NAR nar, boolean directed) {
         super(nar);
+        if (directed) {
+            graph = new DefaultDirectedGraph<Concept, E>(this);
+        }
+        else {
+            graph = new AsUndirectedGraph(new DefaultDirectedGraph<Concept, E>(this));
+        }
+
     }
 
     @Override
@@ -32,8 +44,11 @@ abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<
     }
 
 
-    @Override
-    abstract public E createEdge(Concept source, Concept target);
+
+    /** must override this to use graph.addEdge(source,target) method */
+    public E createEdge(Concept source, Concept target) {
+        return null;
+    }
 
     public E addEdge(Concept source, Concept target) {
         graph.addVertex(source);
@@ -52,4 +67,8 @@ abstract public class ConceptGraph<E> extends ConceptMap implements EdgeFactory<
         graph.removeEdge(e);
     }
 
+    @Override
+    public String toString() {
+        return graph.toString();
+    }
 }

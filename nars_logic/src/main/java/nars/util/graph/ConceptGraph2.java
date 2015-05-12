@@ -1,4 +1,4 @@
-package nars.rl.example;
+package nars.util.graph;
 
 import nars.Global;
 import nars.NAR;
@@ -12,7 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Abstract graph model of inter-Concept dynamics
+ * Abstract graph model of inter-Concept dynamics.
+ * Uses a concept meta to hold adjacency data
  * TODO incomplete
  */
 abstract public class ConceptGraph2<E> extends ConceptMap implements DirectedGraph<Concept,E>, EdgeFactory<Concept,E> {

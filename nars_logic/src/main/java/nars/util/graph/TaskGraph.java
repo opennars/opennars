@@ -21,7 +21,7 @@ public class TaskGraph  {
 
 
     final Deque<Task> log = new ArrayDeque();
-    public final Map<Task, Float> y = new CuckooMap<>();
+    public final Map<Task, Float> y = new CuckooMap<>(); //TODO use ObjectDoubleMap
     final DefaultGrapher extraGrapher = new DefaultGrapher(true, true, true, false, 1, true, true);
 
     int maxItems = 32;

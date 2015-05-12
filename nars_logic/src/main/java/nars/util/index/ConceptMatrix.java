@@ -24,8 +24,8 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
      */
     //public final HashBasedTable<R,C, V> table = HashBasedTable.create();
 
-    public final SetConceptMap<C> cols;
-    public final SetConceptMap<R> rows;
+    public final ConceptSet<C> cols;
+    public final ConceptSet<R> rows;
 
 
     boolean uninitialized = true;
@@ -37,7 +37,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
         this.nar = nar;
 
-        cols = new SetConceptMap(nar) {
+        cols = new ConceptSet(nar) {
 
             @Override
             protected void onFrame() {
@@ -57,7 +57,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
         };
 
-        rows = new SetConceptMap(nar) {
+        rows = new ConceptSet(nar) {
 
             @Override
             public boolean contains(Concept c) {

@@ -11,13 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 /** uses a predefined set of terms that will be mapped */
-abstract public class SetConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
-
-
+abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
     public final Map<T,Concept> values = new LinkedHashMap();
 
-    public SetConceptMap(NAR nar) {
+    public ConceptSet(NAR nar) {
         super(nar);
     }
 

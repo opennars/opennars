@@ -2,6 +2,7 @@ package nars.op.app;
 
 import nars.Events;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
@@ -15,7 +16,7 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
-import static nars.op.app.plan.MultipleExecutionManager.isInputOrTriggeredOperation;
+import static nars.nal.nal7.TemporalRules.containsMentalOperator;
 
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
@@ -52,6 +53,13 @@ public class STMInduction extends AbstractOperator {
             DirectProcess n = (DirectProcess) args[1];
             inductionOnSucceedingEvents(t, n);
         }
+    }
+
+    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
+        if (newEvent.isInput()) return true;
+        if (containsMentalOperator(newEvent)) return true;
+        if (newEvent.getCause()!=null) return true;
+        return false;
     }
 
     public int getStmSize() {

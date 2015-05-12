@@ -1,38 +1,50 @@
 package nars.util.graph;
 
-import nars.Memory;
-import nars.nal.Item;
-import nars.nal.Sentence;
+import nars.NAR;
+import nars.nal.concept.Concept;
 import nars.nal.term.Statement;
-import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
+import java.io.Serializable;
 
-public abstract class StatementGraph extends SentenceGraph {
-    float minConfidence = 0.01f;
 
-    public StatementGraph(Memory memory) {
-        super(memory);
+abstract public class StatementGraph extends SentenceGraph {
+
+    public StatementGraph(NAR nar) {
+        this(nar, true);
     }
 
-    @Override
-    public boolean allow(final Sentence s) {
-        float conf = s.truth.getConfidence();
-        return conf > minConfidence;
+    public StatementGraph(NAR nar, boolean directed) {
+        super(nar, directed);
     }
 
+
     @Override
-    public boolean add(Sentence s, Compound ct, Item c) {
-        if (ct instanceof Statement) {
-            Statement st = (Statement)ct;
-            Term subject = st.getSubject();
-            Term predicate = st.getPredicate();
-            addVertex(subject);
-            addVertex(predicate);
-            addEdge(subject, predicate, s);
-            return true;
-        }
+    boolean containsRelation(Concept c) {
+        if (c.getTerm() instanceof Statement)
+            return containsStatement((Statement)c.getTerm());
         return false;
-
     }
+
+    abstract public boolean containsStatement(Statement term);
+
+    @Override
+    ConceptRelation[] getRelations(Concept c) {
+        Statement t = (Statement)c.getTerm();
+        Term subj = t.getSubject();
+        Concept subjTerm = nar.concept(subj);
+        Term pred = t.getPredicate();
+        Concept predTerm = nar.concept(pred);
+
+        if (subjTerm == null || predTerm == null) {
+            return null;
+        }
+
+        return new ConceptRelation[] {
+                new ConceptRelation(c, subjTerm, predTerm)
+        };
+    }
+
+
+
 }

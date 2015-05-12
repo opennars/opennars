@@ -11,6 +11,7 @@ import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.TemporalRules;
 import nars.util.event.AbstractReaction;
+import nars.util.graph.ConceptGraph;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

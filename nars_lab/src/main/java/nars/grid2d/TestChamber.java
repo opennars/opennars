@@ -15,7 +15,6 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
-import nars.op.app.plan.TemporalParticlePlanner;
 import nars.op.mental.FullInternalExperience;
 import nars.op.mental.InternalExperience;
 import processing.core.PVector;
@@ -53,8 +52,7 @@ public class TestChamber {
             }
         }
   
-        nar.on(new TemporalParticlePlanner());
-        
+
         //(nar.param).duration.set(10);
         (nar.param).outputVolume.set(0);
         new NARSwing(nar);
