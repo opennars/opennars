@@ -407,7 +407,8 @@ public class Concept extends Item<Term> implements Termable {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
-                trySolution(belief, task, nal); // check if the Goal is already satisfied (manipulate budget)
+                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
+                trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
             }    
             
