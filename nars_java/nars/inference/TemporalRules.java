@@ -524,8 +524,11 @@ public class TemporalRules {
                             if(strongest_desire.getOccurenceTime()==Stamp.ETERNAL) {
                                 st.setEternal();
                             } else {
-                                //time is known by considered events
-                                st.setOccurrenceTime(s2.getOccurenceTime());
+                                long shift=0;
+                                if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                                    shift=nal.memory.getDuration();
+                                }
+                                st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
                             }
                             st.setEternal();
                             ///SPECIAL REASONING CONTEXT FOR TEMPORAL DESIRE UPDATE
