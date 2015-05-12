@@ -250,7 +250,7 @@ public class TemporalRules {
     
     public static List<Task> temporalInduction(final Sentence s1, final Sentence s2, final nars.core.control.NAL nal, boolean SucceedingEventsInduction) {
         
-        if ((s1.truth==null) || (s2.truth==null))
+        if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT_MARK || s2.punctuation!=Symbols.JUDGMENT_MARK)
             return Collections.EMPTY_LIST;
         
         Term t1 = s1.term;
@@ -512,35 +512,39 @@ public class TemporalRules {
                         Concept S1_State_C=nal.memory.concept(s1.term);
                         if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0 &&
                                 !(((Statement)belief.term).getPredicate() instanceof Operation)) {
-                            Task strongest_desire = S1_State_C.desires.get(0);
-                            TruthValue T=TruthFunctions.abduction(belief.truth, strongest_desire.sentence.truth);
+                            Task a_desire = S1_State_C.desires.get(0);
+                            Sentence Goal = new Sentence(S1_State_C.term,Symbols.JUDGMENT_MARK,new TruthValue(1.0f,0.99f),a_desire.sentence.stamp.clone());
+                            Goal.stamp.setOccurrenceTime(s1.getOccurenceTime()); //strongest desire for that time is what we want to know
+                            Task strongest_desireT=S1_State_C.selectCandidate(Goal, S1_State_C.desires);
+                            Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurenceTime(), strongest_desireT.sentence.getOccurenceTime());
+                            TruthValue T=TruthFunctions.desireWeak(belief.truth, strongest_desire.truth);
                             //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
                             Stamp st=belief.stamp.clone();
                             
-                            if(strongest_desire.sentence.getOccurenceTime()==Stamp.ETERNAL) {
+                            if(strongest_desire.getOccurenceTime()==Stamp.ETERNAL) {
                                 st.setEternal();
                             } else {
-                                int shift=0;
+                                long shift=0;
                                 if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                                     shift=nal.memory.getDuration();
                                 }
-                                st.setOccurrenceTime(strongest_desire.sentence.stamp.getOccurrenceTime()-shift);
+                                st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
                             }
                             
-                            ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+                            ///SPECIAL REASONING CONTEXT FOR TEMPORAL DESIRE UPDATE
                             Stamp SVSTamp=nal.getNewStamp();
                             Task SVTask=nal.getCurrentTask();
                             NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
                             //END
                             
                             nal.setCurrentBelief(belief);
-                            nal.setCurrentTask(strongest_desire);
+                            nal.setCurrentTask(strongest_desireT);
                             
                             Sentence W=new Sentence(s2.term,Symbols.GOAL_MARK,T,st);
                             BudgetValue val=BudgetFunctions.forward(T, nal);
-                            Task TD=new Task(W,val,strongest_desire);
+                            Task TD=new Task(W,val,strongest_desireT);
                             
-                            nal.derivedTask(TD, false, false, strongest_desire, null, false);
+                            nal.derivedTask(TD, false, false, strongest_desireT, null, false);
                             
                             //RESTORE CONTEXT
                             nal.setNewStamp(SVSTamp);
