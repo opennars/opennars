@@ -49,6 +49,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     public static final byte[] toUtf8(final String str) {
         return str.getBytes(utf8Charset);
     }
+    public static final byte[] toUtf8(byte prefix, final String str) {
+        return ByteBuf.create(prefix + str.length()).add((byte)prefix).add(str).toBytes();
+    }
 
     /** ordinary array equals comparison with some conditions removed */
     public static boolean equals2(final byte[] a, final byte[] a2) {

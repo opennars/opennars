@@ -553,17 +553,24 @@ public class TextInputPanel extends NPanel /*implements ActionListener*/ {
 
 
         inputText = new RSyntaxTextArea();
-        inputText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LISP);
+        //inputText.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LISP);
 
         //http://fifesoft.com/rsyntaxtextarea/examples/example5.php
         //http://fifesoft.com/rsyntaxtextarea/doc/CustomSyntaxHighlighting.html
         /*((RSyntaxDocument)inputText.getDocument()).setSyntaxStyle(new TokenMaker() {        });*/
-        try {
-            Theme theme = Theme.load(getClass().getResourceAsStream("/text_input_theme_dark.xml"));
-            theme.apply(inputText);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Theme theme = Theme.load(getClass().getResourceAsStream("/text_input_theme_dark.xml"));
+//            theme.apply(inputText);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        inputText.setBackground(Color.BLACK);
+        inputText.setCurrentLineHighlightColor(new Color(0.1f, 0.1f, 0.1f));
+        inputText.setForeground(Color.WHITE);
+        inputText.setMarkOccurrencesColor(Color.ORANGE);
+        inputText.setMarkAllHighlightColor(Color.ORANGE);
+
+
         inputText.setCodeFoldingEnabled(false);
         inputText.setAntiAliasingEnabled(true);
 

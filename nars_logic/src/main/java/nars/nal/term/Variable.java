@@ -21,6 +21,8 @@
 package nars.nal.term;
 
 
+import nars.util.utf8.Utf8;
+
 import static nars.Symbols.*;
 
 /**
@@ -47,6 +49,12 @@ public class Variable extends Atom {
         this(name, false);
     }
 
+//    public Variable(char varType, final String name) {
+//        super(Utf8.toUtf8((byte) varType, name));
+//        this.type = varType;
+//        this.scope = false;
+//    }
+
     public Variable(final byte[] n, final boolean scope) {
         super(n);
         this.type = ensureValidVariableType((char)n[0]);
@@ -59,7 +67,7 @@ public class Variable extends Atom {
      * @param name A String read from input
      */
     public Variable(final String n, final boolean scope) {
-        super( n  );
+        super(n);
         this.type = ensureValidVariableType(n.charAt(0));
         this.scope = scope;
     }

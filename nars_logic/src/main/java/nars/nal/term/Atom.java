@@ -16,7 +16,7 @@ public class Atom implements Term {
     protected byte[] name;
     transient protected final int hash;
 
-    private static final Map<String,Atom> atoms = Global.newHashMap(8192);
+    private static final Map<String,Atom> atoms = Global.newHashMap(4096);
 
     @Override
     public byte[] name() {
@@ -87,15 +87,18 @@ public class Atom implements Term {
         this.hash = Arrays.hashCode(name);
     }
 
-    /** gets the atomic term given a name */
-//    public final static Atom get(final String name) {
-//        Atom x = atoms.get(name);
-//        if (x != null) return x;
-//        atoms.put(name, x = new Atom(name));
-//        return x;
-//    }
+    /** gets the atomic term given a name, storing it in the static symbol table */
+    public final static Atom getCached(final String name) {
+        Atom x = atoms.get(name);
+        if (x != null) return x;
+        atoms.put(name, x = new Atom(name));
+        return x;
+    }
 
+    /** gets the atomic term given a name */
     public final static Atom get(final String name) {
+        if (name.length() <= 2)
+            return getCached(name);
         return new Atom(name);
     }
 

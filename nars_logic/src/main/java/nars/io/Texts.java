@@ -362,6 +362,53 @@ abstract public class Texts  {
         return n2((float)p);
     }
 
+
+    /** character to a digit, or -1 if it wasnt a digit */
+    public static int i(final char c) {
+        if ((c >= '0' && c <= '9'))
+            return c - '0';
+        return -1;
+    }
+
+    /** fast parse an int under certain conditions, avoiding Integer.parse if possible */
+    public static int i(final String s) {
+        if (s.length() == 1) {
+            char c = s.charAt(0);
+            int i = i(c);
+            if (i!=-1) return i;
+        }
+        else if (s.length() == 2) {
+            int dig1 = i(s.charAt(1));
+            int dig10 = i(s.charAt(0));
+            if ((dig1!=-1) && (dig10!=-1))
+                return dig10*10+dig1;
+        }
+        return Integer.parseInt(s);
+    }
+
+    /** fast parse for float, checking common conditions */
+    public static float f(final String s) {
+
+        switch(s) {
+            case "0": return 0;
+            case "0.00": return 0;
+            case "1": return 1f;
+            case "1.00": return 1f;
+            case "0.90": return 0.9f;
+            case "0.9": return 0.9f;
+            case "0.5": return 0.5f;
+            default: return Float.parseFloat(s);
+        }
+
+    }
+
+    public static float f(final String s, final float min, final float max) {
+        float x = f(s);
+        if ((x < min) || x > max)
+            return Float.NaN;
+        return x;
+    }
+
 //    /** fast append to CharBuffer */
 //    public final static CharBuffer append(final CharBuffer c, final CharSequence s) {
 //        if (s instanceof CharBuffer) {            
