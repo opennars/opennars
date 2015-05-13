@@ -1,6 +1,7 @@
 package nars.nal.term;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound2 extends Compound {
@@ -28,11 +29,12 @@ abstract public class Compound2 extends Compound {
     }
 
     protected void updateHash() {
-        int h = getTemporalOrder();
-        h = h * 31 + a().hashCode();
-        h = h * 31 + b().hashCode();
-        h = h * 31 + operator().hashCode();
-        this.hash = h;
+        this.hash = Objects.hash(getTemporalOrder(), a(), b(), operator());
+//        int h = getTemporalOrder();
+//        h = h * 31 + a().hashCode();
+//        h = h * 31 + b().hashCode();
+//        h = h * 31 + operator().hashCode();
+//        this.hash = h;
     }
 
     @Override

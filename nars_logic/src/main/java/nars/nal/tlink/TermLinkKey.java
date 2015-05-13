@@ -1,5 +1,6 @@
 package nars.nal.tlink;
 
+import nars.Global;
 import nars.nal.term.Term;
 import nars.util.utf8.Utf8;
 
@@ -25,6 +26,12 @@ public interface TermLinkKey {
         if (obj == this) return true;
 
         TermLinkKey t = (TermLinkKey) obj;
+
+        if (Global.DEBUG) {
+            if (hashCode() == t.hashCode() && !getTarget().equals(t.getTarget())) {
+                System.err.println("hash collision but apparently not equal, may be problem: " + this + " ==hash== " + obj);
+            }
+        }
 
         if (testHash && hashCode()!=t.hashCode()) return false;
 

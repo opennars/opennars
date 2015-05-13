@@ -17,6 +17,7 @@ import nars.util.utf8.Utf8;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 
 public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
@@ -216,20 +217,18 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         byte[] p = this.prefix;
         if (p == null) {
             p = this.prefix = currentTemplate.prefix(incoming);
-            this.h = hash(prefix, concept.getTerm(), incoming);
+            this.h = hash(prefix, getSource(), getTarget(), incoming);
         }
         return p;
     }
 
-    public static int hash(byte[] prefix, Term term, boolean incoming) {
+    public static int hash(byte[] prefix, Term source, Term target, boolean incoming) {
         int ah = Arrays.hashCode(prefix);
         if (incoming) {
-            //if incoming, the prefix is enough to identify it uniquely
-            return ah;
+            return Objects.hash(ah, source, target, incoming);
         }
         else {
-            //if outgoing, include the target term
-            return ah * 31 + term.hashCode();
+            return Objects.hash(ah, target, source, incoming);
         }
     }
 
@@ -265,6 +264,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public TermLink newItem() {
+        this.prefix = null;
         return new TermLink(incoming, concept.getTerm(), currentTemplate, getBudgetRef(), getLinkKey(), this.h);
     }
 
