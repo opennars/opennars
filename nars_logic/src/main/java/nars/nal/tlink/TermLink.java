@@ -20,13 +20,12 @@
  */
 package nars.nal.tlink;
 
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.Item;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.utf8.Utf8;
-
-import java.util.Arrays;
 
 /**
  * A tlink between a compound term and a component term
@@ -93,28 +92,27 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(boolean incoming, Term host, TermLinkTemplate template, byte[] key, Budget v) {
+    public TermLink(boolean incoming, Term host, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
         super(v);
 
 
         if (incoming) {
             this.source = template.target;
-            this.target = host.normalized();
+            this.target = host; //.normalized();
             type = template.type;
         }
         else {
             this.source = host;
-            this.target = template.target.normalized();
+            this.target = template.target;//.normalized();
             type = (short)(template.type - 1); //// point to component
         }
 
         index = template.index;
 
         this.key = key;
-        this.keyHash = Arrays.hashCode(key);
-
-        //this.hash = termLinkHashCode();
+        this.keyHash = keyHash;
     }
+
 
 
 
@@ -149,8 +147,11 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     
     @Override
     public String toString() {
-        //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return Utf8.fromUtf8(getLinkKey());
+        String hk = Utf8.fromUtf8(getLinkKey());
+        if (!toSubTerm())
+            return hk;
+        else
+            return hk + Symbols.TLinkSeparator + getTarget().toString();
     }
 
     public byte[] getLinkKey() { return key; }
@@ -192,6 +193,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     public Term getTerm() {
         return target;
     }
+
 
 
 //    /** the original prefix code, verbose. see TermLinkTemplate.prefix(..) */

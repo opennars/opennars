@@ -1,11 +1,10 @@
 package nars.nal.tlink;
 
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
-import nars.util.utf8.ByteBuf;
+import nars.util.utf8.Utf8;
 
 /** contains most of the essential data to populate new TermLinks */
 public class TermLinkTemplate implements Termed {
@@ -98,25 +97,29 @@ public class TermLinkTemplate implements Termed {
         if (!incoming && type == TermLink.SELF && (index == null || index.length ==0))
             return emptyBytes; //empty, avoids constructing useless prefix in this case
 
-        //CharSequence otherName = other.name();
-        ByteBuf sb = ByteBuf.create(index.length + 1);
+        if (index == null)
+            throw new RuntimeException("null termlink index");
+
+
+        byte[] x = new byte[index.length + 1];
+        int j = 0;
 
         //use compact 1-char representation for type and each index component
-        sb.add((byte) ('A' + t));
+        x[j++] = (byte) ('A' + t);
 
         if (index!=null) {
             for (short s : index) {
-                sb.add((byte) ('a' + s));
+                x[j++] = ((byte) ('a' + s));
             }
         }
-        return sb.toBytes();
+
+        return x;
     }
 
 
 
-    public byte[] key(boolean in, Term target) {
-        byte[] tname = target.name();
-        byte[] prefix;
+    public byte[] prefix(boolean in) {
+        byte[] prefix = null;
         if (in) {
             if (incoming == null)
                 incoming = key(type, index, true);
@@ -127,17 +130,25 @@ public class TermLinkTemplate implements Termed {
                 outgoing = key(type, index, false);
             prefix = outgoing;
         }
-        return ByteBuf.create(prefix.length + tname.length+1).
-                add(prefix).
-                add((byte)Symbols.TLinkSeparator).
-                add(tname).
-                toBytes();
+
+        return prefix;
+//        if (includeTerm) {
+//            byte[] tname = target.name();
+//            return ByteBuf.create(prefix.length + tname.length + 1).
+//                    add(prefix).
+//                    add((byte) Symbols.TLinkSeparator).
+//                    add(tname).
+//                    toBytes();
+//        }
+//        else {
+//            return prefix;
+//        }
     }
 
 
     @Override
     public String toString() {
-        return concept.getTerm() + ":" + key(true, target) + '|' + key(false, target) + ':' + target;
+        return concept.getTerm() + ":" + Utf8.fromUtf8(prefix(true)) + '|' + Utf8.fromUtf8(prefix(false)) + ':' + target;
     }
 
     @Override

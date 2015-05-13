@@ -22,7 +22,14 @@ public interface TermLinkKey {
 
         TermLinkKey t = (TermLinkKey) obj;
 
-        return Utf8.equals2(getLinkKey(), t.getLinkKey());
+        if (Utf8.equals2(getLinkKey(), t.getLinkKey()) && getTarget().equals(t.getTarget())) {
+//            if (!getSource().equals(t.getSource())) {
+//                System.out.println("nonequal " + this + " " + obj);
+//
+//            }
+            return true;
+        }
+        return false;
 
         //return getPrefix().equals(t.getPrefix()) && getTarget().equals(t.getTarget());//
 

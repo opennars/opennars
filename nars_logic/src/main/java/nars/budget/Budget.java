@@ -529,11 +529,19 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
         return this;
     }
 
+    /** fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance */
+    protected Budget setFast(final float p, final float d, final float q) {
+        this.priority = p;
+        this.durability = d;
+        this.quality = q;
+        return this;
+    }
+
     public Budget set(final Budget b) {
         if (b == null)
             return zero();
         else
-            return set(b.getPriority(), b.getDurability(), b.getQuality());
+            return setFast(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
 

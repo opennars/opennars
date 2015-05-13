@@ -26,11 +26,11 @@ public class SolidTest {
         int timePeriod = 8;
 
         Memory.resetStatic(1);
-        Global.DEBUG = false;
+        Global.DEBUG = true;
 
         final int numConcepts = 800;
         final float leakRate = 0.4f;
-        Solid s = new Solid(3, numConcepts, 1, 6, 1, 6) {
+        Solid s = new Solid(3, numConcepts, 1, 4, 1, 3) {
 
             @Override
             protected void initDerivationFilters() {

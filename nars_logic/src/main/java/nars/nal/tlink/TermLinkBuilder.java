@@ -25,14 +25,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     final List<TermLinkTemplate> template;
 
+    int h;
 
     int nonTransforms;
 
     TermLinkTemplate currentTemplate;
 
     boolean incoming;
-    transient private byte[] prefix = null;
-    private int h;
+    transient private byte[] prefix;
 
     public TermLinkBuilder(Concept c) {
         super();
@@ -164,22 +164,39 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     /** configures this selector's current budget for the next bag operation */
     public Budget set(float subBudget, float durability, float quality) {
+        invalidate();
         return super.set(subBudget, durability, quality);
     }
 
     /** configures this selector's current bag key for the next bag operation */
     public TermLinkBuilder set(TermLinkTemplate temp) {
-        this.prefix = null;
-        this.currentTemplate = temp;
+        invalidate();
+        if (temp != currentTemplate) {
+            this.currentTemplate = temp;
+        }
         return this;
     }
 
     public TermLinkBuilder setIncoming(boolean b) {
-        this.prefix = null;
-        this.incoming = b;
+        invalidate();
+        if (this.incoming!=b) {
+            this.incoming = b;
+        }
         return this;
     }
 
+
+    protected void invalidate() {
+        this.prefix = null;
+        this.h = 0;
+    }
+
+    @Override
+    public Budget set(Budget b) {
+        /** reset the prefix when budget is set in linkTerms */
+        invalidate();
+        return super.set(b);
+    }
 
     /**
      *
@@ -198,11 +215,24 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     public byte[] getLinkKey() {
         byte[] p = this.prefix;
         if (p == null) {
-            p = this.prefix = currentTemplate.key(incoming, getTarget());
-            h = Arrays.hashCode(p);
+            p = this.prefix = currentTemplate.prefix(incoming);
+            this.h = hash(prefix, concept.getTerm(), incoming);
         }
         return p;
     }
+
+    public static int hash(byte[] prefix, Term term, boolean incoming) {
+        int ah = Arrays.hashCode(prefix);
+        if (incoming) {
+            //if incoming, the prefix is enough to identify it uniquely
+            return ah;
+        }
+        else {
+            //if outgoing, include the target term
+            return ah * 31 + term.hashCode();
+        }
+    }
+
 
     @Override
     public TermLinkKey getKey() {
@@ -224,16 +254,18 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
 
+
     @Override
     public int hashCode() {
-        if (this.prefix == null)
+        if (this.prefix == null) {
             getLinkKey(); //computes hash:
+        }
         return h;
     }
 
     @Override
     public TermLink newItem() {
-        return new TermLink(incoming, concept.getTerm(), currentTemplate, getLinkKey(), getBudgetRef());
+        return new TermLink(incoming, concept.getTerm(), currentTemplate, getBudgetRef(), getLinkKey(), this.h);
     }
 
     public int size() {
@@ -245,6 +277,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             template.clear();
         nonTransforms = 0;
         currentTemplate = null;
+        prefix = null;
     }
 
     /** count of how many templates are non-transforms */
@@ -259,7 +292,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return Utf8.fromUtf8(getLinkKey());
+        return getSource() + ":" + Utf8.fromUtf8(getLinkKey()) + ":" + getTarget();
     }
 
 

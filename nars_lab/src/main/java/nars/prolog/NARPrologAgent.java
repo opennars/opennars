@@ -2,16 +2,58 @@ package nars.prolog;
 
 import nars.NAR;
 import org.projog.api.Projog;
+import org.projog.core.KB;
+import org.projog.core.Operands;
+import org.projog.core.PredicateKey;
 import org.projog.core.ProjogSystemProperties;
+import org.projog.core.parser.SentenceParser;
 import org.projog.core.term.*;
+import org.projog.core.udp.ClauseModel;
+import org.projog.core.udp.StaticUserDefinedPredicateFactory;
+import org.projog.core.udp.UserDefinedPredicateFactory;
 
-import java.io.File;
 import java.util.Arrays;
+
+import static org.projog.core.KnowledgeBaseServiceLocator.getServiceLocator;
 
 /**
  * Created by me on 5/10/15.
  */
 public class NARPrologAgent extends Projog {
+
+    private static UserDefinedPredicateFactory getActualPredicateFactory(KB kb, PTerm... clauses) {
+        StaticUserDefinedPredicateFactory f = null;
+        for (PTerm clause : clauses) {
+            if (f == null) {
+                PredicateKey key = PredicateKey.createForTerm(clause);
+                f = new StaticUserDefinedPredicateFactory(key);
+                f.setKB(kb);
+            }
+            ClauseModel clauseModel = ClauseModel.createClauseModel(clause);
+            f.addLast(clauseModel);
+        }
+        return f; //.getActualPredicateFactory();
+    }
+    public static Operands getOperands(KB kb) {
+        return getServiceLocator(kb).getInstance(Operands.class);
+    }
+
+    private static PTerm[] toTerms(KB kb, String... clausesSyntax) {
+        PTerm[] clauses = new PTerm[clausesSyntax.length];
+        for (int i = 0; i < clauses.length; i++) {
+            clauses[i] = parseSentence(clausesSyntax[i], kb);
+        }
+        return clauses;
+    }
+    public static SentenceParser createSentenceParser(String prologSyntax, KB kb) {
+        return SentenceParser.getInstance(prologSyntax, getOperands(kb));
+    }
+
+    public static PTerm parseSentence(String prologSyntax, KB kb) {
+        SentenceParser sp = createSentenceParser(prologSyntax, kb);
+        return sp.parseSentence();
+    }
+
 
     public NARPrologAgent(NAR n) throws InterruptedException {
         super(new ProjogSystemProperties() {
@@ -21,16 +63,27 @@ public class NARPrologAgent extends Projog {
             }
         });
 
-        consultFile(new File("/home/me/share/opennars/nars_prolog/src/main/java/nal.pl"));
+        //consultFile(new File("/home/me/share/opennars/nars_prolog/src/main/java/nal.pl"));
 
-        consult("believe(inh(A,C)) :- inh(A,B) , inh(B,C).\n");
+        kb.addDefined( getActualPredicateFactory(kb,
+                toTerms(kb,
+                        "inh(a,b).",
+                        "inh(b,c)."
+                )) );
+        kb.addDefined( getActualPredicateFactory(kb,
+                toTerms(kb,
+                        "inh(A,C) :- inh(A,B), inh(B,C)."
+                        //"concatenate([],L,L).", "concatenate([X|L1],L2,[X|L3]) :- concatenate(L1,L2,L3).",
+                        //"p(X,Y,Z) :- repeat(3), X<Y.", "p(X,Y,Z) :- X is Y+Z.", "p(X,Y,Z) :- X=a."
+                )) );
 
-        System.out.println(query("asserta(inh(a,b)).").get().all());
-        System.out.println(query("asserta(inh(b,c)).").get().all());
-        query("inh(X,Y).").get().all( result -> {
+        query("listing(inh).").get().all( result -> {
             System.out.println(result);
         });
-        System.out.println(query("?- believe(B).").get().all());
+        query("inh(a,c).").get().all( result -> {
+            System.out.println(result);
+        });
+        //System.out.println(query("?- believe(B).").get().all());
 
 //        query("listing(inh).").get().all(-1 /* sec */, result -> {
 //            System.out.println(result.query);

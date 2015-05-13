@@ -79,6 +79,8 @@ public class Solid extends Default implements ControlCycle {
         termLinkForgetDurations.set(2);
         taskLinkForgetDurations.set(2);
 
+        setTermLinkBagSize(16);
+        setTaskLinkBagSize(16);
         subcon = new CacheBag(maxSubConcepts);
 
         //concepts = new CurveBag(maxConcepts, true);

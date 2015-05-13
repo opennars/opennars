@@ -30,16 +30,16 @@ import static nars.io.Texts.n4;
  */
 public class BooleanChallenge implements Reaction {
 
-    final float freqThresh = 0.4f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
+    final float freqThresh = 0.2f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
     private final double complete;
     boolean failOnError = false; //exit on the first logical error
     private boolean correctFeedback = false;
     boolean ignoreCorrectProvided = false; //if true, scores will only be updated if the answer is was not provided or if it was incorrect (provided or not provided)
     float confThreshold = 0.01f; //confidence threshold for being counted as an answer
-    float inputConf = 0.95f;
+    float inputConf = 0.99f;
 
     public static void main(String[] args) {
-        Global.DEBUG = true;
+        Global.DEBUG = false;
         NAR n = new NAR(new Default(2048, 4, 3).setInternalExperience(null));
 
         //NAR n = new NAR(new Discretinuous());
@@ -49,7 +49,7 @@ public class BooleanChallenge implements Reaction {
         //new TraceWriter(n, System.out);
         //new TextOutput(n, System.out);
 
-        new BooleanChallenge(n, 2, 22550, 0.15f).getScore();
+        new BooleanChallenge(n, 2, 122550, 0.65f).getScore();
 
     }
 
@@ -326,11 +326,15 @@ public class BooleanChallenge implements Reaction {
     void inputAxioms() {
 
         nar.believe("<{or,xor,and} --> operate>", inputConf);
+        nar.believe("<(*,a0,a0) <=> b0>");
+        nar.believe("<(*,a0,a1) <=> b1>");
+        nar.believe("<(*,a1,a0) <=> b2>");
+        nar.believe("<(*,a1,a1) <=> b3>");
 
         String a = "<{";
         for (int i = 1; i < (1 << bits); i++)
             a += 'b' + i + ",";
-        a += "0} --> number>";
+        a += "b0} --> number>";
         nar.believe(a, inputConf);
     }
 
@@ -473,7 +477,7 @@ public class BooleanChallenge implements Reaction {
         sb.append("),");
             sb.append('b');
             sb.append(y);
-        sb.append(")} <-> ");
+        sb.append(")} --> ");
         sb.append(op);
         sb.append('>');
         return sb.toString();
