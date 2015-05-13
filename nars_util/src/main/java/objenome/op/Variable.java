@@ -36,6 +36,11 @@ abstract public class Variable<X> {
     public final Class datatype;
     public final String name;
 
+
+    public Variable<X> clone() {
+        return Variable.make(name, datatype);
+    }
+
     public static Variable make(String name, Class datatype) {
         if (datatype == Double.class) {
             return new DoubleVariable(name);

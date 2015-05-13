@@ -48,8 +48,15 @@ public class RouletteSelector extends AbstractSelector {
      */
     @Override
     public void init(Population population) {
+        if (population.size() == 0) return;
+
         Fitness best = population.get(0).getFitness();
         Fitness worst = best;
+
+        if (best == null) {
+            //no fitness information available yet
+            return;
+        }
 
         if (!(best instanceof DoubleFitness)) {
             throw new IllegalArgumentException("Fitness not supported: " + best.getClass());
@@ -106,6 +113,7 @@ public class RouletteSelector extends AbstractSelector {
         double random = rng.nextDouble();
 
         final double[] rr = this.roulette;
+        if (rr == null) return null;
         int nr = rr.length;
         for (int i = 0; i < nr; i++) {
             if (random < rr[i]) {

@@ -219,13 +219,15 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 //        return population;
 //    }
 
-    public void run() {
+
+    public void run(double maxTimeSeconds) {
 
 
         updatePopulation();
 
+
         try {
-            exe.awaitTermination(1000, TimeUnit.SECONDS);
+            exe.awaitTermination((long)(maxTimeSeconds * 1000.0), TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -256,7 +258,11 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
             b.update(getPopulation(), 1);
         }
         catch (Exception e) {
-            System.err.println("reproduction accident: " + e);
+            //System.err.println("reproduction accident: " + e);
+            //e.printStackTrace();
+
+            //give up reproducing for now
+            //TODO fix this
         }
     }
 

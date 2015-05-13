@@ -1,16 +1,18 @@
 package objenome.evolve;
 
-import objenome.solver.evolve.TypedOrganism;
-import objenome.problem.ProblemSTGP;
-import objenome.solver.evolve.Population;
 import junit.framework.TestCase;
+import objenome.problem.ProblemSTGP;
 import objenome.problem.STGPRegression;
+import objenome.solver.evolve.Population;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.util.BenchmarkSolutions;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore //until API is finished
 public class STGPRegressionTest extends TestCase {
 
-	@Test public void testRegression() {            
+	@Test public void testRegression() {
             
             ProblemSTGP e = new STGPRegression(20, BenchmarkSolutions.XpXXpXXX);
             

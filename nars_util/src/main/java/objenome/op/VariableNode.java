@@ -127,4 +127,11 @@ public class VariableNode<V> extends Node {
     public boolean isVariable() {
         return true;
     }
+
+    @Override
+    public VariableNode newInstance() {
+        VariableNode n = (VariableNode) super.newInstance();
+        n.variable = n.variable.clone();
+        return n;
+    }
 }

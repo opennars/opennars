@@ -44,7 +44,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         final int cycles = 750;
 
         Civilization c = new OptimizeLeakGenetic3(threads, individuals, cycles);
-        c.run();
+        c.run(10000);
     }
 
     @Override
