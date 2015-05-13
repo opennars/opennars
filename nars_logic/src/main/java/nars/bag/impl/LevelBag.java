@@ -856,19 +856,20 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
     }
 
     @Override
-    public void forEach(Consumer<? super E> c) {
+    public void forEach(final Consumer<? super E> c) {
         int count = size();
 
         if (count == 0) return;
 
         for (int l = level.length-1; l >= 0; l--) {
             if (levelEmpty[l]) continue;
-            DD<E> node = level[l].getFirstNode();
-            while (node!=null) {
-                if (node.item!=null)
-                    c.accept( node.item );
-                node = node.next;
-            }
+            level[l].forEach(c);
+//            DD<E> node = level[l].getFirstNode();
+//            while (node!=null) {
+//                if (node.item!=null)
+//                    c.accept( node.item );
+//                node = node.next;
+//            }
         }
     }
 

@@ -217,7 +217,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
                 Recording r = records.get(i);
                 final long rtime = r.getTime();
 
-                if (termLink.equals(r.link)) {
+                if (termLink.termLinkEquals(r.link, true)) {
                     if (minTime < rtime) {
                         //too recent, not novel
                         return false;

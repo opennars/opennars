@@ -1,5 +1,7 @@
 package nars.util.data.linkedlist;
 
+import java.util.function.Consumer;
+
 /** from: http://algs4.cs.princeton.edu/13stacks/DoublyLinkedList.java.html */
 public class DDList<E> implements Iterable<E> {
 
@@ -182,5 +184,18 @@ public class DDList<E> implements Iterable<E> {
 
     public int getID() {
         return id;
+    }
+
+    @Override
+    public void forEach(Consumer<? super E> action) {
+
+        final DD<E> postSentinel = post;
+        DD<E> next = getFirstNode();
+
+        while ((next!=null) && (next!=postSentinel)) {
+            E item = next.item;
+            action.accept(item);
+            next = next.next;
+        }
     }
 }

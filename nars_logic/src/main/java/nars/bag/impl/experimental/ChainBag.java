@@ -16,6 +16,7 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * ChainBag repeatedly cycles through a linked list containing
@@ -76,7 +77,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
         this.capacity = capacity; //HACK
         this.mass = 0;
-        this.index = new CuckooMap(capacity*4/2);
+        this.index = new CuckooMap(capacity*3/2);
 
 
         this.nodePool = nodePool;
@@ -87,7 +88,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
 
     public ChainBag(int capacity) {
-        this(new DDNodePool(capacity/8), capacity);
+        this(new DDNodePool(4), capacity);
         this.ownsNodePool = true;
     }
 
@@ -451,4 +452,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
         return index.keySet();
     }
 
+    @Override
+    public void forEach(Consumer<? super V> value) {
+        chain.forEach(value);
+    }
 }

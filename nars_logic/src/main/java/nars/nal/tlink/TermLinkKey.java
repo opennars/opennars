@@ -17,10 +17,16 @@ public interface TermLinkKey {
 //    }
 
     default public boolean termLinkEquals(Object obj) {
+        return termLinkEquals(obj, false);
+    }
+
+    default public boolean termLinkEquals(Object obj, boolean testHash) {
         if (obj == null) return false;
         if (obj == this) return true;
 
         TermLinkKey t = (TermLinkKey) obj;
+
+        if (testHash && hashCode()!=t.hashCode()) return false;
 
         if (Utf8.equals2(getLinkKey(), t.getLinkKey()) && getTarget().equals(t.getTarget())) {
 //            if (!getSource().equals(t.getSource())) {

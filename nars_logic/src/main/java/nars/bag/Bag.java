@@ -4,11 +4,12 @@ import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
 import nars.Memory;
-import nars.budget.Budget;
-import nars.budget.BudgetSource;
 import nars.bag.tx.ForgetNext;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.BudgetSource;
 import nars.nal.Item;
+import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -279,14 +280,16 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
         return getPriorityHistogram(new double[bins]);
     }
 
-    public double[] getPriorityHistogram(double[] x) {
+    public double[] getPriorityHistogram(final double[] x) {
         int bins = x.length;
         double total = 0;
-        for (V e : values()) {
-            float p = e.getPriority();
-            int b = bin(p, bins - 1);
+        forEach(e -> {
+            final float p = e.getPriority();
+            final int b = bin(p, bins - 1);
             x[b]++;
-            total++;
+        });
+        for (double e : x) {
+            total += e;
         }
         if (total > 0) {
             for (int i = 0; i < bins; i++)
@@ -325,7 +328,7 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
     }
 
     public static final int bin(final float x, final int bins) {
-        int i = (int) Math.floor((x + 0.5f / bins) * bins);
+        int i = (int) FastMath.floor((x + 0.5f / bins) * bins);
         return i;
     }
 
