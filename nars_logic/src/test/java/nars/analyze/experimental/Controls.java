@@ -18,7 +18,7 @@ public interface Controls {
     public static List<Variable> reflect(Class c, Object obj) {
         final List<Variable> variables = new ArrayList();
 
-        Class variable = DoubleVariable.class;
+        Class variable = Variable.class;
         for (Field f : c.getFields()) {
 
 //System.out.println("field: " + f.getType() + " " + f.isAccessible() + " " + Meter.class.isAssignableFrom( f.getType() ));

@@ -115,17 +115,17 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
     public static class LibraryGoal extends EGoal<TypedOrganism> {
 
         public List<Variable> var;
-        public DoubleVariable derPri;
-        public DoubleVariable derQua;
-        public DoubleVariable derQuest;
-        public DoubleVariable derJudge;
-        public DoubleVariable derGoal;
+        public Variable<Double> derPri;
+        public Variable<Double> derQua;
+        public Variable<Double> derQuest;
+        public Variable<Double> derJudge;
+        public Variable<Double> derGoal;
 
-        public DoubleVariable derComplex;
+        public Variable<Double> derComplex;
 
-        public DoubleVariable c0;
-        public DoubleVariable c1;
-        public DoubleVariable c2;
+        public Variable<Double> c0;
+        public Variable<Double> c1;
+        public Variable<Double> c2;
 
         private String path;
         private int maxCycles;
@@ -195,13 +195,17 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         @Override
         public double cost(TypedOrganism leakProgram) {
 
+
             //bind all program variables to this instance
-//            Node root = (leakProgram.getRoot());
-//            Map<String, Variable> vars = new HashMap();
-//            for (Object o : root.listVariables()) {
-//                VariableNode v = (VariableNode)o;
-//                vars.put(v.getIdentifier(), v);
-//            }
+            derPri = leakProgram.var("derPri");
+            derQua = leakProgram.var("derQua");
+            derQuest = leakProgram.var("derQuest");
+            derJudge = leakProgram.var("derJudge");
+            derGoal = leakProgram.var("derGoal");
+            derComplex = leakProgram.var("derComplex");
+            c0 = leakProgram.var("c0");
+            c1 = leakProgram.var("c1");
+            c2 = leakProgram.var("c2");
 
             Default b = new Default() {
                 @Override
@@ -216,12 +220,12 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
                             setDerived(derived);
 
-                            float mult = (float) leakProgram.eval();
+                            float newPriority = (float) leakProgram.eval();
 
-                            if (!Double.isFinite(mult))
-                                mult = 0;
+                            if (!Double.isFinite(newPriority))
+                                newPriority = 0;
 
-                            derived.mulPriority(mult);
+                            derived.setPriority(newPriority);
 
                             if (derived.getPriority() < Global.BUDGET_THRESHOLD)
                                 return false;

@@ -1,13 +1,10 @@
 package objenome.evolve;
 
 
-import jdk.nashorn.internal.objects.Global;
 import objenome.op.DoubleVariable;
 import objenome.op.Node;
-import objenome.op.Variable;
 import objenome.op.VariableNode;
 import objenome.op.math.*;
-import objenome.op.trig.HyperbolicTangent;
 import objenome.solver.Civilization;
 import objenome.solver.EGoal;
 import objenome.solver.evolve.RandomSequence;
@@ -19,7 +16,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
-import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -75,7 +71,7 @@ public class CivilizationTest extends Civilization<TypedOrganism> {
         @Override
         public double cost(TypedOrganism leakProgram) {
 
-            Set<VariableNode> vars = leakProgram.getRoot().listVariables();
+            Set<VariableNode> vars = leakProgram.getRoot().newVariableSet();
 
             synchronized (uniqueVar) {
                 for (VariableNode vn : vars) {

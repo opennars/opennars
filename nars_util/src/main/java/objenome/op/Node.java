@@ -443,7 +443,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         return false;
     }
 
-    public Set<VariableNode> listVariables() {
+    public Set<VariableNode> newVariableSet() {
         Set<VariableNode> v = new UnifiedSet<>();
 
         int arity = getArity();
@@ -451,10 +451,29 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
             v.add((VariableNode) this);
         } else {
             for (int i = 0; i < arity; i++) {
-                v.addAll(getChild(i).listVariables());
+                v.addAll(getChild(i).newVariableSet());
             }
         }
         return v;
+    }
+
+    public Map<String,Variable> newVariableMap() {
+        Map<String,Variable> m = new HashMap();
+        addToVariableMap(m);
+        return m;
+    }
+
+    public void addToVariableMap(Map<String,Variable> v)  {
+        int arity = getArity();
+
+        if (isVariable()) {
+            Variable vv = ((VariableNode) this).getVariable();
+            v.put(vv.getName(), vv);
+        } else {
+            for (int i = 0; i < arity; i++) {
+                getChild(i).addToVariableMap(v);
+            }
+        }
     }
 
     /**
@@ -828,4 +847,6 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
     public double asDouble() {
         return ((Double)evaluate());
     }
+
+
 }

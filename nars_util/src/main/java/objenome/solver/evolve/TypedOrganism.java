@@ -21,10 +21,15 @@
  */
 package objenome.solver.evolve;
 
+import objenome.op.DoubleVariable;
 import objenome.op.Node;
+import objenome.op.Variable;
+import objenome.op.VariableNode;
 import objenome.solver.evolve.GPContainer.GPKey;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * An TypedOrganism is a candidate solution which uses a strongly
@@ -65,6 +70,7 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
     private Node<X,Y> root;
     
     transient private Class dataType; //caches data type
+    private Map<String, ? extends Variable> vars = null;
 
     /**
      * Constructs an individual represented by a strongly typed tree, with a
@@ -292,4 +298,18 @@ public class TypedOrganism<X extends Node,Y> extends AbstractOrganism {
     public int compareTo(Organism other) {
         return getFitness().compareTo(other.getFitness());
     }
+
+    public Variable var(String id) {
+        if (vars == null) {
+            vars = getRoot().newVariableMap();
+        }
+
+        Variable x = vars.get(id);
+        if (x == null) {
+            //create a dummy variable so the user wont throw NPE's even though the variable is not used
+            return Variable.make(id, Object.class);
+        }
+        return x;
+    }
+
 }
