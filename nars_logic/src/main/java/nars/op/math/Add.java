@@ -24,14 +24,14 @@ import nars.op.mental.Mental;
 /**
  * Count the number of elements in a set
  */
-public class Add extends TermFunction implements Mental {
+public class Add extends TermFunction<Integer> implements Mental {
 
     public Add() {
         super("^add");
     }
 
     @Override
-    public Term function(Term[] x) {
+    public Integer function(Term... x) {
         if (x.length < 2) {
             throw new RuntimeException("Requires 2 arguments");
         }
@@ -39,18 +39,18 @@ public class Add extends TermFunction implements Mental {
         int n1, n2;
         
         try {
-            n1 = Integer.parseInt(String.valueOf(x[0].name()));
+            n1 = integer(x[0]);
         } catch (NumberFormatException e) {
             throw new RuntimeException("1st parameter not an integer: " + x[0]);
         }
         
         try {
-            n2 = Integer.parseInt(String.valueOf(x[1].name()));
+            n2 = integer(x[1]);
         } catch (NumberFormatException e) {
             throw new RuntimeException("2nd parameter not an integer: " + x[1]);
         }
         
-        return Atom.get(String.valueOf(n1 + n2));
+        return n1 + n2;
     }
 
 }

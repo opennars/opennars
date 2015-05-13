@@ -3,11 +3,11 @@ package nars.nal.nal8;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Symbols;
+import nars.io.Texts;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.ImageExt;
-import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
@@ -30,12 +30,23 @@ public abstract class TermFunction<O> extends Operator  {
         super(name);
     }
 
+    public static int integer(Term x, int defaultValue)  {
+        try {
+            return integer(x);
+        }
+        catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 
+    public static int integer(Term x) throws NumberFormatException {
+        return Texts.i(x.toString());
+    }
 
     /** y = function(x) 
      * @return y, or null if unsuccessful
      */
-    abstract public O function(Term[] x);
+    abstract public O function(Term... x);
 
 
     protected ArrayList<Task> result(Operation operation, Term y, Term[] x0, Term lastTerm) {

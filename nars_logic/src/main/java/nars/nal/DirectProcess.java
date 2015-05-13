@@ -61,9 +61,9 @@ public class DirectProcess extends NAL {
     protected void process(Concept c) {
         setCurrentTerm(currentTask.getTerm());
 
-        c.link(currentTask);
-
         if (c.process(this)) {
+
+            c.link(currentTask);
 
             emit(DirectProcess.class, getCurrentTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
