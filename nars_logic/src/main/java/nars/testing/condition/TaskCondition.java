@@ -52,10 +52,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     public final Deque<Task> removals = new ArrayDeque();
 
-    final int maxClose = 7;
-    public final TreeMap<Double,Task> close = new TreeMap();
+    int maxClose = 7;
 
-    final int maxRemovals = 2;
+    public final TreeMap<Double,Task> close = new TreeMap();
+    int maxRemovals = 2;
 
     //enable true for more precise temporality constraints; this may be necessary or not
     private boolean strictDurationWindow = true;
@@ -120,6 +120,16 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.confMin = Math.max(0.0f, confMin);
         this.punc = punc;
         this.term = n.term(sentenceTerm);
+    }
+
+    public TaskCondition(NAR n, Class<Events.IN> inClass, Task t, int cycle, boolean b, int similarResultsToSave) {
+        this(n, inClass, t, cycle, b);
+
+        this.maxClose = similarResultsToSave;
+
+        if (similarResultsToSave == 0) {
+            this.maxRemovals = 0;
+        }
     }
 
 

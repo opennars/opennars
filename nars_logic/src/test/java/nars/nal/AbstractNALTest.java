@@ -20,6 +20,8 @@ import org.junit.Ignore;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by me on 2/10/15.
@@ -31,6 +33,7 @@ abstract public class AbstractNALTest extends TestCase {
 
     private static final int similarsToSave = 3;
 
+    final static Map<String,Task> conditionsCache = new ConcurrentHashMap<>();
 
 
     public static OutputStream dataOut = null;
@@ -137,7 +140,7 @@ abstract public class AbstractNALTest extends TestCase {
         if (NALysis.showInput)
             System.out.println(script);
 
-        nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave));
+        nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave, conditionsCache));
 
         nar.input(script);
 

@@ -27,6 +27,7 @@ import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
+import nars.util.data.FastPutsArrayMap;
 import nars.util.utf8.ByteBuf;
 import nars.util.utf8.Utf8;
 import nars.util.data.sexpression.IPair;
@@ -299,29 +300,40 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     public static class VariableNormalization implements VariableTransform {
 
-        /** necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap */
-        final static class VariableID {
+//        /** necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap */
+//        final static class VariableID {
+//
+//            final Variable v;
+//
+//            public VariableID(final Variable v) {
+//                this.v = v;
+//            }
+//
+//            @Override
+//            public boolean equals(final Object obj) {
+//                return Utf8.equals2(((VariableID) obj).name(), name());
+//            }
+//
+//            public byte[] name() { return v.name(); }
+//
+//            @Override
+//            public int hashCode() {
+//                return v.hashCode();
+//            }
+//        }
 
-            final Variable v;
+        static final class VariableMap extends FastPutsArrayMap<Variable,Variable> {
 
-            public VariableID(final Variable v) {
-                this.v = v;
+            public VariableMap(int initialCapacity) {
+                super(initialCapacity);
             }
 
             @Override
-            public boolean equals(final Object obj) {
-                return Arrays.equals(((VariableID) obj).name(), name());
-            }
-
-            public byte[] name() { return v.name(); }
-
-            @Override
-            public int hashCode() {
-                return v.hashCode();
+            public boolean keyEquals(final Variable a, final Object b) {
+                return Utf8.equals2(((Variable) b).name(), a.name());
             }
         }
-
-        Map<VariableID, Variable> rename = Global.newHashMap();
+        VariableMap rename = null;
 
         final Compound result;
         boolean renamed = false;
@@ -330,13 +342,18 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
             this.result = target.cloneVariablesDeep();
             if (this.result!=null)
                 this.result.transformVariableTermsDeep(this);
+
+            if (rename!=null)
+                rename.clear(); //assist GC
         }
 
         @Override
         public Variable apply(final Compound ct, final Variable v, int depth) {
-            VariableID vname = new VariableID(v);
+            Variable vname = v;
 //            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
 //                vname = vname.toString() + v.getScope().name();
+
+            if (rename==null) rename = new VariableMap(2); //lazy allocate
 
             Variable vv = rename.get(vname);
 
@@ -347,8 +364,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
                     true
                 );
                 rename.put(vname, vv);
-                if (!vv.name().equals(v.name()))
-                    renamed = true;
+                renamed = !Utf8.equals2(vv.name(), v.name());
             }
 
             return vv;

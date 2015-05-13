@@ -6,7 +6,6 @@ import nars.Symbols;
 import nars.event.CycleReaction;
 import nars.io.LibraryInput;
 import nars.io.TextInput;
-import nars.io.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
@@ -24,6 +23,8 @@ import objenome.solver.evolve.TypedOrganism;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 
@@ -112,6 +113,8 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
     }
 
     public static class LibraryGoal extends EGoal<TypedOrganism> {
+
+        final static Map<String,Task> conditionsCache = new ConcurrentHashMap<>();
 
         public List<Variable> var;
         public Variable<Double> derPri;
@@ -249,7 +252,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
                 }
             };
 
-            nar.requires.addAll(OutputCondition.getConditions(nar, script, 0));
+            nar.requires.addAll(OutputCondition.getConditions(nar, script, 0, conditionsCache));
 
             nar.input(new TextInput.CachingTextInput(nar.textPerception, script));
 

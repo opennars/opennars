@@ -110,7 +110,7 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         // Search in reverse so we find the most up to date value in the event of duplicates
         for (int i = entries.size() - 1; i >= 0; i--) {
             e = entries.get(i);
-            if (e.getKey().equals(key)) {
+            if (keyEquals(e.getKey(), key)) {
                 return e;
             }
         }
@@ -146,11 +146,13 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         Entry<K, V> e;
         V value = null;
 
+        //TODO avoid ListIterator by just doing for loop then removal
+
         // Search in reverse so we find the most up to date value in the event of duplicates
         ListIterator<Entry<K, V>> itr = entries.listIterator(entries.size());
         while (itr.hasPrevious()) {
             e = itr.previous();
-            if (e.getKey().equals(key)) {
+            if (keyEquals(e.getKey(), key)) {
                 if (value == null) {
                     value = e.getValue(); // Keep the newest value
                 }
@@ -161,6 +163,10 @@ public class FastPutsArrayMap<K, V> extends AbstractMap<K, V> implements Seriali
         }
 
         return value;
+    }
+
+    public boolean keyEquals(K a, Object b) {
+        return a.equals(b);
     }
 
     @Override

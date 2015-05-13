@@ -7,6 +7,7 @@ package nars.testing.condition;
 import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
+import nars.io.Texts;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
 import nars.narsese.InvalidInputException;
@@ -15,6 +16,8 @@ import nars.testing.TestNAR;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Monitors NAR behavior for certain conditions. Used in testing and
@@ -80,9 +83,24 @@ public abstract class OutputCondition extends NARReaction {
     /** returns true if condition was satisfied */
     public abstract boolean condition(Class channel, Object signal);
 
-            
-    /** reads an example file line-by-line, before being processed, to extract expectations */
+
     public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave)  {
+        return getConditions(n, example, similarResultsToSave, x -> n.narsese.parseTask(x));
+    }
+
+    /** with caching, useful for repeated tests to avoid re-parsing the same text */
+    public static List<OutputCondition> getConditions(NAR n, String example, int similarsToSave, Map<String,Task> conditionCache)  {
+        return getConditions(n, example, similarsToSave, x -> {
+            Task t = conditionCache.get(x);
+            if (t == null) {
+                conditionCache.put(x, t = n.narsese.parseTask(x));
+            }
+            return t;
+        });
+    }
+
+    /** reads an example file line-by-line, before being processed, to extract expectations */
+    public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave, Function<String,Task> task)  {
         List<OutputCondition> conditions = new ArrayList();
         String[] lines = example.split("\n");
 
@@ -94,11 +112,9 @@ public abstract class OutputCondition extends NARReaction {
 
         for (String s : lines) {
             s = s.trim();
-            if (s.length() == 0) continue;
-            
-            
+            if (s.isEmpty()) continue;
 
-            if (s.indexOf(expectOutContains)==0) {
+            if (s.startsWith(expectOutContains)) {
 
                 if (!s.endsWith("')"))
                     throw new RuntimeException("invalid " + expectOutContains + " syntax: missing ending: \')");
@@ -106,7 +122,7 @@ public abstract class OutputCondition extends NARReaction {
                 String match = s.substring(expectOutContains.length(), s.length() - 2); //remove ') suffix:
 
                 try {
-                    Task t = n.narsese.parseTask(match, false);
+                    Task t = task.apply(match);
                     if (t != null)
                         conditions.add(new TaskCondition(n, Events.OUT.class, t,
                                 -Stamp.UNPERCEIVED, /* to cancel it */
@@ -120,19 +136,19 @@ public abstract class OutputCondition extends NARReaction {
                 }
             }
 
-            else if (s.indexOf(expectInContains)==0) {
+            else if (s.startsWith(expectInContains)) {
                 String match = s.substring(expectInContains.length(), s.length()-2); //remove ') suffix:
 
-                Task t = n.narsese.parseTask(match);
+                Task t = task.apply(match);//n.narsese.parseTask(match);
                 if (t!=null)
-                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle, false));
+                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle, false, similarResultsToSave));
                 else
                     throw new RuntimeException("API upgrade incomplete"); //conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
 
             }
             
 
-            else if (s.indexOf(expectOutNotContains2)==0) {
+            else if (s.startsWith(expectOutNotContains2)) {
 
                 //remove ') suffix:
                 String e = s.substring(expectOutNotContains2.length(), s.length()-2);                 
@@ -143,13 +159,11 @@ public abstract class OutputCondition extends NARReaction {
             else if (s.indexOf(expectOutEmpty)==0) {
                 conditions.add(new OutputEmptyCondition(n));
             }                
-            else if (!s.startsWith("'")) {
-                //skip comment lines
-
+            else if (Texts.i(s.charAt(0))!=-1)  {
 
                 try {
                     //parse sleep cycles to advance the correlated 'cycle' time
-                    int sleepCycles = Integer.parseInt(s);
+                    int sleepCycles = Texts.i(s);
                     cycle += sleepCycles;
                 }
                 catch (NumberFormatException e) {
