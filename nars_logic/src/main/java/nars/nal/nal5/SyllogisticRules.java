@@ -260,7 +260,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        Compound nst = Statement.make(st, term1, term2, order).normalized();
+        Statement nst = Statement.make(st, term1, term2, order).normalized();
         if (nst == null) return false;
 
         return nal.doublePremiseTask( nst, truth, budget,

@@ -1,9 +1,5 @@
 package nars.nal.term;
 
-import nars.util.data.Utf8;
-
-import java.util.Arrays;
-
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound1 extends Compound {
 

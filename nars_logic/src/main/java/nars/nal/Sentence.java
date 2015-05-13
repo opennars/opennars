@@ -149,7 +149,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
 
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
-        this.term = normalize ? seedTerm.cloneNormalized() : seedTerm;
+        this.term = normalize ? seedTerm.normalized() : seedTerm;
         if (term == null)
             throw new RuntimeException("Term for a new Sentence not valid or could not be normalized: " + seedTerm);
 

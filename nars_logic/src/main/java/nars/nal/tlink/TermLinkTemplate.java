@@ -1,9 +1,10 @@
 package nars.nal.tlink;
 
 import nars.budget.Budget;
-import nars.nal.term.Termed;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
+import nars.nal.term.Termed;
+import nars.util.utf8.ByteBuf;
 
 /** contains most of the essential data to populate new TermLinks */
 public class TermLinkTemplate implements Termed {
@@ -21,8 +22,8 @@ public class TermLinkTemplate implements Termed {
     private Term concept;
 
     //cached names for new TermLinks
-    protected String outgoing;
-    protected String incoming;
+    protected byte[] outgoing;
+    protected byte[] incoming;
 
     /** accumulates budget to eventually apply to termlinks at a future time */
     public final Budget pending = new Budget(0,0,0);
@@ -79,6 +80,8 @@ public class TermLinkTemplate implements Termed {
         this(host, target, type, (short)i0, (short)i1, (short)i2, (short)i3);
     }
 
+    final static byte[] emptyBytes = new byte[0];
+
     /** creates a new TermLink key consisting of:
      *      type
      *      target
@@ -86,40 +89,47 @@ public class TermLinkTemplate implements Termed {
      *
      * determined by the current template ('temp')
      */
-    public static String prefix(short type, short[] index, boolean incoming) {
+    public static byte[] prefix(short type, short[] index, boolean incoming) {
         short t = type;
         if (!incoming) {
             t--; //point to component
         }
         if (!incoming && type == TermLink.SELF && (index == null || index.length ==0))
-            return ""; //empty, avoids constructing useless prefix in this case
+            return emptyBytes; //empty, avoids constructing useless prefix in this case
 
         //CharSequence otherName = other.name();
-        StringBuilder sb = new StringBuilder(16);
+        ByteBuf sb = ByteBuf.create(index.length + 1);
+
         //use compact 1-char representation for type and each index component
-        sb.append((char) ('A' + t));
+        sb.add((byte) ('A' + t));
 
         if (index!=null) {
             for (short s : index) {
-                sb.append((char) ('a' + s));
+                sb.add((byte) ('a' + s));
             }
         }
-        return sb.toString();
+        return sb.toBytes();
     }
 
 
 
-    public String prefix(boolean in, Term target) {
+    public byte[] prefix(boolean in, Term target) {
+        byte[] tname = target.name();
+        byte[] prefix;
         if (in) {
             if (incoming == null)
                 incoming = prefix(type, index, true);
-            return incoming + target.toString();
+            prefix = incoming;
         }
         else {
             if (outgoing == null)
                 outgoing = prefix(type, index, false);
-            return outgoing + target.toString();
+            prefix = outgoing;
         }
+        return ByteBuf.create(prefix.length + tname.length).
+                add(prefix).
+                add(tname).
+                toBytes();
     }
 
 

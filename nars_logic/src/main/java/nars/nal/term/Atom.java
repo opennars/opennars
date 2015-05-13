@@ -3,7 +3,7 @@ package nars.nal.term;
 import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.nal7.TemporalRules;
-import nars.util.data.Utf8;
+import nars.util.utf8.Utf8;
 
 import java.util.Arrays;
 import java.util.Map;

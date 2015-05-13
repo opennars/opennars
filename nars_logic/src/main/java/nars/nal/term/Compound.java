@@ -28,7 +28,7 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.util.utf8.ByteBuf;
-import nars.util.data.Utf8;
+import nars.util.utf8.Utf8;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 
@@ -218,10 +218,6 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     @Override
     public abstract Term clone();
 
-    public Compound normalized() {
-        return cloneNormalized();
-    }
-
     abstract public int hashCode();
 
     @Override
@@ -387,7 +383,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * Normalizes if contain variables which need to be finalized for use in a Sentence
      * May return null if the resulting compound term is invalid
      */
-    public <T extends Compound> T cloneNormalized() {
+    @Override
+    public <T extends Term> T normalized() {
         if (!hasVar()) return (T) this;
         if (isNormalized()) return (T) this;
 

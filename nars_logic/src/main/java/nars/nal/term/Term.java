@@ -27,6 +27,7 @@ import nars.nal.NALOperator;
 import nars.nal.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
+import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
 
@@ -66,8 +67,8 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     public boolean isNormalized();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
-    default public Term normalized() {
-        return this;
+    default public <T extends Term> T normalized() {
+        return (T) this;
     }
 
 
@@ -134,26 +135,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
         final byte[] a = name();
         final byte[] b = t.name();
         if (a == b) return true;
-        return (hashCode() == t.hashCode() && equals2(a, b));
-    }
-
-    /** ordinary array equals comparison with some conditions removed */
-    static boolean equals2(final byte[] a, final byte[] a2) {
-        /*if (a==a2)
-            return true;
-        if (a==null || a2==null)
-            return false;*/
-
-        int length = a.length;
-        if (a2.length != length)
-            return false;
-
-        //backwards
-        for (int i=length-1; i>=0; i--)
-            if (a[i] != a2[i])
-                return false;
-
-        return true;
+        return Utf8.equals2(a, b);
     }
 
 }

@@ -20,11 +20,13 @@
  */
 package nars.nal.tlink;
 
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.Item;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
+import nars.util.utf8.Utf8;
+
+import java.util.Arrays;
 
 /**
  * A tlink between a compound term and a component term
@@ -74,8 +76,9 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
+    private final int keyHash;
 
-    String key;
+    byte[] key;
 
     //final int hash;
 
@@ -90,7 +93,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(boolean incoming, Term host, TermLinkTemplate template, String key, Budget v) {
+    public TermLink(boolean incoming, Term host, TermLinkTemplate template, byte[] key, Budget v) {
         super(v);
 
 
@@ -108,6 +111,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
         index = template.index;
 
         this.key = key;
+        this.keyHash = Arrays.hashCode(key);
 
         //this.hash = termLinkHashCode();
     }
@@ -133,7 +137,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return keyHash;
     }
 
 
@@ -146,10 +150,10 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return getPrefix() + Symbols.TLinkSeparator + getTarget();
+        return Utf8.fromUtf8(getPrefix());
     }
 
-    public String getPrefix() { return key; }
+    public byte[] getPrefix() { return key; }
 
 
 

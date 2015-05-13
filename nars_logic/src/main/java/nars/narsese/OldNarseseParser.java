@@ -209,7 +209,7 @@ import static nars.nal.nal8.Operation.make;
         if (content == null) throw new InvalidInputException("Content term missing");
         if (!(content instanceof Compound)) throw new InvalidInputException("Content term is not compound");
 
-        content = ((Compound) content).cloneNormalized();
+        content = ((Compound) content).normalized();
         if (content == null) return null;
 
         return new Sentence((Compound)content, punc, truth, stamp);

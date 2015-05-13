@@ -1,18 +1,19 @@
 package nars.nal.tlink;
 
 import nars.Global;
+import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
-import nars.nal.term.Statement;
 import nars.nal.nal1.Negation;
 import nars.nal.nal4.Image;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.bag.tx.BagActivator;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.util.utf8.Utf8;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     TermLinkTemplate currentTemplate;
 
     boolean incoming;
-    transient private String prefix = null;
+    transient private byte[] prefix = null;
 
     public TermLinkBuilder(Concept c) {
         super();
@@ -192,8 +193,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
-    public String getPrefix() {
-        String p = this.prefix;
+    public byte[] getPrefix() {
+        byte[] p = this.prefix;
         if (p == null) {
             p = this.prefix = currentTemplate.prefix(incoming, getTarget());
         }
@@ -248,7 +249,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return getPrefix() + ':' + getTarget();
+        return Utf8.fromUtf8(getPrefix());
     }
 
 
