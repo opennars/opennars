@@ -21,12 +21,13 @@
     </scm>
 
     <build>
-        <finalName>opennars_core_${project.version}</finalName>
+        <finalName>opennars_util_${project.version}</finalName>
         <plugins>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
                 <configuration>
                     <skipTests>true</skipTests>
                 </configuration>
@@ -44,15 +45,7 @@
                     <!--<useIncrementalCompilation>true</useIncrementalCompilation>-->
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
-                <!--<configuration>
-                    <parallel>classes</parallel>
-                    <threadCount>1</threadCount>
-                </configuration>-->
-            </plugin>
+
 
             <!--<plugin>-->
                 <!--&lt;!&ndash; https://github.com/chrischristo/capsule-maven-plugin &ndash;&gt;-->
