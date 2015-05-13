@@ -169,7 +169,11 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     @Override
     public Task clone() {
-        return new Task(sentence, this, parentTask, parentBelief, bestSolution);
+
+        if (sentence == null)
+            return this;
+
+        return new Task(sentence.clone(), this, parentTask, parentBelief, bestSolution);
     }
     
     public Task clone(final Sentence replacedSentence) {

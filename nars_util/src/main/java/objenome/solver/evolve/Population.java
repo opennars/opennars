@@ -21,6 +21,7 @@
  */
 package objenome.solver.evolve;
 
+import com.gs.collections.impl.list.mutable.FastList;
 import objenome.goal.DoubleFitness;
 import objenome.solver.evolve.GPContainer.GPKey;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -53,7 +54,8 @@ public class Population<I extends Organism> implements Iterable<I>, Cloneable {
     public Population(GPContainer config) {
         this.config = config;
         //individuals = new ArrayList<>(/*config.get(SIZE)*/);
-        individuals = new CopyOnWriteArrayList();
+        individuals = //new CopyOnWriteArrayList();
+            new FastList().asSynchronized();
     }
 
     public GPContainer getConfig() {

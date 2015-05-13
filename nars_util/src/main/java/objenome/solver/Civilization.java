@@ -34,7 +34,7 @@ import objenome.solver.evolve.mutate.OnePointCrossover;
 import objenome.solver.evolve.mutate.PointMutation;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
-import objenome.solver.evolve.selection.RouletteSelector;
+import objenome.solver.evolve.selection.TournamentSelector;
 import objenome.util.random.MersenneTwisterFast;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -89,12 +89,12 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
 
 
-        the(TypedOrganism.MAXIMUM_DEPTH, 5);
-        the(Full.MAXIMUM_INITIAL_DEPTH, 3);
+        the(TypedOrganism.MAXIMUM_DEPTH, 8);
+        the(Full.MAXIMUM_INITIAL_DEPTH, 5);
         the(OrganismBuilder.class, new Full());
 
-        the(Breeder.SELECTOR, new RouletteSelector());
-        //the(Breeder.SELECTOR, new TournamentSelector(7));
+        //the(Breeder.SELECTOR, new RouletteSelector());
+        the(Breeder.SELECTOR, new TournamentSelector(7));
 
         List<OrganismOperator> operators = new ArrayList<>();
         {
@@ -251,11 +251,14 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
     double minLifeSpan = 0.25;
     double maxSurvivalCostPercentile = 80;
 
-    protected void reproduce() {
+    protected void reproduce(int n) {
         //System.out.println(x + " reproduce");
         BranchedBreeder b = new BranchedBreeder();
+        n = Math.max(populationSize - (getPopulation().size() + n), 0);
+        if (n == 0) return;
         try {
-            b.update(getPopulation(), 1);
+            b.update(getPopulation(), n);
+            System.err.println("\nborn " + n);
         }
         catch (Exception e) {
             //System.err.println("reproduction accident: " + e);
@@ -271,7 +274,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         getPopulation().remove(x.i);
         System.out.println(x + " die @ " + x.getAge() );
 
-        reproduce();
+        reproduce(1);
     }
 
     int cycle = 0;
@@ -279,6 +282,9 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         //maintain population level
         if (population.size() == 0) {
             getOrganismBuilder().populate(getPopulation(), populationSize);
+        }
+        else {
+            reproduce(1);
         }
 
         if (cycle % 64 == 0)
@@ -331,7 +337,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 
         @Override
         public String toString() {
-            return i.toString() + "[" + age + ", " + (totalCost) + "]";
+            return i.toString() + " [" + age + ", " + (totalCost) + "]";
         }
 
         /** rate: cost/time */
@@ -361,7 +367,11 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
             List<EGoal> goalSequence = new ArrayList(goals);
             Collections.shuffle(goalSequence);
 
-            for (final EGoal g : goalSequence) {
+            for (int j = 0; j < goalSequence.size(); j++) {
+                final EGoal g = goalSequence.get(j);
+
+                goalSequence.set(j, null); //GC assistance
+
                 try {
                     double s = exe.submit(new Callable<Double>() {
                         @Override

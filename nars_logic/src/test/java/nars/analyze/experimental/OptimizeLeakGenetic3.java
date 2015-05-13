@@ -5,12 +5,13 @@ import nars.NAR;
 import nars.Symbols;
 import nars.event.CycleReaction;
 import nars.io.LibraryInput;
+import nars.io.TextInput;
+import nars.io.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
 import nars.testing.TestNAR;
 import nars.testing.condition.OutputCondition;
-import objenome.op.DoubleVariable;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
@@ -22,9 +23,7 @@ import objenome.solver.evolve.RandomSequence;
 import objenome.solver.evolve.TypedOrganism;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static objenome.goal.DefaultProblemSTGP.doubleVariable;
 
@@ -40,7 +39,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         Global.DEBUG = false;
 
         final int threads = 2;
-        final int individuals = 64;
+        final int individuals = 25;
         final int cycles = 750;
 
         Civilization c = new OptimizeLeakGenetic3(threads, individuals, cycles);
@@ -252,13 +251,15 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
             nar.requires.addAll(OutputCondition.getConditions(nar, script, 0));
 
-            nar.input(script);
+            nar.input(new TextInput.CachingTextInput(nar.textPerception, script));
 
             nar.run(maxCycles);
 
             double cost = OutputCondition.cost(nar);
             if (Double.isInfinite(cost))
                 cost = 1.0;
+
+            nar.delete();
 
             return cost / maxCycles;
         }

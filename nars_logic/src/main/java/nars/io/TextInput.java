@@ -20,20 +20,57 @@
  */
 package nars.io;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import nars.Events;
 import nars.Global;
 import nars.nal.Task;
+import nars.nal.stamp.Stamp;
 import nars.op.io.Echo;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * To read and write experience as Task streams
  */
 public class TextInput extends Input.BufferedInput {
+
+
+    public static class CachingTextInput extends TextInput {
+
+
+        final static Map<String, Iterable<Task>> cache = new ConcurrentHashMap<>(1024);
+
+        public CachingTextInput(TextPerception p, String input) {
+            super(p, input);
+        }
+
+        @Override
+        protected Iterator<Task> perceive(String line) {
+            Iterable<Task> x = cache.get(line);
+            if (x == null) {
+                Iterator<Task> y = super.perceive(line);
+                cache.put(line, x = Lists.newArrayList(y));
+            }
+
+            return Iterators.transform(x.iterator(), new Function<Task,Task>() {
+                @Nullable  @Override
+                public Task apply(Task input) {
+                    //provide a new copy for every input
+                    Task t = input.clone();
+                    if (t.sentence!=null)
+                        t.sentence.stamp.setCreationTime(Stamp.UNPERCEIVED);
+                    return t;
+                }
+            });
+        }
+    }
 
     private final TextPerception perception;
     /**
@@ -125,13 +162,18 @@ public class TextInput extends Input.BufferedInput {
             }
         }
         
-        if (line!=null)
-            return perception.perceive( process(line) );
+        if (line!=null) {
+            return perceive(line);
+        }
 
         return null;
     }
 
-    
+    protected Iterator<Task> perceive(String line) {
+        return perception.perceive(process(line));
+    }
+
+
     /** can be overridden in subclasses to preprocess addInput */
     public String process(String input) {
         return input;

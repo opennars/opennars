@@ -2,19 +2,20 @@ package nars.io;
 
 import com.google.common.collect.Iterators;
 import nars.*;
-import nars.narsese.InvalidInputException;
-import nars.narsese.OldNarseseParser;
-import nars.narsese.NarseseParser;
 import nars.io.nlp.Englisch;
 import nars.io.nlp.NaturalLanguagePerception;
 import nars.io.nlp.Twenglish;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal8.ImmediateOperation;
+import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
+import nars.narsese.OldNarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 import nars.op.io.Reset;
 import nars.op.io.SetVolume;
+import nars.util.data.buffer.Perception;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,31 +32,31 @@ import static com.google.common.collect.Iterators.singletonIterator;
  *  
  *  TODO break into separate subclasses for each text mode
  */
-public class TextPerception {
+public class TextPerception  {
 
-    private Memory memory;
+    public final Memory memory;
     
-    public List<TextReaction> parsers;
+    public final List<TextReaction> parsers;
     
     
     public OldNarseseParser narsese;
-    public Englisch englisch;
-    public Twenglish twenglish;
+    //public Englisch englisch;
+    //public Twenglish twenglish;
     
     private boolean enableNarsese = true;
 
-    private boolean enableNaturalLanguage = false; //the NLP mode we should strive for
-    private boolean enableEnglisch = false;
+    //private boolean enableNaturalLanguage = false; //the NLP mode we should strive for
+    //private boolean enableEnglisch = false;
     
-    private boolean enableTwenglish = false; //the events should be introduced event-wise
+    //private boolean enableTwenglish = false; //the events should be introduced event-wise
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
 
     public TextPerception(NAR n, @Deprecated OldNarseseParser narsese, NarseseParser newParser) {
         this.memory = n.memory;
         this.narsese = narsese;
-        this.englisch = new Englisch();
-        this.twenglish = new Twenglish(memory);
+        //this.englisch = new Englisch();
+        //this.twenglish = new Twenglish(memory);
         this.parsers = new ArrayList();
 
         //integer, # of cycles to step
@@ -185,7 +186,8 @@ public class TextPerception {
             }
         });
 
-        parsers.add(new BindJavascriptExpression(n));
+
+
         //narsese
         parsers.add(new TextReaction() {
             @Override
@@ -207,65 +209,66 @@ public class TextPerception {
                 return null;
             }
         });
-
-        //englisch
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String line) {
-
-                if (enableEnglisch) {
-                    /*if (!possiblyNarsese(line))*/ {
-                        try {
-                            List<Task> l = englisch.parse(line, narsese, true);
-                            if ((l == null) || (l.isEmpty()))
-                                return null;
-                            return l;
-                        } catch (InvalidInputException ex) {
-                            return null;
-                        }
-                    }
-                }
-                return null;
-            }
-        });
-
-        //englisch
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String line) {
-
-                if (enableTwenglish) {
-                    /*if (!possiblyNarsese(line))*/ {
-                        try {
-                            List<Task> l = twenglish.parse(line, narsese, true);
-                            if ((l == null) || (l.isEmpty()))
-                                return null;
-                            return l;
-                        } catch (InvalidInputException ex) {
-                            return null;
-                        }
-                    }
-                }
-                return null;
-            }
-        });
-
-        // natural language
-        parsers.add(new TextReaction() {
-            @Override
-            public Object react(String line) {
-
-                if (enableNaturalLanguage) {
-                    /*if (!possiblyNarsese(line))*/ {
-                        List<Task> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
-                        if ((l == null) || (l.isEmpty()))
-                            return null;
-                        return l;
-                    }
-                }
-                return null;
-            }
-        });
+//
+//
+//        //englisch
+//        parsers.add(new TextReaction() {
+//            @Override
+//            public Object react(String line) {
+//
+//                if (enableEnglisch) {
+//                    /*if (!possiblyNarsese(line))*/ {
+//                        try {
+//                            List<Task> l = englisch.parse(line, narsese, true);
+//                            if ((l == null) || (l.isEmpty()))
+//                                return null;
+//                            return l;
+//                        } catch (InvalidInputException ex) {
+//                            return null;
+//                        }
+//                    }
+//                }
+//                return null;
+//            }
+//        });
+//
+//        //englisch
+//        parsers.add(new TextReaction() {
+//            @Override
+//            public Object react(String line) {
+//
+//                if (enableTwenglish) {
+//                    /*if (!possiblyNarsese(line))*/ {
+//                        try {
+//                            List<Task> l = twenglish.parse(line, narsese, true);
+//                            if ((l == null) || (l.isEmpty()))
+//                                return null;
+//                            return l;
+//                        } catch (InvalidInputException ex) {
+//                            return null;
+//                        }
+//                    }
+//                }
+//                return null;
+//            }
+//        });
+//
+//        // natural language
+//        parsers.add(new TextReaction() {
+//            @Override
+//            public Object react(String line) {
+//
+//                if (enableNaturalLanguage) {
+//                    /*if (!possiblyNarsese(line))*/ {
+//                        List<Task> l = NaturalLanguagePerception.parseLine(line, narsese, "word");
+//                        if ((l == null) || (l.isEmpty()))
+//                            return null;
+//                        return l;
+//                    }
+//                }
+//                return null;
+//            }
+//        });
 
 
     }
@@ -297,7 +300,7 @@ public class TextPerception {
     }
     
 
-    protected Iterator<Task> perceive(final String line) {
+    public Iterator<Task> perceive(final String line) {
 
         Exception lastException = null;
         
@@ -338,13 +341,13 @@ public class TextPerception {
         return null;
     }
 
-    public void enableEnglisch(boolean enableEnglisch) {
-        this.enableEnglisch = enableEnglisch;
-    }
-
-    public void enableNarsese(boolean enableNarsese) {
-        this.enableNarsese = enableNarsese;
-    }
+//    public void enableEnglisch(boolean enableEnglisch) {
+//        this.enableEnglisch = enableEnglisch;
+//    }
+//
+//    public void enableNarsese(boolean enableNarsese) {
+//        this.enableNarsese = enableNarsese;
+//    }
 
     
     

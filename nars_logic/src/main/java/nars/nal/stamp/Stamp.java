@@ -410,6 +410,12 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         return this;
     }
 
+    public void setCreationTime(long c) {
+        this.creationTime = c;
+        this.hash = 0;
+    }
+
+
     public void setEternal() {
         setOccurrenceTime(ETERNAL);
     }

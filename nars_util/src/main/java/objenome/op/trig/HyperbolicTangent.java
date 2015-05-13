@@ -24,7 +24,7 @@ package objenome.op.trig;
 import objenome.op.Node;
 import objenome.op.Numeric1d;
 import objenome.util.NumericUtils;
-import objenome.util.TypeUtil;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A node which performs the hyperbolic trigonometric function of hyperbolic
@@ -45,7 +45,7 @@ public class HyperbolicTangent extends Numeric1d {
      */
     @Override
     public double value(double x) {
-        return Math.tanh(NumericUtils.asDouble(x));
+        return FastMath.tanh(x);
     }
 
 

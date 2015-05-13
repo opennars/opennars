@@ -2,7 +2,7 @@ package nars.io;
 
 /** A low-level handler for parsing text.
  *  Named reaction because it is analogous to an automatic reflex or reaction. */
-public interface TextReaction {
+public interface TextReaction extends ObjectReaction<String> {
     
     /**
      * 
@@ -13,5 +13,6 @@ public interface TextReaction {
      *      Task instance, 
      *      a new input task, or null
      */
+    @Override
     public Object react(String input);
 }

@@ -55,8 +55,7 @@ public class NAR implements Runnable {
               "    Github website:  http://github.com/opennars/ \n" + 
             "    IRC:  http://webchat.freenode.net/?channels=nars \n";
     private final NarseseParser narseseParser;
-
-
+    public final TextPerception textPerception;
 
 
     /**
@@ -71,7 +70,7 @@ public class NAR implements Runnable {
     
 
     @Deprecated public final OldNarseseParser narsese;
-    public TextPerception textPerception;
+
 
     public void think(int delay) {
         memory.think(delay);
@@ -150,6 +149,10 @@ public class NAR implements Runnable {
         memory.reset(true, false);
     }
 
+    public void delete() {
+        memory.reset(true, true);
+    }
+
     final Reaction togglePluginOnReset = new Reaction() {
 
         final List<OperatorRegistration> toReEnable = new ArrayList();
@@ -214,7 +217,9 @@ public class NAR implements Runnable {
 
 
     public TextInput input(final String text) {
+        //final TextInput i = new TextInput(new TextPerception(this, narsese, narseseParser), text);
         final TextInput i = new TextInput(textPerception, text);
+        //final TextInput i = new TextInput.CachingTextInput(textPerception, text);
         input(i);
         return i;
     }

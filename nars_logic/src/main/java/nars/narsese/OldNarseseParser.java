@@ -122,6 +122,7 @@ import static nars.nal.nal8.Operation.make;
     }
 
     public Task parseTask(String s, boolean newStamp) throws InvalidInputException {
+        //ENTRY POINT TO NEW PARSER
         return newParser.parseTask(s, newStamp);
     }
 
