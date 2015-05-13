@@ -247,7 +247,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
                 if (t.getPriority() < minPriority) continue;
                 Term to = t.target;
                 if (to != null) {
-                    addEdge(graph, t.getSource(), to, new NARGraph.TermLinkEdge(t));
+                    //addEdge(graph, t.getSource(), to, new NARGraph.TermLinkEdge(t));
                 }
             }
         }

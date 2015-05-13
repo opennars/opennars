@@ -18,9 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /** concept which holds a fixed set of beliefs or goals, and rejects others
- *  UNTESTED
+ *  UNTESTED, EXPERIMENTAL
  * */
-
 public abstract class AxiomaticConcept extends Concept {
 
     public Set<Task> goalAxioms = Global.newHashSet(4);

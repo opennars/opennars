@@ -22,6 +22,7 @@ import java.util.Objects;
 
 public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
 
+
     public final Concept concept;
 
     final List<TermLinkTemplate> template;
@@ -217,19 +218,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         byte[] p = this.prefix;
         if (p == null) {
             p = this.prefix = currentTemplate.prefix(incoming);
-            this.h = hash(prefix, getSource(), getTarget(), incoming);
+            this.h = hash(prefix, getTarget(), currentTemplate.getType(getTarget()));
         }
         return p;
     }
 
-    public static int hash(byte[] prefix, Term source, Term target, boolean incoming) {
-        int ah = Arrays.hashCode(prefix);
-        if (incoming) {
-            return Objects.hash(ah, source, target, incoming);
-        }
-        else {
-            return Objects.hash(ah, target, source, incoming);
-        }
+    public static int hash(byte[] prefix, Term target, short type) {
+        return Objects.hash(Arrays.hashCode(prefix), target, type);
     }
 
 
@@ -238,11 +233,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
+    @Override
     public Term getTarget() {
         return incoming ? concept.getTerm() : currentTemplate.target;
     }
 
-    @Override
     public Term getSource() {
         return incoming ? currentTemplate.target : concept.getTerm();
     }
@@ -265,7 +260,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public TermLink newItem() {
         this.prefix = null;
-        return new TermLink(incoming, concept.getTerm(), currentTemplate, getBudgetRef(), getLinkKey(), this.h);
+        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), getLinkKey(), this.h);
     }
 
     public int size() {
@@ -292,7 +287,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return getSource() + ":" + Utf8.fromUtf8(getLinkKey()) + ":" + getTarget();
+        return /*getSource() + ":" +*/
+                Utf8.fromUtf8(getLinkKey()) + ":" + getTarget();
     }
 
 

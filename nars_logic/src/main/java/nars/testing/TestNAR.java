@@ -42,18 +42,19 @@ public class TestNAR extends NAR {
         super(b);
 
         if (exitOnAllSuccess) {
-            new EarlyExit();
+            new EarlyExit(1);
         }
 
     }
 
     class EarlyExit extends NARReaction {
 
-        final int checkResolution = 16; //every # cycles to check for completion
+        final int checkResolution; //every # cycles to check for completion
         int cycle = 0;
 
-        public EarlyExit() {
+        public EarlyExit(int checkResolution) {
             super(TestNAR.this, Events.CycleEnd.class);
+            this.checkResolution = checkResolution;
         }
 
         @Override

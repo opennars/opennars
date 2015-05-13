@@ -27,6 +27,7 @@ import java.util.*;
  */
 public abstract class NAL  implements Runnable {
 
+    private Term currentTerm;
 
     public final Memory memory;
     protected final Task currentTask;
@@ -232,6 +233,19 @@ public abstract class NAL  implements Runnable {
         }
 
 
+    }
+
+
+
+    /**
+     * @return the currentTerm
+     */
+    public Term getCurrentTerm() {
+        return currentTerm;
+    }
+
+    public void setCurrentTerm(Term currentTerm) {
+        this.currentTerm = currentTerm;
     }
 
     /* --------------- new task building --------------- */

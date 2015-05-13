@@ -6,15 +6,17 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.model.impl.Default;
 import nars.nal.concept.Concept;
+import nars.nal.term.Term;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.nal.tlink.TermLinkTemplate;
+import nars.util.graph.TermLinkGraph;
+import org.jgrapht.alg.ConnectivityInspector;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
@@ -103,7 +105,17 @@ public class TermLinkTest {
     }
 
     @Test
-    public void testUnnecessaryTargetInTermlinkKey() {
+    public void testStatementComponent() {
+        NAR n = new NAR(new Default());
+        n.input("<a --> b>.");
+        n.run(1);
+
+        Set<String> tl = getTermLinks(n.concept("<a --> b>").termLinks);
+        System.out.println(tl);
+    }
+
+    @Test
+    public void testTermLinkKey() {
         NAR n = new NAR(new Default());
         n.input("<a --> b>.");
         n.input("<<a --> b> --> d>.");
@@ -114,11 +126,14 @@ public class TermLinkTest {
         n.run(6);
 
 
+
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").termLinks);
-        assertEquals(6, ainhb.size());
-        assertTrue(ainhb.contains("Da"));
-        assertTrue(ainhb.contains("Db"));
-        assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
+
+        assertEquals( 6, ainhb.size());
+        System.out.println(ainhb);
+        assertTrue(ainhb.contains("Da:a"));
+        assertTrue(ainhb.contains("Db:b"));
+        //assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
 
 
 
@@ -140,12 +155,45 @@ public class TermLinkTest {
         //this compound involving f has no incoming links, all links are internal
         Set<String> fc = getTermLinks(n.concept("<f --> <a --> b>>").termLinks);
         assertEquals(4, fc.size());
-        assertTrue(fc.contains("Da"));
-        assertTrue(fc.contains("Db"));
-        assertTrue(fc.contains("Dba"));
-        assertTrue(fc.contains("Dbb"));
+        assertTrue(fc.contains("Da:f"));
+        assertTrue(fc.contains("Db:<a --> b>"));
+        assertTrue(fc.contains("Dba:a"));
+        assertTrue(fc.contains("Dbb:b"));
 
 
     }
 
+    @Test public void termlinkConjunctionImplicationFullyConnected() {
+        //from nal6.4
+        String c = "<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>.";
+        String d = "<<$y --> [withwings]> ==> <$y --> flyer>>.";
+        Bag<TermLinkKey, TermLink> x = getTermLinks(d);
+        for (TermLink t : x.values()) {
+            assertEquals(t.type, 3); //all component_statement links
+        }
+
+        assertEquals(4, getTermLinkTemplates(d).size());
+
+
+
+        NAR n = new NAR(new Default());
+        n.input(c);
+        n.input(d);
+        n.frame(2);
+
+        TermLinkGraph g = new TermLinkGraph(n);
+
+
+        ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
+        int set = 0;
+        for (Set<Term> s : ci.connectedSets()) {
+            for (Term v : s)
+                System.out.println(set + ": " + v);
+            set++;
+        }
+
+        assertTrue("termlinks between the two input concepts form a fully connected graph",
+                ci.isGraphConnected());
+
+    }
 }

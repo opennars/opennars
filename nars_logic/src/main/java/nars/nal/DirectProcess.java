@@ -24,7 +24,7 @@ public class DirectProcess extends NAL {
         this(c.memory, task);
 
         onStart();
-        process(c);
+        process(c); //WARNING this will avoid conceptualizing the concept
         onFinished();
     }
 
@@ -59,9 +59,11 @@ public class DirectProcess extends NAL {
     }
 
     protected void process(Concept c) {
-        if (c.process(this)) {
+        setCurrentTerm(currentTask.getTerm());
 
-            c.link(currentTask);
+        c.link(currentTask);
+
+        if (c.process(this)) {
 
             emit(DirectProcess.class, getCurrentTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
@@ -95,5 +97,6 @@ public class DirectProcess extends NAL {
         d.run();
         return d;
     }
+
 
 }

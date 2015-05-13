@@ -1,62 +1,72 @@
-//package nars.util.graph;
-//
-//import nars.logic.entity.Concept;
-//import nars.logic.entity.Task;
-//import nars.logic.entity.TaskLink;
-//import nars.logic.entity.TermLink;
-//import nars.logic.entity.Term;
-//import org.jgrapht.graph.DirectedMultigraph;
-//
-///**
-// * Generates a graph of a set of Concept's TermLinks. Each TermLink is an edge,
-// * and the set of unique Concepts and Terms linked are the vertices.
-// */
-//public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
-//
-//    public TermLinkGraph() {
-//        super(TermLink.class);
-//    }
-//
-//    public void add(Iterable<Concept> concepts, boolean includeTermLinks, boolean includeTaskLinks/*, boolean includeOtherReferencedConcepts*/) {
-//
-//        for (final Concept c : concepts) {
-//
-//            final Term source = c.term;
-//
-//            if (!containsVertex(source)) {
-//                addVertex(source);
-//
-//                if (includeTermLinks) {
-//                    for (TermLink t : c.termLinks.values()) {
-//                        Term target = t.target;
-//                        if (!containsVertex(target)) {
-//                            addVertex(target);
-//                        }
-//                        addEdge(source, target, t);
-//                    }
-//                }
-//
-//                if (includeTaskLinks) {
-//                    for (TaskLink t : c.taskLinks.values()) {
-//                        Task target = t.targetTask;
-//                        if (!containsVertex(target)) {
-//                            addVertex(target);
-//                        }
-//                        addEdge(source, target, t);
-//                    }
-//                }
-//
-//            }
-//        }
-//
-//    }
-//
-//    public boolean includeLevel(int l) {
-//        return true;
-//    }
-//
-//    @Override
-//    public Object clone() {
-//        return super.clone(); //To change body of generated methods, choose Tools | Templates.
-//    }
-//}
+package nars.util.graph;
+
+import nars.NAR;
+import nars.nal.Task;
+import nars.nal.concept.Concept;
+import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
+import nars.nal.tlink.TermLink;
+import org.jgrapht.graph.DirectedMultigraph;
+
+;
+
+/**
+ * Generates a graph of a set of Concept's TermLinks. Each TermLink is an edge,
+ * and the set of unique Concepts and Terms linked are the vertices.
+ */
+public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
+
+    public TermLinkGraph() {
+        super(TermLink.class);
+    }
+
+    public TermLinkGraph(NAR n) {
+        this();
+        add(n.memory.concepts, true);
+    }
+
+    public void add(Iterable<Concept> concepts, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
+
+        for (final Concept c : concepts) {
+
+            final Term source = c.term;
+
+            if (!containsVertex(source)) {
+                addVertex(source);
+
+                if (includeTermLinks) {
+                    for (TermLink t : c.termLinks.values()) {
+                        Term target = t.target;
+                        if (!containsVertex(target)) {
+                            addVertex(target);
+                        }
+                        addEdge(source, target, t);
+                    }
+                }
+
+                /*
+                if (includeTaskLinks) {
+                    for (TaskLink t : c.taskLinks.values()) {
+                        Task target = t.targetTask;
+                        if (!containsVertex(target)) {
+                            addVertex(target);
+                        }
+                        addEdge(source, target, t);
+                    }
+                }
+                */
+
+            }
+        }
+
+    }
+
+    public boolean includeLevel(int l) {
+        return true;
+    }
+
+    @Override
+    public Object clone() {
+        return super.clone(); //To change body of generated methods, choose Tools | Templates.
+    }
+}

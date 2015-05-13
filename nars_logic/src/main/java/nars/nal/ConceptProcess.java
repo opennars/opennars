@@ -45,6 +45,7 @@ public class ConceptProcess extends NAL {
         this.currentConcept = concept;
         this.termLinksToFire = termLinkCount;
 
+        setCurrentTerm(concept.getTerm());
 
     }
 
@@ -77,6 +78,7 @@ public class ConceptProcess extends NAL {
 
         currentTaskLink.setUsed(memory.time());
 
+        setCurrentTerm(currentConcept.term);
         setCurrentTermLink(null);
         reasoner.fire(this);
     }
@@ -217,12 +219,6 @@ public class ConceptProcess extends NAL {
     }
 
 
-    /**
-     * @return the currentTerm
-     */
-    public Term getCurrentTerm() {
-        return currentConcept.getTerm();
-    }
 
     /**
      * @return the currentTaskLink

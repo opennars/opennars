@@ -153,15 +153,23 @@ public final class SyllogisticRules {
 
         final NAL.StampBuilder stamp = nal.newStamp(sentence1, sentence2);
 
-        nal.doublePremiseTask(
-                Statement.make(taskContent, term1, term2, order), 
-                    truth1, budget1, stamp, false, false);
-        nal.doublePremiseTask(
-                Statement.make(taskContent, term2, term1, reverseOrder(order)), 
-                    truth2, budget2, stamp, false, false);
-        nal.doublePremiseTask(
-                Terms.makeSymStatement(taskContent, term1, term2, order),
-                    truth3, budget3, stamp, false, false);
+        {
+            Statement s = Statement.make(taskContent, term1, term2, order);
+            if (s!=null)
+                nal.doublePremiseTask(s, truth1, budget1, stamp, false, false);
+        }
+
+        {
+            Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
+            if (s!=null)
+                nal.doublePremiseTask(s, truth2, budget2, stamp, false, false);
+        }
+
+        {
+            Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
+            if (s!=null)
+                nal.doublePremiseTask(s, truth3, budget3, stamp, false, false);
+        }
         
     }
 

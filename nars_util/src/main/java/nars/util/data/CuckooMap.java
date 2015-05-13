@@ -121,35 +121,36 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> m) {
-        throw new RuntimeException("not impl yet");
+
     }
 
-    private V put_internal (final K key, final V value) {
-
+    private V put_internal (K key, V value) {
+        final K[] keyTable = this.keyTable;
+        final V[] vt = valueTable;
 
         // Check for existing keys.
         int hashCode = key.hashCode();
         int index1 = hashCode & mask;
         K key1 = keyTable[index1];
         if (key.equals(key1)) {
-            V oldValue = valueTable[index1];
-            valueTable[index1] = value;
+            V oldValue = vt[index1];
+            vt[index1] = value;
             return oldValue;
         }
 
         int index2 = hash2(hashCode);
         K key2 = keyTable[index2];
         if (key.equals(key2)) {
-            V oldValue = valueTable[index2];
-            valueTable[index2] = value;
+            V oldValue = vt[index2];
+            vt[index2] = value;
             return oldValue;
         }
 
         int index3 = hash3(hashCode);
         K key3 = keyTable[index3];
         if (key.equals(key3)) {
-            V oldValue = valueTable[index3];
-            valueTable[index3] = value;
+            V oldValue = vt[index3];
+            vt[index3] = value;
             return oldValue;
         }
 
@@ -157,8 +158,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
         final int st = stashSize;
         for (int i = capacity, n = i + st; i < n; i++) {
             if (key.equals(keyTable[i])) {
-                V oldValue = valueTable[i];
-                valueTable[i] = value;
+                V oldValue = vt[i];
+                vt[i] = value;
                 return oldValue;
             }
         }
@@ -166,21 +167,21 @@ public class CuckooMap<K, V> implements Map<K,V> {
         // Check for empty buckets.
         if (key1 == null) {
             keyTable[index1] = key;
-            valueTable[index1] = value;
+            vt[index1] = value;
             if (size++ >= threshold) resize(capacity << 1);
             return null;
         }
 
         if (key2 == null) {
             keyTable[index2] = key;
-            valueTable[index2] = value;
+            vt[index2] = value;
             if (size++ >= threshold) resize(capacity << 1);
             return null;
         }
 
         if (key3 == null) {
             keyTable[index3] = key;
-            valueTable[index3] = value;
+            vt[index3] = value;
             if (size++ >= threshold) resize(capacity << 1);
             return null;
         }
@@ -231,6 +232,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     private void push (K insertKey, V insertValue, int index1, K key1, int index2, K key2, int index3, K key3) {
 
+
+
+        final int capacity = this.capacity;
 
         // Push keys until an empty bucket is found.
         K evictedKey;
@@ -305,7 +309,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return;
         }
         // Store key in the stash.
-        final int index = capacity + stashSize;
+        int index = capacity + stashSize;
         keyTable[index] = key;
         valueTable[index] = value;
         stashSize++;
@@ -369,6 +373,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
         if (key == null)
             throw new RuntimeException("can not remover key null");
 
+        final K[] keyTable = this.keyTable;
+        final V[] valueTable = this.valueTable;
 
         int hashCode = key.hashCode();
         int index = hashCode & mask;
@@ -405,6 +411,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
         if (key == null)
             throw new RuntimeException("can not remover key null");
 
+        final K[] keyTable = this.keyTable;
+        final V[] valueTable = this.valueTable;
+        final int stashSize = this.stashSize;
 
         for (int i = capacity, n = i + stashSize; i < n; i++) {
             if (key.equals(keyTable[i])) {
@@ -458,13 +467,10 @@ public class CuckooMap<K, V> implements Map<K,V> {
         V[] valueTable = this.valueTable;
         //Arrays.fill(keyTable, null);
         //Arrays.fill(valueTable, null);
-//        for (int i = capacity + stashSize; i-- > 0;) {
-//            keyTable[i] = null;
-//            valueTable[i] = null;
-//        }
-        Arrays.fill(keyTable, null);
-        Arrays.fill(valueTable, null);
-
+        for (int i = capacity + stashSize; i-- > 0;) {
+            keyTable[i] = null;
+            valueTable[i] = null;
+        }
         size = 0;
         stashSize = 0;
     }

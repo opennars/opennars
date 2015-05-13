@@ -105,18 +105,19 @@ public class TermLinkTemplate implements Termed {
         int j = 0;
 
         //use compact 1-char representation for type and each index component
-        x[j++] = (byte) ('A' + t);
+        x[j++] = (byte) (typeCharOffset + t);
 
         if (index!=null) {
             for (short s : index) {
-                x[j++] = ((byte) ('a' + s));
+                x[j++] = ((byte) (indexCharOffset + s));
             }
         }
 
         return x;
     }
 
-
+    public static final byte typeCharOffset = 'A';
+    public static final byte indexCharOffset = 'a';
 
     public byte[] prefix(boolean in) {
         byte[] prefix = null;
@@ -158,6 +159,17 @@ public class TermLinkTemplate implements Termed {
 
     @Override
     public boolean equals(Object obj) {
-        return ((TermLinkTemplate)obj).toString().equals(toString());
+        throw new RuntimeException("TermLinkTemplates should not need compared to each other");
+        //return ((TermLinkTemplate)obj).toString().equals(toString());
+    }
+
+
+    public short getType(Term target) {
+        if (this.target.equals(target)) {
+            //points in the same direction as to the subterms, so it is a component
+            return (short)(type-1);
+        }
+
+        return type;
     }
 }

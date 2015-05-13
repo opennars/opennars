@@ -68,14 +68,11 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     /** The linked Term */
     public final Term target;
 
-    public final Term source;
 
-    /** The type of tlink, one of the above */
-    public final short type;
-    
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
     private final int keyHash;
+    public final short type;
 
     byte[] key;
 
@@ -92,24 +89,17 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(boolean incoming, Term host, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
+    public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
         super(v);
 
+        this.target = t;
 
-        if (incoming) {
-            this.source = template.target;
-            this.target = host; //.normalized();
-            type = template.type;
-        }
-        else {
-            this.source = host;
-            this.target = template.target;//.normalized();
-            type = (short)(template.type - 1); //// point to component
-        }
+        this.type = template.getType(t); /* whether this points to subterm */
 
-        index = template.index;
+        this.index = template.index;
 
         this.key = key;
+
         this.keyHash = keyHash;
     }
 
@@ -148,10 +138,10 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     @Override
     public String toString() {
         String hk = Utf8.fromUtf8(getLinkKey());
-        if (!toSubTerm())
-            return hk;
-        else
-            return hk + Symbols.TLinkSeparator + getTarget().toString();
+//        if (!toSubTerm())
+//            return hk;
+//        else
+        return hk + Symbols.TLinkSeparator + getTarget().toString();
     }
 
     public byte[] getLinkKey() { return key; }
@@ -183,10 +173,6 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
         return getTerm();
     }
 
-    @Override
-    public Term getSource() {
-        return source;
-    }
 
 
     @Override

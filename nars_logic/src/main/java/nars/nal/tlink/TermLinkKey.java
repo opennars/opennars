@@ -7,7 +7,6 @@ import nars.util.utf8.Utf8;
 
 public interface TermLinkKey {
 
-    public Term getSource();
     public Term getTarget();
 
     public byte[] getLinkKey();
