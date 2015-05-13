@@ -150,10 +150,10 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return Utf8.fromUtf8(getPrefix());
+        return Utf8.fromUtf8(getLinkKey());
     }
 
-    public byte[] getPrefix() { return key; }
+    public byte[] getLinkKey() { return key; }
 
 
 

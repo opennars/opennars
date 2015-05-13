@@ -9,7 +9,7 @@ public interface TermLinkKey {
     public Term getSource();
     public Term getTarget();
 
-    public byte[] getPrefix();
+    public byte[] getLinkKey();
 
 //    default public int termLinkHashCode() {
 //        //TODO cache this value while prefix and target remain the same; it is called more than necessary
@@ -22,7 +22,7 @@ public interface TermLinkKey {
 
         TermLinkKey t = (TermLinkKey) obj;
 
-        return Utf8.equals2(getPrefix(), t.getPrefix());
+        return Utf8.equals2(getLinkKey(), t.getLinkKey());
 
         //return getPrefix().equals(t.getPrefix()) && getTarget().equals(t.getTarget());//
 

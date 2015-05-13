@@ -41,6 +41,7 @@ public class SolidTest {
             }
         };
 
+        s.level(6);
         s.setInternalExperience(null);
         //s.setMaxTasksPerCycle(numConcepts);
 

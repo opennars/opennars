@@ -52,14 +52,15 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     /** ordinary array equals comparison with some conditions removed */
     public static boolean equals2(final byte[] a, final byte[] a2) {
-        /*if (a==a2)
-            return true;
-        if (a==null || a2==null)
+        /*if (a==null || a2==null)
             return false;*/
+
 
         int length = a.length;
         if (a2.length != length)
             return false;
+
+        if (a == a2) return true;
 
         //backwards
         for (int i=length-1; i>=0; i--)

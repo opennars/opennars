@@ -15,6 +15,7 @@ import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.util.utf8.Utf8;
 
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,6 +32,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     boolean incoming;
     transient private byte[] prefix = null;
+    private int h;
 
     public TermLinkBuilder(Concept c) {
         super();
@@ -193,12 +195,18 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
-    public byte[] getPrefix() {
+    public byte[] getLinkKey() {
         byte[] p = this.prefix;
         if (p == null) {
-            p = this.prefix = currentTemplate.prefix(incoming, getTarget());
+            p = this.prefix = currentTemplate.key(incoming, getTarget());
+            h = Arrays.hashCode(p);
         }
         return p;
+    }
+
+    @Override
+    public TermLinkKey getKey() {
+        return this;
     }
 
     public Term getTarget() {
@@ -218,12 +226,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public int hashCode() {
-        return getPrefix().hashCode();
+        if (this.prefix == null)
+            getLinkKey(); //computes hash:
+        return h;
     }
 
     @Override
     public TermLink newItem() {
-        return new TermLink(incoming, concept.getTerm(), currentTemplate, getPrefix(), getBudgetRef());
+        return new TermLink(incoming, concept.getTerm(), currentTemplate, getLinkKey(), getBudgetRef());
     }
 
     public int size() {
@@ -249,7 +259,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return Utf8.fromUtf8(getPrefix());
+        return Utf8.fromUtf8(getLinkKey());
     }
 
 

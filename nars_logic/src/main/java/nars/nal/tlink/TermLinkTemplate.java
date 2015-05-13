@@ -1,5 +1,6 @@
 package nars.nal.tlink;
 
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -89,7 +90,7 @@ public class TermLinkTemplate implements Termed {
      *
      * determined by the current template ('temp')
      */
-    public static byte[] prefix(short type, short[] index, boolean incoming) {
+    public static byte[] key(short type, short[] index, boolean incoming) {
         short t = type;
         if (!incoming) {
             t--; //point to component
@@ -113,21 +114,22 @@ public class TermLinkTemplate implements Termed {
 
 
 
-    public byte[] prefix(boolean in, Term target) {
+    public byte[] key(boolean in, Term target) {
         byte[] tname = target.name();
         byte[] prefix;
         if (in) {
             if (incoming == null)
-                incoming = prefix(type, index, true);
+                incoming = key(type, index, true);
             prefix = incoming;
         }
         else {
             if (outgoing == null)
-                outgoing = prefix(type, index, false);
+                outgoing = key(type, index, false);
             prefix = outgoing;
         }
-        return ByteBuf.create(prefix.length + tname.length).
+        return ByteBuf.create(prefix.length + tname.length+1).
                 add(prefix).
+                add((byte)Symbols.TLinkSeparator).
                 add(tname).
                 toBytes();
     }
@@ -135,7 +137,7 @@ public class TermLinkTemplate implements Termed {
 
     @Override
     public String toString() {
-        return concept.getTerm() + ":" + prefix(true, target) + '|' + prefix(false,target) + ':' + target;
+        return concept.getTerm() + ":" + key(true, target) + '|' + key(false, target) + ':' + target;
     }
 
     @Override
