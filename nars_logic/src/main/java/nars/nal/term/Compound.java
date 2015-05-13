@@ -21,6 +21,7 @@
 package nars.nal.term;
 
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Ordering;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
@@ -35,6 +36,7 @@ import nars.util.data.sexpression.Pair;
 
 import java.util.*;
 
+import static java.util.Comparator.naturalOrder;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
@@ -300,48 +302,48 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     public static class VariableNormalization implements VariableTransform {
 
-//        /** necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap */
-//        final static class VariableID {
-//
-//            final Variable v;
-//
-//            public VariableID(final Variable v) {
-//                this.v = v;
-//            }
-//
-//            @Override
-//            public boolean equals(final Object obj) {
-//                return Utf8.equals2(((VariableID) obj).name(), name());
-//            }
-//
-//            public byte[] name() { return v.name(); }
-//
-//            @Override
-//            public int hashCode() {
-//                return v.hashCode();
-//            }
-//        }
-
+        /** overridden keyEquals necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap */
         static final class VariableMap extends FastPutsArrayMap<Variable,Variable> {
+
+            final static Comparator<Entry<Variable,Variable>> comp = new Comparator<Entry<Variable,Variable>>() {
+                @Override public int compare(Entry<Variable,Variable> c1, Entry<Variable,Variable> c2) {
+                    return c1.getKey().compareTo(c2.getKey());
+                }
+            };
 
             public VariableMap(int initialCapacity) {
                 super(initialCapacity);
             }
 
             @Override
-            public boolean keyEquals(final Variable a, final Object b) {
-                return Utf8.equals2(((Variable) b).name(), a.name());
+            public boolean keyEquals(final Variable a, final Object ob) {
+                if (a == ob) return true;
+                Variable b = ((Variable)ob);
+                if (!b.isScoped() || !a.isScoped())
+                    return false;
+                return Utf8.equals2(b.name(), a.name());
+            }
+
+            @Override
+            public Variable put(Variable key, Variable value) {
+                Variable removed = super.put(key, value);
+                /*if (size() > 1)
+                    Collections.sort(entries, comp);*/
+                return removed;
             }
         }
+
         VariableMap rename = null;
 
         final Compound result;
         boolean renamed = false;
 
         public VariableNormalization(Compound target) {
+
             this.result = target.cloneVariablesDeep();
             if (this.result!=null)
                 this.result.transformVariableTermsDeep(this);
+
 
             if (rename!=null)
                 rename.clear(); //assist GC
@@ -352,6 +354,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
             Variable vname = v;
 //            if (!v.hasVarIndep() && v.isScoped()) //already scoped; ensure uniqueness?
 //                vname = vname.toString() + v.getScope().name();
+
 
             if (rename==null) rename = new VariableMap(2); //lazy allocate
 

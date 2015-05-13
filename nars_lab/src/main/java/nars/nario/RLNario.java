@@ -22,7 +22,7 @@ public class RLNario extends NARio  {
     public RLNario(NAR nar, Perception... p) {
         super(nar);
 
-        float fps = 60f;
+        float fps = 30f;
         gameRate = 1.0f / fps;
 
         QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p);
@@ -74,7 +74,7 @@ public class RLNario extends NARio  {
     public static void main(String[] args) {
 
 
-        NAR nar = new NAR(new Default(2000, 100, 4).setInternalExperience(null) );
+        NAR nar = new NAR(new Default(2000, 20, 4).setInternalExperience(null) );
 
         nar.param.duration.set(memoryCyclesPerFrame * 3);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);

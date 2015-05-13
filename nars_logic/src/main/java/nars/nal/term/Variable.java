@@ -21,6 +21,7 @@
 package nars.nal.term;
 
 
+import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
 
 import static nars.Symbols.*;
@@ -33,6 +34,7 @@ public class Variable extends Atom {
 
     @Override
     public int compareTo(Term that) {
+        if (this == that) return 0;
         if (that instanceof Variable) {
             return Variable.compare(this, (Variable)that);
         }
@@ -148,8 +150,15 @@ public class Variable extends Atom {
         return equalsName((Variable)that);
     }
     public static int compare(final Variable a, final Variable b) {
+
+        int nameCompare = FastByteComparisons.compare( a.name(), b.name() );
+        if (nameCompare != 0)
+            return nameCompare;
+
+        //otherwise, if they have the same name:
         boolean ascoped = a.isScoped();
         boolean bscoped = b.isScoped();
+
         if (!ascoped && !bscoped) {
             //if the two variables are each without scope, they are not equal.
             //so use their identityHashCode to determine a stable ordering
@@ -158,13 +167,14 @@ public class Variable extends Atom {
             return Integer.compare(as, bs);
         }
         else if (ascoped && !bscoped) {
-            return -1;
-        }
-        else if (bscoped && !ascoped) {
             return 1;
         }
+        else if (bscoped && !ascoped) {
+            return -1;
+        }
         else {
-            return a.compareHash(b);
+            a.name = b.name; //share instances so comparisons will be faster next time
+            return 0; //must be equal
         }
     }
 //    public boolean equalsTerm(Object that) {

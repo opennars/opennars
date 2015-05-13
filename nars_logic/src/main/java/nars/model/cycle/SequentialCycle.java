@@ -199,8 +199,8 @@ abstract public class SequentialCycle implements ControlCycle {
         //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
         if (concepts instanceof LevelBag)
             ((LevelBag) concepts).forEach(action);
-//        if (concepts instanceof ChainBag)
-//            ((ChainBag) concepts).forEach(action);
+        if (concepts instanceof ChainBag)
+            ((ChainBag) concepts).forEach(action);
 
         //use default iterator
         iterator().forEachRemaining(action);

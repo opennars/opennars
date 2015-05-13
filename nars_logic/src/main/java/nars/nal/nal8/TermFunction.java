@@ -2,8 +2,12 @@ package nars.nal.nal8;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.Symbols;
 import nars.nal.Task;
+import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
+import nars.nal.nal4.ImageExt;
+import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
@@ -15,7 +19,7 @@ import java.util.ArrayList;
 
 /** 
  * Superclass of functions that execute synchronously (blocking, in thread) and take
- * N input parameters and one variable argument (as the final argument), generating a new task
+ * N input Global and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
 public abstract class TermFunction<O> extends Operator  {
@@ -35,6 +39,61 @@ public abstract class TermFunction<O> extends Operator  {
 
 
     protected ArrayList<Task> result(Operation operation, Term y, Term[] x0, Term lastTerm) {
+
+        final int numArgs = x0.length;
+
+        //Variable var=new Variable("$1");
+        //  Term actual_part = Similarity.make(var, y);
+        //  Variable vardep=new Variable("#1");
+        //Term actual_dep_part = Similarity.make(vardep, y);
+//        operation=(Operation) operation.setComponent(0,
+//                ((Compound)operation.getSubject()).setComponent(
+//                        numArgs, y));
+
+        //Examples:
+        //      <3 --> (/,^add,1,2,_,SELF)>.
+        //      <2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%
+        //transform to image for perception variable introduction rule (is more efficient representation
+
+        Inheritance inh=Inheritance.make(y,
+                ImageExt.make(operation.getArguments(), operation.getPredicate(), (short)(numArgs))
+                );
+
+        //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
+
+        float confidence = 0.99f;
+        return Lists.newArrayList(
+                nar.memory.newTask(inh).
+                        truth(1f, confidence).
+                        budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
+                        judgment().
+                        present().
+                            get()
+            );
+
+            /*float equal = equals(lastTerm, y);
+            ArrayList<Task> rt = Lists.newArrayList(
+                    m.newTask(actual, Symbols.JUDGMENT_MARK,
+                            1.0f, confidence,
+                            Global.DEFAULT_JUDGMENT_PRIORITY,
+                            Global.DEFAULT_JUDGMENT_DURABILITY,
+                            operation.getTask()));
+
+            if (equal < 1.0f) {
+                rt.add(m.newTask(operation, Symbols.JUDGMENT_MARK,
+                            equal, confidence,
+                            Global.DEFAULT_JUDGMENT_PRIORITY,
+                            Global.DEFAULT_JUDGMENT_DURABILITY,
+                            operation.getTask()));
+            }
+            return rt;
+            */
+
+
+
+
+    }
+    protected ArrayList<Task> result2(Operation operation, Term y, Term[] x0, Term lastTerm) {
         //since Peis approach needs it to directly generate op(...,$output) =|> <$output <-> result>,
         //which wont happen on temporal induction with dependent variable for good rule,
         //because in general the two dependent variables of event1 and event2
@@ -111,11 +170,14 @@ public abstract class TermFunction<O> extends Operator  {
         char ysz = ys.charAt(ys.length() - 1);
 
         //1. try to parse as task
-        try {
-            Task t = nar.task(ys);
-            if (t != null)
-                return Lists.newArrayList(t);
-        } catch (Throwable t) {
+        char mustBePuncToBeTask = ys.charAt(ys.length()-1); //early prevention from invoking parser
+        if (Symbols.isPunctuation(mustBePuncToBeTask)) {
+            try {
+                Task t = nar.task(ys);
+                if (t != null)
+                    return Lists.newArrayList(t);
+            } catch (Throwable t) {
+            }
         }
 
         //2. try to parse as term
@@ -157,15 +219,15 @@ public abstract class TermFunction<O> extends Operator  {
             ArrayList<Task> rt = Lists.newArrayList(
                     m.newTaskAt(actual, Symbols.JUDGMENT,
                             1.0f, confidence,
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                            Global.DEFAULT_JUDGMENT_PRIORITY,
+                            Global.DEFAULT_JUDGMENT_DURABILITY,
                             operation.getTask()));
 
             if (equal < 1.0f) {
                 rt.add(m.newTaskAt(operation, Symbols.JUDGMENT,
                             equal, confidence,
-                            Parameters.DEFAULT_JUDGMENT_PRIORITY,
-                            Parameters.DEFAULT_JUDGMENT_DURABILITY,
+                            Global.DEFAULT_JUDGMENT_PRIORITY,
+                            Global.DEFAULT_JUDGMENT_DURABILITY,
                             operation.getTask()));
             }
             return rt;

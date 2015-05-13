@@ -48,6 +48,7 @@ import java.util.Set;
 public class Global {
 
 
+
     public static int DEFAULT_NAL_LEVEL = 8;
 
     /** use this for advanced error checking, at the expense of lower performance.
@@ -152,8 +153,7 @@ public class Global {
     /** Maximum length of the Derivation Chain of the stamp */
     public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 8;
     
-    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1;
-    
+
 
     /**
      * The rate of confidence decrease in mental operations Doubt and Hesitate
@@ -244,6 +244,15 @@ public class Global {
     public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
     public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection
+
+
+    public static float DED_SECOND_UNIFICATION_DEPTH = 0.02f;
+    public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 4;
+
+    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1;
+    public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
+        return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts
+    }
 
     public static boolean equals(double a, double b) {
         return Math.abs(a - b) <= Double.MIN_VALUE*2;

@@ -62,6 +62,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static nars.nal.concept.Concept.*;
@@ -938,6 +939,11 @@ public class Memory implements Serializable {
      */
     public Concept nextConcept() {
         return concepts.nextConcept();
+    }
+
+    /** scan for a next concept matching the predicate */
+    public Concept nextConcept(Predicate<Concept> pred, float v) {
+        return concepts.nextConcept(pred, v);
     }
 
     public Timing getTiming() {

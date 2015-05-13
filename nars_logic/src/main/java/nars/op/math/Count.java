@@ -38,7 +38,7 @@ import nars.op.mental.Mental;
 
  * 
  */
-public class Count extends TermFunction implements Mental {
+public class Count extends TermFunction<Integer> implements Mental {
 
     public Count() {
         super("^count");
@@ -49,19 +49,16 @@ public class Count extends TermFunction implements Mental {
     final static Term counted = get("counted");
 
 
-    @Override
-    public Term function(Term[] x) {
-//        if (x.length!=1) {
-//            throw new RuntimeException(requireMessage);
-//        }
 
+
+    @Override
+    public Integer function(Term[] x) {
         Term content = x[0];
         if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
             throw new RuntimeException(requireMessage);
         }       
         
-        int n = ((Compound) content).length();
-        return get((Object) n);
+        return ((Compound) content).length();
     }
 
     

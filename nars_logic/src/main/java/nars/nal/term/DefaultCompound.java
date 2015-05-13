@@ -42,8 +42,8 @@ abstract public class DefaultCompound extends Compound {
     @Override
     public int compareSubterms(final Compound otherCompoundOfEqualType) {
         DefaultCompound o = ((DefaultCompound) otherCompoundOfEqualType);
-        int h = Integer.compare(hashCode(), o.hashCode());
-        if (h == 0) {
+        //int h = Integer.compare(hashCode(), o.hashCode());
+        //if (h == 0) {
             byte[] n1 = name();
             byte[] n2 = o.name();
             int c = FastByteComparisons.compare(n1, n2);
@@ -52,8 +52,8 @@ abstract public class DefaultCompound extends Compound {
                 share(o);
             }
             return c;
-        }
-        return h;
+        //}
+        //return h;
     }
 
     protected void share(DefaultCompound equivalent) {

@@ -2,8 +2,8 @@ package nars.nal.rule;
 
 import nars.Events;
 import nars.Global;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
@@ -19,6 +19,7 @@ import nars.nal.tlink.TermLink;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static nars.nal.Terms.reduceUntilLayer2;
 import static nars.nal.Terms.unwrapNegation;
@@ -135,42 +136,45 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             return false;
         }
 
-        Term first = taskSentence.term;
+        Term firstTerm = taskSentence.term;
 
-        if (!first.hasVar()) {
+        if (!firstTerm.hasVar()) {
             return false;
         }
 
         //lets just allow conjunctions, implication and equivalence for now
-        if (!((first instanceof Disjunction || first instanceof Conjunction || first instanceof Equivalence || first instanceof Implication))) {
+        if (!((firstTerm instanceof Disjunction || firstTerm instanceof Conjunction || firstTerm instanceof Equivalence || firstTerm instanceof Implication))) {
             return false;
         }
 
 
         boolean unifiedAnything = false;
-        int remainingUnifications = 1; //memory.param.variableUnificationLayer2_MaxUnificationsPerCycle.get();
 
-        int maxUnificationAttempts = 1; //memory.param.variableUnificationLayer2_ConceptAttemptsPerCycle.get();
+        int remainingUnifications = 1;
 
+        for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
+            Concept secondConcept = nal.memory.concepts.nextConcept(new Predicate<Concept>() {
 
-        for (int k = 0; k < maxUnificationAttempts; k++) {
-            Concept secondConcept = nal.memory.nextConcept();
+                @Override
+                public boolean test(Concept concept) {
+                    //prevent unification with itself
+                    if (concept.getTerm().equals(firstTerm)) return false;
+                    if (!concept.hasBeliefs()) return false;
+
+                    return true;
+                }
+
+            }, Global.DED_SECOND_UNIFICATION_DEPTH);
+
             if (secondConcept == null) {
                 //no more concepts, stop
                 break;
             }
 
-            //prevent unification with itself
-            if (secondConcept.term.equals(first)) {
-                continue;
-            }
-
-            Term secterm = secondConcept.term;
+            Term secTerm = secondConcept.term;
 
             Sentence second_belief = secondConcept.getStrongestBelief();
             //getBeliefRandomByConfidence(task.sentence.isEternal());
-            if (second_belief == null)
-                continue;
 
             Truth truthSecond = second_belief.truth;
 
@@ -193,8 +197,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             //ok, we have selected a second concept, we know the truth value of a belief of it, lets now go through taskterms term
             //for two levels, and remember the terms which unify with second
-            Term[] components_level1 = ((Compound) first).term;
-            Term secterm_unwrap = unwrapNegation(secterm);
+            Term[] components_level1 = ((Compound) firstTerm).term;
+            Term secterm_unwrap = unwrapNegation(secTerm);
 
             for (final Term T1 : components_level1) {
                 Term T1_unwrap = unwrapNegation(T1);
@@ -204,9 +208,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
 
-                    Compound ctaskterm_subs = (Compound) first;
+                    Compound ctaskterm_subs = (Compound) firstTerm;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
-                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
+                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                         terms_dependent.add(taskterm_subs);
                     }
@@ -216,9 +220,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 smap.clear();
 
                 if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
-                    Compound ctaskterm_subs = (Compound) first;
+                    Compound ctaskterm_subs = (Compound) firstTerm;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
-                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
+                    Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
                     if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
 
                         terms_independent.add(taskterm_subs);
@@ -240,9 +244,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                         if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
-                            Compound ctaskterm_subs = (Compound) first;
+                            Compound ctaskterm_subs = (Compound) firstTerm;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
-                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
+                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_dependent.add(taskterm_subs);
                             }
@@ -253,9 +257,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                         if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
-                            Compound ctaskterm_subs = (Compound) first;
+                            Compound ctaskterm_subs = (Compound) firstTerm;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
-                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secterm, nal.memory);
+                            Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
                             if (taskterm_subs != null && !(Variables.indepVarUsedInvalid(taskterm_subs))) {
                                 terms_independent.add(taskterm_subs);
                             }
@@ -270,15 +274,19 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             final NAL.StampBuilder stamp = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
 
-            dedSecondLayerVariableUnificationTerms(nal, task,
-                    second_belief, stamp, terms_dependent,
-                    anonymousAnalogy(taskSentence.truth, truthSecond),
-                    taskSentence.truth, truthSecond, false);
+            if (!terms_dependent.isEmpty()) {
+                dedSecondLayerVariableUnificationTerms(nal, task,
+                        second_belief, stamp, terms_dependent,
+                        anonymousAnalogy(taskSentence.truth, truthSecond),
+                        taskSentence.truth, truthSecond, false);
+            }
 
-            dedSecondLayerVariableUnificationTerms(nal, task,
-                    second_belief, stamp, terms_independent,
-                    deduction(taskSentence.truth, truthSecond),
-                    taskSentence.truth, truthSecond, true);
+            if (!terms_independent.isEmpty()) {
+                dedSecondLayerVariableUnificationTerms(nal, task,
+                        second_belief, stamp, terms_independent,
+                        deduction(taskSentence.truth, truthSecond),
+                        taskSentence.truth, truthSecond, true);
+            }
 
             final int termsIndependent = terms_independent.size();
             for (int i = 0; i < termsIndependent; i++) {
@@ -321,7 +329,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 if (nal.deriveTask(newTask, false, false, dummy, true /* allow overlap */)) {
 
-                    nal.emit(Events.ConceptUnification.class, newTask, first, secondConcept, second_belief);
+                    nal.emit(Events.ConceptUnification.class, newTask, firstTerm, secondConcept, second_belief);
                     nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();
 
                     unifiedAnything = true;

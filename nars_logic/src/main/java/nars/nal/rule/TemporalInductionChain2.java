@@ -2,7 +2,10 @@ package nars.nal.rule;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.*;
+import nars.nal.ConceptProcess;
+import nars.nal.NALOperator;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
@@ -11,6 +14,7 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
 
@@ -19,6 +23,26 @@ import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
 * new attempt/experiment to make nars effectively track temporal coherences
 */
 public class TemporalInductionChain2 extends ConceptFireTaskTerm {
+
+    final static class ConceptByOperator implements Predicate<Concept> {
+
+        final NALOperator[] n;
+
+        public ConceptByOperator(NALOperator... n) {
+            this.n = n;
+        }
+
+        @Override
+        public boolean test(Concept concept) {
+            for (NALOperator x : n)
+                if (concept.operator() == x)
+                    return true;
+            return false;
+        }
+
+    }
+
+    final ConceptByOperator implications = new ConceptByOperator(NALOperator.IMPLICATION);
 
     @Override
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
@@ -45,7 +69,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 (beliefTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD || beliefTerm.getTemporalOrder() == TemporalRules.ORDER_CONCURRENT)) {
 
             final int chainSamples = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
-            final float chainSampleSearchSize = 0.0f + 0.05f * taskLink.getPriority();
+            final float chainSampleSearchSize = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(taskLink.getPriority());
 
             //prevent duplicate inductions
             Set<Term> alreadyInducted = null;
@@ -54,7 +78,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
-                Concept next = memory.concepts.nextConcept(NALOperator.IMPLICATION, chainSampleSearchSize);
+                Concept next = memory.concepts.nextConcept(implications, chainSampleSearchSize);
                 if (next == null || next.equals(concept))
                     continue;
 
@@ -73,7 +97,6 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
 
 
-                Sentence temporalBelief = next.getStrongestBelief(true, true);
 
                 //TODO: make this work if it is needed, but i think it just implements a restore point that is not needed due to the refactor
 //                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
@@ -84,10 +107,14 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 //now set the current context:
 //                    f.setCurrentBelief(temporalBelief);
 
+
+
+                //select a Non-eternal (temporal) belief
+                Sentence temporalBelief = next.getStrongestBelief(false, true);
                 if (temporalBelief!=null) {
-                    if(!taskSentence.isEternal() && !temporalBelief.isEternal()) {
+                    //if(!temporalBelief.isEternal()) {
                         induct(f, task, taskSentence, memory, temporalBelief);
-                    }
+                    //}
                 }
 
 

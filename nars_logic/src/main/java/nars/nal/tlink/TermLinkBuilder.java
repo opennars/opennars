@@ -172,17 +172,17 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     /** configures this selector's current bag key for the next bag operation */
     public TermLinkBuilder set(TermLinkTemplate temp) {
-        invalidate();
         if (temp != currentTemplate) {
             this.currentTemplate = temp;
+            invalidate();
         }
         return this;
     }
 
     public TermLinkBuilder setIncoming(boolean b) {
-        invalidate();
         if (this.incoming!=b) {
             this.incoming = b;
+            invalidate();
         }
         return this;
     }
@@ -196,19 +196,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public Budget set(Budget b) {
         /** reset the prefix when budget is set in linkTerms */
-        invalidate();
         return super.set(b);
     }
 
-    /**
-     *
-     * @return the amount of remaining budget priority
-     */
-    /*double invest(Bag<TermLink,String> bag) {
-        //TODO move code from Concept here
-        //iterate all items, both forward and backward
-        return 0;
-    }*/
 
     @Override public TermLinkKey name() {
         return this;

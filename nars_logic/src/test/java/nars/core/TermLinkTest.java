@@ -111,7 +111,7 @@ public class TermLinkTest {
         n.run(1);
 
         Set<String> tl = getTermLinks(n.concept("<a --> b>").termLinks);
-        System.out.println(tl);
+        assertEquals("[Da:a, Db:b]", tl.toString());
     }
 
     @Test
@@ -179,18 +179,18 @@ public class TermLinkTest {
         NAR n = new NAR(new Default());
         n.input(c);
         n.input(d);
-        n.frame(2);
+        n.frame(4);
 
         TermLinkGraph g = new TermLinkGraph(n);
 
 
         ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
         int set = 0;
-        for (Set<Term> s : ci.connectedSets()) {
+        /*for (Set<Term> s : ci.connectedSets()) {
             for (Term v : s)
                 System.out.println(set + ": " + v);
             set++;
-        }
+        }*/
 
         assertTrue("termlinks between the two input concepts form a fully connected graph",
                 ci.isGraphConnected());

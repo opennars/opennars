@@ -3,14 +3,15 @@ package nars.model;
 import javolution.context.ConcurrentContext;
 import nars.Global;
 import nars.Memory;
-import nars.budget.BudgetFunctions.Activating;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions.Activating;
 import nars.nal.NALOperator;
-import nars.nal.concept.Concept;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 import java.util.Deque;
+import java.util.function.Predicate;
 
 
 /** Core implements a central reasoning component which references a set of Concepts and activates them during a memory cycle.*/
@@ -32,12 +33,11 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      * @param implication
      * @param v percentage of bag size # of attempts to search before returning null
      */
-    default Concept nextConcept(NALOperator op, float v) {
+    default Concept nextConcept(Predicate<Concept> pred, float v) {
         int attempts = (int) Math.ceil(size() * v);
         for (int i = 0; i < attempts; i++) {
             Concept c = nextConcept();
-            if (c.getTerm().operator() == op)
-                return c;
+            if (pred.test(c)) return c;
         }
         return null;
     }

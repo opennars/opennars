@@ -32,7 +32,7 @@ import static java.lang.Math.signum;
  */
 public class NARio extends Run implements RLEnvironment {
 
-    static int memoryCyclesPerFrame = 2;
+    static int memoryCyclesPerFrame = 4;
 
     int movementStatusPeriod = 1;
     int commandPeriod = 50;
