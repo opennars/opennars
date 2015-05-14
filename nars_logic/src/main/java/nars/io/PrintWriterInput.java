@@ -10,7 +10,7 @@ import java.io.PipedWriter;
  * for TextInput implementations that dynamically generate new input from Java
  * execution.
  */
-public class PrintWriterInput extends TextInput.ReaderInput {
+public class PrintWriterInput extends ReaderInput {
 
     /**
      * Printing to out will be piped into TextInput

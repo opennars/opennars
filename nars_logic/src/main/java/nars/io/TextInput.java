@@ -32,74 +32,10 @@ import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 
 /**
- * To read and write experience as Task streams
+ * Process experience from a string into zero or more input tasks
  */
 public class TextInput extends Input.BufferedInput {
 
-
-
-    public static class ReaderInput extends Input.BufferedInput {
-        private final TextPerception perception;
-        protected BufferedReader input;
-
-        protected void setInput(BufferedReader input) {
-            this.input = input;
-        }
-
-        public ReaderInput(TextPerception p) {
-            this.perception = p;
-        }
-
-        public ReaderInput(TextPerception p, InputStream i) {
-            this(p, new BufferedReader(new InputStreamReader(i)));
-        }
-        public ReaderInput(TextPerception p, URL u) throws IOException {
-            this(p, u.openStream());
-        }
-
-        public ReaderInput(TextPerception p, BufferedReader input) {
-            this(p);
-
-            setInput(input);
-
-        }
-
-        @Override
-        public void stop() {
-            if (input!=null) {
-                try {
-                    input.close();
-                    input = null;
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
-
-        protected String readAll() throws IOException {
-            return input.lines().collect(Collectors.joining("\n"));
-        }
-
-    }
-
-    public static class FileInput extends TextInput {
-
-
-        public FileInput(TextPerception p, File input) throws IOException {
-            super(p, load(input));
-        }
-
-        public static String load(String path) throws IOException {
-            return load(new File(path));
-        }
-
-        private static String load(File file) throws IOException {
-            return Files.toString(file, Charset.defaultCharset());
-        }
-
-
-
-    }
 
     private final TextPerception perception;
     /**

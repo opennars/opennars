@@ -185,11 +185,11 @@ public class NAR implements Runnable {
 
 
     public TaskSource input(final File input) throws IOException {
-        return input(new TextInput.FileInput(textPerception, input));
+        return input(new FileInput(textPerception, input));
     }
 
     public TaskSource input(final InputStream input) {
-        return input(new TextInput.ReaderInput(textPerception, input));
+        return input(new ReaderInput(textPerception, input));
     }
 
     /** inputs a task, only if the parsed text is valid; returns null if invalid */

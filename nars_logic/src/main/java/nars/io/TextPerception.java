@@ -49,33 +49,33 @@ public class TextPerception  {
         //this.twenglish = new Twenglish(memory);
         this.parsers = new ArrayList();
 
-        //integer, # of cycles to step
-        parsers.add(new TextReaction<Task>() {
-            final String spref = Symbols.INPUT_LINE_PREFIX + ':';
-
-            @Override public void react(String input, Consumer<Task> recv) {
-
-                input = input.trim();
-                if (input.startsWith(spref))
-                    input = input.substring(spref.length());
-
-                if (input.isEmpty()) return;
-                if (!Character.isDigit(input.charAt(0)))
-                    return;
-                if (input.length() > 8) {
-                    //if input > ~8 chars it wont fit as 32bit integer anyway so terminate early.
-                    //parseInt is sorted of expensive
-                    return;
-                }
-
-                try {
-                    int cycles = Integer.parseInt(input);
-                    recv.accept( new PauseInput(cycles).newTask() );
-                }
-                catch (NumberFormatException e) {
-                }
-            }
-        });
+//        //integer, # of cycles to step
+//        parsers.add(new TextReaction<Task>() {
+//            final String spref = Symbols.INPUT_LINE_PREFIX + ':';
+//
+//            @Override public void react(String input, Consumer<Task> recv) {
+//
+//                input = input.trim();
+//                if (input.startsWith(spref))
+//                    input = input.substring(spref.length());
+//
+//                if (input.isEmpty()) return;
+//                if (!Character.isDigit(input.charAt(0)))
+//                    return;
+//                if (input.length() > 8) {
+//                    //if input > ~8 chars it wont fit as 32bit integer anyway so terminate early.
+//                    //parseInt is sorted of expensive
+//                    return;
+//                }
+//
+//                try {
+//                    int cycles = Integer.parseInt(input);
+//                    recv.accept( new PauseInput(cycles).newTask() );
+//                }
+//                catch (NumberFormatException e) {
+//                }
+//            }
+//        });
 
         //reset
         parsers.add(new TextReaction<Task>() {
@@ -155,26 +155,26 @@ public class TextPerception  {
 //            }
 //        });
 
-        //echo
-        //TODO standardize on an echo/comment format
-        parsers.add(new TextReaction<Task>() {
-            @Override
-            public void react(String input, Consumer<Task> recv) {
-                char c = input.charAt(0);
-                Echo e = null;
-                if (c == Symbols.ECHO_MARK) {
-                    String echoString = input.substring(1);
-                    e = new Echo(Echo.class, echoString);
-                }
-                final String it = input.trim();
-                if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("***") ) {
-                    e = new Echo(Echo.class, input);
-                }
-                if (e!=null)
-                    recv.accept(e.newTask());
-            }
-        });
-
+//        //echo
+//        //TODO standardize on an echo/comment format
+//        parsers.add(new TextReaction<Task>() {
+//            @Override
+//            public void react(String input, Consumer<Task> recv) {
+//                char c = input.charAt(0);
+//                Echo e = null;
+//                if (c == Symbols.ECHO_MARK) {
+//                    String echoString = input.substring(1);
+//                    e = new Echo(Echo.class, echoString);
+//                }
+//                final String it = input.trim();
+//                if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("***") ) {
+//                    e = new Echo(Echo.class, input);
+//                }
+//                if (e!=null)
+//                    recv.accept(e.newTask());
+//            }
+//        });
+//
 
 
         //narsese

@@ -77,20 +77,23 @@ public class NarseseParser extends BaseParser<Object> {
                         sequence(
                                 s(),
                                 firstOf(
-                                        LineComment(),
-                                        LineComment2(),
-                                        ThinkCycles(),
-                                        Task(true)
+                                        Immediate(),
+                                        Task(true),
+                                        sequence("IN:",s(),Task(true),"\n") //temporary
                                 )
                         )
                 );
     }
 
     public Rule LineComment() {
-        return sequence("/","/", LineCommentEchoed()  );
-    }
-    public Rule LineComment2() {
-        return sequence("'", LineCommentEchoed()  );
+        return sequence(
+                firstOf(
+                        string("//"),
+                        "'",
+                        sequence(string("***"), zeroOrMore('*')), //temporary
+                        "OUT:"
+                ),
+                LineCommentEchoed()  );
     }
 
     public Rule LineCommentEchoed() {
@@ -98,9 +101,18 @@ public class NarseseParser extends BaseParser<Object> {
                 push(new Echo(match()) ), "\n");
     }
 
-    public Rule ThinkCycles() {
+    public Rule PauseInput() {
         return sequence(Integer(),
                 push( new PauseInput( (Integer) pop() ) ), "\n" );
+    }
+
+    public Rule Immediate() {
+        return firstOf(
+                LineComment(),
+                PauseInput()
+                /*Reset(),
+                Volume(),*/
+        );
     }
 
     public Rule Task(final boolean newStamp) {
