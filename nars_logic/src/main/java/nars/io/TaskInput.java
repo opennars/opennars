@@ -8,7 +8,7 @@ import nars.nal.Task;
 
 
 /**
- * Wraps a pre-created Task as an Input
+ * Wraps 1 pre-created Task as an Input
  */
 public class TaskInput implements Input {
 
@@ -29,4 +29,8 @@ public class TaskInput implements Input {
         return null;
     }
 
+    @Override
+    public void accept(Task task) {
+        throw new RuntimeException(this + " is a singleton and does not accept more than 1 task");
+    }
 }

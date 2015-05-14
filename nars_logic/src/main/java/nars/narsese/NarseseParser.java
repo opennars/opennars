@@ -764,20 +764,20 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    public void parse(String input, Collection<Task> c) {
+    public void parse(String input, Collection<? super Task> c) {
         parse(input, t -> {
             c.add(t);
         });
     }
 
-    public void parse(String input, Consumer<Task> c) {
+    public void parse(String input, Consumer<? super Task> c) {
         parse(input, true, c);
     }
 
     /**
      * parse a series of tasks
      */
-    public void parse(String input, boolean newStamp, Consumer<Task> c) {
+    public void parse(String input, boolean newStamp, Consumer<? super Task> c) {
         ParsingResult r = inputParser.run(input);
         int size = r.getValueStack().size();
 

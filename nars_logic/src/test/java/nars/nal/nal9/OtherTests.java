@@ -2,13 +2,15 @@ package nars.nal.nal9;
 
 
 import nars.NARSeed;
-import nars.nal.ScriptNALTest;
 import nars.model.impl.Default;
+import nars.nal.ScriptNALTest;
+import org.junit.Ignore;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
 import static nars.io.LibraryInput.getParams;
+
 
 public class OtherTests extends ScriptNALTest {
 

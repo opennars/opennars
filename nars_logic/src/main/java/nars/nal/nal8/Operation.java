@@ -21,12 +21,9 @@
 package nars.nal.nal8;
 
 import nars.Memory;
-import nars.budget.Budget;
 import nars.Symbols;
-import nars.nal.NALOperator;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.Truth;
+import nars.budget.Budget;
+import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;

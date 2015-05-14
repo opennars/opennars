@@ -20,22 +20,13 @@
  */
 package nars.io;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.io.Files;
 import nars.Events;
 import nars.Global;
-import nars.nal.Task;
-import nars.nal.stamp.Stamp;
 import nars.op.io.Echo;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -44,34 +35,36 @@ import java.util.stream.Collectors;
 public class TextInput extends Input.BufferedInput {
 
 
+    //TODO
     public static class CachingTextInput extends TextInput {
 
 
-        final static Map<String, Iterable<Task>> cache = new ConcurrentHashMap<>(1024);
-
+//        final static Map<String, Iterable<Task>> cache = new ConcurrentHashMap<>(1024);
+//
         public CachingTextInput(TextPerception p, String input) {
+
             super(p, input);
         }
-
-        @Override
-        protected Iterator<Task> perceive(String line) {
-            Iterable<Task> x = cache.get(line);
-            if (x == null) {
-                Iterator<Task> y = super.perceive(line);
-                cache.put(line, x = Lists.newArrayList(y));
-            }
-
-            return Iterators.transform(x.iterator(), new Function<Task,Task>() {
-                @Nullable  @Override
-                public Task apply(Task input) {
-                    //provide a new copy for every input
-                    Task t = input.clone();
-                    if (t.sentence!=null)
-                        t.sentence.stamp.setCreationTime(Stamp.UNPERCEIVED);
-                    return t;
-                }
-            });
-        }
+//
+//        @Override
+//        protected void perceive(String line) {
+//            Iterable<Task> x = cache.get(line);
+//            if (x == null) {
+//                Iterator<Task> y = super.perceive(line);
+//                cache.put(line, x = Lists.newArrayList(y));
+//            }
+//
+//            return Iterators.transform(x.iterator(), new Function<Task,Task>() {
+//                @Nullable  @Override
+//                public Task apply(Task input) {
+//                    //provide a new copy for every input
+//                    Task t = input.clone();
+//                    if (t.sentence!=null)
+//                        t.sentence.stamp.setCreationTime(Stamp.UNPERCEIVED);
+//                    return t;
+//                }
+//            });
+//        }
     }
 
     private final TextPerception perception;
@@ -80,7 +73,7 @@ public class TextInput extends Input.BufferedInput {
      */
     protected BufferedReader input;
     
-    private boolean finished = false;
+    //private boolean isLooping = false;
     
     public TextInput(TextPerception p, String input) {
         this(p, new BufferedReader(new StringReader(input)));
@@ -98,6 +91,7 @@ public class TextInput extends Input.BufferedInput {
         this(p);
 
         setInput(input);
+        load();
     }
     
     public TextInput(TextPerception p) {
@@ -108,6 +102,14 @@ public class TextInput extends Input.BufferedInput {
         this.input = input;
     }
 
+
+    /*public boolean isLooping() {
+        return isLooping;
+    }
+
+    public void setLooping(boolean isLooping) {
+        this.isLooping = isLooping;
+    }*/
 
     @Override
     public void stop() {
@@ -121,52 +123,44 @@ public class TextInput extends Input.BufferedInput {
         }
     }
 
-    protected String nextLine() throws IOException {
+    protected String readAll() throws IOException {
         return input.lines().collect(Collectors.joining("\n"));
     }
 
-    protected boolean finished() {
-        return (input == null);
-    }
+    public void load() {
 
-    protected int inputsPerBuffer() {
-        return 1;
-    }
+        if (input!=null) {
+            try {
+                String line = readAll();
 
-    @Override
-    public Iterator<Task> nextBuffer() {
-        String line = null;
+                perception.perceive(process(line), this);
 
-        try {
-            //read entire file
-            line = nextLine();
-        } catch (IOException e) {
-            if (input!=null) {
-                try {
+                //if (!isLooping()) {
                     input.close();
-                } catch (IOException ex1) {
-                    ex1.printStackTrace();
+                    input = null;
+                /*}
+                else {
+                    input.reset(); //rewind
+                }*/
+
+            } catch (IOException e) {
+                if (input != null) {
+                    try {
+                        input.close();
+                        input = null;
+                    } catch (IOException ex1) {
+                        ex1.printStackTrace();
+                    }
                 }
+                if (Global.DEBUG) {
+                    e.printStackTrace();
+                }
+                accept(new Echo(Events.IN.class, e.toString()));
             }
-            if (Global.DEBUG) {
-                e.printStackTrace();
-            }
-            return Iterators.singletonIterator( new Echo(Events.IN.class, e.toString()).newTask() );
-        }
-        if (line == null) {
-            return null;
         }
 
-        line = line.trim();
-
-        if (line.isEmpty()) return null;
-
-        return perceive(line);
     }
 
-    protected Iterator<Task> perceive(String line) {
-        return perception.perceive(process(line));
-    }
 
 
     /** can be overridden in subclasses to preprocess addInput */

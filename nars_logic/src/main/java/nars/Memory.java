@@ -66,7 +66,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static nars.nal.concept.Concept.*;
-import static nars.nal.concept.Concept.State.New;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -754,7 +753,7 @@ public class Memory implements Serializable {
      *  adding it to the new tasks queue for future reasoning.
      * @return how many tasks were generated as a result of perceiving (which can be zero), or -1 if no percept is available */
     public int perceiveNext() {
-        if (!thinking()) return -1;
+        if (!perceiving()) return -1;
 
         Task t = perception.get();
         if (t != null)
@@ -769,7 +768,7 @@ public class Memory implements Serializable {
      *  @return how many tasks perceived
      */
     public int perceiveNext(int maxPercepts) {
-        if (!thinking()) return 0;
+        if (!perceiving()) return 0;
 
         boolean inputEverything;
 
@@ -879,7 +878,8 @@ public class Memory implements Serializable {
         return currentStampSerial++;
     }
 
-    public boolean thinking() {
+    public boolean perceiving() {
+        if (inputPausedUntil == -1) return true;
         return time() >= inputPausedUntil;
     }
 

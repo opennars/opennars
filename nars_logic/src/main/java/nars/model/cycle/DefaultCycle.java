@@ -76,7 +76,8 @@ public class DefaultCycle extends SequentialCycle {
 
         //all new tasks
         int numNewTasks = newTasks.size();
-        runNewTasks(numNewTasks);
+        if (numNewTasks > 0)
+            runNewTasks(numNewTasks);
 
 
         //1 novel tasks if numNewTasks empty

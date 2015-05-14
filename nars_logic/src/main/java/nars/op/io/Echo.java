@@ -1,5 +1,6 @@
 package nars.op.io;
 
+import nars.Events;
 import nars.Memory;
 import nars.nal.nal8.ImmediateOperation;
 
@@ -17,7 +18,11 @@ public class Echo extends ImmediateOperation {
         this.signal = signal;
     }
 
-    
+    public Echo(Exception ex) {
+        this(Events.ERR.class, ex);
+    }
+
+
     @Override
     public String toString() {
         return channel.getSimpleName() + ": " + signal.toString();

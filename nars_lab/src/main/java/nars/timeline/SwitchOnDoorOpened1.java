@@ -50,10 +50,10 @@ public class SwitchOnDoorOpened1 extends TimelineExample {
         TextInput i = new TextInput(nar.textPerception, new File("nal/TestChamber/TestChamberIndependentExperience/switch_on_door_opened.nal")) {
 
             int c = 0;
-            public Iterator<Task> nextBuffer() {
+            public Iterator<Task> load() {
 
                 if (c++ % 2 == 0)
-                    return super.nextBuffer();
+                    return super.load();
                 else {
                     return Iterators.singletonIterator(new PauseInput(inputDelay).newTask());
                 }

@@ -127,14 +127,14 @@ import static nars.nal.nal8.Operation.make;
 //        return newParser.parseTask(s, newStamp);
 //    }
 
-    public void parseTask(String s, Consumer<Task> c) throws InvalidInputException {
+    public void parseTask(String s, Consumer<? super Task> c) throws InvalidInputException {
         parseTask(s, true, c);
     }
-    public void parseTask(String s, Collection<Task> c) throws InvalidInputException {
+    public void parseTask(String s, Collection<? super Task> c) throws InvalidInputException {
         newParser.parse(s, c);
     }
 
-    public void parseTask(String s, boolean newStamp, Consumer<Task> c) throws InvalidInputException {
+    public void parseTask(String s, boolean newStamp, Consumer<? super Task> c) throws InvalidInputException {
         //ENTRY POINT TO NEW PARSER
         newParser.parse(s, newStamp, c);
     }

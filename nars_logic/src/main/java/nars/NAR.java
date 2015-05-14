@@ -534,7 +534,7 @@ public class NAR implements Runnable {
             memory.think(cycles);
         
         //finish all remaining cycles
-        while (!memory.thinking() && (running)) {
+        while (!memory.perceiving() && (running)) {
             frame(1);
         }
         

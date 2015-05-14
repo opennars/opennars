@@ -20,10 +20,12 @@
 package nars.io;
 
 import nars.nal.Task;
+import nars.nal.nal8.ImmediateOperation;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -31,7 +33,7 @@ import java.util.function.Supplier;
  * Provides a stream of input tasks
  *
  */
-public interface Input extends Supplier<Task> {
+public interface Input extends Supplier<Task>, Consumer<Task> {
 
     @Override
     abstract public Task get();
@@ -50,9 +52,12 @@ public interface Input extends Supplier<Task> {
 
         final Deque<Task> queue = new ArrayDeque();
 
-        abstract public Iterator<Task> nextBuffer();
+        protected int accept(ImmediateOperation o) {
+            accept(o.newTask());
+            return 1;
+        }
 
-        protected int queue(Iterator<Task> tasks) {
+        protected int accept(Iterator<Task> tasks) {
             if (tasks == null) return 0;
             int count = 0;
             while (tasks.hasNext()) {
@@ -63,15 +68,16 @@ public interface Input extends Supplier<Task> {
         }
 
         @Override
+        public void accept(Task task) {
+            queue.add(task);
+        }
+
+        @Override
         public Task get() {
             if (!queue.isEmpty()) {
                 return queue.removeFirst();
             }
-            else {
-                int q = queue(nextBuffer());
-                if (q == 0) return null;
-                return queue.removeFirst();
-            }
+            return null;
         }
 
         @Override

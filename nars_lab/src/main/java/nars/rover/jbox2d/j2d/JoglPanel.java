@@ -119,8 +119,6 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
 
         //https://www.opengl.org/sdk/docs/man2/xhtml/glAccum.xml
 
-
-
         light.render(gl, drawer.getViewportTranform());
 
 

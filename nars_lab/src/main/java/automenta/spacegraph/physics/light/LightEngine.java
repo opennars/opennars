@@ -15,8 +15,8 @@ import static com.jogamp.opengl.GL2.*;
 
 public class LightEngine {
 
-	public final int width = 300;
-	public final int height = 300;
+	public final float width = 300;
+	public final float height = 300;
 
 	public ArrayList<Light> lights = new ArrayList<Light>();
 	public ArrayList<Block> blocks = new ArrayList<Block>();
@@ -57,18 +57,23 @@ public class LightEngine {
 			}
 
 			float cx, cy;
-			cx = -vt.getCenter().x * vt.getExtents().x;
-			cy = -vt.getCenter().y * vt.getExtents().y;
+			float scale = vt.getExtents().x;
+
+			cx = -vt.getCenter().x * scale;
+			cy = -vt.getCenter().y * scale;
+
 
 			gl.glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 			gl.glStencilFunc(GL_EQUAL, 0, 1);
 			gl.glColorMask(true, true, true, true);
 
 			gl.glUseProgram(shaderProgram);
-			gl.glUniform2f(gl.glGetUniformLocation(shaderProgram, "lightLocation"), cx+ light.location.x, cy + height - light.location.y);
+			gl.glUniform1f(gl.glGetUniformLocation(shaderProgram, "scale"), 1);
+			gl.glUniform2f(gl.glGetUniformLocation(shaderProgram, "lightLocation"), cx+ light.location.x / scale, cy + light.location.y);
 			gl.glUniform3f(gl.glGetUniformLocation(shaderProgram, "lightColor"), light.red, light.green, light.blue);
 			gl.glEnable(GL_BLEND);
 			gl.glBlendFunc(GL_ONE, GL_ONE);
+			//gl.glBlendFunc(GL_ONE, GL_DST_ALPHA);
 
 			gl.glBegin(GL_QUADS); {
 				gl.glVertex2f(-width/2, -height/2);

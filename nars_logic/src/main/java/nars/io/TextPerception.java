@@ -1,29 +1,19 @@
 package nars.io;
 
-import com.google.common.collect.Iterators;
-import nars.*;
-import nars.io.nlp.Englisch;
-import nars.io.nlp.NaturalLanguagePerception;
-import nars.io.nlp.Twenglish;
-import nars.nal.Sentence;
+import nars.Memory;
+import nars.NAR;
+import nars.Symbols;
 import nars.nal.Task;
-import nars.nal.nal8.ImmediateOperation;
-import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.narsese.OldNarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 import nars.op.io.Reset;
 import nars.op.io.SetVolume;
-import nars.util.data.buffer.Perception;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-
-import static com.google.common.collect.Iterators.singletonIterator;
+import java.util.function.Consumer;
 
 /**
  *  Default handlers for text perception.
@@ -36,7 +26,7 @@ public class TextPerception  {
 
     public final Memory memory;
     
-    public final List<TextReaction> parsers;
+    public final List<TextReaction<Task>> parsers;
     
     
     public OldNarseseParser narsese;
@@ -60,51 +50,48 @@ public class TextPerception  {
         this.parsers = new ArrayList();
 
         //integer, # of cycles to step
-        parsers.add(new TextReaction() {
+        parsers.add(new TextReaction<Task>() {
             final String spref = Symbols.INPUT_LINE_PREFIX + ':';
 
-            @Override public Object react(String input) {
+            @Override public void react(String input, Consumer<Task> recv) {
 
                 input = input.trim();
                 if (input.startsWith(spref))
                     input = input.substring(spref.length());
 
-                if (input.isEmpty()) return null;
+                if (input.isEmpty()) return;
                 if (!Character.isDigit(input.charAt(0)))
-                    return null;
+                    return;
                 if (input.length() > 8) {
                     //if input > ~8 chars it wont fit as 32bit integer anyway so terminate early.
                     //parseInt is sorted of expensive
-                    return null;
+                    return;
                 }
 
                 try {
                     int cycles = Integer.parseInt(input);
-                    return new PauseInput(cycles);
+                    recv.accept( new PauseInput(cycles).newTask() );
                 }
                 catch (NumberFormatException e) {
-                    return null;
                 }
             }
         });
 
         //reset
-        parsers.add(new TextReaction() {
-            @Override public Object react(String input) {
+        parsers.add(new TextReaction<Task>() {
+            @Override public void react(String input, Consumer<Task> recv) {
                 if (input.equals(Symbols.RESET_COMMAND) || (input.startsWith("*") && !input.startsWith("*start")
                         && !input.startsWith("*stop") && !input.startsWith("*volume"))) //TODO!
-                    return new Reset(false);
-                return null;
+                    recv.accept( new Reset(false).newTask() );
             }
         });
         //reboot
-        parsers.add(new TextReaction() {
-            @Override public Object react(String input) {
+        parsers.add(new TextReaction<Task>() {
+            @Override public void react(String input, Consumer<Task> recv) {
                 if (input.equals(Symbols.REBOOT_COMMAND)) {
                     //immediately reset the memory
-                    return new Reset(true);
+                    recv.accept(new Reset(true).newTask() );
                 }
-                return null;
             }
         });
 
@@ -139,16 +126,15 @@ public class TextPerception  {
 //        });
 
         //silence
-        parsers.add(new TextReaction() {
-            @Override public Object react(String input) {
+        parsers.add(new TextReaction<Task>() {
+            @Override public void react(String input, Consumer<Task> recv) {
                 if (input.indexOf(Symbols.SET_NOISE_LEVEL_COMMAND)==0) {
                     String[] p = input.split("=");
                     if (p.length == 2) {
                         int noiseLevel = Integer.parseInt(p[1].trim());
-                        return new SetVolume(noiseLevel);
+                        recv.accept(new SetVolume(noiseLevel).newTask());
                     }
                 }
-                return null;
             }
         });
 
@@ -171,44 +157,40 @@ public class TextPerception  {
 
         //echo
         //TODO standardize on an echo/comment format
-        parsers.add(new TextReaction() {
+        parsers.add(new TextReaction<Task>() {
             @Override
-            public Object react(String input) {
+            public void react(String input, Consumer<Task> recv) {
                 char c = input.charAt(0);
+                Echo e = null;
                 if (c == Symbols.ECHO_MARK) {
                     String echoString = input.substring(1);
-                    return new Echo(Echo.class, echoString);
+                    e = new Echo(Echo.class, echoString);
                 }
                 final String it = input.trim();
                 if (it.startsWith("OUT:") || it.startsWith("//") || it.startsWith("***") ) {
-                    return new Echo(Echo.class, input);
+                    e = new Echo(Echo.class, input);
                 }
-                return null;
+                if (e!=null)
+                    recv.accept(e.newTask());
             }
         });
 
 
 
         //narsese
-        parsers.add(new TextReaction() {
+        parsers.add(new TextReaction<Task>() {
             @Override
-            public Object react(String input) {
-
+            public void react(String input, Consumer<Task> recv) {
                 if (enableNarsese) {
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {
-                            List<Task> l = new ArrayList();
-                            narsese.parseTask(input, l);
-                            if (!l.isEmpty()) {
-                                return l;
-                            }
+                            narsese.parseTask(input, recv);
                         } catch (Exception ex) {
-                            return ex;
+                            recv.accept( new Echo(ex).newTask() );
                         }
                     }
                 }
-                return null;
             }
         });
 //
@@ -276,71 +258,69 @@ public class TextPerception  {
     }
 
 
-    /* Perceive an input object by calling an appropriate perception system according to the object type. */
-    public Iterator<Task> perceive(final Object o) {
-                
-        Exception error;
-        try {
-            if (o instanceof String) {
-                return perceive((String) o);
-            } else if (o instanceof Sentence) {
-                //TEMPORARY
-                Sentence s = (Sentence) o;
-                return perceive(s.term.toString() + s.punctuation + ' ' + s.truth.toString());
-            } else if (o instanceof Task) {
-                return Iterators.forArray((Task)o);
-            }
-            error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + ']');
-        }
-        catch (Exception e) {
-            if (Global.DEBUG)
-                throw e;
-            error = e;
-        }
-        
-        return singletonIterator( new Echo(Events.ERR.class, error).newTask() );
-    }
-    
+//    /* Perceive an input object by calling an appropriate perception system according to the object type. */
+//    public Iterator<Task> perceive(final Object o) {
+//
+//        Exception error;
+//        try {
+//            if (o instanceof String) {
+//                return perceive((String) o);
+//            } else if (o instanceof Sentence) {
+//                //TEMPORARY
+//                Sentence s = (Sentence) o;
+//                return perceive(s.term.toString() + s.punctuation + ' ' + s.truth.toString());
+//            } else if (o instanceof Task) {
+//                return Iterators.forArray((Task)o);
+//            }
+//            error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + ']');
+//        }
+//        catch (Exception e) {
+//            if (Global.DEBUG)
+//                throw e;
+//            error = e;
+//        }
+//
+//        return singletonIterator( new Echo(Events.ERR.class, error).newTask() );
+//    }
+//
 
-    public Iterator<Task> perceive(final String line) {
+    public void perceive(final String line, Consumer<Task> receiver) {
 
         Exception lastException = null;
         
         for (final TextReaction p : parsers) {            
             
-            Object result = p.react(line);
+            p.react(line, receiver);
             
-            if (result!=null) {
-                if (result instanceof Iterator) {
-                    return (Iterator<Task>)result;
-                }
-                if (result instanceof Collection) {
-                    return ((Collection<Task>)result).iterator();
-                }
-                if (result instanceof ImmediateOperation) {
-                    return singletonIterator( ((ImmediateOperation)result).newTask() );
-                }
-                if (result instanceof Task) {
-                    return singletonIterator((Task)result);
-                }
-                else if (result.equals(Boolean.TRUE)) {
-                    return Iterators.emptyIterator();
-                }
-                else if (result instanceof Exception) {
-                    lastException = (Exception)result;
-                }
-            }
+//            if (result!=null) {
+//                if (result instanceof Iterator) {
+//                    return (Iterator<Task>)result;
+//                }
+//                if (result instanceof Collection) {
+//                    return ((Collection<Task>)result).iterator();
+//                }
+//                if (result instanceof ImmediateOperation) {
+//                    return singletonIterator( ((ImmediateOperation)result).newTask() );
+//                }
+//                if (result instanceof Task) {
+//                    return singletonIterator((Task)result);
+//                }
+//                else if (result.equals(Boolean.TRUE)) {
+//                    return Iterators.emptyIterator();
+//                }
+//                else if (result instanceof Exception) {
+//                    lastException = (Exception)result;
+//                }
+//            }
         }
 
-        String errorMessage = "Invalid input: \'" + line + '\'';
-
-        if (lastException!=null) {
-            errorMessage += " : " + lastException.toString(); 
-        }
-
-        memory.emit(Events.ERR.class, errorMessage);
-        
-        return null;
+//        String errorMessage = "Invalid input: \'" + line + '\'';
+//
+//        if (lastException!=null) {
+//            errorMessage += " : " + lastException.toString();
+//        }
+//
+//        memory.emit(Events.ERR.class, errorMessage);
     }
 
 //    public void enableEnglisch(boolean enableEnglisch) {

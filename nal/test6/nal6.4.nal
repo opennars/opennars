@@ -1,4 +1,4 @@
-'********** variable unification
+'********** deduction with variable unification
 
 'If something can fly and chirp, then it is a bird.
 <(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>. 
