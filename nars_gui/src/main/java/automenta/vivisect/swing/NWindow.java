@@ -29,6 +29,11 @@ import java.awt.event.WindowEvent;
  * Specify shared properties of NARS windows
  */
 public class NWindow extends JFrame {
+
+    public NWindow(Component j, int w, int h, boolean exitOnClose) {
+        this("", j);
+        show(w, h, exitOnClose);
+    }
     //static final Font NarsFont = new Font("Arial", Font.PLAIN, 13);
 
     public static class TransparentNWindow extends NWindow {
