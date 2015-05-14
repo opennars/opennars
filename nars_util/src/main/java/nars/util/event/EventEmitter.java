@@ -168,6 +168,7 @@ abstract public class EventEmitter<E>  {
         final List<DefaultEventRegistration> pendingAdditions = new ArrayList();
         final List<DefaultEventRegistration> pendingRemovals = new ArrayList();
 
+
         public class DefaultEventRegistration implements EventRegistration {
 
             final Class<?> chan;
@@ -235,6 +236,13 @@ abstract public class EventEmitter<E>  {
             DefaultEventRegistration d = new DefaultEventRegistration(c, o);
             pendingAdditions.add(d);
             return d;
+        }
+
+        @Override
+        public void delete() {
+            reactions.clear();
+            pendingAdditions.clear();
+            pendingRemovals.clear();
         }
 
         @Override
@@ -337,6 +345,9 @@ abstract public class EventEmitter<E>  {
         throw new RuntimeException("off() not supported; use the returned Registration object to .cancel()");
     }
 
+    public void delete() {
+
+    }
 
 
 }

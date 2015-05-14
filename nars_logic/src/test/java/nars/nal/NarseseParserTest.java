@@ -11,12 +11,15 @@ import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Interval;
+import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
+import nars.op.io.Echo;
+import nars.op.io.PauseInput;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -487,8 +490,41 @@ public class NarseseParserTest {
     public void testMultilineQuotes() {
         String a = "js(\"\"\"\n" + "1\n" + "\"\"\")!";
         List<Task> l = tasks(a);
-        System.out.println(l);
         assertEquals(1, l.size());
-
     }
+
+    @Test
+    public void testLineComment() {
+        String a = "<a --> b>.\n//comment1234\n<b-->c>.";
+        List<Task> l = tasks(a);
+        assertEquals(3, l.size());
+        ImmediateOperation op = ((ImmediateOperation.ImmediateTask) l.get(1)).operation;
+        assertEquals(Echo.class, op.getClass());
+        assertEquals("comment1234", ((Echo)op).signal);
+    }
+
+    protected static final ImmediateOperation immediate(Task t) {
+        return ((ImmediateOperation.ImmediateTask)t).operation;
+    }
+
+    @Test
+    public void testLineComment2() {
+        String a = "<a --> b>.\n'comment1234\n<b-->c>.";
+        List<Task> l = tasks(a);
+        assertEquals(3, l.size());
+        ImmediateOperation op = immediate(l.get(1));
+        assertEquals(Echo.class, op.getClass());
+        assertEquals("comment1234", ((Echo)op).signal);
+    }
+
+    @Test
+    public void testPauseInput() {
+        String a = "100\n<a-->b>.";
+        List<Task> l = tasks(a);
+        assertEquals(2, l.size());
+        ImmediateOperation op = immediate(l.get(0));
+        assertEquals(PauseInput.class, op.getClass());
+        assertEquals(100, ((PauseInput)op).cycles);
+    }
+
 }

@@ -1,8 +1,5 @@
 package nars.io;
 
-import nars.io.TextInput;
-import nars.io.TextPerception;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PipedReader;
@@ -13,7 +10,7 @@ import java.io.PipedWriter;
  * for TextInput implementations that dynamically generate new input from Java
  * execution.
  */
-public class PrintWriterInput extends TextInput {
+public class PrintWriterInput extends TextInput.ReaderInput {
 
     /**
      * Printing to out will be piped into TextInput

@@ -2,13 +2,14 @@ package nars.core;
 
 import nars.Global;
 import nars.Memory;
-import nars.io.qa.Answered;
 import nars.io.LibraryInput;
-import nars.nal.filter.ConstantDerivationLeak;
-import nars.testing.TestNAR;
-import nars.nal.Sentence;
-import nars.nal.term.Term;
+import nars.io.TextOutput;
+import nars.io.qa.Answered;
 import nars.model.impl.Solid;
+import nars.nal.Sentence;
+import nars.nal.filter.ConstantDerivationLeak;
+import nars.nal.term.Term;
+import nars.testing.TestNAR;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -47,7 +48,7 @@ public class SolidTest {
 
         TestNAR n = new TestNAR(s);
 
-        //TextOutput.out(n).setOutputPriorityMin(1.0f);
+        TextOutput.out(n).setOutputPriorityMin(1.0f);
 
         Set<Term> solutionTerms = new HashSet();
         Set<Sentence> solutions = new HashSet();

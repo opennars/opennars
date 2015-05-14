@@ -18,23 +18,23 @@ abstract public class ImmediateOperation extends Operation {
 
 
     //TODO make Task an interface so this is lightweight
-    static class ImmediateTask extends Task {
+    public static class ImmediateTask extends Task {
 
-        private final ImmediateOperation imm;
+        public final ImmediateOperation operation;
 
         ImmediateTask(ImmediateOperation o) {
             super();
-            this.imm = o;
+            this.operation = o;
         }
 
         @Override
         public Compound getTerm() {
-            return imm;
+            return operation;
         }
 
         @Override
         public String toString() {
-            return imm.toString();
+            return operation.toString();
         }
     }
 

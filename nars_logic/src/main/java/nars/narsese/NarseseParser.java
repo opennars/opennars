@@ -23,6 +23,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
@@ -30,6 +31,8 @@ import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.op.io.Echo;
+import nars.op.io.PauseInput;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -69,17 +72,35 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public Rule Input() {
-        return sequence(s(),
+        return
                 zeroOrMore(
                         sequence(
-                            Task(true), s()
+                                s(),
+                                firstOf(
+                                        LineComment(),
+                                        LineComment2(),
+                                        ThinkCycles(),
+                                        Task(true)
+                                )
                         )
-                        //firstOf(Comment(), Task(true))                , s()), EOI)
-        ));
+                );
     }
 
-    public Rule Comment() {
-        return sequence("//", zeroOrMore(noneOf("\n")), push(match()));
+    public Rule LineComment() {
+        return sequence("/","/", LineCommentEchoed()  );
+    }
+    public Rule LineComment2() {
+        return sequence("'", LineCommentEchoed()  );
+    }
+
+    public Rule LineCommentEchoed() {
+        return sequence( zeroOrMore(noneOf("\n")),
+                push(new Echo(match()) ), "\n");
+    }
+
+    public Rule ThinkCycles() {
+        return sequence(Integer(),
+                push( new PauseInput( (Integer) pop() ) ), "\n" );
     }
 
     public Rule Task(final boolean newStamp) {
@@ -221,6 +242,13 @@ public class NarseseParser extends BaseParser<Object> {
                         optional('.', oneOrMore(digit()))
                 ),
                 push(Texts.f(matchOrDefault("NaN"), 0, 1f))
+        );
+    }
+
+    Rule Integer() {
+        return sequence(
+                oneOrMore(digit()),
+                push(Integer.parseInt(matchOrDefault("NaN")))
         );
     }
 
@@ -781,8 +809,19 @@ public class NarseseParser extends BaseParser<Object> {
         ParsingResult r = inputParser.run(input);
         int size = r.getValueStack().size();
 
-        for (int i = size-1; i >= 0; i--)
-            c.accept( (Task) r.getValueStack().peek(i) );
+        for (int i = size-1; i >= 0; i--) {
+            Object o = r.getValueStack().peek(i);
+
+            if (o instanceof Task)
+                c.accept((Task) o);
+            else if (o instanceof ImmediateOperation) {
+                c.accept( ((ImmediateOperation)o).newTask() );
+            }
+            else {
+                c.accept(new Echo(Echo.class, o.toString()).newTask());
+                //throw new RuntimeException("unrecognized input result: " + o);
+            }
+        }
 
         r.getValueStack().clear();
 

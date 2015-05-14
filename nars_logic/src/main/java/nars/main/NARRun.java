@@ -80,7 +80,7 @@ public class NARRun {
         if (args.length > 0) {
             try {
                 nar.input(new File(args[0]));
-            } catch (FileNotFoundException ex) {
+            } catch (Exception ex) {
                 System.err.println("NARRun.init: " + ex);
             }
         }

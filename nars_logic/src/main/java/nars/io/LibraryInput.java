@@ -8,9 +8,7 @@ import nars.NAR;
 import nars.NARSeed;
 import nars.testing.condition.OutputCondition;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,17 +27,8 @@ public class LibraryInput extends TextInput {
                     "app/testchamber", "app/pattern_matching1", "app/metacat"
             };
 
-    public static String load(String path) throws IOException {
-        StringBuilder  sb  = new StringBuilder();
-        String line;
-        File fp = new File(path);
-        BufferedReader br = new BufferedReader(new FileReader(fp));
-        while ((line = br.readLine())!=null) {
-            sb.append(line).append("\n");
-        }
-        br.close();
-        return sb.toString();
-    }
+
+
 
     public static Iterable<String> getUnitTestPaths() {
         return getUnitTests().values();
@@ -53,13 +42,11 @@ public class LibraryInput extends TextInput {
             
         });*/
     }
-    
-    /** narsese source code, one instruction per line */
-    private final String source;
 
-    protected LibraryInput(TextPerception t, String input)  {
-        super(t, input);
-        this.source = input;
+
+    protected LibraryInput(TextPerception t, String path) throws IOException {
+        super(t, FileInput.load(path));
+
     }
     
     public static LibraryInput get(NAR n, String id) throws Exception {
@@ -68,7 +55,7 @@ public class LibraryInput extends TextInput {
 
         String path = getExamplePath(id);
                 
-        return new LibraryInput(n.textPerception, load(path));
+        return new LibraryInput(n.textPerception, path);
     }
 
     final static String cwd;
@@ -87,7 +74,7 @@ public class LibraryInput extends TextInput {
     }
     
     public List<OutputCondition> enableConditions(NAR n, int similarResultsToSave) {
-        return OutputCondition.getConditions(n, source, similarResultsToSave);
+        return OutputCondition.getConditions(n, input, similarResultsToSave);
     }
 
     public static Map<String,String> getUnitTests() {
@@ -119,7 +106,7 @@ public class LibraryInput extends TextInput {
     }
 
     public String getSource() {
-        return source;
+        return input;
     }
 
     protected static Map<String, String> examples = new HashMap(); //path -> script data
@@ -130,7 +117,7 @@ public class LibraryInput extends TextInput {
             if (existing!=null)
                 return existing;
 
-            existing = LibraryInput.load(path);
+            existing = FileInput.load(path);
 
             examples.put(path, existing);
             return existing;

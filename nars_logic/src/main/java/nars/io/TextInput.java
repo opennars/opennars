@@ -21,12 +21,14 @@
 package nars.io;
 
 import com.google.common.collect.Iterators;
+import com.google.common.io.Files;
 import nars.Events;
 import nars.Global;
 import nars.op.io.Echo;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 
 /**
@@ -35,130 +37,82 @@ import java.util.stream.Collectors;
 public class TextInput extends Input.BufferedInput {
 
 
-    //TODO
-    public static class CachingTextInput extends TextInput {
 
+    public static class ReaderInput extends Input.BufferedInput {
+        private final TextPerception perception;
+        protected BufferedReader input;
 
-//        final static Map<String, Iterable<Task>> cache = new ConcurrentHashMap<>(1024);
-//
-        public CachingTextInput(TextPerception p, String input) {
-
-            super(p, input);
+        protected void setInput(BufferedReader input) {
+            this.input = input;
         }
-//
-//        @Override
-//        protected void perceive(String line) {
-//            Iterable<Task> x = cache.get(line);
-//            if (x == null) {
-//                Iterator<Task> y = super.perceive(line);
-//                cache.put(line, x = Lists.newArrayList(y));
-//            }
-//
-//            return Iterators.transform(x.iterator(), new Function<Task,Task>() {
-//                @Nullable  @Override
-//                public Task apply(Task input) {
-//                    //provide a new copy for every input
-//                    Task t = input.clone();
-//                    if (t.sentence!=null)
-//                        t.sentence.stamp.setCreationTime(Stamp.UNPERCEIVED);
-//                    return t;
-//                }
-//            });
-//        }
+
+        public ReaderInput(TextPerception p) {
+            this.perception = p;
+        }
+
+        public ReaderInput(TextPerception p, InputStream i) {
+            this(p, new BufferedReader(new InputStreamReader(i)));
+        }
+        public ReaderInput(TextPerception p, URL u) throws IOException {
+            this(p, u.openStream());
+        }
+
+        public ReaderInput(TextPerception p, BufferedReader input) {
+            this(p);
+
+            setInput(input);
+
+        }
+
+        @Override
+        public void stop() {
+            if (input!=null) {
+                try {
+                    input.close();
+                    input = null;
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+
+        protected String readAll() throws IOException {
+            return input.lines().collect(Collectors.joining("\n"));
+        }
+
+    }
+
+    public static class FileInput extends TextInput {
+
+
+        public FileInput(TextPerception p, File input) throws IOException {
+            super(p, load(input));
+        }
+
+        public static String load(String path) throws IOException {
+            return load(new File(path));
+        }
+
+        private static String load(File file) throws IOException {
+            return Files.toString(file, Charset.defaultCharset());
+        }
+
+
+
     }
 
     private final TextPerception perception;
     /**
      * Input experience from a file
      */
-    protected BufferedReader input;
+    protected final String input;
     
     //private boolean isLooping = false;
     
     public TextInput(TextPerception p, String input) {
-        this(p, new BufferedReader(new StringReader(input)));
-    }
-    
-    public TextInput(TextPerception p, File input) throws FileNotFoundException {
-        this(p, new BufferedReader(new FileReader(input)));
-    }
-    
-    public TextInput(TextPerception p, URL u) throws IOException {
-        this(p, new BufferedReader(new InputStreamReader(u.openStream())));
-    }
-    
-    public TextInput(TextPerception p, BufferedReader input) {
-        this(p);
-
-        setInput(input);
-        load();
-    }
-    
-    public TextInput(TextPerception p) {
         this.perception = p;
-    }
-    
-    protected void setInput(BufferedReader input) {
         this.input = input;
-    }
-
-
-    /*public boolean isLooping() {
-        return isLooping;
-    }
-
-    public void setLooping(boolean isLooping) {
-        this.isLooping = isLooping;
-    }*/
-
-    @Override
-    public void stop() {
-        if (input!=null) {
-            try {
-                input.close();
-                input = null;
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-    }
-
-    protected String readAll() throws IOException {
-        return input.lines().collect(Collectors.joining("\n"));
-    }
-
-    public void load() {
-
-        if (input!=null) {
-            try {
-                String line = readAll();
-
-                perception.perceive(process(line), this);
-
-                //if (!isLooping()) {
-                    input.close();
-                    input = null;
-                /*}
-                else {
-                    input.reset(); //rewind
-                }*/
-
-            } catch (IOException e) {
-                if (input != null) {
-                    try {
-                        input.close();
-                        input = null;
-                    } catch (IOException ex1) {
-                        ex1.printStackTrace();
-                    }
-                }
-                if (Global.DEBUG) {
-                    e.printStackTrace();
-                }
-                accept(new Echo(Events.IN.class, e.toString()));
-            }
-        }
-
+        perception.perceive(process(input), this);
     }
 
 

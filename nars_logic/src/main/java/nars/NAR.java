@@ -22,7 +22,10 @@ import nars.op.IOperator;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -150,7 +153,7 @@ public class NAR implements Runnable {
     }
 
     public void delete() {
-        memory.reset(true, true);
+        memory.delete();
     }
 
     final Reaction togglePluginOnReset = new Reaction() {
@@ -181,12 +184,12 @@ public class NAR implements Runnable {
 
 
 
-    public TaskSource input(final File input) throws FileNotFoundException {
-        return input(new TextInput(textPerception, input));
+    public TaskSource input(final File input) throws IOException {
+        return input(new TextInput.FileInput(textPerception, input));
     }
+
     public TaskSource input(final InputStream input) {
-        return input(new TextInput(textPerception,
-                new BufferedReader(new InputStreamReader(input))));
+        return input(new TextInput.ReaderInput(textPerception, input));
     }
 
     /** inputs a task, only if the parsed text is valid; returns null if invalid */

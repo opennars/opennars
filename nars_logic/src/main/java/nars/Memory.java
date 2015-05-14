@@ -353,7 +353,10 @@ public class Memory implements Serializable {
     }
 
     public void delete() {
+        reset(true, true);
 
+        operators.clear();
+        event.delete();
     }
 
     public void reset(boolean resetInputs, boolean delete) {

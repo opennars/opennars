@@ -22,6 +22,10 @@ public class Echo extends ImmediateOperation {
         this(Events.ERR.class, ex);
     }
 
+    public Echo(String ex) {
+        this(Echo.class, ex);
+    }
+
 
     @Override
     public String toString() {

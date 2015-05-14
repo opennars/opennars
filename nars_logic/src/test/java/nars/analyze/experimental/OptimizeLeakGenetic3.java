@@ -254,7 +254,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
             nar.requires.addAll(OutputCondition.getConditions(nar, script, 0, conditionsCache));
 
-            nar.input(new TextInput.CachingTextInput(nar.textPerception, script));
+            nar.input(new TextInput(nar.textPerception, script));
 
             nar.run(maxCycles);
 
