@@ -33,6 +33,8 @@ import nars.entity.Sentence;
 import nars.entity.Stamp;
 import nars.entity.Task;
 import nars.entity.TruthValue;
+import static nars.inference.TemporalRules.ORDER_INVALID;
+import static nars.inference.TemporalRules.ORDER_NONE;
 import static nars.inference.TruthFunctions.abduction;
 import static nars.inference.TruthFunctions.anonymousAnalogy;
 import static nars.inference.TruthFunctions.comparison;
@@ -1141,7 +1143,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
     */
 
     static boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
-
+        
         final Sentence taskSentence = task.sentence;
 
         if (taskSentence == null || taskSentence.isQuestion() || taskSentence.isQuest()) {
@@ -1306,11 +1308,24 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     continue;
                 }
                 
-                TruthValue truth = deduction(taskSentence.truth, truthSecond);
+                TruthValue truth = abduction(taskSentence.truth, truthSecond);
+                
+                int order = taskSentence.getTemporalOrder();
+                int side = 1;
+                long time=-99999;
+                if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+                    long baseTime = second_belief.getOccurenceTime();
+                    if (baseTime == Stamp.ETERNAL) {
+                        baseTime = nal.getTime();
+                    }
+                    long inc = order * nal.mem().param.duration.get();
+                    time = (side == 0) ? baseTime+inc : baseTime-inc;
+                    nal.getTheNewStamp().setOccurrenceTime(time);
+                }
 
                 char mark = Symbols.JUDGMENT_MARK;
-                if (taskSentence.isGoal() || second_belief.isGoal()) {
-                    truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
+                if (taskSentence.isGoal()) {
+                    truth = TruthFunctions.desireDed(taskSentence.truth, truthSecond);
                     mark = Symbols.GOAL_MARK;
                 }
 
@@ -1318,6 +1333,10 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 
                 Sentence newSentence = new Sentence(result, mark, truth,
                         new Stamp(taskSentence.stamp, nal.getTime(), useEvidentalBase));
+                
+                if(time!=-99999) {
+                    newSentence.stamp.setOccurrenceTime(time);
+                }
 
                 BudgetValue budget = BudgetFunctions.compoundForward(truth, newSentence.term, nal);
 
@@ -1365,13 +1384,19 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             }
 
             char mark = Symbols.JUDGMENT_MARK;
-            if (task.sentence.isGoal() || second_belief.isGoal()) {
+            if (task.sentence.isGoal()) {
+                if (strong) {
+                    truth = TruthFunctions.desireInd(t1, t2);
+                } else {
+                    truth = TruthFunctions.desireDed(t1, t2);
+                }
+                mark = Symbols.GOAL_MARK;
+            } else if (task.sentence.isJudgment()) {
                 if (strong) {
                     truth = abduction(t1, t2);
                 } else {
-                    truth = intersection(t1, t2);
+                    truth = deduction(t1, t2);
                 }
-                mark = Symbols.GOAL_MARK;
             }
 
             if (sx == null)
@@ -1394,6 +1419,19 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     nal.setCurrentBelief(taskSentence);
                     nal.setCurrentTask(dummy);
 
+                    int order = taskSentence.getTemporalOrder();
+                    int side = 1;
+                    if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+                        long baseTime = second_belief.getOccurenceTime();
+                        if (baseTime == Stamp.ETERNAL) {
+                            baseTime = nal.getTime();
+                        }
+                        long inc = order * nal.mem().param.duration.get();
+                        long time = (side == 0) ? baseTime+inc : baseTime-inc;
+                        nal.getTheNewStamp().setOccurrenceTime(time);
+                        newTask.sentence.stamp.setOccurrenceTime(time);
+                    }
+                    
                     if (nal.derivedTask(newTask, false, false, task, second_belief, false)) {
 
                         nal.mem().logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.commit();
