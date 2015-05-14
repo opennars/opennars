@@ -23,6 +23,8 @@
  ******************************************************************************/
 package nars.rover.jbox2d.j2d;
 
+import automenta.spacegraph.physics.light.Light;
+import automenta.spacegraph.physics.light.LightEngine;
 import automenta.vivisect.Video;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -57,6 +59,7 @@ public class JoglDraw extends DebugDraw {
         super(new OBBViewportTransform());
         this.panel = panel;
         text = new TextRenderer(Video.monofont);
+
 
         viewportTransform.setCamera(0, 0, 50.0f);
     }
@@ -106,6 +109,8 @@ public class JoglDraw extends DebugDraw {
         //flush();
 
     }
+
+
 
 
     Color defaultFillColor = new Color(0.75f, 0.75f, 0.75f);
@@ -257,6 +262,11 @@ public class JoglDraw extends DebugDraw {
     }
 
 
+    @Override
+    public IViewportTransform getViewportTranform() {
+        return super.getViewportTranform();
+    }
+
     //
     public void transformViewport(GL2 gl, Vec2 center) {
 
@@ -299,7 +309,7 @@ public class JoglDraw extends DebugDraw {
         gl.glEnd();
     }
 
-    private final Vec2 zero = new Vec2();
+    public static final Vec2 zero = new Vec2();
 
     @Override
     public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color) {

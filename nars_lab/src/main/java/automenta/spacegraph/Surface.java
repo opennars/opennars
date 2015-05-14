@@ -36,11 +36,16 @@ public class Surface extends SG {
     float focus = 45.0f;
     boolean showFPS = false;
     protected Space2D space = new Space2D();
+    private int w;
+    private int h;
 
     public Surface() {
         super();
     }
 
+
+    public int getWidth() { return w; }
+    public int getHeight() { return h; }
 
     public Space2D getSpace() {
         return space;
@@ -154,8 +159,8 @@ public class Surface extends SG {
             float cx = getCamera().camPos.x();
             float cy = getCamera().camPos.y();
 
-            float w = viewport[2];
-            float h = viewport[3];
+            w = viewport[2];
+            h = viewport[3];
             
             float aspect = (((float)h) / ((float)w));
             

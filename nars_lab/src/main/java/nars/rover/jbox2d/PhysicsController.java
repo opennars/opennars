@@ -336,17 +336,17 @@ public class PhysicsController {
         playTest(0);
     }
 
-    public synchronized void start() {
-        if (animating != true) {
-            animator.start();
-        } else {
-            log.severe("Animation is already animating.");
-        }
-    }
-
-    public synchronized void stop() {
-        animating = false;
-    }
+//    public synchronized void start() {
+//        if (animating != true) {
+//            animator.start();
+//        } else {
+//            log.severe("Animation is already animating.");
+//        }
+//    }
+//
+//    public synchronized void stop() {
+//        animating = false;
+//    }
 
     float timeInSecs;
     long beforeTime, afterTime, updateTime, timeDiff, sleepTime, timeSpent;

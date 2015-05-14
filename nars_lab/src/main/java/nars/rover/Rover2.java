@@ -68,8 +68,8 @@ public class Rover2 extends PhysicsModel {
                     setSubconceptBagSize(12000).
                     setNovelTaskBagSize(256));
             nar.param.inputsMaxPerCycle.set(100);
-            nar.param.conceptsFiredPerCycle.set(64);
-            nar.setCyclesPerFrame(16);
+            nar.param.conceptsFiredPerCycle.set(4);
+            nar.setCyclesPerFrame(4);
         }
 
         //NAR nar = new CurveBagNARBuilder().
@@ -81,9 +81,9 @@ public class Rover2 extends PhysicsModel {
 
 
 
-        float framesPerSecond = 30f;
+        float framesPerSecond = 20f;
 
-        nar.param.shortTermMemoryHistory.set(4);
+        nar.param.shortTermMemoryHistory.set(2);
         nar.param.temporalRelationsMax.set(3);
 
         (nar.param).outputVolume.set(3);
@@ -413,8 +413,8 @@ public class Rover2 extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         //world = new ReactorWorld(this, 32, sz, sz*2);
-        //world = new FoodSpawnWorld1(this, 32, sz, sz);
-        world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
+        world = new FoodSpawnWorld1(this, 32, sz, sz);
+        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);
 
