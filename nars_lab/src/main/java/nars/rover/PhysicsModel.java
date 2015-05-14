@@ -26,7 +26,7 @@
 package nars.rover;
 
 import nars.rover.jbox2d.*;
-import nars.rover.jbox2d.j2d.DrawPhy2D;
+import nars.rover.jbox2d.j2d.SwingDraw;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
@@ -412,7 +412,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 
         debugDraw.getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
 
-        ((DrawPhy2D) debugDraw).draw(m_world);
+        ((SwingDraw) debugDraw).draw(m_world);
 
         
 

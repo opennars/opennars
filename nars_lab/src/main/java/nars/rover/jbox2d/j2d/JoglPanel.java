@@ -3,7 +3,6 @@ package nars.rover.jbox2d.j2d;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.util.gl2.GLUT;
 import nars.rover.jbox2d.PhysicsController;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedState;
@@ -58,7 +57,7 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
         this.controller = controller;
         setSize(600, 600);
         //(new Dimension(600, 600));
-        setAutoSwapBufferMode(true);
+        //setAutoSwapBufferMode(true);
         addGLEventListener(this);
         enableInputMethods(true);
 
@@ -102,22 +101,31 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
 
 
 
-        //getGL().getGL2().glClearColor(0f, 0f, 0f, 0f);
-        getGL().getGL2().glClear(GL2.GL_COLOR_BUFFER_BIT);
+        //getGL().getGL2().glClearAccum(0,0,0,1f);
+        //getGL().getGL2().glClearColor(0f, 0f, 0f, 0.25f);
+        //getGL().getGL2().glClear(GL2.GL_COLOR_BUFFER_BIT);
+
+        getGL().getGL2().glAccum(GL2.GL_RETURN, 0.9f); //adding the current frame to the buffer
+
+
+        ((JoglDraw)model.getDebugDraw()).draw(model.model.m_world);
+
+
+        //https://www.opengl.org/sdk/docs/man2/xhtml/glAccum.xml
 
 
 
-        ((JoglDebugDraw)model.getDebugDraw()).draw(model.model.m_world);
 
 
-        getGL().getGL2().glAccum(GL2.GL_ACCUM, 1.0f); //adding the current frame to the buffer
-        getGL().getGL2().glAccum(GL2.GL_RETURN, 1.0f); //Drawing last frame, saved in buffer
-        getGL().getGL2().glAccum(GL2.GL_MULT, 0.9f ); //make current frame in buffer dim
+        getGL().getGL2().glAccum(GL2.GL_LOAD, 0.95f); //Drawing last frame, saved in buffer
+        getGL().getGL2().glAccum(GL2.GL_MULT, 0.95f ); //make current frame in buffer dim
 
 
         getGL().glFlush();
 
         repaint();
+
+
     }
 
     @Override
@@ -126,11 +134,13 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
     @Override
     public void init(GLAutoDrawable arg0) {
         getGL().getGL2().glLineWidth(1f);
-        getGL().getGL2().glEnable(GL2.GL_BLEND);
+        //getGL().getGL2().glEnable(GL2.GL_BLEND);
         getGL().getGL2().glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
-        getGL().getGL2().glClear(GL2.GL_COLOR_BUFFER_BIT);
+        getGL().glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
+        //getGL().getGL2().glClear(GL2.GL_COLOR_BUFFER_BIT);
         timer = new Timer(50, new ActionListener() {
 
             @Override
@@ -165,5 +175,8 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
         gl2.glViewport(0, 0, getWidth(), getHeight());
 
         controller.updateExtents(arg3 / 2, arg4 / 2);
+
+
+
     }
 }

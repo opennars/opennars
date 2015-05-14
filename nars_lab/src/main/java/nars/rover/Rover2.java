@@ -10,7 +10,7 @@ import nars.nal.nal8.Operation;
 import nars.model.impl.Default;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
-import nars.rover.jbox2d.j2d.DrawPhy2D;
+import nars.rover.jbox2d.j2d.SwingDraw;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -267,7 +267,7 @@ public class Rover2 extends PhysicsModel {
         }
     }
 
-    public static enum Material implements DrawPhy2D.DrawProperty {
+    public static enum Material implements SwingDraw.DrawProperty {
 
         Food, Wall, Block;
 
@@ -278,7 +278,7 @@ public class Rover2 extends PhysicsModel {
         static final Color wallFill = new Color(0.5f, 0.5f, 0.5f);
 
         @Override
-        public void before(Body b, DrawPhy2D d) {
+        public void before(Body b, SwingDraw d) {
             switch (this) {
                 case Food:
                     d.setStrokeColor(foodStroke);
@@ -413,8 +413,8 @@ public class Rover2 extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         //world = new ReactorWorld(this, 32, sz, sz*2);
-        world = new FoodSpawnWorld1(this, 32, sz, sz);
-        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
+        //world = new FoodSpawnWorld1(this, 32, sz, sz);
+        world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);
 

@@ -73,10 +73,15 @@ public class PhysicsRun {
 
         //PhysPanel panel = new PhysPanel(model, controller);
         GLCapabilities config = new GLCapabilities(GLProfile.getDefault());
-        config.setAlphaBits(1);
-        config.setDoubleBuffered(true);
         config.setHardwareAccelerated(true);
-        config.setBackgroundOpaque(false);
+        config.setAlphaBits(8);
+        config.setAccumAlphaBits(8);
+        config.setAccumRedBits(8);
+        config.setAccumGreenBits(8);
+        config.setAccumBlueBits(8);
+
+        config.setNumSamples(1);
+        //config.setBackgroundOpaque(false);
 
         JoglPanel panel = new JoglPanel(model, controller, config) {
 
@@ -84,7 +89,7 @@ public class PhysicsRun {
 
         model.setPanel(panel);
         //model.setDebugDraw(new DrawPhy2D(panel, true));
-        model.setDebugDraw(new JoglDebugDraw(panel));
+        model.setDebugDraw(new JoglDraw(panel));
 
         for (PhysicsModel test : tests) {
             model.addTest(test);

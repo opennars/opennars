@@ -9,8 +9,8 @@ import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
 import nars.nal.concept.Concept;
-import nars.rover.jbox2d.j2d.DrawPhy2D;
-import nars.rover.jbox2d.j2d.DrawPhy2D.LayerDraw;
+import nars.rover.jbox2d.j2d.JoglDraw;
+import nars.rover.jbox2d.j2d.SwingDraw.LayerDraw;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
@@ -296,12 +296,12 @@ public class RoverModel {
         }
 
         @Override
-        public void drawGround(DrawPhy2D draw, World w) {
+        public void drawGround(JoglDraw draw, World w) {
             step(false, true);
         }
 
         @Override
-        public void drawSky(DrawPhy2D draw, World w) {
+        public void drawSky(JoglDraw draw, World w) {
         }
     }
     boolean feel_motion = true; //todo add option in gui

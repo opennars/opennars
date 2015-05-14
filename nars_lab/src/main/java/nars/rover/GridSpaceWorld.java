@@ -7,8 +7,9 @@ package nars.rover;
 import nars.Memory;
 import nars.grid2d.*;
 import nars.grid2d.map.Maze;
-import nars.rover.jbox2d.j2d.DrawPhy2D;
-import nars.rover.jbox2d.j2d.DrawPhy2D.LayerDraw;
+import nars.rover.jbox2d.j2d.SwingDraw;
+import nars.rover.jbox2d.j2d.SwingDraw.LayerDraw;
+import nars.rover.jbox2d.j2d.JoglDraw;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
@@ -52,13 +53,13 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
     private final float ch;
     private final float worldWidth;
     private final float worldHeight;
-    private DrawPhy2D draw;
-    private Graphics2D graphics;
+    private JoglDraw draw;
+
 
     public GridSpaceWorld(PhysicsModel p, Grid2DSpace g) {
         super(p);
         
-        ((DrawPhy2D)p.draw()).addLayer(this);
+        ((JoglDraw)p.draw()).addLayer(this);
         
         this.grid = g;
         
@@ -77,10 +78,10 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                 switch (c.material) {
                     case StoneWall:
                         Body w = addWall(px, py, cw/2f, ch/2f, 0f);
-                        w.setUserData(new DrawPhy2D.DrawProperty() {
+                        w.setUserData(new SwingDraw.DrawProperty() {
 
                             @Override
-                            public void before(Body b, DrawPhy2D d) {
+                            public void before(Body b, SwingDraw d) {
                                 d.setFillColor(null);
                                 d.setStroke(null);
                             }
@@ -136,7 +137,8 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                     
                     float b = 0.5f + h*0.01f - db;
                     if (b < 0) b = 0; if (b > 1.0f) b = 1.0f;
-                                        
+
+
                     draw.drawSolidRect(px, py, cw, ch, 0.1f,0.1f,b);
                     break;
             }
@@ -144,14 +146,14 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
     };
 
     @Override
-    public void drawGround(DrawPhy2D draw, World w) {
+    public void drawGround(JoglDraw draw, World w) {
         this.draw = draw;
-        this.graphics = draw.getGraphics();
+        //this.graphics = draw.getGraphics();
         cells(groundDrawer, true);
     }
 
     @Override
-    public void drawSky(DrawPhy2D draw, World w) {
+    public void drawSky(JoglDraw draw, World w) {
     
     }
     

@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DrawPhy2D extends DebugDraw {
+public class SwingDraw extends DebugDraw {
 
     public static int circlePoints = 5;
     public static final float edgeWidth = 0.02f;
@@ -64,7 +64,7 @@ public class DrawPhy2D extends DebugDraw {
     private Graphics2D graphics;
     
     
-    public DrawPhy2D(TestPanelJ2D argTestPanel, boolean yFlip) {  
+    public SwingDraw(TestPanelJ2D argTestPanel, boolean yFlip) {
         super(new OBBViewportTransform());
         panel = argTestPanel;
         this.yFlip = yFlip;        
@@ -72,14 +72,14 @@ public class DrawPhy2D extends DebugDraw {
     }
 
     public static interface PhyDrawable {
-        public void draw(DrawPhy2D d);
+        public void draw(SwingDraw d);
     }
     
 
 
     public interface LayerDraw {
-        public void drawGround(DrawPhy2D draw, World w);
-        public void drawSky(DrawPhy2D draw, World w);
+        public void drawGround(JoglDraw draw, World w);
+        public void drawSky(JoglDraw draw, World w);
     }
     
     public void addLayer(LayerDraw l) {
@@ -97,7 +97,7 @@ public class DrawPhy2D extends DebugDraw {
         
         
         
-        for (LayerDraw l : layers) l.drawGround(this, w);
+        //for (LayerDraw l : layers) l.drawGround(this, w);
         
         int flags = getFlags();
         //boolean wireframe = (flags & DebugDraw.e_wireframeDrawingBit) != 0;
@@ -164,13 +164,13 @@ public class DrawPhy2D extends DebugDraw {
 //            m_contactManager.m_broadPhase.drawTree(m_debugDraw);
 //        }
 
-        for (LayerDraw l : layers) l.drawSky(this, w);
+        //for (LayerDraw l : layers) l.drawSky(this, w);
 
         //flush();
 
     }
     public interface DrawProperty {
-        public void before(Body b, DrawPhy2D d);
+        public void before(Body b, SwingDraw d);
     }
     
     Color defaultFillColor =  new Color(0.75f, 0.75f, 0.75f);
