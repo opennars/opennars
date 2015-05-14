@@ -25,15 +25,15 @@
  */
 package nars.rover;
 
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
 import nars.NAR;
 import nars.rover.jbox2d.PhysicsController;
 import nars.rover.jbox2d.PhysicsController.MouseBehavior;
 import nars.rover.jbox2d.PhysicsController.UpdateBehavior;
 import nars.rover.jbox2d.TestbedErrorHandler;
 import nars.rover.jbox2d.TestbedState;
-import nars.rover.jbox2d.j2d.DrawPhy2D;
-import nars.rover.jbox2d.j2d.TestPanelJ2D;
-import nars.rover.jbox2d.j2d.TestbedSidePanel;
+import nars.rover.jbox2d.j2d.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,6 +47,7 @@ import java.awt.event.KeyListener;
  */
 public class PhysicsRun {
     public final PhysicsController controller;
+    private final TestbedState model;
     // private static final Logger log = LoggerFactory.getLogger(TestbedMain.class);
 
     NAR nar;
@@ -60,7 +61,7 @@ public class PhysicsRun {
         // log.warn("Could not set the look and feel to nimbus.  "
         // + "Hopefully you're on a mac so the window isn't ugly as crap.");
         // }
-        TestbedState model = new TestbedState();
+        model = new TestbedState();
         controller = new PhysicsController(model, UpdateBehavior.UPDATE_CALLED, MouseBehavior.NORMAL,
             new TestbedErrorHandler() {
                 @Override
@@ -69,10 +70,21 @@ public class PhysicsRun {
                             JOptionPane.ERROR_MESSAGE);
                 }
             });
-        PhysPanel panel = new PhysPanel(model, controller);
+
+        //PhysPanel panel = new PhysPanel(model, controller);
+        GLCapabilities config = new GLCapabilities(GLProfile.getDefault());
+        config.setAlphaBits(1);
+        config.setDoubleBuffered(true);
+        config.setHardwareAccelerated(true);
+        config.setBackgroundOpaque(false);
+
+        JoglPanel panel = new JoglPanel(model, controller, config) {
+
+        };
 
         model.setPanel(panel);
-        model.setDebugDraw(new DrawPhy2D(panel, true));
+        //model.setDebugDraw(new DrawPhy2D(panel, true));
+        model.setDebugDraw(new JoglDebugDraw(panel));
 
         for (PhysicsModel test : tests) {
             model.addTest(test);
@@ -119,6 +131,29 @@ public class PhysicsRun {
         
     }
 
+//    class PhysPanelGL extends JoglPanel implements KeyListener {
+//
+//        public PhysPanelGL(final TestbedState model, final PhysicsController controller) {
+//            super(model,controller, config);
+//            this.addKeyListener(this);
+//        }
+//
+//        @Override
+//        public void keyPressed(KeyEvent e) {
+//            PhysicsRun.this.keyPressed(e);
+//        }
+//
+//        @Override
+//        public void keyReleased(KeyEvent e) {
+//
+//        }
+//
+//        @Override
+//        public void keyTyped(KeyEvent e) {
+//
+//        }
+//
+//    }
     /*public void start(final int fps) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -130,6 +165,8 @@ public class PhysicsRun {
     }*/
     
     public void cycle() {          
+
         controller.cycle(simulationRate);
+
     }
 }

@@ -61,13 +61,13 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
         updateSize(INIT_WIDTH, INIT_HEIGHT);
 
         AWTPanelHelper.addHelpAndPanelListeners(this, model, controller, SCREEN_DRAG_BUTTON);
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                updateSize(getWidth(), getHeight());
-                dbImage = null;
-            }
-        });
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                updateSize(getWidth(), getHeight());
+//                dbImage = null;
+//            }
+//        });
 
     }
 

@@ -8,9 +8,7 @@ var BufferedReader    = java.io.BufferedReader;
 var FileInputStream   = java.io.FileInputStream;
 var ByteArray         = Java.type('byte[]');
 
-var PORT = 8080;
-
-
+var serverID = 'NAL HTTP Server';
 var PORT = 8080;
 var CRLF = '\r\n';
 var FOUROHFOUR = '404';
@@ -27,19 +25,22 @@ EOD*/
 
 var serverSocket = new ServerSocket(PORT);
 
-while (true) {
+function start() {
     var socket = serverSocket.accept();
 
+    print('start');
     try {
         var thread = new Thread(function() { httpRequestHandler(socket); });
         thread.start();
-        Thread.sleep(100);
     } catch (e) {
         print(e);
     }
 }
 
 function httpRequestHandler(socket) {
+
+    nar.input('<http --> [request]>. :|:');
+
     var out       = socket.getOutputStream();
     var output    = new PrintWriter(out);
     var inReader  = new InputStreamReader(socket.getInputStream(), 'utf-8');
@@ -75,7 +76,7 @@ function httpRequestHandler(socket) {
 
 function respond(output, status, type, body) {
     sendBytes(output, status + CRLF);
-    sendBytes(output, 'Server: Simple Nashorn HTTP Server' + CRLF);
+    sendBytes(output, 'Server: ' + serverID + CRLF);
     sendBytes(output, 'Content-type: ${type}' + CRLF);
     sendBytes(output, 'Content-Length: ${body.length}' + CRLF);
     sendBytes(output, CRLF);
@@ -121,7 +122,7 @@ function sendFile(output, out, path) {
 
     var type = contentType(path);
     sendBytes(output, 'HTTP/1.0 200 OK' + CRLF);
-    sendBytes(output, 'Server: NAL HTTP Server' + CRLF);
+    sendBytes(output, 'Server: ' + serverID + CRLF);
     sendBytes(output, 'Content-type: ${contentType(path)}' + CRLF);
     sendBytes(output, 'Content-Length: ${file.available()}' + CRLF);
     sendBytes(output, CRLF);
@@ -134,5 +135,7 @@ function sendFile(output, out, path) {
         out.write(buffer, 0, bytes);
     }
 }
+
+start();
 
 """ )!

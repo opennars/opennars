@@ -67,7 +67,7 @@ public class PhysicsController {
     private boolean animating = false;
     private Thread animator;
 
-    private final TestbedState model;
+    public final TestbedState model;
 
     private boolean savePending, loadPending, resetPending = false;
 
@@ -164,6 +164,11 @@ public class PhysicsController {
         if (currTest != null) {
             currTest.init(model);
         }
+    }
+
+    public PhysicsCamera getCamera() {
+        if (currTest == null) return null;
+        return currTest.getCamera();
     }
 
     private void initTest(PhysicsModel test) {

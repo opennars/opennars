@@ -69,7 +69,8 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
 
     @Override
     public void run() {
-        phy.cycle();        
+        if (phy!=null)
+            phy.cycle();
     }
     
     

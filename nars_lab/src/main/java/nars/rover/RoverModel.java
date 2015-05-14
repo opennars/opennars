@@ -5,14 +5,13 @@
 package nars.rover;
 
 import nars.NAR;
-import nars.budget.Budget;
 import nars.io.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
-import nars.nal.Item;
 import nars.nal.concept.Concept;
 import nars.rover.jbox2d.j2d.DrawPhy2D;
 import nars.rover.jbox2d.j2d.DrawPhy2D.LayerDraw;
+import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.MathUtils;
@@ -45,7 +44,7 @@ public class RoverModel {
     private final ChangedTextInput feltSpeedAvg;
     private final ChangedTextInput mouthInput;
     private final World world;
-    private final DrawPhy2D draw;
+    private final DebugDraw draw;
 
     final double minVisionInputProbability = 0.01f;
     final double maxVisionInputProbability = 0.08f;
@@ -73,7 +72,7 @@ public class RoverModel {
         
 
         this.world = sim.getWorld();
-        this.draw = (DrawPhy2D) sim.draw();
+        this.draw = (DebugDraw) sim.draw();
 
         mouthInput = new ChangedTextInput(nar);
         feltAngularVelocity = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
@@ -168,7 +167,7 @@ public class RoverModel {
             this.arc = arc;
             this.resolution = resolution;
             this.distance = length;
-            draw.addLayer(this);
+            //draw.addLayer(this);
         }
         
 

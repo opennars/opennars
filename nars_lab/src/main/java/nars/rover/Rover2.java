@@ -108,6 +108,7 @@ public class Rover2 extends PhysicsModel {
                 super.frame();
 
                 nar.memory.timeSimulationAdd(1);
+
             }
 
 

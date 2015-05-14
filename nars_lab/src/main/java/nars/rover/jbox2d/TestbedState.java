@@ -40,7 +40,7 @@ public class TestbedState {
   private final DefaultComboBoxModel tests = new DefaultComboBoxModel();
   private final TestbedSettings settings = new TestbedSettings();
   private DebugDraw draw;
-  private PhysicsModel test;
+  public PhysicsModel model;
   private final Vector<TestChangedListener> listeners = new Vector<>();
   private final boolean[] keys = new boolean[512];
   private final boolean[] codedKeys = new boolean[512];
@@ -99,7 +99,7 @@ public class TestbedState {
   }
 
   public PhysicsModel getCurrTest() {
-    return test;
+    return model;
   }
 
   /**
@@ -133,9 +133,9 @@ public class TestbedState {
     }
     currTestIndex = argCurrTestIndex;
     ListItem item = (ListItem) tests.getElementAt(argCurrTestIndex);
-    test = item.test;
+    model = item.test;
     for (TestChangedListener listener : listeners) {
-      listener.testChanged(test, currTestIndex);
+      listener.testChanged(model, currTestIndex);
     }
   }
 

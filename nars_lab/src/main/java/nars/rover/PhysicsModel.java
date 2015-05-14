@@ -70,7 +70,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
     /**
      * Only visible for compatibility. Should use {@link #getWorld()} instead.
      */
-    protected World m_world;
+    public World m_world;
     protected Body groundBody;
     private MouseJoint mouseJoint;
 
@@ -87,7 +87,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
     private int pointCount;
     private int stepCount;
 
-    private TestbedState model;
+    @Deprecated private TestbedState model;
     protected DestructionListener destructionListener;
 
     private String title = null;
@@ -378,10 +378,10 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 
     /** only for drawing called by SwingUtilities */
     @Override public void run() {
-        drawNext();
+        //drawNext();
     }
     
-    protected synchronized void drawNext() {
+    public synchronized void drawNext() {
         if (!panel.render())
             return;
         
