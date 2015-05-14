@@ -168,7 +168,10 @@ public abstract class TermFunction<O> extends Operator  {
 
         final Object y = function(x);
 
-        if (y == null) return null;
+        if (y == null) {
+            operation.stop();
+            return null;
+        }
 
         if (y instanceof Task) {
             return Lists.newArrayList((Task)y);

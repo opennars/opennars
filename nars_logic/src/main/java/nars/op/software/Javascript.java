@@ -77,15 +77,7 @@ public class Javascript extends TermFunction implements Mental {
             super("^jsOp");
         }
 
-        @Override
-        protected ArrayList<Task> execute(Operation operation, Term[] args) {
-            ArrayList<Task> result = super.execute(operation, args);
 
-            //prevent this task from being re-executed unless input again:
-            nar.concept(operation.getTerm()).delete();
-
-            return result;
-        }
 
         @Override
         public Object function(Term... x) {

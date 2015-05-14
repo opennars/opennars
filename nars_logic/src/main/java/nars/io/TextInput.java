@@ -23,6 +23,7 @@ package nars.io;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import nars.Events;
 import nars.Global;
 import nars.nal.Task;
@@ -35,6 +36,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * To read and write experience as Task streams
@@ -120,7 +122,7 @@ public class TextInput extends Input.BufferedInput {
     }
 
     protected String nextLine() throws IOException {
-        return input.readLine();
+        return input.lines().collect(Collectors.joining("\n"));
     }
 
     protected boolean finished() {
@@ -135,38 +137,31 @@ public class TextInput extends Input.BufferedInput {
     public Iterator<Task> nextBuffer() {
         String line = null;
 
-
-        while (!finished()) {
-            try {
-                line = nextLine();
-            } catch (IOException e) {
-                if (input!=null) {
-                    try {
-                        input.close();
-                    } catch (IOException ex1) {
-                        ex1.printStackTrace();
-                    }
+        try {
+            //read entire file
+            line = nextLine();
+        } catch (IOException e) {
+            if (input!=null) {
+                try {
+                    input.close();
+                } catch (IOException ex1) {
+                    ex1.printStackTrace();
                 }
-                if (Global.DEBUG) {
-                    e.printStackTrace();
-                }
-                return Iterators.singletonIterator( new Echo(Events.IN.class, e.toString()).newTask() );
             }
-            if (line == null) {
-                break;
+            if (Global.DEBUG) {
+                e.printStackTrace();
             }
-            else {
-                line = line.trim();
-                if (line.length() > 0)
-                    break;
-            }
+            return Iterators.singletonIterator( new Echo(Events.IN.class, e.toString()).newTask() );
         }
-        
-        if (line!=null) {
-            return perceive(line);
+        if (line == null) {
+            return null;
         }
 
-        return null;
+        line = line.trim();
+
+        if (line.isEmpty()) return null;
+
+        return perceive(line);
     }
 
     protected Iterator<Task> perceive(String line) {

@@ -1,14 +1,9 @@
 package nars.nal;
 
-import nars.model.impl.Default;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.Symbols;
-import nars.narsese.InvalidInputException;
-import nars.narsese.NarseseParser;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
+import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal3.Intersect;
@@ -17,7 +12,15 @@ import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Interval;
 import nars.nal.nal8.Operation;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
+import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -32,13 +35,25 @@ public class NarseseParserTest {
         return p.parseTerm(s);
     }
 
-    Task task(String s) throws InvalidInputException {
+    List<Task> tasks(String s) throws InvalidInputException {
         //TODO n.task(s) when the parser is replaced
-        return p.parseTask(s, true);
+        //return p.parseTask(s, true);
+        List<Task> l = new ArrayList(1);
+        p.parse(s, l);
+        return l;
     }
 
 
-    @Test public void testSomethingTheOldParserCouldntHandle() {
+    Task task(String s) throws InvalidInputException {
+        List<Task> l = tasks(s);
+        if (l.size() != 1)
+            throw new RuntimeException("Expected 1 task");
+        return l.get(0);
+    }
+
+
+    @Test
+    public void testSomethingTheOldParserCouldntHandle() {
 
         Task t = task("<<$A --> $B> --> QPre>!");
         assertNotNull(t);
@@ -55,7 +70,8 @@ public class NarseseParserTest {
         System.out.println(t);
     }
 
-    @Test public void testParseCompleteEternalTask() throws InvalidInputException {
+    @Test
+    public void testParseCompleteEternalTask() throws InvalidInputException {
         Task t = task("$0.99;0.95$ <a --> b>! %0.93;0.95%");
 
         assertNotNull(t);
@@ -66,11 +82,12 @@ public class NarseseParserTest {
         assertEquals(0.95f, t.sentence.getTruth().getConfidence(), 0.001);
     }
 
-    @Test public void testIncompleteTask() throws InvalidInputException {
+    @Test
+    public void testIncompleteTask() throws InvalidInputException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
         assertEquals(NALOperator.INHERITANCE, t.sentence.term.operator());
-        Inheritance i = (Inheritance)t.getTerm();
+        Inheritance i = (Inheritance) t.getTerm();
         assertEquals("a", i.getSubject().toString());
         assertEquals("b", i.getPredicate().toString());
         assertEquals('.', t.getPunctuation());
@@ -80,14 +97,16 @@ public class NarseseParserTest {
         assertEquals(Global.DEFAULT_JUDGMENT_CONFIDENCE, t.sentence.getTruth().getConfidence(), 0.001);
     }
 
-    @Test public void testPropertyInstance() {
+    @Test
+    public void testPropertyInstance() {
 
         taskEqualsOldParser("<a --] b>.");
         taskEqualsOldParser("<a {-- b>.");
         taskEqualsOldParser("<a {-] b>.");
     }
 
-    @Test public void testNoBudget() throws InvalidInputException {
+    @Test
+    public void testNoBudget() throws InvalidInputException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
         assertEquals(NALOperator.EQUIVALENCE, t.sentence.term.operator());
@@ -99,7 +118,8 @@ public class NarseseParserTest {
         assertEquals(0.93f, t.sentence.getTruth().getConfidence(), 0.001);
     }
 
-    @Test public void testMultiCompound() throws InvalidInputException {
+    @Test
+    public void testMultiCompound() throws InvalidInputException {
         String tt = "<<a <=> b> --> <c ==> d>>";
         Task t = task(tt + "?");
         assertNotNull(t);
@@ -117,7 +137,8 @@ public class NarseseParserTest {
         assertEquals("c", p.term[2].toString());
     }
 
-    @Test public void testFailureOfMultipleDistinctInfixOperators() {
+    @Test
+    public void testFailureOfMultipleDistinctInfixOperators() {
 
         try {
             term("(a * b & c)");
@@ -129,7 +150,8 @@ public class NarseseParserTest {
         }
     }
 
-    @Test public void testQuest() throws InvalidInputException {
+    @Test
+    public void testQuest() throws InvalidInputException {
         String tt = "(*,a,b,c)";
         Task t = task(tt + "@");
         assertNotNull(t);
@@ -140,7 +162,8 @@ public class NarseseParserTest {
 
     }
 
-    @Test public void testProduct() throws InvalidInputException {
+    @Test
+    public void testProduct() throws InvalidInputException {
 
         Product pt = term("(a, b, c)");
 
@@ -159,7 +182,8 @@ public class NarseseParserTest {
         //testProductABC(term("(a *  b * c)")); //with multiple (redundant) infix
     }
 
-    @Test public void testInfix2() throws InvalidInputException {
+    @Test
+    public void testInfix2() throws InvalidInputException {
         Intersect t = term("(x & y)");
         assertEquals(NALOperator.INTERSECTION_EXT, t.operator());
         assertEquals(2, t.length());
@@ -182,8 +206,8 @@ public class NarseseParserTest {
     }
 
 
-
-    @Test public void testShortFloat() {
+    @Test
+    public void testShortFloat() {
 
         taskEqualsOldParser("<{a} --> [b]>. %0%");
         taskEqualsOldParser("<a --> b>. %0.95%");
@@ -192,14 +216,16 @@ public class NarseseParserTest {
         taskEqualsOldParser("<a --> b>. %1.0%");
     }
 
-    @Test public void testNegation() throws InvalidInputException {
+    @Test
+    public void testNegation() throws InvalidInputException {
         taskEqualsOldParser("(--,negated).");
         taskEqualsOldParser("(--, negated).");
     }
 
-    @Test public void testNegation2() throws InvalidInputException {
+    @Test
+    public void testNegation2() throws InvalidInputException {
 
-        for (String s : new String[] { "--negated!", "-- negated!" }) {
+        for (String s : new String[]{"--negated!", "-- negated!"}) {
             Task t = task(s);
             Term tt = t.getTerm();
             assertTrue(tt instanceof Negation);
@@ -208,7 +234,8 @@ public class NarseseParserTest {
         }
     }
 
-    @Test public void testNegation3() {
+    @Test
+    public void testNegation3() {
         Negation nab = term("--(a & b)");
         assertTrue(nab instanceof Negation);
         IntersectionExt ab = (IntersectionExt) nab.the();
@@ -217,8 +244,8 @@ public class NarseseParserTest {
         try {
             task("(-- negated illegal_extra_term)!");
             assertTrue(false);
+        } catch (Exception e) {
         }
-        catch (Exception e) { }
     }
 
 
@@ -230,12 +257,14 @@ public class NarseseParserTest {
         assertEquals("SELF", t.getArgument(2).toString());
     }
 
-    @Test public void testOperationNoArgs() {
+    @Test
+    public void testOperationNoArgs() {
         taskEqualsOldParser("believe()!");
         taskEqualsOldParser("believe( )!");
     }
 
-    @Test public void testOperation() throws InvalidInputException {
+    @Test
+    public void testOperation() throws InvalidInputException {
 
         testBelieveAB(term("(^believe,a,b)"));
         testBelieveAB(term("(^believe,a,b,SELF)"));
@@ -245,28 +274,32 @@ public class NarseseParserTest {
 
     }
 
-    @Test public void testOperation2() throws InvalidInputException {
+    @Test
+    public void testOperation2() throws InvalidInputException {
         testBelieveAB(term("believe(a,b)"));
         testBelieveAB(term("believe(a,b,SELF)"));
         //testBelieveAB(term("believe(a b)"));
 
     }
 
-    @Test public void testOperationTask() {
+    @Test
+    public void testOperationTask() {
         taskEqualsOldParser("(^break,{t001},SELF)! %1.00;0.95%");
     }
 
-    @Test public void testInterval() throws InvalidInputException {
+    @Test
+    public void testInterval() throws InvalidInputException {
 
         Term x = term(Symbols.INTERVAL_PREFIX + "2");
         assertNotNull(x);
         assertEquals(Interval.class, x.getClass());
-        Interval i = (Interval)x;
+        Interval i = (Interval) x;
         assertEquals(1, i.magnitude);
 
     }
 
-    @Test public void testCompoundTermOpenerCloserStatements() {
+    @Test
+    public void testCompoundTermOpenerCloserStatements() {
         Term a = term("<a --> b>");
         Term x = term("(a --> b)");
         Term y = term("(a-->b)");
@@ -292,12 +325,13 @@ public class NarseseParserTest {
         Term x = term(prefix + "x");
         assertNotNull(x);
         assertEquals(Variable.class, x.getClass());
-        Variable i = (Variable)x;
+        Variable i = (Variable) x;
         assertEquals(prefix + "x", i.toString());
         return i;
     }
 
-    @Test public void testVariables() throws InvalidInputException {
+    @Test
+    public void testVariables() throws InvalidInputException {
         Variable v;
         v = testVar(Symbols.VAR_DEPENDENT);
         assertTrue(v.hasVarDep());
@@ -309,7 +343,8 @@ public class NarseseParserTest {
         assertTrue(v.hasVarQuery());
     }
 
-    @Test public void testSet() {
+    @Test
+    public void testSet() {
         Compound xInt = term("[x]");
         assertEquals(NALOperator.SET_INT_OPENER, xInt.operator());
         assertEquals(1, xInt.length());
@@ -332,44 +367,56 @@ public class NarseseParserTest {
 
     }
 
-    @Test public void testTenses() throws InvalidInputException {
+    @Test
+    public void testTenses() throws InvalidInputException {
         taskEqualsOldParser("<a --> b>. :|:");
         taskEqualsOldParser("<a --> b>. :/:");
         taskEqualsOldParser("<a --> b>. :\\:");
     }
 
-    @Test public void testEscape() throws InvalidInputException {
+    @Test
+    public void testEscape() throws InvalidInputException {
         taskEqualsOldParser("<a --> \"a\">.");
-        assertTrue( task("<a --> \"a\">.").toString().contains("<a --> \"a\">.") );
+        assertTrue(task("<a --> \"a\">.").toString().contains("<a --> \"a\">."));
     }
 
-    @Test public void testFuzzyKeywords() throws InvalidInputException {
+    @Test
+    public void testFuzzyKeywords() throws InvalidInputException {
         //definately=certainly, uncertain, doubtful, dubious, maybe, likely, unlikely, never, always, yes, no, sometimes, usually, rarely, etc...
         //ex: %maybe never%, % doubtful always %, %certainly never%
     }
 
-    @Test public void testEmbeddedJavascript() throws InvalidInputException {
+    @Test
+    public void testEmbeddedJavascript() throws InvalidInputException {
 
     }
 
-    @Test public void testEmbeddedPrologRules() throws InvalidInputException {
+    @Test
+    public void testEmbeddedPrologRules() throws InvalidInputException {
 
     }
 
-    /** test ability to report meaningful parsing errors */
-    @Test public void testError() {
+    /**
+     * test ability to report meaningful parsing errors
+     */
+    @Test
+    public void testError() {
 
     }
 
-    @Test public void testSimpleTask() {
+    @Test
+    public void testSimpleTask() {
         taskEqualsOldParser("(-,mammal,swimmer). %0.00;0.90%");
 
     }
-    @Test public void testCompleteTask() {
+
+    @Test
+    public void testCompleteTask() {
         taskEqualsOldParser("$0.80;0.50;0.95$ <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90%");
     }
 
-    @Test public void testImageIndex() {
+    @Test
+    public void testImageIndex() {
         Compound t = term("(/,open,$1,_)");
         assertEquals("(/,open,$1,_)", t.toString());
         assertEquals("index psuedo-term should not count toward its size", 2, t.length());
@@ -378,7 +425,7 @@ public class NarseseParserTest {
     private void taskEqualsOldParser(String s) {
         Task t = task(s);
         assertNotNull(t);
-        Task u = n.narsese.parseTask(s);
+        Task u = n.narsese.parseTaskOld(s, true);
         assertNotNull(u);
 
         assertEquals("(term) " + t + " != " + u, u.getTerm(), t.getTerm());
@@ -389,7 +436,8 @@ public class NarseseParserTest {
         //TODO punctuation:
     }
 
-    @Test public void testNamespaceTerms() {
+    @Test
+    public void testNamespaceTerms() {
         Inheritance t = term("namespace.named");
         assertEquals(t.operator(), NALOperator.INHERITANCE);
         assertEquals("namespace", t.getPredicate().toString());
@@ -402,6 +450,36 @@ public class NarseseParserTest {
         Task ut = task("<a.b <-> c.d>.");
         assertNotNull(ut);
         assertEquals(ut.getTerm(), u);
+
+    }
+
+    @Test
+    public void testMultiline() {
+        String a = "<a --> b>.";
+        assertEquals(1, tasks(a).size());
+
+        String b = "<a --> b>. <b --> c>.";
+        assertEquals(2, tasks(b).size());
+
+        String c = "<a --> b>. \n <b --> c>.";
+        assertEquals(2, tasks(c).size());
+
+        String s = "<a --> b>.\n" +
+                "<b --> c>.\n" +
+
+                "<multi\n" +
+                " --> \n" +
+                "line>. :|:\n" +
+
+                "<multi \n" +
+                " --> \n" +
+                "line>.\n" +
+
+                "<x --> b>!\n" +
+                "<y --> w>.  <z --> x>.\n";
+
+        List<Task> t = tasks(s);
+        assertEquals(7, t.size());
 
     }
 }

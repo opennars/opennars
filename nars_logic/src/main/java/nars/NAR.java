@@ -203,7 +203,7 @@ public class NAR implements Runnable {
 
     /** parses and forms a Task from a string but doesnt input it */
     public Task task(String taskText) {
-        Task t = narsese.parseTask(taskText);
+        Task t = narsese.parseOneTask(taskText);
 
         long now = time();
         if (!t.sentence.isEternal()) {
@@ -344,17 +344,20 @@ public class NAR implements Runnable {
     
     public NAR input(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
         
-        Task t = narsese.parseTask(taskText);
-        if (frequency!=-1)
-            t.sentence.truth.setFrequency(frequency);
-        if (confidence!=-1)
-            t.sentence.truth.setConfidence(confidence);
-        if (priority!=-1)
-            t.setPriority(priority);
-        if (durability!=-1)
-            t.setDurability(durability);
-        
-        return input(t);
+        narsese.parseTask(taskText, t -> {
+            if (frequency != -1)
+                t.sentence.truth.setFrequency(frequency);
+            if (confidence != -1)
+                t.sentence.truth.setConfidence(confidence);
+            if (priority != -1)
+                t.setPriority(priority);
+            if (durability != -1)
+                t.setDurability(durability);
+
+            input(t);
+        });
+
+        return this;
     }
     
     public NAR input(final Task t) {

@@ -31,10 +31,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static nars.Symbols.IMAGE_PLACE_HOLDER;
@@ -748,25 +745,41 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
+    public void parse(String input, Collection<Task> c) {
+        parse(input, t -> {
+            c.add(t);
+        });
+    }
+
+    public void parse(String input, Consumer<Task> c) {
+        parse(input, true, c);
+    }
+
     /**
      * parse a series of tasks
      */
-    public void parse(String input, Consumer<Task> c) {
+    public void parse(String input, boolean newStamp, Consumer<Task> c) {
         ParsingResult r = inputParser.run(input);
-        //r.getValueStack().iterator().forEachRemaining(x -> System.out.println("  " + x.getClass() + " " + x));
-        r.getValueStack().iterator().forEachRemaining(x -> {
-            if (x instanceof Task)
-                c.accept((Task) x);
-            else {
-                throw new RuntimeException("Unknown parse result: " + x + " (" + x.getClass() + ')');
-            }
-        });
+        int size = r.getValueStack().size();
+
+        for (int i = size-1; i >= 0; i--)
+            c.accept( (Task) r.getValueStack().peek(i) );
+
+        r.getValueStack().clear();
+
+//        r.getValueStack().iterator().forEachRemaining(x -> {
+//            if (x instanceof Task)
+//                c.accept((Task) x);
+//            else {
+//                throw new RuntimeException("Unknown parse result: " + x + " (" + x.getClass() + ')');
+//            }
+//        });
     }
 
     /**
      * parse one task
      */
-    public Task parseTask(String input, boolean newStamp) throws InvalidInputException {
+    @Deprecated public Task parseTask(String input, boolean newStamp) throws InvalidInputException {
         ParsingResult r = null;
         try {
             input = input.trim();

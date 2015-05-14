@@ -314,4 +314,10 @@ public class Operation extends Inheritance {
         return tv.getExpectation();
     }
 
+    /** deletes the concept of this operation, preventing it from
+     * being executed again (unless invoked again by input).
+     */
+    public void stop() {
+        this.getOperator().getMemory().concept(getTerm()).delete();
+    }
 }

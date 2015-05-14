@@ -3,8 +3,8 @@ package nars.narsese;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.nal.*;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
@@ -16,7 +16,9 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Consumer;
 
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
@@ -59,35 +61,34 @@ import static nars.nal.nal8.Operation.make;
      * @param time The current time
      * @return An experienced task
      */
-    public Task parseNarsese(StringBuilder buffer) throws InvalidInputException {
-        
-        int i = buffer.indexOf(valueOf(PREFIX_MARK));
-        if (i > 0) {
-            String prefix = buffer.substring(0, i).trim();
-            if (prefix.equals(INPUT_LINE_PREFIX)) {
-                buffer.delete(0, i + 1);                
-            }
-            else if (prefix.equals(OUTPUT_LINE_PREFIX)) {
-                //ignore outputs
-                return null;                
-            }            
-        }
-        
-        
-        
-        char c = buffer.charAt(buffer.length() - 1);
-        if (c == STAMP_CLOSER) {
-            //ignore stamp
-            int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
-            buffer.delete(j - 1, buffer.length());
-        }
-        c = buffer.charAt(buffer.length() - 1);
-        if (c == ']') {
-            int j = buffer.lastIndexOf(valueOf('['));
-            buffer.delete(j-1, buffer.length());
-        }
+    @Deprecated public Task parseNarsese(StringBuilder buffer) throws InvalidInputException {
 
-        return parseTask(buffer.toString().trim());
+        throw new RuntimeException("use the new parser");
+
+//        int i = buffer.indexOf(valueOf(PREFIX_MARK));
+//        if (i > 0) {
+//            String prefix = buffer.substring(0, i).trim();
+//            if (prefix.equals(INPUT_LINE_PREFIX)) {
+//                buffer.delete(0, i + 1);
+//            } else if (prefix.equals(OUTPUT_LINE_PREFIX)) {
+//                //ignore outputs
+//                return null;
+//            }
+//        }
+//
+//        char c = buffer.charAt(buffer.length() - 1);
+//        if (c == STAMP_CLOSER) {
+//            //ignore stamp
+//            int j = buffer.lastIndexOf(valueOf(STAMP_OPENER));
+//            buffer.delete(j - 1, buffer.length());
+//        }
+//        c = buffer.charAt(buffer.length() - 1);
+//        if (c == ']') {
+//            int j = buffer.lastIndexOf(valueOf('['));
+//            buffer.delete(j-1, buffer.length());
+//        }
+//
+//        return parseTask(buffer.toString().trim());
     }
 
 
@@ -117,47 +118,60 @@ import static nars.nal.nal8.Operation.make;
 //    }
 
 
-    public Task parseTask(String s) throws InvalidInputException {
-        return parseTask(s, true);
+//    public Task parseTask(String s) throws InvalidInputException {
+//        return parseTask(s, true);
+//    }
+//
+//    public Task parseTask(String s, boolean newStamp) throws InvalidInputException {
+//        //ENTRY POINT TO NEW PARSER
+//        return newParser.parseTask(s, newStamp);
+//    }
+
+    public void parseTask(String s, Consumer<Task> c) throws InvalidInputException {
+        parseTask(s, true, c);
+    }
+    public void parseTask(String s, Collection<Task> c) throws InvalidInputException {
+        newParser.parse(s, c);
     }
 
-    public Task parseTask(String s, boolean newStamp) throws InvalidInputException {
+    public void parseTask(String s, boolean newStamp, Consumer<Task> c) throws InvalidInputException {
         //ENTRY POINT TO NEW PARSER
-        return newParser.parseTask(s, newStamp);
+        newParser.parse(s, newStamp, c);
     }
 
-    public Task parseTaskIfEqualToOldParser(String s) throws InvalidInputException {
 
-        Task u = null, t = null;
-
-        InvalidInputException uError = null;
-        try {
-            u = parseTaskOld(s, true);
-        }
-        catch (InvalidInputException tt) {
-            uError = tt;
-        }
-
-
-        try {
-            t = parseTask(s, true);
-            if (t.equals(u))
-                return t;
-        }
-        catch (Throwable e) {
-            if (Global.DEBUG)
-                System.err.println("Task parse error: " + t + " isnt " + u + ": " + Arrays.toString(e.getStackTrace()));
-        }
-
-        if ((u == null) && (t!=null)) return t;
-        else {
-            if (uError!=null)
-                throw uError;
-        }
-
-        return u;
-
-    }
+//    public Task parseTaskIfEqualToOldParser(String s) throws InvalidInputException {
+//
+//        Task u = null, t = null;
+//
+//        InvalidInputException uError = null;
+//        try {
+//            u = parseTaskOld(s, true);
+//        }
+//        catch (InvalidInputException tt) {
+//            uError = tt;
+//        }
+//
+//
+//        try {
+//            t = parseTask(s, true);
+//            if (t.equals(u))
+//                return t;
+//        }
+//        catch (Throwable e) {
+//            if (Global.DEBUG)
+//                System.err.println("Task parse error: " + t + " isnt " + u + ": " + Arrays.toString(e.getStackTrace()));
+//        }
+//
+//        if ((u == null) && (t!=null)) return t;
+//        else {
+//            if (uError!=null)
+//                throw uError;
+//        }
+//
+//        return u;
+//
+//    }
 
 
     /**
@@ -697,5 +711,14 @@ import static nars.nal.nal8.Operation.make;
 
     public void setSelf(Term arg) {
         this.self = arg;
+    }
+
+    public Task parseOneTask(String taskText) {
+        List<Task> l = new ArrayList(1);
+        parseTask(taskText, l);
+        if (l.size() != 1) {
+            throw new RuntimeException("expected 1 task, got " + l.size());
+        }
+        return l.get(0);
     }
 }

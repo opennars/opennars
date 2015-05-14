@@ -69,6 +69,7 @@ public class TextPerception  {
                 if (input.startsWith(spref))
                     input = input.substring(spref.length());
 
+                if (input.isEmpty()) return null;
                 if (!Character.isDigit(input.charAt(0)))
                     return null;
                 if (input.length() > 8) {
@@ -197,9 +198,10 @@ public class TextPerception  {
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {
-                            Task task = narsese.parseNarsese(new StringBuilder(input));
-                            if (task != null) {
-                                return task;
+                            List<Task> l = new ArrayList();
+                            narsese.parseTask(input, l);
+                            if (!l.isEmpty()) {
+                                return l;
                             }
                         } catch (Exception ex) {
                             return ex;
