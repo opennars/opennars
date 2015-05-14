@@ -153,7 +153,12 @@ public abstract class CompoundTerm extends Term implements Iterable<Term> {
     
     public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
         T=T.cloneDeep(); //we will operate on a copy
-        int counter = (int) (T.toString().chars().filter(num -> num == Symbols.VAR_INDEPENDENT).count()); //if we only add some more as needed its fine as long as its not less
+        int counter = 0;
+        for(char c : T.toString().toCharArray()) {
+            if(c==Symbols.VAR_INDEPENDENT) {
+                counter++;
+            }
+        }
         HashMap<String,Variable> vars = new HashMap<>();
         for(int i=1;i<=counter;i++) {
             vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
