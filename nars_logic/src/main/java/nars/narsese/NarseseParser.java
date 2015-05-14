@@ -69,7 +69,13 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public Rule Input() {
-        return sequence(s(), zeroOrMore(sequence(firstOf(Comment(), Task(true)), s())), EOI);
+        return sequence(s(),
+                zeroOrMore(
+                        sequence(
+                            Task(true), s()
+                        )
+                        //firstOf(Comment(), Task(true))                , s()), EOI)
+        ));
     }
 
     public Rule Comment() {
@@ -321,11 +327,14 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(
                 s(),
                 firstOf(
+
+                        QuotedMultilineLiteral(),
+                        QuotedLiteral(),
+
                         sequence( NALOperator.STATEMENT_OPENER.symbol,
                                 MultiArgTerm(null, NALOperator.STATEMENT_CLOSER, false, true, true, false)
                         ),
 
-                        QuotedLiteral(),
                         Variable(),
                         Interval(),
                         ImageIndex(),
@@ -432,13 +441,23 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     Rule QuotedLiteral() {
-        return sequence("\"", AnyString(), push('\"' + match() + '\"'), "\"");
+        return sequence(dquote(), AnyString(), push('\"' + match() + '\"'), dquote());
     }
+
+    Rule QuotedMultilineLiteral() {
+        return sequence(
+                dquote(), dquote(), dquote(),
+                AnyString(), push('\"' + match() + '\"'),
+                dquote(), dquote(), dquote()
+        );
+    }
+
 
     Rule AnyString() {
         //TODO handle \" escape
         return oneOrMore(noneOf("\""));
     }
+
 
 
     Rule Interval() {

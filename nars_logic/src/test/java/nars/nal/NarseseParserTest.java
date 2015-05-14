@@ -482,4 +482,13 @@ public class NarseseParserTest {
         assertEquals(7, t.size());
 
     }
+
+    @Test
+    public void testMultilineQuotes() {
+        String a = "js(\"\"\"\n" + "1\n" + "\"\"\")!";
+        List<Task> l = tasks(a);
+        System.out.println(l);
+        assertEquals(1, l.size());
+
+    }
 }
