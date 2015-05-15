@@ -2,15 +2,16 @@ package nars.testing.condition;
 
 
 import nars.Events;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.io.Texts;
-import nars.narsese.InvalidInputException;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.Truth;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Term;
+import nars.narsese.InvalidInputException;
+import nars.util.language.JSON;
 
 import java.io.Serializable;
 import java.util.*;
@@ -339,31 +340,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
 
-
-//    public final static JsonSerializer asString = new JsonSerializer() {
-//
-//        @Override
-//        public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
-//            return new JsonPrimitive(o.toString());
-//        }
-//
-//    };
-//
-//    public final static JsonSerializer classString = new JsonSerializer() {
-//
-//        @Override
-//        public JsonElement serialize(Object o, Type type, JsonSerializationContext jsonSerializationContext) {
-//            return new JsonPrimitive(((Class) o).getSimpleName());
-//        }
-//
-//    };
-//
-//    final static Gson j = new GsonBuilder()
-//            .disableHtmlEscaping()
-//            .registerTypeAdapter(Class.class, classString)
-//            .registerTypeAdapter(Term.class, asString)
-//            .excludeFieldsWithoutExposeAnnotation().create();
-
     @Override
     public String getFalseReason() {
         String x = "Unmatched; ";
@@ -392,7 +368,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public List<Task> getTrueReasons() {
-        if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
+        return exact;
+        //if (!isTrue()) throw new RuntimeException(this + " is not true so has no true reasons");
         /*return Lists.newArrayList("match at: " +
 
                 Iterables.transform(trueAt, new Function<Task, String>() {
@@ -402,21 +379,17 @@ public class TaskCondition extends OutputCondition implements Serializable {
                     }
                 }));
                 */
-        return exact;
+        //return exact;
     }
 
     @Override
     public String toString() {
-        return succeeded  +": "  + json(this);
+        return succeeded  +": "  + JSON.stringFrom(this);
     }
 
     public long getCreationTime() {
         return creationTime;
     }
 
-
-    public String json(Object o) {
-        return "<json>";
-    }
 
 }
