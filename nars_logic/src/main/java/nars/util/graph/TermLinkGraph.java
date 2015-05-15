@@ -25,24 +25,21 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
         add(n.memory.concepts, true);
     }
 
-    public void add(Iterable<Concept> concepts, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
+    public TermLinkGraph add(Concept c, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
+        final Term source = c.term;
 
-        for (final Concept c : concepts) {
+        if (!containsVertex(source)) {
+            addVertex(source);
 
-            final Term source = c.term;
-
-            if (!containsVertex(source)) {
-                addVertex(source);
-
-                if (includeTermLinks) {
-                    for (TermLink t : c.termLinks.values()) {
-                        Term target = t.target;
-                        if (!containsVertex(target)) {
-                            addVertex(target);
-                        }
-                        addEdge(source, target, t);
+            if (includeTermLinks) {
+                for (TermLink t : c.termLinks.values()) {
+                    Term target = t.target;
+                    if (!containsVertex(target)) {
+                        addVertex(target);
                     }
+                    addEdge(source, target, t);
                 }
+            }
 
                 /*
                 if (includeTaskLinks) {
@@ -56,17 +53,23 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
                 }
                 */
 
-            }
         }
 
+        return this;
     }
 
-    public boolean includeLevel(int l) {
+    public TermLinkGraph add(Iterable<Concept> concepts, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
+
+        for (final Concept c : concepts) {
+            add(c, includeTermLinks);
+
+        }
+
+        return this;
+    }
+
+    /*public boolean includeLevel(int l) {
         return true;
-    }
+    }*/
 
-    @Override
-    public Object clone() {
-        return super.clone(); //To change body of generated methods, choose Tools | Templates.
-    }
 }

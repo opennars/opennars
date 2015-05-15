@@ -163,7 +163,7 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 2048;
+        int concepts = 1024;
         int conceptsPerCycle = 25;
         final int cyclesPerFrame = 10;
         float qLearnedConfidence = 0.75f; //0.85f; //0 to disable feedback from Q to NARS in model update beliefs

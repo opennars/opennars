@@ -141,7 +141,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
                                 //System.out.println("edge: " + source + " to " + target);
                                 //System.out.println(" " + v1 + " to " + v2);
 
-                                ee.add((Named)e);
+                                ee.add(e);
                             }
 
                         }

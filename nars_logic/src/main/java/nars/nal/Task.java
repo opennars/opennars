@@ -46,7 +46,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed,Budget.Budgetable, Stamped, Truth.Truthable {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed,Budget.Budgetable, Stamped, Truth.Truthable, Sentenced {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -66,20 +66,15 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      */
     public final Sentence parentBelief;
 
-    /** if hash calculated once creation; if parentTask reference is lost, the hash (which includes its hash) will still be preserved,
-     * allowing it to be differentiated from another equal task with a lost parent
-     * this may result in duplicate equivalent tasks that can be merged but it preserves their
-     * position within a bag. otherwise if the hash suddenly changed, there would be a bag fault.
-     */
-    private int hash;
 
     /**
      * For Question and Goal: best solution found so far
      */
     private Sentence bestSolution;
     
-    /** causal factor; usually an instance of Operation */
-    private Term cause;
+    /** causal factor if executed; an instance of Operation */
+    private Operation cause;
+
     private List<String> history = null;
     private boolean temporalInducted=true;
 
@@ -197,9 +192,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     @Override
     public int hashCode() {
-        if (this.hash == 0)
-            this.hash = (sentence==null? toString().hashCode() : sentence.hashCode());// + parentHash();
-        return hash;
+        if (sentence == null) return toString().hashCode();
+        return sentence.hashCode();
     }
 
     public boolean equalParents(Task t) {
@@ -344,13 +338,17 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     /** generally, op will be an Operation instance */
-    public Task setCause(final Term op) {
+    public Task setCause(final Operation op) {
+        if (op.getTask().equals(this))
+            return this; //dont set the cause to itself
+
         this.cause = op;
+
         return this;
     }
 
     /** the causing Operation, or null if not applicable. */
-    public Term getCause() {
+    public Operation getCause() {
         return cause;
     }
 
@@ -569,5 +567,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     public boolean isEternal() {
         return getStamp().isEternal();
+    }
+
+    @Override
+    public Sentence<T> getSentence() {
+        return sentence;
     }
 }

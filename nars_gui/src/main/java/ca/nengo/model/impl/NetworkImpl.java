@@ -189,8 +189,7 @@ abstract public class NetworkImpl<K, N extends Node> implements Network<K,N>, Vi
      * @see ca.nengo.model.Network#addNode(ca.nengo.model.Node)
      */
     public void addNode(N node) throws StructuralException {
-        if (setNode(name(node), node)!=null)
-            throw new StructuralException("This Network already contained a Node named " + node.name());
+        setNode(name(node), node);
     }
 
     /** returns pre-existing */

@@ -23,15 +23,11 @@ package nars.nal.tlink;
 import nars.budget.Budget;
 import nars.nal.Item;
 import nars.nal.Sentence;
-import nars.nal.Sentence.Sentenced;
+import nars.nal.Sentenced;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.data.CircularArrayList;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
 
 /**
  * Reference to a Task.

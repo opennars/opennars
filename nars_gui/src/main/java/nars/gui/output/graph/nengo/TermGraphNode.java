@@ -375,7 +375,6 @@ public class TermGraphNode extends AbstractMapNetwork<String, AbstractWidget> im
             if (ui == null) //should not be materialized
                 return null;
 
-
             try {
                 addNode(ui);
             } catch (StructuralException e) {

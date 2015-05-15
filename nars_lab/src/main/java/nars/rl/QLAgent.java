@@ -185,7 +185,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         if (!isRowPrefilter(s)) return false;
         for (Perception p : perceptions) {
             if (p.isState(s)) {
-                System.out.println(s + " is row according to " + p);
+                //adds the state
                 return true;
             }
         }

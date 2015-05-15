@@ -18,7 +18,7 @@ public class UIEdge<V extends UIVertex> extends ShapeObject implements Named<Str
     final double tEpsilon = 2; //# pixel difference to cause repaint
 
     /** items contained in this edge */
-    public final Set<Named> e = new CopyOnWriteArraySet(); //new FastSet<Named>().atomic();
+    public final Set<Object> components = new CopyOnWriteArraySet(); //new FastSet<Named>().atomic();
     private final String name;
 
     float termlinkPriority, tasklinkPriority, priority;
@@ -133,7 +133,7 @@ public class UIEdge<V extends UIVertex> extends ShapeObject implements Named<Str
 
         tasklinkPriority = termlinkPriority = priority = 0;
         int ntask = 0, nterm = 0, np = 0;
-        for (Named n : e) {
+        for (Object n : components) {
             if (n.getClass() == NARGraph.TaskLinkEdge.class) {
                 float bp = ((NARGraph.TaskLinkEdge) n).getBudget().getPriority();
                 priority += bp;
@@ -174,12 +174,12 @@ public class UIEdge<V extends UIVertex> extends ShapeObject implements Named<Str
         return tasklinkPriority;
     }
 
-    public UIEdge<V> add(Named item) {
-        e.add(item);
+    public UIEdge<V> add(Object item) {
+        components.add(item);
         return this;
     }
-    public UIEdge<V> remove(Named item) {
-        e.remove(item);
+    public UIEdge<V> remove(Object item) {
+        components.remove(item);
         return this;
     }
 

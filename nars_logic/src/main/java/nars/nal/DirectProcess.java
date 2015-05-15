@@ -7,6 +7,9 @@ package nars.nal;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
+import nars.nal.tlink.TermLinkTemplate;
+
+import java.util.List;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,

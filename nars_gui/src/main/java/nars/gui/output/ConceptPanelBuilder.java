@@ -13,6 +13,7 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Budget.Budgetable;
 import nars.event.NARReaction;
+import nars.gui.ConceptMenu;
 import nars.gui.VerticalLayout;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
@@ -27,6 +28,8 @@ import nars.nal.tlink.TaskLink;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.util.*;
@@ -79,7 +82,7 @@ public class ConceptPanelBuilder extends NARReaction {
     }
 
     public ConceptPanel newPanel(Concept c, boolean label, boolean full, int chartSize) {
-        ConceptPanel cp = new ConceptPanel(c, label, full, chartSize).update(nar.time());
+        ConceptPanel cp = new ConceptPanel(nar, c, label, full, chartSize).update(nar.time());
 //        {
 
 //            @Override
@@ -219,7 +222,7 @@ public class ConceptPanelBuilder extends NARReaction {
         // private final PCanvas syntaxPanel;
 
 
-        public ConceptPanel(final Concept c, boolean label, boolean full, int chartSize) {
+        public ConceptPanel(final NAR nar, final Concept c, boolean label, boolean full, int chartSize) {
             super();
             this.concept = c;
             this.closed = false;
@@ -323,6 +326,16 @@ public class ConceptPanelBuilder extends NARReaction {
 //                    title.setOpaque(false);
                     JLabel title = new JLabel(concept.term.toString());
                     title.setFont(titleFont);
+                    title.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    title.addMouseListener(new MouseAdapter() {
+
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            JPopupMenu jp = new ConceptMenu(nar, c);
+                            jp.show(title, e.getX(), e.getY());
+                        }
+                    });
+
 
                     JPanel titlePanel = new JPanel(new VerticalLayout());
                     titlePanel.setOpaque(false);

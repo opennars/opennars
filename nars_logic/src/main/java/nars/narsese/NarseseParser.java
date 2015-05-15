@@ -8,10 +8,7 @@ import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.stack.ValueStack;
 import com.github.fge.grappa.support.Var;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
 import nars.model.impl.Default;
@@ -820,6 +817,11 @@ public class NarseseParser extends BaseParser<Object> {
     public void parse(String input, boolean newStamp, Consumer<? super Task> c) {
         ParsingResult r = inputParser.run(input);
         int size = r.getValueStack().size();
+
+        if (size == 0) {
+            c.accept(new Echo(Events.ERR.class, "Unrecognized input: " + input).newTask());
+            return;
+        }
 
         for (int i = size-1; i >= 0; i--) {
             Object o = r.getValueStack().peek(i);

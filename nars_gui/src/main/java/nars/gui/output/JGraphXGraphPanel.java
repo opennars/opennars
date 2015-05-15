@@ -1,6 +1,9 @@
 package nars.gui.output;
 
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxOrganicLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import nars.NAR;
@@ -9,8 +12,6 @@ import nars.util.graph.NARGraph;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Map;
 
 import static nars.util.graph.NARGraph.IncludeEverything;
@@ -19,102 +20,99 @@ import static nars.util.graph.NARGraph.IncludeEverything;
  *
  * https://github.com/jgrapht/jgrapht/blob/master/jgrapht-demo/src/main/java/org/jgrapht/demo/JGraphXAdapterDemo.java
  */
-public class JGraphXGraphPanel extends JPanel {
-    
-    private final JGraphXAdapter jgxAdapter;
-    
+public class JGraphXGraphPanel extends mxGraphComponent {
+
+
+    public enum LayoutMode {
+        Organic,
+        Tree
+    }
 
     public JGraphXGraphPanel(Graph g) {
-        super(new BorderLayout());
-        
+        this(g, LayoutMode.Organic);
+    }
 
-        // create a visualization using JGraph, via an adapter
-        jgxAdapter = new JGraphXAdapter(g) {
+    public JGraphXGraphPanel(Graph g, LayoutMode l) {
+        super(new JGraphXAdapter(g));
+
+        setOpaque(false);
+
+        getGraph().setGridEnabled(false);
 
 
-          
-        };
-        jgxAdapter.setMultigraph(true);
-        jgxAdapter.setEdgeLabelsMovable(false);
-        jgxAdapter.setVertexLabelsMovable(false);
-        jgxAdapter.setAutoOrigin(true);
-        jgxAdapter.setLabelsClipped(true);
+        getGraph().setMultigraph(true);
+        getGraph().setEdgeLabelsMovable(false);
+        getGraph().setVertexLabelsMovable(false);
+        getGraph().setAutoOrigin(true);
+        getGraph().setLabelsClipped(false);
         
         //System.out.println(jgxAdapter.getStylesheet().getDefaultEdgeStyle());
         
         //{perimeter=com.mxgraph.view.mxPerimeter$1@7b3300e5, shape=rectangle, fontColor=#774400, strokeColor=#6482B9, fillColor=#C3D9FF, align=center, verticalAlign=middle}
-        Map<String, Object> vstyle = jgxAdapter.getStylesheet().getDefaultVertexStyle();
-
+        Map<String, Object> vstyle = getGraph().getStylesheet().getDefaultVertexStyle();
+        vstyle.put(mxConstants.STYLE_SHAPE, "hexagon");
+        vstyle.put(mxConstants.STYLE_FONTFAMILY, "Monospace");
+        vstyle.put(mxConstants.STYLE_FONTSIZE, 16);
+        vstyle.put("fontColor", "#222");
         vstyle.put("fillColor", "#CCCCCC");
         
         //{endArrow=classic, shape=connector, fontColor=#446299, strokeColor=#6482B9, align=center, verticalAlign=middle}
-        Map<String, Object> estyle = jgxAdapter.getStylesheet().getDefaultEdgeStyle();
-        estyle.put("strokeColor", "#333333");
-        estyle.put("fontColor", "#333333");
-        estyle.put(mxConstants.STYLE_STROKEWIDTH, 2);
-        
-        
-
-        mxGraphComponent mxc = new mxGraphComponent(jgxAdapter) {
-            
-        };
-        mxc.setAntiAlias(true);
-        mxc.setConnectable(false);        
-        mxc.setExportEnabled(false);
-        mxc.setFoldingEnabled(false);
-        mxc.setPanning(true);
-        mxc.setTextAntiAlias(true);
-
-        
-                
-        add(mxc, BorderLayout.CENTER);
+        Map<String, Object> estyle = getGraph().getStylesheet().getDefaultEdgeStyle();
+        estyle.put("strokeColor", "#555");
+        estyle.put("fontColor", "#222");
+        estyle.put(mxConstants.STYLE_STROKEWIDTH, 3);
+        estyle.put(mxConstants.STYLE_FONTFAMILY, "Monospace");
+        estyle.put(mxConstants.STYLE_FONTSIZE, 16);
 
 
-        /*
-        
 
-        
-        mxOrganicLayout layout = 
-                new mxCompactTreeLayout(jgxAdapter);
-                new mxOrganicLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);        
-        layout.setEdgeLengthCostFactor(0.001);
-        */
-        /*
-        {
-        mxCompactTreeLayout layout = 
-                new mxCompactTreeLayout(jgxAdapter);
-        
-        layout.levelDistance(40);
-        layout.setNodeDistance(50);
-        layout.setEdgeRouting(true);
-        layout.setHorizontal(false);
-        layout.setMoveTree(true);
-        layout.setResizeParent(false);
-        layout.execute(jgxAdapter.getDefaultParent());
+        setAntiAlias(true);
+        setConnectable(false);
+        setExportEnabled(false);
+        setFoldingEnabled(false);
+        setPanning(true);
+        setTextAntiAlias(true);
+
+        mxGraphLayout theLayout = null;
+
+        switch (l) {
+            case Organic:
+                mxFastOrganicLayout og =
+                        //new mxCompactTreeLayout(jgxAdapter);
+                        new mxFastOrganicLayout(getGraph());
+                //new mxCircleLayout(jgxAdapter);
+                og.setForceConstant(600);
+                og.setMaxIterations(1500);
+                og.setUseBoundingBox(true);
+                theLayout = og;
+                break;
+            case Tree:
+                mxCompactTreeLayout ot =
+                        new mxCompactTreeLayout(getGraph());
+
+                //new mxCircleLayout(jgxAdapter);
+                ot.setLevelDistance(40);
+                ot.setNodeDistance(50);
+                ot.setEdgeRouting(true);
+                ot.setHorizontal(false);
+                ot.setMoveTree(true);
+                ot.setResizeParent(false);
+                theLayout = ot;
+                break;
         }
-        */
-        {
-        mxFastOrganicLayout layout = 
-                //new mxCompactTreeLayout(jgxAdapter);
-                new mxFastOrganicLayout(jgxAdapter);
-                //new mxCircleLayout(jgxAdapter);                
-        layout.setForceConstant(400);
-        layout.setMaxIterations(2000);
-        layout.setUseBoundingBox(true);
-        layout.execute(jgxAdapter.getDefaultParent());
-            
-        }
-        
 
-        
-        jgxAdapter.setConnectableEdges(false);
-        jgxAdapter.setCellsDisconnectable(false);
-        jgxAdapter.setEdgeLabelsMovable(false);
+        theLayout.execute(getGraph().getDefaultParent());
+
+
+        getGraph().setConnectableEdges(false);
+        getGraph().setCellsDisconnectable(false);
+        getGraph().setEdgeLabelsMovable(false);
         //jgxAdapter.setCellsLocked(true);
         
     }
-    
+
+
+
     public JGraphXGraphPanel(NAR n) {
         this(new NARGraph().add(n, IncludeEverything, new DefaultGrapher(true,true,true,true,3,false, false)));
     }

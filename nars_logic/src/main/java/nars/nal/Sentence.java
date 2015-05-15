@@ -44,14 +44,8 @@ import java.util.*;
  * It is used as the premises and conclusions of all logic rules.
  */
 //TODO: make Named<byte[]>
-public class Sentence<T extends Compound> implements Cloneable, Named<String>, Termed, Truth.Truthable, Stamped {
+public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>, Termed, Truth.Truthable, Stamped, Sentenced {
 
-
-
-
-    public static interface Sentenced<T2 extends Compound> extends Termed {
-        public Sentence<T2> getSentence();
-    }
 
     /**
      * The content of a Sentence is a Term
@@ -506,8 +500,8 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
     }
 
     @Override
-    public String name() {
-        return toString();
+    public Sentence name() {
+        return this;
     }
 
     /**
@@ -715,4 +709,8 @@ public class Sentence<T extends Compound> implements Cloneable, Named<String>, T
         return stamp;
     }
 
+    @Override
+    public Sentence getSentence() {
+        return this;
+    }
 }

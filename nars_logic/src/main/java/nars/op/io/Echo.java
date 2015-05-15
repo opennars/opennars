@@ -35,7 +35,7 @@ public class Echo extends ImmediateOperation {
 
     @Override
     public void execute(Memory m) {
-
+        m.emit(channel, signal);
     }
 
 }

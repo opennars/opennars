@@ -986,7 +986,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         if (tl!=null && (updateTLinks || linkPendingEveryCycle )) {
             int n = tl.size();
             for (int i = 0; i < n; i++) {
-                TermLinkTemplate t = getTermLinkTemplates().get(i);
+                TermLinkTemplate t = tl.get(i);
                 if (t.pending.aboveThreshold()) {
                     if (linkTerm(t, t.pending, updateTLinks))
                         activity = true;

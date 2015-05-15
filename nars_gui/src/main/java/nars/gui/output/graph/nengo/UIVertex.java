@@ -170,24 +170,24 @@ abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
         return incoming;
     }
     public Set<UIEdge<UIVertex<V>>> getEdgesOut() {
-        return incoming;
+        return outgoing;
     }
 
-    /** Iterables.concat makes a copy of the list, unnecessary */
-    @Deprecated public Iterable<UIEdge<UIVertex<V>>> getEdges(boolean in, boolean out) {
-        if (destroyed) return Collections.emptyList();
-
-        boolean i = !incoming.isEmpty();
-        boolean o = !outgoing.isEmpty();
-        if (i && o)
-            return Iterables.concat(incoming, outgoing);
-        else if (i)
-            return incoming;
-        else if (o)
-            return outgoing;
-        else
-            return Collections.emptyList();
-    }
+//    /** Iterables.concat makes a copy of the list, unnecessary */
+//    @Deprecated public Iterable<UIEdge<UIVertex<V>>> getEdges(boolean in, boolean out) {
+//        if (destroyed) return Collections.emptyList();
+//
+//        boolean i = !incoming.isEmpty();
+//        boolean o = !outgoing.isEmpty();
+//        if (i && o)
+//            return Iterables.concat(incoming, outgoing);
+//        else if (i)
+//            return incoming;
+//        else if (o)
+//            return outgoing;
+//        else
+//            return Collections.emptyList();
+//    }
 
     public int degree() {
         return incoming.size() + outgoing.size();
