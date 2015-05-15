@@ -26,7 +26,7 @@ public class twoPointRegulator extends javax.swing.JFrame implements KeyListener
      */
     public twoPointRegulator() {
         initComponents();
-        this.setTitle("Experience Predictive Control");
+        this.setTitle("Experience Predictive Control (use up and down key, or w and s to change reference)");
         this.setSize(1000, 400);
         this.addKeyListener(this);
     }
@@ -100,10 +100,10 @@ public class twoPointRegulator extends javax.swing.JFrame implements KeyListener
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyCode()==KeyEvent.VK_UP) {
+        if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
             drawPanel.setpoint+=10;
         }
-        if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+        if(e.getKeyCode()==KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
             drawPanel.setpoint-=10;
         }
     }
