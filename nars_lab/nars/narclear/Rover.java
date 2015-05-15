@@ -43,6 +43,7 @@ public class Rover extends PhysicsModel {
     public static int do_sth_importance=0;
     public static RoverModel rover;
     private final NAR nar;
+    int pixels = 3;
 
     public Rover(NAR nar) {
         this.nar = nar;
@@ -63,7 +64,7 @@ public class Rover extends PhysicsModel {
         ChangedTextInput feltAngularVelocity = new ChangedTextInput(nar);
         ChangedTextInput feltOrientation = new ChangedTextInput(nar);
         ChangedTextInput feltSpeed = new ChangedTextInput(nar);
-        
+       
 
         //public class DistanceInput extends ChangedTextInput
         public RoverModel(RoverWorld world,PhysicsModel p) {
@@ -130,20 +131,20 @@ public class Rover extends PhysicsModel {
                 elbowJoint = (RevoluteJoint) getWorld().createJoint(rjd2);
 
             }*/
-            
-            
-            
-            int pixels = 8;
-            float aStep = 1.8f / pixels;
+           
+           
+           
+           
+            float aStep = 1.8f / pixels / 15;
             float retinaArc = aStep;
-            int retinaResolution = 5; //should be odd # to balance
-            float L = 50.0f;
+            int retinaResolution = 3; //should be odd # to balance
+            float L = 70.0f;
             Vec2 frontRetina = new Vec2(0, 0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
                 vision.add(new VisionRay(world,"front" + i, torso, frontRetina, MathUtils.PI/2f + aStep*i*1.0f,
                             retinaArc, retinaResolution, L, 3));
             }
-            
+           
             /*pixels=3;
             Vec2 backRetina = new Vec2(0, -0.5f);
             for (int i = -pixels/2; i <= pixels/2; i++) {
@@ -151,11 +152,11 @@ public class Rover extends PhysicsModel {
                            retinaArc, retinaResolution,
                            5.5f, 3));
             }*/
-            
+           
             //Vec2 backRetina = new Vec2(0, -0.5f);
             //vision.add(new VisionRay("back", torso, backRetina, -MathUtils.PI/2f, L/2f, 3));
-            
-            
+           
+           
             /*
             int n = 0;
             float LS = 0.4f;
@@ -163,7 +164,7 @@ public class Rover extends PhysicsModel {
             for (float sonarAngle = 0f; sonarAngle < MathUtils.TWOPI; sonarAngle+=0.6f) {
                 float ca = (float)Math.cos(sonarAngle) * LT;
                 float sa = (float)Math.sin(sonarAngle) * LT;
-                vision.add(new VisionRay("radar" + n, torso, 
+                vision.add(new VisionRay("radar" + n, torso,
                         new Vec2(ca, sa), sonarAngle + MathUtils.PI/16, LS, 2));
                 n++;
             }
@@ -181,11 +182,12 @@ public class Rover extends PhysicsModel {
                 this.dist = dist;
             }
         }
-        
+       
+        int tt=0;
         double goods=1;
         double bads=1;
         ArrayList<InputDistance> Li=new ArrayList<InputDistance>();
-            
+           
         public class VisionRay {
             final Vec2 point; //where the retina receives vision at
             final float angle;
@@ -210,7 +212,7 @@ public class Rover extends PhysicsModel {
                 this.distance = length;
                 this.distanceSteps = steps;
             }
-            
+           
             int n=0;
 
             public void step() {
@@ -218,9 +220,9 @@ public class Rover extends PhysicsModel {
                 point1 = body.getWorldPoint(point);
 
                 Body hit = null;
-                
+               
                 float minDist = 999999;
-                
+               
                 float dArc = arc / resolution;
                 for (int r = 0; r < resolution; r++) {
                     float da = (-arc / 2f) + dArc * r;
@@ -254,12 +256,12 @@ public class Rover extends PhysicsModel {
                         draw().drawSegment(point1, point2, laserColor);
                     }
                 }
-                
+               
                 boolean good=world.goods.contains(hit);
 
-                if (hit!=null) {  
-                    
-                    float di = minDist; 
+                if (hit!=null) { 
+                   
+                    float di = minDist;
                     /*f(id.startsWith("back")) {
                         if(good) {
                             sight.set("<goal --> reached>. :|: %0.0;0.90%");
@@ -268,21 +270,26 @@ public class Rover extends PhysicsModel {
                         }
                         return;
                     }*/
-                    
-                    String dist = "unknown";                    
+                   
+                    String dist = "unknown";                   
                     //if (distanceSteps == 2) {
                     //    dist = "hit";
                     //}
                     //else if (distanceSteps < 10) {
                         dist = Texts.n1(di);
                     //}
-                    
+                   
                     if(n%1000==0) {
-                        nar.addInput("<goal --> reached>. %0.00;0.90%"); //dont remember
+                        //nar.addInput("<goal --> reached>. %0.00;0.90%"); //dont remember
                         nar.addInput("<goal --> reached>! %1.00;0.90%"); //also remember on goal
+                       /* for (int i = -pixels/2; i <= pixels/2; i++) {
+                            String textd = "<front"+i+" --> [good]>!
+                           
+                        }*/
+                       
                     }
-                    if(di <= 0.2f) {
-                        
+                    if(di <= 0.2f && forward) {
+                       
                         float x = (float) Math.random() * sz - sz / 2f;
                         float y = (float) Math.random() * sz - sz / 2f;
                         //world.AddABlock(Phys, sz, sz);
@@ -292,25 +299,25 @@ public class Rover extends PhysicsModel {
                             goods++;
                             double stat=goods/bads;
                             nar.emit(Output.OUT.class, "good : bad = "+stat+" total: "+((Integer)((int)(goods+bads))).toString());
-                            sight.set("<goal --> reached>. :|:"); 
+                            sight.set("<goal --> reached>. :|:");
                         } else {
                             bads++;
                             double stat=goods/bads;
                             nar.emit(Output.OUT.class, "good : bad = "+stat+" total: "+((Integer)((int)(goods+bads))).toString());
-                            sight.set("<goal --> reached>. :|: %0.0;0.90%"); 
+                            sight.set("<goal --> reached>. :|: %0.0;0.90%");
                         }
-                        
+                       
                     }
                     String Sgood= good ? "good" : "bad";
                     //sight.set("<(*," + id + ",sth) --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     if(Sgood.equals("bad") && n%100==0) {
-                        Li.add(new InputDistance("<(*," + id +/* "," + dist +*/ ",good) --> see>. :|: %0.00;0.90%", di));
+                        Li.add(new InputDistance("<vision"+/* "," + dist +*/" --> [bad]>. :|:", di));
                        // nar.addInput("<(*," + id + "," + dist + ",good) --> see>. :|: %0.00;0.90%");
                     } else if(n%100==0) {
                         //nar.addInput("<(*," + id + ",good) --> see>. :|:");
-                        Li.add(new InputDistance("<(*," + id +/* "," + dist +*/ ","+Sgood+") --> see>. :|:", di));
+                        Li.add(new InputDistance("<vision" +/* "," + dist +*/ " --> [good]>. :|:", di));
                         //nar.addInput("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     }
                 }
@@ -326,44 +333,46 @@ public class Rover extends PhysicsModel {
         public void step() {
             for (VisionRay v : vision)
                 v.step();
-            
+           
             double d=999999;
             String inp="";
-            
+           
             for(InputDistance I : Li) {
                 if(I.dist<d) {
                     inp=I.inp;
                     d=I.dist;
                 }
             }
-            
+           
             Li.clear();
-            
+           
             if(!("".equals(inp))) {
                 nar.addInput(inp);
             }
-            
-            if(Rover.cnt>=do_sth_importance) {
+           
+            tt++;
+            if(Rover.cnt>=do_sth_importance && tt<100) {
                 Rover.cnt=0;
                 Rover.do_sth_importance+=decrease_of_importance_step; //increase
                 //System.out.println("choosing random "+String.valueOf(Math.random()));
                 ArrayList<String> candids=new ArrayList<>();
-                candids.add("(^motor,left)! :|:");
-                candids.add("(^motor,right)! :|:");
-                candids.add("(^motor,backward)! :|:");
+               // candids.add("(^motor,left)! :|:");
+               // candids.add("(^motor,right)! :|:");
+               // candids.add("(^motor,backward)! :|:");
                 //candids.add("(^motor,backward). :|:");
                // candids.add("(^motor,forward)! :|:");
                 candids.add("(^motor,forward)! :|:");
                 int candid=(int)(Math.random()*candids.size()-0.001);
                 nar.addInput(candids.get(candid));
-                
+               
                 //nar.addInput("(^motor,random)!");
             }
-            
+           
             if(feel_motion) {
                 feelMotion();
             }
-           // rover.thrust(0, 100);
+          //  rover.thrust(0, 100);
+            rover.rotate(0.15f);
             Rover.cnt++;
         }
 
@@ -390,7 +399,7 @@ public class Rover extends PhysicsModel {
 
             if (a < 0.1) {
                 feltAngularVelocity.set("$0.1;0.1$ <0 --> feltAngularMotion>. :|: %1.00;0.90%");
-                //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");   
+                //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");  
             } else {
                 String direction;
                 String da = Texts.n1(a);// + ",radPerFrame";
@@ -464,7 +473,7 @@ public class Rover extends PhysicsModel {
                 nar.addInput(command);
             }
 
-            
+           
         }
 
         public RoverPanel(RoverModel rover) {
@@ -506,8 +515,8 @@ public class Rover extends PhysicsModel {
             float a = 0;
             addBlock(p, x*2.0f, y*2.0f, bw, bh, a,bad);
         }
-        
-        
+       
+       
         public HashSet<Body> goods=new HashSet<Body>();
         public HashSet<Body> bads=new HashSet<Body>();
         public void addBlock(PhysicsModel p, float x, float y, float w, float h, float a,boolean bad) {
@@ -548,7 +557,7 @@ public class Rover extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         world = new RoverWorld(this, sz, sz);
-        
+       
         rover = new RoverModel(world,this);
         rover.torso.setAngularDamping(20);
         rover.torso.setLinearDamping(10);
@@ -561,14 +570,16 @@ public class Rover extends PhysicsModel {
     }
 
     public static float rotationSpeed = 100f;
-    public static float linearSpeed = 5000f;
-                
+    public static float linearSpeed = 30000f;
+               
     public static boolean allow_imitate=true; //allow rover to desire user way
-    
+  
+    boolean forward=false;
     protected void addOperators() {
         nar.addPlugin(new NullOperator("^motor") {
             @Override
             protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
+                forward=false;
                 Term t1 = args[0];
                 float priority = operation.getTask().budget.getPriority();
 
@@ -581,6 +592,7 @@ public class Rover extends PhysicsModel {
                             rover.rotate(-rotationSpeed);
                             break;
                         case "forward":
+                            forward=true;
                             rover.thrust(0, linearSpeed);
                             break;
                         case "backward":
@@ -593,15 +605,15 @@ public class Rover extends PhysicsModel {
                             //nar.addInput("(^motor,random). :|:\n");
                             rover.thrust(0, linearSpeed);
                             //nar.step(100);
-                            
+                           
  
                             if(true) { //allow_subcons
                                 ArrayList<String> candids=new ArrayList<>();
-                                candids.add("(^motor,left). :|:");
-                                candids.add("(^motor,right). :|:");
+                             //   candids.add("(^motor,left). :|:");
+                              //  candids.add("(^motor,right). :|:");
                                 //candids.add("(^motor,backward). :|:");
                                 candids.add("(^motor,forward). :|:");
-                                candids.add("(^motor,backward). :|:");
+                              //  candids.add("(^motor,backward). :|:");
                                 //candids.add("(^motor,forward). :|:");
                                 int candid=(int)(Math.random()*candids.size()-0.001);
                                 nar.addInput(candids.get(candid));
@@ -615,17 +627,17 @@ public class Rover extends PhysicsModel {
                                     rover.rotate(rotationSpeed);
                             } else {
                                 ArrayList<String> candids=new ArrayList<>();
-                                candids.add("(^motor,left)! :|:");
-                                candids.add("(^motor,right)! :|:");
+                               // candids.add("(^motor,left)! :|:");
+                               // candids.add("(^motor,right)! :|:");
                                 //candids.add("(^motor,backward)! :|:");
                                 candids.add("(^motor,forward)! :|:");
-                                candids.add("(^motor,backward)! :|:");
+                             //   candids.add("(^motor,backward)! :|:");
                                 int candid=(int)(Math.random()*candids.size()-0.001);
                                 nar.addInput(candids.get(candid));
                             }
-                            
+                           
                             //{"(^motor,left)! :|:", "(^motor,right)! :|:", "(^motor,forward)! :|:", "(^motor,backward)! :|:"};
-                            
+                           
                             break;
                     }
                 }
@@ -673,22 +685,22 @@ public class Rover extends PhysicsModel {
 
         //nar.addPlugin(new TemporalParticlePlanner());
         float framesPerSecond = 50f;
-        int cyclesPerFrame = 10; //was 200    
+        int cyclesPerFrame = 10; //was 200   
         (nar.param).noiseLevel.set(0);
         (nar.param).duration.set(cyclesPerFrame);
-        
+       
        // RoverWorld.world= new RoverWorld(rv, 48, 48);
         NARPhysics phys=new NARPhysics<Rover>(nar, 1.0f / framesPerSecond, new Rover(nar)) {
 
             @Override
             public void cycle() {
-                super.cycle(); 
+                super.cycle();
                 nar.memory.addSimulationTime(cyclesPerFrame);
             }
-            
+           
             @Override
             public void keyPressed(KeyEvent e) {
-                 
+                
                 Rover.RoverModel rover=Rover.rover;
                 float rotationSpeed = Rover.rotationSpeed;
                 float linearSpeed = Rover.linearSpeed;
@@ -728,9 +740,9 @@ public class Rover extends PhysicsModel {
 
             }
 
-            
+           
         };
-        
+       
         nar.start(((long)(1000f/framesPerSecond)));//, cyclesPerFrame, 1.0f);
         phys.sw.controls.setSpeed(1.0f);
        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);

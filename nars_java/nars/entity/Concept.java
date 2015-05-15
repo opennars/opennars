@@ -373,7 +373,7 @@ public class Concept extends Item<Term> implements Termable {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
-                Sentence projectedGoal = oldGoal.projection(memory.time(), newStamp.getOccurrenceTime());
+                Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
@@ -385,7 +385,7 @@ public class Concept extends Item<Term> implements Termable {
                         if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
                             return; // with higher/lower desire
                         } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
-                    }
+                   }
                 }
             }
         } 
@@ -393,7 +393,7 @@ public class Concept extends Item<Term> implements Termable {
         Stamp s2=goal.stamp.clone();
         s2.setOccurrenceTime(memory.time());
         if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
-            Sentence projectedGoal = oldGoal.projection(memory.time(), nal.memory.param.duration.get());
+            Sentence projectedGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
             if(projectedGoal!=null) {
                 nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
                 return;
