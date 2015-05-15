@@ -394,7 +394,7 @@ public final class SyllogisticRules {
             return;
         
         int order = statement.getTemporalOrder();
-        if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+        if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
             long baseTime = subSentence.getOccurenceTime();
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = nal.getTime();
@@ -433,9 +433,9 @@ public final class SyllogisticRules {
                     truth = TruthFunctions.desireStrong(truth1, truth2);
                     strong=true;
                 } else if (side == 0) {
-                    truth = TruthFunctions.desireDed(truth1, truth2);
-                } else {
                     truth = TruthFunctions.desireInd(truth1, truth2);
+                } else {
+                    truth = TruthFunctions.desireDed(truth1, truth2);
                     strong=true;
                 }
             } else { // isJudgment

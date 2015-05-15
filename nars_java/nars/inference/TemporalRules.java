@@ -517,7 +517,7 @@ public class TemporalRules {
                             Goal.stamp.setOccurrenceTime(s1.getOccurenceTime()); //strongest desire for that time is what we want to know
                             Task strongest_desireT=S1_State_C.selectCandidate(Goal, S1_State_C.desires);
                             Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurenceTime(), strongest_desireT.sentence.getOccurenceTime());
-                            TruthValue T=TruthFunctions.desireWeak(belief.truth, strongest_desire.truth);
+                            TruthValue T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
                             //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
                             Stamp st=belief.stamp.clone();
                             
@@ -530,7 +530,7 @@ public class TemporalRules {
                                 }
                                 st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
                             }
-                            st.setEternal();
+
                             ///SPECIAL REASONING CONTEXT FOR TEMPORAL DESIRE UPDATE
                             Stamp SVSTamp=nal.getNewStamp();
                             Task SVTask=nal.getCurrentTask();
@@ -544,7 +544,8 @@ public class TemporalRules {
                             BudgetValue val=BudgetFunctions.forward(T, nal);
                             Task TD=new Task(W,val,strongest_desireT);
                             
-                            nal.derivedTask(TD, false, false, strongest_desireT, null, false);
+                            nal.doublePremiseTask(TD.getTerm(), TD.sentence.truth, TD.budget, false, true);
+                           // nal.derivedTask(TD, false, false, strongest_desireT, null, false);
                             
                             //RESTORE CONTEXT
                             nal.setNewStamp(SVSTamp);

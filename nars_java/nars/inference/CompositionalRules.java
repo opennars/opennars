@@ -1308,12 +1308,15 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     continue;
                 }
                 
-                TruthValue truth = abduction(taskSentence.truth, truthSecond);
+                TruthValue truth = deduction(taskSentence.truth, truthSecond);
+                if(taskSentence.isGoal()) {
+                    truth = TruthFunctions.desireInd(taskSentence.truth, truthSecond);
+                }
                 
                 int order = taskSentence.getTemporalOrder();
                 int side = 1;
                 long time=-99999;
-                if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+                if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
                     long baseTime = second_belief.getOccurenceTime();
                     if (baseTime == Stamp.ETERNAL) {
                         baseTime = nal.getTime();
@@ -1391,12 +1394,6 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     truth = TruthFunctions.desireDed(t1, t2);
                 }
                 mark = Symbols.GOAL_MARK;
-            } else if (task.sentence.isJudgment()) {
-                if (strong) {
-                    truth = abduction(t1, t2);
-                } else {
-                    truth = deduction(t1, t2);
-                }
             }
 
             if (sx == null)
@@ -1421,7 +1418,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                     int order = taskSentence.getTemporalOrder();
                     int side = 1;
-                    if ((order != ORDER_NONE) && (order!=ORDER_INVALID)) {
+                    if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
                         long baseTime = second_belief.getOccurenceTime();
                         if (baseTime == Stamp.ETERNAL) {
                             baseTime = nal.getTime();
