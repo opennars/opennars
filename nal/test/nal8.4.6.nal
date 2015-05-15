@@ -2,4 +2,4 @@
   IN: <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :\: %1.00;0.90%
   IN: <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :\: %1.00;0.45% 
 35
-''outputMustContain('<(^pick,key001) =/> <Self --> (/,hold,_,key001)>>. :\: %1.00;0.63%') 
+''outputMustContain('<(^pick,key001) =/> <(*,Self,key001) --> hold>>. :\: %1.00;0.91%') 

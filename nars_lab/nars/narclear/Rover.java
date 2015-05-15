@@ -313,7 +313,7 @@ public class Rover extends PhysicsModel {
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     //sight.set("<(*," + id + "," + dist + ","+Sgood+") --> see>. :|:");
                     if(Sgood.equals("bad") && n%100==0) {
-                        Li.add(new InputDistance("<vision"+/* "," + dist +*/" --> [bad]>. :|:", di));
+                        Li.add(new InputDistance("<vision"+/* "," + dist +*/" --> [good]>. :|: %0%", di));
                        // nar.addInput("<(*," + id + "," + dist + ",good) --> see>. :|: %0.00;0.90%");
                     } else if(n%100==0) {
                         //nar.addInput("<(*," + id + ",good) --> see>. :|:");

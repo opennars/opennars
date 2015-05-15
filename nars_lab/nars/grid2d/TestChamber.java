@@ -176,7 +176,7 @@ public class TestChamber {
             space.newWindow(1000, 800, true);
         cells.forEach(16, 16, 18, 18, new Hauto.SetMaterial(Material.DirtFloor));
         GridAgent a = new GridAgent(17, 17, nar) {
-
+        String lastgone="";
             @Override
             public void update(Effect nextEffect) {
                 if(active) {
@@ -321,7 +321,10 @@ public class TestChamber {
                                     }
                                     if("go-to".equals(opname)) {
                                         executed_going=false;
-                                        nar.addInput("<"+goal+" --> [at]>. :|:");
+                                        if(!goal.equals(lastgone)) {
+                                            nar.addInput("<"+goal+" --> [at]>. :|:");
+                                        }
+                                        lastgone=goal;
                                         if (goal.startsWith("{pizza")) {
                                             GridObject ToRemove = null;
                                             for (GridObject obj : space.objects) { //remove pizza
