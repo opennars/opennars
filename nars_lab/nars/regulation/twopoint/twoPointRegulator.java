@@ -100,20 +100,20 @@ public class twoPointRegulator extends javax.swing.JFrame implements KeyListener
 
     @Override
     public void keyTyped(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
-            drawPanel.setpoint+=10;
-        }
-        if(e.getKeyCode()==KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
+        if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyChar() == 'w') {
             drawPanel.setpoint-=10;
+        }
+        if(e.getKeyCode()==KeyEvent.VK_DOWN || e.getKeyChar() == 's') {
+            drawPanel.setpoint+=10;
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode()==KeyEvent.VK_UP) {
+        if(e.getKeyCode()==KeyEvent.VK_UP || e.getKeyChar() == 'w') {
             drawPanel.setpoint-=10;
         }
-        if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+        if(e.getKeyCode()==KeyEvent.VK_DOWN  || e.getKeyChar() == 's') {
             drawPanel.setpoint+=10;
         }
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
