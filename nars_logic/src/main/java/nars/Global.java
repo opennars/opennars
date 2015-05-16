@@ -85,13 +85,6 @@ public class Global {
 
 
     
-    /** determines the internal precision used for TruthValue calculations.
-     *  a value of 0.01 gives 100 truth value states between 0 and 1.0.
-     *  other values may be used, for example, 0.02 for 50, 0.10 for 10, etc.
-     *  Change at your own risk
-     */
-    public static float TRUTH_EPSILON = 0.01f;
-    public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
 
 
 
@@ -195,7 +188,11 @@ public class Global {
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
 
+    //default
+    public static float TRUTH_EPSILON = 0.01f;
 
+    public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
+    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
     //temporary parameter for setting #threads to use, globally
     @Deprecated public static int THREADS = 1;
@@ -240,8 +237,6 @@ public class Global {
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
     public static final float TERMLINK_FORGETTING_ACCURACY = 0.2f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.2f;
-    //public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
-    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
 
     public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection
 

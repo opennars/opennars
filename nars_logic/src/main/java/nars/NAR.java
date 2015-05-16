@@ -12,13 +12,11 @@ import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
-import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.narsese.OldNarseseParser;
-import nars.op.IOperator;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 
@@ -85,40 +83,40 @@ public class NAR implements Runnable {
     }
 
 
-    /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
-    public class OperatorRegistration implements Serializable {
-        final public nars.op.IOperator IOperator;
-        boolean enabled = false;
-
-        public OperatorRegistration(IOperator IOperator) {
-            this(IOperator,true);
-        }
-        
-        public OperatorRegistration(IOperator IOperator, boolean enabled) {
-            this.IOperator = IOperator;
-            setEnabled(enabled);
-        }
-
-        public void setEnabled(boolean enabled) {
-            if (this.enabled == enabled) return;
-            
-            IOperator.setEnabled(NAR.this, enabled);
-            this.enabled = enabled;
-            emit(Events.PluginsChange.class, IOperator, enabled);
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void off() {
-            NAR.this.off(this);
-        }
-
-        public Memory getMemory() { return NAR.this.memory; }
-    }
-    
-    protected final List<OperatorRegistration> plugins = new CopyOnWriteArrayList<>();
+//    /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
+//    public class OperatorRegistration implements Serializable {
+//        final public nars.op.IOperator IOperator;
+//        boolean enabled = false;
+//
+//        public OperatorRegistration(IOperator IOperator) {
+//            this(IOperator,true);
+//        }
+//
+//        public OperatorRegistration(IOperator IOperator, boolean enabled) {
+//            this.IOperator = IOperator;
+//            setEnabled(enabled);
+//        }
+//
+//        public void setEnabled(boolean enabled) {
+//            if (this.enabled == enabled) return;
+//
+//            IOperator.setEnabled(NAR.this, enabled);
+//            this.enabled = enabled;
+//            emit(Events.PluginsChange.class, IOperator, enabled);
+//        }
+//
+//        public boolean isEnabled() {
+//            return enabled;
+//        }
+//
+//        public void off() {
+//            NAR.this.off(this);
+//        }
+//
+//        public Memory getMemory() { return NAR.this.memory; }
+//    }
+//
+//    protected final List<OperatorRegistration> plugins = new CopyOnWriteArrayList<>();
     
     /** Flag for running continuously  */
     private boolean running = false;
@@ -155,32 +153,6 @@ public class NAR implements Runnable {
     public void delete() {
         memory.delete();
     }
-
-    final Reaction togglePluginOnReset = new Reaction() {
-
-        final List<OperatorRegistration> toReEnable = new ArrayList();
-
-        @Override
-        public void event(Class event, Object[] args) {
-
-            //toggle plugins
-
-            //1. disable all
-            for (OperatorRegistration p : getPlugins()) {
-                if (p.isEnabled()) {
-                    toReEnable.add(p);
-                    p.setEnabled(false);
-                }
-            }
-            //2. enable all
-            for (OperatorRegistration p : toReEnable) {
-                p.setEnabled(true);
-            }
-
-            toReEnable.clear();
-        }
-    };
-
 
 
 
@@ -403,31 +375,31 @@ public class NAR implements Runnable {
 //        return channel;
 //    }
 
-
-    /** add and enable a plugin or operate */
-    public OperatorRegistration on(IOperator p) {
-        if (p instanceof Operator) {
-            memory.operatorAdd((Operator) p);
-        }
-        OperatorRegistration ps = new OperatorRegistration(p);
-        plugins.add(ps);
-        return ps;
-    }
-
-    /** disable and remove a plugin or operate; use the PluginState instance returned by on(plugin) to .off() it */
-    protected void off(OperatorRegistration ps) {
-        if (plugins.remove(ps)) {
-            IOperator p = ps.IOperator;
-            if (p instanceof Operator) {
-                memory.operatorRemove((Operator) p);
-            }
-            ps.setEnabled(false);
-        }
-    }
-    
-    public List<OperatorRegistration> getPlugins() {
-        return Collections.unmodifiableList(plugins);
-    }
+//
+//    /** add and enable a plugin or operate */
+//    public OperatorRegistration on(IOperator p) {
+//        if (p instanceof Operator) {
+//            memory.operatorAdd((Operator) p);
+//        }
+//        OperatorRegistration ps = new OperatorRegistration(p);
+//        plugins.add(ps);
+//        return ps;
+//    }
+//
+//    /** disable and remove a plugin or operate; use the PluginState instance returned by on(plugin) to .off() it */
+//    protected void off(OperatorRegistration ps) {
+//        if (plugins.remove(ps)) {
+//            IOperator p = ps.IOperator;
+//            if (p instanceof Operator) {
+//                memory.operatorRemove((Operator) p);
+//            }
+//            ps.setEnabled(false);
+//        }
+//    }
+//
+//    public List<OperatorRegistration> getPlugins() {
+//        return Collections.unmodifiableList(plugins);
+//    }
 
     
     @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {

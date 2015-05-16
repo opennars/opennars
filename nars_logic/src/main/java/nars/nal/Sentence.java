@@ -30,7 +30,6 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.term.*;
@@ -481,14 +480,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     }
     
 
-    public Operator getOperator() {
-        if (term instanceof Operation) {
-             return (Operator) ((Statement) term).getPredicate();
-        } else {
-             return null;
-        }
-    }    
-    
+
     /**
      * Get a String representation of the sentence
      *

@@ -246,12 +246,7 @@ public class Memory implements Serializable {
 
     public final EventEmitter event;
 
-    /* InnateOperator registry. Containing all registered operators of the system */
-    public final LinkedHashMap<String, Operator> operators;
-
     private long currentStampSerial = 1;
-
-
 
     //public final Term self;
     public final EmotionMeter emotion = new EmotionMeter();

@@ -46,7 +46,7 @@ import java.util.List;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-public abstract class Operator extends Atom implements IOperator {
+@Deprecated abstract class Operator extends Atom  {
 
     protected NAR nar;
 
@@ -59,7 +59,7 @@ public abstract class Operator extends Atom implements IOperator {
 
 
 
-    @Override public boolean setEnabled(final NAR n, final boolean enabled) {
+    public boolean setEnabled(final NAR n, final boolean enabled) {
         if (enabled)
             this.nar = n;
         else

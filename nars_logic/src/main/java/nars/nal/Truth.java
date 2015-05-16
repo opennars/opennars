@@ -20,149 +20,247 @@
  */
 package nars.nal;
 
-import com.google.common.primitives.Floats;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.util.FastMath;
 
-import static nars.Global.TRUTH_EPSILON;
+import java.io.Serializable;
 
 
-public class Truth implements Cloneable { // implements Cloneable {
+abstract public interface Truth extends Cloneable, Serializable { // implements Cloneable {
+
+    public static float TRUTH_EPSILON = 0.01f;
 
 
     final static Term Truth_TRUE = Atom.get("TRUE");
     final static Term Truth_FALSE = Atom.get("FALSE");
     final static Term Truth_UNSURE = Atom.get("UNSURE");
 
-    /**
-     * The frequency factor of the truth value
-     */
-    private float frequency;
-    /**
-     * The confidence factor of the truth value
-     */
-    private float confidence;
-    /**
-     * Whether the truth value is derived from a definition
-     */
-    private boolean analytic = false;
+    public static class DefaultTruth implements Truth {
 
-    public Truth() {
-        this(0,0);
-    }
-    
-    /**
-     * Constructor with two ShortFloats
-     *
-     * @param f The frequency value
-     * @param c The confidence value
-     */
-    public Truth(final float f, final float c) {
-        this(f, c, false);
-    }
 
-    /**
-     * Constructor with two ShortFloats
-     *
-     * @param f The frequency value
-     * @param c The confidence value
-     *
-     */
-    public Truth(final float f, final float c, final boolean b) {
-        setFrequency(f);                
-        setConfidence(c);        
-        setAnalytic(b);
-    }
+        /** determines the internal precision used for TruthValue calculations.
+         *  a value of 0.01 gives 100 truth value states between 0 and 1.0.
+         *  other values may be used, for example, 0.02 for 50, 0.10 for 10, etc.
+         *  Change at your own risk
+         */
+        //public static boolean TASK_LINK_UNIQUE_BY_INDEX = false;
 
-    /**
-     * Constructor with a TruthValue to clone
-     *
-     * @param v The truth value to be cloned
-     */
-    public Truth(final Truth v) {
-        setFrequency(v.getFrequency());
-        setConfidence(v.getConfidence());
-        setAnalytic(v.getAnalytic());
-    }
 
-    public Truth(char punctuation) {
-        float c;
-        switch(punctuation) {
-            case Symbols.JUDGMENT: c = Global.DEFAULT_JUDGMENT_CONFIDENCE;  break;
-            case Symbols.GOAL: c = Global.DEFAULT_GOAL_CONFIDENCE;  break;
-            default:
-                throw new RuntimeException("Invalid punctuation " + punctuation + " for a TruthValue");
+        /**
+         * The frequency factor of the truth value
+         */
+        private float frequency;
+        /**
+         * The confidence factor of the truth value
+         */
+        private float confidence;
+
+        /**
+         * Whether the truth value is derived from a definition
+         */
+        private boolean analytic = false;
+
+
+        public DefaultTruth() {
+            this(0,0);
         }
-        float f = 1;
-        setFrequency(f);
-        setConfidence(c);
+
+
+
+        /**
+         * Constructor with two ShortFloats
+         *
+         * @param f The frequency value
+         * @param c The confidence value
+         */
+        public DefaultTruth(final float f, final float c) {
+            this(f, c, false);
+        }
+
+        /**
+         * Constructor with two ShortFloats
+         *
+         * @param f The frequency value
+         * @param c The confidence value
+         *
+         */
+        public DefaultTruth(final float f, final float c, final boolean b) {
+            setFrequency(f);
+            setConfidence(c);
+            setAnalytic(b);
+        }
+
+        /**
+         * Constructor with a TruthValue to clone
+         *
+         * @param v The truth value to be cloned
+         */
+        public DefaultTruth(final Truth v) {
+            setFrequency(v.getFrequency());
+            setConfidence(v.getConfidence());
+            setAnalytic(v.getAnalytic());
+        }
+
+        public DefaultTruth(char punctuation) {
+            float c;
+            switch(punctuation) {
+                case Symbols.JUDGMENT: c = Global.DEFAULT_JUDGMENT_CONFIDENCE;  break;
+                case Symbols.GOAL: c = Global.DEFAULT_GOAL_CONFIDENCE;  break;
+                default:
+                    throw new RuntimeException("Invalid punctuation " + punctuation + " for a TruthValue");
+            }
+            float f = 1;
+            setFrequency(f);
+            setConfidence(c);
+        }
+
+        public float getFrequency() {
+            return frequency;
+        }
+
+        @Override
+        public void setAnalytic() {
+            this.analytic = true;
+        }
+
+        @Override
+        public boolean getAnalytic() {
+            return analytic;
+        }
+
+        public Truth setFrequency(float f) {
+            if (f > 1.0f) f = 1.0f;
+            if (f < 0f) f = 0f;
+            //if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
+
+            final float e = getEpsilon();
+            this.frequency = FastMath.round(f / e) * e;
+            return this;
+        }
+
+        private float getEpsilon() {
+            return Global.TRUTH_EPSILON;
+
+        }
+
+        @Override
+        public float getConfidence() {
+            return confidence;
+        }
+
+
+        public Truth setConfidence(float c) {
+            //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
+            final float maxConf = getConfidenceMax();
+            if (c > maxConf)  c = maxConf;
+            if (c < 0) c = 0;
+
+            final float e = getEpsilon();
+            this.confidence = Math.round( c / e) * e;
+            return this;
+        }
+
+        @Override public float getConfidenceMax() {
+            return Global.MAX_CONFIDENCE;
+        }
+
+        @Override
+        public Truth setAnalytic(final boolean a) {
+            analytic = a;
+            return this;
+        }
+
+        /**
+         * Compare two truth values
+         *
+         * @param that The other TruthValue
+         * @return Whether the two are equivalent
+         */
+
+        @Override
+        public boolean equals(final Object that) {
+            if (that == this) return true;
+            if (that instanceof Truth) {
+                final Truth t = ((Truth) that);
+
+                final float e = getEpsilon();
+
+                if (!isEqual(getFrequency(), t.getFrequency(), e))
+                    return false;
+                if (!isEqual(getConfidence(), t.getConfidence(), e))
+                    return false;
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * The String representation of a TruthValue, as used internally by the system
+         *
+         * @return The String
+         */
+        @Override
+        public String toString() {
+            //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
+
+            //1 + 6 + 1 + 6 + 1
+            return name().toString();
+        }
     }
+
+
 
     /**
      * Get the frequency value
      *
      * @return The frequency value
      */
-    public float getFrequency() {
-        return frequency;
-    }
+    public float getFrequency();
+
+    public Truth setFrequency(float f);
 
     /**
      * Get the confidence value
      *
      * @return The confidence value
      */
-    public float getConfidence() {
-        return confidence;
-    }
+    public float getConfidence();
 
-    public Truth setFrequency(float f) {
-        if (f > 1.0f) f = 1.0f;
-        if (f < 0f) f = 0f;
-        //if ((f > 1.0f) || (f < 0f)) throw new RuntimeException("Invalid frequency: " + f); //f = 0f;
 
-        this.frequency = Math.round( f / TRUTH_EPSILON) * TRUTH_EPSILON;
-        return this;
-    }
-    
-    public Truth setConfidence(float c) {
-        //if ((c > 1.0f) || (c < 0f)) throw new RuntimeException("Invalid confidence: " + c);
-        if (c > Global.MAX_CONFIDENCE)  c = Global.MAX_CONFIDENCE;
-        if (c < 0) c = 0;
-        this.confidence = Math.round( c / TRUTH_EPSILON) * TRUTH_EPSILON;
-        return this;
-    }
-    
+    /** max confidence value */
+    public float getConfidenceMax();
+
+
+    public Truth setConfidence(float c);
+
+
     /**
      * Get the isAnalytic flag
      *
      * @return The isAnalytic value
      */
-    public boolean getAnalytic() {
-        return analytic;
-    }
+    public boolean getAnalytic();
 
     /**
      * Set the isAnalytic flag
      */
-    public void setAnalytic() {
-        analytic = true;
-    }
+    public void setAnalytic();
 
     /**
      * Calculate the expectation value of the truth value
      *
      * @return The expectation value
      */
-    public float getExpectation() {
-        return expectation(frequency, confidence);
+    default public float getExpectation() {
+        return expectation(getFrequency(), getConfidence());
     }
 
-    public static final float expectation(final float frequency, final float confidence) {
+    public static float expectation(final float frequency, final float confidence) {
         return (confidence * (frequency - 0.5f) + 0.5f);
     }
 
@@ -173,8 +271,8 @@ public class Truth implements Cloneable { // implements Cloneable {
      * @param t The given value
      * @return The absolute difference
      */
-    public float getExpDifAbs(final Truth t) {
-        return Math.abs(getExpectation() - t.getExpectation());
+    default public float getExpDifAbs(final Truth t) {
+        return FastMath.abs(getExpectation() - t.getExpectation());
     }
 
     /**
@@ -182,67 +280,47 @@ public class Truth implements Cloneable { // implements Cloneable {
      *
      * @return True if the frequence is less than 1/2
      */
-    public boolean isNegative() {
+    default public boolean isNegative() {
         return getFrequency() < 0.5;
     }
 
+    /** tests equivalence (according to epsilon precision) */
     public static boolean isEqual(final float a, final float b, final float epsilon) {
         if (a > b) return ((a - b) < epsilon/2f);
         else if ( a < b) return ((b - a) < epsilon/2f);
         return true;
     }
     
-    /**
-     * Compare two truth values
-     *
-     * @param that The other TruthValue
-     * @return Whether the two are equivalent
-     */
-    @Override
-    public boolean equals(final Object that) {
-        if (that == this) return true;
-        if (that instanceof Truth) {
-            final Truth t = ((Truth) that);
-            if (!isEqual(getFrequency(), t.getFrequency(), TRUTH_EPSILON))
-                return false;
-            if (!isEqual(getConfidence(), t.getConfidence(), TRUTH_EPSILON))
-                return false;
-            return true;
-        }
-        return false;
-    }
+
 
     /**
      * The hash code of a TruthValue
-     * TODO this is not accurate, must use both freq and conf otherwise there is missing information
      * @return The hash code
      */
-    @Override
-    public int hashCode() {
+    static public int hash(Truth t) {
         int h = 0;
-        h += Float.floatToRawIntBits(frequency);
-        h += 31 * Float.floatToRawIntBits(confidence);
+        h += Float.floatToRawIntBits(t.getFrequency());
+        h += 31 * Float.floatToRawIntBits(t.getConfidence());
         return h;
     }
 
-    @Override
-    public Truth clone() {
-        return new Truth(frequency, confidence, getAnalytic());
-    }
-    
-    
-    public Truth setAnalytic(final boolean a) {
-        analytic = a;
-        return this;
-    }
+//    @Override
+//    default public Truth clone() {
+//        return new DefaultTruth(getFrequency(), getConfidence(), getAnalytic());
+//    }
 
-    
+
+
+    public Truth setAnalytic(final boolean a);
+
+
+
 
     /**
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
      */
-    public StringBuilder appendString(final StringBuilder sb, final boolean external) {
+    default public StringBuilder appendString(final StringBuilder sb, final boolean external) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -254,64 +332,53 @@ public class Truth implements Cloneable { // implements Cloneable {
         sb.ensureCapacity(11);
         return sb
             .append(Symbols.TRUTH_VALUE_MARK)
-            .append(Texts.n2(frequency))
+            .append(Texts.n2(getFrequency()))
             .append(Symbols.VALUE_SEPARATOR)
-            .append(Texts.n2(confidence))
+            .append(Texts.n2(getConfidence()))
             .append(Symbols.TRUTH_VALUE_MARK);
     }
 
-    public String toStringExternal1() {
+    default public String toStringExternal1() {
         return new StringBuilder(5)
                 .append(Symbols.TRUTH_VALUE_MARK)
-                .append(Texts.n1(frequency))
+                .append(Texts.n1(getFrequency()))
                 .append(Symbols.VALUE_SEPARATOR)
-                .append(Texts.n1(confidence))
+                .append(Texts.n1(getConfidence()))
                 .append(Symbols.TRUTH_VALUE_MARK).toString();
     }
 
 
-    public CharSequence name() {
+    default public CharSequence name() {
         //1 + 4 + 1 + 4 + 1
         StringBuilder sb =  new StringBuilder();
         return appendString(sb, false);
     }
 
     /** output representation */
-    public CharSequence toStringExternal() {
+    default public CharSequence toStringExternal() {
         //return name().toString();
         StringBuilder sb =  new StringBuilder();
         return appendString(sb, true);
-    }
-    /**
-     * The String representation of a TruthValue, as used internally by the system
-     *
-     * @return The String
-     */
-    @Override
-    public String toString() {
-        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
-        
-        //1 + 6 + 1 + 6 + 1
-        return name().toString();
     }
 
     
     
     /** displays the truth value as a short string indicating degree of true/false */
-    public String toTrueFalseString() {        
+    default public String toTrueFalseString() {
         //TODO:
         //  F,f,~,t,T
         return null;
     }
+
     /** displays the truth value as a short string indicating degree of yes/no */
-    public String toYesNoString() {        
+    default public String toYesNoString() {
         //TODO
         // N,n,~,y,Y
         return null;
     }
 
     
-    public Term toWordTerm() {
+    default public Term toWordTerm() {
         float e = getExpectation();
         float t = Global.DEFAULT_CREATION_EXPECTATION;
         if (e > t) {
@@ -323,7 +390,7 @@ public class Truth implements Cloneable { // implements Cloneable {
         return Truth_UNSURE;
     }
 
-    public Truth set(float frequency, float confidence) {
+    default public Truth set(float frequency, float confidence) {
         setFrequency(frequency);
         setConfidence(confidence);
         return this;
@@ -339,10 +406,10 @@ public class Truth implements Cloneable { // implements Cloneable {
         Frequency, Confidence, Expectation
     }
     
-    public float getComponent(TruthComponent c) {
+    default public float getComponent(TruthComponent c) {
         switch (c) {
-            case Frequency: return frequency;
-            case Confidence: return confidence;
+            case Frequency: return getFrequency();
+            case Confidence: return getConfidence();
             case Expectation: return getExpectation();                
         }
         return Float.NaN;
@@ -367,7 +434,7 @@ public class Truth implements Cloneable { // implements Cloneable {
      *
      * @return Truth value, null for question
      */
-    public void discountConfidence() {
+    default public void discountConfidence() {
         setConfidence(getConfidence() * Global.DISCOUNT_RATE).setAnalytic(false);
     }
 }
