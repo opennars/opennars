@@ -92,7 +92,7 @@ public class Launcher extends javax.swing.JFrame {
         }
         
         try {
-            BufferedImage myPicture = ImageIO.read(resource("control.png"));
+            BufferedImage myPicture = ImageIO.read(resource("pong.png"));
             jLabel9.setIcon(new ImageIcon(myPicture));
             
         } catch (IOException ex) {
@@ -244,7 +244,7 @@ public class Launcher extends javax.swing.JFrame {
 
         jLabel9.setBackground(new java.awt.Color(255, 255, 255));
         jLabel9.setForeground(new java.awt.Color(254, 255, 255));
-        jLabel9.setText("NAR Control");
+        jLabel9.setText("NAR Pong");
         jLabel9.setToolTipText("");
         jLabel9.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -412,7 +412,7 @@ public class Launcher extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jLabel9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel9MouseClicked
-        nars.regulation.twopoint.twoPointRegulator.main(null);
+        nars.regulation.twopoint.breakout.main(null);
         this.dispose();
     }//GEN-LAST:event_jLabel9MouseClicked
 
