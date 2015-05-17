@@ -39,7 +39,7 @@ public class NullOperator extends SynchOperator {
     }*/
     
     public NullOperator(String name) {
-        super();
+        super(name);
         this.name = name;
     }
 
@@ -48,7 +48,7 @@ public class NullOperator extends SynchOperator {
     @Override
     protected List<Task> execute(Operation o, Memory memory) {
         if (Global.DEBUG) {
-            nar.memory.emit(getClass(),
+            memory.emit(getClass(),
                     //HACK
                     name,
                     Arrays.toString(o.arg().term)

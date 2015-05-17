@@ -49,8 +49,9 @@ import java.util.List;
  */
 abstract public class Operator implements Reaction<Term> {
 
-    protected NAR nar;
+
     public final Term term;
+    protected NAR nar;
 
     public Operator(Term term) {
         this.term = term;
@@ -60,12 +61,27 @@ abstract public class Operator implements Reaction<Term> {
         this.term = Atom.get(name);
     }
 
+    public boolean setEnabled(NAR n, boolean enabled) {
+        if (enabled)
+            this.nar = n;
+        else
+            this.nar = null;
+        return enabled;
+    }
+
     /**
      * use the class name as the operator name
      */
     public Operator() {
         String className = getClass().getSimpleName();
         this.term = Atom.get(className);
+    }
+
+
+    public Memory getMemory() {
+        if (nar!=null)
+            return nar.memory;
+        return null;
     }
 
     public Decider decider() {
@@ -83,17 +99,17 @@ abstract public class Operator implements Reaction<Term> {
     }
 
 
-    public boolean setEnabled(final NAR n, final boolean enabled) {
-        if (enabled)
-            this.nar = n;
-        else
-            this.nar = null;
-        return true;
-    }
-
-    public Memory getMemory() {
-        return nar.memory;
-    }
+//    public boolean setEnabled(final NAR n, final boolean enabled) {
+//        if (enabled)
+//            this.nar = n;
+//        else
+//            this.nar = null;
+//        return true;
+//    }
+//
+//    public Memory getMemory() {
+//        return nar.memory;
+//    }
 
     /**
      * Required method for every operate, specifying the corresponding

@@ -786,7 +786,9 @@ public class NarseseParser extends BaseParser<Object> {
 
 
         if (op == OPERATION) {
-            vectorterms.add(memory.self()); //SELF in final argument
+            final Term self = memory.self();
+            if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
+                vectorterms.add(self); //SELF in final argument
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
             return Operation.make(va);
         }

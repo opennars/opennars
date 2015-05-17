@@ -155,7 +155,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
         Term[] rawArgs = operation.arg().term;
 
         int numInputs = rawArgs.length;
-        if (rawArgs[numInputs - 1].equals(op.getMemory().self()))
+        if (rawArgs[numInputs - 1].equals(memory.self()))
             numInputs--;
 
         Term lastTerm = null;

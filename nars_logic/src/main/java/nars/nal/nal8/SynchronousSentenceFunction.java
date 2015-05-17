@@ -34,14 +34,14 @@ public abstract class SynchronousSentenceFunction extends Operator {
     @Override
     protected List<Task> execute(Operation operation, Memory memory) {
 
-        Collection<Sentence> y = function(nar.memory, operation.arg().term);
+        Collection<Sentence> y = function(memory, operation.arg().term);
         if (y == null) {
                 return null;
             }
 
         List<Task> result = new ArrayList(y.size());
         for (Sentence s : y) {
-            result.add( nar.memory.newTask(s).parent( operation.getTask() ).get() );
+            result.add( memory.newTask(s).parent( operation.getTask() ).get() );
         }
 
         return result;

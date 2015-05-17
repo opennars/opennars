@@ -1,13 +1,14 @@
 package nars.nal.nal8;
 
+import nars.Global;
+import nars.NARSeed;
+import nars.io.TextOutput;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
-import nars.NARSeed;
-import nars.Global;
-import nars.narsese.InvalidInputException;
+import nars.model.impl.DefaultMicro;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
-import nars.model.impl.DefaultMicro;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -60,6 +61,7 @@ public class NAL8Test extends JavaNALTest {
     }
 
     @Test public void testGoalExecute0() {
+
         /* 8.1.14
         ********** [24 + 12 -> 25]
         IN: <(*,SELF,{t002}) --> reachable>. :|:
@@ -69,7 +71,7 @@ public class NAL8Test extends JavaNALTest {
         */
 
 
-        testGoalExecute("<a --> b>", "(^pick,c,SELF)");
+        testGoalExecute("<a --> b>", "pick(c,SELF)");
     }
 
     @Test public void testGoalExecute1() {
@@ -82,7 +84,7 @@ public class NAL8Test extends JavaNALTest {
         */
 
 
-        testGoalExecute("<(*,SELF,{t002}) --> reachable>", "(^pick,{t002},SELF)");
+        testGoalExecute("<(*,SELF,{t002}) --> reachable>", "pick({t002},SELF)");
     }
 
     @Test public void testGoalExecute2() {
@@ -95,7 +97,7 @@ public class NAL8Test extends JavaNALTest {
         */
 
 
-        testGoalExecute("<a --> b>", "(^pick,<c --> d>,SELF)");
+        testGoalExecute("<a --> b>", "pick(<c --> d>,SELF)");
     }
 
 
@@ -118,7 +120,7 @@ public class NAL8Test extends JavaNALTest {
                 System.out.println("Remove: " + t + " " + t.getReason());
             }
         });*/
-        nar.mustBelieve(100, "(^pick,c,SELF)", 1f, 1f, 0.47f, 0.47f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
+        nar.mustBelieve(100, "pick(c,SELF)", 1f, 1f, 0.40f, 0.50f);//this is checking for the eternalized result, but there are non-eternalized results that occur before that
         nar.run(100);
 
     }

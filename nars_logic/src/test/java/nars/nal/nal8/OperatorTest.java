@@ -58,7 +58,7 @@ public class OperatorTest {
 
             @Override
             public void event(Term event, Object... args) {
-                System.out.println("executed: " + Arrays.toString(args));
+                //System.out.println("executed: " + Arrays.toString(args));
                 executed.set(true);
             }
 
@@ -96,8 +96,6 @@ public class OperatorTest {
     }
 
     @Test public void testCompoundOperator() {
-
-        TextOutput.out(n);
 
         AtomicBoolean executed = new AtomicBoolean(false);
 

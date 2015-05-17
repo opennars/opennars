@@ -81,41 +81,6 @@ public class NAR extends Container implements Runnable {
     }
 
 
-//    /** represents the state of an instance of a plugin: whether it is 'plugged in' or not, and methods to control that */
-//    public class OperatorRegistration implements Serializable {
-//        final public nars.op.IOperator IOperator;
-//        boolean enabled = false;
-//
-//        public OperatorRegistration(IOperator IOperator) {
-//            this(IOperator,true);
-//        }
-//
-//        public OperatorRegistration(IOperator IOperator, boolean enabled) {
-//            this.IOperator = IOperator;
-//            setEnabled(enabled);
-//        }
-//
-//        public void setEnabled(boolean enabled) {
-//            if (this.enabled == enabled) return;
-//
-//            IOperator.setEnabled(NAR.this, enabled);
-//            this.enabled = enabled;
-//            emit(Events.PluginsChange.class, IOperator, enabled);
-//        }
-//
-//        public boolean isEnabled() {
-//            return enabled;
-//        }
-//
-//        public void off() {
-//            NAR.this.off(this);
-//        }
-//
-//        public Memory getMemory() { return NAR.this.memory; }
-//    }
-//
-//    protected final List<OperatorRegistration> plugins = new CopyOnWriteArrayList<>();
-    
     /** Flag for running continuously  */
     private boolean running = false;
     
@@ -356,7 +321,9 @@ public class NAR extends Container implements Runnable {
     }
     public EventEmitter.Registrations on(Operator o) {
         Term a = o.getTerm();
-        return on(o, a);
+        EventEmitter.Registrations reg = on(o, a);
+        o.setEnabled(this, true);
+        return reg;
     }
 
 

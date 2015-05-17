@@ -17,7 +17,7 @@ public class Schizo extends SynchOperator {
 
     @Override
     protected List<Task> execute(Operation operation, Memory memory) {
-        nar.memory.setSelf(operation.arg());
+        memory.setSelf(operation.arg());
         return null;
     }
 

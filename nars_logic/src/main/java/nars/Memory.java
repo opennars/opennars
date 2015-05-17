@@ -153,11 +153,14 @@ public class Memory implements Serializable {
      * Enters a task and determine if there is a decision to execute.
      * Returns true if the Task has a Term which can be executed
      */
-    public void execute(Concept c, Task<Operation> t) {
-        Operation o = t.getTerm();
-        o.setTask(t);
-        Term e = o.getOperator();
-        exe.emit(e, o, c, this);
+    public void execute(Concept c, Task t) {
+        Term term = t.getTerm();
+        if (term instanceof Operation) {
+            Operation o = (Operation)term;
+            o.setTask(t);
+            Term e = o.getOperator();
+            exe.emit(e, o, c, this);
+        }
     }
 
     /** prepend a conceptbuilder to the conceptbuilder handler chain */
