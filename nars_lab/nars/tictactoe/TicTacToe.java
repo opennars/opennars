@@ -118,7 +118,7 @@ public class TicTacToe extends JPanel {
         status = new JLabel("");
         menu.add(status);
         
-        JButton teachButton = new JButton("Re-Explain rules to NARS");
+        JButton teachButton = new JButton("Observe game board again");
         teachButton.setBackground(Color.DARK_GRAY);
         teachButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -153,7 +153,7 @@ public class TicTacToe extends JPanel {
                 nar.addInput("<(*," + i + ",human) --> move>. :|:");
                 c.setText("X");
                 field[i] = 1;
-                playing = !playing;
+                playing = COMPUTER;
                 updateField();
             }
 
@@ -227,7 +227,7 @@ public class TicTacToe extends JPanel {
 
         @Override
         protected List<Task> execute(Operation operation, Term[] args, Memory memory) {
-            
+
             int i = -1;
             try {
                 i = Integer.parseInt( args[0].toString() );
@@ -240,7 +240,7 @@ public class TicTacToe extends JPanel {
                 return null;
             
             if (playing == COMPUTER) {
-                playing = HUMAN;
+                
                 boolean success = false;
                 
                 if (field[i]==0) {
@@ -249,6 +249,7 @@ public class TicTacToe extends JPanel {
                 }
                 
                 if (success) {
+                    playing = HUMAN;
                     nar.emit(TicTacToe.class, "NARS plays: " + i);
                     nar.addInput("<input --> succeeded>. :|: %" + (success ? "1.00" : "0.00") + "%" );
                     nar.addInput("<(*," + i + ",nars) --> move>. :|:");
