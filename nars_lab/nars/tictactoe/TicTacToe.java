@@ -118,7 +118,7 @@ public class TicTacToe extends JPanel {
         status = new JLabel("");
         menu.add(status);
         
-        JButton teachButton = new JButton("Observe game board again");
+        JButton teachButton = new JButton("Look and Hurry!");
         teachButton.setBackground(Color.DARK_GRAY);
         teachButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -246,6 +246,7 @@ public class TicTacToe extends JPanel {
                 if (field[i]==0) {
                     field[i] = 2;                
                     success = true;
+                    status.setText("Humans Turn");
                 }
                 
                 if (success) {
