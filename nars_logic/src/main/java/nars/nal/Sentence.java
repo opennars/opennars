@@ -29,7 +29,6 @@ import nars.nal.TruthFunctions.EternalizedTruthValue;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.term.*;
@@ -354,7 +353,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
     protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
-                truth!=null ? new Truth(truth) : null,
+                truth!=null ? new Truth.DefaultTruth(truth) : null,
                 stamp.clone());
     }
 
@@ -397,12 +396,15 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new Truth(truth.getFrequency(), projectedConfidence);
+                    newTruth = new Truth.DefaultTruth(truth.getFrequency(), projectedConfidence);
                 }
             }
         }
         
-        if (newTruth == null) newTruth = truth.clone();
+        if (newTruth == null) {
+            //newTruth = truth.clone();
+            throw new RuntimeException("should not clone null truth");
+        }
         
         return newTruth;
     }

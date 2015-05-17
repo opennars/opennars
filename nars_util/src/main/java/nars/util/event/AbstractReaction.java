@@ -7,7 +7,7 @@ abstract public class AbstractReaction implements Reaction {
 
     protected final EventEmitter source;
     protected EventEmitter.Registrations active;
-    protected final Class[] events;
+    private Class[] events;
 
     public AbstractReaction(EventEmitter source, Class... events) {
         this(source, true, events);
@@ -17,16 +17,19 @@ abstract public class AbstractReaction implements Reaction {
         super();
 
         this.source = source;
-        this.events = events;
 
         setActive(active);
+    }
+
+    public Class[] getEvents() {
+        return this.events;
     }
 
 
     public void setActive(boolean b) {
 
         if (b && (this.active==null)) {
-            this.active = source.on(this, events);
+            this.active = source.on(this, getEvents());
         }
         else if (!b && (this.active!=null)) {
             this.active.off();

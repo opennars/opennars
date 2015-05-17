@@ -11,9 +11,9 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.*;
+import sun.tools.jstat.Operator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -307,7 +307,7 @@ import static nars.nal.nal8.Operation.make;
                 confidence = parseFloat(s.substring(i + 1));
             }
         }
-        return new Truth(frequency, confidence);
+        return new Truth.DefaultTruth(frequency, confidence);
     }
 
     /**
@@ -393,84 +393,85 @@ import static nars.nal.nal8.Operation.make;
      * @return the Term generated from the String
      */
     public Term parseTermOld(String s) throws InvalidInputException {
-        s = s.trim();
-        
-        if (s.length() == 0) return null;
-        
-        int index = s.length() - 1;
-        char first = s.charAt(0);
-        char last = s.charAt(index);
-
-        NALOperator opener = getOpener(first);
-        if (opener!=null) {
-            switch (opener) {
-                case COMPOUND_TERM_OPENER:
-                    if (last == COMPOUND_TERM_CLOSER.ch) {
-                       return parsePossibleCompoundTermTerm(s.substring(1, index));
-                    } else {
-                        throw new InvalidInputException("missing CompoundTerm closer: " + s);
-                    }
-                case SET_EXT_OPENER:
-                    if (last == SET_EXT_CLOSER.ch) {
-                        return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
-                    } else {
-                        throw new InvalidInputException("missing ExtensionSet closer: " + s);
-                    }                    
-                case SET_INT_OPENER:
-                    if (last == SET_INT_CLOSER.ch) {
-                        return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
-                    } else {
-                        throw new InvalidInputException("missing IntensionSet closer: " + s);
-                    }   
-                case STATEMENT_OPENER:
-                    if (last == STATEMENT_CLOSER.ch) {
-                        return parseStatement(s.substring(1, index));
-                    } else {
-                        throw new InvalidInputException("missing Statement closer: " + s);
-                    }
-            }
-        }
-        else if (Global.FUNCTIONAL_OPERATIONAL_FORMAT) {
-            
-            //parse functional operation:
-            //  function()
-            //  function(a)
-            //  function(a,b)
-            
-            //test for existence of matching parentheses at beginning at index!=0
-            int pOpen = s.indexOf('(');
-            int pClose = s.lastIndexOf(')');
-            if ((pOpen!=-1) && (pClose!=-1) && (pClose==s.length()-1)) {
-                
-                String operatorString = Operator.addPrefixIfMissing( s.substring(0, pOpen) );
-                                
-                Operator operator = memory.operator(operatorString);
-                
-                if (operator == null) {
-                    //???
-                    throw new InvalidInputException("Unknown operate: " + operatorString);
-                }
-                
-                String argString = s.substring(pOpen+1, pClose+1);               
-                
-                
-                Term[] a;                
-                if (argString.length() > 1) {                
-                    ArrayList<Term> args = parseArguments(argString);                                
-                    a = args.toArray(new Term[args.size()]);
-                }
-                else {
-                    //void "()" arguments, default to (SELF)
-                    a = Terms.EmptyTermArray;
-                }                                                            
-                
-                Operation o = Operation.make(operator, a, self);
-                return o;                
-            }
-        }
-
-        //if no opener, parse the term            
-        return parseAtomicTerm(s);
+        throw new RuntimeException("deprecated");
+//        s = s.trim();
+//
+//        if (s.length() == 0) return null;
+//
+//        int index = s.length() - 1;
+//        char first = s.charAt(0);
+//        char last = s.charAt(index);
+//
+//        NALOperator opener = getOpener(first);
+//        if (opener!=null) {
+//            switch (opener) {
+//                case COMPOUND_TERM_OPENER:
+//                    if (last == COMPOUND_TERM_CLOSER.ch) {
+//                       return parsePossibleCompoundTermTerm(s.substring(1, index));
+//                    } else {
+//                        throw new InvalidInputException("missing CompoundTerm closer: " + s);
+//                    }
+//                case SET_EXT_OPENER:
+//                    if (last == SET_EXT_CLOSER.ch) {
+//                        return SetExt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
+//                    } else {
+//                        throw new InvalidInputException("missing ExtensionSet closer: " + s);
+//                    }
+//                case SET_INT_OPENER:
+//                    if (last == SET_INT_CLOSER.ch) {
+//                        return SetInt.make(parseArguments(s.substring(1, index) + ARGUMENT_SEPARATOR));
+//                    } else {
+//                        throw new InvalidInputException("missing IntensionSet closer: " + s);
+//                    }
+//                case STATEMENT_OPENER:
+//                    if (last == STATEMENT_CLOSER.ch) {
+//                        return parseStatement(s.substring(1, index));
+//                    } else {
+//                        throw new InvalidInputException("missing Statement closer: " + s);
+//                    }
+//            }
+//        }
+//        else if (Global.FUNCTIONAL_OPERATIONAL_FORMAT) {
+//
+//            //parse functional operation:
+//            //  function()
+//            //  function(a)
+//            //  function(a,b)
+//
+//            //test for existence of matching parentheses at beginning at index!=0
+//            int pOpen = s.indexOf('(');
+//            int pClose = s.lastIndexOf(')');
+//            if ((pOpen!=-1) && (pClose!=-1) && (pClose==s.length()-1)) {
+//
+//                String operatorString = Operator.addPrefixIfMissing(s.substring(0, pOpen));
+//
+//                Operator operator = memory.operator(operatorString);
+//
+//                if (operator == null) {
+//                    //???
+//                    throw new InvalidInputException("Unknown operate: " + operatorString);
+//                }
+//
+//                String argString = s.substring(pOpen+1, pClose+1);
+//
+//
+//                Term[] a;
+//                if (argString.length() > 1) {
+//                    ArrayList<Term> args = parseArguments(argString);
+//                    a = args.toArray(new Term[args.size()]);
+//                }
+//                else {
+//                    //void "()" arguments, default to (SELF)
+//                    a = Terms.EmptyTermArray;
+//                }
+//
+//                Operation o = Operation.make(operator, a, self);
+//                return o;
+//            }
+//        }
+//
+//        //if no opener, parse the term
+//        return parseAtomicTerm(s);
 
     }
 
@@ -504,9 +505,7 @@ import static nars.nal.nal8.Operation.make;
         if (c == Symbols.INTERVAL_PREFIX) {
             return Interval.interval(s);
         }
-        else if (c == '^') {
-            return memory.operator(s);
-        }
+
  
         if (containVar(s)) {
             return new Variable(s);
@@ -546,51 +545,51 @@ import static nars.nal.nal8.Operation.make;
         throw new InvalidInputException(s + " is not a CompoundTerm");
     }
 
-    /**
-     * Parse a String to create a CompoundTerm.
-     *
-     * @return the Term generated from the String
-     * @param s0 The String to be parsed
-     * @throws nars.io.StringParser.InvalidInputException the String cannot be
-     * parsed into a Term
-     */
-    public Term parsePossibleCompoundTermTerm(final String s0) throws InvalidInputException {
-        String s = s0.trim();
-        if (s.isEmpty()) {
-            throw new InvalidInputException("Empty compound term: " + s);
-        }
-        int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
-        if (firstSeparator == -1) {
-            throw new InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
-        }
-                
-        String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
-        NALOperator oNative = getOperator(op);
-        Operator oRegistered = memory.operator(op);
-        
-        if ((oRegistered==null) && (oNative == null)) {
-            throw new InvalidInputException("Unknown operate: " + op);
-        }
-
-        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
-                : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
-
-        Term[] argA = arg.toArray(new Term[arg.size()]);
-        
-        Term t;
-        
-        if (oNative!=null) {
-            t = Memory.term(oNative, argA);
-        }
-        else if (oRegistered!=null) {
-            t = Operation.make(oRegistered, argA, self);
-        }
-        else {
-            throw new InvalidInputException("Invalid compound term");
-        }
-        
-        return t;
-    }
+//    /**
+//     * Parse a String to create a CompoundTerm.
+//     *
+//     * @return the Term generated from the String
+//     * @param s0 The String to be parsed
+//     * @throws nars.io.StringParser.InvalidInputException the String cannot be
+//     * parsed into a Term
+//     */
+//    public Term parsePossibleCompoundTermTerm(final String s0) throws InvalidInputException {
+//        String s = s0.trim();
+//        if (s.isEmpty()) {
+//            throw new InvalidInputException("Empty compound term: " + s);
+//        }
+//        int firstSeparator = s.indexOf(ARGUMENT_SEPARATOR);
+//        if (firstSeparator == -1) {
+//            throw new InvalidInputException("Invalid compound term (missing ARGUMENT_SEPARATOR): " + s);
+//        }
+//
+//        String op = (firstSeparator < 0) ? s : s.substring(0, firstSeparator).trim();
+//        NALOperator oNative = getOperator(op);
+//        Operator oRegistered = memory.operator(op);
+//
+//        if ((oRegistered==null) && (oNative == null)) {
+//            throw new InvalidInputException("Unknown operate: " + op);
+//        }
+//
+//        ArrayList<Term> arg = (firstSeparator < 0) ? new ArrayList<>(0)
+//                : parseArguments(s.substring(firstSeparator + 1) + ARGUMENT_SEPARATOR);
+//
+//        Term[] argA = arg.toArray(new Term[arg.size()]);
+//
+//        Term t;
+//
+//        if (oNative!=null) {
+//            t = Memory.term(oNative, argA);
+//        }
+//        else if (oRegistered!=null) {
+//            t = Operation.make(oRegistered, argA, self);
+//        }
+//        else {
+//            throw new InvalidInputException("Invalid compound term");
+//        }
+//
+//        return t;
+//    }
 
     /**
      * Parse a String into the argument get of a CompoundTerm.

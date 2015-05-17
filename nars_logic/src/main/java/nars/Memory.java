@@ -47,7 +47,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.nal8.Operator;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -56,6 +55,7 @@ import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
 import objenome.util.random.XORShiftRandom;
+import sun.tools.jstat.Operator;
 
 import java.io.Serializable;
 import java.util.*;
@@ -65,7 +65,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static nars.nal.concept.Concept.*;
+import static nars.nal.concept.Concept.State;
 
 /**
  * Memory consists of the run-time state of a NAR, including: * term and concept
@@ -290,7 +290,6 @@ public class Memory implements Serializable {
 
         this.self = Symbols.DEFAULT_SELF; //default value
 
-        this.operators = new LinkedHashMap();
         this.event = new EventEmitter.DefaultEventEmitter();
 
 
@@ -350,7 +349,6 @@ public class Memory implements Serializable {
     public void delete() {
         reset(true, true);
 
-        operators.clear();
         event.delete();
     }
 
@@ -854,22 +852,6 @@ public class Memory implements Serializable {
 
     }
 
-    /** returns the operate identified by its name, or null if none such exists */
-    public Operator operator(final String name) {
-        return operators.get(name);
-    }
-
-    /** adds a operate directly to Memory; the preferred way to do this from
-     * external code is through a NAR's Plugin registry (since Operator extends Plugin)*
-     */
-    Operator operatorAdd(final Operator op) {
-        operators.put(op.toString(), op);
-        return op;
-    }
-
-    Operator operatorRemove(final Operator op) {
-        return operators.remove(op.name());
-    }
 
     /** produces a new stamp serial #, used to uniquely identify inputs */
     public long newStampSerial() {

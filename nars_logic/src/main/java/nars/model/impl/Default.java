@@ -18,7 +18,6 @@ import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.filter.FilterBelowConfidence;
 import nars.nal.filter.FilterOperationWithSubjOrPredVariable;
 import nars.nal.nal8.NullOperator;
-import nars.nal.nal8.Operator;
 import nars.nal.rule.*;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -36,7 +35,7 @@ import nars.op.meta.Reflect;
 import nars.op.software.Javascript;
 import nars.op.software.NumericCertainty;
 import nars.op.software.Scheme;
-import nars.util.data.linkedlist.DD;
+import nars.util.event.Reaction;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +47,8 @@ import java.util.List;
 
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Full;
 import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
+
+//import sun.tools.jstat.Operator;
 
 /**
  * Default set of NAR parameters which have been classically used for development.
@@ -199,7 +200,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
     }
 
 
-    final Operator[] exampleOperators = new Operator[] {
+    final Reaction[] exampleOperators = new Reaction[] {
         //new Wait(),
         new NullOperator("^break"),
         new NullOperator("^drop"),
@@ -212,9 +213,9 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         new NullOperator("^deactivate")
     };
 
-    public static Operator[] newDefaultOperators(NAR n) {
+    public static Reaction[] newDefaultOperators(NAR n) {
 
-        return new Operator[] {
+        return new Reaction[] {
 
 
                 //new Wait(),
@@ -333,9 +334,9 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         n.setCyclesPerFrame(cyclesPerFrame);
 
 
-        for (Operator o : newDefaultOperators(n))
+        for (Reaction o : newDefaultOperators(n))
             n.on(o);
-        for (Operator o : exampleOperators)
+        for (Reaction o : exampleOperators)
             n.on(o);
 
 

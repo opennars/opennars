@@ -50,5 +50,6 @@ public class NullOperator extends Operator {
         return null;
     }
 
+
 }
 

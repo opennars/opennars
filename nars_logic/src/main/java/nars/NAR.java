@@ -23,11 +23,6 @@ import nars.util.event.Reaction;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
@@ -137,8 +132,6 @@ public class NAR implements Runnable {
         this.narseseParser = NarseseParser.newParser(this);
         this.narsese = new OldNarseseParser(this, narseseParser);
         this.textPerception = new TextPerception(this, narsese, narseseParser);
-
-        m.event.on(Events.ResetStart.class, togglePluginOnReset);
     }
 
     /**
@@ -258,7 +251,7 @@ public class NAR implements Runnable {
                         new Sentence(
                                 narsese.parseCompoundTerm(goalTerm),
                                 Symbols.GOAL,
-                                tv = new Truth(freq, conf),
+                                tv = new Truth.DefaultTruth(freq, conf),
                                 new Stamp(memory, Stamp.UNPERCEIVED, Stamp.ETERNAL)),
                         new Budget(
                                 pri,
@@ -279,7 +272,7 @@ public class NAR implements Runnable {
                         new Sentence(
                                 narsese.parseCompoundTerm(beliefTerm),
                                 Symbols.JUDGMENT,
-                                tv = new Truth(freq, conf),
+                                tv = new Truth.DefaultTruth(freq, conf),
                                 new Stamp(memory, time(), occurrenceTime)),
                         new Budget(
                                 pri,

@@ -22,7 +22,6 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
@@ -158,7 +157,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         Truth t = truth.get();
         if ((t == null) && ((p == Symbols.JUDGMENT) || (p == Symbols.GOAL)))
-            t = new Truth(p);
+            t = new Truth.DefaultTruth(p);
 
         float[] b = budget.get();
         if (b != null && ((b.length == 0) || (Float.isNaN(b[0]))))
@@ -233,10 +232,10 @@ public class NarseseParser extends BaseParser<Object> {
                 firstOf(
                         sequence(
                             Symbols.VALUE_SEPARATOR, ShortFloat(),
-                            swap() && push(new Truth((float) pop(), (float) pop()))
+                            swap() && push(new Truth.DefaultTruth((float) pop(), (float) pop()))
                         ),
 
-                        push(new Truth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
+                        push(new Truth.DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
 
                 ),
 
@@ -699,13 +698,7 @@ public class NarseseParser extends BaseParser<Object> {
         if (o instanceof Term) return ((Term)o);
         if (o instanceof String) {
             String s= (String)o;
-            if (s.charAt(0) == NALOperator.OPERATION.ch) {
-                if (memory!=null)
-                    return memory.operator(s);
-                return null;
-            } else {
-                return Atom.get(s);
-            }
+            return Atom.get(s);
         }
         throw new RuntimeException(o + " is not a term");
     }
@@ -767,16 +760,16 @@ public class NarseseParser extends BaseParser<Object> {
 
         Collections.reverse(vectorterms);
 
-        if ((op == null || op == PRODUCT) && (vectorterms.get(0) instanceof Operator)) {
-            op = NALOperator.OPERATION;
-        }
+//        if ((op == null || op == PRODUCT) && (vectorterms.get(0) instanceof Operator)) {
+//            op = NALOperator.OPERATION;
+//        }
 
         if (op == null) op = NALOperator.PRODUCT;
 
         Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
 
         if (op == OPERATION)
-            return Operation.make(memory, va);
+            return Operation.make(va);
 
         return Memory.term(op, va);
     }

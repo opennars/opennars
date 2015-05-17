@@ -27,6 +27,7 @@ import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -77,20 +78,20 @@ public class Operation extends Inheritance {
      * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
-    public static Operation make(final Operator oper, Term[] arg, Term self) {
+    public static Operation make(final Term oper, Term[] arg) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
 //        }
 
-        if (self == null) {
-            self = oper.getMemory().getSelf();
-        }
+//        if (self == null) {
+//            self = oper.getMemory().getSelf();
+//        }
 
-        if((arg.length == 0) || ( !arg[arg.length-1].equals(self)) ) {
+        if((arg.length == 0) || ( !arg[arg.length-1].equals(null)) ) {
             Term[] arg2=new Term[arg.length+1];
             System.arraycopy(arg, 0, arg2, 0, arg.length);
-            arg2[arg.length] = self;
+            arg2[arg.length] = null;
             arg=arg2;
         }
         
@@ -180,42 +181,34 @@ public class Operation extends Inheritance {
         return (Product)getSubject();
     }
 
-    public static Term make(Memory m, Term[] raw) {
+    public static Term make(Term[] raw) {
         if (raw.length < 1) {
             //must include at least the operate as the first term in raw[]
             return null;
         }
 
-        String operator = raw[0].toString();
-        if (operator.charAt(0)!= NALOperator.OPERATION.ch) {
-            //prepend '^' if missing
-            operator = NALOperator.OPERATION.symbol + operator;
-        }
+        Term operator = raw[0];
 
         Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
 
-        Operator o = m.operator(operator);
-        if (o == null)
-            throw new RuntimeException("Unknown operate: " + operator); //TODO use a 'UnknownOperatorException' so this case can be detected by callers
-
-        return make(o, args, null);
+        return make(operator, args);
     }
 
     public Term getArgument(int i) {
         return getArguments().term[i];
     }
 
-    @Override
-    public boolean isExecutable(Memory mem) {
-        //don't allow ^want and ^believe to be active/have an effect,
-        //which means its only used as monitor
-        return getOperator().isExecutable(mem);
-    }
+//    @Override
+//    public boolean isExecutable(Memory mem) {
+//        //don't allow ^want and ^believe to be active/have an effect,
+//        //which means its only used as monitor
+//        return getOperator().isExecutable(mem);
+//    }
 
 
-    public static Operation make(Operator opTerm, Term... arg) {
-        return make(opTerm, arg, null);
-    }
+//    public static Operation make(Operator opTerm, Term... arg) {
+//        return make(opTerm, arg, null);
+//    }
 
     public Task newSubTask(Sentence sentence, Budget budget) {
         return new Task(sentence, budget, getTask());
