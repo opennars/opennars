@@ -417,7 +417,7 @@ public class Concept extends Item<Term> implements Termable {
             
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (task.aboveThreshold() && AntiSatisfaction >= Parameters.SATISFACTION_TRESHOLD) {
+            if (task.aboveThreshold() && AntiSatisfaction >= Parameters.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
                 
@@ -425,7 +425,7 @@ public class Concept extends Item<Term> implements Termable {
                 
                 InternalExperience.InternalExperienceFromTask(memory,task,false);
                 
-                if(goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get() && !executeDecision(task)) {
+                if(!executeDecision(task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
                 }
             }
