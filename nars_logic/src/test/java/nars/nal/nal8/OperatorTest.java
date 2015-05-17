@@ -17,30 +17,23 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TermFunctionTest extends JavaNALTest {
+import static junit.framework.TestCase.assertTrue;
 
-    public TermFunctionTest(NARSeed b) {
-        super(b);
-    }
-
-    @Parameterized.Parameters(name= "{0}")
-    public static Collection configurations() {
-        return NAL8Test.configurations();
-    }
+public class OperatorTest {
 
 
-
-    public void testIO(String input, String output) {
-
-        //TextOutput.out(nar);
-
-        nar.mustOutput(16, output);
-        nar.input(input);
-
-        nar.run(4);
-
-    }
-
+//
+//    public void testIO(String input, String output) {
+//
+//        //TextOutput.out(nar);
+//
+//        nar.mustOutput(16, output);
+//        nar.input(input);
+//
+//        nar.run(4);
+//
+//    }
+//
 //    @Test public void testOutputInVariablePosition() {
 //        testIO("count({a,b}, #x)!",
 //                "<2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%");

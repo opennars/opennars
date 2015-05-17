@@ -34,7 +34,6 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
-import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
@@ -51,10 +50,11 @@ public class Believe extends Operator implements Mental {
     /**
      * To create a judgment with a given statement
      * @param args Arguments, a Statement followed by an optional tense
+     * @param memory
      *
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation) {
+    protected ArrayList<Task> execute(Operation operation, Memory memory) {
 
         Compound content = Sentence.termOrException(operation.arg(0));
 

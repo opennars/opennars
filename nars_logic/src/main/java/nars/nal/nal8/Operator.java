@@ -28,14 +28,13 @@ import nars.Memory;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.Truth;
+import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.io.Echo;
-import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
 
@@ -44,33 +43,45 @@ import java.util.List;
  * inside NARS or outside it, in another system or device.
  * <p>
  * This is the only file to modify when registering a new operate into NARS.
- *
+ * <p>
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
 abstract public class Operator implements Reaction<Term> {
 
     protected NAR nar;
-    public final Atom term;
+    public final Term term;
+
+    public Operator(Term term) {
+        this.term = term;
+    }
 
     public Operator(String name) {
-        if (name.charAt(0)!='^')
+        if (name.charAt(0) != '^')
             name = '^' + name;
         this.term = Atom.get(name);
     }
 
-    /** use the class name as the operator name */
+    /**
+     * use the class name as the operator name
+     */
     public Operator() {
         String className = getClass().getSimpleName().toLowerCase();
         this.term = Atom.get('^' + className);
     }
 
+    public Decider decider() {
+        return DesireThresholdExecutive.the;
+    }
 
 
     @Override
     public void event(Term event, Object... args) {
-        //if (event.equals(getTerm()))
-            execute((Operation)args[0]);
+        Operation o = (Operation) args[0];
+        Concept c = (Concept) args[1];
+        Memory m = (Memory) args[2];
+        if (decider().decide(c, o))
+            execute(o, c, m);
     }
 
 
@@ -90,11 +101,12 @@ abstract public class Operator implements Reaction<Term> {
      * Required method for every operate, specifying the corresponding
      * operation
      *
-     * @param args Arguments of the operation, both input (constant) and output (variable)
+     * @param args   Arguments of the operation, both input (constant) and output (variable)
+     * @param memory
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation operation);
+    protected abstract List<Task> execute(Operation operation, Memory memory);
 
 
     @Override
@@ -103,7 +115,7 @@ abstract public class Operator implements Reaction<Term> {
         return this;
     }
 
-    public Atom getTerm() {
+    public Term getTerm() {
         return term;
     }
 
@@ -118,116 +130,78 @@ abstract public class Operator implements Reaction<Term> {
     <patham9_> 4. the system wont try to execute and pursue things in the current moment which are "sheduled" to be in the future.
     <patham9_> 5. the system wont pursue a goal it already pursued for the same reason (due to revision, it is related to 1)
     */
-    public interface Executable {
 
-        public boolean decide(final Operation op, final Memory memory);
+    /**
+     * The standard way to carry out an operation, which invokes the execute
+     * method defined for the operate, and handles feedback tasks as input
+     *
+     * @param op     The operate to be executed
+     * @param memory The memory on which the operation is executed
+     * @return true if successful, false if an error occurred
+     */
+    public final boolean execute(final Operation op, final Concept c, final Memory memory) {
+
+        final Term[] args = op.arg().term;
+
+        List<Task> feedback;
+        try {
+            feedback = execute(op, memory);
+        } catch (Exception e) {
+            feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
+            e.printStackTrace();
+        }
+
+        //Display a message in the output stream to indicate the reportExecution of an operation
+        memory.emit(EXE.class, new ExecutionResult(op, feedback, memory));
+
+
+        noticeExecuted(op, memory);
+
+        //feedback tasks as input
+        //should we allow immediate tasks to create feedback?
+        if (feedback != null) {
+            for (final Task t : feedback) {
+                if (t == null) continue;
+                t.setCause(op);
+                t.addHistory("Feedback");
+
+                memory.input(t);
+            }
+        }
+
+        return true;
 
     }
 
-    /** do-nothing if executed, defult for any Atom */
-    public static class NullExecutable implements Executable {
 
-        @Override
-        public boolean decide(Operation op, Memory memory) {
-            return false;
-        }
+    public boolean isExecutable(final Memory mem) {
+        return true;
     }
 
-    abstract public static class InvokeExecutable implements Executable {
-
-        abstract public List<Task> execute(Operation op);
 
 
-        /**
-         * The standard way to carry out an operation, which invokes the execute
-         * method defined for the operate, and handles feedback tasks as input
-         *
-         * @param op The operate to be executed
-         * @param memory The memory on which the operation is executed
-         * @return true if successful, false if an error occurred
-         */
-        public final boolean decide(final Operation op, final Memory memory) {
+    /** internal notice of the execution */
+    protected void noticeExecuted(final Operation operation, final Memory memory) {
+        final Task opTask = operation.getTask();
+        memory.logic.TASK_EXECUTED.hit();
 
-            if(!op.isExecutable(memory)) {
-                return false;
-            }
-
-            final Term[] args = op.arg().term;
-
-            List<Task> feedback;
-            try {
-                feedback = execute(op);
-            }
-            catch (Exception e) {
-                feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
-                e.printStackTrace();
-            }
-
-            //Display a message in the output stream to indicate the reportExecution of an operation
-            memory.emit(EXE.class, new ExecutionResult(op, feedback));
-
-
-            //internal notice of the execution
-            if (!isImmediate()) {
-                //TODO extract to its own method
-                executedTask(op, new Truth.DefaultTruth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE), memory);
-            }
-
-            //feedback tasks as input
-            //should we allow immediate tasks to create feedback?
-            if (feedback!=null) {
-                for (final Task t : feedback) {
-                    if (t == null) continue;
-                    t.setCause(op);
-                    t.addHistory("Feedback");
-
-                    memory.input(t);
-                }
-            }
-
-            return true;
-
-        }
-
-        /** Immediate operators are processed immediately and do not enter the reasoner's memory */
-        public boolean isImmediate() { return false; }
-
-
-        public boolean isExecutable(final Memory mem) {
-            return true;
-        }
-
-        /**
-         * ExecutedTask called in Operator.call
-         *
-         * @param operation The operation just executed
-         */
-        protected void executedTask(final Operation operation, Truth truth, final Memory memory) {
-            final Task opTask = operation.getTask();
-            memory.logic.TASK_EXECUTED.hit();
-
-            memory.taskAdd(
-                    memory.newTask(operation).
-                            judgment().
-                            truth(truth).
-                            budget(operation.getTask()).
-                            stamp(new Stamp(opTask.getStamp(), memory, Tense.Present)).
-                            parent(opTask).
-                            get().
-                            setCause(operation),
-                    "Executed");
-        }
+        memory.taskAdd(
+                memory.newTask(operation).
+                        judgment().
+                        truth(new Truth.DefaultTruth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE)).
+                        budget(operation.getTask()).
+                        stamp(new Stamp(opTask.getStamp(), memory, Tense.Present)).
+                        parent(opTask).
+                        get().
+                        setCause(operation),
+                "Executed");
     }
-
 
 //    public static String addPrefixIfMissing(String opName) {
 //        if (!opName.startsWith("^"))
 //            return '^' + opName;
 //        return opName;
 //    }
-
-
-
 
 
 }

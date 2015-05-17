@@ -7,8 +7,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
-import nars.exec.AbstractExecutive;
-import nars.exec.DesireThresholdExecutive;
+import nars.nal.nal8.DesireThresholdExecutive;
 import nars.model.ControlCycle;
 import nars.model.cycle.DefaultCycle;
 import nars.nal.*;
@@ -35,7 +34,6 @@ import nars.op.mental.*;
 import nars.op.meta.Reflect;
 import nars.op.software.Javascript;
 import nars.op.software.Scheme;
-import nars.util.event.Reaction;
 
 import java.io.File;
 import java.io.IOException;
@@ -194,12 +192,6 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
     }
 
-
-    public AbstractExecutive getExecutive() {
-        return new DesireThresholdExecutive();
-    }
-
-
     final Operator[] exampleOperators = new Operator[] {
         //new Wait(),
         new NullOperator("^break"),
@@ -334,20 +326,16 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
         n.setCyclesPerFrame(cyclesPerFrame);
 
-
-        for (Operator o : newDefaultOperators(n))
-            n.on(o);
-        for (Operator o : exampleOperators)
-            n.on(o);
-
-
-
         if (maxNALLevel >= 7) {
             n.on(STMInduction.class);
         }
 
         if (maxNALLevel >= 8) {
-            n.on(getExecutive());
+
+            for (Operator o : newDefaultOperators(n))
+                n.on(o);
+            for (Operator o : exampleOperators)
+                n.on(o);
 
             //n.on(new Anticipate());      // expect an event
 

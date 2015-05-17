@@ -19,6 +19,7 @@ package nars.op.mental;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.Symbols;
 import nars.nal.Sentence;
@@ -42,10 +43,11 @@ public class Wonder extends Operator implements Mental {
     /**
      * To create a question with a given statement
      * @param args Arguments, a Statement followed by an optional tense
+     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation) {
+    protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term content = operation.arg(0);
         
         

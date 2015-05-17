@@ -85,12 +85,6 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     }
 
 
-
-    default public boolean isExecutable(final Memory mem) {
-        return false;
-    }
-
-
     /** shallow clone, using the same subterm references */
     public Term clone();
 

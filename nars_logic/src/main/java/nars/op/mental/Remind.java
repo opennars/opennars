@@ -17,6 +17,7 @@
 package nars.op.mental;
 
 import nars.Global;
+import nars.Memory;
 import nars.budget.BudgetFunctions.Activating;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
@@ -40,10 +41,11 @@ public class Remind extends Operator implements Mental {
      * To activate a concept as if a question has been asked about it
      *
      * @param args Arguments, a Statement followed by an optional tense
+     * @param memory
      * @return Immediate results as Tasks
      */
     @Override    
-    protected ArrayList<Task> execute(Operation operation) {
+    protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term term = operation.arg(0);
         Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);

@@ -47,6 +47,8 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -55,7 +57,6 @@ import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
 import objenome.util.random.XORShiftRandom;
-import sun.tools.jstat.Operator;
 
 import java.io.Serializable;
 import java.util.*;
@@ -152,8 +153,11 @@ public class Memory implements Serializable {
      * Enters a task and determine if there is a decision to execute.
      * Returns true if the Task has a Term which can be executed
      */
-    public void decide(Concept c, Task executableOperationTask) {
-        emit(Events.DecideExecution.class, c, executableOperationTask);
+    public void execute(Concept c, Task<Operation> t) {
+        Operation o = t.getTerm();
+        o.setTask(t);
+        Term e = o.getOperator();
+        exe.emit(e, o, c, this);
     }
 
     /** prepend a conceptbuilder to the conceptbuilder handler chain */

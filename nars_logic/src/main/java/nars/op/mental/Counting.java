@@ -1,6 +1,6 @@
 package nars.op.mental;
 
-import com.sun.xml.internal.bind.v2.TODO;
+import nars.Memory;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
@@ -14,7 +14,7 @@ import java.util.List;
 public class Counting extends Operator {
 
     @Override
-    protected List<Task> execute(Operation operation) {
+    protected List<Task> execute(Operation operation, Memory memory) {
         //TODO upgrade code below to new api
         return null;
     }

@@ -5,6 +5,7 @@
 
 package nars.op.app.farg;
 
+import nars.Memory;
 import nars.NAR;
 import nars.bag.impl.LevelBag;
 import nars.nal.Task;
@@ -35,7 +36,7 @@ public class FluidAnalogiesAgents extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation) {
+    protected List<Task> execute(Operation operation, Memory memory) {
         return null;
     }
 

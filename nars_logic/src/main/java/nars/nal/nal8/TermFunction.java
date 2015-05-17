@@ -2,6 +2,7 @@ package nars.nal.nal8;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.Task;
@@ -147,7 +148,7 @@ public abstract class TermFunction<O> extends Operator  {
     }
 
     @Override
-    protected ArrayList<Task> execute(final Operation operation) {
+    protected ArrayList<Task> execute(final Operation operation, Memory memory) {
 
         TermFunction op = (TermFunction) operation.getOperator();
 
@@ -163,13 +164,13 @@ public abstract class TermFunction<O> extends Operator  {
             numInputs--;
         }
 
-        Term[] x0 = operation.getArgumentTerms(false);
-        Term[] x = operation.getArgumentTerms(true);
+        Term[] x0 = operation.getArgumentTerms(false, memory);
+        Term[] x = operation.getArgumentTerms(true, memory);
 
         final Object y = function(x);
 
         if (y == null) {
-            operation.stop();
+            operation.stop(memory);
             return null;
         }
 

@@ -21,6 +21,7 @@
 package nars.nal.nal8;
 
 import nars.Global;
+import nars.Memory;
 import nars.nal.Task;
 
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class NullOperator extends Operator {
 
 
     @Override
-    protected List<Task> execute(Operation o) {
+    protected List<Task> execute(Operation o, Memory memory) {
         if (Global.DEBUG) {
             nar.memory.emit(getClass(),
                     //HACK

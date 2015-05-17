@@ -19,6 +19,7 @@ package nars.op.mental;
 
 import com.google.common.collect.Lists;
 import nars.Global;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.Symbols;
 import nars.nal.Sentence;
@@ -28,7 +29,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 import nars.nal.term.Compound;
-import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
@@ -44,10 +44,11 @@ public class Evaluate extends Operator implements Mental {
     /**
      * To create a quest with a given statement
      * @param args Arguments, a Statement followed by an optional tense
+     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation) {
+    protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Compound content = Sentence.termOrException(operation.arg(0));
 
         Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, nar.memory, Tense.Present));

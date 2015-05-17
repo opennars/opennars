@@ -45,10 +45,11 @@ public class Want extends Operator implements Mental {
     /**
      * To create a goal with a given statement
      * @param args Arguments, a Statement followed by an optional tense
+     * @param memory
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation) {
+    protected ArrayList<Task> execute(Operation operation, Memory memory) {
 
         Term content = operation.arg(0);
         

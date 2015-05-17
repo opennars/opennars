@@ -65,10 +65,11 @@ public class Abbreviation extends AbstractOperator {
         /**
          * To create a judgment with a given statement
          * @param args Arguments, a Statement followed by an optional tense
+         * @param memory
          * @return Immediate results as Tasks
          */
         @Override
-        protected ArrayList<Task> execute(Operation operation) {
+        protected ArrayList<Task> execute(Operation operation, Memory memory) {
             
             Term compound = operation.arg(0);
             

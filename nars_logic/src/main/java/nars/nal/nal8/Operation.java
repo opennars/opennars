@@ -38,7 +38,8 @@ import java.util.Arrays;
  * An operation is interpreted as an Inheritance relation.
  */
 public class Operation extends Inheritance {
-    private Task task;
+
+    private Task<Operation> task; //this is set automatically prior to executing
     
     
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
@@ -97,8 +98,8 @@ public class Operation extends Inheritance {
         return new Operation( new Product(arg), oper  );        
     }
 
-    public Operator getOperator() {
-        return (Operator)getPredicate();
+    public Term getOperator() {
+        return getPredicate();
     }
 
     @Override
@@ -168,11 +169,11 @@ public class Operation extends Inheritance {
     }*/
 
     /** stores the currently executed task, which can be accessed by Operator execution */
-    public void setTask(final Task task) {
+    public void setTask(final Task<Operation> task) {
         this.task = task;
     }
 
-    public Task getTask() {
+    public Task<Operation> getTask() {
         return task;
     }
 
@@ -214,11 +215,11 @@ public class Operation extends Inheritance {
         return new Task(sentence, budget, getTask());
     }
 
-    public Term[] getArgumentTerms(boolean evaluate) {
+    public Term[] getArgumentTerms(boolean evaluate, Memory memory) {
         final Term[] rawArgs = getArgumentsRaw();
         int numInputs = rawArgs.length;
 
-        if (rawArgs[numInputs - 1].equals(getOperator().getMemory().self()))
+        if (rawArgs[numInputs - 1].equals(memory.self()))
             numInputs--;
 
         if (rawArgs[numInputs - 1] instanceof Variable)
@@ -307,7 +308,7 @@ public class Operation extends Inheritance {
     /** deletes the concept of this operation, preventing it from
      * being executed again (unless invoked again by input).
      */
-    public void stop() {
-        this.getOperator().getMemory().concept(getTerm()).delete();
+    public void stop(Memory memory) {
+        memory.concept(getTerm()).delete();
     }
 }

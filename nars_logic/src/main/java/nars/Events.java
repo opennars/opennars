@@ -134,7 +134,6 @@ public class Events {
 
     
     //Executive & Planning
-    public static class DecideExecution {   }
     //public static class UnexecutableGoal {   }
     public static class UnexecutableOperation {   }
     public static class NewTaskExecution {    }

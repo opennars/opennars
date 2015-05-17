@@ -355,7 +355,7 @@ public class NAR extends Container implements Runnable {
         return on(the(c));
     }
     public EventEmitter.Registrations on(Operator o) {
-        Atom a = o.getTerm();
+        Term a = o.getTerm();
         return on(o, a);
     }
 

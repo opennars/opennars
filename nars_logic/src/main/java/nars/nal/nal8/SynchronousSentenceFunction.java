@@ -32,7 +32,7 @@ public abstract class SynchronousSentenceFunction extends Operator {
 
 
     @Override
-    protected List<Task> execute(Operation operation) {
+    protected List<Task> execute(Operation operation, Memory memory) {
 
         Collection<Sentence> y = function(nar.memory, operation.arg().term);
         if (y == null) {

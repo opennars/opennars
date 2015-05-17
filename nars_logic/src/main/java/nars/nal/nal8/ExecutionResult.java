@@ -1,5 +1,6 @@
 package nars.nal.nal8;
 
+import nars.Memory;
 import nars.nal.Task;
 import nars.nal.term.Term;
 
@@ -9,10 +10,12 @@ import nars.nal.term.Term;
 public class ExecutionResult {
     public final Operation operation;
     public final Object feedback;
+    private final Memory memory;
 
-    public ExecutionResult(Operation op, Object feedback) {
+    public ExecutionResult(Operation op, Object feedback, Memory memory) {
         this.operation = op;
         this.feedback = feedback;
+        this.memory = memory;
     }
 
     public Task getTask() {
@@ -29,10 +32,10 @@ public class ExecutionResult {
             return operation.toString();
         } else {
             Term[] args = operation.getArgumentsRaw();
-            Operator operator = operation.getOperator();
+            Term operator = operation.getOperator();
             StringBuilder sb = new StringBuilder();
 
-            getTask().appendToString(sb, operator.getMemory());
+            getTask().appendToString(sb, memory);
 
 //                Budget b = getTask();
 //                if (b!=null)

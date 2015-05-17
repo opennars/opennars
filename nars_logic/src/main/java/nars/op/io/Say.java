@@ -77,13 +77,13 @@ public class Say extends Operator {
     }
 
     @Override
-    protected synchronized List<Task> execute(Operation operation) {
+    protected synchronized List<Task> execute(Operation operation, Memory memory) {
 
         this.memory = nar.memory;
         this.currentOperation = operation;
 
         if (this.reaction == null) {
-            reaction = new NARReaction(memory, Events.CycleEnd.class) {
+            reaction = new NARReaction(Say.this.memory, Events.CycleEnd.class) {
 
                 @Override
                 public void event(Class event, Object[] args) {

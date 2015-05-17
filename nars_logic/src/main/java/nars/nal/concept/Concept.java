@@ -607,7 +607,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         //TODO
         //InternalExperience.InternalExperienceFromTask(memory, task, false);
 
-        memory.decide(this, task);
+        memory.execute(this, task);
 
         return true;
     }
