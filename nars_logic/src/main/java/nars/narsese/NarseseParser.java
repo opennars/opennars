@@ -375,6 +375,21 @@ public class NarseseParser extends BaseParser<Object> {
                         QuotedMultilineLiteral(),
                         QuotedLiteral(),
 
+                        sequence(
+                                includeOperation,
+                                NonOperationTerm(),
+                                EmptyOperationParens()
+                        ),
+
+                        //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
+                        sequence(
+                                includeOperation,
+                                NonOperationTerm(),
+                                NALOperator.COMPOUND_TERM_OPENER.symbol,
+                                MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, true)
+                        ),
+
+
                         sequence( NALOperator.STATEMENT_OPENER.symbol,
                                 MultiArgTerm(null, NALOperator.STATEMENT_CLOSER, false, true, true, false)
                         ),
@@ -399,19 +414,6 @@ public class NarseseParser extends BaseParser<Object> {
                                 MultiArgTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER, false, false, false)
                         ),
 
-                        sequence(
-                                includeOperation,
-                                NonOperationTerm(),
-                                EmptyOperationParens()
-                        ),
-
-                        //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
-                        sequence(
-                                includeOperation,
-                                NonOperationTerm(),
-                                NALOperator.COMPOUND_TERM_OPENER.symbol,
-                                MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, true)
-                        ),
 
 
                         sequence( NALOperator.COMPOUND_TERM_OPENER.symbol,

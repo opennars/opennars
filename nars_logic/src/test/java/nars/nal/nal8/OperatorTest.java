@@ -74,7 +74,6 @@ public class OperatorTest {
 
     @Test public void testSynchOperator() {
 
-        TextOutput.out(n);
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
@@ -89,6 +88,27 @@ public class OperatorTest {
         });
 
         n.input("exe(a,b,c)!");
+
+        n.run(1);
+
+        assertTrue(executed.get());
+
+    }
+
+    @Test public void testCompoundOperator() {
+
+        TextOutput.out(n);
+
+        AtomicBoolean executed = new AtomicBoolean(false);
+
+        n.on(new SynchOperator(n.term("<a --> b>")) {
+            @Override protected List<Task> execute(Operation operation, Memory memory) {
+                executed.set(true);
+                return null;
+            }
+        });
+
+        n.input("<a --> b>(a,b,c)!");
 
         n.run(1);
 
