@@ -7,42 +7,45 @@ package nars.op.app.farg;
 
 import nars.Events.CycleEnd;
 import nars.NAR;
-import nars.util.event.Reaction;
-import nars.nal.concept.Concept;
 import nars.bag.impl.LevelBag;
+import nars.event.NARReaction;
+import nars.nal.concept.Concept;
+import nars.util.event.Reaction;
 
 /**
  *
  * @author patrick.hammer
  */
-public class Workspace {
+public class Workspace extends NARReaction {
 
+    private final FluidAnalogiesAgents farg;
     public double temperature=0.0;
     public NAR nar;
     public int n_concepts=0;
     
     public Workspace(FluidAnalogiesAgents farg, NAR nar) {
-        this.nar=nar;
-        Workspace ws=this;
-        farg.coderack=new LevelBag(farg.codelet_level,farg.max_codelets);
-        nar.on(new Reaction() {
+        super(nar, CycleEnd.class);
 
-            @Override
-            public void event(Class event, Object[] args) {
-                for(int i=0;i<10;i++) { //process 10 codelets in each step
-                    Codelet cod=farg.coderack.pop();
-                    if(cod!=null) {
-                        if(cod.run(ws)) {
-                            farg.coderack.put(cod);
-                        }
-                    }
-                    temperature=calc_temperature();
-                }
-                controller();
-            }
-        }, CycleEnd.class);
+        this.farg = farg;
+        this.nar=nar;
+
+
     }
-    
+
+    @Override
+    public void event(Class event, Object[] args) {
+        for(int i=0;i<10;i++) { //process 10 codelets in each step
+            Codelet cod=farg.coderack.pop();
+            if(cod!=null) {
+                if(cod.run(this)) {
+                    farg.coderack.put(cod);
+                }
+            }
+            temperature=calc_temperature();
+        }
+        controller();
+    }
+
     public void controller() { 
         //when to put in Codelets of different type, and when to remove them
         //different controller for different domains would inherit from FARG

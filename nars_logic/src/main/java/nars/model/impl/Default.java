@@ -33,7 +33,6 @@ import nars.op.math.Count;
 import nars.op.mental.*;
 import nars.op.meta.Reflect;
 import nars.op.software.Javascript;
-import nars.op.software.NumericCertainty;
 import nars.op.software.Scheme;
 import nars.util.event.Reaction;
 
@@ -213,7 +212,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         new NullOperator("^deactivate")
     };
 
-    public static Reaction[] newDefaultOperators(NAR n) {
+    public Reaction[] newDefaultOperators(NAR n) {
 
         return new Reaction[] {
 
@@ -229,7 +228,8 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 new Consider(),  // do one inference step on a concept
                 new Name(),         // turn a compount term into an atomic term
                 //new Abbreviate(),
-                new Register(),
+
+                //new Register(),
 
                 // truth-value operations
                 new Doubt(),        // decrease the confidence of a belief
@@ -256,7 +256,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 new Scheme(),      // scheme evaluation
 
 
-                new NumericCertainty(),
+                //new NumericCertainty(),
 
                 //io operations
                 new Say(),
@@ -342,8 +342,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
 
         if (maxNALLevel >= 7) {
-            n.on(new STMInduction());
-
+            n.on(STMInduction.class);
         }
 
         if (maxNALLevel >= 8) {
@@ -361,7 +360,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         }
 
 
-        n.on(new Events.OUT());
+        n.on(new Events.OUT(n));
 
         //n.on(new RuntimeNARSettings());
 

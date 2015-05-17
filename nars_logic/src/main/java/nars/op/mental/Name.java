@@ -19,16 +19,16 @@ package nars.op.mental;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class Name extends Operator implements Mental {
 
     public Name() {
-        super("^name");
+        super();
     }
 
     /**
@@ -48,12 +48,12 @@ public class Name extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Term compound = args[0];
-        Term atomic = args[1];
+    protected ArrayList<Task> execute(Operation operation) {
+        Term compound = operation.arg(0);
+        Term atomic = operation.arg(1);
         Similarity content = Similarity.make(compound, atomic);
         
-        Truth truth = new Truth(1, 0.9999f);  // a naming convension
+        Truth truth = new Truth.DefaultTruth(1, 0.9999f);  // a naming convension
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, nar.memory, Tense.Present));
         
         Budget budget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth);

@@ -1,12 +1,13 @@
 package nars.op.mental;
 
 import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.Events.TaskDerive;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -19,7 +20,6 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.AbstractOperator;
-import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,7 +33,7 @@ import static nars.nal.term.Compound.termArray;
 public class Abbreviation extends AbstractOperator {
 
     private static final float abbreviationProbability = InternalExperience.INTERNAL_EXPERIENCE_PROBABILITY;
-    private Operator abbreviate = null;
+    private Term abbreviate = null;
     private Memory memory;
 
     //these two are AND-coupled:
@@ -52,7 +52,7 @@ public class Abbreviation extends AbstractOperator {
     public static class Abbreviate extends Operator implements Mental {
 
         public Abbreviate() {
-            super("^abbreviate");
+            super();
         }
 
         private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
@@ -68,16 +68,16 @@ public class Abbreviation extends AbstractOperator {
          * @return Immediate results as Tasks
          */
         @Override
-        protected ArrayList<Task> execute(Operation operation, Term[] args) {
+        protected ArrayList<Task> execute(Operation operation) {
             
-            Term compound = args[0];
+            Term compound = operation.arg(0);
             
             Term atomic = newSerialTerm();
                         
             Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT,
-                    new Truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(operation, nar.memory, Tense.Present));
             
             float quality = BudgetFunctions.truthToQuality(sentence.truth);
@@ -121,7 +121,8 @@ public class Abbreviation extends AbstractOperator {
 
             operation.setTask(task);
 
-            abbreviate.execute(operation, memory);
+            //memory.execute(operation);
+            //abbreviate.execute(operation, memory);
         }
     }
 
@@ -135,9 +136,9 @@ public class Abbreviation extends AbstractOperator {
         memory = n.memory;
 
         if (abbreviate == null) {
-            Operator _abbreviate = memory.operator("^abbreviate");
+            Term _abbreviate = Atom.get("^abbreviate");
             if (_abbreviate == null) {
-                n.on(abbreviate = new Abbreviate());
+                //n.on(abbreviate = new Abbreviate());
             }
         }
         

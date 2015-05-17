@@ -30,9 +30,7 @@ import java.util.ArrayList;
  */
 public class Doubt extends Operator implements Mental {
 
-    public Doubt() {
-        super("^doubt");
-    }
+
 
     /**
      * To activate a concept as if a question has been asked about it
@@ -41,8 +39,8 @@ public class Doubt extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Term term = args[0];
+    protected ArrayList<Task> execute(Operation operation) {
+        Term term = operation.arg();
         Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(true);
         return null;

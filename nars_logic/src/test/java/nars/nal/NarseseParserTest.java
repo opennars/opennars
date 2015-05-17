@@ -253,11 +253,11 @@ public class NarseseParserTest {
 
 
     protected void testBelieveAB(Operation t) {
-        assertEquals(3, t.getArguments().length());
+        assertEquals(3, t.arg().length());
         assertEquals("^believe", t.getOperator().toString());
-        assertEquals("a", t.getArgument(0).toString());
-        assertEquals("b", t.getArgument(1).toString());
-        assertEquals("SELF", t.getArgument(2).toString());
+        assertEquals("a", t.arg(0).toString());
+        assertEquals("b", t.arg(1).toString());
+        assertEquals("SELF", t.arg(2).toString());
     }
 
     @Test

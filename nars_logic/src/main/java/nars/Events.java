@@ -1,9 +1,11 @@
 package nars;
 
-import nars.util.event.Reaction;
-import nars.nal.*;
+import nars.event.NARReaction;
+import nars.nal.ConceptProcess;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.concept.Concept;
-import nars.op.AbstractOperator;
+import nars.util.event.Reaction;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,10 +19,16 @@ public class Events {
     public static interface IN  { }
 
     /** conversational (judgments, questions, etc...) output */
-    public static class OUT extends AbstractOperator {
+    public static class OUT extends NARReaction {
 
         AtomicInteger volume;
-        NAR nar;
+        public final NAR n;
+
+        public OUT(NAR nar) {
+            super(nar);
+            this.n = nar;
+        }
+
 
         @Override
         public void event(final Class event, final Object[] args) {
@@ -31,7 +39,7 @@ public class Events {
             final float noiseLevel = 1.0f - (this.volume.get() / 100.0f);
 
             if (t.summaryNotLessThan(noiseLevel)) {  // only report significant derived Tasks
-                nar.emit(Events.OUT.class, t);
+                n.emit(Events.OUT.class, t);
             }
         }
 
@@ -41,15 +49,14 @@ public class Events {
         }
 
         @Override
-        public void onEnabled(NAR n) {
-            this.volume = n.memory.param.outputVolume;
-            this.nar = n;
+        public void setActive(boolean b) {
+            super.setActive(b);
+            if (b) {
+                this.volume = n.memory.param.outputVolume;
+            }
         }
 
-        @Override
-        public void onDisabled(NAR n) {
 
-        }
     }
 
     /** warnings, errors & exceptions */
@@ -106,7 +113,7 @@ public class Events {
     /** if a concept is completely removed from both main, and subconcepts (or if subconcepts has capacity 0) */
     public static class ConceptDelete { }
     
-    abstract public static class ConceptBeliefAdd implements Reaction {
+    abstract public static class ConceptBeliefAdd implements Reaction<Class> {
         
         abstract public void onBeliefAdd(Concept c, Task t, Object[] extra);
         
@@ -116,8 +123,8 @@ public class Events {
         
     }
     
-    abstract public static class ConceptBeliefRemove implements Reaction {
-        
+    abstract public static class ConceptBeliefRemove implements Reaction<Class> {
+
         abstract public void onBeliefRemove(Concept c, Sentence removed, Task t, Object[] extra);
         
         @Override public void event(Class event, Object[] args) {
@@ -151,7 +158,7 @@ public class Events {
 
     
     /** fired at the END of a ConceptFire task */
-    abstract public static class ConceptProcessed implements Reaction {
+    abstract public static class ConceptProcessed implements Reaction<Class> {
         
         /**
          * use:
@@ -178,7 +185,7 @@ public class Events {
     
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
-    abstract public static class TaskAdd implements Reaction {
+    abstract public static class TaskAdd implements Reaction<Class> {
         
         abstract public void onTaskAdd(Task t, String reason);
         

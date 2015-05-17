@@ -38,7 +38,7 @@ public class Consider extends Operator implements Mental {
     }
     
     public Consider() {
-        super("^consider");
+        super();
     }
 
     /**
@@ -48,8 +48,8 @@ public class Consider extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Term term = args[0];
+    protected ArrayList<Task> execute(Operation operation) {
+        Term term = operation.arg(0);
         
         Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
 

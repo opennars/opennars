@@ -77,7 +77,7 @@ public class Scheme extends TermFunction {
             //TODO handle other types, like Object[] etc
             else {
                 //return Term.get("\"" + schemeObj.print() + "\"" );
-                return get(schemeObj.print());
+                return Atom.get(schemeObj.print());
             }
             //throw new RuntimeException("Invalid expression for term: " + schemeObj);
 

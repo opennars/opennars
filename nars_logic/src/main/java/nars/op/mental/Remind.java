@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class Remind extends Operator implements Mental {
 
     public Remind() {
-        super("^remind");
+        super();
     }
 
     /**
@@ -43,8 +43,8 @@ public class Remind extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override    
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Term term = args[0];
+    protected ArrayList<Task> execute(Operation operation) {
+        Term term = operation.arg(0);
         Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
         nar.memory.concepts.activate(concept, budget, Activating.TaskLink);

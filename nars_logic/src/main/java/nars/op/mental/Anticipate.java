@@ -30,12 +30,14 @@ import nars.Events.CycleEnd;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
-import nars.Symbols;
-import nars.nal.*;
-import nars.nal.stamp.Stamp;
+import nars.nal.NAL;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.op.AbstractOperator;
 
@@ -63,7 +65,7 @@ import java.util.Set;
  */
 public class Anticipate extends AbstractOperator implements Mental {
 
-    final static Truth expiredTruth = new Truth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+    final static Truth expiredTruth = new Truth.DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
 
 

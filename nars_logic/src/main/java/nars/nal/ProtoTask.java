@@ -1,10 +1,10 @@
 package nars.nal;
 
 import nars.Memory;
-import nars.budget.Budget;
 import nars.Symbols;
-import nars.nal.stamp.Stamp;
+import nars.budget.Budget;
 import nars.nal.nal7.Tense;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 
 /** utility method for creating new tasks following a fluent builder pattern
@@ -46,7 +46,7 @@ public class ProtoTask<T extends Compound> {
     }
 
     public ProtoTask<T> truth(float freq, float conf) {
-        this.truth = new Truth(freq, conf);
+        this.truth = new Truth.DefaultTruth(freq, conf);
         if (budget == null) {
             //set a default budget if none exists
             budget = new Budget(punc, truth);
@@ -59,6 +59,8 @@ public class ProtoTask<T extends Compound> {
     public ProtoTask<T> quest() { this.punc = Symbols.QUEST; return this;}
     public ProtoTask<T> goal() { this.punc = Symbols.GOAL; return this;}
 
+
+    //TODO make these return the task, as the final call in the chain
     public ProtoTask<T> eternal() { this.tense = Tense.Eternal; return this;}
     public ProtoTask<T> present() { this.tense = Tense.Present; return this;}
     public ProtoTask<T> past() { this.tense = Tense.Past; return this;}

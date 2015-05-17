@@ -22,7 +22,6 @@ package nars.nal.nal8;
 
 import nars.Global;
 import nars.nal.Task;
-import nars.nal.term.Term;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,7 +50,7 @@ public class NullOperator extends Operator {
             nar.memory.emit(getClass(),
                     //HACK
                     name,
-                    Arrays.toString(o.getArguments().term)
+                    Arrays.toString(o.arg().term)
             );
         }
         return null;

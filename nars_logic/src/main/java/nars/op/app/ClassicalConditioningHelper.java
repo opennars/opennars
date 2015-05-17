@@ -5,21 +5,20 @@
 
 package nars.op.app;
 
-import nars.Events;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.nal.term.Term;
-import nars.op.IOperator;
-import nars.util.event.Reaction;
-import nars.Symbols;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Term;
+import nars.util.event.AbstractReaction;
+import nars.util.event.Reaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ import java.util.Objects;
  *
  * @author tc
  */
-public class ClassicalConditioningHelper implements IOperator {
+public class ClassicalConditioningHelper extends AbstractReaction {
 
     public boolean EnableAutomaticConditioning=true;
     public Reaction obs;
@@ -290,41 +289,49 @@ public class ClassicalConditioningHelper implements IOperator {
     }
     
     boolean enabled=false;
-    
+
+
     @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
-
-        this.enabled=enabled;
-        this.nar=n;
-        if(obs==null) {
-            saved_priority= Global.DEFAULT_JUDGMENT_PRIORITY;
-            obs=new Reaction() {
-
-                @Override
-                public void event(Class event, Object[] a) {
-                    //is not working, keep for later:
-                    if (event!=DirectProcess.class)
-                        return;
-                    Task task = (Task)a[0];
-                    HandleInput(task);
-
-                    
-                }
-            };
-        }
-        
-        
-        if(enabled) {
-            if (enabled)
-                lastElems.clear();
-            Global.DEFAULT_JUDGMENT_PRIORITY= 0.01f;
-        } else {
-            Global.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
-        }
-        
-        
-        n.memory.event.set(obs, enabled, DirectProcess.class);
-        return true;
+    public Class[] getEvents() {
+        return new Class[] { DirectProcess.class };
     }
-    
+
+
+//    @Override
+//    public boolean setEnabled(NAR n, boolean enabled) {
+//
+//        this.enabled=enabled;
+//        this.nar=n;
+//        if(obs==null) {
+//            saved_priority= Global.DEFAULT_JUDGMENT_PRIORITY;
+//            obs=new Reaction() {
+//
+//
+//            };
+//        }
+//
+//
+//        if(enabled) {
+//            if (enabled)
+//                lastElems.clear();
+//            Global.DEFAULT_JUDGMENT_PRIORITY= 0.01f;
+//        } else {
+//            Global.DEFAULT_JUDGMENT_PRIORITY=saved_priority;
+//        }
+//
+//
+//        n.memory.event.set(obs, enabled, DirectProcess.class);
+//        return true;
+//    }
+
+    @Override
+    public void event(Class event, Object[] a) {
+        //is not working, keep for later:
+        if (event!=DirectProcess.class)
+            return;
+        Task task = (Task)a[0];
+        HandleInput(task);
+
+
+    }
 }

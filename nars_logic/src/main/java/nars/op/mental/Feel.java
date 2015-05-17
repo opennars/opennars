@@ -17,20 +17,21 @@
 package nars.op.mental;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
+import nars.Memory;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -39,17 +40,15 @@ import java.util.ArrayList;
  * Feeling common operations
  */
 public abstract class Feel extends Operator implements Mental {
-    private final Term feelingTerm;
+    private final Term feelingTerm = Atom.get("feel");
 
     public Feel(String name) {
-        super(name);
+        super();
         
-        // remove the "^feel" prefix from name
-        this.feelingTerm = get(toString().substring(5));
     }
 
-    final static Term self = get(Symbols.SELF);
-    final static Term selfSubject = SetExt.make(self);
+
+
     
     /**
      * To get the current value of an internal sensor
@@ -60,10 +59,12 @@ public abstract class Feel extends Operator implements Mental {
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory, Tense.Present);
-        Truth truth = new Truth(value, 0.999f);
+        Truth truth = new Truth.DefaultTruth(value, 0.999f);
                 
         Term predicate = SetInt.make(feelingTerm);
-        
+
+        final Term self = memory.self();
+        final Term selfSubject = SetExt.make(self);
         Term content = Inheritance.make(selfSubject, predicate);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, stamp);
         float quality = BudgetFunctions.truthToQuality(truth);

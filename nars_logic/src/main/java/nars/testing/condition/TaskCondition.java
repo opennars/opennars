@@ -363,7 +363,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     public Truth getTruthMean() {
-        return new Truth(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
+        return new Truth.DefaultTruth(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
     }
 
     @Override

@@ -1,9 +1,10 @@
 package nars.nal.nal8;
 
-import com.sun.xml.internal.bind.v2.TODO;
+import nars.NAR;
 import nars.NARSeed;
-import nars.io.TextOutput;
+import nars.model.impl.Default;
 import nars.nal.JavaNALTest;
+import nars.util.event.Reaction;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -37,6 +38,21 @@ public class TermFunctionTest extends JavaNALTest {
         testIO("count({a,b}, #x)!",
                 "<2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%");
     }
+
+
+    @Test public void testOperatorRegistration() {
+
+        //create a completely empty NAR, no default operators
+        NAR n = new NAR(new Default() {
+            @Override
+            public Reaction[] newDefaultOperators(NAR n) {
+                return new Reaction[] { };
+            }
+        });
+
+
+    }
+
 
 
 //TODO: allow this in a special eval operator

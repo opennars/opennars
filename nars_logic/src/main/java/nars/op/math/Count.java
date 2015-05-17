@@ -17,11 +17,12 @@
 
 package nars.op.math;
 
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.TermFunction;
+import nars.nal.term.Atom;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.op.mental.Mental;
 
 /**
@@ -46,7 +47,7 @@ public class Count extends TermFunction<Integer> implements Mental {
 
     final static String requireMessage = "Requires 1 SetExt or SetInt argument";
     
-    final static Term counted = get("counted");
+    final static Term counted = Atom.get("counted");
 
 
 

@@ -18,17 +18,17 @@
 package nars.op.mental;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
+import nars.Memory;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class Want extends Operator implements Mental {
 
     public Want() {
-        super("^want");
+        super();
     }
 
     /**
@@ -48,11 +48,11 @@ public class Want extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
+    protected ArrayList<Task> execute(Operation operation) {
 
-        Term content = args[0];                
+        Term content = operation.arg(0);
         
-        Truth truth = new Truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        Truth truth = new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, nar.memory, Tense.Present));
         
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
@@ -60,8 +60,8 @@ public class Want extends Operator implements Mental {
         return Lists.newArrayList( operation.newSubTask(sentence, budget) );
     }
 
-    @Override
-    public boolean isExecutable(Memory mem) {
-        return false;
-    }
+//    @Override
+//    public boolean isExecutable(Memory mem) {
+//        return false;
+//    }
 }

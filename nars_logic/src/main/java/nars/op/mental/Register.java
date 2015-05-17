@@ -24,27 +24,27 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
 
 import java.util.ArrayList;
-
-/**
- * Register a new operate when the system is running
- */
-public class Register extends Operator implements Mental {
-
-    public Register() {
-        super("^register");
-    }
-
-
-    /**
-     * To register a new operate
-     * @param args Arguments, a Statement followed by an optional tense
-     * @return Immediate results as Tasks
-     */
-    @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Operator op=new NullOperator(args[0].toString());
-        nar.on(op);  // add error checking
-        return null;
-    }
-    
-}
+//
+///**
+// * Register a new operate when the system is running
+// */
+//public class Register extends Operator implements Mental {
+//
+//    public Register() {
+//        super();
+//    }
+//
+//
+//    /**
+//     * To register a new operate
+//     * @param args Arguments, a Statement followed by an optional tense
+//     * @return Immediate results as Tasks
+//     */
+//    @Override
+//    protected ArrayList<Task> execute(Operation operation) {
+//        Operator op=new NullOperator(operation.arg(0).toString());
+//        nar.on(op);  // add error checking
+//        return null;
+//    }
+//
+//}

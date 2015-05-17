@@ -38,7 +38,7 @@ import java.util.ArrayList;
 public class Evaluate extends Operator implements Mental {
 
     public Evaluate() {
-        super("^evaluate");
+        super();
     }
 
     /**
@@ -47,8 +47,8 @@ public class Evaluate extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Compound content = Sentence.termOrException(args[0]);
+    protected ArrayList<Task> execute(Operation operation) {
+        Compound content = Sentence.termOrException(operation.arg(0));
 
         Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, nar.memory, Tense.Present));
         Budget budget = new Budget(Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);

@@ -36,7 +36,7 @@ import java.util.ArrayList;
 public class Wonder extends Operator implements Mental {
 
     public Wonder() {
-        super("^wonder");
+        super();
     }
 
     /**
@@ -45,8 +45,8 @@ public class Wonder extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Term content = args[0];
+    protected ArrayList<Task> execute(Operation operation) {
+        Term content = operation.arg(0);
         
         
         Sentence sentence = new Sentence(content, Symbols.QUESTION, null, new Stamp(nar.memory, Stamp.ETERNAL));

@@ -6,7 +6,7 @@ import nars.util.event.Reaction;
 /**
  * Created by me on 5/1/15.
  */
-public interface DerivationFilter extends Reaction {
+public interface DerivationFilter  {
 
 
     /**

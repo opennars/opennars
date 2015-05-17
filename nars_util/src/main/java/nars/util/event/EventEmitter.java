@@ -1,15 +1,18 @@
 
 package nars.util.event;
 
-import com.google.common.collect.Lists;
+import objenome.op.cas.E;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * TODO separate this into a single-thread and multithread implementation
  */
-abstract public class EventEmitter<E>  {
+abstract public class EventEmitter<K>  {
 
     public interface EventRegistration {
         public void off();
@@ -161,69 +164,32 @@ abstract public class EventEmitter<E>  {
      *
      * TODO investigate if CopyOnWriteArrayList can eliminate the need for the pending addition/removal queues
      * */
-    public static class DefaultEventEmitter<E> extends EventEmitter<E> {
+    public static class DefaultEventEmitter<K> extends EventEmitter<K> {
 
-        final Map<Class,Reaction[]> reactions = new HashMap(16);
-
-        final List<DefaultEventRegistration> pendingAdditions = new ArrayList();
-        final List<DefaultEventRegistration> pendingRemovals = new ArrayList();
+        final Map<K,List<Reaction<K>>> reactions = new HashMap(16);
 
 
-        public class DefaultEventRegistration implements EventRegistration {
+        public class DefaultEventRegistration<K> implements EventRegistration {
 
-            final Class<?> chan;
+            final K key;
             final Reaction reaction;
 
-            DefaultEventRegistration(Class<?> chan, Reaction o) {
-                this.chan = chan;
+            DefaultEventRegistration(K key, Reaction o) {
+                this.key= key;
                 this.reaction = o;
             }
 
             @Override
             public void off() {
-                pendingRemovals.add(this);
+                reactions.get(key).remove(reaction);
             }
         }
+
+
 
         @Override
-        public void cycle() {
-
-            int pr = pendingRemovals.size();
-            for (int i = 0; i < pr; i++) {
-                DefaultEventRegistration d = pendingRemovals.get(i);
-
-                List<Reaction> l = toList(d.chan);
-                l.remove(d.reaction);
-                fromList(d.chan, l);
-            }
-            pendingRemovals.clear();
-
-            int pa = pendingAdditions.size();
-            for (int i = 0; i < pa; i++) {
-                DefaultEventRegistration d = pendingAdditions.get(i);
-
-                List<Reaction> l = toList(d.chan);
-                l.add(d.reaction);
-                fromList(d.chan, l);
-            }
-            pendingAdditions.clear();
-
-        }
-
-        List<Reaction> toList(Class c) {
-            Reaction[] r = reactions.get(c);
-            if (r == null) return new ArrayList();
-            return Lists.newArrayList(r);
-        }
-
-        void fromList(Class c, List<Reaction> l) {
-            Reaction[] r = l.toArray(new Reaction[l.size()]);
-            reactions.put(c, r);
-        }
-
-        @Override
-        public void notify(final Class channel, final Object... arg) {
-            Reaction[] c = reactions.get(channel);
+        public void notify(final K channel, final Object... arg) {
+            List<Reaction<K>> c = reactions.get(channel);
             if (c!=null) {
                 for (Reaction r : c) {
                     r.event(channel, arg);
@@ -232,17 +198,19 @@ abstract public class EventEmitter<E>  {
         }
 
         @Override
-        public EventRegistration on(Class<?> c, Reaction o) {
-            DefaultEventRegistration d = new DefaultEventRegistration(c, o);
-            pendingAdditions.add(d);
+        public EventRegistration on(K channel, Reaction o) {
+            DefaultEventRegistration d = new DefaultEventRegistration(channel, o);
+            List<Reaction<K>> cl = reactions.get(channel);
+            if (cl == null)
+                reactions.put(channel, cl = new CopyOnWriteArrayList());
+
+            cl.add(o);
             return d;
         }
 
         @Override
         public void delete() {
             reactions.clear();
-            pendingAdditions.clear();
-            pendingRemovals.clear();
         }
 
         @Override
@@ -251,19 +219,17 @@ abstract public class EventEmitter<E>  {
         }
     }
 
-    abstract void notify(Class channel, Object[] arg);
+    abstract void notify(K channel, Object[] arg);
 
-    abstract public EventRegistration on(Class<?> c, Reaction o);
+    abstract public EventRegistration on(K k, Reaction o);
 
     abstract public boolean isActive(final Class event);
 
-    /** called after each cycle, allowing the event emitter to update any state it accumulated during the last cycle */
-    abstract public void cycle();
 
     /** for enabling many events at the same time */
-    @Deprecated public void set(final Reaction o, final boolean enable, final Class... events) {
+    @Deprecated public void set(final Reaction<E> o, final boolean enable, final K... events) {
         
-        for (final Class c : events) {
+        for (final K c : events) {
             if (enable)
                 on(c, o);
             else
@@ -300,10 +266,10 @@ abstract public class EventEmitter<E>  {
 
 
     
-    public Registrations on(final Reaction o, final Class... events) {
+    public Registrations on(final Reaction o, final K... events) {
         Registrations r = new Registrations(events.length);
     
-        for (final Class c : events)            
+        for (final K c : events)
             r.add( on(c, o) );
         
         return r;
@@ -320,11 +286,11 @@ abstract public class EventEmitter<E>  {
 //    }
 
 
-    public void emit(final Class channel) {
+    public void emit(final K channel) {
         notify(channel, null);
     }
 
-    public void emit(final Class channel, final Object... args) {
+    public void emit(final K channel, final Object... args) {
 //        if (args.length == 0) {
 //            //notify(channel);
 //            throw new RuntimeException("event to " + channel + " with zero arguments");
@@ -341,7 +307,7 @@ abstract public class EventEmitter<E>  {
      * @param o
      * @return  whether it was removed
      */
-    @Deprecated public <C> void off(final Class<? extends C> event, final Reaction<? extends C> o) {
+    @Deprecated public void off(final K event, final Reaction<? extends E> o) {
         throw new RuntimeException("off() not supported; use the returned Registration object to .cancel()");
     }
 

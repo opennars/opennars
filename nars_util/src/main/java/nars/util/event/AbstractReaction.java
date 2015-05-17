@@ -3,7 +3,7 @@ package nars.util.event;
 /**
  * Created by me on 5/5/15.
  */
-abstract public class AbstractReaction implements Reaction {
+abstract public class AbstractReaction implements Reaction<Class> {
 
     protected EventEmitter source;
     protected EventEmitter.Registrations active;

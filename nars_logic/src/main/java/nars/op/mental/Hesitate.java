@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class Hesitate extends Operator implements Mental {
 
     public Hesitate() {
-        super("^hesitate");
+        super();
     }
 
     /**
@@ -41,8 +41,8 @@ public class Hesitate extends Operator implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
-        Term term = args[0];
+    protected ArrayList<Task> execute(Operation operation) {
+        Term term = operation.arg(0);
         Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
         concept.discountConfidence(false);
         return null;

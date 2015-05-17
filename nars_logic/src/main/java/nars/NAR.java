@@ -20,6 +20,7 @@ import nars.narsese.NarseseParser;
 import nars.narsese.OldNarseseParser;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
+import objenome.Container;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +37,7 @@ import java.io.InputStream;
  *   * step mode - controlled by an outside system, such as during debugging or testing
  *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
-public class NAR implements Runnable {
+public class NAR extends Container implements Runnable {
 
     /**
      * The information about the version and date of the project.
@@ -126,13 +127,18 @@ public class NAR implements Runnable {
     
     
     protected NAR(final Memory m) {
+        super();
         this.memory = m;        
         this.param = m.param;
 
+        the(NAR.class, this);
+        this.narseseParser = the(NarseseParser.class, NarseseParser.newParser(this));
+        this.narsese = the(OldNarseseParser.class);
+        this.textPerception = the(TextPerception.class);
 
-        this.narseseParser = NarseseParser.newParser(this);
-        this.narsese = new OldNarseseParser(this, narseseParser);
-        this.textPerception = new TextPerception(this, narsese, narseseParser);
+//        this.narseseParser = NarseseParser.newParser(this);
+//        this.narsese = new OldNarseseParser(this, narseseParser);
+//        this.textPerception = new TextPerception(this, narsese, narseseParser);
     }
 
     /**
@@ -338,7 +344,10 @@ public class NAR implements Runnable {
     /** attach event handler to one or more event (classes) */
     public EventEmitter.Registrations on(Reaction o, Class... c) {
         return memory.event.on(o, c);
+    }
 
+    public EventEmitter.Registrations on(Class<? extends Reaction> c) {
+        return on(the(c));
     }
     
 

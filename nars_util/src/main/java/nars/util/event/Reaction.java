@@ -1,8 +1,8 @@
 package nars.util.event;
 
 /** Observes events emitted by EventEmitter */
-public interface Reaction<C> {
-    public void event(Class<? extends C> event, Object... args);
+public interface Reaction<K> {
 
+    public void event(K event, Object... args);
 
 }

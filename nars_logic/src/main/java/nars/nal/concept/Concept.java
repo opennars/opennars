@@ -40,7 +40,6 @@ import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
-import nars.op.mental.InternalExperience;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -585,7 +584,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         double Satisfaction=1.0-AntiSatisfaction;
-        Truth T=projectedGoal.truth.clone();
+        Truth T = new Truth.DefaultTruth(projectedGoal.truth);
         T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
 

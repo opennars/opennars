@@ -22,7 +22,7 @@ public class FluidAnalogiesAgents extends Operator {
     public int max_codelets=100;
     public int codelet_level=100;
     Workspace ws;
-    LevelBag<Codelet,Term> coderack;
+    final LevelBag<Codelet,Term> coderack = new LevelBag(codelet_level,max_codelets);
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {

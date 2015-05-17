@@ -12,17 +12,17 @@ import java.util.List;
 public class Schizo extends Operator {
 
     public Schizo() {
-        super("^schizo");
+        super();
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args) {
-        nar.memory.setSelf(args[0]);
+    protected List<Task> execute(Operation operation) {
+        nar.memory.setSelf(operation.arg());
         return null;
     }
 
-    @Override
-    public boolean isImmediate() {
-        return true;
-    }
+//    @Override
+//    public boolean isImmediate() {
+//        return true;
+//    }
 }

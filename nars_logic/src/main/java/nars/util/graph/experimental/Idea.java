@@ -261,7 +261,7 @@ public class Idea implements Iterable<Concept> {
         return false;
     }
     
-    public static class IdeaSet extends HashMap<CharSequence,Idea> implements Reaction {
+    public static class IdeaSet extends HashMap<CharSequence,Idea> implements Reaction<Class> {
         private final NAR nar;
         private EventEmitter.Registrations reg;
 

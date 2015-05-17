@@ -51,14 +51,14 @@ public class Say extends Operator {
 //    boolean rejectHasVariables = true;    
     
     public Say() {
-        super("^say");
+        super();
     }
 
     final int MAX_WORD_LENGTH = 16;
-    final Term WORD = get("WORD");
-    final Term QUIET = get("QUIET");
-    final Term INCOHERENT = get("INCOHERENT");
-    final Term SAID = get("SAID");
+    final Term WORD = Atom.get("WORD");
+    final Term QUIET = Atom.get("QUIET");
+    final Term INCOHERENT = Atom.get("INCOHERENT");
+    final Term SAID = Atom.get("SAID");
 //NOISY
 
     long lastEmit = 0;
@@ -77,7 +77,7 @@ public class Say extends Operator {
     }
 
     @Override
-    protected synchronized List<Task> execute(Operation operation, Term[] args) {
+    protected synchronized List<Task> execute(Operation operation) {
 
         this.memory = nar.memory;
         this.currentOperation = operation;
@@ -123,6 +123,7 @@ public class Say extends Operator {
 //            }
 //        }
 
+        Term[] args = operation.arg().term;
         int argsLength = args.length - 1; //ignore ending SELF
 
         if (argsLength == 1) {
@@ -208,7 +209,7 @@ public class Say extends Operator {
 
     private List<Task> isQuiet() {
         return Arrays.asList( memory.newTask(
-                Inheritance.make(memory.getSelf(), QUIET)
+                Inheritance.make(memory.self(), QUIET)
         ).judgment().present().truth(1.0f, 0.9f).get());
     }
 
@@ -216,7 +217,7 @@ public class Say extends Operator {
         memory.emit(Say.class, t);
         return Arrays.asList( memory.newTask(
                 Inheritance.make(
-                        Product.make(t, memory.getSelf()),
+                        Product.make(t, memory.self()),
                         SAID)
         ).judgment().present().truth(1.0f, 0.9f).get());
     }
@@ -229,7 +230,7 @@ public class Say extends Operator {
         });
         return Arrays.asList( memory.newTask(
                 Inheritance.make(
-                        Product.make(SetExt.make(c), memory.getSelf()),
+                        Product.make(SetExt.make(c), memory.self()),
                         INCOHERENT)
         ).judgment().present().truth(1.0f, 0.9f).get());
 

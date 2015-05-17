@@ -22,7 +22,7 @@ public class DesireThresholdExecutive extends AbstractExecutive {
 
             Operator oper = op.getOperator();
 
-            return oper.execute(op, c.memory);
+            //return oper.execute(op);
         }
 
         return false;

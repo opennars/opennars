@@ -38,7 +38,7 @@ public class FeelHappy extends Feel implements Mental {
      * @return Immediate results as Tasks
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
+    protected ArrayList<Task> execute(Operation operation) {
         return feeling(nar.memory.emotion.happy(), nar.memory);
     }    
 }

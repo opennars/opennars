@@ -20,7 +20,7 @@ public abstract class SynchronousSentenceFunction extends Operator {
     static final Variable var=new Variable("$1");
 
     protected SynchronousSentenceFunction(String name) {
-        super(name);
+        super();
     }
 
 
@@ -32,9 +32,9 @@ public abstract class SynchronousSentenceFunction extends Operator {
 
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args) {
+    protected List<Task> execute(Operation operation) {
 
-        Collection<Sentence> y = function(nar.memory, args);
+        Collection<Sentence> y = function(nar.memory, operation.arg().term);
         if (y == null) {
                 return null;
             }

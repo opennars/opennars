@@ -132,7 +132,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                     return null;
                 }
 
-                Term ta = ((Operation) operation.getTerm()).getArgument(0);
+                Term ta = ((Operation) operation.getTerm()).arg(0);
                 int a = getAction(operation);
                 if (a !=-1)
                     io.desire(a, operation);
@@ -363,7 +363,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
         if (nextAction != null) {
-            int i = Integer.parseInt((nextAction).getArgument(0).toString());
+            int i = Integer.parseInt((nextAction).arg(0).toString());
 
             boolean actionSucceeded = env.takeAction(i);
 

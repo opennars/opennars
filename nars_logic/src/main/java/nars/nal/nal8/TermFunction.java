@@ -27,7 +27,7 @@ public abstract class TermFunction<O> extends Operator  {
     static final Variable var=new Variable("$y");
 
     protected TermFunction(String name) {
-        super(name);
+        super();
     }
 
     public static int integer(Term x, int defaultValue)  {
@@ -67,7 +67,7 @@ public abstract class TermFunction<O> extends Operator  {
         //transform to image for perception variable introduction rule (is more efficient representation
 
         Inheritance inh=Inheritance.make(y,
-                ImageExt.make(operation.getArguments(), operation.getPredicate(), (short)(numArgs))
+                ImageExt.make(operation.arg(), operation.getPredicate(), (short)(numArgs))
                 );
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
@@ -147,14 +147,14 @@ public abstract class TermFunction<O> extends Operator  {
     }
 
     @Override
-    protected ArrayList<Task> execute(final Operation operation, final Term[] args) {
+    protected ArrayList<Task> execute(final Operation operation) {
 
         TermFunction op = (TermFunction) operation.getOperator();
 
-        Term[] rawArgs = operation.getArguments().term;
+        Term[] rawArgs = operation.arg().term;
 
         int numInputs = rawArgs.length;
-        if (rawArgs[numInputs - 1].equals(op.getMemory().getSelf()))
+        if (rawArgs[numInputs - 1].equals(op.getMemory().self()))
             numInputs--;
 
         Term lastTerm = null;

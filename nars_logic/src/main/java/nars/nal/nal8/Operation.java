@@ -27,7 +27,6 @@ import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
-import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -177,9 +176,10 @@ public class Operation extends Inheritance {
         return task;
     }
 
-    public Product getArguments() {
+    public Product arg() {
         return (Product)getSubject();
     }
+
 
     public static Term make(Term[] raw) {
         if (raw.length < 1) {
@@ -194,8 +194,8 @@ public class Operation extends Inheritance {
         return make(operator, args);
     }
 
-    public Term getArgument(int i) {
-        return getArguments().term[i];
+    public Term arg(int i) {
+        return arg().term[i];
     }
 
 //    @Override
@@ -218,7 +218,7 @@ public class Operation extends Inheritance {
         final Term[] rawArgs = getArgumentsRaw();
         int numInputs = rawArgs.length;
 
-        if (rawArgs[numInputs - 1].equals(getOperator().getMemory().getSelf()))
+        if (rawArgs[numInputs - 1].equals(getOperator().getMemory().self()))
             numInputs--;
 
         if (rawArgs[numInputs - 1] instanceof Variable)
@@ -280,7 +280,7 @@ public class Operation extends Inheritance {
 
     /** returns a reference to the raw arguments as contained by the Product subject of this operation */
     public Term[] getArgumentsRaw() {
-        return getArguments().term;
+        return arg().term;
     }
 
     public Truth getConceptDesire(Memory m) {

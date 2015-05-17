@@ -4,11 +4,11 @@ import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.event.NARReaction;
 import nars.nal.DirectProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
-import nars.op.AbstractOperator;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -21,30 +21,22 @@ import static nars.nal.nal7.TemporalRules.containsMentalOperator;
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.
  */
-public class STMInduction extends AbstractOperator {
+public class STMInduction extends NARReaction {
 
     public final Deque<Task> stm;
     int stmSize;
 
-    public STMInduction() {
+    public STMInduction(NAR nar) {
+        super(nar);
         this.stmSize = 1;
         stm = Global.THREADS == 1 ? new ArrayDeque() : new ConcurrentLinkedDeque<>();
     }
 
     @Override
     public Class[] getEvents() {
-        return new Class[]{DirectProcess.class};
+        return new Class[]{DirectProcess.class, Events.ResetStart.class};
     }
 
-    @Override
-    public void onEnabled(NAR n) {
-        stm.clear();
-    }
-
-    @Override
-    public void onDisabled(NAR n) {
-
-    }
 
     @Override
     public void event(Class event, Object[] args) {
@@ -52,6 +44,9 @@ public class STMInduction extends AbstractOperator {
             Task t = (Task) args[0];
             DirectProcess n = (DirectProcess) args[1];
             inductionOnSucceedingEvents(t, n);
+        }
+        else if (event == Events.ResetStart.class) {
+            stm.clear();
         }
     }
 

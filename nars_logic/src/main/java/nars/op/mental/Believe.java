@@ -21,18 +21,18 @@
 package nars.op.mental;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
+import nars.Memory;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
@@ -45,7 +45,7 @@ import java.util.ArrayList;
 public class Believe extends Operator implements Mental {
 
     public Believe() {
-        super("^believe");
+        super();
     }
 
     /**
@@ -54,11 +54,11 @@ public class Believe extends Operator implements Mental {
      *
      */
     @Override
-    protected ArrayList<Task> execute(Operation operation, Term[] args) {
+    protected ArrayList<Task> execute(Operation operation) {
 
-        Compound content = Sentence.termOrException(args[0]);
+        Compound content = Sentence.termOrException(operation.arg(0));
 
-        Truth truth = new Truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        Truth truth = new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, nar.memory, Tense.Present));
         float quality = BudgetFunctions.truthToQuality(truth);
         Budget budget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, quality);
@@ -67,8 +67,8 @@ public class Believe extends Operator implements Mental {
 
     }
 
-    @Override
-    public boolean isExecutable(Memory mem) {
-        return false;
-    }
+//    @Override
+//    public boolean isExecutable(Memory mem) {
+//        return false;
+//    }
 }

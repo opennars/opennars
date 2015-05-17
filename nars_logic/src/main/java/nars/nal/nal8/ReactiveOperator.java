@@ -9,13 +9,13 @@ import nars.util.event.Reaction;
  * provide a convenient API for defining an Operator that reacts
  * to both its own received invocations (via execute()) and additional specific events.
  */
-abstract public class ReactiveOperator extends Operator implements Reaction {
+abstract public class ReactiveOperator extends Operator {
 
     private NARReaction reaction;
     private NAR nar;
 
     public ReactiveOperator(String name) {
-        super(name);
+        super();
     }
 
 

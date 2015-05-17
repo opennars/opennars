@@ -138,7 +138,7 @@ public class Memory implements Serializable {
             taskAdd(t);
     }
 
-    public Term getSelf() {
+    public Term self() {
         return self;
     }
 
@@ -248,7 +248,8 @@ public class Memory implements Serializable {
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
 
 
-    public final EventEmitter event;
+    public final EventEmitter<Class> event;
+    public final EventEmitter<String> exe;
 
     private long currentStampSerial = 1;
 
@@ -295,6 +296,7 @@ public class Memory implements Serializable {
         this.self = Symbols.DEFAULT_SELF; //default value
 
         this.event = new EventEmitter.DefaultEventEmitter();
+        this.exe = new EventEmitter.DefaultEventEmitter();
 
 
         this.conceptBuilders = new ArrayList(1);
@@ -786,8 +788,6 @@ public class Memory implements Serializable {
 
     /** executes one complete memory cycle (if not disabled) */
     public void cycle(final boolean newFrame) {
-
-        event.cycle();
 
         if (!isEnabled()) {
             return;

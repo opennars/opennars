@@ -52,7 +52,8 @@ abstract public class Operator extends AbstractReaction {
     protected NAR nar;
 
     protected Operator() {
-        this(null); }
+        this(null);
+    }
 
     protected Operator(EventEmitter source) {
         super(source, false);
@@ -145,7 +146,7 @@ abstract public class Operator extends AbstractReaction {
                 return false;
             }
 
-            final Term[] args = op.getArguments().term;
+            final Term[] args = op.arg().term;
 
             List<Task> feedback;
             try {
