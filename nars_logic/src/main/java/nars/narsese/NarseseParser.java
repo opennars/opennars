@@ -398,10 +398,9 @@ public class NarseseParser extends BaseParser<Object> {
                         Interval(),
                         ImageIndex(),
 
-                        //Copula(),
 
-                        //negation shorthand
-                        sequence(NALOperator.NEGATION.symbol, s(), Term(), push(Negation.make(term(pop())))),
+//                        //negation shorthand
+//                        sequence(NALOperator.NEGATION.symbol, s(), Term(), push(Negation.make(term(pop())))),
 
 
                         sequence(

@@ -4,13 +4,14 @@
  */
 package nars.nal.nal6;
 
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
 import nars.Events.Answer;
 import nars.NARSeed;
 import nars.event.NARReaction;
-import nars.testing.condition.OutputContainsCondition;
+import nars.io.TextOutput;
+import nars.model.impl.Curve;
+import nars.model.impl.Default;
 import nars.nal.JavaNALTest;
+import nars.testing.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -111,7 +112,6 @@ public class VariableTest extends JavaNALTest {
     }
 
     void unaffected(String left, String right) {
-        //TextOutput.out(nar);
 
         nar.mustInput(1, "<" + left + " ==> " + right + ">.");
         nar.input("<" + left + " ==> " + right + ">.");
@@ -123,9 +123,9 @@ public class VariableTest extends JavaNALTest {
         //should not become
         //<<(*,bird,animal,$1,$2) --> AndShortcut> ==> <$1 --> $3>>>.
     */
-    final String normA = "<(*,bird,animal,$1,$2) --> AndShortcut>";
+    final String normA = "<(*,bird,animal,$1,$2) <-> AndShortcut>";
     final String normB = "<$1 --> $2>";
-    final String normC = "<(*,bird,$1,$abc,$2) --> AndShortcut>";
+    final String normC = "<(*,bird,$1,$abc,$2) <-> AndShortcut>";
 
     @Test public void testNormalizeSomeVars1ab() {
         unaffected(normA, normB);

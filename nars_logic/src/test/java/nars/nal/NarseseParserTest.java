@@ -225,36 +225,11 @@ public class NarseseParserTest {
         taskEqualsOldParser("(--, negated).");
     }
 
-    @Test
-    public void testNegation2() throws InvalidInputException {
-
-        for (String s : new String[]{"--negated!", "-- negated!"}) {
-            Task t = task(s);
-            Term tt = t.getTerm();
-            assertTrue(tt instanceof Negation);
-            assertTrue(((Negation) tt).the().toString().equals("negated"));
-            assertTrue(t.getPunctuation() == Symbols.GOAL);
-        }
-    }
-
-    @Test
-    public void testNegation3() {
-        Negation nab = term("--(a & b)");
-        assertTrue(nab instanceof Negation);
-        IntersectionExt ab = (IntersectionExt) nab.the();
-        assertTrue(ab instanceof IntersectionExt);
-
-        try {
-            task("(-- negated illegal_extra_term)!");
-            assertTrue(false);
-        } catch (Exception e) {
-        }
-    }
 
 
     protected void testBelieveAB(Operation t) {
         assertEquals(3, t.arg().length());
-        assertEquals("^believe", t.getOperator().toString());
+        assertEquals("believe", t.getOperator().toString());
         assertEquals("a", t.arg(0).toString());
         assertEquals("b", t.arg(1).toString());
         assertEquals("SELF", t.arg(2).toString());
@@ -266,16 +241,7 @@ public class NarseseParserTest {
         taskEqualsOldParser("believe( )!");
     }
 
-    @Test
-    public void testOperation() throws InvalidInputException {
 
-        testBelieveAB(term("(^believe,a,b)"));
-        testBelieveAB(term("(^believe,a,b,SELF)"));
-        //testBelieveAB(term("(^ believe,a,b)"));
-        //testBelieveAB(term("(^,believe,a,b)"));
-        //testBelieveAB(term("(^ believe a b)"));
-
-    }
 
     @Test
     public void testOperation2() throws InvalidInputException {
