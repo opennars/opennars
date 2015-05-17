@@ -12,6 +12,7 @@ import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
+import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -132,13 +133,14 @@ public class NAR extends Container implements Runnable {
         this.param = m.param;
 
         the(NAR.class, this);
-        this.narseseParser = the(NarseseParser.class, NarseseParser.newParser(this));
-        this.narsese = the(OldNarseseParser.class);
-        this.textPerception = the(TextPerception.class);
+//        this.narseseParser = get(NarseseParser.class, NarseseParser.newParser(this));
+//        this.narsese = the(OldNarseseParser.class);
+//        this.textPerception = get(TextPerception.class);
 
-//        this.narseseParser = NarseseParser.newParser(this);
-//        this.narsese = new OldNarseseParser(this, narseseParser);
-//        this.textPerception = new TextPerception(this, narsese, narseseParser);
+
+        this.narseseParser = NarseseParser.newParser(this);
+        this.narsese = new OldNarseseParser(this, narseseParser);
+        this.textPerception = new TextPerception(this, narsese, narseseParser);
     }
 
     /**
@@ -342,14 +344,21 @@ public class NAR extends Container implements Runnable {
 
 
     /** attach event handler to one or more event (classes) */
-    public EventEmitter.Registrations on(Reaction o, Class... c) {
+    public EventEmitter.Registrations on(Reaction<Class> o, Class... c) {
         return memory.event.on(o, c);
     }
+    public EventEmitter.Registrations on(Reaction<Term> o, Term... c) {
+        return memory.exe.on(o, c);
+    }
 
-    public EventEmitter.Registrations on(Class<? extends Reaction> c) {
+    public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
         return on(the(c));
     }
-    
+    public EventEmitter.Registrations on(Operator o) {
+        Atom a = o.getTerm();
+        return on(o, a);
+    }
+
 
 
     @Deprecated public int getCyclesPerFrame() {

@@ -249,7 +249,7 @@ public class Memory implements Serializable {
 
 
     public final EventEmitter<Class> event;
-    public final EventEmitter<String> exe;
+    public final EventEmitter<Term> exe;
 
     private long currentStampSerial = 1;
 

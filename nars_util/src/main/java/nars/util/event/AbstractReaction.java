@@ -20,6 +20,7 @@ abstract public class AbstractReaction implements Reaction<Class> {
     public AbstractReaction(EventEmitter source, boolean active, Class... events) {
         super();
 
+        this.events = events;
         this.source = source;
 
         setActive(active);

@@ -12,25 +12,25 @@ public class TruthTest {
 
     @Test
     public void testFreqEquality() {
-        Truth a = new Truth(1.0f, 0.9f);
-        Truth aCopy = new Truth(1.0f, 0.9f);
+        Truth a = new Truth.DefaultTruth(1.0f, 0.9f);
+        Truth aCopy = new Truth.DefaultTruth(1.0f, 0.9f);
         assertEquals(a, aCopy);
 
-        Truth aEqualWithinThresh = new Truth(1.0f- Global.TRUTH_EPSILON/2f, 0.9f);
+        Truth aEqualWithinThresh = new Truth.DefaultTruth(1.0f- Global.TRUTH_EPSILON/2f, 0.9f);
         assertEquals(a, aEqualWithinThresh);
 
-        Truth aNotWithinThresh = new Truth(1.0f - Global.TRUTH_EPSILON*1f, 0.9f);
+        Truth aNotWithinThresh = new Truth.DefaultTruth(1.0f - Global.TRUTH_EPSILON*1f, 0.9f);
         assertNotEquals(a, aNotWithinThresh);
 
     }
     @Test
     public void testConfEquality() {
-        Truth a = new Truth(1.0f, 0.5f);
+        Truth a = new Truth.DefaultTruth(1.0f, 0.5f);
 
-        Truth aEqualWithinThresh = new Truth(1.0f, 0.5f- Global.TRUTH_EPSILON/2f);
+        Truth aEqualWithinThresh = new Truth.DefaultTruth(1.0f, 0.5f- Global.TRUTH_EPSILON/2f);
         assertEquals(a, aEqualWithinThresh);
 
-        Truth aNotWithinThresh = new Truth(1.0f, 0.5f - Global.TRUTH_EPSILON*1f);
+        Truth aNotWithinThresh = new Truth.DefaultTruth(1.0f, 0.5f - Global.TRUTH_EPSILON*1f);
         assertNotEquals(a, aNotWithinThresh);
     }
 

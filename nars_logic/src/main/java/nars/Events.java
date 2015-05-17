@@ -27,6 +27,7 @@ public class Events {
         public OUT(NAR nar) {
             super(nar);
             this.n = nar;
+            this.volume = n.memory.param.outputVolume;
         }
 
 
@@ -48,13 +49,6 @@ public class Events {
             return new Class[] { TaskAdd.class };
         }
 
-        @Override
-        public void setActive(boolean b) {
-            super.setActive(b);
-            if (b) {
-                this.volume = n.memory.param.outputVolume;
-            }
-        }
 
 
     }

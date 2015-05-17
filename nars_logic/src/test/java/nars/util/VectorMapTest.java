@@ -67,7 +67,7 @@ public class VectorMapTest {
         
         n.run(16);
         
-        n.on(new Reaction() {
+        n.on(new Reaction<Class>() {
 
             @Override public void event(Class event, Object[] arguments) {
 

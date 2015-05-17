@@ -30,10 +30,11 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.io.Echo;
-import nars.util.event.AbstractReaction;
 import nars.util.event.EventEmitter;
+import nars.util.event.Reaction;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
@@ -47,30 +48,31 @@ import java.util.List;
  * An instance of an Operator must not be shared by multiple Memory
  * since it will be associated with a particular one.  Create a separate one for each
  */
-abstract public class Operator extends AbstractReaction {
+abstract public class Operator implements Reaction<Term> {
 
     protected NAR nar;
+    public final Atom term;
 
-    protected Operator() {
-        this(null);
+    public Operator(String name) {
+        if (name.charAt(0)!='^')
+            name = '^' + name;
+        this.term = Atom.get(name);
     }
 
-    protected Operator(EventEmitter source) {
-        super(source, false);
+    /** use the class name as the operator name */
+    public Operator() {
+        String className = getClass().getSimpleName().toLowerCase();
+        this.term = Atom.get('^' + className);
     }
+
 
 
     @Override
-    public void event(Class event, Object... args) {
-        if (event == getClass())
+    public void event(Term event, Object... args) {
+        //if (event.equals(getTerm()))
             execute((Operation)args[0]);
     }
 
-    /** adds this class as top the list of events watched */
-    @Override
-    public Class[] getEvents() {
-        return ArrayUtils.addAll(super.getEvents(), getClass());
-    }
 
     public boolean setEnabled(final NAR n, final boolean enabled) {
         if (enabled)
@@ -99,6 +101,10 @@ abstract public class Operator extends AbstractReaction {
     public Operator clone() {
         //do not clone operators, just use as-is since it's effectively immutable
         return this;
+    }
+
+    public Atom getTerm() {
+        return term;
     }
 
 

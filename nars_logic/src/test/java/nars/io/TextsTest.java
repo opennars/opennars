@@ -1,16 +1,16 @@
 package nars.io;
 
-import nars.Symbols;
-import nars.nal.Sentence;
-import nars.nal.term.Statement;
-import nars.nal.Truth;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.model.impl.Default;
 import nars.NAR;
-import nars.narsese.InvalidInputException;
-import nars.nal.stamp.Stamp;
+import nars.Symbols;
+import nars.model.impl.Default;
+import nars.nal.Sentence;
+import nars.nal.Truth;
 import nars.nal.nal7.Tense;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
+import nars.nal.term.Statement;
+import nars.nal.term.Term;
+import nars.narsese.InvalidInputException;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;
 import nars.util.data.rope.impl.PrePostCharRope;
@@ -91,7 +91,7 @@ public class TextsTest {
         
         //visualize(tr, System.out);
         
-        Sentence s = new Sentence(term1, '.', new Truth(1,1), new Stamp(n.memory, Tense.Eternal));
+        Sentence s = new Sentence(term1, '.', new Truth.DefaultTruth(1,1), new Stamp(n.memory, Tense.Eternal));
         
     }
     

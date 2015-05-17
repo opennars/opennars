@@ -42,7 +42,7 @@ public class TextPerception  {
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
 
-    public TextPerception(NAR n, @Deprecated OldNarseseParser narsese, NarseseParser newParser) {
+    public TextPerception(NAR n, OldNarseseParser narsese, NarseseParser newParser) {
         this.memory = n.memory;
         this.narsese = narsese;
         //this.englisch = new Englisch();

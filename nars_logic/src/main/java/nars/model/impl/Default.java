@@ -18,6 +18,7 @@ import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.filter.FilterBelowConfidence;
 import nars.nal.filter.FilterOperationWithSubjOrPredVariable;
 import nars.nal.nal8.NullOperator;
+import nars.nal.nal8.Operator;
 import nars.nal.rule.*;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -199,7 +200,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
     }
 
 
-    final Reaction[] exampleOperators = new Reaction[] {
+    final Operator[] exampleOperators = new Operator[] {
         //new Wait(),
         new NullOperator("^break"),
         new NullOperator("^drop"),
@@ -212,9 +213,9 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         new NullOperator("^deactivate")
     };
 
-    public Reaction[] newDefaultOperators(NAR n) {
+    public Operator[] newDefaultOperators(NAR n) {
 
-        return new Reaction[] {
+        return new Operator[] {
 
 
                 //new Wait(),
@@ -334,9 +335,9 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         n.setCyclesPerFrame(cyclesPerFrame);
 
 
-        for (Reaction o : newDefaultOperators(n))
+        for (Operator o : newDefaultOperators(n))
             n.on(o);
-        for (Reaction o : exampleOperators)
+        for (Operator o : exampleOperators)
             n.on(o);
 
 

@@ -641,7 +641,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     boolean OperationPrefixTerm() {
-        return push( new Object[] { term("^" + pop()), (Compound.class) } );
+        return push( new Object[] { term("^" + pop()), (Operation.class) } );
     }
 
     /**
@@ -732,6 +732,11 @@ public class NarseseParser extends BaseParser<Object> {
                 p = pp[0];
             }
 
+            if (p == Operation.class) {
+                op = OPERATION;
+                break;
+            }
+
             if (p == Compound.class) break; //beginning of stack frame for this term
 
 
@@ -766,12 +771,17 @@ public class NarseseParser extends BaseParser<Object> {
 
         if (op == null) op = NALOperator.PRODUCT;
 
-        Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
 
-        if (op == OPERATION)
+
+        if (op == OPERATION) {
+            vectorterms.add(memory.self()); //SELF in final argument
+            Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
             return Operation.make(va);
-
-        return Memory.term(op, va);
+        }
+        else {
+            Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
+            return Memory.term(op, va);
+        }
     }
 
 

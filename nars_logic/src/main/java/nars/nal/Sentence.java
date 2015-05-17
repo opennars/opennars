@@ -402,8 +402,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         }
         
         if (newTruth == null) {
-            //newTruth = truth.clone();
-            throw new RuntimeException("should not clone null truth");
+            newTruth = new Truth.DefaultTruth(truth);
         }
         
         return newTruth;

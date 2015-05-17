@@ -43,7 +43,7 @@ public class EventTest {
         AtomicBoolean b = new AtomicBoolean();
 
 
-        e.on(Events.CycleEnd.class,new Reaction() {
+        e.on(Events.CycleEnd.class,new Reaction<Class>() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -52,7 +52,6 @@ public class EventTest {
             }
         });
 
-        e.cycle();
 
         e.emit(Events.CycleEnd.class);
 
@@ -65,20 +64,19 @@ public class EventTest {
         AtomicBoolean b = new AtomicBoolean();
 
 
-        e.on(Events.CycleEnd.class, new Reaction() {
+        e.on(Events.CycleEnd.class, new Reaction<Class>() {
             @Override
             public void event(Class event, Object[] args) {
                 throw new RuntimeException("Exception generated for testing purposes; everything is OK");
             }
         });
-        e.on(Events.ERR.class, new Reaction() {
+        e.on(Events.ERR.class, new Reaction<Class>() {
             @Override
             public void event(Class event, Object[] args) {
                 b.set(true);
             }
         });
 
-        e.cycle();
 
         e.emit(Events.CycleEnd.class);
 

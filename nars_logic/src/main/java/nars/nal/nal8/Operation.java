@@ -87,12 +87,12 @@ public class Operation extends Inheritance {
 //            self = oper.getMemory().getSelf();
 //        }
 
-        if((arg.length == 0) || ( !arg[arg.length-1].equals(null)) ) {
-            Term[] arg2=new Term[arg.length+1];
-            System.arraycopy(arg, 0, arg2, 0, arg.length);
-            arg2[arg.length] = null;
-            arg=arg2;
-        }
+//        if((arg.length == 0) || ( !arg[arg.length-1].equals(null)) ) {
+//            Term[] arg2=new Term[arg.length+1];
+//            System.arraycopy(arg, 0, arg2, 0, arg.length);
+//            arg2[arg.length] = null;
+//            arg=arg2;
+//        }
         
         return new Operation( new Product(arg), oper  );        
     }

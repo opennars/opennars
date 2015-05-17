@@ -85,7 +85,7 @@ public class Javascript extends TermFunction implements Mental {
             String functionCode = Atom.unquote(x[1]);
             nar.input(new Echo(Javascript.class, "JS Operator Bind: ^" + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
-            nar.on(d);
+            nar.on(d, Atom.get(funcName));
             return null;
         }
     }
@@ -94,7 +94,7 @@ public class Javascript extends TermFunction implements Mental {
     public boolean setEnabled(NAR n, boolean enabled) {
         boolean x = super.setEnabled(n, enabled);
         if (enabled) {
-            n.on(new DynamicJavascriptFunctionOperator());
+            n.on(new DynamicJavascriptFunctionOperator(), Atom.get("jsOp"));
         }
         return x;
     }

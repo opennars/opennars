@@ -2,13 +2,20 @@ package nars.nal.nal8;
 
 import nars.NAR;
 import nars.NARSeed;
+import nars.io.TextOutput;
+import nars.model.impl.Curve;
 import nars.model.impl.Default;
+import nars.model.impl.DefaultMicro;
 import nars.nal.JavaNALTest;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
 import nars.util.event.Reaction;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TermFunctionTest extends JavaNALTest {
 
@@ -34,10 +41,10 @@ public class TermFunctionTest extends JavaNALTest {
 
     }
 
-    @Test public void testOutputInVariablePosition() {
-        testIO("count({a,b}, #x)!",
-                "<2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%");
-    }
+//    @Test public void testOutputInVariablePosition() {
+//        testIO("count({a,b}, #x)!",
+//                "<2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%");
+//    }
 
 
     @Test public void testOperatorRegistration() {
@@ -45,11 +52,31 @@ public class TermFunctionTest extends JavaNALTest {
         //create a completely empty NAR, no default operators
         NAR n = new NAR(new Default() {
             @Override
-            public Reaction[] newDefaultOperators(NAR n) {
-                return new Reaction[] { };
+            public Operator[] newDefaultOperators(NAR n) {
+                return new Operator[] { };
             }
         });
 
+        TextOutput.out(n);
+
+        AtomicBoolean executed = new AtomicBoolean(false);
+
+        n.on(new Reaction<Term>() {
+
+            @Override
+            public void event(Term event, Object... args) {
+                System.out.println("executed: " + Arrays.toString(args));
+                executed.set(true);
+            }
+
+        }, Atom.get("^exe"));
+
+        n.input("exe(a,b,c)!");
+        //n.input("(^exe,a,b,c)!");
+
+        n.run(1);
+
+        assertTrue(executed.get());
 
     }
 
