@@ -83,6 +83,11 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         clearCanvas.setForeground(Color.WHITE);
         
         addInput.addActionListener(this);
+        addInput.setBackground(backColor);
+        addInput.setForeground(Color.WHITE);
+        
+        deleteUserDefined.setBackground(backColor);
+        deleteUserDefined.setForeground(Color.WHITE);
         
         tempContainer.add(clearCanvas, BorderLayout.EAST);
         add(tempContainer, BorderLayout.NORTH);
@@ -112,7 +117,7 @@ public class SketchPointCloudPanel extends Panel implements MouseListener, Mouse
         userDefinedName.setBackground(Color.BLACK);
         userDefinedName.setForeground(Color.WHITE);
         addUserDefined.setLabel("Add");
-        addUserDefined.setEnabled(false);
+        //addUserDefined.setEnabled(false);
         addUserDefined.addActionListener(this);
         addUserDefined.setForeground(Color.WHITE);
         addUserDefined.setBackground(backColor);
