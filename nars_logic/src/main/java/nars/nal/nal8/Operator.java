@@ -33,9 +33,9 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.op.io.Echo;
 import nars.util.event.AbstractReaction;
+import nars.util.event.EventEmitter;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,9 +51,11 @@ abstract public class Operator extends AbstractReaction {
 
     protected NAR nar;
 
+    protected Operator() {
+        this(null); }
 
-    protected Operator(NAR nar) {
-        super(nar.memory.event, false);
+    protected Operator(EventEmitter source) {
+        super(source, false);
     }
 
 

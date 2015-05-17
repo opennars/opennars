@@ -6,20 +6,24 @@
 package nars.op.app.farg;
 
 import nars.NAR;
-import nars.op.IOperator;
-import nars.nal.term.Term;
 import nars.bag.impl.LevelBag;
+import nars.nal.Task;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
+import nars.nal.term.Term;
+
+import java.util.List;
 
 /**
  *
  * @author tc
  */
-public class FluidAnalogiesAgents implements IOperator {
+public class FluidAnalogiesAgents extends Operator {
     public int max_codelets=100;
     public int codelet_level=100;
     Workspace ws;
     LevelBag<Codelet,Term> coderack;
-    
+
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         if(enabled) {
@@ -29,5 +33,10 @@ public class FluidAnalogiesAgents implements IOperator {
         }
         return true;
     }
-    
+
+    @Override
+    protected List<Task> execute(Operation operation) {
+        return null;
+    }
+
 }

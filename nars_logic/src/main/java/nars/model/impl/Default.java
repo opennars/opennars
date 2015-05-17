@@ -363,7 +363,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
         n.on(new Events.OUT());
 
-        n.on(new RuntimeNARSettings());
+        //n.on(new RuntimeNARSettings());
 
         initDerivationFilters();
 

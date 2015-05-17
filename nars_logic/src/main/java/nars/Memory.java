@@ -189,6 +189,10 @@ public class Memory implements Serializable {
         return concept;
     }
 
+    public Atom the(final String s) {
+        return Atom.get(s);
+    }
+
 
     @Deprecated public static enum Forgetting {
         @Deprecated Iterative,

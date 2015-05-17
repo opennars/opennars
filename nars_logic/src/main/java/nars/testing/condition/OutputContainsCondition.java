@@ -10,7 +10,7 @@ import nars.io.TextOutput;
 import nars.io.Texts;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.nal8.Operator.ExecutionResult;
+import nars.nal.nal8.ExecutionResult;
 
 import java.util.ArrayList;
 import java.util.Collection;

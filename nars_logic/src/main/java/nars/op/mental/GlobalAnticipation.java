@@ -6,22 +6,21 @@
 package nars.op.mental;
 
 import nars.Events;
-import nars.NAR;
-import nars.NAR.OperatorRegistration;
 import nars.Global;
+import nars.NAR;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.*;
 import nars.nal.concept.Concept;
-import nars.nal.term.Term;
-import nars.op.IOperator;
-import nars.util.event.Reaction;
-import nars.Symbols;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Term;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import java.util.List;
  *
  * @author tc
  */
-public class GlobalAnticipation implements IOperator, Reaction {
+public class GlobalAnticipation extends Operator {
 
     public final ArrayDeque<Task> stm = new ArrayDeque();
     public final List<Task> current_tasks=new ArrayList<Task>();
@@ -181,12 +180,12 @@ public class GlobalAnticipation implements IOperator, Reaction {
                  
                 if(right_in_time && Variables.hasSubstitute(Symbols.VAR_INDEPENDENT,imp.getPredicate(),lastEvents.get(args.length-off).sentence.term)) { //it matched and same consequence, so positive evidence
                     //c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
-                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new Truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
+                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new Truth.DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
                     Task t=new Task(s2,new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } else { //it matched and other consequence, so negative evidence
                    // c.sentence.truth=TruthFunctions.revision(c.sentence.truth, new TruthValue(0.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE));
-                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new Truth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
+                    Sentence s2=new Sentence(c.sentence.term.clone(),Symbols.JUDGMENT,new Truth.DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE),new Stamp(nal.memory, Tense.Present));
                     Task t=new Task(s2,new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY,s2.truth));
                     derivetasks.add(t);
                 } //todo use derived task with revision instead
@@ -213,14 +212,19 @@ public class GlobalAnticipation implements IOperator, Reaction {
     public boolean setEnabled(NAR n, boolean enabled) {
         //Events.TaskDerive.class Events.ConceptBeliefRemove.class
         n.memory.event.set(this, enabled, Events.InduceSucceedingEvent.class, Events.TaskDerive.class, Events.ConceptBeliefRemove.class);
-        for(OperatorRegistration s : n.getPlugins()) {
-            if(s.IOperator instanceof Anticipate)
-            {
-                s.IOperator.setEnabled(n, !enabled);
-            }
-        }
-        
+//        for(OperatorRegistration s : n.getPlugins()) {
+//            if(s.IOperator instanceof Anticipate)
+//            {
+//                s.IOperator.setEnabled(n, !enabled);
+//            }
+//        }
+//
         return true;
     }
-    
+
+    @Override
+    protected List<Task> execute(Operation operation) {
+        return null;
+    }
+
 }

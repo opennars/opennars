@@ -31,6 +31,7 @@ import java.util.List;
  *  A class used as a template for Operator definition.
  */
 public class NullOperator extends Operator {
+    private final String name;
 
     
     /*public NullOperator() {
@@ -38,18 +39,22 @@ public class NullOperator extends Operator {
     }*/
     
     public NullOperator(String name) {
-        super(name);
+        super();
+        this.name = name;
     }
 
-    /** called from Operator */
-    @Override 
-    protected List<Task> execute(Operation operation, Term[] args) {
+
+
+    @Override
+    protected List<Task> execute(Operation o) {
         if (Global.DEBUG) {
-            nar.memory.emit(getClass(), Arrays.toString(args));
+            nar.memory.emit(getClass(),
+                    //HACK
+                    name,
+                    Arrays.toString(o.getArguments().term)
+            );
         }
         return null;
     }
-
-
 }
 

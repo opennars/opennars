@@ -5,21 +5,20 @@
 
 package nars.op.mental;
 
-import nars.NAR;
 import nars.Global;
-import nars.op.IOperator;
+import nars.NAR;
+import nars.util.event.AbstractReaction;
 
 /**
  *
  * @author tc
  */
-public class RuntimeNARSettings implements IOperator {
+public class RuntimeNARSettings extends AbstractReaction {
 
-    NAR n=null;
-    @Override
-    public boolean setEnabled(NAR n, boolean enabled) {
-        this.n=n;
-        return true;
+    private final NAR n;
+
+    public RuntimeNARSettings(NAR x) {
+        this.n = x;
     }
 
     public boolean isImmediateEternalization() {
@@ -49,5 +48,9 @@ public class RuntimeNARSettings implements IOperator {
     public void setEvidentalHorizon(double val) {
         Global.HORIZON=(float) val;
     }
-    
+
+    @Override
+    public void event(Class event, Object... args) {
+
+    }
 }

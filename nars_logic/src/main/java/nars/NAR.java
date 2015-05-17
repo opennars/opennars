@@ -13,6 +13,7 @@ import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
@@ -337,6 +338,7 @@ public class NAR implements Runnable {
     /** attach event handler to one or more event (classes) */
     public EventEmitter.Registrations on(Reaction o, Class... c) {
         return memory.event.on(o, c);
+
     }
     
 
@@ -648,6 +650,11 @@ public class NAR implements Runnable {
     public NAR(NARSeed b) {
         this(b.newMemory(b, b.getLogicPolicy()));
         b.init(this);
+    }
+
+    /** returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the */
+    public Atom the(final String s) {
+        return memory.the(s);
     }
 
 

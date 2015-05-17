@@ -2,10 +2,8 @@ package nars.op.mental;
 
 import nars.*;
 import nars.budget.Budget;
-import nars.Symbols;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
@@ -14,7 +12,8 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.AbstractOperator;
 
@@ -58,10 +57,10 @@ public class InternalExperience extends AbstractOperator {
     }*/
 
     private Memory memory;
-    private Operator believe;
-    private Operator want;
-    private Operator wonder;
-    private Operator evaluate;
+    private Atom believe;
+    private Atom want;
+    private Atom wonder;
+    private Atom evaluate;
 
 
     /** whether it is full internal experience, or minimal (false) */
@@ -84,10 +83,10 @@ public class InternalExperience extends AbstractOperator {
     public void onEnabled(NAR n) {
 
         this.memory = n.memory;
-        this.believe = memory.operator("^believe");
-        this.want = memory.operator("^want");
-        this.wonder = memory.operator("^wonder");
-        this.evaluate = memory.operator("^evaluate");
+        this.believe = n.the("^believe");
+        this.want = n.the("^want");
+        this.wonder = n.the("^wonder");
+        this.evaluate = n.the("^evaluate");
     }
 
     @Override
@@ -96,7 +95,7 @@ public class InternalExperience extends AbstractOperator {
     }
 
     public Term toTerm(final Sentence s, final Memory mem) {
-        Operator opTerm;
+        Atom opTerm;
         switch (s.punctuation) {
             case Symbols.JUDGMENT:
                 if(!AllowWantBelieve)
@@ -175,7 +174,7 @@ public class InternalExperience extends AbstractOperator {
 
                 NAL.StampBuilder stamp = nal.newStamp(task.sentence, memory.time());
 
-                Sentence j = new Sentence(ret, Symbols.JUDGMENT, new Truth(1.0f, conf), stamp);
+                Sentence j = new Sentence(ret, Symbols.JUDGMENT, new Truth.DefaultTruth(1.0f, conf), stamp);
 
                 Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
 
@@ -205,16 +204,14 @@ public class InternalExperience extends AbstractOperator {
             
             //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
-            Operator op=memory.operator(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
-            
-            Product prod=new Product(belief.term);
-            
+            Atom op = memory.the(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             if(op!=null) {
-                
+                Product prod=new Product(belief.term);
+
                 Term new_term=Inheritance.make(prod, op);
                 Sentence sentence = new Sentence(
                     new_term, Symbols.GOAL,
-                    new Truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory, Tense.Present));
                 
                 float quality = BudgetFunctions.truthToQuality(sentence.truth);
@@ -251,16 +248,14 @@ public class InternalExperience extends AbstractOperator {
                 }    
 
                 if(valid) {
-                    Operator op=memory.operator("^anticipate");
-                    if (op == null)
-                        throw new RuntimeException(this + " requires ^anticipate operate");
-                    
+                    Atom op = memory.the("^anticipate");
+
                     Product args=new Product(imp.getPredicate());
                     Term new_term=Operation.make(args,op);
 
                     Sentence sentence = new Sentence(
                         new_term, Symbols.GOAL,
-                        new Truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                        new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                         new Stamp(memory, Tense.Present));
 
                     float quality = BudgetFunctions.truthToQuality(sentence.truth);
