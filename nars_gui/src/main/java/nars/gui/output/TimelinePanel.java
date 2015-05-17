@@ -9,7 +9,7 @@ import nars.util.event.Reaction;
  */
 
 
-public class TimelinePanel extends NPanel implements Reaction {
+public class TimelinePanel extends NPanel implements Reaction<Class> {
 
     @Override
     protected void visibility(boolean appearedOrDisappeared) {

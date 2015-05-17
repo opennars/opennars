@@ -55,7 +55,7 @@ import static nars.Memory.Timing.RealMS;
 import static nars.Memory.Timing.Simulation;
 
 
-public class NARControlPanel extends TimeControl implements Reaction {
+public class NARControlPanel extends TimeControl implements Reaction<Class> {
 
 
     /**

@@ -20,7 +20,7 @@ import static javax.swing.SwingUtilities.invokeLater;
  *
  * @author me
  */
-public class MultiModePanel extends NPanel implements Reaction {
+public class MultiModePanel extends NPanel implements Reaction<Class> {
     final float activityIncrement = 0.5f; //per output
     final float activityMomentum = 0.95f;
 
