@@ -287,7 +287,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="fe" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="NAR Control"/>
+            <Property name="text" type="java.lang.String" value="NAR Pong"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
           <Events>
