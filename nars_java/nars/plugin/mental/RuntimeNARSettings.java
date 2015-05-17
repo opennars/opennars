@@ -198,5 +198,18 @@ public class RuntimeNARSettings implements Plugin {
     public void setCuriosityConfidenceThreshold(double val) {
         Parameters.CURIOSITY_CONFIDENCE_THRESHOLD=(float) val;
     }
-
+    
+    public double getAnticipationConfidence() {
+        return Parameters.ANTICIPATION_CONFIDENCE;
+    }
+    public void setAnticipationConfidence(double val) {
+        Parameters.ANTICIPATION_CONFIDENCE=(float) val;
+    }
+    
+    public double getSatisfactionThreshold() {
+        return Parameters.SATISFACTION_TRESHOLD;
+    }
+    public void setSatisfactionThreshold(double val) {
+        Parameters.SATISFACTION_TRESHOLD=(float) val;
+    }
 }
