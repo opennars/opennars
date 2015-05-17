@@ -28,7 +28,7 @@ import nars.nal.Truth;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 /**
  * Operator that give a CompoundTerm a new name
  */
-public class Name extends Operator implements Mental {
+public class Name extends SynchOperator implements Mental {
 
     public Name() {
         super();

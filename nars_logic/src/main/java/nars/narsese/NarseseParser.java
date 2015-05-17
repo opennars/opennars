@@ -352,7 +352,15 @@ public class NarseseParser extends BaseParser<Object> {
         return Memory.term(op, subject, predicate);
     }
 
+    Rule NonOperationTerm() {
+        return Term(false);
+    }
+
     Rule Term() {
+        return Term(true);
+    }
+
+    Rule Term(boolean includeOperation) {
         /*
                  <term> ::= <word>                             // an atomic constant term
                         | <variable>                         // an atomic variable term
@@ -392,13 +400,15 @@ public class NarseseParser extends BaseParser<Object> {
                         ),
 
                         sequence(
-                                Atom(),
+                                includeOperation,
+                                NonOperationTerm(),
                                 EmptyOperationParens()
                         ),
 
                         //Functional form of an Operation, ex: operate(p1,p2), TODO move to FunctionalOperationTerm() rule
                         sequence(
-                                Atom(),
+                                includeOperation,
+                                NonOperationTerm(),
                                 NALOperator.COMPOUND_TERM_OPENER.symbol,
                                 MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, true)
                         ),
@@ -641,7 +651,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     boolean OperationPrefixTerm() {
-        return push( new Object[] { term("^" + pop()), (Operation.class) } );
+        return push( new Object[] { term(pop()), (Operation.class) } );
     }
 
     /**

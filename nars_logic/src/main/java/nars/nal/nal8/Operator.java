@@ -57,8 +57,6 @@ abstract public class Operator implements Reaction<Term> {
     }
 
     public Operator(String name) {
-        if (name.charAt(0) != '^')
-            name = '^' + name;
         this.term = Atom.get(name);
     }
 
@@ -66,8 +64,8 @@ abstract public class Operator implements Reaction<Term> {
      * use the class name as the operator name
      */
     public Operator() {
-        String className = getClass().getSimpleName().toLowerCase();
-        this.term = Atom.get('^' + className);
+        String className = getClass().getSimpleName();
+        this.term = Atom.get(className);
     }
 
     public Decider decider() {
@@ -131,25 +129,11 @@ abstract public class Operator implements Reaction<Term> {
     <patham9_> 5. the system wont pursue a goal it already pursued for the same reason (due to revision, it is related to 1)
     */
 
-    /**
-     * The standard way to carry out an operation, which invokes the execute
-     * method defined for the operate, and handles feedback tasks as input
-     *
-     * @param op     The operate to be executed
-     * @param memory The memory on which the operation is executed
-     * @return true if successful, false if an error occurred
-     */
-    public final boolean execute(final Operation op, final Concept c, final Memory memory) {
+    abstract public boolean execute(final Operation op, final Concept c, final Memory memory);
 
-        final Term[] args = op.arg().term;
 
-        List<Task> feedback;
-        try {
-            feedback = execute(op, memory);
-        } catch (Exception e) {
-            feedback = Lists.newArrayList(new Echo(getClass(), e.toString()).newTask());
-            e.printStackTrace();
-        }
+    /** called after execution completed */
+    protected void executed(Operation op, List<Task> feedback, Memory memory) {
 
         //Display a message in the output stream to indicate the reportExecution of an operation
         memory.emit(EXE.class, new ExecutionResult(op, feedback, memory));
@@ -168,8 +152,6 @@ abstract public class Operator implements Reaction<Term> {
                 memory.input(t);
             }
         }
-
-        return true;
 
     }
 

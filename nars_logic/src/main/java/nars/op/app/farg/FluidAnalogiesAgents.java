@@ -10,7 +10,7 @@ import nars.NAR;
 import nars.bag.impl.LevelBag;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.term.Term;
 
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author tc
  */
-public class FluidAnalogiesAgents extends Operator {
+public class FluidAnalogiesAgents extends SynchOperator {
     public int max_codelets=100;
     public int codelet_level=100;
     Workspace ws;

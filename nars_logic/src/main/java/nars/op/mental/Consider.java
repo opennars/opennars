@@ -19,20 +19,20 @@ package nars.op.mental;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.nal.concept.Concept;
-import nars.nal.Task;
-import nars.nal.tlink.TaskLink;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.nal.ConceptProcess;
+import nars.nal.Task;
+import nars.nal.concept.Concept;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
 
 import java.util.ArrayList;
 
 /**
  * Operator that activates a concept
  */
-public class Consider extends Operator implements Mental {
+public class Consider extends SynchOperator implements Mental {
 
     public static Budget budgetMentalConcept(final Operation o) {
         return o.getTask().clone();

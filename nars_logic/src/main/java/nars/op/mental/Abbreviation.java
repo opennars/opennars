@@ -15,7 +15,7 @@ import nars.nal.Truth;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -49,7 +49,7 @@ public class Abbreviation extends AbstractOperator {
     /**
     * Operator that give a CompoundTerm an atomic name
     */
-    public static class Abbreviate extends Operator implements Mental {
+    public static class Abbreviate extends SynchOperator implements Mental {
 
         public Abbreviate() {
             super();

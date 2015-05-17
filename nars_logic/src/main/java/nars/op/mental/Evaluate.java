@@ -20,14 +20,14 @@ package nars.op.mental;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 /**
  * Operator that creates a quest with a given statement
  */
-public class Evaluate extends Operator implements Mental {
+public class Evaluate extends SynchOperator implements Mental {
 
     public Evaluate() {
         super();

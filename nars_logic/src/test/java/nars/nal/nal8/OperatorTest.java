@@ -1,5 +1,6 @@
 package nars.nal.nal8;
 
+import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
 import nars.io.TextOutput;
@@ -7,6 +8,7 @@ import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.model.impl.DefaultMicro;
 import nars.nal.JavaNALTest;
+import nars.nal.Task;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.util.event.Reaction;
@@ -15,12 +17,20 @@ import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static junit.framework.TestCase.assertTrue;
 
 public class OperatorTest {
 
+    //create a completely empty NAR, no default operators
+    NAR n = new NAR(new Default() {
+        @Override
+        public Operator[] newDefaultOperators(NAR n) {
+            return new Operator[] { };
+        }
+    });
 
 //
 //    public void testIO(String input, String output) {
@@ -40,17 +50,7 @@ public class OperatorTest {
 //    }
 
 
-    @Test public void testOperatorRegistration() {
-
-        //create a completely empty NAR, no default operators
-        NAR n = new NAR(new Default() {
-            @Override
-            public Operator[] newDefaultOperators(NAR n) {
-                return new Operator[] { };
-            }
-        });
-
-        TextOutput.out(n);
+    @Test public void testTermReactionRegistration() {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
@@ -62,10 +62,9 @@ public class OperatorTest {
                 executed.set(true);
             }
 
-        }, Atom.get("^exe"));
+        }, Atom.get("exe"));
 
         n.input("exe(a,b,c)!");
-        //n.input("(^exe,a,b,c)!");
 
         n.run(1);
 
@@ -73,7 +72,29 @@ public class OperatorTest {
 
     }
 
+    @Test public void testSynchOperator() {
 
+        TextOutput.out(n);
+
+        AtomicBoolean executed = new AtomicBoolean(false);
+
+        n.on(new SynchOperator("exe") {
+
+
+            @Override
+            protected List<Task> execute(Operation operation, Memory memory) {
+                executed.set(true);
+                return null;
+            }
+        });
+
+        n.input("exe(a,b,c)!");
+
+        n.run(1);
+
+        assertTrue(executed.get());
+
+    }
 
 //TODO: allow this in a special eval operator
 

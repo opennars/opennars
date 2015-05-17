@@ -128,7 +128,7 @@ public class Operation extends Inheritance {
 
         b.add((byte)NALOperator.COMPOUND_TERM_CLOSER.ch);
 
-        return b.toBytes(1 /* skip leading ^ */);
+        return b.toBytes();
     }
 
     //    @Override

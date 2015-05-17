@@ -18,20 +18,20 @@ package nars.op.mental;
 
 import nars.Global;
 import nars.Memory;
-import nars.budget.BudgetFunctions.Activating;
 import nars.budget.Budget;
-import nars.nal.concept.Concept;
+import nars.budget.BudgetFunctions.Activating;
 import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
 /**
  * Operator that activates a concept
  */
-public class Remind extends Operator implements Mental {
+public class Remind extends SynchOperator implements Mental {
 
     public Remind() {
         super();

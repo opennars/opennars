@@ -29,7 +29,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 /**
  * Feeling common operations
  */
-public abstract class Feel extends Operator implements Mental {
+public abstract class Feel extends SynchOperator implements Mental {
     private final Term feelingTerm = Atom.get("feel");
 
     public Feel(String name) {

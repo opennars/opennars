@@ -23,7 +23,7 @@ import java.util.ArrayList;
  * N input Global and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class TermFunction<O> extends Operator  {
+public abstract class TermFunction<O> extends SynchOperator  {
 
     static final Variable var=new Variable("$y");
 

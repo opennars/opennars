@@ -27,7 +27,7 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 /**
  * Operator that creates a goal with a given statement
  */
-public class Want extends Operator implements Mental {
+public class Want extends SynchOperator implements Mental {
 
     public Want() {
         super();

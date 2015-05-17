@@ -20,13 +20,13 @@ package nars.op.mental;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -34,11 +34,7 @@ import java.util.ArrayList;
 /**
  * Operator that creates a question with a given statement
  */
-public class Wonder extends Operator implements Mental {
-
-    public Wonder() {
-        super();
-    }
+public class Wonder extends SynchOperator implements Mental {
 
     /**
      * To create a question with a given statement

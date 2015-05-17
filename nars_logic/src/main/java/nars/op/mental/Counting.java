@@ -3,7 +3,7 @@ package nars.op.mental;
 import nars.Memory;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * Counting and Cardinality
  * TODO extends AbstractPlugin
  */
-public class Counting extends Operator {
+public class Counting extends SynchOperator {
 
     @Override
     protected List<Task> execute(Operation operation, Memory memory) {

@@ -31,7 +31,7 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 
@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * Operator that creates a judgment with a given statement
  * Causes the system to belief things it has no evidence for
  */
-public class Believe extends Operator implements Mental {
+public class Believe extends SynchOperator implements Mental {
 
     public Believe() {
         super();

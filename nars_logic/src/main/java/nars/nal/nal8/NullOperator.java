@@ -30,7 +30,7 @@ import java.util.List;
 /**
  *  A class used as a template for Operator definition.
  */
-public class NullOperator extends Operator {
+public class NullOperator extends SynchOperator {
     private final String name;
 
     

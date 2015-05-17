@@ -18,18 +18,18 @@
 package nars.op.mental;
 
 import nars.Memory;
-import nars.nal.concept.Concept;
 import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
 /**
  * Operator that activates a concept
  */
-public class Hesitate extends Operator implements Mental {
+public class Hesitate extends SynchOperator implements Mental {
 
     public Hesitate() {
         super();
