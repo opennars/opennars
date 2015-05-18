@@ -28,7 +28,7 @@ import static nars.io.Texts.n4;
 /**
  * @author me
  */
-public class BooleanChallenge implements Reaction {
+public class BooleanChallenge implements Reaction<Class> {
 
     final float freqThresh = 0.2f; //threshold diff from 0.0 or 1.0 considered too uncertain to count as answer
     private final double complete;

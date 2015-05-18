@@ -21,7 +21,7 @@ import java.lang.reflect.Array;
  * in its appearance (font, color, etc..) and lines drawn between them on an overlay.
  * @author me
  */
-abstract public class GridButtonPanel extends NPanel implements Reaction {
+abstract public class GridButtonPanel extends NPanel implements Reaction<Class> {
     
     public final NAR nar;
 

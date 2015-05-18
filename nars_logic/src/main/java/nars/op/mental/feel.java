@@ -39,14 +39,8 @@ import java.util.ArrayList;
 /**
  * Feeling common operations
  */
-public abstract class Feel extends SynchOperator implements Mental {
+public abstract class feel extends SynchOperator implements Mental {
     private final Term feelingTerm = Atom.get("feel");
-
-    public Feel(String name) {
-        super();
-        
-    }
-
 
 
     

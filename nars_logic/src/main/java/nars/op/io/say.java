@@ -42,7 +42,7 @@ import java.util.*;
 
 /**
  */
-public class Say extends SynchOperator {
+public class say extends SynchOperator {
     private Memory memory;
     private Operation currentOperation;
     private NARReaction reaction;
@@ -50,9 +50,6 @@ public class Say extends SynchOperator {
 //    boolean rejectEmpty = true;
 //    boolean rejectHasVariables = true;    
     
-    public Say() {
-        super();
-    }
 
     final int MAX_WORD_LENGTH = 16;
     final Term WORD = Atom.get("WORD");
@@ -83,7 +80,7 @@ public class Say extends SynchOperator {
         this.currentOperation = operation;
 
         if (this.reaction == null) {
-            reaction = new NARReaction(Say.this.memory, Events.CycleEnd.class) {
+            reaction = new NARReaction(say.this.memory, Events.CycleEnd.class) {
 
                 @Override
                 public void event(Class event, Object[] args) {
@@ -214,7 +211,7 @@ public class Say extends SynchOperator {
     }
 
     private List<Task> isSpoken(Term t) {
-        memory.emit(Say.class, t);
+        memory.emit(say.class, t);
         return Arrays.asList( memory.newTask(
                 Inheritance.make(
                         Product.make(t, memory.self()),

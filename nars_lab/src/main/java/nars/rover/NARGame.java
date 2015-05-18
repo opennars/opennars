@@ -9,7 +9,7 @@ import nars.gui.NARSwing;
 /**
  * Game event-loop interface for NARS sensory and motor interaction
  */
-abstract public class NARGame implements Reaction {
+abstract public class NARGame implements Reaction<Class> {
     public final NAR nar;
     private int cyclesPerFrame;
     public NARSwing sw;

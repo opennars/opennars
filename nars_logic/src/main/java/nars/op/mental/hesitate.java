@@ -17,45 +17,33 @@
 
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
-import nars.Global;
 import nars.Memory;
-import nars.Symbols;
-import nars.budget.Budget;
-import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.nal7.Tense;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
-import nars.nal.stamp.Stamp;
-import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
 /**
- * Operator that creates a quest with a given statement
+ * Operator that activates a concept
  */
-public class Evaluate extends SynchOperator implements Mental {
-
-    public Evaluate() {
-        super();
-    }
+public class hesitate extends SynchOperator implements Mental {
 
     /**
-     * To create a quest with a given statement
+     * To activate a concept as if a question has been asked about it
+     *
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-        Compound content = Sentence.termOrException(operation.arg(0));
-
-        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, nar.memory, Tense.Present));
-        Budget budget = new Budget(Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-        
-        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
-
+        Term term = operation.arg(0);
+        Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
+        concept.discountConfidence(false);
+        return null;
     }
-        
+    
 }

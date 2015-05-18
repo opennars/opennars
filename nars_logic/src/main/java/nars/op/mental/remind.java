@@ -14,42 +14,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.Sentence;
+import nars.budget.BudgetFunctions.Activating;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
-import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
 /**
- * Operator that creates a question with a given statement
+ * Operator that activates a concept
  */
-public class Wonder extends SynchOperator implements Mental {
+public class remind extends SynchOperator implements Mental {
+
 
     /**
-     * To create a question with a given statement
+     * To activate a concept as if a question has been asked about it
+     *
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory
      * @return Immediate results as Tasks
      */
-    @Override
+    @Override    
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-        Term content = operation.arg(0);
-        
-        
-        Sentence sentence = new Sentence(content, Symbols.QUESTION, null, new Stamp(nar.memory, Stamp.ETERNAL));
+        Term term = operation.arg(0);
+        Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
+        nar.memory.concepts.activate(concept, budget, Activating.TaskLink);
+        return null;
     }
-        
+
 }

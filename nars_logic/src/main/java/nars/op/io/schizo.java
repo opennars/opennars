@@ -9,11 +9,8 @@ import nars.nal.nal8.SynchOperator;
 import java.util.List;
 
 /** sets the memory's current SELF term; warning: can cause mental disturbance */
-public class Schizo extends SynchOperator {
+public class schizo extends SynchOperator {
 
-    public Schizo() {
-        super();
-    }
 
     @Override
     protected List<Task> execute(Operation operation, Memory memory) {

@@ -11,14 +11,12 @@ import ca.nengo.neural.SpikeOutput;
 import ca.nengo.ui.lib.NengoStyle;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.lib.world.piccolo.primitive.PXPath;
-import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
 import ca.nengo.ui.model.widget.UITarget;
 import ca.nengo.util.ScriptGenException;
 import nars.Global;
 import nars.io.Texts;
+import org.apache.commons.math3.util.FastMath;
 import org.piccolo2d.extras.nodes.PNodeCache;
-import org.piccolo2d.nodes.PArea;
-import org.piccolo2d.nodes.PShape;
 import org.piccolo2d.util.PPaintContext;
 
 import java.awt.*;
@@ -36,7 +34,7 @@ public class LinePlot extends AbstractWidget {
     private final PNodeCache plotSurfaceWrap;
 
 
-    long minRepaintPeriod = 75; //milliseconds
+    long minRepaintPeriod = 150; //milliseconds
     long lastRepaint = 0;
 
     private String label = "?";
@@ -131,7 +129,7 @@ public class LinePlot extends AbstractWidget {
                         final int iy = (int) y;
 
                         g.setColor(BlueRed.get(py));
-                        g.fillRect(prevX+1, (int)(bh / 2f - y / 2), (int) Math.ceil(x - prevX), iy);
+                        g.fillRect(prevX+1, (int)(bh / 2f - y / 2), (int) FastMath.ceil(x - prevX), iy);
 
                         prevX = (int)x;
                         x += dx;
@@ -227,7 +225,7 @@ public class LinePlot extends AbstractWidget {
             lastRepaint = now;
         }
         else {
-            plotSurfaceWrap.invalidatePaint();
+            //plotSurfaceWrap.invalidatePaint();
         }
 
     }

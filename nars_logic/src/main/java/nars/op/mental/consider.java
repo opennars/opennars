@@ -17,52 +17,53 @@
 
 package nars.op.mental;
 
-import com.google.common.collect.Lists;
-import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.Sentence;
+import nars.nal.ConceptProcess;
 import nars.nal.Task;
-import nars.nal.Truth;
-import nars.nal.nal7.Tense;
+import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
-import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
+import nars.nal.tlink.TaskLink;
 
 import java.util.ArrayList;
 
 /**
- * Operator that creates a goal with a given statement
+ * Operator that activates a concept
  */
-public class Want extends SynchOperator implements Mental {
+public class consider extends SynchOperator implements Mental {
 
-    public Want() {
-        super();
+    public static Budget budgetMentalConcept(final Operation o) {
+        return o.getTask().clone();
     }
+    
 
     /**
-     * To create a goal with a given statement
+     * To activate a concept as if a question has been asked about it
+     *
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-
-        Term content = operation.arg(0);
+        Term term = operation.arg(0);
         
-        Truth truth = new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, nar.memory, Tense.Present));
-        
-        Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
+        Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
 
-        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
+        TaskLink taskLink = concept.taskLinks.peekNext();
+        if (taskLink!=null) {
+            new ConceptProcess(concept, taskLink) {
+
+                @Override
+                public void beforeFinish() {
+                }
+
+            }.run();
+        }
+        
+        return null;
     }
 
-//    @Override
-//    public boolean isExecutable(Memory mem) {
-//        return false;
-//    }
 }

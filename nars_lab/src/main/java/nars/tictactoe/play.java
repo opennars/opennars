@@ -18,13 +18,14 @@
 package nars.tictactoe;
 
 import automenta.vivisect.Video;
+import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.nal.Task;
-import nars.nal.term.Term;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.model.impl.Default;
+import nars.nal.Task;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.term.Term;
 
 import javax.swing.*;
 import java.util.List;
@@ -287,60 +288,62 @@ class play extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    public class AddO extends Operator {
+    public class AddO extends SynchOperator {
 
     public AddO(String name) {
         super(name);
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args) {
+    protected List<Task> execute(Operation operation, Memory memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
-         
+
+        Term a = operation.arg(0);
+
         boolean success=true;
         System.out.println("Executed: " + this);
-        if(args[0].toString().equals("1") && field[0]==0) {
+        if(a.toString().equals("1") && field[0]==0) {
             jButton2.setText("O");
             field[0]=2;
         }
         else
-        if(args[0].toString().equals("2") && field[1]==0) {
+        if(a.toString().equals("2") && field[1]==0) {
             jButton5.setText("O");
             field[1]=2;
         }
         else
-        if(args[0].toString().equals("3") && field[2]==0) {
+        if(a.toString().equals("3") && field[2]==0) {
             jButton8.setText("O");
             field[2]=2;
         }
         else
-        if(args[0].toString().equals("4") && field[3]==0) {
+        if(a.toString().equals("4") && field[3]==0) {
             jButton3.setText("O");
             field[3]=2;
         }
         else
-        if(args[0].toString().equals("5") && field[4]==0) {
+        if(a.toString().equals("5") && field[4]==0) {
             jButton6.setText("O");
             field[4]=2;
         }
         else
-        if(args[0].toString().equals("6") && field[5]==0) {
+        if(a.toString().equals("6") && field[5]==0) {
             jButton9.setText("O");
             field[5]=2;
         }
         else
-        if(args[0].toString().equals("7") && field[6]==0) {
+        if(a.toString().equals("7") && field[6]==0) {
              jButton4.setText("O");
             field[6]=2;
         }
         else
-        if(args[0].toString().equals("8") && field[7]==0) {
+        if(a.toString().equals("8") && field[7]==0) {
             jButton7.setText("O");
             field[7]=2;
         }
         else
-        if(args[0].toString().equals("9") && field[8]==0) {
+        if(a.toString().equals("9") && field[8]==0) {
             nar.input("<input --> succeeded>. :|: %1.00;0.99%");
             jButton10.setText("O");
             field[8]=2;

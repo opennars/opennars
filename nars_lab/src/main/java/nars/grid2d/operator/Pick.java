@@ -20,11 +20,12 @@
  */
 package nars.grid2d.operator;
 
+import nars.Memory;
 import nars.grid2d.TestChamber;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.term.Term;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ import java.util.List;
  *  A class used as a template for Operator definition.
  * TODO: memory.registerOperator(new Goto("^goto"));
  */
-public class Pick extends Operator {
+public class Pick extends SynchOperator {
 
     TestChamber chamb;
     public Pick(TestChamber chamb, String name) {
@@ -41,13 +42,13 @@ public class Pick extends Operator {
     }
 
     @Override
-    protected List<Task> execute(Operation operation, Term[] args) {
+    protected List<Task> execute(Operation operation, Memory memory) {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
          
         TestChamber.executed=true;
         System.out.println("Executed: " + this);
-        for (Term t : args) {
+        for (Term t : operation.arg()) {
             System.out.print(" --- " + t);
             TestChamber.operateObj(t.toString(), "pick");
             break;

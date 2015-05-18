@@ -1,5 +1,7 @@
 package nars.util.language;
 
+import com.fasterxml.jackson.core.JsonParser;
+
 import java.io.IOException;
 import java.util.Map;
 

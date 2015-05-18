@@ -4,10 +4,10 @@ import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import nars.rl.AEPerception;
 import nars.rl.HaiSOMPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
+import nars.rl.RawPerception;
 import nars.rl.example.QVis;
 
 import java.awt.*;
@@ -84,11 +84,11 @@ public class RLNario extends NARio  {
         nar.param.shortTermMemoryHistory.set(2);
 
         new RLNario(nar,
-                //new RawPerception("r", 0.7f),
+                new RawPerception("r", 0.7f)
                 //new RawPerception.BipolarDirectPerception("r", 0.3f),
-                new HaiSOMPerception("s", 2, 0.6f),
-                new AEPerception("a", 0.6f, 3, 2).setLearningRate(0.02).setSigmoid(true),
-                new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
+                //new HaiSOMPerception("s", 2, 0.6f)
+                //new AEPerception("a", 0.6f, 3, 2).setLearningRate(0.02).setSigmoid(true),
+                //new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
         );
 
     }

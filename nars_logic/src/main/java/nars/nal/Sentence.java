@@ -32,6 +32,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.term.*;
+import nars.util.data.Util;
 
 import java.util.*;
 
@@ -233,7 +234,10 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     @Override
     public int hashCode() {
         if ((this.hash == 0) /*&& (stamp!=null)*/) {
-            this.hash = Objects.hash(term, punctuation, truth, stamp);
+            if (truth == null)
+                this.hash = Util.hash(term, punctuation, stamp);
+            else
+                this.hash = Util.hash(term, punctuation, truth, stamp);
         }
         return hash;
     }

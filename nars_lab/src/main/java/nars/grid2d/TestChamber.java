@@ -45,13 +45,13 @@ public class TestChamber {
         Global.DEFAULT_JUDGMENT_DURABILITY=0.99f; //try to don't forget the input in TestChamber domain
         NAR nar = new NAR(builder);
         //set NAR runtime parmeters:  
-
-        for(NAR.OperatorRegistration pluginstate : nar.getPlugins()) {
-            if(pluginstate.IOperator instanceof InternalExperience || pluginstate.IOperator instanceof FullInternalExperience) {
-                pluginstate.off();
-            }
-        }
-  
+//
+//        for(NAR.OperatorRegistration pluginstate : nar.getPlugins()) {
+//            if(pluginstate.IOperator instanceof InternalExperience || pluginstate.IOperator instanceof FullInternalExperience) {
+//                pluginstate.off();
+//            }
+//        }
+//
 
         //(nar.param).duration.set(10);
         (nar.param).outputVolume.set(0);
@@ -151,7 +151,7 @@ public class TestChamber {
         space.automataPeriod = automataPeriod/gridUpdatePeriod;
         space.agentPeriod = agentPeriod/gridUpdatePeriod;
         TestChamber into=this;
-        nar.memory.event.on(Events.FrameEnd.class, new Reaction() {
+        nar.memory.event.on(Events.FrameEnd.class, new Reaction<Class>() {
             private long lastDrawn = 0;
             
             @Override

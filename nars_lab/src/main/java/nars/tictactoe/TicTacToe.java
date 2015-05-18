@@ -25,18 +25,19 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.Events.FrameEnd;
 import nars.Events.OUT;
+import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
-import nars.util.event.Reaction;
 import nars.gui.NARSwing;
+import nars.model.impl.Classic;
 import nars.nal.Task;
 import nars.nal.concept.AxiomaticConcept;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.model.impl.Classic;
+import nars.util.event.Reaction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -93,7 +94,7 @@ public class TicTacToe extends JPanel {
         nar.param.conceptsFiredPerCycle.set(100);
         
         new NARSwing(nar);    
-        nar.on(new Reaction() {
+        nar.on(new Reaction<Class>() {
 
             @Override
             public void event(Class event, Object[] args) {
@@ -217,18 +218,18 @@ public class TicTacToe extends JPanel {
     }
     
 
-    public class AddO extends Operator {
+    public class AddO extends SynchOperator {
 
         public AddO() {
             super("^add0");
         }
 
         @Override
-        protected List<Task> execute(Operation operation, Term[] args) {
+        protected List<Task> execute(Operation operation, Memory memory) {
             
             int i = -1;
             try {
-                i = Integer.parseInt( args[0].toString() );
+                i = Integer.parseInt( operation.arg(0).toString() );
             }
             catch (Throwable e) {
                 return null;

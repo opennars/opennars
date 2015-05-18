@@ -37,11 +37,8 @@ import java.util.ArrayList;
 /**
  * Operator that give a CompoundTerm a new name
  */
-public class Name extends SynchOperator implements Mental {
+public class name extends SynchOperator implements Mental {
 
-    public Name() {
-        super();
-    }
 
     /**
      * To create a judgment with a given statement

@@ -2,12 +2,13 @@ package nars.rover;
 
 import automenta.vivisect.Video;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
+import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
-import nars.model.impl.Default;
+import nars.nal.term.Term;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.SwingDraw;
@@ -456,23 +457,24 @@ public class Rover2 extends PhysicsModel {
         nar.on(new NullOperator("^motor") {
 
             @Override
-            protected List<Task> execute(Operation operation, Term[] args) {
+            protected List<Task> execute(Operation operation, Memory memory) {
 
+                Term[] args = operation.arg().term;
                 Term t1 = args[0];
 
                 float priority = operation.getTask().getPriority();
 
                 String command = "";
                 if (args.length == 1 + 1) {
-                    command = t1.name().toString();
+                    command = t1.toString();
                 }
                 if (args.length == 2 + 1) {
                     Term t2 = args[1];
-                    command = t1.name().toString() + "," + t2.name().toString();
+                    command = t1.toString() + "," + t2.toString();
                 } else if (args.length == 3 + 1) {
                     Term t2 = args[1];
                     Term t3 = args[2];
-                    command = t1.name().toString() + "," + t2.name().toString() + "," + t3.name().toString();
+                    command = t1.toString() + "," + t2.toString() + "," + t3.toString();
                 }
 
                 switch (command) {

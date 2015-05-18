@@ -13,11 +13,11 @@ import nars.nal.nal5.Implication;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 
 public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
@@ -204,7 +204,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return this;
     }
 
-    public byte[] getLinkKey() {
+    public final byte[] getLinkKey() {
         byte[] p = this.prefix;
         if (p == null) {
             p = this.prefix = currentTemplate.prefix(incoming);
@@ -213,8 +213,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return p;
     }
 
-    public static int hash(byte[] prefix, Term target, short type) {
-        return Objects.hash(Arrays.hashCode(prefix), target, type);
+    public static final int hash(byte[] prefix, Term target, short type) {
+        return Util.hash(Arrays.hashCode(prefix), target, type);
     }
 
 

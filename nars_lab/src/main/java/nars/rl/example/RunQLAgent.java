@@ -1,6 +1,7 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
@@ -18,7 +19,9 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.rl.*;
+import nars.rl.Perception;
+import nars.rl.QLAgent;
+import nars.rl.RawPerception;
 
 import javax.swing.*;
 import java.awt.*;
@@ -153,7 +156,9 @@ public class RunQLAgent extends JPanel {
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
+
         RLEnvironment d = new Curiousbot();
+
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
 

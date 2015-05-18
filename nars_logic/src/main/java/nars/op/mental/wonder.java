@@ -17,56 +17,39 @@
 
 package nars.op.mental;
 
+import com.google.common.collect.Lists;
+import nars.Global;
 import nars.Memory;
+import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.ConceptProcess;
+import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
-import nars.nal.tlink.TaskLink;
 
 import java.util.ArrayList;
 
 /**
- * Operator that activates a concept
+ * Operator that creates a question with a given statement
  */
-public class Consider extends SynchOperator implements Mental {
-
-    public static Budget budgetMentalConcept(final Operation o) {
-        return o.getTask().clone();
-    }
-    
-    public Consider() {
-        super();
-    }
+public class wonder extends SynchOperator implements Mental {
 
     /**
-     * To activate a concept as if a question has been asked about it
-     *
+     * To create a question with a given statement
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-        Term term = operation.arg(0);
+        Term content = operation.arg(0);
         
-        Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-
-        TaskLink taskLink = concept.taskLinks.peekNext();
-        if (taskLink!=null) {
-            new ConceptProcess(concept, taskLink) {
-
-                @Override
-                public void beforeFinish() {
-                }
-
-            }.run();
-        }
         
-        return null;
+        Sentence sentence = new Sentence(content, Symbols.QUESTION, null, new Stamp(nar.memory, Stamp.ETERNAL));
+        Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
+        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
     }
-
+        
 }

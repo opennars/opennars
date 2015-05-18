@@ -5,6 +5,7 @@ import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Events;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
@@ -12,7 +13,6 @@ import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal8.NullOperator;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Term;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
@@ -21,7 +21,6 @@ import nars.util.event.Reaction;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.log;
@@ -76,13 +75,13 @@ public class NARio extends Run implements RLEnvironment {
     protected void initKeyboardOperators() {
         for (final int kk : keys) {
             String ko = "^keyboard" + kk;
-            if (nar.memory.operator(ko) == null) {
-                nar.on(new NullOperator("^" + "keyboard" + kk) {
+
+                nar.on(new NullOperator("keyboard" + kk) {
 
                     @Override
-                    protected List<Task> execute(Operation operation, Term[] args) {
+                    protected List<Task> execute(Operation operation, Memory memory) {
 
-                        String state = args[0].toString();
+                        String state = operation.arg(0).toString();
 
                         Task task = operation.getTask();
                         Task parent = task.getParentTask();
@@ -91,11 +90,11 @@ public class NARio extends Run implements RLEnvironment {
 
                         mario.keys[kk] = state.equals("on");
 
-                        return super.execute(operation, args);
+                        return super.execute(operation, memory);
                     }
 
                 });
-            }
+
 
             int currentKeyTime, nextKeyTime;
             currentKeyTime = nextKeyTime = keyTime[kk];
@@ -687,19 +686,7 @@ public class NARio extends Run implements RLEnvironment {
 
         });
 
-        nar.memory.event.on(Events.FrameEnd.class, new Reaction() {
 
-
-
-            @Override
-            public void event(Class event, Object... arguments) {
-
-                //frame();
-
-            }
-
-
-        });
 
     }
 

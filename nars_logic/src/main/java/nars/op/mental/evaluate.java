@@ -17,29 +17,41 @@
 
 package nars.op.mental;
 
+import com.google.common.collect.Lists;
+import nars.Global;
 import nars.Memory;
+import nars.Symbols;
+import nars.budget.Budget;
+import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.SynchOperator;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
 
 import java.util.ArrayList;
 
 /**
- * Feeling happy value
+ * Operator that creates a quest with a given statement
  */
-public class FeelHappy extends Feel implements Mental {
-
-    public FeelHappy() {
-        super("^feelHappy");
-    }
+public class evaluate extends SynchOperator implements Mental {
 
     /**
-     * To get the current value of an internal sensor
-     * @param args Arguments, a set and a variable
+     * To create a quest with a given statement
+     * @param args Arguments, a Statement followed by an optional tense
      * @param memory
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-        return feeling(nar.memory.emotion.happy(), nar.memory);
-    }    
+        Compound content = Sentence.termOrException(operation.arg(0));
+
+        Sentence sentence = new Sentence(content, Symbols.QUEST, null, new Stamp(operation, nar.memory, Tense.Present));
+        Budget budget = new Budget(Global.DEFAULT_QUEST_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
+        
+        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
+
+    }
+        
 }

@@ -41,11 +41,7 @@ import java.util.ArrayList;
  * Operator that creates a judgment with a given statement
  * Causes the system to belief things it has no evidence for
  */
-public class Believe extends SynchOperator implements Mental {
-
-    public Believe() {
-        super();
-    }
+public class believe extends SynchOperator implements Mental {
 
     /**
      * To create a judgment with a given statement

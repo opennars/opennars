@@ -8,7 +8,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.gui.NARSwing;
@@ -17,7 +16,7 @@ import nars.model.impl.Default;
 import nars.nal.concept.Concept;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.op.io.Say;
+import nars.op.io.say;
 import nars.rl.example.MarkovObservationsGraph;
 import nars.util.language.Twokenize;
 
@@ -256,7 +255,7 @@ public class IRCBot {
         new NWindow("Say", new ReflectPanel(this)).show(500,300);
 
         this.nar = n;
-        new NARReaction(nar, Say.class) {
+        new NARReaction(nar, say.class) {
 
             public String last = "";
 
@@ -265,7 +264,7 @@ public class IRCBot {
 
             @Override
             public void event(Class event, Object[] args) {
-                if (event == Say.class) {
+                if (event == say.class) {
                     //Operator.ExecutionResult er = (Operator.ExecutionResult)args[0];
 
                     Term a = (Term)args[0]; //er.getOperation().getArguments().term;

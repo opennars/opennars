@@ -17,37 +17,49 @@
 
 package nars.op.mental;
 
+import com.google.common.collect.Lists;
+import nars.Global;
 import nars.Memory;
+import nars.Symbols;
+import nars.budget.Budget;
+import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.nal.Truth;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
 /**
- * Operator that activates a concept
+ * Operator that creates a goal with a given statement
  */
-public class Hesitate extends SynchOperator implements Mental {
+public class want extends SynchOperator implements Mental {
 
-    public Hesitate() {
-        super();
-    }
 
     /**
-     * To activate a concept as if a question has been asked about it
-     *
+     * To create a goal with a given statement
      * @param args Arguments, a Statement followed by an optional tense
      * @param memory
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-        Term term = operation.arg(0);
-        Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        concept.discountConfidence(false);
-        return null;
+
+        Term content = operation.arg(0);
+        
+        Truth truth = new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, nar.memory, Tense.Present));
+        
+        Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
+
+        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
     }
-    
+
+//    @Override
+//    public boolean isExecutable(Memory mem) {
+//        return false;
+//    }
 }

@@ -6,7 +6,7 @@ import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 
 
-public abstract class AbstractController implements Reaction {
+public abstract class AbstractController implements Reaction<Class> {
 
     public final NAR nar;
     /** how many cycles to wait before action, then wait again.. */

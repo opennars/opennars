@@ -21,11 +21,20 @@ import java.util.Map;
  *
  *
  *
- * @author The Stajistics Project
  */
 public final class Util {
 
     private Util() {
+    }
+
+    public final static int hash(Object a, Object b) {
+        return 31 * (31 + a.hashCode() ) + b.hashCode() ;
+    }
+    public final static int hash(Object a, Object b, Object c) {
+        return 31 * (31 * (31 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ;
+    }
+    public final static int hash(Object a, Object b, Object c, Object d) {
+        return 31 * (31 * (31 * (31 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;
     }
 
     public static void assertNotNull(final Object test, final String varName) {

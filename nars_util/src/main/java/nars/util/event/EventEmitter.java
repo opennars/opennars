@@ -227,7 +227,7 @@ abstract public class EventEmitter<K>  {
 
 
     /** for enabling many events at the same time */
-    @Deprecated public void set(final Reaction<E> o, final boolean enable, final K... events) {
+    @Deprecated public void set(final Reaction<K> o, final boolean enable, final K... events) {
         
         for (final K c : events) {
             if (enable)
@@ -307,7 +307,7 @@ abstract public class EventEmitter<K>  {
      * @param o
      * @return  whether it was removed
      */
-    @Deprecated public void off(final K event, final Reaction<? extends E> o) {
+    @Deprecated public void off(final K event, final Reaction<? extends K> o) {
         throw new RuntimeException("off() not supported; use the returned Registration object to .cancel()");
     }
 

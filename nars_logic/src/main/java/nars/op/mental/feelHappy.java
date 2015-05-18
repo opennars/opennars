@@ -19,33 +19,24 @@ package nars.op.mental;
 
 import nars.Memory;
 import nars.nal.Task;
-import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.SynchOperator;
-import nars.nal.term.Term;
 
 import java.util.ArrayList;
 
 /**
- * Operator that activates a concept
+ * Feeling happy value
  */
-public class Doubt extends SynchOperator implements Mental {
-
+public class feelHappy extends feel implements Mental {
 
 
     /**
-     * To activate a concept as if a question has been asked about it
-     *
-     * @param args Arguments, a Statement followed by an optional tense
+     * To get the current value of an internal sensor
+     * @param args Arguments, a set and a variable
      * @param memory
      * @return Immediate results as Tasks
      */
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
-        Term term = operation.arg();
-        Concept concept = nar.memory.conceptualize(Consider.budgetMentalConcept(operation), term);
-        concept.discountConfidence(true);
-        return null;
-    }
-
+        return feeling(nar.memory.emotion.happy(), nar.memory);
+    }    
 }

@@ -25,8 +25,9 @@ import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
 import nars.op.app.STMInduction;
 import nars.op.data.Flat;
-import nars.op.io.Say;
-import nars.op.io.Schizo;
+import nars.op.data.json;
+import nars.op.io.say;
+import nars.op.io.schizo;
 import nars.op.math.add;
 import nars.op.math.count;
 import nars.op.mental.*;
@@ -211,30 +212,30 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
 
                 //new Wait(),
-                new Believe(),  // accept a statement with a default truth-value
-                new Want(),     // accept a statement with a default desire-value
-                new Wonder(),   // find the truth-value of a statement
-                new Evaluate(), // find the desire-value of a statement
+                new believe(),  // accept a statement with a default truth-value
+                new want(),     // accept a statement with a default desire-value
+                new wonder(),   // find the truth-value of a statement
+                new evaluate(), // find the desire-value of a statement
 
                 //concept operations for internal perceptions
-                new Remind(),   // create/activate a concept
-                new Consider(),  // do one inference step on a concept
-                new Name(),         // turn a compount term into an atomic term
+                new remind(),   // create/activate a concept
+                new consider(),  // do one inference step on a concept
+                new name(),         // turn a compount term into an atomic term
                 //new Abbreviate(),
 
                 //new Register(),
 
                 // truth-value operations
-                new Doubt(),        // decrease the confidence of a belief
-                new Hesitate(),      // decrease the confidence of a goal
+                new doubt(),        // decrease the confidence of a belief
+                new hesitate(),      // decrease the confidence of a goal
 
 
                 //Meta
                 new reflect(),
 
                 // feeling operations
-                new FeelHappy(),
-                new FeelBusy(),
+                new feelHappy(),
+                new feelBusy(),
 
                 // math operations
                 new count(),
@@ -245,7 +246,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 new complexity(),
 
                 //Term manipulation
-                new Flat.AsProduct(),
+                new Flat.flatProduct(),
 
                 //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
                 //new Javascript(),  // javascript evaluation
@@ -255,11 +256,14 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 //new NumericCertainty(),
 
                 //io operations
-                new Say(),
+                new say(),
 
-                new Schizo(),     //change Memory's SELF term (default: SELF)
+                new schizo(),     //change Memory's SELF term (default: SELF)
 
-                new js()
+                new js(),
+
+                new json.jsonfrom(),
+                new json.jsonto()
          /*
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)

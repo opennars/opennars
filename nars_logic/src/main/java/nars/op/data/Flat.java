@@ -21,10 +21,6 @@ import java.util.List;
  */
 abstract public class Flat extends TermFunction {
 
-    public Flat(String name) {
-        super(name);
-    }
-
     @Override
     public Term function(Term[] x) {
         List<Term> l = new ArrayList();
@@ -44,11 +40,8 @@ abstract public class Flat extends TermFunction {
 
     abstract public Term result(List<Term> terms);
 
-    public static class AsProduct extends Flat {
+    public static class flatProduct extends Flat {
 
-        public AsProduct() {
-            super("^flatProduct");
-        }
 
         @Override
         public Term result(List<Term> terms) {

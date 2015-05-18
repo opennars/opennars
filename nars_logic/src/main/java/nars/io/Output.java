@@ -8,7 +8,7 @@ import nars.event.NARReaction;
 import nars.util.event.EventEmitter;
 import nars.nal.nal8.ImmediateOperation;
 import nars.op.io.Echo;
-import nars.op.io.Say;
+import nars.op.io.say;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
@@ -23,7 +23,7 @@ public abstract class Output extends NARReaction {
             Events.ERR.class,
             ImmediateOperation.class,
             Echo.class,
-            Say.class,
+            say.class,
             Answer.class
             //Events.PluginsChange.class //this gets annoying
     };

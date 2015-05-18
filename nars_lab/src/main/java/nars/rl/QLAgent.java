@@ -11,8 +11,9 @@ import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.term.Term;
+import nars.util.event.EventEmitter;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -32,8 +33,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     private final Perception[] perceptions;
     private final Term rewardTerm;
     private final String operationTerm;
-    private final Operator operator;
-    private final NAR.OperatorRegistration opReg;
+    private final Term operator;
+    private final EventEmitter.Registrations opReg;
 
 
     java.util.List<Task> before = new ArrayList();
@@ -96,6 +97,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     public QLAgent(NAR nar, String operationTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         super(nar);
 
+        this.operator = nar.the(operationTerm);
         this.operationTerm = operationTerm;
         this.rewardTerm = rewardTerm;
 
@@ -121,12 +123,17 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         this.combinedDesire = new ArrayRealVector(env.numActions());
 
 
-        opReg = nar.on(operator = new Operator("^" + operationTerm) {
+        opReg = nar.on(new SynchOperator(operationTerm) {
 
 
             @Override
-            protected java.util.List<Task> execute(Operation operation, Term[] args) {
+            protected void noticeExecuted(Operation operation, Memory memory) {
+                //dont notice
+            }
 
+            @Override
+            protected java.util.List<Task> execute(Operation operation, Memory memory) {
+                Term[] args = operation.arg().term;
                 if (args.length != 2) { // || args.length==3) { //left, self
                     //System.err.println(this + " ?? " + Arrays.toString(args));
                     return null;

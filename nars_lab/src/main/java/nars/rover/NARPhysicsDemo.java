@@ -1,12 +1,13 @@
 package nars.rover;
 
+import nars.Memory;
 import nars.NAR;
-import nars.model.impl.Default;
 import nars.io.ChangedTextInput;
+import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.term.Term;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.NullOperator;
+import nars.nal.nal8.Operation;
+import nars.nal.term.Term;
 import org.jbox2d.common.MathUtils;
 
 import java.util.List;
@@ -55,9 +56,11 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         arm = getModel();
         nar.on(new NullOperator("^joint") {
             @Override
-            protected List<Task> execute(Operation operation, Term[] args) {
+            protected List<Task> execute(Operation operation, Memory memory) {
 
+                Term[] args = operation.arg().term;
                 if ((autonomous) || (operation.getTask().isInput())) {
+
 
 
                     String as = args[1].toString();
@@ -87,7 +90,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
                     }
                 }
 
-                return super.execute(operation, args);
+                return super.execute(operation, memory);
             }
         });
         
