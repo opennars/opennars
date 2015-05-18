@@ -319,8 +319,8 @@ abstract public class FastOrganicIterativeLayout<N extends UIVertex, E extends U
             edgeWeights.clear();
             for (Object oo : v.getEdgesIn())
                 updateEdge(cells, edgeWeights, v, (UIEdge) oo);
-            for (Object oo : v.getEdgesOut())
-                updateEdge(cells, edgeWeights, v, (UIEdge) oo);
+            /*for (Object oo : v.getEdgesOut())
+                updateEdge(cells, edgeWeights, v, (UIEdge) oo);*/
 
 
             if (cells.isEmpty() && neighbors[i] != null) {

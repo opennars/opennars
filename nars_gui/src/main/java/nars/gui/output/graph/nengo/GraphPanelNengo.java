@@ -1,6 +1,7 @@
 package nars.gui.output.graph.nengo;
 
 import automenta.vivisect.dimensionalize.FastOrganicIterativeLayout;
+import automenta.vivisect.dimensionalize.HyperassociativeMap;
 import ca.nengo.model.Node;
 import ca.nengo.model.SimulationException;
 import ca.nengo.model.StructuralException;
@@ -15,8 +16,11 @@ import ca.nengo.ui.model.icon.NodeIcon;
 import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import com.google.common.collect.Iterators;
+import nars.NAR;
 import nars.gui.WrapLayout;
+import nars.model.impl.Default;
 import nars.nal.Named;
+import nars.util.graph.TermLinkGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.Graph;
 
@@ -25,10 +29,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
+import java.util.*;
 
 /** for displaying any generic Graph */
 public class GraphPanelNengo<V extends Named, E> extends Nengrow {
@@ -61,6 +62,38 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
 
         private final Graph graph;
         private DefaultUINetwork ui;
+
+        final HyperassociativeMap hyperLayout = new HyperassociativeMap(2) {
+            @Override
+            public ArrayRealVector getPosition(UIVertex node) {
+                updateCoordinates(Collections.singleton(node));
+                return node.getCoordinates();
+            }
+
+
+
+            @Override
+            public double getEdgeWeight(UIEdge e) {
+                    /*if (e.e instanceof TermLink) {
+                        return 4.0;
+                    }*/
+                //return 0.25 + 0.5 * e.get;
+                return 1;
+            }
+
+
+            @Override
+            public double getRadius(UIVertex narGraphVertex) {
+                double r = 1 + narGraphVertex.getRadius();
+                return r * 100;
+            }
+
+            @Override
+            protected Iterator<UIVertex> getVertices() {
+                return Iterators.filter(nodes().iterator(), UIVertex.class);
+            }
+
+        };
 
         final FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>> organicLayout =
                 new FastOrganicIterativeLayout<UIVertex, UIEdge<UIVertex>>(layoutBounds) {
@@ -151,7 +184,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
                                 java.util.List<UIEdge> removals = new ArrayList();
                                 for (Object oe : v.getEdgesOut()) {
                                     UIEdge e = (UIEdge)oe;
-                                    if (!g.containsEdge(e.getSource(), e.getTarget()))
+                                    if (!g.containsEdge(e.getSource().vertex, e.getTarget().vertex))
                                         removals.add(e);
                                 }
                                 for (UIEdge r : removals) {
@@ -194,9 +227,13 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
                     layoutBounds.setRect(-layoutRad / 2, -layoutRad / 2, layoutRad, layoutRad);
                     //hmap.setInitialTemp(200, 0.5f);
                     //hmap.setForceConstant(100);
+
                     organicLayout.setForceConstant(300);
                     organicLayout.resetLearning();
                     organicLayout.run(1);
+
+
+                    //hyperLayout.run(1);
 
 
                 }
@@ -211,7 +248,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
 
         @Override
         public Object name(Node node) {
-            return node.name().toString();
+            return node.name();
         }
 
         @Override
@@ -256,7 +293,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
          * adds or gets existing edge between two vertices, directional
          */
         public UIEdge<UIVertex> addEdge(UIVertex<?> s, UIVertex<?> t) {
-            String name = s.name().toString() + ':' + t.name();
+            String name = s.name() + ':' + t.name();
 
             //this may be inefficient
             for (UIEdge e : s.getEdgesOut()) {
@@ -289,7 +326,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
         }
         protected synchronized Node add(Named o) {
 
-            Node ui = getNode(o.name());
+            Node ui = getNode(o.toString());
 
             if (ui == null) {
 
@@ -546,5 +583,22 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
     @Override
     public void init() throws Exception {
 
+    }
+
+
+    //TEST
+    public static void main(String[] arg) {
+        NAR n = new NAR(new Default());
+
+        n.input("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>.");
+        n.input("<<$y --> [withwings]> ==> <$y --> flyer>>.");
+
+        n.run(5);
+
+        TermLinkGraph g = new TermLinkGraph();
+        g.add(n.concept("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>"), true);
+        g.add(n.concept("<<$y --> [withwings]> ==> <$y --> flyer>>"), true);
+
+        new GraphPanelNengo<>(g).newWindow(600,500);
     }
 }

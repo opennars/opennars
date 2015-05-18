@@ -91,6 +91,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             if (ti.isConstant()) {
                 addTemplate(new TermLinkTemplate(concept, type, ti, i));
             }
+
             if ((tEquivalence || (tImplication && (i == 0))) && ((ti instanceof Conjunction) || (ti instanceof Negation))) {
 
                 prepareComponentLinks(TermLink.COMPOUND_CONDITION, (Compound) ti);
@@ -108,7 +109,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         TermLinkTemplate a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
-                                //WARNING: COVERAGE (at one point) FOUND THIS CONDITION NEVER BEING CALLED, TODO check if this is still the case
                                 a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, 0, i, j);
                             } else {
                                 a = new TermLinkTemplate(concept, TermLink.TRANSFORM, tj, i, j);

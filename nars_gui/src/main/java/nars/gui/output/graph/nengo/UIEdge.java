@@ -36,7 +36,7 @@ public class UIEdge<V extends UIVertex> extends ShapeObject implements Named<Str
         super();
         this.s = s;
         this.t = t;
-        this.name = s.name().toString() + ':' + t.name();
+        this.name = s.name() + ':' + t.name();
 
         this.shape = new Polygon();
         getGeometry().setPathTo(shape); //forces update

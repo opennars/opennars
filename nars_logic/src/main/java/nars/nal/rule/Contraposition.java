@@ -22,15 +22,15 @@ public class Contraposition extends ConceptFireTask {
 
         final Term taskTerm = taskSentence.term;
 
-        if (((taskLink.type!= TermLink.TRANSFORM) && (taskTerm instanceof Implication))) {
+        if ((taskLink.type!= TermLink.TRANSFORM) && (taskTerm instanceof Implication)) {
             //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
 
             //Concept d=memory.concepts.sampleNextConcept();
             //if(d!=null && d.term.equals(taskSentence.term)) {
 
-            double n = taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
-            double w = 1.0 / ((n * (n - 1)) / 2.0); //let's assume hierachical tuple (triangle numbers) amount for this
-            if (Memory.randomNumber.nextDouble() < w) { //so that NARS memory will not be spammed with contrapositions
+            float n = taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
+            float w = 1.0f / ((n * (n - 1)) / 2.0f); //let's assume hierachical tuple (triangle numbers) amount for this
+            if (Memory.randomNumber.nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
 
                 contraposition((Statement) taskTerm, taskSentence, f);
                 //}
@@ -69,14 +69,17 @@ public class Contraposition extends ConceptFireTask {
             } else {
                 budget = BudgetFunctions.compoundBackward(content, nal);
             }
-            return nal.singlePremiseTask(content, Symbols.QUESTION, truth, budget);
         } else {
             if (content instanceof Implication) {
                 truth = TruthFunctions.contraposition(truth);
             }
+            else {
+                throw new RuntimeException("contraposition for non-implication are not implemented yet");
+            }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
-            return nal.singlePremiseTask(content, Symbols.JUDGMENT, truth, budget);
         }
+
+        return nal.singlePremiseTask(content, sentence.punctuation, truth, budget);
     }
 
 

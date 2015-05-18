@@ -77,7 +77,7 @@ public final class TruthFunctions extends UtilityFunctions {
         return revision(v1, v2, new Truth.DefaultTruth());
     }
     
-    public static final Truth revision(final Truth v1, final Truth v2, final Truth result) {
+    static final Truth revision(final Truth v1, final Truth v2, final Truth result) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float w1 = c2w( v1.getConfidence() );

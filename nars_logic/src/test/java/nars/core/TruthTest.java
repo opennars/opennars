@@ -34,4 +34,16 @@ public class TruthTest {
         assertNotEquals(a, aNotWithinThresh);
     }
 
+    @Test public void testEpsilon() {
+        float e = 0.1f;
+        Truth.DefaultTruth a = new Truth.DefaultTruth(1.0f, 0.9f, e);
+        Truth.DefaultTruth aCopy = new Truth.DefaultTruth(1.0f, 0.9f, e);
+        assertEquals(a, aCopy);
+
+        Truth aEqualWithinThresh = new Truth.DefaultTruth(1.0f- a.getEpsilon()/2, 0.9f, e);
+        assertEquals(a, aEqualWithinThresh);
+
+        Truth aNotWithinThresh = new Truth.DefaultTruth(1.0f - a.getEpsilon(), 0.9f, e);
+        assertNotEquals(a, aNotWithinThresh);
+    }
 }

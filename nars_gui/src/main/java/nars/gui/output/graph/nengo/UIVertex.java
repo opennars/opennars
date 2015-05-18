@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-abstract public class UIVertex<V extends Named<String>> extends AbstractWidget {
+abstract public class UIVertex<V extends Named> extends AbstractWidget {
 
     public final V vertex;
     private final ArrayRealVector coords;

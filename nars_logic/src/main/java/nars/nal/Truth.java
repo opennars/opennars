@@ -33,7 +33,6 @@ import java.io.Serializable;
 
 abstract public interface Truth extends Cloneable, Serializable { // implements Cloneable {
 
-    public static float TRUTH_EPSILON = 0.01f;
 
 
     final static Term Truth_TRUE = Atom.get("TRUE");
@@ -64,6 +63,7 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
          * Whether the truth value is derived from a definition
          */
         private boolean analytic = false;
+        final float epsilon;
 
 
         public DefaultTruth() {
@@ -82,6 +82,12 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
             this(f, c, false);
         }
 
+        public DefaultTruth(final float f, final float c, final boolean b, float epsilon) {
+            this.epsilon = epsilon;
+            setFrequency(f);
+            setConfidence(c);
+            setAnalytic(b);
+        }
         /**
          * Constructor with two ShortFloats
          *
@@ -90,9 +96,11 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
          *
          */
         public DefaultTruth(final float f, final float c, final boolean b) {
-            setFrequency(f);
-            setConfidence(c);
-            setAnalytic(b);
+            this(f, c, b, Global.TRUTH_EPSILON);
+        }
+
+        public DefaultTruth(final float f, final float c, float epsilon) {
+            this(f, c, false, epsilon);
         }
 
         /**
@@ -101,12 +109,15 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
          * @param v The truth value to be cloned
          */
         public DefaultTruth(final Truth v) {
-            setFrequency(v.getFrequency());
-            setConfidence(v.getConfidence());
-            setAnalytic(v.getAnalytic());
+            this(v.getFrequency(), v.getConfidence(), v.getAnalytic(), Global.TRUTH_EPSILON);
+        }
+
+        public DefaultTruth(final DefaultTruth v) {
+            this(v.getFrequency(), v.getConfidence(), v.getAnalytic(), v.getEpsilon());
         }
 
         public DefaultTruth(char punctuation) {
+            this.epsilon = Global.TRUTH_EPSILON;
             float c;
             switch(punctuation) {
                 case Symbols.JUDGMENT: c = Global.DEFAULT_JUDGMENT_CONFIDENCE;  break;
@@ -143,9 +154,8 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
             return this;
         }
 
-        private float getEpsilon() {
-            return Global.TRUTH_EPSILON;
-
+        public float getEpsilon() {
+            return epsilon;
         }
 
         @Override
@@ -286,8 +296,9 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
 
     /** tests equivalence (according to epsilon precision) */
     public static boolean isEqual(final float a, final float b, final float epsilon) {
-        if (a > b) return ((a - b) < epsilon/2f);
-        else if ( a < b) return ((b - a) < epsilon/2f);
+        final float he = epsilon/2f;
+        if (a > b) return ((a - b) < he);
+        else if ( a < b) return ((b - a) < he);
         return true;
     }
     
