@@ -7,7 +7,6 @@ import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
-import nars.nal.nal8.DesireThresholdExecutive;
 import nars.model.ControlCycle;
 import nars.model.cycle.DefaultCycle;
 import nars.nal.*;
@@ -28,11 +27,11 @@ import nars.op.app.STMInduction;
 import nars.op.data.Flat;
 import nars.op.io.Say;
 import nars.op.io.Schizo;
-import nars.op.math.Add;
-import nars.op.math.Count;
+import nars.op.math.add;
+import nars.op.math.count;
 import nars.op.mental.*;
 import nars.op.meta.Reflect;
-import nars.op.software.Javascript;
+import nars.op.software.js;
 import nars.op.software.Scheme;
 
 import java.io.File;
@@ -237,8 +236,8 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 new FeelBusy(),
 
                 // math operations
-                new Count(),
-                new Add(),
+                new count(),
+                new add(),
                 //new MathExpression(),
 
                 //Term manipulation
@@ -256,7 +255,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
                 new Schizo(),     //change Memory's SELF term (default: SELF)
 
-                new Javascript()
+                new js()
          /*
 +         *          I/O operations under consideration
 +         * observe          // get the most active input (Channel ID: optional?)

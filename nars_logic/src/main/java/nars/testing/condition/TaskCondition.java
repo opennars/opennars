@@ -352,10 +352,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
             }
         }
         else {
-            x += "No similar\n";
+            x += "No similar: " + term;
         }
         if (!removals.isEmpty()) {
-            x += "Matching removals:\n";
+            x += " Matching removals:\n";
             for (Task t : removals)
                 x += t.toString() + ' ' + t.getHistory() + '\n';
         }

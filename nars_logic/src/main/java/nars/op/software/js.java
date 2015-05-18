@@ -1,9 +1,6 @@
 package nars.op.software;
 
-import jdk.nashorn.internal.runtime.ScriptObject;
 import nars.NAR;
-import nars.nal.Task;
-import nars.nal.nal8.Operation;
 import nars.nal.nal8.TermFunction;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -14,24 +11,16 @@ import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Executes a Javascript expression
  */
-public class Javascript extends TermFunction implements Mental {
+public class js extends TermFunction implements Mental {
 
     ScriptEngine js = null;
 
     final HashMap global = new HashMap();
-
-    public Javascript() {
-
-        super("^js");
-
-
-    }
 
     class DynamicFunction extends TermFunction {
 
@@ -39,7 +28,7 @@ public class Javascript extends TermFunction implements Mental {
         private Object fnCompiled;
 
         public DynamicFunction(String name, String function) {
-            super("^" + name);
+            super(name);
             this.function = function;
 
             ensureJSLoaded();
@@ -71,21 +60,16 @@ public class Javascript extends TermFunction implements Mental {
 
     }
 
-    public class DynamicJavascriptFunctionOperator extends TermFunction {
-
-        protected DynamicJavascriptFunctionOperator() {
-            super("^jsOp");
-        }
-
-
+    /** create dynamic javascript functions */
+    public class jsop extends TermFunction {
 
         @Override
         public Object function(Term... x) {
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
-            nar.input(new Echo(Javascript.class, "JS Operator Bind: ^" + funcName + " = " + functionCode));
+            nar.input(new Echo(nars.op.software.js.class, "JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
-            nar.on(d, Atom.get(funcName));
+            nar.on(d);
             return null;
         }
     }
@@ -94,16 +78,11 @@ public class Javascript extends TermFunction implements Mental {
     public boolean setEnabled(NAR n, boolean enabled) {
         boolean x = super.setEnabled(n, enabled);
         if (enabled) {
-            n.on(new DynamicJavascriptFunctionOperator(), Atom.get("jsOp"));
+            n.on(new jsop());
         }
         return x;
     }
 
-    //    public DynamicFunction newDynamic(String funcName, ScriptObject functionCode) {
-//        DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
-//        nar.on(d);
-//        return d;
-//    }
 
     public Bindings newBindings(Term[] args) {
 

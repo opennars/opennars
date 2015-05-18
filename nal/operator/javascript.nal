@@ -3,7 +3,7 @@
 
 
 js(" '<random --> [' + parseInt(Math.random()*0) + ']>. :|:' ")!
-''outputMustContain('<random --> [0]>. :|:')
+''outputMustContain('<random --> [0]>. :|: %1.00;0.90%')
 
 
 ''produces a task
@@ -13,17 +13,16 @@ js("'<a --> b>.'")!
 
 ''produces a term implication
 js("'<a --> term>'")!
-''outputMustContain('<js("'<a --> term>'",$1,SELF) =/> <$1 <-> <a --> term>>>. :|: %1.00;0.90%')
+''outputMustContain('<<a --> term> --> (/,js,"'<a --> term>'",_)>. :|: %1.00;0.99%')
 
 
 
 
 
 
-
-jsOp("abc", "function(x) { return '<it --> ' + x + '>.'; }")!
+jsop("abc", "function(x) { return '<it --> ' + x + '>.'; }")!
 abc(works)!
 ''outputMustContain('<it --> works>.')
 
 
-20
+50

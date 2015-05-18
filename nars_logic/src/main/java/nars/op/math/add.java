@@ -14,53 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package nars.op.math;
 
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal8.TermFunction;
 import nars.nal.term.Atom;
-import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.op.mental.Mental;
 
 /**
  * Count the number of elements in a set
- * 
-
-'INVALID
-(^count,a)!
-(^count,a,b)!
-(^count,a,#b)!
-
-'VALID: 
-(^count,[a,b],#b)!
-
- * 
  */
-public class Count extends TermFunction<Integer> implements Mental {
-
-    public Count() {
-        super("^count");
-    }
-
-    final static String requireMessage = "Requires 1 SetExt or SetInt argument";
-    
-    final static Term counted = Atom.get("counted");
-
-
-
+public class add extends TermFunction<Integer> implements Mental {
 
     @Override
-    public Integer function(Term[] x) {
-        Term content = x[0];
-        if (!(content instanceof SetExt) && !(content instanceof SetInt)) {
-            throw new RuntimeException(requireMessage);
-        }       
+    public Integer function(Term... x) {
+        if (x.length < 2) {
+            throw new RuntimeException("Requires 2 arguments");
+        }
         
-        return ((Compound) content).length();
+        int n1, n2;
+        
+        try {
+            n1 = integer(x[0]);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("1st parameter not an integer: " + x[0]);
+        }
+        
+        try {
+            n2 = integer(x[1]);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("2nd parameter not an integer: " + x[1]);
+        }
+        
+        return n1 + n2;
     }
 
-    
 }

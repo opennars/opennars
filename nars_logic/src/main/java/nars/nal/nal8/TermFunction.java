@@ -27,8 +27,12 @@ public abstract class TermFunction<O> extends SynchOperator  {
 
     static final Variable var=new Variable("$y");
 
-    protected TermFunction(String name) {
+    protected TermFunction() {
         super();
+    }
+
+    protected TermFunction(String name) {
+        super(name);
     }
 
     public static int integer(Term x, int defaultValue)  {
@@ -150,7 +154,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
     @Override
     protected ArrayList<Task> execute(final Operation operation, Memory memory) {
 
-        TermFunction op = (TermFunction) operation.getOperator();
+
 
         Term[] rawArgs = operation.arg().term;
 
@@ -186,7 +190,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
 
         //1. try to parse as task
         char mustBePuncToBeTask = ys.charAt(ys.length()-1); //early prevention from invoking parser
-        if (Symbols.isPunctuation(mustBePuncToBeTask)) {
+        if (Symbols.isPunctuation(mustBePuncToBeTask) || mustBePuncToBeTask == ':' /* tense ending character */) {
             try {
                 Task t = nar.task(ys);
                 if (t != null)
