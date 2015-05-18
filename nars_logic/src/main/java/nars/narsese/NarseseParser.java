@@ -1,6 +1,7 @@
 package nars.narsese;
 
 import com.github.fge.grappa.Grappa;
+import com.github.fge.grappa.annotations.Cached;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.ListeningParseRunner;
@@ -17,7 +18,6 @@ import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal1.Negation;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
@@ -45,13 +45,13 @@ public class NarseseParser extends BaseParser<Object> {
     private final int level;
 
     //These should be set to something like RecoveringParseRunner for performance
-    public final ParseRunner inputParser = new ListeningParseRunner(Input());
-    public final ParseRunner singleTaskParser = new ListeningParseRunner(Task(true));
+    public final ParseRunner inputParser = new ListeningParseRunner2(Input());
+    public final ParseRunner singleTaskParser = new ListeningParseRunner2(Task(true));
 
     //use a parameter or something to avoid this extra instance
-    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ListeningParseRunner(Task(false));
+    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ListeningParseRunner2(Task(false));
 
-    public final ParseRunner singleTermParser = new ListeningParseRunner(Term()); //new ErrorReportingParseRunner(Term(), 0);
+    public final ParseRunner singleTermParser = new ListeningParseRunner2(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
     public Memory memory;
 
@@ -92,16 +92,18 @@ public class NarseseParser extends BaseParser<Object> {
                 LineCommentEchoed()  );
     }
 
+    @Cached
     public Rule LineCommentEchoed() {
         return sequence( zeroOrMore(noneOf("\n")),
                 push(new Echo(match()) ), "\n");
     }
 
+    @Cached
     public Rule PauseInput() {
         return sequence(Integer(),
                 push( new PauseInput( (Integer) pop() ) ), "\n" );
     }
-
+    @Cached
     public Rule Immediate() {
         return firstOf(
                 LineComment(),
@@ -360,6 +362,7 @@ public class NarseseParser extends BaseParser<Object> {
         return Term(true);
     }
 
+    @Cached
     Rule Term(boolean includeOperation) {
         /*
                  <term> ::= <word>                             // an atomic constant term
@@ -484,7 +487,7 @@ public class NarseseParser extends BaseParser<Object> {
     final static Atom imageIndexTerm = Atom.getCached(String.valueOf(IMAGE_PLACE_HOLDER));
 
     Rule ImageIndex() {
-        return sequence("_", push(imageIndexTerm));
+        return sequence('_', push(imageIndexTerm));
     }
 
     Rule QuotedLiteral() {
@@ -647,17 +650,19 @@ public class NarseseParser extends BaseParser<Object> {
         );*/
     }
 
+    @Cached
     Rule MultiArgTerm(NALOperator open, NALOperator close, boolean allowInitialOp, boolean allowInternalOp, boolean allowSpaceToSeparate) {
         return MultiArgTerm(open, /*open, */close, allowInitialOp, allowInternalOp, allowSpaceToSeparate, false);
     }
 
     boolean OperationPrefixTerm() {
-        return push( new Object[] { term(pop()), (Operation.class) } );
+        return push( new Object[] { termable(pop()), (Operation.class) } );
     }
 
     /**
      * list of terms prefixed by a particular compound term operate
      */
+    @Cached
     Rule MultiArgTerm(NALOperator defaultOp, /*NALOperator open, */NALOperator close, boolean initialOp, boolean allowInternalOp, boolean spaceSeparates, boolean operatorPrecedes) {
 
 
@@ -705,7 +710,12 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    Term term(Object o) {
+    /** pass-through; the object is potentially a term but don't create it yet */
+    Object termable(Object o) {
+        return o;
+    }
+
+    Object term(Object o) {
         if (o instanceof Term) return ((Term)o);
         if (o instanceof String) {
             String s= (String)o;
@@ -713,7 +723,6 @@ public class NarseseParser extends BaseParser<Object> {
         }
         throw new RuntimeException(o + " is not a term");
     }
-
 
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
@@ -753,7 +762,10 @@ public class NarseseParser extends BaseParser<Object> {
 
 
 
-            if (p instanceof Term) {
+            if (p instanceof String) {
+                Term t = Atom.get((String)p);
+                vectorterms.add(t);
+            } else if (p instanceof Term) {
                 Term t = (Term) p;
                 vectorterms.add(t);
             } else if (p instanceof NALOperator) {
@@ -904,6 +916,9 @@ public class NarseseParser extends BaseParser<Object> {
         if (!r.getValueStack().isEmpty()) {
 
             Object x = r.getValueStack().iterator().next();
+            if (x instanceof String)
+                x = Atom.get((String)x);
+
             if (x != null) {
                 try {
                     return (T) x;
@@ -933,31 +948,31 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    /**
-     * interactive parse test
-     */
-    public static void main(String[] args) {
-        NAR n = new NAR(new Default());
-        NarseseParser p = NarseseParser.newParser(n);
-
-        Scanner sc = new Scanner(System.in);
-
-        String input = null; //"<a ==> b>. %0.00;0.9%";
-
-        while (true) {
-            if (input == null)
-                input = sc.nextLine();
-
-            ParseRunner rpr = new ListeningParseRunner<>(p.Input());
-            //TracingParseRunner rpr = new TracingParseRunner(p.Input());
-
-            ParsingResult r = rpr.run(input);
-
-            //p.printDebugResultInfo(r);
-            input = null;
-        }
-
-    }
+//    /**
+//     * interactive parse test
+//     */
+//    public static void main(String[] args) {
+//        NAR n = new NAR(new Default());
+//        NarseseParser p = NarseseParser.newParser(n);
+//
+//        Scanner sc = new Scanner(System.in);
+//
+//        String input = null; //"<a ==> b>. %0.00;0.9%";
+//
+//        while (true) {
+//            if (input == null)
+//                input = sc.nextLine();
+//
+//            ParseRunner rpr = new ListeningParseRunner<>(p.Input());
+//            //TracingParseRunner rpr = new TracingParseRunner(p.Input());
+//
+//            ParsingResult r = rpr.run(input);
+//
+//            //p.printDebugResultInfo(r);
+//            input = null;
+//        }
+//
+//    }
 
 //    public void printDebugResultInfo(ParsingResult r) {
 //

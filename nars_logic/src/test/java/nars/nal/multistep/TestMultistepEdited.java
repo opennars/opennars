@@ -30,7 +30,7 @@ public class TestMultistepEdited {
         n.run(100);
         
         
-        assertEquals(997, n.time());
+        assertEquals(100, n.time()); //was 997
     }
             
 }

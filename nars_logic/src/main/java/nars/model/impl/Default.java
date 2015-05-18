@@ -30,9 +30,10 @@ import nars.op.io.Schizo;
 import nars.op.math.add;
 import nars.op.math.count;
 import nars.op.mental.*;
-import nars.op.meta.Reflect;
+import nars.op.meta.complexity;
+import nars.op.meta.reflect;
 import nars.op.software.js;
-import nars.op.software.Scheme;
+import nars.op.software.scheme.scheme;
 
 import java.io.File;
 import java.io.IOException;
@@ -229,7 +230,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
 
                 //Meta
-                new Reflect(),
+                new reflect(),
 
                 // feeling operations
                 new FeelHappy(),
@@ -240,12 +241,15 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
                 new add(),
                 //new MathExpression(),
 
+
+                new complexity(),
+
                 //Term manipulation
                 new Flat.AsProduct(),
 
                 //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
                 //new Javascript(),  // javascript evaluation
-                new Scheme(),      // scheme evaluation
+                new scheme(),      // scheme evaluation
 
 
                 //new NumericCertainty(),

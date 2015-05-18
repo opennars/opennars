@@ -17,16 +17,12 @@ import nars.nal.term.Term;
  * Produces canonical "Reflective-Narsese" representation of a parameter term
  * @author me
  */
-public class Reflect extends TermFunction {
+public class reflect extends TermFunction {
 
 
     /*
      <(*,<(*,good,property) --> inheritance>,(&&,<(*,human,good) --> product>,<(*,(*,human,good),inheritance) --> inheritance>)) --> conjunction>.
     */
-    
-    public Reflect() {
-        super("^reflect");
-    }
 
     
     @Override

@@ -1,5 +1,6 @@
 package nars.op.scheme;
 
+
 import nars.op.software.scheme.DefaultEnvironment;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
@@ -16,9 +17,6 @@ import static nars.op.software.scheme.expressions.NumberExpression.number;
 import static nars.op.software.scheme.expressions.SymbolExpression.symbol;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-
-
-
 public class DefaultEnvironmentTest {
 
     @Test

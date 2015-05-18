@@ -1,4 +1,4 @@
-package nars.op.software;
+package nars.op.software.scheme;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -7,9 +7,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal8.TermFunction;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.op.software.scheme.DefaultEnvironment;
-import nars.op.software.scheme.Environment;
-import nars.op.software.scheme.Evaluator;
 import nars.op.software.scheme.cons.Cons;
 import nars.op.software.scheme.expressions.Expression;
 import nars.op.software.scheme.expressions.ListExpression;
@@ -19,7 +16,7 @@ import nars.op.software.scheme.expressions.SymbolExpression;
 import java.util.List;
 
 
-public class Scheme extends TermFunction {
+public class scheme extends TermFunction {
 
     public static final Environment env = DefaultEnvironment.newInstance();
 
@@ -53,12 +50,8 @@ public class Scheme extends TermFunction {
     public static class SchemeProduct extends ListExpression {
 
         public SchemeProduct(Product p) {
-            super(Cons.copyOf( Iterables.transform(p, narsToScheme)));
+            super(Cons.copyOf(Iterables.transform(p, narsToScheme)));
         }
-    }
-
-    public Scheme() {
-        super("^scheme");
     }
 
     public Expression eval(Product p) {
