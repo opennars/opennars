@@ -1,5 +1,5 @@
 ********** [24 + 05 -> 27]
   IN: <(*,SELF,{t002}) --> reachable>. :|:
-  IN: <(&/,<(*,SELF,{t002}) --> reachable>,(^pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.
+  IN: <(&/,<(*,SELF,{t002}) --> reachable>,(pick,{t002}))=/><(*,SELF,{t002}) --> hold>>.
 1
-''outputMustContain('<(^pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>. :\: %1.00;0.81%')
+''outputMustContain('<(pick,{t002}) =/> <(*,SELF,{t002}) --> hold>>. :\: %1.00;0.81%')

@@ -1,23 +1,23 @@
-(^goto,a). :|:
+(goto,a). :|:
 2
-(^pick,b). :|:
+(pick,b). :|:
 2
 <goal --> reached>. :|:
 72
-(^pick,b). :|:
+(pick,b). :|:
 72
-(^pick,b). :|:
+(pick,b). :|:
 72
-(^pick,b). :|:
+(pick,b). :|:
 72
-(^goto,a). :|:
+(goto,a). :|:
 2
-(^pick,b). :|:
+(pick,b). :|:
 2
 <goal --> reached>. :|:
 50
 <goal --> reached>!
 <goal --> reached>!
 5000
-''outputMustContain('^goto([a, SELF])=null')
-''outputMustContain('^pick([b, SELF])=null')
+''outputMustContain('goto([a, SELF])=null')
+''outputMustContain('pick([b, SELF])=null')

@@ -3,26 +3,26 @@ IN: <light1 --> off>. :|: %1.00;0.90%
 IN: <switch0 --> switch>. %1.00;0.90%
 IN: <switch0 --> off>. :|: %1.00;0.90%
 10
-IN: (^goto,switch0). :|: %1.00;0.90%
+IN: (goto,switch0). :|: %1.00;0.90%
 10
 IN: <switch0 --> at>. :|: %1.00;0.90%
 10
-IN: (^activate,switch0). :|: %1.00;0.90%
+IN: (activate,switch0). :|: %1.00;0.90%
 10
 IN: <switch0 --> on>. :|: %1.00;0.90%
 10
 IN: <light1 --> on>. :|: %1.00;0.90%
 10
-IN: (^deactivate,switch0). :|: %1.00;0.90%
+IN: (deactivate,switch0). :|: %1.00;0.90%
 10
 IN: <switch0 --> off>. :|: %1.00;0.90%
 10
 IN: <light1 --> off>. :|: %1.00;0.90%
 10
-IN: (^goto,place2). :|: %1.00;0.90%
+IN: (goto,place2). :|: %1.00;0.90%
 10
 IN: <place2 --> at>. :|: %1.00;0.90%
 10
 IN: <light1 --> on>! %1.00;0.90%
-'Expected is: ^goto([switch0]), ^activate([switch0]) but instead ^activate([switch0]) happens
+'Expected is: goto([switch0]), activate([switch0]) but instead activate([switch0]) happens
 

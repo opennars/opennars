@@ -2,8 +2,8 @@
 
 <(*,SELF,{t001}) --> at>!
 
-<(^goto,$1)=/><(*,SELF,$1) --> at>>.
+<(goto,$1)=/><(*,SELF,$1) --> at>>.
 
 500
 
-''outputMustContain('(^goto,{t001})! %1.00;0.81%')
+''outputMustContain('(goto,{t001})! %1.00;0.81%')

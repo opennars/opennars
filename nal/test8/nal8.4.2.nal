@@ -1,6 +1,6 @@
 ********** [07 + 05 -> 08]:
-  IN: (^pick,key001). :\: 
-  IN: <(^pick,key001) =/> <(*,Self,key001) --> hold>>.  
+  IN: (pick,key001). :\:
+  IN: <(pick,key001) =/> <(*,Self,key001) --> hold>>.
 15
 ''outputMustContain('<(*,Self,key001) --> hold>. :\: %1.00;0.81%') 
 

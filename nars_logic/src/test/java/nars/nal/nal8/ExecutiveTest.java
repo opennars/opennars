@@ -21,7 +21,7 @@
 //        Frequency firings = new Frequency();
 //
 //        BeliefTruthExecutive bte;
-//        n.on(bte = new BeliefTruthExecutive("^act"));
+//        n.on(bte = new BeliefTruthExecutive("act"));
 //
 //        BeliefTruthExecutive.Action a = bte.add("a", new Runnable() {
 //            @Override public void run() {

@@ -1,5 +1,5 @@
 ********** [13 + 09 -> 14]
-  IN: <(&/,<(*,Self,{t003}) --> at>,(^pick,{t002}),(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. :|:
-  IN: <(^goto,$1) =/> <(*,Self,$1) --> at>>.
+  IN: <(&/,<(*,Self,{t003}) --> at>,(pick,{t002}),(goto,{t001}),(open,{t001})) =/> <{t001} --> [opened]>>. :|:
+  IN: <(goto,$1) =/> <(*,Self,$1) --> at>>.
 16
-''outputMustContain('<(&/,(^goto,{t003}),(^pick,{t002}),(^goto,{t001}),(^open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.43%')
+''outputMustContain('<(&/,(goto,{t003}),(pick,{t002}),(goto,{t001}),(open,{t001})) =/> <{t001} --> [opened]>>. %1.00;0.43%')

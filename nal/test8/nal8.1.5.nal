@@ -1,5 +1,5 @@
 ********** [15 + 09 -> 16]:
   IN: <(*,SELF,{t003}) --> at>!
-  IN: <(^goto,$1)=/><(*,SELF,$1) --> at>>.
-''outputMustContain('(^goto,{t003})! %1.00;0.81%')
+  IN: <(goto,$1)=/><(*,SELF,$1) --> at>>.
+''outputMustContain('(goto,{t003})! %1.00;0.81%')
 100

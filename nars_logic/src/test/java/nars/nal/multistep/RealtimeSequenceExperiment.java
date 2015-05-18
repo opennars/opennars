@@ -30,7 +30,7 @@ public class RealtimeSequenceExperiment {
         int last = 0;
         int i = 1;
 //        while (true) {
-//            n.addInput("<(&/,e" + last + ",(^pick,x" + last + ")) =/> e" + i + ">. :|:");
+//            n.addInput("<(&/,e" + last + ",(pick,x" + last + ")) =/> e" + i + ">. :|:");
 //            Thread.sleep(seqPeriodMS);
 //            i++;
 //            last++;
@@ -44,7 +44,7 @@ public class RealtimeSequenceExperiment {
 //        }
         
         while (true) {
-            n.input("(^pick,x" + i + ")!");
+            n.input("(pick,x" + i + ")!");
             //n.addInput("<(^pick,x" + i + ") =/> e" + i + ">. :|:");
             //n.addInput("e" + last + ". :|:");
             Thread.sleep(seqPeriodMS);

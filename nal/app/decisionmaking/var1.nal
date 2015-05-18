@@ -1,5 +1,5 @@
 <{key0} --> key>.
-(&&,<$1 --> key>,<(^goto,$1) =/> <goal --> reached>>).
+(&&,<$1 --> key>,<(goto,$1) =/> <goal --> reached>>).
 <goal --> reached>!
 70
-''outputMustContain('^goto([{key0}, SELF])=null')
+''outputMustContain('goto([{key0}, SELF])=null')

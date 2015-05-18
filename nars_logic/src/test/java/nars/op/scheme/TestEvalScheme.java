@@ -27,11 +27,7 @@ public class TestEvalScheme extends JavaNALTest {
     @Test
     public void testCAR() {
 
-        //nar.addPlugin(new Scheme());
-
         nar.input("scheme((*, car, (*, quote, (*, 2, 3))), #x)!");
-
-        //OUT: <(^scheme,(*,car,(*,quote,(*,2,3))),$1) =/> <$1 <-> 2>>. :|: %1.00;0.99% {0|0 : 1 : }
 
         nar.requires.add(new OutputContainsCondition(nar, "<2 --> (/,scheme,(*,car,(*,quote,(*,2,3))),_,SELF)>. :|: %1.00;0.99%", 1));
 

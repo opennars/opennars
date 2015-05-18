@@ -33,7 +33,7 @@ public class PlanDecisionExperiment {
             i += "<<c" + n + " --> decision> =/> goal>." + "\n";
         }
         for (int n = 0; n < confidences.length; n++) {            
-            i += "<(^pick,p" + n + ") =/> <c" + n + " --> decision>>." + "\n";
+            i += "<pick(p" + n + ") =/> <c" + n + " --> decision>>." + "\n";
         }
         for (int n = 0; n < confidences.length; n++) {
             double c = confidences[n];

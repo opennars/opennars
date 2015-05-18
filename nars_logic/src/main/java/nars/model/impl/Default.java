@@ -194,15 +194,15 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
     final Operator[] exampleOperators = new Operator[] {
         //new Wait(),
-        new NullOperator("^break"),
-        new NullOperator("^drop"),
-        new NullOperator("^goto"),
-        new NullOperator("^open"),
+        new NullOperator("break"),
+        new NullOperator("drop"),
+        new NullOperator("goto"),
+        new NullOperator("open"),
         new NullOperator("pick"),
-        new NullOperator("^strike"),
-        new NullOperator("^throw"),
-        new NullOperator("^activate"),
-        new NullOperator("^deactivate")
+        new NullOperator("strike"),
+        new NullOperator("throw"),
+        new NullOperator("activate"),
+        new NullOperator("deactivate")
     };
 
     public Operator[] newDefaultOperators(NAR n) {

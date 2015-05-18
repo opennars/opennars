@@ -1,33 +1,33 @@
 (--,<goal --> reached>). :|:
-(^goto,a). :|:
+(goto,a). :|:
 10
-(^pick,b). :|:
-10
-<goal --> reached>. :|:
-
-100
-
-(--,<goal --> reached>). :|:
-(^goto,a). :|:
-10
-(^pick,b). :|:
+(pick,b). :|:
 10
 <goal --> reached>. :|:
 
 100
 
 (--,<goal --> reached>). :|:
-(^pick,b). :|:
+(goto,a). :|:
 10
-(^pick,b). :|:
+(pick,b). :|:
 10
-(^pick,b). :|:
+<goal --> reached>. :|:
+
+100
+
+(--,<goal --> reached>). :|:
+(pick,b). :|:
+10
+(pick,b). :|:
+10
+(pick,b). :|:
 10
 
 100
 
 $0.99;0.99$ <goal --> reached>!
 
-''outputMustContain('^goto([a, SELF])=null')
-''outputMustContain('^pick([b, SELF])=null')
+''outputMustContain('goto([a, SELF])=null')
+''outputMustContain('pick([b, SELF])=null')
 3000

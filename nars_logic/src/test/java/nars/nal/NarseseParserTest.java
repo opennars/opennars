@@ -253,7 +253,7 @@ public class NarseseParserTest {
 
     @Test
     public void testOperationTask() {
-        taskEqualsOldParser("(^break,{t001},SELF)! %1.00;0.95%");
+        taskEqualsOldParser("break({t001},SELF)! %1.00;0.95%");
     }
 
     @Test
