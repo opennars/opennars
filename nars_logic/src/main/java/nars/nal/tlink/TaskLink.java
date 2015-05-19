@@ -143,16 +143,17 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) return true;
-        if (obj instanceof TaskLink) {
-            TaskLink t = (TaskLink) obj;
-            return getSentence().equals(t.getSentence());
-
-            /*if (Global.TASK_LINK_UNIQUE_BY_INDEX)
-                return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
-            else*/
-        }
-        return false;
+        throw new RuntimeException("tasklinks should be compared by their sentences, not directly");
+//        if (obj == this) return true;
+//        if (obj instanceof TaskLink) {
+//            TaskLink t = (TaskLink) obj;
+//            return getSentence().equals(t.getSentence());
+//
+//            /*if (Global.TASK_LINK_UNIQUE_BY_INDEX)
+//                return TermLinkTemplate.prefix(type, index, false) + Symbols.TLinkSeparator + task.sentence.name();
+//            else*/
+//        }
+//        return false;
     }
 
     /**

@@ -174,7 +174,6 @@ public abstract class TermFunction<O> extends SynchOperator  {
         final Object y = function(x);
 
         if (y == null) {
-            operation.stop(memory);
             return null;
         }
 

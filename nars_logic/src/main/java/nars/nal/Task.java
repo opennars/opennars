@@ -207,12 +207,12 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         }
     }
 
-    private int parentHash() {
-        Task parent = getParentTask();
-        if (parent!=null)
-            return parent.hashCode();
-        return 0;
-    }
+//    private int parentHash() {
+//        Task parent = getParentTask();
+//        if (parent!=null)
+//            return parent.hashCode();
+//        return 0;
+//    }
 
 
     /**

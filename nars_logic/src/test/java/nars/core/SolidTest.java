@@ -30,7 +30,7 @@ public class SolidTest {
         Global.DEBUG = true;
 
         final int numConcepts = 800;
-        final float leakRate = 0.4f;
+        final float leakRate = 0.3f;
         Solid s = new Solid(3, numConcepts, 1, 4, 1, 3) {
 
             @Override

@@ -254,9 +254,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return new TermLink(getTarget(), currentTemplate, getBudgetRef(), getLinkKey(), this.h);
     }
 
-    public int size() {
+/*    public int size() {
         return template.size();
-    }
+    }*/
 
     public void delete() {
         if (template!=null)

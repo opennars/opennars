@@ -1,6 +1,10 @@
 package nars.op.software;
 
+import nars.Memory;
 import nars.NAR;
+import nars.nal.Task;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.SynchOperator;
 import nars.nal.nal8.TermFunction;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -12,6 +16,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Executes a Javascript expression
@@ -61,17 +66,22 @@ public class js extends TermFunction implements Mental {
     }
 
     /** create dynamic javascript functions */
-    public class jsop extends TermFunction {
+    public class jsop extends SynchOperator {
 
         @Override
-        public Object function(Term... x) {
+        protected List<Task> execute(Operation operation, Memory memory) {
+            Term[] x = operation.arg().term;
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             nar.input(new Echo(nars.op.software.js.class, "JS Operator Bind: " + funcName + " = " + functionCode));
             DynamicFunction d = new DynamicFunction(funcName, functionCode.toString());
             nar.on(d);
+
+            operation.stop(memory);
+
             return null;
         }
+
     }
 
     @Override

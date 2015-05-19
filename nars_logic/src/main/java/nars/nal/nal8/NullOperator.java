@@ -42,6 +42,10 @@ public class NullOperator extends SynchOperator {
         super(name);
         this.name = name;
     }
+    public NullOperator() {
+        super();
+        this.name = getClass().getSimpleName();
+    }
 
 
 

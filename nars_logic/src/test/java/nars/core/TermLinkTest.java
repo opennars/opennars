@@ -129,8 +129,7 @@ public class TermLinkTest {
 
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").termLinks);
 
-        assertEquals( 6, ainhb.size());
-        System.out.println(ainhb);
+        assertTrue( 6 <= ainhb.size());
         assertTrue(ainhb.contains("Da:a"));
         assertTrue(ainhb.contains("Db:b"));
         //assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
@@ -196,4 +195,32 @@ public class TermLinkTest {
                 ci.isGraphConnected());
 
     }
+
+    @Test public void termlinksSetAndElement() {
+        //from nal6.4
+        String c = "<{x} --> y>.";
+
+
+        NAR n = new NAR(new Default());
+        n.input(c);
+        n.frame(2);
+
+        TermLinkGraph g = new TermLinkGraph(n);
+
+
+        //System.out.println(g);
+
+        ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
+        assertTrue("termlinks between the two input concepts form a fully connected graph",
+                ci.isGraphConnected());
+
+        TermLinkGraph h = new TermLinkGraph().add(n.concept("{x}"), true);
+        //System.out.println(h);
+        assertTrue(h.toString().contains("Ba:x=({x},x)"));
+        TermLinkGraph i = new TermLinkGraph().add(n.concept("x"), true);
+        //System.out.println(i);
+        assertTrue(i.toString().contains("Ca:{x}=(x,{x})"));
+
+    }
+
 }

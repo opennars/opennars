@@ -373,12 +373,12 @@ abstract public class Concept extends Item<Term> implements Termed {
 
         termLinks.forgetNext(
                 memory.param.termLinkForgetDurations,
-                Global.TERMLINK_FORGETTING_ACCURACY,
+                Memory.randomNumber.nextFloat() * Global.TERMLINK_FORGETTING_ACCURACY,
                 memory);
 
         taskLinks.forgetNext(
                 memory.param.taskLinkForgetDurations,
-                Global.TASKLINK_FORGETTING_ACCURACY,
+                Memory.randomNumber.nextFloat() * Global.TASKLINK_FORGETTING_ACCURACY,
                 memory);
 
         linkTerms(null, true);
@@ -847,7 +847,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         taskLinkBuilder.setTask(task);
 
         taskLinkBuilder.setBudget(taskBudget);
-        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
+        activateTaskLink(taskLinkBuilder);  //  link type: SELF
 
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();

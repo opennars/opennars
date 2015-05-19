@@ -119,7 +119,7 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
 
         setTermLinkBagSize(96);
 
-        setNovelTaskBagSize(32);
+        setNovelTaskBagSize(48);
 
 
 
@@ -127,9 +127,8 @@ public class Default extends NARSeed implements NARSeed.ConceptBuilder {
         //Runtime Initial Values
 
         duration.set(5);
-        duration.set(5);
 
-        confidenceThreshold.set(0.01);
+        confidenceThreshold.set(0.02);
 
         shortTermMemoryHistory.set(1);
         temporalRelationsMax.set(7);

@@ -66,6 +66,8 @@ public class TableDerivations extends ConceptFireTaskTerm {
                             SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, tIndex, f);
                         }
                         break;
+                    default:
+                        none(tLink, bLink); break;
                 }
                 break;
             case TermLink.COMPOUND:
@@ -97,6 +99,8 @@ public class TableDerivations extends ConceptFireTaskTerm {
                             }
                         }
                         break;
+                    default:
+                        none(tLink, bLink); break;
                 }
                 break;
             case TermLink.COMPOUND_STATEMENT:
@@ -125,6 +129,8 @@ public class TableDerivations extends ConceptFireTaskTerm {
                             }
                         }
                         break;
+                    default:
+                        none(tLink, bLink); break;
                 }
                 break;
             case TermLink.COMPOUND_CONDITION:
@@ -154,9 +160,25 @@ public class TableDerivations extends ConceptFireTaskTerm {
 
                         }
                         break;
+
+
+
+                    default:
+                        none(tLink, bLink); break;
                 }
+            default:
+                none(tLink); break;
         }
 
         return true;
     }
+
+    private void none(TaskLink tLink, TermLink bLink) {
+        //System.err.println(this + " inactivity: " + tLink + "(" + tLink.type + ") &&& " + bLink + " (" + bLink.type + ")");
+    }
+
+    private void none(TaskLink tLink) {
+        //System.err.println(this + " inactivity: " + tLink+ "(" + tLink.type + ")");
+    }
+
 }

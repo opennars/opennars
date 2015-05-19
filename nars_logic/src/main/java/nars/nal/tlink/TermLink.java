@@ -92,6 +92,9 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
         super(v);
 
+        if (!t.isNormalized()) {
+            throw new RuntimeException("not normalized: "+ t);
+        }
         this.target = t;
 
         this.type = template.getType(t); /* whether this points to subterm */

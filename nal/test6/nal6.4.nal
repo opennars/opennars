@@ -11,3 +11,4 @@
 ''outputMustContain('<(&&,<$1 --> [chirping]>,<$1 --> [withwings]>) ==> <$1 --> bird>>. %1.00;0.81%')
 
 8
+

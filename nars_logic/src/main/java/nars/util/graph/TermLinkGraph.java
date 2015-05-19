@@ -1,5 +1,6 @@
 package nars.util.graph;
 
+import nars.Memory;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
@@ -66,6 +67,10 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
         }
 
         return this;
+    }
+
+    public void add(Memory memory) {
+        add(memory.concepts, true);
     }
 
     /*public boolean includeLevel(int l) {
