@@ -43,7 +43,7 @@ public class reflect extends TermFunction {
         return Inheritance.make(Product.make(getMetaTerm(subject),getMetaTerm(object)), predicate);
     }
     public static Term sop(Statement s, String operatorName) {
-        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Atom.quoted(operatorName));
+        return Inheritance.make(Product.make(getMetaTerm(s.getSubject()), getMetaTerm(s.getPredicate())), Atom.quote(operatorName));
     }
     public static Term sop(Statement s, Term predicate) {
         return Inheritance.make(Product.make(getMetaTerm(s.getSubject()),getMetaTerm(s.getPredicate())), predicate);
@@ -54,7 +54,7 @@ public class reflect extends TermFunction {
         for (Term x : t)
             m[i++] = getMetaTerm(x);
         
-        return Inheritance.make(Product.make(m), Atom.quoted(operatorName));
+        return Inheritance.make(Product.make(m), Atom.quote(operatorName));
     }
     
     public static Term getMetaTerm(Term node) {

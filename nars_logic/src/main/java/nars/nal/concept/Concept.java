@@ -847,7 +847,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         taskLinkBuilder.setTask(task);
 
         taskLinkBuilder.setBudget(taskBudget);
-        activateTaskLink(taskLinkBuilder);  //  link type: SELF
+        activateTaskLink(taskLinkBuilder);  // tlink type: SELF
 
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();

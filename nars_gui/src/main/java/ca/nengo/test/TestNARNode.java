@@ -181,7 +181,7 @@ public class TestNARNode  {
                                 System.err.println("Warning: " + w + " (" + w.getClass() + ") has empty name");
                             continue;
                         }
-                        t.add(Atom.quoted(ww));
+                        t.add(Atom.quote(ww));
                     }
 
                     return Inheritance.make(SetExt.make(t), Atom.the("intersects"));

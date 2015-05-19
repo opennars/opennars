@@ -30,6 +30,9 @@ abstract public class Compound1 extends Compound {
     }
 
 
+    @Override final public int length() {
+        return 1;
+    }
 
     @Override
     protected void init(Term[] term) {

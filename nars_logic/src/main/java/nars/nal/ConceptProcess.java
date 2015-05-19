@@ -45,7 +45,6 @@ public class ConceptProcess extends NAL {
         this.currentConcept = concept;
         this.termLinksToFire = termLinkCount;
 
-        setCurrentTerm(concept.getTerm());
 
     }
 

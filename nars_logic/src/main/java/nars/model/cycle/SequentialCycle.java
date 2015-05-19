@@ -70,7 +70,7 @@ abstract public class SequentialCycle implements ControlCycle {
 
         private final Bag<Term, Concept> bag;
 
-        public DefaultConceptProcess(Memory mem, Bag<Term, Concept> bag, Concept concept, TaskLink taskLink) {
+        public DefaultConceptProcess(Bag<Term, Concept> bag, Concept concept, TaskLink taskLink) {
             super(concept, taskLink);
             this.bag = bag;
         }
@@ -86,7 +86,7 @@ abstract public class SequentialCycle implements ControlCycle {
     }
 
     protected ConceptProcess newConceptProcess(Concept c, TaskLink t) {
-        return new DefaultConceptProcess(memory, concepts, c, t);
+        return new DefaultConceptProcess(concepts, c, t);
     }
 
     protected Concept nextConceptToProcess() {

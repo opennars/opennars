@@ -56,7 +56,7 @@ public class json {
 
         @Override
         public Object function(Term... x) {
-            return Atom.quoted(JSON.stringFrom(x[0]));
+            return Atom.quote(JSON.stringFrom(x[0]));
         }
 
     }

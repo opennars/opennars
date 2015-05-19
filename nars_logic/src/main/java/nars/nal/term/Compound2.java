@@ -26,16 +26,15 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
         super.init(term);
 
         if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()
-            updateHash();
+            invalidateHash();
     }
 
-    protected void updateHash() {
-        this.hash = Util.hash(getTemporalOrder(), a(), b(), operator());
-//        int h = getTemporalOrder();
-//        h = h * 31 + a().hashCode();
-//        h = h * 31 + b().hashCode();
-//        h = h * 31 + operator().hashCode();
-//        this.hash = h;
+    protected void invalidateHash() {
+        this.hash = 0;
+    }
+
+    @Override final public int length() {
+        return 2;
     }
 
     @Override
@@ -48,7 +47,7 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
                     ((Compound) t).invalidate();
             }
 
-            updateHash();
+            invalidateHash();
         }
         else {
             setNormalized();
@@ -86,6 +85,9 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
 
     @Override
     public int hashCode() {
+        if (this.hash == 0) {
+            return this.hash = Util.hash(getTemporalOrder(), a(), b(), operator());
+        }
         return hash;
     }
 

@@ -184,7 +184,7 @@ public class IRCBot {
                 //TODO apostrophe words
                 else if (input.pattern.equals("punct")) {
                     String b = input.content;
-                    wordTerm = Atom.quoted(b);
+                    wordTerm = Atom.quote(b);
 
                     a = input.content;
                     pattern = "word";

@@ -244,7 +244,7 @@ public class ConceptPanelBuilder extends NARReaction {
                 TermGraphPanelNengo nengo;
 
 
-                add(nengo = new TermGraphPanelNengo(new TermGraphNode(c.memory) {
+                add(nengo = new TermGraphPanelNengo(new TermGraphNode(nar.memory) {
 
                     Set<Term> neighbors = new LinkedHashSet();
 

@@ -610,7 +610,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      *
      * @return the size of the component list
      */
-    @Override final public int length() {
+    @Override
+    public int length() {
         return term.length;
     }
 
@@ -670,7 +671,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * creates a new ArrayList for terms
      */
     public List<Term> asTermList() {
-        List<Term> l = new ArrayList(term.length);
+        List<Term> l = new ArrayList(length());
         addTermsTo(l);
         return l;
     }
@@ -679,7 +680,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * forced deep clone of terms
      */
     public Term[] cloneTermsDeep() {
-        Term[] l = new Term[term.length];
+        Term[] l = new Term[length()];
         for (int i = 0; i < l.length; i++)
             l[i] = term[i].cloneDeep();
         return l;
@@ -692,7 +693,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     public Term[] cloneVariableTermsDeep() {
-        Term[] l = new Term[term.length];
+        Term[] l = new Term[length()];
         for (int i = 0; i < l.length; i++) {
             Term t = term[i];
 
@@ -711,7 +712,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     protected void transformVariableTermsDeep(VariableTransform variableTransform, int depth) {
-        for (int i = 0; i < term.length; i++) {
+        final int len = length();
+        for (int i = 0; i < len; i++) {
             Term t = term[i];
 
             if (t.hasVar()) {
@@ -728,7 +730,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * forced deep clone of terms
      */
     public ArrayList<Term> cloneTermsListDeep() {
-        ArrayList<Term> l = new ArrayList(term.length);
+        ArrayList<Term> l = new ArrayList(length());
         for (final Term t : term)
             l.add(t.clone());
         return l;
@@ -955,7 +957,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
             return this;//.clone();
         }
 
-        Term[] tt = new Term[term.length];
+        Term[] tt = new Term[length()];
         boolean modified = false;
 
         for (int i = 0; i < tt.length; i++) {
@@ -1123,7 +1125,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     public Term[] cloneTermsReplacing(final Term from, final Term to) {
-        Term[] y = new Term[term.length];
+        Term[] y = new Term[length()];
         int i = 0;
         for (Term x : term) {
             if (x.equals(from))
@@ -1148,14 +1150,15 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      */
     @Override
     public Object rest() {
-        if (term.length == 1) throw new RuntimeException("Pair fault");
-        if (term.length == 2) return term[1];
-        if (term.length == 3) return new Pair(term[1], term[2]);
-        if (term.length == 4) return new Pair(term[1], new Pair(term[2], term[3]));
+        final int len = length();
+        if (len == 1) throw new RuntimeException("Pair fault");
+        if (len == 2) return term[1];
+        if (len == 3) return new Pair(term[1], term[2]);
+        if (len == 4) return new Pair(term[1], new Pair(term[2], term[3]));
 
         //this may need tested better:
         Pair p = null;
-        for (int i = term.length - 2; i >= 0; i--) {
+        for (int i = len  - 2; i >= 0; i--) {
             if (p == null)
                 p = new Pair(term[i], term[i + 1]);
             else

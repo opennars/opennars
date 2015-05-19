@@ -222,7 +222,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     }
 
     /** compares all sentence fields, after comparing hash (which includes them all) */
-    private boolean equivalentTo(Sentence that) {
+    private boolean equivalentTo(final Sentence that) {
         if (that.hashCode()!=hashCode()) return false;
         return equivalentTo(that, true, true, true, true, false);
     }
@@ -270,10 +270,6 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
         if (this == that) return true;
 
-        if (punctuation) {
-            if (thisPunc!=that.punctuation) return false;
-        }
-
         if (truth) {
             if (this.truth==null) {
                 if (that.truth!=null) return false;
@@ -281,6 +277,10 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
             else {
                 if (!this.truth.equals(that.truth)) return false;
             }
+        }
+
+        if (punctuation) {
+            if (thisPunc!=that.punctuation) return false;
         }
 
         if (stamp) {

@@ -58,7 +58,7 @@ public class DirectProcess extends NAL {
         if (c == null) return;
 
         process(c);
-
+        
     }
 
     protected void process(Concept c) {

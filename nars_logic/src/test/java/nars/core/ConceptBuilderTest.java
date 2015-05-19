@@ -1,10 +1,14 @@
 package nars.core;
 
+import nars.Memory;
 import nars.NAR;
+import nars.NARSeed;
+import nars.budget.Budget;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.concept.AxiomaticConcept;
-import org.junit.Ignore;
+import nars.nal.concept.Concept;
+import nars.nal.term.Term;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -12,8 +16,22 @@ import static org.junit.Assert.assertEquals;
 
 
 //UNTESTED
-@Ignore
+
 public class ConceptBuilderTest {
+
+    @Test
+    public void testConceptBuilder() {
+        String term = "<google --> [deleted]>";
+
+        NAR n = new NAR(new Default());
+        n.memory.on(new NARSeed.ConceptBuilder() {
+
+            @Override
+            public Concept newConcept(Term t, Budget b, Memory m) {
+                return null;
+            }
+        });
+    }
 
     @Test
     public void testAxiomaticConceptBeliefAndGoal() {

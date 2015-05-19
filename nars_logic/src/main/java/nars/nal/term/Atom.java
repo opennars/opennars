@@ -24,7 +24,7 @@ public class Atom implements Term {
     }
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
-    public static Atom quoted(String t) {
+    public static Atom quote(String t) {
         return the('"' + t + '"');
     }
 
@@ -220,12 +220,6 @@ public class Atom implements Term {
         return 1;
     }
 
-
-
-
-
-
-
     public int containedTemporalRelations() {
         return 0;
     }
@@ -256,7 +250,6 @@ public class Atom implements Term {
     public boolean hasVar() {
         return false;
     }
-
 
     public boolean hasVarIndep() {
         return false;
