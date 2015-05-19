@@ -1,8 +1,9 @@
 package nars.nal.nal8;
 
 
-import nars.model.impl.Default;
 import nars.NARSeed;
+import nars.model.impl.Classic;
+import nars.model.impl.Default;
 import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;
 
@@ -20,7 +21,9 @@ public class NAL8ScriptTests extends ScriptNALTest {
     public static Collection configurations() {
         return getParams(new String[]{"test8"},
                 new Default(),
-                new Default().setInternalExperience(null));
+                new Default().setInternalExperience(null),
+                new Classic().setInternalExperience(null)
+        );
     }
 
     public int getMaxCycles() { return 1500; }

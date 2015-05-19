@@ -2,7 +2,7 @@ package nars.nal.nal8;
 
 import nars.Global;
 import nars.NARSeed;
-import nars.io.TextOutput;
+import nars.model.impl.Classic;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.model.impl.DefaultMicro;
@@ -26,7 +26,8 @@ public class NAL8Test extends JavaNALTest {
                 {new Default()},
                 {new Default().setInternalExperience(null)},
                 {new Curve().setInternalExperience(null)},
-                {new DefaultMicro() }
+                {new DefaultMicro() },
+                {new Classic() }
                 //{new Discretinuous() },
         });
     }

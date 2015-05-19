@@ -42,7 +42,7 @@ public class Equivalence extends Statement {
      * @param arg The component list of the term
      */
     private Equivalence(Term[] arg, int order) {
-        super(arg);
+        super(arg[0], arg[1]);
 
         if ((order == TemporalRules.ORDER_BACKWARD) ||
                 (order == TemporalRules.ORDER_INVALID)) {

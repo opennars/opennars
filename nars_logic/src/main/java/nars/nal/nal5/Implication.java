@@ -40,7 +40,7 @@ public class Implication extends Statement {
      * @param arg The component list of the term
      */
     public Implication(Term[] arg, int order) {
-        super(arg);
+        super(arg[0], arg[1]);
 
         if (order == TemporalRules.ORDER_INVALID) {
             throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));

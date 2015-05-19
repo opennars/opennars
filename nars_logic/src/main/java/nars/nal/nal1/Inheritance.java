@@ -31,16 +31,16 @@ import nars.nal.term.Term;
 /**
  * A Statement about an Inheritance relation.
  */
-public class Inheritance extends Statement {
+public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> {
 
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    protected Inheritance(final Term... arg) {
-        super(arg);
+    protected Inheritance(final A a, final B b) {
+        super(a, b);
 
-        init(arg);
+        init(term);
     }
 
     @Deprecated protected Inheritance() {

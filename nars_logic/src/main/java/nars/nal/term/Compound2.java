@@ -5,20 +5,20 @@ import nars.util.data.Util;
 import java.util.Arrays;
 
 /** an optimized compound implementation for use when only 1 subterm */
-abstract public class Compound2 extends Compound {
+abstract public class Compound2<A extends Term,B extends Term> extends Compound {
 
     private byte[] name = null;
     transient private int hash = 0;
 
-    protected Compound2(Term a, Term b) {
+    protected Compound2(A a, B b) {
         super(a, b);
     }
 
-    public Term a() {
-        return term[0];
+    public A a() {
+        return (A)term[0];
     }
-    public Term b() {
-        return term[1];
+    public B b() {
+        return (B)term[1];
     }
 
     @Override

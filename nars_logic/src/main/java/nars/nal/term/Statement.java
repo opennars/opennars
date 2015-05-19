@@ -41,7 +41,7 @@ import static nars.nal.NALOperator.*;
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-public abstract class Statement extends Compound2 {
+public abstract class Statement<A extends Term, B extends Term> extends Compound2<A,B> {
     
     /**
      * Constructor with partial values, called by make
@@ -49,19 +49,19 @@ public abstract class Statement extends Compound2 {
      * 
      * @param arg The component list of the term
      */
-    protected Statement(final Term subj, final Term pred) {
+    protected Statement(final A subj, final B pred) {
         super(subj, pred);
     }
-    protected Statement(final Term... twoTermsPlease) {
+    /*protected Statement(final Term... twoTermsPlease) {
         this(twoTermsPlease[0], twoTermsPlease[1]);
-    }
+    }*/
     @Deprecated protected Statement() {
         this(null, null);
     }
     
 
     @Override
-    protected void init(Term[] t) {
+    protected void init(Term... t) {
         if (t.length!=2)
             throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
         if (t[0]==null)
@@ -298,8 +298,8 @@ public abstract class Statement extends Compound2 {
      *
      * @return The first component
      */
-    public Term getSubject() {
-        return term[0];
+    public A getSubject() {
+        return (A)term[0];
     }
 
     /**
@@ -307,8 +307,8 @@ public abstract class Statement extends Compound2 {
      *
      * @return The second component
      */
-    public Term getPredicate() {
-        return term[1];
+    public B getPredicate() {
+        return (B)term[1];
     }
 
     @Override public abstract Statement clone();

@@ -35,7 +35,7 @@ public class Similarity extends Statement {
      * @param arg The component list of the term
      */
     protected Similarity(final Term[] arg) {
-        super(arg);
+        super(arg[0], arg[1]);
         
         init(arg);
     }

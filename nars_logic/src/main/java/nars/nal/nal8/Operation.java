@@ -37,9 +37,9 @@ import java.util.Arrays;
 /**
  * An operation is interpreted as an Inheritance relation.
  */
-public class Operation extends Inheritance {
+public class Operation<T extends Term> extends Inheritance<Product, T> {
 
-    private Task<Operation> task; //this is set automatically prior to executing
+    private Task<Operation<T>> task; //this is set automatically prior to executing
     
     
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
@@ -48,13 +48,13 @@ public class Operation extends Inheritance {
      * Constructor with partial values, called by make
      *
      */
-    protected Operation(Term argProduct, Term operator) {
+    protected Operation(Product argProduct, T operator) {
         super(argProduct, operator);
     }
     
-    protected Operation(Term[] t) {
+    /*protected Operation(Term[] t) {
         super(t);
-    }
+    }*/
     protected Operation() {
         super();
     }
@@ -66,8 +66,8 @@ public class Operation extends Inheritance {
      * @return A new object, to be casted into a SetExt
      */
     @Override
-    public Operation clone() {        
-        return new Operation(term);
+    public Operation<T> clone() {
+        return new Operation(getSubject(), getOperator());
     }
  
    
@@ -78,7 +78,7 @@ public class Operation extends Inheritance {
      * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
-    public static Operation make(final Term oper, Term[] arg) {
+    public static <T extends Term> Operation<T> make(final T oper, Term[] arg) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -98,8 +98,8 @@ public class Operation extends Inheritance {
         return new Operation( new Product(arg), oper  );        
     }
 
-    public Term getOperator() {
-        return getPredicate();
+    public T getOperator() {
+        return (T)getPredicate();
     }
 
     @Override
@@ -169,11 +169,11 @@ public class Operation extends Inheritance {
     }*/
 
     /** stores the currently executed task, which can be accessed by Operator execution */
-    public void setTask(final Task<Operation> task) {
+    public void setTask(final Task<Operation<T>> task) {
         this.task = task;
     }
 
-    public Task<Operation> getTask() {
+    public Task<Operation<T>> getTask() {
         return task;
     }
 
@@ -182,7 +182,7 @@ public class Operation extends Inheritance {
     }
 
 
-    public static Term make(Term[] raw) {
+    @Deprecated public static Term make(Term[] raw) {
         if (raw.length < 1) {
             //must include at least the operate as the first term in raw[]
             return null;
