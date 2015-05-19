@@ -928,6 +928,12 @@ public class NarseseParser extends BaseParser<Object> {
 
         throw newParseException(input, r);
     }
+    public <T extends Compound> T parseCompound(String s) throws InvalidInputException {
+        Term t = parseTerm(s);
+        if (t instanceof Compound)
+            return ((T)t);
+        return null;
+    }
 
     public static InvalidInputException newParseException(String input, ParsingResult r) {
 

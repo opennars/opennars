@@ -85,7 +85,7 @@ public abstract class OutputCondition extends NARReaction {
 
 
     public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave)  {
-        return getConditions(n, example, similarResultsToSave, x -> n.narsese.parseOneTask(x));
+        return getConditions(n, example, similarResultsToSave, x -> n.narsese.parseTask(x, true));
     }
 
     /** with caching, useful for repeated tests to avoid re-parsing the same text */
@@ -93,7 +93,7 @@ public abstract class OutputCondition extends NARReaction {
         return getConditions(n, example, similarsToSave, x -> {
             Task t = conditionCache.get(x);
             if (t == null) {
-                conditionCache.put(x, t = n.narsese.parseOneTask(x));
+                conditionCache.put(x, t = n.narsese.parseTask(x, true));
             }
             return t;
         });

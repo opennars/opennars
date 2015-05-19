@@ -18,7 +18,7 @@ package nars.io.nlp;
 
 import nars.Memory;
 import nars.narsese.InvalidInputException;
-import nars.narsese.OldNarseseParser;
+import nars.narsese.NarseseParser;
 import nars.util.language.Twokenize;
 import nars.util.language.Twokenize.Span;
 import nars.nal.term.Atom;
@@ -103,7 +103,7 @@ public class Twenglish {
         this.memory = memory;
     }
 
-    protected Collection<Task> parseSentence(List<Span> s, OldNarseseParser narsese, boolean modifyVocabulary) {
+    protected Collection<Task> parseSentence(List<Span> s, NarseseParser narsese, boolean modifyVocabulary) {
         return spansToSentenceTerms(s);
     }
     
@@ -189,7 +189,7 @@ public class Twenglish {
     
     
     /** returns a list of all tasks that it was able to parse for the input */
-    public List<Task> parse(String s, OldNarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
+    public List<Task> parse(String s, NarseseParser narsese, boolean modifyVocabulary) throws InvalidInputException {
 
         
         List<Task> results = new ArrayList();
@@ -228,10 +228,10 @@ public class Twenglish {
             if (!languageBooted) {
                 
                 
-                results.add(0, narsese.parseNarsese(new StringBuilder(
-                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.")));
-                results.add(0, narsese.parseNarsese(new StringBuilder(
-                       "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.")));
+                results.add(0, narsese.parseTask(new StringBuilder(
+                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString(), true));
+                results.add(0, narsese.parseTask(new StringBuilder(
+                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString(), true));
                 
                 languageBooted = true;
             }

@@ -18,7 +18,6 @@ import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
-import nars.narsese.OldNarseseParser;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import objenome.Container;
@@ -53,7 +52,7 @@ public class NAR extends Container implements Runnable {
             + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
               "    Github website:  http://github.com/opennars/ \n" + 
             "    IRC:  http://webchat.freenode.net/?channels=nars \n";
-    private final NarseseParser narseseParser;
+    public final NarseseParser narsese;
     public final TextPerception textPerception;
 
 
@@ -66,9 +65,6 @@ public class NAR extends Container implements Runnable {
      */
     public final Memory memory;
     public final Param param;
-    
-
-    @Deprecated public final OldNarseseParser narsese;
 
 
     public void think(int delay) {
@@ -83,10 +79,7 @@ public class NAR extends Container implements Runnable {
 
     /** Flag for running continuously  */
     private boolean running = false;
-    
-    
 
-    
     private boolean threadYield = false;
 
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
@@ -98,14 +91,9 @@ public class NAR extends Container implements Runnable {
         this.param = m.param;
 
         the(NAR.class, this);
-//        this.narseseParser = get(NarseseParser.class, NarseseParser.newParser(this));
-//        this.narsese = the(OldNarseseParser.class);
-//        this.textPerception = get(TextPerception.class);
 
-
-        this.narseseParser = NarseseParser.newParser(this);
-        this.narsese = new OldNarseseParser(this, narseseParser);
-        this.textPerception = new TextPerception(this, narsese, narseseParser);
+        this.narsese = NarseseParser.newParser(this);
+        this.textPerception = new TextPerception(this, narsese);
     }
 
     /**
@@ -117,6 +105,7 @@ public class NAR extends Container implements Runnable {
         memory.reset(true, false);
     }
 
+    /** Resets and deletes the entire system */
     public void delete() {
         memory.delete();
     }
@@ -145,7 +134,7 @@ public class NAR extends Container implements Runnable {
 
     /** parses and forms a Task from a string but doesnt input it */
     public Task task(String taskText) {
-        Task t = narsese.parseOneTask(taskText);
+        Task t = narsese.parseTask(taskText, true);
 
         long now = time();
         if (!t.sentence.isEternal()) {
@@ -179,7 +168,7 @@ public class NAR extends Container implements Runnable {
     }
     /** gets a concept if it exists, or returns null if it does not */
     public Concept concept(String conceptTerm) throws InvalidInputException {
-        return concept(narsese.parseTerm(conceptTerm));
+        return concept((Term)narsese.parseTerm(conceptTerm));
     }
 
 
@@ -223,7 +212,7 @@ public class NAR extends Container implements Runnable {
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompoundTerm(goalTerm),
+                                narsese.parseCompound(goalTerm),
                                 Symbols.GOAL,
                                 tv = new Truth.DefaultTruth(freq, conf),
                                 new Stamp(memory, Stamp.UNPERCEIVED, Stamp.ETERNAL)),
@@ -244,7 +233,7 @@ public class NAR extends Container implements Runnable {
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompoundTerm(beliefTerm),
+                                narsese.parseCompound(beliefTerm),
                                 Symbols.JUDGMENT,
                                 tv = new Truth.DefaultTruth(freq, conf),
                                 new Stamp(memory, time(), occurrenceTime)),
@@ -262,7 +251,7 @@ public class NAR extends Container implements Runnable {
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompoundTerm(termString),
+                                narsese.parseCompound(termString),
                                 questionOrQuest,
                                 null,
                                 new Stamp(memory, Stamp.UNPERCEIVED, Tense.Eternal)),
@@ -286,7 +275,7 @@ public class NAR extends Container implements Runnable {
     
     public NAR input(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
         
-        narsese.parseTask(taskText, t -> {
+        narsese.parse(taskText, t -> {
             if (frequency != -1)
                 t.sentence.truth.setFrequency(frequency);
             if (confidence != -1)

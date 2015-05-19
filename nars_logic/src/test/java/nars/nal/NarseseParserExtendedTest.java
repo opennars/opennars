@@ -1,9 +1,35 @@
 package nars.nal;
 
+import nars.nal.nal1.Inheritance;
+import nars.nal.term.Compound;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Proposed syntax extensions, not implemented yet
  */
-public class NarseseParserExtendedTest {
+public class NarseseParserExtendedTest  {
+
+
+
+    @Test
+    public void testNamespaceTerms() {
+        Inheritance t = NarseseParserTest.term("namespace.named");
+        assertEquals(t.operator(), NALOperator.INHERITANCE);
+        assertEquals("namespace", t.getPredicate().toString());
+        assertEquals("named", t.getSubject().toString());
+
+
+        Compound u = NarseseParserTest.term("<a.b <-> c.d>");
+        assertEquals("<<b --> a> <-> <d --> c>>", u.toString());
+
+        Task ut = NarseseParserTest.task("<a.b <-> c.d>.");
+        assertNotNull(ut);
+        assertEquals(ut.getTerm(), u);
+
+    }
 
 
 //    @Test

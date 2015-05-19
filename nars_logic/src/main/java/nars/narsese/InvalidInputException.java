@@ -11,7 +11,7 @@ public class InvalidInputException extends RuntimeException {
      * An invalid addInput line.
      * @param s type of error
      */
-    InvalidInputException(String s) {
+    public InvalidInputException(String s) {
         super(s);
     }
 

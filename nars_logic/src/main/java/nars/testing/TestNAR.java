@@ -136,7 +136,7 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustEmit(long withinCycles, String task, Class channel) throws InvalidInputException {
-        Task t = narsese.parseOneTask(task);
+        Task t = narsese.parseTask(task, true);
         //TODO avoid reparsing term from string
 
         final long now = time();

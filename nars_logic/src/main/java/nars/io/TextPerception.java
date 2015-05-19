@@ -5,9 +5,7 @@ import nars.NAR;
 import nars.Symbols;
 import nars.nal.Task;
 import nars.narsese.NarseseParser;
-import nars.narsese.OldNarseseParser;
 import nars.op.io.Echo;
-import nars.op.io.PauseInput;
 import nars.op.io.Reset;
 import nars.op.io.SetVolume;
 
@@ -27,9 +25,7 @@ public class TextPerception  {
     public final Memory memory;
     
     public final List<TextReaction<Task>> parsers;
-    
-    
-    public OldNarseseParser narsese;
+
     //public Englisch englisch;
     //public Twenglish twenglish;
     
@@ -42,9 +38,9 @@ public class TextPerception  {
     //or with a higher order copula a1...an-1 =/> an, because a &/ statement alone is useless for temporal logic
 
 
-    public TextPerception(NAR n, OldNarseseParser narsese, NarseseParser newParser) {
+    public TextPerception(NAR n, NarseseParser parser) {
         this.memory = n.memory;
-        this.narsese = narsese;
+
         //this.englisch = new Englisch();
         //this.twenglish = new Twenglish(memory);
         this.parsers = new ArrayList();
@@ -185,7 +181,7 @@ public class TextPerception  {
                     char c = input.charAt(0);
                     if (c != Symbols.COMMENT_MARK) {
                         try {
-                            narsese.parseTask(input, recv);
+                            parser.parse(input, recv);
                         } catch (Exception ex) {
                             recv.accept( new Echo(ex).newTask() );
                         }
