@@ -134,7 +134,7 @@ public class Twenglish {
         if (inputProduct) {
             Term p = 
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
-            Compound q = Sentence.termOrNull( Instance.make( p, Atom.get(sentenceType)) );
+            Compound q = Sentence.termOrNull( Instance.make( p, Atom.the(sentenceType)) );
             if (q != null) {
                 throw new RuntimeException("API Upgrade not finished here:");
                 /*tt.add(
@@ -181,10 +181,10 @@ public class Twenglish {
     }
     
     public Term lexToTerm(String c) {
-        return Atom.get(c);
+        return Atom.the(c);
     }
     public Term tagToTerm(String c) {
-        return Atom.get(c.toLowerCase());
+        return Atom.the(c.toLowerCase());
     }
     
     

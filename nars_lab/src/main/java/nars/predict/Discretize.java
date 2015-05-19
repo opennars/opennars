@@ -94,7 +94,7 @@ public class Discretize {
     }
     
     public Inheritance getValueTerm(String prefix, int level) {
-        return Instance.make(Atom.get(prefix), Atom.get("y" + level));
+        return Instance.make(Atom.the(prefix), Atom.the("y" + level));
     }
     
     public Term[] getValueTerms(String prefix) {
@@ -113,7 +113,7 @@ public class Discretize {
     }    
     
     public Term getValueTerm(double y) {
-        return Atom.get("y" + i((float) y, discretization));
+        return Atom.the("y" + i((float) y, discretization));
     }
 
     /**

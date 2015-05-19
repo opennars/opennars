@@ -32,7 +32,7 @@ public class Contraposition extends ConceptFireTask {
             float w = 1.0f / ((n * (n - 1)) / 2.0f); //let's assume hierachical tuple (triangle numbers) amount for this
             if (Memory.randomNumber.nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
 
-                contraposition((Statement) taskTerm, taskSentence, f);
+                contraposition(taskSentence, f);
                 //}
             }
         }
@@ -45,8 +45,10 @@ public class Contraposition extends ConceptFireTask {
      *
      * @param statement The premise
      */
-    protected static boolean contraposition(final Statement statement, final Sentence sentence, final NAL nal) {
+    protected static boolean contraposition(final Sentence sentence, final NAL nal) {
         //TODO this method can end earlier if it detects an input implication with freq=1, because the resulting confidence should be 0 which is useless
+
+        final Statement statement = (Statement)sentence.term;
 
         Memory memory = nal.memory;
         memory.logic.CONTRAPOSITION.hit();

@@ -24,7 +24,6 @@ import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.nal.nal8.SynchOperator;
 import nars.nal.nal8.TermFunction;
 import nars.nal.term.Atom;
@@ -76,7 +75,7 @@ public class TestNARNode  {
         public NARNode(String name, NAR nar) {
             super(name);
             this.nar = nar;
-            nar.memory.setSelf(Atom.get(name));
+            nar.memory.setSelf(Atom.the(name));
             nar.param.outputVolume.set(25);
             initOperators();
 
@@ -185,7 +184,7 @@ public class TestNARNode  {
                         t.add(Atom.quoted(ww));
                     }
 
-                    return Inheritance.make(SetExt.make(t), Atom.get("intersects"));
+                    return Inheritance.make(SetExt.make(t), Atom.the("intersects"));
                 }
 
 

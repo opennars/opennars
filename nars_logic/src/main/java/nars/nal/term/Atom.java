@@ -25,7 +25,7 @@ public class Atom implements Term {
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Atom quoted(String t) {
-        return get('"' + t + '"');
+        return the('"' + t + '"');
     }
 
 
@@ -88,7 +88,7 @@ public class Atom implements Term {
     }
 
     /** gets the atomic term given a name, storing it in the static symbol table */
-    public final static Atom getCached(final String name) {
+    public final static Atom theCached(final String name) {
         Atom x = atoms.get(name);
         if (x != null) return x;
         atoms.put(name, x = new Atom(name));
@@ -96,36 +96,36 @@ public class Atom implements Term {
     }
 
     /** gets the atomic term given a name */
-    public final static Atom get(final String name) {
+    public final static Atom the(final String name) {
         if (name.length() <= 2)
-            return getCached(name);
+            return theCached(name);
         return new Atom(name);
     }
 
-    public final static Term get(Object o) {
+    public final static Term the(Object o) {
         if (o instanceof Term) return (Term)o;
         if (o instanceof String) {
-            return get((String) o);
+            return the((String) o);
         }
         return null;
     }
 
     /** gets the atomic term of an integer */
-    public final static Term get(final int i) {
+    public final static Term the(final int i) {
         //fast lookup for single digits
         switch (i) {
-            case 0: return get("0");
-            case 1: return get("1");
-            case 2: return get("2");
-            case 3: return get("3");
-            case 4: return get("4");
-            case 5: return get("5");
-            case 6: return get("6");
-            case 7: return get("7");
-            case 8: return get("8");
-            case 9: return get("9");
+            case 0: return the("0");
+            case 1: return the("1");
+            case 2: return the("2");
+            case 3: return the("3");
+            case 4: return the("4");
+            case 5: return the("5");
+            case 6: return the("6");
+            case 7: return the("7");
+            case 8: return the("8");
+            case 9: return the("9");
         }
-        return get(Integer.toString(i));
+        return the(Integer.toString(i));
     }
 
     @Override public String toString() {
@@ -134,14 +134,11 @@ public class Atom implements Term {
 
 
     /**
-     * Make a new Term with the same name.
-     *
-     * @return The new Term
+     * Atoms are singular, so it is useless to clone them
      */
     @Override
     public Term clone() {
         return this;
-        //return new Atom(name());
     }
 
     /** attempts to return cloneNormalize result,

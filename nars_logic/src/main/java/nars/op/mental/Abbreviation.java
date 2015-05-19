@@ -58,7 +58,7 @@ public class Abbreviation extends AbstractOperator {
         private static final AtomicInteger currentTermSerial = new AtomicInteger(1);
 
         public Term newSerialTerm() {
-            return Atom.get(Symbols.TERM_PREFIX + String.valueOf(currentTermSerial.incrementAndGet()));
+            return Atom.the(Symbols.TERM_PREFIX + String.valueOf(currentTermSerial.incrementAndGet()));
         }
 
 
@@ -137,7 +137,7 @@ public class Abbreviation extends AbstractOperator {
         memory = n.memory;
 
         if (abbreviate == null) {
-            Term _abbreviate = Atom.get("^abbreviate");
+            Term _abbreviate = Atom.the("^abbreviate");
             if (_abbreviate == null) {
                 //n.on(abbreviate = new Abbreviate());
             }

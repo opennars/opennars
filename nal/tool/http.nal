@@ -1,5 +1,7 @@
 js("""
 
+/* from: https://blogs.oracle.com/nashorn/entry/http_server_written_in_nashorn*/
+
 var Thread            = java.lang.Thread;
 var ServerSocket      = java.net.ServerSocket;
 var PrintWriter       = java.io.PrintWriter;

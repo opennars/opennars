@@ -2,21 +2,13 @@ package nars.nal.nal8;
 
 import nars.Memory;
 import nars.NAR;
-import nars.NARSeed;
-import nars.io.TextOutput;
-import nars.model.impl.Curve;
 import nars.model.impl.Default;
-import nars.model.impl.DefaultMicro;
-import nars.nal.JavaNALTest;
 import nars.nal.Task;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.util.event.Reaction;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -62,7 +54,7 @@ public class OperatorTest {
                 executed.set(true);
             }
 
-        }, Atom.get("exe"));
+        }, Atom.the("exe"));
 
         n.input("exe(a,b,c)!");
 

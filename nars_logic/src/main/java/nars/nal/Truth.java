@@ -35,9 +35,9 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
 
 
 
-    final static Term Truth_TRUE = Atom.get("TRUE");
-    final static Term Truth_FALSE = Atom.get("FALSE");
-    final static Term Truth_UNSURE = Atom.get("UNSURE");
+    final static Term Truth_TRUE = Atom.the("TRUE");
+    final static Term Truth_FALSE = Atom.the("FALSE");
+    final static Term Truth_UNSURE = Atom.the("UNSURE");
 
     public static class DefaultTruth implements Truth {
 

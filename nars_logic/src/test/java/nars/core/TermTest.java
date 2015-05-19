@@ -304,8 +304,8 @@ public class TermTest {
 
     @Test public void testDifferenceImmediate() {
         {
-            Compound a = SetInt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
-            Compound b = SetInt.make(Atom.get("d"), Atom.get("b"));
+            Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
+            Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
             Term d = DifferenceInt.make(a, b);
             assertEquals(d.toString(), d.getClass(), SetIntN.class);
             assertEquals(d.toString(), 2, ((SetInt) d).length());
@@ -313,8 +313,8 @@ public class TermTest {
         }
 
         {
-            Compound a = SetExt.make(Atom.get("a"), Atom.get("b"), Atom.get("c"));
-            Compound b = SetExt.make(Atom.get("d"), Atom.get("b"));
+            Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
+            Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
             Term d = DifferenceExt.make(a, b);
             assertEquals(d.toString(), d.getClass(), SetExtN.class);
             assertEquals(d.toString(), 2, ((SetExt)d).length() );

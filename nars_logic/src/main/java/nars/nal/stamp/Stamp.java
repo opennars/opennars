@@ -20,13 +20,15 @@
  */
 package nars.nal.stamp;
 
-import nars.Memory;
+import com.google.common.hash.PrimitiveSink;
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.nal.NAL;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
+import nars.util.data.Util;
 
 import java.util.Arrays;
 
@@ -378,9 +380,15 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (evidentialSet == null)
             toSet();
         if (hash == 0) {
-            hash = (int)(evidentialHash + 31 * occurrenceTime);
+            hash = Util.hash(evidentialHash, occurrenceTime);
         }
         return hash;
+    }
+
+    public void hash(PrimitiveSink p) {
+        p.putLong(occurrenceTime);
+        for (long e :toSet())
+            p.putLong(e);
     }
 
     public Stamp cloneWithNewCreationTime(long newCreationTime) {

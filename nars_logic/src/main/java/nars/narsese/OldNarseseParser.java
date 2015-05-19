@@ -6,14 +6,10 @@ import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.*;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.*;
-import sun.tools.jstat.Operator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +20,6 @@ import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.Symbols.*;
 import static nars.budget.BudgetFunctions.truthToQuality;
-import static nars.nal.NALOperator.*;
 import static nars.nal.Variables.containVar;
 import static nars.nal.nal8.Operation.make;
 
@@ -510,7 +505,7 @@ import static nars.nal.nal8.Operation.make;
         if (containVar(s)) {
             return new Variable(s);
         } else {
-            return Atom.get(s);
+            return Atom.the(s);
         }
     }
 

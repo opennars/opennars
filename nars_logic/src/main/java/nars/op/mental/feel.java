@@ -40,7 +40,7 @@ import java.util.ArrayList;
  * Feeling common operations
  */
 public abstract class feel extends SynchOperator implements Mental {
-    private final Term feelingTerm = Atom.get("feel");
+    private final Term feelingTerm = Atom.the("feel");
 
 
     

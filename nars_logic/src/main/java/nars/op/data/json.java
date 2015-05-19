@@ -37,17 +37,17 @@ public class json {
                 for (Map.Entry<String,Object> e : jj.entrySet()) {
                     String key = e.getKey();
                     Object data = e.getValue();
-                    tt.add(Product.make(Atom.get(key), termize(data)));
+                    tt.add(Product.make(Atom.the(key), termize(data)));
                 }
 
                 Compound s = SetExt.make(tt);
                 return s;
             }
             else if (x instanceof String) {
-                return Atom.get((String)x);
+                return Atom.the((String) x);
             }
             else /*if (x instanceof Number)*/ {
-                return Atom.get("\"" + x.toString() + "\"");
+                return Atom.the("\"" + x.toString() + "\"");
             }
         }
 

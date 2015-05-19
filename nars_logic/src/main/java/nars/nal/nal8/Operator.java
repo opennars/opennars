@@ -21,7 +21,6 @@
 
 package nars.nal.nal8;
 
-import com.google.common.collect.Lists;
 import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
@@ -33,7 +32,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.op.io.Echo;
 import nars.util.event.Reaction;
 
 import java.util.List;
@@ -58,7 +56,7 @@ abstract public class Operator implements Reaction<Term> {
     }
 
     public Operator(String name) {
-        this.term = Atom.get(name);
+        this.term = Atom.the(name);
     }
 
     public boolean setEnabled(NAR n, boolean enabled) {
@@ -74,7 +72,7 @@ abstract public class Operator implements Reaction<Term> {
      */
     public Operator() {
         String className = getClass().getSimpleName();
-        this.term = Atom.get(className);
+        this.term = Atom.the(className);
     }
 
 

@@ -30,7 +30,7 @@ public class RawPerception implements Perception {
     public RawPerception(String id, float confidence) {
         this.confidence = confidence;
         this.id = id;
-        subjectTerm = Atom.get(id);
+        subjectTerm = Atom.the(id);
     }
 
     @Override

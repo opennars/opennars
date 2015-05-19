@@ -132,7 +132,7 @@ public class TicTacToe extends JPanel {
 
             @Override
             public Concept initTerm(int x, int y) {
-                Term t = Atom.get(Integer.toString(y * 3 + x));
+                Term t = Atom.the(Integer.toString(y * 3 + x));
                 fieldTerms.add(t);
                 return nar.memory.conceptualize(new Budget(0.5f, 0.5f, 0.5f), t);
             }

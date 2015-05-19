@@ -20,6 +20,7 @@
  */
 package nars.nal;
 
+import com.google.common.hash.PrimitiveSink;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -241,6 +242,21 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         }
         return hash;
     }
+
+    public void hash(PrimitiveSink into) {
+
+        into.putBytes(term.name());
+        into.putByte((byte)punctuation);
+
+        getStamp().hash(into);
+
+        Truth t = truth;
+        if (t != null) {
+            into.putFloat(t.getFrequency());
+            into.putFloat(t.getConfidence());
+        }
+    }
+
 
     /**
      * Check whether different aspects of sentence are equivalent to another one

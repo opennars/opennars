@@ -52,10 +52,10 @@ public class say extends SynchOperator {
     
 
     final int MAX_WORD_LENGTH = 16;
-    final Term WORD = Atom.get("WORD");
-    final Term QUIET = Atom.get("QUIET");
-    final Term INCOHERENT = Atom.get("INCOHERENT");
-    final Term SAID = Atom.get("SAID");
+    final Term WORD = Atom.the("WORD");
+    final Term QUIET = Atom.the("QUIET");
+    final Term INCOHERENT = Atom.the("INCOHERENT");
+    final Term SAID = Atom.the("SAID");
 //NOISY
 
     long lastEmit = 0;

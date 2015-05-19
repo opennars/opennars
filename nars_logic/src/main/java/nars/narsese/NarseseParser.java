@@ -4,7 +4,6 @@ import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
-import com.github.fge.grappa.run.ListeningParseRunner;
 import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.stack.ValueStack;
@@ -12,7 +11,6 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
-import nars.model.impl.Default;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -469,7 +467,7 @@ public class NarseseParser extends BaseParser<Object> {
      * MACRO: namespace.x    becomes    <x --> namespace>
      */
     Rule NamespacedAtom() {
-        return sequence(Atom(), '.', Atom(), push(Inheritance.make(Atom.get(pop()), Atom.get(pop()))));
+        return sequence(Atom(), '.', Atom(), push(Inheritance.make(Atom.the(pop()), Atom.the(pop()))));
     }
 
     public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
@@ -484,7 +482,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
 
-    final static Atom imageIndexTerm = Atom.getCached(String.valueOf(IMAGE_PLACE_HOLDER));
+    final static Atom imageIndexTerm = Atom.theCached(String.valueOf(IMAGE_PLACE_HOLDER));
 
     Rule ImageIndex() {
         return sequence('_', push(imageIndexTerm));
@@ -719,7 +717,7 @@ public class NarseseParser extends BaseParser<Object> {
         if (o instanceof Term) return ((Term)o);
         if (o instanceof String) {
             String s= (String)o;
-            return Atom.get(s);
+            return Atom.the(s);
         }
         throw new RuntimeException(o + " is not a term");
     }
@@ -763,7 +761,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
             if (p instanceof String) {
-                Term t = Atom.get((String)p);
+                Term t = Atom.the((String) p);
                 vectorterms.add(t);
             } else if (p instanceof Term) {
                 Term t = (Term) p;
@@ -917,7 +915,7 @@ public class NarseseParser extends BaseParser<Object> {
 
             Object x = r.getValueStack().iterator().next();
             if (x instanceof String)
-                x = Atom.get((String)x);
+                x = Atom.the((String) x);
 
             if (x != null) {
                 try {

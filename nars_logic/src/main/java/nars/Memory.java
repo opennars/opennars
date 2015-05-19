@@ -48,7 +48,6 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -105,7 +104,7 @@ public class Memory implements Serializable {
     }
 
     public Concept concept(final String t) {
-        return concept(Atom.get(t));
+        return concept(Atom.the(t));
     }
 
 
@@ -197,7 +196,7 @@ public class Memory implements Serializable {
     }
 
     public Atom the(final String s) {
-        return Atom.get(s);
+        return Atom.the(s);
     }
 
 

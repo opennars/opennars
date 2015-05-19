@@ -178,7 +178,7 @@ public class IRCBot {
                 Term wordTerm;
                 if (input.pattern.equals("word")) {
                     a = input.content.toLowerCase().toString();
-                    wordTerm = Atom.get(a);
+                    wordTerm = Atom.the(a);
                     pattern = "word";
                 }
                 //TODO apostrophe words

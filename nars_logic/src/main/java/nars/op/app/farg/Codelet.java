@@ -35,7 +35,7 @@ public class Codelet extends Item<Term> {
         super(budget);
         this.args=args;
         this.mem=mem;
-        t = Atom.get("Codelet" + String.valueOf(codeletid++));
+        t = Atom.the("Codelet" + String.valueOf(codeletid++));
     }
     
     
