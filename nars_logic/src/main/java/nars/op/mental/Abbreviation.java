@@ -9,9 +9,9 @@ import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
@@ -78,7 +78,7 @@ public class Abbreviation extends AbstractOperator {
             Sentence sentence = new Sentence(
                     Similarity.make(compound, atomic), 
                     Symbols.JUDGMENT,
-                    new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(operation, nar.memory, Tense.Present));
             
             float quality = BudgetFunctions.truthToQuality(sentence.truth);

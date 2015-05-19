@@ -41,7 +41,7 @@ public abstract class SynchronousSentenceFunction extends Operator {
 
         List<Task> result = new ArrayList(y.size());
         for (Sentence s : y) {
-            result.add( memory.newTask(s).parent( operation.getTask() ).get() );
+            result.add( memory.task(s).parent( operation.getTask() ).get() );
         }
 
         return result;

@@ -3,8 +3,8 @@ package nars.io;
 import nars.NAR;
 import nars.Symbols;
 import nars.model.impl.Default;
+import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
-import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
@@ -91,7 +91,7 @@ public class TextsTest {
         
         //visualize(tr, System.out);
         
-        Sentence s = new Sentence(term1, '.', new Truth.DefaultTruth(1,1), new Stamp(n.memory, Tense.Eternal));
+        Sentence s = new Sentence(term1, '.', new DefaultTruth(1,1), new Stamp(n.memory, Tense.Eternal));
         
     }
     

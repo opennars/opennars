@@ -127,7 +127,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
 
             //String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
-            Task t = concept.memory.newTask((Compound) qt).punctuation(
+            Task t = concept.memory.task((Compound) qt).punctuation(
 
                     Symbols.JUDGMENT
 

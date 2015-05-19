@@ -5,6 +5,7 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.io.Texts;
+import nars.nal.DefaultTruth;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal7.Tense;
@@ -363,7 +364,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     public Truth getTruthMean() {
-        return new Truth.DefaultTruth(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
+        return new DefaultTruth(0.5f * (freqMax + freqMin), 0.5f * (confMax + confMin));
     }
 
     @Override

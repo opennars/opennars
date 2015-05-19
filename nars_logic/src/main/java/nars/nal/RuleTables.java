@@ -272,14 +272,14 @@ public class RuleTables {
 
 
             if(goalterm!=null && (goalterm instanceof Compound) && !goalterm.hasVarIndep()) {
-                Truth truth=new Truth.DefaultTruth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+                Truth truth=new DefaultTruth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
                 nal.singlePremiseTask((Compound) goalterm, Symbols.GOAL, truth,
                         new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL, BudgetFunctions.truthToQuality(truth)),
                         nal.newStamp(task.sentence,nal.memory.time())
                 );
             }
             if(goalterm2!=null && (goalterm2 instanceof Compound) && !goalterm2.hasVarIndep()) {
-                Truth truth=new Truth.DefaultTruth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
+                Truth truth=new DefaultTruth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
                 nal.singlePremiseTask((Compound) goalterm2, Symbols.GOAL, truth,
                         new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)),
                         nal.newStamp(task.sentence,nal.memory.time())

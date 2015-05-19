@@ -11,6 +11,7 @@ import nars.model.ControlCycle;
 import nars.model.cycle.DefaultCycle;
 import nars.nal.*;
 import nars.nal.concept.Concept;
+import nars.nal.concept.ConceptBuilder;
 import nars.nal.concept.DefaultConcept;
 import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.filter.FilterBelowConfidence;
@@ -52,7 +53,7 @@ import static nars.op.mental.InternalExperience.InternalExperienceMode.Minimal;
 /**
  * Default set of NAR parameters which have been classically used for development.
  */
-public class Default extends NARSeed implements NARSeed.ConceptBuilder {
+public class Default extends NARSeed implements ConceptBuilder {
 
 
 

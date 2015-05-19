@@ -20,7 +20,7 @@ js("'<a --> term>'")!
 
 
 
-jsop("abc", "function(x) { return '<it --> ' + x + '>.'; }")!
+jsop(abc, "function(x) { return '<it --> ' + x + '>.'; }")!
 abc(works)!
 ''outputMustContain('<it --> works>.')
 

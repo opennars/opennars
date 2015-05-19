@@ -174,7 +174,7 @@ public class InternalExperience extends AbstractOperator {
 
                 NAL.StampBuilder stamp = nal.newStamp(task.sentence, memory.time());
 
-                Sentence j = new Sentence(ret, Symbols.JUDGMENT, new Truth.DefaultTruth(1.0f, conf), stamp);
+                Sentence j = new Sentence(ret, Symbols.JUDGMENT, new DefaultTruth(1.0f, conf), stamp);
 
                 Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
 
@@ -211,7 +211,7 @@ public class InternalExperience extends AbstractOperator {
                 Term new_term=Inheritance.make(prod, op);
                 Sentence sentence = new Sentence(
                     new_term, Symbols.GOAL,
-                    new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                    new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                     new Stamp(memory, Tense.Present));
                 
                 float quality = BudgetFunctions.truthToQuality(sentence.truth);
@@ -255,7 +255,7 @@ public class InternalExperience extends AbstractOperator {
 
                     Sentence sentence = new Sentence(
                         new_term, Symbols.GOAL,
-                        new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
+                        new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
                         new Stamp(memory, Tense.Present));
 
                     float quality = BudgetFunctions.truthToQuality(sentence.truth);

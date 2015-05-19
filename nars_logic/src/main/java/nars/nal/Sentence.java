@@ -373,7 +373,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
     protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
-                truth!=null ? new Truth.DefaultTruth(truth) : null,
+                truth!=null ? new DefaultTruth(truth) : null,
                 stamp.clone());
     }
 
@@ -416,13 +416,13 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
-                    newTruth = new Truth.DefaultTruth(truth.getFrequency(), projectedConfidence);
+                    newTruth = new DefaultTruth(truth.getFrequency(), projectedConfidence);
                 }
             }
         }
         
         if (newTruth == null) {
-            newTruth = new Truth.DefaultTruth(truth);
+            newTruth = new DefaultTruth(truth);
         }
         
         return newTruth;

@@ -26,6 +26,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
@@ -54,7 +55,7 @@ public class believe extends SynchOperator implements Mental {
 
         Compound content = Sentence.termOrException(operation.arg(0));
 
-        Truth truth = new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        Truth truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, nar.memory, Tense.Present));
         float quality = BudgetFunctions.truthToQuality(truth);
         Budget budget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, quality);

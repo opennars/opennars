@@ -362,7 +362,7 @@ abstract public class Concept extends Item<Term> implements Termed {
                 memory.logic.QUESTION_PROCESS.hit();
                 break;
             default:
-                throw new RuntimeException("Invalid sentence type");
+                throw new RuntimeException("Invalid sentence type: " + task);
         }
 
         return true;
@@ -584,7 +584,7 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         double Satisfaction=1.0-AntiSatisfaction;
-        Truth T = new Truth.DefaultTruth(projectedGoal.truth);
+        Truth T = new DefaultTruth(projectedGoal.truth);
         T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
 

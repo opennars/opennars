@@ -22,6 +22,7 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
+import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
@@ -50,7 +51,7 @@ public class want extends SynchOperator implements Mental {
 
         Term content = operation.arg(0);
         
-        Truth truth = new Truth.DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        Truth truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
         Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, nar.memory, Tense.Present));
         
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);

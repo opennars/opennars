@@ -1,5 +1,6 @@
 package nars.nal;
 
+import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -46,13 +47,20 @@ public class ProtoTask<T extends Compound> {
     }
 
     public ProtoTask<T> truth(float freq, float conf) {
-        this.truth = new Truth.DefaultTruth(freq, conf);
+        return truth(freq, conf, Global.TRUTH_EPSILON);
+    }
+
+    public ProtoTask<T> truth(float freq, float conf, float epsilon) {
+        this.truth = new DefaultTruth(freq, conf, epsilon);
         if (budget == null) {
             //set a default budget if none exists
             budget = new Budget(punc, truth);
         }
         return this;
     }
+
+    /** alias for judgment */
+    public ProtoTask<T> belief() { return judgment(); }
 
     public ProtoTask<T> judgment() { this.punc = Symbols.JUDGMENT; return this;}
     public ProtoTask<T> question() { this.punc = Symbols.QUESTION; return this;}

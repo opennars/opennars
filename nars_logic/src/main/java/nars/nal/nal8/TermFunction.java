@@ -79,7 +79,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
 
         float confidence = 0.99f;
         return Lists.newArrayList(
-                nar.memory.newTask(inh).
+                nar.memory.task(inh).
                         truth(1f, confidence).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
@@ -132,7 +132,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
 
         return Lists.newArrayList(
 
-                nar.memory.newTask(actual).judgment()
+                nar.memory.task(actual).judgment()
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                         .truth(1f, confidence)
                         .present()
@@ -140,7 +140,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
                         .get(),
 
                 actual_dep_part != null ?
-                        nar.memory.newTask(actual_dep_part).judgment()
+                        nar.memory.task(actual_dep_part).judgment()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .truth(1f, confidence)
                                 .present()

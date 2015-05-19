@@ -31,7 +31,6 @@ import nars.budget.Budget;
 import nars.gui.NARSwing;
 import nars.model.impl.Classic;
 import nars.nal.Task;
-import nars.nal.concept.AxiomaticConcept;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
@@ -346,33 +345,33 @@ public class TicTacToe extends JPanel {
 
 
     public void init() {
-        AxiomaticConcept.add(nar.memory,
-                nar.task("<nars --> win>! %1.0;0.99%"),
-                nar.task("<nars --> win>! :|: %1.0;0.99%"),
 
-                nar.task("<human --> win>! %0.0;0.99%"),
-                nar.task("<human --> win>! :|: %0.0;0.99%"),
-                nar.task("<empty --> win>! %0.0;0.99%"),
-                nar.task("<empty --> win>! :|: %0.0;0.99%"),
+                nar.input("<nars --> win>! %1.0;0.99%");
+                nar.input("<nars --> win>! :|: %1.0;0.99%");
 
-                nar.task("<input --> succeeded>! %1.0;0.99%"),
-                nar.task("<input --> succeeded>! :|: %1.0;0.99%"),
+                nar.input("<human --> win>! %0.0;0.99%");
+                nar.input("<human --> win>! :|: %0.0;0.99%");
+                nar.input("<empty --> win>! %0.0;0.99%");
+                nar.input("<empty --> win>! :|: %0.0;0.99%");
 
-                nar.task("<{nars,human,empty} <-> field>."),
-                nar.task("<<$1 --> empty> =/> (||,<$1 --> nars>,<$1 --> human>)>."),
-                nar.task("<<$1 --> nars> =/> (--,<$1 --> human>)>."),
-                nar.task("<<$1 --> human> =/> (--,<$1 --> nars>)>."),
+                nar.input("<input --> succeeded>! %1.0;0.99%");
+                nar.input("<input --> succeeded>! :|: %1.0;0.99%");
 
-
-
-                nar.task("<<nars --> win> <-> (--,<human --> win>)>."),
-                nar.task("<<human --> win> <-> (--,<nars --> win>)>."),
-
-                nar.task("<(&/,<$1 --> empty>, (^add0,$1,SELF)) =/> <input --> succeeded>>."),
+                nar.input("<{nars,human,empty} <-> field>.");
+                nar.input("<<$1 --> empty> =/> (||,<$1 --> nars>,<$1 --> human>)>.");
+                nar.input("<<$1 --> nars> =/> (--,<$1 --> human>)>.");
+                nar.input("<<$1 --> human> =/> (--,<$1 --> nars>)>.");
 
 
-                nar.task("<{0,1,2,3,4,5,6,7,8} --> field>.")
-        );
+
+                nar.input("<<nars --> win> <-> (--,<human --> win>)>.");
+                nar.input("<<human --> win> <-> (--,<nars --> win>)>.");
+
+                nar.input("<(&/,<$1 --> empty>, (^add0,$1,SELF)) =/> <input --> succeeded>>.");
+
+
+                nar.input("<{0,1,2,3,4,5,6,7,8} --> field>.");
+
 
         //rules+=("<<#1 --> field> =/> (^addO,#1,SELF)>. %0.5;0.5%\n"); //doing something is also a goal :D
 
@@ -382,9 +381,7 @@ public class TicTacToe extends JPanel {
             int c = h[2];
             //rules+=("<(&|,(^addO," + a + "),<input --> succeeded>,(^addO," + b + "),<input --> succeeded>,(^addO," + c + "),<input --> succeeded>) =/> <nars --> win>>.\n");
             String tt = "<(&&,<" + a + " --> $1>,<" + b + " --> $1>,<" + c + " --> $1>) =/> <$1 --> win>>";
-            AxiomaticConcept.add(nar.memory,
-                    nar.task(tt + ". %1.0;0.99%")
-            );
+            nar.input(tt + ". %1.0;0.99%");
         }
 
 

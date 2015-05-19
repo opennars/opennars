@@ -7,9 +7,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal1.Negation;
 import nars.nal.nal3.Intersect;
-import nars.nal.nal3.IntersectionExt;
 import nars.nal.nal3.IntersectionInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Interval;
@@ -763,7 +761,7 @@ public class NarseseParserTest {
                     confidence = parseFloat(s.substring(i + 1));
                 }
             }
-            return new Truth.DefaultTruth(frequency, confidence);
+            return new DefaultTruth(frequency, confidence);
         }
 
         /**

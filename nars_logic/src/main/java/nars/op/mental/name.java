@@ -22,6 +22,7 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
+import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
@@ -52,7 +53,7 @@ public class name extends SynchOperator implements Mental {
         Term atomic = operation.arg(1);
         Similarity content = Similarity.make(compound, atomic);
         
-        Truth truth = new Truth.DefaultTruth(1, 0.9999f);  // a naming convension
+        Truth truth = new DefaultTruth(1, 0.9999f);  // a naming convension
         Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamp(operation, nar.memory, Tense.Present));
         
         Budget budget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth);

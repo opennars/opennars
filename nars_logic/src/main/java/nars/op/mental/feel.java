@@ -22,6 +22,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
@@ -53,7 +54,7 @@ public abstract class feel extends SynchOperator implements Mental {
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
         Stamp stamp = new Stamp(memory, Tense.Present);
-        Truth truth = new Truth.DefaultTruth(value, 0.999f);
+        Truth truth = new DefaultTruth(value, 0.999f);
                 
         Term predicate = SetInt.make(feelingTerm);
 

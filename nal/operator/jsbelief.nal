@@ -1,0 +1,13 @@
+jsbelief("""
+    function(t) {
+        if (t.toString().startsWith('code('))
+            return (t.toString().length() % 10)/10.0;
+    }
+""")!
+
+code(abc)?
+
+''outputMustContain('code(abc). %0.40;0.99%')
+
+5
+

@@ -1,8 +1,6 @@
-
-jsop("spawnMutated", "function(org) { return '<{' + org + parseInt(Math.random()*9.0) + '} --> population>.'; }")!
-jsop("spawnCrossover", "function(parentA, parentB) { return '<{' + parentA+parentB+ parseInt(Math.random()*9.0) + '} --> population>.'; }")!
-jsop("kill","function(org) { return '(--,<{' + org + '} --> population>). :|:'; }")!
-
+jsop(spawnMutated, "function(org) { return '<{' + org + parseInt(Math.random()*9.0) + '} --> population>.'; }")!
+jsop(spawnCrossover, "function(parentA, parentB) { return '<{' + parentA+parentB+ parseInt(Math.random()*9.0) + '} --> population>.'; }")!
+jsop(kill, "function(org) { return '(--,<{' + org + '} --> population>). :|:'; }")!
 
 
 <<{$o} --> population> ==> <{$o} --> [good, bad]>>.
@@ -18,8 +16,8 @@ jsop("kill","function(org) { return '(--,<{' + org + '} --> population>). :|:'; 
 <{o1, o2, o3, o4} --> population>.
 
 
-jsop("t1","function(org) { if (Math.random() < 0.5) return 'good'; else return 'bad'; }")!
-jsop("t2","function(org) { if (Math.random() < 0.5) return 'good'; else return 'bad'; }")!
+jsop(t1, "function(org) { if (Math.random() < 0.5) return 'good'; else return 'bad'; }")!
+jsop(t2, "function(org) { if (Math.random() < 0.5) return 'good'; else return 'bad'; }")!
 
 <{t1, t2} --> tests>.
 

@@ -30,6 +30,7 @@ import nars.meter.LogicMetrics;
 import nars.model.ControlCycle;
 import nars.nal.*;
 import nars.nal.concept.Concept;
+import nars.nal.concept.ConceptBuilder;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -88,7 +89,7 @@ public class Memory implements Serializable {
     private long timePreviousCycle;
     private long timeSimulation;
     private int level;
-    final List<NARSeed.ConceptBuilder> conceptBuilders;
+    final List<ConceptBuilder> conceptBuilders;
 
     public LogicPolicy rules;
     private Term self;
@@ -163,18 +164,24 @@ public class Memory implements Serializable {
     }
 
     /** prepend a conceptbuilder to the conceptbuilder handler chain */
-    public void on(NARSeed.ConceptBuilder c) {
+    public void on(ConceptBuilder c) {
         conceptBuilders.add(0, c);
     }
 
     /** remove a conceptbuilder which has been added; return true if successfully removed or false if it wasnt present */
-    public boolean off(NARSeed.ConceptBuilder c) {
+    public boolean off(ConceptBuilder c) {
         return conceptBuilders.remove(c);
     }
 
     /** conceptbuilder handler chain */
-    public List<NARSeed.ConceptBuilder> getConceptBuilders() {
+    public List<ConceptBuilder> getConceptBuilders() {
         return conceptBuilders;
+    }
+
+    /** gets the final concept builder in the chain */
+    public ConceptBuilder getConceptBuilderDefault() {
+        List<ConceptBuilder> cb = getConceptBuilders();
+        return cb.get(cb.size() - 1);
     }
 
 
@@ -183,11 +190,11 @@ public class Memory implements Serializable {
         Concept concept = null;
 
         /** use the concept created by the first conceptbuilder to return non-null */
-        List<NARSeed.ConceptBuilder> cb = getConceptBuilders();
+        List<ConceptBuilder> cb = getConceptBuilders();
         int cbn = cb.size();
 
         for (int i = 0; i < cbn; i++) {
-            NARSeed.ConceptBuilder c  =  cb.get(i);
+            ConceptBuilder c  =  cb.get(i);
             concept = c.newConcept(term, budget, this);
             if (concept != null) break;
         }
@@ -198,6 +205,7 @@ public class Memory implements Serializable {
     public Atom the(final String s) {
         return Atom.the(s);
     }
+
 
 
     @Deprecated public static enum Forgetting {
@@ -915,10 +923,10 @@ public class Memory implements Serializable {
         return t;
     }
 
-    public <T extends Compound> ProtoTask<T> newTask(T t) {
+    public <T extends Compound> ProtoTask<T> task(T t) {
         return new ProtoTask(this, t);
     }
-    public <T extends Compound> ProtoTask<T> newTask(Sentence<T> s) {
+    public <T extends Compound> ProtoTask<T> task(Sentence<T> s) {
         return new ProtoTask(this, s);
     }
 

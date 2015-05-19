@@ -25,8 +25,8 @@ import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.nal.DefaultTruth;
 import nars.nal.Task;
-import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
@@ -182,9 +182,9 @@ abstract public class Operator implements Reaction<Term> {
         memory.logic.TASK_EXECUTED.hit();
 
         memory.taskAdd(
-                memory.newTask(operation).
+                memory.task(operation).
                         judgment().
-                        truth(new Truth.DefaultTruth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE)).
+                        truth(new DefaultTruth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE)).
                         budget(operation.getTask()).
                         stamp(new Stamp(opTask.getStamp(), memory, Tense.Present)).
                         parent(opTask).

@@ -344,7 +344,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
     public void acted(Term action, char punctuation, float freq, float conf, float priority, float durability) {
-        Task t = nar.memory.newTask((Compound)action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).present().get();
+        Task t = nar.memory.task((Compound) action).punctuation(punctuation).truth(freq, conf).budget(priority, durability).present().get();
         input(t);
     }
 
@@ -368,7 +368,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     protected void goalReward() {
         //seek reward goal
         if (rewardGoalConfidence > 0) {
-            input(nar.memory.newTask((Compound) getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence).get());
+            input(nar.memory.task((Compound) getRewardTerm()).present().goal().truth(1.0f, rewardGoalConfidence).get());
         }
     }
 
@@ -383,7 +383,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             if (rFreq < 0) rFreq = 0;
             if (rFreq > 1f) rFreq = 1f;
 
-            input(nar.memory.newTask((Compound) getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence).get());
+            input(nar.memory.task((Compound) getRewardTerm()).judgment().present().truth(rFreq, rewardGoalConfidence).get());
         }
     }
 

@@ -55,7 +55,4 @@ abstract public class NARSeed extends Param {
 
     abstract public LogicPolicy getLogicPolicy();
 
-    public static interface ConceptBuilder {
-        public Concept newConcept(Term t, Budget b, Memory m);
-    }
 }

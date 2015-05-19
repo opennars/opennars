@@ -2,7 +2,10 @@ package nars.op.software;
 
 import nars.Memory;
 import nars.NAR;
+import nars.nal.DefaultTruth;
 import nars.nal.Task;
+import nars.nal.Truth;
+import nars.nal.concept.BelievedConceptBuilder;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
 import nars.nal.nal8.TermFunction;
@@ -84,18 +87,88 @@ public class js extends TermFunction implements Mental {
 
     }
 
+    public class JSBelievedConceptBuilder extends BelievedConceptBuilder {
+
+        private Object fnCompiled;
+
+        public JSBelievedConceptBuilder(String fnsource) {
+
+            ensureJSLoaded();
+
+            try {
+                this.fnCompiled = js.eval(fnsource);
+            }
+            catch (Throwable ex) {
+                ex.printStackTrace();
+            }
+        }
+
+
+        @Override
+        protected Truth truth(Term t) {
+
+            Bindings bindings = new SimpleBindings();
+            bindings.put("t", t);
+            bindings.put("_o", fnCompiled);
+            String input = "_o.apply(this,[t])";
+
+            Object result;
+            try {
+                result = js.eval(input, bindings);
+            } catch (Throwable ex) {
+                ex.printStackTrace();
+                throw new RuntimeException(ex);
+            }
+
+            if (result instanceof Number) {
+                return new DefaultTruth(((Number)result).floatValue(), 0.99f);
+            }
+            if (result instanceof Object[]) {
+                if (((Object[])result).length > 1) {
+                    Object a = ((Object[])result)[0];
+                    Object b = ((Object[])result)[1];
+                    if ((a instanceof Number) && (b instanceof Number)) {
+                        return new DefaultTruth(((Number) a).floatValue(), ((Number) b).floatValue());
+                    }
+                }
+            }
+
+            return null;        }
+    }
+
+
+    /** create dynamic javascript functions */
+    public class jsbelief extends SynchOperator {
+
+
+        @Override
+        protected List<Task> execute(Operation operation, Memory memory) {
+            Term[] x = operation.arg().term;
+
+            String functionCode = Atom.unquote(x[0]);
+
+            nar.on(new JSBelievedConceptBuilder(functionCode));
+
+            operation.stop(memory);
+
+            return null;
+        }
+
+    }
+
+
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
         boolean x = super.setEnabled(n, enabled);
         if (enabled) {
             n.on(new jsop());
+            n.on(new jsbelief());
         }
         return x;
     }
 
 
     public Bindings newBindings(Term[] args) {
-
 
         Bindings bindings = new SimpleBindings();
         bindings.put("global", global);
@@ -107,7 +180,7 @@ public class js extends TermFunction implements Mental {
         return bindings;
     }
 
-    protected void ensureJSLoaded() {
+    protected synchronized void ensureJSLoaded() {
         if (js == null) {
             ScriptEngineManager factory = new ScriptEngineManager();
             js = factory.getEngineByName("JavaScript");

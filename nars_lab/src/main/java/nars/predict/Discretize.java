@@ -156,7 +156,7 @@ public class Discretize {
         }
         else if ((mode == BeliefInsertion.MemoryInput)|| (mode == BeliefInsertion.ImmediateProcess)) {
             
-            Task t = nar.memory.newTask(getValueTerm(variable, level)).judgment().truth(freq, conf).budget(1.0f, 0.8f).get();
+            Task t = nar.memory.task(getValueTerm(variable, level)).judgment().truth(freq, conf).budget(1.0f, 0.8f).get();
 
             System.out.println(t);
             

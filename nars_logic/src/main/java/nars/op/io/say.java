@@ -153,7 +153,7 @@ public class say extends SynchOperator {
 
 
     private List<Task> isWord(Term t, boolean b) {
-        return Arrays.asList(memory.newTask(Inheritance.make(t, WORD)).judgment().
+        return Arrays.asList(memory.task(Inheritance.make(t, WORD)).judgment().
                 truth(b, 0.9f).present().get());
     }
 
@@ -205,14 +205,14 @@ public class say extends SynchOperator {
     }
 
     private List<Task> isQuiet() {
-        return Arrays.asList( memory.newTask(
+        return Arrays.asList( memory.task(
                 Inheritance.make(memory.self(), QUIET)
         ).judgment().present().truth(1.0f, 0.9f).get());
     }
 
     private List<Task> isSpoken(Term t) {
         memory.emit(say.class, t);
-        return Arrays.asList( memory.newTask(
+        return Arrays.asList( memory.task(
                 Inheritance.make(
                         Product.make(t, memory.self()),
                         SAID)
@@ -225,7 +225,7 @@ public class say extends SynchOperator {
                 return Inheritance.make( (Term)input, WORD ) ;
             }
         });
-        return Arrays.asList( memory.newTask(
+        return Arrays.asList( memory.task(
                 Inheritance.make(
                         Product.make(SetExt.make(c), memory.self()),
                         INCOHERENT)

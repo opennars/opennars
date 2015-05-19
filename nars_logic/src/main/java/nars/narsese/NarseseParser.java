@@ -11,10 +11,7 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
-import nars.nal.NALOperator;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
@@ -157,7 +154,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         Truth t = truth.get();
         if ((t == null) && ((p == Symbols.JUDGMENT) || (p == Symbols.GOAL)))
-            t = new Truth.DefaultTruth(p);
+            t = new DefaultTruth(p);
 
         float[] b = budget.get();
         if (b != null && ((b.length == 0) || (Float.isNaN(b[0]))))
@@ -232,10 +229,10 @@ public class NarseseParser extends BaseParser<Object> {
                 firstOf(
                         sequence(
                             Symbols.VALUE_SEPARATOR, ShortFloat(),
-                            swap() && push(new Truth.DefaultTruth((float) pop(), (float) pop()))
+                            swap() && push(new DefaultTruth((float) pop(), (float) pop()))
                         ),
 
-                        push(new Truth.DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
+                        push(new DefaultTruth((float) pop(), Global.DEFAULT_JUDGMENT_CONFIDENCE))
 
                 ),
 

@@ -6,15 +6,15 @@ import nars.Memory.Timing;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.io.*;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.*;
 import nars.nal.concept.Concept;
+import nars.nal.concept.ConceptBuilder;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
@@ -145,7 +145,12 @@ public class NAR extends Container implements Runnable {
         }
         return t;
     }
-
+    public <T extends Compound> ProtoTask<T> task(T t) {
+        return memory.task(t);
+    }
+    public <T extends Compound> ProtoTask<T> task(Sentence<T> s) {
+        return memory.task(s);
+    }
 
     public TextInput input(final String text) {
         //final TextInput i = new TextInput(new TextPerception(this, narsese, narseseParser), text);
@@ -214,7 +219,7 @@ public class NAR extends Container implements Runnable {
                         new Sentence(
                                 narsese.parseCompound(goalTerm),
                                 Symbols.GOAL,
-                                tv = new Truth.DefaultTruth(freq, conf),
+                                tv = new DefaultTruth(freq, conf),
                                 new Stamp(memory, Stamp.UNPERCEIVED, Stamp.ETERNAL)),
                         new Budget(
                                 pri,
@@ -235,7 +240,7 @@ public class NAR extends Container implements Runnable {
                         new Sentence(
                                 narsese.parseCompound(beliefTerm),
                                 Symbols.JUDGMENT,
-                                tv = new Truth.DefaultTruth(freq, conf),
+                                tv = new DefaultTruth(freq, conf),
                                 new Stamp(memory, time(), occurrenceTime)),
                         new Budget(
                                 pri,
@@ -301,13 +306,15 @@ public class NAR extends Container implements Runnable {
     public EventEmitter.Registrations on(Reaction<Class> o, Class... c) {
         return memory.event.on(o, c);
     }
-    public EventEmitter.Registrations on(Reaction<Term> o, Term... c) {
-        return memory.exe.on(o, c);
-    }
 
     public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
         return on(the(c));
     }
+
+    public EventEmitter.Registrations on(Reaction<Term> o, Term... c) {
+        return memory.exe.on(o, c);
+    }
+
     public EventEmitter.Registrations on(Operator o) {
         Term a = o.getTerm();
         EventEmitter.Registrations reg = on(o, a);
@@ -315,7 +322,10 @@ public class NAR extends Container implements Runnable {
         return reg;
     }
 
-
+    /** activate a concept builder */
+    public void on(ConceptBuilder c) {         memory.on(c);    }
+    /** deactivate a concept builder */
+    public void off(ConceptBuilder c) {        memory.off(c);    }
 
     @Deprecated public int getCyclesPerFrame() {
         return cyclesPerFrame;
