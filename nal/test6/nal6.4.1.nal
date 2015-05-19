@@ -1,0 +1,15 @@
+'********** deduction with variable unification
+
+'If something has wings, then it can fly.
+<<$y --> [withwings]> ==> <$y --> flyer>>.
+
+'If something can fly and chirp, then it is a bird.
+<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>. 
+
+
+
+
+'If something can chirp and has wings, then it is a bird.
+''outputMustContain('<(&&,<$1 --> [chirping]>,<$1 --> [withwings]>) ==> <$1 --> bird>>. %1.00;0.81%')
+
+8

@@ -13,6 +13,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.nal.term.Variable;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
@@ -88,7 +89,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 throw new RuntimeException("prepareComponentLinks: " + t.term[i] + " normalized to null in superterm " + t);
             }
 
-            if (ti.isConstant()) {
+            if (!(ti instanceof Variable)) {
                 addTemplate(new TermLinkTemplate(concept, type, ti, i));
             }
 
@@ -105,7 +106,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                 for (short j = 0; j < tiSize; ) {
                     Term tj = cti.term[j].normalized();
 
-                    if (tj.isConstant()) {
+                    if (!(tj instanceof Variable)) {
                         TermLinkTemplate a;
                         if (t1ProductOrImage) {
                             if (type == TermLink.COMPOUND_CONDITION) {
@@ -126,7 +127,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
                         for (short k = 0; k < tjSize; ) {
                             final Term tk = ctj.term[k].normalized();
 
-                            if (tk.isConstant()) {
+                            if (!(tk instanceof Variable)) {
                                 TermLinkTemplate b;
                                 if (type == TermLink.COMPOUND_CONDITION) {
                                     b = new TermLinkTemplate(concept, TermLink.TRANSFORM, tk, 0, i, j, k);
