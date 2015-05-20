@@ -166,6 +166,20 @@ public class Memory implements Serializable {
         }*/
     }
 
+    /** attempt to answer a question task with an Operator execution */
+    public boolean answer(Concept c, Task t) {
+        if (t.sentence.isQuestion()) {
+            Term term = t.getTerm();
+            if (term instanceof Operation) {
+                Operation o = (Operation) term;
+                o.setTask(t);
+                Term e = o.getOperator();
+                exe.emit(e, o, c, this);
+            }
+        }
+        return false;
+    }
+
     /** prepend a conceptbuilder to the conceptbuilder handler chain */
     public void on(ConceptBuilder c) {
         conceptBuilders.add(0, c);

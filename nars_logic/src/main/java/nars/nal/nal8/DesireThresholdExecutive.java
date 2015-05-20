@@ -1,8 +1,7 @@
 package nars.nal.nal8;
 
+import nars.Symbols;
 import nars.nal.concept.Concept;
-import nars.nal.Task;
-import nars.nal.term.Term;
 
 
 public class DesireThresholdExecutive implements Decider {
@@ -11,7 +10,9 @@ public class DesireThresholdExecutive implements Decider {
 
     @Override
     public boolean decide(Concept c, Operation task) {
-        return c.isDesired();
+        if (task.getTask().getPunctuation() == Symbols.GOAL)
+            return c.isDesired();
+        return false;
     }
 
 }

@@ -25,6 +25,7 @@ import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.Symbols;
 import nars.nal.DefaultTruth;
 import nars.nal.Task;
 import nars.nal.concept.Concept;

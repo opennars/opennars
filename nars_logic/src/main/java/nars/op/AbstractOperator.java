@@ -7,7 +7,7 @@ import nars.util.event.Reaction;
 /**
 * Created by me on 1/12/15.
 */
-abstract public class AbstractOperator implements IOperator, Reaction<Class> {
+@Deprecated abstract public class AbstractOperator implements IOperator, Reaction<Class> {
 
     private EventEmitter.Registrations regist = null;
 

@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
+import nars.nal.DirectProcess;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal1.Inheritance;
@@ -21,7 +21,6 @@ import nars.nal.term.Term;
 import nars.nal.term.Variable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 
 /** 
@@ -198,11 +197,13 @@ public abstract class TermFunction<O> extends SynchOperator  {
             //this will get the original input operation term, not after it has been inlined.
             Compound inputTerm = (Compound)operation.getTask().getTerm();
 
-            return Lists.newArrayList(
-                    memory.task(
+            Task b = memory.task(
                             inputTerm
-                    ).judgment().eternal().truth((Truth) y).get()
-            );
+                    ).judgment().eternal().truth((Truth) y).get();
+
+            DirectProcess.run(nar, b);
+
+            return null;
         }
 
 

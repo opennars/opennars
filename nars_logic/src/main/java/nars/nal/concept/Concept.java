@@ -645,20 +645,20 @@ abstract public class Concept extends Item<Term> implements Termed {
     /**
      * To answer a quest or question by existing beliefs
      *
-     * @param newTask The task to be processed
+     * @param n The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final DirectProcess nal, final Task newTask) {
+    protected void processQuestion(final DirectProcess nal, final Task n) {
 
-        Sentence ques = newTask.sentence;
+        Sentence ques = n.sentence;
 
         List<Task> table = ques.isQuestion() ? questions : quests;
 
         if (Global.DEBUG) {
-            if (newTask.sentence.truth!=null) {
-                System.err.println(newTask.sentence + " has non-null truth");
-                System.err.println(newTask.getExplanation());
-                throw new RuntimeException(newTask.sentence + " has non-null truth");
+            if (n.sentence.truth!=null) {
+                System.err.println(n.sentence + " has non-null truth");
+                System.err.println(n.getExplanation());
+                throw new RuntimeException(n.sentence + " has non-null truth");
             }
         }
 
@@ -672,11 +672,11 @@ abstract public class Concept extends Item<Term> implements Termed {
             // (truth==null in all cases, and term will be equal)
 
             if (Global.DEBUG) {
-                if (!t.equalPunctuations(newTask))
-                    throw new RuntimeException("Sentence punctuation mismatch: " + t.sentence.punctuation + " != " + newTask.sentence.punctuation);
+                if (!t.equalPunctuations(n))
+                    throw new RuntimeException("Sentence punctuation mismatch: " + t.sentence.punctuation + " != " + n.sentence.punctuation);
             }
 
-            if (t.equalParents(newTask)) {
+            if (t.equalParents(n)) {
                 ques = t.sentence;
                 newQuestion = false;
                 break;
@@ -684,23 +684,30 @@ abstract public class Concept extends Item<Term> implements Termed {
         }
 
         if (newQuestion) {
-            if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
-                Task removed = table.remove(0);    // FIFO
-                memory.event.emit(ConceptQuestionRemove.class, this, removed, newTask);
-            }
 
-            table.add(newTask);
-            memory.event.emit(ConceptQuestionAdd.class, this, newTask);
+            if (memory.answer(this, n)) {
+
+            }
+            else {
+
+                if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+                    Task removed = table.remove(0);    // FIFO
+                    memory.event.emit(ConceptQuestionRemove.class, this, removed, n);
+                }
+
+                table.add(n);
+                memory.event.emit(ConceptQuestionAdd.class, this, n);
+            }
         }
 
-        onTableUpdated(newTask.getPunctuation(), presize);
+        onTableUpdated(n.getPunctuation(), presize);
 
 
         if (ques.isQuest()) {
-            trySolution(getSentence(ques, goals), newTask, nal);
+            trySolution(getSentence(ques, goals), n, nal);
         }
         else {
-            trySolution(getSentence(ques, beliefs), newTask, nal);
+            trySolution(getSentence(ques, beliefs), n, nal);
         }
     }
 
