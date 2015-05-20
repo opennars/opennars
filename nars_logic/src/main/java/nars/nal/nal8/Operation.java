@@ -226,6 +226,10 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
     }
 
     public Term[] getArgumentTerms( Memory memory) {
+        return getArgumentTerms(memory, false);
+    }
+
+    public Term[] getArgumentTerms( Memory memory, boolean evaluate) {
         final Term[] rawArgs = getArgumentsRaw();
         int numInputs = rawArgs.length;
 
@@ -237,14 +241,14 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
 
         Term[] x;
 
-        /*if (evaluate) {
+        if (evaluate) {
 
             x = new Term[numInputs];
             for (int i = 0; i < numInputs; i++) {
-                x[i] = evaluate(getOperator().getMemory(), rawArgs[i]);
+                x[i] = eval.eval(rawArgs[i], memory);
             }
         }
-        else */ {
+        else  {
             x = Arrays.copyOfRange(rawArgs, 0, numInputs);
         }
 
@@ -298,20 +302,20 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
     public Operation inline(Memory memory) {
         if (!hasEval()) return this;
 
-        int s = arg().length();
-        Term[] n = new Term[s];
-        for (int i = 0; i < s; i++) {
-            Term x = arg(i);
-            if (x instanceof Operation) {
-                Operation o = (Operation) x;
-                if (o.getOperator().equals(eval.term)) {
-                    x = eval.eval(x, memory);
-                }
-            }
-            n[i] = x;
-        }
+//        int s = arg().length();
+//        Term[] n = new Term[s];
+//        for (int i = 0; i < s; i++) {
+//            Term x = arg(i);
+//            if (x instanceof Operation) {
+//                Operation o = (Operation) x;
+//                if (o.getOperator().equals(eval.term)) {
+//                    x = eval.eval(x, memory);
+//                }
+//            }
+//            n[i] = x;
+//        }
 
-        return clone(Product.make(n));
+        return clone(Product.make(getArgumentTerms(memory, true)));
     }
 
     protected boolean hasEval() {

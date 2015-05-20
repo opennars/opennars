@@ -26,7 +26,7 @@ public class eval extends TermFunction {
             final Term op = o.getOperator();
             TermFunction tf = getTheTermFunction(op, m);
             if (tf instanceof TermFunction) {
-                return term(((TermFunction) tf).function(o.getArgumentTerms(m)));
+                return term(((TermFunction) tf).function(o.getArgumentTerms(m,true)));
             }
         }
 

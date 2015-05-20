@@ -185,7 +185,9 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         if (obj == this) return true;
         if (obj instanceof Task) {
             Task t = (Task)obj;
-            return sentence.equals(t.sentence);// && equalParents(t);
+            Sentence ts = t.sentence;
+            if (sentence == null && ts !=null) return false;
+            return sentence.equals(ts);// && equalParents(t);
         }
         return false;        
     }
