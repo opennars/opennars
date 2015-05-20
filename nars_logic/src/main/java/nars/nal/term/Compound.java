@@ -164,7 +164,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     /**
-     * Deep clone an array list of terms
+     * Shallow clone an array list of terms
      *
      * @param original The original component list
      * @return an identical and separate copy of the list
@@ -206,6 +206,8 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
             ar[i] = a;
         }
     }
+
+    public Term term(int i ) { return term[i]; }
 
     /**
      * Abstract method to get the operate of the compound
@@ -431,22 +433,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     }
 
-    public boolean subjectOrPredicateIsIndependentVar() {
-        if (!(this instanceof Statement))
-            return false;
 
-        Statement cont=(Statement)this;
-        if (!cont.hasVarIndep()) return false;
-
-        Term subj = cont.getSubject();
-        if ((subj instanceof Variable) && (subj.hasVarIndep()))
-            return true;
-        Term pred = cont.getPredicate();
-        if ((pred instanceof Variable) && (pred.hasVarIndep()))
-            return true;
-
-        return false;
-    }
 
     /**
      * call this after changing Term[] contents: recalculates variables and complexity
@@ -636,12 +623,18 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     /**
-     * Clone the component list
-     *
-     * @return The cloned component list
+     * (shallow) Clone the component list
      */
     public Term[] cloneTerms(final Term... additional) {
+
         return cloneTermsAppend(term, additional);
+    }
+
+    /**
+     * (shallow) Clone the component list
+     */
+    public Term[] cloneTerms() {
+        return Arrays.copyOf(term, term.length);
     }
 
 

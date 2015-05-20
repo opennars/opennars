@@ -148,8 +148,13 @@ public class NAR extends Container implements Runnable {
     public <T extends Compound> ProtoTask<T> task(T t) {
         return memory.task(t);
     }
-    public <T extends Compound> ProtoTask<T> task(Sentence<T> s) {
-        return memory.task(s);
+
+    public <T extends Compound> Task<T> task(Sentence<T> s) {
+        return task(s, null);
+    }
+
+    public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
+        return memory.task(s, parentTask);
     }
 
     public TextInput input(final String text) {

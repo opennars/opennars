@@ -35,6 +35,7 @@ import org.junit.Test;
 
 import java.util.TreeSet;
 
+import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -349,7 +350,7 @@ public class TermTest {
         nullCachedName("{x}");
     }
 
-    @Test public void testTermEqualityWithQueryVariables() {
+    @Test public void termEqualityWithQueryVariables() {
         NAR n = new NAR(new Default());
         String a = "<?1-->bird>";
         assertEquals(n.term(a), n.term(a));
@@ -357,4 +358,9 @@ public class TermTest {
         assertEquals(n.term(b), n.term(b));
     }
 
+    @Test public void validStatement() {
+        NAR n = new NAR(new Default());
+        Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
+        assertFalse(Statement.invalidStatement((Inheritance)t));
+    }
 }

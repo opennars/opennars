@@ -156,12 +156,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
     }
 
-
-
-    public Task(ProtoTask<T> t) {
-        this(t.getSentence(), t.getBudget(), t.getParentTask(), t.getParentBelief(), null);
-    }
-
     @Override
     public Task clone() {
 

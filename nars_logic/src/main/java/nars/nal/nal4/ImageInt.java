@@ -100,15 +100,16 @@ public class ImageInt extends Image {
         if (relation instanceof Product) {
             Product p2 = (Product) relation;
             if ((product.length() == 2) && (p2.length() == 2)) {
-                if ((index == 0) && product.term[1].equals(p2.term[1])) {// (\,_,(*,a,b),b) is reduced to a
-                    return p2.term[0];
+                if ((index == 0) && product.term(1).equals(p2.term(1))) {// (\,_,(*,a,b),b) is reduced to a
+                    return p2.term(0);
                 }
-                if ((index == 1) && product.term[0].equals(p2.term[0])) {// (\,(*,a,b),a,_) is reduced to b
-                    return p2.term[1];
+                if ((index == 1) && product.term(0).equals(p2.term(0))) {// (\,(*,a,b),a,_) is reduced to b
+                    return p2.term(1);
                 }
             }
         }
-        Term[] argument = product.cloneTerms(); //TODO is this clone needed?
+
+        Term[] argument = product.cloneTerms(); //shallow clone necessary because the index argument is replaced
         argument[index] = relation;
         return make(argument, index);
     }

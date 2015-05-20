@@ -133,8 +133,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
             @Override
             protected java.util.List<Task> execute(Operation operation, Memory memory) {
-                Term[] args = operation.arg().term;
-                if (args.length != 2) { // || args.length==3) { //left, self
+
+                if (operation.args() != 2) { // || args.length==3) { //left, self
                     //System.err.println(this + " ?? " + Arrays.toString(args));
                     return null;
                 }

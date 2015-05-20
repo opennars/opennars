@@ -146,9 +146,9 @@ public class NarseseParserTest {
 
     protected void testProductABC(Product p) throws InvalidInputException {
         assertEquals(p.toString() + " should have 3 sub-terms", 3, p.length());
-        assertEquals("a", p.term[0].toString());
-        assertEquals("b", p.term[1].toString());
-        assertEquals("c", p.term[2].toString());
+        assertEquals("a", p.term(0).toString());
+        assertEquals("b", p.term(1).toString());
+        assertEquals("c", p.term(2).toString());
     }
 
     @Test

@@ -74,7 +74,7 @@ abstract public class Image extends DefaultCompound {
     }
 
     protected static byte[] makeImageKey(final NALOperator op, final Term[] arg, final int relationIndex) {
-        final int sizeEstimate = 24 * arg.length + 2;
+        final int sizeEstimate = 16 * arg.length + 2;
         ByteBuf b = ByteBuf.create(sizeEstimate)
                 .add((byte)COMPOUND_TERM_OPENER.ch)
                 .add(op.toBytes())

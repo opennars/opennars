@@ -671,7 +671,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
      * returns true if the term is invalid for use as sentence content term
      * */
     public static final boolean invalidSentenceTerm(final Term t) {
-        if ((t == null) || (!(t instanceof Compound))) { //(t instanceof Interval) || (t instanceof Variable)
+        if (!(t instanceof Compound)) { //(t instanceof Interval) || (t instanceof Variable)
             return true;
         }
 
@@ -682,7 +682,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
             if (st.subjectOrPredicateIsIndependentVar())
                 return true;
 
-            if (Statement.invalidStatement(st.getSubject(), st.getPredicate()))
+            if (Statement.invalidStatement(st))
                 return true;
 
         }

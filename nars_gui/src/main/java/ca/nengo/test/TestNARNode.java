@@ -105,7 +105,7 @@ public class TestNARNode  {
         protected void initOperators() {
 
             //access to world objects
-            nar.on(new SynchOperator("^object") {
+            nar.on(new SynchOperator("object") {
 
                 @Override
                 protected List<Task> execute(Operation operation, Memory memory) {
@@ -113,7 +113,7 @@ public class TestNARNode  {
                 }
             });
 
-            /*nar.addPlugin(new SynchronousSentenceFunction("^near") {
+            /*nar.addPlugin(new SynchronousSentenceFunction("near") {
 
 
                 @Override
@@ -126,7 +126,7 @@ public class TestNARNode  {
 
             });*/
 
-            nar.on(new TermFunction("^see") {
+            nar.on(new TermFunction("see") {
 
 
                 @Override
@@ -190,14 +190,14 @@ public class TestNARNode  {
 
             });
 
-            nar.on(new SynchOperator("^move") {
+            nar.on(new SynchOperator("move") {
 
                 @Override
                 protected List<Task> execute(Operation operation, Memory memory) {
 
                     double dx = 64;
                     boolean error = true;
-                    Term[] args = operation.arg().term;
+                    Term[] args = operation.argArray();
                     if (args.length > 1) {
                         Term param = args[0];
                         String ps = param.toString();
@@ -222,13 +222,13 @@ public class TestNARNode  {
                     return null;
                 }
             });
-            nar.on(new SynchOperator("^turn") {
+            nar.on(new SynchOperator("turn") {
 
                 @Override
                 protected List<Task> execute(Operation operation, Memory memory) {
                     double dA = Math.PI / 4; //radians
 
-                    Term[] args = operation.arg().term;
+                    Term[] args = operation.argArray();
                     boolean error = true;
                     if (args.length > 1) {
                         Term param = args[0];

@@ -94,18 +94,18 @@ abstract public class VNCControl extends VNCClient {
 
             int dx = 0, dy = 0;
 
-            String charX = s.term[0].toString();
+            String charX = s.term(0).toString();
             switch (charX) {
                 case "L": dx = -1; break;
                 case "R": dx = 1; break;
             }
-            String charY = s.term[1].toString();
+            String charY = s.term(1).toString();
             switch (charY) {
                 case "U": dy = -1; break;
                 case "D": dy = 1; break;
             }
-            if (s.term.length > 2 && s.term[2] instanceof Product) {
-                next = (Product)s.term[2];
+            if (s.length() > 2 && s.term(2) instanceof Product) {
+                next = (Product)s.term(2);
             }
 
             cx += wx * dx;

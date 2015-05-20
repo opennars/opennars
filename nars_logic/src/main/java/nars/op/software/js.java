@@ -73,7 +73,7 @@ public class js extends TermFunction implements Mental {
 
         @Override
         protected List<Task> execute(Operation operation, Memory memory) {
-            Term[] x = operation.arg().term;
+            Term[] x = operation.argArray();
             String funcName = Atom.unquote(x[0]);
             String functionCode = Atom.unquote(x[1]);
             nar.input(new Echo(nars.op.software.js.class, "JS Operator Bind: " + funcName + " = " + functionCode));
@@ -143,7 +143,7 @@ public class js extends TermFunction implements Mental {
 
         @Override
         protected List<Task> execute(Operation operation, Memory memory) {
-            Term[] x = operation.arg().term;
+            Term[] x = operation.argArray();
 
             String functionCode = Atom.unquote(x[0]);
 

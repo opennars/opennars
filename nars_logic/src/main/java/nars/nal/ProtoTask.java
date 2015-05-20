@@ -34,13 +34,7 @@ public class ProtoTask<T extends Compound> {
         this.budget = bv;
         return this;
     }
-    public ProtoTask<T> priority(float p) {
-        if (budget == null)
-            pri = p;
-        else
-            budget.setPriority(p);
-        return this;
-    }
+
 
     public ProtoTask<T> truth(boolean freqAsBoolean, float conf) {
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
@@ -52,10 +46,6 @@ public class ProtoTask<T extends Compound> {
 
     public ProtoTask<T> truth(float freq, float conf, float epsilon) {
         this.truth = new DefaultTruth(freq, conf, epsilon);
-        if (budget == null) {
-            //set a default budget if none exists
-            budget = new Budget(punc, truth);
-        }
         return this;
     }
 
@@ -103,22 +93,22 @@ public class ProtoTask<T extends Compound> {
 
     /** build the new instance */
     public Task get() {
-        if (this.budget == null)
+        if (this.budget == null) {
+            //if budget not specified, use the default given the punctuation and truth
             this.budget = new Budget(punc, truth);
-        return new Task(this);
+        }
+
+        return new Task(getSentence(), getBudget(), getParentTask(), getParentBelief(), null);
     }
 
 
-    public Sentence<T> getSentence() {
+    protected Sentence<T> getSentence() {
         return new Sentence(term, punc, truth,
                 stamp == null ? new Stamp(memory, tense) : stamp);
     }
 
-    public Budget getBudget() {
-//        if (budget == null)
-//            return new Budget(pri, dur, truth);
-//        else
-            return budget;
+    protected Budget getBudget() {
+        return budget;
     }
 
     public Task getParentTask() {

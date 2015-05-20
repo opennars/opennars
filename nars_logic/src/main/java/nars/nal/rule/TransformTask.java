@@ -203,7 +203,7 @@ public class TransformTask extends ConceptFireTask {
         if (subject instanceof Product) {
             Product product = (Product) subject;
             for (short i = 0; i < product.length(); i++) {
-                newSubj = product.term[i];
+                newSubj = product.term(i);
                 newPred = ImageExt.make(product, predicate, i);
                 inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
@@ -259,7 +259,7 @@ public class TransformTask extends ConceptFireTask {
             Product product = (Product) predicate;
             for (short i = 0; i < product.length(); i++) {
                 newSubj = ImageInt.make(product, subject, i);
-                newPred = product.term[i];
+                newPred = product.term(i);
                 inheritance = Inheritance.make(newSubj, newPred);
                 if (inheritance != null) {
                     if (truth == null) {

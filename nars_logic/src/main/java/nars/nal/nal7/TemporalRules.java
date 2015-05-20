@@ -311,14 +311,14 @@ public class TemporalRules {
                     if (ss2_term instanceof Product) {
                         Product ss2_prod = (Product) ss2_term;
 
-                        if (applicableVariableType && Terms.contains(ss2_prod.term, comp)) { //only if there is one and it isnt a variable already
+                        if (applicableVariableType && Terms.contains(ss2_prod.terms(), comp)) { //only if there is one and it isnt a variable already
                             Term[] ars = ss2_prod.cloneTermsReplacing(comp, var1);
 
                             t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
 
                             Operation op = (Operation) Operation.make(
                                     ss2.getPredicate(),
-                                    new Product(ars)
+                                    Product.make(ars)
                             );
 
                             t22 = op;
@@ -334,7 +334,7 @@ public class TemporalRules {
                     if (ss1_term instanceof Product) {
                         Product ss1_prod = (Product) ss1_term;
 
-                        if (applicableVariableType && Terms.contains(ss1_prod.term, comp)) { //only if there is one and it isnt a variable already
+                        if (applicableVariableType && Terms.contains(ss1_prod.terms(), comp)) { //only if there is one and it isnt a variable already
 
                             Term[] ars = ss1_prod.cloneTermsReplacing(comp, var1);
 
@@ -343,7 +343,7 @@ public class TemporalRules {
 
                             Operation op = (Operation) Operation.make(
                                     ss1.getPredicate(),
-                                    new Product(ars)
+                                    Product.make(ars)
                             );
 
                             t11 = op;

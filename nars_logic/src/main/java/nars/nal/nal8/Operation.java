@@ -113,7 +113,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     @Override
     protected byte[] makeKey() {
         byte[] op = getPredicate().name();
-        Term[] arg = argArray();
+        //Term[] arg = argArray();
 
         ByteBuf b = ByteBuf.create(64);
         //b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch).add(op);
@@ -122,7 +122,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
 
         int n=0;
-        for (final Term t : arg) {
+        for (final Term t : arg()) {
             /*if(n==arg.length-1) {
                 break;
             }*/
@@ -150,38 +150,13 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
     public Product arg() {
-        return getSubject().the();
+        return arg;//getSubject().the();
     }
-
-
-//    @Deprecated public static Term make(Term[] raw) {
-//        if (raw.length < 1) {
-//            //must include at least the operate as the first term in raw[]
-//            return null;
-//        }
-//
-//        Term operator = raw[0];
-//
-//        Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
-//
-//        return make(operator, args);
-//    }
 
     public Term arg(int i) {
-        return arg().term[i];
+        return arg().term(i);
     }
 
-//    @Override
-//    public boolean isExecutable(Memory mem) {
-//        //don't allow ^want and ^believe to be active/have an effect,
-//        //which means its only used as monitor
-//        return getOperator().isExecutable(mem);
-//    }
-
-
-//    public static Operation make(Operator opTerm, Term... arg) {
-//        return make(opTerm, arg, null);
-//    }
 
     public Task newSubTask(Sentence sentence, Budget budget) {
         return new Task(sentence, budget, getTask());
@@ -224,9 +199,12 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         return (Operation)setComponent(0, Product.make(args, additional));
     }
 
-    /** returns a reference to the raw arguments as contained by the Product subject of this operation */
-    public Term[] argArray() {
-        return arg().term;
+    /** returns a reference to the raw arguments as contained by the Product subject of this operation
+     * avoid using this because it may involve creation of unnecessary array
+     * if Product1.terms() is called
+     * */
+    @Deprecated public Term[] argArray() {
+        return arg().terms();
     }
 
     public Truth getConceptDesire(Memory m) {
@@ -262,24 +240,28 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      * @return
      */
     public Operation inline(Memory memory) {
-        if (!hasEval()) return this;
+        //if (!hasEval()) return this;
         return clone(Product.make(arg(memory, true)));
     }
 
-    protected boolean hasEval() {
-        for (Term x : arg().term) {
-            if (x instanceof Operation) {
-                Operation o = (Operation)x;
-                if (o.getOperator().equals(eval.term)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+//    protected boolean hasEval() {
+//        for (Term x : arg().term) {
+//            if (x instanceof Operation) {
+//                Operation o = (Operation)x;
+//                if (o.getOperator().equals(eval.term)) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
     /** use this to restrict potential operator (predicate terms) */
     public static boolean validOperatorTerm(Term t) {
         return t instanceof Term;
+    }
+
+    public int args() {
+        return arg().length();
     }
 }

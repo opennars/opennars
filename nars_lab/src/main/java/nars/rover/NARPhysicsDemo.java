@@ -58,7 +58,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
             @Override
             protected List<Task> execute(Operation operation, Memory memory) {
 
-                Term[] args = operation.arg().term;
+                Term[] args = operation.argArray();
                 if ((autonomous) || (operation.getTask().isInput())) {
 
 

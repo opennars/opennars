@@ -46,11 +46,11 @@ public class Goto extends SynchOperator {
         //Operation content = (Operation) task.getContent();
         //Operator op = content.getOperator();
 
-        Term[] args = operation.arg().term;
+
         TestChamber.executed=true;
         TestChamber.executed_going=true;
         System.out.println("Executed: " + this);
-        for (Term t : args) {
+        for (Term t : operation.arg()) {
             System.out.println(" --- " + t);
             TestChamber.operateObj(t.toString(), "go-to");
             break;

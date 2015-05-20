@@ -255,8 +255,8 @@ public class RunQLAgent extends JPanel {
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.35f)
-                //new RawPerception.BipolarDirectPerception("L", 0.25f)
+                new RawPerception("L", 0.1f)
+                //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
                 //new AEPerception("A", 0.05f, 7, 0).setLearningRate(0.01).setSigmoid(false)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)

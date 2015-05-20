@@ -65,7 +65,7 @@ public class scheme extends TermFunction {
         public Term apply(Expression schemeObj) {
             if (schemeObj instanceof ListExpression) {
                 List<Term> elements = Lists.newArrayList( Iterables.transform(((ListExpression)schemeObj).value, schemeToNars));
-                return new Product( elements );
+                return Product.make( elements );
             }
             //TODO handle other types, like Object[] etc
             else {

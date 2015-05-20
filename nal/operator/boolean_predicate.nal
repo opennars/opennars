@@ -1,0 +1,8 @@
+<{1,2,3,4,5} --> num>. %1.00;0.99%
+
+<<{$n} --> num> ==> lessThan(3, $n)>?
+
+<(&&, <{$n} --> num>, lessThan(3, $n)) ==> pick($n)>! :|: %1.00;0.99%
+
+''outputMustContain('pick(4,SELF)! :\:')
+''outputMustContain('pick(5,SELF)! :\:')

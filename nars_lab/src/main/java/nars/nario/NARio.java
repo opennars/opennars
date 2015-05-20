@@ -137,7 +137,7 @@ public class NARio extends Run implements RLEnvironment {
 
     final DoubleArrayList o = new DoubleArrayList();
 
-    final int rad = 2;
+    final int rad = 3;
     final DoubleArrayList radar = DoubleArrayList.newWithNValues((rad*2+1)*(rad*2+1), 0);
 
 
@@ -292,15 +292,19 @@ public class NARio extends Run implements RLEnvironment {
 //                                            ")) --> space>. :|:";
                     String direction = direction(i, j);
 
-                    char datachar = (char) ('r' + data);
+                    //char datachar = (char) ('r' + block);
                     //String s = "<" + direction + " --> [solid]>. :|: %" + (blocked ? 1.0 : 0.0) + ";0.90%";
 
 
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(i * i + j * j)));
 
                     if (t % radarPeriod == 0) {
-                        String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [" + datachar + "]>. :|:";
+                        String s2 = "$" + sightPriority + "$" + "<" + direction + "--> [b" + Integer.toHexString(128 + block) + "]>. :|:";
+                        //System.out.println(blocked + " " + s2);
                         input(s2);
+                    }
+                    else {
+                        //System.out.println(blocked);
                     }
 
                     radar.set(rr++, blocked ? -1 : 1);
@@ -347,8 +351,10 @@ public class NARio extends Run implements RLEnvironment {
 
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
 
-                    nar.input("$" + sightPriority + "$" +
-                            " <{" + type + "} --> " + direction(dx, dy) + ">. :|:");
+                    String sees = "$" + sightPriority + "$" +
+                            " <" + direction(dx, dy)  + " --> [" + type + "]>. :|:";
+                    //System.out.println(sees);
+                    nar.input(sees);
 
                     //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
                 }

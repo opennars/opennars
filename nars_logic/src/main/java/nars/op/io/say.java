@@ -120,7 +120,7 @@ public class say extends SynchOperator {
 //            }
 //        }
 
-        Term[] args = operation.arg().term;
+        Term[] args = operation.argArray();
         int argsLength = args.length - 1; //ignore ending SELF
 
         if (argsLength == 1) {

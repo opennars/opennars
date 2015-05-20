@@ -204,7 +204,7 @@ public class InternalExperience extends AbstractOperator {
             //also get a chance to reveal its effects to the system this way
             Atom op = memory.the(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
             if(op!=null) {
-                Product prod=new Product(belief.term);
+                Product prod=Product.make(belief.term);
 
                 Term new_term=Inheritance.make(prod, op);
                 Sentence sentence = new Sentence(
@@ -248,7 +248,7 @@ public class InternalExperience extends AbstractOperator {
                 if(valid) {
 
 
-                    Product args=new Product(imp.getPredicate());
+                    Product args = Product.make(imp.getPredicate());
                     Term new_term=Operation.make(anticipateOp, args);
 
                     Sentence sentence = new Sentence(

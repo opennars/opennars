@@ -91,7 +91,7 @@ public class OperatorTest {
 
         AtomicBoolean executed = new AtomicBoolean(false);
 
-        n.on(new SynchOperator(n.term("<a --> b>")) {
+        n.on(new SynchOperator((Term)n.term("<a --> b>")) {
             @Override protected List<Task> execute(Operation operation, Memory memory) {
                 executed.set(true);
                 return null;

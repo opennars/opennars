@@ -43,15 +43,6 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
         init(term);
     }
 
-    @Deprecated protected Inheritance() {
-        super();
-    }
-    
-    /*protected Inheritance(final Term subj, final Term pred) {
-        this(subj, pred);
-    }*/
-
-
     
     /**
      * Clone an object

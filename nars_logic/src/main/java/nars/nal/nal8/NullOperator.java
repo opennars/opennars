@@ -55,7 +55,7 @@ public class NullOperator extends SynchOperator {
             memory.emit(getClass(),
                     //HACK
                     name,
-                    Arrays.toString(o.arg().term)
+                    o.arg()
             );
         }
         return null;

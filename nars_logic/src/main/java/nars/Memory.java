@@ -599,7 +599,7 @@ public class Memory implements Serializable {
             case DIFFERENCE_INT:
                 return DifferenceInt.make(a);
             case PRODUCT:
-                return new Product(a);
+                return Product.make(a);
             case IMAGE_EXT:
                 return ImageExt.make(a);
             case IMAGE_INT:
@@ -943,8 +943,9 @@ public class Memory implements Serializable {
     public <T extends Compound> ProtoTask<T> task(T t) {
         return new ProtoTask(this, t);
     }
-    public <T extends Compound> ProtoTask<T> task(Sentence<T> s) {
-        return new ProtoTask(this, s);
+
+    public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
+        return new Task(s, new Budget(s.punctuation, s.truth), parentTask);
     }
 
 

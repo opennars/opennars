@@ -21,7 +21,6 @@ abstract public class AsynchOperator extends Operator {
 
             @Override
             public void run() {
-                final Term[] args = op.arg().term;
 
                 List<Task> feedback;
                 try {

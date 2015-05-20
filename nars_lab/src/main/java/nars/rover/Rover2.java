@@ -459,7 +459,7 @@ public class Rover2 extends PhysicsModel {
             @Override
             protected List<Task> execute(Operation operation, Memory memory) {
 
-                Term[] args = operation.arg().term;
+                Term[] args = operation.argArray();
                 Term t1 = args[0];
 
                 float priority = operation.getTask().getPriority();

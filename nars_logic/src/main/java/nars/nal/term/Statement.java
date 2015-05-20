@@ -213,6 +213,11 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
                 .toBytes();
     }
 
+    final public static boolean invalidStatement(Statement s) {
+        return invalidStatement(s.getSubject(), s.getPredicate());
+    }
+
+
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>
@@ -278,7 +283,20 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
         boolean s2Indep = s2.hasVarIndep();
         return (s1Indep && !s2Indep || !s1Indep && s2Indep);
     }
-    
+
+    public boolean subjectOrPredicateIsIndependentVar() {
+        if (!hasVarIndep()) return false;
+
+        Term subj = getSubject();
+        if ((subj instanceof Variable) && (subj.hasVarIndep()))
+            return true;
+
+        Term pred = getPredicate();
+        if ((pred instanceof Variable) && (pred.hasVarIndep()))
+            return true;
+
+        return false;
+    }
 
     /**
      * Check the validity of a potential Statement. [To be refined]

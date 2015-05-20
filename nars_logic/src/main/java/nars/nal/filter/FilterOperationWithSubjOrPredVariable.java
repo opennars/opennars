@@ -16,8 +16,8 @@ public class FilterOperationWithSubjOrPredVariable implements DerivationFilter {
         Term t = task.sentence.term;
         if (t instanceof Operation) {
             Operation op = (Operation)t;
-            if (op.getSubject() instanceof Variable || op.getPredicate() instanceof Variable) {
-                return "Operation with variable as subject or predicate";
+            if (/*op.getSubject() instanceof Variable || */op.getPredicate() instanceof Variable) {
+                return "Operation with variable as predicate";
             }
         }
         return null;

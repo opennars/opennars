@@ -45,7 +45,7 @@ abstract public class Flat extends TermFunction {
 
         @Override
         public Term result(List<Term> terms) {
-            return new Product(terms);
+            return Product.make(terms);
         }
 
     }
