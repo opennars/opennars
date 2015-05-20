@@ -339,7 +339,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     /** generally, op will be an Operation instance */
     public Task setCause(final Operation op) {
-        if (op.getTask().equals(this))
+        if (this.equals(op.getTask()))
             return this; //dont set the cause to itself
 
         this.cause = op;

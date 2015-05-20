@@ -9,8 +9,10 @@ import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.ImageExt;
+import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -45,7 +47,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
     }
 
     public static int integer(Term x) throws NumberFormatException {
-        return Texts.i(x.toString());
+        return Texts.i(Atom.unquote(x));
     }
 
     /** y = function(x) 
@@ -71,8 +73,9 @@ public abstract class TermFunction<O> extends SynchOperator  {
         //      <2 --> (/,^count,{a,b},_,SELF)>. :|: %1.00;0.99%
         //transform to image for perception variable introduction rule (is more efficient representation
 
+        Product originalArgs =  ((Operation)operation.getTask().getTerm()).arg();
         Inheritance inh=Inheritance.make(y,
-                ImageExt.make(operation.arg(), operation.getPredicate(), (short)(numArgs))
+                ImageExt.make(originalArgs, operation.getPredicate(), (short)(numArgs))
                 );
 
         //Implication.make(operation, actual_part, TemporalRules.ORDER_FORWARD);
@@ -168,21 +171,25 @@ public abstract class TermFunction<O> extends SynchOperator  {
             numInputs--;
         }
 
-        Term[] x0 = operation.getArgumentTerms(false, memory);
-        Term[] x = operation.getArgumentTerms(true, memory);
+        //Term[] x0 = operation.getArgumentTerms(false, memory);
+        Term[] x = operation.getArgumentTerms(memory);
 
-        final Object y = function(x);
+        Object y = function(x);
 
         if (y == null) {
             return null;
+        }
+        if (y instanceof Number) {
+            y = (Atom.the((Number)y));
         }
 
         if (y instanceof Task) {
             return Lists.newArrayList((Task)y);
         }
         else if (y instanceof Term) {
-            return result(operation, (Term) y, x0, lastTerm);
+            return result(operation, (Term) y, x, lastTerm);
         }
+
 
         String ys = y.toString();
         char ysz = ys.charAt(ys.length() - 1);
@@ -202,7 +209,7 @@ public abstract class TermFunction<O> extends SynchOperator  {
 
         Term t = nar.term(ys);
         if (t != null)
-            return result(operation, t, x0, lastTerm);
+            return result(operation, t, x, lastTerm);
 
 
         throw new RuntimeException(this + " return value invalid: " + y);

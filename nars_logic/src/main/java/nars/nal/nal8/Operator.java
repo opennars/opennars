@@ -89,7 +89,8 @@ abstract public class Operator implements Reaction<Term> {
 
     @Override
     public void event(Term event, Object... args) {
-        Operation o = (Operation) args[0];
+        Operation input = ((Operation) args[0]);
+        Operation o = input.inline(getMemory());
         Concept c = (Concept) args[1];
         Memory m = (Memory) args[2];
         if (decider().decide(c, o))
@@ -118,7 +119,7 @@ abstract public class Operator implements Reaction<Term> {
      * @return The direct collectable results and feedback of the
      * reportExecution
      */
-    protected abstract List<Task> execute(Operation operation, Memory memory);
+    protected abstract List<Task> execute(Operation input, Memory memory);
 
 
     @Override
@@ -179,6 +180,8 @@ abstract public class Operator implements Reaction<Term> {
     /** internal notice of the execution */
     protected void noticeExecuted(final Operation operation, final Memory memory) {
         final Task opTask = operation.getTask();
+        //if (opTask == null) return;
+
         memory.logic.TASK_EXECUTED.hit();
 
         memory.taskAdd(

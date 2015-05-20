@@ -128,10 +128,11 @@ public class DefaultCycle extends SequentialCycle {
 
         executingNewTasks = false;
 
-        for (Task t : incoming)
-            newTasks.add(t);
-
-        incoming.clear();
+        if (!incoming.isEmpty()) {
+            for (Task t : incoming)
+                newTasks.add(t);
+            incoming.clear();
+        }
     }
 
     /** returns whether the task was run */

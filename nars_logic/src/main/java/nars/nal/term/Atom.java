@@ -104,9 +104,13 @@ public class Atom implements Term {
 
     public final static Term the(Object o) {
         if (o instanceof Term) return (Term)o;
-        if (o instanceof String) {
+        else if (o instanceof Number) {
+            return quote(((Number)o).toString());
+        }
+        else if (o instanceof String) {
             return the((String) o);
         }
+
         return null;
     }
 

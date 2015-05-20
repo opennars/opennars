@@ -27,6 +27,8 @@ import nars.nal.tlink.TermLinkKey;
 import nars.op.app.STMInduction;
 import nars.op.data.Flat;
 import nars.op.data.json;
+import nars.op.data.similaritree;
+import nars.op.eval;
 import nars.op.io.say;
 import nars.op.io.schizo;
 import nars.op.math.add;
@@ -210,6 +212,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         return new Operator[] {
 
+                new eval(),
 
                 //new Wait(),
                 new believe(),  // accept a statement with a default truth-value
@@ -247,6 +250,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
                 //Term manipulation
                 new Flat.flatProduct(),
+                new similaritree(),
 
                 //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
                 //new Javascript(),  // javascript evaluation

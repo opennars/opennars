@@ -161,6 +161,9 @@ public class Memory implements Serializable {
             Term e = o.getOperator();
             exe.emit(e, o, c, this);
         }
+        /*else {
+            System.err.println("Unexecutable: " + t);
+        }*/
     }
 
     /** prepend a conceptbuilder to the conceptbuilder handler chain */

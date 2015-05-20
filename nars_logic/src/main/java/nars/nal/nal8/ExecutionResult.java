@@ -28,6 +28,9 @@ public class ExecutionResult {
 
     @Override
     public String toString() {
+        Task t = getTask();
+        //if (t == null) return "";
+
         if (operation instanceof ImmediateOperation) {
             return operation.toString();
         } else {
@@ -35,7 +38,7 @@ public class ExecutionResult {
             Term operator = operation.getOperator();
             StringBuilder sb = new StringBuilder();
 
-            getTask().appendToString(sb, memory);
+            t.appendToString(sb, memory);
 
 //                Budget b = getTask();
 //                if (b!=null)

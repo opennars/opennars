@@ -23,13 +23,16 @@ package nars.nal.nal8;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.*;
+import nars.nal.NALOperator;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
-import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.op.eval;
 import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
@@ -67,8 +70,15 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
      */
     @Override
     public Operation<T> clone() {
-        return new Operation(getSubject(), getOperator());
+        return clone(getSubject());
     }
+
+    public Operation<T> clone(Product args) {
+        Operation x = new Operation(args, getOperator());
+        x.setTask(getTask());
+        return x;
+    }
+
  
    
     /**
@@ -215,7 +225,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
         return new Task(sentence, budget, getTask());
     }
 
-    public Term[] getArgumentTerms(boolean evaluate, Memory memory) {
+    public Term[] getArgumentTerms( Memory memory) {
         final Term[] rawArgs = getArgumentsRaw();
         int numInputs = rawArgs.length;
 
@@ -241,37 +251,6 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
         return x;
     }
 
-    protected static Term evaluate(final Memory m, final Term x) {
-//        if (x instanceof Operation) {
-//            final Operation o = (Operation)x;
-//            final Operator op = o.getOperator();
-//            if (op instanceof TermEval) {
-//                return ((TermFunction)op).function(o.getArgumentTerms(true));
-//            }
-//        }
-
-        if (x instanceof Compound) {
-            Compound ct = (Compound)x;
-            Term[] r = new Term[ct.length()];
-            boolean modified = false;
-            int j = 0;
-            for (final Term w : ct.term) {
-                Term v = evaluate(m, w);
-                if ((v!=null) && (v!=w)) {
-                    r[j] = v;
-                    modified = true;
-                }
-                else {
-                    r[j] = w;
-                }
-                j++;
-            }
-            if (modified)
-                return ct.clone(r);
-        }
-
-        return x; //return as-is
-    }
 
 
     /** produces a cloned instance with the replaced args + additional terms in a new argument product */
@@ -310,5 +289,40 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
      */
     public void stop(Memory memory) {
         memory.concept(getTerm()).delete();
+    }
+
+    /** if any of the arguments are 'eval' operations, replace its result
+     * in that position in a cloned Operation instance
+     * @return
+     */
+    public Operation inline(Memory memory) {
+        if (!hasEval()) return this;
+
+        int s = arg().length();
+        Term[] n = new Term[s];
+        for (int i = 0; i < s; i++) {
+            Term x = arg(i);
+            if (x instanceof Operation) {
+                Operation o = (Operation) x;
+                if (o.getOperator().equals(eval.term)) {
+                    x = eval.eval(x, memory);
+                }
+            }
+            n[i] = x;
+        }
+
+        return clone(Product.make(n));
+    }
+
+    protected boolean hasEval() {
+        for (Term x : arg().term) {
+            if (x instanceof Operation) {
+                Operation o = (Operation)x;
+                if (o.getOperator().equals(eval.term)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

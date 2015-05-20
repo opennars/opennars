@@ -14,6 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 abstract public class EventEmitter<K>  {
 
+    abstract public List<Reaction<K>> all(K op);
+
     public interface EventRegistration {
         public void off();
     }
@@ -186,10 +188,14 @@ abstract public class EventEmitter<K>  {
         }
 
 
+        @Override
+        public List<Reaction<K>> all(K c) {
+            return reactions.get(c);
+        }
 
         @Override
         public void notify(final K channel, final Object... arg) {
-            List<Reaction<K>> c = reactions.get(channel);
+            List<Reaction<K>> c = all(channel);
             if (c!=null) {
                 for (Reaction r : c) {
                     r.event(channel, arg);
@@ -200,7 +206,7 @@ abstract public class EventEmitter<K>  {
         @Override
         public EventRegistration on(K channel, Reaction o) {
             DefaultEventRegistration d = new DefaultEventRegistration(channel, o);
-            List<Reaction<K>> cl = reactions.get(channel);
+            List<Reaction<K>> cl = all(channel);
             if (cl == null)
                 reactions.put(channel, cl = new CopyOnWriteArrayList());
 
