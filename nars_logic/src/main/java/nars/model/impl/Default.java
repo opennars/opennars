@@ -33,6 +33,7 @@ import nars.op.io.say;
 import nars.op.io.schizo;
 import nars.op.math.add;
 import nars.op.math.count;
+import nars.op.math.lessThan;
 import nars.op.mental.*;
 import nars.op.meta.complexity;
 import nars.op.meta.reflect;
@@ -243,6 +244,7 @@ public class Default extends NARSeed implements ConceptBuilder {
                 // math operations
                 new count(),
                 new add(),
+                new lessThan(),
                 //new MathExpression(),
 
 

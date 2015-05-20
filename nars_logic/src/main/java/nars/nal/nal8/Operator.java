@@ -77,7 +77,7 @@ abstract public class Operator implements Reaction<Term> {
 
 
     public Memory getMemory() {
-        if (nar!=null)
+        if (nar != null)
             return nar.memory;
         return null;
     }
@@ -89,26 +89,14 @@ abstract public class Operator implements Reaction<Term> {
 
     @Override
     public void event(Term event, Object... args) {
-        Operation input = ((Operation) args[0]);
-        Operation o = input.inline(getMemory());
+        Operation o = ((Operation) args[0]);
         Concept c = (Concept) args[1];
         Memory m = (Memory) args[2];
-        if (decider().decide(c, o))
+        if (decider().decide(c, o)) {
+            o = o.inline(getMemory());
             execute(o, c, m);
+        }
     }
-
-
-//    public boolean setEnabled(final NAR n, final boolean enabled) {
-//        if (enabled)
-//            this.nar = n;
-//        else
-//            this.nar = null;
-//        return true;
-//    }
-//
-//    public Memory getMemory() {
-//        return nar.memory;
-//    }
 
     /**
      * Required method for every operate, specifying the corresponding
@@ -147,7 +135,9 @@ abstract public class Operator implements Reaction<Term> {
     abstract public boolean execute(final Operation op, final Concept c, final Memory memory);
 
 
-    /** called after execution completed */
+    /**
+     * called after execution completed
+     */
     protected void executed(Operation op, List<Task> feedback, Memory memory) {
 
         //Display a message in the output stream to indicate the reportExecution of an operation
@@ -176,8 +166,9 @@ abstract public class Operator implements Reaction<Term> {
     }
 
 
-
-    /** internal notice of the execution */
+    /**
+     * internal notice of the execution
+     */
     protected void noticeExecuted(final Operation operation, final Memory memory) {
         final Task opTask = operation.getTask();
         //if (opTask == null) return;
@@ -194,67 +185,7 @@ abstract public class Operator implements Reaction<Term> {
                         get().
                         setCause(operation),
                 "Executed");
+
     }
 
-//    public static String addPrefixIfMissing(String opName) {
-//        if (!opName.startsWith("^"))
-//            return '^' + opName;
-//        return opName;
-//    }
-
-
 }
-
-//        catch (NegativeFeedback n) {
-//
-//            if (n.freqOcurred >=0 && n.confidenceOcurred >= 0) {
-//                memory.executedTask(operation, new TruthValue(n.freqOcurred, n.confidenceOcurred));
-//            }
-//
-//            if (n.freqCorrection >= 0 && n.confCorrection >=0) {
-//                //for inputting an inversely frequent goal to counteract a repeat invocation
-//                BudgetValue b = operation.getTask().budget;
-//                float priority = b.getPriority();
-//                float durability = b.getDurability();
-//
-//                memory.addNewTask(
-//                        memory.newTaskAt(operation, Symbols.GOAL, n.freqCorrection, n.confCorrection, priority, durability, (Tense)null),
-//                        "Negative feedback"
-//                );
-//
-//            }
-//
-//            if (!n.quiet) {
-//                reportExecution(operation, args, n, memory);
-//            }
-//        }
-
-
-//    public static class NegativeFeedback extends RuntimeException {
-//
-//        /** convenience method for creating a "never again" negative feedback"*/
-//        public static NegativeFeedback never(String rule, boolean quiet) {
-//            return new NegativeFeedback(rule, 0, executionConfidence,
-//                    0, executionConfidence, quiet
-//            );
-//        }
-//        /** convenience method for ignoring an invalid operation; does not recognize that it occurred, and does not report anything*/
-//        public static NegativeFeedback ignore(String rule) {
-//            return new NegativeFeedback(rule, -1, -1, -1, -1, true);
-//        }
-//
-//        public final float freqCorrection;
-//        public final float confCorrection;
-//        public final float freqOcurred;
-//        public final float confidenceOcurred;
-//        public final boolean quiet;
-//
-//        public NegativeFeedback(String rule, float freqOcurred, float confidenceOccurred, float freqCorrection, float confCorrection, boolean quiet) {
-//            super(rule);
-//            this.freqOcurred = freqOcurred;
-//            this.confidenceOcurred = confidenceOccurred;
-//            this.freqCorrection = freqCorrection;
-//            this.confCorrection = confCorrection;
-//            this.quiet = quiet;
-//        }
-//    }

@@ -97,12 +97,14 @@ public class ProtoTask<T extends Compound> {
         this.punc = t.punctuation;
         this.truth = t.truth;
         this.stamp = t.stamp;
-        this.budget = new Budget(t.punctuation, t.truth);
+
     }
 
 
     /** build the new instance */
     public Task get() {
+        if (this.budget == null)
+            this.budget = new Budget(punc, truth);
         return new Task(this);
     }
 
@@ -113,9 +115,9 @@ public class ProtoTask<T extends Compound> {
     }
 
     public Budget getBudget() {
-        if (budget == null)
-            return new Budget(pri, dur, truth);
-        else
+//        if (budget == null)
+//            return new Budget(pri, dur, truth);
+//        else
             return budget;
     }
 

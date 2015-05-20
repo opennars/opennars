@@ -26,7 +26,9 @@ public class eval extends TermFunction {
             final Term op = o.getOperator();
             TermFunction tf = getTheTermFunction(op, m);
             if (tf instanceof TermFunction) {
-                return term(((TermFunction) tf).function(o.getArgumentTerms(m,true)));
+                Object result = ((TermFunction) tf).function(o.arg(m, true));
+                if (result != null)
+                    return term(result);
             }
         }
 
@@ -69,6 +71,7 @@ public class eval extends TermFunction {
     }
 
     private static Term term(Object o) {
+
         if (o instanceof Term) return ((Term)o);
         else if (o instanceof String) {
             return Atom.the((String) o);

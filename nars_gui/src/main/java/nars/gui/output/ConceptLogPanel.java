@@ -178,7 +178,10 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
         CharSequence s = TextOutput.getOutputString(channel, o, true, showStamp, nar, new StringBuilder(), 0f);
         if (s == null)
-            throw new RuntimeException("ConceptLogPanel: " + channel + " " + o + " NULL");
+            return; //ex: too low priority
+            //throw new RuntimeException("ConceptLogPanel: " + channel + " " + o + " NULL");
+
+
         JLabel jl = new JLabel(s.toString());
         jl.setDoubleBuffered(true);
         jl.setIgnoreRepaint(true);

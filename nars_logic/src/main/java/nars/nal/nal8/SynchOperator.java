@@ -37,7 +37,7 @@ abstract public class SynchOperator extends Operator {
      */
     public boolean execute(final Operation op, final Concept c, final Memory memory) {
 
-        final Term[] args = op.arg().term;
+        //final Term[] args = op.arg().term;
 
         List<Task> feedback;
         try {

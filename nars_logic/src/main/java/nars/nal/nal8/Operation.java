@@ -225,11 +225,11 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
         return new Task(sentence, budget, getTask());
     }
 
-    public Term[] getArgumentTerms( Memory memory) {
-        return getArgumentTerms(memory, false);
+    public Term[] arg(Memory memory) {
+        return arg(memory, false);
     }
 
-    public Term[] getArgumentTerms( Memory memory, boolean evaluate) {
+    public Term[] arg(Memory memory, boolean evaluate) {
         final Term[] rawArgs = getArgumentsRaw();
         int numInputs = rawArgs.length;
 
@@ -301,21 +301,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
      */
     public Operation inline(Memory memory) {
         if (!hasEval()) return this;
-
-//        int s = arg().length();
-//        Term[] n = new Term[s];
-//        for (int i = 0; i < s; i++) {
-//            Term x = arg(i);
-//            if (x instanceof Operation) {
-//                Operation o = (Operation) x;
-//                if (o.getOperator().equals(eval.term)) {
-//                    x = eval.eval(x, memory);
-//                }
-//            }
-//            n[i] = x;
-//        }
-
-        return clone(Product.make(getArgumentTerms(memory, true)));
+        return clone(Product.make(arg(memory, true)));
     }
 
     protected boolean hasEval() {

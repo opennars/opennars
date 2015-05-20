@@ -5,7 +5,10 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
+import nars.nal.DefaultTruth;
+import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.ImageExt;
@@ -18,6 +21,7 @@ import nars.nal.term.Term;
 import nars.nal.term.Variable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 /** 
@@ -28,6 +32,7 @@ import java.util.ArrayList;
 public abstract class TermFunction<O> extends SynchOperator  {
 
     static final Variable var=new Variable("$y");
+
 
     protected TermFunction() {
         super();
@@ -155,6 +160,11 @@ public abstract class TermFunction<O> extends SynchOperator  {
     }
 
     @Override
+    protected void noticeExecuted(Operation operation, Memory memory) {
+        //no notice
+    }
+
+    @Override
     protected ArrayList<Task> execute(final Operation operation, Memory memory) {
 
 
@@ -172,13 +182,30 @@ public abstract class TermFunction<O> extends SynchOperator  {
         }
 
         //Term[] x0 = operation.getArgumentTerms(false, memory);
-        Term[] x = operation.getArgumentTerms(memory);
+        Term[] x = operation.arg(memory);
 
         Object y = function(x);
 
         if (y == null) {
             return null;
         }
+
+        if (y instanceof Boolean) {
+            boolean by = (Boolean)y;
+            y = new DefaultTruth(by ? 1 : 0, 0.99f);
+        }
+        if (y instanceof Truth) {
+            //this will get the original input operation term, not after it has been inlined.
+            Compound inputTerm = (Compound)operation.getTask().getTerm();
+
+            return Lists.newArrayList(
+                    memory.task(
+                            inputTerm
+                    ).judgment().eternal().truth((Truth) y).get()
+            );
+        }
+
+
         if (y instanceof Number) {
             y = (Atom.the((Number)y));
         }
