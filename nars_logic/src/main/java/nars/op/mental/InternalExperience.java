@@ -39,6 +39,7 @@ public class InternalExperience extends AbstractOperator {
             INTERNAL_EXPERIENCE_PROBABILITY/ 4.0f;
 
 
+    public final static Atom anticipateOp = Atom.the("anticipate");
 
 
     //internal experience has less durability?
@@ -57,10 +58,10 @@ public class InternalExperience extends AbstractOperator {
     }*/
 
     private Memory memory;
-    private Atom believe;
-    private Atom want;
-    private Atom wonder;
-    private Atom evaluate;
+    public final static Atom believe = Atom.the("believe");
+    public final static Atom want = Atom.the("want");;
+    public final static Atom wonder = Atom.the("wonder");;
+    public final static Atom evaluate = Atom.the("evaluate");;
 
 
     /** whether it is full internal experience, or minimal (false) */
@@ -83,10 +84,7 @@ public class InternalExperience extends AbstractOperator {
     public void onEnabled(NAR n) {
 
         this.memory = n.memory;
-        this.believe = n.the("^believe");
-        this.want = n.the("^want");
-        this.wonder = n.the("^wonder");
-        this.evaluate = n.the("^evaluate");
+
     }
 
     @Override
@@ -123,7 +121,7 @@ public class InternalExperience extends AbstractOperator {
             arg[1] = s.truth.toWordTerm();            
         }
         
-        Operation operation = Operation.make(opTerm, arg);
+        Operation operation = Operation.make(opTerm, Product.make(arg));
         if (operation == null) {
             throw new RuntimeException("Unable to create Inheritance: " + opTerm + ", " + Arrays.toString(arg));
         }
@@ -192,7 +190,7 @@ public class InternalExperience extends AbstractOperator {
     }
 
     final static String[] nonInnateBeliefOperators = new String[] {
-        "^remind","^doubt","^consider","^evaluate","hestitate","^wonder","^belief","^want"
+        "remind","doubt","consider","evaluate","hestitate","wonder","belief","want"
     }; 
     
     /** used in full internal experience mode only */
@@ -248,10 +246,10 @@ public class InternalExperience extends AbstractOperator {
                 }    
 
                 if(valid) {
-                    Atom op = memory.the("^anticipate");
+
 
                     Product args=new Product(imp.getPredicate());
-                    Term new_term=Operation.make(args,op);
+                    Term new_term=Operation.make(anticipateOp, args);
 
                     Sentence sentence = new Sentence(
                         new_term, Symbols.GOAL,

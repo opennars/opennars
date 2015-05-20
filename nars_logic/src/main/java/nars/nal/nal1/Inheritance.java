@@ -21,9 +21,9 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
+import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -89,14 +89,17 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
             return null;
         }
         
-        boolean subjectProduct = subject instanceof Product;
-        boolean predicateOperator = predicate instanceof Atom;
+        boolean subjectSetExt = subject instanceof SetExt1;
+        boolean predicateOperator = Operation.validOperatorTerm(predicate);
 
-        if (subjectProduct && predicateOperator) {
-            return Operation.make((Atom) predicate, ((Compound) subject).term);
-        } else {            
-            return new Inheritance(subject, predicate);
+        if (subjectSetExt && predicateOperator) {
+            Term p = ((SetExt1) subject).the();
+            if (p instanceof Product)
+                return Operation.make(predicate, ((Product)p));
         }
+
+        return new Inheritance(subject, predicate);
+
          
     }
 

@@ -13,6 +13,7 @@ import nars.budget.Budget;
 import nars.io.Texts;
 import nars.nal.*;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
@@ -25,7 +26,10 @@ import nars.nal.term.Variable;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static nars.Symbols.IMAGE_PLACE_HOLDER;
@@ -795,8 +799,9 @@ public class NarseseParser extends BaseParser<Object> {
             final Term self = memory.self();
             if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self); //SELF in final argument
+            Term operatorPred = vectorterms.remove(0);
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
-            return Operation.make(va);
+            return Operation.make(operatorPred, Product.make(va));
         }
         else {
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);

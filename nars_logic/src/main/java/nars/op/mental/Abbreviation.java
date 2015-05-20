@@ -13,6 +13,7 @@ import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;
+import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.SynchOperator;
@@ -118,7 +119,7 @@ public class Abbreviation extends AbstractOperator {
         if (canAbbreviate(task)) {
 
             Operation operation = Operation.make(
-                    abbreviate, termArray(task.sentence.term ));
+                    abbreviate, Product.make(termArray(task.sentence.term)));
 
             operation.setTask(task);
 

@@ -688,16 +688,15 @@ abstract public class Concept extends Item<Term> implements Termed {
             if (memory.answer(this, n)) {
 
             }
-            else {
 
-                if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
-                    Task removed = table.remove(0);    // FIFO
-                    memory.event.emit(ConceptQuestionRemove.class, this, removed, n);
-                }
-
-                table.add(n);
-                memory.event.emit(ConceptQuestionAdd.class, this, n);
+            if (table.size() + 1 > memory.param.conceptQuestionsMax.get()) {
+                Task removed = table.remove(0);    // FIFO
+                memory.event.emit(ConceptQuestionRemove.class, this, removed, n);
             }
+
+            table.add(n);
+            memory.event.emit(ConceptQuestionAdd.class, this, n);
+
         }
 
         onTableUpdated(n.getPunctuation(), presize);

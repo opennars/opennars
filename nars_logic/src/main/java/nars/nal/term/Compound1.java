@@ -1,17 +1,17 @@
 package nars.nal.term;
 
 /** an optimized compound implementation for use when only 1 subterm */
-abstract public class Compound1 extends Compound {
+abstract public class Compound1<T extends Term> extends Compound {
 
     byte[] name = null;
     transient int hash;
 
-    public Compound1(final Term the) {
+    public Compound1(final T the) {
         super(the);
     }
 
-    public Term the() {
-        return term[0];
+    public T the() {
+        return (T)term[0];
     }
 
     @Override
@@ -54,7 +54,7 @@ abstract public class Compound1 extends Compound {
     public void invalidate() {
         if (hasVar()) {
             name = null;
-            Term n = the();
+            T n = the();
             if (n instanceof Compound) {
                 ((Compound)n).invalidate();
             }

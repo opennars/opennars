@@ -517,35 +517,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         return this;
     }
 
-    /**
-     * @return true if it was immediate
-     */
     public boolean executeIfImmediate(Memory memory) {
-        final Term taskTerm = getTerm();
-        if (taskTerm instanceof Operation) {
-            Operation o = (Operation) taskTerm;
-            o.setTask((Task<Operation>) this);
-
-
-            if (o instanceof ImmediateOperation) {
-                if (sentence!=null && getPunctuation()!= Symbols.GOAL)
-                    throw new RuntimeException("ImmediateOperation " + o + " was not specified with goal punctuation");
-
-                ImmediateOperation i = (ImmediateOperation) getTerm();
-                i.execute(memory);
-                return true;
-            }
-//            else if (o.getOperator().isImmediate()) {
-//                if (sentence!=null && getPunctuation()!= Symbols.GOAL)
-//                    throw new RuntimeException("ImmediateOperator call " + o + " was not specified with goal punctuation");
-//
-//                o.getOperator().execute(o, memory);
-//                return true;
-//            }
-        }
-
         return false;
     }
+
 
     public void ensurePerceived(Memory memory) {
         if (sentence!=null) {

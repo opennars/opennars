@@ -192,6 +192,9 @@ public class SwingLogText extends SwingText {
 
 
         CharSequence text = TextOutput.getOutputString(c, o, showStamp, nar, buffer);
+
+
+
         StringBuilder sb = new StringBuilder(text.length() + 2);
         sb.append(' ');
         if ((text.length() > maxLineWidth) && (c != Events.ERR.class))

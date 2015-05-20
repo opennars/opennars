@@ -317,8 +317,8 @@ public class TemporalRules {
                             t11 = Terms.makeStatement(ss1, var1, ss1.getPredicate());
 
                             Operation op = (Operation) Operation.make(
-                                    new Product(ars),
-                                    ss2.getPredicate()
+                                    ss2.getPredicate(),
+                                    new Product(ars)
                             );
 
                             t22 = op;
@@ -342,8 +342,8 @@ public class TemporalRules {
                             t22 = Terms.makeStatement(ss2, var1, ss2.getPredicate());
 
                             Operation op = (Operation) Operation.make(
-                                    new Product(ars),
-                                    ss1.getPredicate()
+                                    ss1.getPredicate(),
+                                    new Product(ars)
                             );
 
                             t11 = op;

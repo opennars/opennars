@@ -31,10 +31,10 @@ public class ExecutionResult {
         Task t = getTask();
         //if (t == null) return "";
 
-        if (operation instanceof ImmediateOperation) {
+        /*if (operation instanceof ImmediateOperation) {
             return operation.toString();
-        } else {
-            Term[] args = operation.getArgumentsRaw();
+        } else */{
+            Term[] args = operation.argArray();
             Term operator = operation.getOperator();
             StringBuilder sb = new StringBuilder();
 

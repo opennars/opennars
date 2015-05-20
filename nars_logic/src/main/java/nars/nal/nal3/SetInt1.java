@@ -5,9 +5,9 @@ import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
 /** efficient implementation of a set with one element */
-public class SetInt1 extends Compound1 implements SetInt, SetTensional {
+public class SetInt1<T extends Term> extends Compound1<T> implements SetInt, SetTensional {
 
-    protected SetInt1(Term the) {
+    public SetInt1(T the) {
         super(the);
 
         init(term);

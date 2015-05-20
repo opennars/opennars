@@ -5,9 +5,9 @@ import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
 /** efficient implementation of a set with one element */
-public class SetExt1 extends Compound1 implements SetExt, SetTensional {
+public class SetExt1<T extends Term> extends Compound1<T> implements SetExt, SetTensional {
 
-    protected SetExt1(Term the) {
+    public SetExt1(T the) {
         super(the);
 
         init(term);
@@ -37,5 +37,6 @@ public class SetExt1 extends Compound1 implements SetExt, SetTensional {
     protected byte[] makeKey() {
         return SetTensional.makeKey(NALOperator.SET_EXT_OPENER.ch, NALOperator.SET_EXT_CLOSER.ch, the());
     }
+
 
 }

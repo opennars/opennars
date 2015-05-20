@@ -29,6 +29,7 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -40,8 +41,9 @@ import java.util.Arrays;
 /**
  * An operation is interpreted as an Inheritance relation.
  */
-public class Operation<T extends Term> extends Inheritance<Product, T> {
+public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> {
 
+    private final Product arg;
     private Task<Operation<T>> task; //this is set automatically prior to executing
     
     
@@ -52,15 +54,12 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
      *
      */
     protected Operation(Product argProduct, T operator) {
-        super(argProduct, operator);
+
+        super(new SetExt1(argProduct), operator);
+
+        this.arg = argProduct;
     }
-    
-    /*protected Operation(Term[] t) {
-        super(t);
-    }*/
-    protected Operation() {
-        super();
-    }
+
 
     
     /**
@@ -70,7 +69,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
      */
     @Override
     public Operation<T> clone() {
-        return clone(getSubject());
+        return clone(arg());
     }
 
     public Operation<T> clone(Product args) {
@@ -79,7 +78,6 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
         return x;
     }
 
- 
    
     /**
      * Try to make a new compound from two components. Called by the logic
@@ -88,7 +86,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
      * @param self specify a SELF, or null to use memory's current self
      * @return A compound generated or null
      */
-    public static <T extends Term> Operation<T> make(final T oper, Term[] arg) {
+    public static <T extends Term> Operation<T> make(final T oper, Product arg) {
 
 //        if (Variables.containVar(arg)) {
 //            throw new RuntimeException("Operator contains variable: " + oper + " with arguments " + Arrays.toString(arg) );
@@ -105,7 +103,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
 //            arg=arg2;
 //        }
         
-        return new Operation( new Product(arg), oper  );        
+        return new Operation( arg, oper  );
     }
 
     public T getOperator() {
@@ -115,7 +113,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
     @Override
     protected byte[] makeKey() {
         byte[] op = getPredicate().name();
-        Term[] arg = getArgumentsRaw();
+        Term[] arg = argArray();
 
         ByteBuf b = ByteBuf.create(64);
         //b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch).add(op);
@@ -141,42 +139,6 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
         return b.toBytes();
     }
 
-    //    @Override
-//    protected CharSequence makeName() {
-//        if (Global.DEBUG)
-//            if (!(getSubject() instanceof Product && getPredicate() instanceof Operator))
-//                throw new RuntimeException("Invalid Operation contents: " + this); //should never happen
-//
-//       return makeName(getPredicate().toString(), ((Product)getSubject()).term);
-//    }
-//
-//
-//    public static CharSequence makeName(final CharSequence op, final Term[] arg) {
-//        final StringBuilder nameBuilder = new StringBuilder(16) //estimate
-//                .append(COMPOUND_TERM_OPENER.ch).append(op);
-//
-//        int n=0;
-//        for (final Term t : arg) {
-//            /*if(n==arg.length-1) {
-//                break;
-//            }*/
-//            nameBuilder.append(Symbols.ARGUMENT_SEPARATOR);
-//            nameBuilder.append(t.toString());
-//            n++;
-//        }
-//
-//        nameBuilder.append(COMPOUND_TERM_CLOSER.ch);
-//        return nameBuilder.toString();
-//    }
-    
-    
-    /*public Operator getOperator() {
-        return (Operator) getPredicate();
-    }
-    
-    public Term[] getArguments() {
-        return ((CompoundTerm) getSubject()).term;
-    }*/
 
     /** stores the currently executed task, which can be accessed by Operator execution */
     public void setTask(final Task<Operation<T>> task) {
@@ -188,22 +150,22 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
     }
 
     public Product arg() {
-        return (Product)getSubject();
+        return getSubject().the();
     }
 
 
-    @Deprecated public static Term make(Term[] raw) {
-        if (raw.length < 1) {
-            //must include at least the operate as the first term in raw[]
-            return null;
-        }
-
-        Term operator = raw[0];
-
-        Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
-
-        return make(operator, args);
-    }
+//    @Deprecated public static Term make(Term[] raw) {
+//        if (raw.length < 1) {
+//            //must include at least the operate as the first term in raw[]
+//            return null;
+//        }
+//
+//        Term operator = raw[0];
+//
+//        Term[] args = Arrays.copyOfRange(raw, 1, raw.length);
+//
+//        return make(operator, args);
+//    }
 
     public Term arg(int i) {
         return arg().term[i];
@@ -230,7 +192,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
     }
 
     public Term[] arg(Memory memory, boolean evaluate) {
-        final Term[] rawArgs = getArgumentsRaw();
+        final Term[] rawArgs = argArray();
         int numInputs = rawArgs.length;
 
         if (rawArgs[numInputs - 1].equals(memory.self()))
@@ -263,7 +225,7 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
     }
 
     /** returns a reference to the raw arguments as contained by the Product subject of this operation */
-    public Term[] getArgumentsRaw() {
+    public Term[] argArray() {
         return arg().term;
     }
 
@@ -314,5 +276,10 @@ public class Operation<T extends Term> extends Inheritance<Product, T> {
             }
         }
         return false;
+    }
+
+    /** use this to restrict potential operator (predicate terms) */
+    public static boolean validOperatorTerm(Term t) {
+        return t instanceof Term;
     }
 }
