@@ -4,13 +4,8 @@ import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import nars.rl.HaiSOMPerception;
-import nars.rl.Perception;
-import nars.rl.QLAgent;
-import nars.rl.RawPerception;
+import nars.rl.*;
 import nars.rl.example.QVis;
-
-import java.awt.*;
 
 /**
  * Created by me on 4/26/15.
@@ -25,7 +20,7 @@ public class RLNario extends NARio  {
         float fps = 30f;
         gameRate = 1.0f / fps;
 
-        QLAgent agent = new QLAgent(nar, "act", "<nario --> [good]>", this, p);
+        QLAgent agent = new QLAgent(nar, "act", "<nario --> good>", this, p);
 
         agent.brain.setEpsilon(0.15);
         agent.brain.setAlpha(0.1);
@@ -52,7 +47,7 @@ public class RLNario extends NARio  {
 
         //o.addAll(radar);
 
-        Image screen = ((LevelScene) scene).layer.image;
+        //Image screen = ((LevelScene) scene).layer.image;
 
 
 
@@ -80,14 +75,14 @@ public class RLNario extends NARio  {
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.8);
-        nar.param.shortTermMemoryHistory.set(2);
+        nar.param.decisionThreshold.set(0.65);
+        nar.param.shortTermMemoryHistory.set(3);
 
         new RLNario(nar,
-                new RawPerception("r", 0.7f)
-                //new RawPerception.BipolarDirectPerception("r", 0.3f),
-                //new HaiSOMPerception("s", 2, 0.6f)
-                //new AEPerception("a", 0.6f, 3, 2).setLearningRate(0.02).setSigmoid(true),
+                new RawPerception("r", 0.7f),
+                //new RawPerception.BipolarDirectPerception("r", 0.7f),
+                new HaiSOMPerception("s", 3, 0.5f),
+                new AEPerception("a", 0.6f, 3, 2).setLearningRate(0.02).setSigmoid(true)
                 //new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
         );
 

@@ -3,7 +3,6 @@ package nars.nario;
 import automenta.vivisect.Video;
 import com.gs.collections.impl.list.mutable.primitive.DoubleArrayList;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -16,11 +15,11 @@ import nars.nal.nal8.Operation;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
-import nars.util.event.Reaction;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.log;
@@ -169,12 +168,27 @@ public class NARio extends Run implements RLEnvironment {
     @Override
     public boolean takeAction(int action) {
         boolean pressed;
-        if (action > 5) { pressed = false; action -=5; }
+        if (action == 12) {
+            //check if already reset
+            boolean resettable = false;
+            for (boolean b : mario.keys) {
+                if (b) {
+                    resettable = true;
+                    break;
+                }
+            }
+            if (!resettable) return false;
+
+            //reset
+            Arrays.fill(mario.keys, false);
+            return true;
+        }
+        if (action > 5) { pressed = false; action -=6; }
         else pressed = true;
 
 
-        /*if (mario.keys[action] == pressed)
-            return false;*/
+        if (mario.keys[action] == pressed)
+            return false;
 
         //System.out.println('@' + nar.time() + " " + Arrays.toString(mario.keys));
         mario.keys[action] = pressed;
@@ -361,7 +375,7 @@ public class NARio extends Run implements RLEnvironment {
 
     @Override
     public int numActions() {
-        return 5*2;
+        return 6*2 + 1;
     }
 
 

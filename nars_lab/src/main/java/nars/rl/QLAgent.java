@@ -378,7 +378,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 acted(nextAction);
             }
             else {
-
+                nextAction = null;
             }
         }
 
@@ -402,6 +402,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         learn(nextAction, before, this.now, r);
 
+        //System.out.println(nextAction + " " + lastAction);
 
         //swap buffers
         List<Task> tmp = before;
