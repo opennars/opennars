@@ -30,7 +30,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     private final RLEnvironment env;
     private final EnvironmentReaction io;
 
-    private final Perception[] perceptions;
+    private final List<Perception> perceptions;
     private final Term rewardTerm;
     private final String operationTerm;
     private final Term operator;
@@ -104,9 +104,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         //HACK TODO this is necessary to disable the superclass's state belief update in methods we end up calling, this class has its own belief update method that should only be called
         stateUpdateConfidence = 0;
 
-        this.perceptions = perceptions;
+        this.perceptions = new ArrayList();
+
         for (Perception p : perceptions) {
-            p.init(env, this);
+            add(p);
         }
 
         operationCache = new Operation[env.numActions()];
@@ -149,6 +150,15 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         });
 
 
+    }
+
+    public synchronized void add(Perception p) {
+        perceptions.add(p);
+        p.init(env, this);
+    }
+
+    public synchronized void remove(Perception p) {
+        perceptions.remove(p);
     }
 
     public Concept getOperatorConcept() {

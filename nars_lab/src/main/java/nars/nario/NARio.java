@@ -18,9 +18,11 @@ import nars.nario.sprites.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static java.lang.Math.log;
 import static java.lang.Math.signum;
@@ -40,7 +42,6 @@ public class NARio extends Run implements RLEnvironment {
     private float lastMX;
     private float lastMY;
 
-    //boolean representation_simple = false;
     public int t = 0;
 
     private final NAR nar;
@@ -61,6 +62,24 @@ public class NARio extends Run implements RLEnvironment {
     private ChangedTextInput moveInput;
     private ChangedTextInput velInput;
     private LevelScene level;
+
+    private Supplier<BufferedImage> levelImageSupplier = new Supplier<BufferedImage>() {
+        @Override
+        public BufferedImage get() {
+            if (level!=null)
+                if (level.layer!=null)
+                    return level.layer.image;
+            return null;
+        }
+    };
+
+    private Supplier<BufferedImage> screenImageSupplier = new Supplier<BufferedImage>() {
+        @Override
+        public synchronized BufferedImage get() {
+            return imageBuffer;
+        }
+    };
+
 
     public NARio(NAR n) {
         super();
@@ -695,19 +714,6 @@ public class NARio extends Run implements RLEnvironment {
 
         axioms();
 
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                //new Window("Implications", new SentenceGraphPanel(nar, new ImplicationGraph(nar))).show(500,500);
-                //new Window("Inheritance", new SentenceGraphPanel(nar, new InheritanceGraph(nar))).show(500,500);
-
-            }
-
-        });
-
-
-
     }
 
 
@@ -734,5 +740,11 @@ public class NARio extends Run implements RLEnvironment {
     }
 
 
+    public Supplier<BufferedImage> getLevelImage() {
+        return levelImageSupplier;
+    }
 
+    public Supplier<BufferedImage> getScreenImage() {
+        return screenImageSupplier;
+    }
 }

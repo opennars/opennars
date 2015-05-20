@@ -42,7 +42,7 @@ public class LevelScene extends Scene implements SpriteContext
     //    private Replayer replayer = null;
     
     private long levelSeed;
-    private MarioComponent renderer;
+    public final MarioComponent renderer;
     private int levelType;
     private int levelDifficulty;
 

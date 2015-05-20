@@ -703,6 +703,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
             timer = new Timer(ms, this);
             timer.setCoalesce(true);
             timer.setRepeats(false);
+            timer.restart();
             //System.out.println("timer start: " + ms);
         }
         else {

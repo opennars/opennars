@@ -39,10 +39,20 @@ public class ImagePanel extends JComponent {
         return null;
     }
 
+    public void setImage(BufferedImage image) {
+        this.image = image;
+        repaint();
+    }
+
     @Override
     public void paint(Graphics g) {
         //super.paintComponent(g);
-        g.drawImage(image, 0, 0, null);
+        if (image!=null) {
+            g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+        }
+        else {
+            super.paintComponent(g);
+        }
         super.paintBorder(g);
     }
 

@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.nario.level.Level;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 
@@ -11,7 +12,7 @@ public class LevelRenderer
 {
     private int xCam;
     private int yCam;
-    protected Image image;
+    protected BufferedImage image;
     private Graphics2D g;
     private static final Color transparent = new Color(0, 0, 0, 0);
     private Level level;
