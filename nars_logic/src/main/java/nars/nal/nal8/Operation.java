@@ -34,6 +34,7 @@ import nars.nal.nal4.Product;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.op.eval;
+import nars.op.mental.evaluate;
 import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
@@ -170,11 +171,16 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         final Term[] rawArgs = argArray();
         int numInputs = rawArgs.length;
 
-        if (rawArgs[numInputs - 1].equals(memory.self()))
-            numInputs--;
+        if (numInputs > 0) {
+            if (rawArgs[numInputs - 1].equals(memory.self()))
+                numInputs--;
+        }
 
-        if (rawArgs[numInputs - 1] instanceof Variable)
-            numInputs--;
+        if (numInputs > 0) {
+            if (rawArgs[numInputs - 1] instanceof Variable)
+                numInputs--;
+        }
+
 
         Term[] x;
 

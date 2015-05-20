@@ -23,8 +23,6 @@
  ******************************************************************************/
 package nars.rover.jbox2d.j2d;
 
-import automenta.spacegraph.physics.light.Light;
-import automenta.spacegraph.physics.light.LightEngine;
 import automenta.vivisect.Video;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
@@ -43,14 +41,14 @@ import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class JoglDraw extends DebugDraw {
 
     private final JoglPanel panel;
     private final TextRenderer text;
     private static final int NUM_CIRCLE_POINTS = 13;
-    public final java.util.List<SwingDraw.LayerDraw> layers = new ArrayList();
+    public final java.util.List<SwingDraw.LayerDraw> layers = new CopyOnWriteArrayList();
 
     Transform xf = new Transform();
 
@@ -104,7 +102,7 @@ public class JoglDraw extends DebugDraw {
         //}
 
 
-        //for (DrawPhy2D.LayerDraw l : layers) l.drawSky(this, w);
+        for (SwingDraw.LayerDraw l : layers) l.drawSky(this, w);
 
         //flush();
 

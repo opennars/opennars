@@ -22,6 +22,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  *
@@ -44,7 +45,7 @@ public class RoverModel {
     private final ChangedTextInput feltSpeedAvg;
     private final ChangedTextInput mouthInput;
     private final World world;
-    private final DebugDraw draw;
+    private DebugDraw draw = null;
 
     final double minVisionInputProbability = 0.01f;
     final double maxVisionInputProbability = 0.08f;
@@ -72,7 +73,6 @@ public class RoverModel {
         
 
         this.world = sim.getWorld();
-        this.draw = (DebugDraw) sim.draw();
 
         mouthInput = new ChangedTextInput(nar);
         feltAngularVelocity = new SometimesChangedTextInput(sim.nar, minVisionInputProbability);
@@ -117,6 +117,8 @@ public class RoverModel {
             v.sparkColor = new Color3f(0.5f, 0.4f, 0.4f);
             v.normalColor = new Color3f(0.4f, 0.4f, 0.4f);
 
+            ((JoglDraw)p.draw()).addLayer(v);
+
             vision.add(v);
         }
     }
@@ -133,6 +135,10 @@ public class RoverModel {
         food.setTransform(new Vec2(x * 2.0f, y * 2.0f), food.getAngle());
 
         mouthInput.set("$0.95;0.50$ <goal --> Food>. :|: %0.90;0.90%");
+    }
+
+    public DebugDraw getDraw() {
+        return draw;
     }
 
     public class VisionRay implements LayerDraw {
@@ -167,11 +173,15 @@ public class RoverModel {
             this.arc = arc;
             this.resolution = resolution;
             this.distance = length;
-            //draw.addLayer(this);
         }
         
 
+        List<Runnable> toDraw = new CopyOnWriteArrayList();
+
+
+
         public synchronized void step(boolean feel, boolean drawing) {
+
             float conceptActivity = 0f;
             if (angleConcept!=null) {
                 conceptActivity = angleConcept.getPriority();
@@ -199,7 +209,7 @@ public class RoverModel {
                 try {
                     world.raycast(ccallback, point1, point2);
                 }
-                catch (Exception e) { System.err.println("Phys2D raycast: " + e); }
+                catch (Exception e) { System.err.println("Phys2D raycast: " + e + " " + point1 + " " + point2 ); e.printStackTrace(); }
 
                 Vec2 endPoint = null;
                 if (ccallback.m_hit) {
@@ -207,7 +217,13 @@ public class RoverModel {
                     if (drawing) {
                         rayColor.set(laserHitColor);
                         rayColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
-                        draw.drawPoint(ccallback.m_point, 5.0f, sparkColor);
+                        Vec2 pp = ccallback.m_point.clone();
+                        toDraw.add(new Runnable() {
+                            @Override public void run() {
+                                getDraw().drawPoint(pp, 5.0f, sparkColor);
+                            }
+                        });
+
                         endPoint = ccallback.m_point;
                     }
                     
@@ -235,7 +251,16 @@ public class RoverModel {
                     rayColor.x = Math.max(rayColor.x, 0f);
                     rayColor.y = Math.max(rayColor.y, 0f);
                     rayColor.z = Math.max(rayColor.z, 0f);
-                    draw.drawSegment(point1, endPoint, rayColor);
+                    final Vec2 finalEndPoint = endPoint.clone();
+                    Color3f rc = new Color3f(rayColor.x, rayColor.y, rayColor.z);
+                    toDraw.add(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            getDraw().drawSegment(point1, finalEndPoint, rc);
+                        }
+                    });
+
                 }
             }
             if (hit != null) {
@@ -301,7 +326,12 @@ public class RoverModel {
         }
 
         @Override
-        public void drawSky(JoglDraw draw, World w) {
+        public void drawSky(JoglDraw d, World w) {
+            draw = d;
+            for (Runnable r : toDraw) {
+                r.run();
+            }
+            toDraw.clear();
         }
     }
     boolean feel_motion = true; //todo add option in gui

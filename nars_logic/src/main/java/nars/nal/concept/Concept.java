@@ -612,13 +612,14 @@ abstract public class Concept extends Item<Term> implements Termed {
         return true;
     }
 
+    final static Variable how=new Variable("?how");
     private void questionFromGoal(final Task task, final NAL nal) {
         if(Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
             ArrayList<Term> qu=new ArrayList<Term>();
             if(Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
                 if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
-                    Variable how=new Variable("?how");
+
                     Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
                     Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
                     qu.add(imp);

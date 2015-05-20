@@ -1,6 +1,7 @@
 package nars.util.signal;
 
 
+import org.apache.commons.math3.util.FastMath;
 
 import java.util.Random;
 
@@ -49,7 +50,7 @@ public class Autoencoder {
     */
 
     final public static double sigmoid(final double x) {
-        return 1.0 / (1.0 + Math.pow(Math.E, -x));
+        return 1.0 / (1.0 + FastMath.pow(Math.E, -x));
     }
     
     public Autoencoder(int n_visible, int n_hidden) {
@@ -121,12 +122,18 @@ public class Autoencoder {
 
         if (y == null)
             y = new double[n_hidden];
-                    
+
+        final int nv = n_visible;
+        final int nh = n_hidden;
+        double[] hbias = this.hbias;
+
         double max=0, min=0;
-        for (int i = 0; i < n_hidden; i++) {
+        for (int i = 0; i < nh; i++) {
             double yi = hbias[i];
-            for (int j = 0; j < n_visible; j++) {
-                yi += W[i][j] * x[j];
+            final double[] wi = W[i];
+
+            for (int j = 0; j < nv; j++) {
+                yi += wi[j] * x[j];
             }
             
             if (sigmoid)
@@ -143,7 +150,7 @@ public class Autoencoder {
         }
         
         if ((normalize) && (max!=min)) {
-            for (int i = 0; i < n_hidden; i++) {
+            for (int i = 0; i < nh; i++) {
                 y[i] = (y[i]-min)/(max-min);
             }            
         }
@@ -153,12 +160,19 @@ public class Autoencoder {
     }
 
     // Decode
-    public void get_reconstructed_input(double[] y, double[] z) {
-        for (int i = 0; i < n_visible; i++) {
+    public void get_reconstructed_input(final double[] y, final double[] z) {
+        double[][] w = W;
+
+        double[] vbias = this.vbias;
+        final int nv = n_visible;
+        final int nh = n_hidden;
+
+        for (int i = 0; i < nv; i++) {
             double zi = vbias[i];
-            
-            for (int j = 0; j < n_hidden; j++) {
-                zi += W[j][i] * y[j];
+
+
+            for (int j = 0; j < nh; j++) {
+                zi += w[j][i] * y[j];
             }
             
             zi = sigmoid(zi);
@@ -201,12 +215,13 @@ public class Autoencoder {
         get_reconstructed_input(y, z);
 
         double error = 0;
-        
+
+        double[] zz = z;
         // vbias
         for (int i = 0; i < n_visible; i++) {
             
             
-            double lv = L_vbias[i] = x[i] - z[i];
+            double lv = L_vbias[i] = x[i] - zz[i];
             
             error += lv*lv; //square of difference
             
@@ -219,9 +234,10 @@ public class Autoencoder {
         final int n = n_visible;
         final double[] y = this.y;
         final double[] hbias = this.hbias;
+        final int nh = n_hidden;
 
         // hbias
-        for (int i = 0; i < n_hidden; i++) {
+        for (int i = 0; i < nh; i++) {
             L_hbias[i] = 0;
             for (int j = 0; j < n; j++) {
                 L_hbias[i] += W[i][j] * L_vbias[j];
@@ -233,7 +249,7 @@ public class Autoencoder {
 
 
         // W
-        for (int i = 0; i < n_hidden; i++) {
+        for (int i = 0; i < nh; i++) {
             double yi = y[i];
             double lhb = L_hbias[i];
             for (int j = 0; j < n; j++) {

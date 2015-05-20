@@ -53,7 +53,7 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
     public final PhysicsController controller;
     public final TestbedState model;
     private Timer timer;
-    LightEngine light = new LightEngine();
+    //LightEngine light = new LightEngine();
 
     public JoglPanel(final TestbedState model, final PhysicsController controller, GLCapabilitiesImmutable config) {
         super(config);
@@ -119,7 +119,7 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
 
         //https://www.opengl.org/sdk/docs/man2/xhtml/glAccum.xml
 
-        light.render(gl, drawer.getViewportTranform());
+        //light.render(gl, drawer.getViewportTranform());
 
 
         //getGL().getGL2().glAccum(GL2.GL_LOAD, 0.95f); //Drawing last frame, saved in buffer
@@ -149,8 +149,8 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
         getGL().getGL2().glClearColor(0f, 0f, 0f, 1f);
 
 
-        light.random();
-        light.init((GL2)getGL());
+        /*light.random();
+        light.init((GL2)getGL());*/
 
 //        timer = new Timer(50, new ActionListener() {
 //

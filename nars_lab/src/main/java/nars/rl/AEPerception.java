@@ -13,7 +13,7 @@ import nars.util.signal.Autoencoder;
  */
 public class AEPerception extends RawPerception {
 
-    private final MatrixImage vis;
+    private MatrixImage vis;
     private final int history;
     private Autoencoder ae = null;
     private final int nodes;
@@ -45,9 +45,17 @@ public class AEPerception extends RawPerception {
         setMin(0);
         setMax(1.0);
 
+        vis = null;
+    }
+
+    protected AEPerception vis() {
+
         new NWindow("AE",
                 vis = new MatrixImage(400, 400)
         ).show(400, 400);
+
+        return this;
+
     }
 
     @Override

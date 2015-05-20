@@ -38,7 +38,7 @@ import java.io.IOException;
  */
 public abstract class AbstractAgent {
     /** Used to convert ALE screen data to GUI images */
-    protected final ScreenConverter converter;
+    protected ScreenConverter converter;
 
     /** The UI used for displaying images and receiving actions */
     protected AbstractUI ui;
@@ -54,9 +54,6 @@ public abstract class AbstractAgent {
     /** Create a new agent that communicates with ALE via stdin/out and
      *    uses the graphical user interface.
      */
-    public AbstractAgent() {
-        this(true, null);
-    }
 
     /** Create a new agent with the specified parameters. The user can specify
      *   the base name for two FIFO pipes used to communicate with ALE. If
@@ -69,6 +66,13 @@ public abstract class AbstractAgent {
      *   files used to communicate with ALE.
      */
     public AbstractAgent(boolean useGUI, String namedPipesBasename) {
+        init(useGUI, namedPipesBasename);
+    }
+    public AbstractAgent() {
+        super();
+    }
+
+    protected void init(boolean useGUI, String namedPipesBasename) {
         this.useGUI = useGUI;
         this.namedPipesBasename = namedPipesBasename;
 
@@ -77,8 +81,9 @@ public abstract class AbstractAgent {
 
         // Create an object to convert indexed images to Java images
         converter = new ScreenConverter(palette);
-        
+
         init();
+
     }
 
     /** Create a color palette used to display the screen. The currently available

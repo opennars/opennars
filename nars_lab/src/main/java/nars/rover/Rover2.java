@@ -126,30 +126,30 @@ public class Rover2 extends PhysicsModel {
 
 //                if (e.getKeyCode() == KeyEvent.VK_UP) {
 //                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,linear,1). :|:");
+//                        nar.addInput("motor(linear,1). :|:");
 //                    } else {
-//                        nar.addInput("(^motor,linear,1)!");
+//                        nar.addInput("motor(linear,1)!");
 //                    }
 //                }
 //                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 //                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,linear,-1). :|:");
+//                        nar.addInput("motor(linear,-1). :|:");
 //                    } else {
-//                        nar.addInput("(^motor,linear,-1)!");
+//                        nar.addInput("motor(linear,-1)!");
 //                    }
 //                }
 //                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 //                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,turn,-1). :|:");
+//                        nar.addInput("motor(turn,-1). :|:");
 //                    } else {
-//                        nar.addInput("(^motor,turn,-1)!");
+//                        nar.addInput("motor(turn,-1)!");
 //                    }
 //                }
 //                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 //                    if(!Rover2.allow_imitate) {
-//                        nar.addInput("(^motor,turn,1). :|:");
+//                        nar.addInput("motor(turn,1). :|:");
 //                    } else {
-//                        nar.addInput("(^motor,turn,1)!");
+//                        nar.addInput("motor(turn,1)!");
 //                    }
 //                }
             }
@@ -393,11 +393,11 @@ public class Rover2 extends PhysicsModel {
             {
                 JPanel motorPanel = new JPanel(new GridLayout(0, 2));
 
-//                motorPanel.add(new InputButton("Stop", "(^motor,stop). :|:"));
-//                motorPanel.add(new InputButton("Forward", "(^motor,forward). :|:"));
-//                motorPanel.add(new InputButton("TurnLeft", "(^motor,turn,left). :|:"));
-//                motorPanel.add(new InputButton("TurnRight", "(^motor,turn,right). :|:"));
-//                motorPanel.add(new InputButton("Backward", "(^motor,backward). :|:"));
+//                motorPanel.add(new InputButton("Stop", "motor(stop). :|:"));
+//                motorPanel.add(new InputButton("Forward", "motor(forward). :|:"));
+//                motorPanel.add(new InputButton("TurnLeft", "motor(turn,left). :|:"));
+//                motorPanel.add(new InputButton("TurnRight", "motor(turn,right). :|:"));
+//                motorPanel.add(new InputButton("Backward", "motor(backward). :|:"));
                 add(motorPanel, BorderLayout.SOUTH);
             }
         }
@@ -414,8 +414,8 @@ public class Rover2 extends PhysicsModel {
         getWorld().setAllowSleep(false);
 
         //world = new ReactorWorld(this, 32, sz, sz*2);
-        world = new FoodSpawnWorld1(this, 32, sz, sz);
-        //world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
+        //world = new FoodSpawnWorld1(this, 32, sz, sz);
+        world = new GridSpaceWorld(this, GridSpaceWorld.newMazePlanet());
 
         rover = new RoverModel(this, this);
 
@@ -435,17 +435,17 @@ public class Rover2 extends PhysicsModel {
 
     static {
         String p = "$0.99;0.75;0.90$ ";
-        randomActions.add("(^motor,left)!");
-        randomActions.add(p + "(^motor,left,left)!");
-        randomActions.add("(^motor,right)!");
-        randomActions.add(p + "(^motor,right,right)!");
-        //randomActions.add("(^motor,forward,forward)!"); //too much actions are not good, 
-        randomActions.add(p + "(^motor,forward)!"); //however i would agree if <(^motor,forward,forward) --> (^motor,forward)>.
-        //randomActions.add("(^motor,forward,forward)!");
-        randomActions.add(p + "(^motor,forward)!");
-        //randomActions.add("(^motor,reverse)!");
-        randomActions.add(p + "(^motor,stop)!");
-        //randomActions.add("(^motor,random)!");
+        randomActions.add("motor(left)!");
+        randomActions.add(p + "motor(left,left)!");
+        randomActions.add("motor(right)!");
+        randomActions.add(p + "motor(right,right)!");
+        //randomActions.add("motor(forward,forward)!"); //too much actions are not good, 
+        randomActions.add(p + "motor(forward)!"); //however i would agree if <motor(forward,forward) --> motor(forward)>.
+        //randomActions.add("motor(forward,forward)!");
+        randomActions.add(p + "motor(forward)!");
+        //randomActions.add("motor(reverse)!");
+        randomActions.add(p + "motor(stop)!");
+        //randomActions.add("motor(random)!");
     }
 
     protected void randomAction() {
@@ -454,7 +454,7 @@ public class Rover2 extends PhysicsModel {
     }
 
     protected void addOperators() {
-        nar.on(new NullOperator("^motor") {
+        nar.on(new NullOperator("motor") {
 
             @Override
             protected List<Task> execute(Operation operation, Memory memory) {
@@ -465,17 +465,19 @@ public class Rover2 extends PhysicsModel {
                 float priority = operation.getTask().getPriority();
 
                 String command = "";
-                if (args.length == 1 + 1) {
+                if (args.length == 1 ) {
                     command = t1.toString();
                 }
-                if (args.length == 2 + 1) {
+                if (args.length == 2 ) {
                     Term t2 = args[1];
                     command = t1.toString() + "," + t2.toString();
-                } else if (args.length == 3 + 1) {
+                } else if (args.length == 3 ) {
                     Term t2 = args[1];
                     Term t3 = args[2];
                     command = t1.toString() + "," + t2.toString() + "," + t3.toString();
                 }
+
+                //System.out.println(operation + " "+ command);
 
                 switch (command) {
                     case "right":

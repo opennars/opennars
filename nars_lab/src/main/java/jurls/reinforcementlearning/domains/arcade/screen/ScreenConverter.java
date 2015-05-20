@@ -26,7 +26,7 @@ import java.awt.image.BufferedImage;
  */
 public class ScreenConverter {
     /** The map from screen indices to RGB colors */
-    protected ColorPalette colorMap;
+    public ColorPalette colorMap;
 
     /** Create a new ScreenConverter with the desired color palette
      * 
@@ -55,4 +55,5 @@ public class ScreenConverter {
 
         return img;
     }
+
 }
