@@ -37,8 +37,8 @@ public class Abbreviation extends NARReaction {
 
     //these two are AND-coupled:
     //when a concept is important and exceeds a syntactic complexity, let NARS name it:
-    public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(16);
-    public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.75f);
+    public final AtomicInteger abbreviationComplexityMin = new AtomicInteger(24);
+    public final AtomicDouble abbreviationQualityMin = new AtomicDouble(0.7f);
 
     //TODO different parameters for priorities and budgets of both the abbreviation process and the resulting abbreviation judgment
     //public AtomicDouble priorityFactor = new AtomicDouble(1.0);

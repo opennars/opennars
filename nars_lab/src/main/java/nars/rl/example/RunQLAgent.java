@@ -2,7 +2,7 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
+import jurls.reinforcementlearning.domains.follow.Follow1D;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -155,9 +155,9 @@ public class RunQLAgent extends JPanel {
 
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
-        //RLEnvironment d = new Follow1D();
+        RLEnvironment d = new Follow1D();
 
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
 
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
@@ -255,7 +255,7 @@ public class RunQLAgent extends JPanel {
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.1f),
+                new RawPerception("L", 0.3f),
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
                 //new AEPerception("A", 0.05f, 7, 0).setLearningRate(0.01).setSigmoid(false)
@@ -269,7 +269,7 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("B", 6, 0.1f)
+                new HaiSOMPerception("B", 2, 0.1f)
         );
 
 

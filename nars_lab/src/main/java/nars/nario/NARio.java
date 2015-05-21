@@ -35,8 +35,8 @@ public class NARio extends Run implements RLEnvironment {
     static int memoryCyclesPerFrame = 4;
 
     int movementStatusPeriod = 1;
-    int commandPeriod = 50;
-    int radarPeriod = 2;
+    int commandPeriod = 250;
+    int radarPeriod = 10;
 
     private int[] keyTime = new int[256];
     private float lastMX;
@@ -44,7 +44,7 @@ public class NARio extends Run implements RLEnvironment {
 
     public int t = 0;
 
-    private final NAR nar;
+    public final NAR nar;
 
     private float lastX = -1;
     private float lastY = -1;
@@ -59,8 +59,7 @@ public class NARio extends Run implements RLEnvironment {
 
     boolean offKeys = false;
 
-    private ChangedTextInput moveInput;
-    private ChangedTextInput velInput;
+
     private LevelScene level;
 
     private Supplier<BufferedImage> levelImageSupplier = new Supplier<BufferedImage>() {
@@ -277,11 +276,13 @@ public class NARio extends Run implements RLEnvironment {
                 updateMovement(direction(0, 0), 1.0f);
             } else {
                 //4 basis vectors
-                int maxVelocity = 64;
-                updateMovement(dx, dy, 0, -maxVelocity);
+                float maxVelocity = 1;
+                float precision = 0.5f;
+                updateMovement(direction((int)(dx/maxVelocity * precision),  (int)(dy/maxVelocity * precision)), 1.0f); //for some reason the sign needs negated
+                /*updateMovement(dx, dy, 0, -maxVelocity);
                 updateMovement(dx, dy, 0, maxVelocity);
                 updateMovement(dx, dy, -maxVelocity, 0);
-                updateMovement(dx, dy, maxVelocity, 0);
+                updateMovement(dx, dy, maxVelocity, 0);*/
             }
         }
 
@@ -354,7 +355,7 @@ public class NARio extends Run implements RLEnvironment {
                     //priority/=2f;
                 }
 
-                double senseRadius = 15;
+                double senseRadius = 32;
                 double dist = Math.sqrt((x - s.x) * (x - s.x) + (y - s.y) * (y - s.y)) / 16.0;
                 if (dist <= senseRadius) {
                     double priority = 0.5f + 0.5f * (senseRadius - dist) / senseRadius;
@@ -365,15 +366,15 @@ public class NARio extends Run implements RLEnvironment {
                         type = s.toString();
                     }
 
-                    int dx = Math.round((x - s.x) / 16f);
-                    int dy = Math.round((y - s.y) / 16f);
+                    int dx = Math.round((s.x - x) / 16f);
+                    int dy = Math.round((s.y - y) / 16f);
 
                     float sightPriority = (float) (4.0 / (4.0 + Math.sqrt(dx * dx + dy * dy)));
 
                     String sees = "$" + sightPriority + "$" +
                             " <" + direction(dx, dy)  + " --> [" + type + "]>. :|:";
                     //System.out.println(sees);
-                    nar.input(sees);
+                    input(sees);
 
                     //nar.addInput("$" + sv.toString() + "$ <(*,<(*," + dx +"," + dy + ") --> localPos>," + type + ") --> feel>. :|:");
                 }
@@ -414,10 +415,10 @@ public class NARio extends Run implements RLEnvironment {
         //dont remain still
         //nar.input("<I --> [" + direction(0, 0) + "]>! :|: %0.05;0.6%");
 
-        nar.input("<I --> [died]>! %0.00;0.95%");
-        nar.input("<I --> [died]>. :|: %0.00;0.9%");
-        nar.input("<I --> [stomp]>! :|: %1.00;0.5%");
-        nar.input("<I --> [coin]>! :|: %1.00;0.45%");
+        input("died()! %0.00;0.95%");
+        input("died(). :|: %0.00;0.9%");
+        input("stomp()! :|: %1.00;0.5%");
+        input("coin()! :|: %1.00;0.45%");
 
 //        for (int i= 0; i < 5; i++) {
 //            nar.input("keyboard" + i + "(on)! :|: %0.75;0.5%");
@@ -427,26 +428,26 @@ public class NARio extends Run implements RLEnvironment {
     }
 
     public void coin() {
-        nar.input("<I --> [coin]>. :|:");
+        input("coin(). :|:");
         System.out.println("MONEY");
         bonus += 1;
     }
 
     protected void hurt() {
-        nar.input("<I --> [died]>. :|:");
+        input("died(). :|:");
         goals();
         System.out.println("OUCH");
         bonus -= 10;
     }
 
     public void stomp() {
-        nar.input("<I --> [stomp]>. :|:");
+        input("stomp(). :|:");
         System.out.println("KILL");
         bonus += 1;
     }
 
     public void trip() {
-        nar.input("<I --> [tripping]>. :|:");
+        input("trip(). :|:");
         System.out.println("TRIPPING");
         bonus += 2;
     }
@@ -551,9 +552,6 @@ public class NARio extends Run implements RLEnvironment {
 
         //NAR.DEBUG = true;
 
-        chg = new ChangedTextInput(nar);
-        moveInput = new ChangedTextInput(nar);
-        velInput = new ChangedTextInput(nar);
 
         //nar.addInput("<(*,?m,(*,?x,?y)) --> space>? :/:");
                        /* nar.addInput("<?y --> space>? :/:");
@@ -590,7 +588,6 @@ public class NARio extends Run implements RLEnvironment {
 //        }
     }
 
-    ChangedTextInput[] keyInput = new ChangedTextInput[6];
 
 //    protected void setKey(int k, boolean pressed) {
 //        setKey(k, pressed, true);
@@ -721,8 +718,8 @@ public class NARio extends Run implements RLEnvironment {
 
 
     protected void updateMovement(String direction, float freq) {
-        String s = "<I --> [" + direction + "]>. :|: %" +
-                freq + ";0.80%";
+        String s = "moved(" + direction + "). :|: %" +
+                freq + ";0.95%";
         input(s);
     }
 
@@ -730,12 +727,16 @@ public class NARio extends Run implements RLEnvironment {
     protected void updateMovement(float cx, float cy, int tx, int ty) {
         double f = cosineSimilarityScaled(new double[]{cx, cy}, new double[]{tx, ty});
         float ff = (float) (f / 2f + 0.5f);
-        updateMovement(direction(-tx, -ty), ff); //for some reason the sign needs negated
+        double precision = 0.25; //reduction to discretized scale
+        //updateMovement(direction((int)(-tx * ff * precision),  (int)(-ty* ff * precision)), 1.0f); //for some reason the sign needs negated
+        updateMovement(direction((int)(-tx),  (int)(-ty)), ff); //for some reason the sign needs negated
     }
 
 
 
     protected void input(String sensed) {
+
+
         nar.input(sensed);
     }
 

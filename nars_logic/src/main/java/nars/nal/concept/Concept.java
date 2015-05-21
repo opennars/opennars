@@ -535,7 +535,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final DirectProcess nal, final Task task) {
+    public boolean processGoal(final DirectProcess nal, final Task task) {
 
 
         final Sentence goal = task.sentence, oldGoal;

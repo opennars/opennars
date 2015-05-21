@@ -35,13 +35,13 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /** pending tasks to execute to prevent CME */
     transient private final List<Task> stateActionImplications = Global.newArrayList();
 
-    final int implicationOrder = TemporalRules.ORDER_FORWARD; //TemporalRules.ORDER_FORWARD;
+    final int implicationOrder = TemporalRules.ORDER_CONCURRENT; //TemporalRules.ORDER_FORWARD;
 
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char implicationPunctuation = Symbols.GOAL;
-    float updateThresh = Global.TRUTH_EPSILON * 2; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
+    char implicationPunctuation = Symbols.JUDGMENT;
+    float updateThresh = Global.TRUTH_EPSILON * 0; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
 
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
@@ -125,7 +125,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
                         v.addDQ(dqDivE * e);
                         v.updateE(eMult, eAdd);
 
-                        v.commit(qUpdateConfidence, updateThresh);
+                        v.commit(implicationPunctuation, qUpdateConfidence, updateThresh);
                     }
                 }
             }

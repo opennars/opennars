@@ -63,7 +63,8 @@ public class RLNario extends NARio  {
 
     @Override
     protected void input(String sensed) {
-        //ignore this input
+        //System.out.println(sensed);
+        nar.input(sensed);
     }
 
 
@@ -76,7 +77,7 @@ public class RLNario extends NARio  {
     public static void main(String[] args) {
 
 
-        NAR nar = new NAR(new Default(2000, 20, 4));
+        NAR nar = new NAR(new Default(2000, 30, 4));
         nar.memory.setSelf(Atom.the("I"));
 
         nar.param.duration.set(memoryCyclesPerFrame * 3);

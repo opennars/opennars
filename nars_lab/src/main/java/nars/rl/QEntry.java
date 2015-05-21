@@ -105,18 +105,21 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     long commitEvery = 0;
     float lastFreq = -1;
 
-    public void commitNormal(Task t) {
+    public void commitDirect(Task t) {
         DirectProcess.run(concept.memory, t);
     }
 
     /** inserts the belief directly into the table */
     public void commitFast(Task t) {
         //concept.beliefs.clear();
-        concept.processJudgment(null, t);
+
+        //switch(t.punctuation) ..
+        //concept.processJudgment(null, t);
+        concept.processGoal(null, t);
     }
 
     /** input to NAR */
-    public void commit(float qUpdateConfidence, float thresh) {
+    public void commit(char punctuation, float qUpdateConfidence, float thresh) {
 
         clearDQ();
 
@@ -135,15 +138,13 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         if (lastFreq==-1 ||
                 ((now - lastCommit >= commitEvery) && Math.abs(nextFreq - lastFreq) > thresh)) {
 
-
-            //String updatedBelief = qt + (statePunctuation + " :|: %" + Texts.n2(nextFreq) + ";" + Texts.n2(qUpdateConfidence) + "%");
             Task t = concept.memory.task((Compound) qt).punctuation(
 
-                    Symbols.JUDGMENT
+                    punctuation
 
             ).present().truth(nextFreq, qUpdateConfidence).get();
 
-            commitFast(t);
+            commitDirect(t);
 
             lastFreq = nextFreq;
             lastCommit = now;
