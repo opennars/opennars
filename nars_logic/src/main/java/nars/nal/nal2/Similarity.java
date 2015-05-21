@@ -20,6 +20,7 @@
  */
 package nars.nal.nal2;
 
+import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -34,14 +35,9 @@ public class Similarity extends Statement {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    protected Similarity(final Term[] arg) {
-        super(arg[0], arg[1]);
-        
-        init(arg);
-    }
-
     protected Similarity(final Term subj, final Term pred) {
-        this(new Term[] { subj, pred} );
+        super(subj, pred);
+        init(term);
     }
     
 
@@ -51,7 +47,7 @@ public class Similarity extends Statement {
      */
     @Override
     public Similarity clone() {
-        return new Similarity(term);
+        return new Similarity(getSubject(), getPredicate());
     }
     
     @Override public Similarity clone(Term[] replaced) {
@@ -80,11 +76,16 @@ public class Similarity extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if (subject.compareTo(predicate) > 0) {
-            return make(predicate, subject);
-        }        
-        
-        return new Similarity(subject, predicate);
+
+        int compare = subject.compareTo(predicate);
+        if (compare > 0)
+                return new Similarity(predicate, subject);
+        else if (compare < 0)
+                return new Similarity(subject, predicate);
+        else {
+                throw new RuntimeException("subject and predicate are equal according to compareTo: " + subject + " , " + predicate);
+        }
+
     }
 
     /**

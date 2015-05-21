@@ -1,6 +1,6 @@
 package nars.analyze.meter;
 
-import nars.op.AbstractOperator;
+import nars.op.NARReaction2;
 import nars.Events;
 import nars.NAR;
 import nars.testing.condition.OutputCondition;
@@ -12,7 +12,7 @@ import nars.util.data.CuckooMap;
 import java.util.*;
 
 
-public class CountDerivationCondition extends AbstractOperator {
+public class CountDerivationCondition extends NARReaction2 {
 
     //SM = success method
     final static String methodInvolvedInSuccessfulDerivation_Prefix = "D";
@@ -26,14 +26,9 @@ public class CountDerivationCondition extends AbstractOperator {
     final Map<Task, StackTraceElement[]> derived = new CuckooMap();
     final List<OutputCondition> successesThisCycle = new ArrayList();
 
-    public CountDerivationCondition(Metrics m) {
-        super();
+    public CountDerivationCondition(NAR nar, Metrics m) {
+        super(nar, Events.TaskDerive.class, OutputCondition.class, Events.CycleEnd.class);
         this.metrics = m;
-    }
-
-    @Override
-    public Class[] getEvents() {
-        return new Class[] { Events.TaskDerive.class, OutputCondition.class, Events.CycleEnd.class };
     }
 
     @Override public void onEnabled(NAR n) {       }

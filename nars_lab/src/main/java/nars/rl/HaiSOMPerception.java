@@ -4,6 +4,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.rl.hai.Hsom;
 
@@ -15,6 +16,7 @@ public class HaiSOMPerception implements Perception {
 
     private final String id;
     private final float confidence;
+    private final Atom idTerm;
     private int somSize;
     private Hsom som = null;
     private QLAgent agent;
@@ -24,6 +26,7 @@ public class HaiSOMPerception implements Perception {
         this.id = id;
         this.somSize = somSize;
         this.confidence = confidence;
+        this.idTerm = Atom.the(id);
     }
 
     @Override
@@ -53,7 +56,8 @@ public class HaiSOMPerception implements Perception {
 
         return Collections.singleton(
                 //TODO avoid String parsing
-                nar.task("<state --> [(*," + id + x + "," + id + y + ")]>. :|: %1.00;" + confidence + '%')
+                //nar.task("<state --> [(*," + id + x + "," + id + y + ")]>. :|: %1.00;" + confidence + '%')
+                nar.task("<{(*,s" + x + ",s" + y + ")} --> " + id + ">. :|: %1.00;" + confidence + '%')
         );
     }
 
@@ -61,8 +65,11 @@ public class HaiSOMPerception implements Perception {
     public boolean isState(Term t) {
         //TODO better pattern recognizer
         String s = t.toString();
-        if ((t instanceof Inheritance) /*&& (t.getComplexity() == 6)*/) {
-            if (s.startsWith("<state --> [(*," + id) && s.endsWith(")]>")) {
+        int complexity = t.getComplexity();
+
+        //allow complxity to increase to a certain amount to include aggregate states
+        if ((t instanceof Inheritance) && (complexity >= 6) && (complexity <= 9)) {
+            if (((Inheritance)t).getPredicate().equals(idTerm)) {
                 //System.out.println(t + " " + t.getComplexity());
                 return true;
             }

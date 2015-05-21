@@ -353,10 +353,10 @@ public class Default extends NARSeed implements ConceptBuilder {
             //n.on(new Anticipate());      // expect an event
 
             if (internalExperience == Minimal) {
-                n.on(new InternalExperience());
+                new InternalExperience(n);
+                new Abbreviation(n);
             } else if (internalExperience == Full) {
-                n.on(new FullInternalExperience());
-                n.on(new Abbreviation());
+                new FullInternalExperience(n);
                 n.on(new Counting());
             }
         }

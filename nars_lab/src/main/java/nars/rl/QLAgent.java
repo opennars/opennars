@@ -97,6 +97,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     public QLAgent(NAR nar, String operationTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         super(nar);
 
+        this.env = env;
+
         this.operator = nar.the(operationTerm);
         this.operationTerm = operationTerm;
         this.rewardTerm = rewardTerm;
@@ -113,7 +115,6 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         operationCache = new Operation[env.numActions()];
 
 
-        this.env = env;
 
         this.io = new EnvironmentReaction();
 
@@ -523,8 +524,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         if (numTaskTransitions == 0) numTaskTransitions = 1;
 
         List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
+        List<Operation> a = Lists.newArrayList(brain.getActions());
         for (S i : s) {
-            for (Operation k : brain.getActions()) {
+            for (Operation k : a) {
                 brain.qUpdate(i, k, sumDeltaQ/numTaskTransitions, GammaLambda/numTaskTransitions, 0);
             }
         }

@@ -66,7 +66,7 @@ public class Curiousbot extends JComponent implements RLEnvironment {
 
     @Override
     public int numActions() {
-        return 4;
+        return 6;
     }
 
     public static final int CHART_HEIGHT = 100;

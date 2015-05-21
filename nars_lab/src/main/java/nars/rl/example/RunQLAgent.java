@@ -1,7 +1,6 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
-import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
@@ -19,6 +18,7 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
+import nars.rl.HaiSOMPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -255,7 +255,7 @@ public class RunQLAgent extends JPanel {
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.1f)
+                new RawPerception("L", 0.1f),
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
                 //new AEPerception("A", 0.05f, 7, 0).setLearningRate(0.01).setSigmoid(false)
@@ -269,7 +269,7 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                //new HaiSOMPerception("B", 5, 0.1f)
+                new HaiSOMPerception("B", 6, 0.1f)
         );
 
 

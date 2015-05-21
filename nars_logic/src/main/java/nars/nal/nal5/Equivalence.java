@@ -41,19 +41,19 @@ public class Equivalence extends Statement {
      *
      * @param arg The component list of the term
      */
-    private Equivalence(Term[] arg, int order) {
-        super(arg[0], arg[1]);
+    private Equivalence(Term subject, Term predicate, int order) {
+        super(subject, predicate);
 
         if ((order == TemporalRules.ORDER_BACKWARD) ||
                 (order == TemporalRules.ORDER_INVALID)) {
-            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + Arrays.toString(arg));
+            throw new RuntimeException("Invalid temporal order=" + order + "; args=" + subject + " , " + predicate);
         }
 
         temporalOrder = order;
 
 
         
-        init(arg);
+        init(term);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Equivalence extends Statement {
      */
     @Override
     public Equivalence clone() {
-        return new Equivalence(term, temporalOrder);
+        return new Equivalence(getSubject(), getPredicate(), temporalOrder);
     }
     
     @Override public Equivalence clone(final Term[] t) {        
@@ -111,6 +111,7 @@ public class Equivalence extends Statement {
                 
         if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
                 || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
+            //swap
             Term interm = subject;
             subject = predicate;
             predicate = interm;
@@ -120,15 +121,21 @@ public class Equivalence extends Statement {
             temporalOrder = TemporalRules.ORDER_FORWARD;
 
         Term[] t;
-        if (temporalOrder==TemporalRules.ORDER_FORWARD)
-            t = new Term[] { subject, predicate };
-        else
-            t = Terms.toSortedSetArray(subject, predicate);
+        if (temporalOrder==TemporalRules.ORDER_FORWARD) {
+            //t = new Term[]{subject, predicate};
+        }
+        else {
+            int c = subject.compareTo(predicate);
+            if (c > 0) {
+                //swap
+                Term interm = subject;
+                subject = predicate;
+                predicate = interm;
+            }
+        }
 
-        if (t.length != 2)
-            return null;
 
-        return new Equivalence(t, temporalOrder);
+        return new Equivalence(subject, predicate, temporalOrder);
     }
 
     /**

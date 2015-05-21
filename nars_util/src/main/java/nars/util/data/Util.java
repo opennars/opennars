@@ -36,6 +36,9 @@ public final class Util {
     public final static int hash(Object a, Object b, Object c, Object d) {
         return 31 * (31 * (31 * (31 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;
     }
+    public final static int hash(int a, int b, Object c, Object d) {
+        return 31 * (31 * (31 * (31 + a ) + b ) + c.hashCode() ) + d.hashCode() ;
+    }
 
     public static void assertNotNull(final Object test, final String varName) {
         if (test == null) {

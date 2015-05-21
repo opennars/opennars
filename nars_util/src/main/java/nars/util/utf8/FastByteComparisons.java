@@ -21,8 +21,11 @@ public abstract class FastByteComparisons {
      * Lexicographically compare two byte arrays.
      */
     final public static int compareTo(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {
-        return LexicographicalComparerHolder.BEST_COMPARER.compareTo(
+        int x = LexicographicalComparerHolder.PureJavaComparercompareTo(
                 b1, s1, l1, b2, s2, l2);
+        if (x > 0) return 1;
+        if (x < 0) return -1;
+        return 0;
     }
 
     final public static int compare(final byte[] a, final byte[] b) {
@@ -35,9 +38,7 @@ public abstract class FastByteComparisons {
                                       T buffer2, int offset2, int length2);
     }
 
-    private static Comparer<byte[]> lexicographicalComparerJavaImpl() {
-        return LexicographicalComparerHolder.PureJavaComparer.INSTANCE;
-    }
+
 
 
     /**
@@ -51,30 +52,30 @@ public abstract class FastByteComparisons {
         static final String UNSAFE_COMPARER_NAME =
                 LexicographicalComparerHolder.class.getName() + "$UnsafeComparer";
 
-        static final Comparer<byte[]> BEST_COMPARER = getBestComparer();
-        /**
-         * Returns the Unsafe-using Comparer, or falls back to the pure-Java
-         * implementation if unable to do so.
-         */
-        static Comparer<byte[]> getBestComparer() {
-            try {
-                Class<?> theClass = Class.forName(UNSAFE_COMPARER_NAME);
+//        static final Comparer<byte[]> BEST_COMPARER = getBestComparer();
+//        /**
+//         * Returns the Unsafe-using Comparer, or falls back to the pure-Java
+//         * implementation if unable to do so.
+//         */
+//        static Comparer<byte[]> getBestComparer() {
+//            try {
+//                Class<?> theClass = Class.forName(UNSAFE_COMPARER_NAME);
+//
+//                // yes, UnsafeComparer does implement Comparer<byte[]>
+//                @SuppressWarnings("unchecked")
+//                Comparer<byte[]> comparer =
+//                        (Comparer<byte[]>) theClass.getEnumConstants()[0];
+//                return comparer;
+//            } catch (Throwable t) { // ensure we really catch *everything*
+//                return lexicographicalComparerJavaImpl();
+//            }
+//        }
 
-                // yes, UnsafeComparer does implement Comparer<byte[]>
-                @SuppressWarnings("unchecked")
-                Comparer<byte[]> comparer =
-                        (Comparer<byte[]>) theClass.getEnumConstants()[0];
-                return comparer;
-            } catch (Throwable t) { // ensure we really catch *everything*
-                return lexicographicalComparerJavaImpl();
-            }
-        }
-
-        private enum PureJavaComparer implements Comparer<byte[]> {
+        /*public static enum PureJavaComparer implements Comparer<byte[]> {
             INSTANCE;
 
-            @Override
-            public int compareTo(byte[] buffer1, int offset1, int length1,
+            @Override*/
+            public static int PureJavaComparercompareTo(byte[] buffer1, int offset1, int length1,
                                  byte[] buffer2, int offset2, int length2) {
                 // Short circuit equal case
                 if (buffer1 == buffer2 &&
@@ -93,8 +94,9 @@ public abstract class FastByteComparisons {
                 }
                 return length1 - length2;
             }
-        }
+        //}
 
+        //WARNING DOESNT SEEM TO WORK
         @SuppressWarnings("unused") // used via reflection
         private enum UnsafeComparer implements Comparer<byte[]> {
             INSTANCE;

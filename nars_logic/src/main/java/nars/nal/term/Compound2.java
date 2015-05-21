@@ -86,7 +86,7 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
     @Override
     public int hashCode() {
         if (this.hash == 0) {
-            return this.hash = Util.hash(getTemporalOrder(), a(), b(), operator());
+            return this.hash = Util.hash(getTemporalOrder(), operator().ordinal(), a(), b() );
         }
         return hash;
     }

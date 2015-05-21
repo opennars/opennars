@@ -945,7 +945,10 @@ public class Memory implements Serializable {
     }
 
     public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
-        return new Task(s, new Budget(s.punctuation, s.truth), parentTask);
+        return task(s, new Budget(s.punctuation, s.truth), parentTask);
+    }
+    public <T extends Compound> Task<T> task(Sentence<T> s, Budget b, Task parentTask) {
+        return new Task(s, b, parentTask);
     }
 
 

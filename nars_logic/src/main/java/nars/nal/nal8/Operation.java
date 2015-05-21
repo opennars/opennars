@@ -270,4 +270,13 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     public int args() {
         return arg().length();
     }
+
+    public static boolean isA(Term x, Term someOperatorTerm) {
+        if (x instanceof Operation) {
+            Operation o = (Operation)x;
+            if (o.getOperator().equals(someOperatorTerm))
+                return true;
+        }
+        return false;
+    }
 }

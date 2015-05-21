@@ -18,6 +18,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
+import nars.op.NARReaction2;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import objenome.Container;
@@ -310,6 +311,9 @@ public class NAR extends Container implements Runnable {
     /** attach event handler to one or more event (classes) */
     public EventEmitter.Registrations on(Reaction<Class> o, Class... c) {
         return memory.event.on(o, c);
+    }
+    public EventEmitter.Registrations on(NARReaction2 o) {
+        return memory.event.on(o, o.getEvents());
     }
 
     public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {

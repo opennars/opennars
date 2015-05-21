@@ -1,8 +1,8 @@
 package nars.analyze.meter;
 
-import nars.op.AbstractOperator;
 import nars.Events;
 import nars.NAR;
+import nars.event.NARReaction;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;
 
@@ -12,15 +12,15 @@ import java.util.Map;
 /**
 * Created by me on 2/10/15.
 */
-public class CountOutputEvents extends AbstractOperator {
+public class CountOutputEvents extends NARReaction {
 
 //        public static final DoubleMeter numIn = new DoubleMeter("IN");
 //        public static final DoubleMeter numOut = new DoubleMeter("OUT");
 
     final Map<Class, HitMeter> eventMeters = new HashMap();
 
-    public CountOutputEvents(Metrics m) {
-        super();
+    public CountOutputEvents(NAR n, Metrics m) {
+        super(n, ev);
 
         for (Class c : getEvents()) {
             HitMeter h = new HitMeter(c.getSimpleName());
@@ -43,15 +43,7 @@ public class CountOutputEvents extends AbstractOperator {
         return ev;
     }
 
-    @Override
-    public void onEnabled(NAR n) {
 
-    }
-
-    @Override
-    public void onDisabled(NAR n) {
-
-    }
 
     @Override
     public void event(Class event, Object[] args) {

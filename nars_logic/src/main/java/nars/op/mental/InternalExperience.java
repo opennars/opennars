@@ -3,6 +3,7 @@ package nars.op.mental;
 import nars.*;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.event.NARReaction;
 import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
@@ -15,7 +16,6 @@ import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.op.AbstractOperator;
 
 import java.util.Arrays;
 
@@ -27,19 +27,18 @@ import java.util.Arrays;
  * <p>
  * called from Concept
  */
-public class InternalExperience extends AbstractOperator {
+public class InternalExperience extends NARReaction {
         
-    public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f;
+    public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.5f;
     
     //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.01f;
+    public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.05f;
     
     //less probable form
     public static final float INTERNAL_EXPERIENCE_RARE_PROBABILITY = 
             INTERNAL_EXPERIENCE_PROBABILITY/ 4.0f;
 
 
-    public final static Atom anticipateOp = Atom.the("anticipate");
 
 
     //internal experience has less durability?
@@ -62,6 +61,7 @@ public class InternalExperience extends AbstractOperator {
     public final static Atom want = Atom.the("want");;
     public final static Atom wonder = Atom.the("wonder");;
     public final static Atom evaluate = Atom.the("evaluate");;
+    public final static Atom anticipate = Atom.the("anticipate");
 
 
     /** whether it is full internal experience, or minimal (false) */
@@ -70,27 +70,14 @@ public class InternalExperience extends AbstractOperator {
     }
 
 
-    @Override
-    public Class[] getEvents() {
-        if (isFull()) {
-            return new Class[] { DirectProcess.class, Events.BeliefReason.class };
-        }
-        else {
-            return new Class[] { DirectProcess.class };
-        }
-    }
-
-    @Override
-    public void onEnabled(NAR n) {
-
+    protected InternalExperience(NAR n, Class... events) {
+        super(n, events);
         this.memory = n.memory;
-
+    }
+    public InternalExperience(NAR n) {
+        this(n, DirectProcess.class);
     }
 
-    @Override
-    public void onDisabled(NAR n) {
-
-    }
 
     public Term toTerm(final Sentence s, final Memory mem) {
         Atom opTerm;
@@ -115,11 +102,13 @@ public class InternalExperience extends AbstractOperator {
                 return null;
         }
         
-        Term[] arg = new Term[ s.truth==null ? 1 : 2 ];
+        Term[] arg = new Term[ 1 + (s.truth==null ? 1 : 2) ];
         arg[0]=s.getTerm();
+        int k = 1;
         if (s.truth != null) {
-            arg[1] = s.truth.toWordTerm();            
+            arg[k++] = s.truth.toWordTerm();
         }
+        arg[k] = memory.self();
         
         Operation operation = Operation.make(opTerm, Product.make(arg));
         if (operation == null) {
@@ -138,15 +127,16 @@ public class InternalExperience extends AbstractOperator {
             Task task = (Task)a[0];
             NAL nal = (NAL)a[1];
 
-            if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
+            Term content = task.getTerm();
+            if (content instanceof Operation) return;   // to prevent infinite recursions
 
             if (!task.summaryNotLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
                 return;
             }
 
-            Term content = task.getTerm();
+            if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
 
-            if (content instanceof Operation) return;   // to prevent infinite recursions
+
 
 
             Sentence sentence = task.sentence;
@@ -163,9 +153,6 @@ public class InternalExperience extends AbstractOperator {
 
             Term ret = toTerm(sentence, memory);
             if(ret==null) return;
-
-
-
 
 
             if (newbudget.aboveThreshold()) {
@@ -249,7 +236,7 @@ public class InternalExperience extends AbstractOperator {
 
 
                     Product args = Product.make(imp.getPredicate());
-                    Term new_term=Operation.make(anticipateOp, args);
+                    Term new_term=Operation.make(anticipate, args);
 
                     Sentence sentence = new Sentence(
                         new_term, Symbols.GOAL,

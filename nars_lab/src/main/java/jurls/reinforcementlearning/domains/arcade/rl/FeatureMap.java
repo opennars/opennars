@@ -19,6 +19,8 @@ package jurls.reinforcementlearning.domains.arcade.rl;
 
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 
+import java.util.Arrays;
+
 /** A simple RL feature set for Atari agents. The screen is divided into blocks.
  *   Within each block, we encode the presence or absence of a color. The number
  *   of colors is restricted to reduce the number of active features.
@@ -32,15 +34,22 @@ public class FeatureMap {
     protected final int numColumns;
     /** The number of rows (x bins) in the quantization */
     protected final int numRows;
+    private final double[] features;
 
     /** Create a new FeatureMap with fixed parameter settings: 16 columns,
      *   21 rows and 8 colors (SECAM).
      */
-    public FeatureMap() {
+    public FeatureMap(int columns, int rows, int colors) {
         // Some hardcoded feature set parameters
-        numColumns = 16;
-        numRows = 21;
-        numColors = 8;
+        numColumns = columns;
+        numRows = rows;
+        numColors = colors;
+        this.features = new double[numFeatures()];
+        System.out.println(this +  " " + numFeatures());
+
+    }
+    public FeatureMap() {
+        this(18, 21, 8);
     }
     
     /** Returns a quantized version of the last screen.
@@ -48,31 +57,41 @@ public class FeatureMap {
      * @param history
      * @return
      */
-    public double[] getFeatures(FrameHistory history) {
+    public double[] getFeatures(final FrameHistory history) {
         // Obtain the last screen
-        ScreenMatrix screen = history.getLastFrame(0);
+        final ScreenMatrix screen = history.getLastFrame(0);
 
-        int blockWidth = screen.width / numColumns;
-        int blockHeight = screen.height / numRows;
+        final int blockWidth = screen.width / numColumns;
+        final int blockHeight = screen.height / numRows;
 
-        int featuresPerBlock = numColors;
-        double[] features = new double[numFeatures()];
+        final int featuresPerBlock = numColors;
 
         int blockIndex = 0;
-        
+
+        final int numColors = this.numColors;
+
+        final double[] features = this.features;
+        final int[][] matrix = screen.matrix;
+
+        int rr = numRows;
+        int cc = numColumns;
+
         // For each pixel block
-        for (int by = 0; by < numRows; by++) {
-            for (int bx = 0; bx < numColumns; bx++) {
-                boolean[] hasColor = new boolean[numColors];
+        boolean[] hasColor = new boolean[numColors];
+        for (int by = 0; by < rr; by++) {
+            for (int bx = 0; bx < cc; bx++) {
+                Arrays.fill(hasColor, false);
                 int xo = bx * blockWidth;
                 int yo = by * blockHeight;
 
                 // Determine which colors are present
-                for (int x = xo; x < xo + blockWidth; x++)
+                for (int x = xo; x < xo + blockWidth; x++) {
+                    final int sm[] = matrix[x];
                     for (int y = yo; y < yo + blockHeight; y++) {
-                        int pixelColor = screen.matrix[x][y];
+                        int pixelColor = sm[y];
                         hasColor[encode(pixelColor)] = true;
                     }
+                }
 
                 // Add all colors present to our feature set
                 for (int c = 0; c < numColors; c++)
@@ -92,7 +111,7 @@ public class FeatureMap {
      * @param color
      * @return
      */
-    protected int encode(int color) {
+    protected static int encode(final int color) {
         return (color & 0xF) >> 1;
     }
 

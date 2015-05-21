@@ -1,5 +1,9 @@
 package nars.op.mental;
 
+import nars.Events;
+import nars.NAR;
+import nars.nal.DirectProcess;
+
 /**
  * To rememberAction an internal action as an operation
  * <p>
@@ -7,6 +11,11 @@ package nars.op.mental;
  * @param task The task processed
  */
 public class FullInternalExperience extends InternalExperience {
+
+    public FullInternalExperience(NAR n) {
+        super(n, DirectProcess.class, Events.BeliefReason.class);
+    }
+
 
     @Override
     public boolean isFull() {

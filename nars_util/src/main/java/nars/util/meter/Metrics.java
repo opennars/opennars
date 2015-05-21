@@ -246,6 +246,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         numColumns = 0;
         signalList = null;
         signalIndex = null;
+        meters.clear();
     }
     
     public void clearData() {

@@ -18,7 +18,8 @@ public class Player {
     private static final int MOVE_BACKWARD = 1;
     private static final int TURN_LEFT = 2;
     private static final int TURN_RIGHT = 3;
-    private static final int NOP = 4;
+    private static final int BREAK = 4;
+    private static final int NOP = 5;
     public final MyPerception perception;
 
     public double x;
@@ -37,11 +38,18 @@ public class Player {
     public Player(World world) {
         this.world = world;
         r = 8;
-        actions = new Action[5];
+        actions = new Action[6];
         actions[MOVE_FORWARD] = new MoveForward(this);
         actions[MOVE_BACKWARD] = new MoveBackward(this);
         actions[TURN_LEFT] = new TurnLeft(this);
         actions[TURN_RIGHT] = new TurnRight(this);
+        actions[BREAK] = new Action() {
+            @Override public void execute() {
+                vx *= 0.1;
+                vy *= 0.1;
+                vangle *= 0.1;
+            }
+        };
         actions[NOP] = new Nop();
         perception = new MyPerception(this);
 //        perception.setAddRandomInput(true);

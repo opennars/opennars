@@ -1,6 +1,5 @@
 package nars.util.index;
 
-import nars.Global;
 import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -8,12 +7,12 @@ import nars.nal.term.Term;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 /** uses a predefined set of terms that will be mapped */
 abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
     public final Map<T,Concept> values = new LinkedHashMap();
+
 
     public ConceptSet(NAR nar) {
         super(nar);

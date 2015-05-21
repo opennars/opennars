@@ -409,15 +409,15 @@ public class NARio extends Run implements RLEnvironment {
     protected void goals() {
 
         //move, mostly to the right
-        //nar.input("<SELF --> [" + direction(+1, 0) + "]>! %1.0;0.2%");
+        //nar.input("<I --> [" + direction(+1, 0) + "]>! %1.0;0.2%");
 
         //dont remain still
-        //nar.input("<SELF --> [" + direction(0, 0) + "]>! :|: %0.05;0.6%");
+        //nar.input("<I --> [" + direction(0, 0) + "]>! :|: %0.05;0.6%");
 
-        nar.input("<SELF --> [died]>! %0.00;0.95%");
-        nar.input("<SELF --> [died]>. :|: %0.00;0.9%");
-        nar.input("<SELF --> [stomp]>! :|: %1.00;0.5%");
-        nar.input("<SELF --> [coin]>! :|: %1.00;0.45%");
+        nar.input("<I --> [died]>! %0.00;0.95%");
+        nar.input("<I --> [died]>. :|: %0.00;0.9%");
+        nar.input("<I --> [stomp]>! :|: %1.00;0.5%");
+        nar.input("<I --> [coin]>! :|: %1.00;0.45%");
 
 //        for (int i= 0; i < 5; i++) {
 //            nar.input("keyboard" + i + "(on)! :|: %0.75;0.5%");
@@ -427,26 +427,26 @@ public class NARio extends Run implements RLEnvironment {
     }
 
     public void coin() {
-        nar.input("<SELF --> [coin]>. :|:");
+        nar.input("<I --> [coin]>. :|:");
         System.out.println("MONEY");
         bonus += 1;
     }
 
     protected void hurt() {
-        nar.input("<SELF --> [died]>. :|:");
+        nar.input("<I --> [died]>. :|:");
         goals();
         System.out.println("OUCH");
         bonus -= 10;
     }
 
     public void stomp() {
-        nar.input("<SELF --> [stomp]>. :|:");
+        nar.input("<I --> [stomp]>. :|:");
         System.out.println("KILL");
         bonus += 1;
     }
 
     public void trip() {
-        nar.input("<SELF --> [tripping]>. :|:");
+        nar.input("<I --> [tripping]>. :|:");
         System.out.println("TRIPPING");
         bonus += 2;
     }
@@ -721,7 +721,7 @@ public class NARio extends Run implements RLEnvironment {
 
 
     protected void updateMovement(String direction, float freq) {
-        String s = "<SELF --> [" + direction + "]>. :|: %" +
+        String s = "<I --> [" + direction + "]>. :|: %" +
                 freq + ";0.80%";
         input(s);
     }

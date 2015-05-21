@@ -235,10 +235,11 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     @Override
     public int hashCode() {
         if ((this.hash == 0) /*&& (stamp!=null)*/) {
+            //include punctuation separately because it will involve overhead calling Object.hash(punctuation) and having to box it
             if (truth == null)
-                this.hash = Util.hash(term, punctuation, stamp);
+                this.hash = Util.hash(term, stamp) + punctuation;
             else
-                this.hash = Util.hash(term, punctuation, truth, stamp);
+                this.hash = Util.hash(term, truth, stamp) + punctuation;
         }
         return hash;
     }

@@ -105,6 +105,16 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     long commitEvery = 0;
     float lastFreq = -1;
 
+    public void commitNormal(Task t) {
+        DirectProcess.run(concept.memory, t);
+    }
+
+    /** inserts the belief directly into the table */
+    public void commitFast(Task t) {
+        //concept.beliefs.clear();
+        concept.processJudgment(null, t);
+    }
+
     /** input to NAR */
     public void commit(float qUpdateConfidence, float thresh) {
 
@@ -133,7 +143,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
             ).present().truth(nextFreq, qUpdateConfidence).get();
 
-            DirectProcess.run(concept.memory, t);
+            commitFast(t);
 
             lastFreq = nextFreq;
             lastCommit = now;

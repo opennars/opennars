@@ -1,15 +1,20 @@
 package nars.op;
 
 import nars.NAR;
+import nars.event.NARReaction;
 import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
 
 /**
 * Created by me on 1/12/15.
 */
-@Deprecated abstract public class AbstractOperator implements IOperator, Reaction<Class> {
+@Deprecated abstract public class NARReaction2 extends NARReaction implements IOperator {
+
 
     private EventEmitter.Registrations regist = null;
+
+    public NARReaction2(NAR n, Class... events) {
+        super(n, events);
+    }
 
     @Override
     public boolean setEnabled(NAR n, boolean enabled) {
@@ -27,8 +32,7 @@ import nars.util.event.Reaction;
         return true;
     }
 
-    /** list of event channels to listen to */
-    abstract public Class[] getEvents();
+
 
     /** called when plugin is enabled */
     abstract public void onEnabled(NAR n);

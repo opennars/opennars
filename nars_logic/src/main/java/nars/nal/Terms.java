@@ -589,7 +589,7 @@ public class Terms {
 
                 if (c < 0) return new Term[] { a, b };
                 else if (c > 0) return new Term[] { b, a };
-                else if (c == 0) return new Term[] { a }; //equal
+                else /*if (c == 0)*/ return new Term[] { a }; //equal
 
         }
 

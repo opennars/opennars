@@ -50,8 +50,12 @@ public class ConceptMenu extends JPopupMenu {
         add(new ConceptMenuItem(c, "TermLink Graph") {
             @Override
             public void run() {
-                new NWindow(c.toString() + " TermLinks @ " + n.time(),
+                /*new NWindow(c.toString() + " TermLinks @ " + n.time(),
                         new JGraphXGraphPanel(
+                                new TermLinkGraph().add(c, true)
+                        )).show(500, 400);*/
+                new NWindow(c.toString() + " Derivations",
+                        new GraphPanelNengo(
                                 new TermLinkGraph().add(c, true)
                         )).show(500, 400);
             }
@@ -59,14 +63,14 @@ public class ConceptMenu extends JPopupMenu {
         add(new ConceptMenuItem(c, "Derivation Tree") {
             @Override
             public void run() {
-                new NWindow(c.toString() + " Derivations",
+                /*new NWindow(c.toString() + " Derivations",
                         new JGraphXGraphPanel(
                                 new DerivationTree().add(c, 4)
-                        )).show(500, 400);
-                /*new NWindow(c.toString() + " Derivations",
+                        )).show(500, 400);*/
+                new NWindow(c.toString() + " Derivations",
                         new GraphPanelNengo(
                                 new DerivationTree().add(c, 4)
-                        )).show(500, 400);*/
+                        )).show(500, 400);
             }
         });
 

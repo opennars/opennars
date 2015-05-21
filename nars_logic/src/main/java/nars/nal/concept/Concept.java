@@ -453,7 +453,7 @@ abstract public class Concept extends Item<Term> implements Termed {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processJudgment(final DirectProcess nal, final Task task) {
+    public boolean processJudgment(final DirectProcess nal, final Task task) {
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
 
@@ -494,19 +494,24 @@ abstract public class Concept extends Item<Term> implements Termed {
                     }
                     */
 
-                    nal.setCurrentBelief(null);
+                    if (nal!=null) {
+                        nal.setCurrentBelief(null);
 
-                    if (revision(judg, projectedBelief, false, nal))
-                        return false;
+                        if (revision(judg, projectedBelief, false, nal))
+                            return false;
+                    }
                 }
 
             }
         }
 
         /*if (task.aboveThreshold())*/ {
-            int nnq = questions.size();
-            for (int i = 0; i < nnq; i++) {
-                trySolution(judg, questions.get(i), nal);
+
+            if (nal!=null) {
+                int nnq = questions.size();
+                for (int i = 0; i < nnq; i++) {
+                    trySolution(judg, questions.get(i), nal);
+                }
             }
 
 

@@ -4,6 +4,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal2.Instance;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -22,7 +23,7 @@ public class RawPerception implements Perception {
     private RLEnvironment env;
     private QLAgent agent;
     final List<Compound> states = new ArrayList();
-    final Term subjectTerm;
+    final Term idTerm;
 
     double min = -1;
     double max = 1.0;
@@ -30,7 +31,7 @@ public class RawPerception implements Perception {
     public RawPerception(String id, float confidence) {
         this.confidence = confidence;
         this.id = id;
-        subjectTerm = Atom.the(id);
+        idTerm = Atom.the(id);
     }
 
     @Override
@@ -107,7 +108,8 @@ public class RawPerception implements Perception {
     }
 
     public Compound newState(NAR nar, int i) {
-        return (Compound) nar.term("<" + id + " --> [" + getStateTerm(i) + "]>");
+        //return (Compound) nar.term("<" + getStateTerm(i) + " {-> " + id + ">");
+        return Instance.make(Atom.the(getStateTerm(i)), idTerm);
     }
 
     public float getFrequency(final double d) {
@@ -122,7 +124,7 @@ public class RawPerception implements Perception {
 
         if ((t instanceof Inheritance) && (t.getComplexity() == 4) ) {
             Inheritance ii = (Inheritance)t;
-            if (ii.getSubject().equals(subjectTerm))
+            if (ii.getPredicate().equals(idTerm))
                 return true;
 //            String s = t.toString();
 //            if (s.startsWith("<" + id + " --> [") && s.endsWith("]>")) {

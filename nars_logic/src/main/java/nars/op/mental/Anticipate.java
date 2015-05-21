@@ -36,7 +36,6 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
-import nars.op.AbstractOperator;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -60,7 +59,7 @@ import java.util.Set;
  * "if I predicted to observe it but I didnt observe it is evidence that I didn't observe it" makes sense, while the general assumption often taken in AI is not: "what I didn't observe didn't happen"
  *
  */
-public class Anticipate extends AbstractOperator implements Mental {
+public class Anticipate extends NARReaction implements Mental {
 
     final static Truth expiredTruth = new DefaultTruth(0.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
@@ -72,7 +71,7 @@ public class Anticipate extends AbstractOperator implements Mental {
     final Set<Term> newTaskTerms = Global.newHashSet(16);
 
     NAL nal;
-    NARReaction reaction;
+    nars.event.NARReaction reaction;
 
     //a parameter which tells whether NARS should know if it anticipated or not
     //in one case its the base functionality needed for NAL8 and in the other its a mental NAL9 operate
@@ -85,18 +84,12 @@ public class Anticipate extends AbstractOperator implements Mental {
     /*public Anticipate() {
         super("^anticipate");
     }*/
-    public Anticipate() {
-        super();
+    public Anticipate(NAR nar) {
+        super(nar, Events.TaskDeriveFuture.class,
+                Events.InduceSucceedingEvent.class,
+                Events.CycleEnd.class);
     }
 
-    @Override
-    public Class[] getEvents() {
-        return new Class[]{
-                Events.TaskDeriveFuture.class,
-                Events.InduceSucceedingEvent.class,
-                Events.CycleEnd.class
-        };
-    }
 
     public void anticipate(Term term, long occurenceTime, Task t) {
         if (memory == null)
@@ -255,16 +248,16 @@ public class Anticipate extends AbstractOperator implements Mental {
         }
     }
 
-    @Override
-    public void onEnabled(NAR n) {
-            newTaskTerms.clear();
-            anticipations.clear();
-    }
-
-    @Override
-    public void onDisabled(NAR n) {
-
-    }
+//    @Override
+//    public void onEnabled(NAR n) {
+//            newTaskTerms.clear();
+//            anticipations.clear();
+//    }
+//
+//    @Override
+//    public void onDisabled(NAR n) {
+//
+//    }
 
     @Override
     public void event(Class event, Object[] args) {

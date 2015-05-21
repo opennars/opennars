@@ -6,23 +6,23 @@ import jurls.reinforcementlearning.domains.arcade.agents.AbstractAgent;
 import jurls.reinforcementlearning.domains.arcade.io.Actions;
 import jurls.reinforcementlearning.domains.arcade.io.ConsoleRAM;
 import jurls.reinforcementlearning.domains.arcade.io.RLData;
+import jurls.reinforcementlearning.domains.arcade.rl.FeatureMap;
+import jurls.reinforcementlearning.domains.arcade.rl.FrameHistory;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import nars.nario.ShapePerception;
+import nars.nal.Task;
+import nars.nal.term.Term;
 import nars.rl.example.QVis;
-import nars.util.signal.Autoencoder;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.function.Supplier;
 
 /**
- * Created by me on 5/20/15.
+ * https://github.com/mgbellemare/Arcade-Learning-Environment/tree/master/src/games/supported
  */
 public class ALEAgent extends AbstractAgent implements RLEnvironment {
 
@@ -39,11 +39,23 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
     private int reward;
     private double[] screen = new double[33600];
     private QVis mi;
+    private ScreenMatrix currentFrame;
 
     public static void main(String[] args) throws IOException, InterruptedException {
         new ALEAgent(
-                "space_invaders"
+                //"space_invaders"
                 //"seaquest"
+                //"chopper_command"
+                //"enduro"
+                //"berzerk"
+                //"assault"
+                //"asteroids"
+                //"alien"
+                //"atlantis"
+                //"battle_zone"
+                //"kung_fu_master"
+                //"montezuma_revenge"
+                "pitfall"
         );
     }
 
@@ -83,7 +95,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
 
         QLAgent agent = new QLAgent(nar, "act", "<nario --> good>", this);
 
-        agent.brain.setEpsilon(0.15);
+        agent.brain.setEpsilon(0.1);
         agent.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
@@ -94,10 +106,11 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
                 return buffer;
             }
         }));*/
-        agent.add(new AEPerception("AE", 0.25f, 64).setLearningRate(0.3));
+        //agent.add(new AEPerception("AE", 0.25f, 64).setLearningRate(0.1));
+        agent.add(new ALEFeaturePerception(0.25f));
 
         Video.themeInvert();
-        NARSwing s = new NARSwing(nar);
+        //NARSwing s = new NARSwing(nar);
 
     }
 
@@ -144,6 +157,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
     @Override
     public void observe(ScreenMatrix screen, ConsoleRAM ram, RLData rlData) {
         this.reward = rlData.reward;
+        this.currentFrame = screen;
 
         this.buffer = convert(screen, this.buffer);
         this.screen = m(screen, this.screen);
@@ -200,5 +214,24 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
     @Override
     public Component component() {
         return null;
+    }
+
+    private class ALEFeaturePerception extends RawPerception implements Perception {
+
+        final FrameHistory h = new FrameHistory(1);
+        final FeatureMap m = new FeatureMap(9, 16, 8);
+
+        public ALEFeaturePerception(float conf) {
+            super("ALE", conf);
+        }
+
+
+        @Override
+        public Iterable<Task> perceive(NAR nar, double[] input, double t) {
+            h.addFrame(currentFrame);
+            return super.perceive(nar, m.getFeatures(h), t);
+        }
+
+
     }
 }
