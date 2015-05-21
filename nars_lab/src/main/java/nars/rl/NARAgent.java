@@ -20,18 +20,24 @@ abstract public class NARAgent {
     public final ObjectIntHashMap<Operation<?>> operationToAction = new ObjectIntHashMap();
 
     public final Term operator;
-    private final EventEmitter.Registrations opReg;
+    private EventEmitter.Registrations opReg;
+    public final NAR nar;
 
     public NARAgent(NAR nar, RLEnvironment env, Term operator) {
         super();
 
+        this.nar = nar;
         this.env = env;
         this.operationCache = new Operation[env.numActions()];
 
         this.operator = operator;
-        opReg = nar.on(newOperator(operator));
 
     }
 
-    protected abstract Operator newOperator(Term operator);
+    /** call at the end of an implementation's constructor */
+    protected void init() {
+        opReg = nar.on(getOperator(operator));
+    }
+
+    protected abstract Operator getOperator(Term operator);
 }

@@ -28,11 +28,11 @@ import java.util.List;
 public class QLAgent<S extends Term> extends NARAgent {
 
 
-    private final EnvironmentReaction io;
 
     private final List<Perception> perceptions;
     private final Term rewardTerm;
     public final QLAgentTermMatrix ql;
+    private final FrameDecisionOperator decision;
 
 
     java.util.List<Task> before = new ArrayList();
@@ -44,10 +44,6 @@ public class QLAgent<S extends Term> extends NARAgent {
     final float actedConfidence = 0.75f; //similar to Operator.exec
 
 
-    private final ArrayRealVector actByExpectation, actByQ, lastActByQ;
-    private final ArrayRealVector actByPriority;
-    private RealVector combinedDesire;
-    final double actionMomentum = 0.0; //smooths the action vectors
 
     /** if NARS does not specify one by the next frame,
      *  whether to invoke an action in the environment
@@ -59,6 +55,8 @@ public class QLAgent<S extends Term> extends NARAgent {
     double lastReward = 0;
     private Concept operatorConcept;
 
+    private final ArrayRealVector actByQ, lastActByQ;
+    private final ArrayRealVector combinedDesire;
 
     /**
      * corresponds to the numeric operation as specified by the environment
@@ -89,8 +87,8 @@ public class QLAgent<S extends Term> extends NARAgent {
      * @param p
 
      */
-    public QLAgent(NAR nar, String operationTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
-        super(nar, env, Atom.the(operationTerm));
+    public QLAgent(NAR nar, String operatorTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
+        super(nar, env, Atom.the(operatorTerm));
 
         ql = new QLAgentTermMatrix(nar);
 
@@ -106,46 +104,29 @@ public class QLAgent<S extends Term> extends NARAgent {
             add(p);
         }
 
+        final int numActions = env.numActions();
+
+        this.actByQ = new ArrayRealVector(numActions);
+        this.lastActByQ = new ArrayRealVector(numActions);
+        this.combinedDesire = new ArrayRealVector(numActions);
 
 
+        this.decision = new FrameDecisionOperator(operator, env.numActions());
 
-        this.io = new EnvironmentReaction();
+        new FrameReaction(nar) {
 
-        this.actByPriority = new ArrayRealVector(env.numActions());
-        this.actByQ = new ArrayRealVector(env.numActions());
-        this.lastActByQ = new ArrayRealVector(env.numActions());
-        this.actByExpectation = new ArrayRealVector(env.numActions());
-        this.combinedDesire = new ArrayRealVector(env.numActions());
+            @Override
+            public void onFrame() {
+                QLAgent.this.onFrame();
+            }
+        };
 
+        init();
     }
 
     @Override
-    public Operator newOperator(Term operationTerm) {
-
-        return new SynchOperator(operationTerm) {
-
-
-            @Override
-            protected void noticeExecuted(Operation operation, Memory memory) {
-                //dont notice
-            }
-
-            @Override
-            protected java.util.List<Task> execute(Operation operation, Memory memory) {
-
-                if (operation.args() != 2) { // || args.length==3) { //left, self
-                    //System.err.println(this + " ?? " + Arrays.toString(args));
-                    return null;
-                }
-
-                Term ta = ((Operation) operation.getTerm()).arg(0);
-                int a = getAction(operation);
-                if (a !=-1)
-                    io.desire(a, operation);
-
-                return null;
-            }
-        };
+    public Operator getOperator(Term operationTerm) {
+        return decision;
     }
 
 
@@ -175,7 +156,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         return combinedDesire.getEntry(action);
     }
     public double getNARDesire(int action) {
-        return actByExpectation.getEntry(action);
+        return decision.actByExpectation.getEntry(action);
     }
     public double getQDesire(int action) {
         return actByQ.getEntry(action);
@@ -212,40 +193,6 @@ public class QLAgent<S extends Term> extends NARAgent {
 //        return t;
 //    }
 
-
-    /**
-     * interface to an RL world/experiment/etc..
-     * implements a per-frame reaction in which an action
-     * is decided either by NARS or an Agent, the world updated,
-     * and the new input processed by the Agent's perception interface
-     */
-    class EnvironmentReaction extends FrameReaction {
-
-        public EnvironmentReaction() {
-            super(ql.nar);
-
-        }
-
-        public void desire(int action, Operation operation) {
-            desire(action, operation.getTask().getPriority(), operation.getTaskExpectation());
-        }
-
-        protected void desire(int action, float priority, float expectation) {
-            actByPriority.addToEntry(action, priority);
-            actByExpectation.addToEntry(action, expectation);
-
-            //ALTERNATIVE: sum expectation * taskPriority
-            //actByExpectation.addToEntry(action, expectation * priority);
-        }
-
-
-        @Override
-        public void onFrame() {
-            QLAgent.this.onFrame();
-        }
-
-
-    }
 
     protected int getMaxDesiredAction() {
         int best = -1;
@@ -288,7 +235,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         }
 
 
-        normalizeActionVector(actByExpectation);
+        normalizeActionVector(decision.actByExpectation);
         normalizeActionVector(actByQ);
 
 
@@ -297,11 +244,11 @@ public class QLAgent<S extends Term> extends NARAgent {
         for (int i = 0; i < combinedDesire.getDimension(); i++) {
 
             //50%/50% q and nars
-            double d = ( actByExpectation.getEntry(i) + actByQ.getEntry(i) );
+            double d = ( decision.actByExpectation.getEntry(i) + actByQ.getEntry(i) );
 
             double p = combinedDesire.getEntry(i);
 
-            double n = (p * actionMomentum) + (1.0 - actionMomentum) * d;
+            double n = (p * decision.actionMomentum) + (1.0 - decision.actionMomentum) * d;
             combinedDesire.setEntry(i, d);
         }
 
@@ -321,8 +268,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         //System.out.println("  volition_coherency: " + Texts.n4(alignment * 100.0) + "%");
 
         //reset for next cycle
-        actByExpectation.set(0);
-        actByPriority.set(0);
+        decision.clear();
 
         return getAction(winner);
     }
@@ -605,6 +551,61 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         public QEntry newEntry(Concept c, S row, Operation col) {
             return new QEntry(c, this);
+        }
+    }
+
+    public class FrameDecisionOperator extends SynchOperator {
+
+        public final ArrayRealVector actByExpectation;
+        public final ArrayRealVector actByPriority;
+        final double actionMomentum = 0.0; //smooths the action vectors
+
+
+        public FrameDecisionOperator(Term operationTerm, int numActions) {
+            super(operationTerm);
+
+            this.actByPriority = new ArrayRealVector(numActions);
+            this.actByExpectation = new ArrayRealVector(numActions);
+        }
+
+
+        public void desire(int action, Operation operation) {
+            desire(action, operation.getTask().getPriority(), operation.getTaskExpectation());
+        }
+
+        protected void desire(int action, float priority, float expectation) {
+            actByPriority.addToEntry(action, priority);
+            actByExpectation.addToEntry(action, expectation);
+
+            //ALTERNATIVE: sum expectation * taskPriority
+            //actByExpectation.addToEntry(action, expectation * priority);
+        }
+
+
+        @Override
+        protected void noticeExecuted(Operation operation, Memory memory) {
+            //dont notice
+        }
+
+        @Override
+        protected List<Task> execute(Operation operation, Memory memory) {
+
+            if (operation.args() != 2) { // || args.length==3) { //left, self
+                //System.err.println(this + " ?? " + Arrays.toString(args));
+                return null;
+            }
+
+            Term ta = ((Operation) operation.getTerm()).arg(0);
+            int a = getAction(operation);
+            if (a !=-1)
+                desire(a, operation);
+
+            return null;
+        }
+
+        public void clear() {
+            actByExpectation.set(0);
+            actByPriority.set(0);
         }
     }
 }
