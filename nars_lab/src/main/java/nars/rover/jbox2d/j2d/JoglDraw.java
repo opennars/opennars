@@ -488,6 +488,18 @@ public class JoglDraw extends DebugDraw {
         gl.glEnd();
         gl.glPopMatrix();
     }
+    public void drawSegment(Vec2 p1, Vec2 p2, float r, float g, float b, float a, float width) {
+        GL2 gl = panel.getGL().getGL2();
+        gl.glPushMatrix();
+        transformViewport(gl, zero);
+        gl.glLineWidth(width);
+        gl.glBegin(GL2.GL_LINES);
+        gl.glColor4f(r, g, b, a);
+        gl.glVertex3f(p1.x, p1.y, 0);
+        gl.glVertex3f(p2.x, p2.y, 0);
+        gl.glEnd();
+        gl.glPopMatrix();
+    }
 
 //  @Override
 //  public void drawParticles(Vec2[] centers, float radius, ParticleColor[] colors, int count) {

@@ -102,15 +102,15 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
     }
     protected void repainter() {
 
-
+        GL2 gl = getGL().getGL2();
 
         //getGL().getGL2().glClearAccum(0,0,0,1f);
 
-        getGL().getGL2().glClear(GL2.GL_COLOR_BUFFER_BIT);
+        //gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
-        GL2 gl = getGL().getGL2();
 
-        ///gl.glAccum(GL2.GL_RETURN, 0.9f); //adding the current frame to the buffer
+
+        gl.glAccum(GL2.GL_RETURN, 0.9f); //adding the current frame to the buffer
 
 
         JoglDraw drawer = ((JoglDraw) model.getDebugDraw());
@@ -122,8 +122,8 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
         //light.render(gl, drawer.getViewportTranform());
 
 
-        //getGL().getGL2().glAccum(GL2.GL_LOAD, 0.95f); //Drawing last frame, saved in buffer
-        //getGL().getGL2().glAccum(GL2.GL_MULT, 0.95f ); //make current frame in buffer dim
+        gl.glAccum(GL2.GL_LOAD, 0.95f); //Drawing last frame, saved in buffer
+        gl.glAccum(GL2.GL_MULT, 0.95f ); //make current frame in buffer dim
 
 
         getGL().glFlush();
@@ -138,34 +138,24 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
 
     @Override
     public void init(GLAutoDrawable arg0) {
-        getGL().getGL2().glLineWidth(1f);
-        //getGL().getGL2().glEnable(GL2.GL_BLEND);
-        getGL().getGL2().glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+        GL gl2 = getGL();
+        gl2.glLineWidth(1f);
 
-        getGL().glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        gl2.glEnable(GL.GL_LINE_SMOOTH);
+        gl2.glEnable(GL.GL_LINE_WIDTH);
+        gl2.glEnable(GL2.GL_BLEND);
+        gl2.glBlendFunc(gl2.GL_SRC_ALPHA, gl2.GL_ONE_MINUS_SRC_ALPHA);
+
+
+        //getGL().getGL2().glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
+
+        getGL().glClearColor(0.0f, 0.0f, 0.0f, 0.8f);
         getGL().glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
 
-        getGL().getGL2().glClearColor(0f, 0f, 0f, 1f);
+        //getGL().getGL2().glClearColor(0f, 0f, 0f, 1f);
 
 
-        /*light.random();
-        light.init((GL2)getGL());*/
-
-//        timer = new Timer(50, new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                Threading.invokeOnOpenGLThread(false, new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        repainter();
-//                    }
-//                });
-//            }
-//        });
-//        timer.setCoalesce(true);
-//        timer.start();
 
         new FPSAnimator(this, 25);
     }

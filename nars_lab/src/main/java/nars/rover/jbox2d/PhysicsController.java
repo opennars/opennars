@@ -192,20 +192,20 @@ public class PhysicsController {
         }
 
         if (currTest == null) {
-            synchronized (inputQueue) {
+
                 inputQueue.clear();
                 return;
-            }
+            
         }
         IViewportTransform transform = currTest.getCamera().getTransform();
         // process our input
         while (!inputQueue.isEmpty()) {
             QueueItem i = null;
-            synchronized (inputQueue) {
+
                 if (!inputQueue.isEmpty()) {
                     i = inputQueue.pop();
                 }
-            }
+
             if (i == null) {
                 continue;
             }

@@ -181,6 +181,7 @@ public class RoverModel {
 
 
         public synchronized void step(boolean feel, boolean drawing) {
+            toDraw.clear();
 
             float conceptActivity = 0f;
             if (angleConcept!=null) {
@@ -218,11 +219,13 @@ public class RoverModel {
                         rayColor.set(laserHitColor);
                         rayColor.x = Math.min(1.0f, laserUnhitColor.x + 0.75f * (1.0f - d));
                         Vec2 pp = ccallback.m_point.clone();
-                        toDraw.add(new Runnable() {
-                            @Override public void run() {
-                                getDraw().drawPoint(pp, 5.0f, sparkColor);
-                            }
-                        });
+//                        toDraw.add(new Runnable() {
+//                            @Override public void run() {
+//
+//                                getDraw().drawPoint(pp, 5.0f, sparkColor);
+//
+//                            }
+//                        });
 
                         endPoint = ccallback.m_point;
                     }
@@ -242,9 +245,10 @@ public class RoverModel {
                 }
 
                 if ((drawing) && (endPoint!=null)) {
-                    rayColor.x *= 0.15f + 0.85f * senseActivity;
-                    rayColor.y *= 0.15f + 0.85f * conceptActivity;
-                    rayColor.z *= 0.15f + 0.2f * (senseActivity + conceptActivity)/2f;
+
+                    final float alpha = rayColor.x *= 0.2f + 0.8f * (senseActivity + conceptActivity)/2f;
+                    rayColor.z *= alpha - 0.35f * senseActivity;
+                    rayColor.y *= alpha - 0.35f * conceptActivity;
                     rayColor.x = Math.min(rayColor.x, 1f);
                     rayColor.y = Math.min(rayColor.y, 1f);
                     rayColor.z = Math.min(rayColor.z, 1f);
@@ -257,7 +261,7 @@ public class RoverModel {
 
                         @Override
                         public void run() {
-                            getDraw().drawSegment(point1, finalEndPoint, rc);
+                            ((JoglDraw)getDraw()).drawSegment(point1, finalEndPoint, rc.x, rc.y, rc.z, alpha, alpha * 6f);
                         }
                     });
 
@@ -321,17 +325,16 @@ public class RoverModel {
         }
 
         @Override
-        public void drawGround(JoglDraw draw, World w) {
-            step(false, true);
-        }
-
-        @Override
-        public void drawSky(JoglDraw d, World w) {
+        public void drawGround(JoglDraw d, World w) {
             draw = d;
             for (Runnable r : toDraw) {
                 r.run();
             }
-            toDraw.clear();
+        }
+
+        @Override
+        public void drawSky(JoglDraw d, World w) {
+
         }
     }
     boolean feel_motion = true; //todo add option in gui
@@ -342,7 +345,7 @@ public class RoverModel {
         }
         
         for (VisionRay v : vision) {
-            v.step(true, false);
+            v.step(true, true);
         }
         /*if(cnt>=do_sth_importance) {
         cnt=0;
