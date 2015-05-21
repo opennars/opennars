@@ -8,6 +8,9 @@ import java.util.Arrays;
 
 /*
 Experimental utf8 encoding in int[] for faster comparison and copying than byte[]
+TODO efficient non-byte[] decoding
+TODO write/append building
+TODO p(,,) byte access sequential storing index, not calculate everytime as it currently does in encode
 */
 public class IntBuf {
     private static final Surrogate.Parser sgp = new Surrogate.Parser();

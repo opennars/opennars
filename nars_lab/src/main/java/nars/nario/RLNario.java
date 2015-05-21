@@ -27,8 +27,8 @@ public class RLNario extends NARio  {
 
         this.agent = new QLAgent(nar, "A", "<I --> G>", this, p);
 
-        agent.brain.setEpsilon(0.15);
-        agent.brain.setAlpha(0.1);
+        agent.ql.brain.setEpsilon(0.15);
+        agent.ql.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
 

@@ -104,7 +104,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 //            arg=arg2;
 //        }
         
-        return new Operation( arg, oper  );
+        return new Operation<T>( arg, oper  );
     }
 
     public T getOperator() {

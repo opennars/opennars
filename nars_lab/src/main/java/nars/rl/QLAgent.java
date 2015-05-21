@@ -2,7 +2,6 @@ package nars.rl;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
@@ -10,10 +9,12 @@ import nars.event.FrameReaction;
 import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
+import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.SynchOperator;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.util.event.EventEmitter;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -24,25 +25,19 @@ import java.util.List;
  * Additional interfaces for interacting with RL environment,
  * deciding next action, and managing goal and reward states
  */
-public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
+public class QLAgent<S extends Term> extends NARAgent {
 
 
-    private final RLEnvironment env;
     private final EnvironmentReaction io;
 
     private final List<Perception> perceptions;
     private final Term rewardTerm;
-    private final String operationTerm;
-    private final Term operator;
-    private final EventEmitter.Registrations opReg;
+    public final QLAgentTermMatrix ql;
 
 
     java.util.List<Task> before = new ArrayList();
     java.util.List<Task> now = new ArrayList();
 
-    /** for fast lookup of operation terms, since they will be used frequently */
-    final Operation[] operationCache;
-    final ObjectIntHashMap<Operation> operationToAction = new ObjectIntHashMap();
 
     private float initialPossibleDesireConfidence = 0.25f;
 
@@ -73,7 +68,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         if (o == null) {
             //TODO avoid String here
             o = operationCache[i] =
-                    (Operation)nar.term(operationTerm + "(" + i + ")");
+                    Operation.make(operator, Product.make(Atom.the(i)) );
             operationToAction.put(o, i);
         }
         return o;
@@ -95,16 +90,15 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
      */
     public QLAgent(NAR nar, String operationTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
-        super(nar);
+        super(nar, env, Atom.the(operationTerm));
 
-        this.env = env;
+        ql = new QLAgentTermMatrix(nar);
 
-        this.operator = nar.the(operationTerm);
-        this.operationTerm = operationTerm;
+
         this.rewardTerm = rewardTerm;
 
         //HACK TODO this is necessary to disable the superclass's state belief update in methods we end up calling, this class has its own belief update method that should only be called
-        stateUpdateConfidence = 0;
+        ql.stateUpdateConfidence = 0;
 
         this.perceptions = new ArrayList();
 
@@ -112,7 +106,6 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             add(p);
         }
 
-        operationCache = new Operation[env.numActions()];
 
 
 
@@ -124,8 +117,12 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         this.actByExpectation = new ArrayRealVector(env.numActions());
         this.combinedDesire = new ArrayRealVector(env.numActions());
 
+    }
 
-        opReg = nar.on(new SynchOperator(operationTerm) {
+    @Override
+    public Operator newOperator(Term operationTerm) {
+
+        return new SynchOperator(operationTerm) {
 
 
             @Override
@@ -148,14 +145,13 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
                 return null;
             }
-        });
-
-
+        };
     }
+
 
     public synchronized void add(Perception p) {
         perceptions.add(p);
-        p.init(env, this);
+        p.init(env, QLAgent.this);
     }
 
     public synchronized void remove(Perception p) {
@@ -164,57 +160,14 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
     public Concept getOperatorConcept() {
         if ((operatorConcept ==null || getOperatorConcept().isDeleted()))
-            operatorConcept = nar.concept(operator);
+            operatorConcept = ql.nar.concept(operator);
         return operatorConcept;
-    }
-
-    public void off() {
-        super.off();
-        opReg.off();
-    }
-
-    @Override
-    public Term getRewardTerm() {
-        return rewardTerm;
-    }
-
-    @Override
-    public void init() {
-        super.init();
-
-        for (int i = 0; i < env.numActions(); i++) {
-            Operation a = getAction(i);
-            cols.include(a);
-        }
-
-        //spontaneous(initialPossibleDesireConfidence);
-        setActedBeliefConfidence(actedConfidence / getNumActions());
-        setActedGoalConfidence(actedConfidence / getNumActions());
     }
 
     /** fast immediate checks to discount terms which are definitely not representative of a state */
     public boolean isRowPrefilter(Term s) {
         //TODO use a standard subject for all state data that can be tested quickly
         return (s.operator()== NALOperator.INHERITANCE);
-    }
-
-    @Override
-    public boolean isRow(Term s) {
-        if (!isRowPrefilter(s)) return false;
-        for (Perception p : perceptions) {
-            if (p.isState(s)) {
-                //adds the state
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isCol(Term a) {
-        if (a instanceof Operation)
-            return cols.contains((Operation)a);
-        return false;
     }
 
     /* the effective action desire value, as aggregated between frames from NARS executions */
@@ -233,8 +186,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     }
 
     public Concept getActionConcept(int i) {
-        return cols.values.get( getAction(i) );
+        return ql.cols.values.get( getAction(i) );
     }
+
+    //v = new ConceptMatrixEntry<>(c, this);
 
 
 //    /**
@@ -267,7 +222,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     class EnvironmentReaction extends FrameReaction {
 
         public EnvironmentReaction() {
-            super(nar);
+            super(ql.nar);
 
         }
 
@@ -319,9 +274,9 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
         final int actions = getNumActions();
 
-        final double epsilon = brain.getEpsilon();
+        final double epsilon = ql.brain.getEpsilon();
         //do not apply epsilon random decisions if decisionThreshold=1f
-        float decisionThreshold = nar.param.decisionThreshold.floatValue();
+        float decisionThreshold = ql.nar.param.decisionThreshold.floatValue();
         if (decisionThreshold < 1.0f && epsilon > 0 && Memory.randomNumber.nextFloat() < epsilon) {
             int a = Memory.randomNumber.nextInt(actions);
 
@@ -373,7 +328,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     }
 
     protected void onFrame() {
-        long t = nar.time();
+        long t = ql.nar.time();
 
         env.frame();
 
@@ -386,7 +341,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             boolean actionSucceeded = env.takeAction(i);
 
             if (actionSucceeded) {
-                acted(nextAction);
+                ql.acted(nextAction);
             }
             else {
                 nextAction = null;
@@ -398,20 +353,20 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
         for (final Perception p : perceptions) {
-            Iterables.addAll(this.now, p.perceive(nar, o, t));
+            Iterables.addAll(QLAgent.this.now, p.perceive(ql.nar, o, t));
         }
 
 
-        for (Task task : this.now) {
+        for (Task task : QLAgent.this.now) {
             sense(task);
         }
 
         double r = env.getReward();
-        believeReward((float) r);
-        goalReward();
+        ql.believeReward((float) r);
+        ql.goalReward();
 
 
-        learn(nextAction, before, this.now, r);
+        learn(nextAction, before, QLAgent.this.now, r);
 
         //System.out.println(nextAction + " " + lastAction);
 
@@ -425,20 +380,14 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
     }
 
     public void sense(Task environmentState) {
-        if (stateChanged(environmentState)) {
-            environmentState.mulPriority(sensedStatePriorityChanged);
+        if (ql.stateChanged(environmentState)) {
+            environmentState.mulPriority(ql.sensedStatePriorityChanged);
         }
         else {
             //float sensedStatePrioritySame = 1.0f - environmentState.getTruth().getConfidence();
-            environmentState.mulPriority(sensedStatePrioritySame);
+            environmentState.mulPriority(ql.sensedStatePrioritySame);
         }
-        input(environmentState);
-    }
-
-
-    @Override
-    public QEntry newEntry(Concept concept, Term state, Operation action) {
-        return new QEntry(concept, this);
+        ql.input(environmentState);
     }
 
 
@@ -455,8 +404,8 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         // System.out.println(confidence + " " + Arrays.toString(state));
 
         //double alpha = brain.getAlpha();
-        double gamma = brain.getGamma();
-        double lambda = brain.getLambda();
+        double gamma = ql.brain.getGamma();
+        double lambda = ql.brain.getLambda();
 
         double sumDeltaQ = 0;
         final double GammaLambda = gamma * lambda;
@@ -472,7 +421,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
             double alpha = lastTask.getTruth().getConfidence();
             double lastTaskExpectation = lastTask.getTruth().getExpectation();
 
-            double qLast = q(lastState, lastAction, lastTaskExpectation);
+            double qLast = ql.q(lastState, lastAction, lastTaskExpectation);
 
             for (Task i : currentStateTasks) {
 
@@ -509,7 +458,7 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
                 //TODO compare: q(state, nextAction) with q(i.sentence)
                 //double DeltaQ = reward + Gamma * Q[StateX][StateY][Action] - Q[lastStateX][lastStateY][lastAction];
                 //double deltaQ = reward + gamma * q(state, nextAction) - q(lastState, lastAction);
-                double deltaQ = reward + (gamma * q(state, nextAction))
+                double deltaQ = reward + (gamma * ql.q(state, nextAction))
 
                         //update eligiblity trace according to the expectation
                         //et[lastStateX][lastStateY][lastAction] += 1;
@@ -524,10 +473,10 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         if (numTaskTransitions == 0) numTaskTransitions = 1;
 
         List<S> s = Lists.newArrayList(getStates()); //copy to avoid CME because the update procedure can change the set of states
-        List<Operation> a = Lists.newArrayList(brain.getActions());
+        List<Operation> a = Lists.newArrayList(ql.brain.getActions());
         for (S i : s) {
             for (Operation k : a) {
-                brain.qUpdate(i, k, sumDeltaQ/numTaskTransitions, GammaLambda/numTaskTransitions, 0);
+                ql.brain.qUpdate(i, k, sumDeltaQ / numTaskTransitions, GammaLambda / numTaskTransitions, 0);
             }
         }
 
@@ -536,14 +485,14 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
 
 
 
-        int numRows = rows.size();
+        int numRows = ql.rows.size();
         for (int i = 0; i < getNumActions(); i++) {
             Operation oa = getAction(i);
 
             double qSum = 0;
 
-            for (S state : rows) {
-                QEntry v = getEntry(state, oa);
+            for (S state : ql.rows) {
+                QEntry v = ql.getEntry(state, oa);
                 if (v!=null) {
                     double q = v.getQ();
 
@@ -600,5 +549,62 @@ public class QLAgent<S extends Term> extends QLTermMatrix<S, Operation> {
         r.mapDivideToSelf(sum);
     }
 
-    public Iterable<S> getStates() { return rows; }
+
+    public Iterable<S> getStates() { return ql.rows; }
+
+    public class QLAgentTermMatrix extends QLTermMatrix<S,Operation> {
+
+        public QLAgentTermMatrix(NAR nar) {
+            super(nar);
+        }
+
+        public void off() {
+            super.off();
+
+            //opReg.off();
+        }
+
+        @Override
+        public Term getRewardTerm() {
+            return rewardTerm;
+        }
+
+        @Override
+        public void init() {
+            super.init();
+
+            for (int i = 0; i < env.numActions(); i++) {
+                Operation a = getAction(i);
+                cols.include(a);
+            }
+
+            //spontaneous(initialPossibleDesireConfidence);
+            setActedBeliefConfidence(actedConfidence / getNumActions());
+            setActedGoalConfidence(actedConfidence / getNumActions());
+        }
+
+        @Override
+        public boolean isRow(Term s) {
+            if (!isRowPrefilter(s)) return false;
+            for (Perception p : perceptions) {
+                if (p.isState(s)) {
+                    //adds the state
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isCol(Term a) {
+            if (a instanceof Operation)
+                return cols.contains((Operation)a);
+            return false;
+        }
+
+
+        public QEntry newEntry(Concept c, S row, Operation col) {
+            return new QEntry(c, this);
+        }
+    }
 }

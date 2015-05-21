@@ -29,7 +29,7 @@ import java.util.WeakHashMap;
  */
 abstract public class QLTermMatrix<S extends Term, A extends Term> extends ConceptMatrix<S,A, Implication, QEntry> {
 
-    public AbstractHaiQBrain<S,A> brain;
+    public final AbstractHaiQBrain<S,A> brain;
 
 
     /** pending tasks to execute to prevent CME */

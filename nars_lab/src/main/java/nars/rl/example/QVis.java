@@ -39,7 +39,7 @@ public class QVis extends JPanel implements Runnable {
             if (i >= xactions.size()) return;
             if (j >= xstates.size()) return;
 
-            QEntry v = agent.getEntry(xstates.get(j), xactions.get(i));
+            QEntry v = agent.ql.getEntry(xstates.get(j), xactions.get(i));
             int color;
             if (v != null) {
                 Concept c = v.concept;
@@ -199,11 +199,11 @@ public class QVis extends JPanel implements Runnable {
 
         //if (xstates.size() != states.size()) {
         xstates.clear();
-        Iterables.addAll(xstates, agent.rows);
+        Iterables.addAll(xstates, agent.ql.rows);
         //}
         //if (xactions.size() != actions.size()) {
         xactions.clear();
-        Iterables.addAll(xactions, agent.cols);
+        Iterables.addAll(xactions, agent.ql.cols);
         //}
 
 

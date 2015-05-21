@@ -95,8 +95,8 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
 
         QLAgent agent = new QLAgent(nar, "act", "<nario --> good>", this);
 
-        agent.brain.setEpsilon(0.1);
-        agent.brain.setAlpha(0.1);
+        agent.ql.brain.setEpsilon(0.1);
+        agent.ql.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
 

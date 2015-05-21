@@ -68,10 +68,10 @@ public class QLAgentTest {
             a.getActionConcept(0).print(System.out);
 
             //check that the agent knows all the actions
-            assertEquals(a.cols.toString(), a.cols.size(), env.numActions());
+            assertEquals(a.ql.cols.toString(), a.ql.cols.size(), env.numActions());
 
 
-            assertTrue(a.rows.toString(), a.rows.size() > 0);
+            assertTrue(a.ql.rows.toString(), a.ql.rows.size() > 0);
         }
 
         return n;
