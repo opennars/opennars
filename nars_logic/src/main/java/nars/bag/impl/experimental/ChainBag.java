@@ -75,9 +75,9 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     public ChainBag(final DDNodePool<V> nodePool, int capacity) {
         super();
 
-        this.capacity = capacity; //HACK
+        this.capacity = capacity;
         this.mass = 0;
-        this.index = new CuckooMap(capacity/2);
+        this.index = new CuckooMap((capacity+1)/2);
 
 
         this.nodePool = nodePool;

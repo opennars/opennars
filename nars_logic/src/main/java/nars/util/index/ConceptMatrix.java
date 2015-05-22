@@ -1,6 +1,7 @@
 package nars.util.index;
 
 import nars.NAR;
+import nars.budget.Budget;
 import nars.event.ConceptReaction;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -125,9 +126,21 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     }
 
     public V getEntry(R row, C col) {
+        return getEntry(row, col, 0, 0, 0);
+    }
+    public V getEntry(R row, C col, float conceptualizePriority, float conceptualizeDuration, float conceptualizeQuality) {
         E qt = qterm(row, col);
         if (qt != null) {
-            Concept c = nar.concept(qt);
+            Concept c;
+            if (conceptualizePriority == 0) {
+                c = nar.concept(qt);
+            }
+            else {
+                c = nar.memory.conceptualize(
+                        new Budget(conceptualizePriority, conceptualizeDuration, conceptualizeQuality),
+                        qt
+                );
+            }
             if (c != null) {
                 return getEntry(c, row, col);
             }

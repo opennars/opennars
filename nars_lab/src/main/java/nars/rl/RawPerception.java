@@ -2,6 +2,7 @@ package nars.rl;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
+import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
@@ -124,8 +125,15 @@ public class RawPerception implements Perception {
 
         if ((t instanceof Inheritance) && (t.getComplexity() == 4) ) {
             Inheritance ii = (Inheritance)t;
-            if (ii.getPredicate().equals(idTerm))
-                return true;
+            if (!ii.getPredicate().equals(idTerm))
+                return false;
+            if (ii.getSubject().operator() == NALOperator.SET_EXT) {
+                Term subj = ((Compound)ii.getSubject()).term(0);
+                if (subj instanceof Atom) {
+                    return true;
+                }
+            }
+            return false;
 //            String s = t.toString();
 //            if (s.startsWith("<" + id + " --> [") && s.endsWith("]>")) {
 //                //System.out.println(s + " " + t.getComplexity());

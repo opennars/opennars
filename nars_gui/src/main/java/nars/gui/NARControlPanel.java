@@ -85,9 +85,11 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
     final Executor narexe = Executors.newSingleThreadExecutor();
     final Runnable narrun = new Runnable() {
         @Override public void run() {
-            nar.frame();
-            if (timer!=null)
-                timer.restart();
+            synchronized(nar) {
+                nar.frame();
+                if (timer != null)
+                    timer.restart();
+            }
         }
     };
 

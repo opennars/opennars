@@ -22,6 +22,7 @@ package nars.util.data;
 
 
 import com.google.common.collect.Sets;
+import com.sun.xml.internal.xsom.impl.Ref;
 import objenome.util.random.XORShiftRandom;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
@@ -40,7 +41,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
     private static final int PRIME3 = 0xced1c241;
 
     //TODO allow setting this via constructor
-    static Random random = XORShiftRandom.global;
+    static final Random random = XORShiftRandom.global;
 
     public int size;
 
@@ -52,6 +53,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
     private int hashShift, mask, threshold;
     private int stashCapacity;
     private int pushIterations;
+    static final int stashCapacityFactor = 8; //originally = 2
 
     /** Creates a new map with an initial capacity of 32 and a load factor of 0.8. This map will hold 25 items before growing the
      * backing table. */
@@ -78,7 +80,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         threshold = (int)(capacity * loadFactor);
         mask = capacity - 1;
         hashShift = 31 - Integer.numberOfTrailingZeros(capacity);
-        stashCapacity = Math.max(3, (int)Math.ceil(Math.log(capacity)) * 2);
+        stashCapacity = Math.max(3, (int)Math.ceil(Math.log(capacity)) * stashCapacityFactor);
         pushIterations = Math.max(Math.min(capacity, 8), (int)Math.sqrt(capacity) / 8);
 
         keyTable = (K[])new Object[capacity + stashCapacity];
@@ -101,7 +103,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
 
@@ -124,12 +126,15 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     }
 
+
+
     private V put_internal (K key, V value) {
         final K[] keyTable = this.keyTable;
         final V[] vt = valueTable;
 
         // Check for existing keys.
-        int hashCode = key.hashCode();
+        final int hashCode = key.hashCode();
+
         int index1 = hashCode & mask;
         K key1 = keyTable[index1];
         if (key.equals(key1)) {
@@ -137,6 +142,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
             vt[index1] = value;
             return oldValue;
         }
+
+        ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
 
         int index2 = hash2(hashCode);
         K key2 = keyTable[index2];
@@ -209,6 +216,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
             return;
         }
 
+        ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
+
         int index2 = hash2(hashCode);
         K key2 = keyTable[index2];
         if (key2 == null) {
@@ -234,7 +243,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
 
 
-        final int capacity = this.capacity;
+        //final int capacity = this.capacity;
 
         // Push keys until an empty bucket is found.
         K evictedKey;
@@ -242,7 +251,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         int i = 0, pushIterations = this.pushIterations;
         do {
             // Replace the key and value for one of the hashes.
-            switch (random.nextInt(3)) {
+            switch (random.nextInt()%3) {
                 case 0:
                     evictedKey = key1;
                     evictedValue = valueTable[index1];
@@ -273,6 +282,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
                 if (size++ >= threshold) resize(capacity << 1);
                 return;
             }
+
+            ///* EXPERIMENTAL */ if (insertKey instanceof Hash2) hashCode = ((Hash2)insertKey).hashCode2();
 
             index2 = hash2(hashCode);
             key2 = keyTable[index2];
@@ -319,12 +330,16 @@ public class CuckooMap<K, V> implements Map<K,V> {
     @Override
     public V get (Object key) {
         if (key == null) return null;
+        if (isEmpty()) return null;
 
         final K[] keyTable = this.keyTable;
 
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         if (!key.equals(keyTable[index])) {
+
+            ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
+
             index = hash2(hashCode);
             if (!key.equals(keyTable[index])) {
                 index = hash3(hashCode);
@@ -349,6 +364,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
         final K[] keyTable = this.keyTable;
 
         if (!key.equals(keyTable[index])) {
+
+            ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
+
             index = hash2(hashCode);
             if (!key.equals(keyTable[index])) {
                 index = hash3(hashCode);
@@ -385,6 +403,8 @@ public class CuckooMap<K, V> implements Map<K,V> {
             size--;
             return oldValue;
         }
+
+        ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
 
         index = hash2(hashCode);
         if (key.equals(keyTable[index])) {
@@ -518,6 +538,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         if (!key.equals(keyTable[index])) {
+
+            ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
+
             index = hash2(hashCode);
             if (!key.equals(keyTable[index])) {
                 index = hash3(hashCode);
@@ -568,7 +591,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
         if (sizeNeeded >= threshold) resize(nextPowerOfTwo((int)(sizeNeeded / loadFactor)));
     }
 
-    private void resize (int newSize) {
+    private synchronized void resize (int newSize) {
         int oldEndIndex = capacity + stashSize;
 
         capacity = newSize;
@@ -597,12 +620,12 @@ public class CuckooMap<K, V> implements Map<K,V> {
 
     private int hash2(int h) {
         h *= PRIME2;
-        return (h ^ h >>> hashShift) & mask;
+        return (h ^ (h >>> hashShift)) & mask;
     }
 
     private int hash3(int h) {
         h *= PRIME3;
-        return (h ^ h >>> hashShift) & mask;
+        return (h ^ (h >>> hashShift)) & mask;
     }
 
     public String toString () {

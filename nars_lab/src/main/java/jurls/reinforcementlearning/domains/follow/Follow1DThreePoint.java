@@ -4,6 +4,7 @@ package jurls.reinforcementlearning.domains.follow;
  * Created by me on 5/21/15.
  */
 public class Follow1DThreePoint extends Follow1DTwoPoint {
+
     @Override
     public int numActions() {
         return 3;

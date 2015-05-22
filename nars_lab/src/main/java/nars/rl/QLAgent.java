@@ -10,9 +10,7 @@ import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
-import nars.nal.nal8.SynchOperator;
+import nars.nal.nal8.*;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -58,6 +56,11 @@ public class QLAgent<S extends Term> extends NARAgent {
     private final ArrayRealVector actByQ, lastActByQ;
     private final ArrayRealVector combinedDesire;
 
+    /** proportion how much QL affects decision vs. general control mechanism decisions; 0.5 = equal */
+    float qDecisionFactor = 0.5f;
+
+
+
     /**
      * corresponds to the numeric operation as specified by the environment
      */
@@ -71,11 +74,22 @@ public class QLAgent<S extends Term> extends NARAgent {
         }
         return o;
     }
+
     protected int getAction(final Operation o) {
         return operationToAction.getIfAbsent(o, -1);
     }
 
-
+    /** sets the influence of q-learning on the overall behavior of the system.
+     *
+     * @param qDecisionFactor
+     * @param qConceptChangeConfidence
+     *
+     * set to 0,0 to disable ql influence entirely
+     */
+    public void setQLFactor(float qDecisionFactor, float qConceptChangeConfidence) {
+        this.qDecisionFactor = qDecisionFactor;
+        ql.setqUpdateConfidence(qConceptChangeConfidence);
+    }
 
     public QLAgent(NAR nar, String operationTerm, String rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         this(nar, operationTerm, nar.term(rewardTerm), env, perceptions);
@@ -85,21 +99,15 @@ public class QLAgent<S extends Term> extends NARAgent {
      * @param nar
      * @param env
      * @param p
-
      */
     public QLAgent(NAR nar, String operatorTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         super(nar, env, Atom.the(operatorTerm));
 
         ql = new QLAgentTermMatrix(nar);
 
-
         this.rewardTerm = rewardTerm;
 
-        //HACK TODO this is necessary to disable the superclass's state belief update in methods we end up calling, this class has its own belief update method that should only be called
-        ql.stateUpdateConfidence = 0;
-
         this.perceptions = new ArrayList();
-
         for (Perception p : perceptions) {
             add(p);
         }
@@ -244,7 +252,9 @@ public class QLAgent<S extends Term> extends NARAgent {
         for (int i = 0; i < combinedDesire.getDimension(); i++) {
 
             //50%/50% q and nars
-            double d = ( decision.actByExpectation.getEntry(i) + actByQ.getEntry(i) );
+            double d = (
+                    (1.0f - qDecisionFactor) * decision.actByExpectation.getEntry(i) +
+                    qDecisionFactor * actByQ.getEntry(i) );
 
             double p = combinedDesire.getEntry(i);
 
@@ -308,7 +318,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         }
 
         double r = env.getReward();
-        ql.believeReward((float) r);
+        ql.believeReward((float) r, env.getMinReward(), env.getMaxReward());
         ql.goalReward();
 
 
@@ -364,16 +374,16 @@ public class QLAgent<S extends Term> extends NARAgent {
 
             S lastState = (S) lastTask.getTerm();
 
-            double alpha = lastTask.getTruth().getConfidence();
-            double lastTaskExpectation = lastTask.getTruth().getExpectation();
+            double alpha = lastTask.getTruth().getExpectation();
+            //double lastTaskExpectation = lastTask.getTruth().getExpectation();
 
-            double qLast = ql.q(lastState, lastAction, lastTaskExpectation);
+            double qLast = ql.q(lastState, lastAction, alpha);
 
             for (Task i : currentStateTasks) {
 
-                float freq = i.sentence.truth.getFrequency();
-                float confidence = i.sentence.truth.getConfidence();
-                double currentTaskExpectation = freq * confidence;
+                //float freq = i.sentence.truth.getFrequency();
+                //float confidence = i.sentence.truth.getConfidence();
+                //double currentTaskExpectation = freq * confidence;
 
                 S state = (S) i.sentence.getTerm();
 
@@ -425,10 +435,6 @@ public class QLAgent<S extends Term> extends NARAgent {
                 ql.brain.qUpdate(i, k, sumDeltaQ / numTaskTransitions, GammaLambda / numTaskTransitions, 0);
             }
         }
-
-
-
-
 
 
         int numRows = ql.rows.size();
@@ -525,8 +531,9 @@ public class QLAgent<S extends Term> extends NARAgent {
             }
 
             //spontaneous(initialPossibleDesireConfidence);
-            setActedBeliefConfidence(actedConfidence / getNumActions());
-            setActedGoalConfidence(actedConfidence / getNumActions());
+
+            setActedBeliefConfidence(actedConfidence);
+            setActedGoalConfidence(0);
         }
 
         @Override
@@ -543,8 +550,9 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         @Override
         public boolean isCol(Term a) {
-            if (a instanceof Operation)
-                return cols.contains((Operation)a);
+            if (a.getComplexity() == 5) //"act(X)"
+                if (a instanceof Operation)
+                    return cols.contains((Operation)a);
             return false;
         }
 
@@ -568,6 +576,10 @@ public class QLAgent<S extends Term> extends NARAgent {
             this.actByExpectation = new ArrayRealVector(numActions);
         }
 
+        @Override
+        public Decider decider() {
+            return DecideGoals.the;
+        }
 
         public void desire(int action, Operation operation) {
             desire(action, operation.getTask().getPriority(), operation.getTaskExpectation());

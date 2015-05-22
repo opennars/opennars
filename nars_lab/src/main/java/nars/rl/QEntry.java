@@ -11,6 +11,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.index.ConceptMatrix;
 import nars.util.index.ConceptMatrixEntry;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Represents a 'row' in the q-matrix
@@ -103,7 +104,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
     long lastCommit = -1;
     long commitEvery = 0;
-    float lastFreq = -1;
+    float lastFreq = 0.5f; //start in neutral
 
     public void commitDirect(Task t) {
         DirectProcess.run(concept.memory, t);
@@ -135,8 +136,8 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 
         long now = concept.memory.time();
 
-        if (lastFreq==-1 ||
-                ((now - lastCommit >= commitEvery) && Math.abs(nextFreq - lastFreq) > thresh)) {
+        if (qUpdateConfidence > 0 &&
+                ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > thresh)) {
 
             Task t = concept.memory.task((Compound) qt).punctuation(
 

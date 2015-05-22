@@ -363,4 +363,25 @@ public class TermTest {
         Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
         assertFalse(Statement.invalidStatement((Inheritance)t));
     }
+
+    @Test public void statementHash() {
+        statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(9)>");
+        statementHash("<<{i0} --> r> ==> A(8)>", "<<{i1} --> r> ==> A(7)>");
+        statementHash("<<{i10} --> r> ==> A(1)>","<<{i11} --> r> ==> A(0)>");
+    }
+    public void statementHash(String a, String b) {
+        //this is a case where a faulty hash function produced a collision
+
+        NAR n = new NAR(new Default());
+
+        Term ta = n.term(a).normalized();
+        Term tb = n.term(b).normalized();
+
+
+        assertNotEquals(ta, tb);
+        assertNotEquals(ta.hashCode(), tb.hashCode());
+
+        //-1169543707
+
+    }
 }

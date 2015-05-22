@@ -2,7 +2,7 @@ package nars.rl.example;
 
 import automenta.vivisect.Video;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.follow.Follow1DThreePoint;
+import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -105,7 +105,7 @@ public class RunQLAgent extends JPanel {
     public final NAR nar;
 
 
-    public RunQLAgent(RLEnvironment env, NARSeed dd, float qLearnedConfidence, Perception... p) {
+    public RunQLAgent(RLEnvironment env, NARSeed dd, Perception... p) {
         super();
 
         nar = new NAR(dd);
@@ -156,9 +156,10 @@ public class RunQLAgent extends JPanel {
         /* Create and display the form */
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
-        RLEnvironment d = new Follow1DThreePoint();
+        //RLEnvironment d = new Follow1DTwoPoint();
+        //RLEnvironment d = new Follow1DThreePoint();
 
-        //RLEnvironment d = new Curiousbot();
+        RLEnvironment d = new Curiousbot();
 
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
@@ -169,10 +170,9 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.04f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 1024;
+        int concepts = 2048;
         int conceptsPerCycle = 25;
         final int cyclesPerFrame = 10;
-        float qLearnedConfidence = 0.75f; //0.85f; //0 to disable feedback from Q to NARS in model update beliefs
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -242,7 +242,6 @@ public class RunQLAgent extends JPanel {
 
         dd.setSubconceptBagSize(1000);
 
-        //dd.setTaskLinkBagSize(32);
         dd.setInternalExperience(null);
 
         dd.inputsMaxPerCycle.set(10);
@@ -250,16 +249,16 @@ public class RunQLAgent extends JPanel {
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
-        dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
         dd.shortTermMemoryHistory.set(2);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
 
-        RunQLAgent a = new RunQLAgent(d, dd, qLearnedConfidence,
-                new RawPerception("L", 0.2f)
+        RunQLAgent a = new RunQLAgent(d, dd,
+                new RawPerception("L", 0.2f),
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
-                //new AEPerception("A", 0.05f, 7, 0).setLearningRate(0.01).setSigmoid(false)
+                //new AEPerception("A", 0.1f, 8, 1).setLearningRate(0.1).setSigmoid(true)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
@@ -270,12 +269,12 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                //new HaiSOMPerception("B", 3, 0.3f)
+                new HaiSOMPerception("B", 2, 0.2f)
         );
 
+        a.agent.setQLFactor(0.5f, 0.45f);
 
-
-        a.agent.ql.brain.setEpsilon(0.1);
+        a.agent.ql.brain.setEpsilon(0.05);
 
 
 

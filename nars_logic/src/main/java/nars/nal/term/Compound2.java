@@ -1,11 +1,12 @@
 package nars.nal.term;
 
+import nars.util.data.Hash2;
 import nars.util.data.Util;
 
 import java.util.Arrays;
 
 /** an optimized compound implementation for use when only 1 subterm */
-abstract public class Compound2<A extends Term,B extends Term> extends Compound {
+abstract public class Compound2<A extends Term,B extends Term> extends Compound  {
 
     private byte[] name = null;
     transient private int hash = 0;
@@ -21,13 +22,7 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
         return (B)term[1];
     }
 
-    @Override
-    protected void init(Term[] term) {
-        super.init(term);
 
-        if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()
-            invalidateHash();
-    }
 
     protected void invalidateHash() {
         this.hash = 0;
@@ -86,17 +81,17 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
     @Override
     public int hashCode() {
         if (this.hash == 0) {
-            return this.hash = Util.hash(getTemporalOrder(), operator().ordinal(), a(), b() );
+            this.hash = Util.hash(operator().ordinal(), getTemporalOrder(), a(), b() );
+            return this.hash;
         }
         return hash;
     }
 
-
-
-
-
-
-
+//    @Override
+//    public int hashCode2() {
+//        //return hashCode();
+//        return Util.hash(operator().ordinal(), getTemporalOrder(), b(), a() );
+//    }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
     @Override

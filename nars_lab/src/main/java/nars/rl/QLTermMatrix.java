@@ -35,7 +35,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /** pending tasks to execute to prevent CME */
     transient private final List<Task> stateActionImplications = Global.newArrayList();
 
-    final int implicationOrder = TemporalRules.ORDER_CONCURRENT; //TemporalRules.ORDER_FORWARD;
+    final int implicationOrder = TemporalRules.ORDER_NONE; //TemporalRules.ORDER_FORWARD;
 
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
@@ -64,9 +64,6 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /** confidence of reward command goal; set to zero to disable reward beliefs */
     float rewardGoalConfidence = 0.8f;
 
-    /** confidence of state belief updates */
-    @Deprecated protected float stateUpdateConfidence = 0.9f;
-
     //TODO belief update priority, durability etc
     //TODO reward goal priority, durability etc
 
@@ -75,6 +72,10 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     protected float actedBeliefConfidence = 0; //set to 0 to disable qAutonomous
     float actionPriority = Global.DEFAULT_GOAL_PRIORITY;
     float actionDurability = Global.DEFAULT_GOAL_DURABILITY;
+
+    float entryConceptualizationPriority = 0.5f;
+    float entryConceptualizationDurability = 0.5f;
+    float entryConceptualizationQuality = 0.5f;
 
 
     WeakHashMap<S,Task> lastState = new WeakHashMap();
@@ -99,34 +100,27 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
             public void qUpdate(S state, A action, double dqDivE, double eMult, double eAdd) {
 
 
+                if (((dqDivE==0) && (eMult == 1) && (eAdd == 0)) || (!Double.isFinite(dqDivE) || !Double.isFinite(eMult) || !Double.isFinite(eAdd))) {
+                    return;
+                }
+
                 if (action == null) return;
 
-                QEntry v = getEntry(state, action);
-                if (v == null) {
-                    //attempt conceptualization of the term
-                    Concept c = nar.memory.conceptualize(
-                            new Budget(0.8f, 0.8f, 0.8f),
-                            qterm(state,action)
-                    );
-                    if (c != null) {
-                        v = getEntry(c, state, action);
-                    }
-
-                    /*input(
-                            nar.memory.newTask(qterm(state, action))
-                                    .present()
-                                    .judgment()
-                                    .truth(0.5f, 0.5f)
-                                    .get());*/
-                }
+                QEntry v = getEntry(state, action,
+                        entryConceptualizationPriority,
+                        entryConceptualizationDurability,
+                        entryConceptualizationQuality);
                 if (v != null) {
-                    if (Double.isFinite(dqDivE) && Double.isFinite(eMult)) {
+
+                    if (dqDivE!=0) {
                         double e = v.getE();
                         v.addDQ(dqDivE * e);
-                        v.updateE(eMult, eAdd);
-
-                        v.commit(implicationPunctuation, qUpdateConfidence, updateThresh);
                     }
+
+                    v.updateE(eMult, eAdd);
+
+                    v.commit(implicationPunctuation, qUpdateConfidence, updateThresh);
+
                 }
             }
 
@@ -372,12 +366,33 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         }
     }
 
-    protected void believeReward(float reward) {
+    /** converts reward scalar to a NAR truth frequency.
+     *  mapping:
+          reward < 0: mapped to 0..0.5 linearly in range [minReward, 0)
+          reward 0 = 0.5 frequency
+     *    reward > 0: mapped to 0.5..1 linearly in range (0, maxReward]
+     * @param reward
+     * @param minReward
+     * @param maxReward
+     */
+    protected void believeReward(float reward, float minReward, float maxReward) {
         //belief about current reward amount
         if (rewardBeliefConfidence > 0) {
 
+
+            float rFreq;
+            if (reward == 0) {
+                rFreq = 0.5f;
+            }
+            else if (reward > 0) {
+                rFreq = (reward) / (maxReward);
+            }
+            else {
+                rFreq = -((reward) / (minReward));
+            }
+
             //expects -1..+1 as reward range input
-            float rFreq = reward /2.0f + 0.5f;
+            rFreq = rFreq / 2.0f + 0.5f;
 
             //clip reward to bounds
             if (rFreq < 0) rFreq = 0;
@@ -387,10 +402,12 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
         }
     }
 
+    /** confidence of taken action goals (after action taken), 0 to disable */
     public void setActedGoalConfidence(float qAutonomicGoalConfidence) {
         this.actedGoalConfidence = qAutonomicGoalConfidence;
     }
 
+    /** confidence of taken action beliefs (after action taken), 0 to disable */
     public void setActedBeliefConfidence(float actedBeliefConfidence) {
         this.actedBeliefConfidence = actedBeliefConfidence;
     }
