@@ -10,13 +10,12 @@ import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.nal8.NullOperator;
+import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.Operation;
 import nars.nario.level.Level;
 import nars.nario.level.LevelGenerator;
 import nars.nario.sprites.*;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

@@ -24,7 +24,7 @@ import nars.gui.NARSwing;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.SynchOperator;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Term;
 
 import javax.swing.*;

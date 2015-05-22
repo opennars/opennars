@@ -5,7 +5,7 @@ import nars.nal.term.Term;
 import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal8.TermFunction;
+import nars.nal.nal8.operator.TermFunction;
 
 import java.util.ArrayList;
 import java.util.List;

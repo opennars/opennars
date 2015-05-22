@@ -8,9 +8,14 @@ import nars.NAR;
 import nars.event.FrameReaction;
 import nars.nal.NALOperator;
 import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.*;
+import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
+import nars.nal.nal8.decide.DecideAllGoals;
+import nars.nal.nal8.decide.Decider;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -69,7 +74,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         if (o == null) {
             //TODO avoid String here
             o = operationCache[i] =
-                    Operation.make(operator, Product.make(Atom.the(i)) );
+                    Operation.make(operator, Product.make(Atom.the(i), nar.memory.self()) );
             operationToAction.put(o, i);
         }
         return o;
@@ -568,6 +573,7 @@ public class QLAgent<S extends Term> extends NARAgent {
         public final ArrayRealVector actByPriority;
         final double actionMomentum = 0.0; //smooths the action vectors
 
+        boolean filterNegativeGoals = true;
 
         public FrameDecisionOperator(Term operationTerm, int numActions) {
             super(operationTerm);
@@ -578,11 +584,18 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         @Override
         public Decider decider() {
-            return DecideGoals.the;
+            if (filterNegativeGoals)
+                return DecideAboveDecisionThreshold.the;
+            else
+                return DecideAllGoals.the;
         }
 
         public void desire(int action, Operation operation) {
-            desire(action, operation.getTask().getPriority(), operation.getTaskExpectation());
+            Truth t = operation.getTask().getTruth();
+
+
+            desire(action, operation.getTask().getPriority(),
+                    t.getExpectation());
         }
 
         protected void desire(int action, float priority, float expectation) {

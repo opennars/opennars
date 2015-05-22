@@ -21,7 +21,7 @@ import nars.Memory;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.SynchOperator;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;

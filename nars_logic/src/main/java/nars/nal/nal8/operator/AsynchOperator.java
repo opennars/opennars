@@ -1,9 +1,11 @@
-package nars.nal.nal8;
+package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nal.term.Term;
 import nars.op.io.Echo;
 

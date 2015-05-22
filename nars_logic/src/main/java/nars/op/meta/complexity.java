@@ -1,6 +1,6 @@
 package nars.op.meta;
 
-import nars.nal.nal8.TermFunction;
+import nars.nal.nal8.operator.TermFunction;
 import nars.nal.term.Term;
 
 /**

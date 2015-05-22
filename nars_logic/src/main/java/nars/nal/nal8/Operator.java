@@ -25,11 +25,12 @@ import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.Symbols;
 import nars.nal.DefaultTruth;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
+import nars.nal.nal8.decide.Decider;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -84,7 +85,7 @@ abstract public class Operator implements Reaction<Term> {
     }
 
     public Decider decider() {
-        return DesireThresholdExecutive.the;
+        return DecideAboveDecisionThreshold.the;
     }
 
 

@@ -29,7 +29,7 @@ import nars.nal.Truth;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.SynchOperator;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 

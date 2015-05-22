@@ -1301,9 +1301,7 @@ abstract public class Concept extends Item<Term> implements Termed {
     public Sentence getStrongestBelief() {
         return getStrongestBelief(true, true);
     }
-    public Sentence getStrongGoal() {
-        return getStrongestGoal(true, true);
-    }
+
 
     public List<TermLinkTemplate> getTermLinkTemplates() {
         return termLinkBuilder.templates();

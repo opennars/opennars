@@ -7,7 +7,7 @@ import nars.io.ChangedTextInput;
 import nars.io.Texts;
 import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.nal8.NullOperator;
+import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Term;
 import nars.rover.jbox2d.TestbedPanel;

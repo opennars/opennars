@@ -1,4 +1,4 @@
-package nars.nal.nal8;
+package nars.nal.nal8.operator;
 
 import com.google.common.collect.Lists;
 import nars.Global;
@@ -15,6 +15,8 @@ import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
  * N input Global and one variable argument (as the final argument), generating a new task
  * with the result of the function substituted in the variable's place.
  */
-public abstract class TermFunction<O> extends SynchOperator  {
+public abstract class TermFunction<O> extends SynchOperator {
 
     static final Variable var=new Variable("$y");
 

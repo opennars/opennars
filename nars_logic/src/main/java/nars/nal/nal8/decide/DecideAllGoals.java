@@ -1,14 +1,15 @@
-package nars.nal.nal8;
+package nars.nal.nal8.decide;
 
 import nars.Symbols;
 import nars.nal.concept.Concept;
+import nars.nal.nal8.Operation;
 
 /**
  * true if the task is a goal, even if it is negative (frequency < 0.5)
  */
-public class DecideGoals implements Decider {
+public class DecideAllGoals implements Decider {
 
-    public final static DecideGoals the = new DecideGoals();
+    public final static DecideAllGoals the = new DecideAllGoals();
 
     @Override
     public boolean decide(Concept c, Operation task) {

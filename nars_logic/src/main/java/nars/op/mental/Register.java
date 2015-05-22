@@ -17,13 +17,6 @@
 
 package nars.op.mental;
 
-import nars.nal.Task;
-import nars.nal.term.Term;
-import nars.nal.nal8.NullOperator;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
-
-import java.util.ArrayList;
 //
 ///**
 // * Register a new operate when the system is running

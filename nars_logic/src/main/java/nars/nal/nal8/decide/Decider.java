@@ -1,7 +1,8 @@
-package nars.nal.nal8;
+package nars.nal.nal8.decide;
 
 import nars.nal.Task;
 import nars.nal.concept.Concept;
+import nars.nal.nal8.Operation;
 
 /**
  * A method of deciding if an execution should proceed.

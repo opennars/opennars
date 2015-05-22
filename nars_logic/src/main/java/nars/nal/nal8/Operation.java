@@ -33,8 +33,7 @@ import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.op.eval;
-import nars.op.mental.evaluate;
+import nars.nal.nal8.operator.eval;
 import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
@@ -168,12 +167,18 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
     public Term[] arg(Memory memory, boolean evaluate) {
+        return arg(memory, evaluate, true);
+    }
+
+    public Term[] arg(Memory memory, boolean evaluate, boolean removeSelf) {
         final Term[] rawArgs = argArray();
         int numInputs = rawArgs.length;
 
-        if (numInputs > 0) {
-            if (rawArgs[numInputs - 1].equals(memory.self()))
-                numInputs--;
+        if (removeSelf) {
+            if (numInputs > 0) {
+                if (rawArgs[numInputs - 1].equals(memory.self()))
+                    numInputs--;
+            }
         }
 
         if (numInputs > 0) {
@@ -213,8 +218,12 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         return arg().terms();
     }
 
+    public Concept getConcept(Memory memory) {
+        return memory.concept(getTerm());
+    }
+
     public Truth getConceptDesire(Memory m) {
-        Concept c = m.concept(getTerm());
+        Concept c = getConcept(m);
         if (c == null) return null;
         return c.getDesire();
     }
@@ -247,7 +256,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      */
     public Operation inline(Memory memory) {
         //if (!hasEval()) return this;
-        return clone(Product.make(arg(memory, true)));
+        return clone(Product.make(arg(memory, true, false /* keep SELF term at this point */ )));
     }
 
 //    protected boolean hasEval() {
@@ -279,4 +288,6 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         }
         return false;
     }
+
+
 }

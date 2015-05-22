@@ -4,7 +4,7 @@ import nars.nal.DefaultTruth;
 import nars.nal.Truth;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
-import nars.op.TermPredicate;
+import nars.nal.nal8.operator.TermPredicate;
 
 import static nars.io.Texts.f;
 

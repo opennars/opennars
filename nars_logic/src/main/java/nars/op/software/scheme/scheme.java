@@ -4,7 +4,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.TermFunction;
+import nars.nal.nal8.operator.TermFunction;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.software.scheme.cons.Cons;

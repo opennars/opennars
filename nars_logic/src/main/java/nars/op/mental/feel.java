@@ -30,7 +30,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Tense;
-import nars.nal.nal8.SynchOperator;
+import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;

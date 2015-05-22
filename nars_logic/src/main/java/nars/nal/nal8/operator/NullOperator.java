@@ -18,13 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.nal.nal8;
+package nars.nal.nal8.operator;
 
 import nars.Global;
 import nars.Memory;
 import nars.nal.Task;
+import nars.nal.nal8.Operation;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
