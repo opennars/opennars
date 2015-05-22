@@ -77,7 +77,7 @@ public class RLNario extends NARio  {
     public static void main(String[] args) {
 
 
-        NAR nar = new NAR(new Default(2000, 30, 4));
+        NAR nar = new NAR(new Default(3000, 30, 4));
         nar.memory.setSelf(Atom.the("I"));
 
         nar.param.duration.set(memoryCyclesPerFrame * 3);
@@ -95,7 +95,9 @@ public class RLNario extends NARio  {
                 //new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
         );
 
-        rl.agent.add(new ShapePerception(rl.getScreenImage()));
+        rl.agent.setQLFactor(0.45f, 0.85f);
+
+        //rl.agent.add(new ShapePerception(rl.getScreenImage()));
 
         /*rl.agent.add( new ImagePerception("i1", rl.getLevelImage()) {
 

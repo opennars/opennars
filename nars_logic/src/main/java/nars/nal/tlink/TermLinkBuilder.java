@@ -215,7 +215,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     public static final int hash(byte[] prefix, Term target, short type) {
-        return Util.hash(Arrays.hashCode(prefix), target, type);
+        return Util.hash(Arrays.hashCode(prefix), target) * 31 + type;
     }
 
 

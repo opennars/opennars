@@ -14,6 +14,7 @@
  */
 package nars.util.data;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public final class Util {
         return 31 * (31 * (31 * (31 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;
     }
     public final static int hash(int a, int b, Object c, Object d) {
-        return 31 * (31 * (31 * (31 + c.hashCode()  ) + b ) + a ) + d.hashCode() ;
+        return 31 * (31 * (31 * (31 + c.hashCode()  ) + d.hashCode() ) + a ) + b ;
     }
 
     public static void assertNotNull(final Object test, final String varName) {

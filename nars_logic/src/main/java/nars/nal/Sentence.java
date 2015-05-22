@@ -237,9 +237,9 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         if ((this.hash == 0) /*&& (stamp!=null)*/) {
             //include punctuation separately because it will involve overhead calling Object.hash(punctuation) and having to box it
             if (truth == null)
-                this.hash = (Util.hash(term, stamp) * 31) + punctuation * 31;
+                this.hash = (Util.hash(term, stamp) * 31) + punctuation;
             else
-                this.hash = (Util.hash(term, truth, stamp) * 31) + punctuation * 31;
+                this.hash = (Util.hash(term, truth, stamp) * 31) + punctuation;
         }
         return hash;
     }
