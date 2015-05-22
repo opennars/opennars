@@ -24,6 +24,7 @@ package nars.util.data;
 import com.google.common.collect.Sets;
 import com.sun.xml.internal.xsom.impl.Ref;
 import objenome.util.random.XORShiftRandom;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
 import java.util.*;
@@ -107,9 +108,9 @@ public class CuckooMap<K, V> implements Map<K,V> {
     }
 
 
-    @Override
-    public boolean containsValue(Object value) {
-        return false;
+    /** this is an expensive operation and should be avoided */
+    @Override public boolean containsValue(Object value) {
+        return ArrayUtils.contains(valueTable, value);
     }
 
 
