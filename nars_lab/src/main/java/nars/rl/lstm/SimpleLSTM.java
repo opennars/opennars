@@ -7,6 +7,9 @@ public class SimpleLSTM implements IAgentSupervised
 {
 	
 	private double init_weight_range = 0.1;
+	public static double learningRate = 0.07;//0.07
+
+
 	private int full_input_dimension;
 	private int output_dimension;
 	private int cell_blocks;
@@ -28,7 +31,6 @@ public class SimpleLSTM implements IAgentSupervised
 	
 	private double SCALE_OUTPUT_DELTA = 1.0;
 	
-	public static double learningRate = 0.07;//0.07
 
 	private double[] sumF;
 	private double[] actF;
@@ -39,6 +41,7 @@ public class SimpleLSTM implements IAgentSupervised
 	private double[] output;
 	private double[] deltaOutput;
 	private double[] deltaH;
+	private double[] full_input;
 
 	public SimpleLSTM(Random r, int input_dimension, int output_dimension, int cell_blocks)
 	{
@@ -60,8 +63,8 @@ public class SimpleLSTM implements IAgentSupervised
 		
 		for (int i = 0; i < full_input_dimension; i++) {
 			for (int j = 0; j < cell_blocks; j++) {
-				weightsF[j][i] = (r.nextDouble() * 2 - 1) * init_weight_range;
-				weightsG[j][i] = (r.nextDouble() * 2 - 1) * init_weight_range;
+				weightsF[j][i] = (r.nextDouble() * 2d - 1d) * init_weight_range;
+				weightsG[j][i] = (r.nextDouble() * 2d - 1d) * init_weight_range;
 			}
 		}
 		
@@ -69,39 +72,49 @@ public class SimpleLSTM implements IAgentSupervised
 		
 		for (int j = 0; j < cell_blocks + 1; j++) {
 			for (int k = 0; k < output_dimension; k++)
-				weightsOut[k][j] = (r.nextDouble() * 2 - 1) * init_weight_range;
+				weightsOut[k][j] = (r.nextDouble() * 2d - 1d) * init_weight_range;
 		}
 	}
 	
-	public void Reset()
+	public void clear()
 	{
-		for (int c = 0; c < context.length; c++)
-			context[c] = 0.0;
+
+		Arrays.fill(context, 0.0);
+
 		//reset accumulated partials
 		for (int c = 0; c < cell_blocks; c++) {
-			for (int i = 0; i < full_input_dimension; i++) {
-				this.dSdG[c][i] = 0;
-				this.dSdF[c][i] = 0;
-			}
+			Arrays.fill(this.dSdG[c], 0.0);
+			Arrays.fill(this.dSdF[c], 0.0);
 		}
+
 	}
 	
-	public double[] Next(double[] input)
+	public double[] predict(double[] input)
 	{
-		return Next(input, null);
+		return learn(input, null);
 	}
 	
-	public void Display()
+	public static void Display()
 	{
 		System.out.println("==============================");
 		System.out.println("DAGate: todo...");
 		System.out.println("\n==============================");
 	}
 	
-	public double[] Next(double[] input, double[] target_output) {
-		
+	public double[] learn(double[] input, double[] target_output) {
+
+		final double learningRate = this.learningRate;
+		final int cell_blocks = this.cell_blocks;
+		final int full_input_dimension = this.full_input_dimension;
+
 		//setup input vector
-		double[] full_input = new double[full_input_dimension];
+
+
+		if ((full_input == null) || (full_input.length != full_input_dimension)) {
+			full_input = new double[full_input_dimension];
+		}
+		final double[] full_input = this.full_input;
+
 		int loc = 0;
 		for (int i = 0; i < input.length; ) {
 			full_input[loc++] = input[i++];
@@ -128,6 +141,7 @@ public class SimpleLSTM implements IAgentSupervised
 			Arrays.fill(actG, 0);
 			Arrays.fill(actH, 0);
 		}
+		final double[] full_hidden = this.full_hidden;
 
 		//inputs to cell blocks
 		for (int i = 0; i < full_input_dimension; i++)
@@ -142,26 +156,30 @@ public class SimpleLSTM implements IAgentSupervised
 		}
 		
 		for (int j = 0; j < cell_blocks; j++) {
-			actF[j] = F.Activate(sumF[j]);
-			actG[j] = G.Activate(sumG[j]);
-			actH[j] = actF[j] * context[j] + (1 - actF[j]) * actG[j];
+			final double actfj = actF[j] = F.Activate(sumF[j]);
+			final double actgj = actG[j] = G.Activate(sumG[j]);
+
+
+			actH[j] = actfj * context[j] + (1 - actfj) * actgj;
 		}
 		
 		//prepare hidden layer plus bias
 		Arrays.fill(full_hidden, 0);
 
-		loc = 0;
-		for (int j = 0; j < cell_blocks; j++)
-			full_hidden[loc++] = actH[j];
-		full_hidden[loc++] = 1.0; //bias
+
+		System.arraycopy(actH, 0, full_hidden, 0, cell_blocks);
+		full_hidden[cell_blocks] = 1.0; //bias
 		
 		//calculate output
 
-		Arrays.fill(output, 0);
 		for (int k = 0; k < output_dimension; k++)
 		{
+			double s = 0;
+			double wk[] = weightsOut[k];
 			for (int j = 0; j < cell_blocks + 1; j++)
-				output[k] += weightsOut[k][j] * full_hidden[j];
+				s += wk[j] * full_hidden[j];
+
+			output[k] = s;
 			//output not squashed
 		}
 
@@ -179,15 +197,18 @@ public class SimpleLSTM implements IAgentSupervised
 			double g = actG[j];
 			double dg = G.Derivative(sumG[j]);
 			double h_ = context[j]; //prev value of h
-			
+
+			final double[] dsg = dSdG[j];
+			final double[] dsf = dSdF[j];
+
 			for (int i = 0; i < full_input_dimension; i++) {
 				
-				double prevdSdF = dSdF[j][i];
-				double prevdSdG = dSdG[j][i];
+				double prevdSdF = dsf[i];
+				double prevdSdG = dsg[i];
 				double in = full_input[i];
 				
-				dSdG[j][i] = ((1 - f)*dg*in) + (f*prevdSdG);
-				dSdF[j][i] = ((h_- g)*df*in) + (f*prevdSdF);
+				dsg[i] = ((1 - f)*dg*in) + (f*prevdSdG);
+				dsf[i] = ((h_- g)*df*in) + (f*prevdSdF);
 			}
 		}
 		
@@ -205,20 +226,30 @@ public class SimpleLSTM implements IAgentSupervised
 			}
 
 			for (int k = 0; k < output_dimension; k++) {
-				deltaOutput[k] = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
+				final double dok  = deltaOutput[k] = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
+
+				final double[] wk = weightsOut[k];
+
 				for (int j = 0; j < cell_blocks; j++) {
-					deltaH[j] += deltaOutput[k] * weightsOut[k][j];
-					weightsOut[k][j] += deltaOutput[k] * actH[j] * learningRate;
+
+					deltaH[j] += dok * wk[j];
+					wk[j] += dok * actH[j] * learningRate;
 				}
 				//bias
-				weightsOut[k][cell_blocks] += deltaOutput[k] * 1.0 * learningRate;
+				wk[cell_blocks] += dok * 1.0 * learningRate;
 			}
 			
 			//input to hidden
 			for (int j = 0; j < cell_blocks; j++) {
+				final double dhj = deltaH[j];
+				final double[] dsj = dSdF[j];
+				final double[] dsd = dSdG[j];
+				final double[] wfj = weightsF[j];
+				final double[] wgj = weightsG[j];
+
 				for (int i = 0; i < full_input_dimension; i++) {
-					weightsF[j][i] += deltaH[j] * dSdF[j][i] * learningRate;
-					weightsG[j][i] += deltaH[j] * dSdG[j][i] * learningRate;
+					wfj[i] += dhj * dsj[i] * learningRate;
+					wgj[i] += dhj * dsd[i] * learningRate;
 				}
 			}
 		}
@@ -226,9 +257,7 @@ public class SimpleLSTM implements IAgentSupervised
 		//////////////////////////////////////////////////////////////
 		
 		//roll-over context to next time step
-		for (int j = 0; j < cell_blocks; j++) {
-			context[j] = actH[j];
-		}
+		System.arraycopy(actH, 0, context, 0, cell_blocks);
 		
 		//give results
 		return output;

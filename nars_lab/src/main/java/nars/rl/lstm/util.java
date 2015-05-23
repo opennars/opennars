@@ -2,13 +2,14 @@ package nars.rl.lstm;
 
 public class util 
 {
-	public static int argmax(double[] vec) {
+	public static int argmax(final double[] vec) {
 		int result = -1;
 		double max = Double.NEGATIVE_INFINITY;
+
 		for (int i = 0; i < vec.length; i++) {
-			if (vec[i] > max)
-			{
-				max = vec[i];
+			final double v = vec[i];
+			if (v > max)  {
+				max = v;
 				result = i;
 			}
 		}
@@ -19,9 +20,9 @@ public class util
 		int result = -1;
 		double min = Double.POSITIVE_INFINITY;
 		for (int i = 0; i < vec.length; i++) {
-			if (vec[i] < min)
-			{
-				min = vec[i];
+			final double v = vec[i];
+			if (v < min)  {
+				min = v;
 				result = i;
 			}
 		}

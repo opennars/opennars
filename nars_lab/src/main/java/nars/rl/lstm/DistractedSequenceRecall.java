@@ -1,6 +1,6 @@
 package nars.rl.lstm;
 
-import nars.rl.lstm.util;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,17 @@ public class DistractedSequenceRecall {
 		this.r = r;
 	}
 	
-	class Interaction {
+	public final static class Interaction {
 		double[] observation;
 		double[] target_output;
 		boolean do_reset;
+
+		@Override
+		public String toString() {
+			return ArrayUtils.toString(observation) + " " +
+					ArrayUtils.toString(target_output) + " " +
+					do_reset;
+		}
 	}
 	
 	private List<Interaction> GenerateInteractions(int tests) {
@@ -87,33 +94,35 @@ public class DistractedSequenceRecall {
 		for (Interaction inter : interactions) {
 			
 			if (inter.do_reset)
-				agent.Reset();
+				agent.clear();
 			
 			if (inter.target_output == null)
-				agent.Next(inter.observation);
+				agent.predict(inter.observation);
 			else {
 				double[] actual_output = null;
 
 				if (validation_mode == true)
-					actual_output = agent.Next(inter.observation);
+					actual_output = agent.predict(inter.observation);
 				else
-					actual_output = agent.Next(inter.observation, inter.target_output);
+					actual_output = agent.learn(inter.observation, inter.target_output);
 
 				if (util.argmax(actual_output) == util.argmax(inter.target_output))
 					fit++;
 				
 				max_fit++;
 			}
+
+			//System.out.println(inter);
 		}
 		return fit/max_fit;
 	}
 	
 
-	public int GetActionDimension() {
+	public int outputDimension() {
 		return action_dimension;
 	}
 
-	public int GetObservationDimension() {
+	public int inputDimension() {
 		return observation_dimension;
 	}
 

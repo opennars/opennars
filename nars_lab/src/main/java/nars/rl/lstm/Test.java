@@ -1,5 +1,7 @@
 package nars.rl.lstm;
 
+import objenome.util.random.XORShiftRandom;
+
 import java.util.Random;
 
 public class Test {
@@ -7,11 +9,14 @@ public class Test {
 		
 		System.out.println("Test of SimpleLSTM\n");
 		
-		Random r = new Random(1234);
+		Random r = new XORShiftRandom(1234);
 		DistractedSequenceRecall task = new DistractedSequenceRecall(r);
 
-		int cell_blocks = 15;
-		SimpleLSTM slstm = new SimpleLSTM(r, task.GetObservationDimension(), task.GetActionDimension(), cell_blocks);
+		int cell_blocks = 5;
+		SimpleLSTM slstm = new SimpleLSTM(r,
+				task.inputDimension(),
+				task.outputDimension(),
+				cell_blocks);
 		
 		for (int epoch = 0; epoch < 5000; epoch++) {
 			double fit = task.EvaluateFitnessSupervised(slstm);

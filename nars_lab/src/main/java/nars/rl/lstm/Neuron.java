@@ -6,15 +6,16 @@ public abstract class Neuron
 {
 	public static Neuron Factory(NeuronType neuron_type)
 	{
-		if (neuron_type == NeuronType.Sigmoid)
-			return new SigmoidNeuron();
-		else if (neuron_type == NeuronType.Identity)
-			return new IdentityNeuron();
-		else if (neuron_type == NeuronType.Tanh)
-			return new TanhNeuron();
-		else
-			System.out.println("ERROR: unknown neuron type");
-		return null;
+		switch (neuron_type) {
+			case Sigmoid:
+				return new SigmoidNeuron();
+			case Tanh:
+				return new TanhNeuron();
+			case Identity:
+				return new IdentityNeuron();
+			default:
+				throw new RuntimeException("ERROR: unknown neuron type");
+		}
 	}
 	
 	abstract public double Activate(double x);

@@ -2,7 +2,7 @@ package nars.rl.lstm;
 
 public interface IAgentSupervised 
 {
-	void Reset();
-	double[] Next(double[] input, double[] target_output) throws Exception;
-	double[] Next(double[] input) throws Exception;
+	void clear();
+	double[] learn(double[] input, double[] target_output) throws Exception;
+	double[] predict(double[] input) throws Exception;
 }

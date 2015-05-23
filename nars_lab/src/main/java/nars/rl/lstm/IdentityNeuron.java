@@ -3,15 +3,14 @@ package nars.rl.lstm;
 public class IdentityNeuron extends Neuron
 {
 	@Override
-	public double Activate(double x) 
+	final public double Activate(double x)
 	{
 		return x;
 	}
 
 	@Override
-	public double Derivative(double x) {
-		// TODO Auto-generated method stub
-		return 1;
+	final public double Derivative(double x) {
+		return 1.0;
 	}
 }
 
