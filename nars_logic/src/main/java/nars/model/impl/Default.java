@@ -5,6 +5,7 @@ import nars.Memory.Forgetting;
 import nars.Memory.Timing;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.HeapBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.model.ControlCycle;
@@ -16,8 +17,9 @@ import nars.nal.concept.DefaultConcept;
 import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.filter.FilterBelowConfidence;
 import nars.nal.filter.FilterOperationWithSubjOrPredVariable;
-import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.Operator;
+import nars.nal.nal8.operator.NullOperator;
+import nars.nal.nal8.operator.eval;
 import nars.nal.rule.*;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -28,7 +30,6 @@ import nars.op.app.STMInduction;
 import nars.op.data.Flat;
 import nars.op.data.json;
 import nars.op.data.similaritree;
-import nars.nal.nal8.operator.eval;
 import nars.op.io.say;
 import nars.op.io.schizo;
 import nars.op.math.add;
@@ -382,8 +383,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
-        Bag<Sentence, TaskLink> taskLinks = new ChainBag(/*sentenceNodes,*/ getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(/*termlinkKeyNodes,*/ getConceptTermLinks());
+        Bag<Sentence, TaskLink> taskLinks = new HeapBag(/*sentenceNodes,*/ getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new HeapBag(/*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -398,7 +399,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        return new ChainBag(getConceptBagSize());
+        return new HeapBag(getConceptBagSize());
     }
     
     CacheBag<Term,Concept> newSubconceptBag() {        
@@ -412,7 +413,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new ChainBag(getNovelTaskBagSize());
+        return new HeapBag(getNovelTaskBagSize());
     }
 
     public Default setSubconceptBagSize(int subconceptBagSize) {

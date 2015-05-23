@@ -44,7 +44,7 @@ public class NALPerfLoop {
                 String examplePath = (x instanceof Object[]) ? (String)(((Object[])x)[1]) : (String)x;
 
 
-                Global.DEBUG = false;
+                Global.DEBUG = Global.DEBUG_BAG = false;
                 perfNAL(n, examplePath,extraCycles+ (int)(Math.random()*randomExtraCycles),repeats,warmups,false);
             }
         }        

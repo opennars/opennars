@@ -8,6 +8,7 @@ import nars.util.data.CircularArrayList;
 import nars.util.data.CuckooMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
+import org.apache.commons.math3.util.FastMath;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -129,7 +130,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 //        }
 
         public E removeItem(final E removed) {
-            if (items.remove(removed)) {
+            if (items.removeIdentity(removed)) {
                 mass -= removed.getPriority();
                 return removed;
             }
@@ -171,10 +172,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         E removed = null;
         if (items.size() + 1 > capacity()) {
             removed = items.removeLast();
+            E removedVal = nameTable.remove(removed.name());
+            if (removedVal!=removed)
+                throw new RuntimeException("bag fault, nametable valuetable mismatch");
         }
         items.addFirst(i);
 
-        final int sortPrecision = size() / 2;
+        final int sortPrecision = 1; //(int)FastMath.sqrt(size());
         for (int j = 0; j < sortPrecision; j++)
             sortNext();
 
@@ -182,8 +186,9 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    int limit;
+    int heapCycle;
     int cmps = 0, m = 0; //variables to keep track of comparisons and moves
+    //int maxHeapMovesPerCycle
 
     /**
      * true if: item(a) "<" item(b)
@@ -198,14 +203,19 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         final E A = items.get(a);
 
+        if (A == null)
+            throw new RuntimeException("null");
+
         float ap = A.getPriority();
         float bp = B.getPriority();
 
         if (ap == bp) {
-            float aq = A.getQuality();
-            float bq = B.getQuality();
+            float aq = A.getQuality() + A.getDurability();
+            float bq = B.getQuality() + B.getDurability();
 
-            //TODO duration?
+            if (aq == bq) {
+                return A.hashCode() < B.hashCode();
+            }
             return aq < bq;
         } else {
             return ap < bp;
@@ -215,6 +225,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     public void reHeap(final int k) {
 
         int k2 = 2 * k;
+
+        final int limit = size() - 1;
 
         if (k2 + 1 > limit)
             return;
@@ -251,35 +263,21 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     /** perform the next partial sorting iteration */
     public void sortNext() {
         final int is = items.size();
-        if (is < 2) return;
+        if (is < 2) {
+            heapCycle = 0;
+            return;
+        }
 
-
-        /*
-           //Main logic of heap sort with partial heaping
-           limit=a.length-1;
-           reHeap(limit);
-           swap(0,limit);
-            
-           limit--;
-         
-           for(; limit>0; limit--)
-           {
-            reHeap(0);
-            swap(0,limit);
-           }
-         */
-
-        if (limit == 0) {
-            limit=is -1;
-            reHeap(limit);
-            swap(0,limit);
+        if ((heapCycle == 0) || (heapCycle > (is-1))) {
+            heapCycle = is -1;
+            reHeap(heapCycle);
         }
         else {
             reHeap(0);
-            swap(0,limit);
         }
+        swap(0, heapCycle);
 
-        limit--;
+        heapCycle--;
 
         //System.out.println("sortNext: " + is + " size, " + cmps + " compares, " + m + " moves");
 
@@ -446,11 +444,13 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         if (y < 0) y = 0;
         if (y > 1.0f) y = 1.0f;
 
-        int result = (int) Math.floor(y * s);
+        int result = (int) FastMath.floor(y * s);
         if (result == s) {
             //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
             result = (int) (s - 1);
         }
+
+        if (result < 0) result = 0;
 
         return result;
     }

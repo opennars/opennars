@@ -28,17 +28,20 @@ public final class Util {
     private Util() {
     }
 
+    final static int PRIME3 = 524287;
+    final static int PRIME2 = 92821;
+
     public final static int hash(Object a, Object b) {
-        return 31 * (31 + a.hashCode() ) + b.hashCode() ;
+        return PRIME2 * (31 + a.hashCode() ) + b.hashCode() ;
     }
     public final static int hash(Object a, Object b, Object c) {
-        return       31 * (31 * (31 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ;
+        return       PRIME3 * (31 * (PRIME2 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ;
     }
     public final static int hash(Object a, Object b, Object c, Object d) {
-        return 31 * (31 * (31 * (31 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;
+        return 31 * (PRIME3 * (31 * (PRIME2 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;
     }
     public final static int hash(int a, int b, Object c, Object d) {
-        return 31 * (31 * (31 * (31 + c.hashCode()  ) + d.hashCode() ) + a ) + b ;
+        return 31 * (PRIME3 * (31 * (PRIME2 + a  ) + d.hashCode() ) + a ) + c.hashCode() ;
     }
 
     public static void assertNotNull(final Object test, final String varName) {

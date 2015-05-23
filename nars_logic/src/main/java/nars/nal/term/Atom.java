@@ -84,7 +84,7 @@ public class Atom implements Term {
 
     protected Atom(final byte[] name) {
         this.name = name;
-        this.hash = Arrays.hashCode(name);
+        this.hash = Arrays.hashCode(name) * 31;
     }
 
     /** gets the atomic term given a name, storing it in the static symbol table */

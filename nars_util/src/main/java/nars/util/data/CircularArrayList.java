@@ -92,17 +92,16 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
     @Override
     public E get(final int i) {
         //same as the original function below but avoid another function call to help guarante inlining
-        int m = (head + i) % n;
-        //if (m < 0) m += n;        
-        return array[m];
+        //int m = ;
+        //if (m < 0) m += n;
+        return array[(head + i) % n];
 
         //original code:
         //return buf[wrapIndex(head + i)];
     }
 
     public void setFast(final int i, final E e) {
-        int m = (head + i) % n;
-        array[m] = e;
+        array[(head + i) % n] = e;
     }
 
     @Override
@@ -158,11 +157,11 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     @Override
     public E remove(final int i) {
-        /*final int s = size;        
+        final int s = size;
          if (i < 0 || i >= s) {
          throw new IndexOutOfBoundsException();
          }
-         */
+
 
         E e = get(i);
         removeFast(i);
@@ -171,6 +170,16 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     public boolean remove(Object o) {
         return remove(indexOf(o))!=null;
+    }
+    public boolean removeIdentity(Object o) {
+        final int s = size();
+        for (int i = 0; i < s; i++) {
+            if (get(i) == o) {
+                removeFast(i);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -189,8 +198,13 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
 
     public void swap(int a, int b) {
         E ap = get(a);
-        setFast(a, get(b));
+        E bp = get(b);
+        if ((ap == null) || (bp == null))
+            throw new RuntimeException("illegal swap");
+
+        setFast(a, bp);
         setFast(b, ap);
+
     }
 
     @Override
