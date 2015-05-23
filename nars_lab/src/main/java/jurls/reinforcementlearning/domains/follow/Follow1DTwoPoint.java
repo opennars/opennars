@@ -26,6 +26,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
      //if movement, should be an odd number so the middle value = 0 (no movement)
     
     double speed = 0.05;
+    double targetSpeed = 1;
     double closeThresh = speed * 2; //threshold that distance must be less than to receive positive rewards
 
     private final int history = 64;
@@ -185,8 +186,7 @@ public class Follow1DTwoPoint implements RLEnvironment {
     public void updateTargetXOR(int cycle) {        
         int complexity = 10;
         double scale = 1.0;
-        double s = 2;
-        double v = ( ((int)(speed  * s * cycle )%complexity ^ 0xf3f24f)%complexity * scale / complexity);
+        double v = ( ((int)(speed * targetSpeed * cycle )%complexity ^ 0xf3f24f)%complexity * scale / complexity);
         targetPos = v;
     }
 

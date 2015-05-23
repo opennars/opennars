@@ -18,7 +18,7 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.rl.HaiSOMPerception;
+import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -157,7 +157,7 @@ public class RunQLAgent extends JPanel {
         //RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
         //RLEnvironment d = new Follow1DTwoPoint();
-        //RLEnvironment d = new Follow1DThreePoint();
+        //RLEnvironment d = new Follow1DThreePoint(0.02, 0.1);
 
         RLEnvironment d = new Curiousbot();
 
@@ -167,17 +167,17 @@ public class RunQLAgent extends JPanel {
         d.newWindow();
 
         Global.DEBUG = Global.DEBUG_BAG = false;
-        //Global.TRUTH_EPSILON = 0.04f;
+        Global.TRUTH_EPSILON = 0.05f;
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 125;
-        final int cyclesPerFrame = 2;
+        int conceptsPerCycle = 50;
+        final int cyclesPerFrame = 10;
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
 
-        Default dd = new Default(concepts, conceptsPerCycle, 3) {
+        Default dd = new Default(concepts, conceptsPerCycle, 4) {
 
 //            @Override
 //            public Memory.DerivationProcessor getDerivationProcessor() {
@@ -240,7 +240,7 @@ public class RunQLAgent extends JPanel {
 //            }
         };
 
-        dd.setSubconceptBagSize(1000);
+        dd.setSubconceptBagSize(4000);
 
         dd.setInternalExperience(null);
 
@@ -249,16 +249,16 @@ public class RunQLAgent extends JPanel {
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
-        dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.shortTermMemoryHistory.set(2);
+        dd.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.shortTermMemoryHistory.set(1);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd,
-                new RawPerception("L", 0.2f),
+                new RawPerception("L", 0.8f),
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
-                //new AEPerception("A", 0.1f, 8, 1).setLearningRate(0.1).setSigmoid(true)
+                new AEPerception("A", 0.6f, 16, 1).setLearningRate(0.05).setSigmoid(false)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
@@ -269,12 +269,12 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("B", 2, 0.1f)
+                //new HaiSOMPerception("B", 2, 0.1f)
         );
 
-        a.agent.setQLFactor(0.5f, 0.45f);
+        a.agent.setQLFactor(0.5f, 0.5f);
 
-        a.agent.ql.brain.setEpsilon(0.05);
+        a.agent.ql.brain.setEpsilon(0.08);
 
 
 

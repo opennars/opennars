@@ -7,7 +7,7 @@ public class SimpleLSTM implements IAgentSupervised
 {
 	
 	private double init_weight_range = 0.1;
-	public static double learningRate = 0.07;//0.07
+	public double learningRate;//0.07
 
 
 	private int full_input_dimension;
@@ -43,8 +43,9 @@ public class SimpleLSTM implements IAgentSupervised
 	private double[] deltaH;
 	private double[] full_input;
 
-	public SimpleLSTM(Random r, int input_dimension, int output_dimension, int cell_blocks)
+	public SimpleLSTM(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate)
 	{
+		this.learningRate = initLearningRate;
 		this.output_dimension = output_dimension;
 		this.cell_blocks = cell_blocks;
 		
@@ -261,6 +262,10 @@ public class SimpleLSTM implements IAgentSupervised
 		
 		//give results
 		return output;
+	}
+
+	public void setLearningRate(double learningRate) {
+		learningRate = learningRate;
 	}
 }
 

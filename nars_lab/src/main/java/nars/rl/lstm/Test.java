@@ -13,10 +13,12 @@ public class Test {
 		DistractedSequenceRecall task = new DistractedSequenceRecall(r);
 
 		int cell_blocks = 5;
+		double learningRate = 0.07;
 		SimpleLSTM slstm = new SimpleLSTM(r,
 				task.inputDimension(),
 				task.outputDimension(),
-				cell_blocks);
+				cell_blocks,
+				learningRate);
 		
 		for (int epoch = 0; epoch < 5000; epoch++) {
 			double fit = task.EvaluateFitnessSupervised(slstm);

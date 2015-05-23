@@ -5,6 +5,11 @@ package jurls.reinforcementlearning.domains.follow;
  */
 public class Follow1DThreePoint extends Follow1DTwoPoint {
 
+    public Follow1DThreePoint(double speed, double targetSpeed) {
+        this.speed = speed;
+        this.targetSpeed = targetSpeed;
+    }
+
     @Override
     public int numActions() {
         return 3;
