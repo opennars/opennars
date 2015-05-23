@@ -46,20 +46,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
     private final CurveBag.BagCurve curve;
 
-    /**
-     * Rate of sampling index when in non-random "scanning" removal mode.
-     * The position will be incremented/decremented by scanningRate/(numItems+1) per removal.
-     * Default scanning behavior is to start at 1.0 (highest priority) and decrement.
-     * When a value exceeds 0.0 or 1.0 it wraps to the opposite end (modulo).
-     * <p>
-     * Valid values are: -1.0 <= x <= 1.0, x!=0
-     */
-    final float scanningRate = -1.0f;
-
-    /**
-     * current removal index x, between 0..1.0.  set automatically
-     */
-    private float x;
 
 
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
@@ -172,22 +158,23 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         E removed = null;
         if (items.size() + 1 > capacity()) {
             removed = items.removeLast();
-            E removedVal = nameTable.remove(removed.name());
-            if (removedVal!=removed)
-                throw new RuntimeException("bag fault, nametable valuetable mismatch");
         }
         items.addFirst(i);
 
-        final int sortPrecision = 1; //(int)FastMath.sqrt(size());
+
+        //sort iterations
+        final int sortPrecision = 1;
+        //# of max moves per iteration before ending it
+        final int sortMovesMax = 2;
         for (int j = 0; j < sortPrecision; j++)
-            sortNext();
+            sortNext(sortMovesMax);
 
         return removed;
     }
 
 
     int heapCycle;
-    int cmps = 0, m = 0; //variables to keep track of comparisons and moves
+    int cmps = 0, movs = 0; //variables to keep track of comparisons and moves
     //int maxHeapMovesPerCycle
 
     /**
@@ -222,7 +209,10 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         }
     }
 
-    public void reHeap(final int k) {
+    public void reHeap(final int k, final int maxMoves) {
+
+        if (movs >= maxMoves)
+            return;
 
         int k2 = 2 * k;
 
@@ -234,7 +224,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         if (k2 + 2 > limit) {
             if (less(k, k2 + 1)) {
                 swap(k, k2 + 1);
-                reHeap(k2 + 1);
+                reHeap(k2 + 1, maxMoves);
             }
             return;
         }
@@ -250,38 +240,39 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
             }
 
             swap(k, k2 + t);
-            reHeap(k2 + t);
+            reHeap(k2 + t, maxMoves);
             return;
         }
     }
 
     private void swap(int x, int y) {
         items.swap(x, y);
-        m += 3;
+        movs++;
     }
 
     /** perform the next partial sorting iteration */
-    public void sortNext() {
+    public void sortNext(int maxMoves) {
         final int is = items.size();
         if (is < 2) {
             heapCycle = 0;
             return;
         }
 
+        final int hc;
         if ((heapCycle == 0) || (heapCycle > (is-1))) {
-            heapCycle = is -1;
-            reHeap(heapCycle);
+            hc = heapCycle = is -1;
         }
         else {
-            reHeap(0);
+            hc = 0;
         }
+        reHeap(hc, maxMoves);
         swap(0, heapCycle);
 
         heapCycle--;
 
-        //System.out.println("sortNext: " + is + " size, " + cmps + " compares, " + m + " moves");
+        //System.out.println("sortNext: " + is + " size, " + cmps + " compares, " + movs + " moves");
 
-        cmps = m = 0;
+        cmps = movs = 0;
 
     }
 
@@ -292,8 +283,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         this.curve = curve;
 
         items = new CircularArrayList<>(capacity);
-
-        x = 1.0f; //start a highest priority
 
         nameTable = new CurveMap(capacity);
 
@@ -317,7 +306,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The number of items
      */
     @Override
-    public int size() {
+    final public int size() {
 
         int in = nameTable.size();
 
@@ -408,18 +397,18 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return The selected Item, or null if this bag is empty
      */
     @Override
-    public E pop() {
+    final public E pop() {
 
-        if (size() == 0) return null; // empty bag
+        if (isEmpty()) return null; // empty bag
         return removeItem(nextRemovalIndex());
 
     }
 
 
     @Override
-    public E peekNext() {
+    final public E peekNext() {
 
-        if (size() == 0) return null; // empty bag
+        if (isEmpty()) return null; // empty bag
         return items.get(nextRemovalIndex());
 
     }
@@ -429,29 +418,16 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * distributor function
      */
     public int nextRemovalIndex() {
-        final float s = items.size();
-        //if (randomRemoval) {
-        x = Memory.randomNumber.nextFloat();
-        /*} else {
-            x += scanningRate * 1.0f / (1 + s);
-            if (x >= 1.0f)
-                x -= 1.0f;
-            if (x <= 0.0f)
-                x += 1.0f;
-        }*/
+        final int s = items.size();
+
+        final float x = Memory.randomNumber.nextFloat();
 
         float y = getFocus(x);
-        if (y < 0) y = 0;
-        if (y > 1.0f) y = 1.0f;
 
         int result = (int) FastMath.floor(y * s);
-        if (result == s) {
-            //throw new RuntimeException("Invalid removal index: " + x + " -> " + y + " " + result);
-            result = (int) (s - 1);
-        }
 
-        if (result < 0) result = 0;
-
+        if (result < 0) return 0;
+        if (result >= s) return s-1;
         return result;
     }
 
@@ -462,7 +438,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * @return
      */
     public float getFocus(final float x) {
-        return (float) curve.y(x);
+        return curve.y(x);
     }
 
 //    public static long fastRound(final double d) {
@@ -474,6 +450,11 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 //    }
 //    
 
+
+    @Override
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
 
     @Override
     public float getMinPriority() {

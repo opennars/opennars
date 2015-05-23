@@ -171,8 +171,8 @@ public class RunQLAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 25;
-        final int cyclesPerFrame = 10;
+        int conceptsPerCycle = 125;
+        final int cyclesPerFrame = 2;
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -249,7 +249,7 @@ public class RunQLAgent extends JPanel {
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
-        dd.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
         dd.shortTermMemoryHistory.set(2);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
@@ -269,7 +269,7 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                new HaiSOMPerception("B", 2, 0.2f)
+                new HaiSOMPerception("B", 2, 0.1f)
         );
 
         a.agent.setQLFactor(0.5f, 0.45f);

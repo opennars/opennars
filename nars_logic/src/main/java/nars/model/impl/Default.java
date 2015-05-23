@@ -399,7 +399,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        return new HeapBag(getConceptBagSize());
+        return new ChainBag(getConceptBagSize());
     }
     
     CacheBag<Term,Concept> newSubconceptBag() {        

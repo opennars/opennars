@@ -236,7 +236,7 @@ public class Global {
     public static final float CONCEPT_FORGETTING_ACCURACY = 0.06f;
 
     //TODO scale these by % per cycle so it can perform more forgetting depending on time. if % exceeds ~100% it just means to do all of them and can avoid stochastic bag result
-    public static final float TERMLINK_FORGETTING_ACCURACY = 0.2f;
+    public static final float TERMLINK_FORGETTING_ACCURACY = 0.05f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.2f;
 
     public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection
