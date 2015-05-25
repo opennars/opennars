@@ -34,14 +34,14 @@ public class Training extends AbstractTraining {
 
         List<Interaction> result = new ArrayList<>();
         for (int test = 0; test < tests; test++) {
-            sampleSource++;
+            //sampleSource++;
             sampleSource %= 2;
 
             String sampleNaturalText;
             String sampleNal;
 
             if( sampleSource == 0 ) {
-                int testIndex = random.nextInt(trainingTuples.size());
+                int testIndex = 0; // random.nextInt(trainingTuples.size());
 
                 sampleNaturalText = trainingTuples.get(testIndex).input;
                 sampleNal = trainingTuples.get(testIndex).result;
