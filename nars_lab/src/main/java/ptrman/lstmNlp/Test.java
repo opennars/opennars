@@ -19,7 +19,7 @@ public class Test {
         Random r = new XORShiftRandom(1234);
         AbstractTraining task = new Training(r);
 
-        int cell_blocks = 10; // 5
+        int cell_blocks = 5; // 5
         double learningRate = 0.07;
         final int cycles = 5000;
 
@@ -36,7 +36,7 @@ public class Test {
         }
         System.out.println("done.");
 
-        slstm.clear();
+        //slstm.do_reset = true;
 
         int[] inputSequence = convertInputToVector("a bridge is stable.");
 
