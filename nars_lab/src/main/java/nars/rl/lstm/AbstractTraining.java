@@ -7,15 +7,13 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class AbstractTraining {
-    Random random;
 
 
-    public AbstractTraining(Random random) {
+    public AbstractTraining(Random random, final int inputDimension, final int outputDimension) {
         this.random = random;
+        this.inputDimension = inputDimension;
+        this.outputDimension = outputDimension;
     }
-
-    protected abstract List<Interaction> GenerateInteractions(int tests);
-
 
     public double EvaluateFitnessSupervised(IAgentSupervised agent) throws Exception {
 
@@ -44,17 +42,15 @@ public abstract class AbstractTraining {
 
                 max_fit++;
             }
-
-            //System.out.println(inter);
         }
         return fit/max_fit;
     }
 
 
     public final static class Interaction {
-        double[] observation;
-        double[] target_output;
-        boolean do_reset;
+        public double[] observation;
+        public double[] target_output;
+        public boolean do_reset;
 
         @Override
         public String toString() {
@@ -64,6 +60,19 @@ public abstract class AbstractTraining {
         }
     }
 
+    public int getInputDimension() {
+        return inputDimension;
+    }
+
+    public int getOutputDimension() {
+        return outputDimension;
+    }
+
+    protected Random random;
     protected int tests; // need to be set by GenerateInteractions()
     protected boolean validation_mode = false;
+    protected abstract List<Interaction> GenerateInteractions(int tests);
+
+    private final int inputDimension;
+    private final int outputDimension;
 }

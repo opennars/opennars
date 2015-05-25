@@ -15,8 +15,8 @@ public class Test {
 		int cell_blocks = 5;
 		double learningRate = 0.07;
 		SimpleLSTM slstm = new SimpleLSTM(r,
-				task.inputDimension(),
-				task.outputDimension(),
+				task.getInputDimension(),
+				task.getOutputDimension(),
 				cell_blocks,
 				learningRate);
 		

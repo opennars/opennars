@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 public class DistractedSequenceRecall extends AbstractTraining {
-	int observation_dimension = 10;
-	int action_dimension = 4;
-
-
+	static final int observation_dimension = 10;
+	static final int action_dimension = 4;
 
 
 	public DistractedSequenceRecall(Random r) {
-		super(r);
+		super(r, observation_dimension, action_dimension);
 
 		tests = 1000;
 	}
@@ -26,7 +24,7 @@ public class DistractedSequenceRecall extends AbstractTraining {
 			int target1 = random.nextInt(4);
 			int target2 = random.nextInt(4);
 			for (int t = 0; t < 22; t++) {
-				seq[t] = random.nextInt(4)+4;//+4 so as not to overlap with target symbols
+				seq[t] = random.nextInt(4) + 4;//+4 so as not to overlap with target symbols
 			}
 			int loc1 = random.nextInt(22);
 			int loc2 = random.nextInt(22);
@@ -71,14 +69,4 @@ public class DistractedSequenceRecall extends AbstractTraining {
 		}
 		return result;
 	}
-
-
-	public int outputDimension() {
-		return action_dimension;
-	}
-
-	public int inputDimension() {
-		return observation_dimension;
-	}
-
 }
