@@ -6,7 +6,10 @@ import com.google.common.collect.Lists;
 import nars.Memory;
 import nars.bag.impl.experimental.BubbleBag;
 import nars.nal.Item;
+import objenome.util.random.XORShiftRandom;
 import org.junit.Test;
+
+import java.util.Random;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
@@ -15,15 +18,13 @@ import static org.junit.Assert.assertTrue;
 
 public class BubbleBagTest extends AbstractBagTest {
 
-    static {
-        Memory.resetStatic(1);
-    }
+    final static Random rng = new XORShiftRandom();
 
     @Test
     public void testSolidBagSetOperations() {
 
 
-        BubbleBag<NullItem,CharSequence> s = new BubbleBag(4);
+        BubbleBag<NullItem,CharSequence> s = new BubbleBag(rng, 4);
 
         s.put(new NullItem(0.5f, "5"));
         s.put(new NullItem(0.3f, "3"));
@@ -75,12 +76,12 @@ public class BubbleBagTest extends AbstractBagTest {
     @Test public void testActivity() {
 
         int c = 32;
-        BubbleBag<NullItem,CharSequence> s = new BubbleBag(c);
+        BubbleBag<NullItem,CharSequence> s = new BubbleBag(rng, c);
 
         int ii = c*3;
         for (int i = 0; i < ii; i++) {
             //System.out.println(s.size() + " " + s.getCapacity());
-            s.put(new NullItem(Memory.randomNumber.nextFloat() * 0.95f));
+            s.put(new NullItem(rng.nextFloat() * 0.95f));
         }
 
         assertEquals(c, s.size());
@@ -109,7 +110,7 @@ public class BubbleBagTest extends AbstractBagTest {
         int insertsPerLoop = 1;
         float fractionToAdjust = 0.1f;
         float fractionTRemove = 0.1f;
-        BubbleBag bag = new BubbleBag(16);
+        BubbleBag bag = new BubbleBag(rng, 16);
 
         int[] dist =AbstractBagTest.testRemovalPriorityDistribution(
                 loops, insertsPerLoop, fractionToAdjust, fractionTRemove, bag,
@@ -124,7 +125,7 @@ public class BubbleBagTest extends AbstractBagTest {
         int loops = 5000;
         int insertsPerLoop = 1;
 
-        BubbleBag bag = new BubbleBag(500) {
+        BubbleBag bag = new BubbleBag(rng, 500) {
 
             @Override
             public Item onExit(Item item) {

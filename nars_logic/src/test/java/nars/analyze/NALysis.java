@@ -57,12 +57,15 @@ public class NALysis extends AbstractNALTest {
 
         String testName = path + "_" + build;
 
-        Memory.resetStatic(seed);
+
 
         TestNAR n = new TestNAR(build) {
 
             @Override
             public void run() {
+
+                memory.randomSeed(seed);
+
                 long nanos = runScript(this, path, maxCycles);
 
                 //String report = "";

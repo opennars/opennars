@@ -3,7 +3,6 @@ package nars.core;
 import nars.Global;
 import nars.Memory;
 import nars.io.LibraryInput;
-import nars.io.TextOutput;
 import nars.io.qa.Answered;
 import nars.model.impl.Solid;
 import nars.nal.Sentence;
@@ -26,7 +25,7 @@ public class SolidTest {
         int time = 256; //should solve the example in few cycles
         int timePeriod = 8;
 
-        Memory.resetStatic(1);
+
         Global.DEBUG = true;
 
         final int numConcepts = 800;
@@ -47,6 +46,7 @@ public class SolidTest {
         //s.setMaxTasksPerCycle(numConcepts);
 
         TestNAR n = new TestNAR(s);
+        n.memory.randomSeed(1);
 
         //TextOutput.out(n).setOutputPriorityMin(1.0f);
 

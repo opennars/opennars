@@ -2,7 +2,6 @@ package nars.nal.rule;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.Symbols;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.term.Statement;
@@ -30,7 +29,7 @@ public class Contraposition extends ConceptFireTask {
 
             float n = taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
             float w = 1.0f / ((n * (n - 1)) / 2.0f); //let's assume hierachical tuple (triangle numbers) amount for this
-            if (Memory.randomNumber.nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
+            if (f.memory.random.nextFloat() < w) { //so that NARS memory will not be spammed with contrapositions
 
                 contraposition(taskSentence, f);
                 //}

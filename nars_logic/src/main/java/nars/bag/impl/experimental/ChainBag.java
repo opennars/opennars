@@ -1,7 +1,6 @@
 package nars.bag.impl.experimental;
 
 import nars.Global;
-import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.nal.Item;
@@ -15,6 +14,7 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -38,6 +38,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
 
     private final Mean mean; //priority mean, continuously calculated
+    private final Random rng;
 
     private boolean ownsNodePool = false;
 
@@ -72,9 +73,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     final int dLen = d.length;
     int dp = 0;
 
-    public ChainBag(final DDNodePool<V> nodePool, int capacity) {
+    public ChainBag(final Random rng, final DDNodePool<V> nodePool, int capacity) {
         super();
 
+        this.rng = rng;
         this.capacity = capacity;
         this.mass = 0;
         this.index = new CuckooMap((capacity/2+1));
@@ -87,8 +89,8 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
 
-    public ChainBag(int capacity) {
-        this(new DDNodePool(4), capacity);
+    public ChainBag(final Random rng, int capacity) {
+        this(rng, new DDNodePool(4), capacity);
         this.ownsNodePool = true;
     }
 
@@ -364,11 +366,11 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     protected boolean selectPercentileRandom(final double percentileEstimate) {
-        return Memory.randomNumber.nextFloat() < percentileEstimate;
+        return rng.nextFloat() < percentileEstimate;
     }
 
     protected boolean selectPercentage(V v) {
-        return Memory.randomNumber.nextFloat() < v.getPriority();
+        return rng.nextFloat() < v.getPriority();
     }
 
     protected DD<V> after(final DD<V> d) {

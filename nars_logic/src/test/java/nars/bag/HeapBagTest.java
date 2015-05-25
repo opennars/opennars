@@ -1,7 +1,6 @@
 package nars.bag;
 
 import com.google.common.collect.Iterables;
-import com.gs.collections.impl.bag.mutable.HashBag;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -14,8 +13,6 @@ import nars.bag.impl.LevelBag;
 import nars.model.impl.Default;
 import nars.nal.Item;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -54,10 +51,9 @@ public class HeapBagTest extends AbstractBagTest {
     }
     
     public int[] testBag(int items) {
-        Memory.resetStatic(1);
-        
+
         testHeapBag(items);
-        testCapacityLimit(new HeapBag(4, curve));
+        testCapacityLimit(new HeapBag(rng, 4, curve));
         
         
         testAveragePriority(4);
@@ -72,7 +68,7 @@ public class HeapBagTest extends AbstractBagTest {
     }
     
     public void testHeapBag(int items) {
-        HeapBag<CharSequence, NullItem> f = new HeapBag(items, curve);
+        HeapBag<CharSequence, NullItem> f = new HeapBag(rng, items, curve);
         
         f.put(new NullItem(.25f));
         assert(f.size() == 1);
@@ -131,7 +127,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         int count[] = new int[capacity];
         
-        HeapBag<CharSequence, NullItem> f = new HeapBag(capacity, curve);
+        HeapBag<CharSequence, NullItem> f = new HeapBag(rng, capacity, curve);
         
         //fill
         for (int i= 0; i < capacity; i++) {
@@ -158,7 +154,7 @@ public class HeapBagTest extends AbstractBagTest {
         
         final float priorityEpsilon = 0.01f;
         
-        HeapBag<CharSequence, NullItem> c = new HeapBag(capacity, curve);
+        HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
         assertEquals(c.mass(), d.mass(), 0);
@@ -233,7 +229,7 @@ public class HeapBagTest extends AbstractBagTest {
     @Test public void testEqualBudgetedItems() {
         int capacity = 4;
 
-        HeapBag<CharSequence, NullItem> c = new HeapBag(capacity, curve);
+        HeapBag<CharSequence, NullItem> c = new HeapBag(rng, capacity, curve);
 
         NullItem a, b;
         c.put(a = new NullItem(0.5f));

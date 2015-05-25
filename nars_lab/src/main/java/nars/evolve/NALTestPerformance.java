@@ -69,7 +69,7 @@ public class NALTestPerformance {
 
             final String input = LibraryInput.getExample(example);
 
-            Memory.resetStatic(1);
+            nar.memory.randomSeed(1);
 
             final List<OutputCondition> expects = new ArrayList();
 

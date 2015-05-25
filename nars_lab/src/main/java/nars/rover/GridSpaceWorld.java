@@ -13,8 +13,6 @@ import nars.rover.jbox2d.j2d.JoglDraw;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 
-import java.awt.*;
-
 /**
  *
  * @author me
@@ -132,7 +130,7 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                     draw.drawSolidRect(px, py, cw, ch,0.1f,0.5f + c.height*0.005f, 0.1f);
                     break;
                 case Water:
-                    float db = Memory.randomNumber.nextFloat()*0.04f;
+                    float db = (float)Math.random()*0.04f;
                     
                     
                     float b = 0.5f + h*0.01f - db;

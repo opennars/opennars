@@ -37,7 +37,7 @@ public class HsomQBrain extends LearnerAndActor {
         return q(som.winnerx, som.winnery, reward);
     }
     
-    public static double random(double max) { return Memory.randomNumber.nextDouble() * max;    }
+    public static double random(double max) { return Math.random() * max;    }
 
     
     int q(final int StateX, final int StateY, final double reward) {

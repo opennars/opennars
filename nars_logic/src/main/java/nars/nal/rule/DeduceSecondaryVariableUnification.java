@@ -19,6 +19,7 @@ import nars.nal.tlink.TermLink;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import static nars.nal.Terms.reduceUntilLayer2;
@@ -130,6 +131,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
     public boolean dedSecondLayerVariableUnification(final Task task, final NAL nal) {
 
+        final Random r = nal.memory.random;
+
         final Sentence taskSentence = task.sentence;
 
         if (taskSentence == null || taskSentence.isQuestion() || taskSentence.isQuest()) {
@@ -206,7 +209,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 smap.clear();
 
-                if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
+                if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T1_unwrap, secterm_unwrap, Values, smap, r)) {
 
                     Compound ctaskterm_subs = (Compound) firstTerm;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
@@ -219,7 +222,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 Values.clear(); //we are only interested in first variables
                 smap.clear();
 
-                if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values, smap)) {
+                if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T1_unwrap, secterm_unwrap, Values, smap, r)) {
                     Compound ctaskterm_subs = (Compound) firstTerm;
                     ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
                     Term taskterm_subs = reduceUntilLayer2(ctaskterm_subs, secTerm, nal.memory);
@@ -242,7 +245,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         Values.clear(); //we are only interested in first variables
                         smap.clear();
 
-                        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
+                        if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, T2_unwrap, secterm_unwrap, Values, smap, r)) {
                             //terms_dependent_compound_terms.put(Values3, (CompoundTerm)T1_unwrap);
                             Compound ctaskterm_subs = (Compound) firstTerm;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);
@@ -255,7 +258,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         Values.clear(); //we are only interested in first variables
                         smap.clear();
 
-                        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values, smap)) {
+                        if (Variables.findSubstitute(Symbols.VAR_INDEPENDENT, T2_unwrap, secterm_unwrap, Values, smap, r)) {
                             //terms_independent_compound_terms.put(Values4, (CompoundTerm)T1_unwrap);
                             Compound ctaskterm_subs = (Compound) firstTerm;
                             ctaskterm_subs = ctaskterm_subs.applySubstituteToCompound(Values);

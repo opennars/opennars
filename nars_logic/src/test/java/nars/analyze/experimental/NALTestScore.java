@@ -57,7 +57,7 @@ import java.util.Collection;
             
             NALTest.saveSimilar = false;
             
-            Memory.resetStatic(1);
+
             n.reset();
 
             if (maxCycles!=-1) {

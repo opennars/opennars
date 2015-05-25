@@ -1,9 +1,12 @@
 package nars.bag;
 
-import nars.analyze.experimental.BagPerf;
 import nars.Memory;
+import nars.analyze.experimental.BagPerf;
 import nars.bag.impl.CurveBag;
 import nars.util.data.sorted.SortedIndex;
+import objenome.util.random.XORShiftRandom;
+
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -12,8 +15,10 @@ import static org.junit.Assert.assertTrue;
  * Created by me on 1/18/15.
  */
 public class AbstractBagTest {
+    final static Random rng = new XORShiftRandom();
+
     public static int[] testRemovalPriorityDistribution(int capacity, boolean random, SortedIndex<BagPerf.NullItem> items) {
-        CurveBag<CharSequence, BagPerf.NullItem> f = new CurveBag(capacity, CurveBagTest.curve, random, items);
+        CurveBag<CharSequence, BagPerf.NullItem> f = new CurveBag(rng, capacity, CurveBagTest.curve, random, items);
         return testRemovalPriorityDistribution(8, capacity, 0.2f, 0.2f, f);
     }
 
@@ -35,7 +40,7 @@ public class AbstractBagTest {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
                 BagPerf.NullItem ni = new BagPerf.NullItem();
-                ni.key = "" + (int)(Memory.randomNumber.nextFloat() * insertsPerLoop * 1.2f);
+                ni.key = "" + (int)(rng.nextFloat() * insertsPerLoop * 1.2f);
                 f.put(ni);
             }
 
@@ -130,7 +135,7 @@ public class AbstractBagTest {
         for (int l = 0; l < loops; l++) {
             //fill with random items
             for (int i= 0; i < insertsPerLoop; i++) {
-                BagPerf.NullItem ni = new BagPerf.NullItem(Memory.randomNumber.nextFloat());
+                BagPerf.NullItem ni = new BagPerf.NullItem(rng.nextFloat());
                 f.put(ni);
             }
 

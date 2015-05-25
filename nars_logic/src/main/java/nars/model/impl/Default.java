@@ -383,8 +383,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
-        Bag<Sentence, TaskLink> taskLinks = new HeapBag(/*sentenceNodes,*/ getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new HeapBag(/*termlinkKeyNodes,*/ getConceptTermLinks());
+        Bag<Sentence, TaskLink> taskLinks = new HeapBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new HeapBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -399,7 +399,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        return new ChainBag(getConceptBagSize());
+        return new ChainBag(rng, getConceptBagSize());
     }
     
     CacheBag<Term,Concept> newSubconceptBag() {        
@@ -413,7 +413,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new HeapBag(getNovelTaskBagSize());
+        return new HeapBag(rng, getNovelTaskBagSize());
     }
 
     public Default setSubconceptBagSize(int subconceptBagSize) {

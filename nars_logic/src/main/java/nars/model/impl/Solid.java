@@ -83,7 +83,7 @@ public class Solid extends Default implements ControlCycle {
         subcon = new CacheBag(maxSubConcepts);
 
         //concepts = new CurveBag(maxConcepts, true);
-        concepts = new ChainBag(maxConcepts);
+        concepts = new ChainBag(rng, maxConcepts);
     }
 
     @Override
@@ -257,8 +257,8 @@ public class Solid extends Default implements ControlCycle {
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
-        Bag<Sentence, TaskLink> taskLinks = new ChainBag(getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(getConceptTermLinks());
+        Bag<Sentence, TaskLink> taskLinks = new ChainBag(rng, getConceptTaskLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
         //return super.newConcept(b, t, m);

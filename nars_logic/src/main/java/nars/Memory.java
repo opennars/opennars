@@ -258,16 +258,11 @@ public class Memory implements Serializable {
 
 
 
-    private static long defaultRandomSeed = 1;
-    public static final Random randomNumber = //new Random(defaultRandomSeed);
-            XORShiftRandom.global;  //not thread safe but faster
-    static {
-        randomNumber.setSeed(defaultRandomSeed);
-    }
 
+    public final Random random;
 
-    public static void resetStatic(long randomSeed) {
-        randomNumber.setSeed(randomSeed);
+    public void randomSeed(long randomSeed) {
+        random.setSeed(randomSeed);
     }
 
 
@@ -311,8 +306,9 @@ public class Memory implements Serializable {
      * @param narParam reasoner paramerters
      * @param policy logic parameters
      */
-    public Memory(int nalLevel, Param narParam, LogicPolicy policy, ControlCycle core) {
+    public Memory(Random rng, int nalLevel, Param narParam, LogicPolicy policy, ControlCycle core) {
 
+        this.random = rng;
         this.level = nalLevel;
 
         this.param = narParam;

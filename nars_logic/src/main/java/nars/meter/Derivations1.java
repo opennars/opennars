@@ -20,8 +20,8 @@ public class Derivations1  {
 
         for (int seed = 0; seed < 4; seed++) {
             for (String s : LibraryInput.getPaths("test2")) {
-                Memory.resetStatic(seed);
                 NAR n = new TestNAR(new Default().setInternalExperience(null).level(3));
+                n.memory.randomSeed(seed);
                 d.record(n);
                 n.input(LibraryInput.getExample(s));
                 n.run(200);

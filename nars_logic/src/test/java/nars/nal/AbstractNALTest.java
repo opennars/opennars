@@ -82,11 +82,12 @@ abstract public class AbstractNALTest extends TestCase {
     public AbstractNALTest(NARSeed b) {
         super();
 
-        Memory.resetStatic(randomSeed);
+
         Global.DEBUG = true;
 
         this.build = b;
         this.nar = new TestNAR(b);
+        nar.memory.randomSeed(randomSeed);
         results.clear();
         this.eventCounter = new CountOutputEvents(nar, results);
         this.deriveMethodCounter = new CountDerivationCondition(nar, results);

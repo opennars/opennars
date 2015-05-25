@@ -2,6 +2,7 @@ package nars.nario;
 
 import nars.Memory;
 import nars.nario.level.Level;
+import objenome.util.random.XORShiftRandom;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,7 +18,7 @@ public class LevelRenderer
     private static final Color transparent = new Color(0, 0, 0, 0);
     private Level level;
 
-    private Random random = Memory.randomNumber;
+    private Random random = new XORShiftRandom();
     public boolean renderBehaviors = false;
 
     int width;

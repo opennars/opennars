@@ -1,9 +1,10 @@
 package nars.bag;
 
-import nars.analyze.experimental.BagPerf;
 import nars.Memory;
-import nars.nal.Item;
+import nars.analyze.experimental.BagPerf;
 import nars.bag.impl.experimental.ChainBag;
+import nars.nal.Item;
+import objenome.util.random.XORShiftRandom;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -23,7 +24,9 @@ public class ChainBagTest {
     }
     public void testChainBagSequence(int loops, int capacity) {
 
-        ChainBag bag = new ChainBag(capacity);
+        XORShiftRandom rng = new XORShiftRandom();
+
+        ChainBag bag = new ChainBag(rng, capacity);
 
 
         float fractionToAdjust = 0.1f;
@@ -31,7 +34,7 @@ public class ChainBagTest {
 
         int inputs = loops * loops;
         for (int i = 0 ;i < inputs; i++) {
-            bag.put(new BagPerf.NullItem(Memory.randomNumber.nextFloat()));
+            bag.put(new BagPerf.NullItem(rng.nextFloat()));
             assertTrue(capacity >= bag.size());
         }
 

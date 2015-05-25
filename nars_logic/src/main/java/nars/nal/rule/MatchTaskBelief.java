@@ -42,7 +42,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
         } else {
             if (TemporalRules.matchingOrder(taskSentence, belief)) {
                 Term[] u = new Term[] { taskSentence.term, belief.term };
-                if (Variables.unify(Symbols.VAR_QUERY, u)) {
+                if (Variables.unify(Symbols.VAR_QUERY, u, nal.memory.random)) {
                     return LocalRules.trySolution(belief, task, nal);
                 }
             }

@@ -140,7 +140,7 @@ public class LocalRules {
         if (content.hasVarIndep()) {
             Term u[] = new Term[] { content, problem.term };
             
-            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u);
+            boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
             if (!unified) return false;
 
             content = u[0];

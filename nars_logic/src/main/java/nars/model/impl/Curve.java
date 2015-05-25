@@ -38,12 +38,12 @@ public class Curve extends Default {
 
     @Override
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new CurveBag(getNovelTaskBagSize(), curve, randomRemoval);
+        return new CurveBag(rng, getNovelTaskBagSize(), curve, randomRemoval);
     }
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
-        return new CurveBag(getConceptBagSize(), curve, randomRemoval);
+        return new CurveBag(rng, getConceptBagSize(), curve, randomRemoval);
         //return new AdaptiveContinuousBag<>(getConceptBagSize());
     }
 
@@ -60,8 +60,8 @@ public class Curve extends Default {
     public Concept newConcept(final Term t, Budget b, final Memory m) {
 
 
-        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(getConceptTaskLinks(), curve, randomRemoval);
-        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(getConceptTermLinks(), curve, randomRemoval);
+        Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve, randomRemoval);
+        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve, randomRemoval);
         
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }

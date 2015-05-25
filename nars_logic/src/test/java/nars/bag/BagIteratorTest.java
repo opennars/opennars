@@ -3,9 +3,11 @@ package nars.bag;
 import nars.analyze.experimental.BagPerf.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
+import objenome.util.random.XORShiftRandom;
 import org.junit.Test;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,7 +15,9 @@ import static org.junit.Assert.assertTrue;
 
 
 public class BagIteratorTest {
-    
+
+    final static Random rng = new XORShiftRandom();
+
     int L = 4;
 
 
@@ -67,8 +71,8 @@ public class BagIteratorTest {
     @Test
     public void testBags() {
         testBagIterator(new LevelBag(L, L*2));
-        testBagIterator(new CurveBag(L*2, false));
-        testBagIterator(new CurveBag(L*2, true));
+        testBagIterator(new CurveBag(rng, L*2, false));
+        testBagIterator(new CurveBag(rng, L*2, true));
         
     }
     

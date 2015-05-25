@@ -127,7 +127,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
 
-        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1, res2)) {
+        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1, res2,nal.memory.random)) {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
                 final Term ti = term[i];

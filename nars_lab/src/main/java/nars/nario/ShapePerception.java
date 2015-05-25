@@ -14,13 +14,12 @@ import boofcv.struct.PointIndex_I32;
 import boofcv.struct.image.ImageFloat32;
 import boofcv.struct.image.ImageUInt8;
 import boofcv.struct.image.MultiSpectral;
-import nars.Memory;
 import nars.gui.output.ImagePanel;
+import objenome.util.random.XORShiftRandom;
 
 import java.awt.*;
-import java.awt.List;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Random;
 import java.util.function.Supplier;
 
 /**
@@ -35,6 +34,7 @@ public class ShapePerception extends ImagePerception {
     public BufferedImage valueBuffer, hueBuffer;
     public BufferedImage output;
 
+    final static Random rng = new XORShiftRandom();
 
     // Polynomial fitting tolerances
     double toleranceDist;
@@ -77,7 +77,7 @@ public class ShapePerception extends ImagePerception {
             java.util.List<PointIndex_I32> vertexes = ShapeFittingOps.fitPolygon(c.external, true,
                     toleranceDist, toleranceAngle, iterations);
 
-            overlay.setColor(new Color(Memory.randomNumber.nextInt()));
+            overlay.setColor(new Color(rng.nextInt()));
             VisualizeShapes.drawPolygon(vertexes, true, overlay);
         }
 

@@ -99,7 +99,7 @@ abstract public class AbstractHaiQBrain<S,A> {
     }
 
     
-    public static double random(double max) { return Memory.randomNumber.nextDouble() * max;    }
+    private static double random(double max) { return Math.random() * max;    }
 
     abstract public double eligibility(S state, A action);
 

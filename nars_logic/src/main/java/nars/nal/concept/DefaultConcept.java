@@ -1,6 +1,5 @@
 package nars.nal.concept;
 
-import com.google.common.base.Function;
 import nars.Events;
 import nars.Global;
 import nars.Memory;
@@ -14,16 +13,13 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.nal.term.Termed;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
 
-import java.io.PrintStream;
 import java.util.*;
 
 import static com.google.common.collect.Iterators.concat;
 import static com.google.common.collect.Iterators.filter;
-import static com.google.common.collect.Iterators.transform;
 import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.UtilityFunctions.or;
 import static nars.nal.nal1.LocalRules.revisible;
@@ -307,12 +303,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         getTermLinks().forgetNext(
                 getMemory().param.termLinkForgetDurations,
-                Memory.randomNumber.nextFloat() * Global.TERMLINK_FORGETTING_ACCURACY,
+                getMemory().random.nextFloat() * Global.TERMLINK_FORGETTING_ACCURACY,
                 getMemory());
 
         getTaskLinks().forgetNext(
                 getMemory().param.taskLinkForgetDurations,
-                Memory.randomNumber.nextFloat() * Global.TASKLINK_FORGETTING_ACCURACY,
+                getMemory().random.nextFloat() * Global.TASKLINK_FORGETTING_ACCURACY,
                 getMemory());
 
         linkTerms(null, true);
@@ -1187,7 +1183,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (getBeliefs().isEmpty()) return null;
 
         float totalConfidence = getConfidenceSum(getBeliefs());
-        float r = Memory.randomNumber.nextFloat() * totalConfidence;
+        float r = getMemory().random.nextFloat() * totalConfidence;
 
         Sentence s = null;
         for (int i = 0; i < getBeliefs().size(); i++) {

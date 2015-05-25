@@ -216,7 +216,7 @@ public class QLAgent<S extends Term> extends NARAgent {
             double  v = combinedDesire.getEntry(i);
             if ((v > highest) ||
                     //if equal, decide randomly if it should replace it, to be fair
-                    ((v >= highest) && (Memory.randomNumber.nextBoolean()))
+                    ((v >= highest) && (nar.memory.random.nextBoolean()))
                     ) {
                 highest = v;
                 best = i;
@@ -237,8 +237,8 @@ public class QLAgent<S extends Term> extends NARAgent {
         final double epsilon = ql.brain.getEpsilon();
         //do not apply epsilon random decisions if decisionThreshold=1f
         float decisionThreshold = ql.nar.param.decisionThreshold.floatValue();
-        if (decisionThreshold < 1.0f && epsilon > 0 && Memory.randomNumber.nextFloat() < epsilon) {
-            int a = Memory.randomNumber.nextInt(actions);
+        if (decisionThreshold < 1.0f && epsilon > 0 && nar.memory.random.nextFloat() < epsilon) {
+            int a = nar.memory.random.nextInt(actions);
 
             //for display purposes:
             combinedDesire.set(0);

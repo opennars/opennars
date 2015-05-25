@@ -3,15 +3,15 @@ package nars.bag.impl.experimental;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Global;
-import nars.Memory;
-import nars.nal.Item;
 import nars.bag.Bag;
+import nars.nal.Item;
 import nars.util.data.CircularArrayList;
 import nars.util.data.CuckooMap;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -32,6 +32,8 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
     int capacity;
 
+    final Random rng;
+
     public final CuckooMap<K,E> index;
     public final CircularArrayList<E> queue;
 
@@ -44,12 +46,13 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
 
     //Deque<Bagged<E>> pool = new ArrayDeque<>();
 
-    public BubbleBag(int initialCapacity) {
-        this(initialCapacity, 0.5f);
+    public BubbleBag(Random rng, int initialCapacity) {
+        this(rng, initialCapacity, 0.5f);
     }
 
-    public BubbleBag(int initialCapacity, float loadFactor) {
+    public BubbleBag(Random rng, int initialCapacity, float loadFactor) {
         super();
+        this.rng = rng;
         this.capacity = initialCapacity;
         this.index = new CuckooMap(capacity, loadFactor);
         this.queue = new CircularArrayList<>(capacity*2 /* extra space for invalid items */ );
@@ -102,7 +105,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
     protected void swapToProportionalIndex(int currentIndex, float priority) {
         //TODO choose reinsertionIndex intelligently
         //int reinsertionIndex = Memory.randomNumber.nextInt(queue.size()-1);
-        int reinsertionIndex = (int)(Memory.randomNumber.nextDouble() * (1.0f - priority) * (queue.size()-1));
+        int reinsertionIndex = (int)(rng.nextDouble() * (1.0f - priority) * (queue.size()-1));
         if (currentIndex == reinsertionIndex) return;
         queue.swap(currentIndex, reinsertionIndex);
     }

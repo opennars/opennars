@@ -82,7 +82,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
                                 Term[] u = new Term[] { beliefTerm, taskTerm };
-                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u)) {
+                                if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, f.memory.random)) {
                                     Sentence<Statement> newBelief = belief.clone(u[0], Statement.class);
                                     if (newBelief!=null) {
                                         Sentence newTaskSentence = taskSentence.clone(u[1]);

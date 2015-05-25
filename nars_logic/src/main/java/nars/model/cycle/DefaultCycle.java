@@ -101,11 +101,9 @@ public class DefaultCycle extends SequentialCycle {
             }
         }
 
-
-
         concepts.forgetNext(
                 memory.param.conceptForgetDurations,
-                Memory.randomNumber.nextFloat() * Global.CONCEPT_FORGETTING_ACCURACY,
+                memory.random.nextFloat() * Global.CONCEPT_FORGETTING_ACCURACY,
                 memory);
 
         memory.runNextTasks();

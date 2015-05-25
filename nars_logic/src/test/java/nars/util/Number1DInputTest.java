@@ -32,14 +32,12 @@ import org.junit.Test;
  */
 public class Number1DInputTest {
 
-    static {
-        Memory.randomNumber.setSeed(1);
-    }
+
 
     public static double[] randomArray(int size, double scale, double min) {
         double[] d = new double[size];
         for (int i = 0; i < size; i++) {
-            d[i] = Memory.randomNumber.nextDouble() * scale + min;
+            d[i] = Math.random() * scale + min;
         }
         return d;
     }

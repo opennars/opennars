@@ -18,6 +18,7 @@ import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  *
@@ -134,7 +135,7 @@ public class InternalExperience extends NARReaction {
                 return;
             }
 
-            if (Memory.randomNumber.nextDouble()>INTERNAL_EXPERIENCE_PROBABILITY) return;
+            if (nal.memory.random.nextFloat()>INTERNAL_EXPERIENCE_PROBABILITY) return;
 
 
 
@@ -184,12 +185,13 @@ public class InternalExperience extends NARReaction {
     protected void beliefReason(Sentence belief, Term beliefTerm, Term taskTerm, NAL nal) {
         
         Memory memory = nal.memory;
+        Random r = memory.random;
     
-        if (Memory.randomNumber.nextDouble() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
+        if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
             
             //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
-            Atom op = memory.the(nonInnateBeliefOperators[Memory.randomNumber.nextInt(nonInnateBeliefOperators.length)]);
+            Atom op = memory.the(nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)]);
             if(op!=null) {
                 Product prod=Product.make(belief.term);
 
@@ -210,7 +212,7 @@ public class InternalExperience extends NARReaction {
             }
         }
 
-        if (beliefTerm instanceof Implication && Memory.randomNumber.nextDouble()<=INTERNAL_EXPERIENCE_PROBABILITY) {
+        if (beliefTerm instanceof Implication && memory.random.nextFloat()<=INTERNAL_EXPERIENCE_PROBABILITY) {
             Implication imp=(Implication) beliefTerm;
             if(imp.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                 //1. check if its (&/,term,+i1,...,+in) =/> anticipateTerm form:

@@ -1,7 +1,9 @@
 package nars.bag.impl.experimental;
 
-import nars.nal.Item;
 import nars.bag.impl.CurveBag;
+import nars.nal.Item;
+
+import java.util.Random;
 
 
 /**
@@ -35,8 +37,8 @@ public class AdaptiveContinuousBag<I extends Item<K>, K> extends CurveBag<K, I> 
     private double maxPriority;
     
 
-    public AdaptiveContinuousBag(int capacity) {
-        super(capacity, null, true);                
+    public AdaptiveContinuousBag(Random random, int capacity) {
+        super(random, capacity, null, true);
         
         update();
     }

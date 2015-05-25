@@ -1,10 +1,10 @@
 package nars;
 
-import nars.budget.Budget;
 import nars.model.ControlCycle;
 import nars.nal.LogicPolicy;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import objenome.util.random.XORShiftRandom;
+
+import java.util.Random;
 
 /**
  * NAR design parameters which define a NAR at initialization.
@@ -13,6 +13,8 @@ import nars.nal.term.Term;
  * For runtime parameters, @see Param
  */
 abstract public class NARSeed extends Param {
+
+    public final Random rng = new XORShiftRandom();
 
     abstract public ControlCycle newControlCycle();
 
@@ -38,7 +40,8 @@ abstract public class NARSeed extends Param {
 //    }
 
     protected Memory newMemory(Param narParam, LogicPolicy policy) {
-        return new Memory(getMaximumNALLevel(), narParam, policy, newControlCycle());
+
+        return new Memory(rng, getMaximumNALLevel(), narParam, policy, newControlCycle());
     }
 
     protected abstract int getMaximumNALLevel();

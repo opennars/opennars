@@ -200,7 +200,7 @@ import java.util.Map;
         System.err.flush();
         System.out.flush();
 
-        Memory.resetStatic(randomSeed);
+
 
         String input;
         NAR nar;
@@ -220,6 +220,7 @@ import java.util.Map;
             System.out.println();
         }
 
+        nar.memory.randomSeed(randomSeed);
         test.run(minCycles);
 
         System.err.flush();

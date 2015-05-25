@@ -21,8 +21,8 @@
 package nars.nal;
 
 import nars.Global;
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
@@ -42,6 +42,7 @@ import nars.nal.term.Term;
 import nars.nal.term.Variable;
 
 import java.util.Map;
+import java.util.Random;
 
 import static nars.nal.Terms.reduceComponents;
 import static nars.nal.TruthFunctions.*;
@@ -740,6 +741,8 @@ OUT: <lock1 --> lock>.
     http://code.google.com/p/open-nars/issues/detail?id=40&can=1
     */
     public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final NAL nal) {
+        final Random m = nal.memory.random;
+
         Statement T1 = (Statement) sentence.term;
         Statement T2 = (Statement) belief.term;
 
@@ -756,7 +759,7 @@ OUT: <lock1 --> lock>.
         if (figure == 21) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2); //this part is
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, S2, res1, res2, m); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null) {
                 return;
@@ -778,7 +781,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4, m)) {
                         for (Term s2 : ((Compound) S1).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -804,7 +807,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) P2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4, m)) {
                         for (Term s2 : ((Compound) P2).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -827,7 +830,7 @@ OUT: <lock1 --> lock>.
         if (figure == 12) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2); //this part is
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, P2, res1, res2, m); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null) {
                 return;
@@ -849,7 +852,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4, m)) {
                         for (Term s2 : ((Compound) S2).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -875,7 +878,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) P1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
                         for (Term s2 : ((Compound) P1).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -898,7 +901,7 @@ OUT: <lock1 --> lock>.
         if (figure == 11) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2); //this part is
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, S1, S2, res1, res2, m); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null) {
                 return;
@@ -921,7 +924,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) P1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4, m)) {
                         for (Term s2 : ((Compound) P1).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -948,7 +951,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) P2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P1, res3, res4, m)) {
                         for (Term s2 : ((Compound) P2).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -971,7 +974,7 @@ OUT: <lock1 --> lock>.
         if (figure == 22) {
             res1.clear();
             res2.clear();
-            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2); //this part is
+            Variables.findSubstitute(Symbols.VAR_INDEPENDENT, P1, P2, res1, res2, m); //this part is
             T1 = (Statement) T1.applySubstitute(res2); //independent, the rule works if it unifies
             if (T1 == null) {
                 return;
@@ -993,7 +996,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) S1).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
                         for (Term s2 : ((Compound) S1).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
@@ -1019,7 +1022,7 @@ OUT: <lock1 --> lock>.
                 for (final Term s1 : ((Compound) S2).term) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
-                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4)) {
+                    if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S1, res3, res4, m)) {
                         for (Term s2 : ((Compound) S2).term) {
                             if (!(s2 instanceof Compound)) {
                                 continue;

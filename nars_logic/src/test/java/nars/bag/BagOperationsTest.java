@@ -7,10 +7,11 @@ package nars.bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
-import nars.nal.concept.Concept;
 import nars.nal.Item;
-import nars.nal.term.Atom;
+import objenome.util.random.XORShiftRandom;
 import org.junit.Test;
+
+import java.util.Random;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
@@ -22,6 +23,8 @@ import static org.junit.Assert.assertTrue;
  * @author me
  */
 public class BagOperationsTest {
+
+    final Random rng = new XORShiftRandom();
 
     public static class NullConcept extends Item<String> {
 
@@ -54,7 +57,7 @@ public class BagOperationsTest {
     
     
     @Test public void testCurveBag() {
-        testBagSequence(new CurveBag(2, new CurveBag.FairPriorityProbabilityCurve(), true));
+        testBagSequence(new CurveBag(rng, 2, new CurveBag.FairPriorityProbabilityCurve(), true));
     }
 
     /** test with a bag of capacity 2 */

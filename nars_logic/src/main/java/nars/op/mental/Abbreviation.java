@@ -85,7 +85,7 @@ public class Abbreviation extends NARReaction {
         if (event != TaskDerive.class)
             return;
 
-        if ((Memory.randomNumber.nextDouble() < abbreviationProbability))
+        if ((memory.random.nextDouble() < abbreviationProbability))
             return;
 
         Task task = (Task)a[0];

@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class AntCore extends ConceptWaveCore {
     
-    public final Random random = Memory.randomNumber;
+
 
     public final Deque<Ant> ants = new ArrayDeque();
     
@@ -151,7 +151,7 @@ public class AntCore extends ConceptWaveCore {
         boolean traverseTermLinks = true;
         boolean traverseTaskLinks = true;
         boolean allowLoops = false;
-        double randomConceptProbability = 0.01;
+        float randomConceptProbability = 0.01f;
         
         /**
          * ETA = estimated time of arrival
@@ -311,7 +311,7 @@ public class AntCore extends ConceptWaveCore {
         public TLink nextLink() {
             Iterable<? extends Item> ii;
             
-            if (random.nextDouble() < randomConceptProbability) {
+            if (memory.random.nextFloat() < randomConceptProbability) {
                 return null;
             }
             
@@ -322,13 +322,13 @@ public class AntCore extends ConceptWaveCore {
                 ii = concept.getTaskLinks();
             }
             else {
-                if (random.nextInt() % 2 == 0) {
+                if (memory.random.nextInt() % 2 == 0) {
                     ii = concept.getTermLinks();
                 }
                 else
                     ii = concept.getTaskLinks();
             }
-            return (TLink)Item.selectRandomByPriority(ii);
+            return (TLink)Item.selectRandomByPriority(memory, ii);
         }
         
         /*

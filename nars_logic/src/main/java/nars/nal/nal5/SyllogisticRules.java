@@ -20,16 +20,18 @@
  */
 package nars.nal.nal5;
 
-import nars.budget.Budget;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
-import nars.nal.stamp.Stamp;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+
+import java.util.Random;
 
 import static nars.nal.Terms.reduceComponents;
 import static nars.nal.nal7.TemporalRules.*;
@@ -408,7 +410,7 @@ public final class SyllogisticRules {
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
         boolean deduction = (side != 0);
-        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
+        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term, nal.memory.random);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -434,7 +436,7 @@ public final class SyllogisticRules {
             index = (short) index2;
         } else {
             Term[] u = new Term[] { premise1, premise2 };            
-            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u);
+            boolean match = Variables.unify(Symbols.VAR_INDEPENDENT, oldCondition.term[index], commonComponent, u, nal.memory.random);
             premise1 = (Implication) u[0]; premise2 = u[1];
             
             if (!match && (Terms.equalType(commonComponent, oldCondition, true))) {
@@ -446,7 +448,7 @@ public final class SyllogisticRules {
                     match = Variables.unify(Symbols.VAR_INDEPENDENT, 
                             oldCondition.term[index], 
                             compoundCommonComponent.term[index], 
-                            u);
+                            u, nal.memory.random);
                     premise1 = (Implication) u[0]; premise2 = u[1];
                 }
                 
@@ -567,10 +569,12 @@ public final class SyllogisticRules {
      * @param nal Reference to the memory
      */
     public static boolean conditionalAna(Equivalence premise1, short index, Term premise2, int side, NAL nal) {
+        final Random r = nal.memory.random;
+
         Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
-        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term);
+        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term, r);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -590,12 +594,12 @@ public final class SyllogisticRules {
         Conjunction oldCondition = (Conjunction) tm;
 
         Term[] u = new Term[] { premise1, premise2 };
-        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u);
+        boolean match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], commonComponent, u, r);
         premise1 = (Equivalence) u[0]; premise2 = u[1];
         
         if (!match && (Terms.equalType(commonComponent, oldCondition))) {
             u = new Term[] { premise1, premise2 };
-            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u);
+            match = Variables.unify(Symbols.VAR_DEPENDENT, oldCondition.term[index], ((Compound) commonComponent).term[index], u, r);
             premise1 = (Equivalence) u[0]; premise2 = u[1];
         }
         if (!match) {
@@ -702,7 +706,7 @@ public final class SyllogisticRules {
         Truth value2 = belief.truth;
         Term content;
         
-        boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm());
+        boolean keepOrder = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, st1, task.getTerm(), nal.memory.random);
         
         Truth truth = null;
         Budget budget;

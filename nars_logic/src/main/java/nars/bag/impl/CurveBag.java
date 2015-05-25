@@ -1,16 +1,12 @@
 package nars.bag.impl;
 
-import nars.Memory;
 import nars.Global;
 import nars.bag.Bag;
 import nars.nal.Item;
-import nars.util.sort.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
+import nars.util.sort.ArraySortedIndex;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -43,6 +39,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * defined in different bags
      */
     final int capacity;
+    private final Random rng;
     /**
      * current sum of occupied level
      */
@@ -78,12 +75,12 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         //    return new FractalSortedItemList<E>();
     }
 
-    public CurveBag(int capacity, boolean randomRemoval) {
-        this(capacity, new FairPriorityProbabilityCurve(), randomRemoval);
+    public CurveBag(Random rng, int capacity, boolean randomRemoval) {
+        this(rng, capacity, new FairPriorityProbabilityCurve(), randomRemoval);
     }
 
-    public CurveBag(int capacity, BagCurve curve, boolean randomRemoval) {
-        this(capacity, curve, randomRemoval,
+    public CurveBag(Random rng, int capacity, BagCurve curve, boolean randomRemoval) {
+        this(rng, capacity, curve, randomRemoval,
                 getIndex(capacity)                
                 
                                 /*if (capacity < 128)*/
@@ -188,8 +185,9 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
 
     }
 
-    public CurveBag(int capacity, BagCurve curve, boolean randomRemoval, SortedIndex<E> items) {
+    public CurveBag(Random rng, int capacity, BagCurve curve, boolean randomRemoval, SortedIndex<E> items) {
         super();
+        this.rng = rng;
         this.capacity = capacity;
         this.randomRemoval = randomRemoval;
         this.curve = curve;
@@ -200,7 +198,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         this.items = items;
 
         if (randomRemoval)
-            x = Memory.randomNumber.nextFloat();
+            x = rng.nextFloat();
         else
             x = 1.0f; //start a highest priority
 
@@ -339,7 +337,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
     public int nextRemovalIndex() {
         final float s = items.size();
         if (randomRemoval) {
-            x = Memory.randomNumber.nextFloat();
+            x = rng.nextFloat();
         } else {
             x += scanningRate * 1.0f / (1 + s);
             if (x >= 1.0f)

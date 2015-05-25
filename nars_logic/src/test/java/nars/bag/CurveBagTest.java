@@ -12,7 +12,10 @@ import nars.nal.Item;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
+import objenome.util.random.XORShiftRandom;
 import org.junit.Test;
+
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -21,6 +24,8 @@ import static org.junit.Assert.*;
  * @author me
  */
 public class CurveBagTest extends AbstractBagTest {
+
+    final static Random rng = new XORShiftRandom();
 
     static {
         Global.DEBUG = true;
@@ -51,12 +56,11 @@ public class CurveBagTest extends AbstractBagTest {
     }
     
     public int[] testCurveBag(SortedIndex<NullItem> items) {
-        Memory.resetStatic(1);
-        
+
         testCurveBag(true, items);
         testCurveBag(false, items);
-        testCapacityLimit(new CurveBag(4, curve, true, items));
-        testCapacityLimit(new CurveBag(4, curve, false, items));
+        testCapacityLimit(new CurveBag(rng, 4, curve, true, items));
+        testCapacityLimit(new CurveBag(rng, 4, curve, false, items));
         
         
         testAveragePriority(4, items);
@@ -71,7 +75,7 @@ public class CurveBagTest extends AbstractBagTest {
     }
     
     public void testCurveBag(boolean random, SortedIndex<NullItem> items) {
-        CurveBag<CharSequence, NullItem> f = new CurveBag(4, curve, random, items);
+        CurveBag<CharSequence, NullItem> f = new CurveBag(rng, 4, curve, random, items);
         
         f.put(new NullItem(.25f));
         assert(f.size() == 1);
@@ -130,7 +134,7 @@ public class CurveBagTest extends AbstractBagTest {
         int count[] = new int[capacity];
         
         SortedIndex<NullItem> items = new ArraySortedIndex<>(capacity);
-        CurveBag<CharSequence, NullItem> f = new CurveBag(capacity, curve, random, items);
+        CurveBag<CharSequence, NullItem> f = new CurveBag(rng, capacity, curve, random, items);
         
         //fill
         for (int i= 0; i < capacity; i++) {
@@ -157,7 +161,7 @@ public class CurveBagTest extends AbstractBagTest {
         
         final float priorityEpsilon = 0.01f;
         
-        CurveBag<CharSequence, NullItem> c = new CurveBag(capacity, curve, false, items);
+        CurveBag<CharSequence, NullItem> c = new CurveBag(rng, capacity, curve, false, items);
         LevelBag<NullItem,CharSequence> d = new LevelBag<>(capacity, 10);
         
         assertEquals(c.mass(), d.mass(), 0);
@@ -232,7 +236,7 @@ public class CurveBagTest extends AbstractBagTest {
     @Test public void testEqualBudgetedItems() {
         int capacity = 4;
 
-        CurveBag<CharSequence, NullItem> c = new CurveBag(capacity, curve, true);
+        CurveBag<CharSequence, NullItem> c = new CurveBag(rng, capacity, curve, true);
 
         NullItem a, b;
         c.put(a = new NullItem(0.5f));

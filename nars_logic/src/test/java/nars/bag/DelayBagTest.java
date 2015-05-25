@@ -33,7 +33,6 @@ public class DelayBagTest {
     @Before
     public void start() {
         Global.THREADS = 1;
-        Memory.resetStatic(1);
     }
 
     @Test

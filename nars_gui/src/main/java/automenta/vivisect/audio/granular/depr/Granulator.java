@@ -1,6 +1,7 @@
 package automenta.vivisect.audio.granular.depr;
 
 import nars.Memory;
+import objenome.util.random.XORShiftRandom;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -13,7 +14,7 @@ import java.util.Random;
  */
 public class Granulator extends Wave {
 
-    private static final Random random = Memory.randomNumber;
+    private static final Random random = new XORShiftRandom();
     private int REPEAT = 1;
     private final ArrayList<String> samples;
     private List<int[][]> grains;

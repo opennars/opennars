@@ -22,8 +22,6 @@ package nars.nal;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.budget.Budget.Budgetable;
-import nars.nal.concept.Concept;
 
 import java.util.Comparator;
 
@@ -177,12 +175,12 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     }
     
     /** randomly selects an item from a collection, weighted by priority */
-    public static <E extends Item> E selectRandomByPriority(Iterable<E> c) {
+    public static <E extends Item> E selectRandomByPriority(Memory memory, Iterable<E> c) {
         float totalPriority = getPrioritySum(c);
         
         if (totalPriority == 0) return null;
         
-        float r = Memory.randomNumber.nextFloat() * totalPriority;
+        float r = memory.random.nextFloat() * totalPriority;
                 
         E s = null;
         for (E i : c) {

@@ -1,7 +1,6 @@
 package nars.bag.impl;
 
 import nars.Global;
-import nars.Memory;
 import nars.bag.Bag;
 import nars.nal.Item;
 import nars.util.data.CircularArrayList;
@@ -12,6 +11,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -38,6 +38,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      * defined in different bags
      */
     final int capacity;
+    private final Random rng;
     /**
      * current sum of occupied level
      */
@@ -55,8 +56,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         //    return new FractalSortedItemList<E>();
     }
 
-    public HeapBag(int capacity) {
-        this(capacity, new CurveBag.FairPriorityProbabilityCurve());
+    public HeapBag(Random rng, int capacity) {
+        this(rng, capacity, new CurveBag.FairPriorityProbabilityCurve());
     }
 
 
@@ -277,8 +278,9 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     }
 
 
-    public HeapBag(int capacity, CurveBag.BagCurve curve) {
+    public HeapBag(Random rng, int capacity, CurveBag.BagCurve curve) {
         super();
+        this.rng = rng;
         this.capacity = capacity;
         this.curve = curve;
 
@@ -420,7 +422,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     public int nextRemovalIndex() {
         final int s = items.size();
 
-        final float x = Memory.randomNumber.nextFloat();
+        final float x = rng.nextFloat();
 
         float y = getFocus(x);
 

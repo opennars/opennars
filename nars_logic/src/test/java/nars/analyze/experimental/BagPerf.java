@@ -29,6 +29,7 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.util.sort.ArraySortedIndex;
 import com.google.common.util.concurrent.AtomicDouble;
+import objenome.util.random.XORShiftRandom;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -44,7 +45,7 @@ public class BagPerf {
     final static AtomicDouble forgetRate = (new NAR(new Default()).param).conceptForgetDurations;
     int randomAccesses;
     double insertRatio = 0.9;
-    
+    final static Random rng = new XORShiftRandom();
 
     
     public float totalPriority, totalMass, totalMinItemsPerLevel, totalMaxItemsPerLevel;
@@ -102,7 +103,7 @@ public class BagPerf {
         public String key;
     
         public NullItem() {
-            this(Memory.randomNumber.nextFloat() * (1.0f - Global.TRUTH_EPSILON));
+            this(rng.nextFloat() * (1.0f - Global.TRUTH_EPSILON));
         }
 
         public NullItem(float priority, String key) {
@@ -124,7 +125,7 @@ public class BagPerf {
     
     public static void randomBagIO(Bag<CharSequence, NullItem> b, int accesses, double insertProportion) {
         for (int i = 0; i < accesses; i++) {
-            if (Memory.randomNumber.nextFloat() > insertProportion) {
+            if (rng.nextFloat() > insertProportion) {
                 //remove
                 b.pop();
             }
@@ -152,9 +153,7 @@ public class BagPerf {
     
     //final boolean first, final int levels, final int levelCapacity, 
     public static double getTime(String label, BagBuilder b, final int iterations, final int randomAccesses, final float insertRatio, int repeats, int warmups) {
-        
-        Memory.resetStatic(1);
-        
+
         Performance p = new Performance(label, repeats, warmups) {
 
             @Override public void init() { }
@@ -241,7 +240,7 @@ public class BagPerf {
                         
                 Bag[] bags = new Bag[] { 
 
-                    new CurveBag(items, curve, true, new ArraySortedIndex<>(items)),
+                    new CurveBag(rng, items, curve, true, new ArraySortedIndex(items)),
                     //new CurveBag(items, curve, true, new FractalSortedItemList<>()),                
                     new LevelBag(levels, items),
                         //new FairDelayBag(..., items)
