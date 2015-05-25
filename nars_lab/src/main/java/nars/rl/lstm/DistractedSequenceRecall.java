@@ -1,49 +1,37 @@
 package nars.rl.lstm;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class DistractedSequenceRecall {
-
-	int tests = 1000;
+public class DistractedSequenceRecall extends AbstractTraining {
 	int observation_dimension = 10;
 	int action_dimension = 4;
-	boolean validation_mode = false;
-	Random r;
-	
-	public DistractedSequenceRecall(Random r) {
-		this.r = r;
-	}
-	
-	public final static class Interaction {
-		double[] observation;
-		double[] target_output;
-		boolean do_reset;
 
-		@Override
-		public String toString() {
-			return ArrayUtils.toString(observation) + " " +
-					ArrayUtils.toString(target_output) + " " +
-					do_reset;
-		}
+
+
+
+	public DistractedSequenceRecall(Random r) {
+		super(r);
+
+		tests = 1000;
 	}
-	
-	private List<Interaction> GenerateInteractions(int tests) {
-		List<Interaction> result = new ArrayList<Interaction>();
+
+	protected List<Interaction> GenerateInteractions(int tests) {
+		this.tests = tests;
+
+		List<Interaction> result = new ArrayList<>();
 		for (int test = 0; test < tests; test++) {
 			int[] seq = new int[22];
-			int target1 = r.nextInt(4);
-			int target2 = r.nextInt(4);
+			int target1 = random.nextInt(4);
+			int target2 = random.nextInt(4);
 			for (int t = 0; t < 22; t++) {
-				seq[t] = r.nextInt(4)+4;//+4 so as not to overlap with target symbols
+				seq[t] = random.nextInt(4)+4;//+4 so as not to overlap with target symbols
 			}
-			int loc1 = r.nextInt(22);
-			int loc2 = r.nextInt(22);
+			int loc1 = random.nextInt(22);
+			int loc2 = random.nextInt(22);
 			while (loc1 == loc2)
-				loc2 = r.nextInt(22);
+				loc2 = random.nextInt(22);
 			if (loc1 > loc2) {
 				int temp = loc1;
 				loc1 = loc2;
@@ -51,11 +39,11 @@ public class DistractedSequenceRecall {
 			}
 			seq[loc1] = target1;
 			seq[loc2] = target2;
-			
+
 			for (int t = 0; t < seq.length; t++) {
 				double[] input = new double[observation_dimension];
 				input[seq[t]] = 1.0;
-				
+
 				Interaction inter = new Interaction();
 				if (t == 0)
 					inter.do_reset = true;
@@ -71,7 +59,7 @@ public class DistractedSequenceRecall {
 			inter1.observation = input1;
 			inter1.target_output = target_output1;
 			result.add(inter1);
-			
+
 			double[] input2 = new double[observation_dimension];
 			input2[9] = 1.0;
 			double[] target_output2 = new double[action_dimension];
@@ -83,40 +71,7 @@ public class DistractedSequenceRecall {
 		}
 		return result;
 	}
-	
-	public double EvaluateFitnessSupervised(IAgentSupervised agent) throws Exception {
-		
-		List<Interaction> interactions = this.GenerateInteractions(tests);
-		
-		double fit = 0;
-		double max_fit = 0;
-		
-		for (Interaction inter : interactions) {
-			
-			if (inter.do_reset)
-				agent.clear();
-			
-			if (inter.target_output == null)
-				agent.predict(inter.observation);
-			else {
-				double[] actual_output = null;
 
-				if (validation_mode == true)
-					actual_output = agent.predict(inter.observation);
-				else
-					actual_output = agent.learn(inter.observation, inter.target_output);
-
-				if (util.argmax(actual_output) == util.argmax(inter.target_output))
-					fit++;
-				
-				max_fit++;
-			}
-
-			//System.out.println(inter);
-		}
-		return fit/max_fit;
-	}
-	
 
 	public int outputDimension() {
 		return action_dimension;
