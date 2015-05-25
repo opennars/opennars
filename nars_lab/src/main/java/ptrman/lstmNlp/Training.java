@@ -26,14 +26,40 @@ public class Training extends AbstractTraining {
         trainingTuples.add(new TrainingTuple("is a bridge a dog?", "(^ask, <(*, \"bridge\", \"dog\") -- >is-a>)"));
         trainingTuples.add(new TrainingTuple("is a dog a bride?", "(^ask, <(*, \"dog\", \"bridge\") -- >is-a>)"));
 
+        trainingTuples.add(new TrainingTuple("a bridge is stable.", "<(*, \"bridge\", \"stable\") -- >is-a>"));
+
         this.tests = trainingTuples.size();
+
+        int sampleSource = 0;
 
         List<Interaction> result = new ArrayList<>();
         for (int test = 0; test < tests; test++) {
-            int testIndex = random.nextInt(trainingTuples.size());
+            sampleSource++;
+            sampleSource %= 2;
 
-            int[] inputSequence = convertInputToVector(trainingTuples.get(testIndex).input);
-            int[] resultSequence = convertInputToVector(trainingTuples.get(testIndex).result);
+            String sampleNaturalText;
+            String sampleNal;
+
+            if( sampleSource == 0 ) {
+                int testIndex = random.nextInt(trainingTuples.size());
+
+                sampleNaturalText = trainingTuples.get(testIndex).input;
+                sampleNal = trainingTuples.get(testIndex).result;
+            }
+            else {
+                TrainingExampleGenerators.Pattern1 generator = new TrainingExampleGenerators.Pattern1();
+
+                TrainingExampleGenerators.Tuple trainingTuple = generator.generate(random);
+
+                sampleNaturalText = trainingTuple.naturalText;
+                sampleNal = trainingTuple.nalText;
+
+                //System.out.println(sampleNal);
+            }
+
+
+            int[] inputSequence = convertInputToVector(sampleNaturalText);
+            int[] resultSequence = convertInputToVector(sampleNal);
 
             for (int t = 0; t < inputSequence.length; t++) {
                 double[] input = new double[observation_dimension];
