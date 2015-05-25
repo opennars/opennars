@@ -101,7 +101,7 @@ public class Training extends AbstractTraining {
         return result;
     }
 
-    private static int[] convertInputToVector(final String input) {
+    public static int[] convertInputToVector(final String input) {
         int[] result = new int[input.length()];
 
         final String translatedInput = input.toLowerCase();
