@@ -1,16 +1,16 @@
 
 package nars.bag.impl.experimental;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import nars.Global;
+import nars.Memory;
+import nars.bag.Bag;
+import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
 import nars.model.ControlCycle.CoreAware;
-import nars.Memory;
-import nars.Global;
-import nars.budget.BudgetFunctions;
+import nars.nal.Itemized;
 import nars.nal.concept.Concept;
-import nars.nal.Item;
-import nars.bag.Bag;
 import nars.util.sort.ArraySortedIndex;
-import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,7 +68,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * TODO make this abstract and derive ThresholdDelayBag subclass
  */
-public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> implements CoreAware {
+public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> implements CoreAware {
 
     private final int capacity;
     
@@ -203,7 +203,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
             e = ee.getValue();
                            
             if (forgettable(e))
-                BudgetFunctions.forgetPeriodic(e, forgetCycles, Global.FORGET_QUALITY_RELATIVE, now);
+                BudgetFunctions.forgetPeriodic(e.getBudget(), forgetCycles, Global.FORGET_QUALITY_RELATIVE, now);
             
             float p = e.getPriority();
             
@@ -365,7 +365,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
         }
         
         if (x.getLastForgetTime() == -1)
-            x.setLastForgetTime(now);
+            x.getBudget().setLastForgetTime(now);
 
         /* return null since nothing was actually displaced yet */
         return null;
@@ -378,7 +378,7 @@ public class DelayBag<K, E extends Item<K>> extends Bag/*.IndexedBag*/<K,E> impl
 
         E item;
         if (existingItemWithSameKey != null) {
-            newItem.merge(existingItemWithSameKey);
+            newItem.getBudget().merge(existingItemWithSameKey.getBudget());
             item = newItem;
         }
         else {

@@ -98,7 +98,7 @@ public class HeapBagTest extends AbstractBagTest {
         assert(f.mass() == 0);
     }
 
-    public void testCapacityLimit(Bag f) {
+    public void testCapacityLimit(Bag<CharSequence,NullItem> f) {
         
         NullItem four = new NullItem(.4f);
         NullItem five = new NullItem(.5f);

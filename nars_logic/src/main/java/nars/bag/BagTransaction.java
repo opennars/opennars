@@ -1,11 +1,11 @@
 package nars.bag;
 
 import nars.budget.Budget;
-import nars.nal.Item;
+import nars.nal.Itemized;
 
 /** transaction interface for lazily constructing bag items, and efficiently updating existing items.
   * this avoids construction when only updating the budget of an item already in the bag  */
-public interface BagTransaction<K,V extends Item<K>> extends Budget.Budgetable {
+public interface BagTransaction<K,V extends Itemized<K>> extends Budget.Budgetable {
     //TODO make a version which accepts an array or list of keys to select in batch
 
     ////TODO called before anything, including name().  return false to cancel the process before anything else happens */
@@ -31,7 +31,7 @@ public interface BagTransaction<K,V extends Item<K>> extends Budget.Budgetable {
         //1. merge the budget, if specified
         Budget b = getBudgetRef();
         if (b!=null) {
-            changed = v.merge(b);
+            changed = v.getBudget().merge(b);
         }
 
         //2. perform the update defined by implementations

@@ -1,10 +1,8 @@
 package nars.bag.impl;
 
 import com.google.common.cache.*;
-import nars.Events;
 import nars.Memory;
-import nars.nal.concept.Concept;
-import nars.nal.Item;
+import nars.nal.Itemized;
 
 /**
  * Index of stored Items (ex: concepts) which is optimized for
@@ -13,7 +11,7 @@ import nars.nal.Item;
  * 
  * http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html*
  */
-public class CacheBag<K, I extends Item<K>> implements Memory.MemoryAware, RemovalListener<K,I> {
+public class CacheBag<K, I extends Itemized<K>> implements Memory.MemoryAware, RemovalListener<K,I> {
 
     public final Cache<K, I> data;
     private Memory memory;

@@ -52,7 +52,7 @@ public class consider extends SynchOperator implements Mental {
         
         Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
 
-        TaskLink taskLink = concept.taskLinks.peekNext();
+        TaskLink taskLink = concept.getTaskLinks().peekNext();
         if (taskLink!=null) {
             new ConceptProcess(concept, taskLink) {
 

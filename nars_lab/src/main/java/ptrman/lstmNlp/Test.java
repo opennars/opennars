@@ -21,13 +21,15 @@ public class Test {
 
         int cell_blocks = 10; // 5
         double learningRate = 0.07;
+        final int cycles = 5000;
+
         SimpleLSTM slstm = new SimpleLSTM(r,
                 task.getInputDimension(),
                 task.getOutputDimension(),
                 cell_blocks,
                 learningRate);
 
-        for (int epoch = 0; epoch < 5000; epoch++) {
+        for (int epoch = 0; epoch < cycles; epoch++) {
             double fit = task.EvaluateFitnessSupervised(slstm);
             if (epoch % 10 == 0)
                 System.out.println("["+epoch+"] error = " + (1 - fit));

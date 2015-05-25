@@ -32,10 +32,10 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         getMemory().forget(c, cyclesSinceLastForgotten, relativeThreshold);
 
         //if (budget!=null) {
-            Budget cb = c;
+            
 
             final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
-            BudgetFunctions.activate(cb, getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
+            BudgetFunctions.activate(c.getBudget(), getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
         //}
 
         return c;

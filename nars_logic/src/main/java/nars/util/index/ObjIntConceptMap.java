@@ -6,8 +6,6 @@ import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /** uses a predefined set of terms that will be mapped */
 abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
@@ -26,12 +24,12 @@ abstract public class ObjIntConceptMap<T extends Term> extends MutableConceptMap
     }
 
     public boolean include(Concept c) {
-        T t = (T)c.term;
+        T t = (T) c.getTerm();
         return values.getIfAbsentPut(t, 0) == 0;
     }
 
     public boolean exclude(Concept c) {
-        return exclude(c.term);
+        return exclude(c.getTerm());
     }
 
     public boolean exclude(Term t) {

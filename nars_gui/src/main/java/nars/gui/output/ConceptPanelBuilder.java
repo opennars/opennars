@@ -28,7 +28,6 @@ import nars.nal.tlink.TaskLink;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -278,7 +277,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
                     @Override
                     public String name() {
-                        return concept.term.toString();
+                        return concept.getTerm().toString();
                     }
 
                 }, conceptGraphFPS), BorderLayout.CENTER);
@@ -295,8 +294,8 @@ public class ConceptPanelBuilder extends NARReaction {
                 nengo.getUniverse().add(questionChart);
 
                 JPanel details = new JPanel(new GridLayout(0, 2));
-                details.add(termLinkChart = new ScatterPlotBagChart(c, c.termLinks));
-                details.add(taskLinkChart = new RadialBagChart(c, c.taskLinks));
+                details.add(termLinkChart = new ScatterPlotBagChart(c, c.getTermLinks()));
+                details.add(taskLinkChart = new RadialBagChart(c, c.getTaskLinks()));
                 add(details, BorderLayout.SOUTH);
 
             } else {
@@ -324,7 +323,7 @@ public class ConceptPanelBuilder extends NARReaction {
 //                    title.setLineWrap(true);
 //                    title.setEditable(false);
 //                    title.setOpaque(false);
-                    JLabel title = new JLabel(concept.term.toString());
+                    JLabel title = new JLabel(concept.getTerm().toString());
                     title.setFont(titleFont);
                     title.setCursor(new Cursor(Cursor.HAND_CURSOR));
                     title.addMouseListener(new MouseAdapter() {
@@ -375,18 +374,18 @@ public class ConceptPanelBuilder extends NARReaction {
             String st = "";
 
             beliefGoalChart.setVisible(true);
-            if (!concept.beliefs.isEmpty() || !concept.goals.isEmpty()) {
+            if (!concept.getBeliefs().isEmpty() || !concept.getGoals().isEmpty()) {
 
-                beliefGoalChart.update(time, concept.beliefs, concept.goals);
+                beliefGoalChart.update(time, concept.getBeliefs(), concept.getGoals());
 
-                if (!concept.beliefs.isEmpty())
-                    st += (concept.beliefs.get(0).getTruth().toString()) + ' ';
-                if (!concept.goals.isEmpty()) {
-                    st += " desire: " + concept.goals.get(0).getTruth().toString();
+                if (!concept.getBeliefs().isEmpty())
+                    st += (concept.getBeliefs().get(0).getTruth().toString()) + ' ';
+                if (!concept.getGoals().isEmpty()) {
+                    st += " desire: " + concept.getGoals().get(0).getTruth().toString();
                 }
 
                 beliefGoalTime.setVisible(
-                        beliefGoalTime.update(time, concept.beliefs, concept.goals));
+                        beliefGoalTime.update(time, concept.getBeliefs(), concept.getGoals()));
             } else {
                 beliefGoalChart.setVisible(false);
                 beliefGoalTime.setVisible(false);
@@ -395,9 +394,9 @@ public class ConceptPanelBuilder extends NARReaction {
             if (subtitle != null)
                 subtitle.setText(st.trim());
 
-            if (!concept.questions.isEmpty()) {
+            if (!concept.getQuestions().isEmpty()) {
                 questionChart.setVisible(true);
-                questionChart.update(concept.questions);
+                questionChart.update(concept.getQuestions());
             } else {
                 questionChart.setVisible(false);
             }

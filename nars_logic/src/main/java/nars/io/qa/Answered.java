@@ -49,7 +49,7 @@ public abstract class Answered extends NARReaction {
             Concept c = nar.memory.concept(question.getTerm());
             if (c == null) return;
 
-            for (Task s : c.beliefs)
+            for (Task s : c.getBeliefs())
                 onSolution(s.sentence);
         }
 

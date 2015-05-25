@@ -329,7 +329,7 @@ public class TermTest {
         NAR n = new NAR(new Default());
         n.input(term + ".");
         n.run(1);
-        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).term).nameCached());
+        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).getTerm()).nameCached());
     }
 
     @Test public void avoidsNameConstructionUnlessOutputInheritance() {

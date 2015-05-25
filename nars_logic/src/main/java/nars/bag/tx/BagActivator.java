@@ -1,14 +1,13 @@
 package nars.bag.tx;
 
-import nars.budget.Budget;
-import nars.nal.Item;
 import nars.bag.BagTransaction;
-import nars.nal.Truth;
+import nars.budget.Budget;
+import nars.nal.Itemized;
 
 /**
 * Created by me on 1/19/15.
 */
-abstract public class BagActivator<K,V extends Item<K>> extends Budget implements BagTransaction<K,V> {
+abstract public class BagActivator<K,V extends Itemized<K>> extends Budget implements BagTransaction<K,V> {
 
 
 

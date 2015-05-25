@@ -316,17 +316,17 @@ public class AntCore extends ConceptWaveCore {
             }
             
             if ((traverseTermLinks) && (!traverseTaskLinks)) {
-                ii = concept.termLinks;
+                ii = concept.getTermLinks();
             }
             else if ((!traverseTermLinks) && (traverseTaskLinks)) {
-                ii = concept.taskLinks;
+                ii = concept.getTaskLinks();
             }
             else {
                 if (random.nextInt() % 2 == 0) {
-                    ii = concept.termLinks;
+                    ii = concept.getTermLinks();
                 }
                 else
-                    ii = concept.taskLinks;
+                    ii = concept.getTaskLinks();
             }
             return (TLink)Item.selectRandomByPriority(ii);
         }
@@ -371,10 +371,10 @@ public class AntCore extends ConceptWaveCore {
             }
             else {
                 if (viaLink instanceof TermLink) {
-                    concept.termLinks.putBack((TermLink)viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+                    concept.getTermLinks().putBack((TermLink) viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
                 }
                 else if (viaLink instanceof TaskLink) {
-                    concept.taskLinks.putBack((TaskLink)viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
+                    concept.getTaskLinks().putBack((TaskLink) viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
                 }
 
                 eta = viaLink.getPriority();

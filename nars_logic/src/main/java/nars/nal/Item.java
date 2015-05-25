@@ -33,7 +33,7 @@ import java.util.Comparator;
  * <p>
  * It has a key and a budget. Cannot be cloned
  */
-public abstract class Item<K> extends Budget implements Budgetable, Named<K> {
+public abstract class Item<K> extends Budget implements Itemized<K> {
 
 
 

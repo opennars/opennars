@@ -97,7 +97,7 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
 //    }
 //
     protected Iterator<TermLink> iterateEdges(Concept concept, boolean asOutgoing) {
-        return Iterators.filter(concept.termLinks.iterator(), new Predicate<TermLink>() {
+        return Iterators.filter(concept.getTermLinks().iterator(), new Predicate<TermLink>() {
             @Override public boolean apply(TermLink t) {
                 return include(concept, t, asOutgoing);
             }
@@ -121,7 +121,7 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
     protected Set<TermLink> getEdgeSet(Concept concept, boolean towardsSubterm) {
         final Set<TermLink>[] e = new Set[1]; // new ArrayUnenforcedSet<>();
 
-        concept.termLinks.iterator().forEachRemaining(t -> {
+        concept.getTermLinks().iterator().forEachRemaining(t -> {
             if (include(concept, t, towardsSubterm)) {
                 if (e[0] == null) e[0] = new ArrayUnenforcedSet(); //lazily allocate as necessary
                 e[0].add(t);

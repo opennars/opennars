@@ -188,7 +188,7 @@ public class DefaultCycle extends SequentialCycle {
         if (concept == null) return null;
 
 
-        TaskLink taskLink = concept.taskLinks.forgetNext(memory.param.taskLinkForgetDurations, memory);
+        TaskLink taskLink = concept.getTaskLinks().forgetNext(memory.param.taskLinkForgetDurations, memory);
         if (taskLink!=null)
             return newConceptProcess(concept, taskLink);
         else {

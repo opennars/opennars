@@ -1,16 +1,16 @@
 package nars.bag.tx;
 
-import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
-import nars.nal.Item;
+import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
+import nars.budget.Budget;
+import nars.nal.Itemized;
 
 /**
 * Applies forgetting to the next sequence of sampled bag items
 */
-public class ForgetNext<K, V extends Item<K>> implements BagTransaction<K,V> {
+public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V> {
 
     private final Bag<K, V> bag;
     private float forgetCycles;
@@ -28,14 +28,15 @@ public class ForgetNext<K, V extends Item<K>> implements BagTransaction<K,V> {
         return null; //signals to the bag updater to use the next item
     }
 
-    protected boolean forgetWillChangeBudget(final Budget v) {
+    protected boolean forgetWillChangeBudget(final Itemized<K> v) {
         final long now = memory.time();
-        if (v.getLastForgetTime() == -1) {
-            v.setLastForgetTime(now);
+
+        if (v.getBudget().getLastForgetTime() == -1) {
+            v.getBudget().setLastForgetTime(now);
             return false;
         }
-        return (v.getLastForgetTime() != now) && //there is >0 time across which forgetting would be applied
-                (v.getPriority() > v.getQuality() * Global.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
+        return (v.getBudget().getLastForgetTime() != now) && //there is >0 time across which forgetting would be applied
+                (v.getBudget().getPriority() > v.getBudget().getQuality() * Global.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
     }
 
     public void set(float forgetCycles, Memory memory) {

@@ -7,10 +7,8 @@ package nars.op.app.farg;
 
 import nars.Events.CycleEnd;
 import nars.NAR;
-import nars.bag.impl.LevelBag;
 import nars.event.NARReaction;
 import nars.nal.concept.Concept;
-import nars.util.event.Reaction;
 
 /**
  *
@@ -55,8 +53,8 @@ public class Workspace extends NARReaction {
         double s=0.0f;
         n_concepts=0;
         for(Concept node : nar.memory.concepts) {
-            if(!node.goals.isEmpty()) {
-                s+=node.getPriority()*node.goals.get(0).getTruth().getExpectation();
+            if(!node.getGoals().isEmpty()) {
+                s+=node.getPriority()* node.getGoals().get(0).getTruth().getExpectation();
             }
             n_concepts++;
         }

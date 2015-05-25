@@ -168,7 +168,7 @@ abstract public class SequentialCycle implements ControlCycle {
     @Override
     public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
         concepts.remove(c.name());
-        BudgetFunctions.activate(c, b, mode);
+        BudgetFunctions.activate(c.getBudget(), b, mode);
         concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
     }
 

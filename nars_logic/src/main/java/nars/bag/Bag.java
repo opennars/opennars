@@ -9,6 +9,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
 import nars.nal.Item;
+import nars.nal.Itemized;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V> {
+public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V> {
 
     protected final ForgetNext<K, V> forgetNext = new ForgetNext(this);
 
@@ -308,7 +309,7 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
      */
     public float getMinPriority() {
         float min = 1.0f;
-        for (Item e : this) {
+        for (Itemized e : this) {
             float p = e.getPriority();
             if (p < min) min = p;
         }
@@ -320,7 +321,7 @@ public abstract class Bag<K, V extends Item<K>> extends BudgetSource.DefaultBudg
      */
     public float getMaxPriority() {
         float max = 0.0f;
-        for (Item e : this) {
+        for (Itemized e : this) {
             float p = e.getPriority();
             if (p > max) max = p;
         }

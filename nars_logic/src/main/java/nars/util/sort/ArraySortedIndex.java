@@ -2,8 +2,7 @@ package nars.util.sort;
 
 import com.google.common.collect.Lists;
 import nars.Global;
-import nars.budget.Budget;
-import nars.nal.Item;
+import nars.nal.Itemized;
 import nars.util.data.sorted.SortedIndex;
 
 import java.util.Collection;
@@ -14,7 +13,7 @@ import java.util.List;
 //public class PrioritySortedItemList<E extends Item> extends GapList<E>  {    
 //public class PrioritySortedItemList<E extends Item> extends ArrayList<E>  {    
 //abstract public class SortedItemList<E> extends FastTable<E> {
-public class ArraySortedIndex<E extends Item>  implements SortedIndex<E> {
+public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E> {
 
     int capacity = Integer.MAX_VALUE;
     private List<E> reverse;

@@ -34,11 +34,11 @@ public class ConceptProcess extends NAL {
 
 
     public ConceptProcess(Concept concept, TaskLink taskLink) {
-        this(concept, taskLink, concept.memory.param.termLinkMaxReasoned.get());
+        this(concept, taskLink, concept.getMemory().param.termLinkMaxReasoned.get());
     }
 
     public ConceptProcess(Concept concept, TaskLink taskLink, int termLinkCount) {
-        super(concept.memory, taskLink.getTask());
+        super(concept.getMemory(), taskLink.getTask());
 
 
         this.currentTaskLink = taskLink;
@@ -77,7 +77,7 @@ public class ConceptProcess extends NAL {
 
         currentTaskLink.setUsed(memory.time());
 
-        setCurrentTerm(currentConcept.term);
+        setCurrentTerm(currentConcept.getTerm());
         setCurrentTermLink(null);
         reasoner.fire(this);
     }
@@ -89,7 +89,7 @@ public class ConceptProcess extends NAL {
         int termLinkSelectionAttempts = termLinksToFire;
 
         //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
-        int numTermLinks = getCurrentConcept().termLinks.size();
+        int numTermLinks = getCurrentConcept().getTermLinks().size();
 
         currentConcept.updateTermLinks();
 
@@ -127,7 +127,7 @@ public class ConceptProcess extends NAL {
      */
     TermLink nextTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
 
-        final int links = currentConcept.termLinks.size();
+        final int links = currentConcept.getTermLinks().size();
         if (links == 0) return null;
 
         int toMatch = memory.param.termLinkMaxMatched.get();
@@ -139,7 +139,7 @@ public class ConceptProcess extends NAL {
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = currentConcept.termLinks.forgetNext(memory.param.termLinkForgetDurations, memory);
+            final TermLink termLink = currentConcept.getTermLinks().forgetNext(memory.param.termLinkForgetDurations, memory);
             termlinkMatches++;
 
             if (termLink == null)

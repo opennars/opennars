@@ -69,7 +69,7 @@ abstract public class ConceptWaveCore implements ControlCycle {
         Concept c = concept(term);
         if (c!=null) {
             //existing
-            BudgetFunctions.activate(c, budget, BudgetFunctions.Activating.Max);
+            BudgetFunctions.activate(c.getBudget(), budget, BudgetFunctions.Activating.Max);
         }
         else {
             if (createIfMissing)
@@ -83,7 +83,7 @@ abstract public class ConceptWaveCore implements ControlCycle {
 
     @Override
     public void activate(Concept c, Budget b, BudgetFunctions.Activating mode) {
-        conceptualize(b, c.term, false);
+        conceptualize(b, c.getTerm(), false);
     }
 
     @Override

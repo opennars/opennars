@@ -65,7 +65,7 @@ public class Idea implements Iterable<Concept> {
     
     public Idea(Concept c) {
         super();
-        this.key = getKey(c.term);
+        this.key = getKey(c.getTerm());
         add(c);
     }
     
@@ -146,16 +146,16 @@ public class Idea implements Iterable<Concept> {
                 for (Concept c : concepts) {
                     switch (punc) {
                         case Symbols.JUDGMENT:
-                            sentences.addAll(c.beliefs);
+                            sentences.addAll(c.getBeliefs());
                             break;
                         case Symbols.QUESTION:
-                            sentences.addAll(Task.getSentences(c.questions));
+                            sentences.addAll(Task.getSentences(c.getQuestions()));
                             break;
                         case Symbols.QUEST:
-                            sentences.addAll(Task.getSentences(c.quests));
+                            sentences.addAll(Task.getSentences(c.getQuests()));
                             break;
                         case Symbols.GOAL:
-                            sentences.addAll(c.goals);
+                            sentences.addAll(c.getGoals());
                             break;
                     }
                 }
@@ -206,13 +206,13 @@ public class Idea implements Iterable<Concept> {
             NALOperator o = c.operator();
             operators.add(o);
             
-            if (!c.beliefs.isEmpty())
+            if (!c.getBeliefs().isEmpty())
                 feature.add(new SentenceType(o, Symbols.JUDGMENT));
-            if (!c.questions.isEmpty())
+            if (!c.getQuestions().isEmpty())
                 feature.add(new SentenceType(o, Symbols.QUESTION));
-            if (!c.goals.isEmpty())
+            if (!c.getGoals().isEmpty())
                 feature.add(new SentenceType(o, Symbols.GOAL));
-            if (!c.quests.isEmpty())
+            if (!c.getQuests().isEmpty())
                 feature.add(new SentenceType(o, Symbols.QUEST));
         }
         
@@ -233,7 +233,7 @@ public class Idea implements Iterable<Concept> {
     }
 
     protected void ensureMatchingConcept(Concept c) {
-        CharSequence ckey = getKey(c.term);
+        CharSequence ckey = getKey(c.getTerm());
         if (!ckey.equals(key))
             throw new RuntimeException(c + " does not belong in Idea " + key);          }
 

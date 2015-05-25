@@ -38,7 +38,6 @@ import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.op.mental.Mental;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -508,7 +507,7 @@ public class TemporalRules {
 
                     Concept S1_State_C = nal.memory.concept(s1.term);
                     if (S1_State_C != null && S1_State_C.hasGoals()) {
-                        Task strongest_desire = S1_State_C.goals.get(0);
+                        Task strongest_desire = S1_State_C.getGoals().get(0);
                         Truth T = TruthFunctions.abduction(belief.truth, strongest_desire.sentence.truth);
                         //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
                         Stamp st = belief.stamp.clone();
@@ -542,7 +541,7 @@ public class TemporalRules {
                 double conf = task.sentence.truth.getConfidence();
                 Concept C = nal.memory.concept(task.sentence.term);
                 if (C != null && C.hasBeliefs()) {
-                    Sentence bel = C.beliefs.get(0).sentence;
+                    Sentence bel = C.getBeliefs().get(0).sentence;
                     Truth cur = bel.truth;
                     conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                     //if there is no overlapping evidental base, use revision:

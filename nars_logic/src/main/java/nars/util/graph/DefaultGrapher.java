@@ -124,12 +124,12 @@ public class DefaultGrapher implements NARGraph.Grapher {
         @Deprecated NARGraph g = this.graph;
 
         if (includeTermLinks) {
-            for (TermLink x : c.termLinks) {
+            for (TermLink x : c.getTermLinks()) {
                 termLinks.add(x);
             }
         }
         if (includeTaskLinks) {
-            for (TaskLink x : c.taskLinks) {
+            for (TaskLink x : c.getTaskLinks()) {
                 taskLinks.put(x, c);
             }
         }
@@ -137,16 +137,16 @@ public class DefaultGrapher implements NARGraph.Grapher {
         //that's why this isnt necessar and will cause a graph error
         if (includeTermContent) {
             //addVertex(g,t);
-            addEdge(g,c, c.term, new NARGraph.TermContent());
+            addEdge(g,c, c.getTerm(), new NARGraph.TermContent());
         }
         if (includeBeliefs) {
-            for (final Task belief : c.beliefs) {
+            for (final Task belief : c.getBeliefs()) {
                 sentenceTerms.put(onBelief(belief.sentence), c);
             }
         }
         if (includeQuestions) {
             for (final Task q : c.getQuestions()) {
-                if (c.term.equals(q.getTerm())) {
+                if (c.getTerm().equals(q.getTerm())) {
                     continue;
                 }
                 //TODO extract to onQuestion

@@ -167,12 +167,12 @@ public class RunQLAgent extends JPanel {
         d.newWindow();
 
         Global.DEBUG = Global.DEBUG_BAG = false;
-        Global.TRUTH_EPSILON = 0.05f;
+        //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 50;
-        final int cyclesPerFrame = 10;
+        int conceptsPerCycle = 100;
+        final int cyclesPerFrame = 5;
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);

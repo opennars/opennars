@@ -181,8 +181,8 @@ public class Predict2D extends JPanel {
                 Concept c = e.getKey();
                 int level = e.getValue();
 
-                if (!c.beliefs.isEmpty()) {
-                    for (Task s : c.beliefs) {
+                if (!c.getBeliefs().isEmpty()) {
+                    for (Task s : c.getBeliefs()) {
 
                         if (s.getStamp().isEternal()) continue;
                         long o = s.getOccurrenceTime();
@@ -217,8 +217,8 @@ public class Predict2D extends JPanel {
                 Concept c = e.getKey();
                 int level = e.getValue();
 
-                if (!c.beliefs.isEmpty()) {
-                    for (Task t : c.beliefs) {
+                if (!c.getBeliefs().isEmpty()) {
+                    for (Task t : c.getBeliefs()) {
                         final Sentence s = t.sentence;
 
                         if (s.isEternal()) continue;

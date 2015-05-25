@@ -52,7 +52,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             @Override
             public boolean contains(Concept c) {
-                return isCol(c.term);
+                return isCol(c.getTerm());
             }
 
 
@@ -62,7 +62,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             @Override
             public boolean contains(Concept c) {
-                return isRow(c.term);
+                return isRow(c.getTerm());
             }
 
         };
@@ -72,8 +72,8 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             @Override
             public void onConceptActive(Concept c) {
-                if (isEntry(c.term)) {
-                    E i = (E) c.term;
+                if (isEntry(c.getTerm())) {
+                    E i = (E) c.getTerm();
 
                     R rr = getRow(i);
                     C cc = getCol(i);
@@ -159,10 +159,10 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     abstract public C getCol(E entry);
 
     public C getCol(V v) {
-        return getCol((E) v.concept.term);
+        return getCol((E) v.concept.getTerm());
     }
     public C getCol(Concept c) {
-        return getCol((E)c.term);
+        return getCol((E) c.getTerm());
     }
 
     abstract public boolean isRow(Term s);

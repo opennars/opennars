@@ -44,7 +44,7 @@ public class doubt extends SynchOperator implements Mental {
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term term = operation.arg();
         Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
-        concept.discountConfidence(true);
+        concept.discountBeliefConfidence();
         return null;
     }
 

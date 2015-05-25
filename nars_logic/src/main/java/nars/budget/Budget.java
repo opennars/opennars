@@ -140,6 +140,11 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
         return this;
     }
 
+    @Override
+    public boolean addPriority(final float v) {
+        return setPriority( v + getPriority() );
+    }
+
     /** set all quantities to zero */
     public Budget zero() {
         /* avoids tests, slightly faster than set(0,0,0) */
@@ -234,10 +239,6 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
         setPriority( Math.min(1.0f, or(priority, v)));
     }
 
-    @Override
-    public boolean addPriority(final float v) {
-        return setPriority( v + getPriority() );
-    }
 
 
     public boolean maxDurability(final float otherDurability) {
@@ -581,5 +582,13 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
     /** indicates an implementation has, or is associated with a specific BudgetValue */
     public interface Budgetable {
         public Budget getBudget();
+
+        default public float getPriority() { return getBudget().getPriority(); }
+        default public float getDurability() { return getBudget().getDurability(); }
+        default public float getQuality() { return getBudget().getQuality(); }
+        default public long getLastForgetTime() { return getBudget().getLastForgetTime(); }
+        default public void setUsed(long now) { getBudget().setUsed(now); }
+
+
     }
 }

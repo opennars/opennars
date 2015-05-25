@@ -136,8 +136,8 @@ public class LogicMetrics extends NARReaction {
         @Override
         public void accept(Concept c) {
             double p = c.getPriority();
-            totalQuestions += c.questions.size();
-            totalBeliefs += c.beliefs.size();
+            totalQuestions += c.getQuestions().size();
+            totalBeliefs += c.getBeliefs().size();
             //TODO totalGoals...
             //TODO totalQuests...
 
@@ -154,10 +154,10 @@ public class LogicMetrics extends NARReaction {
                 histogram[3]++;
             }
 
-            float termLinksMass = c.termLinks.mass();
-            int numTermLinks = c.termLinks.size();
-            float taskLinksMass = c.taskLinks.mass();
-            int numTaskLinks = c.taskLinks.size();
+            float termLinksMass = c.getTermLinks().mass();
+            int numTermLinks = c.getTermLinks().size();
+            float taskLinksMass = c.getTaskLinks().mass();
+            int numTaskLinks = c.getTaskLinks().size();
 
             termLinkMassPerConcept.addValue(termLinksMass);
             termLinkMass.addValue((numTermLinks > 0) ? termLinksMass / numTermLinks : 0);

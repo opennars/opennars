@@ -6,6 +6,7 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.model.impl.Default;
 import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
@@ -84,7 +85,7 @@ public class TermLinkTest {
         Concept c = n.concept(term);
         assertNotNull(c);
 
-        return c.getTermLinkTemplates();
+        return ((DefaultConcept)c).getTermLinkTemplates();
     }
 
     public static Bag<TermLinkKey, TermLink> getTermLinks(String term) {
@@ -95,7 +96,7 @@ public class TermLinkTest {
         assertNotNull(c);
         n.run(2);
 
-        return c.termLinks;
+        return c.getTermLinks();
     }
 
     public Set<String> getTermLinks(Bag<TermLinkKey, TermLink> t) {
@@ -110,7 +111,7 @@ public class TermLinkTest {
         n.input("<a --> b>.");
         n.run(1);
 
-        Set<String> tl = getTermLinks(n.concept("<a --> b>").termLinks);
+        Set<String> tl = getTermLinks(n.concept("<a --> b>").getTermLinks());
         assertEquals("[Da:a, Db:b]", tl.toString());
     }
 
@@ -127,7 +128,7 @@ public class TermLinkTest {
 
 
 
-        Set<String> ainhb = getTermLinks(n.concept("<a --> b>").termLinks);
+        Set<String> ainhb = getTermLinks(n.concept("<a --> b>").getTermLinks());
 
         assertTrue( 6 <= ainhb.size());
         assertTrue(ainhb.contains("Da:a"));
@@ -146,13 +147,13 @@ public class TermLinkTest {
 //
 //        System.out.println();
 //
-        Set<String> f = getTermLinks(n.concept("f").termLinks);
+        Set<String> f = getTermLinks(n.concept("f").getTermLinks());
         assertEquals(1, f.size());
         assertTrue(f.contains("Ea" + Symbols.TLinkSeparator + "<f --> <a --> b>>"));
 
 
         //this compound involving f has no incoming links, all links are internal
-        Set<String> fc = getTermLinks(n.concept("<f --> <a --> b>>").termLinks);
+        Set<String> fc = getTermLinks(n.concept("<f --> <a --> b>>").getTermLinks());
         assertEquals(4, fc.size());
         assertTrue(fc.contains("Da:f"));
         assertTrue(fc.contains("Db:<a --> b>"));

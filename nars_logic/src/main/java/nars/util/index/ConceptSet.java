@@ -24,11 +24,11 @@ abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> im
     }
 
     public boolean include(Concept c) {
-        Concept removed = values.put((T) c.term, c);
+        Concept removed = values.put((T) c.getTerm(), c);
         return removed!=c; //different instance
     }
     public boolean exclude(Concept c) {
-        return values.remove(c.term)!=null;
+        return values.remove(c.getTerm())!=null;
     }
     public boolean exclude(Term t) {
         return values.remove(t)!=null;

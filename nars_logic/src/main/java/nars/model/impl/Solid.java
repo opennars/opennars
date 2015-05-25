@@ -174,7 +174,7 @@ public class Solid extends Default implements ControlCycle {
 
                 if (c == null) break;
 
-                int conceptTaskLinks = c.taskLinks.size();
+                int conceptTaskLinks = c.getTaskLinks().size();
                 if (conceptTaskLinks == 0) continue;
 
                 float p = c.getPriority();
@@ -184,7 +184,7 @@ public class Solid extends Default implements ControlCycle {
                 if (termFires < 1) continue;
 
                 for (int i = 0; i < fires; i++) {
-                    TaskLink tl = c.taskLinks.forgetNext(taskLinkForgetDurations, getMemory());
+                    TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, getMemory());
                     if (tl==null) break;
                     new ConceptProcess(c, tl, termFires).run();
                 }

@@ -345,8 +345,8 @@ public class Memory implements Serializable {
 
     /** called when a Concept's lifecycle has changed */
     public void updateConceptState(Concept c) {
-        boolean hasQuestions = !c.questions.isEmpty();
-        boolean hasGoals = !c.goals.isEmpty();
+        boolean hasQuestions = !c.getQuestions().isEmpty();
+        boolean hasGoals = !c.getGoals().isEmpty();
 
         if (c.isActive()) {
             //index an incoming concept with existing questions or goals
@@ -364,7 +364,7 @@ public class Memory implements Serializable {
     /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events
         called by a Concept when its questions state changes (becomes empty or becomes un-empty) */
     public void updateConceptQuestions(Concept c) {
-        if (c.questions.isEmpty()) {
+        if (c.getQuestions().isEmpty()) {
             if (!questionConcepts.remove(c))
                 throw new RuntimeException("Concept " + c + " never registered any questions");
         }
@@ -660,13 +660,13 @@ public class Memory implements Serializable {
      * can disrupt the bag's priority order. it should only be used after it has
      * been removed then before inserted
      */
-    public void forget(final Item x, final float forgetCycles, final float relativeThreshold) {
+    public void forget(final Itemized x, final float forgetCycles, final float relativeThreshold) {
         /*switch (param.forgetting) {
             case Iterative:
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:*/
-                BudgetFunctions.forgetPeriodic(x, forgetCycles, relativeThreshold, time());
+                BudgetFunctions.forgetPeriodic(x.getBudget(), forgetCycles, relativeThreshold, time());
                 //break;
         //}
     }
@@ -920,8 +920,10 @@ public class Memory implements Serializable {
 
         if (includeTaskLinks) {
             concepts.forEach( c -> {
-                if (c.taskLinks!=null)
-                    c.taskLinks.forEach(tl -> { t.add(tl.targetTask); });
+                if (c.getTaskLinks() !=null)
+                    c.getTaskLinks().forEach(tl -> {
+                        t.add(tl.targetTask);
+                    });
             });
         }
 

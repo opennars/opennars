@@ -107,17 +107,17 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     float lastFreq = 0.5f; //start in neutral
 
     public void commitDirect(Task t) {
-        DirectProcess.run(concept.memory, t);
+        DirectProcess.run(concept.getMemory(), t);
     }
 
-    /** inserts the belief directly into the table */
-    public void commitFast(Task t) {
-        //concept.beliefs.clear();
-
-        //switch(t.punctuation) ..
-        //concept.processJudgment(null, t);
-        concept.processGoal(null, t);
-    }
+//    /** inserts the belief directly into the table */
+//    public void commitFast(Task t) {
+//        //concept.beliefs.clear();
+//
+//        //switch(t.punctuation) ..
+//        //concept.processJudgment(null, t);
+//        concept.processGoal(null, t);
+//    }
 
     /** input to NAR */
     public void commit(char punctuation, float qUpdateConfidence, float thresh) {
@@ -129,17 +129,17 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         if (nq > 1d) nq = 1d;
         if (nq < -1d) nq = -1d;
 
-        Term qt = concept.term;
+        Term qt = concept.getTerm();
         //System.out.println(qt + " qUpdate: " + Texts.n4(q) + " + " + dq + " -> " + " (" + Texts.n4(nq) + ")");
 
         float nextFreq = (float)((nq / 2f) + 0.5f);
 
-        long now = concept.memory.time();
+        long now = concept.getMemory().time();
 
         if (qUpdateConfidence > 0 &&
                 ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > thresh)) {
 
-            Task t = concept.memory.task((Compound) qt).punctuation(
+            Task t = concept.getMemory().task((Compound) qt).punctuation(
 
                     punctuation
 

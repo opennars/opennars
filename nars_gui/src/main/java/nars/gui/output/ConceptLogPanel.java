@@ -6,7 +6,6 @@ import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.io.TextOutput;
-import nars.meter.ConceptLifeCycleLog;
 import nars.nal.Named;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
@@ -201,7 +200,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
             public void run() {
                 ConceptPanelBuilder.ConceptPanel cp = b.getFirstPanelOrCreateNew(c, true, false, 64);
                 //cp.setMessage(...)
-                applyPriority(c.term.getClass(), cp, priority);
+                applyPriority(c.getTerm().getClass(), cp, priority);
                 append(cp);
             }
         });

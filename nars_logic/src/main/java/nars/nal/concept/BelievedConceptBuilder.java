@@ -15,7 +15,7 @@ abstract public class BelievedConceptBuilder implements ConceptBuilder {
         if (tt == null) return null;
 
         Concept d = m.getConceptBuilderDefault().newConcept(t, b, m);
-        d.beliefs.add(m.task((Compound) t).truth(tt).judgment().eternal().get());
+        d.getBeliefs().add(m.task((Compound) t).truth(tt).judgment().eternal().get());
         return d;
     }
 

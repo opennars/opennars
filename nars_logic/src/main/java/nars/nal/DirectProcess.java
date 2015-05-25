@@ -7,9 +7,6 @@ package nars.nal;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
-import nars.nal.tlink.TermLinkTemplate;
-
-import java.util.List;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,
@@ -24,7 +21,7 @@ public class DirectProcess extends NAL {
 
     /** runs the entire process in a constructor, for when a Concept is provided */
     public DirectProcess(Concept c, Task task) {
-        this(c.memory, task);
+        this(c.getMemory(), task);
 
         onStart();
         process(c); //WARNING this will avoid conceptualizing the concept

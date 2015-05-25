@@ -277,7 +277,7 @@ public class SwingLogText extends SwingText {
                 //Collection<ConceptPanelBuilder.ConceptPanel> panels = cpBuilder.getPanels(concept);
 
                 if (w == null) {
-                    w = new NWindow(concept.term.toString(),
+                    w = new NWindow(concept.getTerm().toString(),
                             cpBuilder.newPanel(concept, true, true, 64));
 
                     w.pack();

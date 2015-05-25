@@ -2,10 +2,8 @@ package nars.util.graph;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
-import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import org.jgrapht.graph.DirectedMultigraph;
 
@@ -27,13 +25,13 @@ public class TermLinkGraph extends DirectedMultigraph<Term, TermLink> {
     }
 
     public TermLinkGraph add(Concept c, boolean includeTermLinks/*, boolean includeTaskLinks, boolean includeOtherReferencedConcepts*/) {
-        final Term source = c.term;
+        final Term source = c.getTerm();
 
         if (!containsVertex(source)) {
             addVertex(source);
 
             if (includeTermLinks) {
-                for (TermLink t : c.termLinks.values()) {
+                for (TermLink t : c.getTermLinks().values()) {
                     Term target = t.target;
                     if (!containsVertex(target)) {
                         addVertex(target);

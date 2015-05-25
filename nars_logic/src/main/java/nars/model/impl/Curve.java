@@ -43,7 +43,7 @@ public class Curve extends Default {
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
-        return new CurveBag<>(getConceptBagSize(), curve, randomRemoval);
+        return new CurveBag(getConceptBagSize(), curve, randomRemoval);
         //return new AdaptiveContinuousBag<>(getConceptBagSize());
     }
 
