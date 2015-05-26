@@ -1,7 +1,7 @@
 package nars.guifx;
 
-import de.jensd.fx.fontawesome.AwesomeDude;
-import de.jensd.fx.fontawesome.AwesomeIcon;
+import de.jensd.fx.glyphs.GlyphsDude;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -141,36 +141,36 @@ public class NARWindow extends Stage {
 
 
             if (runButtons) {
-                Button bp = AwesomeDude.createIconButton(AwesomeIcon.PLAY);
+                Button bp = GlyphsDude.createIconButton(FontAwesomeIcon.PLAY);
                 bp.setTooltip(new Tooltip("Play"));
                 v.getChildren().add(bp);
 
 
-                Button bs = AwesomeDude.createIconButton(AwesomeIcon.STEP_FORWARD);
+                Button bs = GlyphsDude.createIconButton(FontAwesomeIcon.STEP_FORWARD);
                 bs.setTooltip(new Tooltip("Step"));
                 v.getChildren().add(bs);
             }
 
             if (memoryButtons) {
-                Button b0 = AwesomeDude.createIconButton(AwesomeIcon.FOLDER);
+                Button b0 = GlyphsDude.createIconButton(FontAwesomeIcon.FOLDER);
                 b0.setTooltip(new Tooltip("Open"));
                 v.getChildren().add(b0);
 
-                Button b1 = AwesomeDude.createIconButton(AwesomeIcon.SAVE);
+                Button b1 = GlyphsDude.createIconButton(FontAwesomeIcon.SAVE);
                 b1.setTooltip(new Tooltip("Save"));
                 v.getChildren().add(b1);
 
-                Button b2 = AwesomeDude.createIconButton(AwesomeIcon.CODE_FORK);
+                Button b2 = GlyphsDude.createIconButton(FontAwesomeIcon.CODE_FORK);
                 b2.setTooltip(new Tooltip("Clone"));
                 v.getChildren().add(b2);
             }
 
             if (guiButtons) {
-                Button bi = AwesomeDude.createIconButton(AwesomeIcon.CODE);
+                Button bi = GlyphsDude.createIconButton(FontAwesomeIcon.CODE);
                 bi.setTooltip(new Tooltip("Input..."));
                 v.getChildren().add(bi);
 
-                Button bo = AwesomeDude.createIconButton(AwesomeIcon.TACHOMETER);
+                Button bo = GlyphsDude.createIconButton(FontAwesomeIcon.TACHOMETER);
                 bo.setTooltip(new Tooltip("Output..."));
                 v.getChildren().add(bo);
             }
