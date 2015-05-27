@@ -217,7 +217,7 @@ public class Parameters {
     public static boolean BREAK_NAL_HOL_BOUNDARY=true;
     
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
-    public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
+    public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=true;
     
     public static float ANTICIPATION_CONFIDENCE=0.95f;
     

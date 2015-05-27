@@ -56,6 +56,7 @@ import static nars.inference.UtilityFunctions.or;
 import nars.io.Symbols;
 import nars.io.Symbols.NativeOperator;
 import nars.language.CompoundTerm;
+import nars.language.Conjunction;
 import nars.language.Equivalence;
 import nars.language.Implication;
 import nars.language.Term;
@@ -209,7 +210,7 @@ public class Concept extends Item<Term> implements Termable {
                 break;
             case Symbols.GOAL_MARK:
                 memory.logic.GOAL_PROCESS.commit();
-                processGoal(nal, task);
+                processGoal(nal, task, true);
                 break;
             case Symbols.QUESTION_MARK:
             case Symbols.QUEST_MARK:
@@ -346,6 +347,41 @@ public class Concept extends Item<Term> implements Termable {
         return false;
     }
     
+    protected void howQuestionDecisionMakingAccel(final Task T, NAL nal) {
+        Term Subject = new Variable("?how");
+        Term how=Implication.make(Subject, T.sentence.term, TemporalRules.ORDER_FORWARD);
+        if(how!=null) {
+            Concept myCon=nal.memory.concept(how);
+            if(myCon!=null) {
+                //get best solution to first question
+                if(myCon.questions!=null && myCon.questions.size()>0) {
+                    Task question=myCon.questions.get(0);
+                    if(question!=null && question.getBestSolution()!=null) {
+                        Sentence solution=question.getBestSolution();
+                        //we have the best solution, check truth expectation
+                        Term plan = ((Implication)solution.term).getSubject();
+                        //ok we have the plan, either it is elementary,
+                        //then we have to processGoal with its first desire task
+                        //but this we skip for now because it can be done by inference also,
+                        //or it is a forward conjunction and we have to call processGoal from lefz to right with its desire
+                        if(plan instanceof Conjunction && ((Conjunction)plan).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                            Conjunction Cplan=(Conjunction) plan;
+                            for(Term t : Cplan.term) {
+                                Concept Ct = nal.memory.concept(t);
+                                if(Ct != null && Ct.desires!=null && Ct.desires.size()>0) {
+                                    Task toProcess=Ct.desires.get(0);
+                                    if(!processGoal(nal,toProcess,true)) { //not fullfilled or fullfillable per exec, stop
+                                        break; //should be false instead true due to AIKR
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
@@ -354,7 +390,7 @@ public class Concept extends Item<Term> implements Termable {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processGoal(final NAL nal, final Task task) {        
+    protected boolean processGoal(final NAL nal, final Task task, boolean shortcut) {        
         
         final Sentence goal = task.sentence;
         final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
@@ -366,9 +402,9 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp oldStamp = oldGoal.stamp;
             
             
-            if (newStamp.equals(oldStamp,false,true,true,false)) {
+            /*if (newStamp.equals(oldStamp,false,true,true,false)) {
                 return; // duplicate
-            }
+            }*/
             if (revisible(goal, oldGoal)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
@@ -383,7 +419,7 @@ public class Concept extends Item<Term> implements Termable {
                     if(!(task.sentence.term instanceof Operation)) {
                         boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
                         if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                            return; // with higher/lower desire
+                            return false; // with higher/lower desire
                         } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                    }
                 }
@@ -396,7 +432,7 @@ public class Concept extends Item<Term> implements Termable {
             Sentence projectedGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
             if(projectedGoal!=null) {
                 nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
-                return;
+                return false;
             }
         }
         
@@ -417,9 +453,14 @@ public class Concept extends Item<Term> implements Termable {
             
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (task.aboveThreshold() && AntiSatisfaction >= Parameters.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            boolean fullfilled = AntiSatisfaction < Parameters.SATISFACTION_TRESHOLD;
+            
+            if (task.aboveThreshold() && !fullfilled && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
+                
+                if(shortcut)
+                    howQuestionDecisionMakingAccel(task, nal);
                 
                 addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
                 
@@ -427,9 +468,13 @@ public class Concept extends Item<Term> implements Termable {
                 
                 if(!executeDecision(task)) {
                     memory.emit(UnexecutableGoal.class, task, this, nal);
+                    return true; //it was made true by itself
                 }
+                return false;
             }
+            return fullfilled;
         }
+        return false;
     }
 
     private void questionFromGoal(final Task task, final NAL nal) {
