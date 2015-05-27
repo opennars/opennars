@@ -348,7 +348,7 @@ public class Concept extends Item<Term> implements Termable {
     }
     
     protected void howQuestionDecisionMakingAccel(final Task T, NAL nal) {
-        Term Subject = new Variable("?how");
+        Term Subject = new Variable("?1"); //because its not normalized we have to use "?1" here
         Term how=Implication.make(Subject, T.sentence.term, TemporalRules.ORDER_FORWARD);
         if(how!=null) {
             Concept myCon=nal.memory.concept(how);
@@ -356,7 +356,7 @@ public class Concept extends Item<Term> implements Termable {
                 //get best solution to first question
                 if(myCon.questions!=null && myCon.questions.size()>0) {
                     Task question=myCon.questions.get(0);
-                    if(question!=null && question.getBestSolution()!=null) {
+                    if(question!=null && question.getBestSolution()!=null) { //TODO from here nothing is called
                         Sentence solution=question.getBestSolution();
                         //we have the best solution, check truth expectation
                         Term plan = ((Implication)solution.term).getSubject();
