@@ -199,7 +199,7 @@ public class Parameters {
     
     public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
     
-    public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
+    public static float CURIOSITY_BUSINESS_THRESHOLD=0.18f; //dont be curious if business is above
     public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
     public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
     public static float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
