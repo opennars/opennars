@@ -22,7 +22,8 @@ public class NAL1ScriptTests extends ScriptNALTest {
                 new Default(),
                 new Default().setInternalExperience(null),
                 new Default().setInternalExperience(null).level(1),
-                new Curve(),
+                new Curve().setInternalExperience(null),
+                new Curve().level(1),
                 new DefaultMicro(),
                 new Classic(),
                 new Solid(1, 32, 1, 1, 1,2)

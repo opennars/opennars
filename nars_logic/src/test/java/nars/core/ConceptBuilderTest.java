@@ -27,7 +27,7 @@ public class ConceptBuilderTest {
         n.input("lessThan(4,3).");
         n.frame(1);
 
-        assertTrue("even though lessThan(4,3) is asserted, its ConceptBuilder will have set the correct value and locked it",
+        assertTrue("although lessThan(4,3) is asserted, its ConceptBuilder will have set the correct value and locked it",
                 n.concept("lessThan(4,3)").getStrongestBelief().getTruth().isNegative());
     }
 

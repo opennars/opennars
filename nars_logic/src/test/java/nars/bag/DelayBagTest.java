@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class DelayBagTest {
 
-    private NAR n;
 
     static int numConcepts(NAR n) {
         return ((AntCore)n.memory.concepts).concepts.size();
@@ -36,45 +35,46 @@ public class DelayBagTest {
     }
 
     @Test
-    public void testAnt1() { n = new NAR(new Neuromorphic(1));    }
+    public void testAnt1() { test(1);    }
     @Test
-    public void testAnt2() { n = new NAR(new Neuromorphic(2));    }
+    public void testAnt2() { test(2);    }
     @Test
-    public void testAnt4() { n = new NAR(new Neuromorphic(4));    }
+    public void testAnt4() { test(4);     }
 
-    @After
-    public void test() throws InvalidInputException {
+    public void test(int ants) throws InvalidInputException {
+
+        NAR n = new NAR(new Neuromorphic(ants));
 
         assertTrue(n.memory.concepts != null);
         
         n.input("<a --> b>.");
         
-        n.run(1);        
+        n.frame(1);
         assertEquals(3, numConcepts(n) );
 
-        n.run(1);        
-        assertEquals(3, numConcepts(n) );
+        n.frame(1);
+        assertTrue(3 <= numConcepts(n));
         
-        n.run(1);        
-        assertEquals(3, numConcepts(n) );
+        n.frame(1);
+        assertTrue(3 <= numConcepts(n));
         
         n.input("<c --> d>.");
         
-        n.run(2);        
+        n.frame(2);
         assertEquals(6, numConcepts(n) );
 
-        n.run(30);
+        n.frame(30);
         assertEquals(6, numConcepts(n) );
         
-        ((AntCore)n.memory.concepts).concepts.remove((Term)n.term("<a --> b>"));
+        ((AntCore)n.memory.concepts).concepts.remove(n.term("<a --> b>"));
         
         assertEquals(5, numConcepts(n) );
-        n.run(10);
+        n.frame(10);
         assertEquals(5, numConcepts(n) );
 
         n.input("<a --> b>.");
-        n.run(5);
-        assertEquals(6, numConcepts(n) );
+        n.frame(5);
+        assertTrue(6 <= numConcepts(n) );
     }
 
 }

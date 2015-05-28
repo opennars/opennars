@@ -179,7 +179,7 @@ public class TermLinkTest {
         NAR n = new NAR(new Default());
         n.input(c);
         n.input(d);
-        n.frame(4);
+        n.frame(8);
 
         TermLinkGraph g = new TermLinkGraph(n);
 
