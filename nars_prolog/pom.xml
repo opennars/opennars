@@ -12,7 +12,6 @@
     <name>OpenNARS Prolog</name>
     <url>https://github.com/opennars/opennars</url>
 
-   
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -29,37 +28,16 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>                    
-                    <excludes>
-                    	<exclude>src/main/java/nars/prolog/test/unit/**.java</exclude>
-                    	<exclude>src/main/java/nars/prolog/test/unit/*/*</exclude>
-                	</excludes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-           
-
-    
     <dependencies>
-
          <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-util</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 

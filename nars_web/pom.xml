@@ -16,21 +16,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-   <build>
-        <plugins>
-          
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
            
 
     <dependencies>
@@ -38,19 +23,16 @@
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-util</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-logic</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>io.undertow</groupId>        
             <artifactId>undertow-core</artifactId>
-            <version>1.2.6.Final</version>
         </dependency>  
 
     </dependencies>
