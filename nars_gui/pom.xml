@@ -96,39 +96,33 @@
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-util</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
 
 
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-logic</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.12</version>
         </dependency>
 
         <dependency>
             <groupId>org.tinyjee.jgraphx</groupId>
             <artifactId>jgraphx</artifactId>
-            <version>2.3.0.5</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.javabits.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>0.9.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.tinyjee.jgraphx</groupId>
@@ -140,24 +134,20 @@
         <dependency>
             <groupId>org.abego.treelayout</groupId>
             <artifactId>org.abego.treelayout.core</artifactId>
-            <version>1.0.2</version>
         </dependency>
 
         <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>rsyntaxtextarea</artifactId>
-            <version>2.5.6</version>
         </dependency>
         <dependency>
             <groupId>com.fifesoft</groupId>
             <artifactId>autocomplete</artifactId>
-            <version>2.5.4</version>
         </dependency>
 
         <dependency>
             <groupId>de.jensd</groupId>
             <artifactId>fontawesomefx</artifactId>
-            <version>8.4</version>
         </dependency>
 
 
@@ -167,30 +157,25 @@
         <dependency>
             <groupId>gov.nist.math</groupId>
             <artifactId>jama</artifactId>
-            <version>1.0.3</version>
         </dependency>
 
         <dependency>
             <groupId>jung</groupId>
             <artifactId>jung</artifactId>
-            <version>1.7.6</version>
         </dependency>
         <dependency>
             <groupId>org.simplericity.macify</groupId>
             <artifactId>macify</artifactId>
-            <version>1.6</version>
         </dependency>
 
         <dependency>
             <groupId>org.piccolo2d</groupId>
             <artifactId>piccolo2d-core</artifactId>
-            <version>3.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.piccolo2d</groupId>
             <artifactId>piccolo2d-extras</artifactId>
-            <version>3.0</version>
         </dependency>
 
 
@@ -198,7 +183,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 

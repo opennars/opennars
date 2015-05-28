@@ -50,31 +50,26 @@
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-logic</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
-            <version>2.7.8</version>
         </dependency>
 
         <dependency>
             <groupId>org.boofcv</groupId>
             <artifactId>visualize</artifactId>
-            <version>0.18</version>
         </dependency>
         <dependency>
             <groupId>org.boofcv</groupId>
             <artifactId>WebcamCapture</artifactId>
-            <version>0.18</version>
         </dependency>
 
 
@@ -102,23 +97,19 @@
         <dependency>
             <groupId>org.jbox2d</groupId>
             <artifactId>jbox2d-library</artifactId>
-            <version>2.2.1.1</version>
         </dependency>
 
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-prolog</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-gui</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>        
         <dependency>
             <groupId>opennars</groupId>
             <artifactId>opennars-web</artifactId>
-            <version>1.7-SNAPSHOT</version>
         </dependency>
 
                 <!--<dependency>
@@ -146,35 +137,29 @@
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
             <artifactId>gluegen-rt-main</artifactId>
-            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
             <artifactId>jogl-all-main</artifactId>
-            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sociaal</groupId>
             <artifactId>vecmath</artifactId>
-            <version>3.0.0.20130526</version>
         </dependency>
 
         <dependency>
             <groupId>gov.nasa</groupId>
             <artifactId>worldwind</artifactId>
-            <version>2.0.0-986</version>
         </dependency>
         <dependency>
             <groupId>gov.nasa</groupId>
             <artifactId>worldwindx</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
 
        <dependency>
            <groupId>org.encog</groupId>
            <artifactId>encog-core</artifactId>
-           <version>3.3.0</version>
            <exclusions>
                <exclusion>
                    <groupId>org.apache.commons</groupId>
@@ -185,7 +170,6 @@
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
 
@@ -193,7 +177,6 @@
         <dependency>
             <groupId>org.processing</groupId>
             <artifactId>core</artifactId>
-            <version>2.2.1</version>
         </dependency>
 
 

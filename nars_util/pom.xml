@@ -251,43 +251,36 @@
         <dependency>
             <groupId>com.goldmansachs</groupId>
             <artifactId>gs-collections</artifactId>
-            <version>6.1.0</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.jr</groupId>
             <artifactId>jackson-jr-objects</artifactId>
-            <version>2.6.0-rc1</version>
         </dependency>
 
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.19.0-GA</version>
         </dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.10</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
         </dependency>
 
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
         </dependency>
         <dependency>
             <groupId>org.javolution</groupId>
             <artifactId>javolution-core-java</artifactId>
-            <version>6.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.osgi</groupId>
@@ -302,14 +295,12 @@
         <dependency>
             <groupId>org.javabits.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>0.9.3</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.javabits.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
-            <version>0.9.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.tinyjee.jgraphx</groupId>
@@ -321,14 +312,12 @@
         <dependency>
             <groupId>net.openhft</groupId>
             <artifactId>collections</artifactId>
-            <version>3.2.2</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.5</version>
         </dependency>
 
 
@@ -340,7 +329,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
