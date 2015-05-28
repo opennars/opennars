@@ -27,9 +27,7 @@ import static nars.nal.nal1.LocalRules.revision;
 import static nars.nal.nal1.LocalRules.trySolution;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
-/**
- * Created by me on 4/17/15.
- */
+
 public class DefaultConcept extends Item<Term> implements Concept {
 
     State state;
@@ -45,16 +43,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
     private Map<Object,Meta> meta = null;
 
 
-    private final List<Task> questions;
-
-
-    private final List<Task> quests;
-
-    private final List<Task> beliefs;
-
-
-
-    private final List<Task> goals;
+    private List<Task> questions;
+    private List<Task> quests;
+    private List<Task> beliefs;
+    private List<Task> goals;
 
     private final Memory memory;
 
@@ -64,6 +56,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     private final TermLinkBuilder termLinkBuilder;
     private final TaskLinkBuilder taskLinkBuilder;
+
+    private boolean constant = false;
 
 
     /**
@@ -78,7 +72,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
     public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);
 
-        this.state = State.New;
 
         this.term = term;
         this.memory = memory;
@@ -86,20 +79,18 @@ public class DefaultConcept extends Item<Term> implements Concept {
         this.creationTime = memory.time();
         this.deletionTime = creationTime - 1; //set to one cycle before created meaning it was potentially reborn
 
-        this.questions = Global.newArrayList();
-        this.beliefs = Global.newArrayList();
-        this.quests = Global.newArrayList();
-        this.goals = Global.newArrayList();
+        this.questions = Global.newArrayList(1);
+        this.beliefs = Global.newArrayList(1);
+        this.quests = Global.newArrayList(1);
+        this.goals = Global.newArrayList(1);
 
         this.taskLinks = taskLinks;
         this.termLinks = termLinks;
 
-        if (taskLinks instanceof Memory.MemoryAware)  ((Memory.MemoryAware)taskLinks).setMemory(memory);
-        if (termLinks instanceof Memory.MemoryAware)  ((Memory.MemoryAware)termLinks).setMemory(memory);
-
         this.termLinkBuilder = new TermLinkBuilder(this);
         this.taskLinkBuilder = new TaskLinkBuilder(memory);
 
+        this.state = State.New;
         memory.emit(Events.ConceptNew.class, this);
         if (memory.logic!=null)
             memory.logic.CONCEPT_NEW.hit();
@@ -264,7 +255,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public boolean process(final DirectProcess nal) {
 
-        if (!ensureActiveTo("DirectProcess")) return false;
+        if (isConstant())
+            return false;
+
+        if (!ensureActiveFor("DirectProcess")) return false;
 
         final Task task = nal.getCurrentTask();
 
@@ -325,7 +319,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     //TODO untested
     public void link(Collection<Task> tasks) {
 
-        if (!ensureActiveTo("link(Collection<Task>)")) return;
+        if (!ensureActiveFor("link(Collection<Task>)")) return;
 
         final int s = tasks.size();
         if (s == 0) return;
@@ -643,7 +637,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public Task addToTable(final Memory memory, final Task newSentence, final List<Task> table, final int capacity) {
 
-        if (!ensureActiveTo("addToTable")) return null;
+        if (!ensureActiveFor("addToTable")) return null;
 
         long now = memory.time();
 
@@ -742,6 +736,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final long now = getMemory().time();
         for (List<Task> list : lists) {
+            if (list.isEmpty()) continue;
+
             int lsv = list.size();
             for (int i = 0; i < lsv; i++) {
                 Sentence judg = list.get(i).sentence;
@@ -1105,11 +1101,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         super.delete();
 
         //dont delete the tasks themselves because they may be referenced from othe concepts.
-        getQuestions().clear();
-        getQuests().clear();
-
-        getGoals().clear();
-        getBeliefs().clear();
+        questions = quests = goals = beliefs = null;
 
         if (getMeta() !=null) {
             getMeta().clear();
@@ -1213,14 +1205,17 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return t / beliefs.size();
     }
 
+    @Override
+    public boolean isConstant() {
+        return constant;
+    }
 
+    @Override
+    public boolean setConstant(boolean b) {
+        return constant;
+    }
 
-
-
-
-
-
-//
+    //
 //    public Collection<Sentence> getSentences(char punc) {
 //        switch(punc) {
 //            case Symbols.JUDGMENT: return beliefs;

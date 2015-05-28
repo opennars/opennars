@@ -142,6 +142,11 @@ abstract public interface Concept extends Termed, Itemized<Term> {
         }
     }
 
+    boolean isConstant();
+
+    /** allows concept state to be locked */
+    boolean setConstant(boolean b);
+
     public enum State {
 
         /** created but not added to memory */
@@ -233,7 +238,7 @@ abstract public interface Concept extends Termed, Itemized<Term> {
 
     public void delete();
 
-    default public boolean ensureActiveTo(String activity) {
+    default public boolean ensureActiveFor(String activity) {
         if (!this.isActive()) {
             System.err.println(activity + " fail: " + this + " (state=" + getState() + ')');
             new Exception().printStackTrace();

@@ -19,10 +19,10 @@ public class OperatorTest {
 
     //create a completely empty NAR, no default operators
     NAR n = new NAR(new Default() {
-        @Override
-        public Operator[] newDefaultOperators(NAR n) {
+        /*@Override
+        public Operator[] defaultOperators(NAR n) {
             return new Operator[] { };
-        }
+        }*/
     });
 
 //

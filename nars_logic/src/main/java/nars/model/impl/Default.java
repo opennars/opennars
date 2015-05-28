@@ -197,7 +197,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     }
 
-    final Operator[] exampleOperators = new Operator[] {
+    public static final Operator[] exampleOperators = new Operator[] {
         //new Wait(),
         new NullOperator("break"),
         new NullOperator("drop"),
@@ -210,9 +210,13 @@ public class Default extends NARSeed implements ConceptBuilder {
         new NullOperator("deactivate")
     };
 
-    public Operator[] newDefaultOperators(NAR n) {
+    public ConceptBuilder[] defaultConceptBuilders = new ConceptBuilder[] {
+            new lessThan()
+    };
 
-        return new Operator[] {
+
+
+    public final Operator[] defaultOperators  = new Operator[] {
 
                 new eval(),
 
@@ -245,7 +249,6 @@ public class Default extends NARSeed implements ConceptBuilder {
                 // math operations
                 new count(),
                 new add(),
-                new lessThan(),
                 //new MathExpression(),
 
 
@@ -256,7 +259,6 @@ public class Default extends NARSeed implements ConceptBuilder {
                 new similaritree(),
 
                 //TODO move Javascript to a UnsafeOperators set, because of remote execution issues
-                //new Javascript(),  // javascript evaluation
                 new scheme(),      // scheme evaluation
 
 
@@ -267,7 +269,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
                 new schizo(),     //change Memory's SELF term (default: SELF)
 
-                new js(),
+                new js(), //javascdript evalaution
 
                 new json.jsonfrom(),
                 new json.jsonto()
@@ -331,7 +333,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         };
 
-    }
+
 
 
 
@@ -346,10 +348,14 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         if (maxNALLevel >= 8) {
 
-            for (Operator o : newDefaultOperators(n))
+            for (Operator o : defaultOperators)
                 n.on(o);
             for (Operator o : exampleOperators)
                 n.on(o);
+
+            for (ConceptBuilder c  : defaultConceptBuilders) {
+                n.on(c);
+            }
 
             //n.on(new Anticipate());      // expect an event
 

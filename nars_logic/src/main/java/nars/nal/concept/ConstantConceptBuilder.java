@@ -7,7 +7,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 /** creates a new concept using the default concept builder and inserts a default belief of a given truth */
-abstract public class BelievedConceptBuilder implements ConceptBuilder {
+abstract public class ConstantConceptBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
@@ -16,6 +16,8 @@ abstract public class BelievedConceptBuilder implements ConceptBuilder {
 
         Concept d = m.getConceptBuilderDefault().newConcept(t, b, m);
         d.getBeliefs().add(m.task((Compound) t).truth(tt).judgment().eternal().get());
+        d.setConstant(true);
+
         return d;
     }
 

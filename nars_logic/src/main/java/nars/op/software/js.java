@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.nal.DefaultTruth;
 import nars.nal.Task;
 import nars.nal.Truth;
-import nars.nal.concept.BelievedConceptBuilder;
+import nars.nal.concept.ConstantConceptBuilder;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.nal8.operator.TermFunction;
@@ -87,7 +87,7 @@ public class js extends TermFunction implements Mental {
 
     }
 
-    public class JSBelievedConceptBuilder extends BelievedConceptBuilder {
+    public class JSBelievedConceptBuilder extends ConstantConceptBuilder {
 
         private Object fnCompiled;
 

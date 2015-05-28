@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.model.impl.Default;
 import nars.nal.DefaultTruth;
 import nars.nal.Truth;
-import nars.nal.concept.BelievedConceptBuilder;
+import nars.nal.concept.ConstantConceptBuilder;
 import nars.nal.concept.PatternConceptBuilder;
 import nars.nal.term.Term;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class ConceptBuilderTest {
         final AtomicInteger count = new AtomicInteger(0);
 
         NAR n = new NAR(new Default());
-        n.on(new PatternConceptBuilder("(\\*,pos,*)", new BelievedConceptBuilder() {
+        n.on(new PatternConceptBuilder("(\\*,pos,*)", new ConstantConceptBuilder() {
 
             @Override
             protected Truth truth(Term t) {
@@ -49,7 +49,7 @@ public class ConceptBuilderTest {
         final AtomicInteger count = new AtomicInteger(0);
 
         NAR n = new NAR(new Default());
-        n.on(new PatternConceptBuilder("pos(*,*)", new BelievedConceptBuilder() {
+        n.on(new PatternConceptBuilder("pos(*,*)", new ConstantConceptBuilder() {
 
             @Override
             protected Truth truth(Term t) {
