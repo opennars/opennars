@@ -304,16 +304,94 @@ public final class SyllogisticRules {
                 truth = TruthFunctions.desireStrong(sentence.truth, belief.truth);
             } else {
                 truth = TruthFunctions.resemblance(belief.truth, sentence.truth);
-            }            
+            }
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        Statement nst = Statement.make(st, term1, term2, order).normalized();
-        if (nst == null) return false;
+        boolean beliefTermHO = isHigherOrderStatement(belief.term);
+        boolean sentenceTermHO = isHigherOrderStatement(sentence.term);
+        boolean eitherHigherOrder = (beliefTermHO || sentenceTermHO);
+        boolean bothHigherOrder = (beliefTermHO && sentenceTermHO);
 
-        return nal.doublePremiseTask( nst, truth, budget,
-                nal.newStamp(belief, sentence),
-                false, true );
+        if (!bothHigherOrder && eitherHigherOrder) {
+            if (beliefTermHO) {
+                order = belief.term.getTemporalOrder();
+            } else if (sentenceTermHO) {
+                order = sentence.term.getTemporalOrder();
+            }
+        }
+
+        NAL.StampBuilder sb = nal.newStamp(belief, sentence);
+
+        Statement s = Statement.make(eitherHigherOrder ? NALOperator.EQUIVALENCE : NALOperator.SIMILARITY, term1, term2, true, order);
+        //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
+        boolean s1 = nal.doublePremiseTask(s, truth, budget, sb, false, true), s2 = false;
+        // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
+
+        if (Global.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) &&
+                order1 == order2 &&
+                beliefTermHO && sentenceTermHO) {
+
+            Budget budget1 = null, budget2 = null, budget3 = null;
+            Truth truth1 = null, truth2 = null, truth3 = null;
+            Truth value1 = sentence.truth;
+            Truth value2 = belief.truth;
+
+            if (sentence.isQuestion()) {
+               /* budget1 = BudgetFunctions.backward(value2, nal);
+                budget2 = BudgetFunctions.backwardWeak(value2, nal);*/
+                budget3 = BudgetFunctions.backward(value2, nal);
+            } else if (sentence.isQuest()) {
+               /* budget1 = BudgetFunctions.backwardWeak(value2, nal);
+                budget2 = BudgetFunctions.backward(value2, nal);*/
+                budget3 = BudgetFunctions.backwardWeak(value2, nal);
+            } else {
+                if (sentence.isGoal()) {
+                  /*  truth1 = TruthFunctions.desireStrong(value1, value2);
+                    truth2 = TruthFunctions.desireWeak(value2, value1);*/
+                    truth3 = TruthFunctions.desireStrong(value1, value2);
+                } else {
+                    // isJudgment
+                   /* truth1 = TruthFunctions.abduction(value1, value2);
+                    truth2 = TruthFunctions.abduction(value2, value1);*/
+                    truth3 = TruthFunctions.comparison(value1, value2);
+                }
+
+                /*budget1 = BudgetFunctions.forward(truth1, nal);
+                budget2 = BudgetFunctions.forward(truth2, nal);*/
+                budget3 = BudgetFunctions.forward(truth3, nal);
+            }
+
+            /* Bridge to higher order statements:
+            <b <=> k>.
+            <b <=> c>.
+            |-
+            <k <-> c>. %F_cmp%
+            */
+           /* nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2),
+                    truth1, budget1.clone(),false, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term2, term1),
+                    truth2, budget2.clone(),false, false);*/
+            s2 = nal.doublePremiseTask(
+                    Statement.make(NALOperator.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
+                    truth3, budget3.clone(), sb, false, false);
+
+
+        }
+
+
+        return s1 || s2;
+
+        //-----
+        //Original conclusion:
+//        Statement nst = Statement.make(st, term1, term2, order).normalized();
+//        if (nst == null) return false;
+//
+//        return nal.doublePremiseTask( nst, truth, budget,
+//                sb,
+//                false, true );
 
     }
 

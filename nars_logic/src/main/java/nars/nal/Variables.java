@@ -65,6 +65,17 @@ public class Variables {
                     map[0].put(var1, CommonVar);
                     map[1].put(term2, CommonVar);
                 } else {
+                    if (term2 instanceof Variable) {
+                        //https://github.com/opennars/opennars/commit/dd70cb81d22ad968ece86a549057cd19aad8bff3
+
+                        boolean t1Query = ((Variable) term1).getType() == Symbols.VAR_QUERY;
+                        boolean t2Query = ((Variable) term2).getType() == Symbols.VAR_QUERY;
+
+                        if ((t2Query && !t1Query) || (!t2Query && t1Query)) {
+                            return false;
+                        }
+                    }
+
                     map[0].put(var1, term2);
                     if (var1.isCommon()) {
                         map[1].put(var1, term2);
