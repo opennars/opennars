@@ -11,7 +11,7 @@ abstract public class ConstantConceptBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
-        Truth tt = truth(t);
+        Truth tt = truth(t, m);
         if (tt == null) return null;
 
         Concept d = m.getConceptBuilderDefault().newConcept(t, b, m);
@@ -22,5 +22,5 @@ abstract public class ConstantConceptBuilder implements ConceptBuilder {
     }
 
     /** determine the truth of a given term, or return null to prevent the concept being created */
-    protected abstract Truth truth(Term t);
+    protected abstract Truth truth(Term t, Memory m);
 }

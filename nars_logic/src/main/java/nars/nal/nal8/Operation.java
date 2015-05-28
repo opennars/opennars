@@ -255,6 +255,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      * @return
      */
     public Operation inline(Memory memory) {
+        //TODO avoid clone if it does not involve any eval()
         //if (!hasEval()) return this;
         return clone(Product.make(arg(memory, true, false /* keep SELF term at this point */ )));
     }

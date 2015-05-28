@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.Memory;
 import nars.NAR;
 import nars.model.impl.Default;
 import nars.nal.DefaultTruth;
@@ -27,7 +28,20 @@ public class ConceptBuilderTest {
         n.frame(1);
 
         assertTrue("even though lessThan(4,3) is asserted, its ConceptBuilder will have set the correct value and locked it",
-                n.concept("lessThan(4,3)").getStrongestBelief().getTruth().isNegative() );
+                n.concept("lessThan(4,3)").getStrongestBelief().getTruth().isNegative());
+    }
+
+    @Test
+    public void testEval() {
+        eq(0, "lessThan(eval(add(1,1)), 1)");
+        eq(1, "lessThan(eval(add(1,1)), 3)");
+    }
+
+    public void eq(float expectedValue, String term) {
+        NAR n = new NAR(new Default());
+        n.input(term + "?");
+        n.frame(1);
+        assertEquals(expectedValue, n.concept(term).getStrongestBelief().getTruth().getFrequency(), 0.01);
     }
 
     @Test
@@ -39,7 +53,7 @@ public class ConceptBuilderTest {
         n.on(new PatternConceptBuilder("(\\*,pos,*)", new ConstantConceptBuilder() {
 
             @Override
-            protected Truth truth(Term t) {
+            protected Truth truth(Term t, Memory m) {
                 count.getAndIncrement();
                 return new DefaultTruth(0.75f, 0.99f);
             }
@@ -63,7 +77,7 @@ public class ConceptBuilderTest {
         n.on(new PatternConceptBuilder("pos(*,*)", new ConstantConceptBuilder() {
 
             @Override
-            protected Truth truth(Term t) {
+            protected Truth truth(Term t, Memory m) {
                 count.getAndIncrement();
                 return new DefaultTruth(0.75f, 0.99f);
             }

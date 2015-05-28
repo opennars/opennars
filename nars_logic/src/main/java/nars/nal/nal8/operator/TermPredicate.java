@@ -1,5 +1,6 @@
 package nars.nal.nal8.operator;
 
+import nars.Memory;
 import nars.nal.Truth;
 import nars.nal.concept.ConstantConceptBuilder;
 import nars.nal.nal8.Operation;
@@ -19,9 +20,12 @@ abstract public class TermPredicate extends ConstantConceptBuilder {
     }*/
 
     @Override
-    protected Truth truth(Term t) {
+    protected Truth truth(Term t, Memory m) {
         if (t instanceof Operation) {
             Operation o = (Operation)t;
+
+            o = o.inline(m);
+
             return truth(o.getPredicate(), o.arg().terms());
         }
         return null;

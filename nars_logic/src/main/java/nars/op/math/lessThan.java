@@ -24,7 +24,7 @@ public class lessThan extends TermPredicate {
             v = (a < b) ? 1f : 0f;
         }
         catch (NumberFormatException e) {
-            v = 0.5f;
+            return null;
         }
 
         return new DefaultTruth(v, 0.9f);

@@ -105,7 +105,7 @@ public class js extends TermFunction implements Mental {
 
 
         @Override
-        protected Truth truth(Term t) {
+        protected Truth truth(Term t, Memory m) {
 
             Bindings bindings = new SimpleBindings();
             bindings.put("t", t);
@@ -133,7 +133,8 @@ public class js extends TermFunction implements Mental {
                 }
             }
 
-            return null;        }
+            return null;
+        }
     }
 
 
