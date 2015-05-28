@@ -33,221 +33,14 @@
                 </configuration>
             </plugin>
 
-            <!-- Order is important ! Execution follows the declaration order -->
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <!--<useIncrementalCompilation>true</useIncrementalCompilation>-->
-                </configuration>
-            </plugin>
-
-
-            <!--<plugin>-->
-                <!--&lt;!&ndash; https://github.com/chrischristo/capsule-maven-plugin &ndash;&gt;-->
-                <!--<groupId>com.github.chrischristo</groupId>-->
-                <!--<artifactId>capsule-maven-plugin</artifactId>-->
-                <!--<version>0.10.1</version>-->
-                <!--<configuration>-->
-                    <!--<appClass>nars.core.NARRun</appClass>-->
-                    <!--<manifest>-->
-                        <!--<entry>-->
-                            <!--<key>Min-Java-Version</key>-->
-                            <!--<value>1.8.0</value>-->
-                        <!--</entry>-->
-                    <!--</manifest>-->
-                    <!--&lt;!&ndash;-->
-                    <!--<fileSets>-->
-                        <!--<fileSet>-->
-                            <!--<directory>../nal/</directory>-->
-                            <!--<outputDirectory>nal/</outputDirectory>-->
-                            <!--<includes>-->
-                                <!--<include>*</include>-->
-                            <!--</includes>-->
-                        <!--</fileSet>-->
-                    <!--</fileSets>-->
-                    <!--&ndash;&gt;-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>build</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
-
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-shade-plugin</artifactId>-->
-                <!--<version>2.4</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>shade</goal>-->
-                        <!--</goals>-->
-                            <!--<configuration>-->
-                                <!--<transformers>-->
-                                    <!--<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
-                                        <!--<mainClass>nars.run.NARRun</mainClass>-->
-                                    <!--</transformer>-->
-                                <!--</transformers>-->
-                                <!--<minimizeJar>true</minimizeJar>-->
-                                <!--<artifactSet>-->
-                                    <!--<excludes>-->
-                                        <!--&lt;!&ndash;-->
-                                        <!--<exclude>classworlds:classworlds</exclude>-->
-                                        <!--<exclude>junit:junit</exclude>-->
-                                        <!--<exclude>jmock:*</exclude>-->
-                                        <!--<exclude>*:xml-apis</exclude>-->
-                                        <!--<exclude>org.apache.maven:lib:tests</exclude>-->
-                                        <!--<exclude>log4j:log4j:jar:</exclude>-->
-                                        <!--&ndash;&gt;-->
-                                    <!--</excludes>-->
-                                <!--</artifactSet>-->
-                            <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
-
-            <!-- Proguard SOMEWHAT WORKING -->
-                    <!--<plugin>-->
-                        <!--<groupId>com.github.wvengen</groupId>-->
-                        <!--<artifactId>proguard-maven-plugin</artifactId>-->
-                        <!--<executions>-->
-                            <!--<execution>-->
-                                <!--<phase>package</phase>-->
-                                <!--<goals><goal>proguard</goal></goals>-->
-                            <!--</execution>-->
-                        <!--</executions>-->
-                        <!--<configuration>-->
-                            <!--<obfuscate>true</obfuscate>-->
-                            <!--&lt;!&ndash;<injar>${project.build.finalName}${project.build.finalName}-capsule-fat.jar</injar>&ndash;&gt;-->
-                            <!--<injar>${project.build.finalName}.jar</injar>-->
-                            <!--<outjar>${project.build.finalName}-small.jar</outjar>-->
-                            <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
-                            <!--<proguardInclude>${basedir}/proguard.conf</proguardInclude>-->
-                            <!--<includeDependency>true</includeDependency>-->
-                            <!--<includeDependencyInjar>true</includeDependencyInjar>-->
-                            <!--<libs>-->
-                                <!--<lib>${java.home}/lib/rt.jar</lib>-->
-                                <!--<lib>${java.home}/lib/jsse.jar</lib>-->
-                            <!--</libs>-->
-                        <!--</configuration>-->
-                    <!--</plugin>-->
-
-
-
-            <!--<plugin>-->
-                <!--<groupId>net.ju-n.maven.plugins</groupId>-->
-                <!--<artifactId>soot-maven-plugin</artifactId>-->
-                <!--<version>0.1.1</version>-->
-                <!--&lt;!&ndash; http://nicoulaj.github.io/soot-maven-plugin/soot-mojo.html &ndash;&gt;-->
-                <!--<configuration>-->
-                    <!--<debug>true</debug>-->
-
-                    <!--<sootClasspath>${java.class.path}:${java.home}/jre/lib:${java.home}/lib:${project.build.outputDirectory}</sootClasspath>-->
-                    <!--<applicationMode>true</applicationMode>-->
-                    <!--<wholeProgram>true</wholeProgram>-->
-                    <!--&lt;!&ndash;<prependClasspath>-->
-                        <!--target/classes-->
-                    <!--</prependClasspath>&ndash;&gt;-->
-                    <!--<mainClass>nars.core.NARRun</mainClass>-->
-                    <!--&lt;!&ndash;<interactiveMode>true</interactiveMode>&ndash;&gt;-->
-                    <!--&lt;!&ndash; put your configurations here &ndash;&gt;-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-
-            <!-- mvn org.pitest:pitest-maven:mutationCoverage -->
-            <!--<plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>LATEST</version>
-                <configuration>
-                    <targetClasses>
-                        <param>nars.build.**</param>
-                        <param>nars.core.**</param>
-                        <param>nars.control.**</param>
-                        <param>nars.event.**</param>
-                        <param>nars.io.**</param>
-                        <param>nars.logic.**</param>
-                        <param>nars.operate**</param>
-                        <param>nars.util.**</param>
-                    </targetClasses>
-                    <targetTests>
-                        <param>nars.*</param>
-                    </targetTests>
-                </configuration>
-
-            </plugin>-->
-            <!--<plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-5</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>nars.core.NARRun</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> -->
-
-
         </plugins>
-
-
     </build>
-
-    <!--<reporting>-->
-        <!--<plugins>-->
-            <!--&lt;!&ndash;-->
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>jdepend-maven-plugin</artifactId>-->
-                <!--<version>2.0</version>-->
-            <!--</plugin>-->
-            <!--&ndash;&gt;-->
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>cobertura-maven-plugin</artifactId>-->
-                <!--<version>2.6</version>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-    <!--</reporting>-->
-
-
-   
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 
     <dependencies>
-        <!-- <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
-            <version>2.1.0.BUILD-SNAPSHOT</version>
-        </dependency>-->
         <dependency>
             <groupId>com.goldmansachs</groupId>
             <artifactId>gs-collections</artifactId>
@@ -296,8 +89,6 @@
             <groupId>org.javabits.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>org.javabits.jgrapht</groupId>
             <artifactId>jgrapht-ext</artifactId>
@@ -308,24 +99,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>net.openhft</groupId>
             <artifactId>collections</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>annotations</artifactId>
+                    <groupId>org.kohsuke.jetbrains</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
         </dependency>
-
-
-
-
-
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
