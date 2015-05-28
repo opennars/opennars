@@ -223,5 +223,7 @@ public class Parameters {
     
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
     
+    public static float COMPLEXITY_UNIT=10.0f;
+    
 }
 

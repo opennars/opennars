@@ -635,7 +635,7 @@ public class TemporalRules {
         }
         
         if (problem.containQueryVar()) {
-            return truth.getExpectation() / solution.term.getComplexity();
+            return truth.getExpectation() / (solution.term.getComplexity()*Parameters.COMPLEXITY_UNIT);
         } else {
             return truth.getConfidence();
         }

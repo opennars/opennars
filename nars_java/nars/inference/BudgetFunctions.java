@@ -24,6 +24,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 import nars.core.Memory;
+import nars.core.Parameters;
 import nars.entity.BudgetValue;
 import nars.entity.Concept;
 import nars.entity.Item;
@@ -291,7 +292,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundForward(final TruthValue truth, final Term content, final nars.core.control.NAL nal) {
-        final int complexity = (content == null) ? 1 : content.getComplexity();
+        final float complexity = (content == null) ? Parameters.COMPLEXITY_UNIT : Parameters.COMPLEXITY_UNIT*content.getComplexity();
         return budgetInference(truthToQuality(truth), complexity, nal);
     }
 
@@ -303,7 +304,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackward(final Term content, final nars.core.control.NAL nal) {
-        return budgetInference(1, content.getComplexity(), nal);
+        return budgetInference(1, content.getComplexity()*Parameters.COMPLEXITY_UNIT, nal);
     }
 
     /**
@@ -314,7 +315,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static BudgetValue compoundBackwardWeak(final Term content, final nars.core.control.NAL nal) {
-        return budgetInference(w2c(1), content.getComplexity(), nal);
+        return budgetInference(w2c(1), content.getComplexity()*Parameters.COMPLEXITY_UNIT, nal);
     }
 
     /**
@@ -325,7 +326,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    private static BudgetValue budgetInference(final float qual, final int complexity, final nars.core.control.NAL nal) {
+    private static BudgetValue budgetInference(final float qual, final float complexity, final nars.core.control.NAL nal) {
         Item t = nal.getCurrentTaskLink();
         if (t == null) {
             t = nal.getCurrentTask();

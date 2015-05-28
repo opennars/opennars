@@ -350,6 +350,8 @@ public class Concept extends Item<Term> implements Termable {
     }
     
     protected void howQuestionDecisionMakingAccel(final Task T, NAL nal) {
+       // if(true)
+       //     return;
         Term Subject = new Variable("?1"); //because its not normalized we have to use "?1" here
         Term how=Implication.make(Subject, T.sentence.term, TemporalRules.ORDER_FORWARD);
         if(how!=null) {
@@ -400,7 +402,7 @@ public class Concept extends Item<Term> implements Termable {
                                 nal.setCurrentTask(SVTask);
                                 nal.newStampBuilder=SVstampBuilder; //also restore this one
                                 //END
-                                //Task derived=BudgetFunctions.forward(null, nal)
+
                                 occurrenceOffset+=nal.memory.param.duration.get();
                             }
                         }
@@ -430,9 +432,9 @@ public class Concept extends Item<Term> implements Termable {
             final Stamp oldStamp = oldGoal.stamp;
             
             
-            /*if (newStamp.equals(oldStamp,false,true,true,false)) {
-                return; // duplicate
-            }*/
+            if (newStamp.equals(oldStamp,false,true,true,false)) {
+                return false; // duplicate
+            }
             if (revisible(goal, oldGoal)) {
                 
                 nal.setTheNewStamp(newStamp, oldStamp, memory.time());
@@ -831,7 +833,7 @@ public class Concept extends Item<Term> implements Termable {
     @Override
     public float getQuality() {
         float linkPriority = termLinks.getAveragePriority();
-        float termComplexityFactor = 1.0f / term.getComplexity();
+        float termComplexityFactor = 1.0f / term.getComplexity()*Parameters.COMPLEXITY_UNIT;
         float result = or(linkPriority, termComplexityFactor);
         if (result < 0) {
             throw new RuntimeException("Concept.getQuality < 0:  result=" + result + ", linkPriority=" + linkPriority + " ,termComplexityFactor=" + termComplexityFactor + ", termLinks.size=" + termLinks.size());
