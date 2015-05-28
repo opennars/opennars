@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 
@@ -18,6 +19,16 @@ import static org.junit.Assert.assertEquals;
 
 public class ConceptBuilderTest {
 
+
+    @Test
+    public void testConstantConcept() {
+        NAR n = new NAR(new Default());
+        n.input("lessThan(4,3).");
+        n.frame(1);
+
+        assertTrue("even though lessThan(4,3) is asserted, its ConceptBuilder will have set the correct value and locked it",
+                n.concept("lessThan(4,3)").getStrongestBelief().getTruth().isNegative() );
+    }
 
     @Test
     public void testConceptBuilder() {

@@ -28,7 +28,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     ConceptPanelBuilder b;
     VerticalPanel content = new VerticalPanel();
 
-    final Set<JComponent> pendingDisplay = new FastSet().atomic(); //new ConcurrentLinkedDeque<>();
+    Set<JComponent> pendingDisplay = new FastSet().atomic(); //new ConcurrentLinkedDeque<>();
 
     int y = 0;
 
@@ -110,7 +110,8 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
     }
 
     protected void off() {
-        pendingDisplay.clear();
+        pendingDisplay = new FastSet().atomic();
+
         content.removeAllVertically();
         b.off();
     }

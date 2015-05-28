@@ -255,8 +255,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public boolean process(final DirectProcess nal) {
 
-        if (isConstant())
-            return false;
 
         if (!ensureActiveFor("DirectProcess")) return false;
 
@@ -363,6 +361,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @return Whether to continue the processing of the task
      */
     public boolean processJudgment(final DirectProcess nal, final Task task) {
+
+        if (hasBeliefs() && isConstant())
+            return false;
+
         final Sentence judg = task.sentence;
         final Sentence oldBelief;
 
@@ -446,6 +448,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     public boolean processGoal(final DirectProcess nal, final Task task) {
 
+        if (hasGoals() && isConstant())
+            return false;
 
         final Sentence goal = task.sentence, oldGoal;
 
@@ -599,23 +603,26 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
         }
 
-        if (newQuestion) {
+        if (!isConstant()) {
 
-            if (getMemory().answer(this, n)) {
+            if (newQuestion) {
+
+                if (getMemory().answer(this, n)) {
+
+                }
+
+                if (table.size() + 1 > getMemory().param.conceptQuestionsMax.get()) {
+                    Task removed = table.remove(0);    // FIFO
+                    getMemory().event.emit(Events.ConceptQuestionRemove.class, this, removed, n);
+                }
+
+                table.add(n);
+                getMemory().event.emit(Events.ConceptQuestionAdd.class, this, n);
 
             }
 
-            if (table.size() + 1 > getMemory().param.conceptQuestionsMax.get()) {
-                Task removed = table.remove(0);    // FIFO
-                getMemory().event.emit(Events.ConceptQuestionRemove.class, this, removed, n);
-            }
-
-            table.add(n);
-            getMemory().event.emit(Events.ConceptQuestionAdd.class, this, n);
-
+            onTableUpdated(n.getPunctuation(), presize);
         }
-
-        onTableUpdated(n.getPunctuation(), presize);
 
 
         if (ques.isQuest()) {
@@ -1212,6 +1219,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     @Override
     public boolean setConstant(boolean b) {
+        this.constant = b;
         return constant;
     }
 

@@ -47,7 +47,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
 
     private final NAR nar;
-    private final Map<Concept, ConceptPanel> concept = new FastMap().atomic();
+    private Map<Concept, ConceptPanel> concept = new FastMap().atomic();
     static float conceptGraphFPS = 4; //default update frames per second
 
     final Set<Concept> changed = new LinkedHashSet();
@@ -181,7 +181,8 @@ public class ConceptPanelBuilder extends NARReaction {
     public void off() {
         super.off();
         changed.clear();
-        concept.clear();
+        //concept.clear();
+        concept = new FastMap().atomic();
     }
 
     public ConceptPanel getPanel(Concept c) {
