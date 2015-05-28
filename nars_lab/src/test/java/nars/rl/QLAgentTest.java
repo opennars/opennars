@@ -6,9 +6,11 @@ import nars.Global;
 import nars.NAR;
 import nars.io.TextOutput;
 import nars.model.impl.Default;
+import nars.nal.concept.Concept;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -65,7 +67,9 @@ public class QLAgentTest {
 
             //a.getOperatorConcept().termLinks.printAll(System.out);
             //a.getActionConcept(0).termLinks.printAll(System.out);
-            a.getActionConcept(0).print(System.out);
+            Concept actionConcept = a.getActionConcept(0);
+            assertNotNull(actionConcept);
+            actionConcept.print(System.out);
 
             //check that the agent knows all the actions
             assertEquals(a.ql.cols.toString(), a.ql.cols.size(), env.numActions());
