@@ -7,7 +7,7 @@ nars_web/client/lib/jquery-ui/themes
 nars_web/client/lib/jquery/src
 
 lib/cache_dir
-lib/cachedir 
+lib/cachedir
 .jacocoverage
 jacoco**
 nbproject/yjp-build-impl.xml
