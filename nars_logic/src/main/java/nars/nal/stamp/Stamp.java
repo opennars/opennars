@@ -260,7 +260,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
     public boolean after(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;
-        return order(s.occurrenceTime, occurrenceTime, duration) == TemporalRules.ORDER_FORWARD;
+        return TemporalRules.after(s.occurrenceTime, occurrenceTime, duration);
     }
 
     public float getOriginality() {

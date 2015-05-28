@@ -663,9 +663,9 @@ public class TemporalRules {
 
     public static int order(final long timeDiff, final int durationCycles) {
         final int halfDuration = durationCycles / 2;
-        if (timeDiff > halfDuration) {
+        if (timeDiff >= halfDuration) {
             return ORDER_FORWARD;
-        } else if (timeDiff < -halfDuration) {
+        } else if (timeDiff <= -halfDuration) {
             return ORDER_BACKWARD;
         } else {
             return ORDER_CONCURRENT;
@@ -707,4 +707,9 @@ public class TemporalRules {
     }
 
 
+    public static boolean after(long a, long b, int duration) {
+        if (a == Stamp.ETERNAL || b == Stamp.ETERNAL)
+            return false;
+        return order(a, b, duration) == TemporalRules.ORDER_FORWARD;
+    }
 }

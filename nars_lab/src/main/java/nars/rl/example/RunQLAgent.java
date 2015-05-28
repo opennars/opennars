@@ -171,8 +171,8 @@ public class RunQLAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 2048;
-        int conceptsPerCycle = 100;
-        final int cyclesPerFrame = 5;
+        int conceptsPerCycle = 50;
+        final int cyclesPerFrame = 20;
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -249,16 +249,17 @@ public class RunQLAgent extends JPanel {
 
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
-        dd.duration.set(5 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.shortTermMemoryHistory.set(1);
+        //dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
+        dd.duration.set(5);
+        dd.shortTermMemoryHistory.set(2);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd,
-                new RawPerception("L", 0.8f),
+                new RawPerception("L", 0.5f)
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
-                new AEPerception("A", 0.6f, 16, 1).setLearningRate(0.05).setSigmoid(false)
+                //new AEPerception("A", 0.5f, 4, 1).setLearnigRate(0.05).setSigmoid(false)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {
@@ -272,7 +273,7 @@ public class RunQLAgent extends JPanel {
                 //new HaiSOMPerception("B", 2, 0.1f)
         );
 
-        a.agent.setQLFactor(0.5f, 0.5f);
+        a.agent.setQLFactor(0.5f, 0.25f);
 
         a.agent.ql.brain.setEpsilon(0.08);
 

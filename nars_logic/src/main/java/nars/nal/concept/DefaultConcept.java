@@ -15,16 +15,16 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
+import nars.op.mental.InternalExperience;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-import static com.google.common.collect.Iterators.concat;
-import static com.google.common.collect.Iterators.filter;
 import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.UtilityFunctions.or;
-import static nars.nal.nal1.LocalRules.revisible;
-import static nars.nal.nal1.LocalRules.revision;
-import static nars.nal.nal1.LocalRules.trySolution;
+import static nars.nal.nal1.LocalRules.*;
 import static nars.nal.nal7.TemporalRules.solutionQuality;
 
 
@@ -159,16 +159,24 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
     public boolean hasGoals() {
-        return !getGoals().isEmpty();
+        final List<Task> s = getGoals();
+        if (s == null) return false;
+        return !s.isEmpty();
     }
     public boolean hasBeliefs() {
-        return !getBeliefs().isEmpty();
+        final List<Task> s = getBeliefs();
+        if (s == null) return false;
+        return !s.isEmpty();
     }
     public boolean hasQuestions() {
-        return !getQuestions().isEmpty();
+        final List<Task> s = getQuestions();
+        if (s == null) return false;
+        return !s.isEmpty();
     }
     public boolean hasQuests() {
-        return !getQuests().isEmpty();
+        final List<Task> s = getQuests();
+        if (s == null) return false;
+        return !s.isEmpty();
     }
     public State getState() {
         return state;
@@ -446,12 +454,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processGoal(final DirectProcess nal, final Task task) {
+    public boolean processGoal(final DirectProcess nal, Task task) {
 
         if (hasGoals() && isConstant())
             return false;
 
-        final Sentence goal = task.sentence, oldGoal;
+        Sentence goal = task.sentence, oldGoal;
 
         oldGoal = getSentence(goal, getGoals()); // revise with the existing desire values
 
@@ -475,7 +483,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     }
                     */
 
-                    nal.setCurrentBelief(null);
+                    nal.setCurrentBelief(projectedGoal);
 
                     boolean revisionSucceeded = revision(goal, projectedGoal, false, nal);
                     if(revisionSucceeded) {
@@ -487,45 +495,74 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
         }
 
-
-        double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-        Sentence projectedGoal = task.sentence.projection(task.sentence.getOccurrenceTime(), getMemory().time());
-
-
-        Sentence sol = getSentence(goal, getBeliefs());
-        if (sol!=null) {
-            // check if the Goal is already satisfied
-
-            trySolution(sol, task, nal);
-            Sentence projectedBelief = sol.projection(sol.getOccurrenceTime(), getMemory().time());
-            AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
-        }
-
-        double Satisfaction=1.0-AntiSatisfaction;
-        Truth T = new DefaultTruth(projectedGoal.truth);
-        T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
-
-
         // still worth pursuing?
         if (!task.aboveThreshold()) {
             return false;
         }
 
+        final long now = memory.time();
+        final int dur = nal.memory.duration();
+        if(TemporalRules.after(task.sentence.getOccurrenceTime(), now, dur)) { //this task is not up to date we have to project it first
 
-        questionFromGoal(task, nal);
+            Sentence projectedGoal = task.sentence.projection(now, dur);
+            if(projectedGoal!=null) {
+                //nal.singlePremiseTask(projectedGoal, /*(Budget)*/task); //it has to be projected
+                goal = projectedGoal;
+                System.out.println("projected: " + goal + " <- " + task);
+                task = task.clone(goal);
 
-
-
-        if (!addToTable(task, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
-            //wasnt added to table
-            getMemory().removed(task, "Insufficient Rank"); //irrelevant
-            return false;
+            }
         }
 
-        //TODO
-        //InternalExperience.InternalExperienceFromTask(memory, task, false);
+        /*
+        //TODO move to its own method getSatisfaction(Sentence goal)
+        Sentence sol = getSentence(goal, getBeliefs());
+        if (sol!=null) {
+            // check if the Goal is already satisfied
 
-        getMemory().execute(this, task);
+            trySolution(sol, task, nal);
+            Sentence projectedBelief = sol.projection(sol.getOccurrenceTime(), now);
+            System.out.println("satisfied: " + projectedBelief + " <- " +sol);
+            //AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
+        }
+        */
+
+
+/*
+        double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+
+
+
+        double Satisfaction=1.0-AntiSatisfaction;
+
+
+        boolean fulfilled = AntiSatisfaction < Global.SATISFACTION_TRESHOLD;
+
+        if (fulfilled) {
+            //System.out.println(goal + " fulfilled");
+        }
+        else
+        */
+        /*if (task.aboveThreshold())*/ {
+
+            //questionFromGoal(task, nal);
+
+            //if(shortcut)
+                //howQuestionDecisionMakingAccel(task, nal);
+
+
+            if (!addToTable(task, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
+                //wasnt added to table
+                getMemory().removed(task, "Insufficient Rank"); //irrelevant
+                return false;
+            }
+
+            //TODO
+            //InternalExperience.InternalExperienceFromTask(memory, task, false);
+
+            getMemory().execute(this, task);
+        }
+
 
         return true;
     }

@@ -20,10 +20,12 @@
  */
 package nars.nal.nal5;
 
+import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
+import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
@@ -153,27 +155,63 @@ public final class SyllogisticRules {
             budget3 = BudgetFunctions.forward(truth3, nal);
         }
 
-        final NAL.StampBuilder stamp = nal.newStamp(sentence1, sentence2);
+        if (order != ORDER_INVALID) {
+            final NAL.StampBuilder stamp = nal.newStamp(sentence1, sentence2);
 
-        {
-            Statement s = Statement.make(taskContent, term1, term2, order);
-            if (s!=null)
-                nal.doublePremiseTask(s, truth1, budget1, stamp, false, false);
+            {
+                Statement s = Statement.make(taskContent, term1, term2, order);
+                if (s != null)
+                    nal.doublePremiseTask(s, truth1, budget1, stamp, false, false);
+            }
+
+            {
+                Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
+                if (s != null)
+                    nal.doublePremiseTask(s, truth2, budget2, stamp, false, false);
+            }
+
+            {
+                Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
+                if (s != null)
+                    nal.doublePremiseTask(s, truth3, budget3, stamp, false, false);
+            }
+
+
+            if(Global.BREAK_NAL_HOL_BOUNDARY && order1==order2 && isHigherOrderStatement(taskContent) && isHigherOrderStatement(sentence2.term)) { //
+                /* Bridge to higher order statements:
+                <a ==> c>.
+                <b ==> c>.
+                |-
+                <a <-> b>. %F_cmp%
+                <a --> b>. %F_abd%
+                <b --> a>. %F_abd%
+                */
+              /*  if(truth1!=null)
+                    truth1=truth1.clone();
+                if(truth2!=null)
+                    truth2=truth2.clone();*/
+                if(truth3!=null)
+                    truth3=new DefaultTruth(truth3);
+           /* nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term1, term2),
+                    truth1, budget1.clone(),false, false);
+            nal.doublePremiseTask(
+                Statement.make(NativeOperator.INHERITANCE, term2, term1),
+                    truth2, budget2.clone(),false, false);*/
+                Statement s = Similarity.make(term1, term2);
+                if (s!=null)
+                    nal.doublePremiseTask(s, truth3, budget3, stamp, false, false);
+            }
+
         }
 
-        {
-            Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
-            if (s!=null)
-                nal.doublePremiseTask(s, truth2, budget2, stamp, false, false);
-        }
 
-        {
-            Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
-            if (s!=null)
-                nal.doublePremiseTask(s, truth3, budget3, stamp, false, false);
-        }
-        
     }
+
+    public static boolean isHigherOrderStatement(Term t) { //==> <=>
+        return (t instanceof Equivalence) || (t instanceof Implication);
+    }
+
 
     /**
      * {<S ==> P>, <M <=> P>} |- <S ==> P>

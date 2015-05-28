@@ -246,6 +246,9 @@ public class Global {
     public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 4;
 
     public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1;
+
+    public static final boolean BREAK_NAL_HOL_BOUNDARY = true;
+
     public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
         return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts
     }
