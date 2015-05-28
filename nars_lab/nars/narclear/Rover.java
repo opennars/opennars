@@ -356,7 +356,7 @@ public class Rover extends PhysicsModel {
                 Rover.do_sth_importance+=decrease_of_importance_step; //increase
                 //System.out.println("choosing random "+String.valueOf(Math.random()));
                 ArrayList<String> candids=new ArrayList<>();
-                candids.add("(^motor,left)! :|:");
+             //   candids.add("(^motor,left)! :|:");
                 candids.add("(^motor,right)! :|:");
                // candids.add("(^motor,backward)! :|:");
                // candids.add("(^motor,backward). :|:");
@@ -610,7 +610,7 @@ public class Rover extends PhysicsModel {
  
                             if(true) { //allow_subcons
                                 ArrayList<String> candids=new ArrayList<>();
-                                candids.add("(^motor,left). :|:");
+                         //       candids.add("(^motor,left). :|:");
                                 candids.add("(^motor,right). :|:");
                            //     candids.add("(^motor,backward). :|:");
                                 candids.add("(^motor,forward). :|:");
@@ -628,7 +628,7 @@ public class Rover extends PhysicsModel {
                                     rover.rotate(rotationSpeed);
                             } else {
                                 ArrayList<String> candids=new ArrayList<>();
-                                candids.add("(^motor,left)! :|:");
+                          //      candids.add("(^motor,left)! :|:");
                                 candids.add("(^motor,right)! :|:");
                               //  candids.add("(^motor,backward)! :|:");
                                 candids.add("(^motor,forward)! :|:");
