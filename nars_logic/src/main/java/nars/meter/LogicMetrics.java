@@ -135,9 +135,17 @@ public class LogicMetrics extends NARReaction {
 
         @Override
         public void accept(Concept c) {
+            if (c == null) return;
+            if (!c.isActive()) return;
+
             double p = c.getPriority();
-            totalQuestions += c.getQuestions().size();
-            totalBeliefs += c.getBeliefs().size();
+
+            if (c.hasQuestions())
+                totalQuestions += c.getQuestions().size();
+
+            if (c.hasBeliefs())
+                totalBeliefs += c.getBeliefs().size();
+
             //TODO totalGoals...
             //TODO totalQuests...
 

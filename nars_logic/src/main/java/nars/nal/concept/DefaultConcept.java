@@ -1144,7 +1144,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
         super.delete();
 
         //dont delete the tasks themselves because they may be referenced from othe concepts.
-        questions = quests = goals = beliefs = null;
+        beliefs.clear();
+        goals.clear();
+        questions.clear();
+        quests.clear();
+
+
 
         if (getMeta() !=null) {
             getMeta().clear();

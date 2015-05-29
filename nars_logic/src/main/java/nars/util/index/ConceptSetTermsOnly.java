@@ -24,6 +24,7 @@ abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConcept
     }
 
     public boolean include(Concept c) {
+        values.add((T)c.getTerm());
         return true;
     }
     public boolean exclude(Concept c) {

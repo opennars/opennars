@@ -111,7 +111,7 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
     protected void off() {
         pendingDisplay = new FastSet().atomic();
-
+        conceptReaction.off();
         content.removeAllVertically();
         b.off();
     }
