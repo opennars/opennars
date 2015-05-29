@@ -171,6 +171,13 @@ public class RuntimeNARSettings implements Plugin {
         Parameters.QUESTION_GENERATION_ON_DECISION_MAKING=val;
     }
     
+    public boolean isCompoundOperations() {
+        return Parameters.QUESTION_GENERATION_ON_DECISION_MAKING;
+    }
+    public void setCompoundOperations(boolean val) {
+        Parameters.QUESTION_GENERATION_ON_DECISION_MAKING=val;
+    }
+    
     public boolean isHowQuestionGenerationOnDecisionMaking() {
         return Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING;
     }
