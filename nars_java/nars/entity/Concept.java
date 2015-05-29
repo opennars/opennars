@@ -350,8 +350,8 @@ public class Concept extends Item<Term> implements Termable {
     }
     
     protected void howQuestionDecisionMakingAccel(final Task T, NAL nal) {
-       // if(true)
-       //     return;
+        if(!Parameters.COMPOUND_OPERATIONS)
+            return;
         Term Subject = new Variable("?1"); //because its not normalized we have to use "?1" here
         Term how=Implication.make(Subject, T.sentence.term, TemporalRules.ORDER_FORWARD);
         if(how!=null) {
@@ -371,13 +371,13 @@ public class Concept extends Item<Term> implements Termable {
                         if(plan instanceof Conjunction && ((Conjunction)plan).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                             Conjunction Cplan=(Conjunction) plan;
                             int occurrenceOffset=0;
-                            //for(Term t : Cplan.term) {
-                                Term t=Cplan; //we directly deduct the entire (&/ statement like it should be
-                                /*if(t instanceof Interval) {
+                            for(Term t : Cplan.term) {
+                                //test: Term t=Cplan; //we directly deduct the entire (&/ statement
+                                if(t instanceof Interval) {
                                     Interval I=(Interval)t;
                                     occurrenceOffset += I.getTime(nal.memory.param.duration);
                                     continue;
-                                }*/
+                                }
                                 //Concept Ct = nal.memory.concept(t);
                                 /*if(Ct != null && Ct.desires!=null && Ct.desires.size()>0) {
                                     Task toProcess=Ct.desires.get(0);
@@ -405,7 +405,7 @@ public class Concept extends Item<Term> implements Termable {
                                 //END
 
                                 occurrenceOffset+=nal.memory.param.duration.get();
-                            //}
+                            }
                         }
                     }
                 }

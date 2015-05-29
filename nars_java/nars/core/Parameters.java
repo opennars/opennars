@@ -225,5 +225,7 @@ public class Parameters {
     
     public static float COMPLEXITY_UNIT=1.0f; //1.0 - oo
     
+    public static boolean COMPOUND_OPERATIONS=true;
+    
 }
 
