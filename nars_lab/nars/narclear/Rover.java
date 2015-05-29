@@ -288,7 +288,7 @@ public class Rover extends PhysicsModel {
                         }*/
                        
                     }
-                    if(di <= 0.2f) { // && forward
+                    if(di <= 0.2f && forward) { //
                        
                         float x = (float) Math.random() * sz - sz / 2f;
                         float y = (float) Math.random() * sz - sz / 2f;
