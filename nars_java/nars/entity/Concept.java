@@ -515,10 +515,12 @@ public class Concept extends Item<Term> implements Termable {
             if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
                 if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
                     Variable how=new Variable("?how");
-                    Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    //Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
                     Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                    qu.add(imp);
-                    qu.add(imp2);
+                    //qu.add(imp);
+                    if(!(task.sentence.term instanceof Operation)) {
+                        qu.add(imp2);
+                    }
                 }
             }
             if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
