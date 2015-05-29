@@ -117,7 +117,8 @@ public class NAR extends Container implements Runnable {
         return input(new FileInput(textPerception, input));
     }
 
-    public TaskSource input(final InputStream input) {
+    /** this needs tested to see if it still works, an asynchronous input interface is probably better */
+    @Deprecated public TaskSource input(final InputStream input) {
         return input(new ReaderInput(textPerception, input));
     }
 

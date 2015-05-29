@@ -54,7 +54,7 @@ public class ConceptMenu extends JPopupMenu {
                         new JGraphXGraphPanel(
                                 new TermLinkGraph().add(c, true)
                         )).show(500, 400);*/
-                new NWindow(c.toString() + " Derivations",
+                new NWindow(c.toString() + " TermLinks (1st Level, Outgoing)",
                         new GraphPanelNengo(
                                 new TermLinkGraph().add(c, true)
                         )).show(500, 400);

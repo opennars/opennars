@@ -19,14 +19,14 @@
 package nars.main;
 
 import nars.NAR;
-import nars.model.impl.Default.CommandLineNARBuilder;
 import nars.io.TextOutput;
+import nars.model.impl.Default.CommandLineNARBuilder;
+import sun.misc.IOUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-
+import java.util.Scanner;
 
 
 /**
@@ -84,8 +84,16 @@ public class NARRun {
                 System.err.println("NARRun.init: " + ex);
             }
         }
-        else {            
-            nar.input(System.in);
+        else {
+            Scanner sc = new Scanner(System.in);
+
+            String entire  = "";
+            while(sc.hasNext()) {
+                String l = sc.next();
+                entire += l;
+            }
+
+            nar.input(entire);
         }
         
         while (true) {
