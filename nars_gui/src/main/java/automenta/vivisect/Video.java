@@ -5,19 +5,24 @@
  */
 package automenta.vivisect;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Utility class for video components
  */
 public class Video {
-    public static Font FontAwesome;
     public static Font monofont;
     public static final Color transparent = new Color(0,0,0,10);
+    public static Font FontAwesome;
 
     //System.out.println(Files.list(Paths.get(getClass().getResource("/").toURI())).collect(Collectors.toList()) );
+
 
     static {
         Object e = System.getProperty("sun.java2d.opengl");
@@ -96,8 +101,6 @@ public class Video {
         /*
         try {
             //monofont = Font.createFont(Font.TRUETYPE_FONT, NARSwing.class.getResourceAsStream("Inconsolata-Regular.ttf"));
-            
-            
         } catch (FontFormatException ex) {
             Logger.getLogger(NARSwing.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -105,17 +108,16 @@ public class Video {
         }
         */
     }
-        
-    
-    static {        
-        try {
-            Video.FontAwesome = Font.createFont(Font.TRUETYPE_FONT, Video.class.getResourceAsStream("FontAwesome.ttf")).deriveFont(Font.PLAIN, 14);
-        } catch (Exception ex) {    
-            System.err.println("FontAwesome.ttf not found");
-            Video.FontAwesome = monofont; //Font.decode(Font.MONOSPACED).deriveFont(Font.PLAIN, 14);
-            //ex.printStackTrace();
-        }
 
+
+    static {
+        InputStream is = FontAwesomeIconView.class.getResourceAsStream("/de/jensd/fx/glyphs/fontawesome/fontawesome-webfont.ttf");
+        try {
+            FontAwesome = Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(18f);
+        } catch (Exception e) {
+            e.printStackTrace();
+            FontAwesome = monofont;
+        }
     }
 
     
