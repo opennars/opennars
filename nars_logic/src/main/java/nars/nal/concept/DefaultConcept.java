@@ -500,6 +500,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             return false;
         }
 
+        //EXPERIMENTAL adapted from 1.6.4 stuff
         final long now = memory.time();
         final int dur = nal.memory.duration();
         if(TemporalRules.after(task.sentence.getOccurrenceTime(), now, dur)) { //this task is not up to date we have to project it first
@@ -508,9 +509,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             if(projectedGoal!=null) {
                 //nal.singlePremiseTask(projectedGoal, /*(Budget)*/task); //it has to be projected
                 goal = projectedGoal;
-                System.out.println("projected: " + goal + " <- " + task);
                 task = task.clone(goal);
-
             }
         }
 

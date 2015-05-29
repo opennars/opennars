@@ -4,39 +4,38 @@ import nars.NAR;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.Set;
 
-/** uses a predefined set of terms that will be mapped */
-abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
+/** similar to ConceptSet except Concepts are not stored, useful as a pass-through */
+abstract public class ConceptSetTermsOnly<T extends Term> extends MutableConceptMap<T> implements Iterable<T> {
 
-    public final Map<T,Concept> values = new LinkedHashMap();
+    public final Set<T> values = new HashSet();
 
 
-    public ConceptSet(NAR nar) {
+    public ConceptSetTermsOnly(NAR nar) {
         super(nar);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return values.keySet().iterator();
+        return values.iterator();
     }
 
     public boolean include(Concept c) {
-        Concept removed = values.put((T) c.getTerm(), c);
-        return removed!=c; //different instance
+        return true;
     }
     public boolean exclude(Concept c) {
-        return values.remove(c.getTerm())!=null;
+        return values.remove(c.getTerm());
     }
     public boolean exclude(Term t) {
-        return values.remove(t)!=null;
+        return true;
     }
 
 
     public boolean contains(final T t) {
-        if (!values.containsKey(t)) {
+        if (!values.contains(t)) {
             return super.contains(t);
         }
         return true;
@@ -46,7 +45,7 @@ abstract public class ConceptSet<T extends Term> extends MutableConceptMap<T> im
     /** set a term to be present always in this map, even if the conept disappears */
     public void include(T a) {
         super.include(a);
-        values.put(a, null);
+        values.add(a);
     }
 
     /** remove an inclusion, and/or add an exclusion */

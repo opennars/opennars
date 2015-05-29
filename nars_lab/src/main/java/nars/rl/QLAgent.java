@@ -180,7 +180,7 @@ public class QLAgent<S extends Term> extends NARAgent {
     }
 
     public Concept getActionConcept(int i) {
-        return ql.cols.values.get( getAction(i) );
+        return nar.concept( getAction(i) );
     }
 
     //v = new ConceptMatrixEntry<>(c, this);
@@ -555,7 +555,7 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         @Override
         public boolean isCol(Term a) {
-            if (a.getComplexity() == 5) //"act(X)"
+            if ((a.getComplexity() == 5) && (!a.hasVar())) //"act(X)"
                 if (a instanceof Operation)
                     return cols.contains((Operation)a);
             return false;

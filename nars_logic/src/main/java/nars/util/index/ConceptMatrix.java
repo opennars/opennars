@@ -25,8 +25,8 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
      */
     //public final HashBasedTable<R,C, V> table = HashBasedTable.create();
 
-    public final ConceptSet<C> cols;
-    public final ConceptSet<R> rows;
+    public final ConceptSetTermsOnly<C> cols;
+    public final ConceptSetTermsOnly<R> rows;
 
 
     boolean uninitialized = true;
@@ -38,7 +38,7 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
         this.nar = nar;
 
-        cols = new ConceptSet(nar) {
+        cols = new ConceptSetTermsOnly(nar) {
 
             @Override
             protected void onFrame() {
@@ -52,17 +52,17 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
 
             @Override
             public boolean contains(Concept c) {
-                return isCol(c.getTerm());
+                return isCol(c);
             }
 
 
         };
 
-        rows = new ConceptSet(nar) {
+        rows = new ConceptSetTermsOnly(nar) {
 
             @Override
             public boolean contains(Concept c) {
-                return isRow(c.getTerm());
+                return isRow(c);
             }
 
         };
@@ -168,6 +168,19 @@ abstract public class ConceptMatrix<R extends Term, C extends Term, E extends Te
     abstract public boolean isRow(Term s);
 
     abstract public boolean isCol(Term a);
+
+    public boolean isCol(Concept a) {
+        if (isCol(a.getTerm())) {
+            return cols.include(a);
+        }
+        return false;
+    }
+    public boolean isRow(Concept a) {
+        if (isRow(a.getTerm())) {
+            return rows.include(a);
+        }
+        return false;
+    }
 
     abstract public boolean isEntry(Term c);
 
