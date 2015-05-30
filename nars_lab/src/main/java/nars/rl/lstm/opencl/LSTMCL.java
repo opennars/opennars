@@ -4,14 +4,15 @@ import com.jogamp.opencl.*;
 import nars.rl.lstm.IAgentSupervised;
 import nars.rl.lstm.Neuron;
 import nars.rl.lstm.NeuronType;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.DoubleBuffer;
 import java.util.Arrays;
 import java.util.Random;
 
-import static com.jogamp.opencl.CLMemory.Mem.READ_ONLY;
-import static com.jogamp.opencl.CLMemory.Mem.READ_WRITE;
-import static com.jogamp.opencl.CLMemory.Mem.WRITE_ONLY;
+import static com.jogamp.opencl.CLMemory.Mem.*;
 import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 
@@ -93,32 +94,19 @@ public class LSTMCL implements IAgentSupervised
 //            //final double actfj = actF[j] = F.Activate(sumFF[j]);
 //            //final double actgj = actG[j] = G.Activate(sumGG[j]);
 //            actH[j] = actfj * context[j] + (1 - actfj) * actgj;
-        program = cl.createProgram(
-                "#pragma OPENCL EXTENSION cl_khr_fp64: enable\n"+
 
-                        "#define ARRAY2d(array, x , y) array[x*width + y]\n"+
+        String[] sources = new String[3];
 
-                "float expActivate(const float x) {\n" +
-                "    return 1.0f / (1.0f + exp(-x));\n" +
-                "}" +
-
-                "    kernel void Activate(global const double* context, global const double* sumF, global const double* sumG, global double* actF, global double* actG, global double* actH, int cell_blocks) {\n" +
-                "        // get index into global data array\n" +
-                "        int i = get_global_id(0);\n" +
-                "        // bound check (equivalent to the limit on a 'for' loop for standard/serial C code\n" +
-                "        if (i >= cell_blocks)  {\n" +
-                "            return;\n" +
-                "        }\n" +
-                "        // add the vector elements\n" +
-                "        double actfj = actF[i] = expActivate(sumF[i]);\n" +
-                "        double actgj = actG[i] = expActivate(sumG[i]);\n" +
-                "        actH[i] = actfj * context[i] + (1 - actfj) * actgj;\n" +
-                "    }"
+        sources[0] = readStringFromInputStream(LSTMCL.class.getResourceAsStream("PragmaDefinitions.cl"));
+        sources[1] = readStringFromInputStream(LSTMCL.class.getResourceAsStream("SigmoidNeuron.cl"));
+        sources[2] = readStringFromInputStream(LSTMCL.class.getResourceAsStream("KernelActivate.cl"));
 
 
-        ).build();
+        String concatenedSource = concatenateStringsWithNewLine(sources);
 
-        activateKernel = program.createCLKernel("Activate");
+        program = cl.createProgram(concatenedSource).build();
+
+        activateKernel = program.createCLKernel("activateKernel");
 
         this.learningRate = initLearningRate;
         this.output_dimension = output_dimension;
@@ -426,5 +414,22 @@ public class LSTMCL implements IAgentSupervised
             return globalSize + groupSize - r;
         }
     }
-}
 
+    private static String readStringFromInputStream(InputStream inputStream) {
+        try {
+            return IOUtils.toString(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Can't read stream");
+        }
+    }
+
+    private static String concatenateStringsWithNewLine(String[] sources) {
+        String result = "";
+
+        for( String iterationSource : sources ) {
+            result += iterationSource + "\n";
+        }
+
+        return result;
+    }
+}
