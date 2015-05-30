@@ -440,7 +440,7 @@ public class LSTMCL implements IAgentSupervised
     }
 
     public void setLearningRate(double learningRate) {
-        learningRate = learningRate;
+        this.learningRate = learningRate;
     }
 
     private static void zero(DoubleBuffer buffer) {

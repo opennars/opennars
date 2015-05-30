@@ -265,7 +265,7 @@ public class SimpleLSTM implements IAgentSupervised
 	}
 
 	public void setLearningRate(double learningRate) {
-		learningRate = learningRate;
+		this.learningRate = learningRate;
 	}
 }
 
