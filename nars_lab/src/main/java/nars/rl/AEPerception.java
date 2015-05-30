@@ -24,6 +24,7 @@ public class AEPerception extends RawPerception {
     private double[] ii;
     private int frameDimension;
     boolean sigmoid = true;
+    private RLEnvironment env;
 
     /**
      * present and history input buffer
@@ -58,13 +59,19 @@ public class AEPerception extends RawPerception {
 
     }
 
+    public int numStates() {
+        return env.numStates();
+    }
+
+
     @Override
     public void init(RLEnvironment env, QLAgent agent) {
-        frameDimension = env.numStates();
+        this.env = env;
+        frameDimension = numStates();
         if (history > 1)
             ii = new double[frameDimension * history];
         else
-            ii = env.observe();
+            ii = new double[frameDimension * 1]; //env.observe();
 
         this.agent = agent;
 

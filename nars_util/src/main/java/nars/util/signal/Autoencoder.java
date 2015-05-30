@@ -188,11 +188,12 @@ public class Autoencoder {
     public double train(double[] x, double learningRate, double noiseLevel, double corruptionRate, boolean sigmoid) {
         if ((tilde_x == null) || (tilde_x.length!=n_visible)) {
             tilde_x = new double[n_visible];
-            y = new double[n_hidden];
             z = new double[n_visible];
-
             L_vbias = new double[n_visible];
-            L_hbias = new double[n_hidden];            
+        }
+        if (y == null || y.length != n_hidden) {
+            y = new double[n_hidden];
+            L_hbias = new double[n_hidden];
         }
 
         final double[][] W = this.W;

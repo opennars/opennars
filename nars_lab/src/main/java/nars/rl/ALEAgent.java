@@ -9,6 +9,7 @@ import jurls.reinforcementlearning.domains.arcade.io.RLData;
 import jurls.reinforcementlearning.domains.arcade.rl.FeatureMap;
 import jurls.reinforcementlearning.domains.arcade.rl.FrameHistory;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
+import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
@@ -53,9 +54,9 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
                 //"alien"
                 //"atlantis"
                 //"battle_zone"
-                //"kung_fu_master"
+                "kung_fu_master"
                 //"montezuma_revenge"
-                "pitfall"
+                //"pitfall"
         );
     }
 
@@ -81,9 +82,9 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
     }
 
     protected void initNARS() {
-        this.nar = new NAR(new Default(2000, 20, 4).setInternalExperience(null) );
-
-        int memoryCyclesPerFrame = 4;
+        Global.TRUTH_EPSILON = 0.02f;
+        this.nar = new NAR(new Default(3000, 10, 3).setInternalExperience(null) );
+        int memoryCyclesPerFrame = 2;
 
         nar.param.duration.set(memoryCyclesPerFrame * 3);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
@@ -92,11 +93,12 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
         nar.param.decisionThreshold.set(0.65);
         nar.param.shortTermMemoryHistory.set(3);
 
+        nar.input("schizo(I)!");
 
-        QLAgent agent = new QLAgent(nar, "act", "<nario --> good>", this);
+
+        QLAgent agent = new QLAgent(nar, "a", "<be --> good>", this);
 
         agent.ql.brain.setEpsilon(0.1);
-        agent.ql.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
 
@@ -107,7 +109,8 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
             }
         }));*/
         //agent.add(new AEPerception("AE", 0.25f, 64).setLearningRate(0.1));
-        agent.add(new ALEFeaturePerception(0.25f));
+        //agent.add(new ALEFeaturePerception(0.75f));
+        agent.add(new AEALEFeaturePerception(0.75f));
 
         Video.themeInvert();
         //NARSwing s = new NARSwing(nar);
@@ -203,7 +206,8 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
 
     @Override
     public void frame() {
-        mi.frame();
+        if (mi!=null)
+            mi.frame();
     }
 
     @Override
@@ -219,7 +223,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
     private class ALEFeaturePerception extends RawPerception implements Perception {
 
         final FrameHistory h = new FrameHistory(1);
-        final FeatureMap m = new FeatureMap(9, 16, 8);
+        final FeatureMap m = new FeatureMap(9, 8, 8);
 
         public ALEFeaturePerception(float conf) {
             super("ALE", conf);
@@ -232,6 +236,30 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
             return super.perceive(nar, m.getFeatures(h), t);
         }
 
+    }
+
+    private class AEALEFeaturePerception extends AEPerception implements Perception {
+
+        final FrameHistory h = new FrameHistory(1);
+        final FeatureMap m = new FeatureMap(9, 8, 8);
+
+        public AEALEFeaturePerception(float conf) {
+            super("ALE", conf, 128, 1);
+            setLearningRate(0.01f);
+        }
+
+        @Override
+        public int numStates() {
+            return 576;
+        }
+
+        @Override
+        public Iterable<Task> perceive(NAR nar, double[] input, double t) {
+            h.addFrame(currentFrame);
+            double[] vvf = m.getFeatures(h);
+            //System.out.println(vvf.length);
+            return super.perceive(nar, vvf, t);
+        }
 
     }
 }

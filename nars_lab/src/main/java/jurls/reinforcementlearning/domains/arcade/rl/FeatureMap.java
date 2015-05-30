@@ -35,6 +35,7 @@ public class FeatureMap {
     /** The number of rows (x bins) in the quantization */
     protected final int numRows;
     private final double[] features;
+    private final boolean[] hasColor;
 
     /** Create a new FeatureMap with fixed parameter settings: 16 columns,
      *   21 rows and 8 colors (SECAM).
@@ -44,6 +45,7 @@ public class FeatureMap {
         numColumns = columns;
         numRows = rows;
         numColors = colors;
+        hasColor = new boolean[numColors];
         this.features = new double[numFeatures()];
         System.out.println(this +  " " + numFeatures());
 
@@ -51,7 +53,9 @@ public class FeatureMap {
     public FeatureMap() {
         this(18, 21, 8);
     }
-    
+
+
+
     /** Returns a quantized version of the last screen.
      * 
      * @param history
@@ -77,12 +81,16 @@ public class FeatureMap {
         int cc = numColumns;
 
         // For each pixel block
-        boolean[] hasColor = new boolean[numColors];
+        final boolean[] hasColor = this.hasColor;
+
         for (int by = 0; by < rr; by++) {
+
+            final int yo = by * blockHeight;
+
             for (int bx = 0; bx < cc; bx++) {
                 Arrays.fill(hasColor, false);
                 int xo = bx * blockWidth;
-                int yo = by * blockHeight;
+
 
                 // Determine which colors are present
                 for (int x = xo; x < xo + blockWidth; x++) {
