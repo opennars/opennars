@@ -95,6 +95,10 @@
             <artifactId>core</artifactId>
         </dependency>
     </dependencies>
+
+
+
+
     <repositories>
         <repository>
             <id>snapshots-repo</id>
@@ -108,6 +112,18 @@
         </repository>
     </repositories>
   
-  
+
+    <build>
+        <resources>
+
+            <resource>
+                <directory>${basedir}/src/main/java/</directory>
+                <includes>
+                    <include>**/*.cl</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
 

@@ -38,8 +38,8 @@ public class TestOpenCL {
         int globalWorkSize = roundUp(localWorkSize, elementCount);   // rounded up to the nearest multiple of the localWorkSize
 
         // load sources, create and build program
-        //CLProgram program = context.createProgram(TestOpenCL.class.getResourceAsStream("VectorAdd.cl")).build();
-        CLProgram program = context.createProgram(
+        CLProgram program = context.createProgram(TestOpenCL.class.getResourceAsStream("VectorAdd.cl")).build();
+        /*CLProgram program = context.createProgram(
                 //"    // OpenCL Kernel Function for element by element vector addition\n" +
             "    kernel void VectorAdd(global const float* a, global const float* b, global float* c, int numElements) {\n" +
             "        // get index into global data array\n" +
@@ -51,7 +51,7 @@ public class TestOpenCL {
             "        // add the vector elements\n" +
             "        c[iGID] = a[iGID] + b[iGID];\n" +
             "    }\n"
-        ).build();
+        ).build();*/
 
         // A, B are input buffers, C is for the result
         CLBuffer<FloatBuffer> clBufferA = context.createFloatBuffer(globalWorkSize, READ_ONLY);
