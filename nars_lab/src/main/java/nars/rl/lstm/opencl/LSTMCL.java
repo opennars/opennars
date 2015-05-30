@@ -6,11 +6,11 @@ import nars.rl.lstm.Neuron;
 import nars.rl.lstm.NeuronType;
 
 import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
 import java.util.Arrays;
 import java.util.Random;
 
-import static com.jogamp.opencl.CLMemory.Mem.*;
+import static com.jogamp.opencl.CLMemory.Mem.READ_ONLY;
+import static com.jogamp.opencl.CLMemory.Mem.WRITE_ONLY;
 import static java.lang.Math.min;
 import static java.lang.System.nanoTime;
 
@@ -60,6 +60,8 @@ public class LSTMCL implements IAgentSupervised
     private double[] full_input;
     private int maxWorkGroupSize;
 
+    CLKernel activateKernel;
+
 
     public LSTMCL(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate)
     {
@@ -105,6 +107,8 @@ public class LSTMCL implements IAgentSupervised
 
 
         ).build();
+
+        activateKernel = program.createCLKernel("Activate");
 
         this.learningRate = initLearningRate;
         this.output_dimension = output_dimension;
@@ -254,8 +258,8 @@ public class LSTMCL implements IAgentSupervised
 //        }
 
         // and map the buffers to its input parameters.
-        CLKernel activate = program.createCLKernel("Activate");
-        activate.putArgs(context, sumF, sumG, actF, actG, actH).putArg(cell_blocks);
+        activateKernel.rewind();
+        activateKernel.putArgs(context, sumF, sumG, actF, actG, actH).putArg(cell_blocks);
 
         int localWorkSize = min(maxWorkGroupSize, 256);  // Local work size dimensions
         int globalWorkSize = roundUp(localWorkSize, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
@@ -267,11 +271,13 @@ public class LSTMCL implements IAgentSupervised
                 .putWriteBuffer(context, false)
                 .putWriteBuffer(sumF, false)
                 .putWriteBuffer(sumG, false)
-                .put1DRangeKernel(activate, 0, globalWorkSize, localWorkSize)
+                .put1DRangeKernel(activateKernel, 0, globalWorkSize, localWorkSize)
                 .putReadBuffer(actF, true)
                 .putReadBuffer(actG, true)
                 .putReadBuffer(actH, true);
         time = nanoTime() - time;
+
+        //System.out.println(time);
 
         //prepare hidden layer plus bias
         Arrays.fill(full_hidden, 0);
