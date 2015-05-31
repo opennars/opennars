@@ -11,12 +11,9 @@ import jurls.reinforcementlearning.domains.arcade.rl.FrameHistory;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
 import nars.Global;
 import nars.NAR;
-import nars.gui.NARSwing;
 import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.term.Term;
 import nars.rl.example.QVis;
-import sun.misc.IOUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -64,7 +61,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
                 //"wizard_of_wor"
                 //"air_raid"
                 //"star_gunner"
-                "river_raid"
+                //"river_raid"
 
 
         );
