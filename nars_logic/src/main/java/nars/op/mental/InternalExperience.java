@@ -76,7 +76,7 @@ public class InternalExperience extends NARReaction {
         this.memory = n.memory;
     }
     public InternalExperience(NAR n) {
-        this(n, DirectProcess.class);
+        this(n, TaskProcess.class);
     }
 
 
@@ -123,7 +123,7 @@ public class InternalExperience extends NARReaction {
     public void event(Class event, Object[] a) {
 
 
-        if (event==DirectProcess.class) {
+        if (event==TaskProcess.class) {
 
             Task task = (Task)a[0];
             NAL nal = (NAL)a[1];

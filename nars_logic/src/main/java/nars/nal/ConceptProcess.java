@@ -17,7 +17,7 @@ import nars.nal.tlink.TermLink;
  *     TermLinks
  *
  * */
-public class ConceptProcess extends NAL {
+public class ConceptProcess extends NAL implements Premise {
 
     protected final TaskLink currentTaskLink;
     protected final Concept currentConcept;
@@ -53,6 +53,7 @@ public class ConceptProcess extends NAL {
     /**
      * @return the currentConcept
      */
+    @Override
     public Concept getCurrentConcept() {
         return currentConcept;
     }
@@ -197,6 +198,7 @@ public class ConceptProcess extends NAL {
     /**
      * @return the currentBeliefLink
      */
+    @Override
     public TermLink getCurrentTermLink() {
         return currentTermLink;
     }
@@ -222,6 +224,7 @@ public class ConceptProcess extends NAL {
     /**
      * @return the currentTaskLink
      */
+    @Override
     public TaskLink getCurrentTaskLink() {
         return currentTaskLink;
     }

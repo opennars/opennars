@@ -279,7 +279,7 @@ public class Idea implements Iterable<Concept> {
             else if (event == ConceptForget.class) {
                 remove((Concept) args[0]);
             }
-            else if (event == DirectProcess.class) {
+            else if (event == TaskProcess.class) {
                 update((Concept) args[2]);
             }
         }
@@ -290,7 +290,7 @@ public class Idea implements Iterable<Concept> {
             if (enabled) {
                 clear();
 
-                reg = nar.memory.event.on(this, ConceptForget.class, Events.ConceptActive.class, DirectProcess.class);
+                reg = nar.memory.event.on(this, ConceptForget.class, Events.ConceptActive.class, TaskProcess.class);
 
                 //add existing
                 for (Concept c : nar.memory.concepts)

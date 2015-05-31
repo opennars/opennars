@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.DefaultTruth;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal1.Inheritance;
@@ -16,7 +16,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -203,7 +202,7 @@ public abstract class TermFunction<O> extends SynchOperator {
                             inputTerm
                     ).judgment().eternal().truth((Truth) y).get();
 
-            DirectProcess.run(nar, b);
+            TaskProcess.run(nar, b);
 
             return null;
         }

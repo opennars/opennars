@@ -145,7 +145,7 @@ public class DefaultCycle extends SequentialCycle {
                 ) {
 
             //it is a question/quest or a judgment for a concept which exists:
-            return DirectProcess.run(memory, task)!=null;
+            return TaskProcess.run(memory, task)!=null;
 
         } else {
             //it is a judgment or goal which would create a new concept:
@@ -204,7 +204,7 @@ public class DefaultCycle extends SequentialCycle {
 
         final Task task = novelTasks.pop();
 
-        return DirectProcess.run(memory, task);
+        return TaskProcess.run(memory, task);
     }
 
 

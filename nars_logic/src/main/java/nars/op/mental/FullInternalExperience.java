@@ -2,7 +2,7 @@ package nars.op.mental;
 
 import nars.Events;
 import nars.NAR;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 
 /**
  * To rememberAction an internal action as an operation
@@ -13,7 +13,7 @@ import nars.nal.DirectProcess;
 public class FullInternalExperience extends InternalExperience {
 
     public FullInternalExperience(NAR n) {
-        super(n, DirectProcess.class, Events.BeliefReason.class);
+        super(n, TaskProcess.class, Events.BeliefReason.class);
     }
 
 

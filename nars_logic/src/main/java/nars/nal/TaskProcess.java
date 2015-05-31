@@ -12,15 +12,14 @@ import nars.nal.concept.Concept;
  * "Direct" processing of a new task, in constant time Local processing,
  * involving one concept only
  */
-public class DirectProcess extends NAL {
+public class TaskProcess extends NAL {
 
-
-    public DirectProcess(Memory mem, Task task) {
+    public TaskProcess(Memory mem, Task task) {
         super(mem, task);
     }
 
     /** runs the entire process in a constructor, for when a Concept is provided */
-    public DirectProcess(Concept c, Task task) {
+    public TaskProcess(Concept c, Task task) {
         this(c.getMemory(), task);
 
         onStart();
@@ -65,22 +64,22 @@ public class DirectProcess extends NAL {
 
             c.link(currentTask);
 
-            emit(DirectProcess.class, getCurrentTask(), this, c);
+            emit(TaskProcess.class, getCurrentTask(), this, c);
             memory.logic.TASK_IMMEDIATE_PROCESS.hit();
         }
     }
 
-    public static DirectProcess run(NAR nar, String task) {
+    public static TaskProcess run(NAR nar, String task) {
         return run(nar.memory, nar.task(task));
     }
 
     /** create and execute a direct process immediately */
-    public static DirectProcess run(NAR nar, Task task) {
+    public static TaskProcess run(NAR nar, Task task) {
         return run(nar.memory, task);
     }
 
     /** create and execute a direct process immediately */
-    public static DirectProcess run(Memory m, Task task) {
+    public static TaskProcess run(Memory m, Task task) {
 
 
         if (!task.aboveThreshold())
@@ -89,7 +88,7 @@ public class DirectProcess extends NAL {
 
 
         //System.err.println("direct: " + task);
-        DirectProcess d = new DirectProcess(m, task);
+        TaskProcess d = new TaskProcess(m, task);
 
 //        if (task.isInput())
 //            m.emit(Events.IN.class, task); //TODO use a different event than IN

@@ -6,8 +6,7 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
-import nars.budget.Budget;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
@@ -414,7 +413,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     protected void input(Task t) {
         //System.out.println("ql: " + t);
-        DirectProcess.run(nar, t);
+        TaskProcess.run(nar, t);
         //nar.input(t);
     }
 

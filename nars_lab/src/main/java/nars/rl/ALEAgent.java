@@ -64,7 +64,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
                 //"wizard_of_wor"
                 //"air_raid"
                 //"star_gunner"
-                "river_raid"
+                //"river_raid"
 
 
         );

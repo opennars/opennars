@@ -293,7 +293,7 @@ public class ClassicalConditioningHelper extends AbstractReaction {
 
     @Override
     public Class[] getEvents() {
-        return new Class[] { DirectProcess.class };
+        return new Class[] { TaskProcess.class };
     }
 
 
@@ -327,7 +327,7 @@ public class ClassicalConditioningHelper extends AbstractReaction {
     @Override
     public void event(Class event, Object[] a) {
         //is not working, keep for later:
-        if (event!=DirectProcess.class)
+        if (event!=TaskProcess.class)
             return;
         Task task = (Task)a[0];
         HandleInput(task);

@@ -144,7 +144,7 @@ public class Solid extends Default implements ControlCycle {
                 if (currentQuality < minQuality) minQuality = currentQuality;
                 else if (currentQuality > maxQuality) maxQuality = currentQuality;
 
-                if (DirectProcess.run(getMemory(), task)!=null) {
+                if (TaskProcess.run(getMemory(), task)!=null) {
                     t++;
                     if (mt!=-1 && t >= mt) break;
                 }

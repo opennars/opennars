@@ -79,7 +79,7 @@ public class AntCore extends ConceptWaveCore {
                 Task t = tasks.removeFirst();
                 if (t == null) break;
                 if (t.aboveThreshold()) {
-                    run.add(new DirectProcess(memory, t));
+                    run.add(new TaskProcess(memory, t));
                     i++;
                 }
             }

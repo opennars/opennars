@@ -8,7 +8,7 @@ package nars.prolog;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.event.NARReaction;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 
@@ -56,7 +56,7 @@ abstract public class AbstractMirror extends NARReaction {
             if (mode == InputMode.InputTask)
                 nar.memory.input(t);
             else if (mode == InputMode.ImmediateProcess)
-                DirectProcess.run(nar.memory, t);
+                TaskProcess.run(nar.memory, t);
 
             return true;
 
