@@ -1,7 +1,6 @@
 package nars.rl.lstm.opencl;
 
 import nars.rl.lstm.DistractedSequenceRecall;
-import nars.rl.lstm.SimpleLSTM;
 import objenome.util.random.XORShiftRandom;
 
 import java.util.Random;
@@ -23,9 +22,14 @@ public class TestCL {
 				learningRate);
 		
 		for (int epoch = 0; epoch < 5000; epoch++) {
-			double fit = task.EvaluateFitnessSupervised(slstm);
-			if (epoch % 10 == 0)
+			if (epoch % 50 == 0) {
+				double fit = task.EvaluateFitnessSupervised(slstm);
+
 				System.out.println("["+epoch+"] error = " + (1 - fit));
+			}
+			else {
+				task.supervised(slstm);
+			}
 		}
 		System.out.println("done.");
 	}

@@ -90,9 +90,9 @@ public class SimpleLSTM implements IAgentSupervised
 
 	}
 	
-	public double[] predict(double[] input)
+	public double[] predict(double[] input, final boolean requireOutput)
 	{
-		return learn(input, null);
+		return learn(input, null, requireOutput);
 	}
 	
 	public static void Display()
@@ -101,8 +101,9 @@ public class SimpleLSTM implements IAgentSupervised
 		System.out.println("DAGate: todo...");
 		System.out.println("\n==============================");
 	}
-	
-	public double[] learn(double[] input, double[] target_output) {
+
+	// requireOutput is unused
+	public double[] learn(double[] input, double[] target_output, final boolean requireOutput) {
 
 		final double learningRate = this.learningRate;
 		final int cell_blocks = this.cell_blocks;

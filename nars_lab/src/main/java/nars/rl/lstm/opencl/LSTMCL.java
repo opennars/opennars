@@ -34,7 +34,7 @@ public class LSTMCL implements IAgentSupervised {
 
     //private double [][] weightsF;
     //private double [][] weightsG;
-    private double [][] weightsOut;
+    //private double [][] weightsOut;
 
     private CLBuffer<DoubleBuffer> weightsFBuffer = null;
     private CLBuffer<DoubleBuffer> weightsGBuffer = null;
@@ -50,15 +50,15 @@ public class LSTMCL implements IAgentSupervised {
     private double SCALE_OUTPUT_DELTA = 1.0;
 
 
-    CLBuffer<DoubleBuffer> sumFBuffer = null, sumGBuffer = null, actFBuffer, actGBuffer, actHBuffer, contextBuffer;
+    CLBuffer<DoubleBuffer> sumFBuffer = null, sumGBuffer = null, actFBuffer, actGBuffer, actHBuffer, context;
     //private double[] sumF;
     //private double[] sumG;
 
     private CLBuffer<DoubleBuffer> fullInputBuffer = null;
 
 
-    private double[] full_hidden;
-    private double[] output;
+    private CLBuffer<DoubleBuffer>  full_hidden = null;
+    private CLBuffer<DoubleBuffer> output;
     private double[] deltaOutput;
     CLBuffer<DoubleBuffer> deltaH = null;
     private double[] full_input;
@@ -68,6 +68,8 @@ public class LSTMCL implements IAgentSupervised {
     private CLKernel inputsToCellblocksKernel;
     private CLKernel backpropScalePartialsKernel;
     private CLKernel inputToHiddenKernel;
+    private CLKernel prepareHiddenLayerPlusBias;
+    private CLKernel calculateOutputKernel;
 
 
     public LSTMCL(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate) {
@@ -109,12 +111,14 @@ public class LSTMCL implements IAgentSupervised {
         inputsToCellblocksKernel = program.createCLKernel("InputsToCellblocksKernel");
         backpropScalePartialsKernel = program.createCLKernel("BackpropScalePartialsKernel");
         inputToHiddenKernel = program.createCLKernel("InputToHiddenKernel");
+        prepareHiddenLayerPlusBias = program.createCLKernel("PrepareHiddenLayerPlusBias");
+        calculateOutputKernel = program.createCLKernel("CalculateOutputKernel");
 
         this.learningRate = initLearningRate;
         this.output_dimension = output_dimension;
         this.cell_blocks = cell_blocks;
 
-        contextBuffer = cl.createDoubleBuffer(cell_blocks, READ_WRITE);
+        context = cl.createDoubleBuffer(cell_blocks, READ_WRITE);
 
         full_input_dimension = input_dimension + cell_blocks + 1; //+1 for bias
 
@@ -135,14 +139,17 @@ public class LSTMCL implements IAgentSupervised {
             }
         }
 
-        weightsOut = new double[output_dimension][cell_blocks + 1];
+        queue.putWriteBuffer(dSdFBuffer, false);
+        queue.putWriteBuffer(dSdGBuffer, false);
 
         weightsOutBuffer = cl.createDoubleBuffer(output_dimension*(cell_blocks + 1), READ_WRITE);
 
         for (int j = 0; j < cell_blocks + 1; j++) {
             for (int k = 0; k < output_dimension; k++)
-                weightsOut[k][j] = (r.nextDouble() * 2d - 1d) * init_weight_range;
+                writeArray2dDouble(weightsOutBuffer.getBuffer(), output_dimension, k, j, (r.nextDouble() * 2d - 1d) * init_weight_range);
         }
+
+        queue.putWriteBuffer(weightsOutBuffer, false);
     }
 
     public void delete() {
@@ -151,15 +158,20 @@ public class LSTMCL implements IAgentSupervised {
     }
 
     public void clear() {
-        zero(contextBuffer.getBuffer());
+        zero(context.getBuffer());
+
+        queue.putWriteBuffer(context, false);
 
         //reset accumulated partials
         zero(dSdFBuffer.getBuffer());
         zero(dSdGBuffer.getBuffer());
+
+        queue.putWriteBuffer(dSdFBuffer, false);
+        queue.putWriteBuffer(dSdGBuffer, false);
     }
 
-    public double[] predict(double[] input) {
-        return learn(input, null);
+    public double[] predict(double[] input, final boolean requireOutput) {
+        return learn(input, null, requireOutput);
     }
 
     public static void Display() {
@@ -168,8 +180,7 @@ public class LSTMCL implements IAgentSupervised {
         System.out.println("\n==============================");
     }
 
-    public double[] learn(double[] input, double[] target_output) {
-
+    public double[] learn(double[] input, double[] target_output, final boolean requireOutput) {
         final double learningRate = this.learningRate;
         final int cell_blocks = this.cell_blocks;
         final int full_input_dimension = this.full_input_dimension;
@@ -191,9 +202,9 @@ public class LSTMCL implements IAgentSupervised {
             full_input[loc++] = input[i++];
         }
 
-        DoubleBuffer cb = contextBuffer.getBuffer();
+        DoubleBuffer contextBuffer = context.getBuffer();
         for (int c = 0; c < cell_blocks; ) {
-            full_input[loc++] = cb.get(c++);
+            full_input[loc++] = contextBuffer.get(c++);
         }
         full_input[loc++] = 1.0; //bias
 
@@ -217,8 +228,8 @@ public class LSTMCL implements IAgentSupervised {
             //actG = new double[cell_blocks];
             //actH = new double[cell_blocks];
 
-            full_hidden = new double[cell_blocks + 1];
-            output = new double[output_dimension];
+            full_hidden = cl.createDoubleBuffer(cell_blocks+1, READ_WRITE);
+            output = cl.createDoubleBuffer(output_dimension, READ_WRITE);
         }
         else {
             // these will be set in the InputToCellblocks kernel, so no need to zero it here
@@ -231,10 +242,11 @@ public class LSTMCL implements IAgentSupervised {
             //zero(actH.getBuffer());
         }
 
-        int localWorkSize = min(maxWorkGroupSize, 256);  // Local work size dimensions
-        int globalWorkSize = roundUp(localWorkSize, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
+        int localWorkSizeForCells = min(maxWorkGroupSize, 256);  // Local work size dimensions
+        int globalWorkSizeForCells = roundUp(localWorkSizeForCells, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
 
-        final double[] full_hidden = this.full_hidden;
+        int localWorkSizeForOutput = min(maxWorkGroupSize, 256);
+        int globalWorkSizeForOutput = roundUp(localWorkSizeForOutput, output_dimension);
 
         inputsToCellblocksKernel.rewind();
         inputsToCellblocksKernel.putArgs(sumFBuffer, sumGBuffer, weightsFBuffer, weightsGBuffer, fullInputBuffer).putArg(full_input_dimension).putArg(cell_blocks);
@@ -270,49 +282,78 @@ public class LSTMCL implements IAgentSupervised {
 
         // and map the buffers to its input parameters.
         activateKernel.rewind();
-        activateKernel.putArgs(contextBuffer, sumFBuffer, sumGBuffer, actFBuffer, actGBuffer, actHBuffer).putArg(cell_blocks);
+        activateKernel.putArgs(context, sumFBuffer, sumGBuffer, actFBuffer, actGBuffer, actHBuffer).putArg(cell_blocks);
 
 
         // asynchronous write of data to GPU device,
         // followed by blocking read to get the computed results back.
         long time = nanoTime();
         queue
-                .putWriteBuffer(weightsFBuffer, false)
-                .putWriteBuffer(weightsGBuffer, false)
+                //.putWriteBuffer(weightsFBuffer, false)
+                //.putWriteBuffer(weightsGBuffer, false)
                 .putWriteBuffer(fullInputBuffer, false)
-                .put1DRangeKernel(inputsToCellblocksKernel, 0, globalWorkSize, localWorkSize)
+                .put1DRangeKernel(inputsToCellblocksKernel, 0, globalWorkSizeForCells, localWorkSizeForCells)
 
-                .putWriteBuffer(contextBuffer, false)
-                .put1DRangeKernel(activateKernel, 0, globalWorkSize, localWorkSize)
+                .putWriteBuffer(context, false)
+                .put1DRangeKernel(activateKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
                 //.putReadBuffer(actFBuffer, true)
                 //.putReadBuffer(actGBuffer, true)
-                .putReadBuffer(actHBuffer, true);
+                ///.putReadBuffer(actHBuffer, true);
         time = nanoTime() - time;
 
         //System.out.println(time);
 
+        /*
+        {
+            // debugging
+
+            queue.putReadBuffer(actHBuffer, false);
+
+            double[] actHHost = new double[cell_blocks];
+
+            for( int i = 0; i < cell_blocks; i++ ) {
+                actHHost[i] = actHBuffer.getBuffer().get(i);
+            }
+
+            int debugHere = 0;
+        }
+        */
+
+
+
         //prepare hidden layer plus bias
-        Arrays.fill(full_hidden, 0);
+        prepareHiddenLayerPlusBias.rewind();
+        prepareHiddenLayerPlusBias.putArgs(actHBuffer, full_hidden).putArg(cell_blocks);
 
-        DoubleBuffer actHBufferBuffer = actHBuffer.getBuffer();
-        for (int i = 0; i < cell_blocks; i++)
-            full_hidden[i] = actHBufferBuffer.get(i);
-        //System.arraycopy(actH, 0, full_hidden, 0, cell_blocks);
+        queue.put1DRangeKernel(prepareHiddenLayerPlusBias, 0, globalWorkSizeForCells, localWorkSizeForCells);
 
-        full_hidden[cell_blocks] = 1.0; //bias
+
+        //Arrays.fill(full_hidden, 0);
+        //
+        //DoubleBuffer actHBufferBuffer = actHBuffer.getBuffer();
+        //for (int i = 0; i < cell_blocks; i++)
+        //    full_hidden[i] = actHBufferBuffer.get(i);
+        ////System.arraycopy(actH, 0, full_hidden, 0, cell_blocks);
+        //
+        //full_hidden[cell_blocks] = 1.0; //bias
 
         //calculate output
 
-        for (int k = 0; k < output_dimension; k++)
-        {
-            double s = 0;
-            double wk[] = weightsOut[k];
-            for (int j = 0; j < cell_blocks + 1; j++)
-                s += wk[j] * full_hidden[j];
 
-            output[k] = s;
-            //output not squashed
-        }
+        calculateOutputKernel.rewind();
+        calculateOutputKernel.putArgs(weightsOutBuffer, full_hidden, output).putArg(output_dimension).putArg(cell_blocks);
+
+        queue.put1DRangeKernel(calculateOutputKernel, 0, globalWorkSizeForOutput, localWorkSizeForOutput);
+
+        //for (int k = 0; k < output_dimension; k++)
+        //{
+        //    double s = 0;
+        //    for (int j = 0; j < cell_blocks + 1; j++)
+        //        s +=  weightsOut[k][j] * full_hidden[j];
+        //
+        //    output[k] = s;
+        //    //output not squashed
+        //}
 
         //////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////
@@ -322,10 +363,10 @@ public class LSTMCL implements IAgentSupervised {
 
         //SCALE PARTIALS KERNEL
         backpropScalePartialsKernel.rewind();
-        backpropScalePartialsKernel.putArgs(actFBuffer, sumFBuffer, actGBuffer, sumGBuffer, contextBuffer, dSdGBuffer, dSdFBuffer, fullInputBuffer).putArg(full_input_dimension).putArg(cell_blocks);
+        backpropScalePartialsKernel.putArgs(actFBuffer, sumFBuffer, actGBuffer, sumGBuffer, context, dSdGBuffer, dSdFBuffer, fullInputBuffer).putArg(full_input_dimension).putArg(cell_blocks);
 
         queue
-                .put1DRangeKernel(backpropScalePartialsKernel, 0, globalWorkSize, localWorkSize);
+                .put1DRangeKernel(backpropScalePartialsKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
                 //.putReadBuffer(dSdFBuffer, true)
                 //.putReadBuffer(dSdGBuffer, true);
 
@@ -372,21 +413,29 @@ public class LSTMCL implements IAgentSupervised {
 
             // we need to sync the buffer
             queue.putReadBuffer(deltaH, false);
+            queue.putReadBuffer(weightsOutBuffer, false);
+            queue.putReadBuffer(actHBuffer, false);
+            queue.putReadBuffer(output, false);
 
             DoubleBuffer deltaHBuffer = deltaH.getBuffer();
+            DoubleBuffer weightsOutBufferBuffer = weightsOutBuffer.getBuffer();
+            DoubleBuffer actHBufferBuffer = actHBuffer.getBuffer();
+            DoubleBuffer outputBuffer = output.getBuffer();
 
             for (int k = 0; k < output_dimension; k++) {
-                final double dok  = deltaOutput[k] = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
-
-                final double[] wk = weightsOut[k];
+                final double dok  = deltaOutput[k] = (target_output[k] - outputBuffer.get(k)) * SCALE_OUTPUT_DELTA;
 
                 for (int cellIndex = 0; cellIndex < cell_blocks; cellIndex++) {
-                    deltaHBuffer.put(cellIndex, deltaHBuffer.get(cellIndex) + dok * wk[cellIndex]);
-                    wk[cellIndex] += dok * actHBufferBuffer.get(cellIndex) * learningRate;
+                    deltaHBuffer.put(cellIndex, deltaHBuffer.get(cellIndex) + dok * readArray2dDouble(weightsOutBufferBuffer, output_dimension, k, cellIndex));
+                    writeArray2dDouble(weightsOutBufferBuffer, output_dimension, k, cellIndex,      readArray2dDouble(weightsOutBufferBuffer, output_dimension, k, cellIndex) + dok * actHBufferBuffer.get(cellIndex) * learningRate);
                 }
                 //bias
-                wk[cell_blocks] += dok * 1.0 * learningRate;
+
+                writeArray2dDouble(weightsOutBufferBuffer, output_dimension, k, cell_blocks,     readArray2dDouble(weightsOutBufferBuffer, output_dimension, k, cell_blocks)   + dok * 1.0 * learningRate);
             }
+
+            queue.putWriteBuffer(weightsOutBuffer, false);
+            queue.putWriteBuffer(deltaH, false);
 
 
             //input to hidden
@@ -396,7 +445,7 @@ public class LSTMCL implements IAgentSupervised {
 
             queue
                     .putWriteBuffer(deltaH, false)
-                    .put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSize, localWorkSize);
+                    .put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
 
 
             //for (int cellIndex = 0; cellIndex < cell_blocks; cellIndex++) {
@@ -413,12 +462,26 @@ public class LSTMCL implements IAgentSupervised {
 
         //roll-over context to next time step
         //System.arraycopy(actH, 0, context, 0, cell_blocks);
-        //TODO DoubleBuffer copy
-        for (int i = 0; i < cell_blocks; i++)
-            cb.put(i, actHBufferBuffer.get(i));
+        queue.putCopyBuffer(actHBuffer, context);
 
-        //give results
-        return output;
+
+        //give results (if requested)
+        if( requireOutput ) {
+            queue.putReadBuffer(output, false);
+
+            DoubleBuffer outputBuffer = output.getBuffer();
+
+            double[] outputArray = new double[output_dimension];
+
+            for( int i = 0; i < outputArray.length; i++ ) {
+                outputArray[i] = outputBuffer.get(i);
+            }
+
+            return outputArray;
+        }
+        else {
+            return null;
+        }
     }
 
     public void setLearningRate(double learningRate) {
