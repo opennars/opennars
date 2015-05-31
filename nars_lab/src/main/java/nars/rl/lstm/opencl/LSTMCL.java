@@ -170,8 +170,8 @@ public class LSTMCL implements IAgentSupervised {
         queue.putWriteBuffer(dSdGBuffer, false);
     }
 
-    public double[] predict(double[] input) {
-        return learn(input, null);
+    public double[] predict(double[] input, final boolean requireOutput) {
+        return learn(input, null, requireOutput);
     }
 
     public static void Display() {
@@ -180,11 +180,7 @@ public class LSTMCL implements IAgentSupervised {
         System.out.println("\n==============================");
     }
 
-    public double[] learn(double[] input, double[] target_output) {
-
-        final boolean requireOutput = true;
-
-
+    public double[] learn(double[] input, double[] target_output, final boolean requireOutput) {
         final double learningRate = this.learningRate;
         final int cell_blocks = this.cell_blocks;
         final int full_input_dimension = this.full_input_dimension;
@@ -307,7 +303,7 @@ public class LSTMCL implements IAgentSupervised {
 
         //System.out.println(time);
 
-
+        /*
         {
             // debugging
 
@@ -321,6 +317,7 @@ public class LSTMCL implements IAgentSupervised {
 
             int debugHere = 0;
         }
+        */
 
 
 

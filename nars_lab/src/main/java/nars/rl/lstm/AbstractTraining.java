@@ -28,14 +28,14 @@ public abstract class AbstractTraining {
                 agent.clear();
 
             if (inter.target_output == null)
-                agent.predict(inter.observation);
+                agent.predict(inter.observation, false);
             else {
                 double[] actual_output = null;
 
                 if (validation_mode == true)
-                    actual_output = agent.predict(inter.observation);
+                    actual_output = agent.predict(inter.observation, true);
                 else
-                    actual_output = agent.learn(inter.observation, inter.target_output);
+                    actual_output = agent.learn(inter.observation, inter.target_output, true);
 
                 if (util.argmax(actual_output) == util.argmax(inter.target_output))
                     fit++;
@@ -44,6 +44,27 @@ public abstract class AbstractTraining {
             }
         }
         return fit/max_fit;
+    }
+
+    public void supervised(IAgentSupervised agent) throws Exception {
+        List<Interaction> interactions = this.GenerateInteractions(tests);
+
+        for (Interaction inter : interactions) {
+
+            if (inter.do_reset)
+                agent.clear();
+
+            if (inter.target_output == null)
+                agent.predict(inter.observation, false);
+            else {
+                double[] actual_output = null;
+
+                if (validation_mode == true)
+                    agent.predict(inter.observation, false);
+                else
+                    agent.learn(inter.observation, inter.target_output, false);
+            }
+        }
     }
 
 
