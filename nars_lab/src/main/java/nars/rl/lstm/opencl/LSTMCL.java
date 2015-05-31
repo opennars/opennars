@@ -103,15 +103,15 @@ public class LSTMCL implements IAgentSupervised
                 "}" +
 
                 "    kernel void Activate(global const double* context, global const double* sumF, global const double* sumG, global double* actF, global double* actG, global double* actH, int cell_blocks) {\n" +
-                "        // get index into global data array\n" +
-                "        int i = get_global_id(0);\n" +
-                "        // bound check (equivalent to the limit on a 'for' loop for standard/serial C code\n" +
-                "        if (i >= cell_blocks)  {\n" +
-                "            return;\n" +
-                "        }\n" +
+                //"        // get index into global data array\n" +
+                "        const int i = get_global_id(0);\n" +
+                //"        // bound check (equivalent to the limit on a 'for' loop for standard/serial C code\n" +
+                //"        if (i >= cell_blocks)  {\n" +
+                //"            return;\n" +
+                //"        }\n" +
                 "        // add the vector elements\n" +
-                "        double actfj = actF[i] = expActivate(sumF[i]);\n" +
-                "        double actgj = actG[i] = expActivate(sumG[i]);\n" +
+                "        const double actfj = actF[i] = expActivate(sumF[i]);\n" +
+                "        const double actgj = actG[i] = expActivate(sumG[i]);\n" +
                 "        actH[i] = actfj * context[i] + (1 - actfj) * actgj;\n" +
                 "    }"
 

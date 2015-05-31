@@ -16,6 +16,7 @@ import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.term.Term;
 import nars.rl.example.QVis;
+import sun.misc.IOUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -49,14 +50,23 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
                 //"chopper_command"
                 //"enduro"
                 //"berzerk"
-                //"assault"
+                "assault"
                 //"asteroids"
                 //"alien"
                 //"atlantis"
                 //"battle_zone"
-                "kung_fu_master"
+                //"kung_fu_master"
                 //"montezuma_revenge"
                 //"pitfall"
+                //"video_pinball"
+                //"zaxxon"
+                //"yars_revenge"
+                //"wizard_of_wor"
+                //"air_raid"
+                //"star_gunner"
+                "river_raid"
+
+
         );
     }
 
