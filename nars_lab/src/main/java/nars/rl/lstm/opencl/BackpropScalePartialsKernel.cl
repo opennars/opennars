@@ -5,7 +5,7 @@
 //  dSdG
 //  dSdF
 
-kernel void BackpropScalePartialsKernel(global double* actF, __global double* sumF, __global double* actG, __global double* sumG, __global double* context, __global double* dSdG, __global double* dSdF, __global double* full_input, int full_input_dimension, int cell_blocks) {
+kernel void BackpropScalePartialsKernel(__global double* actF, __global double* sumF, __global double* actG, __global double* sumG, __global double* context, __global double* dSdG, __global double* dSdF, __global double* full_input, int full_input_dimension, int cell_blocks) {
     int cellIndex = get_global_id(0);
 
     if (cellIndex >= cell_blocks)  {
