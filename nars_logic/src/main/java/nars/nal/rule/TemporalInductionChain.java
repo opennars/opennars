@@ -161,8 +161,8 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             Implication whole=Implication.make(S, C,order2);
 
             if(whole!=null) {
-                Truth truth = TruthFunctions.deduction(s1.truth, s2.truth);
-                Budget budget = BudgetFunctions.forward(truth, nal);
+                Truth truth = TruthFunctions.induction(s1.truth, s2.truth);
+                Budget budget = BudgetFunctions.compoundForward(truth,whole, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
 
                 return nal.doublePremiseTask(whole, truth, budget,

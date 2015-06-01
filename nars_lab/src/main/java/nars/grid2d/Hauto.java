@@ -1,5 +1,6 @@
 package nars.grid2d;
 
+import nars.Memory;
 import nars.NAR;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Machine;
@@ -23,6 +24,13 @@ public class Hauto {
             return -2;
         }
         return Integer.parseInt(c.name.replaceAll("door", "").replaceAll("\\}", "").replaceAll("\\{", ""));
+    }
+    
+    public boolean bridge(Logic c) {
+        if(c==Logic.UNCERTAINBRIDGE || c==Logic.BRIDGE) {
+            return true;
+        }
+        return false;
     }
     
     //put to beginning because we will need this one most often
@@ -76,7 +84,7 @@ public class Hauto {
             else {
                 if(!r.is_solid && TestChamber.keyn!=doornumber(r)) {
                     w.is_solid=true;
-                    nar.input("(--,<" + r.name + " --> [opened]>). :|:");
+                    nar.addInput("<"+r.name+" --> [opened]>. :|: %0.00;0.90%");
                 }
             }
         }
@@ -116,7 +124,7 @@ public class Hauto {
             w.value=(up.charge==1 ^ down.charge==1) ? 1.0f : 0.0f;  //eval state from input connections
 
         //ADD BIDIRECTIONAL LOGIC BRIDGE TO OVERCOME 2D TOPOLOGY
-        if(r.logic==BRIDGE)
+        if(r.logic==BRIDGE || (r.logic==UNCERTAINBRIDGE && Memory.randomNumber.nextDouble()>0.5))
         {
             if(left.chargeFront && left.logic==WIRE)
                 w.value=left.charge;
@@ -131,12 +139,12 @@ public class Hauto {
                 w.value2=down.charge;
         }
         
-        if(!r.chargeFront && r.charge==0 && (((right.logic==BRIDGE && right.value==1) || (left.logic==BRIDGE && left.value==1)) || ((down.logic==BRIDGE && down.value2==1) || (up.logic==BRIDGE && up.value2==1))))
+        if(!r.chargeFront && r.charge==0 && (((bridge(right.logic) && right.value==1) || (bridge(left.logic) && left.value==1)) || ((bridge(down.logic) && down.value2==1))))
         {
             w.charge=1;
             w.chargeFront=true;
         }
-        if(!r.chargeFront && r.charge==1 && (((right.logic==BRIDGE && right.value==0) || (left.logic==BRIDGE && left.value==0)) || ((down.logic==BRIDGE && down.value2==0) || (up.logic==BRIDGE && up.value2==0))))
+        if(!r.chargeFront && r.charge==1 && (((bridge(right.logic) && right.value==0) || (bridge(left.logic) && left.value==0)) || ((bridge(down.logic) && down.value2==0))))
         {
             w.charge=0;
             w.chargeFront=true;
@@ -148,7 +156,7 @@ public class Hauto {
         }
         if(r.machine==Machine.Light || r.machine==Machine.Turret) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
-                nar.input("(--,<" + r.name + " --> [on]>). :|:");
+                nar.addInput("<"+r.name+" --> [on]>. :|: %0.00;0.90%");
             }
         }
             //w.charge *= w.conductivity;
@@ -218,7 +226,7 @@ public class Hauto {
                 if(!inverse) {
                     nar.input("<" + readCells[x][y].name + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.input("(--,<" + readCells[x][y].name + " --> [" + wishreal + "]>)! :|:");
+                    nar.addInput("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
@@ -228,7 +236,7 @@ public class Hauto {
                 if(!inverse) {
                     nar.input("<" + s + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.input("(--,<" + s + " --> [" + wishreal + "]>)! :|:");
+                    nar.addInput("<" + s +" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
@@ -299,7 +307,7 @@ public class Hauto {
                 readCells[x][y].name = name;
                 writeCells[x][y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
-                    nar.input("(--,<" + name + " --> " + "[on]>). :|:");
+                    nar.addInput("<"+name+" --> "+"[on]>. :|: %0.00;0.90%");
                     if(TestChamber.curiousity) {
                         space.nar.input("<(^go-to," + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.input("<(^activate," + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
@@ -400,6 +408,10 @@ public class Hauto {
         if("bridge".equals(label))
         {
             selected.setLogic(Cell.Logic.BRIDGE, 0);
+        }
+        if("uncertainbridge".equals(label))
+        {
+            selected.setLogic(Cell.Logic.UNCERTAINBRIDGE, 0);
         }
         if("OnWire".equals(label))
         {

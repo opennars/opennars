@@ -341,7 +341,9 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override public void init(NAR n) {
 
         n.setCyclesPerFrame(cyclesPerFrame);
-
+        
+        n.on(PerceptionAccel.class);
+        
         if (maxNALLevel >= 7) {
             n.on(STMInduction.class);
         }
@@ -357,7 +359,7 @@ public class Default extends NARSeed implements ConceptBuilder {
                 n.on(c);
             }
 
-            //n.on(new Anticipate());      // expect an event
+            n.on(new Anticipate());      // expect an event
 
             if (internalExperience == Minimal) {
                 new InternalExperience(n);

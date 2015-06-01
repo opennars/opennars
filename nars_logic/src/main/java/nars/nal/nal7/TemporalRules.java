@@ -243,7 +243,7 @@ public class TemporalRules {
 
     public static void temporalInduction(final Sentence s1, final Sentence s2, NAL.StampBuilder stamp, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
 
-        if ((s1.truth == null) || (s2.truth == null))
+        if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT || s2.punctuation!=Symbols.JUDGMENT)
             return;
 
         Term t1 = s1.term;
@@ -472,69 +472,8 @@ public class TemporalRules {
                     budget2, true, subbedTask, false);
 
             if (task!=null) {
-                final Sentence belief = task.sentence;
-
-
-                            /*
-                        IN <SELF --> [good]>! %1.00;0.90%
-                        IN (^pick,left). :|: %1.00;0.90%
-                        IN  PauseInput(3)
-                        IN <SELF --> [good]>. :|: %0.00;0.90%
-                           <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. :|: %0.00;0.45%
-                           <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. %0.00;0.31%
-                           <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. :|: %0.00;0.45%
-                           <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. %0.00;0.31%
-                           <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. :|: %0.00;0.45%
-                           <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. %0.00;0.31%
-                           <(&/,(^pick,left),+3) </> <SELF --> [good]>>. :|: %0.00;0.45%
-                           <(&/,(^pick,left),+3) </> <SELF --> [good]>>. %0.00;0.31%
-
-                    It takes the system sometimes like 1000 steps to go from
-                    "(^pick,left) leads to SELF not being good"
-                    to
-                    "since <SELF --> good> is a goal, (^pick,left) is not desired"
-                    making it bad for RL tasks but this will change, maybe with the following principle:
-
-
-                    task: <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>.
-                    belief: <SELF --> [good]>!
-                    |-
-                    (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
-
-                    */
-
-                if (s1.punctuation == Symbols.JUDGMENT) { //necessary check?
-
-                    Concept S1_State_C = nal.memory.concept(s1.term);
-                    if (S1_State_C != null && S1_State_C.hasGoals()) {
-                        Task strongest_desire = S1_State_C.getGoals().get(0);
-                        Truth T = TruthFunctions.abduction(belief.truth, strongest_desire.sentence.truth);
-                        //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
-                        Stamp st = belief.stamp.clone();
-
-                        if (strongest_desire.sentence.getOccurrenceTime() == Stamp.ETERNAL) {
-                            st.setEternal();
-                        } else {
-                            int shiftToPast = 0;
-                            if (((Implication) task.sentence.term).getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                                shiftToPast = nal.memory.duration();
-                            }
-                            st.setOccurrenceTime(strongest_desire.sentence.stamp.getOccurrenceTime() - shiftToPast);
-                        }
-
-
-                        nal.setCurrentBelief(belief);
-
-                        Sentence W = new Sentence(s2.term, Symbols.GOAL, T, st);
-                        Budget val = BudgetFunctions.forward(T, nal);
-                        Task TD = new Task(W, val, strongest_desire);
-                        nal.deriveTask(TD, false, false, strongest_desire, false);
-
-                    }
-                }
-
-                //PRINCIPLE END
-
+            
+                desireUpdateCompiledInferenceHelper(s1, task, nal, s2);
 
                 //micropsi inspired strive for knowledge
                 //get strongest belief of that concept and use the revison truth, if there is no, use this truth
@@ -563,6 +502,106 @@ public class TemporalRules {
 
     }
 
+    private static void desireUpdateCompiledInferenceHelper(final Sentence s1, Task task, final NAL nal, final Sentence s2) {
+        /*
+        IN <SELF --> [good]>! %1.00;0.90%
+        IN (^pick,left). :|: %1.00;0.90%
+        IN  PauseInput(3)
+        IN <SELF --> [good]>. :|: %0.00;0.90%
+        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. :|: %0.00;0.45%
+        <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>. %0.00;0.31%
+        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. :|: %0.00;0.45%
+        <(&/,(^pick,left,$1),+3) </> <$1 --> [good]>>. %0.00;0.31%
+        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. :|: %0.00;0.45%
+        <(&/,(^pick,left),+3) =/> <SELF --> [good]>>. %0.00;0.31%
+        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. :|: %0.00;0.45%
+        <(&/,(^pick,left),+3) </> <SELF --> [good]>>. %0.00;0.31%
+        
+        It takes the system sometimes like 1000 steps to go from
+        "(^pick,left) leads to SELF not being good"
+        to
+        "since <SELF --> good> is a goal, (^pick,left) is not desired"
+        making it bad for RL tasks but this will change, maybe with the following principle:
+        
+        
+        task: <(&/,(^pick,left,$1),+3) =/> <$1 --> [good]>>.
+        belief: <SELF --> [good]>!
+        |-
+        (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
+        
+        */
+        
+        if(s1.punctuation==Symbols.JUDGMENT_MARK) { //necessary check?
+            Sentence belief=task.sentence;
+            Concept S1_State_C=nal.memory.concept(s1.term);
+            if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0 &&
+                    !(((Statement)belief.term).getPredicate() instanceof Operation)) {
+                Task a_desire = S1_State_C.desires.get(0);
+                Sentence Goal = new Sentence(S1_State_C.term,Symbols.JUDGMENT_MARK,new TruthValue(1.0f,0.99f),a_desire.sentence.stamp.clone());
+                Goal.stamp.setOccurrenceTime(s1.getOccurenceTime()); //strongest desire for that time is what we want to know
+                Task strongest_desireT=S1_State_C.selectCandidate(Goal, S1_State_C.desires);
+                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurenceTime(), strongest_desireT.sentence.getOccurenceTime());
+                TruthValue T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
+                //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
+                Stamp st=belief.stamp.clone();
+                
+                if(strongest_desire.getOccurenceTime()==Stamp.ETERNAL) {
+                    st.setEternal();
+                } else {
+                    long shift=0;
+                    if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                        shift=nal.memory.getDuration();
+                    }
+                    st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
+                }
+                
+                ///SPECIAL REASONING CONTEXT FOR TEMPORAL DESIRE UPDATE
+                Stamp SVSTamp=nal.getNewStamp();
+                Task SVTask=nal.getCurrentTask();
+                NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
+                //END
+                
+                nal.setCurrentBelief(belief);
+                nal.setCurrentTask(strongest_desireT);
+                
+                Sentence W=new Sentence(s2.term,Symbols.GOAL_MARK,T,st);
+                BudgetValue val=BudgetFunctions.forward(T, nal);
+                Task TD=new Task(W,val,strongest_desireT);
+                
+                nal.doublePremiseTask(TD.getTerm(), TD.sentence.truth, TD.budget, false, true);
+                // nal.derivedTask(TD, false, false, strongest_desireT, null, false);
+                
+                //RESTORE CONTEXT
+                nal.setNewStamp(SVSTamp);
+                nal.setCurrentTask(SVTask);
+                nal.newStampBuilder=SVstampBuilder; //also restore this one
+                //END
+            }
+        }
+        
+        //PRINCIPLE END
+    }
+
+    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
+        if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+            if(task.sentence.term instanceof Implication) {
+                boolean valid=false;
+                if(task.sentence.term instanceof Implication) {
+                    Implication equ=(Implication) task.sentence.term;
+                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
+                        valid=true;
+                    }
+                }
+                if(valid) {
+                    Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
+                    BudgetValue budg=task.budget.clone();
+                    budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
+                    budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
+                    nal.singlePremiseTask(tt2, task.budget.clone());
+                }
+            }
+        }
+    }
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
         if(!(task.sentence.term instanceof Implication)) return;

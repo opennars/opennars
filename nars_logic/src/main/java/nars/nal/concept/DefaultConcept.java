@@ -443,6 +443,35 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
+    private void questionFromGoal(final Task task, final NAL nal) {
+        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+            //ok, how can we achieve it? add a question of whether it is fullfilled
+            ArrayList<Term> qu=new ArrayList<Term>();
+            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+                    Variable how=new Variable("?how");
+                    Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                    qu.add(imp);
+                    qu.add(imp2);
+                }
+            }
+            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
+                qu.add(task.sentence.term);
+            }
+            for(Term q : qu) {
+                if(q!=null) {
+                    Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
+                    st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
+                    Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,st);
+                    if(s!=null) {
+                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
+                        nal.singlePremiseTask(s, budget);
+                    }
+                }
+            }
+        }
+    }
 
 
     /**
@@ -453,116 +482,82 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processGoal(final TaskProcess nal, Task task) {
-
-        if (hasGoals() && isConstant())
-            return false;
-
-        Sentence goal = task.sentence, oldGoal;
-
-        oldGoal = getSentence(goal, getGoals()); // revise with the existing desire values
-
-        if (oldGoal != null) {
+        protected void processGoal(final NAL nal, final Task task) {        
+        
+        final Sentence goal = task.sentence;
+        final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
+        Sentence oldGoal = null;
+        
+        if (oldGoalT != null) {
+            oldGoal = oldGoalT.sentence;
             final Stamp newStamp = goal.stamp;
             final Stamp oldStamp = oldGoal.stamp;
-
-
-
-            if (newStamp.equals(oldStamp, true, true, false, true)) {
-                getMemory().removed(task, "Duplicated");
-                return false; // duplicate
-            } else if (revisible(goal, oldGoal)) {
-
-                Sentence projectedGoal = oldGoal.projection(newStamp.getOccurrenceTime(), getMemory().time());
+            
+            
+            if (newStamp.equals(oldStamp,false,true,true,false)) {
+                return; // duplicate
+            }
+            if (revisible(goal, oldGoal)) {
+                
+                nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+                
+                Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
-
-                    /*
-                    if (projectedGoal.getOccurrenceTime()!=oldGoal.getOccurrenceTime()) {
-                        nal.singlePremiseTask(projectedGoal, task.budget);
-                    }
-                    */
-
+                   // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
+                       // nal.singlePremiseTask(projectedGoal, task.budget); 
+                        //return;
+                   // }
                     nal.setCurrentBelief(projectedGoal);
+                    if(!(task.sentence.term instanceof Operation)) {
+                        boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
+                        if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                            return; // with higher/lower desire
+                        } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+                   }
+                }
+            }
+        } 
+        
+        Stamp s2=goal.stamp.clone();
+        s2.setOccurrenceTime(memory.time());
+        if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
+            Sentence projectedGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
+            if(projectedGoal!=null) {
+                nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
+                return;
+            }
+        }
+        
+        if (task.aboveThreshold()) {
 
-                    boolean revisionSucceeded = revision(goal, projectedGoal, false, nal);
-                    if(revisionSucceeded) {
-                        // it is revised, so there is a new task for which this function will be called
-                        getMemory().removed(task, "Revised");
-                        return false; // with higher/lower desire
-                    }
+            final Task beliefT = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+
+            double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
+            if (beliefT != null) {
+                Sentence belief = beliefT.sentence;
+                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
+                trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
+                AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
+            }    
+            
+            double Satisfaction=1.0-AntiSatisfaction;
+            TruthValue T=goal.truth.clone();
+            
+            T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
+
+            if (task.aboveThreshold() && AntiSatisfaction >= Parameters.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+
+                questionFromGoal(task, nal);
+                
+                addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
+                
+                InternalExperience.InternalExperienceFromTask(memory,task,false);
+                
+                if(!executeDecision(task)) {
+                    memory.emit(UnexecutableGoal.class, task, this, nal);
                 }
             }
         }
-
-        // still worth pursuing?
-        if (!task.aboveThreshold()) {
-            return false;
-        }
-
-        //EXPERIMENTAL adapted from 1.6.4 stuff
-        final long now = memory.time();
-        final int dur = nal.memory.duration();
-        if(TemporalRules.after(task.sentence.getOccurrenceTime(), now, dur)) { //this task is not up to date we have to project it first
-
-            Sentence projectedGoal = task.sentence.projection(now, dur);
-            if(projectedGoal!=null) {
-                //nal.singlePremiseTask(projectedGoal, /*(Budget)*/task); //it has to be projected
-                goal = projectedGoal;
-                task = task.clone(goal);
-            }
-        }
-
-        /*
-        //TODO move to its own method getSatisfaction(Sentence goal)
-        Sentence sol = getSentence(goal, getBeliefs());
-        if (sol!=null) {
-            // check if the Goal is already satisfied
-
-            trySolution(sol, task, nal);
-            Sentence projectedBelief = sol.projection(sol.getOccurrenceTime(), now);
-            System.out.println("satisfied: " + projectedBelief + " <- " +sol);
-            //AntiSatisfaction = task.sentence.truth.getExpDifAbs(projectedBelief.truth);
-        }
-        */
-
-
-/*
-        double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-
-
-
-        double Satisfaction=1.0-AntiSatisfaction;
-
-
-        boolean fulfilled = AntiSatisfaction < Global.SATISFACTION_TRESHOLD;
-
-        if (fulfilled) {
-            //System.out.println(goal + " fulfilled");
-        }
-        else
-        */
-        /*if (task.aboveThreshold())*/ {
-
-            //questionFromGoal(task, nal);
-
-            //if(shortcut)
-                //howQuestionDecisionMakingAccel(task, nal);
-
-
-            if (!addToTable(task, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
-                //wasnt added to table
-                getMemory().removed(task, "Insufficient Rank"); //irrelevant
-                return false;
-            }
-
-            //TODO
-            //InternalExperience.InternalExperienceFromTask(memory, task, false);
-
-            getMemory().execute(this, task);
-        }
-
-
-        return true;
     }
 
     final static Variable how=new Variable("?how");

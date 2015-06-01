@@ -32,6 +32,9 @@ public class InternalExperience extends NARReaction {
         
     public static final float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.5f;
     
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE=0.92f; //0.92
+    public static float MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=0.92f;
+    
     //internal experience has less durability?
     public static final float INTERNAL_EXPERIENCE_PROBABILITY=0.05f;
     
@@ -42,20 +45,46 @@ public class InternalExperience extends NARReaction {
 
 
 
-    //internal experience has less durability?
-    public static final float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
+//internal experience has less durability?
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.1f; //0.1 
     //internal experience has less priority?
-    public static final float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.5f;
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
     
     //dont use internal experience for want and believe if this setting is true
-    public static final boolean AllowWantBelieve=true;
+    public static final boolean AllowWantBelieve=true; //wut, semantic issue ^^
+    
+    //
+    public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
+    
+    public boolean isAllowNewStrategy() {
+        return !OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY;
+    }
+    public void setAllowNewStrategy(boolean val) {
+        OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=!val;
+    }
 
-    /*public boolean isAllowWantBelieve() {
+    public boolean isAllowWantBelieve() {
         return AllowWantBelieve;
     }
     public void setAllowWantBelieve(boolean val) {
         AllowWantBelieve=val;
-    }*/
+    }
+    
+    public double getMinCreationBudgetSummary() {
+        return MINIMUM_BUDGET_SUMMARY_TO_CREATE;
+    }
+    public void setMinCreationBudgetSummary(double val) {
+        MINIMUM_BUDGET_SUMMARY_TO_CREATE=(float) val;
+    }
+    
+    public double getMinCreationBudgetSummaryWonderEvaluate() {
+        return MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE;
+    }
+    public void setMinCreationBudgetSummaryWonderEvaluate(double val) {
+        MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE=(float) val;
+    }
+    
+    public static boolean enabled=true;
 
     private Memory memory;
     public final static Atom believe = Atom.the("believe");
@@ -125,57 +154,83 @@ public class InternalExperience extends NARReaction {
 
         if (event==TaskProcess.class) {
 
-            Task task = (Task)a[0];
-            NAL nal = (NAL)a[1];
-
-            Term content = task.getTerm();
-            if (content instanceof Operation) return;   // to prevent infinite recursions
-
-            if (!task.summaryNotLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
-                return;
+            Task task = (Task)a[0];  
+            
+            //old strategy always, new strategy only for QUESTION and QUEST:
+            if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY || (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK))) {
+                InternalExperienceFromTaskInternal(memory,task,isFull());
             }
-
-            if (nal.memory.random.nextFloat()>INTERNAL_EXPERIENCE_PROBABILITY) return;
-
-
-
-
-            Sentence sentence = task.sentence;
-
-            float conf = Global.DEFAULT_JUDGMENT_CONFIDENCE;
-
-
-            Budget newbudget = Budget.budgetIfAboveThreshold(
-                    task.getPriority() * INTERNAL_EXPERIENCE_PRIORITY_MUL, //Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL
-                    task.getDurability() * INTERNAL_EXPERIENCE_DURABILITY_MUL, //Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                    task.getQuality());
-            if (newbudget == null) return;
-
-
-            Term ret = toTerm(sentence, memory);
-            if(ret==null) return;
-
-
-            if (newbudget.aboveThreshold()) {
-
-                NAL.StampBuilder stamp = nal.newStamp(task.sentence, memory.time());
-
-                Sentence j = new Sentence(ret, Symbols.JUDGMENT, new DefaultTruth(1.0f, conf), stamp);
-
-                Task newTask = new Task(j, newbudget, /*isFull() ? null : */task);
-
-                memory.taskAdd(newTask, "Internally remembered experienced");
-            }
-
         }
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal
             Sentence belief = (Sentence)a[0];
-            Term taskTerm = (Term)a[1];
-            NAL nal = (NAL)a[2];
-            beliefReason(belief, belief.getTerm(), taskTerm, nal);
+            Term beliefTerm = (Term)a[1];
+            Term taskTerm = (Term)a[2];
+            NAL nal = (NAL)a[3];
+            beliefReason(belief, beliefTerm, taskTerm, nal);
         }
     }
+
+     public static void InternalExperienceFromBelief(Memory memory, Task task, Sentence belief) {
+        Task T=new Task(belief.clone(),task.budget.clone(),null);
+        InternalExperienceFromTask(memory,T,false);
+    }
+    
+    public static void InternalExperienceFromTask(Memory memory, Task task, boolean full) {
+        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+            InternalExperienceFromTaskInternal(memory,task,full);
+        }
+    }
+
+    public static boolean InternalExperienceFromTaskInternal(Memory memory, Task task, boolean full) {
+        if(!enabled) {
+            return false;
+        }
+        
+       // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
+       //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION_MARK || task.sentence.punctuation==Symbols.QUEST_MARK))) {
+        {
+            if(task.sentence.punctuation == Symbols.QUESTION_MARK || task.sentence.punctuation == Symbols.QUEST_MARK) {
+                if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
+                    return false;
+                }
+            }
+            else
+            if(task.budget.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE) {
+                return false;
+            }
+        }
+        
+        Term content=task.getTerm();
+        // to prevent infinite recursions
+        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+            return true;
+        }
+        Sentence sentence = task.sentence;
+        TruthValue truth = new TruthValue(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+        Stamp stamp = task.sentence.stamp.clone();
+        stamp.setOccurrenceTime(memory.time());
+        Term ret=toTerm(sentence, memory);
+        if (ret==null) {
+            return true;
+        }
+        Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
+        BudgetValue newbudget=new BudgetValue(
+                Global.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                Global.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                BudgetFunctions.truthToQuality(truth));
+        
+        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
+            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
+            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
+        }
+        
+        Task newTask = new Task(j, (BudgetValue) newbudget,
+                full ? null : task);
+        memory.addNewTask(newTask, "Remembered Action (Internal Experience)");
+        return false;
+    }
+
 
     final static String[] nonInnateBeliefOperators = new String[] {
         "remind","doubt","consider","evaluate","hestitate","wonder","belief","want"
@@ -208,7 +263,7 @@ public class InternalExperience extends NARReaction {
                     quality);
 
                 Task newTask = new Task(sentence, budget);       
-                nal.deriveTask(newTask, false, false, null, false);
+                nal.deriveTask(newTask, false, false, null, null, false);
             }
         }
 
@@ -252,7 +307,7 @@ public class InternalExperience extends NARReaction {
                         quality);
 
                     Task newTask = new Task(sentence, budget);       
-                    nal.deriveTask(newTask, false, false, null, false);
+                    nal.deriveTask(newTask, false, false, null, null, false);
                 }
             }
         }
@@ -298,11 +353,11 @@ public class InternalExperience extends NARReaction {
 //
 //        Term content=task.getTerm();
 //        // to prevent infinite recursions
-//        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Parameters.INTERNAL_EXPERIENCE_PROBABILITY*/) {
+//        if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
 //            return true;
 //        }
 //        Sentence sentence = task.sentence;
-//        TruthValue truth = new TruthValue(1.0f, Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
+//        TruthValue truth = new TruthValue(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
 //        Stamp stamp = task.sentence.stamp.clone();
 //        stamp.setOccurrenceTime(memory.time());
 //        Term ret=toTerm(sentence, memory);
@@ -311,8 +366,8 @@ public class InternalExperience extends NARReaction {
 //        }
 //        Sentence j = new Sentence(ret, Symbols.JUDGMENT_MARK, truth, stamp);
 //        BudgetValue newbudget=new BudgetValue(
-//                Parameters.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-//                Parameters.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
+//                Global.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+//                Global.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
 //                BudgetFunctions.truthToQuality(truth));
 //
 //        if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {

@@ -291,7 +291,7 @@ public class Grid2DSpace extends PApplet {
         Cell to = cells.at(tx, ty);
                 
         //System.out.println(to + " " + to.material);
-        if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water || to.logic==Logic.BRIDGE)
+        if ((to.material == Material.StoneWall) || to.is_solid || to.material==Material.Water || to.logic==Logic.BRIDGE || to.logic==Logic.UNCERTAINBRIDGE)
             return "Too solid";
         
         final float maxTraversableHeight = 8;
@@ -384,8 +384,8 @@ public class Grid2DSpace extends PApplet {
         private float savepy = 0;
         private int selID = 0;
         private float zoom = 43.0f;
-        private float difx = 0;
-        private float dify = 0;
+        private float difx = -750;
+        private float dify = -1300;
         private int lastscr = 0;
         private boolean EnableZooming = true;
         private float scrollcamspeed = 1.1f;

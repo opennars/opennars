@@ -18,7 +18,7 @@ public class HumanoidFacePanel extends NPanel {
     
     public boolean nod = false;
     public boolean shake = false;
-    public boolean busy = false;
+    public boolean unhappy = false;
     public boolean happy = false;
     public int talk=-1;
 
@@ -97,7 +97,7 @@ public class HumanoidFacePanel extends NPanel {
             nextSpin = 0;
         }
         
-        if (busy) {
+        if (unhappy) {
             face.setFlex('z');
             face.setFlex('`');
             face.setFlex('b');

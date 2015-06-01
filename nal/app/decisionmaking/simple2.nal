@@ -1,0 +1,6 @@
+pick(c). :|: 
+6
+<a --> b>. :|:
+<a --> b>!
+117
+''outputMustContain('^pick([c, SELF])=null')

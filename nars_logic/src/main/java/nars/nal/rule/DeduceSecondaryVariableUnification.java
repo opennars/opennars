@@ -59,11 +59,11 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
             }
 
             char mark = Symbols.JUDGMENT;
-            if (task.sentence.isGoal() || second_belief.isGoal()) {
+            if (task.sentence.isGoal()) {
                 if (strong) {
-                    truth = abduction(t1, t2);
+                    truth = desireInd(t1, t2);
                 } else {
-                    truth = intersection(t1, t2);
+                    truth = desireDed(t1, t2);
                 }
                 mark = Symbols.GOAL;
             }
@@ -304,11 +304,24 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 Truth truth;
 
                 char mark = Symbols.JUDGMENT;
-                if (taskSentence.isGoal() || second_belief.isGoal()) {
-                    truth = TruthFunctions.abduction(taskSentence.truth, truthSecond);
+                if (taskSentence.isGoal()) {
+                    truth = TruthFunctions.desireInd(taskSentence.truth, truthSecond);
                     mark = Symbols.GOAL;
                 } else {
                     truth = deduction(taskSentence.truth, truthSecond);
+                }
+                
+                int order = taskSentence.getTemporalOrder();
+                int side = 1;
+                long time=-99999;
+                if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
+                    long baseTime = second_belief.getOccurenceTime();
+                    if (baseTime == Stamp.ETERNAL) {
+                        baseTime = nal.getTime();
+                    }
+                    long inc = order * nal.mem().param.duration.get();
+                    time = (side == 0) ? baseTime+inc : baseTime-inc;
+                    nal.getTheNewStamp().setOccurrenceTime(time);
                 }
 
                 Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
@@ -324,6 +337,10 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
                 Sentence newSentence = new Sentence(result, mark, truth,
                         new Stamp(useEvidentalBase, nal.time(), occ));
+
+                if(time!=-99999) 
+                    newSentence.stamp.setOccurrenceTime(time);
+                }
 
                 Task dummy = new Task(second_belief, budget, task, null);
                 Task newTask = new Task(newSentence, budget, task, null);
