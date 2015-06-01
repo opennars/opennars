@@ -598,6 +598,7 @@ public class LSTMCL implements IAgentSupervised {
 
 
 
+
         activateKernel.rewind();
         activateKernel.putArgs(context, sumF, sumG, actF, actG, actH).putArg(cell_blocks);
 
