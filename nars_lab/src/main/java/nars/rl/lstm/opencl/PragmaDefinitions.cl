@@ -3,3 +3,4 @@
 #define ARRAY2d(array, width, x , y) array[x + y*width]
 
 #define precisionType float
+

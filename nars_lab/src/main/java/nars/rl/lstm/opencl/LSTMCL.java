@@ -451,6 +451,7 @@ public class LSTMCL implements IAgentSupervised {
             //        weightsG[cellIndex][i] += deltaHForCell * readArray2dDouble(dSdGBufferBuffer, cell_blocks, cellIndex, i) * learningRate;
             //    }
             //}
+
         }
 
         //////////////////////////////////////////////////////////////
