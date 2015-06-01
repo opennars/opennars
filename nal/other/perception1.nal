@@ -1,0 +1,4 @@
+<(&/,<a --> b>,<$1 --> c>,<x --> y>,pick(a)) =/> <$1 --> reached>>.
+(&/,<a --> b>,<goal --> c>,<x --> y>). :|:
+10
+''outputMustContain('<(^pick,a) =/> <goal --> reached>>. %1.00;0.43%')

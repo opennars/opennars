@@ -53,6 +53,52 @@ import static nars.Symbols.*;
 public class RuleTables {
 
     
+    private static void temporalInduce(final NAL nal, final Task task, final Sentence taskSentence, final Memory memory) {
+        //usual temporal induction between two events
+        for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
+            
+            //prevent duplicate inductions
+            Set<Term> alreadyInducted = new HashSet();
+            
+            Concept next=nal.memory.sampleNextConceptNovel(task.sentence);
+            if (next == null) continue;
+            
+            Term t = next.getTerm();
+            
+            if (!alreadyInducted.contains(t)) {
+                
+                if (!next.beliefs.isEmpty()) {
+                    
+                    Sentence s=next.beliefs.get(0).sentence;
+                    
+                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
+                    Stamp SVSTamp=nal.getNewStamp();
+                    Sentence SVBelief=nal.getCurrentBelief();
+                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
+                    //now set the current context:
+                    nal.setCurrentBelief(s);
+                    
+                    if(!taskSentence.isEternal() && !s.isEternal()) {
+                        if(s.after(taskSentence, memory.param.duration.get())) {
+                            nal.memory.proceedWithTemporalInduction(s,task.sentence,task,nal,false);
+                        } else {
+                            nal.memory.proceedWithTemporalInduction(task.sentence,s,task,nal,false);
+                        }
+                    }
+                    
+                    //RESTORE OF SPECIAL REASONING CONTEXT
+                    nal.setNewStamp(SVSTamp);
+                    nal.setCurrentBelief(SVBelief);
+                    nal.newStampBuilder=SVstampBuilder; //also restore this one
+                    //END
+                    
+                    alreadyInducted.add(t);
+                    
+                }
+            }
+        }
+    }
+    
     /* ----- syllogistic inferences ----- */
     /**
      * Meta-table of syllogistic rules, indexed by the content classes of the
@@ -464,7 +510,7 @@ public class RuleTables {
             
             Term[] u = new Term[] { statement, content };
             
-            if (!component.hasVar()) {
+            if (!component.hasVarIndep()) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u, nal.memory.random)) {
                 mainSentence = mainSentence.clone(u[0]);

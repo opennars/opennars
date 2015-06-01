@@ -320,7 +320,8 @@ public class Global {
 
 
 
-
+    //TODO eventually sort out in case that a parameter is not needed anymore
+    
     public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
     public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
     public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
@@ -329,6 +330,46 @@ public class Global {
     public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
     public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
     public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
+    
+    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
+    
+    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
+    
+    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
+    
+    public static float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    
+    public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+    
+    public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
+    public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
+    public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
+    public static float CURIOSITY_DESIRE_CONFIDENCE_MUL=0.1f; //how much risk is the system allowed to take just to fullfill its hunger for knowledge?
+    public static float CURIOSITY_DESIRE_PRIORITY_MUL=0.1f; //how much priority should curiosity have?
+    public static float CURIOSITY_DESIRE_DURABILITY_MUL=0.3f; //how much durability should curiosity have?
+    public static boolean CURIOSITY_FOR_OPERATOR_ONLY=false; //for Peis concern that it may be overkill to allow it for all <a =/> b> statement, so that a has to be an operator
+    public static boolean CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF=true;
+    
+    public static float HAPPY_EVENT_HIGHER_THRESHOLD=0.75f;
+    public static float HAPPY_EVENT_LOWER_THRESHOLD=0.25f;
+    public static float BUSY_EVENT_HIGHER_THRESHOLD=0.9f; //1.6.4, step by step^, there is already enough new things ^^
+    public static float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
+    public static boolean REFLECT_META_HAPPY_GOAL=false;
+    public static boolean CONSIDER_REMIND=false;
+    public static boolean BREAK_NAL_HOL_BOUNDARY=true;
+    
+    public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
+    public static boolean HOW_QUESTION_GENERATION_ON_DECISION_MAKING=false;
+    
+    public static float ANTICIPATION_CONFIDENCE=0.95f;
+    
+    public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
+    
+     public static int NOVEL_TASKS_TRACK_SIZE=1000; //inference rules like temporal induction
+    //work a bit differently, in order for it not to bypass the novelty strategy (because it doesn't use a termlink
+    //for inference, we track the tasks extra for now
+
+    
 
 
 }

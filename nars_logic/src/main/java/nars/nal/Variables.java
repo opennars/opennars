@@ -196,6 +196,13 @@ public class Variables {
             final Term b = applySubstituteAndRenameVariables(((Compound) compound[1]), map[1]);
             if (b == null) return false;
 
+            if(compound[0] instanceof Variable && ((Variable)compound[0]).hasVarQuery() && (((Variable)a).hasVarIndep() || ((Variable)a).hasVarDep()) ) {
+                return false;
+            }
+            if(compound[1] instanceof Variable && ((Variable)compound[1]).hasVarQuery() && (((Variable)b).hasVarIndep() || ((Variable)b).hasVarDep()) ) {
+                return false;
+            }
+
             //only set the values if it will return true, otherwise if it returns false the callee can expect its original values untouched
             compound[0] = a;
             compound[1] = b;

@@ -477,7 +477,35 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
 
-
+    protected void transformIndependentVariableToDependent(HashMap<String,Variable> vars, CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
+        Term[] term=T.term;
+        for (int i = 0; i < term.length; i++) {
+            Term t = term[i];
+            if (t.hasVar()) {
+                if (t instanceof CompoundTerm) {
+                    transformIndependentVariableToDependent(vars, (CompoundTerm) t);
+                } else if (t instanceof Variable) {  /* it's a variable */
+                    term[i] = vars.get(t.toString());
+                }
+            }
+        }
+    }
+    
+    public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
+        T=T.cloneDeep(); //we will operate on a copy
+        int counter = 0;
+        for(char c : T.toString().toCharArray()) {
+            if(c==Symbols.VAR_INDEPENDENT) {
+                counter++;
+            }
+        }
+        HashMap<String,Variable> vars = new HashMap<>();
+        for(int i=1;i<=counter;i++) {
+            vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
+        }
+        transformIndependentVariableToDependent(vars, T);
+        return T;
+    }
 
 
 

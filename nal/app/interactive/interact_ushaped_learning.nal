@@ -1,0 +1,27 @@
+js("this.askPassive=function(a){ a=a.toString(); ret=javax.swing.JOptionPane.showInputDialog(new javax.swing.JFrame(), 'Is this right passive form? '+a); if(ret==null) { nar.addInput('<'+a+' --> passive>. %0%'); return; } nar.addInput('<'+a+' --> passive>.'); }")!
+
+***Ushaped Learning
+//initial input as experience:
+//eaten is the passive form of eat:
+<(*,"eat","eaten") --> passive>.
+//broken is the passive form of break:
+<(*,"break","broken") --> passive>.
+//added is the passive form of add:
+<(*,"add","added") --> passive>.
+//asked is the passive form of ask:
+<(*,"ask","asked") --> passive>.
+
+//concatenation:
+//added is the appended form of add:
+<(*,"add","added") --> appended>.
+//asked is the appended form of ask:
+<(*,"ask","asked") --> appended>.
+//needed is the appended form of need:
+<(*,"need","needed") --> appended>.
+//eated is the appended form of eat:
+<(*,"eat","eated") --> appended>.
+
+<<$1 --> appended> ==> <$1 --> passive>>?
+
+//if you know some interesting card, look at it
+<<$sth --> passive> =/> js("this.askPassive(arg[0])",$sth)>!

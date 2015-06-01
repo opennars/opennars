@@ -157,7 +157,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
 
             //not really relevant for NARS, Im working on a active approach to detecting such patterns
             //which will work when conditioning works good
-           /* JMenuItem cct4 = new JMenuItem("+ Input Drawing");
+            JMenuItem cct4 = new JMenuItem("+ Input Drawing");
             cct4.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -166,7 +166,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
                     w.setVisible(true);
                 }                
             });
-            m.add(cct4); */
+            m.add(cct4); 
             
             JMenuItem ml = new JMenuItem("+ Output");
             ml.addActionListener(new ActionListener() {

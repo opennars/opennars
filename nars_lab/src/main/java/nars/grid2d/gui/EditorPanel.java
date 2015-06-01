@@ -1,5 +1,6 @@
 package nars.grid2d.gui;
 
+import nars.nal.concept.Concept;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Machine;
 import nars.grid2d.Cell.Material;
@@ -68,6 +69,27 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode mindSettings = new DefaultMutableTreeNode("Advanced Settings");
         root.add(mindSettings);
 
+        /*mindSettings.add(new EditorMode("Delete all desires") {
+            @Override
+            public void run() {
+                for(Concept c : s.nar.memory.concepts) {
+                    if(c.desires!=null && !c.desires.isEmpty()) {
+                        c.desires.clear();
+                    }
+                    ArrayList<TaskLink> toDelete=new ArrayList<TaskLink>();
+                    for(TaskLink T : c.taskLinks) {
+                        if(T.targetTask.sentence.punctuation==Symbols.GOAL_MARK) {
+                            toDelete.add(T);
+                        }    
+                    }
+                    for(TaskLink T : toDelete) {
+                        c.taskLinks.take(T);
+                    }
+                }
+            }
+        });
+        */
+
         mindSettings.add(new EditorMode("Allow joy in action") {
             @Override
             public void run() {
@@ -95,6 +117,22 @@ public class EditorPanel extends JPanel {
                 TestChamber.staticInformation=false;
             }
         });
+        
+         mindSettings.add(new EditorMode("Use complex feedback") {
+            @Override
+            public void run() {
+                TestChamber.ComplexFeedback=true;
+            }
+        });
+        
+        mindSettings.add(new EditorMode("Don't use complex feedback") {
+            @Override
+            public void run() {
+                TestChamber.ComplexFeedback=false;
+            }
+        });
+        
+        //ComplexFeedback
 
 
         DefaultMutableTreeNode load = new DefaultMutableTreeNode("Load Scenario");
@@ -200,6 +238,9 @@ public class EditorPanel extends JPanel {
                                                 //s.nar.addInput("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
+                                    } else {
+                                        s.cells.readCells[i][j].machine=null;
+                                        s.cells.writeCells[i][j].machine=null;
                                     }
 
                                     s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
@@ -235,6 +276,8 @@ public class EditorPanel extends JPanel {
                                 String[] objs=allText.split("OBJECTS")[1].split(";");
                                 ArrayList<GridObject> newobj=new ArrayList<>(); //new ArrayList we have to fill
                                 for(String obj : objs) {
+                                    if(obj.equals("\n"))
+                                        continue;
                                     String[] val=obj.split(",");
                                     if(val.length==0) {
                                         continue;
@@ -459,6 +502,12 @@ public class EditorPanel extends JPanel {
                 s.cells.click("bridge", "", "");
             }
         });
+        logicMenu.add(new EditorMode("Uncertain50PercentBridge") {
+            @Override
+            public void run() {
+                s.cells.click("uncertainbridge", "", "");
+            }
+        });
         logicMenu.add(new EditorMode("Off Switch") {
             @Override
             public void run() {
@@ -541,12 +590,12 @@ public class EditorPanel extends JPanel {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            s.nar.input("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
-                            s.nar.input("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
                         }
                         if (obi instanceof Pizza) {
-                            s.nar.input("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
@@ -554,23 +603,23 @@ public class EditorPanel extends JPanel {
                 for (int i = 0; i < s.cells.w; i++) {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
-                            s.nar.input("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            //s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            s.nar.input("<(^activate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
-                            s.nar.input("<(^deactivate," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
                 }
-
-                s.nar.input("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
-                s.nar.input("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
-                s.nar.input("<Self --> [curious]>!");
-                s.nar.input("<Self --> [curious]>!");
-                s.nar.input("<Self --> [exploring]>!");
-                s.nar.input("<Self --> [exploring]>!"); //testing with multiple goals
+                
+                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [curious]>!");
+                s.nar.addInput("<Self --> [exploring]>!");
+                s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
             }
         };
         goalMenu.add(wu);
@@ -653,7 +702,7 @@ public class EditorPanel extends JPanel {
                 s.nar.input("<(&/,<$1 --> [at]>,(^pick,$1)) =/> <$1 --> [hold]>>.");
                 s.nar.input("<(^go-to,$1) =/> <$1 --> [at]>>.");
                 s.nar.input("<(&/,<$1 --> [at]>,(^activate,$1)) =/> <$1 --> [on]>>.");
-                s.nar.input("<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> (--,<$1 --> [on]>)>.");
+                s.nar.input("<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [on]>>. %0.00;0.90%");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
                 //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }

@@ -2,6 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.face.HumanoidFacePanel;
 import nars.NAR;
+import nars.Global;
 
 
 
@@ -28,8 +29,9 @@ public class NARFacePanel extends HumanoidFacePanel  {
 
     @Override
     public void update(double t) {
-        happy = nar.memory.emotion.happy() > 0.6;
-        busy = nar.memory.emotion.busy() > 0.95;
+        happy = nar.memory.emotion.happy() > Parameters.HAPPY_EVENT_HIGHER_THRESHOLD;
+        unhappy = nar.memory.emotion.happy() < Parameters.HAPPY_EVENT_LOWER_THRESHOLD;
+        
         float conceptPriority = 0.5f; //((Number)nar.memory.logic.get("concept.priority.mean")).floatValue();
         float taskNewPriority = 0.5f; //((Number)nar.memory.logic.get("task.new.priority.mean")).floatValue();        
         
