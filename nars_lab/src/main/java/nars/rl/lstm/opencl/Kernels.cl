@@ -54,7 +54,7 @@ kernel void BackpropScalePartialsKernel(
     }
 }
 
-kernel void InputsToCellblocksKernel(__global precisionType* sumF, __global precisionType* sumG, __global const precisionType* weightsF, __global const precisionType* weightsG, __global const precisionType* full_input, int full_input_dimension, int cell_blocks) {
+kernel void InputsToCellblocksKernel(__global precisionType* sumF, __global precisionType* sumG, __global precisionType* weightsF, __global precisionType* weightsG, __global precisionType* full_input, int full_input_dimension, int cell_blocks) {
     int cellIndex = get_global_id(0);
 
     if (cellIndex >= cell_blocks)  {
@@ -67,12 +67,12 @@ kernel void InputsToCellblocksKernel(__global precisionType* sumF, __global prec
     for (int i = 0; i < full_input_dimension; i++) {
         precisionType fi = full_input[i];
 
-        sumFForCell += ARRAY2d(weightsF, cell_blocks, cellIndex, i) * fi;
-        sumGForCell += ARRAY2d(weightsG, cell_blocks, cellIndex, i) * fi;
+        sumFForCell = ((ARRAY2d(weightsF, cell_blocks, cellIndex, i)) * fi);
+        sumGForCell = ((ARRAY2d(weightsG, cell_blocks, cellIndex, i)) * fi);
     }
 
-    sumG[cellIndex] = sumGForCell;
     sumF[cellIndex] = sumFForCell;
+    sumG[cellIndex] = sumGForCell;
 }
 
 kernel void InputToHiddenKernel(
@@ -97,8 +97,8 @@ kernel void InputToHiddenKernel(
     precisionType deltaHForCell = deltaH[cellIndex];
 
     for (int i = 0; i < full_input_dimension; i++) {
-        ARRAY2d(weightsF, cell_blocks, cellIndex, i) += deltaHForCell * ARRAY2d(dSdF, cell_blocks, cellIndex, i) * learningrate;
-        ARRAY2d(weightsG, cell_blocks, cellIndex, i) += deltaHForCell * ARRAY2d(dSdG, cell_blocks, cellIndex, i) * learningrate;
+        ARRAY2d(weightsF, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdF, cell_blocks, cellIndex, i) * learningrate);
+        ARRAY2d(weightsG, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdG, cell_blocks, cellIndex, i) * learningrate);
     }
 }
 
@@ -147,7 +147,7 @@ kernel void CalculateOutputKernel(
 
     precisionType s = 0;
     for (int j = 0; j < cell_blocks + 1; j++) {
-        s += ARRAY2d(weightsOut, output_dimension, k, j) * full_hidden[j];
+        s += (ARRAY2d(weightsOut, output_dimension, k, j) * full_hidden[j]);
     }
 
     output[k] = s;

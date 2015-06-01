@@ -1,6 +1,5 @@
 package nars.rl.lstm;
 
-import nars.rl.lstm.opencl.LSTMCL;
 import objenome.util.random.XORShiftRandom;
 
 import java.util.Random;
@@ -15,7 +14,7 @@ public class Test {
 
 		int cell_blocks = 5;
 		double learningRate = 0.07;
-		LSTMCL slstm = new LSTMCL(r,
+		SimpleLSTM slstm = new SimpleLSTM(r,
 				task.getInputDimension(),
 				task.getOutputDimension(),
 				cell_blocks,
