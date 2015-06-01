@@ -11,6 +11,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
+import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -25,6 +26,7 @@ import java.util.function.Predicate;
 import static nars.nal.Terms.reduceUntilLayer2;
 import static nars.nal.Terms.unwrapNegation;
 import static nars.nal.TruthFunctions.*;
+import static nars.nal.nal7.TemporalRules.*;
 
 /**
  * Because of the re-use of temporary collections, each thread must have its own
@@ -313,15 +315,17 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 
                 int order = taskSentence.getTemporalOrder();
                 int side = 1;
-                long time=-99999;
+                boolean eternal = true;
+                long time = Stamp.ETERNAL;
                 if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
-                    long baseTime = second_belief.getOccurenceTime();
+                    long baseTime = second_belief.getOccurrenceTime();
                     if (baseTime == Stamp.ETERNAL) {
-                        baseTime = nal.getTime();
+                        baseTime = nal.time();
                     }
-                    long inc = order * nal.mem().param.duration.get();
+                    long inc = order * nal.memory.param.duration.get();
                     time = (side == 0) ? baseTime+inc : baseTime-inc;
-                    nal.getTheNewStamp().setOccurrenceTime(time);
+                    eternal = false;
+                    //nal.getTheNewStamp().setOccurrenceTime(time);
                 }
 
                 Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
@@ -335,12 +339,11 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     occ = second_belief.getOccurrenceTime();
                 }
 
-                Sentence newSentence = new Sentence(result, mark, truth,
-                        new Stamp(useEvidentalBase, nal.time(), occ));
+                Stamp sb = new Stamp(useEvidentalBase,
+                        !eternal ? time : nal.time(),
+                        occ);
+                Sentence newSentence = new Sentence(result, mark, truth, sb);
 
-                if(time!=-99999) 
-                    newSentence.stamp.setOccurrenceTime(time);
-                }
 
                 Task dummy = new Task(second_belief, budget, task, null);
                 Task newTask = new Task(newSentence, budget, task, null);

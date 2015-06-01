@@ -10,11 +10,13 @@ import nars.nal.*;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
+import nars.op.mental.InternalExperience;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -443,35 +445,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-    private void questionFromGoal(final Task task, final NAL nal) {
-        if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING || Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-            //ok, how can we achieve it? add a question of whether it is fullfilled
-            ArrayList<Term> qu=new ArrayList<Term>();
-            if(Parameters.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
-                    Variable how=new Variable("?how");
-                    Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
-                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                    qu.add(imp);
-                    qu.add(imp2);
-                }
-            }
-            if(Parameters.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                qu.add(task.sentence.term);
-            }
-            for(Term q : qu) {
-                if(q!=null) {
-                    Stamp st = new Stamp(task.sentence.stamp,nal.memory.time());
-                    st.setOccurrenceTime(task.sentence.getOccurenceTime()); //set tense of question to goal tense
-                    Sentence s=new Sentence(q,Symbols.QUESTION_MARK,null,st);
-                    if(s!=null) {
-                        BudgetValue budget=new BudgetValue(task.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                        nal.singlePremiseTask(s, budget);
-                    }
-                }
-            }
-        }
-    }
+
 
 
     /**
@@ -482,10 +456,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-        protected void processGoal(final NAL nal, final Task task) {        
+    protected boolean processGoal(final NAL nal, final Task task) {
         
         final Sentence goal = task.sentence;
-        final Task oldGoalT = selectCandidate(goal, desires); // revise with the existing desire values
+        final Task oldGoalT = getTask(goal, goals); // revise with the existing desire values
         Sentence oldGoal = null;
         
         if (oldGoalT != null) {
@@ -495,13 +469,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
             
             
             if (newStamp.equals(oldStamp,false,true,true,false)) {
-                return; // duplicate
+                return false; // duplicate
             }
             if (revisible(goal, oldGoal)) {
                 
-                nal.setTheNewStamp(newStamp, oldStamp, memory.time());
+                //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
-                Sentence projectedGoal = oldGoal.projection(task.sentence.getOccurenceTime(), newStamp.getOccurrenceTime());
+                Sentence projectedGoal = oldGoal.projection(task.getOccurrenceTime(), newStamp.getOccurrenceTime());
                 if (projectedGoal!=null) {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
@@ -511,7 +485,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     if(!(task.sentence.term instanceof Operation)) {
                         boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
                         if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
-                            return; // with higher/lower desire
+                            return true; // with higher/lower desire
                         } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                    }
                 }
@@ -523,41 +497,46 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
             Sentence projectedGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
             if(projectedGoal!=null) {
-                nal.singlePremiseTask(projectedGoal, task.budget.clone()); //it has to be projected
-                return;
+                nal.singlePremiseTask(projectedGoal, task.getBudget()); //it has to be projected
+                return true;
             }
         }
         
         if (task.aboveThreshold()) {
 
-            final Task beliefT = selectCandidate(goal, beliefs); // check if the Goal is already satisfied
+            final Task beliefT = getTask(goal, beliefs); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projection(task.sentence.getOccurenceTime(), nal.memory.param.duration.get());
+                Sentence projectedBelief = belief.projection(task.getOccurrenceTime(), nal.memory.param.duration.get());
                 trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
             }    
             
             double Satisfaction=1.0-AntiSatisfaction;
-            TruthValue T=goal.truth.clone();
+            Truth T = new DefaultTruth(goal.truth);
             
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (task.aboveThreshold() && AntiSatisfaction >= Parameters.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            if (task.aboveThreshold() && AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
-                
-                addToTable(task, desires, memory.param.conceptGoalsMax.get(), ConceptGoalAdd.class, ConceptGoalRemove.class);
-                
-                InternalExperience.InternalExperienceFromTask(memory,task,false);
-                
-                if(!executeDecision(task)) {
-                    memory.emit(UnexecutableGoal.class, task, this, nal);
+
+                if (!addToTable(task, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
+                    //wasnt added to table
+                    getMemory().removed(task, "Insufficient Rank"); //irrelevant
+                    return false;
                 }
+
+                //TODO
+                InternalExperience.InternalExperienceFromTask(memory, task, false);
+
+                getMemory().execute(this, task);
             }
         }
+
+        return true;
     }
 
     final static Variable how=new Variable("?how");
@@ -591,6 +570,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
         }
     }
+
 
     /**
      * To answer a quest or question by existing beliefs
@@ -664,7 +644,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
     /**
-     * Add a new belief (or goal) into the table Sort the beliefs/desires by
+     * Add a new belief (or goal) into the table Sort the beliefs/goals by
      * rank, and remove redundant or low rank one
      *
      * @param newSentence The judgment to be processed
@@ -763,13 +743,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * Select a belief value or desire value for a given query
      *
      * @param query The query to be processed
-     * @param list The list of beliefs or desires to be used
+     * @param list The list of beliefs or goals to be used
      * @return The best candidate selected
      */
-    public Sentence getSentence(final Sentence query, final List<Task>... lists) {
+    public Task getTask(final Sentence query, final List<Task>... lists) {
         float currentBest = 0;
         float beliefQuality;
-        Sentence candidate = null;
+        Task candidate = null;
 
         final long now = getMemory().time();
         for (List<Task> list : lists) {
@@ -777,8 +757,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
             int lsv = list.size();
             for (int i = 0; i < lsv; i++) {
-                Sentence judg = list.get(i).sentence;
-                beliefQuality = solutionQuality(query, judg, now);
+                Task judg = list.get(i);
+                beliefQuality = solutionQuality(query, judg.sentence, now);
                 if (beliefQuality > currentBest) {
                     currentBest = beliefQuality;
                     candidate = judg;
@@ -789,7 +769,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return candidate;
     }
 
-
+    public Sentence getSentence(final Sentence query, final List<Task>... lists) {
+        Task t = getTask(query, lists);
+        if (t == null) return null;
+        return t.sentence;
+    }
 
     /**
      * Link to a new task from all relevant concepts for continued processing in
@@ -1159,7 +1143,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //
 //
 //    /**
-//     * Collect direct isBelief, questions, and desires for display
+//     * Collect direct isBelief, questions, and goals for display
 //     *
 //     * @return String representation of direct content
 //     */

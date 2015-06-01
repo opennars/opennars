@@ -531,14 +531,16 @@ public class TemporalRules {
         
         */
         
-        if(s1.punctuation==Symbols.JUDGMENT_MARK) { //necessary check?
+        if(s1.punctuation==Symbols.JUDGMENT) { //necessary check?
             Sentence belief=task.sentence;
             Concept S1_State_C=nal.memory.concept(s1.term);
-            if(S1_State_C != null && S1_State_C.desires != null && S1_State_C.desires.size() > 0 &&
+            if(S1_State_C != null && S1_State_C.hasGoals() &&
                     !(((Statement)belief.term).getPredicate() instanceof Operation)) {
-                Task a_desire = S1_State_C.desires.get(0);
-                Sentence Goal = new Sentence(S1_State_C.term,Symbols.JUDGMENT_MARK,new TruthValue(1.0f,0.99f),a_desire.sentence.stamp.clone());
-                Goal.stamp.setOccurrenceTime(s1.getOccurenceTime()); //strongest desire for that time is what we want to know
+                Task a_desire = S1_State_C.getStrongestGoal(true, true);
+                Sentence Goal = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
+                        new DefaultTruth(1.0f,0.99f), a_desire.sentence.stamp.clone());
+
+                Goal.stamp.setOccurrenceTime(s1.getOccurrenceTime()); //strongest desire for that time is what we want to know
                 Task strongest_desireT=S1_State_C.selectCandidate(Goal, S1_State_C.desires);
                 Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurenceTime(), strongest_desireT.sentence.getOccurenceTime());
                 TruthValue T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
@@ -583,7 +585,7 @@ public class TemporalRules {
     }
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT_MARK && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
+        if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
             if(task.sentence.term instanceof Implication) {
                 boolean valid=false;
                 if(task.sentence.term instanceof Implication) {

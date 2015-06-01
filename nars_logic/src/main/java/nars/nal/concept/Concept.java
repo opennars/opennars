@@ -238,13 +238,13 @@ abstract public interface Concept extends Termed, Itemized<Term> {
     public boolean process(final TaskProcess nal);
 
     /** returns the best belief of the specified types */
-    default public Sentence getStrongestBelief(boolean eternal, boolean nonEternal) {
-        return getStrongestSentence(getBeliefs(), eternal, nonEternal);
+    default public Task getStrongestBelief(boolean eternal, boolean nonEternal) {
+        return getStrongestTask(getBeliefs(), eternal, nonEternal);
     }
 
 
-    default public Sentence getStrongestGoal(boolean eternal, boolean nonEternal) {
-        return getStrongestSentence(getGoals(), eternal, nonEternal);
+    default public Task getStrongestGoal(boolean eternal, boolean nonEternal) {
+        return getStrongestTask(getGoals(), eternal, nonEternal);
     }
 
     /** temporary until goal is separated into goalEternal, goalTemporal */
@@ -257,13 +257,29 @@ abstract public interface Concept extends Termed, Itemized<Term> {
         }
         return null;
     }
-
-    static Sentence getStrongestSentence(List<Task> table) {
-        if (table.isEmpty()) return null;
-        return table.get(0).sentence;
+    /** temporary until goal is separated into goalEternal, goalTemporal */
+    @Deprecated default public Task getStrongestTask(final List<Task> table, final boolean eternal, final boolean temporal) {
+        for (Task t : table) {
+            boolean e = t.isEternal();
+            if (e && eternal) return t;
+            if (!e && temporal) return t;
+        }
+        return null;
     }
 
-    default public Sentence getStrongestBelief() {
+    public static Sentence getStrongestSentence(List<Task> table) {
+        Task t = getStrongestTask(table);
+        if (t!=null) return t.sentence;
+        return null;
+    }
+
+    public static Task getStrongestTask(List<Task> table) {
+        if (table == null) return null;
+        if (table.isEmpty()) return null;
+        return table.get(0);
+    }
+
+    default public Task getStrongestBelief() {
         if (hasBeliefs())
             return getStrongestBelief(true, true);
         return null;
