@@ -196,6 +196,8 @@ public class LSTMCL implements IAgentSupervised {
             full_input[loc++] = (float)input[i++];
         }
 
+        queue.putReadBuffer(context, false);
+
         FloatBuffer contextBuffer = context.getBuffer();
         for (int c = 0; c < cell_blocks; ) {
             full_input[loc++] = contextBuffer.get(c++);
@@ -236,10 +238,10 @@ public class LSTMCL implements IAgentSupervised {
             //zero(actH.getBuffer());
         }
 
-        int localWorkSizeForCells = min(maxWorkGroupSize, 256);  // Local work size dimensions
+        int localWorkSizeForCells = min(maxWorkGroupSize, 16);  // Local work size dimensions
         int globalWorkSizeForCells = roundUp(localWorkSizeForCells, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
 
-        int localWorkSizeForOutput = min(maxWorkGroupSize, 256);
+        int localWorkSizeForOutput = min(maxWorkGroupSize, 16);
         int globalWorkSizeForOutput = roundUp(localWorkSizeForOutput, output_dimension);
 
         inputsToCellblocksKernel.rewind();
@@ -288,7 +290,7 @@ public class LSTMCL implements IAgentSupervised {
                 .putWriteBuffer(fullInputBuffer, false)
                 .put1DRangeKernel(inputsToCellblocksKernel, 0, globalWorkSizeForCells, localWorkSizeForCells)
 
-                .putWriteBuffer(context, false)
+                //.putWriteBuffer(context, false)
                 .put1DRangeKernel(activateKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
                 //.putReadBuffer(actFBuffer, true)
                 //.putReadBuffer(actGBuffer, true)
