@@ -1,0 +1,290 @@
+//processing sketch, copy into a new Processing sketch and press Run (needs a webcam)
+
+import processing.video.*;
+import java.io.*;
+import processing.serial.*;
+
+boolean use_nars=false;
+boolean use_serial=false;
+
+int numPixels;
+int[] previousFrame;
+Capture video;
+Serial port;
+
+boolean vision2D=false; //switch between the way color segments are represented: 1D: <(*,red,X) --> colorseg>  or 2D: <(*,red,X,Y) --> colorseg>
+//what the knowledge and motivations of the robot are  //example: follow the red ball!
+String knowledge="<<(*,red,1) --> colorseg> =|> go-to(r)>!\n<<(*,red,9) --> colorseg> =|> go-to(l)>!\n<<(*,red,8) --> colorseg> =|> go-to(l)>!\n<<(*,red,0) --> colorseg> =|> go-to(r)>!\n";
+
+private class InputThread extends Thread
+{
+  private BufferedReader bufIn;
+  InputThread(InputStream in)
+  {
+    bufIn = new BufferedReader(new InputStreamReader(in));
+  }
+  public void run()
+  {
+    while(true)
+    {
+      try
+      {
+        String line=bufIn.readLine();
+        println(line);
+        if(use_serial)
+        {
+          //all the commands the firmware supports:
+          if(line.contains("^go-to([f, SELF])=null"))
+            port.write('f');
+          if(line.contains("^go-to([b, SELF])=null"))
+            port.write('b');
+          if(line.contains("^go-to([l, SELF])=null"))
+            port.write('l');
+          if(line.contains("^go-to([r, SELF])=null"))
+            port.write('r');
+          if(line.contains("^go-to([1, SELF])=null"))
+            port.write('1');
+          if(line.contains("^go-to([2, SELF])=null"))
+            port.write('2');
+          if(line.contains("^go-to([3, SELF])=null"))
+            port.write('3');
+          if(line.contains("^go-to([4, SELF])=null"))
+            port.write('4');
+        }
+        
+      }catch(Exception ex){println(ex.toString());}
+      try
+      {
+        Thread.sleep(1);
+      }catch(Exception ex){}
+    }
+  }
+}
+
+boolean UNIX=false;
+InputThread thr;
+public class NARSComm extends Thread
+{
+  public void run()
+  {
+    Process cmd=null;
+    try
+    {
+      if(!UNIX)
+        cmd = Runtime.getRuntime().exec("cmd /c "+"java -cp C:/Users/patrick.hammer/Documents/Processing/NARVISION/OpenNARS_GUI.jar nars.core.NARRun");//java -cp OpenNARS_GUI.jar nars.core.NARRun");
+      thr=new InputThread(cmd.getInputStream());
+      thr.start();
+      OutputStream outs = cmd.getOutputStream();
+      PrintWriter printOut;
+      printOut = new PrintWriter(outs);
+      printOut.println("*volume=0");
+      printOut.print(knowledge);
+      while(true)
+      {
+        if(toNAR!=null)
+        {
+          printOut.println(toNAR);
+          printOut.flush();
+          toNAR=null;
+        }
+        try
+        {
+        Thread.sleep(1);
+        }catch(Exception ex){}
+      }
+    }catch(Exception ex){}
+  }
+}
+
+String toNAR=null;
+NARSComm nars;
+void setup()
+{
+  size(640, 480);
+  video = new Capture(this, width, height);
+  video.start(); 
+  numPixels = video.width * video.height;
+  previousFrame = new int[numPixels];
+  loadPixels();
+  smooth(0);
+  if(use_serial)
+    port = new Serial(this,Serial.list()[0], 9600);
+  if(use_nars)
+  {
+    nars = new NARSComm();
+    nars.start();
+  }
+}
+
+int k=0;
+int lastcheckedX=0;
+int lastcheckedY=0;
+void draw()
+{
+  int vsz=10; //segments NARS will know where the change happens and color
+  int[][] vote = new int[vsz][vsz];
+  int[][] colorArR = new int[vsz][vsz];
+  int[][] colorArG = new int[vsz][vsz];
+  int[][] colorArB = new int[vsz][vsz];
+  if (video.available())
+  {
+    k++;
+    video.read(); // Read the new frame from the camera
+    video.loadPixels(); // Make its pixels[] array available
+    
+    int movementSum = 0; // Amount of movement in the frame
+    PImage still=createImage(640, 480, ARGB);
+    int x=0;
+    int y=0;
+    for (int i = 0; i < numPixels; i++)
+    { // For each pixel in the video frame...
+      
+      int vx=0;
+      int vy=0;
+      int u=0;
+      for(int cx=0;cx<width;cx+=width/vsz)
+      {
+         if(cx>x)
+         {
+           vx=u;
+           break;
+         }
+         u++;
+      }
+      u=0;
+      for(int cy=0;cy<height;cy+=height/vsz)
+      {
+         if(cy>y)
+         {
+           vy=u;
+           break;
+         }
+         u++;
+      }
+    
+      color currColor = video.pixels[i];
+      color prevColor = previousFrame[i];
+      // Extract the red, green, and blue components from current pixel
+      int currR = (currColor >> 16) & 0xFF; // Like red(), but faster
+      int currG = (currColor >> 8) & 0xFF;
+      int currB = currColor & 0xFF;
+      // Extract red, green, and blue components from previous pixel
+      int prevR = (prevColor >> 16) & 0xFF;
+      int prevG = (prevColor >> 8) & 0xFF;
+      int prevB = prevColor & 0xFF;
+      // Compute the difference of the red, green, and blue values
+      
+      int diffR = abs(currR - prevR);
+      int diffG = abs(currG - prevG);
+      int diffB = abs(currB - prevB);
+      int voteThreshold=0;
+      int voteAbsThreshold=0;
+      if(!(diffR<voteThreshold && diffG<voteThreshold && diffB<voteThreshold))
+      {
+        if(!(currR<voteAbsThreshold && currG<voteAbsThreshold && currB<voteAbsThreshold))
+        {
+          colorArR[vx][vy]+=currR;
+          colorArG[vx][vy]+=currG;
+          colorArB[vx][vy]+=currB;
+        }
+      }
+      int diffThreshold=30;
+      if(!(diffR<diffThreshold && diffG<diffThreshold && diffB<diffThreshold))
+      {
+        vote[vx][vy]+=1;//diffR+diffG+diffB;
+        diffR=currR;
+        diffG=currG;
+        diffB=currB;
+      }
+      // Add these differences to the running tally
+      movementSum += diffR + diffG + diffB;
+      pixels[i] = 0xff000000 | (diffR << 16) | (diffG << 8) | diffB;
+      still.pixels[i]=pixels[i];
+      // Save the current color into the 'previous' buffer
+      if(k%1==0) //i like it to be continuous thats why its 1
+      {
+        int mass=10; //mass parameter for continuous backgrounding
+        int CR=(mass-1)*prevR, CG=(mass-1)*prevG, CB=(mass-1)*prevB;
+        currR=(currR+CR)/mass;
+        currG=(currG+CG)/mass;
+        currB=(currB+CB)/mass;
+        int colnow = 0xff000000 | (currR << 16) | (currG << 8) | currB;
+        previousFrame[i] = colnow; //dont update in every step
+      }
+      x++;
+      if(x>=width)
+      {
+        x=0;
+        y++;
+      }
+     
+    }
+    // To prevent flicker from frames that are all black (no movement),
+    if (movementSum > 0) {
+      updatePixels();
+      //println(movementSum); // Print the total amount of movement to the console
+    }
+    int s=30; //8
+    still.resize(s,s);
+    pushMatrix();
+    scale(width/s,height/s);
+    image(still, 0, 0);
+    popMatrix();
+    
+    //get the best voted change cell:
+    int maxX=0;
+    int maxY=0;
+    int maxVal=0;
+    for(int i=0;i<vsz;i++)
+    {
+      for(int j=0;j<vsz;j++)
+      {
+        if(vote[i][j]>maxVal)
+        {
+          maxVal=vote[i][j];
+          maxX=i;
+          maxY=j;
+        }
+      }
+    }
+    //get the biggest color in this area:
+    int bigR=colorArR[maxX][maxY];
+    int bigG=colorArG[maxX][maxY];
+    int bigB=colorArB[maxX][maxY];
+    int acceptThreshold=2600; //may depent on lighting, tune it
+    //println(vote[maxX][maxY]);
+    int NARVisionUpdateRate=10;
+    if(k>50 && k%NARVisionUpdateRate==0 && vote[maxX][maxY]>acceptThreshold)
+    {
+      println("accepted vision: "+vote[maxX][maxY]);
+      String col="red";
+      if(bigG>bigB && bigG>bigR)
+        col="green";
+      if(bigB>bigG && bigB>bigR)
+        col="blue";
+      if(toNAR==null)
+      {
+        if(vision2D)
+          toNAR="<(*,"+col+","+maxX+","+maxY+") --> colorseg>. :|:";
+        else
+          toNAR="<(*,"+col+","+maxX+") --> colorseg>. :|:";
+      }
+      println("send to NARS: "+toNAR);
+      if(col=="blue")
+        fill(0,0,255);
+      if(col=="red")
+        fill(255,0,0);
+      if(col=="green")
+        fill(0,255,0);
+      lastcheckedX=width/vsz*maxX;
+      lastcheckedY=height/vsz*maxY;
+    }
+    rect(lastcheckedX,lastcheckedY,10,10);
+  }
+}
+
+void stop()
+{
+  nars.stop();
+  thr.stop();
+} 

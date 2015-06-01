@@ -28,7 +28,8 @@ public class Cell {
         Empty, DirtWall,
         Machine,
         Water,
-        Pizza
+        Pizza,
+        UNCERTAINBRIDGE
         //case Tile.Upstairs:
         //case Tile.Downstairs:
         //case Tile.Chest:        
@@ -219,21 +220,24 @@ public class Cell {
             s.ellipse(0.5f, 0.5f, 1.0f, 1.0f);
         }
         else
-        if(logic!=Logic.BRIDGE && logic!=Logic.NotALogicBlock && logic!=Logic.WIRE) {
+        if(logic!=Logic.BRIDGE && logic!=Logic.UNCERTAINBRIDGE && logic!=Logic.NotALogicBlock && logic!=Logic.WIRE) {
             //s.fill(state.cr+30, state.cg+30, state.cb+30, state.ca+30);
             s.fill(state.cr+30, state.cg+30, 0, state.ca+30);
             s.triangle(0.25f, 1.0f, 0.5f, 0.5f, 0.75f, 1.0f);
             s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
             s.rect(0, 0.3f, 1, 0.4f);
         }
-         else
-        if(logic==Logic.WIRE || logic==Logic.BRIDGE) {
+        else
+        if(logic==Logic.WIRE || logic==Logic.BRIDGE || logic==Logic.UNCERTAINBRIDGE) {
             s.fill(state.cr, state.cg, state.cb, state.ca);
-            if(logic==Logic.BRIDGE) {
+            if(logic==Logic.BRIDGE || logic==Logic.UNCERTAINBRIDGE) {
                 s.fill(state.cr+30, state.cg+30, 0, state.ca+30);
+                s.triangle(0.25f, 0.0f, 0.5f, 0.5f, 0.75f, 0.0f);
+                s.rect(0.3f, 0.3f, 0.4f, 0.7f);
+            } else { 
+                s.rect(0.3f, 0, 0.4f, 1);
             }
             s.rect(0, 0.3f, 1, 0.4f);
-            s.rect(0.3f, 0, 0.4f, 1);
         }
          
         s.fill(255,255,255,128);
@@ -256,6 +260,10 @@ public class Cell {
         if(logic==Logic.BRIDGE)
         {
             drawtext(s,"H");
+        }
+        if(logic==Logic.UNCERTAINBRIDGE)
+        {
+            drawtext(s,"U");
         }
         if(logic==Logic.SWITCH)
         {

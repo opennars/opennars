@@ -356,7 +356,7 @@ public final class StructuralRules {
      * @param nal Reference to the memory
      */
     static boolean structuralCompound(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
-        if (component.hasVar()) {
+        if (component.hasVarIndep()) {
             return false;
         }
         
@@ -402,10 +402,10 @@ public final class StructuralRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        if (content instanceof Compound)
+        //if (content instanceof Compound)
             return nal.singlePremiseTask((Compound)content, truth, budget);
-        else
-            return false;
+       // else
+       //     return false;
     }
 
     /* --------------- Negation related rules --------------- */

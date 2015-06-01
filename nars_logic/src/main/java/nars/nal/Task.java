@@ -268,6 +268,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @param judg The solution to be remembered
      */
     public void setBestSolution(final Sentence judg) {
+        InternalExperience.InternalExperienceFromBelief(memory, this, judg);
         bestSolution = judg;
     }
 
