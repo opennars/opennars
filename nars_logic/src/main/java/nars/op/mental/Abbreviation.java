@@ -10,7 +10,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
 import nars.nal.DefaultTruth;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;
@@ -113,7 +113,7 @@ public class Abbreviation extends NARReaction {
                     Global.DEFAULT_JUDGMENT_DURABILITY,
                     BudgetFunctions.truthToQuality(sentence.truth));
 
-            DirectProcess.run( memory, memory.task(sentence, budget, task ));
+            TaskProcess.run(memory, memory.task(sentence, budget, task));
 
             //memory.execute(operation);
             //abbreviate.execute(operation, memory);

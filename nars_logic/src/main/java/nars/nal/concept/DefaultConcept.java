@@ -15,7 +15,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
-import nars.op.mental.InternalExperience;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -261,7 +260,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param task The task to be processed
      * @return whether it was processed
      */
-    public boolean process(final DirectProcess nal) {
+    public boolean process(final TaskProcess nal) {
 
 
         if (!ensureActiveFor("DirectProcess")) return false;
@@ -368,7 +367,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processJudgment(final DirectProcess nal, final Task task) {
+    public boolean processJudgment(final TaskProcess nal, final Task task) {
 
         if (hasBeliefs() && isConstant())
             return false;
@@ -454,7 +453,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param task The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processGoal(final DirectProcess nal, Task task) {
+    public boolean processGoal(final TaskProcess nal, Task task) {
 
         if (hasGoals() && isConstant())
             return false;
@@ -604,7 +603,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param n The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected void processQuestion(final DirectProcess nal, final Task n) {
+    protected void processQuestion(final TaskProcess nal, final Task n) {
 
         Sentence ques = n.sentence;
 

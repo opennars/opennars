@@ -22,33 +22,21 @@ package nars.nal.concept;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import nars.Events;
-import nars.Events.*;
 import nars.Global;
 import nars.Memory;
-import nars.Memory.MemoryAware;
-import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
-import nars.nal.nal5.Equivalence;
-import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
-import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
-import nars.nal.term.Variable;
 import nars.nal.tlink.*;
 
 import java.io.PrintStream;
 import java.util.*;
 
 import static com.google.common.collect.Iterators.*;
-import static nars.budget.BudgetFunctions.divide;
 import static nars.nal.UtilityFunctions.or;
-import static nars.nal.nal1.LocalRules.*;
-import static nars.nal.nal7.TemporalRules.solutionQuality;
 
 abstract public interface Concept extends Termed, Itemized<Term> {
 
@@ -247,7 +235,7 @@ abstract public interface Concept extends Termed, Itemized<Term> {
         return true;
     }
 
-    public boolean process(final DirectProcess nal);
+    public boolean process(final TaskProcess nal);
 
     /** returns the best belief of the specified types */
     default public Sentence getStrongestBelief(boolean eternal, boolean nonEternal) {

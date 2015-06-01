@@ -1,7 +1,7 @@
 package nars.rl;
 
 import nars.Symbols;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
@@ -107,7 +107,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     float lastFreq = 0.5f; //start in neutral
 
     public void commitDirect(Task t) {
-        DirectProcess.run(concept.getMemory(), t);
+        TaskProcess.run(concept.getMemory(), t);
     }
 
 //    /** inserts the belief directly into the table */

@@ -13,7 +13,7 @@ import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal7.Tense;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -163,7 +163,7 @@ public class Discretize {
             if (mode == BeliefInsertion.MemoryInput)
                 nar.memory.input(t);
             else if (mode == BeliefInsertion.ImmediateProcess)
-                DirectProcess.run(nar.memory, t);
+                TaskProcess.run(nar.memory, t);
 
         }
     }            

@@ -5,7 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
@@ -34,15 +34,15 @@ public class STMInduction extends NARReaction {
 
     @Override
     public Class[] getEvents() {
-        return new Class[]{DirectProcess.class, Events.ResetStart.class};
+        return new Class[]{TaskProcess.class, Events.ResetStart.class};
     }
 
 
     @Override
     public void event(Class event, Object[] args) {
-        if (event == DirectProcess.class) {
+        if (event == TaskProcess.class) {
             Task t = (Task) args[0];
-            DirectProcess n = (DirectProcess) args[1];
+            TaskProcess n = (TaskProcess) args[1];
             inductionOnSucceedingEvents(t, n);
         }
         else if (event == Events.ResetStart.class) {
@@ -61,7 +61,7 @@ public class STMInduction extends NARReaction {
         return stmSize;
     }
 
-    boolean inductionOnSucceedingEvents(final Task newEvent, DirectProcess nal) {
+    boolean inductionOnSucceedingEvents(final Task newEvent, TaskProcess nal) {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 

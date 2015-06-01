@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.Symbols;
 import nars.event.NARReaction;
 import nars.io.Texts;
-import nars.nal.DirectProcess;
+import nars.nal.TaskProcess;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
@@ -47,11 +47,11 @@ abstract public class MarkovObservationsGraph extends ConceptGraph<MarkovObserva
         current = new LinkedHashMap<>();
         currentEpisode = nar.time();
 
-        processing = new NARReaction(nar, DirectProcess.class, Events.CycleEnd.class, Events.ResetStart.class) {
+        processing = new NARReaction(nar, TaskProcess.class, Events.CycleEnd.class, Events.ResetStart.class) {
 
             @Override
             public void event(Class event, Object... args) {
-                if (event == DirectProcess.class) {
+                if (event == TaskProcess.class) {
                     Task t = (Task) args[0];
                     if (/*t.isInput() &&*/ !t.isEternal()) {
                         long now = nar.time();
