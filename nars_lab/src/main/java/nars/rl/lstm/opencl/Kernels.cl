@@ -67,8 +67,8 @@ kernel void InputsToCellblocksKernel(__global precisionType* sumF, __global prec
     for (int i = 0; i < full_input_dimension; i++) {
         precisionType fi = full_input[i];
 
-        sumFForCell = ((ARRAY2d(weightsF, cell_blocks, cellIndex, i)) * fi);
-        sumGForCell = ((ARRAY2d(weightsG, cell_blocks, cellIndex, i)) * fi);
+        sumFForCell += ((ARRAY2d(weightsF, cell_blocks, cellIndex, i)) * fi);
+        sumGForCell += ((ARRAY2d(weightsG, cell_blocks, cellIndex, i)) * fi);
     }
 
     sumF[cellIndex] = sumFForCell;

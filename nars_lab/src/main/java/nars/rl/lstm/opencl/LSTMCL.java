@@ -292,7 +292,6 @@ public class LSTMCL implements IAgentSupervised {
                 double _sumF = 0.0;
                 double _sumG = 0.0;
 
-                //int i = full_input_dimension - 1;
                 for (int i = 0; i < full_input_dimension; i++) {
                     final double fi = full_input[i];
 
@@ -485,10 +484,6 @@ public class LSTMCL implements IAgentSupervised {
     }
 
     public double[] learn(double[] input, double[] target_output, final boolean requireOutput) {
-        final double learningRate = this.learningRate;
-        final int cell_blocks = this.cell_blocks;
-
-
         //setup input vector
 
 
@@ -516,9 +511,11 @@ public class LSTMCL implements IAgentSupervised {
         FloatBuffer fullInputBufferBuffer = fullInputBuffer.getBuffer();
         fullInputBufferBuffer.rewind();
 
-        for( int i = 0; i < full_input.length; i++ ) {
+        for( int i = 0; i < full_input_dimension; i++ ) {
             fullInputBufferBuffer.put(i, full_input[i]);
         }
+
+        queue.putWriteBuffer(fullInputBuffer, true);
 
 
         //cell block arrays
@@ -545,10 +542,10 @@ public class LSTMCL implements IAgentSupervised {
             //zero(actH.getBuffer());
         }
 
-        int localWorkSizeForCells = min(maxWorkGroupSize, 16);  // Local work size dimensions
+        int localWorkSizeForCells = min(maxWorkGroupSize, 32);  // Local work size dimensions
         int globalWorkSizeForCells = roundUp(localWorkSizeForCells, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
 
-        int localWorkSizeForOutput = min(maxWorkGroupSize, 16);
+        int localWorkSizeForOutput = min(maxWorkGroupSize, 32);
         int globalWorkSizeForOutput = roundUp(localWorkSizeForOutput, output_dimension);
 
 
@@ -560,7 +557,7 @@ public class LSTMCL implements IAgentSupervised {
         long time = nanoTime();
 
 
-        queue.putWriteBuffer(fullInputBuffer, true);
+
 
         queue.finish();
 
@@ -723,8 +720,8 @@ public class LSTMCL implements IAgentSupervised {
                 writeArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cell_blocks, readArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cell_blocks) + dok * 1.0f * (float) learningRate);
             }
 
-            queue.putWriteBuffer(weightsOut, false);
-            queue.putWriteBuffer(deltaH, false);
+            queue.putWriteBuffer(weightsOut, true);
+            queue.putWriteBuffer(deltaH, true);
 
 
             //input to hidden
@@ -733,7 +730,7 @@ public class LSTMCL implements IAgentSupervised {
             inputToHiddenKernel.putArgs(deltaH, dSdF, dSdG, weightsF, weightsG).putArg((float)learningRate).putArg(full_input_dimension).putArg(cell_blocks);
 
             queue
-                    .putWriteBuffer(deltaH, false)
+                    .putWriteBuffer(deltaH, true)
                     .put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
 
 
