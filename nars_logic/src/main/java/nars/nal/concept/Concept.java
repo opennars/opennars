@@ -49,6 +49,8 @@ abstract public interface Concept extends Termed, Itemized<Term> {
 
     public Memory getMemory();
 
+    Task getTask(Sentence query, List<Task>... lists);
+
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
 
     boolean linkTerms(Budget budgetRef, boolean b);

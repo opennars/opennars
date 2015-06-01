@@ -530,8 +530,7 @@ public class TemporalRules {
         (^pick,left)! (note the change of punctuation, it needs the punctuation of the belief here)
         
         */
-        
-        if(s1.punctuation==Symbols.JUDGMENT) { //necessary check?
+        if (s1.isJudgment()) { //necessary check?
             Sentence belief=task.sentence;
             Concept S1_State_C=nal.memory.concept(s1.term);
             if(S1_State_C != null && S1_State_C.hasGoals() &&
@@ -541,69 +540,38 @@ public class TemporalRules {
                         new DefaultTruth(1.0f,0.99f), a_desire.sentence.stamp.clone());
 
                 Goal.stamp.setOccurrenceTime(s1.getOccurrenceTime()); //strongest desire for that time is what we want to know
-                Task strongest_desireT=S1_State_C.selectCandidate(Goal, S1_State_C.desires);
-                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurenceTime(), strongest_desireT.sentence.getOccurenceTime());
-                TruthValue T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
+                Task strongest_desireT=S1_State_C.getTask(Goal, S1_State_C.getGoals());
+                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
+                Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
                 Stamp st=belief.stamp.clone();
                 
-                if(strongest_desire.getOccurenceTime()==Stamp.ETERNAL) {
+                if(strongest_desire.isEternal()) {
                     st.setEternal();
                 } else {
                     long shift=0;
                     if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                        shift=nal.memory.getDuration();
+                        shift=nal.memory.duration();
                     }
                     st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
                 }
                 
-                ///SPECIAL REASONING CONTEXT FOR TEMPORAL DESIRE UPDATE
-                Stamp SVSTamp=nal.getNewStamp();
-                Task SVTask=nal.getCurrentTask();
-                NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
-                //END
+
                 
                 nal.setCurrentBelief(belief);
-                nal.setCurrentTask(strongest_desireT);
                 
-                Sentence W=new Sentence(s2.term,Symbols.GOAL_MARK,T,st);
-                BudgetValue val=BudgetFunctions.forward(T, nal);
-                Task TD=new Task(W,val,strongest_desireT);
-                
-                nal.doublePremiseTask(TD.getTerm(), TD.sentence.truth, TD.budget, false, true);
-                // nal.derivedTask(TD, false, false, strongest_desireT, null, false);
-                
-                //RESTORE CONTEXT
-                nal.setNewStamp(SVSTamp);
-                nal.setCurrentTask(SVTask);
-                nal.newStampBuilder=SVstampBuilder; //also restore this one
-                //END
+                Sentence W=new Sentence(s2.term,Symbols.GOAL,T,st);
+                Budget val=BudgetFunctions.forward(T, nal);
+
+                nal.doublePremiseTask(W, val, false, strongest_desireT, true);
+
             }
         }
         
         //PRINCIPLE END
     }
 
-    private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(nal.memory.emotion.busy()<Parameters.CURIOSITY_BUSINESS_THRESHOLD &&  Parameters.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF && task.sentence.punctuation==Symbols.JUDGMENT && conf<Parameters.CURIOSITY_CONFIDENCE_THRESHOLD && task.getPriority()>Parameters.CURIOSITY_PRIORITY_THRESHOLD) {
-            if(task.sentence.term instanceof Implication) {
-                boolean valid=false;
-                if(task.sentence.term instanceof Implication) {
-                    Implication equ=(Implication) task.sentence.term;
-                    if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
-                        valid=true;
-                    }
-                }
-                if(valid) {
-                    Sentence tt2=new Sentence(task.sentence.term.clone(),Symbols.QUESTION_MARK,null,new Stamp(task.sentence.stamp.clone(),nal.memory.time()));
-                    BudgetValue budg=task.budget.clone();
-                    budg.setPriority(budg.getPriority()*Parameters.CURIOSITY_DESIRE_PRIORITY_MUL);
-                    budg.setDurability(budg.getPriority()*Parameters.CURIOSITY_DESIRE_DURABILITY_MUL);
-                    nal.singlePremiseTask(tt2, task.budget.clone());
-                }
-            }
-        }
-    }
+
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
         if(!(task.sentence.term instanceof Implication)) return;

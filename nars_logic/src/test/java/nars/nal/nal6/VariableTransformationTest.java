@@ -11,11 +11,20 @@ import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 5/13/15.
  */
-public class VariableNormalizationTest {
+public class VariableTransformationTest {
+
+    @Test public void testTransformVariables() {
+        NAR nar = new NAR(new Default());
+        Compound c = nar.term("<$a --> x>");
+        Compound d = Compound.transformIndependentVariableToDependent(c);
+        assertTrue(c!=d);
+        assertEquals(d, nar.term("<#a --> x>"));
+    }
 
     @Test
     public void testCombinations() {

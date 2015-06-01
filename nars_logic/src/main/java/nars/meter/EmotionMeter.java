@@ -1,5 +1,20 @@
 package nars.meter;
 
+import nars.Global;
+import nars.Symbols;
+import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
+import nars.nal.*;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetInt;
+import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
+import nars.op.mental.InternalExperience;
+import nars.op.mental.consider;
+import nars.op.mental.remind;
 import nars.util.meter.event.DoubleMeter;
 
 import java.io.Serializable;
@@ -14,8 +29,10 @@ public class EmotionMeter implements Serializable {
 
     public final DoubleMeter happyMeter = new DoubleMeter("happy");
     public final DoubleMeter busyMeter = new DoubleMeter("busy");
-    
-    
+
+    public static final Atom satisfied = Atom.the("satisfied");
+
+
     public EmotionMeter() {
     }
 
@@ -38,56 +55,59 @@ public class EmotionMeter implements Serializable {
     }
 
     public double lasthappy=-1;
-    public void adjustHappy(float newValue, float weight, NAL nal) {
+    
+    public void adjustHappy(final float newValue, final Task task, final NAL nal) {
         //        float oldV = happyValue;
+
+        final float weight = task.getPriority();
         happy += newValue * weight;
         happy /= 1.0f + weight;
         
         if(lasthappy!=-1) {
             float frequency=-1;
-            if(happy>Global.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy<=Global.HAPPY_EVENT_HIGHER_THRESHOLD) {
+            if(happy> Global.HAPPY_EVENT_HIGHER_THRESHOLD && lasthappy<=Global.HAPPY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
             if(happy<Global.HAPPY_EVENT_LOWER_THRESHOLD && lasthappy>=Global.HAPPY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
             if(frequency!=-1) { //ok lets add an event now
-                Term predicate=SetInt.make(new Term("satisfied"));
-                Term subject=new Term("SELF");
+                Term predicate= SetInt.make(satisfied);
+                Term subject= nal.self();
                 Inheritance inh=Inheritance.make(subject, predicate);
-                TruthValue truth=new TruthValue(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE);
-                Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
-                s.stamp.setOccurrenceTime(nal.memory.time());
-                Task t=new Task(s,new BudgetValue(Global.DEFAULT_JUDGMENT_PRIORITY,Global.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
-                nal.addTask(t, "emotion");
-                if(Parameters.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
-                    TruthValue truth2=new TruthValue(1.0f,Parameters.DEFAULT_GOAL_CONFIDENCE);
-                    Sentence s2=new Sentence(inh,Symbols.GOAL_MARK,truth2,new Stamp(nal.memory));
-                    s2.stamp.setOccurrenceTime(nal.memory.time());
-                    Task t2=new Task(s2,new BudgetValue(Global.DEFAULT_GOAL_PRIORITY,Global.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)));
-                    nal.addTask(t2, "metagoal");
+                Truth truth=new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE);
+                Sentence s=new Sentence(inh, Symbols.JUDGMENT, truth, nal.newStamp(task.getStamp(), nal.time()));
+                Task t=new Task(s, new Budget(Global.DEFAULT_JUDGMENT_PRIORITY,Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth)));
+                nal.deriveTask(t, false, false, "emotion");
+                if(Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
+
+                    Truth truth2=new DefaultTruth(1.0f,Global.DEFAULT_GOAL_CONFIDENCE);
+
+                    Sentence s2=new Sentence(inh,Symbols.GOAL,truth2,
+                            nal.newStampNow(task));
+
+                    Task t2=new Task(s2,new Budget(Global.DEFAULT_GOAL_PRIORITY,Global.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)));
+                    nal.deriveTask(t2, false, true, "metagoal");
                     //this is a good candidate for innate belief for consider and remind:
-                    Operator consider=nal.memory.getOperator("^consider");
-                    Operator remind=nal.memory.getOperator("^remind");
-                    Term[] arg=new Term[1];
-                    arg[0]=inh;
-                    if(InternalExperience.enabled && Parameters.CONSIDER_REMIND) {
-                        Operation op_consider=Operation.make(consider, arg, true);
-                        Operation op_remind=Operation.make(remind, arg, true);
+
+                    if(InternalExperience.enabled && Global.CONSIDER_REMIND) {
+                        Operation op_consider= Operation.make(consider.consider, Product.make(inh));
+                        Operation op_remind = Operation.make(remind.remind, Product.make(inh));
                         Operation[] op=new Operation[2];
                         op[0]=op_remind; //order important because usually reminding something
                         op[1]=op_consider; //means it has good chance to be considered after
                         for(Operation o : op) {
-                            TruthValue truth3=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                            Sentence s3=new Sentence(o,Symbols.JUDGMENT_MARK,truth3,new Stamp(nal.memory));
-                            s3.stamp.setOccurrenceTime(nal.memory.time());
-                            
+                            Truth truth3=new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE);
+                            Sentence s3=new Sentence(o,Symbols.JUDGMENT,truth3,
+                                    nal.newStampNow(task));
+
                             //INTERNAL_EXPERIENCE_DURABILITY_MUL
-                            BudgetValue budget=new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth3));
-                            budget.setPriority(budget.getPriority()*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL);
-                            budget.setDurability(budget.getPriority()*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL);
-                            Task t3=new Task(s3,budget);
-                            nal.addTask(t3, "internal experience for consider and remind");
+                            Budget budget=new Budget(
+                                    Global.DEFAULT_JUDGMENT_PRIORITY*InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                                    Global.DEFAULT_JUDGMENT_DURABILITY*InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL,
+                                    BudgetFunctions.truthToQuality(truth3));
+
+                            nal.deriveTask(new Task(s3,budget), false, true, "internal experience for consider and remind");
                         }
                     }
                 }
@@ -99,24 +119,26 @@ public class EmotionMeter implements Serializable {
     }
 
     public double lastbusy=-1;
-    public void manageBusy(NAL nal) {
+    public void manageBusy(Task cause, NAL nal) {
         if(lastbusy!=-1) {
             float frequency=-1;
-            if(busy>Parameters.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Parameters.BUSY_EVENT_HIGHER_THRESHOLD) {
+            if(busy>Global.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Global.BUSY_EVENT_HIGHER_THRESHOLD) {
                 frequency=1.0f;
             }
-            if(busy<Parameters.BUSY_EVENT_LOWER_THRESHOLD && lastbusy>=Parameters.BUSY_EVENT_LOWER_THRESHOLD) {
+            if(busy<Global.BUSY_EVENT_LOWER_THRESHOLD && lastbusy>=Global.BUSY_EVENT_LOWER_THRESHOLD) {
                 frequency=0.0f;
             }
             if(frequency!=-1) { //ok lets add an event now
-                Term predicate=SetInt.make(new Term("busy"));
-                Term subject=new Term("SELF");
+                Term predicate=SetInt.make(Atom.the("busy"));
+                Term subject=Atom.the("SELF");
                 Inheritance inh=Inheritance.make(subject, predicate);
-                TruthValue truth=new TruthValue(1.0f,Parameters.DEFAULT_JUDGMENT_CONFIDENCE);
-                Sentence s=new Sentence(inh,Symbols.JUDGMENT_MARK,truth,new Stamp(nal.memory));
-                s.stamp.setOccurrenceTime(nal.memory.time());
-                Task t=new Task(s,new BudgetValue(Parameters.DEFAULT_JUDGMENT_PRIORITY,Parameters.DEFAULT_JUDGMENT_DURABILITY,BudgetFunctions.truthToQuality(truth)));
-                nal.addTask(t, "emotion");
+                Truth truth=new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE);
+                Sentence s=new Sentence(inh,Symbols.JUDGMENT,truth,
+                        nal.newStampNow(cause));
+
+                nal.deriveTask(
+                        new Task(s, new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth))),
+                        false, true, "emotion");
             }
         }
         lastbusy=busy;

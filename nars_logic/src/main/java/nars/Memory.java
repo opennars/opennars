@@ -92,7 +92,7 @@ public class Memory implements Serializable {
     final List<ConceptBuilder> conceptBuilders;
 
     public LogicPolicy rules;
-    private Term self;
+    private Atom self;
 
     public void setLevel(int nalLevel) {
         if ((nalLevel < 1) || (nalLevel > 8))
@@ -139,11 +139,11 @@ public class Memory implements Serializable {
             taskAdd(t);
     }
 
-    public Term self() {
+    public Atom self() {
         return self;
     }
 
-    public void setSelf(Term t) {
+    public void setSelf(Atom t) {
         this.self = t;
     }
 

@@ -530,7 +530,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 }
 
                 //TODO
-                InternalExperience.InternalExperienceFromTask(memory, task, false);
+                InternalExperience.experienceFromTask(nal, task, false);
 
                 getMemory().execute(this, task);
             }
@@ -746,6 +746,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param list The list of beliefs or goals to be used
      * @return The best candidate selected
      */
+    @Override
     public Task getTask(final Sentence query, final List<Task>... lists) {
         float currentBest = 0;
         float beliefQuality;

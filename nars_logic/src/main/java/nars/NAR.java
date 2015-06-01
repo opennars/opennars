@@ -172,7 +172,7 @@ public class NAR extends Container implements Runnable {
         return input(-1, -1, taskText, frequency, confidence);
     }
 
-    public Term term(String t) throws InvalidInputException {
+    public <T extends Term> T term(String t) throws InvalidInputException {
         return narsese.parseTerm(t).normalized();
     }
 

@@ -111,7 +111,7 @@ abstract public class Symbols {
     protected static final Map<Character,NALOperator> charToOperator
             = Collections.unmodifiableMap(_charToOperator);
 
-    public static final Term DEFAULT_SELF = Atom.the("SELF");
+    public static final Atom DEFAULT_SELF = Atom.the("SELF");
 
 
     /** separates prefix from the term in a termlink or tasklink */

@@ -283,4 +283,8 @@ public class Variable extends Atom {
     public String getIdentifier() {
         return toString().substring(1);
     }
+
+    public static Variable the(char varDependent, int counter) {
+        return new Variable(getName(varDependent, counter));
+    }
 }

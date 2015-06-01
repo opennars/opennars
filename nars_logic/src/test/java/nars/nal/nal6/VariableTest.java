@@ -10,6 +10,7 @@ import nars.event.NARReaction;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.nal.JavaNALTest;
+import nars.nal.term.Compound;
 import nars.testing.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -135,5 +136,7 @@ public class VariableTest extends JavaNALTest {
     @Test public void testNormalizeSomeVars1ac() {
         unaffected(normA, normC);
     }
+
+
 
 }

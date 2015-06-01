@@ -22,15 +22,13 @@ package nars.nal;
 
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.term.Compound;
-import nars.nal.term.Term;
 import nars.nal.term.Termed;
+import nars.op.mental.InternalExperience;
 
 import java.lang.ref.Reference;
 import java.util.ArrayList;
@@ -267,8 +265,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      *
      * @param judg The solution to be remembered
      */
-    public void setBestSolution(final Sentence judg) {
-        InternalExperience.InternalExperienceFromBelief(memory, this, judg);
+    public void setBestSolution(final Memory memory, final Sentence judg) {
+        InternalExperience.experienceFromBelief(memory, this.getBudget(), judg);
         bestSolution = judg;
     }
 

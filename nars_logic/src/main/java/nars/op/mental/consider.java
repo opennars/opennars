@@ -24,6 +24,7 @@ import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 
@@ -33,6 +34,8 @@ import java.util.ArrayList;
  * Operator that activates a concept
  */
 public class consider extends SynchOperator implements Mental {
+
+    public static Atom consider = Atom.the("consider");
 
     public static Budget budgetMentalConcept(final Operation o) {
         return o.getTask().clone();
@@ -50,7 +53,7 @@ public class consider extends SynchOperator implements Mental {
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term term = operation.arg(0);
         
-        Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
+        Concept concept = nar.memory.conceptualize(budgetMentalConcept(operation), term);
 
         TaskLink taskLink = concept.getTaskLinks().peekNext();
         if (taskLink!=null) {

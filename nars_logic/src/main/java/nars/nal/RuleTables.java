@@ -21,9 +21,11 @@
 package nars.nal;
 
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
@@ -32,6 +34,7 @@ import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -41,7 +44,9 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import static nars.Symbols.*;
 
@@ -52,10 +57,11 @@ import static nars.Symbols.*;
  */
 public class RuleTables {
 
+    /*
     
     private static void temporalInduce(final NAL nal, final Task task, final Sentence taskSentence, final Memory memory) {
         //usual temporal induction between two events
-        for(int i=0;i<Parameters.TEMPORAL_INDUCTION_SAMPLES;i++) {
+        for(int i=0;i<Global.TEMPORAL_INDUCTION_SAMPLES;i++) {
             
             //prevent duplicate inductions
             Set<Term> alreadyInducted = new HashSet();
@@ -98,6 +104,7 @@ public class RuleTables {
             }
         }
     }
+    */
     
     /* ----- syllogistic inferences ----- */
     /**

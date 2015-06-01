@@ -21,7 +21,6 @@
 package nars.nal.term;
 
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Ordering;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
@@ -29,14 +28,14 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.util.data.FastPutsArrayMap;
-import nars.util.utf8.ByteBuf;
-import nars.util.utf8.Utf8;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
+import nars.util.utf8.ByteBuf;
+import nars.util.utf8.Utf8;
 
 import java.util.*;
+import java.util.function.Predicate;
 
-import static java.util.Comparator.naturalOrder;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
@@ -169,7 +168,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
      * @param original The original component list
      * @return an identical and separate copy of the list
      */
-    public static Term[] cloneTermsAppend(final Term[] original, final Term[] additional) {
+    public static Term[] cloneTermsAppend(final Term[] original, final Term... additional) {
         if (original == null) {
             return null;
         }
@@ -296,8 +295,45 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return (X) ptr;
     }
 
-    public interface VariableTransform  {
-        public Variable apply(Compound containingCompound, Variable v, int depth);
+    /** I = input term type, T = transformable subterm type */
+    public interface CompoundTransform<I extends Compound, T extends Term> extends Predicate<Term> {
+        T apply(I containingCompound, T v, int depth);
+    }
+
+    abstract public static class CompoundSubstitution<I extends Compound, T extends Term> implements CompoundTransform<I,T> {
+
+        public final Map<T,T> subst = Global.newHashMap();
+
+        @Override
+        public T apply(I containingCompound, T v, int depth) {
+
+            T subbed = subst.get(v);
+
+            if (subbed == null) {
+                subbed = getSubstitute(v);
+                if (subbed == null) return v; //unaffected
+
+                subst.put(v, subbed);
+            }
+
+            v = subbed;
+
+            return v;
+        }
+
+        /** returns the substituted value for the given subterm; null if the subterm should be unaffected */
+        protected abstract T getSubstitute(T v);
+    }
+
+    public interface VariableTransform extends CompoundTransform<Compound,Variable> {
+
+        @Override default boolean test(Term possiblyAVariable) {
+            return (possiblyAVariable instanceof Variable);
+        }
+    }
+
+    abstract public static class VariableSubstitution extends CompoundSubstitution<Compound, Variable> implements VariableTransform {
+
     }
 
 
@@ -344,7 +380,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
             this.result = target.cloneVariablesDeep();
             if (this.result!=null)
-                this.result.transformVariableTermsDeep(this);
+                this.result.transform(this);
 
 
             if (rename!=null)
@@ -477,36 +513,33 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
 
-    protected void transformIndependentVariableToDependent(HashMap<String,Variable> vars, CompoundTerm T) { //a special instance of transformVariableTermsDeep in 1.7
-        Term[] term=T.term;
-        for (int i = 0; i < term.length; i++) {
-            Term t = term[i];
-            if (t.hasVar()) {
-                if (t instanceof CompoundTerm) {
-                    transformIndependentVariableToDependent(vars, (CompoundTerm) t);
-                } else if (t instanceof Variable) {  /* it's a variable */
-                    term[i] = vars.get(t.toString());
-                }
-            }
-        }
-    }
+
     
-    public CompoundTerm transformIndependentVariableToDependentVar(CompoundTerm T) {
-        T=T.cloneDeep(); //we will operate on a copy
-        int counter = 0;
-        for(char c : T.toString().toCharArray()) {
-            if(c==Symbols.VAR_INDEPENDENT) {
-                counter++;
+    public static Compound transformIndependentVariableToDependent(Compound c) {
+
+        if (!c.hasVarIndep())
+            return c;
+
+        return (Compound)c.cloneTransforming(new VariableSubstitution() {
+            int counter = 0;
+
+            @Override
+            public boolean test(Term possiblyAVariable) {
+                if (super.test(possiblyAVariable))
+                    return ((Variable) possiblyAVariable).hasVarIndep();
+                return false;
             }
-        }
-        HashMap<String,Variable> vars = new HashMap<>();
-        for(int i=1;i<=counter;i++) {
-            vars.put(Symbols.VAR_INDEPENDENT+String.valueOf(i), new Variable(Symbols.VAR_DEPENDENT+String.valueOf(i)));
-        }
-        transformIndependentVariableToDependent(vars, T);
-        return T;
+
+            @Override
+            protected Variable getSubstitute(Variable v) {
+                return Variable.the(Symbols.VAR_DEPENDENT, counter++);
+            }
+        });
     }
 
+    public <X extends Compound> X cloneTransforming(CompoundTransform t) {
+        return (X)clone(cloneTermsTransforming(t));
+    }
 
 
     /**
@@ -710,10 +743,10 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     /** clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step */
     protected Compound cloneVariablesDeep() {
-        return (Compound) clone(cloneVariableTermsDeep());
+        return (Compound) clone(cloneTermsDeepIfContainingVariables());
     }
 
-    public Term[] cloneVariableTermsDeep() {
+    public Term[] cloneTermsDeepIfContainingVariables() {
         Term[] l = new Term[length()];
         for (int i = 0; i < l.length; i++) {
             Term t = term[i];
@@ -728,20 +761,25 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return l;
     }
 
-    protected void transformVariableTermsDeep(VariableTransform variableTransform) {
-        transformVariableTermsDeep(variableTransform, 0);
+    protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans) {
+        transform(trans, 0);
     }
 
-    protected void transformVariableTermsDeep(VariableTransform variableTransform, int depth) {
+    protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans, int depth) {
         final int len = length();
+
+        I thiss = null;
         for (int i = 0; i < len; i++) {
             Term t = term[i];
 
             if (t.hasVar()) {
                 if (t instanceof Compound) {
-                    ((Compound)t).transformVariableTermsDeep(variableTransform);
-                } else if (t instanceof Variable) {  /* it's a variable */
-                    term[i] = variableTransform.apply(this, (Variable)t, depth+1);
+                    ((Compound)t).transform(trans);
+                } else if (trans.test(t)) {
+
+                    if (thiss == null) thiss = (I)this;
+                    term[i] = trans.apply(thiss, (T)t, depth+1);
+
                 }
             }
         }
@@ -1151,6 +1189,16 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         for (Term x : term) {
             if (x.equals(from))
                 x = to;
+            y[i++] = x;
+        }
+        return y;
+    }
+    public <I extends Compound, T extends Term> Term[] cloneTermsTransforming(CompoundTransform<I,T> trans) {
+        Term[] y = new Term[length()];
+        int i = 0;
+        for (Term x : this) {
+            if (trans.test(x))
+                x = trans.apply(null, (T)x, 0);
             y[i++] = x;
         }
         return y;

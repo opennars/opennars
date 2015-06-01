@@ -276,16 +276,16 @@ public abstract class NAL  implements Runnable {
         )!=null;
     }
 
-    public Task doublePremiseTask(Sentence newSentence, final Budget newBudget, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
+    public Task doublePremiseTask(Sentence newSentence, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
 
         Stamp stamp = newSentence.stamp;
 
         boolean derived;
 
-        Task task = new Task(newSentence, newBudget, subbedTask, getCurrentBelief());
+        Task task = new Task(newSentence, newBudget, parentTask, getCurrentBelief());
 
         try {
-            derived = deriveTask(task, false, false, subbedTask, allowOverlap);
+            derived = deriveTask(task, false, false, parentTask, allowOverlap);
         } catch (RuntimeException e) {
             if (Global.DEBUG) throw e;
             return null;
@@ -297,11 +297,11 @@ public abstract class NAL  implements Runnable {
             deriveTask(
                     new Task(
                             new Sentence(newSentence.term,
-                                    subbedTask.sentence.punctuation,
+                                    parentTask.sentence.punctuation,
                                     TruthFunctions.eternalize(newSentence.truth),
                                     stamp.cloneEternal()),
-                            newBudget, subbedTask, getCurrentBelief()),
-                    false, false, subbedTask, allowOverlap);
+                            newBudget, parentTask, getCurrentBelief()),
+                    false, false, parentTask, allowOverlap);
         }
 
         return task;
@@ -551,6 +551,28 @@ public abstract class NAL  implements Runnable {
 
     public float conceptPriority(Term target) {
         return memory.conceptPriority(target);
+    }
+
+    public boolean deriveTask(Task t, boolean revised, boolean single, String reason) {
+        t.addHistory(reason);
+        return deriveTask(t, revised, single);
+    }
+
+    public Term self() {
+        return memory.self();
+    }
+
+    public StampBuilder newStamp(Stamp stamp, long when) {
+        return new Stamp(stamp, time(), when);
+    }
+
+    public StampBuilder newStamp(Task task, long time) {
+        return newStamp(task.getStamp(), time);
+    }
+
+    /** new stamp from one parent stamp, with occurence time = now */
+    public StampBuilder newStampNow(Task task) {
+        return newStamp(task, time());
     }
 
     public interface StampBuilder<C> {
