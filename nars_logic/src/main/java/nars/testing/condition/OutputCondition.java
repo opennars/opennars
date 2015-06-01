@@ -202,7 +202,7 @@ public abstract class OutputCondition extends NARReaction {
      *  this is the soonest time at which all output conditions were successful.
      *  if any conditions were not successful, the cost is infinity
      * */
-    public static double cost(List<OutputCondition> conditions) {
+    public static double cost(Iterable<OutputCondition> conditions) {
         long lastSuccess = Stamp.UNPERCEIVED;
         for (OutputCondition e : conditions) {
             if (e.getTrueTime() != Stamp.UNPERCEIVED) {
@@ -217,10 +217,6 @@ public abstract class OutputCondition extends NARReaction {
         }
 
         return Double.POSITIVE_INFINITY;
-    }
-
-    public static double cost(TestNAR testNAR) {
-        return cost(testNAR.requires);
     }
 
     /** returns a function of the cost characterizing the optimality of the conditions

@@ -6,7 +6,7 @@ package nars.testing.condition;
 
 import nars.Events;
 import nars.NAR;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.io.Texts;
 import nars.nal.Sentence;
 import nars.nal.Task;

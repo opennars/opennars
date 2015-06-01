@@ -18,7 +18,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.io.Output;
+import nars.io.out.Output;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;

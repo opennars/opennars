@@ -3,7 +3,7 @@ package nars.rover;
 import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
-import nars.io.ChangedTextInput;
+import nars.io.in.ChangedTextInput;
 import nars.io.Texts;
 import nars.model.impl.Default;
 import nars.nal.Task;

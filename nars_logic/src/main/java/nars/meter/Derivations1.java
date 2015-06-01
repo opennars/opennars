@@ -1,10 +1,9 @@
 package nars.meter;
 
 import nars.model.impl.Default;
-import nars.Memory;
 import nars.NAR;
 import nars.Global;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.testing.TestNAR;
 
 public class Derivations1  {

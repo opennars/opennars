@@ -4,8 +4,8 @@ import nars.Global;
 import nars.NAR;
 import nars.Symbols;
 import nars.event.CycleReaction;
-import nars.io.LibraryInput;
-import nars.io.TextInput;
+import nars.io.in.LibraryInput;
+import nars.io.in.TextInput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
@@ -258,7 +258,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
             nar.run(maxCycles);
 
-            double cost = OutputCondition.cost(nar);
+            double cost = nar.getCost();
             if (Double.isInfinite(cost))
                 cost = 1.0;
 

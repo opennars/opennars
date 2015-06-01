@@ -3,7 +3,7 @@ package nars.nal.multistep;
 import nars.model.impl.Default;
 import nars.Events;
 import nars.NAR;
-import nars.io.Output;
+import nars.io.out.Output;
 import nars.io.Texts;
 import nars.nal.Sentence;
 import nars.nal.Task;

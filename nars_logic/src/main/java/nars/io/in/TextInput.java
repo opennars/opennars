@@ -18,18 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package nars.io;
+package nars.io.in;
 
-import com.google.common.collect.Iterators;
-import com.google.common.io.Files;
-import nars.Events;
-import nars.Global;
-import nars.op.io.Echo;
-
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.stream.Collectors;
+import nars.io.TextPerception;
 
 /**
  * Process experience from a string into zero or more input tasks

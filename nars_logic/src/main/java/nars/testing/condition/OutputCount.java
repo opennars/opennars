@@ -2,7 +2,7 @@ package nars.testing.condition;
 
 import nars.Events;
 import nars.NAR;
-import nars.io.Output;
+import nars.io.out.Output;
 
 /**
  * Counts # of outputs

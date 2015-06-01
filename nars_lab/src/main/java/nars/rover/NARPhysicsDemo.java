@@ -2,7 +2,7 @@ package nars.rover;
 
 import nars.Memory;
 import nars.NAR;
-import nars.io.ChangedTextInput;
+import nars.io.in.ChangedTextInput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal8.operator.NullOperator;

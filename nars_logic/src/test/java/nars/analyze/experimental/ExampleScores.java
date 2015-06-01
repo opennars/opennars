@@ -3,7 +3,7 @@ package nars.analyze.experimental;
 import nars.Global;
 import nars.NARSeed;
 import nars.analyze.NALysis;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.nal.AbstractNALTest;
 import nars.testing.TestNAR;
 

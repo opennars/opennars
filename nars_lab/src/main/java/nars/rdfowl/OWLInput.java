@@ -2,9 +2,9 @@ package nars.rdfowl;
 
 import nars.NAR;
 import nars.model.impl.Default;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.io.TextPerception;
-import nars.io.PrintWriterInput;
+import nars.io.in.PrintWriterInput;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

@@ -6,6 +6,7 @@ import nars.Memory.Timing;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.io.*;
+import nars.io.in.*;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.ConceptBuilder;

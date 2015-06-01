@@ -2,10 +2,11 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.io;
+package nars.io.in;
 
 import nars.NAR;
 import nars.NARSeed;
+import nars.io.TextPerception;
 import nars.testing.condition.OutputCondition;
 
 import java.io.File;
@@ -80,6 +81,7 @@ public class LibraryInput extends TextInput {
     public static Map<String,String> getUnitTests() {
         return getUnitTests(new String[] { "test", "Examples/DecisionMaking", "Examples/ClassicalConditioning" });
     }
+
 
     public static Map<String,String> getUnitTests(String... directories) {
         Map<String,String> l = new TreeMap();

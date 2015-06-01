@@ -3,6 +3,8 @@ package nars.io;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
+import nars.io.out.Output;
+import nars.io.out.TextOutput;
 import nars.nal.Task;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 

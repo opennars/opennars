@@ -15,7 +15,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.model.impl.Default;
 import nars.gui.output.JGraphXGraphPanel;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.testing.condition.OutputCondition;
 import nars.testing.condition.OutputContainsCondition;
 import nars.nal.nal8.Operation;

@@ -19,9 +19,8 @@ package nars.util;
 
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
-import nars.Memory;
 import nars.NAR;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.io.signal.Number1DInput;
 import org.junit.Assert;
 import org.junit.Test;

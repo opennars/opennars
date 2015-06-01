@@ -1,4 +1,4 @@
-package nars.io;
+package nars.io.in;
 
 import nars.NAR;
 

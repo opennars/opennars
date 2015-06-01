@@ -1,9 +1,8 @@
 package nars.evolve;
 
 import nars.model.impl.Default;
-import nars.Memory;
 import nars.NAR;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.testing.condition.OutputCondition;
 import objenome.util.random.XORShiftRandom;
 import org.encog.Encog;

@@ -1,4 +1,4 @@
-package nars.io;
+package nars.io.out;
 
 import nars.Events;
 import nars.Events.Answer;

@@ -10,7 +10,7 @@ import org.junit.runners.Parameterized;
 
 import java.util.Collection;
 
-import static nars.io.LibraryInput.getParams;
+import static nars.io.in.LibraryInput.getParams;
 
 public class NAL6ScriptTests extends ScriptNALTest {
 

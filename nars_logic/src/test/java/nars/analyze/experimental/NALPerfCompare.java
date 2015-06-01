@@ -13,7 +13,7 @@ import static nars.analyze.experimental.NALStressMeasure.perfNAL;
 /**
  * Runs NALTestPerf continuously, for profiling
  */
-public class NALPerfCompare {
+@Deprecated public class NALPerfCompare {
     static int repeats = 100;
     static int warmups = 2;
     static int extraCycles = 256;

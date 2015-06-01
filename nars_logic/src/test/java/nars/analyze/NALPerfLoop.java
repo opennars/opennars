@@ -2,7 +2,7 @@ package nars.analyze;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.nal.NALTest;
 import nars.model.impl.Default;
 

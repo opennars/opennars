@@ -19,9 +19,8 @@
 package nars.main;
 
 import nars.NAR;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.model.impl.Default.CommandLineNARBuilder;
-import sun.misc.IOUtils;
 
 import java.io.File;
 import java.io.PrintStream;

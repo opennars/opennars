@@ -1,4 +1,6 @@
-package nars.io;
+package nars.io.in;
+
+import nars.io.TextPerception;
 
 import java.io.BufferedReader;
 import java.io.IOException;

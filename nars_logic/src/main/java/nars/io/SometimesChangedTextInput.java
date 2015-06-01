@@ -6,6 +6,7 @@
 package nars.io;
 
 import nars.NAR;
+import nars.io.in.ChangedTextInput;
 import objenome.util.random.XORShiftRandom;
 
 /**

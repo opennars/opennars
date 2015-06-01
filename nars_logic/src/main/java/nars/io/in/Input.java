@@ -17,7 +17,7 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nars.io;
+package nars.io.in;
 
 import nars.nal.Task;
 import nars.nal.nal8.ImmediateOperation;

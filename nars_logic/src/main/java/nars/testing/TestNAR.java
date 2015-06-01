@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.NARSeed;
 import nars.Global;
 import nars.event.NARReaction;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.testing.condition.OutputCondition;
 import nars.testing.condition.TaskCondition;
 import nars.narsese.InvalidInputException;
@@ -45,6 +45,19 @@ public class TestNAR extends NAR {
             new EarlyExit(1);
         }
 
+    }
+
+    /** returns the "cost", which can be considered the inverse of a "score".
+     * it is proportional to the effort (ex: # of cycles) expended by
+     * this reasoner in attempts to satisfy success conditions.
+     * If the conditions are not successful, the result will be INFINITE,
+     * though this can be normalized to a finite value in comparing multiple tests
+     * by replacing the INFINITE result with a maximum # of cycles limit,
+     * which will be smaller in cases where the success conditions are
+     * completed prior to the limit.
+     * */
+    public double getCost() {
+        return OutputCondition.cost(requires);
     }
 
     class EarlyExit extends NARReaction {

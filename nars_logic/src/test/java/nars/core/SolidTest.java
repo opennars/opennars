@@ -1,8 +1,7 @@
 package nars.core;
 
 import nars.Global;
-import nars.Memory;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.io.qa.Answered;
 import nars.model.impl.Solid;
 import nars.nal.Sentence;

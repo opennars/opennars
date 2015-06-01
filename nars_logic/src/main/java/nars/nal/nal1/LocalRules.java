@@ -24,7 +24,7 @@ import nars.Events.Answer;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.io.Output;
+import nars.io.out.Output;
 import nars.Symbols;
 import nars.nal.*;
 import nars.nal.nal2.NAL2;

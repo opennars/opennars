@@ -2,13 +2,11 @@ package nars.nal;
 
 import junit.framework.TestCase;
 import nars.model.impl.Default;
-import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
 import nars.Global;
-import nars.io.LibraryInput;
-import nars.io.NALPerformance;
-import nars.io.TextOutput;
+import nars.io.in.LibraryInput;
+import nars.io.out.TextOutput;
 import nars.io.TraceWriter;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -191,83 +189,81 @@ import java.util.Map;
 //    }
     
     
-    public double score() {
-        return testNAL(scriptPath);
-    }
-    
-    
-    protected double testNAL(final String path) {
-        System.err.flush();
-        System.out.flush();
+//    public double score() {
+//        return testNAL(scriptPath);
+//    }
+//
+//
+//    protected double testNAL(final String path) {
+//        System.err.flush();
+//        System.out.flush();
+//
+//
+//
+//        String input;
+//        NAR nar;
+//
+//        NALPerformance test = new NALPerformance(nar = newNAR(), input = LibraryInput.getExample(path) );
+//
+//
+//        if (showOutput)
+//            new TextOutput(nar, System.out);
+//        if (showTrace) {
+//            new TraceWriter(nar, System.out);
+//        }
+//
+//
+//        if (showOutput) {
+//            System.out.println(input);
+//            System.out.println();
+//        }
+//
+//        nar.memory.randomSeed(randomSeed);
+//        test.run(minCycles);
+//
+//        System.err.flush();
+//        System.out.flush();
+//
+//        double score = test.getScore();
+//        boolean success = test.getSuccess();
+//
+//        scores.put(path, score);
+//
+//        //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
+//
+//        if ((!success & showFail) || (success && showSuccess)) {
+//            System.out.print(path + ' ');
+//
+//            if (showInput)
+//                System.out.println(input);
+//            System.out.flush();
+//
+//            test.printResults(System.out);
+//            System.out.flush();
+//
+//            System.out.println("\n\n");
+//
+//        }
+//
+//        //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
+//
+//        /*if (requireSuccess)
+//            assertTrue(path, success);*/
+//
+//
+//
+//        return score;
+//
+//    }
 
 
 
-        String input;
-        NAR nar;
-
-        NALPerformance test = new NALPerformance(nar = newNAR(), input = LibraryInput.getExample(path) );
-
-
-        if (showOutput)
-            new TextOutput(nar, System.out);
-        if (showTrace) {
-            new TraceWriter(nar, System.out);
-        }
-        
-        
-        if (showOutput) {
-            System.out.println(input);
-            System.out.println();
-        }
-
-        nar.memory.randomSeed(randomSeed);
-        test.run(minCycles);
-
-        System.err.flush();
-        System.out.flush();
-        
-        double score = test.getScore();                
-        boolean success = test.getSuccess();
-        
-        scores.put(path, score);
-        
-        //System.out.println(lastSuccess + " ,  " + path + "   \t   excess cycles=" + (n.time() - lastSuccess) + "   end=" + n.time());
-
-        if ((!success & showFail) || (success && showSuccess)) {
-            System.out.print(path + ' ');
-
-            if (showInput)
-                System.out.println(input);
-            System.out.flush();
-
-            test.printResults(System.out);
-            System.out.flush();
-
-            System.out.println("\n\n");
-
-        }
-        
-        //System.err.println("Status: " + success + " total=" + expects.size() + " " + expects);
-        
-        /*if (requireSuccess)
-            assertTrue(path, success);*/
-
-
-        
-        return score;
-        
-    }
-
-    
-
-
-
-    @Test
-    public void test() {
-        double s = testNAL(scriptPath);
-        if (requireSuccess && !Double.isFinite(s))
-            assertTrue(scriptPath, false);
-    }
+//    @Test
+//    public void test() {
+//        double s = testNAL(scriptPath);
+//        if (requireSuccess && !Double.isFinite(s))
+//            assertTrue(scriptPath, false);
+//    }
 
     
     

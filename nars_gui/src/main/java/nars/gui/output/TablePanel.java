@@ -2,7 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
 import nars.NAR;
-import nars.io.Output;
+import nars.io.out.Output;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

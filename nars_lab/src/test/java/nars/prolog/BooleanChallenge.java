@@ -4,7 +4,6 @@ import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 import nars.Events.OUT;
 import nars.Global;
 import nars.NAR;
-import nars.io.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.nal1.Inheritance;

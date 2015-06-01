@@ -2,7 +2,7 @@ package nars.nal.multistep;
 
 import nars.Global;
 import nars.NAR;
-import nars.io.LibraryInput;
+import nars.io.in.LibraryInput;
 import nars.model.impl.Default;
 import org.junit.Test;
 

@@ -24,7 +24,7 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.NAR;
 import nars.model.cycle.experimental.AntCore;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.model.impl.Default.CommandLineNARBuilder;
 
 import javax.management.MBeanServer;

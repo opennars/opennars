@@ -1,6 +1,7 @@
-package nars.io;
+package nars.io.in;
 
 import com.google.common.io.Files;
+import nars.io.TextPerception;
 
 import java.io.File;
 import java.io.IOException;

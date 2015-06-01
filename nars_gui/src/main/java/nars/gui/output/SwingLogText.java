@@ -5,7 +5,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
-import nars.io.TextOutput;
+import nars.io.out.TextOutput;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;

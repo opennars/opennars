@@ -15,7 +15,7 @@ import ca.nengo.ui.model.widget.SliderNode;
 import nars.model.impl.Default;
 import nars.model.cycle.DefaultCycle;
 import nars.NAR;
-import nars.io.Output;
+import nars.io.out.Output;
 import nars.nal.Item;
 import nars.bag.Bag;
 

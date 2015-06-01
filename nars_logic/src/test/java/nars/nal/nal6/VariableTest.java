@@ -7,7 +7,6 @@ package nars.nal.nal6;
 import nars.Events.Answer;
 import nars.NARSeed;
 import nars.event.NARReaction;
-import nars.io.TextOutput;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.nal.JavaNALTest;

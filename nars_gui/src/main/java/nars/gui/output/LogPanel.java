@@ -9,7 +9,7 @@ import nars.Events.EXE;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.gui.WrapLayout;
-import nars.io.Output;
+import nars.io.out.Output;
 import nars.Symbols;
 import nars.io.TraceWriter;
 import nars.io.TraceWriter.LogOutput;

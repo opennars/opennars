@@ -1,10 +1,9 @@
 package nars.analyze;
 
 
-import nars.Memory;
 import nars.NARSeed;
-import nars.io.LibraryInput;
-import nars.io.TextOutput;
+import nars.io.in.LibraryInput;
+import nars.io.out.TextOutput;
 import nars.io.TraceWriter;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
@@ -18,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static nars.io.LibraryInput.getPaths;
+import static nars.io.in.LibraryInput.getPaths;
 
 /**
  * Collects detailed telemetry for a test suite

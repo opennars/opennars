@@ -2,6 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -19,6 +20,43 @@
    sodipodi:docname="opennars_default_loop.svg">
   <defs
      id="defs4">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Checkerboard"
+       id="pattern17729"
+       patternTransform="matrix(10,0,0,10,-20,145)" />
+    <pattern
+       inkscape:isstock="true"
+       inkscape:stockid="Checkerboard"
+       id="Checkerboard"
+       patternTransform="translate(0,0) scale(10,10)"
+       height="2"
+       width="2"
+       patternUnits="userSpaceOnUse"
+       inkscape:collect="always">
+      <rect
+         id="rect17013"
+         height="1"
+         width="1"
+         y="0"
+         x="0"
+         style="fill:black;stroke:none" />
+      <rect
+         id="rect17015"
+         height="1"
+         width="1"
+         y="1"
+         x="1"
+         style="fill:black;stroke:none" />
+    </pattern>
+    <linearGradient
+       id="linearGradient17658"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#009100;stop-opacity:1;"
+         offset="0"
+         id="stop17660" />
+    </linearGradient>
     <linearGradient
        inkscape:collect="always"
        id="linearGradient12350">
@@ -154,8 +192,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="543.1394"
-     inkscape:cy="494.52585"
+     inkscape:cx="500.47177"
+     inkscape:cy="523.86727"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -655,5 +693,13 @@
        id="path4191-3-3-2-9-6"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
+    <rect
+       style="opacity:0.187;fill:url(#pattern17729);fill-opacity:1;stroke:#979797;stroke-width:0.41476837;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:1.24430503, 0.41476834000000001;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect8156-2"
+       width="280.68042"
+       height="447.33096"
+       x="705.37408"
+       y="382.26816"
+       ry="0.61511087" />
   </g>
 </svg>

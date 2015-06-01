@@ -5,7 +5,7 @@
 package nars.rover;
 
 import nars.NAR;
-import nars.io.ChangedTextInput;
+import nars.io.in.ChangedTextInput;
 import nars.io.SometimesChangedTextInput;
 import nars.io.Texts;
 import nars.nal.concept.Concept;
