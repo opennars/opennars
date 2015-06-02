@@ -8,6 +8,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
 import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -35,8 +36,13 @@ abstract public class Image extends DefaultCompound {
         init(components);
     }
 
+    @Override
+    public UTF8Identifier newName() {
+        return new ImageUTF8Identifier(this);
+    }
 
-//    @Override
+
+    //    @Override
 //    public boolean equals2(final CompoundTerm other) {
 //        return relationIndex == ((Image)other).relationIndex;
 //    }
@@ -152,13 +158,22 @@ abstract public class Image extends DefaultCompound {
 
             p.write(COMPOUND_TERM_OPENER.ch);
             p.write(compound.operator().symbol);
+
             p.write(ARGUMENT_SEPARATOR);
+            if (pretty)
+                p.write(' ');
+
             compound.relation().write(p, pretty);
 
             final int relationIndex = compound.relationIndex;
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
+
                 p.write(ARGUMENT_SEPARATOR);
+
+                if (pretty)
+                    p.write(' ');
+
                 if (i == relationIndex) {
                     p.write(Symbols.IMAGE_PLACE_HOLDER);
                 } else {

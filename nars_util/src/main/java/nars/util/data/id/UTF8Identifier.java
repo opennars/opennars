@@ -156,4 +156,9 @@ public class UTF8Identifier extends Identifier {
         return toString(true);
     }
 
+    /** string representation formed by the UTF8 byte[] name() */
+    public String nameString() {
+        return Utf8.fromUtf8(name());
+    }
+
 }

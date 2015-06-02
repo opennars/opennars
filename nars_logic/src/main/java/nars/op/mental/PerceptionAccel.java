@@ -52,7 +52,7 @@ public class PerceptionAccel extends NARReaction {
     public void event(Class event, Object[] args) {
         if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
             Task newEvent = (Task) args[0];
-            if (/*newEvent.isInput() &&*/ newEvent.sentence.punctuation == Symbols.JUDGMENT && newEvent.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
+            if (/*newEvent.isInput() &&*/ newEvent.sentence.isJudgment() && !newEvent.sentence.isEternal()) {
                 eventbuffer.add(newEvent);
                 while (eventbuffer.size() > cur_maxlen + 1) {
                     eventbuffer.remove(0);

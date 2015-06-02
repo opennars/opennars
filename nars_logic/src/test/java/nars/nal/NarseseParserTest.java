@@ -398,6 +398,7 @@ public class NarseseParserTest {
     @Test
     public void testImageIndex() {
         Compound t = term("(/,open,$1,_)");
+        assertEquals("(/,open,$1,_)", t.name().nameString());
         assertEquals("(/, open, $1, _)", t.toString());
         assertEquals("index psuedo-term should not count toward its size", 2, t.length());
     }
