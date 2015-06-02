@@ -52,7 +52,9 @@ abstract public class Compound1<T extends Term> extends Compound {
     @Override
     public void invalidate() {
         if (hasVar()) {
-            id = null;
+
+            super.invalidate();
+
             T n = the();
             if (n instanceof Compound) {
                 ((Compound)n).invalidate();

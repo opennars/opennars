@@ -156,7 +156,8 @@ public class Anticipate extends NARReaction implements Mental {
                         expiredTruth,
                         new Stamp(nal.memory, expectedOccurenceTime /*- nal.memory.param.duration.get()*/ )),
                 //expiredBudget
-                tt.getBudget().clone()
+                tt.getBudget().clone(),
+                tt.task
         );
 
         if (debug)

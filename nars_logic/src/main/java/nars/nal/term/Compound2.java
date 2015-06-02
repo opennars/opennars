@@ -27,7 +27,7 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
     @Override
     public void invalidate() {
         if (hasVar()) {
-            this.id = null; //invalidate name so it will be (re-)created lazily
+            super.invalidate(); //invalidate name so it will be (re-)created lazily
 
             for (final Term t : term) {
                 if (t instanceof Compound)

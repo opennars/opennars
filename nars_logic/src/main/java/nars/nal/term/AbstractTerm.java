@@ -9,7 +9,7 @@ import nars.util.utf8.Utf8;
  */
 abstract public class AbstractTerm implements Term {
 
-    protected Identifier id;
+    private Identifier id;
 
     public AbstractTerm() {
 
@@ -21,6 +21,18 @@ abstract public class AbstractTerm implements Term {
 
     public AbstractTerm(Identifier x) {
         this.id = x;
+    }
+
+    public void invalidate() {
+        setName(null);
+    }
+
+    public boolean hasName() { return this.id!=null; }
+
+    protected void setName(Identifier i) {
+        this.id = i;
+        if (i!=null)
+            i.set(this);
     }
 
     @Override

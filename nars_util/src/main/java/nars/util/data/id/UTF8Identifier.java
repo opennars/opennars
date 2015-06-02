@@ -112,17 +112,29 @@ public class UTF8Identifier extends Identifier {
 
     @Override
     public boolean equalTo(Identifier x) {
-        if (x instanceof UTF8Identifier)
-            return Utf8.equals2(name(), ((UTF8Identifier)x).name());
+        if (x instanceof UTF8Identifier) {
+
+            UTF8Identifier u = (UTF8Identifier) x;
+            if (unequalHash(u))
+                return false;
+
+            return Utf8.equals2(name(), u.name());
+        }
 
         //this case should be avoided, it is wasteful
         System.err.println(this + " wasteful String comparison");
         return toString().equals(x.toString());
     }
 
+    /*8 returns true only if the hashes both exist and are different */
+    public boolean unequalHash(final UTF8Identifier u) {
+        if (!hasHash()) return false;
+        if (!u.hasHash()) return false;
+        return hashCode()!=u.hashCode();
+    }
+
     public byte[] bytes() {
-        ensureNamed();
-        return name;
+        return name();
     }
 
     @Override

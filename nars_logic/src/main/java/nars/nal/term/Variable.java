@@ -81,7 +81,7 @@ public class Variable extends Atom {
     }
 
     public final static char ensureValidVariableType(final byte c) {
-        return ensureValidVariableType(c);
+        return ensureValidVariableType((char)c);
     }
 
     public final static char ensureValidVariableType(final char c) {

@@ -66,12 +66,17 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
             int l = System.identityHashCode( localHost );
             int r = System.identityHashCode( remoteHost );
             Identified target;
-            if (l < r)
+            Identifier source;
+            if (l < r) {
                 target = localHost;
-            else
+                source = ix;
+            }
+            else {
                 target = remoteHost;
+                source = this;
+            }
 
-            target.identifierEquals(ix);
+            target.identifierEquals(source);
         }
     }
 

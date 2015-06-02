@@ -249,12 +249,13 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
         if (!(that instanceof Compound)) return 1;
 
         final Compound c = (Compound)that;
-        return name().compareTo(c.name());
 
 
-//        int opdiff = getClass().getName().compareTo(c.getClass().getName());
-//        if (opdiff == 0) {
+        int opdiff = getClass().getName().compareTo(c.getClass().getName());
+        if (opdiff == 0) {
 //            //return compareSubterms(c);
+            return name().compareTo(c.name());
+        }
 //
 //            int sd = compareSubterms(c);
 //            if (sd == 0) {
@@ -262,7 +263,7 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
 //            }
 //            return sd;
 //        }
-//        return opdiff;
+        return opdiff;
     }
 
     /** copy subterms so that reference check will be sufficient to determine equality
@@ -383,10 +384,6 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
         invalidate();
     }
 
-    public void invalidate() {
-
-    }
-
 
 
     /**
@@ -504,10 +501,10 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
 
     @Override
     public Identifier name() {
-        if (this.id == null) {
-            this.id = new DefaultCompoundUTF8Identifier();
+        if (!hasName()) {
+            setName( new DefaultCompoundUTF8Identifier() );
         }
-        return this.id;
+        return super.name();
     }
  
 

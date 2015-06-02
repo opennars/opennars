@@ -110,10 +110,10 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
 
                 //select a Non-eternal (temporal) belief
-                Sentence temporalBelief = next.getStrongestBelief(false, true).sentence;
+                Task temporalBelief = next.getStrongestBelief(false, true);
                 if (temporalBelief!=null) {
                     //if(!temporalBelief.isEternal()) {
-                        induct(f, task, taskSentence, memory, temporalBelief);
+                        induct(f, task, taskSentence, memory, temporalBelief.sentence);
                     //}
                 }
 

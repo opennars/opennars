@@ -18,6 +18,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
 import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
@@ -81,6 +82,9 @@ public class PerceptionAccel extends NARReaction {
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
 
         boolean longest_result_derived_already = false;
+
+        List<Long> evBase = Global.newArrayList();
+
         for (int Len = cur_maxlen + 1; Len >= 2; Len--) {
             //ok, this is the length we have to collect, measured from the end of event buffer
             Term[] relterms = new Term[2 * Len - 1]; //there is a interval term for every event
@@ -89,7 +93,8 @@ public class PerceptionAccel extends NARReaction {
 
             Task newEvent = eventbuffer.get(eventbuffer.size() - 1);
             Truth truth = newEvent.sentence.truth;
-            ArrayList<Long> evBase = new ArrayList<Long>();
+
+            evBase.clear();
 
             int k = 0;
             for (int i = 0; i < Len; i++) {

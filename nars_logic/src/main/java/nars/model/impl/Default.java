@@ -348,9 +348,9 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         n.setCyclesPerFrame(cyclesPerFrame);
         
-        n.on(PerceptionAccel.class);
-        
+
         if (maxNALLevel >= 7) {
+            n.on(PerceptionAccel.class);
             n.on(STMInduction.class);
         }
 
