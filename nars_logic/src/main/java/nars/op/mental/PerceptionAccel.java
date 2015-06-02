@@ -185,7 +185,7 @@ public class PerceptionAccel extends NARReaction {
             Conjunction C = (Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
 
             Sentence S = new Sentence(C, Symbols.JUDGMENT, truth, st); //importance "summation"
-            Task T = new Task(S, new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth));
+            Task T = new Task(S, new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth), task);
 
             if (debugMechanism) {
                 nal.emit(Events.DEBUG.class, this, "Success", T);

@@ -34,7 +34,24 @@ public class ProtoTask<T extends Compound> {
         this.budget = bv;
         return this;
     }
+    public ProtoTask<T> budgetScaled(float priMult, float durMult) {
+        this.ensureBudgetExists();
+        this.budget.mulPriority(priMult);
+        this.budget.mulDurability(durMult);
+        return this;
+    }
 
+    private void ensureBudgetExists() {
+        if (truth == null)
+            throw new RuntimeException("Truth must be specified before generating a default budget");
+        if (punc == 0)
+            throw new RuntimeException("Punctuation must be specified before generating a default budget");
+
+        if (this.budget == null) {
+            //if budget not specified, use the default given the punctuation and truth
+            this.budget = new Budget(punc, truth);
+        }
+    }
 
     public ProtoTask<T> truth(boolean freqAsBoolean, float conf) {
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
@@ -93,10 +110,7 @@ public class ProtoTask<T extends Compound> {
 
     /** build the new instance */
     public Task get() {
-        if (this.budget == null) {
-            //if budget not specified, use the default given the punctuation and truth
-            this.budget = new Budget(punc, truth);
-        }
+        ensureBudgetExists();
 
         return new Task(getSentence(), getBudget(), getParentTask(), getParentBelief(), null);
     }

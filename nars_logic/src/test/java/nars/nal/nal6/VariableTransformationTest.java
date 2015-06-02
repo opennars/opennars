@@ -21,9 +21,9 @@ public class VariableTransformationTest {
     @Test public void testTransformVariables() {
         NAR nar = new NAR(new Default());
         Compound c = nar.term("<$a --> x>");
-        Compound d = Compound.transformIndependentVariableToDependent(c);
+        Compound d = Compound.transformIndependentToDependentVariables(c).normalized();
         assertTrue(c!=d);
-        assertEquals(d, nar.term("<#a --> x>"));
+        assertEquals(d, nar.term("<#1 --> x>"));
     }
 
     @Test

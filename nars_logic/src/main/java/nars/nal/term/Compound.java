@@ -515,26 +515,12 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
 
     
-    public static Compound transformIndependentVariableToDependent(Compound c) {
+    public static Compound transformIndependentToDependentVariables(Compound c) {
 
         if (!c.hasVarIndep())
             return c;
 
-        return (Compound)c.cloneTransforming(new VariableSubstitution() {
-            int counter = 0;
-
-            @Override
-            public boolean test(Term possiblyAVariable) {
-                if (super.test(possiblyAVariable))
-                    return ((Variable) possiblyAVariable).hasVarIndep();
-                return false;
-            }
-
-            @Override
-            protected Variable getSubstitute(Variable v) {
-                return Variable.the(Symbols.VAR_DEPENDENT, counter++);
-            }
-        });
+        return (Compound)c.cloneTransforming(new TransformIndependentToDependentVariables());
     }
 
     public <X extends Compound> X cloneTransforming(CompoundTransform t) {
@@ -1258,6 +1244,20 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     abstract public byte[] nameCached();
+
+    private static class TransformIndependentToDependentVariables extends VariableSubstitution {
+        int counter = 0;
+
+        @Override public boolean test(Term possiblyAVariable) {
+            if (super.test(possiblyAVariable))
+                return ((Variable) possiblyAVariable).hasVarIndep();
+            return false;
+        }
+
+        @Override protected Variable getSubstitute(Variable v) {
+            return Variable.the(Symbols.VAR_DEPENDENT, counter++);
+        }
+    }
 
 //    @Deprecated public static class UnableToCloneException extends RuntimeException {
 //

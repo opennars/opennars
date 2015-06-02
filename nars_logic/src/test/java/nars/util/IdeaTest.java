@@ -36,8 +36,10 @@ public class IdeaTest {
         n.input("<b --> a>.");
         
         n.run(4);
+
+        //System.out.println(i.keySet());
                         
-        assertEquals(2+2, i.size());
+        assertEquals(5 /* used to be 4 */, i.size());
         assertTrue(i.keySet().contains("[a, b]"));
         assertTrue(i.keySet().contains("(b, a]"));
         assertTrue(i.keySet().contains("a"));

@@ -61,16 +61,16 @@ public class DelayBagTest {
         n.input("<c --> d>.");
         
         n.frame(2);
-        assertEquals(6, numConcepts(n) );
+        assertEquals(7, numConcepts(n) );
 
         n.frame(30);
-        assertEquals(6, numConcepts(n) );
+        assertEquals(7, numConcepts(n) );
         
         ((AntCore)n.memory.concepts).concepts.remove((Term)n.term("<a --> b>"));
         
-        assertEquals(5, numConcepts(n) );
+        assertEquals(6, numConcepts(n) );
         n.frame(10);
-        assertEquals(5, numConcepts(n) );
+        assertEquals(6, numConcepts(n) );
 
         n.input("<a --> b>.");
         n.frame(5);
