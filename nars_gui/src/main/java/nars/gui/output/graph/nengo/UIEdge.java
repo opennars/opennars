@@ -1,7 +1,7 @@
 package nars.gui.output.graph.nengo;
 
 import ca.nengo.ui.lib.world.piccolo.primitive.ShapeObject;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.util.graph.NARGraph;
 import org.apache.commons.math3.util.FastMath;
 

@@ -4,7 +4,7 @@ import nars.NAR;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.nal.term.Termed;
 import nars.budget.Budget.Budgetable;
 import nars.nal.tlink.TaskLink;

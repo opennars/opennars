@@ -6,7 +6,7 @@ import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 

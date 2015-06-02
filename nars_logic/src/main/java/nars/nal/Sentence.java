@@ -35,6 +35,7 @@ import nars.nal.stamp.Stamped;
 import nars.nal.term.*;
 import nars.nal.transform.TermVisitor;
 import nars.util.data.Util;
+import nars.util.data.id.Named;
 
 import java.util.*;
 

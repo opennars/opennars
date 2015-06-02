@@ -204,11 +204,18 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
 
     final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate) {
-        return ByteBuf.create(64)
+        final byte[] subjBytes = subject.name();
+        final byte[] predBytes = predicate.name();
+        final byte[] relationBytes = relation.toBytes();
+        return ByteBuf.create(
+                subjBytes.length + predBytes.length + relationBytes.length +
+            1 + 1 //beginning and end closers
+            + 1 +1 //2 spaces TODO remove this
+        )
                 .add((byte)STATEMENT_OPENER.ch)
-                .add(subject.name())
-                .add((byte) ' ' ).add(relation.toBytes()).add((byte) ' ' )
-                .add(predicate.name())
+                .add(subjBytes)
+                .space().add(relationBytes).space()
+                .add(predBytes)
                 .add((byte)STATEMENT_CLOSER.ch)
                 .toBytes();
     }

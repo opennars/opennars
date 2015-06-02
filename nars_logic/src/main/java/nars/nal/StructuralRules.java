@@ -402,10 +402,10 @@ public final class StructuralRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        //if (content instanceof Compound)
+        if (content instanceof Compound)
             return nal.singlePremiseTask((Compound)content, truth, budget);
-       // else
-       //     return false;
+        else
+            return false;
     }
 
     /* --------------- Negation related rules --------------- */

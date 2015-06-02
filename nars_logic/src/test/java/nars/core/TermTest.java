@@ -258,10 +258,11 @@ public class TermTest {
         }
         
             
-        Term s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0).normalized();
+        Term s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0);
         assertEquals(null, s);
 
-        Term i = Inheritance.make(subj, pred).normalized();
+
+        Term i = Inheritance.make(subj, pred);
         assertEquals(null, i);
 
 
@@ -275,7 +276,7 @@ public class TermTest {
             
             assertEquals(t, forced.toString());
             
-            Term cloned = forced.clone().normalized();
+            Term cloned = forced.clone();
             assertEquals(null, cloned);
             
             

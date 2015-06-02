@@ -89,7 +89,9 @@ abstract public class AbstractNALTest extends TestCase {
         nar.memory.randomSeed(randomSeed);
         results.clear();
         this.eventCounter = new CountOutputEvents(nar, results);
-        this.deriveMethodCounter = new CountDerivationCondition(nar, results);
+
+        deriveMethodCounter = null;
+        //this.deriveMethodCounter = new CountDerivationCondition(nar, results);
 
     }
 
@@ -104,7 +106,8 @@ abstract public class AbstractNALTest extends TestCase {
         */
         if (analyzeStack) {
             nar.on(eventCounter);
-            nar.on(deriveMethodCounter);
+            if (deriveMethodCounter!=null)
+                nar.on(deriveMethodCounter);
         }
 
 

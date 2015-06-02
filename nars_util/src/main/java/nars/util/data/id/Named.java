@@ -1,7 +1,6 @@
-package nars.nal;
+package nars.util.data.id;
 
 /** name = unique identifier */
 public interface Named<K> {
-    public K name();
-
+    K name();
 }

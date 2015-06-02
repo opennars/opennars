@@ -160,7 +160,7 @@ public class ByteBuf  {
 
     public ByteBuf add( final byte value ) {
 
-        if ( 1 + length < capacity ) {
+        if ( 1 + length <= capacity ) {
             Byt.idx( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer );
@@ -737,6 +737,11 @@ public class ByteBuf  {
 
     public byte[] slc( int startIndex, int endIndex ) {
         return Byt.slc( this.buffer, startIndex, endIndex );
+    }
+
+    public ByteBuf space() {
+        add((byte) ' ' );
+        return this;
     }
 
 }

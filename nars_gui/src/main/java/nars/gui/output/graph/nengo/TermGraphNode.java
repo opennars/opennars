@@ -12,7 +12,7 @@ import nars.Events;
 import nars.Memory;
 import nars.event.ConceptReaction;
 import nars.nal.ConceptProcess;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;

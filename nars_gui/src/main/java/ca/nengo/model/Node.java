@@ -29,7 +29,7 @@ package ca.nengo.model;
 
 import ca.nengo.util.ScriptGenException;
 import ca.nengo.util.VisiblyChanges;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 
 import java.io.Serializable;
 import java.util.HashMap;

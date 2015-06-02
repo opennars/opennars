@@ -10,6 +10,7 @@ import nars.nal.tlink.TermLink;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.data.CuckooMap;
+import nars.util.data.id.Named;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -23,7 +23,7 @@ package nars.nal.term;
 
 import nars.Symbols;
 import nars.nal.NALOperator;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.TermVisitor;

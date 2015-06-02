@@ -18,7 +18,7 @@ import nars.gui.VerticalLayout;
 import nars.gui.output.graph.nengo.TermGraphNode;
 import nars.gui.output.graph.nengo.TermGraphPanelNengo;
 import nars.nal.Item;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth.Truthable;

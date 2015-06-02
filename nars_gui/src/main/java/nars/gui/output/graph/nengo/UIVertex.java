@@ -4,14 +4,12 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.world.PaintContext;
 import ca.nengo.ui.model.plot.AbstractWidget;
 import ca.nengo.util.ScriptGenException;
-import com.google.common.collect.Iterables;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.piccolo2d.PNode;
 import org.piccolo2d.util.PAffineTransform;
 
 import javax.swing.*;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;

@@ -19,7 +19,7 @@ import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.gui.WrapLayout;
 import nars.model.impl.Default;
-import nars.nal.Named;
+import nars.util.data.id.Named;
 import nars.util.graph.TermLinkGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.jgrapht.Graph;

@@ -169,11 +169,18 @@ public class Byt {
     }
 
 
-    public static byte[] slc( byte[] array, int startIndex, int endIndex ) {
+    public static byte[] slc( final byte[] array, final int startIndex, final int endIndex ) {
 
         final int start = calculateIndex( array, startIndex );
         final int end = calculateEndIndex(array, endIndex);
         final int newLength = end - start;
+
+        /** if the actual length will be the same as the input array, it
+         * means the entire string will be necessary and we are just going
+         * to return the internal array and not make a copy of it.
+         */
+        if (newLength == array.length)
+            return array;
 
         if ( newLength < 0 ) {
             throw new ArrayIndexOutOfBoundsException(
@@ -397,10 +404,12 @@ public class Byt {
 
 
     /* End universal methods. */
-    private static int calculateIndex( byte[] array, int originalIndex ) {
+    private static int calculateIndex( final byte[] array, final int originalIndex ) {
+        if (originalIndex == 0) {
+            return 0;
+        }
+
         final int length = array.length;
-
-
 
         int index = originalIndex;
 
@@ -430,7 +439,7 @@ public class Byt {
 
 
     /* End universal methods. */
-    private static int calculateEndIndex( byte[] array, int originalIndex ) {
+    private static int calculateEndIndex( final byte[] array, final int originalIndex ) {
         final int length = array.length;
 
 
@@ -461,7 +470,7 @@ public class Byt {
         return index;
     }
 
-    public static int idxInt( byte[] bytes, int off ) {
+    public static int idxInt( final byte[] bytes, final int off ) {
         return ( ( bytes[ off + 3 ] & 0xFF ) ) +
                 ( ( bytes[ off + 2 ] & 0xFF ) << 8 ) +
                 ( ( bytes[ off + 1 ] & 0xFF ) << 16 ) +
@@ -469,7 +478,7 @@ public class Byt {
     }
 
 
-    public static byte[] addInt( byte[] array, int v ) {
+    public static byte[] addInt( final byte[] array, final int v ) {
 
         byte[] arrayToHoldInt = new byte[ 4 ];
         intTo( arrayToHoldInt, 0, v );

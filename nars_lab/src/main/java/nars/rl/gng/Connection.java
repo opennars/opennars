@@ -1,6 +1,6 @@
 package nars.rl.gng;
 
-import nars.nal.Named;
+import nars.util.data.id.Named;
 
 import java.util.Objects;
 
