@@ -399,7 +399,12 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     }
 
     public <X extends Compound> X cloneTransforming(CompoundTransform t) {
-        return (X)clone(cloneTermsTransforming(t));
+        return (X)cloneTransforming(t, 0);
+    }
+    protected <X extends Compound> X cloneTransforming(CompoundTransform t, int level) {
+        if (t.testSuperTerm(this))
+            return (X)clone(cloneTermsTransforming(t, level));
+        return (X)this;
     }
 
 
@@ -603,7 +608,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
 
     /** clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step */
-    protected Compound cloneVariablesDeep() {
+    public Compound cloneVariablesDeep() {
         return (Compound) clone(cloneTermsDeepIfContainingVariables());
     }
 
@@ -622,7 +627,7 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return l;
     }
 
-    protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans) {
+    public <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans) {
         transform(trans, 0);
     }
 
@@ -1054,12 +1059,18 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         }
         return y;
     }
-    public <I extends Compound, T extends Term> Term[] cloneTermsTransforming(CompoundTransform<I,T> trans) {
+
+
+    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(CompoundTransform<I,T> trans, int level) {
         Term[] y = new Term[length()];
         int i = 0;
         for (Term x : this) {
             if (trans.test(x))
-                x = trans.apply(null, (T)x, 0);
+                x = trans.apply((I) this, (T)x, level);
+            else if (x instanceof Compound) {
+                //recurse
+                x = ((Compound)x).cloneTransforming(trans, level+1);
+            }
             y[i++] = x;
         }
         return y;

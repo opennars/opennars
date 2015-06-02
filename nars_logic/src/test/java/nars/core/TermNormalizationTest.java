@@ -25,7 +25,7 @@ public class TermNormalizationTest {
         assertNotNull(a);
         Variable b = ct.subterm(v2Index);
         assertNotNull(b);
-        assertEquals(a, (b));
+        assertEquals(a, b);
         assertTrue("successfully re-used the variable instance", a==b);
     }
 

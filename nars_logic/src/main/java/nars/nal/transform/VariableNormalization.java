@@ -53,15 +53,14 @@ public class VariableNormalization implements VariableTransform {
 
     public VariableNormalization(Compound target) {
 
-        //this.result = target.cloneVariablesDeep();
-        this.result = target.cloneTransforming(this);
-        /*if (this.result!=null)
-            this.result.transform(this);*/
+        Compound result1 = target.cloneTransforming(this);
 
+        this.result = result1;
 
         if (rename != null)
-            rename.clear(); //assist GC
+            rename.clear(); //assists GC
     }
+
 
     @Override
     public Variable apply(final Compound ct, final Variable v, int depth) {
