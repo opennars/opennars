@@ -33,6 +33,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamped;
 import nars.nal.term.*;
+import nars.nal.transform.TermVisitor;
 import nars.util.data.Util;
 
 import java.util.*;

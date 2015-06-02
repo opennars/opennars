@@ -23,7 +23,6 @@ package nars.nal.term;
 
 import nars.Symbols;
 import nars.util.utf8.FastByteComparisons;
-import nars.util.utf8.Utf8;
 
 import static nars.Symbols.*;
 
@@ -246,7 +245,7 @@ public class Variable extends Atom {
     private static final String[] vn3 = new String[MAX_CACHED_VARNAME_INDEXES];
     
     
-    public static String getName(char type, int index) {
+    public static String name(char type, int index) {
         if (index > MAX_CACHED_VARNAME_INDEXES)
             return newName(type, index);
 
@@ -286,7 +285,7 @@ public class Variable extends Atom {
     }
 
     public static Variable the(char varDependent, int counter) {
-        return new Variable(getName(varDependent, counter));
+        return new Variable(name(varDependent, counter));
     }
 
     /** returns the default dependent variable */

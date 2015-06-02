@@ -21,12 +21,12 @@
 package nars.nal.term;
 
 
-import nars.Memory;
 import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.transform.TermVisitor;
 import nars.util.utf8.Utf8;
 
 import java.io.Serializable;

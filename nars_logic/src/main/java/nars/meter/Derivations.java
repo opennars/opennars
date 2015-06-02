@@ -18,6 +18,7 @@ import nars.nal.nal8.Operator;
 import nars.nal.term.*;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.transform.TermVisitor;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;

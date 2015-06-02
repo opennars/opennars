@@ -1,4 +1,6 @@
-package nars.nal.term;
+package nars.nal.transform;
+
+import nars.nal.term.Term;
 
 /**
  * Created by me on 4/25/15.
