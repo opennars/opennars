@@ -383,7 +383,7 @@ kernel void stage2Kernel(
 
 
 
-    //InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
+    InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
 }
 
 

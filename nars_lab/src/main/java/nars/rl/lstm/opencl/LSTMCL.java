@@ -709,24 +709,28 @@ public class LSTMCL implements IAgentSupervised {
 
 
             //input to hidden
+            if( false) {
 
-            inputToHiddenKernel.rewind();
-            inputToHiddenKernel.putArgs(deltaH, dSdF, dSdG, weightsF, weightsG).putArg((float)learningRate).putArg(full_input_dimension).putArg(cell_blocks);
+                inputToHiddenKernel.rewind();
+                inputToHiddenKernel.putArgs(deltaH, dSdF, dSdG, weightsF, weightsG).putArg((float)learningRate).putArg(full_input_dimension).putArg(cell_blocks);
 
-            //queue.putWriteBuffer(deltaH, true);
-            queue.put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
+                //queue.putWriteBuffer(deltaH, true);
+                queue.put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
 
-            queue.finish();
+                queue.finish();
 
 
-            //for (int cellIndex = 0; cellIndex < cell_blocks; cellIndex++) {
-            //    final double deltaHForCell = deltaH[cellIndex];
-            //
-            //    for (int i = 0; i < full_input_dimension; i++) {
-            //        weightsF[cellIndex][i] += deltaHForCell * readArray2dDouble(dSdFBufferBuffer, cell_blocks, cellIndex, i) * learningRate;
-            //        weightsG[cellIndex][i] += deltaHForCell * readArray2dDouble(dSdGBufferBuffer, cell_blocks, cellIndex, i) * learningRate;
-            //    }
-            //}
+
+                //for (int cellIndex = 0; cellIndex < cell_blocks; cellIndex++) {
+                //    final double deltaHForCell = deltaH[cellIndex];
+                //
+                //    for (int i = 0; i < full_input_dimension; i++) {
+                //        weightsF[cellIndex][i] += deltaHForCell * readArray2dDouble(dSdFBufferBuffer, cell_blocks, cellIndex, i) * learningRate;
+                //        weightsG[cellIndex][i] += deltaHForCell * readArray2dDouble(dSdGBufferBuffer, cell_blocks, cellIndex, i) * learningRate;
+                //    }
+                //}
+            }
+
 
 
 
