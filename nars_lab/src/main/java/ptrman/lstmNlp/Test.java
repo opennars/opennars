@@ -65,7 +65,7 @@ public class Test {
             double[] input = new double[Training.CODEBOOK.length()];
             input[inputSequence[t]] = 1.0;
 
-            double[] actual_output = slstm.predict(input);
+            double[] actual_output = slstm.predict(input, true);
 
             // find out the position where it is maximum
             int maxIndex = util.argmax(actual_output);
@@ -87,7 +87,7 @@ public class Test {
         for( int outputSequenceIndex = 0; outputSequenceIndex < 30; outputSequenceIndex++ ) {
             double[] input = new double[Training.CODEBOOK.length()];
 
-            double[] actual_output = slstm.predict(input);
+            double[] actual_output = slstm.predict(input, true);
 
             // find out the position where it is maximum
             int maxIndex = util.argmax(actual_output);

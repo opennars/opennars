@@ -11,12 +11,14 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal4.Product;
-import nars.nal.nal8.*;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.Operator;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.DecideAllGoals;
 import nars.nal.nal8.decide.Decider;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.term.Atom;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealVector;
@@ -97,7 +99,7 @@ public class QLAgent<S extends Term> extends NARAgent {
     }
 
     public QLAgent(NAR nar, String operationTerm, String rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
-        this(nar, operationTerm, nar.term(rewardTerm), env, perceptions);
+        this(nar, operationTerm, (Compound)nar.term(rewardTerm), env, perceptions);
     }
 
     /**
@@ -105,7 +107,7 @@ public class QLAgent<S extends Term> extends NARAgent {
      * @param env
      * @param p
      */
-    public QLAgent(NAR nar, String operatorTerm, Term rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
+    public QLAgent(NAR nar, String operatorTerm, Compound rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         super(nar, env, Atom.the(operatorTerm));
 
         ql = new QLAgentTermMatrix(nar);

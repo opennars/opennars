@@ -45,7 +45,8 @@ public class Cell {
         SWITCH,
         OFFSWITCH,
         WIRE, 
-        Load     
+        Load,
+        UNCERTAINBRIDGE
     }
     
     public enum Machine {

@@ -69,10 +69,12 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
     /** q according to the concept's best belief / goal & its truth/desire */
     public double getQSentence(char implicationPunctuation) {
 
-        Sentence s = implicationPunctuation == Symbols.GOAL ? concept.getStrongestGoal(true, true) : concept.getStrongestBelief();
+        Task s = implicationPunctuation == Symbols.GOAL ?
+                concept.getStrongestGoal(true, true) :
+                concept.getStrongestBelief();
         if (s == null) return 0f;
 
-        return getQSentence(s);
+        return getQSentence(s.sentence);
     }
 
     /** gets the Q-value scalar from the best belief or goal of a state=/>action concept */

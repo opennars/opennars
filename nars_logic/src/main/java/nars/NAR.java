@@ -168,25 +168,26 @@ public class NAR extends Container implements Runnable {
         return i;
     }
     
-    public NAR input(final String taskText, float frequency, float confidence) throws InvalidInputException {
+    public NAR input(final String taskText, final float frequency, final float confidence) throws InvalidInputException {
         return input(-1, -1, taskText, frequency, confidence);
     }
 
-    public <T extends Term> T term(String t) throws InvalidInputException {
+    public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
         return narsese.parseTerm(t).normalized();
     }
 
-    public Concept concept(Term term) {
+    public Concept concept(final Term term) {
         return memory.concept(term);
     }
+
     /** gets a concept if it exists, or returns null if it does not */
-    public Concept concept(String conceptTerm) throws InvalidInputException {
+    public Concept concept(final String conceptTerm) throws InvalidInputException {
         return concept((Term)narsese.parseTerm(conceptTerm));
     }
 
 
 
-    public Task goal(String goalTerm, float freq, float conf) {
+    public Task goal(final String goalTerm, final float freq, final float conf) {
         return goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goalTerm, freq, conf);
     }
 

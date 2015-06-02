@@ -84,7 +84,7 @@ public class Hauto {
             else {
                 if(!r.is_solid && TestChamber.keyn!=doornumber(r)) {
                     w.is_solid=true;
-                    nar.addInput("<"+r.name+" --> [opened]>. :|: %0.00;0.90%");
+                    nar.input("<"+r.name+" --> [opened]>. :|: %0.00;0.90%");
                 }
             }
         }
@@ -124,7 +124,7 @@ public class Hauto {
             w.value=(up.charge==1 ^ down.charge==1) ? 1.0f : 0.0f;  //eval state from input connections
 
         //ADD BIDIRECTIONAL LOGIC BRIDGE TO OVERCOME 2D TOPOLOGY
-        if(r.logic==BRIDGE || (r.logic==UNCERTAINBRIDGE && Memory.randomNumber.nextDouble()>0.5))
+        if(r.logic==BRIDGE || (r.logic==UNCERTAINBRIDGE && nar.memory.random.nextDouble()>0.5))
         {
             if(left.chargeFront && left.logic==WIRE)
                 w.value=left.charge;
@@ -156,7 +156,7 @@ public class Hauto {
         }
         if(r.machine==Machine.Light || r.machine==Machine.Turret) {
             if(r.light==1.0f && w.light!=1.0f) { //changed
-                nar.addInput("<"+r.name+" --> [on]>. :|: %0.00;0.90%");
+                nar.input("<"+r.name+" --> [on]>. :|: %0.00;0.90%");
             }
         }
             //w.charge *= w.conductivity;
@@ -195,7 +195,7 @@ public class Hauto {
                     nar.input("(^" + oper + "," + readCells[x][y].name + "). :|:");
                     TestChamber.operateObj(readCells[x][y].name, oper);
                 }
-                //nar.addInput("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
+                //nar.input("(^" + oper + ","+readCells[x][y].name+"). :|:"); //in order to make NARS an observer
                 //--nar.step(1);
                 //.operateObj(readCells[x][y].name, oper);
             }
@@ -208,7 +208,7 @@ public class Hauto {
                     nar.input("(^" + oper + "," + s + "). :|:");
                     TestChamber.operateObj(s, oper);
                 }
-                //nar.addInput("(^" + oper + ","+s+"). :|:");
+                //nar.input("(^" + oper + ","+s+"). :|:");
                 //--nar.step(1);
                // TestChamber.operateObj(s, oper);
             }
@@ -222,21 +222,21 @@ public class Hauto {
             }
             String wishreal=wish.replace("closed", "opened").replace("off", "on");
             if(!"".equals(readCells[x][y].name)) {
-                //nar.addInput("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
+                //nar.input("(^" + oper + ","+readCells[x][y].name+")!"); //we will force the action
                 if(!inverse) {
                     nar.input("<" + readCells[x][y].name + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|: %0.00;0.90%");
+                    nar.input("<" + readCells[x][y].name+" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
             String s=TestChamber.getobj(x, y);
             if(!s.equals("")) {
-                //nar.addInput("(^" + oper + ","+s+")!"); 
+                //nar.input("(^" + oper + ","+s+")!"); 
                 if(!inverse) {
                     nar.input("<" + s + " --> [" + wishreal + "]>! :|:"); //in order to make NARS an observer
                 } else {
-                    nar.addInput("<" + s +" --> ["+wishreal+"]>! :|: %0.00;0.90%");
+                    nar.input("<" + s +" --> ["+wishreal+"]>! :|: %0.00;0.90%");
                 }
                 //--nar.step(1);
             }
@@ -307,7 +307,7 @@ public class Hauto {
                 readCells[x][y].name = name;
                 writeCells[x][y].name = name;
                 if(selected.logic==Logic.OFFSWITCH) {
-                    nar.addInput("<"+name+" --> "+"[on]>. :|: %0.00;0.90%");
+                    nar.input("<"+name+" --> "+"[on]>. :|: %0.00;0.90%");
                     if(TestChamber.curiousity) {
                         space.nar.input("<(^go-to," + readCells[x][y].name + ") =/> <Self --> [curious]>>.");
                         space.nar.input("<(^activate," + readCells[x][y].name + ") =/> <Self --> [curious]>>.");

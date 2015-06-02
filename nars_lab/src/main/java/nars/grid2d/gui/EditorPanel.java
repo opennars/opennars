@@ -198,20 +198,20 @@ public class EditorPanel extends JPanel {
                                         if(TestChamber.staticInformation)
                                             s.nar.input("<" + c[11] + " --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
-                                            //s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                            //s.nar.input("<"+c[11]+" --> on>. :|:");
                                         }
                                         else {
-                                            //s.nar.addInput("<"+c[11]+" --> off>.");
+                                            //s.nar.input("<"+c[11]+" --> off>.");
                                         }
                                     }
                                     if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
                                         if(TestChamber.staticInformation)
                                             s.nar.input("<" + c[11] + " --> switch>.");
                                         if(s.cells.readCells[i][j].light==1.0f) {
-                                            //s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                            //s.nar.input("<"+c[11]+" --> on>. :|:");
                                         }
                                         else {
-                                            //s.nar.addInput("<"+c[11]+" --> off>. :|:");
+                                            //s.nar.input("<"+c[11]+" --> off>. :|:");
                                         }
                                     }
 
@@ -222,20 +222,20 @@ public class EditorPanel extends JPanel {
                                             if(TestChamber.staticInformation)
                                                 s.nar.input("<" + c[11] + " --> firework>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
-                                                //s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                                //s.nar.input("<"+c[11]+" --> on>. :|:");
                                             }
                                             else {
-                                                //s.nar.addInput("<"+c[11]+" --> off>. :|:");
+                                                //s.nar.input("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
                                         if(s.cells.readCells[i][j].machine==Machine.Light) {
                                             if(TestChamber.staticInformation)
                                                 s.nar.input("<" + c[11] + " --> light>.");
                                             if(s.cells.readCells[i][j].light==1.0f) {
-                                                //s.nar.addInput("<"+c[11]+" --> on>. :|:");
+                                                //s.nar.input("<"+c[11]+" --> on>. :|:");
                                             }
                                             else {
-                                                //s.nar.addInput("<"+c[11]+" --> off>. :|:");
+                                                //s.nar.input("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
                                     } else {
@@ -249,7 +249,7 @@ public class EditorPanel extends JPanel {
                                     if(s.cells.readCells[i][j].material==Material.Door) {
                                         if(TestChamber.staticInformation)
                                             s.nar.input("<" + c[11] + " --> door>.");
-                                        //s.nar.addInput("<"+c[11]+" --> closed>. :|:");
+                                        //s.nar.input("<"+c[11]+" --> closed>. :|:");
                                     }
 
                                     s.cells.readCells[i][j].name=c[11];
@@ -590,12 +590,12 @@ public class EditorPanel extends JPanel {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
-                            //s.nar.addInput("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.input("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.input("<(^pick," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=2;
                         }
                         if (obi instanceof Pizza) {
-                            //s.nar.addInput("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
+                            //s.nar.input("<(^go-to," + obi.doorname + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
@@ -603,23 +603,23 @@ public class EditorPanel extends JPanel {
                 for (int i = 0; i < s.cells.w; i++) {
                     for (int j = 0; j < s.cells.h; j++) {
                         if (s.cells.readCells[i][j].name.startsWith("switch") || s.cells.readCells[i][j].name.startsWith("place")) {
-                            //s.nar.addInput("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
+                            //s.nar.input("<(^go-to," + s.cells.readCells[i][j].name + ") =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
-                            s.nar.addInput("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.input("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.input("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
                 }
                 
-                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
-                s.nar.addInput("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [curious]>!");
-                s.nar.addInput("<Self --> [exploring]>!");
-                s.nar.addInput("<Self --> [exploring]>!"); //testing with multiple goals
+                s.nar.input("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.input("<<Self --> [curious]> =/> <Self --> [exploring]>>.");
+                s.nar.input("<Self --> [curious]>!");
+                s.nar.input("<Self --> [curious]>!");
+                s.nar.input("<Self --> [exploring]>!");
+                s.nar.input("<Self --> [exploring]>!"); //testing with multiple goals
             }
         };
         goalMenu.add(wu);
@@ -703,8 +703,8 @@ public class EditorPanel extends JPanel {
                 s.nar.input("<(^go-to,$1) =/> <$1 --> [at]>>.");
                 s.nar.input("<(&/,<$1 --> [at]>,(^activate,$1)) =/> <$1 --> [on]>>.");
                 s.nar.input("<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [on]>>. %0.00;0.90%");
-                //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
-                //s.nar.addInput("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
+                //s.nar.input("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
+                //s.nar.input("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
         });
 
@@ -717,7 +717,7 @@ public class EditorPanel extends JPanel {
 
         knowMenu.add(new EditorMode("if you are somewhere and you pick whats there, you will hold it") {
             @Override
-            public void run() { /*s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
+            public void run() { /*s.nar.input("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>."); */
 
                 for (GridObject g : s.objects) {
                     if (g instanceof LocalGridObject) {
@@ -727,18 +727,18 @@ public class EditorPanel extends JPanel {
                         }
                     }
                 }
-                /*s.nar.addInput("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
-                 s.nar.addInput("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
-                 s.nar.addInput("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");
-                 s.nar.addInput("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");*/
+                /*s.nar.input("<(&/,<key0 --> at>,(^pick,key0)) =/> <key0 --> hold>>.");
+                 s.nar.input("<(&/,<key1 --> at>,(^pick,key1)) =/> <key1 --> hold>>.");
+                 s.nar.input("<(&/,<key2 --> at>,(^pick,key2)) =/> <key2 --> hold>>.");
+                 s.nar.input("<(&/,<key3 --> at>,(^pick,key3)) =/> <key3 --> hold>>.");*/
             }
-        });  //s.nar.addInput("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
+        });  //s.nar.input("<(&/,<$1 --> at>,(^pick,$1)) =/> <$1 --> hold>>.");
 
         resourceMenu.add(new EditorMode("need pizza") {
             @Override
             public void run() {
                 wu.run();
-                //s.nar.addInput("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
+                //s.nar.input("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
                 s.nar.input("<(^go-to,$1) =/> <$1 --> [at]>>.");
                 TestChamber.needpizza=true;
             }
