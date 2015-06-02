@@ -131,10 +131,20 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
 
     protected static byte[] makeCompoundNKey(final NALOperator op, final Term... arg) {
 
+        final int numArgs = arg.length;
+
+
+        if (numArgs == 2) {
+            //experimental compact infix notation
+            return Statement.makeStatementKey(arg[0], op, arg[1]);
+        }
+
+
         byte[] opBytes = op.toBytes();
 
+
         int len = 1 + 1 + opBytes.length +
-                arg.length; //1 for each arg separator
+                numArgs; //1 for each arg separator
         for  (final Term t : arg) {
             len += t.bytes().length;
         }
@@ -250,29 +260,28 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
 
         final Compound c = (Compound)that;
 
+        int opdiff = compareClass(this, c);
+        if (opdiff != 0) return opdiff;
 
-        int opdiff = getClass().getName().compareTo(c.getClass().getName());
-        if (opdiff == 0) {
-//            //return compareSubterms(c);
-            return name().compareTo(c.name());
-        }
-//
-//            int sd = compareSubterms(c);
-//            if (sd == 0) {
-//                share(c);
-//            }
-//            return sd;
-//        }
-        return opdiff;
+        return compare(c);
     }
 
-    /** copy subterms so that reference check will be sufficient to determine equality
-     * assumes that 'equivalent' has already been determined to be equal.
+    public static int compareClass(final Object b, final Object c) {
+        Class c1 = b.getClass();
+        Class c2 = c.getClass();
+        int h = Integer.compare(c1.hashCode(), c2.hashCode());
+        if (h!=0) return h;
+        return c1.getName().compareTo(c2.getName());
+    }
+
+    /** this will be called if the c is of the same class as 'this'.
+     * the implementation can decide whether to compare by name() or by
+     * subterm content
      * */
-    @Deprecated protected void share(Compound equivalent) {
-        /*if (!hasVar()) {
-            //System.arraycopy(term, 0, equivalent.term, 0, term.length);
-        }*/
+    abstract protected int compare(Compound otherCompoundOfEqualType);
+
+    public int compareName(final Compound c) {
+        return name().compareTo(c.name());
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
@@ -500,11 +509,11 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
     }
 
     @Override
-    public Identifier name() {
+    public UTF8Identifier name() {
         if (!hasName()) {
             setName( new DefaultCompoundUTF8Identifier() );
         }
-        return super.name();
+        return (UTF8Identifier)super.name();
     }
  
 

@@ -615,4 +615,39 @@ public class Terms {
         return n;
         */
     }
+
+    /** tests if any subterms are in common, effectively abidirectional Terms.contains(Term[], Term) */
+    public static boolean shareAnyTerms(Term[] a, Term[] b) {
+
+        //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
+
+
+        for (final Term x : b)
+            if (Terms.contains(a, x)) return true;
+        for (final Term x : a)
+            if (Terms.contains(b, x)) return true;
+        return false;
+    }
+
+    /** tests if any subterms are in common, effectively abidirectional Terms.contains(Term[], Term) */
+    public static boolean shareAnySubTerms(Compound a, Compound b) {
+        return shareAnyTerms(a.term, b.term);
+    }
+
+
+    public static int compareSubterms(final Term[] a, final Term[] b) {
+        int al = a.length;
+        int l = Integer.compare(al, b.length);
+        if (l!=0) return l;
+
+        for (int i = 0; i < al; i++) {
+            Term x = a[i];
+            Term y = b[i];
+            int ca = x.compareTo(y);
+            if (ca != 0) return ca;
+        }
+
+        return 0;
+    }
+
 }

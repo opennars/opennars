@@ -578,6 +578,10 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized {
         return setDurability(getDurability() * factor);
     }
 
+    public boolean summaryLessThan(final float s) {
+        return !summaryNotLessThan(s);
+    }
+
 
     /** indicates an implementation has, or is associated with a specific BudgetValue */
     public interface Budgetable {

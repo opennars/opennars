@@ -493,11 +493,15 @@ public class DefaultConcept extends Item<Term> implements Concept {
         } 
         
         Stamp s2=goal.stamp.clone();
-        s2.setOccurrenceTime(memory.time());
-        if(s2.after(task.sentence.stamp, nal.memory.param.duration.get())) { //this task is not up to date we have to project it first
-            Sentence projectedGoal = task.sentence.projection(memory.time(), nal.memory.param.duration.get());
+        long now = memory.time();
+        s2.setOccurrenceTime(now);
+        int dur = nal.memory.duration();
+        //this task is not up to date we have to project it first
+        if(s2.after(task.sentence.stamp, dur)) {
+            Sentence projectedGoal = task.sentence.projection(now, dur);
             if(projectedGoal!=null) {
-                nal.singlePremiseTask(projectedGoal, task.getBudget()); //it has to be projected
+                //it has to be projected
+                nal.singlePremiseTask(projectedGoal, task.getBudget());
                 return true;
             }
         }
@@ -519,7 +523,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (task.aboveThreshold() && AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
                 questionFromGoal(task, nal);
 
@@ -530,7 +534,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 }
 
                 //TODO
-                InternalExperience.experienceFromTask(nal, task, false);
+                //InternalExperience.experienceFromTask(nal, task, false);
 
                 getMemory().execute(this, task);
             }

@@ -80,6 +80,7 @@ public class UTF8Identifier extends Identifier {
     }
 
 
+
     public byte[] name() {
         ensureNamed();
         return name;
