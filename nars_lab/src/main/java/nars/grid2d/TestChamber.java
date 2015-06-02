@@ -27,7 +27,7 @@ public class TestChamber {
 
     public static boolean staticInformation=false;
     //TIMING
-    static int narUpdatePeriod = 20; /*milliseconds */
+    static int narUpdatePeriod = 10; /*milliseconds */
     public static boolean ComplexFeedback = true;
     int gridUpdatePeriod = 2;
     int automataPeriod = 2;
@@ -60,7 +60,7 @@ public class TestChamber {
 
         new TestChamber(nar);
                 
-        nar.start(narUpdatePeriod);   
+        nar.runAtRate(narUpdatePeriod);   
         
     }
 

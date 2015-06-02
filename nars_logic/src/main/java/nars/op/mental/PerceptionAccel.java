@@ -22,6 +22,7 @@ import java.util.List;
 
 import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
 import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
+import nars.nal.stamp.Stamp;
 
 /**
  * @author tc
@@ -51,7 +52,7 @@ public class PerceptionAccel extends NARReaction {
     public void event(Class event, Object[] args) {
         if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
             Task newEvent = (Task) args[0];
-            if (newEvent.sentence.punctuation == Symbols.JUDGMENT) {
+            if (/*newEvent.isInput() &&*/ newEvent.sentence.punctuation == Symbols.JUDGMENT && newEvent.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL) {
                 eventbuffer.add(newEvent);
                 while (eventbuffer.size() > cur_maxlen + 1) {
                     eventbuffer.remove(0);
