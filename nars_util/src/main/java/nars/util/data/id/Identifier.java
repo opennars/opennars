@@ -77,9 +77,10 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
     public int compareTo(Object o) {
         if (this == o) return 0;
 
+        /*
         Class ca = getClass();
         Class cb = o.getClass();
-        if (ca!=cb /*&& equalOnlyToSameClass()*/) {
+        if (ca!=cb //&& equalOnlyToSameClass()) {
             //sort by the hashcode of the class names, not natural ordering
             String sa = ca.getName();
             String sb = cb.getName();
@@ -89,10 +90,10 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
                 return Integer.compare(a, b);
             return sa.compareTo(sb); //rare case if the hashcodes are equal but different classes
         }
-        else {
+        else {*/
             //same class as this
             return compare((Identifier) o);
-        }
+        //}
     }
 
     public StringBuffer toString(boolean pretty) {
@@ -111,9 +112,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
         return toString(true).toString();
     }
 
-    public int getStringSizeEstimate() {
-        return 16;
-    }
+    abstract int getStringSizeEstimate();
 
     /** frees all associated memory */
     abstract public void delete();
