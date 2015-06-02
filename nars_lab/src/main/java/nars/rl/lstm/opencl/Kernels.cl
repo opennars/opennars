@@ -166,28 +166,31 @@ void outputToHiddenFiber(
 
 
     precisionType SCALE_OUTPUT_DELTA,
-    float learningRate,
+    precisionType learningRate,
 
     int output_dimension,
     int cell_blocks
 ) {
-    int k = fiberId;
+    int j = fiberId;
 
-    if (k >= output_dimension)  {
+    if (j >= cell_blocks)  {
         return;
     }
 
-    precisionType dok  = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
-    //deltaOutput[k] = dok;
 
-    for( int cellIndex = 0; cellIndex < cell_blocks; cellIndex++ ) {
-        // TODO< read write hazzard, switch loops >
-        deltaH[cellIndex] = deltaH[cellIndex] + dok * ARRAY2d(weightsOut, output_dimension, k, cellIndex);
-        ARRAY2d(weightsOut, output_dimension, k, cellIndex) += (dok * actH[cellIndex] * learningRate);
+    precisionType deltaHSum = 0.0f;
+
+    for (int k = 0; k < output_dimension; k++) {
+        precisionType dok = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
+
+        deltaHSum += (dok * ARRAY2d(weightsOut, output_dimension, k, j));
+        ARRAY2d(weightsOut, output_dimension, k, j) += (dok * actH[j] * learningRate);
+
+        //bias
+        ARRAY2d(weightsOut, output_dimension, k, cell_blocks) += (dok * 1.0f * learningRate);
     }
 
-    // bias
-    ARRAY2d(weightsOut, output_dimension, k, cell_blocks) += (dok * 1.0f * learningRate);
+    deltaH[j] = deltaHSum;
 }
 
 
@@ -380,7 +383,7 @@ kernel void stage2Kernel(
 
 
 
-    InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
+    //InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
 }
 
 

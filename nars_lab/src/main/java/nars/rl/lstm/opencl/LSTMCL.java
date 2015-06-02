@@ -361,7 +361,6 @@ public class LSTMCL implements IAgentSupervised {
     private CLBuffer<FloatBuffer> output;
     private CLBuffer<FloatBuffer> target_outputBuffer;
 
-    private double[] deltaOutput;
     CLBuffer<FloatBuffer> deltaH = null;
     private float[] full_input;
     private int maxWorkGroupSize;
@@ -463,7 +462,7 @@ public class LSTMCL implements IAgentSupervised {
         output = cl.createFloatBuffer(output_dimension, READ_WRITE);
         target_outputBuffer = cl.createFloatBuffer(output_dimension, READ_WRITE);
 
-
+        deltaH = cl.createFloatBuffer(cell_blocks, READ_WRITE);
 
         counterBarrier0 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier1 = cl.createIntBuffer(1, READ_WRITE);
@@ -534,29 +533,6 @@ public class LSTMCL implements IAgentSupervised {
         queue.putWriteBuffer(fullInputBuffer, true);
 
 
-        //cell block arrays
-        if ((sumF == null)) {
-
-            //actF = cl.createFloatBuffer(cell_blocks, READ_WRITE);
-            //actG = cl.createFloatBuffer(cell_blocks, READ_WRITE);
-            //actH = cl.createFloatBuffer(cell_blocks, READ_WRITE);
-            //actF = new double[cell_blocks];
-            //actG = new double[cell_blocks];
-            //actH = new double[cell_blocks];
-
-            //full_hidden = cl.createFloatBuffer(cell_blocks + 1, READ_WRITE);
-            //output = cl.createFloatBuffer(output_dimension, READ_WRITE);
-        }
-        else {
-            // these will be set in the InputToCellblocks kernel, so no need to zero it here
-            //zero(sumFBuffer.getBuffer());
-            //zero(sumGBuffer.getBuffer());
-
-            //thse will be set in the kernel, so no need to zero it here
-            //zero(actF.getBuffer());
-            //zero(actG.getBuffer());
-            //zero(actH.getBuffer());
-        }
 
         int localWorkSizeForCells = min(maxWorkGroupSize, 32);  // Local work size dimensions
         int globalWorkSizeForCells = roundUp(localWorkSizeForCells, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
@@ -574,8 +550,6 @@ public class LSTMCL implements IAgentSupervised {
 
 
         queue.finish();
-
-        //debugBuffer1d("context BEFORE stage 1", context);
 
         // STAGE 1 KERNEL
         /////////////////
@@ -622,79 +596,116 @@ public class LSTMCL implements IAgentSupervised {
             }
 
             target_outputBuffer.getBuffer().rewind();
-            target_outputBuffer.getBuffer().put(floatTargetOutput);
+
+            for( int i = 0; i < floatTargetOutput.length; i++ ) {
+                target_outputBuffer.getBuffer().put(i, floatTargetOutput[i]);
+            }
             queue.putWriteBuffer(target_outputBuffer, true);
 
 
 
             //output to hidden
 
-            if ((deltaOutput == null) || (deltaOutput.length!=output_dimension)) {
-                deltaOutput = new double[output_dimension];
-                deltaH = cl.createFloatBuffer(cell_blocks, READ_WRITE);
-            }
-            else {
-                Arrays.fill(deltaOutput, 0);
-                zero(deltaH.getBuffer());
-                queue.putWriteBuffer(deltaH, true);
-            }
 
             queue.finish();
 
 
+
+
+
+            if(true) {
+                zero(deltaH.getBuffer());
+                queue.putWriteBuffer(deltaH, true);
+
+                counterBarrier0Buffer = counterBarrier0.getBuffer();
+                counterBarrier0Buffer.put(0, globalWorkSizeForCombined);
+
+                queue.putWriteBuffer(counterBarrier0, true);
+
+                queue.finish();
+
+                stage2Kernel.rewind();
+                stage2Kernel.putArgs(target_outputBuffer, actH, deltaH, output, weightsF, weightsG, weightsOut, dSdF, dSdG);
+                stage2Kernel.putArg((float) learningRate).putArg(full_input_dimension).putArg((float) SCALE_OUTPUT_DELTA).putArg(output_dimension).putArg(cell_blocks);
+                stage2Kernel.putArgs(counterBarrier0);
+
+                queue.put1DRangeKernel(stage2Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined);
+
+                queue.finish();
+
+
+            }
+            else{
+                zero(deltaH.getBuffer());
+                queue.putWriteBuffer(deltaH, true);
+
+                // we need to sync the buffer
+                queue.putReadBuffer(deltaH, true);
+                queue.putReadBuffer(weightsOut, true);
+                queue.putReadBuffer(actH, true);
+                queue.putReadBuffer(output, true);
+
+                FloatBuffer deltaHBuffer = deltaH.getBuffer();
+                FloatBuffer weightsOutBuffer = weightsOut.getBuffer();
+                FloatBuffer actHBufferBuffer = actH.getBuffer();
+                FloatBuffer outputBuffer = output.getBuffer();
+
+                for (int k = 0; k < output_dimension; k++) {
+                    final float dok = ((float) target_output[k] - outputBuffer.get(k)) * (float) SCALE_OUTPUT_DELTA;
+                    //deltaOutput[k] = dok;
+
+                    for (int cellIndex = 0; cellIndex < cell_blocks; cellIndex++) {
+                        deltaHBuffer.put(cellIndex, deltaHBuffer.get(cellIndex) + dok * readArray2dFloat(weightsOutBuffer, output_dimension, k, cellIndex));
+                        writeArray2dFloat(weightsOutBuffer, output_dimension, k, cellIndex, readArray2dFloat(weightsOutBuffer, output_dimension, k, cellIndex) + dok * actHBufferBuffer.get(cellIndex) * (float) learningRate);
+                    }
+
+                    //bias
+                    writeArray2dFloat(weightsOutBuffer, output_dimension, k, cell_blocks, readArray2dFloat(weightsOutBuffer, output_dimension, k, cell_blocks) + dok * 1.0f * (float) learningRate);
+                }
+
+                queue.putWriteBuffer(weightsOut, true);
+                queue.putWriteBuffer(deltaH, true);
+                //HALF WORKS**/
+            }
+
+            // debug
+            if( false ) {
+                queue.putReadBuffer(deltaH, true);
+
+                queue.finish();
+
+                debugBuffer1d("deltaH after stage2kernel", deltaH);
+            }
 
 
 
             /*
-            counterBarrier0Buffer = counterBarrier0.getBuffer();
-            counterBarrier0Buffer.put(0, globalWorkSizeForCombined);
+            transformed second version without DATA HAZZARD
 
-            queue.putWriteBuffer(counterBarrier0, true);
+            for (int j = 0; j < cell_blocks; j++) {
 
-            stage2Kernel.rewind();
-            stage2Kernel.putArgs(target_outputBuffer, actH, deltaH, output, weightsF, weightsG, weightsOut, dSdF, dSdG);
-            stage2Kernel.putArg((float) learningRate).putArg(full_input_dimension).putArg((float)SCALE_OUTPUT_DELTA).putArg(output_dimension).putArg(cell_blocks);
-            stage2Kernel.putArgs(counterBarrier0);
+                float deltaHSum = 0.0f;
 
-            queue.put1DRangeKernel(stage2Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined);
+                for (int k = 0; k < output_dimension; k++) {
+                    final double dok = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
 
-            queue.finish();
+                    deltaHSum += (dok * weightsOut[k][j]);
+                    weightsOut[k][j] += dok * actH[j] * learningRate;
+
+                    //bias
+                    weightsOut[k][cell_blocks] += dok * 1.0 * learningRate;
+                }
+
+                deltaH[j] = deltaHSum;
+            }
             */
 
 
 
 
-            // we need to sync the buffer
-            queue.putReadBuffer(deltaH, true);
-            queue.putReadBuffer(weightsOut, true);
-            queue.putReadBuffer(actH, true);
-            queue.putReadBuffer(output, true);
 
-            FloatBuffer deltaHBuffer = deltaH.getBuffer();
-            FloatBuffer weightsOutBufferBuffer = weightsOut.getBuffer();
-            FloatBuffer actHBufferBuffer = actH.getBuffer();
-            FloatBuffer outputBuffer = output.getBuffer();
 
-            //System.out.println("===output CONTENT");
-            //for( int i = 0; i < outputBuffer.capacity(); i++ ) {
-            //    System.out.println(outputBuffer.get(i));
-            //}
 
-            for (int k = 0; k < output_dimension; k++) {
-                final float dok  = ((float)target_output[k] - outputBuffer.get(k)) * (float)SCALE_OUTPUT_DELTA;
-                deltaOutput[k] = dok;
-
-                for (int cellIndex = 0; cellIndex < cell_blocks; cellIndex++) {
-                    deltaHBuffer.put(cellIndex, deltaHBuffer.get(cellIndex) + dok * readArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cellIndex));
-                    writeArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cellIndex, readArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cellIndex) + dok * actHBufferBuffer.get(cellIndex) * (float) learningRate);
-                }
-
-                //bias
-                writeArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cell_blocks, readArray2dFloat(weightsOutBufferBuffer, output_dimension, k, cell_blocks) + dok * 1.0f * (float) learningRate);
-            }
-
-            queue.putWriteBuffer(weightsOut, true);
-            queue.putWriteBuffer(deltaH, true);
 
 
             //input to hidden
@@ -702,9 +713,8 @@ public class LSTMCL implements IAgentSupervised {
             inputToHiddenKernel.rewind();
             inputToHiddenKernel.putArgs(deltaH, dSdF, dSdG, weightsF, weightsG).putArg((float)learningRate).putArg(full_input_dimension).putArg(cell_blocks);
 
-            queue
-                    .putWriteBuffer(deltaH, true)
-                    .put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
+            //queue.putWriteBuffer(deltaH, true);
+            queue.put1DRangeKernel(inputToHiddenKernel, 0, globalWorkSizeForCells, localWorkSizeForCells);
 
             queue.finish();
 
@@ -745,19 +755,6 @@ public class LSTMCL implements IAgentSupervised {
         }
         else {
             return null;
-        }
-    }
-
-    private void debugBuffer1d(String name, CLBuffer<FloatBuffer> buffer) {
-        queue.putReadBuffer(buffer, true);
-
-        FloatBuffer bufferBuffer = buffer.getBuffer();
-        bufferBuffer.rewind();
-
-        System.out.println("DEBUG buffer content: " + name);
-
-        for( int i = 0; i < bufferBuffer.capacity(); i++ ) {
-            System.out.println(bufferBuffer.get(i));
         }
     }
 
@@ -865,4 +862,19 @@ public class LSTMCL implements IAgentSupervised {
     }
 
     private static double VALIDATION_DELTA = 0.1f;
+
+
+
+    private void debugBuffer1d(String name, CLBuffer<FloatBuffer> buffer) {
+        queue.putReadBuffer(buffer, true);
+
+        FloatBuffer bufferBuffer = buffer.getBuffer();
+        bufferBuffer.rewind();
+
+        System.out.println("DEBUG buffer content: " + name);
+
+        for( int i = 0; i < bufferBuffer.capacity(); i++ ) {
+            System.out.println(bufferBuffer.get(i));
+        }
+    }
 }
