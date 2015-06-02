@@ -41,6 +41,9 @@ public class MatrixImage extends JComponent {
     public MatrixImage(int width, int height) {
         super();
 
+        setDoubleBuffered(true);
+        setIgnoreRepaint(true);
+
         setBackground(Color.BLACK);
 
         setPreferredSize(new Dimension(width, height));

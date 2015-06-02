@@ -1,9 +1,14 @@
 package nars.util.utf8;
 
+import sun.nio.cs.ThreadLocalCoders;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
 
 /**
@@ -13,13 +18,17 @@ import java.util.Arrays;
  */
 public class Utf8 implements CharSequence, Comparable<Utf8> {
 
+    public static final Charset utf8Charset = Charset.forName("UTF-8");
+    final static CharsetEncoder utf8Encoder = ThreadLocalCoders.encoderFor(utf8Charset)
+            .onMalformedInput(CodingErrorAction.REPLACE)
+            .onUnmappableCharacter(CodingErrorAction.REPLACE);
+
     final byte[] bytes;
     final int start;
     final int end;
     int length = -1;
     int hash = 0;
 
-    public static final Charset utf8Charset = Charset.forName("UTF-8");
 
     protected Utf8(byte[] bytes, int start, int end, int length) {
         this.bytes = bytes;
@@ -48,12 +57,26 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         return new String(bytes, utf8Charset);
     }
 
+
+
+
+
     public static final byte[] toUtf8(final String str) {
-        return str.getBytes(utf8Charset);
+        try {
+            return utf8Encoder.encode(CharBuffer.wrap(str)).array();
+            //return str.getBytes(utf8Charset);
+        } catch (CharacterCodingException e) {
+            throw new RuntimeException(e);
+        }
     }
+
     public static final byte[] toUtf8(final char[] str) {
 
-        return utf8Charset.encode(CharBuffer.wrap(str)).array();
+        try {
+            return utf8Encoder.encode(CharBuffer.wrap(str)).array();
+        } catch (CharacterCodingException e) {
+            throw new RuntimeException(e);
+        }
     }
     public static final byte[] toUtf8(byte prefix, final String str) {
         return ByteBuf.create(prefix + str.length()).add((byte)prefix).add(str).toBytes();

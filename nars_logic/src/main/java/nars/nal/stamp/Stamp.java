@@ -380,7 +380,7 @@ public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
         if (evidentialSet == null)
             toSet();
         if (hash == 0) {
-            hash = Util.hash(evidentialHash, occurrenceTime);
+            hash = Util.hashL(evidentialHash, (int)occurrenceTime);
         }
         return hash;
     }

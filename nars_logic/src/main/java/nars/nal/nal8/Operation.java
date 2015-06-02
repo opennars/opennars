@@ -327,7 +327,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
             
             final Term[] xt = compound.arg().terms();
 
-            p.write(compound.operator().symbol); //add the operator name without leading '^'
+            compound.getPredicate().write(p, pretty); //add the operator name without leading '^'
             p.write((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
 
 

@@ -134,7 +134,7 @@ public class Negation extends Compound1 {
 
         @Override
         public void write(Writer p, boolean pretty) throws IOException {
-            Compound.writeCompound1(neg, p, pretty);
+            Compound.writeCompound1(neg.operator(), neg.the(), p, pretty);
         }
     }
 

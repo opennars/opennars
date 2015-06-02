@@ -34,6 +34,9 @@ public final class Util {
     public final static int hash(Object a, Object b) {
         return PRIME2 * (31 + a.hashCode() ) + b.hashCode() ;
     }
+    public final static int hashL(int a, int b) {
+        return PRIME2 * (31 + a ) + b ;
+    }
     public final static int hash(Object a, Object b, Object c) {
         return       PRIME3 * (31 * (PRIME2 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ;
     }

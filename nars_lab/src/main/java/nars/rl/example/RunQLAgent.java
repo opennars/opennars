@@ -116,8 +116,13 @@ public class RunQLAgent extends JPanel {
 
                 @Override
                 public void frame() {
-                    env.component().repaint();
                     super.frame();
+                }
+
+                @Override
+                public void run() {
+                    super.run();
+                    env.component().repaint();
                 }
             };
 

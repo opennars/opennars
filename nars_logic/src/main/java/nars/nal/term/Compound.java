@@ -168,10 +168,10 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
 
-    public static void writeCompound1(final Term singleTerm, Writer writer, boolean pretty) throws IOException {
+    public static void writeCompound1(final NALOperator op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
 
         writer.write(COMPOUND_TERM_OPENER.ch);
-        writer.write(singleTerm.operator().symbol);
+        writer.write(op.symbol);
         writer.write(ARGUMENT_SEPARATOR);
         singleTerm.write(writer, pretty);
         writer.write(COMPOUND_TERM_CLOSER.ch);
@@ -1111,10 +1111,10 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(CompoundTransform<I,T> trans, int level) {
+    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I,T> trans, final int level) {
         Term[] y = new Term[length()];
         int i = 0;
-        for (Term x : this) {
+        for (Term x : this.term) {
             if (trans.test(x))
                 x = trans.apply((I) this, (T)x, level);
             else if (x instanceof Compound) {

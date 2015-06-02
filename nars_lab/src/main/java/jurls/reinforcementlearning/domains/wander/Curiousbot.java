@@ -12,11 +12,14 @@ public class Curiousbot extends JComponent implements RLEnvironment {
 
     private World world;
     double[] inputs;
-    int drawEvery = 30; //milliseconds
+    int drawEvery = 5; //milliseconds
     long lastFrameTime = -1;
 
     public Curiousbot() {
         super();
+        //setDoubleBuffered(false);
+        setIgnoreRepaint(true);
+
         world = new World();
         inputs = world.getPlayer().perception.updateInputValues(null);
         /*addMouseListener(new MouseListener() {
@@ -94,7 +97,7 @@ public class Curiousbot extends JComponent implements RLEnvironment {
     }
 
     @Override
-    public void paint(Graphics g) {
+    protected void paintComponent(Graphics g) {
         if ((bi == null)) {
             makeBufferedImage();
         }
@@ -104,10 +107,11 @@ public class Curiousbot extends JComponent implements RLEnvironment {
             long now = System.currentTimeMillis();
             if (now - lastFrameTime > drawEvery) {
                 updateGraphics();
+                g.drawImage(bi, 0, 0, null);
                 lastFrameTime = now;
             }
 
-            g.drawImage(bi, 0, 0, null);
+
         }
     }
 

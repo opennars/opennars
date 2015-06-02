@@ -39,7 +39,7 @@ public class ImagePanel extends JComponent {
         return null;
     }
 
-    public void setImage(BufferedImage image) {
+    public void setImage(final BufferedImage image) {
         this.image = image;
         repaint();
     }
@@ -49,12 +49,13 @@ public class ImagePanel extends JComponent {
         //super.paintComponent(g);
         if (image!=null) {
             g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+            super.paintBorder(g);
         }
         else {
-            super.paintComponent(g);
+            //super.paintComponent(g);
         }
-        super.paintBorder(g);
     }
+
 
 
 }
