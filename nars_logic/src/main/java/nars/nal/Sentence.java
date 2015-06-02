@@ -225,7 +225,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
     /** compares all sentence fields, after comparing hash (which includes them all) */
     private boolean equivalentTo(final Sentence that) {
-        //if (that.hashCode()!=hashCode()) return false;
+        if (that.hashCode()!=hashCode()) return false;
         return equivalentTo(that, true, true, true, true, false);
     }
 

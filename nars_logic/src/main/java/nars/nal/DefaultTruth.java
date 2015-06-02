@@ -115,6 +115,11 @@ public class DefaultTruth implements Truth {
         return analytic;
     }
 
+    @Override
+    public int hashCode() {
+        return Truth.hash(this);
+    }
+
     public Truth setFrequency(float f) {
         if (f > 1.0f) f = 1.0f;
         if (f < 0f) f = 0f;

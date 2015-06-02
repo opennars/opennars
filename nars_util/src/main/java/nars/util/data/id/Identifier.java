@@ -62,22 +62,28 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
                 remoteHost.identifierEquals(this);
         }
         else {
-            //use the lower of the system codes to avoid circular assignments
-            int l = System.identityHashCode( localHost );
-            int r = System.identityHashCode( remoteHost );
-            Identified target;
-            Identifier source;
-            if (l < r) {
-                target = localHost;
-                source = ix;
-            }
-            else {
-                target = remoteHost;
-                source = this;
-            }
-
-            target.identifierEquals(source);
+            //modify localHost
+            localHost.identifierEquals(ix);
         }
+
+        //interesting but identityHashCode is slow
+//        else {
+//            //use the lower of the system codes to avoid circular assignments
+//            int l = System.identityHashCode( localHost );
+//            int r = System.identityHashCode( remoteHost );
+//            Identified target;
+//            Identifier source;
+//            if (l < r) {
+//                target = localHost;
+//                source = ix;
+//            }
+//            else {
+//                target = remoteHost;
+//                source = this;
+//            }
+//
+//            target.identifierEquals(source);
+//        }
     }
 
     /*protected boolean equalOnlyToSameClass() {
