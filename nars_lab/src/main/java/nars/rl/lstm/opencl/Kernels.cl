@@ -151,9 +151,75 @@ kernel void BackpropScalePartialsFiber(
 }
 
 
+/////////////////////////////////////////////////////////////////
 
 
+void outputToHiddenFiber(
+    int fiberId,
 
+    __global precisionType* target_output, // input
+
+    __global precisionType* actH,
+    __global precisionType* deltaH,
+    __global precisionType* output,
+    __global precisionType* weightsOut,
+
+
+    precisionType SCALE_OUTPUT_DELTA,
+    float learningRate,
+
+    int output_dimension,
+    int cell_blocks
+) {
+    int k = fiberId;
+
+    if (k >= output_dimension)  {
+        return;
+    }
+
+    precisionType dok  = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
+    //deltaOutput[k] = dok;
+
+    for( int cellIndex = 0; cellIndex < cell_blocks; cellIndex++ ) {
+        // TODO< read write hazzard, switch loops >
+        deltaH[cellIndex] = deltaH[cellIndex] + dok * ARRAY2d(weightsOut, output_dimension, k, cellIndex);
+        ARRAY2d(weightsOut, output_dimension, k, cellIndex) += (dok * actH[cellIndex] * learningRate);
+    }
+
+    // bias
+    ARRAY2d(weightsOut, output_dimension, k, cell_blocks) += (dok * 1.0f * learningRate);
+}
+
+
+kernel void InputToHiddenFiber(
+    int fiberId,
+
+    // read
+    __global precisionType* deltaH,
+    __global precisionType* dSdF,
+    __global precisionType* dSdG,
+
+    // write
+    __global precisionType* weightsF,
+    __global precisionType* weightsG,
+    // others
+    precisionType learningrate,
+    int full_input_dimension,
+    int cell_blocks
+) {
+    int cellIndex = fiberId;
+
+    if (cellIndex >= cell_blocks)  {
+        return;
+    }
+
+    precisionType deltaHForCell = deltaH[cellIndex];
+
+    for (int i = 0; i < full_input_dimension; i++) {
+        ARRAY2d(weightsF, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdF, cell_blocks, cellIndex, i) * learningrate);
+        ARRAY2d(weightsG, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdG, cell_blocks, cellIndex, i) * learningrate);
+    }
+}
 
 
 
@@ -173,33 +239,6 @@ kernel void InputsToCellblocksKernel(__global precisionType* sumF, __global prec
     inputsToCellblocksFiber(cellIndex, sumF, sumG, weightsF, weightsG, full_input, full_input_dimension, cell_blocks);
 }
 
-
-kernel void InputToHiddenKernel(
-    // read
-    __global precisionType* deltaH,
-    __global precisionType* dSdF,
-    __global precisionType* dSdG,
-
-    // write
-    __global precisionType* weightsF,
-    __global precisionType* weightsG,
-    // others
-    precisionType learningrate,
-    int full_input_dimension, int cell_blocks
-) {
-    int cellIndex = get_global_id(0);
-
-    if (cellIndex >= cell_blocks)  {
-        return;
-    }
-
-    precisionType deltaHForCell = deltaH[cellIndex];
-
-    for (int i = 0; i < full_input_dimension; i++) {
-        ARRAY2d(weightsF, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdF, cell_blocks, cellIndex, i) * learningrate);
-        ARRAY2d(weightsG, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdG, cell_blocks, cellIndex, i) * learningrate);
-    }
-}
 
 
 kernel void stage1Kernel(
@@ -298,10 +337,85 @@ kernel void stage1Kernel(
     }
 }
 
+kernel void stage2Kernel(
+    __global precisionType* target_output, // input
+
+    __global precisionType* actH,
+    __global precisionType* deltaH,
+    __global precisionType* output,
+    __global precisionType* weightsF,
+    __global precisionType* weightsG,
+    __global precisionType* weightsOut,
+
+    __global precisionType* dSdF,
+    __global precisionType* dSdG,
+
+    precisionType learningRate,
+    int full_input_dimension,
+
+    precisionType SCALE_OUTPUT_DELTA,
+
+    int output_dimension,
+    int cell_blocks,
+
+    __global int *counterBarrier0
+) {
+    int fiberId = get_global_id(0);
+
+    outputToHiddenFiber(fiberId,target_output,actH,deltaH,output,weightsOut,SCALE_OUTPUT_DELTA,learningRate,output_dimension,cell_blocks);
+
+
+
+
+    atomic_sub(counterBarrier0, 1);
+
+    // wait until the counter hits 0
+    for(;;) {
+        int syncronisationValue = atomic_sub(counterBarrier0, 0);
+
+        if( syncronisationValue <= 0 ) {
+            break;
+        }
+    }
+
+
+
+    InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
+}
 
 
 
 
 
 
+
+///////////////////////////////////////
+/// REMOVE ME NOW !!!!
+
+kernel void InputToHiddenKernel(
+    // read
+    __global precisionType* deltaH,
+    __global precisionType* dSdF,
+    __global precisionType* dSdG,
+
+    // write
+    __global precisionType* weightsF,
+    __global precisionType* weightsG,
+    // others
+    precisionType learningrate,
+    int full_input_dimension, int cell_blocks
+) {
+    int cellIndex = get_global_id(0);
+
+    if (cellIndex >= cell_blocks)  {
+        return;
+    }
+
+    precisionType deltaHForCell = deltaH[cellIndex];
+
+    for (int i = 0; i < full_input_dimension; i++) {
+        ARRAY2d(weightsF, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdF, cell_blocks, cellIndex, i) * learningrate);
+        ARRAY2d(weightsG, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdG, cell_blocks, cellIndex, i) * learningrate);
+    }
+}
 

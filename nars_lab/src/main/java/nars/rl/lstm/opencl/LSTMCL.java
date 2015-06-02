@@ -359,19 +359,17 @@ public class LSTMCL implements IAgentSupervised {
 
     private CLBuffer<FloatBuffer>  full_hidden = null;
     private CLBuffer<FloatBuffer> output;
+    private CLBuffer<FloatBuffer> target_outputBuffer;
+
     private double[] deltaOutput;
     CLBuffer<FloatBuffer> deltaH = null;
     private float[] full_input;
     private int maxWorkGroupSize;
 
-    private CLKernel activateKernel;
-    private CLKernel inputsToCellblocksKernel;
-    private CLKernel backpropScalePartialsKernel;
-    private CLKernel inputToHiddenKernel;
-    private CLKernel prepareHiddenLayerPlusBias;
-    private CLKernel calculateOutputKernel;
-
     private CLKernel stage1Kernel;
+    private CLKernel stage2Kernel;
+
+    private CLKernel inputToHiddenKernel;
 
     private final CLBuffer<IntBuffer> counterBarrier0;
     private final CLBuffer<IntBuffer> counterBarrier3;
@@ -410,11 +408,10 @@ public class LSTMCL implements IAgentSupervised {
 
         program = cl.createProgram(concatenedSource).build();
 
-        inputsToCellblocksKernel = program.createCLKernel("InputsToCellblocksKernel");
-        inputToHiddenKernel = program.createCLKernel("InputToHiddenKernel");
-
-
         stage1Kernel = program.createCLKernel("stage1Kernel");
+        stage2Kernel = program.createCLKernel("stage2Kernel");
+
+        inputToHiddenKernel = program.createCLKernel("InputToHiddenKernel");
 
         this.learningRate = initLearningRate;
         this.output_dimension = output_dimension;
@@ -464,6 +461,7 @@ public class LSTMCL implements IAgentSupervised {
 
         full_hidden = cl.createFloatBuffer(cell_blocks + 1, READ_WRITE);
         output = cl.createFloatBuffer(output_dimension, READ_WRITE);
+        target_outputBuffer = cl.createFloatBuffer(output_dimension, READ_WRITE);
 
 
 
@@ -577,6 +575,8 @@ public class LSTMCL implements IAgentSupervised {
 
         queue.finish();
 
+        //debugBuffer1d("context BEFORE stage 1", context);
+
         // STAGE 1 KERNEL
         /////////////////
 
@@ -616,6 +616,16 @@ public class LSTMCL implements IAgentSupervised {
 
 
         if( target_output != null ) {
+            float[] floatTargetOutput = new float[target_output.length];
+            for( int i = 0; i < target_output.length; i++ ) {
+                floatTargetOutput[i] = (float)target_output[i];
+            }
+
+            target_outputBuffer.getBuffer().rewind();
+            target_outputBuffer.getBuffer().put(floatTargetOutput);
+            queue.putWriteBuffer(target_outputBuffer, true);
+
+
 
             //output to hidden
 
@@ -631,6 +641,29 @@ public class LSTMCL implements IAgentSupervised {
 
             queue.finish();
 
+
+
+
+
+            /*
+            counterBarrier0Buffer = counterBarrier0.getBuffer();
+            counterBarrier0Buffer.put(0, globalWorkSizeForCombined);
+
+            queue.putWriteBuffer(counterBarrier0, true);
+
+            stage2Kernel.rewind();
+            stage2Kernel.putArgs(target_outputBuffer, actH, deltaH, output, weightsF, weightsG, weightsOut, dSdF, dSdG);
+            stage2Kernel.putArg((float) learningRate).putArg(full_input_dimension).putArg((float)SCALE_OUTPUT_DELTA).putArg(output_dimension).putArg(cell_blocks);
+            stage2Kernel.putArgs(counterBarrier0);
+
+            queue.put1DRangeKernel(stage2Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined);
+
+            queue.finish();
+            */
+
+
+
+
             // we need to sync the buffer
             queue.putReadBuffer(deltaH, true);
             queue.putReadBuffer(weightsOut, true);
@@ -641,6 +674,11 @@ public class LSTMCL implements IAgentSupervised {
             FloatBuffer weightsOutBufferBuffer = weightsOut.getBuffer();
             FloatBuffer actHBufferBuffer = actH.getBuffer();
             FloatBuffer outputBuffer = output.getBuffer();
+
+            //System.out.println("===output CONTENT");
+            //for( int i = 0; i < outputBuffer.capacity(); i++ ) {
+            //    System.out.println(outputBuffer.get(i));
+            //}
 
             for (int k = 0; k < output_dimension; k++) {
                 final float dok  = ((float)target_output[k] - outputBuffer.get(k)) * (float)SCALE_OUTPUT_DELTA;
@@ -680,6 +718,8 @@ public class LSTMCL implements IAgentSupervised {
             //    }
             //}
 
+
+
         }
 
         //////////////////////////////////////////////////////////////
@@ -705,6 +745,19 @@ public class LSTMCL implements IAgentSupervised {
         }
         else {
             return null;
+        }
+    }
+
+    private void debugBuffer1d(String name, CLBuffer<FloatBuffer> buffer) {
+        queue.putReadBuffer(buffer, true);
+
+        FloatBuffer bufferBuffer = buffer.getBuffer();
+        bufferBuffer.rewind();
+
+        System.out.println("DEBUG buffer content: " + name);
+
+        for( int i = 0; i < bufferBuffer.capacity(); i++ ) {
+            System.out.println(bufferBuffer.get(i));
         }
     }
 
