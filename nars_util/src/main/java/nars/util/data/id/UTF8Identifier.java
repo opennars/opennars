@@ -120,6 +120,11 @@ public class UTF8Identifier extends Identifier {
         return toString().equals(x.toString());
     }
 
+    public byte[] bytes() {
+        ensureNamed();
+        return name;
+    }
+
     @Override
     public int compare(Identifier o) {
         int i = Integer.compare(hashCode(), o.hashCode());

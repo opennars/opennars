@@ -2,27 +2,22 @@ package nars.nal.term;
 
 import nars.Global;
 import nars.nal.NALOperator;
+import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.TermVisitor;
-import nars.util.utf8.Utf8;
+import nars.util.data.id.Identifier;
+import nars.util.data.id.UTF8Identifier;
 
-import java.util.Arrays;
 import java.util.Map;
 
 /**
  * Created by me on 4/25/15.
  */
-public class Atom implements Term {
-
-    protected byte[] name;
-    transient protected final int hash;
+public class Atom extends AbstractTerm {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
 
-    @Override
-    public byte[] name() {
-        return name;
-    }
+
 
     /** Creates a quote-escaped term from a string. Useful for an atomic term that is meant to contain a message as its name */
     public static Atom quote(String t) {
@@ -80,12 +75,15 @@ public class Atom implements Term {
      * @param name A String as the name of the Term
      */
     protected Atom(final String name) {
-        this(Utf8.toUtf8(name));
+        super(name);
+    }
+
+    protected Atom(final Identifier name) {
+        super(name);
     }
 
     protected Atom(final byte[] name) {
-        this.name = name;
-        this.hash = Arrays.hashCode(name) * 31;
+        this(new UTF8Identifier(name));
     }
 
     /** gets the atomic term given a name, storing it in the static symbol table */
@@ -133,9 +131,6 @@ public class Atom implements Term {
         return the(Integer.toString(i));
     }
 
-    @Override public String toString() {
-        return Utf8.fromUtf8(name());
-    }
 
 
     /**
@@ -170,24 +165,17 @@ public class Atom implements Term {
         if (this == that) return true;
         if (!(that instanceof Atom)) return false;
         final Atom t = (Atom)that;
-        if (equalsType(t) && equalsName(t)) {
-            t.name = name; //share
-            return true;
-        }
-        return false;
+        return equalID(t);
+
+//        if (equalsType(t) && equalsName(t)) {
+//            t.name = name; //share
+//            return true;
+//        }
+//        return false;
     }
 
 
 
-    /**
-     * Produce a hash code for the term
-     *
-     * @return An integer hash code
-     */
-    @Override
-    public int hashCode() {
-        return hash;
-    }
 
     /**
      * Alias for 'isNormalized'

@@ -418,7 +418,6 @@ public class Byt {
          */
         if ( index < 0 ) {
             index = length + index;
-        }
 
         /* Bounds check
             if it is still less than 0, then they
@@ -428,9 +427,12 @@ public class Byt {
             if it is still less than 0, then they
             have an negative index that is greater than length
          */
-        if ( index < 0 ) {
-            index = 0;
+            if ( index < 0 ) {
+                index = 0;
+            }
         }
+
+
         if ( index >= length ) {
             index = length - 1;
         }
@@ -451,7 +453,6 @@ public class Byt {
          */
         if ( index < 0 ) {
             index = length + index;
-        }
 
         /* Bounds check
             if it is still less than 0, then they
@@ -461,9 +462,11 @@ public class Byt {
             if it is still less than 0, then they
             have an negative index that is greater than length
          */
-        if ( index < 0 ) {
-            index = 0;
+            if ( index < 0 ) {
+                index = 0;
+            }
         }
+
         if ( index >length ) {
             index = length;
         }

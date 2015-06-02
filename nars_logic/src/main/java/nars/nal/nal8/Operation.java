@@ -112,16 +112,24 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
     @Override
     protected byte[] makeKey() {
-        byte[] op = getPredicate().name();
+        byte[] op = getPredicate().bytes();
         //Term[] arg = argArray();
 
-        ByteBuf b = ByteBuf.create(64);
-        //b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch).add(op);
+        int len = op.length + 1 + 1;
+        int n = 0;
+        for (final Term t : arg()) {
+            len += t.bytes().length;
+            n++;
+        }
+        if (n > 1) len+=n-1;
+
+
+        final ByteBuf b = ByteBuf.create(len);
         b.add(op); //add the operator name without leading '^'
         b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
 
 
-        int n=0;
+        n=0;
         for (final Term t : arg()) {
             /*if(n==arg.length-1) {
                 break;
@@ -129,7 +137,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
             if (n!=0)
                 b.add((byte)Symbols.ARGUMENT_SEPARATOR);
 
-            b.add(t.name());
+            b.add(t.bytes());
 
             n++;
         }

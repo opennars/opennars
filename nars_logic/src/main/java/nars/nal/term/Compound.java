@@ -28,6 +28,8 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.*;
+import nars.util.data.id.Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -35,11 +37,12 @@ import nars.util.utf8.Utf8;
 
 import java.util.*;
 
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 /** a compound term */
-public abstract class Compound implements Term, Iterable<Term>, IPair {
+public abstract class Compound extends AbstractTerm implements Iterable<Term>, IPair {
 
 
 
@@ -78,6 +81,15 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     }
 
+
+    protected final class DefaultCompoundUTF8Identifier extends UTF8Identifier.DynamicUTF8Identifier {
+        @Override
+        public byte[] makeName() {
+            return makeKey();
+        }
+    }
+
+
     /**
      * build a component list from terms
      *
@@ -100,18 +112,18 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         size += opString.length();
         final CharSequence tString = singleTerm.toString();
         size += tString.length();
-        return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(Symbols.ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
+        return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
     protected static byte[] makeCompound1Key(final NALOperator op, final Term singleTerm) {
 
         final byte[] opString = op.toBytes();
 
-        final byte[] tString = singleTerm.name();
+        final byte[] tString = singleTerm.bytes();
 
         return ByteBuf.create(1 + opString.length + 1 + tString.length + 1)
                 .add((byte)COMPOUND_TERM_OPENER.ch)
                 .add(opString)
-                .add((byte) Symbols.ARGUMENT_SEPARATOR)
+                .add((byte) ARGUMENT_SEPARATOR)
                 .add(tString)
                 .add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
@@ -119,12 +131,20 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     protected static byte[] makeCompoundNKey(final NALOperator op, final Term... arg) {
 
-        ByteBuf b = ByteBuf.create(64)
+        byte[] opBytes = op.toBytes();
+
+        int len = 1 + 1 + opBytes.length +
+                arg.length; //1 for each arg separator
+        for  (final Term t : arg) {
+            len += t.bytes().length;
+        }
+
+        ByteBuf b = ByteBuf.create(len)
                 .add((byte)COMPOUND_TERM_OPENER.ch)
-                .add(op.toBytes());
+                .add(opBytes);
 
         for  (final Term t : arg) {
-            b.add((byte)Symbols.ARGUMENT_SEPARATOR).add(t.name());
+            b.add((byte) ARGUMENT_SEPARATOR).add(t.bytes());
         }
 
         return b.add((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
@@ -195,11 +215,11 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
 
     }
 
-    public static <T> void shuffle(T[] ar, Random rnd) {
+    public static <T> void shuffle(final T[] ar, final Random rnd) {
         if (ar.length < 2) return;
         for (int i = ar.length - 1; i > 0; i--) {
-            int index = rnd.nextInt(i + 1);
-            T a = ar[index];
+            final int index = rnd.nextInt(i + 1);
+            final T a = ar[index];
             ar[index] = ar[i];
             ar[i] = a;
         }
@@ -221,8 +241,6 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
     @Override
     public abstract Term clone();
 
-    abstract public int hashCode();
-
     @Override
     public int compareTo(final Term that) {
         if (that==this) return 0;
@@ -231,28 +249,29 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         if (!(that instanceof Compound)) return 1;
 
         final Compound c = (Compound)that;
+        return name().compareTo(c.name());
 
 
-        int opdiff = getClass().getName().compareTo(c.getClass().getName());
-        if (opdiff == 0) {
-            //return compareSubterms(c);
-
-            int sd = compareSubterms(c);
-            if (sd == 0) {
-                share(c);
-            }
-            return sd;
-        }
-        return opdiff;
+//        int opdiff = getClass().getName().compareTo(c.getClass().getName());
+//        if (opdiff == 0) {
+//            //return compareSubterms(c);
+//
+//            int sd = compareSubterms(c);
+//            if (sd == 0) {
+//                share(c);
+//            }
+//            return sd;
+//        }
+//        return opdiff;
     }
 
     /** copy subterms so that reference check will be sufficient to determine equality
      * assumes that 'equivalent' has already been determined to be equal.
      * */
-    protected void share(Compound equivalent) {
-        if (!hasVar()) {
+    @Deprecated protected void share(Compound equivalent) {
+        /*if (!hasVar()) {
             //System.arraycopy(term, 0, equivalent.term, 0, term.length);
-        }
+        }*/
     }
 
     /** compares only the contents of the subterms; assume that the other term is of the same operator type */
@@ -483,11 +502,13 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         return makeCompoundNKey(operator(), term);
     }
 
-
-
-
-    abstract public byte[] name();
-
+    @Override
+    public Identifier name() {
+        if (this.id == null) {
+            this.id = new DefaultCompoundUTF8Identifier();
+        }
+        return this.id;
+    }
  
 
     /* ----- utilities for other fields ----- */
@@ -1124,12 +1145,6 @@ public abstract class Compound implements Term, Iterable<Term>, IPair {
         }
     }
 
-    @Override
-    public String toString() {
-        return Utf8.fromUtf8(name());
-    }
-
-    abstract public byte[] nameCached();
 
     private static class TransformIndependentToDependentVariables extends VariableSubstitution {
         int counter = 0;

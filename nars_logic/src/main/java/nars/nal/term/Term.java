@@ -23,16 +23,14 @@ package nars.nal.term;
 
 import nars.Symbols;
 import nars.nal.NALOperator;
-import nars.util.data.id.Named;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.TermVisitor;
-import nars.util.utf8.Utf8;
+import nars.util.data.id.Identifier;
 
 import java.io.Serializable;
 
-public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed, Serializable {
-
+public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified, Termed, Serializable {
 
 
     default Term getTerm() {
@@ -121,16 +119,16 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
 
     public boolean hasVarQuery();
 
-    default public boolean equalsType(final Term t) {
+    @Deprecated default public boolean equalsType(final Term t) {
         return Terms.equalType(this, t);
     }
 
-    default public boolean equalsName(final Term t) {
-        final byte[] a = name();
-        final byte[] b = t.name();
-        if (a == b) return true;
-        return Utf8.equals2(a, b);
+    default public boolean equalID(final Term t) {
+        return name().equals(t.name());
     }
 
+    default public byte[] bytes() {
+        return name().bytes();
+    }
 }
 

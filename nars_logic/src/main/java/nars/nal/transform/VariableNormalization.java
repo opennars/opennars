@@ -34,7 +34,7 @@ public class VariableNormalization implements VariableTransform {
             Variable b = ((Variable) ob);
             if (!b.isScoped() || !a.isScoped())
                 return false;
-            return Utf8.equals2(b.name(), a.name());
+            return a.name().equals(b.name());
         }
 
         @Override
@@ -80,7 +80,7 @@ public class VariableNormalization implements VariableTransform {
                     true
             );
             rename.put(vname, vv);
-            renamed = !Utf8.equals2(vv.name(), v.name());
+            renamed = vv.name().equals(v.name());
         }
 
         return vv;

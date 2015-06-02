@@ -1,6 +1,6 @@
 package nars.util.data.id;
 
-import com.sun.org.apache.xml.internal.utils.StringComparable;
+import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,26 +12,26 @@ import java.io.Writer;
  */
 abstract public class Identifier<E extends Identifier> implements Comparable {
 
-    private IdentifierHost host = null;
+    private Identified host = null;
 
-    public interface Identified<I extends Identifier> extends Named<I> {
 
-    }
 
-    public interface IdentifierHost<I extends Identifier> extends Identified<I> {
+    public interface Identified extends Named<Identifier> {
         /**
          * allows a host of an identifier to replace its identifier
          * with an instance known to be equal, effectively
          * removing duplicates from the system.
          */
-        void identifierEquals(I other);
+        void identifierEquals(Identifier other);
     }
+
+
 
     abstract void write(OutputStream o) throws IOException;
 
     public abstract void print(Writer p, boolean pretty) throws IOException;
 
-    public void set(IdentifierHost h) {
+    public void set(Identified h) {
         this.host = h;
     }
 
@@ -47,20 +47,32 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
 
         Identifier ix = (Identifier)x;
         if (equalTo(ix)) {
-            //if both hosts are non-null, this object's host will be replaced
-            IdentifierHost localHost = host;
-            IdentifierHost remoteHost = ix.host;
-            if (localHost==null) {
-                if (remoteHost != null)
-                    remoteHost.identifierEquals(this);
-            }
-            else {
-                localHost.identifierEquals(ix);
-            }
+            share(ix);
             return true;
         }
 
         return false;
+    }
+
+    private void share(Identifier ix) {
+        Identified localHost = host;
+        Identified remoteHost = ix.host;
+        if (localHost==null) {
+            if (remoteHost != null)
+                remoteHost.identifierEquals(this);
+        }
+        else {
+            //use the lower of the system codes to avoid circular assignments
+            int l = System.identityHashCode( localHost );
+            int r = System.identityHashCode( remoteHost );
+            Identified target;
+            if (l < r)
+                target = localHost;
+            else
+                target = remoteHost;
+
+            target.identifierEquals(ix);
+        }
     }
 
     /*protected boolean equalOnlyToSameClass() {
@@ -92,11 +104,16 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
         }
         else {*/
             //same class as this
-            return compare((Identifier) o);
+        Identifier i = (Identifier) o;
+        int x = compare(i);
+        if ( x== 0) {
+            share(i);
+        }
+        return x;
         //}
     }
 
-    public StringBuffer toString(boolean pretty) {
+    public StringBuffer toString(final boolean pretty) {
         StringWriter w = new StringWriter(getStringSizeEstimate());
         try {
             print(w, pretty);
@@ -106,6 +123,19 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
         }
         return w.getBuffer();
     }
+
+    public byte[] bytes() {
+        /** inefficient, override in subclasses please */
+        System.err.println(this + " wasteful String generation");
+        return Utf8.toUtf8(toString(false).toString());
+    }
+    public byte byteAt(final int i) {
+        byte[] b = bytes();
+        if (b == null) return 0;
+        if (b.length <= i) return 0;
+        return b[i];
+    }
+
 
     @Override
     public String toString() {

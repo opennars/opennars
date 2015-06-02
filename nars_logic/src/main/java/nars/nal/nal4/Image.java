@@ -38,7 +38,7 @@ abstract public class Image extends DefaultCompound {
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
         if (t instanceof Compound) return false;
-        byte[] n = t.name();
+        byte[] n = t.bytes();
         if (n.length != 1) return false;
         return n[0] == Symbols.IMAGE_PLACE_HOLDER;
     }    
@@ -74,12 +74,13 @@ abstract public class Image extends DefaultCompound {
     }
 
     protected static byte[] makeImageKey(final NALOperator op, final Term[] arg, final int relationIndex) {
+        //TODO proper size estimate
         final int sizeEstimate = 16 * arg.length + 2;
         ByteBuf b = ByteBuf.create(sizeEstimate)
                 .add((byte)COMPOUND_TERM_OPENER.ch)
                 .add(op.toBytes())
                 .add((byte) Symbols.ARGUMENT_SEPARATOR)
-                .add(arg[relationIndex].name());
+                .add(arg[relationIndex].bytes());
 
 
         for (int i = 0; i < arg.length; i++) {
@@ -87,7 +88,7 @@ abstract public class Image extends DefaultCompound {
             if (i == relationIndex) {
                 b.add((byte)Symbols.IMAGE_PLACE_HOLDER);
             } else {
-                b.add(arg[i].name());
+                b.add(arg[i].bytes());
             }
         }
         return b.add((byte)COMPOUND_TERM_CLOSER.ch).toBytes();

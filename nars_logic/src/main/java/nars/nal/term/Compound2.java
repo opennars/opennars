@@ -8,9 +8,6 @@ import java.util.Arrays;
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound2<A extends Term,B extends Term> extends Compound  {
 
-    private byte[] name = null;
-    transient private int hash = 0;
-
     protected Compound2(A a, B b) {
         super(a, b);
     }
@@ -23,11 +20,6 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
     }
 
 
-
-    protected void invalidateHash() {
-        this.hash = 0;
-    }
-
     @Override final public int length() {
         return 2;
     }
@@ -35,14 +27,13 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
     @Override
     public void invalidate() {
         if (hasVar()) {
-            this.name = null; //invalidate name so it will be (re-)created lazily
+            this.id = null; //invalidate name so it will be (re-)created lazily
 
             for (final Term t : term) {
                 if (t instanceof Compound)
                     ((Compound) t).invalidate();
             }
 
-            invalidateHash();
         }
         else {
             setNormalized();
@@ -54,14 +45,17 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
         if (this == that) return true;
         if (that == null) return false;
 
-        if (getClass()!=that.getClass()) return false;
+        if (getClass() != that.getClass()) return false;
 
-        Compound2 c = (Compound2)that;
+        Compound2 c = (Compound2) that;
+        return equalID(c);
+    }
 
-        if ((nameCached()!=null && c.nameCached()!=null)) {
-            return Arrays.equals(name(), c.name());
-        }
-        else {
+    public boolean equalsByContent(final Object that) {
+
+
+        Compound2 c = (Compound2) that;
+
             //compare components without generating name
 
             //if (operator()!=c.operator()) return false;
@@ -73,19 +67,10 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
                 share(c);
                 return true;
             }
-        }
         return false;
 
     }
 
-    @Override
-    public int hashCode() {
-        if (this.hash == 0) {
-            this.hash = Util.hash(operator().ordinal(), getTemporalOrder(), a(), b() );
-            return this.hash;
-        }
-        return hash;
-    }
 
 //    @Override
 //    public int hashCode2() {
@@ -113,23 +98,6 @@ abstract public class Compound2<A extends Term,B extends Term> extends Compound 
 //            }
 //        }
         return cb;
-    }
-
-
-
-    @Override
-    public byte[] name() {
-        if (name == null) {
-            name = makeKey();
-        }
-        return name;
-    }
-
-
-
-    @Deprecated @Override
-    public byte[] nameCached() {
-        return name;
     }
 
 

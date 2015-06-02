@@ -3,8 +3,7 @@ package nars.nal.term;
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound1<T extends Term> extends Compound {
 
-    byte[] name = null;
-    transient int hash;
+
 
     public Compound1(final T the) {
         super(the);
@@ -38,28 +37,28 @@ abstract public class Compound1<T extends Term> extends Compound {
     protected void init(Term[] term) {
         super.init(term);
 
-        if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()
-            updateHash();
+//        if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()
+//            updateHash();
     }
 
 
-    protected void updateHash() {
-        int h = getTemporalOrder();
-        h = h * 31 + the().hashCode();
-        h = h * 31 + operator().hashCode();
-        this.hash = h;
-    }
+//    protected void updateHash() {
+//        int h = getTemporalOrder();
+//        h = h * 31 + the().hashCode();
+//        h = h * 31 + operator().hashCode();
+//        this.hash = h;
+//    }
 
     @Override
     public void invalidate() {
         if (hasVar()) {
-            name = null;
+            id = null;
             T n = the();
             if (n instanceof Compound) {
                 ((Compound)n).invalidate();
             }
 
-            updateHash();
+            //updateHash();
         }
         else {
             setNormalized();
@@ -75,22 +74,4 @@ abstract public class Compound1<T extends Term> extends Compound {
     }
 
 
-
-    @Override
-    public byte[] name() {
-        if (name == null) {
-            name = makeKey();
-        }
-        return name;
-    }
-
-    @Override
-    public int hashCode() {
-        return hash;
-    }
-
-    @Override
-    public byte[] nameCached() {
-        return name;
-    }
 }

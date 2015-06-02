@@ -51,12 +51,14 @@ public interface SetTensional extends Term {
 
     public static byte[] makeKey(final char opener, final char closer, final Term... arg) {
 
+        //TODO calculate length exactly
+
         final int initialSize = 64;
 
         ByteBuf b = ByteBuf.create(initialSize).add((byte) opener);
         for (int i = 0; i < arg.length; i++) {
             if (i!=0) b.add((byte)Symbols.ARGUMENT_SEPARATOR);
-            b.add(arg[i].name());
+            b.add(arg[i].bytes());
         }
         return b.add((byte)closer).toBytes();
 

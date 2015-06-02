@@ -326,30 +326,30 @@ public class TermTest {
 
     }
 
-    public void nullCachedName(String term) {
-        NAR n = new NAR(new Default());
-        n.input(term + ".");
-        n.run(1);
-        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).getTerm()).nameCached());
-    }
-
-    @Test public void avoidsNameConstructionUnlessOutputInheritance() {
-        nullCachedName("<a --> b>");
-    }
-
-    @Test public void avoidsNameConstructionUnlessOutputNegationAtomic() {
-        nullCachedName("(--, a)");
-    }
-    @Test public void avoidsNameConstructionUnlessOutputNegationCompound() {
-        nullCachedName("(--, <a-->b> )");
-    }
-
-    @Test public void avoidsNameConstructionUnlessOutputSetInt1() {
-        nullCachedName("[x]");
-    }
-    @Test public void avoidsNameConstructionUnlessOutputSetExt1() {
-        nullCachedName("{x}");
-    }
+//    public void nullCachedName(String term) {
+//        NAR n = new NAR(new Default());
+//        n.input(term + ".");
+//        n.run(1);
+//        assertNull("term name string was internally generated although it need not have been", ((Compound) n.concept(term).getTerm()).nameCached());
+//    }
+//
+//    @Test public void avoidsNameConstructionUnlessOutputInheritance() {
+//        nullCachedName("<a --> b>");
+//    }
+//
+//    @Test public void avoidsNameConstructionUnlessOutputNegationAtomic() {
+//        nullCachedName("(--, a)");
+//    }
+//    @Test public void avoidsNameConstructionUnlessOutputNegationCompound() {
+//        nullCachedName("(--, <a-->b> )");
+//    }
+//
+//    @Test public void avoidsNameConstructionUnlessOutputSetInt1() {
+//        nullCachedName("[x]");
+//    }
+//    @Test public void avoidsNameConstructionUnlessOutputSetExt1() {
+//        nullCachedName("{x}");
+//    }
 
     @Test public void termEqualityWithQueryVariables() {
         NAR n = new NAR(new Default());

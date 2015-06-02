@@ -248,7 +248,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
     public void hash(PrimitiveSink into) {
 
-        into.putBytes(term.name());
+        into.putBytes(term.bytes());
         into.putByte((byte)punctuation);
 
         getStamp().hash(into);

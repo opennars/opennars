@@ -22,6 +22,7 @@ package nars.nal.term;
 
 
 import nars.Symbols;
+import nars.util.data.id.Identifier;
 import nars.util.utf8.FastByteComparisons;
 
 import static nars.Symbols.*;
@@ -72,6 +73,15 @@ public class Variable extends Atom {
         super(n);
         this.type = ensureValidVariableType(n.charAt(0));
         this.scope = scope;
+    }
+    public Variable(final Identifier n, final boolean scope) {
+        super(n);
+        this.type = ensureValidVariableType(n.byteAt(0));
+        this.scope = scope;
+    }
+
+    public final static char ensureValidVariableType(final byte c) {
+        return ensureValidVariableType(c);
     }
 
     public final static char ensureValidVariableType(final char c) {
@@ -147,11 +157,11 @@ public class Variable extends Atom {
         if (!((Variable) that).isScoped()) return false;
 
 
-        return equalsName((Variable)that);
+        return equalID((Variable) that);
     }
     public static int compare(final Variable a, final Variable b) {
 
-        int nameCompare = FastByteComparisons.compare( a.name(), b.name() );
+        int nameCompare = a.name().compareTo(b.name());
         if (nameCompare != 0)
             return nameCompare;
 
@@ -173,7 +183,6 @@ public class Variable extends Atom {
             return -1;
         }
         else {
-            a.name = b.name; //share instances so comparisons will be faster next time
             return 0; //must be equal
         }
     }
