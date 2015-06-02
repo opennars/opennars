@@ -566,6 +566,10 @@ public abstract class NAL  implements Runnable {
         return new Stamp(stamp, time(), when);
     }
 
+    public StampBuilder newStamp(Stamp stamp, long when, long[] evidentialBase) {
+        return new Stamp(evidentialBase, time(), when, stamp.getDuration());
+    }
+
     public StampBuilder newStamp(Task task, long time) {
         return newStamp(task.getStamp(), time);
     }

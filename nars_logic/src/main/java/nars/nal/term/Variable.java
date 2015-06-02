@@ -21,6 +21,7 @@
 package nars.nal.term;
 
 
+import nars.Symbols;
 import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
 
@@ -287,4 +288,16 @@ public class Variable extends Atom {
     public static Variable the(char varDependent, int counter) {
         return new Variable(getName(varDependent, counter));
     }
+
+    /** returns the default dependent variable */
+    public static Variable theDependent() {
+        return the(Symbols.VAR_DEPENDENT, 0);
+    }
+
+    /** returns the default independent variable */
+    public static Variable theIndependent() {
+        return the(Symbols.VAR_INDEPENDENT, 0);
+    }
+
+
 }

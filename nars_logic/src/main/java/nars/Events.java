@@ -18,6 +18,9 @@ public class Events {
     /** implicitly repeated input (a repetition of all input) */
     public static interface IN  { }
 
+    /** for misc debug events */
+    public interface DEBUG {     }
+
     /** conversational (judgments, questions, etc...) output */
     public static class OUT extends NARReaction {
 

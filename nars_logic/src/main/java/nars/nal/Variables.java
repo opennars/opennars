@@ -1,6 +1,7 @@
 package nars.nal;
 
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
@@ -19,6 +20,10 @@ import java.util.Random;
  * TODO rename all *substitute* methods to *unify*
  */
 public class Variables {
+
+    public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Memory memory) {
+        return findSubstitute(type, term1, term2, map1, map2, memory.random);
+    }
 
     public static boolean findSubstitute(final char type, final Term term1, final Term term2, final Map<Term, Term> map1, final Map<Term, Term> map2, final Random random) {
         return findSubstitute(type, term1, term2, new Map[]{map1, map2}, random);

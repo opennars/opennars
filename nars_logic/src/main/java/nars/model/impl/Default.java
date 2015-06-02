@@ -178,13 +178,19 @@ public class Default extends NARSeed implements ConceptBuilder {
                     new FilterEqualSubtermsInRespectToImageAndProduct(),
                     new MatchTaskBelief(),
 
-                    //C. concept fire tasklink termlink derivation
+                    //C. concept fire tasklink termlink derivation ---------
                     new ForwardImplicationProceed(),
-                        //(new TemporalInductionChain()),
+
+                    //temporalInduce(nal, task, taskSentence, memory);
+                    //(new TemporalInductionChain()),
                     new TemporalInductionChain2(),
+
+                    new PerceptionDetachment(),
+
                     new DeduceSecondaryVariableUnification(),
                     new DeduceConjunctionByQuestion(),
                     new TableDerivations()
+                    //---------------------------------------------
                 } ,
 
                 new DerivationFilter[] {
@@ -359,7 +365,7 @@ public class Default extends NARSeed implements ConceptBuilder {
                 n.on(c);
             }
 
-            n.on(new Anticipate());      // expect an event
+            n.on(Anticipate.class);      // expect an event
 
             if (internalExperience == Minimal) {
                 new InternalExperience(n);

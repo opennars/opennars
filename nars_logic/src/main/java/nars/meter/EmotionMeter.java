@@ -9,7 +9,6 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import nars.op.mental.InternalExperience;
@@ -118,8 +117,12 @@ public class EmotionMeter implements Serializable {
         //            Record.append("HAPPY: " + (int) (oldV*10.0) + " to " + (int) (happyValue*10.0) + "\n");
     }
 
+    public void busy(NAL nal) {
+        busy(nal.getCurrentTask(), nal);
+    }
+
     public double lastbusy=-1;
-    public void manageBusy(Task cause, NAL nal) {
+    public void busy(Task cause, NAL nal) {
         if(lastbusy!=-1) {
             float frequency=-1;
             if(busy>Global.BUSY_EVENT_HIGHER_THRESHOLD && lastbusy<=Global.BUSY_EVENT_HIGHER_THRESHOLD) {
