@@ -8,8 +8,8 @@ import nars.bag.tx.ForgetNext;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
-import nars.nal.Item;
 import nars.nal.Itemized;
+import objenome.op.cas.E;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
@@ -157,9 +157,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
     /**
      * calls overflow() on an overflown object
      * returns the updated or created concept (not overflow like PUT does (which follows Map.put() semantics)
+     * NOTE: this is the generic version which may or may not work, or be entirely efficient in some subclasses
      */
     public V update(final BagTransaction<K, V> selector) {
-        //TODO this is the generic version which may or may not work, or be entirely efficient in some subclasses
+
 
         K key = selector.name();
         V item;
@@ -170,7 +171,10 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
             item = peekNext();
         }
 
-        if (item != null) {
+        if (item == null) {
+            item = selector.newItem();
+            if (item == null) return null;
+        } else {
             V changed = selector.update(item);
             if (changed == null)
                 return item;
@@ -182,9 +186,6 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
                 remove(item.name());
                 item = changed;
             }
-        } else {
-            item = selector.newItem();
-            if (item == null) return null;
         }
 
         // put the (new or merged) item into itemTable
@@ -333,7 +334,27 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
         return i;
     }
 
+    /** utility function for inserting an item, capturing any overflow,
+     * and returning the result of the operation
+     * (either the inserted item, or null if rejected).
+     * @param n
+     * @param selector
+     * @return
+     */
+    protected V putReplacing(final V n, final BagTransaction<K, V> selector) {
+        final V overflow = put(n);
 
+        if (overflow!=null) {
+            selector.overflow(overflow);
+
+            if (overflow == n) {
+                //the bag rejcted the attempt to put this item, so return null
+                return null;
+            }
+        }
+
+        return n; //return the new instance
+    }
 
 //    /**
 //     * for bags which maintain a separate name index from the items, more fine-granied access methods to avoid redundancy when possible

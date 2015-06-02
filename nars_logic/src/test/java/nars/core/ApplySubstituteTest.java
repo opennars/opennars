@@ -1,5 +1,6 @@
 package nars.core;
 
+import nars.Global;
 import nars.NAR;
 import nars.model.impl.Default;
 import nars.narsese.InvalidInputException;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -28,16 +31,16 @@ public class ApplySubstituteTest {
         String xyS ="<x --> y>";
         Term xy = n.term(xyS);
         
-        Map<Term,Term> h = new HashMap();
+        Map<Term,Term> h = Global.newHashMap();
         h.put(n.term("b"), xy);
         Compound c = ab.applySubstituteToCompound(h);
                 
         assertTrue(c.getComplexity() > originalComplexity);
         
-        assertTrue(ab.toString().equals(abS)); //ab unmodified
-        
-        assertTrue(!c.toString().equals(abS)); //c is actually different
-        assertTrue(!c.equals(ab));
+        assertEquals(abS, ab.toString()); //ab unmodified
+
+        assertNotEquals(abS, c.toString()); //c is actually different
+        assertNotEquals(ab, c);
         
     }
     

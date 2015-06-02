@@ -143,15 +143,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
             //allow selector to provide a new instance
             V n = selector.newItem();
             if (n!=null) {
-                V overflow = put(n);
-
-                if (overflow!=null)
-                    selector.overflow(overflow);
-
-                if (overflow == n)
-                    return null;
-
-                return n; //return the new instance
+                return putReplacing(n, selector);
             }
             //no instance provided, nothing to do
             return null;

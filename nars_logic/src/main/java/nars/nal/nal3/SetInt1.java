@@ -5,7 +5,7 @@ import nars.nal.term.Compound1;
 import nars.nal.term.Term;
 
 /** efficient implementation of a set with one element */
-public class SetInt1<T extends Term> extends Compound1<T> implements SetInt, SetTensional {
+public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt {
 
     public SetInt1(T the) {
         super(the);
@@ -28,14 +28,5 @@ public class SetInt1<T extends Term> extends Compound1<T> implements SetInt, Set
         return SetInt.make(replaced);
     }
 
-    @Override
-    protected CharSequence makeName() {
-        return SetTensional.makeSetName(NALOperator.SET_INT_OPENER.ch, NALOperator.SET_INT_CLOSER.ch, the());
-    }
-
-    @Override
-    protected byte[] makeKey() {
-        return SetTensional.makeKey(NALOperator.SET_INT_OPENER.ch, NALOperator.SET_INT_CLOSER.ch, the());
-    }
 
 }

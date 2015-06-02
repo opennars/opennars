@@ -129,7 +129,7 @@ public class Terms {
             //CompoundTerm itselfCompound = itself;
             Term replaced = null;
             if (j < itself.term.length  )
-                replaced = itself.setComponent(j, ret2);
+                replaced = itself.cloneReplacingSubterm(j, ret2);
             
             if (replaced != null) {
                 if (replaced instanceof Compound)

@@ -1,10 +1,14 @@
 package nars.util.data.id;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.primitives.Bytes;
 import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
+import sun.misc.IOUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
@@ -17,42 +21,8 @@ public class UTF8Identifier extends Identifier {
     protected int hash = 0;
 
 
-    /** Lazily calculated dynamic UTF8 */
-    abstract public static class DynamicUTF8Identifier extends UTF8Identifier {
-
-        public DynamicUTF8Identifier() {
-            super();
-        }
-
-        @Override protected synchronized void ensureNamed() {
-            if (!hasName()) {
-                name = makeName();
-                hash = makeHash();
-            }
-        }
-
-        public boolean hasHash() {
-            /** assumes the hash is generated when name is  */
-            if (!hasName())
-                return false;
-            return true;
-        }
-
-
-        @Override
-        public int hashCode() {
-            ensureNamed();
-            return hash;
-        }
-
-        /** should return byte[] name, override in subclasses if no constant name is provided at construction  */
-        abstract public byte[] makeName();
-
-    }
-
-    protected UTF8Identifier() {
-        //do nothing, used by subclass
-    }
+    /** do nothing, used by subclass */
+    protected UTF8Identifier() { }
 
     public UTF8Identifier(byte[] b) {
         this.name = b;
@@ -68,6 +38,10 @@ public class UTF8Identifier extends Identifier {
         this(Utf8.toUtf8(s));
     }
 
+    public UTF8Identifier(char[] s) {
+        this(Utf8.toUtf8(s));
+    }
+
     /** should set the hashCode, but this may need to call makeName */
     public int makeHash() {
         return Arrays.hashCode(name) * 31;
@@ -78,8 +52,6 @@ public class UTF8Identifier extends Identifier {
     public boolean hasHash() {
         return hash!=0;
     }
-
-
 
     public byte[] name() {
         ensureNamed();
@@ -155,15 +127,20 @@ public class UTF8Identifier extends Identifier {
         return i;
     }
 
-    @Override
-    void write(OutputStream o) throws IOException {
-        o.write(name);
-    }
+
 
     @Override
-    public void print(Writer p, boolean pretty) throws IOException {
+    public void write(Writer p, boolean pretty) throws IOException {
         //default behavior: string representation of name
         ensureNamed();
+//
+//        ByteArrayOutputStream boas = new ByteArrayOutputStream();
+//        boas.write(name());
+//
+//        ByteStreams.newDataOutput()
+//        p.write(new StringWriter(boas, Utf8.utf8Charset);, pretty);
+
+
         p.write(Utf8.fromUtf8(name()));
     }
 
@@ -176,8 +153,7 @@ public class UTF8Identifier extends Identifier {
 
     @Override
     public String toString() {
-        ensureNamed();
-        return Utf8.fromUtf8(name);
+        return toString(true);
     }
 
 }

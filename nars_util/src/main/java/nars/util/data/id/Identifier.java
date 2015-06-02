@@ -2,10 +2,7 @@ package nars.util.data.id;
 
 import nars.util.utf8.Utf8;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
 /**
  * Generic abstract identifier for symbols, tags, and other identifiables
@@ -14,7 +11,15 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
 
     private Identified host = null;
 
-
+    public char[] toChars(boolean pretty) {
+        CharArrayWriter caw = new EfficientCharArrayWriter();
+        try {
+            write(caw, pretty);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return caw.toCharArray();
+    }
 
 
     public interface Identified extends Named<Identifier> {
@@ -27,15 +32,15 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
     }
 
 
-
-    abstract void write(OutputStream o) throws IOException;
-
-    public abstract void print(Writer p, boolean pretty) throws IOException;
+    public abstract void write(Writer p, boolean pretty) throws IOException;
 
     public void set(Identified h) {
         this.host = h;
     }
 
+    public void write(OutputStream o, boolean pretty) throws IOException {
+        write(new PrintWriter(o), pretty);
+    }
 
     @Override
     public boolean equals(final Object x) {
@@ -125,22 +130,22 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
         //}
     }
 
-    public StringBuffer toString(final boolean pretty) {
-        StringWriter w = new StringWriter(getStringSizeEstimate());
-        try {
-            print(w, pretty);
-        } catch (IOException e) {
-            e.printStackTrace();
-            w.write(super.toString());
-        }
-        return w.getBuffer();
+    public String toString(final boolean pretty) {
+        char[] c = toChars(pretty);
+        return new String(c);
+    }
+    public StringBuilder toStringBuilder(final boolean pretty) {
+        char[] c = toChars(pretty);
+        return new StringBuilder(c.length).append(c);
     }
 
     public byte[] bytes() {
         /** inefficient, override in subclasses please */
         System.err.println(this + " wasteful String generation");
-        return Utf8.toUtf8(toString(false).toString());
+
+        return Utf8.toUtf8(toChars(false));
     }
+
     public byte byteAt(final int i) {
         byte[] b = bytes();
         if (b == null) return 0;
@@ -158,4 +163,13 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
 
     /** frees all associated memory */
     abstract public void delete();
+
+    private static class EfficientCharArrayWriter extends CharArrayWriter {
+        @Override
+        public char[] toCharArray() {
+            if (size() == buf.length)
+                return buf;
+            return super.toCharArray();
+        }
+    }
 }

@@ -23,18 +23,18 @@ package nars.nal.term;
 import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.*;
-import nars.util.data.id.Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
-import nars.util.utf8.Utf8;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.*;
 
 import static nars.Symbols.ARGUMENT_SEPARATOR;
@@ -42,7 +42,7 @@ import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 /** a compound term */
-public abstract class Compound extends AbstractTerm implements Iterable<Term>, IPair {
+public abstract class Compound extends AbstractTerm implements Collection<Term>, IPair {
 
 
 
@@ -82,10 +82,62 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
     }
 
 
-    protected final class DefaultCompoundUTF8Identifier extends UTF8Identifier.DynamicUTF8Identifier {
+    public final static class DefaultCompoundUTF8Identifier extends DynamicUTF8Identifier {
+        private final Compound compound;
+
+        public DefaultCompoundUTF8Identifier(Compound c) {
+            this.compound = c;
+        }
+
         @Override
-        public byte[] makeName() {
-            return makeKey();
+        public byte[] newName() {
+
+            final int numArgs = compound.term.length;
+
+
+            /*if (numArgs == 2) {
+                //experimental compact infix notation
+                return Statement.makeStatementKey(arg[0], op, arg[1]);
+            }*/
+
+
+            byte[] opBytes = compound.operator().bytes();
+
+
+            int len = 1 + 1 + opBytes.length +
+                    numArgs; //1 for each arg separator
+            for  (final Term t : compound.term) {
+                len += t.bytes().length;
+            }
+
+            ByteBuf b = ByteBuf.create(len)
+                    .add((byte) COMPOUND_TERM_OPENER.ch)
+                    .add(opBytes);
+
+            for  (final Term t : compound.term) {
+                b.add((byte) ARGUMENT_SEPARATOR).add(t.bytes());
+            }
+
+            return b.add((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
+
+        }
+
+        @Override
+        public void write(Writer p, boolean pretty) throws IOException {
+
+            p.write(COMPOUND_TERM_OPENER.ch);
+            p.write(compound.operator().symbol);
+
+            for (final Term t : compound.term) {
+                p.write(ARGUMENT_SEPARATOR);
+                if (pretty)
+                    p.write(' ');
+
+                t.write(p, pretty);
+            }
+
+            p.write(COMPOUND_TERM_CLOSER.ch);
+
         }
     }
 
@@ -99,6 +151,7 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
         return t;
     }
 
+
     public static List<Term> termList(final Term... t) {
         return Arrays.asList((Term[]) t);
     }
@@ -106,7 +159,7 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
     /**
      * single term version of makeCompoundName without iteration for efficiency
      */
-    protected static CharSequence makeCompoundName(final NALOperator op, final Term singleTerm) {
+    @Deprecated protected static CharSequence makeCompoundName(final NALOperator op, final Term singleTerm) {
         int size = 2; // beginning and end parens
         String opString = op.toString();
         size += opString.length();
@@ -114,9 +167,19 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
         size += tString.length();
         return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
-    protected static byte[] makeCompound1Key(final NALOperator op, final Term singleTerm) {
 
-        final byte[] opString = op.toBytes();
+    public static void writeCompound1(final Term singleTerm, Writer writer, boolean pretty) throws IOException {
+
+        writer.write(COMPOUND_TERM_OPENER.ch);
+        writer.write(singleTerm.operator().symbol);
+        writer.write(ARGUMENT_SEPARATOR);
+        singleTerm.write(writer, pretty);
+        writer.write(COMPOUND_TERM_CLOSER.ch);
+    }
+
+    public static byte[] newCompound1Key(final NALOperator op, final Term singleTerm) {
+
+        final byte[] opString = op.bytes();
 
         final byte[] tString = singleTerm.bytes();
 
@@ -127,38 +190,6 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
                 .add(tString)
                 .add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
-    }
-
-    protected static byte[] makeCompoundNKey(final NALOperator op, final Term... arg) {
-
-        final int numArgs = arg.length;
-
-
-        if (numArgs == 2) {
-            //experimental compact infix notation
-            return Statement.makeStatementKey(arg[0], op, arg[1]);
-        }
-
-
-        byte[] opBytes = op.toBytes();
-
-
-        int len = 1 + 1 + opBytes.length +
-                numArgs; //1 for each arg separator
-        for  (final Term t : arg) {
-            len += t.bytes().length;
-        }
-
-        ByteBuf b = ByteBuf.create(len)
-                .add((byte)COMPOUND_TERM_OPENER.ch)
-                .add(opBytes);
-
-        for  (final Term t : arg) {
-            b.add((byte) ARGUMENT_SEPARATOR).add(t.bytes());
-        }
-
-        return b.add((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
-
     }
 
     /**
@@ -494,27 +525,19 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
 //        
 //    }
 
-    /**
-     * default method to make the oldName of the current term from existing
-     * fields.  needs overridden in certain subclasses
-     *
-     * @return the oldName of the term
-     */
-    @Deprecated protected CharSequence makeName() {
-        return makeCompoundName(operator(), term);
-    }
 
-    protected byte[] makeKey() {
-        return makeCompoundNKey(operator(), term);
-    }
-
-    @Override
-    public UTF8Identifier name() {
+    @Override public UTF8Identifier name() {
         if (!hasName()) {
-            setName( new DefaultCompoundUTF8Identifier() );
+            setName( newName() );
         }
         return (UTF8Identifier)super.name();
     }
+
+     /** creates a new Identifier name for this term */
+     public UTF8Identifier newName() {
+        /* Default implementation */
+        return new DefaultCompoundUTF8Identifier(this);
+     }
  
 
     /* ----- utilities for other fields ----- */
@@ -792,32 +815,32 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
      * Try to replace a component in a compound at a given index by another one
      *
      * @param index The location of replacement
-     * @param t     The new component
+     * @param subterm     The new component
      * @return The new compound
      */
-    public Term setComponent(final int index, final Term t) {
+    public Term cloneReplacingSubterm(final int index, final Term subterm) {
 
-
-
-        final boolean e = (t!=null) && Terms.equalType(this, t, true, true);
+        final boolean e = (subterm!=null) && Terms.equalType(this, subterm, true, true);
 
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
-        if (t != null && (e) && (term[index].equals(t)))
+        if (subterm != null && (e) && (term[index].equals(subterm)))
             return this;
 
         List<Term> list = asTermList();//Deep();
 
         list.remove(index);
 
-        if (t != null) {
+        if (subterm != null) {
             if (!e) {
-                list.add(index, t);
+                list.add(index, subterm);
             } else {
-                //final List<Term> list2 = ((CompoundTerm) t).cloneTermsList();
-                Term[] tt = ((Compound) t).term;
+                //splice in subterm's subterms at index
+                list.addAll(index, ((Compound) subterm));
+
+                /*Term[] tt = ((Compound) subterm).term;
                 for (int i = 0; i < tt.length; i++) {
                     list.add(index + i, tt[i]);
-                }
+                }*/
             }
         }
 
@@ -1104,8 +1127,75 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
     }
 
     @Override
+    public int size() {
+        return length();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return length()!=0;
+    }
+
+    /** first level only, not recursive */
+    @Override public boolean contains(Object o) {
+        if (o instanceof Term)
+            return containsTerm((Term)o);
+        return false;
+    }
+
+    @Override
     public Iterator<Term> iterator() {
         return Iterators.forArray(term);
+    }
+
+    @Override
+    public Object[] toArray() {
+        return term;
+    }
+
+    private boolean unsupportedCollectionMethod() {
+        throw new RuntimeException("Unsupported");
+    }
+
+    @Override
+    public <T> T[] toArray(T[] a) {
+        unsupportedCollectionMethod();
+        return null;
+    }
+
+    @Override
+    public boolean add(Term term) {
+        return unsupportedCollectionMethod();
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        return unsupportedCollectionMethod();
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return unsupportedCollectionMethod();
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends Term> c) {
+        return unsupportedCollectionMethod();
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        return unsupportedCollectionMethod();
+    }
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        return unsupportedCollectionMethod();
+    }
+
+    @Override
+    public void clear() {
+        unsupportedCollectionMethod();
     }
 
     @Override
@@ -1152,21 +1242,7 @@ public abstract class Compound extends AbstractTerm implements Iterable<Term>, I
     }
 
 
-    private static class TransformIndependentToDependentVariables extends VariableSubstitution {
-        int counter = 0;
-
-        @Override public boolean test(Term possiblyAVariable) {
-            if (super.test(possiblyAVariable))
-                return ((Variable) possiblyAVariable).hasVarIndep();
-            return false;
-        }
-
-        @Override protected Variable getSubstitute(Variable v) {
-            return Variable.the(Symbols.VAR_DEPENDENT, counter++);
-        }
-    }
-
-//    @Deprecated public static class UnableToCloneException extends RuntimeException {
+    //    @Deprecated public static class UnableToCloneException extends RuntimeException {
 //
 //        public UnableToCloneException(String message) {
 //            super(message);

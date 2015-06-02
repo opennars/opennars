@@ -171,27 +171,30 @@ public class Byt {
 
     public static byte[] slc( final byte[] array, final int startIndex, final int endIndex ) {
 
-        final int start = calculateIndex( array, startIndex );
+        final int start = calculateIndex(array, startIndex);
         final int end = calculateEndIndex(array, endIndex);
         final int newLength = end - start;
 
         /** if the actual length will be the same as the input array, it
          * means the entire string will be necessary and we are just going
          * to return the internal array and not make a copy of it.
+         * this case is ideal
          */
         if (newLength == array.length)
             return array;
 
-        if ( newLength < 0 ) {
+        else if ( newLength < 0 ) {
             throw new ArrayIndexOutOfBoundsException(
                     String.format( "start index %d, end index %d, length %d",
                             startIndex, endIndex, array.length )
             );
         }
-
-        byte[] newArray = new byte[ newLength ];
-        System.arraycopy( array, start, newArray, 0, newLength );
-        return newArray;
+        else {
+            //create a copy of the correct size, try to avoid this
+            byte[] newArray = new byte[newLength];
+            System.arraycopy(array, start, newArray, 0, newLength);
+            return newArray;
+        }
     }
 
 
@@ -419,14 +422,10 @@ public class Byt {
         if ( index < 0 ) {
             index = length + index;
 
-        /* Bounds check
-            if it is still less than 0, then they
-            have an negative index that is greater than length
-         */
-         /* Bounds check
-            if it is still less than 0, then they
-            have an negative index that is greater than length
-         */
+            /* Bounds check
+                if it is still less than 0, then they
+                have an negative index that is greater than length
+             */
             if ( index < 0 ) {
                 index = 0;
             }
@@ -434,7 +433,7 @@ public class Byt {
 
 
         if ( index >= length ) {
-            index = length - 1;
+            return length - 1;
         }
         return index;
     }

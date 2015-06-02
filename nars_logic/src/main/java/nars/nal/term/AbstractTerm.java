@@ -2,7 +2,9 @@ package nars.nal.term;
 
 import nars.util.data.id.Identifier;
 import nars.util.data.id.UTF8Identifier;
-import nars.util.utf8.Utf8;
+
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Created by me on 6/2/15.
@@ -23,6 +25,7 @@ abstract public class AbstractTerm implements Term {
         this.id = x;
     }
 
+    /** removes the name, forcing the Term to regenerate it */
     public void invalidate() {
         setName(null);
     }
@@ -46,6 +49,7 @@ abstract public class AbstractTerm implements Term {
     public void identifierEquals(Identifier other) {
         this.id = other;
     }
+
 
     @Override public String toString() {
         return name().toString();

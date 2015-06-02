@@ -1,5 +1,6 @@
 package objenome.util;
 
+import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 import org.junit.Test;
@@ -55,14 +56,14 @@ public class UTF8IdentifierTest {
     }
 
 
-    private static class DynamicallyConstructedConstantUTF8Identifier extends UTF8Identifier.DynamicUTF8Identifier {
+    private static class DynamicallyConstructedConstantUTF8Identifier extends DynamicUTF8Identifier {
         private final String b;
 
         public DynamicallyConstructedConstantUTF8Identifier(String b) {
             this.b = b;
         }
 
-        @Override public byte[] makeName() {
+        @Override public byte[] newName() {
             ByteBuf bb = ByteBuf.create(8);
             bb.add(b);
             return bb.toBytes();

@@ -2,6 +2,7 @@ package nars.util.utf8;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
@@ -42,12 +43,17 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     public static final String fromUtf8(final byte[] bytes, final int length) {
         return new String(bytes, 0, length, utf8Charset);
     }
+
     public static final String fromUtf8(final byte[] bytes) {
         return new String(bytes, utf8Charset);
     }
 
     public static final byte[] toUtf8(final String str) {
         return str.getBytes(utf8Charset);
+    }
+    public static final byte[] toUtf8(final char[] str) {
+
+        return utf8Charset.encode(CharBuffer.wrap(str)).array();
     }
     public static final byte[] toUtf8(byte prefix, final String str) {
         return ByteBuf.create(prefix + str.length()).add((byte)prefix).add(str).toBytes();
@@ -59,7 +65,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
             return false;*/
 
 
-        int length = a.length;
+        final int length = a.length;
         if (a2.length != length)
             return false;
 
@@ -74,11 +80,11 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     }
 
     @Override
-    public int compareTo(Utf8 that) {
+    public int compareTo(final Utf8 that) {
         int lDiff = that.bytes.length - bytes.length;
         if (lDiff != 0) return lDiff;
         for (int n = 0; n < bytes.length; n++) {
-            int bDiff = that.bytes[n] - bytes[n];
+            final int bDiff = that.bytes[n] - bytes[n];
             if (bDiff!=0) return bDiff;
         }
         return 0;
@@ -111,11 +117,8 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         Utf8 u = (Utf8) obj;
         if (hashCode() != u.hashCode())
             return false;
-        
-        if (length != u.length)
-            return false;
-        
-        return Arrays.equals(bytes, u.bytes);
+
+        return equals2(bytes, u.bytes);
     }
 
     public void commit() {
@@ -154,7 +157,6 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
 class Utf8_apache implements Comparable<Utf8>, CharSequence {
 
     private static final byte[] EMPTY = new byte[0];
-    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private byte[] bytes = EMPTY;
     private int length;
@@ -270,12 +272,12 @@ class Utf8_apache implements Comparable<Utf8>, CharSequence {
             : new Utf8Converter() {                       // faster in Java 7 & 8
                 @Override
                 public String fromUtf8(byte[] bytes, int length) {
-                    return new String(bytes, 0, length, UTF8);
+                    return new String(bytes, 0, length, Utf8.utf8Charset);
                 }
 
                 @Override
                 public byte[] toUtf8(String str) {
-                    return str.getBytes(UTF8);
+                    return str.getBytes(Utf8.utf8Charset);
                 }
             };
 

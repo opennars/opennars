@@ -20,9 +20,19 @@
  */
 package nars.nal.nal1;
 
+import nars.Symbols;
 import nars.nal.NALOperator;
+import nars.nal.nal3.SetExt;
+import nars.nal.term.Compound;
 import nars.nal.term.Compound1;
 import nars.nal.term.Term;
+import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
+
+import java.io.IOException;
+import java.io.Writer;
+
+import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 
 /**
  * A negation of a statement.
@@ -39,15 +49,7 @@ public class Negation extends Compound1 {
         init(term);
     }
 
-    @Override
-    protected CharSequence makeName() {
-        return makeCompoundName(NALOperator.NEGATION, the());
-    }
 
-    @Override
-    protected byte[] makeKey() {
-        return makeCompound1Key(NALOperator.NEGATION, the());
-    }
 
     /**
      * Clone an object
@@ -82,6 +84,10 @@ public class Negation extends Compound1 {
     }
 
 
+    @Override
+    public UTF8Identifier newName() {
+        return new NegationUTF8Identifier(this);
+    }
 
     /**
      * Try to make a new Negation. Called by StringParser.
@@ -111,6 +117,25 @@ public class Negation extends Compound1 {
         //doesnt seem necessary to check both, one seems sufficient.
         //incurs cost of creating a Negation and its id
         return (b.equals(Negation.make(a)) /* || tc.equals(Negation.make(ptc))*/ );
+    }
+
+
+    public final static class NegationUTF8Identifier extends DynamicUTF8Identifier {
+        private final Negation neg;
+
+        public NegationUTF8Identifier(Negation c) {
+            this.neg = c;
+        }
+
+        @Override
+        public byte[] newName() {
+            return Compound.newCompound1Key(NALOperator.NEGATION, neg.the());
+        }
+
+        @Override
+        public void write(Writer p, boolean pretty) throws IOException {
+            Compound.writeCompound1(neg, p, pretty);
+        }
     }
 
     /*

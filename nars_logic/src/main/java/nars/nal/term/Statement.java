@@ -31,8 +31,12 @@ import nars.nal.nal4.Image;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
 
 import static nars.nal.NALOperator.STATEMENT_CLOSER;
@@ -133,53 +137,54 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return The Statement built
      */
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
-
         return make(statement.operator(), subj, pred, true, order);
     }
 
 
-    /**
-     * Override the default in making the nameStr of the current term from
-     * existing fields
-     *
-     * @return the nameStr of the term
-     */
-    @Override
-    protected CharSequence makeName() {
+//    /**
+//     * Override the default in making the nameStr of the current term from
+//     * existing fields
+//     *
+//     * @return the nameStr of the term
+//     */
+//    @Override
+//    protected CharSequence makeName() {
+//        throw new RuntimeException("should not be called");
+//        //return makeStatementName(getSubject(), operator(), getPredicate());
+//    }
+//
+//    @Override
+//    protected byte[] makeKey() {
+//        throw new RuntimeException("should not be called");
+//        //return makeStatementKey(getSubject(), operator(), getPredicate());
+//    }
 
-        return makeStatementName(getSubject(), operator(), getPredicate());
-    }
 
-    @Override
-    protected byte[] makeKey() {
-        return makeStatementKey(getSubject(), operator(), getPredicate());
-    }
-
-    /**
-     * Default method to make the nameStr of an image term from given fields
-     *
-     * @param subject   The first component
-     * @param predicate The second component
-     * @param relation  The relation operate
-     * @return The nameStr of the term
-     */
-    @Deprecated final protected static CharSequence makeStatementNameSB(final Term subject, final NALOperator relation, final Term predicate) {
-        final CharSequence subjectName = subject.toString();
-        final CharSequence predicateName = predicate.toString();
-        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
-
-        StringBuilder sb = new StringBuilder(length)
-                .append(STATEMENT_OPENER.ch)
-                .append(subjectName)
-
-                .append(' ').append(relation).append(' ')
-                        //.append(relation)
-
-                .append(predicateName)
-                .append(STATEMENT_CLOSER.ch);
-
-        return sb.toString();
-    }
+//    /**
+//     * Default method to make the nameStr of an image term from given fields
+//     *
+//     * @param subject   The first component
+//     * @param predicate The second component
+//     * @param relation  The relation operate
+//     * @return The nameStr of the term
+//     */
+//    @Deprecated final protected static CharSequence makeStatementNameSB(final Term subject, final NALOperator relation, final Term predicate) {
+//        final CharSequence subjectName = subject.toString();
+//        final CharSequence predicateName = predicate.toString();
+//        int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
+//
+//        StringBuilder sb = new StringBuilder(length)
+//                .append(STATEMENT_OPENER.ch)
+//                .append(subjectName)
+//
+//                .append(' ').append(relation).append(' ')
+//                        //.append(relation)
+//
+//                .append(predicateName)
+//                .append(STATEMENT_CLOSER.ch);
+//
+//        return sb.toString();
+//    }
 
     @Deprecated
     final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
@@ -206,34 +211,62 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 //        return cb.toString();
     }
 
-    final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate) {
-        return makeStatementKey(subject, relation, predicate, false);
+//    final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate) {
+//
+//    }
+
+    public final static class StatementUTF8Identifier extends DynamicUTF8Identifier {
+        private final Statement s;
+
+        public StatementUTF8Identifier(Statement c) {
+            this.s = c;
+        }
+
+        @Override
+        public byte[] newName() {
+            final byte[] subjBytes = s.getSubject().bytes();
+            final byte[] predBytes = s.getPredicate().bytes();
+            final byte[] relationBytes = s.operator().bytes();
+
+            ByteBuf b = ByteBuf.create(
+                    subjBytes.length + predBytes.length + relationBytes.length +
+                            + 1 + 1 //beginning and end closers
+            );
+
+            b.add((byte) STATEMENT_OPENER.ch).add(subjBytes);
+
+            b.add(relationBytes);
+
+            b.add(predBytes).add((byte) STATEMENT_CLOSER.ch);
+
+            return b.toBytes();
+        }
+
+        @Override
+        public void write(Writer w, boolean pretty) throws IOException {
+
+            w.write(STATEMENT_OPENER.ch);
+
+            s.getSubject().name().write(w, pretty);
+
+            if (pretty) w.write(' ');
+
+            w.write(s.operator().symbol);
+
+            if (pretty) w.write(' ');
+
+            s.getPredicate().name().write(w, pretty);
+
+            w.write(STATEMENT_CLOSER.ch);
+        }
     }
 
-    final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate, boolean pretty) {
-        final byte[] subjBytes = subject.bytes();
-        final byte[] predBytes = predicate.bytes();
-        final byte[] relationBytes = relation.toBytes();
-        ByteBuf b = ByteBuf.create(
-                subjBytes.length + predBytes.length + relationBytes.length +
-                        (pretty ? 0 : 1 + 1) //spaces
-                        + 1 + 1 //beginning and end closers
-        );
-
-        b.add((byte) STATEMENT_OPENER.ch).add(subjBytes);
-
-        if (pretty) b.space();
-
-        b.add(relationBytes);
-
-        if (pretty) b.space();
-
-        b.add(predBytes).add((byte) STATEMENT_CLOSER.ch);
-
-        return b.toBytes();
+    public UTF8Identifier newName() {
+        return new StatementUTF8Identifier(this);
     }
 
-    final public static boolean invalidStatement(Statement s) {
+
+    final public static boolean invalidStatement(final Statement s) {
         return invalidStatement(s.getSubject(), s.getPredicate());
     }
 

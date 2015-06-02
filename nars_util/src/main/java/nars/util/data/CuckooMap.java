@@ -22,7 +22,6 @@ package nars.util.data;
 
 
 import com.google.common.collect.Sets;
-import com.sun.xml.internal.xsom.impl.Ref;
 import objenome.util.random.XORShiftRandom;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.util.ArrayUnenforcedSet;

@@ -438,6 +438,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     
     /** signaling that the Task has ended or discarded */
     @Override public void delete() {
+
     }
 
     /** flag to indicate whether this Event Task participates in tempporal induction */

@@ -28,7 +28,9 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.TermVisitor;
 import nars.util.data.id.Identifier;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.Writer;
 
 public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified, Termed, Serializable {
 
@@ -83,6 +85,10 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
     }
 
 
+    default char[] toCharSequence(boolean pretty) {
+        return name().toChars(pretty);
+    }
+
     /** shallow clone, using the same subterm references */
     public Term clone();
 
@@ -130,5 +136,18 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
     default public byte[] bytes() {
         return name().bytes();
     }
+
+    default public void write(Writer w, boolean pretty) throws IOException {
+        try {
+            name().write(w, pretty);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    default public StringBuilder toStringBuilder(boolean pretty) {
+        return name().toStringBuilder(pretty);
+    }
+
 }
 

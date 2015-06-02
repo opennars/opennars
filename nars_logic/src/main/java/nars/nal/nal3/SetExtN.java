@@ -66,19 +66,5 @@ public class SetExtN extends AbstractSetN implements SetExt {
         return NALOperator.SET_EXT;
     }
 
-
-    /**
-     * Make a String representation of the set, override the default.
-     * @return true for communitative
-     */
-    @Override
-    public CharSequence makeName() {
-        return SetTensional.makeSetName(SET_EXT_OPENER.ch, SET_EXT_CLOSER.ch, term);
-    }
-
-    @Override
-    protected byte[] makeKey() {
-        return SetTensional.makeKey(NALOperator.SET_EXT_OPENER.ch, NALOperator.SET_EXT_CLOSER.ch, term);
-    }
 }
 

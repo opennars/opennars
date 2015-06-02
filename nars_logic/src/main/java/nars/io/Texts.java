@@ -2,10 +2,12 @@ package nars.io;
 
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.StringHack;
+import org.apache.commons.lang3.StringUtils;
 
 import java.nio.CharBuffer;
 import java.text.DecimalFormat;
 import java.text.Format;
+import java.util.Locale;
 
 /**
  * Utilities for process Text & String input/output, ex: encoding/escaping and decoding/unescaping Terms 
@@ -151,6 +153,10 @@ abstract public class Texts  {
         return Rope.getCharArray(s);
     }
 
+
+    public static int fuzzyDistance(CharSequence a, CharSequence b) {
+        return StringUtils.getFuzzyDistance(a, b, Locale.getDefault());
+    }
 
     /*
     public static void main(String[] args) {

@@ -268,16 +268,6 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
         return f;
     }
 
-    protected void index(E value) {
-        /*E oldValue = */
-        nameTable.putKey(value.name(), value);
-    }
-
-//    protected E unindex(K name) {
-//        E removed = nameTable.removeKey(name);
-//        return removed;
-//    }
-
 
     /**
      * Check if an item is in the bag

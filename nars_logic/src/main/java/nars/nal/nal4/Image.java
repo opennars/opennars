@@ -2,11 +2,18 @@ package nars.nal.nal4;
 
 import nars.Symbols;
 import nars.nal.NALOperator;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal3.SetTensional;
 import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
+import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
@@ -73,43 +80,7 @@ abstract public class Image extends DefaultCompound {
 //        return name.toString();
     }
 
-    protected static byte[] makeImageKey(final NALOperator op, final Term[] arg, final int relationIndex) {
-        //TODO proper size estimate
-        final int sizeEstimate = 16 * arg.length + 2;
-        ByteBuf b = ByteBuf.create(sizeEstimate)
-                .add((byte)COMPOUND_TERM_OPENER.ch)
-                .add(op.toBytes())
-                .add((byte) Symbols.ARGUMENT_SEPARATOR)
-                .add(arg[relationIndex].bytes());
 
-
-        for (int i = 0; i < arg.length; i++) {
-            b.add((byte) Symbols.ARGUMENT_SEPARATOR);
-            if (i == relationIndex) {
-                b.add((byte)Symbols.IMAGE_PLACE_HOLDER);
-            } else {
-                b.add(arg[i].bytes());
-            }
-        }
-        return b.add((byte)COMPOUND_TERM_CLOSER.ch).toBytes();
-    }
-    
-    /**
-     * Get the other term in the Image
-     * @return The term relaterom existing fields
-     * @return the name of the term
-     */
-    @Override
-    public CharSequence makeName() {
-
-        return makeImageName(operator(), term, relationIndex);
-    }
-
-
-    @Override
-    protected byte[] makeKey() {
-        return makeImageKey(operator(), term, relationIndex);
-    }
 
     /**
      * Get the relation term in the Image
@@ -129,9 +100,80 @@ abstract public class Image extends DefaultCompound {
             return null;
         }
         return (relationIndex == 0) ? term[1] : term[0];
-    }    
+    }
 
-    
-    
+    public final static class ImageUTF8Identifier extends DynamicUTF8Identifier {
+        private final Image compound;
+
+        public ImageUTF8Identifier(Image c) {
+            this.compound = c;
+        }
+
+        @Override
+        public byte[] newName() {
+
+            final int len = compound.length();
+
+            //calculate total size
+            int bytes = 2;
+            for (int i = 0; i < len; i++) {
+                Term tt = compound.term(i);
+                bytes += tt.name().bytes().length;
+                if (i!=0) bytes++; //comma
+            }
+
+            ByteBuf b = ByteBuf.create(bytes)
+                    .add((byte)COMPOUND_TERM_OPENER.ch)
+                    .add(compound.operator().bytes())
+                    .add((byte)ARGUMENT_SEPARATOR)
+                    .add(compound.relation().bytes());
+
+
+            final int relationIndex = compound.relationIndex;
+            for (int i = 0; i < len; i++) {
+                Term tt = compound.term(i);
+                b.add((byte) ARGUMENT_SEPARATOR);
+                if (i == relationIndex) {
+                    b.add((byte)Symbols.IMAGE_PLACE_HOLDER);
+                } else {
+                    b.add(tt.bytes());
+                }
+            }
+            b.add((byte)COMPOUND_TERM_CLOSER.ch);
+
+            return b.toBytes();
+
+        }
+
+        @Override
+        public void write(Writer p, boolean pretty) throws IOException {
+
+            final int len = compound.length();
+
+            p.write(COMPOUND_TERM_OPENER.ch);
+            p.write(compound.operator().symbol);
+            p.write(ARGUMENT_SEPARATOR);
+            compound.relation().write(p, pretty);
+
+            final int relationIndex = compound.relationIndex;
+            for (int i = 0; i < len; i++) {
+                Term tt = compound.term(i);
+                p.write(ARGUMENT_SEPARATOR);
+                if (i == relationIndex) {
+                    p.write(Symbols.IMAGE_PLACE_HOLDER);
+                } else {
+                    tt.write(p, pretty);
+                }
+            }
+            p.write(COMPOUND_TERM_CLOSER.ch);
+
+        }
+    }
+
+    public Term relation() {
+        return term(relationIndex);
+    }
+
+
 }
 

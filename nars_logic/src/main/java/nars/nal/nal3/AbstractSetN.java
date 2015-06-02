@@ -4,6 +4,7 @@ import nars.Global;
 import nars.nal.Terms;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
+import nars.util.data.id.UTF8Identifier;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set), where N>1
@@ -26,9 +27,9 @@ abstract public class AbstractSetN extends DefaultCompound implements SetTension
         
         init(arg);
     }
-    
-    
 
-
+    public UTF8Identifier newName() {
+        return new SetUTF8Identifier(this);
+    }
 
 }

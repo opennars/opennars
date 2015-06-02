@@ -4,6 +4,7 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
+import nars.util.data.id.UTF8Identifier;
 
 import java.util.Collection;
 
@@ -26,6 +27,7 @@ public interface SetExt extends SetTensional {
             default: return new SetExtN(t);
         }
     }
+
     public static Compound make(Collection<Term> l) {
         return make(l.toArray(new Term[l.size()]));
     }

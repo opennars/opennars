@@ -50,7 +50,7 @@ public class ConceptBuilderTest {
         final AtomicInteger count = new AtomicInteger(0);
 
         NAR n = new NAR(new Default());
-        n.on(new PatternConceptBuilder("(\\*,pos,*)", new ConstantConceptBuilder() {
+        n.on(new PatternConceptBuilder("(\\*, pos, *)", new ConstantConceptBuilder() {
 
             @Override
             protected Truth truth(Term t, Memory m) {
@@ -60,8 +60,8 @@ public class ConceptBuilderTest {
 
         }));
 
-        n.input("(*,pos,noun)?"); //matches pattern, should create
-        n.input("(*,notpos,noun)?"); //doesnt match pattern, should not create
+        n.input("(*, pos, noun)?"); //matches pattern, should create
+        n.input("(*, notpos, noun)?"); //doesnt match pattern, should not create
         n.frame(3);
 
         assertEquals(1, count.get());

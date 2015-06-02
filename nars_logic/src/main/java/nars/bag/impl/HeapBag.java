@@ -2,9 +2,11 @@ package nars.bag.impl;
 
 import nars.Global;
 import nars.bag.Bag;
+import nars.bag.BagTransaction;
 import nars.nal.Item;
 import nars.util.data.CircularArrayList;
 import nars.util.data.CuckooMap;
+import nars.util.data.linkedlist.DD;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 import org.apache.commons.math3.util.FastMath;
@@ -27,7 +29,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     /**
      * mapping from key to item
      */
-    public final CurveMap nameTable;
+    public final CurveMap index;
 
     /**
      * array of lists of items, for items on different level
@@ -286,7 +288,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         items = new CircularArrayList<>(capacity);
 
-        nameTable = new CurveMap(capacity);
+        index = new CurveMap(capacity);
 
         this.mass = 0;
     }
@@ -297,7 +299,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         /*synchronized (nameTable)*/
         {
             items.clear();
-            nameTable.clear();
+            index.clear();
             mass = 0;
         }
     }
@@ -310,7 +312,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     @Override
     final public int size() {
 
-        int in = nameTable.size();
+        int in = index.size();
 
         if (Global.DEBUG) {
             int is = items.size();
@@ -353,10 +355,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         return f;
     }
 
-    protected void index(E value) {
-        /*E oldValue = */
-        nameTable.putKey(value.name(), value);
-    }
+
 
 //    protected E unindex(K name) {
 //        E removed = nameTable.removeKey(name);
@@ -372,7 +371,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     @Override
     public boolean contains(final E it) {
-        return nameTable.containsValue(it);
+        return index.containsValue(it);
     }
 
     /**
@@ -383,12 +382,12 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
      */
     @Override
     public E get(final K key) {
-        return nameTable.get(key);
+        return index.get(key);
     }
 
     @Override
     public E remove(final K key) {
-        return nameTable.remove(key);
+        return index.remove(key);
     }
 
 
@@ -482,8 +481,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
         float newPriority = i.getPriority();
 
-        boolean contains = nameTable.containsKey(i.name());
-        if ((nameTable.size() >= capacity) && (!contains)) {
+        boolean contains = index.containsKey(i.name());
+        if ((index.size() >= capacity) && (!contains)) {
             // the bag is full
 
             // this item is below the bag's already minimum item, no change (return the input as the overflow)
@@ -503,18 +502,18 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
 
             //insert
-            nameTable.put(i.name(), i);
+            index.put(i.name(), i);
 
             mass += i.getPriority();
 
             return oldItem;
         } else if (contains) {
             //TODO check this mass calculation
-            E existingToReplace = nameTable.put(i.name(), i);
+            E existingToReplace = index.put(i.name(), i);
             mass += i.getPriority();
             return null;
         } else /* if (!contains) */ {
-            E shouldNotExist = nameTable.put(i.name(), i);
+            E shouldNotExist = index.put(i.name(), i);
             if (shouldNotExist != null)
                 throw new RuntimeException("already expected no existing key/item but it was actually there");
             mass += i.getPriority();
@@ -567,12 +566,49 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
                 throw new RuntimeException(this + " inconsistent index: items contained #" + index + " but had no key referencing it");
 
             //should be the same object instance
-            nameTable.removeKey(selected.name());
+            this.index.removeKey(selected.name());
             mass -= selected.getPriority();
         }
 
         return selected;
     }
+
+    @Override
+    public E update(BagTransaction<K, E> selector) {
+
+        final K key = selector.name();
+        final E b;
+        if (key != null) {
+            b = index.get(key);
+        }
+        else {
+            b = peekNext();
+        }
+
+
+        if (b == null) {
+            //allow selector to provide a new instance
+            E n = selector.newItem();
+            if (n!=null) {
+                return putReplacing(n, selector);
+            }
+            //no instance provided, nothing to do
+            return null;
+        }
+        else  {
+            //allow selector to modify it, then if it returns non-null, reinsert
+            final E c = selector.update(b);
+            if ((c!=null) && (c!=b)) {
+                return putReplacing(c, selector);
+            }
+            else
+                return b;
+        }
+
+
+    }
+
+
 
 
     @Override
@@ -594,12 +630,12 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public Set<K> keySet() {
-        return nameTable.keySet();
+        return index.keySet();
     }
 
     @Override
     public Collection<E> values() {
-        return nameTable.values();
+        return index.values();
     }
 
     @Override

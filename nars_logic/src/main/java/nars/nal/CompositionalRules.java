@@ -1066,28 +1066,28 @@ OUT: <lock1 --> lock>.
 
                 Compound zw = (Compound) T.term[index];
 
-                zw = (Compound) zw.setComponent(1, depIndVar1);
+                zw = (Compound) zw.cloneReplacingSubterm(1, depIndVar1);
                 if (zw == null) return false;
 
-                T2 = (Compound) T2.setComponent(1, depIndVar1);
+                T2 = (Compound) T2.cloneReplacingSubterm(1, depIndVar1);
                 if (T2 == null) return false;
 
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
 
-                T = (Compound) T.setComponent(index, res);
+                T = (Compound) T.cloneReplacingSubterm(index, res);
 
             } else if (((Statement) component).getSubject().equals(((Statement) content).getSubject()) && !(((Statement) component).getSubject() instanceof Variable)) {
 
                 Compound zw = (Compound) T.term[index];
 
-                zw = (Compound) zw.setComponent(0, depIndVar2);
+                zw = (Compound) zw.cloneReplacingSubterm(0, depIndVar2);
                 if (zw == null) return false;
 
-                T2 = (Compound) T2.setComponent(0, depIndVar2);
+                T2 = (Compound) T2.cloneReplacingSubterm(0, depIndVar2);
                 if (T2 == null) return false;
 
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
-                T = (Compound) T.setComponent(index, res);
+                T = (Compound) T.cloneReplacingSubterm(index, res);
             }
             Truth truth = induction(originalMainSentence.truth, subSentence.truth);
             Budget budget = BudgetFunctions.compoundForward(truth, T, nal);

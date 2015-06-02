@@ -260,7 +260,7 @@ public class InternalExperience extends NARReaction {
             Atom op = memory.the(nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)]);
             if(op!=null) {
                 beliefReasonDerive(
-                        Inheritance.make(Product.make(belief.term), op),
+                        Inheritance.make(Product.only(belief.term), op),
                 nal);
             }
         }
@@ -289,7 +289,7 @@ public class InternalExperience extends NARReaction {
 
                 if(valid) {
                     beliefReasonDerive(
-                            Operation.make(anticipate, Product.make(imp.getPredicate())),
+                            Operation.make(anticipate, Product.only(imp.getPredicate())),
                             nal);
                 }
             }

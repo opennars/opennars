@@ -23,6 +23,7 @@ public class PatternConceptBuilder implements ConceptBuilder {
 
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
+
         if (pattern.matcher(t.toString()).matches()) {
             return builder.newConcept(t, b, m);
         }

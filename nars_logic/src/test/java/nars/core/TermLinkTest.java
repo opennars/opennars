@@ -217,7 +217,8 @@ public class TermLinkTest {
 
         TermLinkGraph h = new TermLinkGraph().add(n.concept("{x}"), true);
         //System.out.println(h);
-        assertTrue(h.toString().contains("Ba:x=({x},x)"));
+        String baix = "Ba:x=({x},x)";
+        assertTrue(h.toString() + " must contain " + baix, h.toString().contains(baix));
         TermLinkGraph i = new TermLinkGraph().add(n.concept("x"), true);
         //System.out.println(i);
         assertTrue(i.toString().contains("Ca:{x}=(x,{x})"));

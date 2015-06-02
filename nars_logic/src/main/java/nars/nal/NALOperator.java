@@ -110,7 +110,7 @@ public enum NALOperator {
         this.closer = name().endsWith("_CLOSER");
     }
 
-    public byte[] toBytes() { return symbolBytes; }
+    public byte[] bytes() { return symbolBytes; }
 
     @Override
     public String toString() { return symbol; }

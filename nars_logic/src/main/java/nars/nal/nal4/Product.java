@@ -67,7 +67,7 @@ public interface Product extends Term, Iterable<Term> {
         return make(t.toArray(new Term[t.size()]));
     }
 
-    public static Product make(final Term the) {
+    public static Product only(final Term the) {
         return new Product1(the);
     }
 
@@ -78,7 +78,7 @@ public interface Product extends Term, Iterable<Term> {
 
     public static Product make(final Term... arg) {
         if (arg.length == 1)
-            return make(arg[0]);
+            return only(arg[0]);
 
         return new ProductN(arg);
     }
@@ -96,4 +96,5 @@ public interface Product extends Term, Iterable<Term> {
     default public Object first() {
         return term(0);
     }
+
 }

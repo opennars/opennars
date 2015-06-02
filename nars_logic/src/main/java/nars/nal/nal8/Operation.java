@@ -29,14 +29,22 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
+import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Product;
+import nars.nal.nal8.operator.eval;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.nal.nal8.operator.eval;
+import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Arrays;
+
+import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -110,43 +118,11 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         return (T)getPredicate();
     }
 
+
     @Override
-    protected byte[] makeKey() {
-        byte[] op = getPredicate().bytes();
-        //Term[] arg = argArray();
-
-        int len = op.length + 1 + 1;
-        int n = 0;
-        for (final Term t : arg()) {
-            len += t.bytes().length;
-            n++;
-        }
-        if (n > 1) len+=n-1;
-
-
-        final ByteBuf b = ByteBuf.create(len);
-        b.add(op); //add the operator name without leading '^'
-        b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
-
-
-        n=0;
-        for (final Term t : arg()) {
-            /*if(n==arg.length-1) {
-                break;
-            }*/
-            if (n!=0)
-                b.add((byte)Symbols.ARGUMENT_SEPARATOR);
-
-            b.add(t.bytes());
-
-            n++;
-        }
-
-        b.add((byte)NALOperator.COMPOUND_TERM_CLOSER.ch);
-
-        return b.toBytes();
+    public UTF8Identifier newName() {
+        return new OperationUTF8Identifier(this);
     }
-
 
     /** stores the currently executed task, which can be accessed by Operator execution */
     public void setTask(final Task<Operation<T>> task) {
@@ -215,7 +191,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
     /** produces a cloned instance with the replaced args + additional terms in a new argument product */
     public Operation cloneWithArguments(Term[] args, Term... additional) {
-        return (Operation)setComponent(0, Product.make(args, additional));
+        return (Operation) cloneReplacingSubterm(0, Product.make(args, additional));
     }
 
     /** returns a reference to the raw arguments as contained by the Product subject of this operation
@@ -296,6 +272,78 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
                 return true;
         }
         return false;
+    }
+
+
+    public final static class OperationUTF8Identifier extends DynamicUTF8Identifier {
+        private final Operation compound;
+
+        public OperationUTF8Identifier(Operation c) {
+            this.compound = c;
+        }
+
+        @Override
+        public byte[] newName() {
+
+            byte[] op = compound.getPredicate().bytes();
+            //Term[] arg = argArray();
+
+            int len = op.length + 1 + 1;
+            int n = 0;
+
+            final Term[] xt = compound.arg().terms();
+            for (final Term t : xt) {
+                len += t.bytes().length;
+                n++;
+            }
+            if (n > 1) len+=n-1;
+
+
+            final ByteBuf b = ByteBuf.create(len);
+            b.add(op); //add the operator name without leading '^'
+            b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+
+
+            n=0;
+            for (final Term t : xt) {
+            /*if(n==arg.length-1) {
+                break;
+            }*/
+                if (n!=0)
+                    b.add((byte)Symbols.ARGUMENT_SEPARATOR);
+
+                b.add(t.bytes());
+
+                n++;
+            }
+
+            b.add((byte)NALOperator.COMPOUND_TERM_CLOSER.ch);
+
+            return b.toBytes();
+        }
+
+        @Override
+        public void write(Writer p, boolean pretty) throws IOException {
+            
+            final Term[] xt = compound.arg().terms();
+
+            p.write(compound.operator().symbol); //add the operator name without leading '^'
+            p.write((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+
+
+            int n=0;
+            for (final Term t : xt) {
+                if (n!=0)
+                    p.write((byte)Symbols.ARGUMENT_SEPARATOR);
+
+                t.write(p, pretty);
+
+                n++;
+            }
+
+            p.write((byte) NALOperator.COMPOUND_TERM_CLOSER.ch);
+
+        }
     }
 
 
