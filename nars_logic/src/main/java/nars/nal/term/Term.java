@@ -67,7 +67,7 @@ public interface Term extends Cloneable, Comparable<Term>, Named<byte[]>, Termed
     public boolean isNormalized();
 
     /** returns the normalized form of the term, or this term itself if normalization is unnecessary */
-    default public <T extends Term> T normalized() {
+    default <T extends Term> T normalized() {
         return (T) this;
     }
 

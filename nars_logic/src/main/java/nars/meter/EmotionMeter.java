@@ -55,7 +55,7 @@ public class EmotionMeter implements Serializable {
 
     public double lasthappy=-1;
     
-    public void adjustHappy(final float newValue, final Task task, final NAL nal) {
+    public void happy(final float newValue, final Task task, final NAL nal) {
         //        float oldV = happyValue;
 
         final float weight = task.getPriority();

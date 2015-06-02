@@ -137,7 +137,7 @@ public class DefaultCycle extends SequentialCycle {
     protected boolean run(Task task) {
         final Sentence sentence = task.sentence;
 
-        memory.emotion.adjustBusy(task.getPriority(), task.getDurability());
+        //memory.emotion.busy(task);
 
         if (task.isInput() || sentence.isQuest() || sentence.isGoal()
                 || sentence.isQuestion()

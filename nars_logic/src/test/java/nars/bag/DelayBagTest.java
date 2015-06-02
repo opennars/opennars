@@ -66,7 +66,7 @@ public class DelayBagTest {
         n.frame(30);
         assertEquals(6, numConcepts(n) );
         
-        ((AntCore)n.memory.concepts).concepts.remove(n.term("<a --> b>"));
+        ((AntCore)n.memory.concepts).concepts.remove((Term)n.term("<a --> b>"));
         
         assertEquals(5, numConcepts(n) );
         n.frame(10);

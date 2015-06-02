@@ -266,7 +266,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @param judg The solution to be remembered
      */
     public void setBestSolution(final Memory memory, final Sentence judg) {
-        InternalExperience.experienceFromBelief(memory, this.getBudget(), judg);
+        InternalExperience.experienceFromBelief(memory, this, judg);
         bestSolution = judg;
     }
 

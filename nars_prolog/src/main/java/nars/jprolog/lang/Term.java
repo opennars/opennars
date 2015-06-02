@@ -1,5 +1,6 @@
 package nars.jprolog.lang;
 
+import com.google.common.base.Equivalence;
 import nars.jprolog.Prolog;
 
 import java.io.Serializable;
@@ -126,13 +127,7 @@ public abstract class Term implements Serializable,Comparable<Term> {
      */
     public boolean isGround() { return true; }
     
-    /** 
-     * Check whether this term is a higher order statement.
-     * @return <code>true</code> if higher order, otherwise <code>false</code>.
-     */
-    public boolean isHigherOrderStatement() {
-        return (this instanceof Equivalence) || (this instanceof Implication);
-    }
+  
 
     /** 
      * Returns a Java object that corresponds to this term 

@@ -52,7 +52,7 @@ public class InternalExperience extends NARReaction {
     public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.1f; //0.1
     
     //dont use internal experience for want and believe if this setting is true
-    public boolean enableWantBelieve =true; //wut, semantic issue ^^
+    public static final boolean enableWantBelieve =true; //wut, semantic issue ^^
     
     //
     public static boolean OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=false; //https://groups.google.com/forum/#!topic/open-nars/DVE5FJd7FaM
@@ -65,12 +65,12 @@ public class InternalExperience extends NARReaction {
         OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY=!val;
     }
 
-    public boolean isEnableWantBelieve() {
-        return enableWantBelieve;
-    }
-    public void setEnableWantBelieve(boolean val) {
-        enableWantBelieve =val;
-    }
+//    public boolean isEnableWantBelieve() {
+//        return enableWantBelieve;
+//    }
+//    public void setEnableWantBelieve(boolean val) {
+//        enableWantBelieve =val;
+//    }
     
     public double getMinCreationBudgetSummary() {
         return MINIMUM_BUDGET_SUMMARY_TO_CREATE;
@@ -112,7 +112,7 @@ public class InternalExperience extends NARReaction {
         this(n, TaskProcess.class);
     }
 
-    public Operation toTerm(final Sentence s, final NAL mem) {
+    public static Operation toTerm(final Sentence s, final NAL mem) {
         return toTerm(s, mem, enableWantBelieve);
     }
 
@@ -185,14 +185,14 @@ public class InternalExperience extends NARReaction {
                 false);
     }
     
-    public boolean experienceFromTask(NAL nal, Task task, boolean full) {
+    public static boolean experienceFromTask(NAL nal, Task task, boolean full) {
         if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
             return experienceFromTaskInternal(nal, task, full);
         }
         return false;
     }
 
-    protected boolean experienceFromTaskInternal(NAL nal, Task task, boolean full) {
+    protected static boolean experienceFromTaskInternal(NAL nal, Task task, boolean full) {
         if(!enabled) {
             return false;
         }

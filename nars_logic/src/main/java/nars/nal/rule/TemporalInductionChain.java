@@ -63,7 +63,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
                     if (implication.isForward() || implication.isConcurrent()) {
 
-                        Sentence s = next.getStrongestBelief();
+                        Sentence s = next.getStrongestBelief().sentence;
                         if (s!=null) {
                             temporalInductionChain(s, belief, f);
                             temporalInductionChain(belief, s, f);
