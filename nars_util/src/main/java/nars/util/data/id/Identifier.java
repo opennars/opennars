@@ -16,6 +16,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
 
 
 
+
     public interface Identified extends Named<Identifier> {
         /**
          * allows a host of an identifier to replace its identifier
@@ -43,7 +44,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
         /*if (equalOnlyToSameClass())
             if (!(x.getClass().equals(getClass()))) return false;
         else*/
-            if (!(x instanceof Identifier)) return false;
+        if (!(x instanceof Identifier)) return false;
 
         Identifier ix = (Identifier)x;
         if (equalTo(ix)) {
@@ -54,7 +55,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable {
         return false;
     }
 
-    private void share(Identifier ix) {
+    public void share(Identifier ix) {
         Identified localHost = host;
         Identified remoteHost = ix.host;
         if (localHost==null) {

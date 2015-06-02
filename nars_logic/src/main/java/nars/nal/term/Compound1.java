@@ -1,5 +1,7 @@
 package nars.nal.term;
 
+import nars.nal.Terms;
+
 /** an optimized compound implementation for use when only 1 subterm */
 abstract public class Compound1<T extends Term> extends Compound {
 
@@ -19,10 +21,11 @@ abstract public class Compound1<T extends Term> extends Compound {
         if (that == null) return false;
 
         if (getClass()!=that.getClass()) return false;
+
         nars.nal.term.Compound1 c = (nars.nal.term.Compound1)that;
-        //if (operator()!=c.operator()) return false;
+        if (operator()!=c.operator()) return false;
         if (the().equals(c.the())) {
-            share(c);
+            setName(c.name());
             return true;
         }
         return false;
@@ -60,7 +63,6 @@ abstract public class Compound1<T extends Term> extends Compound {
                 ((Compound)n).invalidate();
             }
 
-            //updateHash();
         }
         else {
             setNormalized();
@@ -72,8 +74,11 @@ abstract public class Compound1<T extends Term> extends Compound {
     public int compareSubterms(final Compound otherCompoundOfEqualType) {
         //this is what we want to avoid - generating string names
         //override in subclasses where a different non-string comparison can be made
-        return the().compareTo(((nars.nal.term.Compound1) otherCompoundOfEqualType).the());
+        return Terms.compareSubterms(term, otherCompoundOfEqualType.term);
     }
 
-
+    @Override
+    protected int compare(Compound otherCompoundOfEqualType) {
+        return compareSubterms(otherCompoundOfEqualType);
+    }
 }

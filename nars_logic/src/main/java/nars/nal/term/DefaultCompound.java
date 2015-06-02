@@ -1,10 +1,6 @@
 package nars.nal.term;
 
-import nars.util.data.id.Identifier;
-import nars.util.data.id.UTF8Identifier;
-import nars.util.utf8.FastByteComparisons;
-
-import java.util.Arrays;
+import nars.nal.Terms;
 
 /** implementation of a compound which generates and stores its name as a CharSequence, which is used for equality and hash*/
 abstract public class DefaultCompound extends Compound {
@@ -43,26 +39,10 @@ abstract public class DefaultCompound extends Compound {
     @Override
     public int compareSubterms(final Compound otherCompoundOfEqualType) {
         DefaultCompound o = ((DefaultCompound) otherCompoundOfEqualType);
-        //int h = Integer.compare(hashCode(), o.hashCode());
-        //if (h == 0) {
-            //byte[] n1 = name();
-            //byte[] n2 = o.name();
-            int c = name().compareTo(o.name()); //FastByteComparisons.compare(n1, n2);
-            /*if ((c == 0) && (n1!=n2)) {
-                //equal string, ensure that the same byte[] instance is shared to accelerate equality comparison
-                share(o);
-            }*/
-            return c;
-        //}
-        //return h;
+        return Terms.compareSubterms(term, o.term);
     }
 
-    protected void share(DefaultCompound equivalent) {
-        super.share(equivalent);
-        if (!hasVar()) {
-            //equivalent.name = this.name; //also share name key
-        }
-    }
+
 
     @Override
     public void invalidate() {
@@ -80,6 +60,16 @@ abstract public class DefaultCompound extends Compound {
     }
 
 
+    final static int maxSubTermsForNameCompare = 2; //tunable
 
+    @Override
+    protected int compare(final Compound otherCompoundOfEqualType) {
 
+        int l = length();
+
+        if ((l != otherCompoundOfEqualType.length()) || (l < maxSubTermsForNameCompare))
+            return compareSubterms(otherCompoundOfEqualType);
+
+        return compareName(otherCompoundOfEqualType);
+    }
 }

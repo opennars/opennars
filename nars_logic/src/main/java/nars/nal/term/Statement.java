@@ -35,42 +35,45 @@ import nars.util.utf8.ByteBuf;
 
 import java.util.Arrays;
 
-import static nars.nal.NALOperator.*;
+import static nars.nal.NALOperator.STATEMENT_CLOSER;
+import static nars.nal.NALOperator.STATEMENT_OPENER;
 
 /**
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
  * relation symbol in between. It can be of either first-order or higher-order.
  */
-public abstract class Statement<A extends Term, B extends Term> extends Compound2<A,B> {
-    
+public abstract class Statement<A extends Term, B extends Term> extends Compound2<A, B> {
+
     /**
      * Constructor with partial values, called by make
      * Subclass constructors should call init after any initialization
-     * 
+     *
      * @param arg The component list of the term
      */
     protected Statement(final A subj, final B pred) {
         super(subj, pred);
     }
+
     /*protected Statement(final Term... twoTermsPlease) {
         this(twoTermsPlease[0], twoTermsPlease[1]);
     }*/
-    @Deprecated protected Statement() {
+    @Deprecated
+    protected Statement() {
         this(null, null);
     }
-    
+
 
     @Override
     protected void init(Term... t) {
-        if (t.length!=2)
+        if (t.length != 2)
             throw new RuntimeException("Requires 2 terms: " + Arrays.toString(t));
-        if (t[0]==null)
+        if (t[0] == null)
             throw new RuntimeException("Null subject: " + this);
-        if (t[1]==null)
-            throw new RuntimeException("Null predicate: " + this);        
+        if (t[1] == null)
+            throw new RuntimeException("Null predicate: " + this);
         if (Global.DEBUG) {
             if (t.length > 1 && isCommutative()) {
-                if (t[0].compareTo(t[1])>0) {
+                if (t[0].compareTo(t[1]) > 0) {
                     throw new RuntimeException("Commutative term requires natural order of subject,predicate: " + Arrays.toString(t));
                 }
             }
@@ -82,8 +85,8 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     /**
      * Make a Statement from String, called by StringParser
      *
-     * @param o The relation String
-     * @param subject The first component
+     * @param o         The relation String
+     * @param subject   The first component
      * @param predicate The second component
      * @return The Statement built
      */
@@ -122,12 +125,12 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     /**
      * Make a Statement from given term, called by the rules
      *
-     * @param order The temporal order of the statement
-     * @return The Statement built
-     * @param subj The first component
-     * @param pred The second component
+     * @param order     The temporal order of the statement
+     * @param subj      The first component
+     * @param pred      The second component
      * @param statement A sample statement providing the class type
-     * @param memory Reference to the memory
+     * @param memory    Reference to the memory
+     * @return The Statement built
      */
     final public static Statement make(final Statement statement, final Term subj, final Term pred, int order) {
 
@@ -155,30 +158,31 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     /**
      * Default method to make the nameStr of an image term from given fields
      *
-     * @param subject The first component
+     * @param subject   The first component
      * @param predicate The second component
-     * @param relation The relation operate
+     * @param relation  The relation operate
      * @return The nameStr of the term
      */
-    final protected static CharSequence makeStatementNameSB(final Term subject, final NALOperator relation, final Term predicate) {
+    @Deprecated final protected static CharSequence makeStatementNameSB(final Term subject, final NALOperator relation, final Term predicate) {
         final CharSequence subjectName = subject.toString();
         final CharSequence predicateName = predicate.toString();
         int length = subjectName.length() + predicateName.length() + relation.toString().length() + 4;
-        
+
         StringBuilder sb = new StringBuilder(length)
-            .append(STATEMENT_OPENER.ch)
-            .append(subjectName)
+                .append(STATEMENT_OPENER.ch)
+                .append(subjectName)
 
-            .append(' ').append(relation).append(' ')
-            //.append(relation)
+                .append(' ').append(relation).append(' ')
+                        //.append(relation)
 
-            .append(predicateName)
-            .append(STATEMENT_CLOSER.ch);
-            
+                .append(predicateName)
+                .append(STATEMENT_CLOSER.ch);
+
         return sb.toString();
     }
-    
-    @Deprecated final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
+
+    @Deprecated
+    final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
         throw new RuntimeException("Not necessary, utf8 keys should be used instead");
 //        final CharSequence subjectName = subject.toString();
 //        final CharSequence predicateName = predicate.toString();
@@ -202,22 +206,31 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 //        return cb.toString();
     }
 
-
     final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate) {
+        return makeStatementKey(subject, relation, predicate, false);
+    }
+
+    final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate, boolean pretty) {
         final byte[] subjBytes = subject.bytes();
         final byte[] predBytes = predicate.bytes();
         final byte[] relationBytes = relation.toBytes();
-        return ByteBuf.create(
+        ByteBuf b = ByteBuf.create(
                 subjBytes.length + predBytes.length + relationBytes.length +
-            1 + 1 //beginning and end closers
-            + 1 +1 //2 spaces TODO remove this
-        )
-                .add((byte)STATEMENT_OPENER.ch)
-                .add(subjBytes)
-                .space().add(relationBytes).space()
-                .add(predBytes)
-                .add((byte)STATEMENT_CLOSER.ch)
-                .toBytes();
+                        (pretty ? 0 : 1 + 1) //spaces
+                        + 1 + 1 //beginning and end closers
+        );
+
+        b.add((byte) STATEMENT_OPENER.ch).add(subjBytes);
+
+        if (pretty) b.space();
+
+        b.add(relationBytes);
+
+        if (pretty) b.space();
+
+        b.add(predBytes).add((byte) STATEMENT_CLOSER.ch);
+
+        return b.toBytes();
     }
 
     final public static boolean invalidStatement(Statement s) {
@@ -228,16 +241,17 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     /**
      * Check the validity of a potential Statement. [To be refined]
      * <p>
-     * @param subject The first component
+     *
+     * @param subject   The first component
      * @param predicate The second component
      * @return Whether The Statement is invalid
      */
     final public static boolean invalidStatement(final Term subject, final Term predicate) {
-        if (subject==null || predicate==null) return true;
-        
+        if (subject == null || predicate == null) return true;
+
         if (subject.equals(predicate)) {
             return true;
-        }        
+        }
         if (invalidReflexive(subject, predicate)) {
             return true;
         }
@@ -269,6 +283,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * Check if one term is identical to or included in another one, except in a
      * reflexive relation
      * <p>
+     *
      * @param t1 The first term
      * @param t2 The second term
      * @return Whether they cannot be related in a statement
@@ -316,15 +331,15 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     public boolean invalid() {
         return invalidStatement(getSubject(), getPredicate());
     }
-    
- 
+
+
     /**
      * Return the first component of the statement
      *
      * @return The first component
      */
     public A getSubject() {
-        return (A)term[0];
+        return (A) term[0];
     }
 
     /**
@@ -333,9 +348,10 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @return The second component
      */
     public B getPredicate() {
-        return (B)term[1];
+        return (B) term[1];
     }
 
-    @Override public abstract Statement clone();
-   
+    @Override
+    public abstract Statement clone();
+
 }
