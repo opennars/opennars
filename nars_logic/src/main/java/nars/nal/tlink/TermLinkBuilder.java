@@ -17,24 +17,21 @@ import nars.nal.term.Variable;
 import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey {
+public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey, Serializable {
 
-
-    public final Concept concept;
+    transient public final Concept concept;
 
     final List<TermLinkTemplate> template;
 
-    int h;
-
-    int nonTransforms;
-
-    TermLinkTemplate currentTemplate;
-
-    boolean incoming;
+    transient int nonTransforms;
+    transient int hash;
+    transient TermLinkTemplate currentTemplate;
+    transient boolean incoming;
     transient private byte[] prefix;
 
     public TermLinkBuilder(Concept c) {
@@ -191,7 +188,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     protected void invalidate() {
         this.prefix = null;
-        this.h = 0;
+        this.hash = 0;
     }
 
     @Override
@@ -209,7 +206,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         byte[] p = this.prefix;
         if (p == null) {
             p = this.prefix = currentTemplate.prefix(incoming);
-            this.h = hash(prefix, getTarget(), currentTemplate.getType(getTarget()));
+            this.hash = hash(prefix, getTarget(), currentTemplate.getType(getTarget()));
         }
         return p;
     }
@@ -245,14 +242,14 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         if (this.prefix == null) {
             getLinkKey(); //computes hash:
         }
-        return h;
+        return hash;
     }
 
     @Override
     public TermLink newItem() {
         this.prefix = null;
         byte[] lk = getLinkKey(); //computes .h also
-        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), lk, this.h);
+        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), lk, this.hash);
     }
 
 /*    public int size() {

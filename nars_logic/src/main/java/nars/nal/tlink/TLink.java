@@ -4,8 +4,9 @@ import nars.budget.Budget;
 import nars.nal.term.Termed;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 
-public interface TLink<T extends Termed> extends Budget.Budgetable {
+public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable {
 
     public short getIndex(final int i);
     

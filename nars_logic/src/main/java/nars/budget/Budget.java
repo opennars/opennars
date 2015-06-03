@@ -20,13 +20,14 @@
  */
 package nars.budget;
 
-import nars.Memory;
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.Sentence;
 import nars.nal.Truth;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import static nars.Global.BUDGET_EPSILON;
@@ -41,7 +42,7 @@ import static nars.nal.UtilityFunctions.*;
  *      some subclasses / adapter classes for statistics,
  * monitoring or event notification on changes
  */
-public class Budget implements Cloneable, BudgetTarget, Prioritized {
+public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializable {
 
     /** The character that marks the two ends of a budget value */
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;

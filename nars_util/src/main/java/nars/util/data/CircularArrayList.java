@@ -1,12 +1,13 @@
 package nars.util.data;
 
+import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.RandomAccess;
 
 /* High-performance Circular (Ring) Buffer. Not thread safe, and sacrifices safety for speed in other ways. */
-public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E> {
+public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E>, Serializable {
 
     private final int n; // buffer length
     public final E[] array;

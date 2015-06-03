@@ -4,6 +4,7 @@ import nars.*;
 import nars.Memory.Forgetting;
 import nars.Memory.Timing;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.HeapBag;
 import nars.bag.impl.experimental.ChainBag;
@@ -416,7 +417,7 @@ public class Default extends NARSeed implements ConceptBuilder {
         return new ChainBag(rng, getConceptBagSize());
     }
     
-    GuavaCacheBag<Term,Concept> newSubconceptBag() {
+    public CacheBag<Term,Concept> newSubconceptBag() {
         if (getSubconceptBagSize() < 1) return null;
         return new GuavaCacheBag(getSubconceptBagSize());
     }

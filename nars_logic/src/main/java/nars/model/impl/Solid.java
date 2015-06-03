@@ -3,9 +3,10 @@ package nars.model.impl;
 import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
-import nars.budget.Budget;
+import nars.bag.impl.CacheBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.experimental.ChainBag;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
 import nars.model.cycle.ConceptActivator;
@@ -37,7 +38,7 @@ public class Solid extends Default implements ControlCycle {
     private final int inputsPerCycle;
     private Memory memory;
 
-    public final GuavaCacheBag<Term, Concept> subcon;
+    public final CacheBag<Term, Concept> subcon;
 
     public final Bag<Term, Concept> concepts;
 
@@ -48,7 +49,7 @@ public class Solid extends Default implements ControlCycle {
         }
 
         @Override
-        public GuavaCacheBag<Term, Concept> getSubConcepts() {
+        public CacheBag<Term, Concept> getSubConcepts() {
             return subcon;
         }
 

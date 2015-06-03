@@ -37,6 +37,7 @@ import nars.nal.transform.TermVisitor;
 import nars.util.data.Util;
 import nars.util.data.id.Named;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -46,7 +47,7 @@ import java.util.*;
  * It is used as the premises and conclusions of all logic rules.
  */
 //TODO: make Named<byte[]>
-public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>, Termed, Truth.Truthable, Stamped, Sentenced {
+public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>, Termed, Truth.Truthable, Stamped, Sentenced, Serializable {
 
 
     /**

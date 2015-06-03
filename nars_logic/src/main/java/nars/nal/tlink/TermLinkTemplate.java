@@ -6,8 +6,10 @@ import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.utf8.Utf8;
 
+import java.io.Serializable;
+
 /** contains most of the essential data to populate new TermLinks */
-public class TermLinkTemplate implements Termed {
+public class TermLinkTemplate /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
 
     /** The linked Term */
     public final Term target;

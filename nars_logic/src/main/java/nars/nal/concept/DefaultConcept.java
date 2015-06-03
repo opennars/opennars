@@ -49,14 +49,14 @@ public class DefaultConcept extends Item<Term> implements Concept {
     private List<Task> beliefs;
     private List<Task> goals;
 
-    private final Memory memory;
+    transient private final Memory memory;
 
     /**
      * Link templates of TermLink, only in concepts with CompoundTerm Templates
      * are used to improve the efficiency of TermLink building
      */
     private final TermLinkBuilder termLinkBuilder;
-    private final TaskLinkBuilder taskLinkBuilder;
+    transient private final TaskLinkBuilder taskLinkBuilder;
 
     private boolean constant = false;
 

@@ -26,6 +26,7 @@ import objenome.util.random.XORShiftRandom;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.util.ArrayUnenforcedSet;
 
+import java.io.Serializable;
 import java.util.*;
 
 /** An unordered map. This implementation is a cuckoo hash map using 3 hashes, random walking, and a small stash for problematic
@@ -35,13 +36,13 @@ import java.util.*;
  * depending on hash collisions. Load factors greater than 0.91 greatly increase the chances the map will have to rehash to the
  * next higher POT size.
  * @author Nathan Sweet */
-public class CuckooMap<K, V> implements Map<K,V> {
+public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     private static final int PRIME1 = 0xbe1f14b1;
     private static final int PRIME2 = 0xb4b82e39;
     private static final int PRIME3 = 0xced1c241;
 
     //TODO allow setting this via constructor
-    static final Random random = XORShiftRandom.global;
+    transient static final Random random = XORShiftRandom.global;
 
     public int size;
 
@@ -53,7 +54,7 @@ public class CuckooMap<K, V> implements Map<K,V> {
     private int hashShift, mask, threshold;
     private int stashCapacity;
     private int pushIterations;
-    static final int stashCapacityFactor = 8; //originally = 2
+    static final int stashCapacityFactor = 2; //originally = 2
 
     /** Creates a new map with an initial capacity of 32 and a load factor of 0.8. This map will hold 25 items before growing the
      * backing table. */

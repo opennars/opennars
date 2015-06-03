@@ -33,12 +33,14 @@ import nars.nal.term.Termed;
 import nars.nal.tlink.*;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.collect.Iterators.*;
-import static nars.nal.UtilityFunctions.or;
 
-abstract public interface Concept extends Termed, Itemized<Term> {
+abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     public Bag<Sentence, TaskLink> getTaskLinks();

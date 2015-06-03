@@ -6,6 +6,7 @@ import nars.nal.Item;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -529,7 +530,7 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
      * @param x input mappig value
      * @return
      */
-    public static interface BagCurve {
+    public static interface BagCurve extends Serializable {
 
         public float y(float x);
     }

@@ -42,10 +42,12 @@ public class ProtoTask<T extends Compound> {
     }
 
     private void ensureBudgetExists() {
-        if (truth == null)
-            throw new RuntimeException("Truth must be specified before generating a default budget");
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
+
+        if (truth == null) {
+            truth = new DefaultTruth(punc);
+        }
 
         if (this.budget == null) {
             //if budget not specified, use the default given the punctuation and truth

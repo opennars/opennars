@@ -1,13 +1,13 @@
 package nars.model.cycle;
 
-import nars.Memory;
 import nars.Global;
-import nars.budget.BudgetFunctions;
+import nars.Memory;
+import nars.bag.impl.CacheBag;
+import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
-import nars.bag.impl.GuavaCacheBag;
-import nars.bag.tx.BagActivator;
 
 /**
 * Created by me on 3/15/15.
@@ -48,7 +48,7 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         return this;
     }
 
-    abstract public GuavaCacheBag<Term,Concept> getSubConcepts();
+    abstract public CacheBag<Term,Concept> getSubConcepts();
 
     @Override
     public Concept newItem() {

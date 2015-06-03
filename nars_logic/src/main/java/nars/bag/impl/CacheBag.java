@@ -4,7 +4,7 @@ import com.google.common.cache.RemovalListener;
 import nars.Memory;
 
 
-abstract public class CacheBag<K, V> implements Memory.MemoryAware  {
+abstract public class CacheBag<K, V> implements Memory.MemoryAware, Iterable<V> {
 
     protected Memory memory = null;
 

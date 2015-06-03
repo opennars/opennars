@@ -4,6 +4,8 @@ import com.google.common.cache.*;
 import nars.Memory;
 import nars.nal.Itemized;
 
+import java.util.Iterator;
+
 /**
  * Index of stored Items (ex: concepts) which is optimized for
  * random access storage and retrieval and not prioritized active processing.
@@ -11,7 +13,7 @@ import nars.nal.Itemized;
  * 
  * http://docs.guava-libraries.googlecode.com/git-history/release/javadoc/com/google/common/cache/package-summary.html*
  */
-public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> implements RemovalListener<K, V> {
+public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> implements RemovalListener<K, V>, Iterable<V> {
 
     public final Cache<K, V> data;
 
@@ -71,4 +73,8 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
         }
     }
 
+    @Override
+    public Iterator<V> iterator() {
+        return data.asMap().values().iterator();
+    }
 }

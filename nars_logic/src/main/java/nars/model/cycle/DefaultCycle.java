@@ -3,7 +3,7 @@ package nars.model.cycle;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
-import nars.bag.impl.GuavaCacheBag;
+import nars.bag.impl.CacheBag;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.term.Compound;
@@ -34,7 +34,7 @@ public class DefaultCycle extends SequentialCycle {
 
 
 
-    public DefaultCycle(Bag<Term, Concept> concepts, GuavaCacheBag<Term, Concept> subcon, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+    public DefaultCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
         super(concepts, subcon);
 
 

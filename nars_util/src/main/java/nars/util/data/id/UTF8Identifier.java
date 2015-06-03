@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class UTF8Identifier extends Identifier {
 
     protected byte[] name = null;
-    protected int hash = 0;
+    transient protected int hash = 0;
 
 
     /** do nothing, used by subclass */

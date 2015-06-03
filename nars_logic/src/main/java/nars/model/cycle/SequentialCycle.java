@@ -2,6 +2,7 @@ package nars.model.cycle;
 
 import nars.Memory;
 import nars.bag.Bag;
+import nars.bag.impl.CacheBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
@@ -28,14 +29,14 @@ abstract public class SequentialCycle implements ControlCycle {
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Term, Concept> concepts;
-    public final GuavaCacheBag<Term, Concept> subcon;
+    public final CacheBag<Term, Concept> subcon;
 
 
     protected List<Runnable> run = new ArrayList();
 
     protected Memory memory;
 
-    public SequentialCycle(Bag<Term, Concept> concepts, GuavaCacheBag<Term, Concept> subcon) {
+    public SequentialCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon) {
 
         this.concepts = concepts;
         this.subcon = subcon;
@@ -148,7 +149,7 @@ abstract public class SequentialCycle implements ControlCycle {
         }
 
         @Override
-        public GuavaCacheBag<Term, Concept> getSubConcepts() {
+        public CacheBag<Term, Concept> getSubConcepts() {
             return subcon;
         }
 

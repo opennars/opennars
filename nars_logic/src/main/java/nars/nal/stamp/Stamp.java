@@ -30,12 +30,13 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.util.data.Util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import static nars.nal.nal7.TemporalRules.*;
 import static nars.nal.nal7.Tense.*;
 
-public class Stamp implements Cloneable, NAL.StampBuilder, Stamped {
+public class Stamp implements Cloneable, NAL.StampBuilder, Stamped, Serializable {
 
     /**
      * default for atemporal events

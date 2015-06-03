@@ -9,10 +9,10 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
 import nars.nal.Itemized;
-import objenome.op.cas.E;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -25,9 +25,9 @@ import java.util.function.Supplier;
  * TODO remove unnecessary methods, documetn
  * TODO implement java.util.Map interface
  */
-public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V> {
+public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.DefaultBudgetBuffer implements Iterable<V>, Consumer<V>, Supplier<V>, Serializable {
 
-    protected final ForgetNext<K, V> forgetNext = new ForgetNext(this);
+    transient protected final ForgetNext<K, V> forgetNext = new ForgetNext(this);
 
 
 

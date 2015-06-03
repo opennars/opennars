@@ -30,6 +30,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Termed;
 import nars.op.mental.InternalExperience;
 
+import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -44,7 +45,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed,Budget.Budgetable, Stamped, Truth.Truthable, Sentenced {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Stamped, Truth.Truthable, Sentenced, Serializable {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -55,14 +56,16 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * The sentence of the Task
      */
     public final Sentence<T> sentence;
+
     /**
      * Task from which the Task is derived, or null if input
      */
-    final Reference<Task> parentTask;
+    transient final Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    public final Sentence parentBelief;
+    transient public final Sentence parentBelief;
 
 
     /**

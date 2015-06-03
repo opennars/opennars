@@ -7,9 +7,9 @@ import java.io.*;
 /**
  * Generic abstract identifier for symbols, tags, and other identifiables
  */
-abstract public class Identifier<E extends Identifier> implements Comparable {
+abstract public class Identifier<E extends Identifier> implements Comparable, Serializable {
 
-    private Identified host = null;
+    transient private Identified host = null;
 
     public char[] toChars(boolean pretty) {
         CharArrayWriter caw = new EfficientCharArrayWriter();
