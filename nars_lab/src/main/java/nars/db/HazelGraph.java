@@ -1,8 +1,5 @@
 package nars.db;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.AbstractElement;
 import org.graphstream.graph.implementations.AbstractGraph;
@@ -20,7 +17,6 @@ import java.util.*;
 public class HazelGraph extends MultiGraph {
 
 
-    private HazelcastInstance hazel;
 
     public HazelGraph(String id, boolean strictChecking, boolean autoCreate) {
         this(id, strictChecking, autoCreate, DEFAULT_NODE_CAPACITY,
@@ -37,22 +33,18 @@ public class HazelGraph extends MultiGraph {
 
     @Override
     protected void init(int initialNodeCapacity, int initialEdgeCapacity) {
-        Config cfg = new Config();
 
-        //cfg.setProperty( "hazelcast.logging.type", "none" );
-        cfg.setProperty("hazelcast.memcache.enabled", "false");
-        cfg.setProperty("hazelcast.rest.enabled", "false");
-        cfg.setProperty("hazelcast.system.log.enabled", "false");
-
-        cfg.setProperty("hazelcast.elastic.memory.enabled", "true");
-        cfg.setProperty("hazelcast.elastic.memory.unsafe.enabled", "true");
-
-        hazel = Hazelcast.newHazelcastInstance(cfg);
 
         super.init(initialNodeCapacity, initialEdgeCapacity);
     }
 
-    @Override protected Map<String, Edge> newEdgeMap() {  return hazel.getMap(id + "_edgemap"); }
-    @Override protected Map<String, Node> newNodeMap() {  return hazel.getMap(id + "_nodemap");    }
+    @Override protected Map<String, Edge> newEdgeMap() {
+        //return hazel.getMap(id + "_edgemap"); }
+        return null;
+    }
+    @Override protected Map<String, Node> newNodeMap() {
+            //return hazel.getMap(id + "_nodemap")}
+            return null;
+        }
 
 }

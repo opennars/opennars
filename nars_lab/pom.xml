@@ -70,12 +70,12 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-            <version>3.5-EA</version>
-        </dependency>
 
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-embedded</artifactId>
+            <version>8.0.0.Alpha1</version>
+        </dependency>
 
         <!--graphstream's unfortunate use of protected fields for some of the most overridable features forced me to entirely fork it and this worked out well because a lot needed improved -->
         <!--<dependency>-->

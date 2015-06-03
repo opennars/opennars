@@ -1,12 +1,6 @@
 package nars.db;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.NativeMemoryConfig;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.memory.MemorySize;
-import com.hazelcast.memory.MemoryUnit;
+
 import nars.bag.impl.CacheBag;
 import nars.nal.Itemized;
 
@@ -22,29 +16,11 @@ public class HazelCacheBag<K, V extends Itemized<K>> extends CacheBag<K,V>  {
     private final String userID;
 
     public HazelCacheBag(String userID, String channel) {
-        Config cfg = new Config();
 
-        //cfg.setProperty( "hazelcast.logging.type", "none" );
-        cfg.setProperty("hazelcast.memcache.enabled", "false");
-        cfg.setProperty("hazelcast.rest.enabled", "false");
-        cfg.setProperty("hazelcast.system.log.enabled", "false");
+        this.userID = userID;
 
-        cfg.setProperty("hazelcast.elastic.memory.enabled", "true");
-        cfg.setProperty("hazelcast.elastic.memory.unsafe.enabled", "true");
+        concepts = null;//instance.getMap(channel);
 
-        cfg.setInstanceName(this.userID = userID);
-
-
-        cfg.setNativeMemoryConfig(new NativeMemoryConfig()
-                .setAllocatorType(NativeMemoryConfig.MemoryAllocatorType.POOLED)
-                .setSize(new MemorySize(256, MemoryUnit.MEGABYTES))
-                .setEnabled(true)
-                .setMinBlockSize(16)
-                .setPageSize(1 << 20));
-
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
-
-        concepts = instance.getMap(channel);
 
     }
     @Override
