@@ -1,345 +1,44 @@
 package nars.rl.lstm.opencl;
 
 import com.jogamp.opencl.*;
-import nars.rl.lstm.IAgentSupervised;
-import nars.rl.lstm.Neuron;
-import nars.rl.lstm.NeuronType;
+import nars.rl.lstm.AgentSupervised;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
+import static com.jogamp.opencl.CLMemory.Mem.READ_ONLY;
 import static com.jogamp.opencl.CLMemory.Mem.READ_WRITE;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 
-public class LSTMCL implements IAgentSupervised {
-
-
-    private final CLBuffer<IntBuffer> counterBarrier1;
-    private final CLBuffer<IntBuffer> counterBarrier2;
-
-    // for validation of the implementation
-    public class ValidationSimpleLSTM implements IAgentSupervised
-    {
-        private double init_weight_range = 0.1;
-        public double learningRate;//0.07
-
-
-        private int full_input_dimension;
-        private int output_dimension;
-        private int cell_blocks;
-        private Neuron F;
-        private Neuron G;
-
-        public double [] context;
-
-        public double [][] weightsF;
-        public double [][] weightsG;
-        public double [][] weightsOut;
-
-        //partials (Need this for each output? Need to remind myself..)
-        public double [][] dSdF;
-        public double [][] dSdG;
-
-        private NeuronType neuron_type_F = NeuronType.Sigmoid;
-        private NeuronType neuron_type_G = NeuronType.Sigmoid;
-
-        public double SCALE_OUTPUT_DELTA = 1.0;
-
-
-        public double[] sumF;
-        public double[] actF;
-        public double[] sumG;
-        public double[] actG;
-        public double[] actH;
-        public double[] full_hidden;
-        public double[] output;
-        public double[] deltaOutput;
-        public double[] deltaH;
-        public double[] full_input;
-
-        public ValidationSimpleLSTM(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate)
-        {
-            this.learningRate = initLearningRate;
-            this.output_dimension = output_dimension;
-            this.cell_blocks = cell_blocks;
-
-            context = new double[cell_blocks];
-
-            full_input_dimension = input_dimension + cell_blocks + 1; //+1 for bias
-
-            F = Neuron.Factory(neuron_type_F);
-            G = Neuron.Factory(neuron_type_G);
-
-            weightsF = new double[cell_blocks][full_input_dimension];
-            weightsG = new double[cell_blocks][full_input_dimension];
-
-            dSdF = new double[cell_blocks][full_input_dimension];
-            dSdG = new double[cell_blocks][full_input_dimension];
-
-            for (int i = 0; i < full_input_dimension; i++) {
-                for (int j = 0; j < cell_blocks; j++) {
-                    weightsF[j][i] = (r.nextDouble() * 2d - 1d) * init_weight_range;
-                    weightsG[j][i] = (r.nextDouble() * 2d - 1d) * init_weight_range;
-                }
-            }
-
-            weightsOut = new double[output_dimension][cell_blocks + 1];
-
-            for (int j = 0; j < cell_blocks + 1; j++) {
-                for (int k = 0; k < output_dimension; k++)
-                    weightsOut[k][j] = (r.nextDouble() * 2d - 1d) * init_weight_range;
-            }
-
-            sumF = new double[cell_blocks];
-            sumG = new double[cell_blocks];
-        }
-
-        public void clear()
-        {
-
-            Arrays.fill(context, 0.0);
-
-            //reset accumulated partials
-            for (int c = 0; c < cell_blocks; c++) {
-                Arrays.fill(this.dSdG[c], 0.0);
-                Arrays.fill(this.dSdF[c], 0.0);
-            }
-
-        }
-
-        public double[] predict(double[] input, final boolean requireOutput)
-        {
-            return learn(input, null, requireOutput);
-        }
-
-        // requireOutput is unused
-        public double[] learn(double[] input, double[] target_output, final boolean requireOutput) {
-
-            final double learningRate = this.learningRate;
-            final int cell_blocks = this.cell_blocks;
-            final int full_input_dimension = this.full_input_dimension;
-
-            //setup input vector
-
-
-            if ((full_input == null) || (full_input.length != full_input_dimension)) {
-                full_input = new double[full_input_dimension];
-            }
-            final double[] full_input = this.full_input;
-
-            int loc = 0;
-            for (int i = 0; i < input.length; ) {
-                full_input[loc++] = input[i++];
-            }
-            for (int c = 0; c < context.length; ) {
-                full_input[loc++] = context[c++];
-            }
-            full_input[loc++] = 1.0; //bias
-
-            //cell block arrays
-            if ((sumF == null) || (sumF.length!=cell_blocks)) {
-                actF = new double[cell_blocks];
-                actG = new double[cell_blocks];
-                actH = new double[cell_blocks];
-                full_hidden = new double[cell_blocks + 1];
-                output = new double[output_dimension];
-            }
-            else {
-                Arrays.fill(sumF, 0);
-                Arrays.fill(actF, 0);
-                Arrays.fill(sumG, 0);
-                Arrays.fill(actG, 0);
-                Arrays.fill(actH, 0);
-            }
-            final double[] full_hidden = this.full_hidden;
-
-            //inputs to cell blocks
-            inputsToCellblocksKernel2();
-
-            activateKernel();
-
-            //prepare hidden layer plus bias
-            Arrays.fill(full_hidden, 0);
-
-
-            System.arraycopy(actH, 0, full_hidden, 0, cell_blocks);
-            full_hidden[cell_blocks] = 1.0; //bias
-
-            //calculate output
-
-            for (int k = 0; k < output_dimension; k++)
-            {
-                double s = 0;
-                double wk[] = weightsOut[k];
-                for (int j = 0; j < cell_blocks + 1; j++)
-                    s += wk[j] * full_hidden[j];
-
-                output[k] = s;
-                //output not squashed
-            }
-
-            //////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////
-            //BACKPROP
-            //////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////
-
-            //scale partials
-            for (int j = 0; j < cell_blocks; j++) {
-
-                double f = actF[j];
-                double df = F.Derivative(sumF[j]);
-                double g = actG[j];
-                double dg = G.Derivative(sumG[j]);
-                double h_ = context[j]; //prev value of h
-
-                final double[] dsg = dSdG[j];
-                final double[] dsf = dSdF[j];
-
-                for (int i = 0; i < full_input_dimension; i++) {
-
-                    double prevdSdF = dsf[i];
-                    double prevdSdG = dsg[i];
-                    double in = full_input[i];
-
-                    dsg[i] = ((1 - f)*dg*in) + (f*prevdSdG);
-                    dsf[i] = ((h_- g)*df*in) + (f*prevdSdF);
-                }
-            }
-
-            if (target_output != null) {
-
-                //output to hidden
-
-                if ((deltaOutput == null) || (deltaOutput.length!=output_dimension)) {
-                    deltaOutput = new double[output_dimension];
-                    deltaH = new double[cell_blocks];
-                }
-                else {
-                    Arrays.fill(deltaOutput, 0);
-                    Arrays.fill(deltaH, 0);
-                }
-
-                for (int k = 0; k < output_dimension; k++) {
-                    final double dok  = deltaOutput[k] = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
-
-                    final double[] wk = weightsOut[k];
-
-                    for (int j = 0; j < cell_blocks; j++) {
-
-                        deltaH[j] += dok * wk[j];
-                        wk[j] += dok * actH[j] * learningRate;
-                    }
-                    //bias
-                    wk[cell_blocks] += dok * 1.0 * learningRate;
-                }
-
-                //input to hidden
-                for (int j = 0; j < cell_blocks; j++) {
-                    final double dhj = deltaH[j];
-                    final double[] dsj = dSdF[j];
-                    final double[] dsd = dSdG[j];
-                    final double[] wfj = weightsF[j];
-                    final double[] wgj = weightsG[j];
-
-                    for (int i = 0; i < full_input_dimension; i++) {
-                        wfj[i] += dhj * dsj[i] * learningRate;
-                        wgj[i] += dhj * dsd[i] * learningRate;
-                    }
-                }
-            }
-
-            //////////////////////////////////////////////////////////////
-
-            //roll-over context to next time step
-            System.arraycopy(actH, 0, context, 0, cell_blocks);
-
-            //give results
-            return output;
-        }
-
-
-
-        public void setLearningRate(double learningRate) {
-            this.learningRate = learningRate;
-        }
-
-        /*
-        public void inputsToCellblocksKernel() {
-            for (int i = 0; i < full_input_dimension; i++) {
-                final double fi = full_input[i];
-
-                for (int j = 0; j < cell_blocks; j++) {
-                    sumF[j] += weightsF[j][i] * fi;
-                    sumG[j] += weightsG[j][i] * fi;
-                }
-            }
-        }
-        */
-
-        // "wrong" transformation like in openCL
-        public void inputsToCellblocksKernel2() {
-            for (int j = 0; j < cell_blocks; j++) {
-                double _sumF = 0.0;
-                double _sumG = 0.0;
-
-                for (int i = 0; i < full_input_dimension; i++) {
-                    final double fi = full_input[i];
-
-                    _sumF += (weightsF[j][i] * fi);
-                    _sumG += (weightsG[j][i] * fi);
-                }
-
-                sumF[j] = _sumF;
-                sumG[j] = _sumG;
-            }
-        }
-
-        public void activateKernel() {
-            for (int j = 0; j < cell_blocks; j++) {
-                final double actfj = actF[j] = F.Activate(sumF[j]);
-                final double actgj = actG[j] = G.Activate(sumG[j]);
-
-
-                actH[j] = actfj * context[j] + (1 - actfj) * actgj;
-            }
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private ValidationSimpleLSTM validation;
-
+public class LSTMCL extends AgentSupervised {
     private final CLContext cl;
     private final CLCommandQueue queue;
     private final CLProgram program;
+    private final CLBuffer<IntBuffer> flagIsTargetOutputAvailable;
+    private final CLBuffer<FloatBuffer> batchInputs;
+    private final CLBuffer<FloatBuffer> batchTargetOutputs;
+    private final CLBuffer<IntBuffer> counterBarrier4;
+    private final CLBuffer<IntBuffer> counterBarrier5;
+    private final CLBuffer<IntBuffer> counterBarrier6;
+    private final CLBuffer<IntBuffer> counterBarrier7;
 
+    private final double init_weight_range = 0.1;
+    private double learningRate;
 
-    private double init_weight_range = 0.1;
-    public double learningRate;//0.07
+    private final int full_input_dimension;
+    private final int output_dimension;
+    private final int cell_blocks;
+    private final int inputDimension;
 
-
-    private int full_input_dimension;
-    private int output_dimension;
-    private int cell_blocks;
 
     private CLBuffer<FloatBuffer> weightsF = null;
     private CLBuffer<FloatBuffer> weightsG = null;
@@ -354,7 +53,7 @@ public class LSTMCL implements IAgentSupervised {
 
     CLBuffer<FloatBuffer> sumF = null, sumG = null, actF, actG, actH, context;
 
-    private CLBuffer<FloatBuffer> fullInputBuffer = null;
+    private CLBuffer<FloatBuffer> inputs = null;
 
 
     private CLBuffer<FloatBuffer>  full_hidden = null;
@@ -362,7 +61,6 @@ public class LSTMCL implements IAgentSupervised {
     private CLBuffer<FloatBuffer> target_outputBuffer;
 
     CLBuffer<FloatBuffer> deltaH = null;
-    private float[] full_input;
     private int maxWorkGroupSize;
 
     private CLKernel stage1Kernel;
@@ -370,16 +68,13 @@ public class LSTMCL implements IAgentSupervised {
 
     private CLKernel inputToHiddenKernel;
 
-    private final CLBuffer<IntBuffer> counterBarrier0;
-    private final CLBuffer<IntBuffer> counterBarrier3;
+    private  CLBuffer<IntBuffer> counterBarrier0;
+    private  CLBuffer<IntBuffer> counterBarrier1;
+    private  CLBuffer<IntBuffer> counterBarrier2;
+    private  CLBuffer<IntBuffer> counterBarrier3;
 
     public LSTMCL(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate) {
-        validation = new ValidationSimpleLSTM(r, input_dimension, output_dimension, cell_blocks, initLearningRate);
-
-
-        // set up (uses default CLPlatform and creates context for all devices)
         cl = CLContext.create();
-        //out.println("created " + context);
 
         // always make sure to release the context under all circumstances
         // not needed for this particular sample but recommented
@@ -390,12 +85,7 @@ public class LSTMCL implements IAgentSupervised {
         maxWorkGroupSize = device.getMaxWorkGroupSize();
         //out.println("using " + device);
 
-        // create command queue on device.
         queue = device.createCommandQueue(0);
-
-//            //final double actfj = actF[j] = F.Activate(sumFF[j]);
-//            //final double actgj = actG[j] = G.Activate(sumGG[j]);
-//            actH[j] = actfj * context[j] + (1 - actfj) * actgj;
 
         String[] sources = new String[3];
 
@@ -419,6 +109,7 @@ public class LSTMCL implements IAgentSupervised {
         context = cl.createFloatBuffer(cell_blocks, READ_WRITE);
 
         full_input_dimension = input_dimension + cell_blocks + 1; //+1 for bias
+        this.inputDimension = input_dimension;
 
         weightsF = cl.createFloatBuffer(cell_blocks * full_input_dimension, READ_WRITE);
         weightsG = cl.createFloatBuffer(cell_blocks * full_input_dimension, READ_WRITE);
@@ -464,10 +155,21 @@ public class LSTMCL implements IAgentSupervised {
 
         deltaH = cl.createFloatBuffer(cell_blocks, READ_WRITE);
 
+        inputs = cl.createFloatBuffer(full_input_dimension, READ_WRITE);
+
         counterBarrier0 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier1 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier2 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier3 = cl.createIntBuffer(1, READ_WRITE);
+        counterBarrier4 = cl.createIntBuffer(1, READ_WRITE);
+        counterBarrier5 = cl.createIntBuffer(1, READ_WRITE);
+        counterBarrier6 = cl.createIntBuffer(1, READ_WRITE);
+        counterBarrier7 = cl.createIntBuffer(1, READ_WRITE);
+
+
+        flagIsTargetOutputAvailable = cl.createIntBuffer(1, READ_ONLY);
+        batchInputs = cl.createFloatBuffer(full_input_dimension*1, READ_ONLY);
+        batchTargetOutputs = cl.createFloatBuffer(output_dimension*1, READ_ONLY);
     }
 
     public void delete() {
@@ -499,38 +201,37 @@ public class LSTMCL implements IAgentSupervised {
     }
 
     public double[] learn(double[] input, double[] target_output, final boolean requireOutput) {
-        //setup input vector
+        NonResetInteraction nonResetInteraction = new NonResetInteraction();
+        nonResetInteraction.observation = input;
+        nonResetInteraction.target_output = target_output;
+        return learnBatch(new ArrayList<>(Arrays.asList(nonResetInteraction)), requireOutput);
+    }
+
+    public double[] learnBatch(List<NonResetInteraction> interactions, final boolean requireOutput) {
+
+        // translate all interactions
+
+        // TODO< reallocate buffers if necessary >
 
 
-        if ((full_input == null) || (full_input.length != full_input_dimension)) {
-            full_input = new float[full_input_dimension];
+        FloatBuffer batchInputsBuffer = batchInputs.getBuffer();
+        batchInputsBuffer.rewind();
 
-            fullInputBuffer = cl.createFloatBuffer(full_input_dimension, READ_WRITE);
+        for (int i = 0; i < interactions.get(0).observation.length; i++) {
+            batchInputsBuffer.put(0 * inputDimension + i, (float) interactions.get(0).observation[i++]);
         }
 
-        int loc = 0;
-        for (int i = 0; i < input.length; ) {
-            full_input[loc++] = (float)input[i++];
-        }
+        IntBuffer flagIsTargetOutputAvailableBuffer = flagIsTargetOutputAvailable.getBuffer();
 
-        queue.putReadBuffer(context, true);
+        flagIsTargetOutputAvailableBuffer.put(0, booleanToInt(interactions.get(0).target_output != null));
 
-        FloatBuffer contextBuffer = context.getBuffer();
-        contextBuffer.rewind();
-        for (int c = 0; c < cell_blocks; ) {
-            full_input[loc++] = contextBuffer.get(c++);
-        }
-        full_input[loc++] = (float)1.0; //bias
 
-        // copy full input
-        FloatBuffer fullInputBufferBuffer = fullInputBuffer.getBuffer();
-        fullInputBufferBuffer.rewind();
+        // TODO< target output >
 
-        for( int i = 0; i < full_input_dimension; i++ ) {
-            fullInputBufferBuffer.put(i, full_input[i]);
-        }
 
-        queue.putWriteBuffer(fullInputBuffer, true);
+        queue.putWriteBuffer(flagIsTargetOutputAvailable, true);
+        //queue.putWriteBuffer(this.inputs, true);
+        queue.putWriteBuffer(batchInputs, true);
 
 
 
@@ -576,19 +277,70 @@ public class LSTMCL implements IAgentSupervised {
 
         queue.putWriteBuffer(counterBarrier3, true);
 
+        IntBuffer counterBarrier4Buffer = counterBarrier4.getBuffer();
+        counterBarrier4Buffer.put(0, globalWorkSizeForCombined);
+
+        queue.putWriteBuffer(counterBarrier4, true);
+
+        IntBuffer counterBarrier5Buffer = counterBarrier5.getBuffer();
+        counterBarrier5Buffer.put(0, globalWorkSizeForCombined);
+
+        queue.putWriteBuffer(counterBarrier5, true);
+
+        IntBuffer counterBarrier6Buffer = counterBarrier6.getBuffer();
+        counterBarrier6Buffer.put(0, globalWorkSizeForCombined);
+
+        queue.putWriteBuffer(counterBarrier6, true);
+
+        IntBuffer counterBarrier7Buffer = counterBarrier7.getBuffer();
+        counterBarrier7Buffer.put(0, globalWorkSizeForCombined);
+
+        queue.putWriteBuffer(counterBarrier7, true);
+
+
+        if( interactions.get(0).target_output != null ) {
+            // TODO< do this in the kernel >
+            float[] floatTargetOutput = new float[interactions.get(0).target_output.length];
+            for (int i = 0; i < interactions.get(0).target_output.length; i++) {
+                floatTargetOutput[i] = (float) interactions.get(0).target_output[i];
+            }
+
+            target_outputBuffer.getBuffer().rewind();
+
+            for (int i = 0; i < floatTargetOutput.length; i++) {
+                target_outputBuffer.getBuffer().put(i, floatTargetOutput[i]);
+            }
+            queue.putWriteBuffer(target_outputBuffer, true);
+        }
+
+
+        zero(deltaH.getBuffer());
+        queue.putWriteBuffer(deltaH, true);
 
 
         stage1Kernel.rewind();
-        stage1Kernel.putArgs(context, sumF, sumG, actF, actG, actH, weightsF, weightsG, weightsOut, fullInputBuffer, full_hidden, output, dSdG, dSdF);
+        stage1Kernel.putArgs(context, sumF, sumG, actF, actG, actH, weightsF, weightsG, weightsOut, inputs, full_hidden, output, dSdG, dSdF);
+        stage1Kernel.putArgs(flagIsTargetOutputAvailable, batchInputs, batchTargetOutputs);
+        stage1Kernel.putArg(interactions.size());
         stage1Kernel.putArg(full_input_dimension).putArg(cell_blocks).putArg(output_dimension);
-        stage1Kernel.putArgs(counterBarrier0, counterBarrier1, counterBarrier2, counterBarrier3);
+        stage1Kernel.putArg(inputDimension);
+        stage1Kernel.putArgs(counterBarrier0, counterBarrier1, counterBarrier2, counterBarrier3, counterBarrier4, counterBarrier5, counterBarrier6, counterBarrier7);
+
+        stage1Kernel.putArg((float) SCALE_OUTPUT_DELTA);
+        stage1Kernel.putArgs(target_outputBuffer);
+        stage1Kernel.putArgs(deltaH);
+        stage1Kernel.putArg((float) learningRate);
 
         queue.put1DRangeKernel(stage1Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined);
 
         queue.finish();
 
+        //debugBuffer1d("batchInputs", batchInputs);
+        //debugBuffer1d("inputs", inputs);
 
+        int debug0 = 0;
 
+        /*
         if( target_output != null ) {
             float[] floatTargetOutput = new float[target_output.length];
             for( int i = 0; i < target_output.length; i++ ) {
@@ -665,7 +417,7 @@ public class LSTMCL implements IAgentSupervised {
 
                 queue.putWriteBuffer(weightsOut, true);
                 queue.putWriteBuffer(deltaH, true);
-                //HALF WORKS**/
+                //HALF WORKS*
             }
 
             // debug
@@ -676,31 +428,6 @@ public class LSTMCL implements IAgentSupervised {
 
                 debugBuffer1d("deltaH after stage2kernel", deltaH);
             }
-
-
-
-            /*
-            transformed second version without DATA HAZZARD
-
-            for (int j = 0; j < cell_blocks; j++) {
-
-                float deltaHSum = 0.0f;
-
-                for (int k = 0; k < output_dimension; k++) {
-                    final double dok = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
-
-                    deltaHSum += (dok * weightsOut[k][j]);
-                    weightsOut[k][j] += dok * actH[j] * learningRate;
-
-                    //bias
-                    weightsOut[k][cell_blocks] += dok * 1.0 * learningRate;
-                }
-
-                deltaH[j] = deltaHSum;
-            }
-            */
-
-
 
 
 
@@ -735,6 +462,7 @@ public class LSTMCL implements IAgentSupervised {
 
 
         }
+        */
 
         //////////////////////////////////////////////////////////////
 
@@ -759,6 +487,15 @@ public class LSTMCL implements IAgentSupervised {
         }
         else {
             return null;
+        }
+    }
+
+    private static int booleanToInt(boolean value) {
+        if( value ) {
+            return 1;
+        }
+        else {
+            return 0;
         }
     }
 
