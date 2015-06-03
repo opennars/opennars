@@ -417,7 +417,7 @@ public class Default extends NARSeed implements ConceptBuilder {
         return new ChainBag(rng, getConceptBagSize());
     }
     
-    public CacheBag<Term,Concept> newSubconceptBag() {
+    @Deprecated public CacheBag<Term,Concept> newSubconceptBag() {
         if (getSubconceptBagSize() < 1) return null;
         return new GuavaCacheBag(getSubconceptBagSize());
     }

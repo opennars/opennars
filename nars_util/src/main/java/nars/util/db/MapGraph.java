@@ -3,26 +3,25 @@ package nars.util.db;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.tinkerpop.blueprints.*;
-import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 import com.tinkerpop.blueprints.util.*;
 
 import java.io.Serializable;
 import java.util.*;
 
 /**
- * Blueprints Graph interface implemented with Infinispan collections
+ * Blueprints Graph interface with adjacency implemented by some Map implementation.
+ * Iterables in Elements, Vertices, and Edges are implemented by guava Iterator/Iterable lazy wrappers, avoiding collection allocation
  */
-public class InfiniGraph<X> implements Graph {
+abstract public class MapGraph<X> implements Graph {
 
     public final String id;
-    //protected Long currentId = 0l;
+
     protected Map<X, Vertex> vertices;
     protected Map<X, Edge> edges;
-    //protected Map<String, TinkerIndex> indices = new HashMap<String, TinkerIndex>();
 
+    //protected Map<String, TinkerIndex> indices = new HashMap<String, TinkerIndex>();
     //protected TinkerKeyIndex<InfiniVertex> vertexKeyIndex = new TinkerKeyIndex<InfiniVertex>(InfiniVertex.class, this);
     //protected TinkerKeyIndex<InfiniEdge> edgeKeyIndex = new TinkerKeyIndex<InfiniEdge>(InfiniEdge.class, this);
-
 
     private static final Features FEATURES = new Features();
 
@@ -72,40 +71,29 @@ public class InfiniGraph<X> implements Graph {
 
 
 
-    public InfiniGraph(String id) {
+    public MapGraph(String id) {
         super();
 
         this.id = id;
 
-        init();
+
     }
 
+    /** call this at the end of implementing class constructors */
     protected void init() {
-
+        this.vertices = newVertexMap();
+        this.edges = newEdgeMap();
     }
 
-//    public Iterable<Vertex> getVertices(final String key, final Object value) {
-//        if (vertexKeyIndex.getIndexedKeys().contains(key)) {
-//            return (Iterable) vertexKeyIndex.get(key, value);
-//        } else {
-//            return new PropertyFilteredIterable<Vertex>(key, value, this.getVertices());
-//        }
-//    }
-//
-//    public Iterable<Edge> getEdges(final String key, final Object value) {
-//        if (edgeKeyIndex.getIndexedKeys().contains(key)) {
-//            return (Iterable) edgeKeyIndex.get(key, value);
-//        } else {
-//            return new PropertyFilteredIterable<Edge>(key, value, this.getEdges());
-//        }
-//    }
+    protected abstract Map<X,Edge> newEdgeMap();
 
-    public Vertex addVertex(final Object id) {
+    protected abstract Map<X,Vertex> newVertexMap();
 
-        InfiniVertex<X> vertex;
+    public MVertex<X> addVertex(final Object id) {
+
+
         if (null != id) {
-            vertex = (InfiniVertex<X>) this.vertices.get(id);
-            if (null != vertex) {
+            if (this.vertices.containsKey(id)) {
                 throw ExceptionFactory.vertexWithIdAlreadyExists(id);
             }
         } else {
@@ -119,24 +107,23 @@ public class InfiniGraph<X> implements Graph {
 //            }
         }
 
-        this.vertices.put(vertex.getId(), vertex = new InfiniVertex(id, this));
+        MVertex<X> vertex = new MVertex<X>((X) id, this);
+        this.vertices.put(vertex.id, vertex);
         return vertex;
     }
 
-    public Vertex getVertex(final Object id) {
+    public MVertex<X> getVertex(final Object id) {
         if (null == id)
             throw ExceptionFactory.vertexIdCanNotBeNull();
 
-        String idString = id.toString();
-        return this.vertices.get(idString);
+        return (MVertex<X>) this.vertices.get(id);
     }
 
-    public Edge getEdge(final Object id) {
+    public MEdge<X> getEdge(final Object id) {
         if (null == id)
             throw ExceptionFactory.edgeIdCanNotBeNull();
 
-        String idString = id.toString();
-        return this.edges.get(idString);
+        return (MEdge<X>) this.edges.get(id);
     }
 
 
@@ -161,26 +148,24 @@ public class InfiniGraph<X> implements Graph {
     }
 
     public void removeVertex(final Vertex vertex) {
-        if (null == this.vertices.remove(vertex.getId().toString()))
+        if (null == this.vertices.remove(vertex.getId()))
             throw ExceptionFactory.vertexWithIdDoesNotExist(vertex.getId());
 
         for (Edge edge : vertex.getEdges(Direction.BOTH)) {
             this.removeEdge(edge);
         }
 
-        this.vertices.remove(vertex.getId().toString());
+        this.vertices.remove(vertex.getId());
     }
 
     public Edge addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
         /*if (label == null)
             throw ExceptionFactory.edgeLabelCanNotBeNull();*/
 
-        String idString = null;
-        InfiniEdge<X> edge;
+
+
         if (null != id) {
-            idString = id.toString();
-            edge = (InfiniEdge<X>) this.edges.get(idString);
-            if (null != edge) {
+            if (this.edges.containsKey(id)) {
                 throw ExceptionFactory.edgeWithIdAlreadyExist(id);
             }
         } else {
@@ -194,14 +179,15 @@ public class InfiniGraph<X> implements Graph {
 //            }
         }
 
-        this.edges.put(edge.getId(),
-                edge = new InfiniEdge(idString,
-                        (InfiniVertex)outVertex,
-                        (InfiniVertex)inVertex,
-                        label, this));
+        MEdge<X> edge = new MEdge<X>((X)id,
+                (MVertex)outVertex,
+                (MVertex)inVertex,
+                label, this);
+        this.edges.put(edge.id, edge);
+
         
-        final InfiniVertex out = (InfiniVertex) outVertex;  //(InfiniVertex) outVertex;
-        final InfiniVertex in = (InfiniVertex) inVertex; //(InfiniVertex) inVertex;
+        final MVertex out = (MVertex) outVertex;  //(InfiniVertex) outVertex;
+        final MVertex in = (MVertex) inVertex; //(InfiniVertex) inVertex;
         out.addOutEdge(label, edge);
         in.addInEdge(label, edge);
         return edge;
@@ -215,8 +201,8 @@ public class InfiniGraph<X> implements Graph {
         }
 
 
-        InfiniVertex<X> outVertex = ((InfiniEdge) edge).outVertex;
-        InfiniVertex<X> inVertex = ((InfiniEdge) edge).inVertex;
+        MVertex<X> outVertex = ((MEdge) edge).outVertex;
+        MVertex<X> inVertex = ((MEdge) edge).inVertex;
         if (null != outVertex && null != outVertex.outEdges) {
             /*final Set<Edge> edges = */outVertex.outEdges.remove(edge.getLabel());
         }
@@ -314,20 +300,20 @@ public class InfiniGraph<X> implements Graph {
 //        }
 //    }
 
-    abstract protected static class InfiniElement<X> implements Element, Serializable {
+    abstract protected static class MElement<X> implements Element, Serializable {
 
         public final Map<String, Serializable> properties = new LinkedHashMap();
         public final X id;
         public final String graphID;
-        transient private final InfiniGraph<X> graph;
+        transient private final MapGraph<X> graph;
 
-        protected InfiniElement(final X id, final InfiniGraph<X> graph) {
+        protected MElement(final X id, final MapGraph<X> graph) {
             this.graph = graph;
             this.graphID = graph.id;
             this.id = id;
         }
 
-        public InfiniGraph<X> graph() {
+        public MapGraph<X> graph() {
             if (graph == null) {
                 //TODO lookup the graph by graph ID
             }
@@ -376,12 +362,12 @@ public class InfiniGraph<X> implements Graph {
 
     }
 
-    protected static class InfiniVertex<X> extends InfiniElement<X> implements Vertex, Serializable {
+    protected static class MVertex<X> extends MElement<X> implements Vertex, Serializable {
 
         public final Map<X, Set<Edge>> outEdges = new LinkedHashMap();
         public final Map<X, Set<Edge>> inEdges = new LinkedHashMap();
 
-        protected InfiniVertex(final X id, final InfiniGraph graph) {
+        protected MVertex(final X id, final MapGraph graph) {
             super(id, graph);
         }
 
@@ -487,13 +473,13 @@ public class InfiniGraph<X> implements Graph {
 
     }
 
-    public static class InfiniEdge<X> extends InfiniElement<X> implements Edge, Serializable {
+    public static class MEdge<X> extends MElement<X> implements Edge, Serializable {
 
         public final String label;
-        public final InfiniVertex<X> inVertex;
-        public final InfiniVertex<X> outVertex;
+        public final MVertex<X> inVertex;
+        public final MVertex<X> outVertex;
 
-        protected InfiniEdge(final X id, final InfiniVertex<X> outVertex, final InfiniVertex<X> inVertex, final String label, final InfiniGraph<X> graph) {
+        protected MEdge(final X id, final MVertex<X> outVertex, final MVertex<X> inVertex, final String label, final MapGraph<X> graph) {
             super(id, graph);
             this.label = label;
             this.outVertex = outVertex;

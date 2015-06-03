@@ -1,7 +1,8 @@
-package nars.util.db;
+package nars.bag;
 
 import nars.NAR;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.InfiniCacheBag;
 import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.concept.Concept;
@@ -10,7 +11,7 @@ import nars.nal.term.Term;
 /**
  * Created by me on 6/3/15.
  */
-public class HazelCacheTest {
+public class InfiniCacheTest {
 
     public static class P2PDefault extends Default {
 
@@ -18,7 +19,7 @@ public class HazelCacheTest {
 
         final static String subconChannel = "subcon";
 
-        protected HazelCacheBag<Term, Concept> internar;
+        protected InfiniCacheBag<Term, Concept> internar;
 
         public P2PDefault(String uid) {
             this.uid = uid;
@@ -33,10 +34,10 @@ public class HazelCacheTest {
 
         @Override
         public CacheBag<Term, Concept> newSubconceptBag() {
-            return (this.internar = new HazelCacheBag(uid, subconChannel));
+            return (this.internar = new InfiniCacheBag(uid, subconChannel));
         }
 
-        public HazelCacheBag<Term, Concept> getInterNAR() {
+        public InfiniCacheBag<Term, Concept> getInterNAR() {
             return internar;
         }
 
@@ -47,9 +48,9 @@ public class HazelCacheTest {
     }
 
 
-    public static void printInterNAR(HazelCacheBag<Term, Concept>... x) {
+    public static void printInterNAR(InfiniCacheBag<Term, Concept>... x) {
 
-        for (HazelCacheBag<Term,Concept> y : x) {
+        for (InfiniCacheBag<Term,Concept> y : x) {
             System.out.println(y);
             y.forEach(c -> System.out.println("\t" + c));
         }
