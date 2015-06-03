@@ -4,7 +4,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.bag.impl.CacheBag;
+import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
@@ -37,7 +37,7 @@ public class Solid extends Default implements ControlCycle {
     private final int inputsPerCycle;
     private Memory memory;
 
-    public final CacheBag<Term, Concept> subcon;
+    public final GuavaCacheBag<Term, Concept> subcon;
 
     public final Bag<Term, Concept> concepts;
 
@@ -48,7 +48,7 @@ public class Solid extends Default implements ControlCycle {
         }
 
         @Override
-        public CacheBag<Term, Concept> getSubConcepts() {
+        public GuavaCacheBag<Term, Concept> getSubConcepts() {
             return subcon;
         }
 
@@ -80,7 +80,7 @@ public class Solid extends Default implements ControlCycle {
         taskLinkForgetDurations.set(2);
 
         setTermLinkBagSize(16);
-        subcon = new CacheBag(maxSubConcepts);
+        subcon = new GuavaCacheBag(maxSubConcepts);
 
         //concepts = new CurveBag(maxConcepts, true);
         concepts = new ChainBag(rng, maxConcepts);
@@ -236,7 +236,7 @@ public class Solid extends Default implements ControlCycle {
 
         @Override
         public boolean conceptRemoved(Concept c) {
-            subcon.add(c);
+            subcon.put(c);
             return false;
         }
 

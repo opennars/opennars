@@ -2,7 +2,7 @@ package nars.model.cycle;
 
 import nars.Memory;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
+import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
@@ -28,14 +28,14 @@ abstract public class SequentialCycle implements ControlCycle {
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Term, Concept> concepts;
-    public final CacheBag<Term, Concept> subcon;
+    public final GuavaCacheBag<Term, Concept> subcon;
 
 
     protected List<Runnable> run = new ArrayList();
 
     protected Memory memory;
 
-    public SequentialCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon) {
+    public SequentialCycle(Bag<Term, Concept> concepts, GuavaCacheBag<Term, Concept> subcon) {
 
         this.concepts = concepts;
         this.subcon = subcon;
@@ -131,7 +131,7 @@ abstract public class SequentialCycle implements ControlCycle {
     /** @return true = deleted, false = forgotten */
     @Override public boolean conceptRemoved(Concept c) {
         if ((subcon != null) && (!c.isDeleted())) {
-            subcon.add(c);
+            subcon.put(c);
 
             //it may have been set deleted inside the CacheBag processes's so check for it here
             return (c.isDeleted());
@@ -148,7 +148,7 @@ abstract public class SequentialCycle implements ControlCycle {
         }
 
         @Override
-        public CacheBag<Term, Concept> getSubConcepts() {
+        public GuavaCacheBag<Term, Concept> getSubConcepts() {
             return subcon;
         }
 
