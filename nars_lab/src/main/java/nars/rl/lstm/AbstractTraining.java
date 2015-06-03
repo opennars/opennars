@@ -15,7 +15,7 @@ public abstract class AbstractTraining {
         this.outputDimension = outputDimension;
     }
 
-    public double EvaluateFitnessSupervised(IAgentSupervised agent) throws Exception {
+    public double EvaluateFitnessSupervised(AgentSupervised agent) throws Exception {
 
         List<Interaction> interactions = this.GenerateInteractions(tests);
 
@@ -46,7 +46,7 @@ public abstract class AbstractTraining {
         return fit/max_fit;
     }
 
-    public void supervised(IAgentSupervised agent) throws Exception {
+    public void supervised(AgentSupervised agent) throws Exception {
         List<Interaction> interactions = this.GenerateInteractions(tests);
 
         for (Interaction inter : interactions) {

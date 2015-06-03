@@ -260,18 +260,77 @@ kernel void stage1Kernel(
     __global precisionType* dSdG,
     __global precisionType* dSdF,
 
+
+    __global int* flagIsTargetOutputAvailable,
+    __global precisionType* batchInputs,
+    __global precisionType* batchTargetOutputs,
+
+    int countOfInputOutputTuples,
+
+
+
+
     int full_input_dimension,
     int cell_blocks,
     int output_dimension,
+    int inputDimension,
 
     __global int *counterBarrier0,
     __global int *counterBarrier1,
     __global int *counterBarrier2,
-    __global int *counterBarrier3
+    __global int *counterBarrier3,
+    __global int *counterBarrier4,
+    __global int *counterBarrier5,
+    __global int *counterBarrier6,
+    __global int *counterBarrier7,
+
+
+
+
+
+
+    precisionType SCALE_OUTPUT_DELTA,
+
+    // REMOVE
+    __global precisionType* target_output, // input
+
+    __global precisionType* deltaH,
+
+    precisionType learningRate
 ) {
     int fiberId = get_global_id(0);
 
-    for( int inputI = 0; inputI < 1; inputI++ ) {
+    for( int inputI = 0; inputI < countOfInputOutputTuples; inputI++ ) {
+        // assemle full inputs buffer from inputs and context
+        if( fiberId == 0 ) {
+            int location = 0;
+            for( int batchInputsI = 0; batchInputsI < inputDimension; batchInputsI++ ) {
+                full_input[location] = batchInputs[inputDimension*inputI + batchInputsI];
+                location++;
+            }
+
+            for( int contextI = 0; contextI < cell_blocks; contextI++ ) {
+                full_input[location] = context[contextI];
+                location++;
+            }
+
+            full_input[location] = 1.0f; // bias
+        }
+
+
+        atomic_sub(counterBarrier7, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(counterBarrier7, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
+
+
+
         inputsToCellblocksFiber(fiberId, sumF, sumG, weightsF, weightsG, full_input, full_input_dimension, cell_blocks);
 
         atomic_sub(counterBarrier0, 1);
@@ -337,6 +396,61 @@ kernel void stage1Kernel(
 
 
         BackpropScalePartialsFiber(fiberId,actF,sumF,actG,sumG,context,dSdG, dSdF, full_input, full_input_dimension, cell_blocks);
+
+
+
+        atomic_sub(counterBarrier4, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(counterBarrier4, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
+
+
+        if( flagIsTargetOutputAvailable[inputI] != 0 ) {
+            // TODO< rewrite to read from targetOutputs >
+            outputToHiddenFiber(fiberId,target_output,actH,deltaH,output,weightsOut,SCALE_OUTPUT_DELTA,learningRate,output_dimension,cell_blocks);
+
+
+
+
+            atomic_sub(counterBarrier5, 1);
+
+            // wait until the counter hits 0
+            for(;;) {
+                int syncronisationValue = atomic_sub(counterBarrier5, 0);
+
+                if( syncronisationValue <= 0 ) {
+                    break;
+                }
+            }
+
+
+
+            InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
+        }
+
+        atomic_sub(counterBarrier6, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(counterBarrier6, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
+
+        // TODO< rollover >
+
+
+
+
+        // TODO< reset all counterBarriers >
     }
 }
 

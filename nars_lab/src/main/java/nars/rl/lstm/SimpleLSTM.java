@@ -3,8 +3,7 @@ package nars.rl.lstm;
 import java.util.Arrays;
 import java.util.Random;
 
-public class SimpleLSTM implements IAgentSupervised
-{
+public class SimpleLSTM extends AgentSupervised {
 	
 	private double init_weight_range = 0.1;
 	public double learningRate;//0.07
