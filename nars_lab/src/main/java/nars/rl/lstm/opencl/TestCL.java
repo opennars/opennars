@@ -8,7 +8,7 @@ import java.util.Random;
 public class TestCL {
 	public static void main(String[] args) throws Exception {
 		
-		System.out.println("Test of SimpleLSTM\n");
+		System.out.println("Test of SimpleLSTM openCL\n");
 		
 		Random r = new XORShiftRandom(1234);
 		DistractedSequenceRecall task = new DistractedSequenceRecall(r);
