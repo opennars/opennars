@@ -124,7 +124,7 @@ public class MultiNode extends AdjacencyListNode {
 		return getEdgeSetBetween(graph.getNode(id));
 	}
 
-	public <T extends Edge> Collection<T> getEdgeSetBetween(int index) {
-		return getEdgeSetBetween(graph.getNode(index));
-	}
+//	public <T extends Edge> Collection<T> getEdgeSetBetween(int index) {
+//		return getEdgeSetBetween(graph.getNode(index));
+//	}
 }

@@ -31,18 +31,13 @@
  */
 package org.graphstream.graph.implementations;
 
-import java.util.AbstractCollection;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import org.graphstream.graph.BreadthFirstIterator;
-import org.graphstream.graph.DepthFirstIterator;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.stream.SourceBase;
+import org.jgrapht.traverse.DepthFirstIterator;
+
+import java.util.*;
 
 /**
  * <p>
@@ -66,7 +61,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	/**
 	 * The graph to which this node belongs
 	 */
-	protected AbstractGraph graph;
+	transient protected AbstractGraph graph;
 
 
 	/**
@@ -127,10 +122,7 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		return getEdgeFrom(node) != null;
 	}
 
-    @Override
-	public boolean hasEdgeFrom(int index) {
-		return getEdgeFrom(index) != null;
-	}
+
 
     @Override
 	public boolean hasEdgeFrom(String id) {
@@ -142,10 +134,6 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 		return getEdgeBetween(node) != null;
 	}
 
-    @Override
-	public boolean hasEdgeBetween(int index) {
-		return getEdgeBetween(index) != null;
-	}
 
     @Override
 	public boolean hasEdgeBetween(String id) {
@@ -154,10 +142,6 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 
 	public abstract <T extends Edge> T getEdgeToward(Node node);
 
-    @Override
-	public <T extends Edge> T getEdgeToward(int index) {
-		return getEdgeToward(graph.getNode(index));
-	}
 
     @Override
 	public <T extends Edge> T getEdgeToward(String id) {
@@ -167,21 +151,12 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public abstract <T extends Edge> T getEdgeFrom(Node node);
 
     @Override
-	public <T extends Edge> T getEdgeFrom(int index) {
-		return getEdgeFrom(graph.getNode(index));
-	}
-
-    @Override
 	public <T extends Edge> T getEdgeFrom(String id) {
 		return getEdgeFrom(graph.getNode(id));
 	}
 
 	public abstract <T extends Edge> T getEdgeBetween(Node node);
 
-    @Override
-	public <T extends Edge> T getEdgeBetween(int index) {
-		return getEdgeBetween(graph.getNode(index));
-	}
 
     @Override
 	public <T extends Edge> T getEdgeBetween(String id) {
@@ -320,28 +295,32 @@ public abstract class AbstractNode extends AbstractElement implements Node {
 	public <T extends Node> Iterator<T> getBreadthFirstIterator() {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new BreadthFirstIterator<T>(this);
+		//return new BreadthFirstIterator<T>(this);
+		return null;
 	}
 
     @Override
 	public <T extends Node> Iterator<T> getBreadthFirstIterator(boolean directed) {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new BreadthFirstIterator<T>(this, directed);
+		//return new BreadthFirstIterator<T>(this, directed);
+		return null;
 	}
 
     @Override
 	public <T extends Node> Iterator<T> getDepthFirstIterator() {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new DepthFirstIterator<T>(this);
+		//return new DepthFirstIterator<T>(this);
+        return null;
 	}
 
     @Override
 	public <T extends Node> Iterator<T> getDepthFirstIterator(boolean directed) {
 		// XXX change it when the old iterator disappears
 		// XXX change the return type to have access to the other methods
-		return new DepthFirstIterator<T>(this, directed);
+		//return new DepthFirstIterator<T>(this, directed);
+        return null;
 	}
 
 	/**

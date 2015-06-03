@@ -126,11 +126,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	public abstract Node getNode(String id);
 
-	public abstract Node getNode(int index);
 
 	public abstract Edge getEdge(String id);
 
-	public abstract Edge getEdge(int index);
 
 	// node and edge count, iterators and views
 
@@ -138,32 +136,32 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
 	public abstract int getEdgeCount();
 
-	public abstract <T extends Node> Iterator<T> getNodeIterator();
+	public abstract Iterator<Node> getNodeIterator();
 
-	public abstract <T extends Edge> Iterator<T> getEdgeIterator();
+	public abstract Iterator<Edge> getEdgeIterator();
 
     @Override
-	public <T extends Node> Iterable<? extends T> getEachNode() {
-		return new Iterable<T>() {
-			public Iterator<T> iterator() {
+	public Iterable<? extends Node> getEachNode() {
+		return new Iterable<Node>() {
+			public Iterator<Node> iterator() {
 				return getNodeIterator();
 			}
 		};
 	}
 
     @Override
-	public <T extends Edge> Iterable<? extends T> getEachEdge() {
-		return new Iterable<T>() {
-			public Iterator<T> iterator() {
+	public Iterable<? extends Edge> getEachEdge() {
+		return new Iterable<Edge> () {
+			public Iterator<Edge> iterator() {
 				return getEdgeIterator();
 			}
 		};
 	}
 
     @Override
-	public <T extends Node> Collection<T> getNodeSet() {
-		return new AbstractCollection<T>() {
-			public Iterator<T> iterator() {
+	public Collection<? extends Node> getNodeSet() {
+		return new AbstractCollection<Node>() {
+			public Iterator<Node> iterator() {
 				return getNodeIterator();
 			}
 
@@ -174,9 +172,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	}
 
     @Override
-	public <T extends Edge> Collection<T> getEdgeSet() {
-		return new AbstractCollection<T>() {
-			public Iterator<T> iterator() {
+	public Collection<? extends Edge> getEdgeSet() {
+		return new AbstractCollection<Edge>() {
+			public Iterator<Edge> iterator() {
 				return getEdgeIterator();
 			}
 
@@ -257,10 +255,10 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 	public void clear() {
 		listeners.sendGraphCleared();
 
-		Iterator<AbstractNode> it = getNodeIterator();
+		Iterator<Node> it = getNodeIterator();
 
 		while (it.hasNext())
-			it.next().clearCallback();
+			((AbstractNode)it.next()).clearCallback();
 
 		clearCallback();
 		clearAttributesWithNoEvent();
@@ -298,16 +296,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 				(AbstractNode) getNode(to), to, directed);
 	}
 
-    @Override
-	public <T extends Edge> T addEdge(String id, int index1, int index2) {
-		return addEdge(id, index1, index2, false);
-	}
 
-    @Override
-	public <T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
-			boolean directed) {
-		return addEdge(id, getNode(fromIndex), getNode(toIndex), directed);
-	}
 
     @Override
 	public <T extends Edge> T addEdge(String id, Node node1, Node node2) {
@@ -335,19 +324,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 		return removeNode(node);
 	}
 
-    @Override
-	public <T extends Node> T removeNode(int index) {
-		Node node = getNode(index);
 
-		if (node == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Node #" + index
-						+ " not found. Cannot remove it.");
-			return null;
-		}
-
-		return removeNode(node);
-	}
 
 	@SuppressWarnings("unchecked")
     @Override
@@ -373,19 +350,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 		return removeEdge(edge);
 	}
 
-    @Override
-	public <T extends Edge> T removeEdge(int index) {
-		Edge edge = getEdge(index);
 
-		if (edge == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException("Edge #" + index
-						+ " not found. Cannot remove it.");
-			return null;
-		}
-
-		return removeEdge(edge);
-	}
 
 	@SuppressWarnings("unchecked")
     @Override
@@ -413,21 +378,7 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 		return removeEdge(fromNode, toNode);
 	}
 
-    @Override
-	public <T extends Edge> T removeEdge(int fromIndex, int toIndex) {
-		Node fromNode = getNode(fromIndex);
-		Node toNode = getNode(toIndex);
 
-		if (fromNode == null || toNode == null) {
-			if (strictChecking)
-				throw new ElementNotFoundException(
-						"Cannot remove the edge. The node #%d does not exist",
-						fromNode == null ? fromIndex : toIndex);
-			return null;
-		}
-
-		return removeEdge(fromNode, toNode);
-	}
 
     @Override
 	public <T extends Edge> T removeEdge(Node node1, Node node2) {
@@ -643,7 +594,9 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 
     @Override
 	public Controller getReplayController() {
-		return new GraphReplayController();
+
+        //return new GraphReplayController();
+        return null;
 	}
 
 	/**
@@ -840,47 +793,47 @@ public abstract class AbstractGraph extends AbstractElement implements Graph, Re
 			removeEdgeCallback(edge);
 	}
 
-	class GraphReplayController extends SourceBase implements Controller {
-
-		GraphReplayController() {
-			super(AbstractGraph.this.id + "replay");
-		}
-
-        @Override
-		public void replay() {
-			String sourceId = String.format("%s-replay-%x", id, replayId++);
-			replay(sourceId);
-		}
-
-        @Override
-		public void replay(String sourceId) {
-			for (String key : getAttributeKeySet())
-				sendGraphAttributeAdded(sourceId, key, getAttribute(key));
-
-			for (int i = 0; i < getNodeCount(); i++) {
-				Node node = getNode(i);
-				String nodeId = node.getId();
-
-				sendNodeAdded(sourceId, nodeId);
-
-				if (node.getAttributeCount() > 0)
-					for (String key : node.getAttributeKeySet())
-						sendNodeAttributeAdded(sourceId, nodeId, key,
-								node.getAttribute(key));
-			}
-
-			for (int i = 0; i < getEdgeCount(); i++) {
-				Edge edge = getEdge(i);
-				String edgeId = edge.getId();
-
-				sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
-						.getNode1().getId(), edge.isDirected());
-
-				if (edge.getAttributeCount() > 0)
-					for (String key : edge.getAttributeKeySet())
-						sendEdgeAttributeAdded(sourceId, edgeId, key,
-								edge.getAttribute(key));
-			}
-		}
-	}
+//	class GraphReplayController extends SourceBase implements Controller {
+//
+//		GraphReplayController() {
+//			super(AbstractGraph.this.id + "replay");
+//		}
+//
+//        @Override
+//		public void replay() {
+//			String sourceId = String.format("%s-replay-%x", id, replayId++);
+//			replay(sourceId);
+//		}
+//
+//        @Override
+//		public void replay(String sourceId) {
+//			for (String key : getAttributeKeySet())
+//				sendGraphAttributeAdded(sourceId, key, getAttribute(key));
+//
+//			for (int i = 0; i < getNodeCount(); i++) {
+//				Node node = getNode(i);
+//				String nodeId = node.getId();
+//
+//				sendNodeAdded(sourceId, nodeId);
+//
+//				if (node.getAttributeCount() > 0)
+//					for (String key : node.getAttributeKeySet())
+//						sendNodeAttributeAdded(sourceId, nodeId, key,
+//								node.getAttribute(key));
+//			}
+//
+//			for (int i = 0; i < getEdgeCount(); i++) {
+//				Edge edge = getEdge(i);
+//				String edgeId = edge.getId();
+//
+//				sendEdgeAdded(sourceId, edgeId, edge.getNode0().getId(), edge
+//						.getNode1().getId(), edge.isDirected());
+//
+//				if (edge.getAttributeCount() > 0)
+//					for (String key : edge.getAttributeKeySet())
+//						sendEdgeAttributeAdded(sourceId, edgeId, key,
+//								edge.getAttribute(key));
+//			}
+//		}
+//	}
 }

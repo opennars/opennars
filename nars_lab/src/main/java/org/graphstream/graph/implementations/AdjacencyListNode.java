@@ -197,6 +197,16 @@ public class AdjacencyListNode extends AbstractNode {
 		return edges[i];
 	}
 
+	@Override
+	public boolean hasEdgeFrom(int index) throws IndexOutOfBoundsException {
+		return false;
+	}
+
+	@Override
+	public boolean hasEdgeBetween(int index) throws IndexOutOfBoundsException {
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getEnteringEdge(int i) {
@@ -221,13 +231,28 @@ public class AdjacencyListNode extends AbstractNode {
 	}
 
 	@Override
+	public <T extends Edge> T getEdgeBetween(int index) throws IndexOutOfBoundsException {
+		return null;
+	}
+
+	@Override
 	public <T extends Edge> T getEdgeFrom(Node node) {
 		return locateEdge(node, I_EDGE);
 	}
 
 	@Override
+	public <T extends Edge> T getEdgeFrom(int index) throws IndexOutOfBoundsException {
+		return null;
+	}
+
+	@Override
 	public <T extends Edge> T getEdgeToward(Node node) {
 		return locateEdge(node, O_EDGE);
+	}
+
+	@Override
+	public <T extends Edge> T getEdgeToward(int index) throws IndexOutOfBoundsException {
+		return null;
 	}
 
 	// *** Iterators ***

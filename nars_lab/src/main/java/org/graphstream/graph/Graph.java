@@ -639,101 +639,8 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 */
 	//Viewer display(boolean autoLayout);
 
-	// New methods
 
-	/**
-	 * Get a node by its index. This method is implicitly generic and returns
-	 * something which extends Node. The return type is the one of the left part
-	 * of the assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode node = graph.getNode(index);
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode node. If no left part exists,
-	 * method will just return a Node.
-	 * 
-	 * @param index
-	 *            Index of the node to find.
-	 * @return The node with the given index
-	 * @throws IndexOutOfBoundsException
-	 *             If the index is negative or greater than {@code
-	 *             getNodeCount() - 1}.
-	 */
-	<T extends Node> T getNode(int index) throws IndexOutOfBoundsException;
 
-	/**
-	 * Get an edge by its index. This method is implicitly generic and returns
-	 * something which extends Edge. The return type is the one of the left part
-	 * of the assignment. For example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedEdge edge = graph.getEdge(index);
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedEdge edge. If no left part exists,
-	 * method will just return an Edge.
-	 * 
-	 * @param index
-	 *            The index of the edge to find.
-	 * @return The edge with the given index
-	 * @throws IndexOutOfBoundsException
-	 *             if the index is less than 0 or greater than {@code
-	 *             getNodeCount() - 1}.
-	 */
-	<T extends Edge> T getEdge(int index) throws IndexOutOfBoundsException;
-
-	/**
-	 * Like {@link #addEdge(String, String, String)} but the nodes are
-	 * identified by their indices.
-	 * 
-	 * @param id
-	 *            Unique and arbitrary string identifying the edge.
-	 * @param index1
-	 *            The first node index
-	 * @param index2
-	 *            The second node index
-	 * @return The newly created edge, an existing edge or {@code null}
-	 * @throws IndexOutOfBoundsException
-	 *             If node indices are negative or greater than {@code
-	 *             getNodeCount() - 1}
-	 * @throws IdAlreadyInUseException
-	 *             If an edge with the same id already exists and strict
-	 *             checking is enabled.
-	 * @throws EdgeRejectedException
-	 *             If strict checking is enabled and the edge is not accepted.
-	 * @see #addEdge(String, String, String)
-	 */
-	<T extends Edge> T addEdge(String id, int index1, int index2)
-			throws IndexOutOfBoundsException, IdAlreadyInUseException,
-			EdgeRejectedException;
-
-	/**
-	 * Like {@link #addEdge(String, String, String, boolean)} but the nodes are
-	 * identified by their indices.
-	 * 
-	 * @param id
-	 *            Unique and arbitrary string identifying the edge.
-	 * @param toIndex
-	 *            The first node index
-	 * @param fromIndex
-	 *            The second node index
-	 * @param directed
-	 *            Is the edge directed?
-	 * @return The newly created edge, an existing edge or {@code null}
-	 * @throws IndexOutOfBoundsException
-	 *             If node indices are negative or greater than {@code
-	 *             getNodeCount() - 1}
-	 * @throws IdAlreadyInUseException
-	 *             If an edge with the same id already exists and strict
-	 *             checking is enabled.
-	 * @throws EdgeRejectedException
-	 *             If strict checking is enabled and the edge is not accepted.
-	 * @see #addEdge(String, String, String)
-	 */
-	<T extends Edge> T addEdge(String id, int fromIndex, int toIndex,
-							   boolean directed) throws IndexOutOfBoundsException,
-			IdAlreadyInUseException, EdgeRejectedException;
 
 	/**
 	 * Like {@link #addEdge(String, String, String)} but the node references are
@@ -779,52 +686,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	<T extends Edge> T addEdge(String id, Node from, Node to, boolean directed)
 			throws IdAlreadyInUseException, EdgeRejectedException;
 
-	/**
-	 * Removes an edge with a given index. An event is sent toward the
-	 * listeners.
-	 * 
-	 * <p>
-	 * This method is implicitly generic and returns something which extends
-	 * Edge. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedEdge edge = graph.removeEdge(i);
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedEdge edge. If no left part exists,
-	 * method will just return an Edge.
-	 * </p>
-	 * 
-	 * @param index
-	 *            The index of the edge to be removed.
-	 * @return The removed edge
-	 * @throws IndexOutOfBoundsException
-	 *             if the index is negative or greater than {@code
-	 *             getEdgeCount() - 1}
-	 */
-	<T extends Edge> T removeEdge(int index) throws IndexOutOfBoundsException;
 
-	/**
-	 * Removes an edge between two nodes. Like
-	 * {@link #removeEdge(String, String)} but the nodes are identified by their
-	 * indices.
-	 * 
-	 * @param fromIndex
-	 *            the index of the source node
-	 * @param toIndex
-	 *            the index of the target node
-	 * @return the removed edge or {@code null} if no edge is removed
-	 * @throws IndexOutOfBoundsException
-	 *             If one of the node indices is negative or greater than
-	 *             {@code getNodeCount() - 1}.
-	 * @throws ElementNotFoundException
-	 *             if strict checking is enabled and there is no edge between
-	 *             the two nodes.
-	 * @see #removeEdge(String, String)
-	 */
-	<T extends Edge> T removeEdge(int fromIndex, int toIndex)
-			throws IndexOutOfBoundsException, ElementNotFoundException;
 
 	/**
 	 * Removes an edge between two nodes. Like
@@ -867,34 +729,7 @@ public interface Graph extends Element, Pipe, Iterable<Node>, Structure {
 	 */
 	<T extends Edge> T removeEdge(Edge edge);
 
-	/**
-	 * Removes a node with a given index.
-	 * <p>
-	 * An event is generated toward the listeners. Note that removing a node may
-	 * remove all edges it is connected to. In this case corresponding events
-	 * will also be generated toward the listeners.
-	 * </p>
-	 * <p>
-	 * This method is implicitly generic and return something which extends
-	 * Node. The return type is the one of the left part of the assignment. For
-	 * example, in the following call :
-	 * 
-	 * <pre>
-	 * ExtendedNode n = graph.removeNode(index);
-	 * </pre>
-	 * 
-	 * the method will return an ExtendedNode. If no left part exists, method
-	 * will just return a Node.
-	 * </p>
-	 * 
-	 * @param index
-	 *            The index of the node to be removed
-	 * @return The removed node
-	 * @throws IndexOutOfBoundsException
-	 *             if the index is negative or greater than {@code
-	 *             getNodeCount() - 1}.
-	 */
-	<T extends Node> T removeNode(int index) throws IndexOutOfBoundsException;
+
 
 	/**
 	 * Removes a node.

@@ -61,16 +61,16 @@ public abstract class AbstractElement implements Element {
 	 */
 	protected final String id;
 
-	/**
-	 * The index of this element.
-	 */
-	private int index;
+//	/**
+//	 * The index of this element.
+//	 */
+//	transient private int index;
 
 	/**
 	 * Attributes map. This map is created only when needed. It contains pairs
 	 * (key,value) where the key is the attribute name and the value an Object.
 	 */
-	public final Map<String, Object> attributes = new TreeMap<>();
+	public Map<String, Object> attributes = null; //new TreeMap<>();
 
 	// Construction
 
@@ -94,20 +94,20 @@ public abstract class AbstractElement implements Element {
 		return id;
 	}
 
-    @Override
-	public int getIndex() {
-		return index;
-	}
-
-	/**
-	 * Used by subclasses to change the index of an element
-	 *
-	 * @param index
-	 *            the new index
-	 */
-	protected void setIndex(int index) {
-		this.index = index;
-	}
+//    @Override
+//	public int getIndex() {
+//		return index;
+//	}
+//
+//	/**
+//	 * Used by subclasses to change the index of an element
+//	 *
+//	 * @param index
+//	 *            the new index
+//	 */
+//	protected void setIndex(int index) {
+//		this.index = index;
+//	}
 
 	// XXX UGLY. how to create events in the abstract element ?
 	// XXX The various methods that add and remove attributes will propagate an
@@ -602,7 +602,7 @@ public abstract class AbstractElement implements Element {
     @Override
 	public boolean addAttribute(String attribute, Object... values) {
         if (null == attribute) {
-            return false;
+            attributes = new TreeMap();
         }
 
 		final Object value;

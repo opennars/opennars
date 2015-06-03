@@ -75,12 +75,7 @@ public interface Element extends Serializable {
 	 */
 	String getId();
 
-	/**
-	 * The current index of this element
-	 *
-	 * @return The index value
-	 */
-	int getIndex();
+
 
 	/**
 	 * Get the attribute object bound to the given key. The returned value may

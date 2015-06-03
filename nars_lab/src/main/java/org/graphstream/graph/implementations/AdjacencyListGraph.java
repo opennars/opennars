@@ -31,8 +31,6 @@
  */
 package org.graphstream.graph.implementations;
 
-import com.google.common.collect.Collections2;
-import com.hazelcast.util.CollectionUtil;
 import org.graphstream.graph.*;
 
 import java.util.*;
@@ -56,14 +54,11 @@ public class AdjacencyListGraph extends AbstractGraph {
 	public static final int DEFAULT_NODE_CAPACITY = 128;
 	public static final int DEFAULT_EDGE_CAPACITY = 1024;
 
-	protected final Map<String, Node> nodeMap;
-	protected final Map<String, Edge> edgeMap;
+	protected Map<String, Node> nodeMap;
+	protected Map<String, Edge> edgeMap;
 
-	protected List<Node> nodeArray;
-	protected List<Edge> edgeArray;
-
-	protected int nodeCount;
-	protected int edgeCount;
+//	@Deprecated transient protected List<Node> nodeArray;
+//    @Deprecated transient protected List<Edge> edgeArray;
 
 	// *** Constructors ***
 
@@ -93,44 +88,42 @@ public class AdjacencyListGraph extends AbstractGraph {
 			int initialNodeCapacity, int initialEdgeCapacity) {
 		super(id, strictChecking, autoCreate);
 
-		setNodeFactory(new NodeFactory<AdjacencyListNode>() {
-			public AdjacencyListNode newInstance(String id, Graph graph) {
-				return new AdjacencyListNode((AbstractGraph) graph, id);
-			}
-		});
+        if (initialNodeCapacity < DEFAULT_NODE_CAPACITY)
+            initialNodeCapacity = DEFAULT_NODE_CAPACITY;
+        if (initialEdgeCapacity < DEFAULT_EDGE_CAPACITY)
+            initialEdgeCapacity = DEFAULT_EDGE_CAPACITY;
 
-		setEdgeFactory(new EdgeFactory<AbstractEdge>() {
-			public AbstractEdge newInstance(String id, Node src, Node dst,
-					boolean directed) {
-				return new AbstractEdge(id, (AbstractNode) src,
-						(AbstractNode) dst, directed);
-			}
-		});
-
-		if (initialNodeCapacity < DEFAULT_NODE_CAPACITY)
-			initialNodeCapacity = DEFAULT_NODE_CAPACITY;
-		if (initialEdgeCapacity < DEFAULT_EDGE_CAPACITY)
-			initialEdgeCapacity = DEFAULT_EDGE_CAPACITY;
-
-		nodeMap = newNodeMap();
-		edgeMap = newEdgeMap();
-		nodeArray = newNodeList(initialNodeCapacity);
-		edgeArray = newEdgeList(initialEdgeCapacity);;
-		nodeCount = edgeCount = 0;
+        init(initialNodeCapacity, initialEdgeCapacity);
 	}
 
-	private List<Node> newNodeList(int initialNodeCapacity) {
-		return new ArrayList(initialNodeCapacity);
-	}
-	private List<Edge> newEdgeList(int initialNodeCapacity) {
-		return new ArrayList(initialNodeCapacity);
-	}
+    protected void init(int initialNodeCapacity, int initialEdgeCapacity) {
+        setNodeFactory(new NodeFactory<AdjacencyListNode>() {
+            public AdjacencyListNode newInstance(String id, Graph graph) {
+                return new AdjacencyListNode((AbstractGraph) graph, id);
+            }
+        });
 
-	private Map<String, Edge> newEdgeMap() {
+        setEdgeFactory(new EdgeFactory<AbstractEdge>() {
+            public AbstractEdge newInstance(String id, Node src, Node dst,
+                                            boolean directed) {
+                return new AbstractEdge(id, (AbstractNode) src,
+                        (AbstractNode) dst, directed);
+            }
+        });
+
+
+        nodeMap = newNodeMap();
+        edgeMap = newEdgeMap();
+
+
+    }
+
+
+    protected Map<String, Edge> newEdgeMap() {
 		return new TreeMap<>();
 	}
 
-	private Map<String, Node> newNodeMap() {
+    protected Map<String, Node> newNodeMap() {
 		return new TreeMap<>();
 	}
 
@@ -166,51 +159,51 @@ public class AdjacencyListGraph extends AbstractGraph {
 	@Override
 	protected void addEdgeCallback(Edge edge) {
 		edgeMap.put(edge.getId(), edge);
-		int eas = edgeArray.size();
-		if (edgeCount == eas) {
-			List<Edge> tmp = newEdgeList((int) (eas * GROW_FACTOR) + 1);
-			System.arraycopy(edgeArray, 0, tmp, 0, eas);
-			Collections.fill(edgeArray, null);
-			edgeArray = tmp;
-		}
-		edgeArray.set(edgeCount, edge);
-		((AbstractEdge)edge).setIndex(edgeCount++);
+//		int eas = edgeArray.size();
+//		if (edgeCount == eas) {
+//			List<Edge> tmp = newEdgeList((int) (eas * GROW_FACTOR) + 1);
+//			//System.arraycopy(edgeArray, 0, tmp, 0, eas);
+//            tmp.addAll(edgeArray);
+//			//Collections.fill(edgeArray, null);
+//			edgeArray = tmp;
+//		}
+//		edgeArray.set(edgeCount, edge);
+//		((AbstractEdge)edge).setIndex(edgeCount++);
 	}
 
 	@Override
 	protected void addNodeCallback(Node node) {
 		nodeMap.put(node.getId(), node);
-
-		int nas = nodeArray.size();
-		if (nodeCount == nas) {
-			List<Node> tmp = newNodeList((int) (nas * GROW_FACTOR) + 1);
-			System.arraycopy(nodeArray, 0, tmp, 0, nas);
-			Collections.fill(nodeArray, null);
-			nodeArray = tmp;
-		}
-		nodeArray.set(nodeCount, node);
-		((AbstractNode)node).setIndex(nodeCount++);
+//		int nas = nodeArray.size();
+//		if (nodeCount == nas) {
+//			List<Node> tmp = newNodeList((int) (nas * GROW_FACTOR) + 1);
+//            tmp.addAll(nodeArray);
+//			//System.arraycopy(nodeArray, 0, tmp, 0, nas);
+//			//Collections.fill(nodeArray, null);
+//			nodeArray = tmp;
+//		}
+//		nodeArray.set(nodeCount, node);
+//		((AbstractNode)node).setIndex(nodeCount++);
 	}
 
 	@Override
 	protected void removeEdgeCallback(Edge edge) {
 		edgeMap.remove(edge.getId());
-		int i = edge.getIndex();
-		Edge ea;
-		edgeArray.set(i,  ea = edgeArray.get(--edgeCount));
-        ((AbstractEdge)ea).setIndex(i);
-		edgeArray.set(edgeCount, null);
+//		int i = edge.getIndex();
+//		Edge ea;
+//		edgeArray.set(i,  ea = edgeArray.get(--edgeCount));
+//        ((AbstractEdge)ea).setIndex(i);
+//		edgeArray.set(edgeCount, null);
 	}
 
 	@Override
 	protected void removeNodeCallback(Node node) {
 		nodeMap.remove(node.getId());
-		int i = node.getIndex();
-
-		Node ea;
-		nodeArray.set(i,  ea = nodeArray.get(--nodeCount));
-        ((AbstractNode)ea).setIndex(i);
-		nodeArray.set(nodeCount,  null);
+//		int i = node.getIndex();
+//		Node ea;
+//		nodeArray.set(i,  ea = nodeArray.get(--nodeCount));
+//        ((AbstractNode)ea).setIndex(i);
+//		nodeArray.set(nodeCount,  null);
 	}
 
 	@Override
@@ -218,118 +211,43 @@ public class AdjacencyListGraph extends AbstractGraph {
 		nodeMap.clear();
 		edgeMap.clear();
 
-		Collections.fill(nodeArray, null); //(nodeArray, 0, nodeCount, null);
-		Collections.fill(edgeArray, null); //fill(edgeArray, 0, edgeCount, null);
-		nodeCount = edgeCount = 0;
 	}
 
 
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Edge getEdge(String id) {
 		return edgeMap.get(id);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Edge getEdge(int index) {
-		if (index < 0 || index >= edgeCount)
-			throw new IndexOutOfBoundsException(index
-					+ " does not exist");
-		return edgeArray.get(index);
-	}
 
 	@Override
 	public int getEdgeCount() {
-		return edgeCount;
+		return edgeMap.size();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Node getNode(String id) {
 		return nodeMap.get(id);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Node getNode(int index) {
-		if (index < 0 || index > nodeCount)
-			throw new IndexOutOfBoundsException(index
-					+ " does not exist");
-		return nodeArray.get(index);
-	}
+
 
 	@Override
 	public int getNodeCount() {
-		return nodeCount;
+		return nodeMap.size();
 	}
 
 	// *** Iterators ***
 
-	public class EdgeIterator<T extends Edge> implements Iterator<T> {
-		int iNext = 0;
-		int iPrev = -1;
-
-        @Override
-		public boolean hasNext() {
-			return iNext < edgeCount;
-		}
-
-		@SuppressWarnings("unchecked")
-        @Override
-		public T next() {
-			if (iNext >= edgeCount)
-				throw new NoSuchElementException();
-			iPrev = iNext++;
-			return (T) edgeArray.get(iPrev);
-		}
-
-        @Override
-		public void remove() {
-			if (iPrev == -1)
-				throw new IllegalStateException();
-			removeEdge(edgeArray.get(iPrev), true, true, true);
-			iNext = iPrev;
-			iPrev = -1;
-		}
-	}
-
-	public class NodeIterator<T extends Node> implements Iterator<T> {
-		int iNext = 0;
-		int iPrev = -1;
-
-        @Override
-		public boolean hasNext() {
-			return iNext < nodeCount;
-		}
-
-		@SuppressWarnings("unchecked")
-        @Override
-		public T next() {
-			if (iNext >= nodeCount)
-				throw new NoSuchElementException();
-			iPrev = iNext++;
-			return (T) nodeArray.get(iPrev);
-		}
-
-        @Override
-		public void remove() {
-			if (iPrev == -1)
-				throw new IllegalStateException();
-			removeNode(nodeArray.get(iPrev), true);
-			iNext = iPrev;
-			iPrev = -1;
-		}
+    @Override
+	public Iterator<Edge> getEdgeIterator() {
+		return edgeMap.values().iterator();
 	}
 
 	@Override
-	public <T extends Edge> Iterator<T> getEdgeIterator() {
-		return new EdgeIterator<T>();
+	public Iterator<Node> getNodeIterator() {
+		return nodeMap.values().iterator();
 	}
 
-	@Override
-	public <T extends Node> Iterator<T> getNodeIterator() {
-		return new NodeIterator<T>();
-	}
 }
