@@ -1,39 +1,64 @@
 package objenome.db;
 
+import com.google.common.collect.Iterables;
 import com.tinkerpop.blueprints.Vertex;
-import nars.util.db.SpanGraph;
 import nars.util.db.InfiniPeer;
+import nars.util.db.SpanGraph;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by me on 6/3/15.
  */
 public class SpanGraphTest {
 
+    final static String  graphID = "h";
 
-    public static final String graphID = "h";
-    static final Runnable b = () -> {
-
-
-        sleep(1000);
-
-        InfiniPeer peer = InfiniPeer.start("PeerB");
-        SpanGraph g = new SpanGraph(graphID, peer);
-
-        sleep(1000);
-
-        System.out.println( "b received: " + g.getVertices() );
+    final static Function<String,SpanGraph> graph = (String x) -> {
+        return new SpanGraph(graphID, InfiniPeer.start(x));
     };
 
-    static final Runnable a = () -> {
+    @Test
+    public void testVertexPropagation() throws InterruptedException {
 
-        InfiniPeer peer = InfiniPeer.start("PeerA");
 
-        SpanGraph g = new SpanGraph("h", peer);
+        final List<Vertex> receivedByB = new ArrayList(1);
+
+
+
+        final Runnable b = () -> {
+
+            int preDelayMS = 10;
+            int afterConnectedDelayMS = 100;
+
+            sleep(preDelayMS);
+
+            SpanGraph g = graph.apply("PeerB");
+
+            sleep(afterConnectedDelayMS);
+
+            Iterables.addAll(receivedByB, g.getVertices());
+        };
+
+
+        SpanGraph g = graph.apply("PeerA");
+
         Vertex v = g.addVertex("x");
 
-        new Thread(b).start();
+        Thread x = new Thread(b);
+        x.start();
+        x.join();
 
-    };
+
+        assertEquals(1, receivedByB.size());
+        assertEquals("[v[x]]", receivedByB.toString());
+
+    }
 
 
 
@@ -45,8 +70,4 @@ public class SpanGraphTest {
         }
     }
 
-    public static void main(String[] args)  {
-        new Thread(a).start();
-
-    }
 }
