@@ -19,7 +19,6 @@ void inputsToCellblocksFiber(int fiberId, __global precisionType* sumF, __global
     sumG[cellIndex] = sumGForCell;
 }
 
-
 void activateFiber(
     int fiberId,
 
@@ -49,7 +48,7 @@ void activateFiber(
     actF[cellIndex] = actfj;
     actG[cellIndex] = actgj;
 
-    actH[cellIndex] = actfj * context[cellIndex] + (1 - actfj) * actgj;
+    actH[cellIndex] = actfj * context[cellIndex] + (1.0 - actfj) * actgj;
 }
 
 
@@ -296,7 +295,9 @@ kernel void stage1Kernel(
 
     __global precisionType* deltaH,
 
-    precisionType learningRate
+    precisionType learningRate,
+
+    int syncronisationCounterResetValue
 ) {
     int fiberId = get_global_id(0);
 
@@ -332,6 +333,7 @@ kernel void stage1Kernel(
 
 
         inputsToCellblocksFiber(fiberId, sumF, sumG, weightsF, weightsG, full_input, full_input_dimension, cell_blocks);
+
 
         atomic_sub(counterBarrier0, 1);
 
@@ -450,7 +452,18 @@ kernel void stage1Kernel(
 
 
 
-        // TODO< reset all counterBarriers >
+
+        // TODO barrier
+
+        // reset all counterBarriers
+        counterBarrier0[0] = syncronisationCounterResetValue;
+        counterBarrier1[0] = syncronisationCounterResetValue;
+        counterBarrier2[0] = syncronisationCounterResetValue;
+        counterBarrier3[0] = syncronisationCounterResetValue;
+        counterBarrier4[0] = syncronisationCounterResetValue;
+        counterBarrier5[0] = syncronisationCounterResetValue;
+        counterBarrier6[0] = syncronisationCounterResetValue;
+        counterBarrier7[0] = syncronisationCounterResetValue;
     }
 }
 
