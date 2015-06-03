@@ -12,7 +12,10 @@ import java.nio.charset.CodingErrorAction;
 import java.util.Arrays;
 
 /**
- *
+ * http://www.ascii-code.com/ we can use the 0..31 control characters
+ * for 1 byte representation of NAL operators
+ * which will be interpreted as such when not between double quotes
+
  * @author https://github.com/squito/jutf8
  * http://svn.apache.org/viewvc/avro/trunk/lang/java/avro/src/main/java/org/apache/avro/other/Utf8.java?revision=1552418&view=co
  */
