@@ -4,6 +4,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.util.*;
+import nars.util.math.RangeList;
+import org.jgrapht.Graphs;
 
 import java.io.Serializable;
 import java.util.*;
@@ -126,6 +128,32 @@ abstract public class MapGraph<X> implements Graph {
         return (MEdge<X>) this.edges.get(id);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof MapGraph))
+            return false;
+        MapGraph m = (MapGraph)obj;
+
+
+
+        if ((vertices.size() != m.vertices.size()) ||
+            (edges.size() != m.edges.size()))
+                return false;
+
+        return m.vertexSet().equals(vertexSet()) &&
+                m.edgeSet().equals(edgeSet());
+    }
+
+    //TODO deepEquals which will compare the properties of each vertex and edge
+
+
+    public Set<MVertex<X>> vertexSet() {
+        return new HashSet(vertices.values());
+    }
+    public Set<MEdge<X>> edgeSet() {
+        return new HashSet(edges.entrySet());
+    }
 
     public Iterable<Vertex> getVertices() {
         //Unmodifiable?
@@ -362,7 +390,7 @@ abstract public class MapGraph<X> implements Graph {
 
     }
 
-    protected static class MVertex<X> extends MElement<X> implements Vertex, Serializable {
+    public static class MVertex<X> extends MElement<X> implements Vertex, Serializable {
 
         public final Map<X, Set<Edge>> outEdges = new LinkedHashMap();
         public final Map<X, Set<Edge>> inEdges = new LinkedHashMap();
