@@ -306,9 +306,9 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
                 break;
             }*/
                 if (n!=0)
-                    b.append((byte) Symbols.ARGUMENT_SEPARATOR);
+                    b.add((byte) Symbols.ARGUMENT_SEPARATOR);
 
-                b.append(t.bytes());
+                b.add(t.bytes());
 
                 n++;
             }
@@ -319,25 +319,25 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         }
 
         @Override
-        public void write(Writer p, boolean pretty) throws IOException {
+        public void append(Writer p, boolean pretty) throws IOException {
             
             final Term[] xt = compound.arg().terms();
 
-            compound.getPredicate().write(p, pretty); //add the operator name without leading '^'
-            p.write((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+            compound.getPredicate().append(p, pretty); //add the operator name without leading '^'
+            p.append(NALOperator.COMPOUND_TERM_OPENER.ch);
 
 
             int n=0;
             for (final Term t : xt) {
                 if (n!=0)
-                    p.write((byte)Symbols.ARGUMENT_SEPARATOR);
+                    p.append(Symbols.ARGUMENT_SEPARATOR);
 
-                t.write(p, pretty);
+                t.append(p, pretty);
 
                 n++;
             }
 
-            p.write((byte) NALOperator.COMPOUND_TERM_CLOSER.ch);
+            p.append(NALOperator.COMPOUND_TERM_CLOSER.ch);
 
         }
     }

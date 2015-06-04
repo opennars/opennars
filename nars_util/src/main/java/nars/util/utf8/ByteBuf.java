@@ -40,7 +40,6 @@ package nars.util.utf8;
  */
 public class ByteBuf  {
 
-    protected int capacity = 16;
 
 
     protected int length = 0;
@@ -69,7 +68,6 @@ public class ByteBuf  {
     }
 
     protected ByteBuf( int capacity ) {
-        this.capacity = capacity;
         buffer = new byte[ capacity ];
     }
 
@@ -92,9 +90,8 @@ public class ByteBuf  {
 
     public ByteBuf append(final int value) {
 
-        if ( 4 + length > capacity ) {
+        if ( 4 + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + 4 );
-            capacity = buffer.length;
 
         }
 
@@ -108,9 +105,8 @@ public class ByteBuf  {
 
     public ByteBuf append(final float value) {
 
-        if ( 4 + length > capacity ) {
+        if ( 4 + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + 4 );
-            capacity = buffer.length;
 
         }
         Byt.floatTo( buffer, length, value );
@@ -129,9 +125,9 @@ public class ByteBuf  {
 
     public ByteBuf append(final char value) {
 
-        if ( 2 + length > capacity ) {
+        if ( 2 + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + 2 );
-            capacity = buffer.length;
+            
 
 
         }
@@ -143,11 +139,11 @@ public class ByteBuf  {
 
     public ByteBuf append(final short value) {
 
-        if ( 2 + length < capacity ) {
+        if ( 2 + length < getCapacity()) {
             Byt.shortTo( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer, buffer.length * 2 + 2 );
-            capacity = buffer.length;
+            
 
             Byt.shortTo( buffer, length, value );
         }
@@ -166,9 +162,9 @@ public class ByteBuf  {
 
     public ByteBuf append(long value) {
 
-        if ( 8 + length > capacity ) {
+        if ( 8 + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + 8 );
-            capacity = buffer.length;
+            
 
         }
         Byt.longTo( buffer, length, value );
@@ -180,9 +176,9 @@ public class ByteBuf  {
 
     public ByteBuf addUnsignedInt( long value ) {
 
-        if ( 4 + length > capacity ) {
+        if ( 4 + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + 4 );
-            capacity = buffer.length;
+            
         }
         Byt.unsignedIntTo( buffer, length, value );
         length += 4;
@@ -192,9 +188,9 @@ public class ByteBuf  {
 
     public ByteBuf append(double value) {
 
-        if ( 8 + length > capacity ) {
+        if ( 8 + length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + 8 );
-            capacity = buffer.length;
+            
         }
 
         Byt.doubleTo( buffer, length, value );
@@ -210,16 +206,17 @@ public class ByteBuf  {
     }
 
     public ByteBuf add(final byte value) {
-        Byt.idx( buffer, length, value );
-        length += 1;
+        if (length >= buffer.length)
+            throw new RuntimeException("overflow");
+        buffer[length++] = value;
         return this;
     }
 
     public ByteBuf append(final byte value) {
 
-        if ( 1 + length > capacity ) {
+        if ( 1 + length > getCapacity()) {
             buffer = Byt.grow( buffer );
-            capacity = buffer.length;
+            
         }
 
         return add(value);
@@ -232,9 +229,9 @@ public class ByteBuf  {
 
     public ByteBuf append(final byte[] array) {
         final int al = array.length;
-        if ( al + this.length > capacity ) {
+        if ( al + this.length > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length + al );
-            capacity = buffer.length;
+            
         }
         add(array);
         return this;
@@ -246,9 +243,9 @@ public class ByteBuf  {
     }
 
     public ByteBuf append(final byte[] array, final int length) {
-        if ( ( this.length + length ) > capacity ) {
+        if ( ( this.length + length ) > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + length );
-            capacity = buffer.length;
+            
         }
         Byt._idx( buffer, length, array, length );
         this.length += length;
@@ -256,9 +253,9 @@ public class ByteBuf  {
     }
 
     public ByteBuf append(byte[] array, final int offset, final int length) {
-        if ( ( this.length + length ) > capacity ) {
+        if ( ( this.length + length ) > getCapacity()) {
             buffer = Byt.grow( buffer, buffer.length * 2 + length );
-            capacity = buffer.length;
+            
         }
 
         return add(array, offset, length);
@@ -440,11 +437,11 @@ public class ByteBuf  {
     }
 
     public void addUnsignedByte( short value ) {
-        if ( 1 + length < capacity ) {
+        if ( 1 + length < getCapacity()) {
             Byt.unsignedByteTo( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer, buffer.length * 2 + 1 );
-            capacity = buffer.length;
+            
 
             Byt.unsignedByteTo( buffer, length, value );
         }
@@ -465,11 +462,11 @@ public class ByteBuf  {
 
     public void addUnsignedShort( int value ) {
 
-        if ( 2 + length < capacity ) {
+        if ( 2 + length < getCapacity()) {
             Byt.unsignedShortTo( buffer, length, value );
         } else {
             buffer = Byt.grow( buffer, buffer.length * 2 + 2 );
-            capacity = buffer.length;
+            
 
             Byt.unsignedShortTo( buffer, length, value );
         }
@@ -572,7 +569,7 @@ public class ByteBuf  {
 
 
     private void doWriteShortArray( short[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
+        if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
         for ( int index = 0; index < values.length; index++ ) {
@@ -604,7 +601,7 @@ public class ByteBuf  {
 
 
     private void doWriteIntArray( int[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
+        if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
         for ( int index = 0; index < values.length; index++ ) {
@@ -640,7 +637,7 @@ public class ByteBuf  {
 
 
     private void doWriteLongArray( long[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
+        if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
         for ( int index = 0; index < values.length; index++ ) {
@@ -673,7 +670,7 @@ public class ByteBuf  {
     }
 
     private void doWriteFloatArray( float[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
+        if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
         for ( int index = 0; index < values.length; index++ ) {
@@ -709,7 +706,7 @@ public class ByteBuf  {
 
 
     private void doWriteDoubleArray( double[] values, int byteSize ) {
-        if ( !( byteSize + length < capacity ) ) {
+        if ( !( byteSize + length < getCapacity()) ) {
             buffer = Byt.grow( buffer, buffer.length * 2 + byteSize );
         }
         for ( int index = 0; index < values.length; index++ ) {
@@ -747,4 +744,7 @@ public class ByteBuf  {
         return this;
     }
 
+    final public int getCapacity() {
+        return buffer.length;
+    }
 }

@@ -72,7 +72,7 @@ public interface SetTensional extends Term {
         }
 
         @Override
-        public void write(Writer p, boolean pretty) throws IOException {
+        public void append(Writer p, boolean pretty) throws IOException {
 
             final int len = compound.length();
 
@@ -85,7 +85,7 @@ public interface SetTensional extends Term {
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
                 if (i!=0) p.write(Symbols.ARGUMENT_SEPARATOR);
-                tt.write(p, pretty);
+                tt.append(p, pretty);
             }
             p.write(closer);
         }

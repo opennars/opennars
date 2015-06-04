@@ -27,7 +27,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     public char[] toChars(boolean pretty) {
         CharArrayWriter caw = new EfficientCharArrayWriter(getStringSizeEstimate());
         try {
-            write(caw, pretty);
+            append(caw, pretty);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,15 +45,21 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     }
 
 
-    public abstract void write(Writer p, boolean pretty) throws IOException;
+
+    public void append(OutputStream o, boolean pretty) throws IOException {
+        append(new PrintWriter(o), pretty);
+    }
+
+    /**
+     * implementations should call Writer.append() sometimes instead of Writer.write()
+     * to avoid allocating a temporary buffer
+     */
+    public abstract void append(Writer p, boolean pretty) throws IOException;
 
     public void set(Identified h) {
         this.host = h;
     }
 
-    public void write(OutputStream o, boolean pretty) throws IOException {
-        write(new PrintWriter(o), pretty);
-    }
 
     @Override
     public boolean equals(final Object x) {

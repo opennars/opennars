@@ -119,7 +119,7 @@ abstract public class Image extends DefaultCompound {
             final int len = compound.length();
 
             //calculate total size
-            int bytes = 2;
+            int bytes = 2+2+2;
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
                 bytes += tt.name().bytes().length;
@@ -127,58 +127,58 @@ abstract public class Image extends DefaultCompound {
             }
 
             ByteBuf b = ByteBuf.create(bytes)
-                    .append((byte) COMPOUND_TERM_OPENER.ch)
-                    .append(compound.operator().bytes)
-                    .append((byte) ARGUMENT_SEPARATOR)
-                    .append(compound.relation().bytes());
+                    .add((byte) COMPOUND_TERM_OPENER.ch)
+                    .add(compound.operator().bytes)
+                    .add((byte) ARGUMENT_SEPARATOR)
+                    .add(compound.relation().bytes());
 
 
             final int relationIndex = compound.relationIndex;
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
-                b.append((byte) ARGUMENT_SEPARATOR);
+                b.add((byte) ARGUMENT_SEPARATOR);
                 if (i == relationIndex) {
-                    b.append((byte) Symbols.IMAGE_PLACE_HOLDER);
+                    b.add((byte) Symbols.IMAGE_PLACE_HOLDER);
                 } else {
-                    b.append(tt.bytes());
+                    b.add(tt.bytes());
                 }
             }
-            b.append((byte) COMPOUND_TERM_CLOSER.ch);
+            b.add((byte) COMPOUND_TERM_CLOSER.ch);
 
             return b.toBytes();
 
         }
 
         @Override
-        public void write(Writer p, boolean pretty) throws IOException {
+        public void append(Writer p, boolean pretty) throws IOException {
 
             final int len = compound.length();
 
-            p.write(COMPOUND_TERM_OPENER.ch);
-            p.write(compound.operator().str);
+            p.append(COMPOUND_TERM_OPENER.ch);
+            p.append(compound.operator().str);
 
-            p.write(ARGUMENT_SEPARATOR);
+            p.append(ARGUMENT_SEPARATOR);
             if (pretty)
-                p.write(' ');
+                p.append(' ');
 
-            compound.relation().write(p, pretty);
+            compound.relation().append(p, pretty);
 
             final int relationIndex = compound.relationIndex;
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
 
-                p.write(ARGUMENT_SEPARATOR);
+                p.append(ARGUMENT_SEPARATOR);
 
                 if (pretty)
-                    p.write(' ');
+                    p.append(' ');
 
                 if (i == relationIndex) {
-                    p.write(Symbols.IMAGE_PLACE_HOLDER);
+                    p.append(Symbols.IMAGE_PLACE_HOLDER);
                 } else {
-                    tt.write(p, pretty);
+                    tt.append(p, pretty);
                 }
             }
-            p.write(COMPOUND_TERM_CLOSER.ch);
+            p.append(COMPOUND_TERM_CLOSER.ch);
 
         }
     }

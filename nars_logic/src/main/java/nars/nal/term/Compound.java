@@ -123,20 +123,20 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         }
 
         @Override
-        public void write(Writer p, boolean pretty) throws IOException {
+        public void append(Writer p, boolean pretty) throws IOException {
 
-            p.write(COMPOUND_TERM_OPENER.ch);
-            p.write(compound.operator().str);
+            p.append(COMPOUND_TERM_OPENER.ch);
+            p.append(compound.operator().str);
 
             for (final Term t : compound.term) {
-                p.write(ARGUMENT_SEPARATOR);
+                p.append(ARGUMENT_SEPARATOR);
                 if (pretty)
-                    p.write(' ');
+                    p.append(' ');
 
-                t.write(p, pretty);
+                t.append(p, pretty);
             }
 
-            p.write(COMPOUND_TERM_CLOSER.ch);
+            p.append(COMPOUND_TERM_CLOSER.ch);
 
         }
     }
@@ -170,11 +170,11 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
     public static void writeCompound1(final NALOperator op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
 
-        writer.write(COMPOUND_TERM_OPENER.ch);
-        writer.write(op.str);
-        writer.write(ARGUMENT_SEPARATOR);
-        singleTerm.write(writer, pretty);
-        writer.write(COMPOUND_TERM_CLOSER.ch);
+        writer.append(COMPOUND_TERM_OPENER.ch);
+        writer.append(op.str);
+        writer.append(ARGUMENT_SEPARATOR);
+        singleTerm.append(writer, pretty);
+        writer.append(COMPOUND_TERM_CLOSER.ch);
     }
 
     public static byte[] newCompound1Key(final NALOperator op, final Term singleTerm) {
@@ -186,11 +186,11 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
         final byte[] termBytes = singleTerm.bytes();
 
-        return ByteBuf.create(1 + opBytes.length + 1 + termBytes.length + 1)
+        return ByteBuf.create(opBytes.length + termBytes.length)
                 //.add((byte)COMPOUND_TERM_OPENER.ch)
-                .append(opBytes)
+                .add(opBytes)
                 //.add((byte) ARGUMENT_SEPARATOR)
-                .append(termBytes)
+                .add(termBytes)
                 //.add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
     }

@@ -58,15 +58,26 @@ public class UTF8Identifier extends Identifier {
         return name;
     }
 
+    @Override
     public char[] toChars(final boolean pretty) {
-        /** if UTF8Identifier it is a constant (until we balance the dynamic with a concrete constant subclass and make this abstract)
-         * otherwise call the write routine
-         * */
-        if (getClass() == UTF8Identifier.class)
-            return Utf8.fromUtf8ToChars(name());
-        else
-            return super.toChars(pretty);
+        return toCharsByName();
     }
+
+    /** use this if the input is constant and already known (static).
+     * avoids calling the writer and just decodes the utf8 representation directly
+     * this is why it does not use the 'pretty' parameter because it would have
+     * no effect
+     * */
+    public char[] toCharsByName() {
+        return Utf8.fromUtf8ToChars(name());
+    }
+
+    /** use this when this class must generate an output by a writer */
+    public char[] toCharsByWriter(final boolean pretty) {
+        return super.toChars(pretty);
+    }
+
+
 
     @Override
     int getStringSizeEstimate() {
@@ -140,17 +151,8 @@ public class UTF8Identifier extends Identifier {
 
 
     @Override
-    public void write(Writer p, boolean pretty) throws IOException {
+    public void append(Writer p, boolean pretty) throws IOException {
         //default behavior: string representation of name
-        ensureNamed();
-//
-//        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-//        boas.write(name());
-//
-//        ByteStreams.newDataOutput()
-//        p.write(new StringWriter(boas, Utf8.utf8Charset);, pretty);
-
-
         p.write(Utf8.fromUtf8ToChars(name()));
     }
 

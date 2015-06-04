@@ -137,9 +137,9 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
         return name().bytes();
     }
 
-    default public void write(Writer w, boolean pretty) throws IOException {
+    default public void append(Writer w, boolean pretty) throws IOException {
         try {
-            name().write(w, pretty);
+            name().append(w, pretty);
         } catch (IOException e) {
             e.printStackTrace();
         }

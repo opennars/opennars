@@ -243,11 +243,11 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
         }
 
         @Override
-        public void write(final Writer w, final boolean pretty) throws IOException {
+        public void append(final Writer w, final boolean pretty) throws IOException {
 
             w.append(STATEMENT_OPENER.ch);
 
-            s.getSubject().name().write(w, pretty);
+            s.getSubject().name().append(w, pretty);
 
             if (pretty) w.append(' ');
 
@@ -255,7 +255,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
             if (pretty) w.append(' ');
 
-            s.getPredicate().name().write(w, pretty);
+            s.getPredicate().name().append(w, pretty);
 
             w.append(STATEMENT_CLOSER.ch);
         }
