@@ -27,8 +27,9 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.*;
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -90,7 +91,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         }
 
         @Override
-        public byte[] newName() {
+        public byte[] init() {
 
             final int numArgs = compound.term.length;
 
@@ -529,11 +530,11 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 //    }
 
 
-    @Override public UTF8Identifier name() {
+    @Override public LiteralUTF8Identifier name() {
         if (!hasName()) {
             setName( newName() );
         }
-        return (UTF8Identifier)super.name();
+        return (LiteralUTF8Identifier)super.name();
     }
 
      /** creates a new Identifier name for this term */

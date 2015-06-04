@@ -38,7 +38,7 @@ public interface SetTensional extends Term {
         }
 
         @Override
-        public byte[] newName() {
+        public byte[] init() {
 
             //TODO calculate length exactly
 
@@ -59,13 +59,13 @@ public interface SetTensional extends Term {
 
             ByteBuf b = ByteBuf.create(bytes);
 
-            b.append((byte) opener);
+            b.add((byte) opener);
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
-                if (i!=0) b.append((byte) Symbols.ARGUMENT_SEPARATOR);
-                b.append(tt.bytes());
+                if (i!=0) b.add((byte) Symbols.ARGUMENT_SEPARATOR);
+                b.add(tt.bytes());
             }
-            b.append((byte) closer);
+            b.add((byte) closer);
 
             return b.toBytes();
 
@@ -81,13 +81,13 @@ public interface SetTensional extends Term {
             if (compound instanceof SetExt) { opener = NALOperator.SET_EXT_OPENER.ch; closer = NALOperator.SET_EXT_CLOSER.ch;            }
             else { opener = NALOperator.SET_INT_OPENER.ch;  closer = NALOperator.SET_INT_CLOSER.ch; }
 
-            p.write(opener);
+            p.append(opener);
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
-                if (i!=0) p.write(Symbols.ARGUMENT_SEPARATOR);
+                if (i!=0) p.append(Symbols.ARGUMENT_SEPARATOR);
                 tt.append(p, pretty);
             }
-            p.write(closer);
+            p.append(closer);
         }
     }
 

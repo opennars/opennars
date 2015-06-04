@@ -1,7 +1,8 @@
 package objenome.util;
 
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.utf8.ByteBuf;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class UTF8IdentifierTest {
     }
 
     private void testConstantAndDynamicEquality(String b) {
-        UTF8Identifier x = new UTF8Identifier(b);
+        UTF8Identifier x = new LiteralUTF8Identifier(b);
         UTF8Identifier y = new DynamicallyConstructedConstantUTF8Identifier(b);
         assertEquals(x, y);
         assertEquals(y, x);
@@ -43,7 +44,7 @@ public class UTF8IdentifierTest {
     }
 
     public void testLazyHash(final String b) {
-        UTF8Identifier y = new UTF8Identifier(b);
+        LiteralUTF8Identifier y = new LiteralUTF8Identifier(b);
         assertTrue(y.hasName());
         assertTrue(!y.hasHash());
         assertTrue(y.hashCode()!=0);
@@ -64,7 +65,7 @@ public class UTF8IdentifierTest {
             this.b = b;
         }
 
-        @Override public byte[] newName() {
+        @Override public byte[] init() {
             ByteBuf bb = ByteBuf.create(8);
             bb.append(b);
             return bb.toBytes();

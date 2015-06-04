@@ -1,9 +1,7 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound1;
 import nars.nal.term.Term;
-import nars.util.data.id.UTF8Identifier;
 
 /** efficient implementation of a set with one element */
 public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {

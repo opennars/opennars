@@ -3,7 +3,6 @@ package nars.core;
 import nars.NAR;
 import nars.model.impl.Default;
 import nars.util.data.id.Identifier;
-import nars.util.data.id.UTF8Identifier;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -18,19 +17,28 @@ public class TermIDTest {
     final static NAR nar = new NAR( new Default().level(1) );
 
     @Test
+
+    /** tests whether NALOperators has been reduced to the
+      compact control character (8bits UTF) that represents it */
     public void testInternalRepresentation() {
         testInternalRepresentation("x", 1);
         testInternalRepresentation("xyz", 3);
         testInternalRepresentation("\u00ea", 2);
         testInternalRepresentation("xyz\u00e3", 3 + 2);
 
-        //5 bytes: '<', 'a', [code for inheritance], 'b', '>'
-        //tests whether the relatoin symbol has been reduced to the
-        // control character that represents it
-        testInternalRepresentation("<a --> b>", 5);
-        testInternalRepresentation("(&&, a, b)", 7);
+        //  '-->' 'a' ','  'b' ')' == 4
+        testInternalRepresentation("<a --> b>", 4);
+
+        // '&&' 'a' ',' 'b' ')'
+        testInternalRepresentation("(&&, a, b)", 5);
         //testInternalRepresentation("<a && b>", 5);
+
+        // '--', 'a'
         testInternalRepresentation("(--,a)", 2);
+
+        // '*' 'a' ',' 'b' ')'
+        testInternalRepresentation("(*, a, b)", 5);
+
     }
 
     public void testInternalRepresentation(String expectedStringOutput, int expectedLength) {

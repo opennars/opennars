@@ -4,7 +4,6 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.util.data.id.UTF8Identifier;
 
 import java.util.Collection;
 

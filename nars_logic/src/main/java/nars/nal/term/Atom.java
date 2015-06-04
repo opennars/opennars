@@ -2,11 +2,10 @@ package nars.nal.term;
 
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.transform.TermVisitor;
 import nars.util.data.id.Identifier;
-import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.LiteralUTF8Identifier;
 
 import java.util.Map;
 
@@ -83,7 +82,7 @@ public class Atom extends AbstractTerm {
     }
 
     protected Atom(final byte[] name) {
-        this(new UTF8Identifier(name));
+        this(new LiteralUTF8Identifier(name));
     }
 
     /** gets the atomic term given a name, storing it in the static symbol table */

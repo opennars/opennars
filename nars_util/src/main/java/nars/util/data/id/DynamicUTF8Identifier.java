@@ -1,21 +1,21 @@
 package nars.util.data.id;
 
 /** Lazily calculated dynamic UTF8 for constructing compact INTERNAL REPRESENTATIONS */
-abstract public class DynamicUTF8Identifier extends UTF8Identifier {
+abstract public class DynamicUTF8Identifier extends LiteralUTF8Identifier {
 
     public DynamicUTF8Identifier() {
         super();
     }
 
     @Override
-    public char[] toChars(final boolean pretty) {
-        return toCharsByWriter(pretty);
+    public char[] chars(final boolean pretty) {
+        return charsFromWriter(pretty);
     }
 
 
     @Override protected synchronized void ensureNamed() {
         if (!hasName()) {
-            name = newName();
+            data = init();
             hash = makeHash();
         }
     }
@@ -38,6 +38,6 @@ abstract public class DynamicUTF8Identifier extends UTF8Identifier {
      * implementations should call ByteBuffer.add() sometimes instead of ByteBuf.append()
      * when the exact total size of the resulting byte[] is known
      */
-    abstract public byte[] newName();
+    abstract public byte[] init();
 
 }

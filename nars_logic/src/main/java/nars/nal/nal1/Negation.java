@@ -20,19 +20,15 @@
  */
 package nars.nal.nal1;
 
-import nars.Symbols;
 import nars.nal.NALOperator;
-import nars.nal.nal3.SetExt;
 import nars.nal.term.Compound;
 import nars.nal.term.Compound1;
 import nars.nal.term.Term;
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
 
 import java.io.IOException;
 import java.io.Writer;
-
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 
 /**
  * A negation of a statement.
@@ -128,7 +124,7 @@ public class Negation extends Compound1 {
         }
 
         @Override
-        public byte[] newName() {
+        public byte[] init() {
 
             return Compound.newCompound1Key(NALOperator.NEGATION, neg.the());
         }

@@ -86,7 +86,7 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
 
 
     default char[] toCharSequence(boolean pretty) {
-        return name().toChars(pretty);
+        return name().chars(pretty);
     }
 
     /** shallow clone, using the same subterm references */

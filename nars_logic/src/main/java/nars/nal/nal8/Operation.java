@@ -34,8 +34,8 @@ import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.eval;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -279,7 +279,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         }
 
         @Override
-        public byte[] newName() {
+        public byte[] init() {
 
             byte[] op = compound.getPredicate().bytes();
             //Term[] arg = argArray();

@@ -24,14 +24,38 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
     transient private Identified host = null;
 
-    public char[] toChars(boolean pretty) {
-        CharArrayWriter caw = new EfficientCharArrayWriter(getStringSizeEstimate());
+    /** produces the character array by invoking the append()
+     *  method that certain subclasses use to form their
+     *  data lazily/dynamically.  this is guaranteed to work for all
+     *  but may not be the most efficient - subclasses
+     *  are free to provide more efficient ones for their cases.
+     *  @param pretty - whether to include spaces and other whitespace-like formatting
+     *  @return character array which may need trimmed for trailing zero '\0' characters
+     */
+    public char[] charsFromWriter(boolean pretty) {
+        CharArrayWriter caw = new EfficientCharArrayWriter(charsEstimated());
         try {
             append(caw, pretty);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return caw.toCharArray();
+    }
+
+    /** use this if the input is constant and already known (static).
+     * avoids calling the writer and just decodes the utf8 representation directly
+     * this is why it does not use the 'pretty' parameter because it would have
+     * no effect
+     * */
+    public char[] charsByName() {
+        return Utf8.fromUtf8ToChars(bytes());
+    }
+
+
+    /** use this when this class must generate an output by a writer
+     *  this is the default general implementation.  */
+    public char[] chars(final boolean pretty) {
+        return charsFromWriter(pretty);
     }
 
 
@@ -151,33 +175,33 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public String toString(final boolean pretty) {
-        char[] c = toChars(pretty);
+        char[] c = chars(pretty);
         return new String(c);
     }
 
     /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public StringBuilder toStringBuilder(final boolean pretty) {
-        char[] c = toChars(pretty);
+        char[] c = chars(pretty);
         return new StringBuilder(c.length).append(c);
     }
 
     public CharSequence toCharSequence(final boolean pretty) {
-        char[] c = toChars(pretty, true);
+        char[] c = chars(pretty, true);
         return new CharArrayRope(c);
     }
 
-    private char[] toChars(boolean pretty, boolean trim) {
-        char[] c = toChars(pretty);
+    private char[] chars(boolean pretty, boolean trim) {
+        char[] c = chars(pretty);
         if (trim)
             c = Utf8.trim(c);
         return c;
     }
 
+    /** inefficient and potentially circularly recursive
+     *  override either bytes() or chars() in subclasses please */
     public byte[] bytes() {
-        /** inefficient, override in subclasses please */
         System.err.println(this + " wasteful String generation");
-
-        return Utf8.toUtf8(toChars(false));
+        return Utf8.toUtf8(chars(false));
     }
 
     public byte byteAt(final int i) {
@@ -193,7 +217,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
         return toString(true);
     }
 
-    abstract int getStringSizeEstimate();
+    abstract int charsEstimated();
 
     /** frees all associated memory */
     abstract public void delete();

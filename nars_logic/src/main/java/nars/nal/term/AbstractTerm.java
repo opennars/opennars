@@ -1,10 +1,7 @@
 package nars.nal.term;
 
 import nars.util.data.id.Identifier;
-import nars.util.data.id.UTF8Identifier;
-
-import java.io.IOException;
-import java.io.Writer;
+import nars.util.data.id.LiteralUTF8Identifier;
 
 /**
  * Created by me on 6/2/15.
@@ -18,7 +15,7 @@ abstract public class AbstractTerm implements Term {
     }
 
     public AbstractTerm(String name) {
-        this(new UTF8Identifier(name));
+        this(new LiteralUTF8Identifier(name));
     }
 
     public AbstractTerm(Identifier x) {

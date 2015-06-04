@@ -5,8 +5,8 @@ import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -114,7 +114,7 @@ abstract public class Image extends DefaultCompound {
         }
 
         @Override
-        public byte[] newName() {
+        public byte[] init() {
 
             final int len = compound.length();
 

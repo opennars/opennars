@@ -31,8 +31,8 @@ import nars.nal.nal4.Image;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
+import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -223,7 +223,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
         }
 
         @Override
-        public byte[] newName() {
+        public byte[] init() {
             final byte[] subjBytes = s.getSubject().bytes();
             final byte[] predBytes = s.getPredicate().bytes();
             final byte[] relationBytes = s.operator().bytes;

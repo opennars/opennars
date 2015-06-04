@@ -31,10 +31,8 @@ import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.model.impl.Default;
-import nars.util.data.id.UTF8Identifier;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.TreeSet;
 
 import static junit.framework.TestCase.assertFalse;
