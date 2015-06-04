@@ -3,11 +3,12 @@ package nars.rl.lstm;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public abstract class AbstractTraining {
-
+    public int batchsize = 400000000;
 
     public AbstractTraining(Random random, final int inputDimension, final int outputDimension) {
         this.random = random;
@@ -49,22 +50,34 @@ public abstract class AbstractTraining {
     public void supervised(AgentSupervised agent) throws Exception {
         List<Interaction> interactions = this.GenerateInteractions(tests);
 
+        List<AgentSupervised.NonResetInteraction> agentNonResetInteraction = new ArrayList<>();
+
         for (Interaction inter : interactions) {
 
-            if (inter.do_reset)
+            if (inter.do_reset) {
+                agentExecuteNonResetInteractionsAndFlush(agent, agentNonResetInteraction);
+
                 agent.clear();
-
-            if (inter.target_output == null)
-                agent.predict(inter.observation, false);
-            else {
-                double[] actual_output = null;
-
-                if (validation_mode == true)
-                    agent.predict(inter.observation, false);
-                else
-                    agent.learn(inter.observation, inter.target_output, false);
             }
+
+            AgentSupervised.NonResetInteraction newInteraction = new AgentSupervised.NonResetInteraction();
+            newInteraction.observation = inter.observation;
+            newInteraction.target_output = inter.target_output;
+            agentNonResetInteraction.add(newInteraction);
+
+            if( agentNonResetInteraction.size() > batchsize ) {
+                agentExecuteNonResetInteractionsAndFlush(agent, agentNonResetInteraction);
+            }
+
         }
+
+        agentExecuteNonResetInteractionsAndFlush(agent, agentNonResetInteraction);
+    }
+
+    private void agentExecuteNonResetInteractionsAndFlush(AgentSupervised agent, final List<AgentSupervised.NonResetInteraction> nonResetInteractions) throws Exception {
+        agent.learnBatch(nonResetInteractions, false);
+
+        nonResetInteractions.clear();
     }
 
 

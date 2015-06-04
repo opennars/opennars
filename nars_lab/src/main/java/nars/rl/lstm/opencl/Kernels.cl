@@ -156,7 +156,9 @@ kernel void BackpropScalePartialsFiber(
 void outputToHiddenFiber(
     int fiberId,
 
-    __global precisionType* target_output, // input
+    int currentBatchElement,
+
+    __global precisionType* batchTargetOutputs, // input
 
     __global precisionType* actH,
     __global precisionType* deltaH,
@@ -180,7 +182,7 @@ void outputToHiddenFiber(
     precisionType deltaHSum = 0.0f;
 
     for (int k = 0; k < output_dimension; k++) {
-        precisionType dok = (target_output[k] - output[k]) * SCALE_OUTPUT_DELTA;
+        precisionType dok = (batchTargetOutputs[output_dimension*currentBatchElement + k] - output[k]) * SCALE_OUTPUT_DELTA;
 
         deltaHSum += (dok * ARRAY2d(weightsOut, output_dimension, k, j));
         ARRAY2d(weightsOut, output_dimension, k, j) += (dok * actH[j] * learningRate);
@@ -282,16 +284,14 @@ kernel void stage1Kernel(
     __global int *counterBarrier5,
     __global int *counterBarrier6,
     __global int *counterBarrier7,
-
+    __global int *counterBarrier8,
+    __global int *barrierResetBarrier,
 
 
 
 
 
     precisionType SCALE_OUTPUT_DELTA,
-
-    // REMOVE
-    __global precisionType* target_output, // input
 
     __global precisionType* deltaH,
 
@@ -302,6 +302,8 @@ kernel void stage1Kernel(
     int fiberId = get_global_id(0);
 
     for( int inputI = 0; inputI < countOfInputOutputTuples; inputI++ ) {
+
+
         // assemle full inputs buffer from inputs and context
         if( fiberId == 0 ) {
             int location = 0;
@@ -329,6 +331,12 @@ kernel void stage1Kernel(
                 break;
             }
         }
+
+
+
+        // reset barrier-reset barrier
+
+        barrierResetBarrier[0] = syncronisationCounterResetValue;
 
 
 
@@ -414,8 +422,7 @@ kernel void stage1Kernel(
 
 
         if( flagIsTargetOutputAvailable[inputI] != 0 ) {
-            // TODO< rewrite to read from targetOutputs >
-            outputToHiddenFiber(fiberId,target_output,actH,deltaH,output,weightsOut,SCALE_OUTPUT_DELTA,learningRate,output_dimension,cell_blocks);
+            outputToHiddenFiber(fiberId, inputI, batchTargetOutputs, actH, deltaH, output, weightsOut, SCALE_OUTPUT_DELTA, learningRate, output_dimension, cell_blocks);
 
 
 
@@ -447,15 +454,27 @@ kernel void stage1Kernel(
             }
         }
 
-        // TODO< rollover >
+        // rollover
+
+        for( int cellI = 0; cellI < cell_blocks; cellI++ ) {
+            context[cellI] = actH[cellI];
+        }
+
+        atomic_sub(counterBarrier8, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(counterBarrier8, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
 
 
 
 
-
-        // TODO barrier
-
-        // reset all counterBarriers
+        // reset most counterBarriers
         counterBarrier0[0] = syncronisationCounterResetValue;
         counterBarrier1[0] = syncronisationCounterResetValue;
         counterBarrier2[0] = syncronisationCounterResetValue;
@@ -464,88 +483,20 @@ kernel void stage1Kernel(
         counterBarrier5[0] = syncronisationCounterResetValue;
         counterBarrier6[0] = syncronisationCounterResetValue;
         counterBarrier7[0] = syncronisationCounterResetValue;
-    }
-}
-
-kernel void stage2Kernel(
-    __global precisionType* target_output, // input
-
-    __global precisionType* actH,
-    __global precisionType* deltaH,
-    __global precisionType* output,
-    __global precisionType* weightsF,
-    __global precisionType* weightsG,
-    __global precisionType* weightsOut,
-
-    __global precisionType* dSdF,
-    __global precisionType* dSdG,
-
-    precisionType learningRate,
-    int full_input_dimension,
-
-    precisionType SCALE_OUTPUT_DELTA,
-
-    int output_dimension,
-    int cell_blocks,
-
-    __global int *counterBarrier0
-) {
-    int fiberId = get_global_id(0);
-
-    outputToHiddenFiber(fiberId,target_output,actH,deltaH,output,weightsOut,SCALE_OUTPUT_DELTA,learningRate,output_dimension,cell_blocks);
+        counterBarrier8[0] = syncronisationCounterResetValue;
 
 
+        // barrier for the reset of all other barriers
 
+        atomic_sub(barrierResetBarrier, 1);
 
-    atomic_sub(counterBarrier0, 1);
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(barrierResetBarrier, 0);
 
-    // wait until the counter hits 0
-    for(;;) {
-        int syncronisationValue = atomic_sub(counterBarrier0, 0);
-
-        if( syncronisationValue <= 0 ) {
-            break;
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
         }
     }
-
-
-
-    InputToHiddenFiber( fiberId, deltaH,dSdF, dSdG, weightsF, weightsG, learningRate, full_input_dimension, cell_blocks);
 }
-
-
-
-
-
-
-
-///////////////////////////////////////
-/// REMOVE ME NOW !!!!
-
-kernel void InputToHiddenKernel(
-    // read
-    __global precisionType* deltaH,
-    __global precisionType* dSdF,
-    __global precisionType* dSdG,
-
-    // write
-    __global precisionType* weightsF,
-    __global precisionType* weightsG,
-    // others
-    precisionType learningrate,
-    int full_input_dimension, int cell_blocks
-) {
-    int cellIndex = get_global_id(0);
-
-    if (cellIndex >= cell_blocks)  {
-        return;
-    }
-
-    precisionType deltaHForCell = deltaH[cellIndex];
-
-    for (int i = 0; i < full_input_dimension; i++) {
-        ARRAY2d(weightsF, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdF, cell_blocks, cellIndex, i) * learningrate);
-        ARRAY2d(weightsG, cell_blocks, cellIndex, i) += (deltaHForCell * ARRAY2d(dSdG, cell_blocks, cellIndex, i) * learningrate);
-    }
-}
-

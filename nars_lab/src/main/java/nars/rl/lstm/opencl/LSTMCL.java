@@ -5,6 +5,7 @@ import nars.rl.lstm.AgentSupervised;
 import nars.rl.lstm.Neuron;
 import nars.rl.lstm.NeuronType;
 import org.apache.commons.io.IOUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,8 @@ import static java.lang.Math.min;
 
 public class LSTMCL extends AgentSupervised {
     private final ValidationSimpleLSTM validation;
+    private int allocatedTuplesInBatchBuffer;
+
 
     // for validation of the implementation
     public class ValidationSimpleLSTM extends AgentSupervised
@@ -271,6 +274,11 @@ public class LSTMCL extends AgentSupervised {
             return output;
         }
 
+        @Override
+        public double[] learnBatch(List<NonResetInteraction> interactions, boolean requireOutput) throws Exception {
+            throw new NotImplementedException();
+        }
+
         public void setLearningRate(double learningRate) {
             this.learningRate = learningRate;
         }
@@ -310,13 +318,15 @@ public class LSTMCL extends AgentSupervised {
     private final CLContext cl;
     private final CLCommandQueue queue;
     private final CLProgram program;
-    private final CLBuffer<IntBuffer> flagIsTargetOutputAvailable;
-    private final CLBuffer<FloatBuffer> batchInputs;
-    private final CLBuffer<FloatBuffer> batchTargetOutputs;
+    private CLBuffer<IntBuffer> flagIsTargetOutputAvailable;
+    private CLBuffer<FloatBuffer> batchInputs;
+    private CLBuffer<FloatBuffer> batchTargetOutputs;
     private final CLBuffer<IntBuffer> counterBarrier4;
     private final CLBuffer<IntBuffer> counterBarrier5;
     private final CLBuffer<IntBuffer> counterBarrier6;
     private final CLBuffer<IntBuffer> counterBarrier7;
+    private CLBuffer<IntBuffer> counterBarrier8;
+    private CLBuffer<IntBuffer> barrierResetBarrier;
 
     private final double init_weight_range = 0.1;
     private double learningRate;
@@ -351,14 +361,12 @@ public class LSTMCL extends AgentSupervised {
     private int maxWorkGroupSize;
 
     private CLKernel stage1Kernel;
-    private CLKernel stage2Kernel;
-
-    private CLKernel inputToHiddenKernel;
 
     private  CLBuffer<IntBuffer> counterBarrier0;
     private  CLBuffer<IntBuffer> counterBarrier1;
     private  CLBuffer<IntBuffer> counterBarrier2;
     private  CLBuffer<IntBuffer> counterBarrier3;
+
 
     public LSTMCL(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate) {
         validation = new ValidationSimpleLSTM(r, input_dimension, output_dimension, cell_blocks, initLearningRate);
@@ -387,9 +395,6 @@ public class LSTMCL extends AgentSupervised {
         program = cl.createProgram(concatenedSource).build();
 
         stage1Kernel = program.createCLKernel("stage1Kernel");
-        stage2Kernel = program.createCLKernel("stage2Kernel");
-
-        inputToHiddenKernel = program.createCLKernel("InputToHiddenKernel");
 
         this.learningRate = initLearningRate;
         this.output_dimension = output_dimension;
@@ -454,11 +459,15 @@ public class LSTMCL extends AgentSupervised {
         counterBarrier5 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier6 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier7 = cl.createIntBuffer(1, READ_WRITE);
+        counterBarrier8 = cl.createIntBuffer(1, READ_WRITE);
+        barrierResetBarrier = cl.createIntBuffer(1, READ_WRITE);
 
 
         flagIsTargetOutputAvailable = cl.createIntBuffer(1, READ_ONLY);
-        batchInputs = cl.createFloatBuffer(full_input_dimension*1, READ_ONLY);
+        batchInputs = cl.createFloatBuffer(full_input_dimension * 1, READ_ONLY);
         batchTargetOutputs = cl.createFloatBuffer(output_dimension*1, READ_ONLY);
+
+        allocatedTuplesInBatchBuffer = 1;
     }
 
     public void delete() {
@@ -497,42 +506,68 @@ public class LSTMCL extends AgentSupervised {
     }
 
     public double[] learnBatch(List<NonResetInteraction> interactions, final boolean requireOutput) {
+        if( interactions.isEmpty() ) {
+            return null;
+        }
 
         // translate all interactions
 
-        // TODO< reallocate buffers if necessary >
+        System.out.println(interactions.size());
+
+        // reallocate buffers if necessary
+        if( interactions.size() > allocatedTuplesInBatchBuffer ) {
+            allocatedTuplesInBatchBuffer = interactions.size();
+
+            flagIsTargetOutputAvailable.release();
+            batchInputs.release();
+            batchTargetOutputs.release();
+
+            flagIsTargetOutputAvailable = cl.createIntBuffer(allocatedTuplesInBatchBuffer, READ_ONLY);
+            batchInputs = cl.createFloatBuffer(full_input_dimension * allocatedTuplesInBatchBuffer, READ_ONLY);
+            batchTargetOutputs = cl.createFloatBuffer(output_dimension*allocatedTuplesInBatchBuffer, READ_ONLY);
+        }
 
 
         FloatBuffer batchInputsBuffer = batchInputs.getBuffer();
         batchInputsBuffer.rewind();
 
-        for (int i = 0; i < interactions.get(0).observation.length; i++) {
-            batchInputsBuffer.put(0 * inputDimension + i, (float) interactions.get(0).observation[i]);
-        }
+        FloatBuffer batchTargetOutputsBuffer = batchTargetOutputs.getBuffer();
+        batchTargetOutputsBuffer.rewind();
 
         IntBuffer flagIsTargetOutputAvailableBuffer = flagIsTargetOutputAvailable.getBuffer();
+        flagIsTargetOutputAvailableBuffer.rewind();
 
-        flagIsTargetOutputAvailableBuffer.put(0, booleanToInt(interactions.get(0).target_output != null));
+        int interactionI = 0;
+        for( final NonResetInteraction iterationInteraction : interactions ) {
+            for (int i = 0; i < iterationInteraction.observation.length; i++) {
+                batchInputsBuffer.put(interactionI * inputDimension + i, (float) iterationInteraction.observation[i]);
+            }
+
+            if( iterationInteraction.target_output != null ) {
+                for (int i = 0; i < iterationInteraction.target_output.length; i++) {
+                    batchTargetOutputsBuffer.put(interactionI * output_dimension + i, (float) iterationInteraction.target_output[i]);
+                }
+            }
+
+            flagIsTargetOutputAvailableBuffer.put(interactionI, booleanToInt(iterationInteraction.target_output != null));
+
+            interactionI++;
+        }
 
 
-        // TODO< target output >
+
+
+
 
 
         queue.putWriteBuffer(flagIsTargetOutputAvailable, true);
         //queue.putWriteBuffer(this.inputs, true);
         queue.putWriteBuffer(batchInputs, true);
+        queue.putWriteBuffer(batchTargetOutputs, true);
 
 
-
-        int localWorkSizeForCells = min(maxWorkGroupSize, 32);  // Local work size dimensions
-        int globalWorkSizeForCells = roundUp(localWorkSizeForCells, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
-
-        int localWorkSizeForOutput = min(maxWorkGroupSize, 32);
-        int globalWorkSizeForOutput = roundUp(localWorkSizeForOutput, output_dimension);
-
-
-        int localWorkSizeForCombined = min(maxWorkGroupSize, 32);
-        int globalWorkSizeForCombined = roundUp(localWorkSizeForOutput, max(output_dimension, cell_blocks + 1));
+        int localWorkSizeForCombined = min(maxWorkGroupSize, 8);
+        int globalWorkSizeForCombined = roundUp(localWorkSizeForCombined, max(output_dimension, cell_blocks + 1));
 
 
 
@@ -586,25 +621,19 @@ public class LSTMCL extends AgentSupervised {
 
         queue.putWriteBuffer(counterBarrier7, true);
 
+        IntBuffer counterBarrier8Buffer = counterBarrier8.getBuffer();
+        counterBarrier8Buffer.put(0, globalWorkSizeForCombined);
 
-        if( interactions.get(0).target_output != null ) {
-            // TODO< do this in the kernel >
-            float[] floatTargetOutput = new float[interactions.get(0).target_output.length];
-            for (int i = 0; i < interactions.get(0).target_output.length; i++) {
-                floatTargetOutput[i] = (float) interactions.get(0).target_output[i];
-            }
+        queue.putWriteBuffer(counterBarrier8, true);
 
-            target_outputBuffer.getBuffer().rewind();
+        IntBuffer barrierResetBarrierBuffer = barrierResetBarrier.getBuffer();
+        barrierResetBarrierBuffer.put(0, globalWorkSizeForCombined);
 
-            for (int i = 0; i < floatTargetOutput.length; i++) {
-                target_outputBuffer.getBuffer().put(i, floatTargetOutput[i]);
-            }
-            queue.putWriteBuffer(target_outputBuffer, true);
-        }
+        queue.putWriteBuffer(barrierResetBarrier, true);
 
 
-        zero(deltaH.getBuffer());
-        queue.putWriteBuffer(deltaH, true);
+        //zero(deltaH.getBuffer());
+        //queue.putWriteBuffer(deltaH, true);
 
         // validation
 
@@ -642,25 +671,21 @@ public class LSTMCL extends AgentSupervised {
         stage1Kernel.putArg(interactions.size());
         stage1Kernel.putArg(full_input_dimension).putArg(cell_blocks).putArg(output_dimension);
         stage1Kernel.putArg(inputDimension);
-        stage1Kernel.putArgs(counterBarrier0, counterBarrier1, counterBarrier2, counterBarrier3, counterBarrier4, counterBarrier5, counterBarrier6, counterBarrier7);
+        stage1Kernel.putArgs(counterBarrier0, counterBarrier1, counterBarrier2, counterBarrier3, counterBarrier4, counterBarrier5, counterBarrier6, counterBarrier7, counterBarrier8, barrierResetBarrier);
 
         stage1Kernel.putArg((float) SCALE_OUTPUT_DELTA);
-        stage1Kernel.putArgs(target_outputBuffer);
         stage1Kernel.putArgs(deltaH);
         stage1Kernel.putArg((float) learningRate);
         stage1Kernel.putArg(globalWorkSizeForCombined);
 
-        queue.put1DRangeKernel(stage1Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined);
+        CLEventList kernelFinished = new CLEventList(1);
 
-        queue.finish();
+        queue.put1DRangeKernel(stage1Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined, kernelFinished);
 
-        //debugBuffer1d("batchInputs", batchInputs);
+        // wait for kernel with an event
+        queue.putWaitForEvents(kernelFinished, true);
 
-        if( interactions.get(0).target_output != null ) {
-            //debugBuffer1d("deltaH", deltaH);
-            int debug0 = 0;
-
-        }
+        kernelFinished.release();
 
 
         /*
@@ -791,7 +816,7 @@ public class LSTMCL extends AgentSupervised {
 
         //roll-over context to next time step
         //System.arraycopy(actH, 0, context, 0, cell_blocks);
-        queue.putCopyBuffer(actH, context);
+        //queue.putCopyBuffer(actH, context);
 
 
         // validation

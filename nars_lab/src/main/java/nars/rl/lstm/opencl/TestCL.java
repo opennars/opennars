@@ -13,6 +13,8 @@ public class TestCL {
 		Random r = new XORShiftRandom(1234);
 		DistractedSequenceRecall task = new DistractedSequenceRecall(r);
 
+		task.batchsize = 1;
+
 		int cell_blocks = 8;
 		double learningRate = 0.07;
 		LSTMCL slstm = new LSTMCL(r,
