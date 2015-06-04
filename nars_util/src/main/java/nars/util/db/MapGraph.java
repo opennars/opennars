@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.util.*;
 import nars.util.data.Util;
+import org.infinispan.commons.util.InfinispanCollections;
 import org.infinispan.commons.util.WeakValueHashMap;
 
 import java.io.*;
@@ -14,7 +15,7 @@ import java.util.*;
  * Blueprints Graph interface with adjacency implemented by some Map implementation.
  * Iterables in Elements, Vertices, and Edges are implemented by guava Iterator/Iterable lazy wrappers, avoiding collection allocation
  */
-abstract public class MapGraph<X> implements Graph {
+abstract public class MapGraph<X extends Serializable> implements Graph {
 
     private static Map<String,MapGraph> global = new WeakValueHashMap<>();
 
@@ -383,13 +384,13 @@ abstract public class MapGraph<X> implements Graph {
 //        }
 //    }
 
-    abstract protected static class MElement<X> implements Element, Serializable {
+    abstract protected static class MElement<X extends Serializable> implements Element, Serializable {
 
-        public Map<String, Serializable> properties = null;
-        public X id;
-        public String graphID;
-        transient private String globalID;
-        transient private MapGraph<X> graph;
+        Map<String, Serializable> properties = null;
+        X id;
+        String graphID;
+        transient String globalID;
+        transient MapGraph<X> graph;
 
         public MElement() {
 
@@ -399,6 +400,18 @@ abstract public class MapGraph<X> implements Graph {
             setGraph(graph.id);
             this.graph = graph;
             this.id = id;
+        }
+
+
+
+        public Map<String, Serializable> prop(final boolean createIfMissing) {
+            if (properties == null) {
+                if  (createIfMissing)
+                    properties = new LinkedHashMap(2);
+                else
+                    return InfinispanCollections.emptyMap();
+            }
+            return properties;
         }
 
         public MapGraph<X> graph() {
@@ -419,30 +432,32 @@ abstract public class MapGraph<X> implements Graph {
         }
 
         public Set<String> getPropertyKeys() {
-            return this.properties.keySet();
+            return prop(false).keySet();
         }
 
         public <T> T getProperty(final String key) {
-            return (T) this.properties.get(key);
+            return (T) prop(false).get(key);
         }
 
         public void setProperty(final String key, final Object value) {
             Serializable v = (Serializable)value;
             ElementHelper.validateProperty(this, key, value);
-            Object oldValue = this.properties.put(key, v);
+            Object oldValue = prop(true).put(key, v);
             afterAdd(key, v);
         }
 
         abstract protected void afterAdd(final String key, final Serializable value);
 
         public <T> T removeProperty(final String key) {
-            Serializable oldValue = this.properties.remove(key);
+            Serializable oldValue = prop(false).remove(key);
             if (oldValue!=null) {
                 beforeRemove(key, oldValue);
                 return (T) oldValue;
             }
             return null;
         }
+
+
 
         public String global() {
             if (globalID == null)
@@ -479,13 +494,13 @@ abstract public class MapGraph<X> implements Graph {
 
     }
 
-    public static <X> MapGraph<X> the(String graphID) {
+    public static <X extends Serializable> MapGraph<X> the(String graphID) {
         MapGraph<X> g = global.get(graphID);
         return g;
     }
 
 
-    public static class MVertex<X> extends MElement<X> implements Vertex, Serializable {
+    public static class MVertex<X extends Serializable> extends MElement<X> implements Vertex, Serializable {
 
         public final Map<X, Set<Edge>> outEdges = new LinkedHashMap();
         public final Map<X, Set<Edge>> inEdges = new LinkedHashMap();
@@ -616,7 +631,7 @@ abstract public class MapGraph<X> implements Graph {
 
     }
 
-    public static class MEdge<X> extends MElement<X> implements Edge, Externalizable {
+    public static class MEdge<X extends Serializable> extends MElement<X> implements Edge, Externalizable {
 
         protected String label;
         protected MVertex<X> inVertex;
@@ -640,7 +655,7 @@ abstract public class MapGraph<X> implements Graph {
             out.writeUTF(label == null ? "" : label);
             out.writeObject(outVertex.getId());
             out.writeObject(inVertex.getId());
-            out.writeObject(properties);
+            out.writeObject(prop(false));
         }
 
         @Override

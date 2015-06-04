@@ -3,12 +3,13 @@ package nars.util.db;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Blueprints Graph interface with adjacency implemented by Infinispan collections
  */
-public class SpanGraph<X> extends MapGraph<X> {
+public class SpanGraph<X extends Serializable> extends MapGraph<X> {
 
     public final InfiniPeer peer;
     private final String globalID;
