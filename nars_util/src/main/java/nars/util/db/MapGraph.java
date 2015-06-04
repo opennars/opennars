@@ -4,10 +4,10 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.tinkerpop.blueprints.*;
 import com.tinkerpop.blueprints.util.*;
-import nars.util.math.RangeList;
-import org.jgrapht.Graphs;
+import nars.util.data.Util;
+import org.infinispan.commons.util.WeakValueHashMap;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -16,7 +16,13 @@ import java.util.*;
  */
 abstract public class MapGraph<X> implements Graph {
 
+    private static Map<String,MapGraph> global = new WeakValueHashMap<>();
+
+    /** name of the graph combined with the peerID */
     public final String id;
+
+    /** name of the graph as shared on the network */
+    public final String globalID;
 
     protected Map<X, Vertex> vertices;
     protected Map<X, Edge> edges;
@@ -64,6 +70,13 @@ abstract public class MapGraph<X> implements Graph {
 
     }
 
+    public int vertexCount() {
+        return vertexCollection().size();
+    }
+    public int edgeCount() {
+        return edgeCollection().size();
+    }
+
     public enum FileType {
         JAVA,
         GML,
@@ -72,12 +85,18 @@ abstract public class MapGraph<X> implements Graph {
     }
 
 
+    protected MapGraph(String id) {
+        this(id, id);
+    }
 
-    public MapGraph(String id) {
+    protected MapGraph(String globalID, String peerID) {
         super();
 
-        this.id = id;
+        this.globalID = globalID;
+        this.id = globalID + ':' + peerID;
 
+        if (global.put(id, this)!=null)
+            throw new RuntimeException("graph " + id  + " already exists");
 
     }
 
@@ -87,9 +106,9 @@ abstract public class MapGraph<X> implements Graph {
         this.edges = newEdgeMap();
     }
 
-    protected abstract Map<X,Edge> newEdgeMap();
+    protected abstract Map<X, Edge> newEdgeMap();
 
-    protected abstract Map<X,Vertex> newVertexMap();
+    protected abstract Map<X, Vertex> newVertexMap();
 
     public MVertex<X> addVertex(final Object id) {
 
@@ -145,14 +164,41 @@ abstract public class MapGraph<X> implements Graph {
                 m.edgeSet().equals(edgeSet());
     }
 
+    public Set<MVertex<X>> differentVertices(MapGraph<X> y) {
+        Set<MVertex<X>> xv = vertexSet();
+        Set<MVertex<X>> yv = y.vertexSet();
+        return Sets.difference(xv, yv);
+    }
+    public Set<MEdge<X>> differentEdges(MapGraph<X> y) {
+        Set<MEdge<X>> xe = edgeSet();
+        Set<MEdge<X>> ye = y.edgeSet();
+        return Sets.difference(xe, ye);
+    }
+
+
+
     //TODO deepEquals which will compare the properties of each vertex and edge
 
+
+    public Collection<Vertex> vertexCollection() {
+        return vertices.values();
+    }
+    public Collection<Edge> edgeCollection() {
+        return edges.values();
+    }
 
     public Set<MVertex<X>> vertexSet() {
         return new HashSet(vertices.values());
     }
+    public TreeSet<MVertex<X>> vertexSetSorted() {
+        return new TreeSet(vertices.values());
+    }
+
     public Set<MEdge<X>> edgeSet() {
-        return new HashSet(edges.entrySet());
+        return new HashSet(edges.values());
+    }
+    public TreeSet<MEdge<X>> edgeSetSorted() {
+        return new TreeSet(edges.values());
     }
 
     public Iterable<Vertex> getVertices() {
@@ -186,6 +232,15 @@ abstract public class MapGraph<X> implements Graph {
         this.vertices.remove(vertex.getId());
     }
 
+    public Edge addEdge(final Object edgeID, Object out, Object in) {
+        final Vertex o = getVertex(out);
+        if (o == null) throw new RuntimeException("Unknown source vertex " + out);
+        final Vertex i = getVertex(in);
+        if (i == null) throw new RuntimeException("Unknown target vertex " + in);
+
+        return addEdge(edgeID, o, i, null);
+    }
+
     public Edge addEdge(final Object id, final Vertex outVertex, final Vertex inVertex, final String label) {
         /*if (label == null)
             throw ExceptionFactory.edgeLabelCanNotBeNull();*/
@@ -213,11 +268,9 @@ abstract public class MapGraph<X> implements Graph {
                 label, this);
         this.edges.put(edge.id, edge);
 
-        
-        final MVertex out = (MVertex) outVertex;  //(InfiniVertex) outVertex;
-        final MVertex in = (MVertex) inVertex; //(InfiniVertex) inVertex;
-        out.addOutEdge(label, edge);
-        in.addInEdge(label, edge);
+
+        ((MVertex) outVertex).add(edge, true);
+        ((MVertex) inVertex).add(edge, false);
         return edge;
 
     }
@@ -231,11 +284,13 @@ abstract public class MapGraph<X> implements Graph {
 
         MVertex<X> outVertex = ((MEdge) edge).outVertex;
         MVertex<X> inVertex = ((MEdge) edge).inVertex;
+
+        Object edgeID = edge.getId();
         if (null != outVertex && null != outVertex.outEdges) {
-            /*final Set<Edge> edges = */outVertex.outEdges.remove(edge.getLabel());
+            outVertex.remove(edgeID, false);
         }
         if (null != inVertex && null != inVertex.inEdges) {
-            /*final Set<Edge> edges = */inVertex.inEdges.remove(edge.getLabel());
+            inVertex.remove(edgeID, true);
         }
 
 
@@ -330,22 +385,37 @@ abstract public class MapGraph<X> implements Graph {
 
     abstract protected static class MElement<X> implements Element, Serializable {
 
-        public final Map<String, Serializable> properties = new LinkedHashMap();
-        public final X id;
-        public final String graphID;
-        transient private final MapGraph<X> graph;
+        public Map<String, Serializable> properties = null;
+        public X id;
+        public String graphID;
+        transient private String globalID;
+        transient private MapGraph<X> graph;
+
+        public MElement() {
+
+        }
 
         protected MElement(final X id, final MapGraph<X> graph) {
+            setGraph(graph.id);
             this.graph = graph;
-            this.graphID = graph.id;
             this.id = id;
         }
 
         public MapGraph<X> graph() {
             if (graph == null) {
-                //TODO lookup the graph by graph ID
+                graph = MapGraph.the(graphID);
+                if (graph == null)
+                    throw new RuntimeException(this + " refers to unknown graph " + graphID);
             }
             return graph;
+        }
+
+        protected void setGraph(String newGraphID) {
+            if (this.graphID== null || !this.graphID.equals(newGraphID)) {
+                graphID = newGraphID;
+                globalID = null;
+                graph = null; //invalidates it, so use graph() to access this field
+            }
         }
 
         public Set<String> getPropertyKeys() {
@@ -374,10 +444,20 @@ abstract public class MapGraph<X> implements Graph {
             return null;
         }
 
+        public String global() {
+            if (globalID == null)
+                globalID = graphID.substring(0, graphID.indexOf(':'));
+            return globalID;
+        }
         abstract protected void beforeRemove(final String key, final Serializable oldValue);
 
         public int hashCode() {
-            return this.id.hashCode();
+            return Util.hashL(this.id.hashCode(), global().hashCode()) ;
+        }
+
+        /** also includes properties in the hash */
+        public int hashCodeDeep() {
+            return Util.hashL(hashCode(), properties.hashCode()) ;
         }
 
         public X getId() {
@@ -385,10 +465,25 @@ abstract public class MapGraph<X> implements Graph {
         }
 
         public boolean equals(final Object object) {
-            return ElementHelper.areEqual(this, object);
+            if (object.getClass()!=getClass()) return false;
+            MElement o = (MElement)object;
+            return o.getId().equals(getId()) && o.global().equals(global());
+        }
+
+        /** also includes properties in the equality test */
+        public boolean deepEquals(final Object object) {
+            if (object.getClass()!=getClass()) return false;
+            MElement o = (MElement)object;
+            return o.getId().equals(getId()) && o.global().equals(global()) && properties.equals(o.properties);
         }
 
     }
+
+    public static <X> MapGraph<X> the(String graphID) {
+        MapGraph<X> g = global.get(graphID);
+        return g;
+    }
+
 
     public static class MVertex<X> extends MElement<X> implements Vertex, Serializable {
 
@@ -450,7 +545,7 @@ abstract public class MapGraph<X> implements Graph {
         }
 
         public String toString() {
-            return StringFactory.vertexString(this);
+            return new StringBuilder().append("v[").append(global()).append(':').append(getId()).append("]").toString();
         }
 
         public Edge addEdge(final String label, final Vertex vertex) {
@@ -458,22 +553,6 @@ abstract public class MapGraph<X> implements Graph {
         }
 
 
-        //TODO make addInEdge and addOutEdge call a common function parameterized by a collection reference (in or out)
-        protected boolean addOutEdge(final X label, final Edge edge) {
-            Set<Edge> edges = this.outEdges.get(label);
-            if (null == edges) {
-                this.outEdges.put(label, edges = newEdgeSet(1));
-            }
-            return edges.add(edge);
-        }
-
-        protected boolean addInEdge(final X label, final Edge edge) {
-            Set<Edge> edges = this.inEdges.get(label);
-            if (null == edges) {
-                this.inEdges.put(label, edges = newEdgeSet(1));
-            }
-            return edges.add(edge);
-        }
 
 
         private Set<Edge> newEdgeSet(int size) {
@@ -485,6 +564,7 @@ abstract public class MapGraph<X> implements Graph {
         @Override
         protected void afterAdd(String key, Serializable value) {
             //this.graph.vertexKeyIndex.autoUpdate(key, value, oldValue, (InfiniVertex) this);
+            graph().update(this);
         }
 
         @Override
@@ -499,13 +579,52 @@ abstract public class MapGraph<X> implements Graph {
         }
 
 
+        public boolean remove(Object edgeID, boolean incoming) {
+            Map<X, Set<Edge>> target = incoming ? inEdges : outEdges;
+            if (target.remove(edgeID)!=null) {
+                graph().update(this);
+                return true;
+            }
+
+            return false;
+        }
+
+        public boolean add(MEdge<X> edge, boolean incoming) {
+            Map<X, Set<Edge>> target = incoming ? inEdges : outEdges;
+            X e = edge.id;
+            Set<Edge> edges = target.get(e);
+            if (null == edges) {
+                target.put(e, edges = newEdgeSet(1));
+            }
+            if (edges.add(edge)) {
+                graph().update(this);
+                return true;
+            }
+
+            return false;
+        }
     }
 
-    public static class MEdge<X> extends MElement<X> implements Edge, Serializable {
 
-        public final String label;
-        public final MVertex<X> inVertex;
-        public final MVertex<X> outVertex;
+    /** called if an vertex changes its properties */
+    protected void update(MVertex<X> xmVertex) {
+
+    }
+
+    /** called if an edge changes its properties */
+    protected void update(MEdge<X> xmVertex) {
+
+    }
+
+    public static class MEdge<X> extends MElement<X> implements Edge, Externalizable {
+
+        protected String label;
+        protected MVertex<X> inVertex;
+        protected MVertex<X> outVertex;
+
+        public MEdge( ) {
+
+        }
 
         protected MEdge(final X id, final MVertex<X> outVertex, final MVertex<X> inVertex, final String label, final MapGraph<X> graph) {
             super(id, graph);
@@ -513,6 +632,30 @@ abstract public class MapGraph<X> implements Graph {
             this.outVertex = outVertex;
             this.inVertex = inVertex;
         }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeObject(id);
+            out.writeUTF(graphID);
+            out.writeUTF(label == null ? "" : label);
+            out.writeObject(outVertex.getId());
+            out.writeObject(inVertex.getId());
+            out.writeObject(properties);
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            id = (X) in.readObject();
+
+            setGraph(in.readUTF());
+
+            label = in.readUTF();
+            outVertex = graph().getVertex( in.readObject() );
+            inVertex = graph().getVertex( in.readObject() );
+            properties = (Map<String, Serializable>) in.readObject();
+        }
+
+
 
         public String getLabel() {
             return this.label;
@@ -528,22 +671,39 @@ abstract public class MapGraph<X> implements Graph {
         }
 
         public String toString() {
-            return StringFactory.edgeString(this);
+            StringBuilder sb = new StringBuilder();
+            sb.append("e[").append(global()).append(':').append(getId()).append("][").append(getVertex(Direction.OUT).getId()).append("-");
+            String label = getLabel();
+            if (label!=null)
+                    sb.append(getLabel());
+            return sb.append("->").append(getVertex(Direction.IN).getId()).append(']').toString();
         }
 
         @Override
         protected void afterAdd(String key, Serializable value) {
             //this.graph.edgeKeyIndex.autoUpdate(key, value, oldValue, (InfiniEdge) this);*/
+            graph().update(this);
         }
 
         @Override
         protected void beforeRemove(String key, Serializable oldValue) {
             //this.graph.edgeKeyIndex.autoRemove(key, oldValue, (InfiniEdge) this);*/
+            graph().update(this);
         }
 
         @Override
         public void remove() {
             graph().removeEdge(this);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            return super.equals(object);
         }
     }
 }

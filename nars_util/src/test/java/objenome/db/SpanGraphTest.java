@@ -1,12 +1,14 @@
 package objenome.db;
 
-import com.google.common.collect.Lists;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import nars.util.db.InfiniPeer;
 import nars.util.db.MapGraph;
 import nars.util.db.SpanGraph;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -30,14 +32,17 @@ public class SpanGraphTest {
 
         //final List<Vertex> receivedByB = new ArrayList(1);
 
-        final AtomicReference<SpanGraph> b = new AtomicReference(null);
+        final AtomicReference<SpanGraph> bRef = new AtomicReference(null);
 
 
         SpanGraph a = graph.apply("PeerA");
 
-        Vertex v = a.addVertex("x");
-        assertEquals("correct vertex id", v.getId(), "x");
+        Vertex vx = a.addVertex("x");
+        Vertex vy = a.addVertex("y");
+        assertEquals("correct vertex id", vx.getId(), "x");
+        assertEquals("correct vertex id", vy.getId(), "y");
         assertEquals("non-string vertex id", ((MapGraph.MVertex)a.addVertex(17)).getId(), 17);
+        assertEquals(3, a.vertexCount());
 
         Thread x = new Thread(() -> {
 
@@ -47,13 +52,16 @@ public class SpanGraphTest {
 
                 sleep(preDelayMS);
 
-                SpanGraph g = graph.apply("PeerB");
-                b.set(g);
+                SpanGraph b = graph.apply("PeerB");
+                bRef.set(b);
 
+                b.addEdge("xy", "x", "y");
+                assertEquals(1, b.edgeCount());
 
                 sleep(afterConnectedDelayMS);
             }
             catch (Throwable e) {
+                e.printStackTrace();
                 assertTrue(e.toString(), false);
             }
 
@@ -62,7 +70,12 @@ public class SpanGraphTest {
         x.start();
         x.join();
 
-        assertEquals(a, b.get());
+        SpanGraph b = bRef.get();
+
+        assertEquals(1, a.edgeCount());
+        assertEquals(0, a.differentEdges(b).size());
+        assertEquals(0, b.differentEdges(a).size());
+        assertEquals("Graphs:\n" + a.toString() + "\n" + b.toString(), a, b);
 
 
     }

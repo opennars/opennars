@@ -11,15 +11,17 @@ import java.util.Map;
 public class SpanGraph<X> extends MapGraph<X> {
 
     public final InfiniPeer peer;
+    private final String globalID;
 
     public SpanGraph(String id, InfiniPeer peer) {
-        super(id);
+        super(id, peer.userID); //local ID
+        this.globalID = id; //ID as known on the network
         this.peer = peer;
         init();
     }
 
     protected <Y> Map<X, Y> newElementMap(String suffix) {
-        return peer.the(id + '_' + suffix);
+        return peer.the(globalID + '_' + suffix);
     }
 
     @Override
@@ -31,5 +33,6 @@ public class SpanGraph<X> extends MapGraph<X> {
     protected Map<X, Vertex> newVertexMap() {
         return newElementMap("v");
     }
+
 
 }

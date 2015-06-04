@@ -1,7 +1,6 @@
 package nars.util.db;
 
 import org.infinispan.Cache;
-import org.infinispan.commons.util.CloseableIteratorSet;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -10,6 +9,7 @@ import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.notifications.Listener;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntriesEvicted;
+import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryModified;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
 import org.infinispan.notifications.cachelistener.event.Event;
@@ -18,7 +18,6 @@ import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
 
 import java.io.PrintStream;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -27,7 +26,7 @@ import java.util.UUID;
 @Listener(sync = true)
 public class InfiniPeer extends DefaultCacheManager  {
 
-    private final String userID;
+    public final String userID;
 
     public InfiniPeer(String userID, GlobalConfiguration globalConfig, Configuration config) {
         super(globalConfig, config);
@@ -121,6 +120,7 @@ public class InfiniPeer extends DefaultCacheManager  {
         //updateClusterTable(e.getNewMembers());
     }
 
+    @CacheEntryCreated
     @CacheEntryModified
     @CacheEntryRemoved
     @CacheEntriesEvicted
