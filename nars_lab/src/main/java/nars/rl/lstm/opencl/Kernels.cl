@@ -282,7 +282,8 @@ kernel void stage1Kernel(
     __global int *counterBarrier5,
     __global int *counterBarrier6,
     __global int *counterBarrier7,
-
+    __global int *counterBarrier8,
+    __global int *barrierResetBarrier,
 
 
 
@@ -302,6 +303,8 @@ kernel void stage1Kernel(
     int fiberId = get_global_id(0);
 
     for( int inputI = 0; inputI < countOfInputOutputTuples; inputI++ ) {
+
+
         // assemle full inputs buffer from inputs and context
         if( fiberId == 0 ) {
             int location = 0;
@@ -329,6 +332,12 @@ kernel void stage1Kernel(
                 break;
             }
         }
+
+
+
+        // reset barrier-reset barrier
+
+        barrierResetBarrier[0] = syncronisationCounterResetValue;
 
 
 
@@ -447,15 +456,39 @@ kernel void stage1Kernel(
             }
         }
 
-        // TODO< rollover >
+        // rollover
+
+        for( int cellI = 0; cellI < cell_blocks; cellI++ ) {
+            context[cellI] = actH[cellI];
+        }
+
+        atomic_sub(counterBarrier8, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(counterBarrier8, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
 
 
+        // barrier for the reset of all other barriers
+
+        atomic_sub(barrierResetBarrier, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(barrierResetBarrier, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
 
 
-
-        // TODO barrier
-
-        // reset all counterBarriers
+        // reset most counterBarriers
         counterBarrier0[0] = syncronisationCounterResetValue;
         counterBarrier1[0] = syncronisationCounterResetValue;
         counterBarrier2[0] = syncronisationCounterResetValue;
@@ -464,6 +497,7 @@ kernel void stage1Kernel(
         counterBarrier5[0] = syncronisationCounterResetValue;
         counterBarrier6[0] = syncronisationCounterResetValue;
         counterBarrier7[0] = syncronisationCounterResetValue;
+        counterBarrier8[0] = syncronisationCounterResetValue;
     }
 }
 

@@ -24,6 +24,7 @@ import static java.lang.Math.min;
 public class LSTMCL extends AgentSupervised {
     private final ValidationSimpleLSTM validation;
 
+
     // for validation of the implementation
     public class ValidationSimpleLSTM extends AgentSupervised
     {
@@ -317,6 +318,8 @@ public class LSTMCL extends AgentSupervised {
     private final CLBuffer<IntBuffer> counterBarrier5;
     private final CLBuffer<IntBuffer> counterBarrier6;
     private final CLBuffer<IntBuffer> counterBarrier7;
+    private CLBuffer<IntBuffer> counterBarrier8;
+    private CLBuffer<IntBuffer> barrierResetBarrier;
 
     private final double init_weight_range = 0.1;
     private double learningRate;
@@ -454,6 +457,8 @@ public class LSTMCL extends AgentSupervised {
         counterBarrier5 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier6 = cl.createIntBuffer(1, READ_WRITE);
         counterBarrier7 = cl.createIntBuffer(1, READ_WRITE);
+        counterBarrier8 = cl.createIntBuffer(1, READ_WRITE);
+        barrierResetBarrier = cl.createIntBuffer(1, READ_WRITE);
 
 
         flagIsTargetOutputAvailable = cl.createIntBuffer(1, READ_ONLY);
@@ -586,6 +591,16 @@ public class LSTMCL extends AgentSupervised {
 
         queue.putWriteBuffer(counterBarrier7, true);
 
+        IntBuffer counterBarrier8Buffer = counterBarrier8.getBuffer();
+        counterBarrier8Buffer.put(0, globalWorkSizeForCombined);
+
+        queue.putWriteBuffer(counterBarrier8, true);
+
+        IntBuffer barrierResetBarrierBuffer = barrierResetBarrier.getBuffer();
+        barrierResetBarrierBuffer.put(0, globalWorkSizeForCombined);
+
+        queue.putWriteBuffer(barrierResetBarrier, true);
+
 
         if( interactions.get(0).target_output != null ) {
             // TODO< do this in the kernel >
@@ -642,7 +657,7 @@ public class LSTMCL extends AgentSupervised {
         stage1Kernel.putArg(interactions.size());
         stage1Kernel.putArg(full_input_dimension).putArg(cell_blocks).putArg(output_dimension);
         stage1Kernel.putArg(inputDimension);
-        stage1Kernel.putArgs(counterBarrier0, counterBarrier1, counterBarrier2, counterBarrier3, counterBarrier4, counterBarrier5, counterBarrier6, counterBarrier7);
+        stage1Kernel.putArgs(counterBarrier0, counterBarrier1, counterBarrier2, counterBarrier3, counterBarrier4, counterBarrier5, counterBarrier6, counterBarrier7, counterBarrier8, barrierResetBarrier);
 
         stage1Kernel.putArg((float) SCALE_OUTPUT_DELTA);
         stage1Kernel.putArgs(target_outputBuffer);
@@ -791,7 +806,7 @@ public class LSTMCL extends AgentSupervised {
 
         //roll-over context to next time step
         //System.arraycopy(actH, 0, context, 0, cell_blocks);
-        queue.putCopyBuffer(actH, context);
+        //queue.putCopyBuffer(actH, context);
 
 
         // validation
