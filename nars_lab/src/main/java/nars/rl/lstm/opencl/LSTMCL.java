@@ -367,6 +367,7 @@ public class LSTMCL extends AgentSupervised {
     private  CLBuffer<IntBuffer> counterBarrier2;
     private  CLBuffer<IntBuffer> counterBarrier3;
 
+
     public LSTMCL(Random r, int input_dimension, int output_dimension, int cell_blocks, final double initLearningRate) {
         validation = new ValidationSimpleLSTM(r, input_dimension, output_dimension, cell_blocks, initLearningRate);
 
@@ -511,6 +512,8 @@ public class LSTMCL extends AgentSupervised {
 
         // translate all interactions
 
+        System.out.println(interactions.size());
+
         // reallocate buffers if necessary
         if( interactions.size() > allocatedTuplesInBatchBuffer ) {
             allocatedTuplesInBatchBuffer = interactions.size();
@@ -563,16 +566,8 @@ public class LSTMCL extends AgentSupervised {
         queue.putWriteBuffer(batchTargetOutputs, true);
 
 
-
-        int localWorkSizeForCells = min(maxWorkGroupSize, 32);  // Local work size dimensions
-        int globalWorkSizeForCells = roundUp(localWorkSizeForCells, cell_blocks);   // rounded up to the nearest multiple of the localWorkSize
-
-        int localWorkSizeForOutput = min(maxWorkGroupSize, 32);
-        int globalWorkSizeForOutput = roundUp(localWorkSizeForOutput, output_dimension);
-
-
-        int localWorkSizeForCombined = min(maxWorkGroupSize, 32);
-        int globalWorkSizeForCombined = roundUp(localWorkSizeForOutput, max(output_dimension, cell_blocks + 1));
+        int localWorkSizeForCombined = min(maxWorkGroupSize, 8);
+        int globalWorkSizeForCombined = roundUp(localWorkSizeForCombined, max(output_dimension, cell_blocks + 1));
 
 
 
@@ -683,17 +678,14 @@ public class LSTMCL extends AgentSupervised {
         stage1Kernel.putArg((float) learningRate);
         stage1Kernel.putArg(globalWorkSizeForCombined);
 
-        queue.put1DRangeKernel(stage1Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined);
+        CLEventList kernelFinished = new CLEventList(1);
 
-        queue.finish();
+        queue.put1DRangeKernel(stage1Kernel, 0, globalWorkSizeForCombined, localWorkSizeForCombined, kernelFinished);
 
-        //debugBuffer1d("batchInputs", batchInputs);
+        // wait for kernel with an event
+        queue.putWaitForEvents(kernelFinished, true);
 
-        if( interactions.get(0).target_output != null ) {
-            //debugBuffer1d("deltaH", deltaH);
-            int debug0 = 0;
-
-        }
+        kernelFinished.release();
 
 
         /*

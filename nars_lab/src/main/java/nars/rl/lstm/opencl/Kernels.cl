@@ -472,18 +472,6 @@ kernel void stage1Kernel(
         }
 
 
-        // barrier for the reset of all other barriers
-
-        atomic_sub(barrierResetBarrier, 1);
-
-        // wait until the counter hits 0
-        for(;;) {
-            int syncronisationValue = atomic_sub(barrierResetBarrier, 0);
-
-            if( syncronisationValue <= 0 ) {
-                break;
-            }
-        }
 
 
         // reset most counterBarriers
@@ -496,5 +484,19 @@ kernel void stage1Kernel(
         counterBarrier6[0] = syncronisationCounterResetValue;
         counterBarrier7[0] = syncronisationCounterResetValue;
         counterBarrier8[0] = syncronisationCounterResetValue;
+
+
+        // barrier for the reset of all other barriers
+
+        atomic_sub(barrierResetBarrier, 1);
+
+        // wait until the counter hits 0
+        for(;;) {
+            int syncronisationValue = atomic_sub(barrierResetBarrier, 0);
+
+            if( syncronisationValue <= 0 ) {
+                break;
+            }
+        }
     }
 }

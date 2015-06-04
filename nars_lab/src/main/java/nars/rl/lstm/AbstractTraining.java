@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class AbstractTraining {
-
+    public int batchsize = 400000000;
 
     public AbstractTraining(Random random, final int inputDimension, final int outputDimension) {
         this.random = random;
@@ -64,6 +64,10 @@ public abstract class AbstractTraining {
             newInteraction.observation = inter.observation;
             newInteraction.target_output = inter.target_output;
             agentNonResetInteraction.add(newInteraction);
+
+            if( agentNonResetInteraction.size() > batchsize ) {
+                agentExecuteNonResetInteractionsAndFlush(agent, agentNonResetInteraction);
+            }
 
         }
 
