@@ -129,6 +129,7 @@ public class Negation extends Compound1 {
 
         @Override
         public byte[] newName() {
+
             return Compound.newCompound1Key(NALOperator.NEGATION, neg.the());
         }
 

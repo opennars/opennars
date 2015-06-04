@@ -21,10 +21,13 @@
 package nars;
 
 
+import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 import nars.nal.NALOperator;
 import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.util.utf8.ByteBuf;
 
+import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,8 +74,7 @@ abstract public class Symbols {
     
     
     
-    
-    
+
     
     
     /* numerical value delimitors, must be different from the Term delimitors */
@@ -90,15 +92,69 @@ abstract public class Symbols {
     public static final char QUOTE = '\"';
 
 
+
+
+    /** index of operators which are encoded by 1 byte: must be less than 31 because this is the range for control characters */
+    final static int numByteSymbols = 15;
+    private static final NALOperator[] byteSymbols = new NALOperator[numByteSymbols];
+
+    public static NALOperator symbol(final byte b) {
+        if (b > byteSymbols.length)
+            throw new RuntimeException("value of " + b + " exceeds special character range");
+        return byteSymbols[b];
+    }
+
+
+    /** expands a byte to multi-char representation, for output.
+     * if a special character, it prints the expanded string and returns true.
+     * otherwise it does nothing and returns false.;
+     *  */
+    public static boolean expand(final PrintWriter p, final byte b) {
+        if (b < numByteSymbols) {
+            p.write(symbol(b).str);
+            return true;
+        }
+        else {
+            //ordinary character,
+            return false;
+        }
+    }
+    public static void compact(final ByteBuf b, final NALOperator n) {
+        if (n.has8BitRepresentation()) {
+            b.append(n.byt);
+        }
+        else {
+            b.append(n.str); //ordinary character
+        }
+    }
+
     private static final Map<String,NALOperator> _stringToOperator
             = new HashMap(NALOperator.values().length * 2);
-    private static final Map<Character,NALOperator> _charToOperator
-            = new HashMap(NALOperator.values().length * 2);
+
+    private static final CharObjectHashMap<NALOperator> _charToOperator
+            = new CharObjectHashMap(NALOperator.values().length * 2);
     static {
         //Setup NativeOperator String index hashtable 
-        for (final NALOperator r : NALOperator.values())
+        for (final NALOperator r : NALOperator.values()) {
             _stringToOperator.put(r.toString(), r);
-        
+
+
+            if (r.has8BitRepresentation()) {
+                //store the 8bit representation in the table
+                byteSymbols[r.byt] = r;
+            }
+        }
+
+        System.out.println(Arrays.toString(byteSymbols));
+
+        //VERIFICATION: Look for any empty holes in the byteSymbols table, indicating that the representation is not contigous
+        //index 0 is always 0 to maintain \0's semantics
+        //if # of operators are reduced in the future, then this will report that the table size should be reduced (avoiding unnecessary array lookups)
+        for (int i = 1; i < byteSymbols.length; i++) {
+            if (null == byteSymbols[i])
+                throw new RuntimeException("Invalid byteSymbols encoding: index " + i + " is null");
+        }
+
         //Setup NativeOperator Character index hashtable 
         for (final NALOperator r : NALOperator.values()) {
             char c = r.ch;
@@ -106,11 +162,13 @@ abstract public class Symbols {
                 _charToOperator.put(c, r);
         }
     }
+
     protected static final Map<String,NALOperator> stringToOperator
             = Collections.unmodifiableMap(_stringToOperator);
-    protected static final Map<Character,NALOperator> charToOperator
-            = Collections.unmodifiableMap(_charToOperator);
+    protected static final CharObjectHashMap<NALOperator> charToOperator
+            = (_charToOperator);
 
+    //TODO use 'I' for SELf, it is 3 characters shorter
     public static final Atom DEFAULT_SELF = Atom.the("SELF");
 
 
@@ -173,9 +231,9 @@ abstract public class Symbols {
     //public static final char NATURAL_LANGUAGE_MARK = '\"';
 
     /* control commands */
-    public static final String RESET_COMMAND = "*reset";
-    public static final String REBOOT_COMMAND = "*reboot";
-    public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
+    @Deprecated public static final String RESET_COMMAND = "*reset";
+    @Deprecated public static final String REBOOT_COMMAND = "*reboot";
+    @Deprecated public static final String SET_NOISE_LEVEL_COMMAND = "*volume";
     
     
     /* Stamp, display only */
@@ -184,11 +242,7 @@ abstract public class Symbols {
     public static final char STAMP_SEPARATOR = ';';
     public static final char STAMP_STARTER = ':';
     
-    /* TermLink type, display and internal uniqueness purposes only */
-    public static final String TO_COMPONENT_1 = "@(";
-    public static final String TO_COMPONENT_2 = ")_";
-    public static final String TO_COMPOUND_1 = "_@(";
-    public static final String TO_COMPOUND_2 = ")";
+
 
 
 
@@ -234,7 +288,6 @@ abstract public class Symbols {
     }
     */
 
-    public static final String SELF = "SELF";
 
     public static boolean isPunctuation(final char c) {
         switch (c) {

@@ -29,9 +29,7 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
-import nars.nal.nal3.SetTensional;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.eval;
 import nars.nal.term.Term;
@@ -43,8 +41,6 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
-
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 
 /**
  * An operation is interpreted as an Inheritance relation.
@@ -300,8 +296,8 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
 
             final ByteBuf b = ByteBuf.create(len);
-            b.add(op); //add the operator name without leading '^'
-            b.add((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+            b.append(op); //add the operator name without leading '^'
+            b.append((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
 
 
             n=0;
@@ -310,14 +306,14 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
                 break;
             }*/
                 if (n!=0)
-                    b.add((byte)Symbols.ARGUMENT_SEPARATOR);
+                    b.append((byte) Symbols.ARGUMENT_SEPARATOR);
 
-                b.add(t.bytes());
+                b.append(t.bytes());
 
                 n++;
             }
 
-            b.add((byte)NALOperator.COMPOUND_TERM_CLOSER.ch);
+            b.append((byte) NALOperator.COMPOUND_TERM_CLOSER.ch);
 
             return b.toBytes();
         }

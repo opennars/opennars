@@ -101,7 +101,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
             }*/
 
 
-            byte[] opBytes = compound.operator().bytes();
+            byte[] opBytes = compound.operator().bytes;
 
 
             int len = 1 + 1 + opBytes.length +
@@ -111,14 +111,14 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
             }
 
             ByteBuf b = ByteBuf.create(len)
-                    .add((byte) COMPOUND_TERM_OPENER.ch)
-                    .add(opBytes);
+                    .append((byte) COMPOUND_TERM_OPENER.ch)
+                    .append(opBytes);
 
             for  (final Term t : compound.term) {
-                b.add((byte) ARGUMENT_SEPARATOR).add(t.bytes());
+                b.append((byte) ARGUMENT_SEPARATOR).append(t.bytes());
             }
 
-            return b.add((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
+            return b.append((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
 
         }
 
@@ -126,7 +126,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         public void write(Writer p, boolean pretty) throws IOException {
 
             p.write(COMPOUND_TERM_OPENER.ch);
-            p.write(compound.operator().symbol);
+            p.write(compound.operator().str);
 
             for (final Term t : compound.term) {
                 p.write(ARGUMENT_SEPARATOR);
@@ -171,7 +171,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     public static void writeCompound1(final NALOperator op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
 
         writer.write(COMPOUND_TERM_OPENER.ch);
-        writer.write(op.symbol);
+        writer.write(op.str);
         writer.write(ARGUMENT_SEPARATOR);
         singleTerm.write(writer, pretty);
         writer.write(COMPOUND_TERM_CLOSER.ch);
@@ -179,16 +179,19 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
     public static byte[] newCompound1Key(final NALOperator op, final Term singleTerm) {
 
-        final byte[] opString = op.bytes();
+        final byte[] opBytes = op.bytes;
 
-        final byte[] tString = singleTerm.bytes();
+        if (opBytes.length > 1)
+            throw new RuntimeException("Compound1 operators must have a 1 char representation; invalid: " + op);
 
-        return ByteBuf.create(1 + opString.length + 1 + tString.length + 1)
-                .add((byte)COMPOUND_TERM_OPENER.ch)
-                .add(opString)
-                .add((byte) ARGUMENT_SEPARATOR)
-                .add(tString)
-                .add((byte) COMPOUND_TERM_CLOSER.ch)
+        final byte[] termBytes = singleTerm.bytes();
+
+        return ByteBuf.create(1 + opBytes.length + 1 + termBytes.length + 1)
+                //.add((byte)COMPOUND_TERM_OPENER.ch)
+                .append(opBytes)
+                //.add((byte) ARGUMENT_SEPARATOR)
+                .append(termBytes)
+                //.add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
     }
 

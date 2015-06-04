@@ -1,18 +1,31 @@
 package nars.util.data.id;
 
+import nars.util.data.rope.impl.CharArrayRope;
 import nars.util.utf8.Utf8;
 
 import java.io.*;
 
 /**
- * Generic abstract identifier for symbols, tags, and other identifiables
+ * Generic abstract identifier for symbols, tags, and other identifiables.
+ * It is responsible for maintaining efficient time and space equality,
+ * lexicographic ordering, and hashing of representations of
+ * tokens / symbols / identifiers.
+ *
+ * can generate the following representations:
+ *      --pretty String output ( default behavior of .toString() )
+ *      --compact String output (ex: does not include spaces for readability, newlines, etc.)
+ *      --internal byte[] - most compact and does not need to be human readable
+ *
+ * reducing the size of internal representations does not only save
+ * memory but it is faster to compare and hash, and may hash with
+ * better entropy.
  */
 abstract public class Identifier<E extends Identifier> implements Comparable, Serializable {
 
     transient private Identified host = null;
 
     public char[] toChars(boolean pretty) {
-        CharArrayWriter caw = new EfficientCharArrayWriter();
+        CharArrayWriter caw = new EfficientCharArrayWriter(getStringSizeEstimate());
         try {
             write(caw, pretty);
         } catch (IOException e) {
@@ -130,13 +143,28 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
         //}
     }
 
+    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public String toString(final boolean pretty) {
         char[] c = toChars(pretty);
         return new String(c);
     }
+
+    /** preferably use toCharSequence if needing a CharSequence; it avoids a duplication */
     public StringBuilder toStringBuilder(final boolean pretty) {
         char[] c = toChars(pretty);
         return new StringBuilder(c.length).append(c);
+    }
+
+    public CharSequence toCharSequence(final boolean pretty) {
+        char[] c = toChars(pretty, true);
+        return new CharArrayRope(c);
+    }
+
+    private char[] toChars(boolean pretty, boolean trim) {
+        char[] c = toChars(pretty);
+        if (trim)
+            c = Utf8.trim(c);
+        return c;
     }
 
     public byte[] bytes() {
@@ -156,7 +184,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
 
     @Override
     public String toString() {
-        return toString(true).toString();
+        return toString(true);
     }
 
     abstract int getStringSizeEstimate();
@@ -164,7 +192,13 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     /** frees all associated memory */
     abstract public void delete();
 
+    /** WARNING the toCharArray() result may need trimmed for trailing zero's */
     private static class EfficientCharArrayWriter extends CharArrayWriter {
+
+        public EfficientCharArrayWriter(int initialSize) {
+            super(initialSize);
+        }
+
         @Override
         public char[] toCharArray() {
             if (size() == buf.length)

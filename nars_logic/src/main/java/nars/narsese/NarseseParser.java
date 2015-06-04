@@ -387,12 +387,12 @@ public class NarseseParser extends BaseParser<Object> {
                         sequence(
                                 includeOperation,
                                 NonOperationTerm(),
-                                NALOperator.COMPOUND_TERM_OPENER.symbol,
+                                NALOperator.COMPOUND_TERM_OPENER.str,
                                 MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, true)
                         ),
 
 
-                        sequence( NALOperator.STATEMENT_OPENER.symbol,
+                        sequence( NALOperator.STATEMENT_OPENER.str,
                                 MultiArgTerm(null, NALOperator.STATEMENT_CLOSER, false, true, true, false)
                         ),
 
@@ -406,18 +406,18 @@ public class NarseseParser extends BaseParser<Object> {
 
 
                         sequence(
-                                NALOperator.SET_EXT_OPENER.symbol,
+                                NALOperator.SET_EXT_OPENER.str,
                                 MultiArgTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER, false, false, false)
                         ),
 
                         sequence(
-                                NALOperator.SET_INT_OPENER.symbol,
+                                NALOperator.SET_INT_OPENER.str,
                                 MultiArgTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER, false, false, false)
                         ),
 
 
 
-                        sequence( NALOperator.COMPOUND_TERM_OPENER.symbol,
+                        sequence( NALOperator.COMPOUND_TERM_OPENER.str,
                                 firstOf(
 
                                         MultiArgTerm(null, NALOperator.COMPOUND_TERM_CLOSER, true, false, false, false),
@@ -557,31 +557,31 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(firstOf(
 
 
-                        INHERITANCE.symbol,
+                        INHERITANCE.str,
 
 
-                        SIMILARITY.symbol,
+                        SIMILARITY.str,
 
-                        PROPERTY.symbol,
-                        INSTANCE.symbol,
-                        INSTANCE_PROPERTY.symbol,
+                        PROPERTY.str,
+                        INSTANCE.str,
+                        INSTANCE_PROPERTY.str,
 
-                        NEGATION.symbol,
+                        NEGATION.str,
 
-                        IMPLICATION.symbol,
-                        EQUIVALENCE.symbol,
-                        IMPLICATION_AFTER.symbol, IMPLICATION_BEFORE.symbol, IMPLICATION_WHEN.symbol,
-                        EQUIVALENCE_AFTER.symbol, EQUIVALENCE_WHEN.symbol,
-                        DISJUNCTION.symbol,
-                        CONJUNCTION.symbol,
-                        SEQUENCE.symbol,
-                        PARALLEL.symbol,
+                        IMPLICATION.str,
+                        EQUIVALENCE.str,
+                        IMPLICATION_AFTER.str, IMPLICATION_BEFORE.str, IMPLICATION_WHEN.str,
+                        EQUIVALENCE_AFTER.str, EQUIVALENCE_WHEN.str,
+                        DISJUNCTION.str,
+                        CONJUNCTION.str,
+                        SEQUENCE.str,
+                        PARALLEL.str,
 
                         anyOf(
-                                INTERSECTION_EXT.symbol +
-                                        INTERSECTION_INT.symbol +
-                                        DIFFERENCE_EXT.symbol +
-                                        DIFFERENCE_INT.symbol + PRODUCT.symbol + IMAGE_EXT.symbol + IMAGE_INT.symbol
+                                INTERSECTION_EXT.str +
+                                        INTERSECTION_INT.str +
+                                        DIFFERENCE_EXT.str +
+                                        DIFFERENCE_INT.str + PRODUCT.str + IMAGE_EXT.str + IMAGE_INT.str
                         )
 
 
@@ -594,18 +594,18 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator() {
         return sequence(
                 trie(
-                        NALOperator.NEGATION.symbol,
-                        NALOperator.DISJUNCTION.symbol,
-                        NALOperator.CONJUNCTION.symbol,
-                        NALOperator.SEQUENCE.symbol,
-                        NALOperator.PARALLEL.symbol,
-                        NALOperator.DIFFERENCE_EXT.symbol,
-                        NALOperator.DIFFERENCE_INT.symbol,
-                        NALOperator.INTERSECTION_EXT.symbol,
-                        NALOperator.INTERSECTION_INT.symbol,
-                        NALOperator.PRODUCT.symbol,
-                        NALOperator.IMAGE_EXT.symbol,
-                        NALOperator.IMAGE_INT.symbol
+                        NALOperator.NEGATION.str,
+                        NALOperator.DISJUNCTION.str,
+                        NALOperator.CONJUNCTION.str,
+                        NALOperator.SEQUENCE.str,
+                        NALOperator.PARALLEL.str,
+                        NALOperator.DIFFERENCE_EXT.str,
+                        NALOperator.DIFFERENCE_INT.str,
+                        NALOperator.INTERSECTION_EXT.str,
+                        NALOperator.INTERSECTION_INT.str,
+                        NALOperator.PRODUCT.str,
+                        NALOperator.IMAGE_EXT.str,
+                        NALOperator.IMAGE_INT.str
                         //NALOperator.OPERATION.ch
                 ),
                 push(Symbols.getOperator(match()))
@@ -618,17 +618,17 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator2() {
         return sequence(
                 trie(
-                        NALOperator.DISJUNCTION.symbol,
-                        NALOperator.CONJUNCTION.symbol,
-                        NALOperator.SEQUENCE.symbol,
-                        NALOperator.PARALLEL.symbol,
-                        NALOperator.DIFFERENCE_EXT.symbol,
-                        NALOperator.DIFFERENCE_INT.symbol,
-                        NALOperator.INTERSECTION_EXT.symbol,
-                        NALOperator.INTERSECTION_INT.symbol,
-                        NALOperator.PRODUCT.symbol,
-                        NALOperator.IMAGE_EXT.symbol,
-                        NALOperator.IMAGE_INT.symbol
+                        NALOperator.DISJUNCTION.str,
+                        NALOperator.CONJUNCTION.str,
+                        NALOperator.SEQUENCE.str,
+                        NALOperator.PARALLEL.str,
+                        NALOperator.DIFFERENCE_EXT.str,
+                        NALOperator.DIFFERENCE_INT.str,
+                        NALOperator.INTERSECTION_EXT.str,
+                        NALOperator.INTERSECTION_INT.str,
+                        NALOperator.PRODUCT.str,
+                        NALOperator.IMAGE_EXT.str,
+                        NALOperator.IMAGE_INT.str
                 ),
                 push(Symbols.getOperator(match()))
         );

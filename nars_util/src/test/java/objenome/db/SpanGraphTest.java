@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by me on 6/3/15.
@@ -35,21 +36,27 @@ public class SpanGraphTest {
         SpanGraph a = graph.apply("PeerA");
 
         Vertex v = a.addVertex("x");
-        assertEquals(v.getId(), "x");
-        assertEquals( ((MapGraph.MVertex)a.addVertex(17)).getId(), 17);
+        assertEquals("correct vertex id", v.getId(), "x");
+        assertEquals("non-string vertex id", ((MapGraph.MVertex)a.addVertex(17)).getId(), 17);
 
         Thread x = new Thread(() -> {
 
-            int preDelayMS = 10;
-            int afterConnectedDelayMS = 100;
+            try {
+                int preDelayMS = 10;
+                int afterConnectedDelayMS = 100;
 
-            sleep(preDelayMS);
+                sleep(preDelayMS);
 
-            SpanGraph g = graph.apply("PeerB");
+                SpanGraph g = graph.apply("PeerB");
+                b.set(g);
 
-            sleep(afterConnectedDelayMS);
 
-            b.set(g);
+                sleep(afterConnectedDelayMS);
+            }
+            catch (Throwable e) {
+                assertTrue(e.toString(), false);
+            }
+
         });
 
         x.start();

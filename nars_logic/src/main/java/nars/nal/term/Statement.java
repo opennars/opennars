@@ -226,38 +226,38 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
         public byte[] newName() {
             final byte[] subjBytes = s.getSubject().bytes();
             final byte[] predBytes = s.getPredicate().bytes();
-            final byte[] relationBytes = s.operator().bytes();
+            final byte[] relationBytes = s.operator().bytes;
 
             ByteBuf b = ByteBuf.create(
                     subjBytes.length + predBytes.length + relationBytes.length +
                             + 1 + 1 //beginning and end closers
             );
 
-            b.add((byte) STATEMENT_OPENER.ch).add(subjBytes);
+            b.append((byte) STATEMENT_OPENER.ch).append(subjBytes);
 
-            b.add(relationBytes);
+            b.append(relationBytes);
 
-            b.add(predBytes).add((byte) STATEMENT_CLOSER.ch);
+            b.append(predBytes).append((byte) STATEMENT_CLOSER.ch);
 
             return b.toBytes();
         }
 
         @Override
-        public void write(Writer w, boolean pretty) throws IOException {
+        public void write(final Writer w, final boolean pretty) throws IOException {
 
-            w.write(STATEMENT_OPENER.ch);
+            w.append(STATEMENT_OPENER.ch);
 
             s.getSubject().name().write(w, pretty);
 
-            if (pretty) w.write(' ');
+            if (pretty) w.append(' ');
 
-            w.write(s.operator().symbol);
+            s.operator().expand(w);
 
-            if (pretty) w.write(' ');
+            if (pretty) w.append(' ');
 
             s.getPredicate().name().write(w, pretty);
 
-            w.write(STATEMENT_CLOSER.ch);
+            w.append(STATEMENT_CLOSER.ch);
         }
     }
 

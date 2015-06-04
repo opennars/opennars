@@ -4,9 +4,29 @@ package nars.nal;
 import nars.Symbols;
 import nars.util.utf8.Utf8;
 
+import java.io.IOException;
+import java.io.Writer;
+
+/** NAL symbol table */
 public enum NALOperator {
 
     //TODO include min/max arity for each operate, if applicable
+
+    /* Syntactical, so is neither relation or isNative */
+    COMPOUND_TERM_OPENER("(", 0, false, false),
+    COMPOUND_TERM_CLOSER(")", 0, false, false),
+    STATEMENT_OPENER("<", 0, false, false),
+    STATEMENT_CLOSER(">", 0, false, false),
+
+    NEGATION("--", 5, false, true, 1),
+
+    /* Relations */
+    INHERITANCE("-->", 1, true, 2),
+    SIMILARITY("<->", 2, true, 3),
+
+    INSTANCE("{--", 2, true), //should not be given a compact representation because this will not exist internally after parsing
+    PROPERTY("--]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
+    INSTANCE_PROPERTY("{-]", 2, true), //should not be given a compact representation because this will not exist internally after parsing
 
     /* CompountTerm operators, length = 1 */
     INTERSECTION_EXT("&", 3, false, true),
@@ -20,12 +40,11 @@ public enum NALOperator {
     IMAGE_INT("\\", 4, false, true),
 
     /* CompoundStatement operators, length = 2 */
-    NEGATION("--", 5, false, true),
-    DISJUNCTION("||", 5, false, true),
-    CONJUNCTION("&&", 5, false, true),
+    DISJUNCTION("||", 5, false, true, 4),
+    CONJUNCTION("&&", 5, false, true, 5),
 
-    SEQUENCE("&/", 7, false, true),
-    PARALLEL("&|", 7, false, true),
+    SEQUENCE("&/", 7, false, true, 6),
+    PARALLEL("&|", 7, false, true, 7),
 
 
     /* CompountTerm delimitors, must use 4 different pairs */
@@ -34,28 +53,17 @@ public enum NALOperator {
     SET_EXT_OPENER("{", 3, false, true), //OPENER also functions as the symbol for the entire compound
     SET_EXT_CLOSER("}", 3, false, false),
 
-    /* Syntactical, so is neither relation or isNative */
-    COMPOUND_TERM_OPENER("(", 0, false, false),
-    COMPOUND_TERM_CLOSER(")", 0, false, false),
-    STATEMENT_OPENER("<", 0, false, false),
-    STATEMENT_CLOSER(">", 0, false, false),
 
 
-    /* Relations */
-    INHERITANCE("-->", 1, true),
-    SIMILARITY("<->", 2, true),
-    INSTANCE("{--", 2, true),
-    PROPERTY("--]", 2, true),
-    INSTANCE_PROPERTY("{-]", 2, true),
-    IMPLICATION("==>", 5, true),
+    IMPLICATION("==>", 5, true, 8),
 
     /* Temporal Relations */
-    IMPLICATION_AFTER("=/>", 7, true),
-    IMPLICATION_WHEN("=|>", 7, true),
-    IMPLICATION_BEFORE("=\\>", 7, true),
-    EQUIVALENCE("<=>", 5, true),
-    EQUIVALENCE_AFTER("</>", 7, true),
-    EQUIVALENCE_WHEN("<|>", 7, true),
+    IMPLICATION_AFTER("=/>", 7, true, 9),
+    IMPLICATION_WHEN("=|>", 7, true, 10),
+    IMPLICATION_BEFORE("=\\>", 7, true, 11),
+    EQUIVALENCE("<=>", 5, true, 12),
+    EQUIVALENCE_AFTER("</>", 7, true, 13),
+    EQUIVALENCE_WHEN("<|>", 7, true, 14),
 
     OPERATION("^", 8),
 
@@ -69,7 +77,7 @@ public enum NALOperator {
 
 
     /** symbol representation of this getOperator */
-    public final String symbol;
+    public final String str;
 
     /** character representation of this getOperator if symbol has length 1; else ch = 0 */
     public final char ch;
@@ -88,19 +96,55 @@ public enum NALOperator {
 
     /** minimum NAL level required to use this operate, or 0 for N/A */
     public final int level;
-    private final byte[] symbolBytes;
 
-    private NALOperator(String string, int minLevel) {
-        this(string, minLevel, false);
+    /** should be null unless a 1-character representation is not possible. */
+    public final byte[] bytes;
+
+    /** 1-character representation, or 0 if a multibyte must be used */
+    public final byte byt;
+
+
+    NALOperator(String string, int minLevel, int... bytes) {
+        this(string, minLevel, false, bytes);
     }
 
-    private NALOperator(String string, int minLevel, boolean relation) {
-        this(string, minLevel, relation, !relation);
+    NALOperator(String string, int minLevel, boolean relation, int... bytes) {
+        this(string, minLevel, relation, !relation, bytes);
     }
 
-    private NALOperator(String string, int minLevel, boolean relation, boolean innate) {
-        this.symbol = string;
-        this.symbolBytes = Utf8.toUtf8(string);
+    NALOperator(String string, int minLevel, boolean relation, boolean innate, int... ibytes) {
+
+        this.str = string;
+
+
+        final byte bb[];
+
+        final boolean hasCompact = (ibytes.length == 1);
+        if (!hasCompact) {
+            bb = Utf8.toUtf8(string);
+        } else {
+            if (ibytes.length > 1)
+                throw new RuntimeException("compact representation can only be 1-byte"); //current implementation's limitation
+
+            bb = new byte[ibytes.length];
+            for (int i = 0; i < ibytes.length; i++)
+                bb[i] = (byte) ibytes[i];
+        }
+
+        this.bytes = bb;
+
+        if (hasCompact && hasCompact) {
+            int p = bb[0];
+            if (p < 31) //do not assign if it's an ordinary non-control char
+                this.byt = (byte)(p);
+            else
+                this.byt = (byte)0;
+        }
+        else {
+            //multiple ibytes, use the provided array
+            this.byt = (byte)0;
+        }
+
         this.level = minLevel;
         this.relation = relation;
         this.isNative = innate;
@@ -110,11 +154,24 @@ public enum NALOperator {
         this.closer = name().endsWith("_CLOSER");
     }
 
-    public byte[] bytes() { return symbolBytes; }
-
     @Override
-    public String toString() { return symbol; }
+    public String toString() { return str; }
 
+    /** alias */
     public static final NALOperator SET_EXT = NALOperator.SET_EXT_OPENER;
     public static final NALOperator SET_INT = NALOperator.SET_INT_OPENER;
+
+
+    /** writes this operator to a Writer in (human-readable) expanded UTF16 mode */
+    public final void expand(final Writer w) throws IOException {
+        if (this.ch == 0)
+            w.write(str);
+        else
+            w.write(ch);
+    }
+
+    public boolean has8BitRepresentation() {
+        return byt!=0;
+    }
+
 }

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 public class UTF8IdentifierTest {
 
 
+
     @Test
     public void test1() {
         testDynamic("abcd1234");
@@ -65,8 +66,12 @@ public class UTF8IdentifierTest {
 
         @Override public byte[] newName() {
             ByteBuf bb = ByteBuf.create(8);
-            bb.add(b);
+            bb.append(b);
             return bb.toBytes();
         }
     }
+
+
+
+
 }

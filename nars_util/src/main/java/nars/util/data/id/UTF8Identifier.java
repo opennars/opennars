@@ -58,6 +58,16 @@ public class UTF8Identifier extends Identifier {
         return name;
     }
 
+    public char[] toChars(final boolean pretty) {
+        /** if UTF8Identifier it is a constant (until we balance the dynamic with a concrete constant subclass and make this abstract)
+         * otherwise call the write routine
+         * */
+        if (getClass() == UTF8Identifier.class)
+            return Utf8.fromUtf8ToChars(name());
+        else
+            return super.toChars(pretty);
+    }
+
     @Override
     int getStringSizeEstimate() {
         if (hasName())
@@ -141,7 +151,7 @@ public class UTF8Identifier extends Identifier {
 //        p.write(new StringWriter(boas, Utf8.utf8Charset);, pretty);
 
 
-        p.write(Utf8.fromUtf8(name()));
+        p.write(Utf8.fromUtf8ToChars(name()));
     }
 
 

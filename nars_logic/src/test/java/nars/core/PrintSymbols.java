@@ -15,7 +15,7 @@ public class PrintSymbols {
         
         System.out.println("string" + "\t\t" + "rel?" + "\t\t" + "innate?" + "\t\t" + "opener?" + "\t\t" + "closer?");
         for (NALOperator i : NALOperator.values()) {
-            System.out.println(i.symbol + "\t\t" + i.relation + "\t\t" + i.isNative + "\t\t" + i.opener + "\t\t" + i.closer); 
+            System.out.println(i.str + "\t\t" + i.relation + "\t\t" + i.isNative + "\t\t" + i.opener + "\t\t" + i.closer);
             if (i.relation) relations++;
             if (i.isNative) innates++;
             symbols++;

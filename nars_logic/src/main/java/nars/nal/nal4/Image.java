@@ -2,8 +2,6 @@ package nars.nal.nal4;
 
 import nars.Symbols;
 import nars.nal.NALOperator;
-import nars.nal.nal3.SetExt;
-import nars.nal.nal3.SetTensional;
 import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
@@ -129,23 +127,23 @@ abstract public class Image extends DefaultCompound {
             }
 
             ByteBuf b = ByteBuf.create(bytes)
-                    .add((byte)COMPOUND_TERM_OPENER.ch)
-                    .add(compound.operator().bytes())
-                    .add((byte)ARGUMENT_SEPARATOR)
-                    .add(compound.relation().bytes());
+                    .append((byte) COMPOUND_TERM_OPENER.ch)
+                    .append(compound.operator().bytes)
+                    .append((byte) ARGUMENT_SEPARATOR)
+                    .append(compound.relation().bytes());
 
 
             final int relationIndex = compound.relationIndex;
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
-                b.add((byte) ARGUMENT_SEPARATOR);
+                b.append((byte) ARGUMENT_SEPARATOR);
                 if (i == relationIndex) {
-                    b.add((byte)Symbols.IMAGE_PLACE_HOLDER);
+                    b.append((byte) Symbols.IMAGE_PLACE_HOLDER);
                 } else {
-                    b.add(tt.bytes());
+                    b.append(tt.bytes());
                 }
             }
-            b.add((byte)COMPOUND_TERM_CLOSER.ch);
+            b.append((byte) COMPOUND_TERM_CLOSER.ch);
 
             return b.toBytes();
 
@@ -157,7 +155,7 @@ abstract public class Image extends DefaultCompound {
             final int len = compound.length();
 
             p.write(COMPOUND_TERM_OPENER.ch);
-            p.write(compound.operator().symbol);
+            p.write(compound.operator().str);
 
             p.write(ARGUMENT_SEPARATOR);
             if (pretty)

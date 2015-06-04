@@ -3,18 +3,12 @@ package nars.nal.nal3;
 
 import nars.Symbols;
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.util.data.id.DynamicUTF8Identifier;
-import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
 import java.io.Writer;
-
-import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
 public interface SetTensional extends Term {
 
@@ -65,13 +59,13 @@ public interface SetTensional extends Term {
 
             ByteBuf b = ByteBuf.create(bytes);
 
-            b.add((byte) opener);
+            b.append((byte) opener);
             for (int i = 0; i < len; i++) {
                 Term tt = compound.term(i);
-                if (i!=0) b.add((byte)Symbols.ARGUMENT_SEPARATOR);
-                b.add(tt.bytes());
+                if (i!=0) b.append((byte) Symbols.ARGUMENT_SEPARATOR);
+                b.append(tt.bytes());
             }
-            b.add((byte)closer);
+            b.append((byte) closer);
 
             return b.toBytes();
 
