@@ -145,7 +145,7 @@ abstract public class Symbols {
             }
         }
 
-        System.out.println(Arrays.toString(byteSymbols));
+        //System.out.println(Arrays.toString(byteSymbols));
 
         //VERIFICATION: Look for any empty holes in the byteSymbols table, indicating that the representation is not contigous
         //index 0 is always 0 to maintain \0's semantics
@@ -299,4 +299,40 @@ abstract public class Symbols {
         }
         return false;
     }
+
+    public static boolean isValidAtomChar(char c) {
+        //TODO replace these with Symbols. constants
+        switch(c) {
+            case ' ':
+            case ',':
+            case '.':
+            case '!':
+            case '?':
+            case '\"':
+            case Symbols.INTERVAL_PREFIX:
+            case '<':
+            case '>':
+            case '-':
+            case '~':
+            case '=':
+            case '*':
+            case '|':
+            case '&':
+            case '(':
+            case ')':
+            case '[':
+            case ']':
+            case '{':
+            case '}':
+            case '%':
+            case '#':
+            case '$':
+            case '\'':
+            case '\t':
+            case '\n':
+                return false;
+        }
+        return true;
+    }
+
 }

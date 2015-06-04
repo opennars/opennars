@@ -1,17 +1,18 @@
 package nars.testing;
 
 import nars.Events;
+import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
-import nars.Global;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
+import nars.nal.Task;
+import nars.nal.nal7.Tense;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Term;
+import nars.narsese.InvalidInputException;
 import nars.testing.condition.OutputCondition;
 import nars.testing.condition.TaskCondition;
-import nars.narsese.InvalidInputException;
-import nars.nal.Task;
-import nars.nal.stamp.Stamp;
-import nars.nal.nal7.Tense;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -210,11 +211,10 @@ public class TestNAR extends NAR {
         return explainable(t);
     }
 
-    @Override
     public ExplainableTask believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
-        Task t = super.believe(pri, dur, beliefTerm, tense, freq, conf);
+        Task t = super.believe(pri, dur, (Term)term(beliefTerm), tense, freq, conf);
 
         return explainable(t);
     }

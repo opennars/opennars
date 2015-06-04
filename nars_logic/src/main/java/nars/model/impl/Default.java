@@ -83,18 +83,18 @@ public class Default extends NARSeed implements ConceptBuilder {
     int taskBufferSize;
     
     int taskBufferLevels;
-    protected int maxNALLevel;
 
     InternalExperience.InternalExperienceMode internalExperience;
     private int cyclesPerFrame = 1;
 
 
-    public NARSeed level(int maxNALlevel) {
-        this.maxNALLevel = maxNALlevel;
-        if (maxNALLevel < 8)
+    public Default level(int maxNALlevel) {
+        super.level(maxNALlevel);
+        if (maxNALlevel < 8)
             setInternalExperience(null);
         return this;
     }
+
 
     @Override
     protected int getMaximumNALLevel() {

@@ -20,6 +20,7 @@ import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -30,8 +31,6 @@ import java.util.function.Consumer;
 import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.Symbols.*;
-import static nars.Symbols.getCloser;
-import static nars.Symbols.isRelation;
 import static nars.budget.BudgetFunctions.truthToQuality;
 import static nars.nal.Variables.containVar;
 import static nars.nal.term.Statement.make;
@@ -66,23 +65,23 @@ public class NarseseParserTest {
     }
 
 
-    @Test
-    public void testSomethingTheOldParserCouldntHandle() {
-
-        Task t = task("<<$A --> $B> --> QPre>!");
-        assertNotNull(t);
-
-        Task t1 = task("<<<$A --> $B> --> QPre> =|> X>!");
-        assertNotNull(t);
-
-        Task t2 = task("<<<$A --> $B> --> QPre> =|> <X-->Y>>!");
-        assertNotNull(t);
-
-        Task t3 = task("<<<$A --> $B> --> QPre> =|> <$A --> $B>>!");
-        assertNotNull(t);
-
-        System.out.println(t);
-    }
+//    @Test @Ignore
+//    public void testSomethingTheOldParserCouldntHandle() {
+//
+//        Task t = task("<<$A --> $B> --> QPre>!");
+//        assertNotNull(t);
+//
+//        Task t1 = task("<<<$A --> $B> --> QPre> =|> X>!");
+//        assertNotNull(t);
+//
+//        Task t2 = task("<<<$A --> $B> --> QPre> =|> <X-->Y>>!");
+//        assertNotNull(t);
+//
+//        Task t3 = task("<<<$A --> $B> --> QPre> =|> <$A --> $B>>!");
+//        assertNotNull(t);
+//
+//        System.out.println(t);
+//    }
 
     @Test
     public void testParseCompleteEternalTask() throws InvalidInputException {

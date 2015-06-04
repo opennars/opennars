@@ -16,6 +16,7 @@
 
 package nars.narsese;
 
+import com.github.fge.grappa.buffers.CharSequenceInputBuffer;
 import com.github.fge.grappa.buffers.InputBuffer;
 import com.github.fge.grappa.exceptions.GrappaException;
 import com.github.fge.grappa.internal.NonFinalForTesting;
@@ -27,6 +28,7 @@ import com.github.fge.grappa.run.ParseRunnerListener;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.run.events.*;
+import com.github.fge.grappa.stack.DefaultValueStack;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
@@ -35,45 +37,45 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
 /**
- * High-efficiency parse runner that avoids calling bus
+ * Even more efficient
  */
 @SuppressWarnings("DesignForExtension")
 @ParametersAreNonnullByDefault
 @NonFinalForTesting
-public class ListeningParseRunner2<V>
+public class ListeningParseRunner3<V>
         extends AbstractParseRunner<V>
         implements MatchHandler
 {
     // TODO: does it need to be volatile?
-    private static volatile Throwable throwable = null;
-
-    private static final EventBus bus = new EventBus(new SubscriberExceptionHandler()
-    {
-        @Override
-        public void handleException(final Throwable exception,
-                                    final SubscriberExceptionContext context)
-        {
-            if (throwable == null)
-                throwable = exception;
-            else
-                throwable.addSuppressed(exception);
-        }
-    });
+    private volatile Throwable throwable = null;
+//
+//    private static final EventBus bus = new EventBus(new SubscriberExceptionHandler()
+//    {
+//        @Override
+//        public void handleException(final Throwable exception,
+//                                    final SubscriberExceptionContext context)
+//        {
+//            if (throwable == null)
+//                throwable = exception;
+//            else
+//                throwable.addSuppressed(exception);
+//        }
+//    });
 
     /**
      * Creates a new BasicParseRunner instance for the given rule.
      *
      * @param rule the parser rule
      */
-    public ListeningParseRunner2(final Rule rule)
+    public ListeningParseRunner3(final Rule rule)
     {
         super(rule);
     }
 
     // TODO: replace with a supplier mechanism
-    public final void registerListener(final ParseRunnerListener<V> listener)
-    {
-        bus.register(listener);
+    public final void registerListener(final ParseRunnerListener<V> listener) {
+        throw new RuntimeException(this + " doesn't involve an unnecessary eventbus because we like to conserve Memory");
+        //bus.register(listener);
     }
 
     @Override
@@ -81,14 +83,13 @@ public class ListeningParseRunner2<V>
     {
 
 
-        Objects.requireNonNull(inputBuffer, "inputBuffer");
-        resetValueStack();
+        //Objects.requireNonNull(inputBuffer, "inputBuffer");
+        resetValueStackDOESNTNEEDTOBEFINALPLEASE();
 
-        final MatcherContext<V> rootContext
-                = createRootContext(inputBuffer, this);
+        final MatcherContext<V> rootContext = createRootContext(inputBuffer, this);
 
-        if (busRun())
-            bus.post(new PreParseEvent<>(rootContext));
+//        if (busRun())
+//            bus.post(new PreParseEvent<>(rootContext));
 
         if (throwable != null)
             throw new GrappaException("parsing listener error (before parse)",
@@ -98,8 +99,8 @@ public class ListeningParseRunner2<V>
         final ParsingResult<V> result
                 = createParsingResult(matched, rootContext);
 
-        if (busRun())
-            bus.post(new PostParseEvent<>(result));
+//        if (busRun())
+//            bus.post(new PostParseEvent<>(result));
 
         if (throwable != null)
             throw new GrappaException("parsing listener error (after parse)",
@@ -113,10 +114,10 @@ public class ListeningParseRunner2<V>
     {
         final Matcher matcher = context.getMatcher();
 
-        if (busMatch()) {
-            final PreMatchEvent<T> preMatchEvent = new PreMatchEvent<>(context);
-            bus.post(preMatchEvent);
-        }
+//        if (busMatch()) {
+//            final PreMatchEvent<T> preMatchEvent = new PreMatchEvent<>(context);
+//            bus.post(preMatchEvent);
+//        }
 
         if (throwable != null)
             throw new GrappaException("parsing listener error (before match)",
@@ -127,18 +128,32 @@ public class ListeningParseRunner2<V>
         final boolean match = matcher.match(context);
 
 
-        if (busMatch()) {
-            final MatchContextEvent<T> postMatchEvent = match
-                    ? new MatchSuccessEvent<>(context)
-                    : new MatchFailureEvent<>(context);
-            bus.post(postMatchEvent);
-        }
+//        if (busMatch()) {
+//            final MatchContextEvent<T> postMatchEvent = match
+//                    ? new MatchSuccessEvent<>(context)
+//                    : new MatchFailureEvent<>(context);
+//            bus.post(postMatchEvent);
+//        }
 
         if (throwable != null)
             throw new GrappaException("parsing listener error (after match)",
                     throwable);
 
+
         return match;
+    }
+
+
+    public ParsingResult<V> runWHYISTHESUPERMETHODFINAL(CharSequence input)  {
+        //Objects.requireNonNull(input, "input");
+        return run(new CharSequenceInputBuffer(input));
+    }
+
+    protected void resetValueStackDOESNTNEEDTOBEFINALPLEASE()     {
+        //ONLY CREATE A REPLACEMENT VALUESTACK IF IS EMPTY
+        if (this.valueStack == null || !this.valueStack.isEmpty())
+            this.valueStack = new DefaultValueStack();
+        this.stackSnapshot = null;
     }
 
     public boolean busMatch() { return false; }

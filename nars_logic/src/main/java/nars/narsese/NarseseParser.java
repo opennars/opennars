@@ -2,12 +2,19 @@ package nars.narsese;
 
 import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
+import com.github.fge.grappa.matchers.CharRangeMatcher;
+import com.github.fge.grappa.matchers.MatcherType;
+import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
 import com.github.fge.grappa.rules.Rule;
 import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
+import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
+import com.github.fge.grappa.support.Characters;
+import com.github.fge.grappa.support.Chars;
 import com.github.fge.grappa.support.Var;
+import com.google.common.base.Preconditions;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
@@ -26,10 +33,7 @@ import nars.nal.term.Variable;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static nars.Symbols.IMAGE_PLACE_HOLDER;
@@ -44,13 +48,13 @@ public class NarseseParser extends BaseParser<Object> {
     private final int level;
 
     //These should be set to something like RecoveringParseRunner for performance
-    public final ParseRunner inputParser = new ListeningParseRunner2(Input());
-    public final ParseRunner singleTaskParser = new ListeningParseRunner2(Task(true));
+    public final ParseRunner inputParser = new ListeningParseRunner3(Input());
+    public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task(true));
 
     //use a parameter or something to avoid this extra instance
-    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ListeningParseRunner2(Task(false));
+    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ListeningParseRunner3(Task(false));
 
-    public final ParseRunner singleTermParser = new ListeningParseRunner2(Term()); //new ErrorReportingParseRunner(Term(), 0);
+    public final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
     public Memory memory;
 
@@ -398,7 +402,6 @@ public class NarseseParser extends BaseParser<Object> {
 
                         Variable(),
                         Interval(),
-                        ImageIndex(),
 
 
 //                        //negation shorthand
@@ -441,7 +444,8 @@ public class NarseseParser extends BaseParser<Object> {
 //                        ),
 
                         NamespacedAtom(),
-                        Atom()
+                        Atom(),
+                        ImageIndex()
 
                 ),
 
@@ -458,10 +462,41 @@ public class NarseseParser extends BaseParser<Object> {
      * an atomic term, returns a String because the result may be used as a Variable name
      */
     Rule Atom() {
+
+
         return sequence(
-                oneOrMore(noneOf(invalidAtomCharacters)),
+                //oneOrMore(noneOf(invalidAtomCharacters)),
+                new ValidAtomCharMatcher(),
                 push(match())
         );
+    }
+
+    public final class ValidAtomCharMatcher extends AbstractMatcher
+    {
+
+        public ValidAtomCharMatcher() {
+            super("'ValidAtomChar'");
+        }
+
+        public MatcherType getType()
+        {
+            return MatcherType.TERMINAL;
+        }
+
+        public <V> boolean match(MatcherContext<V> context)
+        {
+            char c;
+
+            int count = 0;
+            int max= context.getInputBuffer().length() - context.getCurrentIndex();
+
+            while (count < max && Symbols.isValidAtomChar(c = context.getCurrentChar())) {
+                context.advanceIndex(1);
+                count++;
+            }
+
+            return count > 0;
+        }
     }
 
     /**

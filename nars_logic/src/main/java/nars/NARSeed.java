@@ -16,6 +16,8 @@ abstract public class NARSeed extends Param {
 
     public final Random rng = new XORShiftRandom();
 
+    protected int maxNALLevel;
+
     abstract public ControlCycle newControlCycle();
 
     public NARSeed() {
@@ -57,5 +59,10 @@ abstract public class NARSeed extends Param {
 
 
     abstract public LogicPolicy getLogicPolicy();
+
+    public NARSeed level(int maxNALlevel) {
+        this.maxNALLevel = maxNALlevel;
+        return this;
+    }
 
 }

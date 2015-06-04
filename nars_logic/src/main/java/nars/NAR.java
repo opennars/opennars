@@ -192,22 +192,6 @@ public class NAR extends Container implements Runnable {
     }
 
 
-    public Task believe(String termString, long when, float freq, float conf, float priority) throws InvalidInputException {
-        return believe(priority, Global.DEFAULT_JUDGMENT_DURABILITY, termString, when, freq, conf);
-    }
-
-    public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, termString, tense, freq, conf);
-    }
-    public Task believe(String termString, float freq, float conf) throws InvalidInputException {
-        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, termString, Tense.Eternal, freq, conf);
-    }
-    public Task believe(String termString, float conf) throws InvalidInputException {
-        return believe(termString, 1.0f, conf);
-    }
-    public Task believe(String termString) throws InvalidInputException {
-        return believe(termString, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-    }
 
 
 
@@ -236,18 +220,43 @@ public class NAR extends Container implements Runnable {
         );
         return t;
     }
-    //getOccurrenceTime(creationTime, tense, memory.duration())
 
-    public Task believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+    public Task believe(String termString, long when, float freq, float conf, float priority) throws InvalidInputException {
+        return believe(priority, Global.DEFAULT_JUDGMENT_DURABILITY, termString, when, freq, conf);
+    }
+
+    public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
+        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term(termString), tense, freq, conf);
+    }
+    public Task believe(Term term, float freq, float conf) throws InvalidInputException {
+        return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term, Tense.Eternal, freq, conf);
+    }
+    public Task believe(String termString, float freq, float conf) throws InvalidInputException {
+        return believe((Term)term(termString), freq, conf);
+    }
+    public Task believe(String termString, float conf) throws InvalidInputException {
+        return believe(termString, 1.0f, conf);
+    }
+    public Task believe(String termString) throws InvalidInputException {
+        return believe(termString, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+    }
+    public Task believe(Term term) throws InvalidInputException {
+        return believe(term, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
+    }
+
+    public Task believe(float pri, float dur, Term beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
     }
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+        return believe(pri, dur, (Term)term(beliefTerm), occurrenceTime, freq, conf);
+    }
+    public Task believe(float pri, float dur, Term belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         final Task t;
         final Truth tv;
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompound(beliefTerm),
+                                belief,
                                 Symbols.JUDGMENT,
                                 tv = new DefaultTruth(freq, conf),
                                 new Stamp(memory, time(), occurrenceTime)),

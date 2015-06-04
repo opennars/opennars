@@ -1,10 +1,14 @@
 package nars.rdfowl;
 
 import nars.NAR;
-import nars.model.impl.Default;
 import nars.io.out.TextOutput;
-import nars.io.TextPerception;
-import nars.io.in.PrintWriterInput;
+import nars.model.impl.Default;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal2.Instance;
+import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -26,21 +30,25 @@ import java.util.Map;
  *
  * @author me
  */
-public class OWLInput extends PrintWriterInput {
+public class OWLInput  {
 
     private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     private static String parentTagName = null;
 
     private final Map<String, Entity> entities = new HashMap();
+    private final NAR nar;
 
-    public OWLInput(TextPerception t, String owlFileLocation) throws Exception {
-        super(t);
-
-        parseAndLoadData(new File(owlFileLocation));
+    public OWLInput(NAR n, String owlFileLocation) throws Exception {
+        this(n);
+        input(new File(owlFileLocation));
     }
 
-    protected class Entity {
+    public OWLInput(NAR n) {
+        this.nar = n;
+    }
+
+    static protected class Entity {
 
         public String name;
         public final List<String[]> attributes = new LinkedList();
@@ -89,7 +97,7 @@ public class OWLInput extends PrintWriterInput {
      * ?@rdf:ID = entity, type=Wine all subtags are relations: tagname =
      * relation_name tag@rdf:resource = target entity
      */
-    public void parseAndLoadData(File f) throws Exception {
+    public void input(File f) throws Exception {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader parser = factory.createXMLStreamReader(
                 new FileInputStream(f));
@@ -97,7 +105,7 @@ public class OWLInput extends PrintWriterInput {
         for (;;) {
             int event = parser.next();
             if (event == XMLStreamConstants.END_DOCUMENT) {
-                close();
+
                 break;
             }
             switch (event) {
@@ -134,7 +142,7 @@ public class OWLInput extends PrintWriterInput {
                                         superclassEntity.addAttribute("Type", name);
 
                                         //saveEntity(superclassEntity);
-                                        saveRelation(parentTagName, superclassEntity.getName(), "parentOf");
+                                        input(parentTagName, superclassEntity.getName(), "parentOf");
                                         parentTagName = null;
                                     }
                                 }
@@ -227,7 +235,7 @@ public class OWLInput extends PrintWriterInput {
                                         Entity entity = new Entity();
                                         entity.setName(id);
                                         parentTagName = entity.getName();
-                                        saveEntity(entity);
+                                        input(entity);
                                     } else {
                                         // these are the relations
                                         String relationName = tagName;
@@ -237,18 +245,25 @@ public class OWLInput extends PrintWriterInput {
                                             targetEntityName = targetEntityName.substring(1);
                                         }
                                         if (targetEntityName != null) {
-                                            saveRelation(parentTagName, targetEntityName, relationName);
+                                            input(parentTagName, targetEntityName, relationName);
                                         }
                                     }
                                 }
                             });
                         }
                     } else {
-                        /*
-                         System.out.println();
-                         System.out.println(parser.getName() + " " + parser.getAttributeName(0) + " " + parser.getAttributeValue(0) + " " + (parser.hasText() ? parser.getText() : ""));                        
-                         System.out.println();
-                         */
+
+                        if (!parser.hasText()) {
+
+                            String pred = formatTag(parser.getAttributeName(0));
+                            String obj = formatTag(new QName(parser.getAttributeValue(0)));
+
+                            System.out.println();
+                            System.out.println(tagName + " " + pred + " " + obj + " " +
+                                    parser.getAttributeValue(0));
+                            //(parser.hasText() ? parser.getText() : ""));
+                        }
+
                     }
                     break;
                 case XMLStreamConstants.END_ELEMENT:
@@ -303,9 +318,16 @@ public class OWLInput extends PrintWriterInput {
         }
     }
 
-    public String getClassName(String uri) {
+    static public Term atom(String uri) {
         int lastSlash = uri.lastIndexOf('/');
-        return uri.substring(lastSlash + 1);
+        if (lastSlash!=-1)
+            uri = uri.substring(lastSlash + 1);
+
+        switch(uri) {
+            case "owl#Thing": uri = "thing"; break;
+        }
+
+        return Atom.the(uri);
     }
 
     // ====================== DB load/save methods =========================
@@ -315,11 +337,12 @@ public class OWLInput extends PrintWriterInput {
      *
      * @param entity the Entity to save.
      */
-    private void saveEntity(final Entity entity) {
+    protected void input(final Entity entity) {
         //entities.put(entity.getName(), entity);
 
-        String className = getClassName(entity.getName());
-        append("<" + className + " --> class>.\n");
+        Term clas = atom(entity.getName());
+        if (clas!=null)
+            inputClass(clas);
 
         //System.out.println("Save: " + entity.getName());
 //        // if entity already exists, don't save
@@ -346,6 +369,20 @@ public class OWLInput extends PrintWriterInput {
 //            // finally, always save the "english name" of the entity as an attribute
 //            saveAttribute(entityId, new Attribute("EnglishName", getEnglishName(entity.getName())));
 //        }
+    }
+
+    //TODO make this abstract for inserting the fact in different ways
+    protected void inputClass(Term clas) {
+        inputClassBelief(clas);
+    }
+
+    private void inputClassBelief(Term clas) {
+        nar.believe(isAClass(clas));
+    }
+
+    public static final Atom owlClass = Atom.the("class");
+    public static Term isAClass(Term clas) {
+        return Instance.make(clas, owlClass);
     }
 
     /**
@@ -386,13 +423,17 @@ public class OWLInput extends PrintWriterInput {
      * relation is to be saved. Takes care of updating relation_types as well.
      *
      */
-    private void saveRelation(final String subject, final String object, final String predicate) {
+    private void input(final String subject, final String object, final String predicate) {
 
         if ((subject == null) || (object == null)) {
             return;
         }
         if (predicate.equals("parentOf")) {
-            append("<" + getClassName(subject) + " --> " + getClassName(object) + ">.\n");
+            nar.believe(Inheritance.make(atom(subject), atom(object)));
+        }
+        else {
+            nar.believe(Operation.make(atom(predicate),
+                    Product.make(atom(subject), atom(object))));
         }
 
 //        // get the entity ids for source and target
@@ -452,6 +493,9 @@ public class OWLInput extends PrintWriterInput {
     private String formatTag(QName qname) {
         String prefix = qname.getPrefix();
         String suffix = qname.getLocalPart();
+
+        suffix = suffix.replace("http://dbpedia.org/ontology/", "");
+
         if (prefix == null || prefix.length() == 0) {
             return suffix;
         } else {
@@ -481,12 +525,13 @@ public class OWLInput extends PrintWriterInput {
     }
 
     public static void main(String[] args) throws Exception {
-        NAR n = new NAR(new Default());
+        NAR n = new NAR(new Default(4096,128,8).setInternalExperience(null).level(6));
 
         new TextOutput(n, System.out);
 
         //new NARSwing(n);
-        n.input(new OWLInput(n.textPerception, "/home/me/Downloads/schemaorg.owl"));
+        new OWLInput(n, "/home/me/Downloads/dbpedia.owl");
 
+        n.frame(5000);
     }
 }

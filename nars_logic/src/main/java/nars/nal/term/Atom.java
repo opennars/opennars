@@ -23,6 +23,15 @@ public class Atom extends AbstractTerm {
         return the('"' + t + '"');
     }
 
+    /** determines if the string is invalid as an unquoted term according to the characters present */
+    public static boolean quoteNecessary(CharSequence t) {
+        for (int i = 0; i < t.length(); i++) {
+            char c = t.charAt(i);
+            if (Character.isWhitespace(c)) return true;
+            if ((!Character.isDigit(c)) && (!Character.isAlphabetic(c))) return true;
+        }
+        return false;
+    }
 
     public NALOperator operator() {
         return NALOperator.ATOM;
@@ -98,6 +107,14 @@ public class Atom extends AbstractTerm {
         if (name.length() <= 2)
             return theCached(name);
         return new Atom(name);
+    }
+
+    public final static Atom the(final String name, boolean quoteIfNecessary) {
+        if (quoteIfNecessary) {
+            if (quoteNecessary(name))
+                return quote(name);
+        }
+        return the(name);
     }
 
     public final static Term the(Object o) {
