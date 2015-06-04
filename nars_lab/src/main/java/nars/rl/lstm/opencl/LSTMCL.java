@@ -5,6 +5,7 @@ import nars.rl.lstm.AgentSupervised;
 import nars.rl.lstm.Neuron;
 import nars.rl.lstm.NeuronType;
 import org.apache.commons.io.IOUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -273,6 +274,11 @@ public class LSTMCL extends AgentSupervised {
             return output;
         }
 
+        @Override
+        public double[] learnBatch(List<NonResetInteraction> interactions, boolean requireOutput) throws Exception {
+            throw new NotImplementedException();
+        }
+
         public void setLearningRate(double learningRate) {
             this.learningRate = learningRate;
         }
@@ -499,6 +505,9 @@ public class LSTMCL extends AgentSupervised {
     }
 
     public double[] learnBatch(List<NonResetInteraction> interactions, final boolean requireOutput) {
+        if( interactions.isEmpty() ) {
+            return null;
+        }
 
         // translate all interactions
 
@@ -628,24 +637,8 @@ public class LSTMCL extends AgentSupervised {
         queue.putWriteBuffer(barrierResetBarrier, true);
 
 
-        if( interactions.get(0).target_output != null ) {
-            // TODO< do this in the kernel >
-            float[] floatTargetOutput = new float[interactions.get(0).target_output.length];
-            for (int i = 0; i < interactions.get(0).target_output.length; i++) {
-                floatTargetOutput[i] = (float) interactions.get(0).target_output[i];
-            }
-
-            target_outputBuffer.getBuffer().rewind();
-
-            for (int i = 0; i < floatTargetOutput.length; i++) {
-                target_outputBuffer.getBuffer().put(i, floatTargetOutput[i]);
-            }
-            queue.putWriteBuffer(target_outputBuffer, true);
-        }
-
-
-        zero(deltaH.getBuffer());
-        queue.putWriteBuffer(deltaH, true);
+        //zero(deltaH.getBuffer());
+        //queue.putWriteBuffer(deltaH, true);
 
         // validation
 

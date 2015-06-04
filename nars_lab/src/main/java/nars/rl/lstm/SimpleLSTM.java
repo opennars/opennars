@@ -1,6 +1,7 @@
 package nars.rl.lstm;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class SimpleLSTM extends AgentSupervised {
@@ -262,6 +263,11 @@ public class SimpleLSTM extends AgentSupervised {
 		
 		//give results
 		return output;
+	}
+
+	@Override
+	public double[] learnBatch(List<NonResetInteraction> interactions, boolean requireOutput) throws Exception {
+		throw new RuntimeException("TODO");
 	}
 
 	public void setLearningRate(double learningRate) {
