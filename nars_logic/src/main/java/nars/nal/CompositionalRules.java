@@ -36,6 +36,7 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -314,7 +315,7 @@ public final class CompositionalRules {
         Truth truth = null;
         Budget budget;
 
-        NAL.StampBuilder stamp = nal.newStamp(taskSentence, belief);
+        Stamper stamp = nal.newStamp(taskSentence, belief);
 
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
@@ -562,7 +563,7 @@ public final class CompositionalRules {
             return;
         }
 
-        NAL.StampBuilder stamp = nal.newStamp(nal.getCurrentTask().sentence, nal.getCurrentBelief());
+        Stamper stamp = nal.newStamp(nal.getCurrentTask().sentence, nal.getCurrentBelief());
 
         Truth truth = induction(truthT, truthB);
         Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
@@ -643,7 +644,7 @@ public final class CompositionalRules {
         final Sentence belief = nal.getCurrentBelief();
         Map<Term, Term> substitute = Global.newHashMap();
 
-        NAL.StampBuilder stamp = nal.newStamp(taskSentence, belief);
+        Stamper stamp = nal.newStamp(taskSentence, belief);
 
         boolean b = false;
 
@@ -754,7 +755,7 @@ OUT: <lock1 --> lock>.
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
 
-        NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
+        Stamper stamp = nal.newStamp(sentence, belief);
 
         if (figure == 21) {
             res1.clear();

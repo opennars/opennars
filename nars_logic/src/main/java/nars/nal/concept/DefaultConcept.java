@@ -11,12 +11,13 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
-import nars.op.mental.InternalExperience;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -405,7 +406,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //                //        }
 //                ) != null) {
 
-                Sentence projectedBelief = oldBelief.projection(newStamp.getOccurrenceTime(), now);
+                Sentence projectedBelief = oldBelief.projection(newStamp.occurrence(), now);
                 if (projectedBelief!=null) {
 
                     /*
@@ -475,7 +476,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 
                 //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
-                Sentence projectedGoal = oldGoal.projection(task.getOccurrenceTime(), newStamp.getOccurrenceTime());
+                Sentence projectedGoal = oldGoal.projection(task.getOccurrenceTime(), newStamp.occurrence());
                 if (projectedGoal!=null) {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
@@ -563,8 +564,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
             for(Term q : qu) {
                 if(q!=null) {
-                    NAL.StampBuilder st = nal.newStamp(task.sentence, nal.time());
-                    st.setOccurrenceTime(task.sentence.getOccurrenceTime()); //set tense of question to goal tense
+                    Stamper st = nal.newStamp(task.sentence, nal.time());
+                    st.setOccurrenceTime(task.sentence.occurrence()); //set tense of question to goal tense
                     Sentence s=new Sentence(q,Symbols.QUESTION,null,st);
                     if(s!=null) {
                         Budget budget=new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,1);

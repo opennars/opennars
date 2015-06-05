@@ -2,9 +2,11 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.nal;
+package nars.nal.process;
 
 import nars.Events;
+import nars.nal.NAL;
+import nars.nal.Premise;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;

@@ -177,16 +177,16 @@ abstract public class Operator implements Reaction<Term> {
 
         memory.logic.TASK_EXECUTED.hit();
 
-        memory.taskAdd(
-                memory.task(operation).
-                        judgment().
-                        truth(new DefaultTruth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE)).
-                        budget(operation.getTask()).
-                        stamp(new Stamp(opTask.getStamp(), memory, Tense.Present)).
-                        parent(opTask).
-                        get().
-                        setCause(operation),
-                "Executed");
+        memory.task(operation).
+                judgment().
+                truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
+                budget(operation.getTask()).
+                stamp(opTask).
+                present().
+                parent(opTask).
+                cause(operation).
+                reason("Executed").
+                input();
 
     }
 

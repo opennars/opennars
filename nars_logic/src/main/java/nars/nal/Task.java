@@ -24,8 +24,8 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
+import nars.nal.stamp.IStamp;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamped;
 import nars.nal.term.Compound;
 import nars.nal.term.Termed;
 import nars.op.mental.InternalExperience;
@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Stamped, Truth.Truthable, Sentenced, Serializable {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truth.Truthable, Sentenced, Serializable, IStamp<Operation> {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -111,8 +111,12 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, null);
     }
 
-    public Task(final Sentence<T> s, final Budget b, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
-        super(b);
+    public Task(final Sentence<T> s, Budget bv, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
+        this(s, bv.getPriority(), bv.getDurability(), bv.getQuality(), parentTask, parentBelief, solution);
+    }
+
+    public Task(final Sentence<T> s, final float p, final float d, final float q, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
+        super(p, d, q);
         this.sentence = s;
         this.parentTask = parentTask;
 
@@ -218,11 +222,11 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @return The creation time of the sentence
      */
     public long getCreationTime() {
-        return sentence.stamp.getCreationTime();
+        return sentence.getCreationTime();
     }
 
     public long getOccurrenceTime() {
-        return sentence.stamp.getOccurrenceTime();
+        return sentence.occurrence();
     }
 
 
@@ -498,9 +502,9 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         return !isInput() && getParentTask() == null;
     }
 
-    @Override
-    public Stamp getStamp() {
-        return sentence.stamp;
+
+    @Deprecated public Sentence getStamp() {
+        return getSentence();
     }
 
     public Task addHistory(List<String> historyToCopy) {
@@ -524,10 +528,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
             //if a task has an unperceived creationTime,
             // set it to the memory's current time here,
             // and adjust occurenceTime if it's not eternal
-            Stamp s = sentence.stamp;
+            Stamp s = sentence;
             if (s.getCreationTime() == Stamp.UNPERCEIVED) {
                 final long now = memory.time();
-                long oc = s.getOccurrenceTime();
+                long oc = s.occurrence();
                 if (oc!=Stamp.ETERNAL)
                     oc += now;
                 getStamp().setTime(now, oc);
@@ -546,5 +550,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     @Override
     public Sentence<T> getSentence() {
         return sentence;
+    }
+
+    @Override
+    public void stamp(Sentence<Operation> c) {
+        sentence.stamp(c);
     }
 }

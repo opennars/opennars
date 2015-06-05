@@ -29,6 +29,7 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -97,7 +98,7 @@ public final class SyllogisticRules {
         if ((content1 == null) || (content2 == null))
             return;
 
-        final NAL.StampBuilder stamp = nal.newStamp(sentence, belief);
+        final Stamper stamp = nal.newStamp(sentence, belief);
         nal.doublePremiseTask(content1, truth1, budget1, stamp, false, false);
         nal.doublePremiseTask(content2, truth2, budget2, stamp, false, false);
     }
@@ -156,7 +157,7 @@ public final class SyllogisticRules {
         }
 
         if (order != ORDER_INVALID) {
-            final NAL.StampBuilder stamp = nal.newStamp(sentence1, sentence2);
+            final Stamper stamp = nal.newStamp(sentence1, sentence2);
 
             {
                 Statement s = Statement.make(taskContent, term1, term2, order);
@@ -321,7 +322,7 @@ public final class SyllogisticRules {
             }
         }
 
-        NAL.StampBuilder sb = nal.newStamp(belief, sentence);
+        Stamper sb = nal.newStamp(belief, sentence);
 
         Statement s = Statement.make(eitherHigherOrder ? NALOperator.EQUIVALENCE : NALOperator.SIMILARITY, term1, term2, true, order);
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
@@ -434,11 +435,11 @@ public final class SyllogisticRules {
 
         final boolean temporalReasoning = nal.nal(7);
 
-        NAL.StampBuilder st = null;
+        Stamper st = null;
         if (temporalReasoning) {
             int order = statement.getTemporalOrder();
             if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() /*&& (!taskSentence.isQuestion()*/)) {
-                long baseTime = subSentence.getOccurrenceTime();
+                long baseTime = subSentence.occurrence();
                 if (baseTime == Stamp.ETERNAL) {
                     baseTime = nal.time();
                 }
@@ -617,11 +618,11 @@ public final class SyllogisticRules {
             return false;
 
 
-        NAL.StampBuilder sb;
+        Stamper sb;
         if (nal.nal(7) && (delta != 0)) {
             final long now = nal.time();
             long baseTime = (belief.term instanceof Implication) ?
-                taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
+                taskSentence.occurrence() : belief.occurrence();
 
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = now;

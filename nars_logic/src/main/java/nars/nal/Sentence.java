@@ -30,8 +30,9 @@ import nars.nal.TruthFunctions.EternalizedTruthValue;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.nal7.Tense;
+import nars.nal.stamp.IStamp;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamped;
 import nars.nal.term.*;
 import nars.nal.transform.TermVisitor;
 import nars.util.data.Util;
@@ -46,8 +47,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-//TODO: make Named<byte[]>
-public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>, Termed, Truth.Truthable, Stamped, Sentenced, Serializable {
+public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truth.Truthable, Sentenced, Serializable, IStamp<T> {
 
 
     /**
@@ -67,10 +67,6 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
      */
     public final Truth truth;
     
-    /**
-     * Partial record of the derivation path
-     */
-    public final Stamp stamp;
 
     /**
      * Whether the sentence can be revised
@@ -82,11 +78,34 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     transient private int hash;
 
 
-    public Sentence(Term invalidTerm, char punctuation, Truth newTruth, NAL.StampBuilder newStamp) {
+    /**
+     * Partial record of the derivation path
+     */
+    private long[] evidentialBase = null;
+
+    /**
+     * caches evidentialBase as a set for comparisons and hashcode.
+     * stores the unique Long's in-order for efficiency
+     */
+    private long[] evidentialSet = null;
+
+
+    transient private int evidentialHash; //hash which includes only evidentialSet, not creation/occurenceTimes
+
+    private long creationTime = Stamp.UNPERCEIVED;
+
+    private long occurrenceTime = Stamp.ETERNAL;
+
+    private int duration = 0;
+
+    @Deprecated public final Stamp stamp = this;
+
+
+    public Sentence(Term invalidTerm, char punctuation, Truth newTruth, IStamp newStamp) {
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    public Sentence(T term, char punctuation, Truth newTruth, NAL.StampBuilder newStamp) {
+    public Sentence(T term, char punctuation, Truth newTruth, IStamp newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
 
@@ -99,9 +118,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, final NAL.StampBuilder stamp, boolean normalize) {
-        
-
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, IStamp stamp, boolean normalize) {
 
         this.punctuation = punctuation;
 
@@ -116,20 +133,18 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
             this.truth = truth;
         }
 
-        Stamp st = stamp.build();
-        if ((isQuestion() || isQuest()) && !st.isEternal()) {
-            //need to clone in case this stamp is shared by others which are not to eternalize it
-            st = st.cloneEternal();
-            if (Global.DEBUG_NONETERNAL_QUESTIONS)
-                throw new RuntimeException("Questions and Quests require eternal tense");
-        }
+
+
+
+        //apply the stamp to this
+        stamp.stamp(this);
+
 
 
         //HACK special handling for conjunctions which may have a trailing interval
         if ((seedTerm instanceof Conjunction) && (seedTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-            st = st.clone(); //temporary: clone the stamp in case it's modified in getTerm; shouldnt be necessary when terms are rerranged
 
-            T newSeedTerm = getTerm(seedTerm, st);
+            T newSeedTerm = getTerm(seedTerm);
             if (newSeedTerm == null)
                 throw new RuntimeException("Error creating a sentence for Conjunction term: " + seedTerm);
             if (newSeedTerm != seedTerm) {
@@ -139,10 +154,13 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
         }
 
+        if ((isQuestion() || isQuest()) && !isEternal()) {
+            //need to clone in case this stamp is shared by others which are not to eternalize it
+            //stamp = stamp.cloneEternal();
+            if (Global.DEBUG_NONETERNAL_QUESTIONS)
+                throw new RuntimeException("Questions and Quests require eternal tense");
+        }
 
-
-
-        this.stamp = st;
 
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
@@ -162,23 +180,25 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
     }
 
-    /** pre-processes a term for sentence's use; in most cases just returns the term itself */
-    protected T getTerm(T t, Stamp st) {
+    /**
+     * pre-processes a term for sentence's use; in most cases just returns the term itself
+     */
+    protected T getTerm(T t) {
         if (t instanceof Conjunction) {
 
             //cut interval at end for sentence in serial conjunction, and inbetween for parallel
             //TODO this can be extended to remove N suffix intervals, if we ever use the multiple interval thing
-            Conjunction c=(Conjunction)t;
-            if(c.getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
-                if(c.term[c.term.length-1] instanceof Interval) {
-                    Term[] term2=new Term[c.term.length-1];
+            Conjunction c = (Conjunction) t;
+            if (c.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
+                if (c.term[c.term.length - 1] instanceof Interval) {
+                    Term[] term2 = new Term[c.term.length - 1];
                     //TODO use System.arraycopy
-                    for(int i=0;i<c.term.length-1;i++) {
-                        term2[i]=c.term[i];
+                    for (int i = 0; i < c.term.length - 1; i++) {
+                        term2[i] = c.term[i];
                     }
                     Term x = Conjunction.make(term2, c.getTemporalOrder());
                     if (!(x instanceof Compound)) return null;
-                    T u = (T)x;
+                    T u = (T) x;
 
                     //if the resulting term is valid for a sentence, adjust the stamp and return the new term
                     if ((u = termOrNull(u)) != null) {
@@ -186,15 +206,14 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
                         //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
                         //accordingly
                         //TODO make this interval not hardcoded
-                        long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(st.getDuration()));
-                        if (!st.isEternal())
-                            st.setOccurrenceTime(st.getOccurrenceTime() - time);
+                        long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(getDuration()));
+                        if (!isEternal())
+                            setOccurrenceTime(occurrence() - time);
                         return u;
-                    }
-                    else {
+                    } else {
                         //the result would not be valid, so just return the original input
                         //this sentence should not be created but in the meantime, this will prevent it from having any effect
-                        if (truth!=null)
+                        if (truth != null)
                             truth.setConfidence(0);
                     }
                 }
@@ -240,12 +259,33 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         if ((this.hash == 0) /*&& (stamp!=null)*/) {
             //include punctuation separately because it will involve overhead calling Object.hash(punctuation) and having to box it
             if (truth == null)
-                this.hash = (Util.hash(term, stamp) * 31) + punctuation;
+                this.hash = (Util.hash(term, hashStamp()) * 31) + punctuation;
             else
-                this.hash = (Util.hash(term, truth, stamp) * 31) + punctuation;
+                this.hash = (Util.hash(term, truth, hashStamp()) * 31) + punctuation;
         }
         return hash;
     }
+
+    /**
+     * The hash code of Stamp; incorporates evidentialHash and occurenceTime (but not creationTime)
+     *
+     * @return The hash code
+     */
+    public final int hashStamp() {
+        if (evidentialSet == null)
+            getEvidentialSet();
+        if (hash == 0) {
+            hash = Util.hashL(evidentialHash, (int)this.occurrenceTime);
+        }
+        return hash;
+    }
+
+//    public void hash(PrimitiveSink p) {
+//        p.putLong(occurrenceTime);
+//        for (long e :toSet())
+//            p.putLong(e);
+//    }
+
 
     public void hash(PrimitiveSink into) {
 
@@ -294,7 +334,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         if (stamp) {
             //uniqueness includes every aspect of stamp except creation time
             //<patham9> if they are only different in creation time, then they are the same
-            if (!this.stamp.equals(that.stamp, true, true, creationTime, true))
+            if (!this.equalStamp(that, true, true, creationTime, true))
                 return false;
         }
 
@@ -339,12 +379,27 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         return x;
     }
 
+    /**
+     * sets the creation time; used to set input tasks with the actual time they enter Memory
+     */
+    public Sentence setTime(long creation, long occurrence) {
+        this.creationTime = creation;
+        this.occurrenceTime = occurrence;
+        this.hash = 0;
+        return this;
+    }
+
+    public Sentence setEternal() {
+        setTime(getCreationTime(), Stamp.ETERNAL);
+        return this;
+    }
+
     
     public Sentence clone(final boolean makeEternal) {
         Sentence clon = clone(term);
-        if(clon.stamp.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
+        if(clon.occurrence()!=Stamp.ETERNAL && makeEternal) {
             //change occurence time of clone
-            clon.stamp.setEternal();
+            clon.setEternal();
         }
         return clon;
     }
@@ -380,7 +435,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     protected <X extends Compound> Sentence<X> clone_(X t) {
         return new Sentence(t, punctuation,
                 truth!=null ? new DefaultTruth(truth) : null,
-                stamp.clone());
+                this);
     }
 
 //    public final Sentence clone(final CompoundTerm t) {
@@ -405,9 +460,11 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
 
-        Stamp newStamp = eternalizing ? stamp.cloneWithNewOccurrenceTime(Stamp.ETERNAL) : stamp.cloneWithNewOccurrenceTime(targetTime);
+        Sentence s = new Sentence(term, punctuation, newTruth, this, false);
 
-        return new Sentence(term, punctuation, newTruth, newStamp, false);
+        s.setOccurrenceTime(eternalizing ? Stamp.ETERNAL : targetTime);
+
+        return s;
     }
 
 
@@ -418,7 +475,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         if (!isEternal()) {
             newTruth = TruthFunctions.eternalize(truth);
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = stamp.getOccurrenceTime();
+                long occurrenceTime = occurrence();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
@@ -439,10 +496,10 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         float freq = truth.getFrequency();
         float conf = truth.getConfidence();
 
-        if (!isEternal() && (targetTime != getOccurrenceTime())) {
+        if (!isEternal() && (targetTime != occurrence())) {
             conf = TruthFunctions.eternalizedConfidence(conf);
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = stamp.getOccurrenceTime();
+                long occurrenceTime = occurrence();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > conf) {
@@ -505,7 +562,7 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
             throw new RuntimeException(this + " has INVALID temporal order");
         return t;
     }
-    
+
 
 
     /**
@@ -549,9 +606,9 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
             suffix.append(' ');
             truth.appendString(suffix, false);
         }
-        if ((showOcurrenceTime) && (stamp!=null)) {
+        if (showOcurrenceTime) {
             suffix.append(" {"); //space + stamp opener
-            stamp.appendOcurrenceTime(suffix);
+            appendOcurrenceTime(suffix);
             suffix.append('}'); //stamp closer
         }
 
@@ -582,14 +639,14 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
 
         final CharSequence tenseString;
         if (memory!=null) {
-            tenseString = stamp.getTense(memory.time(), memory.duration());
+            tenseString = getTense(memory.time(), memory.duration());
         }
         else {
-            stamp.appendOcurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
+            appendOcurrenceTime((StringBuilder) (tenseString = new StringBuilder()));
         }
         
         
-        CharSequence stampString = showStamp ? stamp.name() : null;
+        CharSequence stampString = showStamp ? stampAsStringBuilder() : null;
         
         int stringLength = contentName.length() + tenseString.length() + 1 + 1;
                 
@@ -632,20 +689,85 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
     }
 
     public final boolean isEternal() {
-        return stamp.isEternal();
+        return occurrenceTime == Stamp.ETERNAL;
     }
 
-    public long getCreationTime() { return stamp.getCreationTime();    }
-    public long getOccurrenceTime() {
-        return stamp.getOccurrenceTime();
+    @Override
+    public long[] getEvidentialBase() {
+        return evidentialBase;
+    }
+
+    @Override
+    public long[] getEvidentialSet() {
+        if (evidentialSet == null) {
+            this.evidentialSet = Stamp.toSetArray(evidentialBase);
+            this.evidentialHash = Arrays.hashCode(evidentialSet);
+        }
+        return evidentialSet;
+    }
+
+    @Override
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    @Override
+    public int getDuration() {
+        return duration;
+    }
+
+    public long occurrence() {
+        return occurrence();
+    }
+
+    @Override
+    public Stamp cloneWithNewCreationTime(long newCreationTime) {
+        return null;
+    }
+
+    @Override
+    public Stamp cloneWithNewOccurrenceTime(long newOcurrenceTime) {
+        return null;
     }
 
     public boolean after(Sentence s, int duration) {
-        return stamp.after(s.stamp, duration);
+        return after(s, duration);
     }
 
     public boolean before(Sentence s, int duration) {
-        return stamp.before(s.stamp, duration);
+        return before(s, duration);
+    }
+
+    public Sentence setOccurrenceTime(long occurrenceTime) {
+        this.occurrenceTime = occurrenceTime;
+        return this;
+    }
+
+    public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
+        return setOccurrenceTime(Stamp.occurrence(creation, tense, duration));
+    }
+
+
+    /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
+    @Override public void stamp(Sentence t) {
+        t.setDuration(getDuration());
+        t.setTime(getCreationTime(), occurrence());
+        t.setEvidentialBase(getEvidentialBase());
+    }
+
+    public void setEvidentialBase(long[] evidentialBase) {
+        this.evidentialBase = evidentialBase;
+        this.evidentialSet = null;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    /** default time setter, with ETERNAL for occurrencetime */
+    public Sentence setTime(long creationTime) {
+        setTime(creationTime, Stamp.ETERNAL);
+        return this;
     }
 
 
@@ -724,8 +846,8 @@ public class Sentence<T extends Compound> implements Cloneable, Named<Sentence>,
         }
     }
 
-    public Stamp getStamp() {
-        return stamp;
+    public Sentence getStamp() {
+        return this;
     }
 
     @Override

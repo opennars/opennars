@@ -29,6 +29,7 @@ import nars.Symbols;
 import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -77,7 +78,7 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        NAL.StampBuilder stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
+        Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
         if (stamp == null) return false;
 
         final Task t = nal.getCurrentTask();

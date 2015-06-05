@@ -112,7 +112,7 @@ public class EmotionMeter implements Serializable {
                             nal.deriveTask(
                                     nal.memory.task(o).parent(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                             .budgetScaled(InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL, InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                                            .get(),
+                                            .input(),
                                     false, true,
                                     "internal experience for consider and remind"
                             );

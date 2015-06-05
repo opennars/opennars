@@ -7,7 +7,7 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.ConceptProcess;
+import nars.nal.process.ConceptProcess;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -327,7 +327,7 @@ public class Derivations extends DirectedMultigraph {
         t += s.punctuation;
 
         if (!s.isEternal())
-            t += Tense.tenseRelative(s.getOccurrenceTime(), now);
+            t += Tense.tenseRelative(s.occurrence(), now);
 
         if (includeTruth)
             t += (s.truth.toStringExternal1());

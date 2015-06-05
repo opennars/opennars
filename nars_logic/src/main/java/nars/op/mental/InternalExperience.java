@@ -13,6 +13,7 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
+import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;

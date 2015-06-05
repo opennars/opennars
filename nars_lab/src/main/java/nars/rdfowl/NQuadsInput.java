@@ -1,20 +1,21 @@
 package nars.rdfowl;
 
+import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.io.out.TextOutput;
-import nars.model.impl.Default;
+import nars.model.impl.Solid;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
+import nars.narsese.InvalidInputException;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.Attribute;
 import java.io.File;
@@ -35,14 +36,15 @@ public class NQuadsInput {
     private final Map<String, Entity> entities = new HashMap();
     private final NAR nar;
 
-    public NQuadsInput(NAR n, String nqLoc) throws Exception {
-        this(n);
+    final float beliefConfidence;
+
+    public NQuadsInput(NAR n, String nqLoc, float beliefConfidence) throws Exception {
+        this.nar = n;
+        this.beliefConfidence = beliefConfidence;
         input(new File(nqLoc));
     }
 
-    public NQuadsInput(NAR n) {
-        this.nar = n;
-    }
+
 
     final Pattern nQuads = Pattern.compile("((?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?:@\\w+(?:-\\w+)?|\\^\\^<[^>]+>)?)|<[^>]+>|\\_\\:\\w+|\\.)");
 
@@ -309,8 +311,15 @@ public class NQuadsInput {
                 Atom pred = resource(items.get(1));
                 Term obj = resourceOrValue(items.get(2));
                 if (subj != null && obj != null && pred != null) {
-                    if (!subj.equals(obj)) //avoid equal subj & obj, if only namespace differs
-                        input(subj, pred, obj);
+                    if (!subj.equals(obj))  { //avoid equal subj & obj, if only namespace differs
+                        try {
+                            input(subj, pred, obj);
+                        }
+                        catch (InvalidInputException iie) {
+                            System.err.println(iie);
+                            //iie.printStackTrace();
+                        }
+                    }
                 }
             }
         });
@@ -489,7 +498,7 @@ public class NQuadsInput {
             belief = nar.term(
                 "<" + subject + "($subj,$obj) ==> <$subj {-- " + object + ">>"
             );
-            System.err.println(belief);
+            //System.err.println(belief);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
@@ -512,7 +521,8 @@ public class NQuadsInput {
         }
 
         if (belief!=null) {
-            nar.believe(belief);
+            float freq = 1.0f;
+            nar.believe(belief, freq, beliefConfidence);
         }
 
 //        // get the entity ids for source and target
@@ -604,20 +614,33 @@ public class NQuadsInput {
     }
 
     public static void main(String[] args) throws Exception {
-        Default d = new Default(4096,128,8).setInternalExperience(null).level(6);
-        d.inputsMaxPerCycle.set(1024);
+        //Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
+        Solid d = new Solid(32, 4096,1,4,1,3);
+        d.setInternalExperience(null).level(7);
+        d.inputsMaxPerCycle.set(32);
+        d.inputActivationFactor.set(0.15f);
+
 
         NAR n = new NAR(d);
-        n.input("schizo(I)!");
+        //n.input("schizo(I)!"); //needs nal8
 
-        new TextOutput(n, System.out);
+        //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
 
 
-        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4");
+        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.95f /* conf */);
 
+        Video.themeInvert();
         new NARSwing(n);
 
+
+        //n.frame(100);
+        n.believe(0.95f, 0.8f, n.term("<<$1 <-> decay> =/> <$1 <-> deathCause>>"),
+                Tense.Eternal, 1.0f, 0.95f);
+        n.believe(0.95f, 0.8f, n.term("<Aritocrat <-> decay>. :|:"),
+                Tense.Eternal, 1.0f, 0.95f);
+        n.input("<Politician <-> Aristocrat>?");
         //n.frame(5000);
+
     }
 }
 

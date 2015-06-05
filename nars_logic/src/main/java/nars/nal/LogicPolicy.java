@@ -1,6 +1,7 @@
 package nars.nal;
 
 import com.google.common.collect.Lists;
+import nars.nal.process.ConceptProcess;
 
 import java.util.ArrayList;
 import java.util.List;

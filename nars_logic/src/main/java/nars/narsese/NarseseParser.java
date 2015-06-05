@@ -183,9 +183,17 @@ public class NarseseParser extends BaseParser<Object> {
         Tense te = tense.get();
 
         return new Task(new Sentence((Compound)content, p, t,
-                getNewStamp(memory, newStamp, Stamp.UNPERCEIVED, te),
-                false), B );
 
+
+                memory, //getNewStamp(memory, newStamp, Stamp.UNPERCEIVED, te),
+
+                false).setOccurrenceTime(Stamp.UNPERCEIVED, te, memory.duration()), B );
+
+        /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
+            return new Stamp(
+                    newStamp ? new long[] { memory.newStampSerial() } : new long[] { blank },
+                    //memory, creationTime, tense);
+        }*/
     }
 
 
@@ -506,11 +514,7 @@ public class NarseseParser extends BaseParser<Object> {
         return sequence(Atom(), '.', Atom(), push(Inheritance.make(Atom.the(pop()), Atom.the(pop()))));
     }
 
-    public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
-        return new Stamp(
-                newStamp ? new long[] { memory.newStampSerial() } : new long[] { /* blank */ },
-                memory, creationTime, tense);
-    }
+
 
     /** creates a parser that is not associated with a memory; it will not parse any operator terms (which are registered with a Memory instance) */
     public static NarseseParser newParser() {
@@ -832,8 +836,11 @@ public class NarseseParser extends BaseParser<Object> {
 
         if (op == OPERATION) {
             final Term self = memory.self();
-            if (!vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
+
+            //automatically add SELF term to operations if in NAL8+
+            if (memory.nal(8) && !vectorterms.isEmpty() && !vectorterms.get(vectorterms.size()-1).equals(self))
                 vectorterms.add(self); //SELF in final argument
+
             Term operatorPred = vectorterms.remove(0);
             Term[] va = vectorterms.toArray(new Term[vectorterms.size()]);
             return Operation.make(operatorPred, Product.make(va));

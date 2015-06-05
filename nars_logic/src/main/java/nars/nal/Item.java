@@ -64,6 +64,11 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
         super(budget);
     }
 
+    /** sets the intial budget values */
+    protected Item( float p, float d, float q ) {
+        super(p, d, q);
+    }
+
 
     /**
      * Get the current key

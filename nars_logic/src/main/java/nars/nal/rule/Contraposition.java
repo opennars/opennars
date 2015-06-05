@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
+import nars.nal.process.ConceptProcess;
 import nars.nal.term.Statement;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;

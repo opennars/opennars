@@ -15,6 +15,7 @@ import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import java.util.List;
 
 import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
 import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
-import nars.nal.stamp.Stamp;
 
 /**
  * @author tc
@@ -113,7 +113,7 @@ public class PerceptionAccel extends NARReaction {
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth = TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next = eventbuffer.get(j + 1);
-                    relterms[k + 1] = Interval.interval(next.sentence.getOccurrenceTime() - current.sentence.getOccurrenceTime(), nal.memory);
+                    relterms[k + 1] = Interval.interval(next.sentence.occurrence() - current.sentence.occurrence(), nal.memory);
                 }
                 k += 2;
             }
@@ -125,7 +125,7 @@ public class PerceptionAccel extends NARReaction {
                 u++;
             }
 
-            NAL.StampBuilder st = nal.newStamp(task.getStamp(), nal.time(), evB);
+            Stamper st = nal.newStamp(task.getStamp(), nal.time(), evB);
 
             boolean eventBufferDidNotHaveSoMuchEvents = false;
             for (int i = 0; i < relterms.length; i++) {

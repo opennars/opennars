@@ -222,7 +222,7 @@ public class Predict2D extends JPanel {
                         final Sentence s = t.sentence;
 
                         if (s.isEternal()) continue;
-                        long o = s.getOccurrenceTime();
+                        long o = s.occurrence();
                         if (o <= nar.time()) continue;
                         if (o < when) continue;
 

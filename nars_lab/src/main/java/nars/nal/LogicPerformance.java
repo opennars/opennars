@@ -10,6 +10,7 @@ import com.google.common.collect.Sets;
 import nars.Events.ConceptProcessed;
 import nars.NAR;
 import nars.Global;
+import nars.nal.process.ConceptProcess;
 import nars.nal.tlink.TaskLink;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -68,7 +69,7 @@ public class LogicPerformance {
             
             Sentence s = t.sentence;
             if (!s.isEternal()) {
-                at(t, s.getOccurrenceTime(), "o");
+                at(t, s.occurrence(), "o");
             }
 
             //TODO use evidential base somehow

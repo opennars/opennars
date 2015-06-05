@@ -10,7 +10,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
 import nars.nal.DefaultTruth;
-import nars.nal.TaskProcess;
+import nars.nal.process.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;

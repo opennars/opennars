@@ -10,6 +10,7 @@ import nars.Events.ConceptForget;
 import nars.Global;
 import nars.NAR;
 import nars.nal.*;
+import nars.nal.process.TaskProcess;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.Symbols;

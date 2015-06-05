@@ -15,6 +15,7 @@ import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.util.event.AbstractReaction;
@@ -106,7 +107,7 @@ public class ClassicalConditioningHelper extends AbstractReaction {
         Task lastt=null;
         for(Task t: lastElems) {
             st.add(t);
-            if(lastt!=null && Math.abs(t.sentence.getOccurrenceTime()-lastt.sentence.getOccurrenceTime())>nar.param.duration.get()*100) {
+            if(lastt!=null && Math.abs(t.sentence.occurrence()-lastt.sentence.occurrence())>nar.param.duration.get()*100) {
                 st.add(null); //pause
             }
             lastt=t;
@@ -276,7 +277,7 @@ public class ClassicalConditioningHelper extends AbstractReaction {
         if(!task.isInput()) {
             return;
         }
-        if(task.sentence.stamp.getOccurrenceTime()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT) {
+        if(task.sentence.stamp.occurrence()!=Stamp.ETERNAL && task.sentence.punctuation==Symbols.JUDGMENT) {
             lastElems.add(task);
             if(lastElems.size()>maxlen) {
                 lastElems.remove(0);

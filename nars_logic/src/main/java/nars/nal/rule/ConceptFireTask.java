@@ -2,7 +2,7 @@ package nars.nal.rule;
 
 import nars.nal.LogicRule;
 import nars.nal.tlink.TaskLink;
-import nars.nal.ConceptProcess;
+import nars.nal.process.ConceptProcess;
 
 /**
  * when a concept fires a tasklink but before a termlink is selected

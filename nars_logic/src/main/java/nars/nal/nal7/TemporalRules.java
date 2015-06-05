@@ -32,6 +32,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -233,7 +234,7 @@ public class TemporalRules {
     }*/
 
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, NAL.StampBuilder stamp, final NAL nal) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamper stamp, final NAL nal) {
         temporalInduction(s1, s2, stamp, nal, nal.getCurrentTask(), true);
     }
 
@@ -241,7 +242,7 @@ public class TemporalRules {
     final static Variable v91 = new Variable("$91");
     final static Variable v92 = new Variable("$92");
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, NAL.StampBuilder stamp, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamper stamp, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
 
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT || s2.punctuation!=Symbols.JUDGMENT)
             return;
@@ -356,8 +357,8 @@ public class TemporalRules {
         final Interval.AtomicDuration duration = nal.memory.param.duration;
         int durationCycles = duration.get();
 
-        long time1 = s1.getOccurrenceTime();
-        long time2 = s2.getOccurrenceTime();
+        long time1 = s1.occurrence();
+        long time2 = s2.occurrence();
 
         final long timeDiff;
         if ((time1 == Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
@@ -397,8 +398,8 @@ public class TemporalRules {
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
-            int tt1 = (int) s1.getOccurrenceTime();
-            int tt2 = (int) s1.getOccurrenceTime();
+            int tt1 = (int) s1.occurrence();
+            int tt2 = (int) s1.occurrence();
             int d = Math.abs(tt1 - tt2) / nal.memory.param.duration.get();
             if (d != 0) {
                 double mul = 1.0 / ((double) d);
@@ -485,7 +486,7 @@ public class TemporalRules {
                     conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                     //if there is no overlapping evidental base, use revision:
                     boolean revisable = true;
-                    revisable = !Stamp.isOverlapping(bel.stamp, task.sentence.stamp);
+                    revisable = !Stamp.isOverlappingBase(bel, task.sentence);
                     if (revisable) {
                         conf = TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
                     }
@@ -536,31 +537,35 @@ public class TemporalRules {
             if(S1_State_C != null && S1_State_C.hasGoals() &&
                     !(((Statement)belief.term).getPredicate() instanceof Operation)) {
                 Task a_desire = S1_State_C.getStrongestGoal(true, true);
-                Sentence Goal = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
-                        new DefaultTruth(1.0f,0.99f), a_desire.sentence.stamp.clone());
 
-                Goal.stamp.setOccurrenceTime(s1.getOccurrenceTime()); //strongest desire for that time is what we want to know
-                Task strongest_desireT=S1_State_C.getTask(Goal, S1_State_C.getGoals());
-                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
+                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
+                        new DefaultTruth(1.0f,0.99f), a_desire.sentence);
+
+                g.setOccurrenceTime(s1.occurrence()); //strongest desire for that time is what we want to know
+                Task strongest_desireT=S1_State_C.getTask(g, S1_State_C.getGoals());
+                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.occurrence(), strongest_desireT.getOccurrenceTime());
                 Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
+
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
-                Stamp st=belief.stamp.clone();
+
+                final long occ;
                 
                 if(strongest_desire.isEternal()) {
-                    st.setEternal();
+                    occ = Stamp.ETERNAL;
                 } else {
                     long shift=0;
                     if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                         shift=nal.memory.duration();
                     }
-                    st.setOccurrenceTime(strongest_desire.stamp.getOccurrenceTime()-shift);
+                    occ = (strongest_desire.stamp.occurrence()-shift);
                 }
                 
 
                 
                 nal.setCurrentBelief(belief);
                 
-                Sentence W=new Sentence(s2.term,Symbols.GOAL,T,st);
+                Sentence W=new Sentence(s2.term,Symbols.GOAL,T, belief).setOccurrenceTime(occ);
+
                 Budget val=BudgetFunctions.forward(T, nal);
 
                 nal.doublePremiseTask(W, val, false, strongest_desireT, true);
@@ -610,7 +615,7 @@ public class TemporalRules {
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
 
-        return solution.projectionTruthQuality(problem.getOccurrenceTime(), time, problem.hasQueryVar());
+        return solution.projectionTruthQuality(problem.occurrence(), time, problem.hasQueryVar());
 
 //        if (!matchingOrder(problem, solution)) {
 //            return 0.0F;
@@ -694,7 +699,7 @@ public class TemporalRules {
     }
 
     public static boolean concurrent(Sentence a, Sentence b, final int durationCycles) {
-        return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
+        return concurrent(a.occurrence(), b.occurrence(), durationCycles);
     }
 
     /**

@@ -2,6 +2,7 @@ package nars.nal.rule;
 
 import nars.Symbols;
 import nars.nal.*;
+import nars.nal.process.ConceptProcess;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.nal1.LocalRules;

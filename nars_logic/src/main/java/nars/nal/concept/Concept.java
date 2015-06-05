@@ -27,7 +27,7 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
-import nars.nal.stamp.Stamp;
+import nars.nal.process.TaskProcess;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.nal.tlink.*;
@@ -81,12 +81,12 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
      * @param task The selected task
      * @return The selected isBelief
      */
-    default public Sentence getBelief(final NAL nal, final Task task) {
+    default Sentence getBelief(final NAL nal, final Task task) {
         if (!hasBeliefs()) return null;
 
-        final Stamp taskStamp = task.sentence.stamp;
+
         final long currentTime = getMemory().time();
-        long occurrenceTime = taskStamp.getOccurrenceTime();
+        long occurrenceTime = task.getOccurrenceTime();
 
         final int b = getBeliefs().size();
         for (int i = 0; i < b; i++) {
@@ -95,7 +95,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             //if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
             Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
-            if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
+            if (projectedBelief.occurrence()!=belief.occurrence()) {
                 nal.singlePremiseTask(projectedBelief, task);
             }
 

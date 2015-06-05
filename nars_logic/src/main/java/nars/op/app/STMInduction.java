@@ -5,7 +5,7 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.TaskProcess;
+import nars.nal.process.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;

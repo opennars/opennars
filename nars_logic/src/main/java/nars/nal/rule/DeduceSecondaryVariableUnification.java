@@ -11,8 +11,9 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.TemporalRules;
+import nars.nal.process.ConceptProcess;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -45,7 +46,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     Map<Term, Term> Values4 = null;*/
     Map<Term, Term> smap = null;
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, NAL.StampBuilder s, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, Stamper s, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
 
 
         final Sentence taskSentence = task.sentence;
@@ -74,13 +75,13 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
             Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
 
-            long occ = taskSentence.getOccurrenceTime();
+            long occ = taskSentence.occurrence();
             if (!second_belief.isEternal()) {
-                occ = second_belief.getOccurrenceTime();
+                occ = second_belief.occurrence();
             }
 
             final Stamp sx = new Stamp(
-                    s.build().evidentialBase,
+                    s.accept().evidentialBase,
                     nal.time(),
                     occ,
                     nal.memory.duration()
@@ -277,7 +278,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
 
 
-            final NAL.StampBuilder stamp = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
+            final Stamper stamp = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.occurrence());
 
             if (!terms_dependent.isEmpty()) {
                 dedSecondLayerVariableUnificationTerms(nal, task,
@@ -318,7 +319,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 boolean eternal = true;
                 long time = Stamp.ETERNAL;
                 if ((order != ORDER_NONE) && (order!=ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest())) {
-                    long baseTime = second_belief.getOccurrenceTime();
+                    long baseTime = second_belief.occurrence();
                     if (baseTime == Stamp.ETERNAL) {
                         baseTime = nal.time();
                     }
@@ -332,11 +333,11 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
 
                 //same as above?
-                Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.getOccurrenceTime());
+                Stamp useEvidentalBase = Stamp.zip(taskSentence.stamp, second_belief.stamp, nal.time(), taskSentence.occurrence());
 
-                long occ = taskSentence.getOccurrenceTime();
+                long occ = taskSentence.occurrence();
                 if (!second_belief.isEternal()) {
-                    occ = second_belief.getOccurrenceTime();
+                    occ = second_belief.occurrence();
                 }
 
                 Stamp sb = new Stamp(useEvidentalBase,

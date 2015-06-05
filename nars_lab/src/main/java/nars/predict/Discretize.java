@@ -13,7 +13,7 @@ import nars.nal.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal7.Tense;
-import nars.nal.TaskProcess;
+import nars.nal.process.TaskProcess;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -9,6 +9,7 @@ import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
 import nars.nal.*;
+import nars.nal.process.TaskProcess;
 import nars.nal.term.Termed;
 import nars.nal.concept.Concept;
 import nars.nal.tlink.TLink;

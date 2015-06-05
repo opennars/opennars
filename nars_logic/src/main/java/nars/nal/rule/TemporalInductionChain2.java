@@ -2,7 +2,7 @@ package nars.nal.rule;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.ConceptProcess;
+import nars.nal.process.ConceptProcess;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;

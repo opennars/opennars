@@ -14,6 +14,7 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
 import nars.nal.stamp.Stamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -141,14 +142,14 @@ public class NAR extends Container implements Runnable {
 
         long now = time();
         if (!t.sentence.isEternal()) {
-            t.getStamp().setTime(now, now + t.sentence.getOccurrenceTime());
+            t.getStamp().setTime(now, now + t.sentence.occurrence());
         }
         else {
             t.getStamp().setTime(now, Stamp.ETERNAL);
         }
         return t;
     }
-    public <T extends Compound> ProtoTask<T> task(T t) {
+    public <T extends Compound> TaskSeed<T> task(T t) {
         return memory.task(t);
     }
 
@@ -213,7 +214,8 @@ public class NAR extends Container implements Runnable {
                                 narsese.parseCompound(goalTerm),
                                 Symbols.GOAL,
                                 tv = new DefaultTruth(freq, conf),
-                                new Stamp(memory, Stamp.UNPERCEIVED, Stamp.ETERNAL)),
+                                memory),
+
                         new Budget(
                                 pri,
                                 dur, BudgetFunctions.truthToQuality(tv)))
@@ -245,7 +247,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public Task believe(float pri, float dur, Term beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
+        return believe(pri, dur, beliefTerm, Stamp.occurrence(time(), tense, memory.duration()), freq, conf);
     }
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         return believe(pri, dur, (Term)term(beliefTerm), occurrenceTime, freq, conf);
@@ -255,11 +257,13 @@ public class NAR extends Container implements Runnable {
         final Truth tv;
         input(
                 t = new Task(
+
                         new Sentence(
                                 belief,
                                 Symbols.JUDGMENT,
                                 tv = new DefaultTruth(freq, conf),
-                                new Stamp(memory, time(), occurrenceTime)),
+                                memory).setOccurrenceTime(occurrenceTime),
+
                         new Budget(
                                 pri,
                                 dur, BudgetFunctions.truthToQuality(tv)))
@@ -277,7 +281,7 @@ public class NAR extends Container implements Runnable {
                                 narsese.parseCompound(termString),
                                 questionOrQuest,
                                 null,
-                                new Stamp(memory, Stamp.UNPERCEIVED, Tense.Eternal)),
+                                memory).setTime(Stamp.UNPERCEIVED),
                         new Budget(
                                 Global.DEFAULT_QUESTION_PRIORITY,
                                 Global.DEFAULT_QUESTION_DURABILITY,

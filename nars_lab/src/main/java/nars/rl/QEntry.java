@@ -1,7 +1,7 @@
 package nars.rl;
 
 import nars.Symbols;
-import nars.nal.TaskProcess;
+import nars.nal.process.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;

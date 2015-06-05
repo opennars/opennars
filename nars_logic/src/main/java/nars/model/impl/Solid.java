@@ -13,6 +13,8 @@ import nars.model.cycle.ConceptActivator;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
+import nars.nal.process.ConceptProcess;
+import nars.nal.process.TaskProcess;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;

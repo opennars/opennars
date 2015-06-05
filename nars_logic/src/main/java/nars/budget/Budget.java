@@ -119,6 +119,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
     /**
      * Cloning method
+     * TODO give this a less amgiuous name to avoid conflict with subclasses that have clone methods
      */
     @Override
     public Budget clone() {
@@ -504,24 +505,37 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     /** creates a new budget value appropriate for a given sentence type and memory's current parameters */
     public static Budget newDefault(Sentence s, Memory memory) {
         float priority, durability;
-        switch (s.punctuation) {
+        priority = newDefaultPriority(s.punctuation);
+        durability = newDefaultDurability(s.punctuation);
+        return new Budget(priority, durability, s.getTruth());
+    }
+
+    public static float newDefaultPriority(char punctuation) {
+        switch (punctuation) {
             case Symbols.JUDGMENT:
-                priority = Global.DEFAULT_JUDGMENT_PRIORITY;
-                durability = Global.DEFAULT_JUDGMENT_DURABILITY;
-                break;
+                return Global.DEFAULT_JUDGMENT_PRIORITY;
+
             case Symbols.QUEST:
             case Symbols.QUESTION:
-                priority = Global.DEFAULT_QUESTION_PRIORITY;
-                durability = Global.DEFAULT_QUESTION_DURABILITY;
-                break;
+                return Global.DEFAULT_QUESTION_PRIORITY;
+
             case Symbols.GOAL:
-                priority = Global.DEFAULT_GOAL_PRIORITY;
-                durability = Global.DEFAULT_GOAL_DURABILITY;
-                break;
-            default:
-                throw new RuntimeException("Unknown sentence type: " + s.punctuation);
+                return Global.DEFAULT_GOAL_PRIORITY;
         }
-        return new Budget(priority, durability, s.getTruth());
+        throw new RuntimeException("Unknown sentence type: " + punctuation);
+    }
+
+    public static float newDefaultDurability(char punctuation) {
+        switch (punctuation) {
+            case Symbols.JUDGMENT:
+                return Global.DEFAULT_JUDGMENT_DURABILITY;
+            case Symbols.QUEST:
+            case Symbols.QUESTION:
+                return Global.DEFAULT_QUESTION_DURABILITY;
+            case Symbols.GOAL:
+                return Global.DEFAULT_GOAL_DURABILITY;
+        }
+        throw new RuntimeException("Unknown sentence type: " + punctuation);
     }
 
     public Budget set(final float p, final float d, final float q) {

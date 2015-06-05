@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
 import nars.Symbols;
-import nars.nal.TaskProcess;
+import nars.nal.process.TaskProcess;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;

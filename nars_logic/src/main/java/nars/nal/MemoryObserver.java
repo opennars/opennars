@@ -7,6 +7,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.nal.concept.Concept;
+import nars.nal.process.TaskProcess;
 
 public abstract class MemoryObserver extends NARReaction {
 

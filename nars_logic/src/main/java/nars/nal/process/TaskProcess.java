@@ -2,10 +2,12 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.nal;
+package nars.nal.process;
 
 import nars.Memory;
 import nars.NAR;
+import nars.nal.NAL;
+import nars.nal.Task;
 import nars.nal.concept.Concept;
 
 /**

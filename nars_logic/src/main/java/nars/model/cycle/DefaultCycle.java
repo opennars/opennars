@@ -6,6 +6,8 @@ import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.nal.*;
 import nars.nal.concept.Concept;
+import nars.nal.process.ConceptProcess;
+import nars.nal.process.TaskProcess;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;

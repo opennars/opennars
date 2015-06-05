@@ -9,10 +9,12 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * NAL Reasoner Process.  Includes all reasoning process state and common utility methods that utilize it.
@@ -157,7 +159,7 @@ public abstract class NAL  implements Runnable {
             final Sentence occurence = parent != null ? parent.sentence : null;
             if (occurence != null && !occurence.isEternal()) {
                 //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
-                task.getStamp().setOccurrenceTime(occurence.getOccurrenceTime());
+                task.getStamp().setOccurrenceTime(occurence.occurrence());
             }
         }
 
@@ -172,7 +174,7 @@ public abstract class NAL  implements Runnable {
 
 
         if (nal(7)) {
-            if (task.sentence.getOccurrenceTime() > memory.time()) {
+            if (task.sentence.occurrence() > memory.time()) {
                 memory.event.emit(Events.TaskDeriveFuture.class, task, this);
             }
         }
@@ -258,27 +260,24 @@ public abstract class NAL  implements Runnable {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, StampBuilder newStamp, boolean temporalAdd, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper newStamp, boolean temporalAdd, boolean allowOverlap) {
         return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentTask(), allowOverlap);
     }
 
-    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, StampBuilder stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
+    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
             return false;
 
-        final Stamp newStamp = stamp.build();
-
-
         return doublePremiseTask(
-                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, newStamp),
+                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, stamp),
                 newBudget, temporalAdd, subbedTask, allowOverlap
         )!=null;
     }
 
     public Task doublePremiseTask(Sentence newSentence, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
 
-        Stamp stamp = newSentence.stamp;
+
 
         boolean derived;
 
@@ -299,7 +298,7 @@ public abstract class NAL  implements Runnable {
                             new Sentence(newSentence.term,
                                     parentTask.sentence.punctuation,
                                     TruthFunctions.eternalize(newSentence.truth),
-                                    stamp.cloneEternal()),
+                                    newSentence).setEternal(),
                             newBudget, parentTask, getCurrentBelief()),
                     false, false, parentTask, allowOverlap);
         }
@@ -332,7 +331,7 @@ public abstract class NAL  implements Runnable {
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public boolean singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, StampBuilder stamp) {
+    public boolean singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp) {
 
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
@@ -355,7 +354,7 @@ public abstract class NAL  implements Runnable {
             final Sentence taskSentence = getCurrentTask().sentence;
 
             if (taskSentence.isJudgment() || getCurrentBelief() == null) {
-                stamp = newStamp(taskSentence.stamp, null);
+                stamp = newStamp(taskSentence, null);
             } else {
                 // to answer a question with negation in NAL-5 --- move to activated task?
                 stamp = newStamp(null, getCurrentBelief());
@@ -501,19 +500,19 @@ public abstract class NAL  implements Runnable {
     /**
      * create a new stamp builder for a specific occurenceTime
      */
-    public StampBuilder newStamp(Sentence a, Sentence b, long occurrenceTime) {
-        return newStamp(a.stamp, b.stamp, occurrenceTime);
+    public Stamper newStamp(Sentence a, Sentence b, long occurrenceTime) {
+        return newStamp(a, b, occurrenceTime);
     }
-    public StampBuilder newStamp(Stamp a, Stamp b, long occurrenceTime) {
-        return new LazyStampBuilder(a, b, time(), occurrenceTime);
+    public Stamper newStamp(Stamp a, Stamp b, long occurrenceTime) {
+        return new Stamper(a, b, time(), occurrenceTime);
     }
-    public StampBuilder newStamp(Sentence a, long occurrenceTime) {
-        return newStamp(a.stamp, null, occurrenceTime);
+    public Stamper newStamp(Sentence a, long occurrenceTime) {
+        return newStamp(a, null, occurrenceTime);
     }
 
-    public StampBuilder newStamp(Sentence t, Sentence b) {
-        return newStamp(t != null ? t.stamp : null,
-                        b != null ? b.stamp : null);
+    public Stamper newStamp(Sentence t, Sentence b) {
+        return newStamp(t != null ? t : null,
+                        b != null ? b : null);
     }
 
     /**
@@ -522,7 +521,7 @@ public abstract class NAL  implements Runnable {
      * @param t generally the task's sentence
      * @param b generally the belief's sentence
      */
-    public StampBuilder newStamp(Stamp t, Stamp b) {
+    public Stamper newStamp(Stamp t, Stamp b) {
 
         final long oc;
         if (nal(7)) {
@@ -531,22 +530,22 @@ public abstract class NAL  implements Runnable {
             oc = Stamp.ETERNAL;
         }
 
-        return new LazyStampBuilder(t, b, time(), oc);
+        return new Stamper(t, b, time(), oc);
     }
 
     /**
      * returns a new stamp if A and B do not have overlapping evidence; null otherwise
      */
-    public StampBuilder newStampIfNotOverlapping(Sentence A, Sentence B) {
-        long[] a = A.stamp.toSet();
-        long[] b = B.stamp.toSet();
+    public Stamper newStampIfNotOverlapping(Sentence A, Sentence B) {
+        long[] a = A.getEvidentialSet();
+        long[] b = B.getEvidentialSet();
         for (long ae : a) {
             for (long be : b) {
                 if (ae == be) return null;
                 if (be > ae) break; //if be exceeds ae, it will never be equal so go to the next ae
             }
         }
-        return newStamp(A, B, A.getOccurrenceTime());
+        return newStamp(A, B, A.occurrence());
     }
 
     public float conceptPriority(Term target) {
@@ -562,62 +561,22 @@ public abstract class NAL  implements Runnable {
         return memory.self();
     }
 
-    public StampBuilder newStamp(Stamp stamp, long when) {
-        return new Stamp(stamp, time(), when);
+    public Stamper newStamp(Stamp stamp, long when) {
+
+        return new Stamper(stamp, null, time(), when);
     }
 
-    public StampBuilder newStamp(Stamp stamp, long when, long[] evidentialBase) {
-        return new Stamp(evidentialBase, time(), when, stamp.getDuration());
+    public Stamper newStamp(Stamp stamp, long when, long[] evidentialBase) {
+        return new Stamper(evidentialBase, time(), when, stamp.getDuration());
     }
 
-    public StampBuilder newStamp(Task task, long time) {
+    public Stamper newStamp(Task task, long time) {
         return newStamp(task.getStamp(), time);
     }
 
     /** new stamp from one parent stamp, with occurence time = now */
-    public StampBuilder newStampNow(Task task) {
+    public Stamper newStampNow(Task task) {
         return newStamp(task, time());
-    }
-
-    public interface StampBuilder<C> {
-
-        /** doesnt need to produce a new clone, but this will affect the next build()'s */
-        @Deprecated public StampBuilder<C> setOccurrenceTime(long occurrenceTime);
-
-        public Stamp build();
-    }
-
-    public static class LazyStampBuilder<C> implements StampBuilder<C> {
-
-        public final Stamp a, b;
-        protected long creationTime, occurrenceTime;
-        protected Stamp stamp = null;
-
-        public LazyStampBuilder(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
-            this.a = a;
-            this.b = b;
-            this.creationTime = creationTime;
-            this.occurrenceTime = occurrenceTime;
-        }
-
-        @Deprecated public LazyStampBuilder<C> setOccurrenceTime(long occurrenceTime) {
-            this.occurrenceTime = occurrenceTime;
-            return this;
-        }
-
-        @Override
-        public Stamp build() {
-            if (stamp == null) {
-                if (a == null)
-                    stamp = new Stamp(b, creationTime, occurrenceTime);
-                else if (b == null)
-                    stamp = new Stamp(a, creationTime, occurrenceTime);
-                else {
-                    stamp = Stamp.zip(a, b, creationTime, occurrenceTime);
-                }
-            }
-            return stamp;
-        }
     }
 
 
@@ -628,15 +587,15 @@ public abstract class NAL  implements Runnable {
         if ((t == null) && (b==null))
             throw new RuntimeException("Both sentence parameters null");
         if (t == null)
-            return b.getOccurrenceTime();
+            return b.occurrence();
         else if (b == null)
-            return t.getOccurrenceTime();
+            return t.occurrence();
 
 
 
-        final long tOc = t.getOccurrenceTime();
+        final long tOc = t.occurrence();
         final boolean tEternal = (tOc == Stamp.ETERNAL);
-        final long bOc = b.getOccurrenceTime();
+        final long bOc = b.occurrence();
         final boolean bEternal = (bOc == Stamp.ETERNAL);
 
         /* see: https://groups.google.com/forum/#!searchin/open-nars/eternal$20belief/open-nars/8KnAbKzjp4E/rBc-6V5pem8J) */

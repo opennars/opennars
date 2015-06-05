@@ -23,6 +23,7 @@ package nars.budget;
 import nars.Memory;
 import nars.nal.*;
 import nars.nal.concept.Concept;
+import nars.nal.process.ConceptProcess;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.term.Term;

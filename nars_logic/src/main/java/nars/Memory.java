@@ -49,6 +49,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.stamp.IStamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -56,7 +58,6 @@ import nars.nal.term.Variable;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
-import objenome.util.random.XORShiftRandom;
 
 import java.io.Serializable;
 import java.util.*;
@@ -78,7 +79,7 @@ import static nars.nal.concept.Concept.State;
  *
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable {
+public class Memory implements Serializable, IStamp<Compound> {
 
 
 
@@ -102,6 +103,10 @@ public class Memory implements Serializable {
 
     public int nal() {
         return level;
+    }
+
+    public boolean nal(int isEqualToOrGreater) {
+        return nal() >= isEqualToOrGreater;
     }
 
     public Concept concept(final String t) {
@@ -223,6 +228,24 @@ public class Memory implements Serializable {
         return Atom.the(s);
     }
 
+    /** applies default settings, with a new serial # as its evidentialBase, for a new input sentence */
+    @Override public void stamp(Sentence<Compound> t) {
+//
+//    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
+//        super();
+//        this.creationTime = creationTime;
+//        this.occurrenceTime = occurenceTime;
+//        this.duration = duration;
+//        this.evidentialBase = evidentialBase;
+//    }
+//
+//    protected Stamp(final long serial, final long creationTime, final long occurenceTime, final int duration) {
+//        this(new long[]{serial}, creationTime, occurenceTime, duration);
+//    }
+        t.setTime(time());
+        t.setDuration(duration());
+        t.setEvidentialBase(new long[]{ newStampSerial() });
+    }
 
 
     @Deprecated public static enum Forgetting {
@@ -938,8 +961,8 @@ public class Memory implements Serializable {
         return t;
     }
 
-    public <T extends Compound> ProtoTask<T> task(T t) {
-        return new ProtoTask(this, t);
+    public <T extends Compound> TaskSeed<T> task(T t) {
+        return new TaskSeed(this, t);
     }
 
     public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {

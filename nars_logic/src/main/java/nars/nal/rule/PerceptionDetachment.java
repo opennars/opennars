@@ -1,24 +1,10 @@
 package nars.nal.rule;
 
 import nars.Memory;
-import nars.Symbols;
-import nars.budget.BudgetFunctions;
 import nars.nal.*;
-import nars.nal.concept.Concept;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal5.Implication;
-import nars.nal.stamp.Stamp;
-import nars.nal.term.Term;
+import nars.nal.process.ConceptProcess;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-
-import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
-import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
 
 /**
  * Created by me on 6/1/15.

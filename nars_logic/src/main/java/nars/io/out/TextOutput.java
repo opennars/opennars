@@ -60,6 +60,7 @@ public class TextOutput extends Output {
         return new TextOutput(n, System.err);
     }
 
+
     /**
      * Default constructor; adds the reasoner to a NAR's outptu channels
      *
@@ -168,8 +169,9 @@ public class TextOutput extends Output {
         return true;
     }
 
-    public void setShowStamp(boolean showStamp) {
+    public TextOutput setShowStamp(boolean showStamp) {
         this.showStamp = showStamp;
+        return this;
     }
 
     public TextOutput setShowErrors(boolean errors) {

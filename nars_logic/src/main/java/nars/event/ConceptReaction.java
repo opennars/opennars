@@ -5,7 +5,6 @@ import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.concept.Concept;
-import nars.nal.ConceptProcess;
 
 import java.util.function.Consumer;
 
