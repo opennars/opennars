@@ -12,4 +12,7 @@ public interface IStamp<C extends Compound>  {
 
     public void stamp(Sentence<C> compoundSentence);
 
+
+    public boolean isCyclic();
+
 }

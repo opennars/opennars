@@ -10,6 +10,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamper;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
@@ -107,7 +108,7 @@ public abstract class NAL  implements Runnable {
     }
 
 
-    public boolean deriveTask(final Task task, final boolean revised, final boolean single) {
+    public Task deriveTask(final TaskSeed task, final boolean revised, final boolean single) {
         return deriveTask(task, revised, single, null, false);
     }
 
@@ -117,22 +118,11 @@ public abstract class NAL  implements Runnable {
      * @param task the derived task
      * @param allowOverlap
      */
-    public boolean deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+    public Task deriveTask(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
 
 
         if (task.getParentTask() == null) {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
-        }
-        else {
-
-            if (Global.DEBUG) {
-                //Check EXACT equivalence, slightly different because it includes creationTime test:
-                if (task.sentence.equivalentTo(task.getParentTask().sentence, true, true, true, true, true)) {
-                    memory.emit(Events.ERR.class, "deriveTask: new task's equal to parentTask " + task);
-                    //return false;
-                }
-            }
-
         }
 
 
@@ -143,11 +133,11 @@ public abstract class NAL  implements Runnable {
             //if revised, the stamp should already have been prevented from even being created
 
             if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
-                if (task.getStamp().isCyclic()) {
+                if (task.isStampCyclic()) {
                     //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                     //re.printStackTrace();
                     memory.removed(task, "Cyclic");
-                    return false;
+                    return null;
                 }
             }
         }
@@ -159,27 +149,28 @@ public abstract class NAL  implements Runnable {
             final Sentence occurence = parent != null ? parent.sentence : null;
             if (occurence != null && !occurence.isEternal()) {
                 //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
-                task.getStamp().setOccurrenceTime(occurence.occurrence());
+                task.setOccurrenceTime(occurence.occurrence());
             }
         }
 
 
-
-        if (addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask)) {
+        Task taskCreated;
+        if (null != (taskCreated = addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask))) {
 
             memory.event.emit(Events.TaskDerive.class, task, revised, single, currentTask);
             memory.logic.TASK_DERIVED.hit();
 
+            return taskCreated;
         }
 
 
         if (nal(7)) {
-            if (task.sentence.occurrence() > memory.time()) {
+            if (taskCreated.getOccurrenceTime() > memory.time()) {
                 memory.event.emit(Events.TaskDeriveFuture.class, task, this);
             }
         }
 
-        return true;
+        return null;
     }
 
 
@@ -194,9 +185,9 @@ public abstract class NAL  implements Runnable {
      *
      * if solution is false, it means it is a derivation
      */
-    protected boolean addNewTask(Task task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    protected Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
-        if (!nal(7) && !task.sentence.isEternal()) {
+        if (!nal(7) && !task.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
         }
 
@@ -210,29 +201,29 @@ public abstract class NAL  implements Runnable {
         String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, currentBelief, currentTask);
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
-            return false;
+            return null;
         }
 
 
-        if (memory.input(task, solution)) {
+        Task taskCreated;
+        if ((taskCreated = task.input()) != null) {
 
-            task.setParticipateInTemporalInduction(false);
+            taskCreated.setParticipateInTemporalInduction(false);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                task.addHistory(System.nanoTime() + " " + this.toString());
+                taskCreated.addHistory(System.nanoTime() + " " + this.toString());
             }
 
-            task.addHistory(reason);
+            taskCreated.addHistory(reason);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
-                task.addHistory(getNALStack());
+                taskCreated.addHistory(getNALStack());
             }
 
-            return true;
+            return taskCreated;
         }
-        else {
-            return false;
-        }
+
+        return null;
 
 
     }
@@ -260,29 +251,23 @@ public abstract class NAL  implements Runnable {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper newStamp, boolean temporalAdd, boolean allowOverlap) {
+    public Task doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper newStamp, boolean temporalAdd, boolean allowOverlap) {
         return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentTask(), allowOverlap);
     }
 
-    public boolean doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task subbedTask, boolean allowOverlap) {
+    public Task doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
-            return false;
+            return null;
 
-        return doublePremiseTask(
-                new Sentence(newTaskContent, subbedTask.sentence.punctuation, newTruth, stamp),
-                newBudget, temporalAdd, subbedTask, allowOverlap
-        )!=null;
-    }
+        TaskSeed task = newTask(newTaskContent)
+                            .punctuation(parentTask.sentence.punctuation)
+                            .truth(newTruth)
+                            .stamp(stamp)
+                            .parent(parentTask, getCurrentBelief())
+                            .budget(newBudget);
 
-    public Task doublePremiseTask(Sentence newSentence, final Budget newBudget, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
-
-
-
-        boolean derived;
-
-        Task task = new Task(newSentence, newBudget, parentTask, getCurrentBelief());
-
+        Task derived;
         try {
             derived = deriveTask(task, false, false, parentTask, allowOverlap);
         } catch (RuntimeException e) {
@@ -291,19 +276,23 @@ public abstract class NAL  implements Runnable {
         }
 
         //"Since in principle it is always valid to eternalize a tensed belief"
-        if (derived && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
+        if (derived!=null && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
             //temporal induction generated ones get eternalized directly
             deriveTask(
-                    new Task(
-                            new Sentence(newSentence.term,
-                                    parentTask.sentence.punctuation,
-                                    TruthFunctions.eternalize(newSentence.truth),
-                                    newSentence).setEternal(),
-                            newBudget, parentTask, getCurrentBelief()),
+                    newTask(newTaskContent)
+                        .punctuation(parentTask.sentence.punctuation)
+                        .truth(TruthFunctions.eternalize(newTruth))
+                        .parent(parentTask, getCurrentBelief())
+                        .budget(newBudget)
+                        .eternal(),
                     false, false, parentTask, allowOverlap);
         }
 
-        return task;
+        return derived;
+    }
+
+    public <T extends Compound> TaskSeed newTask(T term) {
+        return memory.task(term);
     }
 
 

@@ -28,7 +28,7 @@ public class TaskSeed<T extends Compound> {
 
     private char punc;
     private Tense tense;
-    private IStamp<T> stamp = null;
+    private IStamp<T> stamp;
     private Truth truth;
     private Task parent;
     private Operation cause;
@@ -36,6 +36,11 @@ public class TaskSeed<T extends Compound> {
 
     /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
     float p = Float.NaN, d = Float.NaN, q = Float.NaN;
+
+    /** if non-UNPERCEIVED, it is allowed to override the value the Stamp applied */
+    private long occurrenceTime = Stamp.UNPERCEIVED;
+    private Sentence parentBelief;
+
 
 
     public TaskSeed<T> truth(Truth tv) {
@@ -114,6 +119,12 @@ public class TaskSeed<T extends Compound> {
         return this;
     }
 
+    public TaskSeed<T> parent(Sentence<?> parentBelief) {
+        this.parentBelief = parentBelief;
+        return this;
+    }
+
+
     public TaskSeed<T> stamp(IStamp<T> s) { this.stamp = s; return this;}
 
     public TaskSeed<T> budget(float p, float d) {
@@ -160,9 +171,14 @@ public class TaskSeed<T extends Compound> {
         if (s == null)
             return null;
 
-        if (stamp == null && tense!=Tense.Eternal) {
+        if (stamp == null && !isEternal()) {
+
             /* apply the Tense on its own, with respect to the creation time and memory duration */
             s.setOccurrenceTime(Stamp.occurrence(s.getCreationTime(), tense, memory.duration()) );
+        }
+
+        if (this.occurrenceTime != Stamp.UNPERCEIVED) {
+            s.setOccurrenceTime(this.occurrenceTime);
         }
 
 
@@ -186,14 +202,12 @@ public class TaskSeed<T extends Compound> {
 
     }
 
-
-
     public Task getParentTask() {
         return parent;
     }
 
     public Sentence getParentBelief() {
-        return null;
+        return parentBelief;
     }
 
 
@@ -214,6 +228,35 @@ public class TaskSeed<T extends Compound> {
     public TaskSeed<T> reason(String reason) {
         this.reason = reason;
         return this;
+    }
+
+    public boolean isEternal() {
+        if (stamp instanceof Stamper) {
+            return ((Stamper)stamp).isEternal();
+        }
+        if (tense!=null)
+            return tense!=Tense.Eternal;
+        return true;
+    }
+
+    /** if a stamp exists, determine if it will be cyclic;
+     *  otherwise assume that it is not. */
+    public boolean isStampCyclic() {
+        if (stamp!=null) return stamp.isCyclic();
+        else if ((getParentTask()!=null) && (getParentBelief()==null)) {
+            //if only the parent task is known (no parent belief)
+            //the evidential set will be the same. so we'll compare its cyclicity
+            return getParentTask().sentence.isCyclic();
+        }
+        return false;
+    }
+
+    public void setOccurrenceTime(long occurrence) {
+        this.occurrenceTime = occurrence;
+    }
+
+    public TaskSeed<T> parent(Task parentTask, Sentence<?> parentBelief) {
+        return parent(parentTask).parent(parentBelief);
     }
 
 }

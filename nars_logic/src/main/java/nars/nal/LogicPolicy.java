@@ -2,6 +2,7 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import nars.nal.process.ConceptProcess;
+import nars.nal.task.TaskSeed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class LogicPolicy {
     }
 
     /** tests validity of a derived task; if valid returns null, else returns a String rule explaining why it is invalid */
-    public String getDerivationRejection(final NAL nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
+    public String getDerivationRejection(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
 
         List<DerivationFilter> derivationFilters = getDerivationFilters();
         final int dfs = derivationFilters.size();

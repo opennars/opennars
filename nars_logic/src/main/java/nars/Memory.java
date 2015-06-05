@@ -752,18 +752,7 @@ public class Memory implements Serializable, IStamp<Compound> {
     }
 
 
-    public boolean input(final Task task, boolean solutionOrDerivation ) {
-//        if (solutionOrDerivation) {
-//            //it's a solution, input directly
-//            return input(task) == 1;
-//        }
-//        else {
-            //it's a derivation, queue it in the derivation sorted set
-            //  this may merge with an existing item in the set.
-            taskAdd(task);
-        //}
-        return true;
-    }
+
 
     /** called anytime a task has been removed, deleted, discarded, ignored, etc. */
     public void removed(final Task task, final String removalReason) {
@@ -772,6 +761,10 @@ public class Memory implements Serializable, IStamp<Compound> {
             task.addHistory(NAL.getNALStack());
         emit(TaskRemove.class, task, removalReason);
         task.delete();
+    }
+
+    public void removed(final TaskSeed task, final String removalReason) {
+        //nothing yet
     }
 
 

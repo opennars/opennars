@@ -854,4 +854,9 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     public Sentence getSentence() {
         return this;
     }
+
+    @Override
+    public boolean isCyclic() {
+        return Stamp.isCyclic(this);
+    }
 }

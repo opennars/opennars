@@ -32,6 +32,10 @@ import java.util.Arrays;
 import static nars.nal.nal7.TemporalRules.*;
 import static nars.nal.nal7.Tense.*;
 
+/** TODO divide this into a Stamp and Timed interfaces,
+ *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
+ */
+
 public interface Stamp extends Cloneable, Serializable {
 
     /**
@@ -479,9 +483,22 @@ public interface Stamp extends Cloneable, Serializable {
      }
      */
 
-    default boolean isCyclic() {
-        long[] es = getEvidentialSet();
-        return es.length!=getEvidentialBase().length; //if the evidential set contains duplicates, it will be of a smaller size then the original evidence
+
+    static boolean isCyclic(final Stamp x) {
+        long[] es = x.getEvidentialSet();
+        long[] eb = x.getEvidentialBase();
+        return isCyclic(eb, es);
+    }
+
+    static boolean isCyclic(final long[] eb) {
+        return isCyclic(eb, toSetArray(eb));
+    }
+
+    static boolean isCyclic(final long[] eb, long[] es) {
+        //if the evidential set contains duplicates, it will be of a smaller size then the original evidence
+        return es.length != eb.length;
+
+
         /*
         final int stampLength = evidentialBase.length;
         for (int i = 0; i < stampLength; i++) {

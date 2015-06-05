@@ -117,14 +117,35 @@ public class Stamper<C extends Compound> implements IStamp<C> {
         else if (a == null) p = b;
         else if (b == null) p = a;
 
+
         if (p!=null) {
-            this.evidentialBase = p.getEvidentialBase();
             this.duration = p.getDuration();
+            this.evidentialBase = p.getEvidentialBase();
         }
 
-        t.setDuration(duration);
-        t.setTime(creationTime, getOccurrenceTime());
-        t.setEvidentialBase(evidentialBase);
+        if (t!=null) {
+            t.setDuration(duration);
+            t.setTime(creationTime, getOccurrenceTime());
+            t.setEvidentialBase(evidentialBase);
+        }
+    }
+
+
+    public long[] getEvidentialBase() {
+        if (evidentialBase == null) {
+            stamp(null); //compute any missing values
+        }
+        return evidentialBase;
+    }
+
+    @Override
+    public boolean isCyclic() {
+        long[] eb = getEvidentialBase();
+        if (Stamp.isCyclic(eb)) {
+
+        }
+        throw new RuntimeException(this + " unable to calculate evidentialBase");
+
     }
 
     public boolean isEternal() {
