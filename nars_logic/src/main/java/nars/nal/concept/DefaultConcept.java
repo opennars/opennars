@@ -14,6 +14,7 @@ import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamper;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -488,18 +489,18 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
         } 
         
-        Stamp s2=goal.stamp.clone();
+        long then = goal.occurrence();
         long now = memory.time();
-        s2.setOccurrenceTime(now);
         int dur = nal.memory.duration();
-        //this task is not up to date we have to project it first
-        if(s2.after(task.sentence.stamp, dur)) {
-            Sentence projectedGoal = task.sentence.projectionSentence(now, dur);
-            if(projectedGoal!=null) {
-                //it has to be projected
-                nal.singlePremiseTask(projectedGoal, task.getBudget());
-                return true;
-            }
+
+        //this task is not up to date (now is ahead of then) we have to project it first
+        if(TemporalRules.after(then, now, dur)) {
+            nal.deriveTask(
+                task.sentence.projection(nal, then, now)
+                    .budget(task.getBudget()),
+                    false, true);
+            return true;
+
         }
         
         if (task.aboveThreshold()) {
@@ -516,7 +517,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             
             double Satisfaction=1.0-AntiSatisfaction;
             Truth T = new DefaultTruth(goal.truth);
-            
+
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
             if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {

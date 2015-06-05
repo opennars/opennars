@@ -718,6 +718,8 @@ public class TemporalRules {
     }
 
 
+
+    /** true if B is after A */
     public static boolean after(long a, long b, int duration) {
         if (a == Stamp.ETERNAL || b == Stamp.ETERNAL)
             return false;

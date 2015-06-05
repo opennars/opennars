@@ -149,7 +149,7 @@ public abstract class NAL  implements Runnable {
             final Sentence occurence = parent != null ? parent.sentence : null;
             if (occurence != null && !occurence.isEternal()) {
                 //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
-                task.occurrs(occurence.occurrence());
+                task.occurr(occurence.occurrence());
             }
         }
 

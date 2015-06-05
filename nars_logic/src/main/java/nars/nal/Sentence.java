@@ -468,18 +468,15 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         return s;
     }
 
-    @Deprecated public TaskSeed<T> projection(NAL n, final long targetTime, final long currentTime) {
+    public TaskSeed<T> projection(NAL n, long targetTime, final long currentTime) {
 
         final Truth newTruth = projection(targetTime, currentTime);
 
-        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
-
-        /*Sentence s = new Sentence(term, punctuation, newTruth, this, false);
-
-        s.setOccurrenceTime(eternalizing ? Stamp.ETERNAL : targetTime);*/
+        if (newTruth instanceof EternalizedTruthValue)
+            targetTime = Stamp.ETERNAL;
 
         return n.newTask(term).punctuation(punctuation).truth(newTruth).
-                stamp(this).occurrs(eternalizing ? Stamp.ETERNAL : targetTime);
+                stamp(this).occurr(targetTime);
     }
 
 

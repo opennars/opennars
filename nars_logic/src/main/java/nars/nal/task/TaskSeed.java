@@ -263,7 +263,7 @@ public class TaskSeed<T extends Compound> {
         return this;
     }
 
-    public TaskSeed<T> occurrs(long occurenceTime) {
+    public TaskSeed<T> occurr(long occurenceTime) {
         this.occurrenceTime = occurenceTime;
         return this;
     }
