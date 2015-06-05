@@ -277,7 +277,7 @@ public class UIEdge<V extends UIVertex> extends ShapeObject implements Named<Str
         float tasklinkPriority = (float) getTasklinkPriority();
         // TODO color based on sub/super directionality of termlink(s) : e.getTermlinkDirectionality
 
-        return new Color(0.25f + 0.75f * termlinkPriority, 0.25f, 0.25f + 0.75f * tasklinkPriority, 0.25f + 0.75f * priority);
+        return new Color(0.5f + 0.5f * termlinkPriority, 0.5f, 0.5f + 0.5f * tasklinkPriority, 0.5f + 0.5f * priority);
 
 //        final Object x = e.e;
 //        if (x instanceof TermLink) {

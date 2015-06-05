@@ -18,7 +18,7 @@ import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.rl.AEPerception;
+import nars.rl.HaiSOMPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -110,7 +110,7 @@ public class RunQLAgent extends JPanel {
 
         nar = new NAR(dd);
 
-        agent = new QLAgent(nar, "act", "<nar --> [good]>", env, p) {
+        agent = new QLAgent(nar, "A", "<n --> [g]>", env, p) {
 
             final QVis qvis = new QVis(this) {
 
@@ -175,9 +175,9 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 2048;
-        int conceptsPerCycle = 50;
-        final int cyclesPerFrame = 20;
+        int concepts = 4096;
+        int conceptsPerCycle = 100;
+        final int cyclesPerFrame = 10;
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -255,7 +255,7 @@ public class RunQLAgent extends JPanel {
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
         //dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.duration.set(5);
+        dd.duration.set(10);
         dd.shortTermMemoryHistory.set(2);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
@@ -275,7 +275,7 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                //new HaiSOMPerception("B", 2, 0.1f)
+                ,new HaiSOMPerception("B", 2, 0.1f)
         );
 
         a.agent.setQLFactor(0.5f, 0.25f);

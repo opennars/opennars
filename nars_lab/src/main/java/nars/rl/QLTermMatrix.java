@@ -39,7 +39,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     /**
      * what type of state implication (q-entry) affected: belief (.) or goal (!)
      */
-    char implicationPunctuation = Symbols.GOAL;
+    char implicationPunctuation = Symbols.JUDGMENT;
     float updateThresh = Global.TRUTH_EPSILON * 0.25f; //seems to be better to aggregate them to a significant amount before generating a new belief otherwise it spams the belief tables
 
 

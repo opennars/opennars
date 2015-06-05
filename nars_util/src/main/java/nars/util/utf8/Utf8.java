@@ -1,6 +1,7 @@
 package nars.util.utf8;
 
 import com.google.common.primitives.Chars;
+import nars.util.data.rope.StringHack;
 import objenome.op.cas.util.ArraySearch;
 import sun.nio.cs.ThreadLocalCoders;
 
@@ -26,6 +27,7 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     final static CharsetDecoder utf8Decoder = ThreadLocalCoders.decoderFor(utf8Charset)
             .onMalformedInput(CodingErrorAction.REPLACE)
             .onUnmappableCharacter(CodingErrorAction.REPLACE);
+
 
     final byte[] bytes;
     final int start;
@@ -62,9 +64,13 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
      * which creates an unnecessary duplicate of the decode buffer
      */
     public static char[] fromUtf8ToChars(final byte[] bytes, final int length) {
+        utf8Decoder.reset();
         try {
-            return trim(utf8Decoder.decode(ByteBuffer.wrap(bytes, 0, length)));
-        } catch (CharacterCodingException e) {
+            int n = (int)(length * utf8Decoder.averageCharsPerByte());
+            CharBuffer d = CharBuffer.allocate(n);
+            utf8Decoder.decode(ByteBuffer.wrap(bytes, 0, length), d, true);
+            return trim(d);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -114,8 +120,10 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
     }
 
     public static final byte[] toUtf8(final CharBuffer c) {
+        utf8Encoder.reset();
         try {
-            return trim(utf8Encoder.encode(c));
+            ByteBuffer e = utf8Encoder.encode(c);
+            return trim(e);
         } catch (CharacterCodingException e) {
             throw new RuntimeException(e);
         }
@@ -123,6 +131,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     public static final byte[] toUtf8(final String str) {
         return toUtf8(CharBuffer.wrap(str));
+
+        //unsafe version;
+        //return toUtf8(StringHack.chars(str));
     }
 
     public static final byte[] toUtf8(final char[] str) {

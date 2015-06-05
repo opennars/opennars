@@ -1,5 +1,7 @@
 package nars.util.data.rope;
 
+import sun.misc.Unsafe;
+
 import java.lang.reflect.Field;
 
 /**
@@ -29,4 +31,13 @@ abstract public class StringHack {
         sbval = sbv;
     }
 
+    public static char[] chars(String s) {
+
+        try {
+            return (char[])val.get(s);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return s.toCharArray();
+    }
 }

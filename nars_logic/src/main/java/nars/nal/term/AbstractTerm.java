@@ -19,7 +19,7 @@ abstract public class AbstractTerm implements Term {
     }
 
     public AbstractTerm(Identifier x) {
-        this.id = x;
+        setName(x);
     }
 
     /** removes the name, forcing the Term to regenerate it */
@@ -44,6 +44,7 @@ abstract public class AbstractTerm implements Term {
 
     @Override
     public void identifierEquals(Identifier other) {
+        //do not use setName because that will overwrite the host
         this.id = other;
     }
 

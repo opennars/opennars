@@ -46,7 +46,7 @@ public class QLAgent<S extends Term> extends NARAgent {
 
     private float initialPossibleDesireConfidence = 0.25f;
 
-    final float actedConfidence = 0.75f; //similar to Operator.exec
+    final float actedConfidence = 0.9f; //similar to Operator.exec
 
 
 
