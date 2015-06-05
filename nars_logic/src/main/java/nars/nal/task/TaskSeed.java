@@ -40,7 +40,7 @@ public class TaskSeed<T extends Compound> {
     /** if non-UNPERCEIVED, it is allowed to override the value the Stamp applied */
     private long occurrenceTime = Stamp.UNPERCEIVED;
     private Sentence parentBelief;
-
+    private Sentence solutionBelief;
 
 
     public TaskSeed<T> truth(Truth tv) {
@@ -59,7 +59,7 @@ public class TaskSeed<T extends Compound> {
         return budget(bv.getPriority(), bv.getDurability(), bv.getQuality());
     }
 
-    public TaskSeed<T> budgetScaled(Budget bv, float priMult, float durMult) {
+    public TaskSeed<T> budget(Budget bv, float priMult, float durMult) {
         return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
     }
 
@@ -135,12 +135,12 @@ public class TaskSeed<T extends Compound> {
         this.memory = memory;
         this.term = t;
     }
+
     public TaskSeed(Memory memory, Sentence<T> t) {
         this(memory, t.getTerm());
         this.punc = t.punctuation;
         this.truth = t.truth;
         this.stamp = t;
-
     }
 
 
@@ -189,7 +189,9 @@ public class TaskSeed<T extends Compound> {
 
         Task t = new Task(s,
                 p, d, q, //budget
-                Global.reference(getParentTask()), getParentBelief(), null);
+                Global.reference(getParentTask()),
+                getParentBelief(),
+                solutionBelief);
 
         if (this.cause!=null) t.setCause(cause);
         if (this.reason!=null) t.addHistory(reason);
@@ -251,12 +253,19 @@ public class TaskSeed<T extends Compound> {
         return false;
     }
 
-    public void setOccurrenceTime(long occurrence) {
-        this.occurrenceTime = occurrence;
-    }
 
     public TaskSeed<T> parent(Task parentTask, Sentence<?> parentBelief) {
         return parent(parentTask).parent(parentBelief);
+    }
+
+    public TaskSeed<T> solution(Sentence<?> solutionBelief) {
+        this.solutionBelief = solutionBelief;
+        return this;
+    }
+
+    public TaskSeed<T> occurrs(long occurenceTime) {
+        this.occurrenceTime = occurenceTime;
+        return this;
     }
 
 }

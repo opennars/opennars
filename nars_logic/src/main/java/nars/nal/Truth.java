@@ -223,11 +223,6 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
     }
 
 
-    /** indicates an implementation has, or is associated with a specific TruthValue */
-    public interface Truthable {
-        public Truth getTruth();
-    }
-    
     public enum TruthComponent {
         Frequency, Confidence, Expectation
     }
@@ -242,9 +237,9 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
     }
     
     /** provides a statistics summary (mean, min, max, variance, etc..) of a particular TruthValue component across a given list of Truthables (sentences, TruthValue's, etc..).  null values in the iteration are ignored */
-    public static DescriptiveStatistics statistics(Iterable<? extends Truthable> t, TruthComponent component) {
+    public static DescriptiveStatistics statistics(Iterable<? extends Truthed> t, TruthComponent component) {
         DescriptiveStatistics d = new DescriptiveStatistics();
-        for (Truthable x : t) {            
+        for (Truthed x : t) {
             Truth v = x.getTruth();
             if (v!=null)
                 d.addValue(v.getComponent(component));

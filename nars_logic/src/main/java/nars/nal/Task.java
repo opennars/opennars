@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truth.Truthable, Sentenced, Serializable, IStamp<Operation> {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, IStamp<Operation> {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -555,5 +555,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     @Override
     public void stamp(Sentence<Operation> c) {
         sentence.stamp(c);
+    }
+
+    @Override
+    public boolean isCyclic() {
+        return sentence.isCyclic();
     }
 }

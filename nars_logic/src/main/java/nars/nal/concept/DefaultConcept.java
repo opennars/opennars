@@ -381,9 +381,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         oldBelief = getSentence(judg, getBeliefs());   // only revise with the strongest -- how about projection?
 
         if ((oldBelief != null) && (oldBelief!=judg)) {
-            final Stamp newStamp = judg.stamp;
-            final Stamp oldStamp = oldBelief.stamp;
-            if (newStamp.equals(oldStamp, true, true, false, true)) {
+            if (judg.equalStamp(oldBelief, true, true, false, true)) {
 //                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
@@ -406,7 +404,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //                //        }
 //                ) != null) {
 
-                Sentence projectedBelief = oldBelief.projection(newStamp.occurrence(), now);
+                Sentence projectedBelief = oldBelief.projectionSentence(judg.occurrence(), now);
                 if (projectedBelief!=null) {
 
                     /*
@@ -465,18 +463,15 @@ public class DefaultConcept extends Item<Term> implements Concept {
         
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
-            final Stamp newStamp = goal.stamp;
-            final Stamp oldStamp = oldGoal.stamp;
-            
-            
-            if (newStamp.equals(oldStamp,false,true,true,false)) {
+
+            if (goal.equalStamp(oldGoal, false, true, true, false)) {
                 return false; // duplicate
             }
             if (revisible(goal, oldGoal)) {
                 
                 //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
-                Sentence projectedGoal = oldGoal.projection(task.getOccurrenceTime(), newStamp.occurrence());
+                Sentence projectedGoal = oldGoal.projectionSentence(task.getOccurrenceTime(), newStamp.occurrence());
                 if (projectedGoal!=null) {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
@@ -499,7 +494,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         int dur = nal.memory.duration();
         //this task is not up to date we have to project it first
         if(s2.after(task.sentence.stamp, dur)) {
-            Sentence projectedGoal = task.sentence.projection(now, dur);
+            Sentence projectedGoal = task.sentence.projectionSentence(now, dur);
             if(projectedGoal!=null) {
                 //it has to be projected
                 nal.singlePremiseTask(projectedGoal, task.getBudget());
@@ -514,7 +509,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projection(task.getOccurrenceTime(), nal.memory.param.duration.get());
+                Sentence projectedBelief = belief.projectionSentence(task.getOccurrenceTime(), nal.memory.param.duration.get());
                 trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
             }    
@@ -1221,18 +1216,18 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-    public static float getConfidenceSum(Iterable<? extends Truth.Truthable> beliefs) {
+    public static float getConfidenceSum(Iterable<? extends Truthed> beliefs) {
         float t = 0;
-        for (final Truth.Truthable s : beliefs)
+        for (final Truthed s : beliefs)
             t += s.getTruth().getConfidence();
         return t;
     }
 
-    public static float getMeanFrequency(Collection<? extends Truth.Truthable> beliefs) {
+    public static float getMeanFrequency(Collection<? extends Truthed> beliefs) {
         if (beliefs.isEmpty()) return 0.5f;
 
         float t = 0;
-        for (final Truth.Truthable s : beliefs)
+        for (final Truthed s : beliefs)
             t += s.getTruth().getFrequency();
         return t / beliefs.size();
     }

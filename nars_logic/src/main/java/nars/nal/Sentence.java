@@ -33,6 +33,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.IStamp;
 import nars.nal.stamp.Stamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.*;
 import nars.nal.transform.TermVisitor;
 import nars.util.data.Util;
@@ -47,7 +48,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truth.Truthable, Sentenced, Serializable, IStamp<T> {
+public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truthed, Sentenced, Serializable, IStamp<T> {
 
 
     /**
@@ -454,9 +455,9 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
       * @param currentTime The current time as a reference
       * @return The projected belief
       */    
-    public Sentence projection(final long targetTime, final long currentTime) {
+    @Deprecated public Sentence projectionSentence(final long targetTime, final long currentTime) {
             
-        final Truth newTruth = projectionTruth(targetTime, currentTime);
+        final Truth newTruth = projection(targetTime, currentTime);
         
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
 
@@ -467,9 +468,23 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         return s;
     }
 
+    @Deprecated public TaskSeed<T> projection(NAL n, final long targetTime, final long currentTime) {
+
+        final Truth newTruth = projection(targetTime, currentTime);
+
+        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
+
+        /*Sentence s = new Sentence(term, punctuation, newTruth, this, false);
+
+        s.setOccurrenceTime(eternalizing ? Stamp.ETERNAL : targetTime);*/
+
+        return n.newTask(term).punctuation(punctuation).truth(newTruth).
+                stamp(this).occurrs(eternalizing ? Stamp.ETERNAL : targetTime);
+    }
 
 
-    public Truth projectionTruth(final long targetTime, final long currentTime) {
+
+    public Truth projection(final long targetTime, final long currentTime) {
         Truth newTruth = null;
                         
         if (!isEternal()) {

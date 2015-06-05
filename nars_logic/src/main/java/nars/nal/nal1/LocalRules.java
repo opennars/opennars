@@ -111,7 +111,12 @@ public class LocalRules {
      * @param memory Reference to the memory
      */
     public static boolean trySolution(Sentence belief, final Task task, final NAL nal) {
+
         if (belief == null) return false;
+
+        //if this is always true then 'task' parameter can be removed
+        System.err.println("trySolution: task==nal.currentTask? "  +  (task.equals(nal.getCurrentTask())));
+
 
         Sentence problem = task.sentence;
         Memory memory = nal.memory;

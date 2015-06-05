@@ -21,7 +21,7 @@ import nars.nal.Item;
 import nars.util.data.id.Named;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.Truth.Truthable;
+import nars.nal.Truthed;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -562,23 +562,23 @@ public class ConceptPanelBuilder extends NARReaction {
             super(width, height);
         }
 
-        public void update(long now, Collection<? extends Truthable> beliefs, Collection<? extends Truthable> goals) {
+        public void update(long now, Collection<? extends Truthed> beliefs, Collection<? extends Truthed> goals) {
             Graphics g = g();
             if (g == null) return;
 
             g.setColor(new Color(0.1f, 0.1f, 0.1f));
             g.fillRect(0, 0, getWidth(), getHeight());
-            for (Truthable s : beliefs) {
+            for (Truthed s : beliefs) {
                 draw(now, g, s, true);
             }
-            for (Truthable s : goals) {
+            for (Truthed s : goals) {
                 draw(now, g, s, false);
             }
             g.dispose();
 
         }
 
-        private void draw(final long now, final Graphics g, final Truthable s, final boolean belief) {
+        private void draw(final long now, final Graphics g, final Truthed s, final boolean belief) {
             final float freq = s.getTruth().getFrequency();
             final float conf = s.getTruth().getConfidence();
 

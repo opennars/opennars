@@ -452,25 +452,24 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if (!tooMuchTemporalStatements(statement11, inductionLimit)) {
-                boolean t = nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedTask, false);
+                Task t = nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedTask, false);
             }
             if (!tooMuchTemporalStatements(statement22, inductionLimit)) {
-                boolean t = nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedTask, false);
+                Task t = nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedTask, false);
             }
             if (!tooMuchTemporalStatements(statement33, inductionLimit)) {
-                boolean t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedTask, false);
+                Task t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedTask, false);
             }
         }
         if (!tooMuchTemporalStatements(statement1, inductionLimit)) {
-            boolean t = nal.doublePremiseTask(statement1, truth1, budget1, stamp, true, subbedTask, false);
+            Task t = nal.doublePremiseTask(statement1, truth1, budget1, stamp, true, subbedTask, false);
         }
         if (!tooMuchTemporalStatements(statement2, inductionLimit)) {
 
             /*  =/>  */
 
-            Task task = nal.doublePremiseTask(
-                    new Sentence(statement2, subbedTask.sentence.punctuation, truth2, stamp),
-                    budget2, true, subbedTask, false);
+            Task task = nal.doublePremiseTask(statement2, subbedTask.sentence.punctuation, truth2,
+                    budget2, stamp, true, subbedTask, false);
 
             if (task!=null) {
             
@@ -498,7 +497,7 @@ public class TemporalRules {
 
         }
         if (!tooMuchTemporalStatements(statement3, inductionLimit)) {
-            boolean t = nal.doublePremiseTask(statement3, truth3, budget3, stamp, true, subbedTask, false);
+            nal.doublePremiseTask(statement3, truth3, budget3, stamp, true, subbedTask, false);
         }
 
     }
@@ -543,7 +542,7 @@ public class TemporalRules {
 
                 g.setOccurrenceTime(s1.occurrence()); //strongest desire for that time is what we want to know
                 Task strongest_desireT=S1_State_C.getTask(g, S1_State_C.getGoals());
-                Sentence strongest_desire=strongest_desireT.sentence.projection(s1.occurrence(), strongest_desireT.getOccurrenceTime());
+                Sentence strongest_desire=strongest_desireT.sentence.projectionSentence(s1.occurrence(), strongest_desireT.getOccurrenceTime());
                 Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
 
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
@@ -564,11 +563,11 @@ public class TemporalRules {
                 
                 nal.setCurrentBelief(belief);
                 
-                Sentence W=new Sentence(s2.term,Symbols.GOAL,T, belief).setOccurrenceTime(occ);
+                //Sentence W=new Sentence(s2.term,Symbols.GOAL,T, belief).setOccurrenceTime(occ);
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.doublePremiseTask(W, val, false, strongest_desireT, true);
+                nal.doublePremiseTask(s2.term, Symbols.GOAL, T, val, nal.newStamp(belief, occ), false, strongest_desireT, true);
 
             }
         }
@@ -595,12 +594,10 @@ public class TemporalRules {
                 }
 
                 if(valid) {
-                    Sentence tt2 = new Sentence(task.sentence.term, Symbols.QUESTION, null,
-                            nal.newStamp(task.sentence, nal.memory.time())
+                    nal.singlePremiseTask(task.sentence.term, Symbols.QUESTION, null,
+                            null, nal.newStamp(task.sentence, nal.memory.time()),
+                            Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL
                     );
-                    task.mulPriority(Global.CURIOSITY_DESIRE_PRIORITY_MUL);
-                    task.mulDurability(Global.CURIOSITY_DESIRE_DURABILITY_MUL);
-                    nal.singlePremiseTask(tt2, task);
                 }
 
         }

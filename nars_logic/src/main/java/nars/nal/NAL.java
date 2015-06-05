@@ -149,7 +149,7 @@ public abstract class NAL  implements Runnable {
             final Sentence occurence = parent != null ? parent.sentence : null;
             if (occurence != null && !occurence.isEternal()) {
                 //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
-                task.setOccurrenceTime(occurence.occurrence());
+                task.occurrs(occurence.occurrence());
             }
         }
 
@@ -254,14 +254,17 @@ public abstract class NAL  implements Runnable {
     public Task doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper newStamp, boolean temporalAdd, boolean allowOverlap) {
         return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentTask(), allowOverlap);
     }
-
     public Task doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+        return doublePremiseTask(newTaskContent, parentTask.sentence.punctuation, newTruth, newBudget, stamp, temporalAdd, parentTask, allowOverlap);
+    }
+
+    public Task doublePremiseTask(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
             return null;
 
         TaskSeed task = newTask(newTaskContent)
-                            .punctuation(parentTask.sentence.punctuation)
+                            .punctuation(punctuation)
                             .truth(newTruth)
                             .stamp(stamp)
                             .parent(parentTask, getCurrentBelief())
@@ -295,6 +298,9 @@ public abstract class NAL  implements Runnable {
         return memory.task(term);
     }
 
+    public <T extends Compound> TaskSeed newTask(Sentence<T> s) {
+        return memory.task(s);
+    }
 
     /**
      * Shared final operations by all single-premise rules, called in
@@ -304,11 +310,11 @@ public abstract class NAL  implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public boolean singlePremiseTask(Compound newContent, Truth newTruth, Budget newBudget) {
+    public Task singlePremiseTask(Compound newContent, Truth newTruth, Budget newBudget) {
         return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
-    public boolean singlePremiseTask(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
+    public Task singlePremiseTask(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
         return singlePremiseTask(newContent, punctuation, newTruth, newBudget, null);
     }
     /**
@@ -320,24 +326,27 @@ public abstract class NAL  implements Runnable {
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public boolean singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp) {
+    public Task singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp) {
+        return singlePremiseTask(newContent, punctuation, newTruth, newBudget, null, 1f, 1f);
+    }
 
+    public Task singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp, float priMult, float durMult) {
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
             if (parentTask.getTerm() == null) {
-                return false;
+                return null;
             }
             if (newContent == null) {
-                return false;
+                return null;
             }
             if (newContent.equals(parentTask.getTerm())) {
-                return false;
+                return null;
             }
         }
 
         newContent = Sentence.termOrNull(newContent);
         if (newContent == null)
-            return false;
+            return null;
 
         if (stamp == null) {
             final Sentence taskSentence = getCurrentTask().sentence;
@@ -351,20 +360,21 @@ public abstract class NAL  implements Runnable {
         }
 
 
-        return singlePremiseTask(
-                new Sentence(newContent,
-                        punctuation,
-                        newTruth,
-                        stamp), //should be getParentTask?
-                newBudget);
+        return deriveTask(
+                newTask(newContent)
+                        .punctuation(punctuation)
+                        .truth(newTruth)
+                        .budget(newBudget, priMult, durMult)
+                        .stamp(stamp), false, true);
+
     }
 
-
-    public boolean singlePremiseTask(Sentence newSentence, Budget newBudget) {
-        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-        //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
-        return deriveTask(newTask, false, true);
-    }
+//    /** this should not be used because it requires a sentence to be constructed ahead of time */
+//    @Deprecated public boolean singlePremiseTask(Sentence newSentence, Budget newBudget) {
+//        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
+//        //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
+//        return deriveTask(newTask, false, true);
+//    }
 
 
     public long time() {
@@ -476,14 +486,16 @@ public abstract class NAL  implements Runnable {
      * @param candidateBelief The belief to be used in future logic, for
      *                        forward/backward correspondence
      */
-    public void addSolution(final Task currentTask, final Budget budget, final Sentence solutionBelief, final Task parentBeliefTask) {
-        Sentence parentTaskParentBelief = parentBeliefTask.getParentBelief();
-
-        addNewTask(
-                new Task(solutionBelief, budget, currentTask, parentTaskParentBelief, solutionBelief)
-                        .addHistory(currentTask.getHistory()),
-                "Activated",
+    public Task addSolution(final Task currentTask, final Budget budget, final Sentence solutionBelief, final Task parentBeliefTask) {
+        return addNewTask(
+                newTask(solutionBelief)
+                        .budget(budget)
+                        .parent(currentTask, parentBeliefTask.getParentBelief())
+                        .solution(solutionBelief),
+                        "Activated",
                 true, false, false, solutionBelief, currentTask);
+
+        //.reason(currentTask.getHistory())
     }
 
     /**
@@ -541,10 +553,10 @@ public abstract class NAL  implements Runnable {
         return memory.conceptPriority(target);
     }
 
-    public boolean deriveTask(Task t, boolean revised, boolean single, String reason) {
-        t.addHistory(reason);
-        return deriveTask(t, revised, single);
-    }
+//    public boolean deriveTask(Task t, boolean revised, boolean single, String reason) {
+//        t.addHistory(reason);
+//        return deriveTask(t, revised, single);
+//    }
 
     public Term self() {
         return memory.self();

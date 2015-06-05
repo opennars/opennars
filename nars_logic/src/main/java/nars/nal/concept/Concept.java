@@ -94,7 +94,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
             //if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
-            Sentence projectedBelief = belief.projection(occurrenceTime, currentTime);
+            Sentence projectedBelief = belief.projectionSentence(occurrenceTime, currentTime);
             if (projectedBelief.occurrence()!=belief.occurrence()) {
                 nal.singlePremiseTask(projectedBelief, task);
             }

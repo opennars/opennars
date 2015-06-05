@@ -20,6 +20,7 @@
  */
 package nars;
 
+import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -246,6 +247,7 @@ public class Memory implements Serializable, IStamp<Compound> {
         t.setDuration(duration());
         t.setEvidentialBase(new long[]{ newStampSerial() });
     }
+
 
 
     @Deprecated public static enum Forgetting {
@@ -957,11 +959,15 @@ public class Memory implements Serializable, IStamp<Compound> {
     public <T extends Compound> TaskSeed<T> task(T t) {
         return new TaskSeed(this, t);
     }
+    public <T extends Compound> TaskSeed<T> task(Sentence<T> s) {
+        return new TaskSeed(this, s);
+    }
 
-    public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
+    @Deprecated public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
         return task(s, new Budget(s.punctuation, s.truth), parentTask);
     }
-    public <T extends Compound> Task<T> task(Sentence<T> s, Budget b, Task parentTask) {
+
+    @Deprecated public <T extends Compound> Task<T> task(Sentence<T> s, Budget b, Task parentTask) {
         return new Task(s, b, parentTask);
     }
 
