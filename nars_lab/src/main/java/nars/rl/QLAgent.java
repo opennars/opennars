@@ -98,6 +98,11 @@ public class QLAgent<S extends Term> extends NARAgent {
         ql.setqUpdateConfidence(qConceptChangeConfidence);
     }
 
+    /* 1.0 = unaffected, 0 = no input (eyes shut) */
+    public void setInputGain(float gain) {
+        ql.setInputPriorityMult(gain);
+    }
+
     public QLAgent(NAR nar, String operationTerm, String rewardTerm, @Deprecated RLEnvironment env, Perception... perceptions) {
         this(nar, operationTerm, (Compound)nar.term(rewardTerm), env, perceptions);
     }

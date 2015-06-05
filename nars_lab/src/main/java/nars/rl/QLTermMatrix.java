@@ -45,6 +45,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
     float sensedStatePriorityChanged = 1.0f; //scales priority by this amount
     float sensedStatePrioritySame = 0.85f; //scales priority by this amount
+    float inputPriorityMult = 1.0f;
 
     /**
      * min threshold of q-update necessary to cause an effect
@@ -118,7 +119,7 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
 
                     v.updateE(eMult, eAdd);
 
-                    v.commit(implicationPunctuation, qUpdateConfidence, updateThresh);
+                    v.commit(implicationPunctuation, qUpdateConfidence, updateThresh, inputPriorityMult);
 
                 }
             }
@@ -412,9 +413,15 @@ abstract public class QLTermMatrix<S extends Term, A extends Term> extends Conce
     }
 
     protected void input(Task t) {
+        t.mulPriority(inputPriorityMult);
+
         //System.out.println("ql: " + t);
         TaskProcess.run(nar, t);
         //nar.input(t);
     }
 
+    /** master input gain */
+    public void setInputPriorityMult(float inputPriorityMult) {
+        this.inputPriorityMult = inputPriorityMult;
+    }
 }

@@ -122,7 +122,7 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
 //    }
 
     /** input to NAR */
-    public void commit(char punctuation, float qUpdateConfidence, float thresh) {
+    public void commit(char punctuation, float qUpdateConfidence, float freqThreshold, float priorityGain) {
 
         clearDQ();
 
@@ -139,13 +139,15 @@ public class QEntry<S extends Term, A extends Term> extends ConceptMatrixEntry<S
         long now = concept.getMemory().time();
 
         if (qUpdateConfidence > 0 &&
-                ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > thresh)) {
+                ((now - lastCommit >= commitEvery) && FastMath.abs(nextFreq - lastFreq) > freqThreshold)) {
 
             Task t = concept.getMemory().task((Compound) qt).punctuation(
 
                     punctuation
 
             ).present().truth(nextFreq, qUpdateConfidence).get();
+
+            t.mulPriority(priorityGain);
 
             commitDirect(t);
 

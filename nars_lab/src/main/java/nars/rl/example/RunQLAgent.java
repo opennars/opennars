@@ -14,6 +14,7 @@ import nars.model.impl.Default;
 import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
+import nars.nal.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
@@ -237,12 +238,12 @@ public class RunQLAgent extends JPanel {
                 };
             }
 
-//            @Override
-//            protected void initDerivationFilters() {
-//                final float DERIVATION_PRIORITY_LEAK=0.1f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-//                final float DERIVATION_DURABILITY_LEAK=0.1f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-//                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
-//            }
+            @Override
+            protected void initDerivationFilters() {
+                final float DERIVATION_PRIORITY_LEAK=0.75f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                final float DERIVATION_DURABILITY_LEAK=0.75f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+                getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
+            }
         };
 
         dd.setSubconceptBagSize(4000);
@@ -255,13 +256,13 @@ public class RunQLAgent extends JPanel {
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
         //dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.duration.set(10);
+        dd.duration.set(2);
         dd.shortTermMemoryHistory.set(2);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd,
-                new RawPerception("L", 0.5f)
+                new RawPerception("L", 0.6f)
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
                 //new AEPerception("A", 0.5f, 4, 1).setLearnigRate(0.05).setSigmoid(false)
@@ -275,10 +276,11 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                ,new HaiSOMPerception("B", 2, 0.1f)
+                ,new HaiSOMPerception("B", 2, 0.2f)
         );
 
-        a.agent.setQLFactor(0.5f, 0.25f);
+        a.agent.setQLFactor(0.5f, 0.5f);
+        a.agent.setInputGain(0.5f);
 
         a.agent.ql.brain.setEpsilon(0.08);
 
