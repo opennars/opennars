@@ -705,15 +705,22 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
     }
 
 
-    public static boolean isOverlappingBase(final Stamp a, final Stamp b) {
-        for (long l : a.getEvidentialBase()) {
-            for (long h : b.getEvidentialBase()) {
+    public static boolean evidentialSetOverlaps(final Stamp a, final Stamp b) {
+        /** TODO since these are sorted, we can compare these faster by
+            iterating both arrays simultaneously skipping ahead when one
+            has a higher value than the other until the shorter reaches the end
+
+            or at least compare a triangular half of the matrix with these
+            2 loops
+         */
+        for (long l : a.getEvidentialSet()) {
+            for (long h : b.getEvidentialSet()) {
                 if (l == h) {
-                    return false;
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
 
 

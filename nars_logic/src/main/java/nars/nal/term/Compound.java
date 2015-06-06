@@ -26,10 +26,13 @@ import nars.Memory;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.transform.*;
-import nars.util.data.id.UTF8Identifier;
+import nars.nal.transform.CompoundTransform;
+import nars.nal.transform.TermVisitor;
+import nars.nal.transform.TransformIndependentToDependentVariables;
+import nars.nal.transform.VariableNormalization;
 import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
 import nars.util.utf8.ByteBuf;
@@ -42,9 +45,10 @@ import static nars.Symbols.ARGUMENT_SEPARATOR;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
-/** a compound term */
+/**
+ * a compound term
+ */
 public abstract class Compound extends AbstractTerm implements Collection<Term>, IPair {
-
 
 
     /**
@@ -63,7 +67,8 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     /**
      * Whether contains a variable
      */
-    transient private boolean hasVariables, hasVarQueries, hasVarIndeps, hasVarDeps;
+    transient private byte hasVarQueries, hasVarIndeps, hasVarDeps;
+    transient private short varTotal;
 
     transient private int containedTemporalRelations = -1;
     private boolean normalized;
@@ -78,8 +83,6 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
         this.complexity = -1;
         this.term = components;
-
-
     }
 
 
@@ -107,7 +110,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
             int len = 1 + 1 + opBytes.length +
                     numArgs; //1 for each arg separator
-            for  (final Term t : compound.term) {
+            for (final Term t : compound.term) {
                 len += t.bytes().length;
             }
 
@@ -115,7 +118,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
                     .append((byte) COMPOUND_TERM_OPENER.ch)
                     .append(opBytes);
 
-            for  (final Term t : compound.term) {
+            for (final Term t : compound.term) {
                 b.append((byte) ARGUMENT_SEPARATOR).append(t.bytes());
             }
 
@@ -160,7 +163,8 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     /**
      * single term version of makeCompoundName without iteration for efficiency
      */
-    @Deprecated protected static CharSequence makeCompoundName(final NALOperator op, final Term singleTerm) {
+    @Deprecated
+    protected static CharSequence makeCompoundName(final NALOperator op, final Term singleTerm) {
         int size = 2; // beginning and end parens
         String opString = op.toString();
         size += opString.length();
@@ -190,9 +194,9 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return ByteBuf.create(opBytes.length + termBytes.length)
                 //.add((byte)COMPOUND_TERM_OPENER.ch)
                 .add(opBytes)
-                //.add((byte) ARGUMENT_SEPARATOR)
+                        //.add((byte) ARGUMENT_SEPARATOR)
                 .add(termBytes)
-                //.add((byte) COMPOUND_TERM_CLOSER.ch)
+                        //.add((byte) COMPOUND_TERM_CLOSER.ch)
                 .toBytes();
     }
 
@@ -260,17 +264,36 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
     }
 
-    public static <T> void shuffle(final T[] ar, final Random rnd) {
-        if (ar.length < 2) return;
-        for (int i = ar.length - 1; i > 0; i--) {
-            final int index = rnd.nextInt(i + 1);
-            final T a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
+    /**
+     * from: http://stackoverflow.com/a/19333201
+     */
+    public static <T> void shuffle(final T[] array, final Random random) {
+        int count = array.length;
+        for (int i = count; i > 1; i--) {
+            int a = i - 1;
+            int b = random.nextInt(i);
+            final T t = array[b];
+            array[b] = array[a];
+            array[a] = t;
         }
     }
 
-    public Term term(int i ) { return term[i]; }
+
+//    @Deprecated public static <T> void shuffleOLD(final T[] ar, final Random rnd) {
+//        if (ar.length < 2) return;
+//
+//
+//        for (int i = ar.length - 1; i > 0; i--) {
+//            final int index = rnd.nextInt(i + 1);
+//            final T a = ar[index];
+//            ar[index] = ar[i];
+//            ar[i] = a;
+//        }
+//    }
+
+    public Term term(int i) {
+        return term[i];
+    }
 
     /**
      * Abstract method to get the operate of the compound
@@ -288,12 +311,12 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
     @Override
     public int compareTo(final Term that) {
-        if (that==this) return 0;
+        if (that == this) return 0;
 
         // variables have earlier sorting order than non-variables
         if (!(that instanceof Compound)) return 1;
 
-        final Compound c = (Compound)that;
+        final Compound c = (Compound) that;
 
         int opdiff = compareClass(this, c);
         if (opdiff != 0) return opdiff;
@@ -305,21 +328,24 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         Class c1 = b.getClass();
         Class c2 = c.getClass();
         int h = Integer.compare(c1.hashCode(), c2.hashCode());
-        if (h!=0) return h;
+        if (h != 0) return h;
         return c1.getName().compareTo(c2.getName());
     }
 
-    /** this will be called if the c is of the same class as 'this'.
+    /**
+     * this will be called if the c is of the same class as 'this'.
      * the implementation can decide whether to compare by name() or by
      * subterm content
-     * */
+     */
     abstract protected int compare(Compound otherCompoundOfEqualType);
 
     public int compareName(final Compound c) {
         return name().compareTo(c.name());
     }
 
-    /** compares only the contents of the subterms; assume that the other term is of the same operator type */
+    /**
+     * compares only the contents of the subterms; assume that the other term is of the same operator type
+     */
     abstract public int compareSubterms(final Compound otherCompoundOfEqualType);
 
     @Override
@@ -328,7 +354,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
         if (this instanceof Compound) {
-            for (Term t : ((Compound)this).term) {
+            for (Term t : ((Compound) this).term) {
                 t.recurseTerms(v, this);
             }
         }
@@ -338,21 +364,22 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         if (hasVar()) {
             v.visit(this, parent);
             //if (this instanceof Compound) {
-                for (Term t : term) {
-                    t.recurseSubtermsContainingVariables(v, this);
-                }
+            for (Term t : term) {
+                t.recurseSubtermsContainingVariables(v, this);
+            }
             //}
         }
     }
 
-    /** extracts a subterm provided by the index tuple
-     *  returns null if specified subterm does not exist
-     * */
+    /**
+     * extracts a subterm provided by the index tuple
+     * returns null if specified subterm does not exist
+     */
     public <X extends Term> X subterm(int... index) {
         Term ptr = this;
         for (int i : index) {
             if (ptr instanceof Compound) {
-                ptr = ((Compound)ptr).term[i];
+                ptr = ((Compound) ptr).term[i];
             }
         }
         return (X) ptr;
@@ -404,10 +431,9 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 //        }
 
 
-        return (T)result;
+        return (T) result;
 
     }
-
 
 
     /**
@@ -415,19 +441,25 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      */
     protected void init(Term[] term) {
 
-        this.complexity = 1;
-        this.hasVariables = this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = false;
+
+        this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = 9;
+
+        int deps = 0, indeps = 0, queries = 0;
+        int compl = 1;
         for (final Term t : term) {
-            this.complexity += t.getComplexity();
-            hasVariables |= t.hasVar();
-            hasVarDeps |= t.hasVarDep();
-            hasVarIndeps |= t.hasVarIndep();
-            hasVarQueries |= t.hasVarQuery();
+            compl += t.getComplexity();
+            deps += t.varDep();
+            indeps += t.varIndep();
+            queries += t.varQuery();
         }
+        this.hasVarDeps = (byte) deps;
+        this.hasVarIndeps = (byte) indeps;
+        this.hasVarQueries = (byte) queries;
+        this.varTotal = (short)(deps + indeps + queries);
+        this.complexity = (short) compl;
 
         invalidate();
     }
-
 
 
     /**
@@ -448,23 +480,22 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-
-    
     public static Compound transformIndependentToDependentVariables(Compound c) {
 
         if (!c.hasVarIndep())
             return c;
 
-        return (Compound)c.cloneTransforming(new TransformIndependentToDependentVariables());
+        return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
     }
 
     public <X extends Compound> X cloneTransforming(CompoundTransform t) {
-        return (X)cloneTransforming(t, 0);
+        return (X) cloneTransforming(t, 0);
     }
+
     protected <X extends Compound> X cloneTransforming(CompoundTransform t, int level) {
         if (t.testSuperTerm(this))
-            return (X)clone(cloneTermsTransforming(t, level));
-        return (X)this;
+            return (X) clone(cloneTermsTransforming(t, level));
+        return (X) this;
     }
 
 
@@ -530,18 +561,21 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 //    }
 
 
-    @Override public LiteralUTF8Identifier name() {
+    @Override
+    public LiteralUTF8Identifier name() {
         if (!hasName()) {
-            setName( newName() );
+            setName(newName());
         }
-        return (LiteralUTF8Identifier)super.name();
+        return (LiteralUTF8Identifier) super.name();
     }
 
-     /** creates a new Identifier name for this term */
-     public UTF8Identifier newName() {
+    /**
+     * creates a new Identifier name for this term
+     */
+    public UTF8Identifier newName() {
         /* Default implementation */
         return new DefaultCompoundUTF8Identifier(this);
-     }
+    }
  
 
     /* ----- utilities for other fields ----- */
@@ -552,7 +586,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      * @return the complexity value
      */
     @Override
-    public short getComplexity() {
+    public int getComplexity() {
         return complexity;
     }
 
@@ -661,7 +695,9 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-    /** clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step */
+    /**
+     * clones all non-constant sub-compound terms, excluding the variables themselves which are not cloned. they will be replaced in a subsequent transform step
+     */
     public Compound cloneVariablesDeep() {
         return (Compound) clone(cloneTermsDeepIfContainingVariables());
     }
@@ -694,11 +730,11 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
             if (t.hasVar()) {
                 if (t instanceof Compound) {
-                    ((Compound)t).transform(trans);
+                    ((Compound) t).transform(trans);
                 } else if (trans.test(t)) {
 
-                    if (thiss == null) thiss = (I)this;
-                    term[i] = trans.apply(thiss, (T)t, depth+1);
+                    if (thiss == null) thiss = (I) this;
+                    term[i] = trans.apply(thiss, (T) t, depth + 1);
 
                 }
             }
@@ -818,13 +854,13 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     /**
      * Try to replace a component in a compound at a given index by another one
      *
-     * @param index The location of replacement
-     * @param subterm     The new component
+     * @param index   The location of replacement
+     * @param subterm The new component
      * @return The new compound
      */
     public Term cloneReplacingSubterm(final int index, final Term subterm) {
 
-        final boolean e = (subterm!=null) && Terms.equalType(this, subterm, true, true);
+        final boolean e = (subterm != null) && Terms.equalType(this, subterm, true, true);
 
         //if the subterm is alredy equivalent, just return this instance because it will be equivalent
         if (subterm != null && (e) && (term[index].equals(subterm)))
@@ -869,15 +905,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 //        }
 //    }
 
-    /**
-     * Whether this compound term contains any variable term
-     *
-     * @return Whether the name contains a variable
-     */
-    @Override
-    public boolean hasVar() {
-        return hasVariables;
-    }
+
 
 //    /**
 //     * Try to add a component into a compound
@@ -901,21 +929,28 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 //        return Memory.make(t1, terms, memory);
 //    }
 
+
+
     @Override
-    public boolean hasVarDep() {
+    public int varDep() {
         return hasVarDeps;
     }
 
     /* ----- variable-related utilities ----- */
 
     @Override
-    public boolean hasVarIndep() {
+    public int varIndep() {
         return hasVarIndeps;
     }
 
     @Override
-    public boolean hasVarQuery() {
+    public int varQuery() {
         return hasVarQueries;
+    }
+
+    @Override
+    public int vars() {
+        return varTotal;
     }
 
     /**
@@ -1071,7 +1106,6 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-
     protected void setNormalized() {
         this.normalized = true;
     }
@@ -1115,15 +1149,15 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I,T> trans, final int level) {
+    protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I, T> trans, final int level) {
         Term[] y = new Term[length()];
         int i = 0;
         for (Term x : this.term) {
             if (trans.test(x))
-                x = trans.apply((I) this, (T)x, level);
+                x = trans.apply((I) this, (T) x, level);
             else if (x instanceof Compound) {
                 //recurse
-                x = ((Compound)x).cloneTransforming(trans, level+1);
+                x = ((Compound) x).cloneTransforming(trans, level + 1);
             }
             y[i++] = x;
         }
@@ -1137,13 +1171,16 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
     @Override
     public boolean isEmpty() {
-        return length()!=0;
+        return length() != 0;
     }
 
-    /** first level only, not recursive */
-    @Override public boolean contains(Object o) {
+    /**
+     * first level only, not recursive
+     */
+    @Override
+    public boolean contains(Object o) {
         if (o instanceof Term)
-            return containsTerm((Term)o);
+            return containsTerm((Term) o);
         return false;
     }
 
@@ -1220,7 +1257,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
         //this may need tested better:
         Pair p = null;
-        for (int i = len  - 2; i >= 0; i--) {
+        for (int i = len - 2; i >= 0; i--) {
             if (p == null)
                 p = new Pair(term[i], term[i + 1]);
             else

@@ -1,6 +1,12 @@
 package nars.rl.hai;
 
+import objenome.util.random.XORShiftRandom;
+
+import java.util.Random;
+
 public class Hsom {
+
+    final Random random = new XORShiftRandom(1);
 
     private double[][][] links;
     private double[] inputs;
@@ -38,7 +44,7 @@ public class Hsom {
         for (int x = 0; x < SomSize; x++) {
             for (int y = 0; y < SomSize; y++) {
                 for (int z = 0; z < numInputs; z++) {
-                    links[x][y][z] = (Hai.random(1)/**
+                    links[x][y][z] = (random.nextDouble() * 1/**
                              * 2.0-1.0
                              */
                             ) * 0.1;

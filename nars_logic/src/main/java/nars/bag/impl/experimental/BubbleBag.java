@@ -54,7 +54,7 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
         super();
         this.rng = rng;
         this.capacity = initialCapacity;
-        this.index = new CuckooMap(capacity, loadFactor);
+        this.index = new CuckooMap(rng, capacity, loadFactor);
         this.queue = new CircularArrayList<>(capacity*2 /* extra space for invalid items */ );
 
     }

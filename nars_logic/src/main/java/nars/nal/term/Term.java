@@ -41,7 +41,16 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
 
     public NALOperator operator();
 
-    public short getComplexity();
+
+    /** total number of terms = complexity + # total variables */
+    default public int getMass() {
+        return getComplexity() + vars();
+    }
+
+    /** total number of leaf terms, excluding variables which have a complexity of zero */
+    public int getComplexity();
+
+
 
     public void recurseTerms(final TermVisitor v, Term parent);
 
@@ -100,7 +109,9 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
      *
      * @return Whether the name contains a variable
      */
-    public boolean hasVar();
+    default public boolean hasVar() {
+        return vars() != 0;
+    }
 
     default public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
@@ -119,11 +130,30 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
     }
 
 
-    public boolean hasVarIndep();
+    /** # of contained independent variables */
+    public int varIndep();
+    /** # of contained dependent variables */
+    public int varDep();
+    /** # of contained query variables */
+    public int varQuery();
 
-    public boolean hasVarDep();
 
-    public boolean hasVarQuery();
+    /** total # of variables */
+    default public int vars() {
+        return varDep() + varIndep() + varQuery();
+    }
+
+    default public boolean hasVarIndep() {
+        return varIndep()!=0;
+    }
+
+    default public boolean hasVarDep() {
+        return varDep()!=0;
+    }
+
+    default public boolean hasVarQuery() {
+        return varQuery()!=0;
+    }
 
     @Deprecated default public boolean equalsType(final Term t) {
         return Terms.equalType(this, t);

@@ -63,5 +63,6 @@ abstract public class AbstractTerm implements Term {
         return name().hashCode();
     }
 
+
     abstract public Term clone();
 }

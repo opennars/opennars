@@ -36,6 +36,7 @@ import org.junit.Test;
 import java.util.TreeSet;
 
 import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -386,5 +387,45 @@ public class TermTest {
 
     }
 
+    @Test public void testTermComplexityMass() {
+        NAR n = new NAR(new Default());
+
+        testTermComplexityMass(n, "x", 1, 1);
+        testTermComplexityMass(n, "+1", 1, 1);
+
+        testTermComplexityMass(n, "#x", 0, 1, 0, 1, 0);
+        testTermComplexityMass(n, "$x", 0, 1, 1, 0, 0);
+        testTermComplexityMass(n, "?x", 0, 1, 0, 0, 1);
+
+        testTermComplexityMass(n, "<a --> b>", 3, 3);
+        testTermComplexityMass(n, "<#a --> b>", 2, 3, 0, 1, 0);
+
+        testTermComplexityMass(n, "<a --> (c & d)>", 5, 5);
+        testTermComplexityMass(n, "<$a --> (c & #d)>", 3, 5, 1, 1, 0);
+    }
+
+    private void testTermComplexityMass(NAR n, String x, int complexity, int mass) {
+        testTermComplexityMass(n, x, complexity, mass, 0, 0, 0);
+    }
+
+    private void testTermComplexityMass(NAR n, String x, int complexity, int mass, int varIndep, int varDep, int varQuery) {
+        Term t = n.term(x);
+
+        assertNotNull(t);
+        assertEquals(complexity, t.getComplexity());
+        assertEquals(mass, t.getMass());
+
+        assertEquals(varDep, t.varDep());
+        assertEquals(varDep!=0, t.hasVarDep());
+
+        assertEquals(varIndep, t.varIndep());
+        assertEquals(varIndep!=0, t.hasVarIndep());
+
+        assertEquals(varQuery, t.varQuery());
+        assertEquals(varQuery!=0, t.hasVarQuery());
+
+        assertEquals(varDep+varIndep+varQuery, t.vars());
+        assertEquals((varDep+varIndep+varQuery) != 0, t.hasVar());
+    }
 
 }

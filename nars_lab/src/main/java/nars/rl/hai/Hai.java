@@ -2,11 +2,13 @@ package nars.rl.hai;
 
 import objenome.util.random.XORShiftRandom;
 
+import java.util.Random;
+
 /** Original Q-Learning + SOM agent by patham9 */
 public class Hai {
 
-    //public static double random(double max) { return Math.random() * max;    }
-    public static double random(double max) { return XORShiftRandom.global.nextDouble() * max;    }
+    final Random random = new XORShiftRandom(1);
+
 
     double Q[][][]; //state, action
     double et[][][];
@@ -45,8 +47,8 @@ public class Hai {
         }
         
         int Action = 0;
-        if (random(1.0) < Alpha) {
-            Action = (int) random(nActions);
+        if (random.nextDouble() < Alpha) {
+            Action = (int) random.nextDouble() * (nActions);
         } else {
             Action = maxk;
         }

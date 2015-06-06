@@ -156,6 +156,7 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
+    //TODO return TaskSeed
     Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<Truth> truth, Var<Tense> tense, boolean newStamp) {
 
         char p = punc.get();
@@ -180,13 +181,10 @@ public class NarseseParser extends BaseParser<Object> {
         content = Sentence.termOrNull(content);
         if (content==null) return null;
 
-        Tense te = tense.get();
 
-        return new Task(new Sentence((Compound)content, p, t,
-                memory, //getNewStamp(memory, newStamp, Stamp.UNPERCEIVED, te),
-                false)
+        return new Task(new Sentence((Compound)content, p, t, memory, false)
                 .setCreationTime(Stamp.UNPERCEIVED)
-                .setOccurrenceTime(Stamp.UNPERCEIVED, te, memory.duration()), B );
+                .setOccurrenceTime(Stamp.UNPERCEIVED, tense.get(), memory.duration()), B );
 
         /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
             return new Stamp(

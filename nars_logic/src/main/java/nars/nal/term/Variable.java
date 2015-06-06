@@ -23,7 +23,6 @@ package nars.nal.term;
 
 import nars.Symbols;
 import nars.util.data.id.Identifier;
-import nars.util.utf8.FastByteComparisons;
 
 import static nars.Symbols.*;
 
@@ -141,9 +140,10 @@ public class Variable extends Atom {
      *
      * @return The complexity of the term, an integer
      */
-    @Override public short getComplexity() {
+    @Override public int getComplexity() {
         return 0;
     }
+
 
 
 
@@ -220,18 +220,21 @@ public class Variable extends Atom {
     
 
 
-    @Override public boolean hasVar() {
-        return true;
+    @Override public boolean hasVar() { return true;     }
+    @Override public int vars() {
+        return 1;
     }
-    @Override public boolean hasVarIndep() {
-        return getType() == VAR_INDEPENDENT;
-    }
-    @Override public boolean hasVarDep() {
-        return getType() == VAR_DEPENDENT;
-    }
-    @Override public boolean hasVarQuery() {
-        return getType() == VAR_QUERY;
-    }
+
+
+    @Override public boolean hasVarDep() { return getType() == VAR_DEPENDENT;    }
+    @Override public int varDep() { return hasVarDep() ? 1 : 0;    }
+
+    @Override public boolean hasVarIndep() { return getType() == VAR_INDEPENDENT;    }
+    @Override public int varIndep() { return hasVarIndep() ? 1 : 0;    }
+
+    @Override public boolean hasVarQuery() { return getType() == VAR_QUERY;    }
+    @Override public int varQuery() { return hasVarQuery() ? 1 : 0;    }
+
 
     public boolean isCommon() {
         //TODO there is a faster way to make this test rather than forming the String

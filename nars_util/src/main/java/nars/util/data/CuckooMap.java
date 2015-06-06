@@ -42,7 +42,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     private static final int PRIME3 = 0xced1c241;
 
     //TODO allow setting this via constructor
-    transient static final Random random = XORShiftRandom.global;
+    transient final Random random;
 
     public int size;
 
@@ -56,21 +56,34 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     private int pushIterations;
     static final int stashCapacityFactor = 2; //originally = 2
 
+    public CuckooMap() {
+        this(newDefaultRNG());
+    }
+
+    public CuckooMap(int capacity) {
+        this(newDefaultRNG(), capacity);
+    }
+
+    private static XORShiftRandom newDefaultRNG() {
+        return new XORShiftRandom(1);
+    }
+
     /** Creates a new map with an initial capacity of 32 and a load factor of 0.8. This map will hold 25 items before growing the
      * backing table. */
-    public CuckooMap() {
-        this(32, 0.8f);
+    public CuckooMap(Random random) {
+        this(random, 32, 0.8f);
     }
 
     /** Creates a new map with a load factor of 0.8. This map will hold initialCapacity * 0.8 items before growing the backing
      * table. */
-    public CuckooMap(int initialCapacity) {
-        this(initialCapacity, 0.8f);
+    public CuckooMap(Random random, int initialCapacity) {
+        this(random, initialCapacity, 0.8f);
     }
 
     /** Creates a new map with the specified initial capacity and load factor. This map will hold initialCapacity * loadFactor items
      * before growing the backing table. */
-    public CuckooMap(int initialCapacity, float loadFactor) {
+    public CuckooMap(Random random, int initialCapacity, float loadFactor) {
+        this.random = random;
         if (initialCapacity < 0) throw new IllegalArgumentException("initialCapacity must be >= 0: " + initialCapacity);
         if (initialCapacity > 1 << 30) throw new IllegalArgumentException("initialCapacity is too large: " + initialCapacity);
         capacity = nextPowerOfTwo(initialCapacity);
@@ -89,13 +102,15 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     }
 
     /** Creates a new map identical to the specified map. */
-    public CuckooMap(CuckooMap<? extends K, ? extends V> map) {
-        this(map.capacity, map.loadFactor);
+    public CuckooMap(Random random, CuckooMap<? extends K, ? extends V> map) {
+        this(random, map.capacity, map.loadFactor);
         stashSize = map.stashSize;
         System.arraycopy(map.keyTable, 0, keyTable, 0, map.keyTable.length);
         System.arraycopy(map.valueTable, 0, valueTable, 0, map.valueTable.length);
         size = map.size;
     }
+
+
 
     @Override
     public int size() {

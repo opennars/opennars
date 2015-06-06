@@ -67,6 +67,8 @@ public class Atom extends AbstractTerm {
 
     }
 
+    @Override public int getMass() { return 1; }
+
     public int compareHash(final Term that) {
         return Integer.compare(hashCode(), that.hashCode());
     }
@@ -225,7 +227,7 @@ public class Atom extends AbstractTerm {
      *
      * @return The complexity of the term, an integer
      */
-    public short getComplexity() {
+    public int getComplexity() {
         return 1;
     }
 
@@ -256,21 +258,27 @@ public class Atom extends AbstractTerm {
      *
      * @return Whether the name contains a variable
      */
-    public boolean hasVar() {
+    @Override public boolean hasVar() {
         return false;
+    }
+    @Override public int vars() {
+        return 0;
     }
 
-    public boolean hasVarIndep() {
+    @Override public boolean hasVarIndep() {
         return false;
     }
+    @Override public int varIndep() { return 0;     }
 
-    public boolean hasVarDep() {
+    @Override public boolean hasVarDep() {
         return false;
     }
+    @Override public int varDep() { return 0;     }
 
-    public boolean hasVarQuery() {
+    @Override public boolean hasVarQuery() {
         return false;
     }
+    @Override public int varQuery() { return 0;     }
 
     public static String unquote(Term s) {
         String x = s.toString();
