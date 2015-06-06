@@ -26,10 +26,7 @@ import nars.Memory;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.transform.CompoundTransform;
-import nars.nal.transform.TermVisitor;
-import nars.nal.transform.TransformIndependentToDependentVariables;
-import nars.nal.transform.VariableNormalization;
+import nars.nal.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
@@ -43,7 +40,6 @@ import java.util.*;
 
 import static java.util.Arrays.copyOf;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.Symbols.INTERVAL_PREFIX;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
@@ -788,6 +784,13 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
                 ;
     }
 
+    /** if it's larger than this term it can not be equal to this.
+     * if it's larger than some number less than that, it can't be a subterm.
+     */
+    public boolean impossibleSubTermOrEqual(int otherTermsMass) {
+        return otherTermsMass > getMass();
+    }
+
     
 
     
@@ -989,73 +992,6 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return Terms.containsAny(this, c);
     }
 
-    /** holds a substitution and any metadata that can eliminate matches as early as possible */
-    public static class Substitution {
-        final Map<Term, Term> subs;
-
-        int minMassOfMatch = Integer.MAX_VALUE;
-        int maxMassOfMatch = Integer.MIN_VALUE;
-        int subsEliminated = 0;
-
-        public Substitution(final Compound superterm, final Map<Term, Term> subs) {
-            this.subs = subs;
-
-
-            final int numSubs = subs.size();
-
-            for (final Map.Entry<Term,Term> e : subs.entrySet()) {
-
-                final Term m = e.getKey();
-
-                final int mass = m.getMass();
-                if (superterm.impossibleSubTerm(mass)) {
-                    subsEliminated++;
-                    continue;
-                }
-
-                if (m instanceof Variable) {
-                    if (!superterm.hasVar(((Variable) m).getType())) {
-                        subsEliminated++;
-                        continue;
-                    }
-                }
-
-                if (minMassOfMatch > mass) minMassOfMatch = mass;
-                if (maxMassOfMatch < mass) maxMassOfMatch = mass;
-
-            /* collapse a substitution map to each key's ultimate destination
-             *  in the case of values that are equal to other keys */
-                if (numSubs >= 2) {
-                    final Term o = e.getValue(); //what the original mapping of this entry's key
-
-                    Term k = o, prev = o;
-                    int hops = 1;
-                    while ((k = subs.getOrDefault(k, k)) != prev) {
-                        prev = k;
-                        if (hops++ == numSubs) {
-                            //cycle detected
-                            throw new RuntimeException("Cyclical substitution map: " + subs);
-                        }
-                    }
-                    if (!k.equals(o)) {
-                        //replace with the actual final mapping
-                        e.setValue(k);
-                    }
-                }
-            }
-
-        }
-
-        /** if eliminated all the possible substitutions */
-        public boolean impossible() {
-            return subsEliminated == subs.size();
-        }
-
-        public Term get(final Term t) {
-            return subs.get(t);
-        }
-    }
-
 
     /**
      * Recursively apply a substitute to the current CompoundTerm
@@ -1063,7 +999,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      *
      * @param subs
      */
-    public Compound applySubstitute(final Map<Term, Term> subs) {
+    public Term applySubstitute(final Map<Term, Term> subs) {
 
         //TODO calculate superterm capacity limits vs. subs min/max
 
@@ -1072,14 +1008,18 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         }
 
 
-        Substitution S = new Substitution(this, subs);
-        if (S.impossible())
-            return this;
+        Substitution S = new Substitution(subs);
 
         return applySubstitute(S);
     }
 
-    public Compound applySubstitute(final Substitution S) {
+
+    public Term applySubstitute(final Substitution S) {
+
+        if (S.impossible(this))
+            return this;
+
+
         Term[] in = this.term;
         Term[] out = in;
 
@@ -1120,7 +1060,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         if (out == in) //nothing changed
             return this;
 
-        return (Compound)this.clone(out);
+        return this.clone(out);
     }
 
 

@@ -181,7 +181,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
             Term secTerm = secondConcept.getTerm();
 
-            Sentence second_belief = secondConcept.getStrongestBelief().sentence;
+            Task secondConceptStrongestBelief = secondConcept.getStrongestBelief();
+            Sentence second_belief = secondConceptStrongestBelief.sentence;
+
             //getBeliefRandomByConfidence(task.sentence.isEternal());
 
             Truth truthSecond = second_belief.truth;
@@ -301,7 +303,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             final int termsIndependent = terms_independent.size();
             for (int i = 0; i < termsIndependent; i++) {
 
-                Term result = Sentence.termOrNull(terms_independent.get(i));
+                Compound result = Sentence.termOrNull(terms_independent.get(i));
 
                 if (result == null) {
                     //changed from return to continue to allow furhter processing
@@ -344,15 +346,19 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 }
 
 
-                Sentence newSentence = new Sentence(result, mark, truth, new Stamper(taskSentence, second_belief.stamp, nal.time(), occ));
-
-
-                Task dummy = new Task(second_belief, budget, task, null);
-                Task newTask = new Task(newSentence, budget, task, null);
 
                 nal.setCurrentBelief(taskSentence);
 
-                if (null!=nal.deriveTask(new TaskSeed(nal.memory, newTask), false, false, dummy, true /* allow overlap */)) {
+                final TaskSeed seed = nal.newTask(result)
+                        .punctuation(mark)
+                        .truth(truth)
+                        .parent(task)
+                        .budget(budget)
+                        .stamp(new Stamper(taskSentence, second_belief.stamp, nal.time(), occ));
+
+                Task newTask = nal.deriveTask(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
+
+                if (null!=newTask) {
 
                     nal.emit(Events.ConceptUnification.class, newTask, firstTerm, secondConcept, second_belief);
                     nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION.hit();

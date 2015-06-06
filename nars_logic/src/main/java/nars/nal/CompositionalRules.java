@@ -48,6 +48,7 @@ import org.apache.commons.collections.MapUtils;
 import java.util.Map;
 import java.util.Random;
 
+import static nars.nal.Terms.*;
 import static nars.nal.Terms.reduceComponents;
 import static nars.nal.TruthFunctions.*;
 
@@ -88,7 +89,7 @@ public final class CompositionalRules {
 
         final Sentence taskBelief = nal.getCurrentTask().sentence;
 
-        if ((!taskBelief.isJudgment()) || (!Terms.equalType(taskContent, beliefContent))) {
+        if ((!taskBelief.isJudgment()) || (!equalType(taskContent, beliefContent))) {
             return;
         }
 
@@ -310,7 +311,7 @@ public final class CompositionalRules {
         Task task = nal.getCurrentTask();
         Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
-        Compound content = Terms.compoundOrNull(reduceComponents(compound, component, nal.memory));
+        Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null) {
             return null;
         }
@@ -421,12 +422,12 @@ public final class CompositionalRules {
 
                 if(commonTerm == null && term12 instanceof ImageExt) {
                     commonTerm = ((ImageExt) term12).getTheOtherComponent();
-                    if(!(term22.containsTermRecursivelyOrEquals(commonTerm))) {
+                    if ((commonTerm == null) || (!(term22.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
                     }
                     if (term22 instanceof ImageExt && ((commonTerm == null) || !(term22).containsTermRecursivelyOrEquals(commonTerm))) {
                         commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                        if ((commonTerm == null) || !(term12).containsTermRecursivelyOrEquals(commonTerm)) {
+                        if ((commonTerm == null) || !term12.containsTermRecursivelyOrEquals(commonTerm)) {
                             commonTerm = null;
                         }
                     }
@@ -451,7 +452,7 @@ public final class CompositionalRules {
 
                 if(commonTerm == null && term22 instanceof ImageExt) {
                     commonTerm = ((ImageExt) term22).getTheOtherComponent();
-                    if(!(term12.containsTermRecursivelyOrEquals(commonTerm))) {
+                    if (commonTerm == null || (!(term12.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
                     }
                     if (term12 instanceof ImageExt && ((commonTerm == null) || !(term12).containsTermRecursivelyOrEquals(commonTerm))) {
@@ -490,7 +491,7 @@ public final class CompositionalRules {
 
                 if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
                     commonTerm = ((ImageInt) term11).getTheOtherComponent();
-                    if(!(term21.containsTermRecursivelyOrEquals(commonTerm))) {
+                    if ((commonTerm == null) || (!(term21.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
                     }
                     if ((commonTerm == null) || !(term21).containsTermRecursivelyOrEquals(commonTerm)) {
@@ -521,7 +522,7 @@ public final class CompositionalRules {
 
                 if(term21 instanceof ImageInt && commonTerm == null /*&& term11 instanceof ImageInt -- already checked */) {
                     commonTerm = ((ImageInt) term21).getTheOtherComponent();
-                    if(!(term11.containsTermRecursivelyOrEquals(commonTerm))) {
+                    if ((commonTerm == null) || (!(term11.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
                     }
                     if ((commonTerm == null) || !(term11).containsTermRecursivelyOrEquals(commonTerm)) {
@@ -547,7 +548,7 @@ public final class CompositionalRules {
 
         Statement state1 = Inheritance.make(term11, term12);
         Statement state2 = Inheritance.make(term21, term22);
-        Compound content = Terms.compoundOrNull(Implication.makeTerm(state1, state2));
+        Compound content = compoundOrNull(Implication.makeTerm(state1, state2));
         if (content == null) {
             return;
         }
@@ -572,7 +573,7 @@ public final class CompositionalRules {
         nal.doublePremiseTask(content, truth, budget, stamp, false, false);
 
         {
-            Compound ct = Terms.compoundOrNull(Implication.makeTerm(state2, state1));
+            Compound ct = compoundOrNull(Implication.makeTerm(state2, state1));
             if (ct != null) {
                 truth = induction(truthB, truthT);
                 budget = BudgetFunctions.compoundForward(truth, ct, nal);
@@ -581,7 +582,7 @@ public final class CompositionalRules {
         }
 
         {
-            Compound ct = Terms.compoundOrNull(Equivalence.makeTerm(state1, state2));
+            Compound ct = compoundOrNull(Equivalence.makeTerm(state1, state2));
             if (ct != null) {
                 truth = comparison(truthT, truthB);
                 budget = BudgetFunctions.compoundForward(truth, ct, nal);
@@ -600,7 +601,7 @@ public final class CompositionalRules {
         if ((state1 == null) || (state2 == null))
             return;
 
-        Compound ct = Terms.compoundOrNull(Conjunction.make(state1, state2));
+        Compound ct = compoundOrNull(Conjunction.make(state1, state2));
         if (ct != null) {
             truth = intersection(truthT, truthB);
             budget = BudgetFunctions.compoundForward(truth, ct, nal);
@@ -625,7 +626,7 @@ public final class CompositionalRules {
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
 
-        if (!taskSentence.isJudgment() || (!Terms.equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {
+        if (!taskSentence.isJudgment() || (!equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {
             return null;
         }
 
@@ -656,12 +657,12 @@ public final class CompositionalRules {
         {
 
 
-            Term content = Terms.compoundOrNull(Conjunction.make(premise1, oldCompound));
+            Term content = compoundOrNull(Conjunction.make(premise1, oldCompound));
             if (content != null) {
 
                 substitute.put(commonTerm1, varDep2);
 
-                Compound ct = Terms.compoundOrNull(((Compound) content).applySubstitute(substitute));
+                Compound ct = compoundOrNull(((Compound) content).applySubstitute(substitute));
                 if (ct != null) {
                     Truth truth = intersection(taskSentence.truth, belief.truth);
                     Budget budget = BudgetFunctions.forward(truth, nal);
@@ -671,10 +672,10 @@ public final class CompositionalRules {
             }
         }
 
-        substitute.clear();
 
         {
 
+            substitute.clear();
 
             substitute.put(commonTerm1, varInd1);
 
@@ -683,10 +684,10 @@ public final class CompositionalRules {
             }
 
 
-            Compound content = Terms.compoundOrNull(Implication.makeTerm(premise1, oldCompound));
+            Compound content = compoundOrNull(Implication.makeTerm(premise1, oldCompound));
             if (content != null) {
 
-                Compound ct = Terms.compoundOrNull(((Compound) content).applySubstituteToCompound(substitute));
+                Compound ct = compoundOrNull(((Compound) content).applySubstituteToCompound(substitute));
 
                 Truth truth;
 

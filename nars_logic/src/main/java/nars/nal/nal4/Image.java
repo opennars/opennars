@@ -103,7 +103,8 @@ abstract public class Image extends DefaultCompound {
         if (term.length != 2) {
             return null;
         }
-        return (relationIndex == 0) ? term[1] : term[0];
+        Term r = (relationIndex == 0) ? term[1] : term[0];
+        return r;
     }
 
     public final static class ImageUTF8Identifier extends DynamicUTF8Identifier {
