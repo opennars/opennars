@@ -22,7 +22,6 @@ package nars.nal.stamp;
 
 import nars.Global;
 import nars.Symbols;
-import nars.nal.Sentence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 
@@ -99,7 +98,7 @@ public interface Stamp extends Cloneable, Serializable {
 
     abstract public int getDuration();
 
-    abstract public long occurrence();
+    abstract public long getOccurrenceTime();
 
 
     abstract public Stamp cloneWithNewCreationTime(long newCreationTime);
@@ -188,7 +187,7 @@ public interface Stamp extends Cloneable, Serializable {
 //        this(evidence, creationTime,  getOccurrenceTime(creationTime, tense, memory.duration()), memory.duration());
 //    }
 
-    public static long occurrence(long creationTime, final Tense tense, final int duration) {
+    public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
 
         if (creationTime == Stamp.UNPERCEIVED) {
             //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
@@ -242,14 +241,14 @@ public interface Stamp extends Cloneable, Serializable {
     default public boolean before(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;
-        return order(s.occurrence(), occurrence(), duration) == TemporalRules.ORDER_BACKWARD;
+        return order(s.getOccurrenceTime(), getOccurrenceTime(), duration) == TemporalRules.ORDER_BACKWARD;
     }
 
     /** true if this instance is after 's' */
     default public boolean after(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;
-        return TemporalRules.after(s.occurrence(), occurrence(), duration);
+        return TemporalRules.after(s.getOccurrenceTime(), getOccurrenceTime(), duration);
     }
 
     default public float getOriginality() {
@@ -257,7 +256,7 @@ public interface Stamp extends Cloneable, Serializable {
     }
 
     default public boolean isEternal() {
-        return occurrence() == ETERNAL;
+        return getOccurrenceTime() == ETERNAL;
     }
 
 
@@ -314,7 +313,7 @@ public interface Stamp extends Cloneable, Serializable {
         if (creationTime)
             if (getCreationTime() != s.getCreationTime()) return false;
         if (occurrenceTime)
-            if (occurrence() != s.occurrence()) return false;
+            if (getOccurrenceTime() != s.getOccurrenceTime()) return false;
         if (evidentialBase) {
             //iterate in reverse; the ending of the evidence chain is more likely to be different
             final long[] a = getEvidentialSet();
@@ -364,12 +363,12 @@ public interface Stamp extends Cloneable, Serializable {
 
 
     default public StringBuilder appendOcurrenceTime(final StringBuilder sb) {
-        if (occurrence() != ETERNAL) {
+        if (getOccurrenceTime() != ETERNAL) {
             int estTimeLength = 10; /* # digits */
             sb.ensureCapacity(estTimeLength);
             sb.append(Long.toString(getCreationTime()));
 
-            long relOc = (occurrence() - getCreationTime());
+            long relOc = (getOccurrenceTime() - getCreationTime());
             if (relOc >= 0)
                 sb.append('+'); //+ sign if positive or zero, negative sign will be added automatically in converting the int to string:
             sb.append(relOc);
@@ -383,7 +382,7 @@ public interface Stamp extends Cloneable, Serializable {
             return "";
         }
 
-        switch (TemporalRules.order(currentTime, occurrence(), duration)) {
+        switch (TemporalRules.order(currentTime, getOccurrenceTime(), duration)) {
             case ORDER_FORWARD:
                 return Symbols.TENSE_FUTURE;
             case ORDER_BACKWARD:

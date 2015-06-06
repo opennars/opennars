@@ -326,7 +326,7 @@ public final class SyllogisticRules {
 
         Statement s = Statement.make(eitherHigherOrder ? NALOperator.EQUIVALENCE : NALOperator.SIMILARITY, term1, term2, true, order);
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
-        boolean s1 = nal.doublePremiseTask(s, truth, budget, sb, false, true), s2 = false;
+        boolean s1 = null!=nal.doublePremiseTask(s, truth, budget, sb, false, true), s2 = false;
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
 
         if (Global.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) &&
@@ -375,7 +375,7 @@ public final class SyllogisticRules {
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1),
                     truth2, budget2.clone(),false, false);*/
-            s2 = nal.doublePremiseTask(
+            s2 = null!=nal.doublePremiseTask(
                     Statement.make(NALOperator.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
                     truth3, budget3.clone(), sb, false, false);
 
@@ -439,7 +439,7 @@ public final class SyllogisticRules {
         if (temporalReasoning) {
             int order = statement.getTemporalOrder();
             if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() /*&& (!taskSentence.isQuestion()*/)) {
-                long baseTime = subSentence.occurrence();
+                long baseTime = subSentence.getOccurrenceTime();
                 if (baseTime == Stamp.ETERNAL) {
                     baseTime = nal.time();
                 }
@@ -522,7 +522,7 @@ public final class SyllogisticRules {
      * for predicate, -1 for the whole term
      * @param nal Reference to the memory
      */
-    public static boolean conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
+    public static Task conditionalDedInd(Implication premise1, short index, Term premise2, int side, NAL nal) {
         Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
@@ -543,7 +543,7 @@ public final class SyllogisticRules {
         Term subj = premise1.getSubject();
 
         if (!(subj instanceof Conjunction)) {
-            return false;
+            return null;
         }
         final Conjunction oldCondition = (Conjunction) subj;
 
@@ -571,19 +571,19 @@ public final class SyllogisticRules {
                 
             }
             if (!match) {
-                return false;
+                return null;
             }
         }
         int conjunctionOrder = subj.getTemporalOrder();
         if (conjunctionOrder == ORDER_FORWARD) {
             if (index > 0) {
-                return false;
+                return null;
             }
             if ((side == 0) && (premise2.getTemporalOrder() == ORDER_FORWARD)) {
-                return false;
+                return null;
             }
             if ((side == 1) && (premise2.getTemporalOrder() == ORDER_BACKWARD)) {
-                return false;
+                return null;
             }
         }
         Term newCondition;
@@ -615,14 +615,14 @@ public final class SyllogisticRules {
         }
         
         if ((content == null) || (!(content instanceof Compound)))
-            return false;
+            return null;
 
 
         Stamper sb;
         if (nal.nal(7) && (delta != 0)) {
             final long now = nal.time();
             long baseTime = (belief.term instanceof Implication) ?
-                taskSentence.occurrence() : belief.occurrence();
+                taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
 
             if (baseTime == Stamp.ETERNAL) {
                 baseTime = now;
@@ -630,7 +630,7 @@ public final class SyllogisticRules {
 
             if(premise1.getTemporalOrder()== TemporalRules.ORDER_CONCURRENT) {
                 //https://groups.google.com/forum/#!topic/open-nars/ZfCM416Dx1M - Interval Simplification
-                return false;
+                return null;
             }
 
             baseTime += delta;

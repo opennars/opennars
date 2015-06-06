@@ -209,7 +209,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
                         //TODO make this interval not hardcoded
                         long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(getDuration()));
                         if (!isEternal())
-                            setOccurrenceTime(occurrence() - time);
+                            setOccurrenceTime(getOccurrenceTime() - time);
                         return u;
                     } else {
                         //the result would not be valid, so just return the original input
@@ -398,7 +398,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     
     public Sentence clone(final boolean makeEternal) {
         Sentence clon = clone(term);
-        if(clon.occurrence()!=Stamp.ETERNAL && makeEternal) {
+        if(clon.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
             //change occurence time of clone
             clon.setEternal();
         }
@@ -487,7 +487,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         if (!isEternal()) {
             newTruth = TruthFunctions.eternalize(truth);
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = occurrence();
+                long occurrenceTime = getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > newTruth.getConfidence()) {
@@ -508,10 +508,10 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         float freq = truth.getFrequency();
         float conf = truth.getConfidence();
 
-        if (!isEternal() && (targetTime != occurrence())) {
+        if (!isEternal() && (targetTime != getOccurrenceTime())) {
             conf = TruthFunctions.eternalizedConfidence(conf);
             if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = occurrence();
+                long occurrenceTime = getOccurrenceTime();
                 float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
                 float projectedConfidence = factor * truth.getConfidence();
                 if (projectedConfidence > conf) {
@@ -728,8 +728,8 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         return duration;
     }
 
-    public long occurrence() {
-        return occurrence();
+    public long getOccurrenceTime() {
+        return occurrenceTime;
     }
 
     @Override
@@ -756,14 +756,14 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     }
 
     public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
-        return setOccurrenceTime(Stamp.occurrence(creation, tense, duration));
+        return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
     }
 
 
     /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
     @Override public void stamp(Sentence t) {
         t.setDuration(getDuration());
-        t.setTime(getCreationTime(), occurrence());
+        t.setTime(getCreationTime(), getOccurrenceTime());
         t.setEvidentialBase(getEvidentialBase());
     }
 
@@ -781,6 +781,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         setTime(creationTime, Stamp.ETERNAL);
         return this;
     }
+
 
 
     public static final class ExpectationComparator implements Comparator<Sentence> {

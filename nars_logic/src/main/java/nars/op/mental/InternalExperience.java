@@ -15,6 +15,7 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -183,20 +184,20 @@ public class InternalExperience extends NARReaction {
         }
     }
 
-    public boolean experienceFromBelief(NAL nal, Budget b, Sentence belief) {
+    public Task experienceFromBelief(NAL nal, Budget b, Sentence belief) {
         return experienceFromTask(nal,
                 new Task(belief.clone(), b, null),
                 false);
     }
     
-    public boolean experienceFromTask(NAL nal, Task task, boolean full) {
+    public Task experienceFromTask(NAL nal, Task task, boolean full) {
         if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
             return experienceFromTaskInternal(nal, task, full);
         }
-        return false;
+        return null;
     }
 
-    protected boolean experienceFromTaskInternal(NAL nal, Task task, boolean full) {
+    protected Task experienceFromTaskInternal(NAL nal, Task task, boolean full) {
 
        // if(OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY ||
        //         (!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY && (task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST))) {
@@ -204,27 +205,27 @@ public class InternalExperience extends NARReaction {
             char punc = task.sentence.punctuation;
             if(punc == Symbols.QUESTION || punc == Symbols.QUEST) {
                 if(task.summary()<MINIMUM_BUDGET_SUMMARY_TO_CREATE_WONDER_EVALUATE) {
-                    return false;
+                    return null;
                 }
             }
             else
             if(task.summaryLessThan(MINIMUM_BUDGET_SUMMARY_TO_CREATE)) {
-                return false;
+                return null;
             }
         }
         
         Term content=task.getTerm();
         // to prevent infinite recursions
         if (content instanceof Operation/* ||  Memory.randomNumber.nextDouble()>Global.INTERNAL_EXPERIENCE_PROBABILITY*/) {
-            return true;
+            return null;
         }
         Sentence sentence = task.sentence;
         Truth truth = new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        Stamp stamp = task.sentence.stamp.clone();
+        Stamper stamp = new Stamper(task, nal.time());
         stamp.setOccurrenceTime(nal.time());
         Operation ret = toTerm(sentence, nal);
         if (ret==null) {
-            return true;
+            return null;
         }
 
         Sentence j = new Sentence(ret, Symbols.JUDGMENT, truth, stamp);
@@ -239,8 +240,8 @@ public class InternalExperience extends NARReaction {
         }
 
         return nal.deriveTask(
-                new Task(j, (Budget) newbudget, full ? null : task),
-                false, true, "Remembered Action (Internal Experience)");
+                nal.newTask(j).budget((Budget) newbudget).parent(full ? null : task).reason("Remembered Action (Internal Experience)"),
+                false, true);
     }
 
 
@@ -297,12 +298,12 @@ public class InternalExperience extends NARReaction {
         }
     }
 
-    protected static void beliefReasonDerive(Compound new_term, NAL nal) {
+    protected static Task beliefReasonDerive(Compound new_term, NAL nal) {
 
         Sentence sentence = new Sentence(
                 new_term, Symbols.GOAL,
                 new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                new Stamp(nal.memory, Tense.Present));
+                new Stamper(nal.memory, Tense.Present));
 
         float quality = BudgetFunctions.truthToQuality(sentence.truth);
         Budget budget = new Budget(
@@ -310,7 +311,7 @@ public class InternalExperience extends NARReaction {
                 Global.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 quality);
 
-        nal.deriveTask(new Task(sentence, budget), false, false);
+        return nal.deriveTask(nal.newTask(sentence).budget(budget), false, false);
 
     }
 

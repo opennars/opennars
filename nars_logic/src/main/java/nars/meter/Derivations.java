@@ -327,7 +327,7 @@ public class Derivations extends DirectedMultigraph {
         t += s.punctuation;
 
         if (!s.isEternal())
-            t += Tense.tenseRelative(s.occurrence(), now);
+            t += Tense.tenseRelative(s.getOccurrenceTime(), now);
 
         if (includeTruth)
             t += (s.truth.toStringExternal1());

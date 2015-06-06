@@ -81,7 +81,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static boolean temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
+    public static Task temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
 
         //prevent trying question sentences, causes NPE
         if ((s1.truth == null) || (s2.truth == null))
@@ -152,7 +152,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
                 for(Term u : term) {
                     if(u!=t) { //important: checking reference here is as it should be!
                         if(equalSubTermsInRespectToImageAndProduct(t, u)) {
-                            return false;
+                            return null;
                         }
                     }
                 }
@@ -166,12 +166,12 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
                 Budget budget = BudgetFunctions.compoundForward(truth,whole, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
 
-                return nal.doublePremiseTask(whole, truth, budget,
-                        nal.newStamp(s1, s2),
+                return nal.doublePremiseTask(
+                        nal.newTask(whole).truth(truth).budget(budget).stamp(nal.newStamp(s1, s2)),
                         true, false);
             }
         }
-        return false;
+        return null;
     }
 
 }

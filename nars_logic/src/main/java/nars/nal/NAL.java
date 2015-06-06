@@ -154,7 +154,7 @@ public abstract class NAL  implements Runnable {
             final Sentence occurence = parent != null ? parent.sentence : null;
             if (occurence != null && !occurence.isEternal()) {
                 //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
-                task.occurr(occurence.occurrence());
+                task.occurr(occurence.getOccurrenceTime());
             }
         }
 
@@ -275,7 +275,15 @@ public abstract class NAL  implements Runnable {
                             .parent(parentTask, getCurrentBelief())
                             .budget(newBudget);
 
+        return doublePremiseTask(task, temporalAdd, allowOverlap);
+    }
+
+    private Task doublePremiseTask(TaskSeed task, boolean temporalAdd, boolean allowOverlap) {
+
+        final Task parentTask = task.getParentTask();
+
         Task derived;
+
         try {
             derived = deriveTask(task, false, false, parentTask, allowOverlap);
         } catch (RuntimeException e) {
@@ -287,11 +295,11 @@ public abstract class NAL  implements Runnable {
         if (derived!=null && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
             //temporal induction generated ones get eternalized directly
             deriveTask(
-                    newTask(newTaskContent)
-                        .punctuation(parentTask.sentence.punctuation)
-                        .truth(TruthFunctions.eternalize(newTruth))
+                    newTask(task.getTerm())
+                        .punctuation(task.getPunctuation())
+                        .truth(TruthFunctions.eternalize(task.getTruth()))
                         .parent(parentTask, getCurrentBelief())
-                        .budget(newBudget)
+                        .budget(task)
                         .eternal(),
                     false, false, parentTask, allowOverlap);
         }
@@ -549,7 +557,7 @@ public abstract class NAL  implements Runnable {
                 if (be > ae) break; //if be exceeds ae, it will never be equal so go to the next ae
             }
         }
-        return newStamp(A, B, A.occurrence());
+        return newStamp(A, B, A.getOccurrenceTime());
     }
 
     public float conceptPriority(Term target) {
@@ -591,15 +599,15 @@ public abstract class NAL  implements Runnable {
         if ((t == null) && (b==null))
             throw new RuntimeException("Both sentence parameters null");
         if (t == null)
-            return b.occurrence();
+            return b.getOccurrenceTime();
         else if (b == null)
-            return t.occurrence();
+            return t.getOccurrenceTime();
 
 
 
-        final long tOc = t.occurrence();
+        final long tOc = t.getOccurrenceTime();
         final boolean tEternal = (tOc == Stamp.ETERNAL);
-        final long bOc = b.occurrence();
+        final long bOc = b.getOccurrenceTime();
         final boolean bEternal = (bOc == Stamp.ETERNAL);
 
         /* see: https://groups.google.com/forum/#!searchin/open-nars/eternal$20belief/open-nars/8KnAbKzjp4E/rBc-6V5pem8J) */

@@ -355,13 +355,13 @@ public final class StructuralRules {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-    static boolean structuralCompound(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static Task structuralCompound(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (component.hasVarIndep()) {
-            return false;
+            return null;
         }
         
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return false;
+            return null;
         }        
         
         final Term content = compoundTask ? component : compound;
@@ -405,7 +405,7 @@ public final class StructuralRules {
         if (content instanceof Compound)
             return nal.singlePremiseTask((Compound)content, truth, budget);
         else
-            return false;
+            return null;
     }
 
     /* --------------- Negation related rules --------------- */
@@ -415,7 +415,7 @@ public final class StructuralRules {
      * @param content The premise
      * @param nal Reference to the memory
      */
-    public static boolean transformNegation(final Compound content, final NAL nal) {
+    public static Task transformNegation(final Compound content, final NAL nal) {
         Task task = nal.getCurrentTask();
         Sentence sentence = task.sentence;
         Truth truth = sentence.truth;

@@ -32,6 +32,7 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
@@ -53,7 +54,7 @@ public abstract class feel extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
-        Stamp stamp = new Stamp(memory, Tense.Present);
+        Stamper stamp = new Stamper(memory, Tense.Present);
         Truth truth = new DefaultTruth(value, 0.999f);
                 
         Term predicate = SetInt.make(feelingTerm);

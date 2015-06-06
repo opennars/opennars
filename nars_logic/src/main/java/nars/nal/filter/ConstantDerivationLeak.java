@@ -1,10 +1,11 @@
 package nars.nal.filter;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.nal.DerivationFilter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import com.google.common.util.concurrent.AtomicDouble;
+import nars.nal.task.TaskSeed;
 
 
 /**
@@ -26,16 +27,16 @@ public class ConstantDerivationLeak implements DerivationFilter {
 
 
     @Override
-    public String reject(final NAL nal, final Task task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
+    public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
         if (!solution) {
-            final Task derived = task;
+            final TaskSeed derived = task;
             if (!leak(derived))
                 return "Leak";
         }
         return null;
     }
 
-    protected boolean leak(Task derived) {
+    protected boolean leak(TaskSeed derived) {
         derived.mulPriority(priorityMultiplier.floatValue());
         derived.mulDurability(durabilityMultiplier.floatValue());
         return true;

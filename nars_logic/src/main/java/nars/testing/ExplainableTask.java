@@ -2,10 +2,10 @@ package nars.testing;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import nars.testing.condition.TaskCondition;
 import nars.nal.Sentence;
-import nars.nal.stamp.Stamp;
 import nars.nal.Task;
+import nars.nal.stamp.Stamper;
+import nars.testing.condition.TaskCondition;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class ExplainableTask extends Task {
     }
 
     public ExplainableTask(TaskCondition tc) {
-        this(new Sentence(tc.term, tc.punc, tc.getTruthMean(), new Stamp(tc.nar.memory, tc.getCreationTime(), tc.tense)));
+        this(new Sentence(tc.term, tc.punc, tc.getTruthMean(), new Stamper(tc.nar.memory, tc.getCreationTime(), tc.tense)));
     }
 
     public ExplainableTask(Task t) {

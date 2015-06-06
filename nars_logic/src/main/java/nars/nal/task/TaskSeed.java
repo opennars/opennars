@@ -163,6 +163,19 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
     /** attempt to build the task, and insert into memory. returns non-null if successful */
     public Task input() {
 
+        Task t = get();
+        if (t == null) return null;
+
+        if (memory.input(t) == 0) {
+            return null;
+        }
+
+        return t;
+
+    }
+
+    /** attempt to build the task. returns non-null if successful */
+    public Task get() {
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
@@ -189,7 +202,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
         if (stamp == null && !isEternal()) {
 
             /* apply the Tense on its own, with respect to the creation time and memory duration */
-            s.setOccurrenceTime(Stamp.occurrence(s.getCreationTime(), tense, memory.duration()) );
+            s.setOccurrenceTime(Stamp.getOccurrenceTime(s.getCreationTime(), tense, memory.duration()) );
         }
 
         if (this.occurrenceTime != Stamp.UNPERCEIVED) {
@@ -211,12 +224,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
         if (this.cause!=null) t.setCause(cause);
         if (this.reason!=null) t.addHistory(reason);
 
-        if (memory.input(t) == 0) {
-            return null;
-        }
-
         return t;
-
     }
 
     public Task getParentTask() {
@@ -288,4 +296,16 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
     public boolean isQuestion() { return punc == Symbols.QUESTION;     }
     public boolean isQuest() { return punc == Symbols.QUEST;     }
 
+    public T getTerm() {
+        return term;
+    }
+
+    public Truth getTruth() {
+        return truth;
+    }
+
+
+    public char getPunctuation() {
+        return punc;
+    }
 }

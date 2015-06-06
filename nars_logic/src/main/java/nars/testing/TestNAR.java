@@ -158,7 +158,7 @@ public class TestNAR extends NAR {
         if (t.sentence.truth!=null) {
             final float freq = t.sentence.getTruth().getFrequency();
             final float conf = t.sentence.getTruth().getConfidence();
-            long occurrence = t.sentence.occurrence();
+            long occurrence = t.sentence.getOccurrenceTime();
             return mustEmit(channel, now, now + withinCycles, termString, t.sentence.punctuation, freq, freq, conf, conf, occurrence);
         }
         else {

@@ -357,8 +357,8 @@ public class TemporalRules {
         final Interval.AtomicDuration duration = nal.memory.param.duration;
         int durationCycles = duration.get();
 
-        long time1 = s1.occurrence();
-        long time2 = s2.occurrence();
+        long time1 = s1.getOccurrenceTime();
+        long time2 = s2.getOccurrenceTime();
 
         final long timeDiff;
         if ((time1 == Stamp.ETERNAL) || (time2 == Stamp.ETERNAL))
@@ -398,8 +398,8 @@ public class TemporalRules {
         //https://groups.google.com/forum/#!topic/open-nars/0k-TxYqg4Mc
         if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
-            int tt1 = (int) s1.occurrence();
-            int tt2 = (int) s1.occurrence();
+            int tt1 = (int) s1.getOccurrenceTime();
+            int tt2 = (int) s1.getOccurrenceTime();
             int d = Math.abs(tt1 - tt2) / nal.memory.param.duration.get();
             if (d != 0) {
                 double mul = 1.0 / ((double) d);
@@ -540,9 +540,9 @@ public class TemporalRules {
                 Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
                         new DefaultTruth(1.0f,0.99f), a_desire.sentence);
 
-                g.setOccurrenceTime(s1.occurrence()); //strongest desire for that time is what we want to know
+                g.setOccurrenceTime(s1.getOccurrenceTime()); //strongest desire for that time is what we want to know
                 Task strongest_desireT=S1_State_C.getTask(g, S1_State_C.getGoals());
-                Sentence strongest_desire=strongest_desireT.sentence.projectionSentence(s1.occurrence(), strongest_desireT.getOccurrenceTime());
+                Sentence strongest_desire=strongest_desireT.sentence.projectionSentence(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
                 Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
 
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
@@ -556,7 +556,7 @@ public class TemporalRules {
                     if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                         shift=nal.memory.duration();
                     }
-                    occ = (strongest_desire.stamp.occurrence()-shift);
+                    occ = (strongest_desire.stamp.getOccurrenceTime()-shift);
                 }
                 
 
@@ -612,7 +612,7 @@ public class TemporalRules {
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
 
-        return solution.projectionTruthQuality(problem.occurrence(), time, problem.hasQueryVar());
+        return solution.projectionTruthQuality(problem.getOccurrenceTime(), time, problem.hasQueryVar());
 
 //        if (!matchingOrder(problem, solution)) {
 //            return 0.0F;
@@ -696,7 +696,7 @@ public class TemporalRules {
     }
 
     public static boolean concurrent(Sentence a, Sentence b, final int durationCycles) {
-        return concurrent(a.occurrence(), b.occurrence(), durationCycles);
+        return concurrent(a.getOccurrenceTime(), b.getOccurrenceTime(), durationCycles);
     }
 
     /**

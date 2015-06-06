@@ -538,7 +538,7 @@ public class ConceptPanelBuilder extends NARReaction {
             float freq = s.getTruth().getFrequency();
             float conf = s.getTruth().getConfidence();
 
-            long when = s.occurrence();
+            long when = s.getOccurrenceTime();
 
             int yy = (int) (getT(when) * length);
 

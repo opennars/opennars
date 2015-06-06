@@ -590,7 +590,7 @@ public class RuleTables {
      * @param compoundTask Whether the compound comes from the task
      * @param nal Reference to the memory
      */
-     public static boolean compoundAndSelf(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
+     public static Task compoundAndSelf(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if (compound instanceof Junction) {
             if (nal.getCurrentBelief() != null) {
                 return CompositionalRules.decomposeStatement(compound, component, compoundTask, index, nal);
@@ -606,7 +606,7 @@ public class RuleTables {
                 return StructuralRules.transformNegation(compound, nal);
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -616,7 +616,7 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param nal Reference to the memory
      */
-    public static boolean compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
+    public static Task compoundAndCompound(Compound taskTerm, Compound beliefTerm, int index, NAL nal) {
         if (Terms.equalType(taskTerm, beliefTerm)) {
             if (taskTerm.length() >= beliefTerm.length()) {
                 return compoundAndSelf(taskTerm, beliefTerm, true, index, nal);
@@ -624,7 +624,7 @@ public class RuleTables {
                 return compoundAndSelf(beliefTerm, taskTerm, false, index, nal);
             }
         }
-        return false;
+        return null;
     }
 
     /**

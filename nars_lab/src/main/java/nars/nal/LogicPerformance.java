@@ -69,7 +69,7 @@ public class LogicPerformance {
             
             Sentence s = t.sentence;
             if (!s.isEternal()) {
-                at(t, s.occurrence(), "o");
+                at(t, s.getOccurrenceTime(), "o");
             }
 
             //TODO use evidential base somehow

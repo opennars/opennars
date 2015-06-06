@@ -142,7 +142,7 @@ public class NAR extends Container implements Runnable {
 
         long now = time();
         if (!t.sentence.isEternal()) {
-            t.getStamp().setTime(now, now + t.sentence.occurrence());
+            t.getStamp().setTime(now, now + t.sentence.getOccurrenceTime());
         }
         else {
             t.getStamp().setTime(now, Stamp.ETERNAL);
@@ -247,7 +247,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public Task believe(float pri, float dur, Term beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
-        return believe(pri, dur, beliefTerm, Stamp.occurrence(time(), tense, memory.duration()), freq, conf);
+        return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
     }
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         return believe(pri, dur, (Term)term(beliefTerm), occurrenceTime, freq, conf);

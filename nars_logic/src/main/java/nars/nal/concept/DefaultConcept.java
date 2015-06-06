@@ -403,7 +403,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //                //        }
 //                ) != null) {
 
-                Sentence projectedBelief = oldBelief.projectionSentence(judg.occurrence(), now);
+                Sentence projectedBelief = oldBelief.projectionSentence(judg.getOccurrenceTime(), now);
                 if (projectedBelief!=null) {
 
                     /*
@@ -415,7 +415,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     if (nal!=null) {
                         nal.setCurrentBelief(null);
 
-                        if (revision(judg, projectedBelief, false, nal))
+                        if (revision(judg, projectedBelief, false, nal)!=null)
                             return false;
                     }
                 }
@@ -470,7 +470,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 
                 //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
                 
-                Sentence projectedGoal = oldGoal.projectionSentence(task.getOccurrenceTime(), newStamp.occurrence());
+                Sentence projectedGoal = oldGoal.projectionSentence(task.getOccurrenceTime(), task.getOccurrenceTime());
                 if (projectedGoal!=null) {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
@@ -478,8 +478,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
                    // }
                     nal.setCurrentBelief(projectedGoal);
                     if(!(task.sentence.term instanceof Operation)) {
-                        boolean successOfRevision=revision(task.sentence, projectedGoal, false, nal);
-                        if(successOfRevision) { // it is revised, so there is a new task for which this function will be called
+                        Task successOfRevision = revision(task.sentence, projectedGoal, false, nal);
+                        if(successOfRevision!=null) { // it is revised, so there is a new task for which this function will be called
                             return true; // with higher/lower desire
                         } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
                    }
@@ -487,7 +487,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
         } 
         
-        long then = goal.occurrence();
+        long then = goal.getOccurrenceTime();
         long now = memory.time();
         int dur = nal.memory.duration();
 
@@ -559,7 +559,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             for(Term q : qu) {
                 if(q!=null) {
                     Stamper st = nal.newStamp(task.sentence, nal.time());
-                    st.setOccurrenceTime(task.sentence.occurrence()); //set tense of question to goal tense
+                    st.setOccurrenceTime(task.sentence.getOccurrenceTime()); //set tense of question to goal tense
                     Sentence s=new Sentence(q,Symbols.QUESTION,null,st);
                     if(s!=null) {
                         Budget budget=new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,1);

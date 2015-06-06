@@ -77,9 +77,9 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory Reference to the memory
      */
-    public static boolean revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+    public static Task revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
         Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
-        if (stamp == null) return false;
+        if (stamp == null) return null;
 
         final Task t = nal.getCurrentTask();
 
@@ -88,18 +88,18 @@ public class LocalRules {
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        if (nal.deriveTask(new Task(new Sentence(newBelief.term,
-                t.sentence.punctuation,
-                truth,
-                stamp), budget, t, nal.getCurrentBelief()),
-                true, false, t, false)) {
+        Task revised = nal.deriveTask(nal.newTask(newBelief.term)
+            .punctuation(t.sentence.punctuation)
+                .truth(truth)
+                .stamp(stamp)
+                .budget(budget)
+                .parent(t, nal.getCurrentBelief()),
+                true, false, t, false);
 
+        if (revised!=null)
             nal.memory.logic.BELIEF_REVISION.hit();
-            return true;
 
-        }
-
-        return false;
+        return revised;
     }
 
 

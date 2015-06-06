@@ -2,6 +2,7 @@ package nars.nal.stamp;
 
 import nars.Memory;
 import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
@@ -51,14 +52,14 @@ public class Stamper<C extends Compound> implements IStamp<C> {
     }
 
     @Deprecated public Stamper(final Memory memory, long creationTime, final Tense tense) {
-        this(memory, creationTime, Stamp.occurrence(creationTime, tense, memory.duration()));
+        this(memory, creationTime, Stamp.getOccurrenceTime(creationTime, tense, memory.duration()));
     }
 
     public Stamper(Operation operation, Memory memory, Tense tense) {
         this(operation.getTask().sentence, memory, tense);
     }
     public Stamper(Sentence s, Memory memory, Tense tense) {
-        this(s, s.getCreationTime(), Stamp.occurrence(s.getCreationTime(), tense, memory.duration()));
+        this(s, s.getCreationTime(), Stamp.getOccurrenceTime(s.getCreationTime(), tense, memory.duration()));
     }
 
     public Stamper(final Memory memory, long creationTime, final long occurenceTime) {
@@ -74,6 +75,17 @@ public class Stamper<C extends Compound> implements IStamp<C> {
         this.occurrenceTime = occurrenceTime;
         this.duration = duration;
         this.evidentialBase = evidentialBase;
+    }
+
+    public Stamper(Memory memory, long occurrence) {
+        this(memory, memory.time(), occurrence);
+    }
+
+    public Stamper(Stamp s, long occ) {
+        this(s, s.getOccurrenceTime(), occ);
+    }
+    public Stamper(Task task, long occ) {
+        this(task.sentence, occ);
     }
 
     public Stamper clone() {

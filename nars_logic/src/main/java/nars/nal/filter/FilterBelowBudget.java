@@ -1,6 +1,10 @@
 package nars.nal.filter;
 
-import nars.nal.*;
+import nars.nal.DerivationFilter;
+import nars.nal.NAL;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.task.TaskSeed;
 
 
 /** this should not be used in practice because derivations should be allowed to accumulate in the derivation buffer,
@@ -11,7 +15,7 @@ public class FilterBelowBudget implements DerivationFilter {
 
     public final static String INSUFFICIENT_BUDGET = "Insufficient Budget";
 
-    @Override public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    @Override public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
         if (!task.aboveThreshold()) return INSUFFICIENT_BUDGET;
         return null;
     }

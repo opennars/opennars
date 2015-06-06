@@ -220,7 +220,7 @@ public class RunQLAgent extends JPanel {
                 }
                 else {
                     w = window;
-                    when = s.occurrence();
+                    when = s.getOccurrenceTime();
                 }
                 float timeRelevance = 1f / (1f+ Math.abs(now - when)/w);
                 //return or(confidence, Math.min(originality, timeRelevance));

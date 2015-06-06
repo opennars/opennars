@@ -226,7 +226,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     public long getOccurrenceTime() {
-        return sentence.occurrence();
+        return sentence.getOccurrenceTime();
     }
 
 
@@ -531,7 +531,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
             Stamp s = sentence;
             if (s.getCreationTime() == Stamp.UNPERCEIVED) {
                 final long now = memory.time();
-                long oc = s.occurrence();
+                long oc = s.getOccurrenceTime();
                 if (oc!=Stamp.ETERNAL)
                     oc += now;
                 getStamp().setTime(now, oc);

@@ -191,11 +191,12 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         this.hash = 0;
     }
 
-    @Override
+
     public Budget budget(Budget b) {
         /** reset the prefix when budget is set in linkTerms */
         return super.set(b);
     }
+
 
 
     @Override public TermLinkKey name() {

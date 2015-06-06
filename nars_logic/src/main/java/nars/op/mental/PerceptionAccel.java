@@ -105,7 +105,7 @@ public class PerceptionAccel extends NARReaction {
                     break;
                 }
                 Task current = eventbuffer.get(j);
-                for (long l : current.sentence.stamp.evidentialBase) {
+                for (long l : current.sentence.stamp.getEvidentialBase()) {
                     evBase.add(l);
                 }
 
@@ -113,7 +113,7 @@ public class PerceptionAccel extends NARReaction {
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth = TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next = eventbuffer.get(j + 1);
-                    relterms[k + 1] = Interval.interval(next.sentence.occurrence() - current.sentence.occurrence(), nal.memory);
+                    relterms[k + 1] = Interval.interval(next.sentence.getOccurrenceTime() - current.sentence.getOccurrenceTime(), nal.memory);
                 }
                 k += 2;
             }
@@ -191,20 +191,19 @@ public class PerceptionAccel extends NARReaction {
             Conjunction C = (Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
 
             Sentence S = new Sentence(C, Symbols.JUDGMENT, truth, st); //importance "summation"
-            Task T = new Task(S, new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth), task);
 
             if (debugMechanism) {
-                nal.emit(Events.DEBUG.class, this, "Success", T);
+                nal.emit(Events.DEBUG.class, this, "Success", S);
             }
 
             if (longest_result_derived_already) {
-                T.setParticipateInTemporalInduction(false);
+                //T.setParticipateInTemporalInduction(false);
                 //T.setParticipateInTemporalInductionOnSucceedingEvents(false);
             }
 
             longest_result_derived_already = true;
 
-            nal.deriveTask(T, false, false); //lets make the new event the parent task, and derive it
+            nal.deriveTask(nal.newTask(S).budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth)).parent(task), false, false); //lets make the new event the parent task, and derive it
         }
     }
 

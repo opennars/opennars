@@ -45,7 +45,7 @@ public class Contraposition extends ConceptFireTask {
      *
      * @param statement The premise
      */
-    protected static boolean contraposition(final Sentence sentence, final NAL nal) {
+    protected static Task contraposition(final Sentence sentence, final NAL nal) {
         //TODO this method can end earlier if it detects an input implication with freq=1, because the resulting confidence should be 0 which is useless
 
         final Statement statement = (Statement)sentence.term;
@@ -61,7 +61,7 @@ public class Contraposition extends ConceptFireTask {
                 Negation.make(subj),
                 TemporalRules.reverseOrder(statement.getTemporalOrder()));
 
-        if (content == null) return false;
+        if (content == null) return null;
 
         Truth truth = sentence.truth;
         Budget budget;

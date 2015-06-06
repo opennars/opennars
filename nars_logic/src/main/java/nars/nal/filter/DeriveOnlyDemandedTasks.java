@@ -4,12 +4,13 @@
  */
 package nars.nal.filter;
 
-import nars.Symbols;
-import nars.nal.NAL;
 import nars.nal.DerivationFilter;
+import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal8.Operation;
+import nars.nal.task.TaskSeed;
+import nars.nal.term.Compound;
 
 /**
 * only allowing derivation of tasks where a demand(goal) exists
@@ -20,13 +21,14 @@ import nars.nal.nal8.Operation;
 public class DeriveOnlyDemandedTasks implements DerivationFilter {
 
     @Override
-    public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
         
-        Sentence s = task.sentence;
+
+        Compound x = task.getTerm();
         
-        if ((s.punctuation == Symbols.JUDGMENT) && !(s.term instanceof Operation)) {
+        if ((task.isJudgment()) && !(x instanceof Operation)) {
             
-            boolean noConcept = (nal.memory.concept(s.term) == null);
+            boolean noConcept = (nal.memory.concept(x) == null);
 
             if (noConcept) {
                 //there is no question and goal of this, return

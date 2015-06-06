@@ -165,13 +165,13 @@ public final class CompositionalRules {
      * @param truth     TruthValue of the contentInd
      * @param memory    Reference to the memory
      */
-    private static boolean processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final Truth truth, final NAL nal) {
+    private static Task processComposed(final Statement statement, final Term subject, final Term predicate, final int order, final Truth truth, final NAL nal) {
         if ((subject == null) || (predicate == null)) {
-            return false;
+            return null;
         }
         Term content = Statement.make(statement, subject, predicate, order);
         if ((content == null) || statement == null || (!(content instanceof Compound)) || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().term)) {
-            return false;
+            return null;
         }
 
         return nal.doublePremiseTask((Compound) content, truth,
@@ -202,14 +202,14 @@ public final class CompositionalRules {
      * @param nal             Reference to the memory
      * @return whether a double premise decomposition was derived
      */
-    private static boolean decomposeCompound(final Compound compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
+    private static Task decomposeCompound(final Compound compound, Term component, Term term1, int index, boolean compoundTask, int order, NAL nal) {
 
         if ((compound instanceof Statement) || (compound instanceof Image)) {
-            return false;
+            return null;
         }
         Term term2 = reduceComponents(compound, component, nal.memory);
         if (term2 == null) {
-            return false;
+            return null;
         }
 
         final Task task = nal.getCurrentTask();
@@ -230,7 +230,7 @@ public final class CompositionalRules {
         if (index == 0) {
             content = Statement.make(oldContent, term1, term2, order);
             if (content == null) {
-                return false;
+                return null;
             }
             if (oldContent instanceof Inheritance) {
                 if (compound instanceof IntersectionExt) {
@@ -258,7 +258,7 @@ public final class CompositionalRules {
         } else {
             content = Statement.make(oldContent, term2, term1, order);
             if (content == null) {
-                return false;
+                return null;
             }
             if (oldContent instanceof Inheritance) {
                 if (compound instanceof IntersectionInt) {
@@ -289,20 +289,19 @@ public final class CompositionalRules {
                     BudgetFunctions.compoundForward(truth, content, nal),
                     nal.newStamp(sentence, belief), false, true);
         }
-        return false; //probably should never reach here
+        return null; //probably should never reach here
     }
 
     /**
      * {(||, S, P), P} |- S {(&&, S, P), P} |- S
-     *
-     * @param implication     The implication term to be decomposed
+     *  @param implication     The implication term to be decomposed
      * @param componentCommon The part of the implication to be removed
      * @param compoundTask    Whether the implication comes from the task
      * @param nal             Reference to the memory
      */
-    static boolean decomposeStatement(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static Task decomposeStatement(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return false;
+            return null;
         }
 
         Task task = nal.getCurrentTask();
@@ -310,7 +309,7 @@ public final class CompositionalRules {
         final Sentence belief = nal.getCurrentBelief();
         Compound content = Terms.compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null) {
-            return false;
+            return null;
         }
         Truth truth = null;
         Budget budget;
@@ -324,11 +323,11 @@ public final class CompositionalRules {
             if (taskSentence.term.hasVarQuery()) {
                 Concept contentConcept = nal.memory.concept(content);
                 if (contentConcept == null) {
-                    return false;
+                    return null;
                 }
                 Sentence contentBelief = contentConcept.getBelief(nal, task);
                 if (contentBelief == null) {
-                    return false;
+                    return null;
                 }
                 Task contentTask = new Task(contentBelief, task);
                 //nal.setCurrentTask(contentTask);
@@ -353,7 +352,7 @@ public final class CompositionalRules {
                     if (compoundTask) {
                         truth = intersection(v1, v2);
                     } else {
-                        return false;
+                        return null;
                     }
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
@@ -363,13 +362,13 @@ public final class CompositionalRules {
                     if (compoundTask) {
                         truth = reduceConjunction(v2, v1);
                     } else {
-                        return false;
+                        return null;
                     }
                 } else {  // isJudgment
                     truth = reduceDisjunction(v1, v2);
                 }
             } else {
-                return false;
+                return null;
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
@@ -617,13 +616,14 @@ public final class CompositionalRules {
      * @param oldCompound   The whole contentInd of the first premise, Implication
      *                      or Conjunction
      * @param nal           Reference to the memory
+     *
      */
-    static boolean introVarInner(Statement premise1, Statement premise2, Compound oldCompound, NAL nal) {
+    static Task introVarInner(Statement premise1, Statement premise2, Compound oldCompound, NAL nal) {
         final Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
 
         if (!taskSentence.isJudgment() || (!Terms.equalType(premise1, premise2)) || oldCompound.containsTerm(premise1)) {
-            return false;
+            return null;
         }
 
         Term subject1 = premise1.getSubject();
@@ -638,7 +638,7 @@ public final class CompositionalRules {
             commonTerm1 = predicate1;
             commonTerm2 = secondCommonTerm(subject1, subject2, 0);
         } else {
-            return false;
+            return null;
         }
 
         final Sentence belief = nal.getCurrentBelief();
@@ -646,7 +646,7 @@ public final class CompositionalRules {
 
         Stamper stamp = nal.newStamp(taskSentence, belief);
 
-        boolean b = false;
+        Task b = null;
 
         {
 
@@ -693,7 +693,8 @@ public final class CompositionalRules {
 
                 Budget budget = BudgetFunctions.forward(truth, nal);
 
-                b |= nal.doublePremiseTask(ct, truth, budget, stamp, false, false);
+                Task c = nal.doublePremiseTask(ct, truth, budget, stamp, false, false);
+
             }
         }
 

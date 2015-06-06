@@ -34,7 +34,7 @@ import nars.nal.*;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Term;
 
 import java.util.Collection;
@@ -151,10 +151,10 @@ public class Anticipate extends NARReaction implements Mental {
         //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
 
         Task task = new Task(
-                new Sentence<>(prediction,
+                new Sentence(prediction,
                         Symbols.JUDGMENT,
                         expiredTruth,
-                        new Stamp(nal.memory, expectedOccurenceTime /*- nal.memory.param.duration.get()*/ )),
+                        new Stamper(nal.memory, expectedOccurenceTime)),
                 //expiredBudget
                 tt.getBudget().clone(),
                 tt.task
