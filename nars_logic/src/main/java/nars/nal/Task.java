@@ -24,8 +24,8 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.IStamp;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.StampEvidence;
 import nars.nal.term.Compound;
 import nars.nal.term.Termed;
 import nars.op.mental.InternalExperience;
@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, IStamp<Operation> {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, StampEvidence {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -556,8 +556,18 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     @Override
-    public void stamp(Sentence<Operation> c) {
-        sentence.stamp(c);
+    public void applyToStamp(Stamp c) {
+        sentence.applyToStamp(c);
+    }
+
+    @Override
+    public long[] getEvidentialBase() {
+        return sentence.getEvidentialBase();
+    }
+
+    @Override
+    public long[] getEvidentialSet() {
+        return sentence.getEvidentialSet();
     }
 
     @Override

@@ -12,8 +12,9 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.IStamp;
+import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.StampEvidence;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 
@@ -22,14 +23,14 @@ import nars.nal.term.Compound;
  *
  *  TODO abstract this and move this into a specialization of it called FluentTaskSeed
  * */
-public class TaskSeed<T extends Compound> extends DirectBudget {
+public class TaskSeed<T extends Compound> extends DirectBudget implements AbstractStamper {
 
     private final T term;
     private final Memory memory;
 
     private char punc;
     private Tense tense;
-    private IStamp<T> stamp;
+    private AbstractStamper stamp;
     private Truth truth;
     private Task parent;
     private Operation cause;
@@ -137,7 +138,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
     }
 
 
-    public TaskSeed<T> stamp(IStamp<T> s) { this.stamp = s; return this;}
+    public TaskSeed<T> stamp(AbstractStamper s) { this.stamp = s; return this;}
 
     public TaskSeed<T> budget(float p, float d) {
         return budget(p, d, Float.NaN);
@@ -180,6 +181,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
 
+
         if ((truth == null) && !((punc==Symbols.QUEST) || (punc==Symbols.QUESTION))) {
             truth = new DefaultTruth(punc);
         }
@@ -191,31 +193,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
 //        }
 
         Sentence s = new Sentence(term, punc, truth,
-                stamp == null ? memory : stamp);
+                stamp == null ? memory : this);
 
         if (s == null)
             return null;
-
-
-        //override occurence time provided by the stamp with either tense or a specific occurrence time:
-        {
-            boolean hasTense = (tense != null);
-            boolean hasSpecificOcccurence = (this.occurrenceTime != Stamp.UNPERCEIVED);
-
-            if (hasTense && hasSpecificOcccurence) {
-                throw new RuntimeException("ambiguous choice between tense " + tense + " and specific occurence time " + occurrenceTime + "; only use one to avoid any inconsistency");
-            }
-
-            if (hasTense) {
-                /* apply the Tense on its own, with respect to the creation time and memory duration */
-                s.setOccurrenceTime(Stamp.getOccurrenceTime(s.getCreationTime(), tense, memory.duration()));
-            }
-
-            if (hasSpecificOcccurence) {
-                s.setOccurrenceTime(this.occurrenceTime);
-            }
-        }
-
 
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
         if (Float.isNaN(quality) && truth != null) {
@@ -278,14 +259,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
 
     /** if a stamp exists, determine if it will be cyclic;
      *  otherwise assume that it is not. */
-    public boolean isStampCyclic() {
-        if (stamp!=null) return stamp.isCyclic();
-        else if ((getParentTask()!=null) && (getParentBelief()==null)) {
-            //if only the parent task is known (no parent belief)
-            //the evidential set will be the same. so we'll compare its cyclicity
-            return getParentTask().sentence.isCyclic();
-        }
-        return false;
+    public boolean isCyclic() {
+        if ((stamp!=null) && (stamp instanceof StampEvidence))
+            return ((StampEvidence)stamp).isCyclic();
+
+        throw new RuntimeException(this + " has no evidence to determine cyclicity");
     }
 
 
@@ -319,5 +297,29 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
 
     public char getPunctuation() {
         return punc;
+    }
+
+    @Override
+    public void applyToStamp(Stamp target) {
+        if (stamp!=null)
+            stamp.applyToStamp(target);
+
+        //override occurence time provided by the stamp with either tense or a specific occurrence time:
+        {
+            boolean hasTense = (tense != null);
+            boolean hasSpecificOcccurence = (this.occurrenceTime != Stamp.UNPERCEIVED);
+
+            if (hasTense && hasSpecificOcccurence) {
+                throw new RuntimeException("ambiguous choice between tense " + tense + " and specific occurence time " + occurrenceTime + "; only use one to avoid any inconsistency");
+            }
+
+            if (hasTense) {
+                /* apply the Tense on its own, with respect to the creation time and memory duration */
+                target.setOccurrenceTime(Stamp.getOccurrenceTime(target.getCreationTime(), tense, memory.duration()));
+            }
+            else if (hasSpecificOcccurence) {
+                target.setOccurrenceTime(this.occurrenceTime);
+            }
+        }
     }
 }

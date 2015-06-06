@@ -183,11 +183,10 @@ public class NarseseParser extends BaseParser<Object> {
         Tense te = tense.get();
 
         return new Task(new Sentence((Compound)content, p, t,
-
-
                 memory, //getNewStamp(memory, newStamp, Stamp.UNPERCEIVED, te),
-
-                false).setOccurrenceTime(Stamp.UNPERCEIVED, te, memory.duration()), B );
+                false)
+                .setCreationTime(Stamp.UNPERCEIVED)
+                .setOccurrenceTime(Stamp.UNPERCEIVED, te, memory.duration()), B );
 
         /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
             return new Stamp(

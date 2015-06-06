@@ -20,7 +20,6 @@
  */
 package nars;
 
-import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -50,7 +49,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.IStamp;
+import nars.nal.stamp.AbstractStamper;
+import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
@@ -80,7 +80,7 @@ import static nars.nal.concept.Concept.State;
  *
  * Memory is serializable so it can be persisted and transported.
  */
-public class Memory implements Serializable, IStamp<Compound> {
+public class Memory implements Serializable, AbstractStamper {
 
 
 
@@ -230,7 +230,7 @@ public class Memory implements Serializable, IStamp<Compound> {
     }
 
     /** applies default settings, with a new serial # as its evidentialBase, for a new input sentence */
-    @Override public void stamp(Sentence<Compound> t) {
+    @Override public void applyToStamp(Stamp t) {
 //
 //    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
 //        super();
@@ -243,7 +243,7 @@ public class Memory implements Serializable, IStamp<Compound> {
 //    protected Stamp(final long serial, final long creationTime, final long occurenceTime, final int duration) {
 //        this(new long[]{serial}, creationTime, occurenceTime, duration);
 //    }
-        t.setTime(time());
+        t.setCreationTime(time());
         t.setDuration(duration());
         t.setEvidentialBase(new long[]{ newStampSerial() });
     }

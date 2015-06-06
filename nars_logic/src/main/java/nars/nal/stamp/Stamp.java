@@ -27,6 +27,7 @@ import nars.nal.nal7.Tense;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import static java.util.Arrays.*;
 
 import static nars.nal.nal7.TemporalRules.*;
 import static nars.nal.nal7.Tense.*;
@@ -35,7 +36,7 @@ import static nars.nal.nal7.Tense.*;
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
  */
 
-public interface Stamp extends Cloneable, Serializable {
+public interface Stamp extends StampEvidence, Cloneable, Serializable {
 
     /**
      * default for atemporal events
@@ -88,11 +89,7 @@ public interface Stamp extends Cloneable, Serializable {
 //    }
 //
 
-    /** the evidentialBase array of serials */
-    abstract public long[] getEvidentialBase();
 
-    /** deduplicated and sorted version of the evidentialBase */
-    abstract public long[] getEvidentialSet();
 
     abstract public long getCreationTime();
 
@@ -206,11 +203,185 @@ public interface Stamp extends Cloneable, Serializable {
         return Stamp.ETERNAL;
     }
 
-    public static long[] toSetArray(final long[] x) {
-        long[] set = x.clone();
 
-        if (x.length < 2)
-            return set;
+    /** Deduplicating heap sort for long[] arrays.
+     *  WARNING doesnt seem to work
+     * */
+    public static class LongDeduplicatingHeapSort {
+
+
+        /**
+         * Standard heapsort.
+         * @param a an array of Comparable items.
+         * @return how many duplicates were removed
+         */
+        public static int sort( long[ ] a )
+        {
+            int duplicates = 0;
+
+
+            int al = a.length;
+
+            for( int i = al / 2; i >= 0; ) { /* buildHeap */
+
+                int dd = percDown(a, i, al);
+
+                boolean dupLimit = ( duplicates >= al-1);
+
+                if ((dd > 0) && (!dupLimit)) {
+                    duplicates += dd;
+                    dupLimit = ( duplicates >= al-1);
+                }
+
+
+                //proceed only if there was no duplicate, or if we have reached the duplicate limit
+                if ((dd == 0) || dupLimit) {
+                    i--;
+                }
+            }
+
+            for( int i = al - 1; i > 0;  ) {
+
+                swapReferences( a, 0, i );  /* deleteMax */
+
+                int dd = percDown( a, 0, i );
+
+                boolean dupLimit = ( duplicates >= al-1);
+
+                if ((dd > 0) && (!dupLimit)) {
+                    duplicates += dd;
+                    dupLimit = ( duplicates >= al-1);
+                }
+
+
+                //proceed only if there was no duplicate, or if we have reached the duplicate limit
+                if ((dd == 0) || dupLimit) {
+                    i--;
+                }
+                else {
+                    //go backwards
+                    if (i < al - 1)
+                        i++;
+                }
+
+            }
+
+            return duplicates;
+        }
+
+        /**
+         * Internal method for heapsort.
+         * @param i the index of an item in the heap.
+         * @return the index of the left child.
+         */
+        private static int leftChild( final int i ) {
+            return 2 * i + 1;
+        }
+
+        /**
+         * Internal method for heapsort that is used in
+         * deleteMax and buildHeap.
+         * @param a an array of Comparable items.
+         * @index i the position from which to percolate down.
+         * @int n the logical size of the binary heap.
+         * @return how many duplicates were removed
+         */
+        private static int percDown( long [] a, int i, int n )
+        {
+            int c;
+            long tmp;
+            int dups = 0;
+
+            for( tmp = a[ i ]; leftChild( i ) < n; i = c ) {
+                c = leftChild(i);
+
+
+
+                if( c != n-1 ) {
+                    final long ac1 = a[c+1];
+
+                    int c1 = Long.compare(a[c], ac1 );
+                    if ((c1 == 0) && (a[c]!=-1)) {
+                        a[c] = -1;
+                        //dups++;
+                        return 1;
+                    }
+
+                    if (c1 < 0 )
+                        c++;
+                }
+
+
+                int c2 = Long.compare(tmp, a[c]);
+                if ((c2 == 0) && (tmp!=-1)) {
+                    tmp = -1;
+                    return 1;
+                    //dups++;
+                }
+
+                if( c2 >= 0 ) {
+                    break;
+                }
+
+                a[i] = a[c];
+            }
+
+            a[ i ] = tmp;
+
+            return 0;
+        }
+
+
+        /**
+         * Method to swap to elements in an array.
+         * @param a an array of objects.
+         * @param index1 the index of the first object.
+         * @param index2 the index of the second object.
+         */
+        public static final void swapReferences( final long[ ] a, final int index1, final int index2 ) {
+            final long tmp = a[ index1 ];
+            a[ index1 ] = a[ index2 ];
+            a[ index2 ] = tmp;
+        }
+    }
+
+    public static long[] toSetArray(final long[] x) {
+        long[] z = toSetArrayOLD(x);
+
+        /*if (x.length!=1) {
+            long[] y = toSetArrayHeap(x);
+
+            if (!Arrays.equals(z, y)) {
+                System.err.println("inconsistent toSetArray: " + Arrays.toString(x) + "  " + Arrays.toString(y) + "  " + Arrays.toString(z));
+            }
+        }*/
+
+        return z;
+    }
+
+    public static long[] toSetArrayHeap(final long[] x) {
+        final int l = x.length;
+
+        if (l < 2)
+            return x;
+
+        long[] y = Arrays.copyOf(x, l);
+
+        int duplicates = LongDeduplicatingHeapSort.sort(y);
+        if (duplicates == 0)
+            return y;
+        else {
+            return Arrays.copyOfRange(y, duplicates, l);
+        }
+    }
+
+    public static long[] toSetArrayOLD(final long[] x) {
+        final int l = x.length;
+
+        if (l < 2)
+            return x;
+
+        long[] set = Arrays.copyOf(x, l);
 
         //1. copy evidentialBse
         //2. sorted
@@ -280,17 +451,6 @@ public interface Stamp extends Cloneable, Serializable {
      return true;
      }
      */
-
-    /**
-     * Get a number from the evidentialBase by index, called in this class only
-     *
-     * @param i The index
-     * @return The number at the index
-     */
-    default long get(final int i) {
-        return getEvidentialSet()[i];
-    }
-
 
 
 
@@ -438,7 +598,34 @@ public interface Stamp extends Cloneable, Serializable {
     }
 
 
-    Stamp setTime(long creation, long occurrence);
+    public Stamp setCreationTime(long c);
+    public Stamp setOccurrenceTime(long o);
+    public Stamp setDuration(int d);
+
+    /** should not call this directly, but use setEvidence() */
+    public Stamp setEvidentialBase(long[] b);
+
+    /** default implementation here is just to ignore the cached value
+     * because an implementation can generate one anyway.
+     * but if the implementation wants to store it they can trust
+     * this will be called with a precomputed value that matches the
+     * evidentialBase provided in a previous call.
+     *
+     *
+     */
+    default Stamp setEvidentialSet(long[] evidentialSetCached) {  return this;  }
+
+    default Stamp setEvidence(long[] evidentialBase, long[] evidentialSet) {
+        setEvidentialBase(evidentialBase);
+        setEvidentialSet(evidentialSet);
+        return this;
+    }
+
+    default Stamp setTime(long creation, long occurrence) {
+        setCreationTime(creation);
+        setOccurrenceTime(occurrence);
+        return this;
+    }
 
 
     /*public int getDuration() {
@@ -484,14 +671,17 @@ public interface Stamp extends Cloneable, Serializable {
      */
 
 
-    static boolean isCyclic(final Stamp x) {
-        long[] es = x.getEvidentialSet();
+    static boolean isCyclic(final StampEvidence x) {
         long[] eb = x.getEvidentialBase();
-        return isCyclic(eb, es);
-    }
-
-    static boolean isCyclic(final long[] eb) {
-        return isCyclic(eb, toSetArray(eb));
+        switch (eb.length) {
+            case 0:
+            case 1:
+                return false;
+            case 2:
+                return eb[0] != eb[1];
+            default:
+                return isCyclic(eb, x.getEvidentialSet());
+        }
     }
 
     static boolean isCyclic(final long[] eb, long[] es) {
@@ -525,6 +715,7 @@ public interface Stamp extends Cloneable, Serializable {
         }
         return true;
     }
+
 
 
 }

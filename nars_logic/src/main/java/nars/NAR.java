@@ -281,7 +281,7 @@ public class NAR extends Container implements Runnable {
                                 narsese.parseCompound(termString),
                                 questionOrQuest,
                                 null,
-                                memory).setTime(Stamp.UNPERCEIVED),
+                                memory).setCreationTime(Stamp.UNPERCEIVED),
                         new Budget(
                                 Global.DEFAULT_QUESTION_PRIORITY,
                                 Global.DEFAULT_QUESTION_DURABILITY,

@@ -31,7 +31,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
-import nars.nal.stamp.IStamp;
+import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.*;
@@ -48,7 +48,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truthed, Sentenced, Serializable, IStamp<T> {
+public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
 
 
     /**
@@ -91,8 +91,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     private long[] evidentialSet = null;
 
 
-    transient private int evidentialHash; //hash which includes only evidentialSet, not creation/occurenceTimes
-
     private long creationTime = Stamp.UNPERCEIVED;
 
     private long occurrenceTime = Stamp.ETERNAL;
@@ -102,11 +100,11 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     @Deprecated public final Stamp stamp = this;
 
 
-    public Sentence(Term invalidTerm, char punctuation, Truth newTruth, IStamp newStamp) {
+    public Sentence(Term invalidTerm, char punctuation, Truth newTruth, AbstractStamper newStamp) {
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    public Sentence(T term, char punctuation, Truth newTruth, IStamp newStamp) {
+    public Sentence(T term, char punctuation, Truth newTruth, AbstractStamper newStamp) {
         this(term, punctuation, newTruth, newStamp, true);
     }
 
@@ -119,7 +117,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, IStamp stamp, boolean normalize) {
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp, boolean normalize) {
 
         this.punctuation = punctuation;
 
@@ -138,7 +136,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
 
         //apply the stamp to this
-        stamp.stamp(this);
+        stamp.applyToStamp(this);
 
 
 
@@ -177,7 +175,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
         this.term.ensureNormalized("Sentence term");
 
-        this.hash = 0;
+        invalidateHash();
 
     }
 
@@ -251,42 +249,26 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     }
 
     /**
-     * To produce the hashcode of a sentence
+     * To produce the hashcode of a sentence, which consists of:
+     *
      *
      * @return A hashcode
      */
     @Override
     public int hashCode() {
-        if ((this.hash == 0) /*&& (stamp!=null)*/) {
-            //include punctuation separately because it will involve overhead calling Object.hash(punctuation) and having to box it
+        if (this.hash == 0) {
+
+            int hashStamp = Util.hashL(Arrays.hashCode(getEvidentialSet()), (int)this.occurrenceTime);
+
             if (truth == null)
-                this.hash = (Util.hash(term, hashStamp()) * 31) + punctuation;
+                this.hash = (Util.hashL(hashStamp, term.hashCode()) * 31) + punctuation;
             else
-                this.hash = (Util.hash(term, truth, hashStamp()) * 31) + punctuation;
+                this.hash = (Util.hash(hashStamp, term.hashCode(), truth.hashCode()) * 31) + punctuation;
+
         }
+
         return hash;
     }
-
-    /**
-     * The hash code of Stamp; incorporates evidentialHash and occurenceTime (but not creationTime)
-     *
-     * @return The hash code
-     */
-    public final int hashStamp() {
-        if (evidentialSet == null)
-            getEvidentialSet();
-        if (hash == 0) {
-            hash = Util.hashL(evidentialHash, (int)this.occurrenceTime);
-        }
-        return hash;
-    }
-
-//    public void hash(PrimitiveSink p) {
-//        p.putLong(occurrenceTime);
-//        for (long e :toSet())
-//            p.putLong(e);
-//    }
-
 
     public void hash(PrimitiveSink into) {
 
@@ -300,6 +282,9 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
             into.putFloat(t.getFrequency());
             into.putFloat(t.getConfidence());
         }
+        into.putLong(occurrenceTime);
+        for (long e : getEvidentialSet())
+            into.putLong(e);
     }
 
 
@@ -380,14 +365,26 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         return x;
     }
 
-    /**
-     * sets the creation time; used to set input tasks with the actual time they enter Memory
-     */
-    public Sentence setTime(long creation, long occurrence) {
-        this.creationTime = creation;
-        this.occurrenceTime = occurrence;
-        this.hash = 0;
+    @Override
+    public Sentence setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+        invalidateHash();
         return this;
+    }
+
+    public Sentence setOccurrenceTime(long occurrenceTime) {
+        this.occurrenceTime = occurrenceTime;
+        invalidateHash();
+        return this;
+    }
+
+    public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
+        return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
+    }
+
+
+    protected void invalidateHash() {
+        this.hash = 0;
     }
 
     public Sentence setEternal() {
@@ -713,7 +710,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     public long[] getEvidentialSet() {
         if (evidentialSet == null) {
             this.evidentialSet = Stamp.toSetArray(evidentialBase);
-            this.evidentialHash = Arrays.hashCode(evidentialSet);
         }
         return evidentialSet;
     }
@@ -750,38 +746,41 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         return TemporalRules.occurrsAfter(this, s);
     }
 
-    public Sentence setOccurrenceTime(long occurrenceTime) {
-        this.occurrenceTime = occurrenceTime;
-        return this;
-    }
-
-    public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
-        return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
-    }
 
 
     /** applies this Sentence's stamp information to a target Sentence (implementing IStamp) */
-    @Override public void stamp(Sentence t) {
-        t.setDuration(getDuration());
-        t.setTime(getCreationTime(), getOccurrenceTime());
-        t.setEvidentialBase(getEvidentialBase());
+    @Override public void applyToStamp(Stamp target) {
+        target.setDuration(getDuration());
+        target.setTime(getCreationTime(), getOccurrenceTime());
+        target.setEvidentialBase(getEvidentialBase());
     }
 
-    public void setEvidentialBase(long[] evidentialBase) {
+    @Override
+    public Sentence setEvidentialBase(long[] evidentialBase) {
+
+        if (this.evidentialBase!=null)
+            throw new RuntimeException(this + " already assigned an EvidentialBase: " + Arrays.toString(evidentialBase) + " different from: " + Arrays.toString(this.evidentialBase));
+
         this.evidentialBase = evidentialBase;
         this.evidentialSet = null;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    /** default time setter, with ETERNAL for occurrencetime */
-    public Sentence setTime(long creationTime) {
-        setTime(creationTime, Stamp.ETERNAL);
+        invalidateHash();
         return this;
     }
 
+    @Override
+    public Sentence setEvidentialSet(long[] evidentialSet) {
+        if (evidentialSet!=null) {
+            this.evidentialSet = evidentialSet;
+        }
+
+        invalidateHash();
+        return this;
+    }
+
+    public Sentence setDuration(int duration) {
+        this.duration = duration;
+        return this;
+    }
 
 
     public static final class ExpectationComparator implements Comparator<Sentence> {
@@ -870,6 +869,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
     @Override
     public boolean isCyclic() {
+        //TODO cache this?
         return Stamp.isCyclic(this);
     }
 }

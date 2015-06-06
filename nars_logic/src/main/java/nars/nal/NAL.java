@@ -138,7 +138,7 @@ public abstract class NAL  implements Runnable {
             //if revised, the stamp should already have been prevented from even being created
 
             if (!Global.OVERLAP_ALLOW && (revised || !allowOverlap)) {
-                if (task.isStampCyclic()) {
+                if (task.isCyclic()) {
                     //RuntimeException re = new RuntimeException(task + " Overlapping Revision Evidence: Should have been discovered earlier: " + task.getStamp());
                     //re.printStackTrace();
                     memory.removed(task, "Cyclic");
@@ -300,6 +300,7 @@ public abstract class NAL  implements Runnable {
                         .truth(TruthFunctions.eternalize(task.getTruth()))
                         .parent(parentTask, getCurrentBelief())
                         .budget(task)
+                        .stamp(derived)
                         .eternal(),
                     false, false, parentTask, allowOverlap);
         }

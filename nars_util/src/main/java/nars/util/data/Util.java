@@ -31,14 +31,19 @@ public final class Util {
     final static int PRIME3 = 524287;
     final static int PRIME2 = 92821;
 
-    public final static int hash(Object a, Object b) {
-        return PRIME2 * (31 + a.hashCode() ) + b.hashCode() ;
-    }
     public final static int hashL(int a, int b) {
         return PRIME2 * (31 + a ) + b ;
     }
+    public final static int hash(int a, int b, int c) {
+        return  PRIME3 * (31 * (PRIME2 + a ) + b ) + c ;
+    }
+
+    public final static int hash(Object a, Object b) {
+        return hashL(a.hashCode(), b.hashCode());
+    }
+
     public final static int hash(Object a, Object b, Object c) {
-        return       PRIME3 * (31 * (PRIME2 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ;
+        return  hash(a.hashCode(), b.hashCode(), c.hashCode());
     }
     public final static int hash(Object a, Object b, Object c, Object d) {
         return 31 * (PRIME3 * (31 * (PRIME2 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;

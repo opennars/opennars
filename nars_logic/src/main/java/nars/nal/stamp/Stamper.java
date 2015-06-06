@@ -10,7 +10,7 @@ import nars.nal.term.Compound;
 /**
  * applies Stamp information to a sentence. default IStamp implementation.
  */
-public class Stamper<C extends Compound> implements IStamp<C> {
+public class Stamper<C extends Compound> implements StampEvidence, AbstractStamper {
 
     /**
      * serial numbers. not to be modified after Stamp constructor has initialized it
@@ -46,6 +46,7 @@ public class Stamper<C extends Compound> implements IStamp<C> {
      * optional second parent stamp
      */
     public Stamp b = null;
+    private long[] evidentialSetCached;
 
     @Deprecated public Stamper(final Memory memory, final Tense tense) {
         this(memory, memory.time(), tense);
@@ -127,55 +128,64 @@ public class Stamper<C extends Compound> implements IStamp<C> {
         return setOccurrenceTime(Stamp.ETERNAL);
     }
 
-    @Override
-    public void stamp(Sentence<C> t) {
-
-        Stamp p = null; //parent to inherit some properties from
-
-        if ((a == null) && (b == null)) {
-            //will be assigned a new serial
-        } else if ((a != null) && (b != null)) {
-            evidentialBase = Stamp.zip(a.getEvidentialSet(), b.getEvidentialSet());
-            p = a;
-        }
-        else if (a == null) p = b;
-        else if (b == null) p = a;
 
 
-        if (p!=null) {
-            this.duration = p.getDuration();
-            this.evidentialBase = p.getEvidentialBase();
-        }
+    @Override public void applyToStamp(final Stamp target) {
 
-        if (t!=null) {
-            t.setDuration(duration);
-            t.setTime(creationTime, getOccurrenceTime());
-            t.setEvidentialBase(evidentialBase);
-        }
+        target.setDuration(getDuration())
+              .setTime(creationTime, occurrenceTime)
+              .setEvidence(getEvidentialBase(), evidentialSetCached);
+
     }
 
+    public int getDuration() {
+        if (this.duration == 0) {
+            if (b!=null)
+                return (this.duration = b.getDuration());
+            else if (a!=null)
+                return (this.duration = a.getDuration());
+            else
+                throw new RuntimeException("Unknown duration");
+        }
+        return duration;
+    }
+
+    @Override
+    public long[] getEvidentialSet() {
+        updateEvidence();
+        return evidentialSetCached;
+    }
 
     public long[] getEvidentialBase() {
-        if (evidentialBase == null) {
-            stamp(null); //compute any missing values
-        }
+        updateEvidence();
         return evidentialBase;
     }
 
-    @Override
-    public boolean isCyclic() {
-        long[] eb = getEvidentialBase();
-        return Stamp.isCyclic(eb);
-        //throw new RuntimeException(this + " unable to calculate evidentialBase");
+    protected void updateEvidence() {
+        if (evidentialBase == null) {
+            Stamp p = null; //parent to inherit some properties from
+
+            if ((a == null) && (b == null)) {
+                //will be assigned a new serial
+            } else if ((a != null) && (b != null)) {
+                //evidentialBase = Stamp.zip(a.getEvidentialSet(), b.getEvidentialSet());
+                evidentialBase = Stamp.zip(a.getEvidentialBase(), b.getEvidentialBase());
+                p = a;
+            }
+            else if (a == null) p = b;
+            else if (b == null) p = a;
+
+
+            if (p!=null) {
+                this.evidentialBase = p.getEvidentialBase();
+                this.evidentialSetCached = p.getEvidentialSet();
+            }
+        }
     }
+
 
     public boolean isEternal() {
         return occurrenceTime == Stamp.ETERNAL;
-    }
-
-
-    public long getOccurrenceTime() {
-        return occurrenceTime;
     }
 
 
