@@ -5,7 +5,7 @@ import nars.model.impl.Default;
 import nars.nal.nal5.Conjunction;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.nal.transform.TermVisitor;
+import nars.nal.term.transform.TermVisitor;
 import nars.nal.term.Variable;
 import org.junit.Test;
 

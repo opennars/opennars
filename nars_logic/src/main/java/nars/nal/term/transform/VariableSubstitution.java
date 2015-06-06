@@ -1,9 +1,7 @@
-package nars.nal.transform;
+package nars.nal.term.transform;
 
 import nars.nal.term.Compound;
 import nars.nal.term.Variable;
-import nars.nal.transform.CompoundSubstitution;
-import nars.nal.transform.VariableTransform;
 
 /**
  * Created by me on 6/1/15.

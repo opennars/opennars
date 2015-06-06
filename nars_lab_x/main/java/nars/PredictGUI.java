@@ -26,7 +26,7 @@ import nars.nal.entity.Task;
 import nars.nal.language.Interval;
 import nars.nal.language.Tense;
 import nars.nal.language.Term;
-import nars.nal.filter.LimitDerivationPriority;
+import nars.nal.task.filter.LimitDerivationPriority;
 
 import javax.swing.*;
 import java.awt.*;

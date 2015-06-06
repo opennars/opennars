@@ -1,9 +1,8 @@
-package nars.nal.transform;
+package nars.nal.term.transform;
 
 import nars.nal.term.Compound;
 import nars.nal.term.Variable;
 import nars.util.data.FastPutsArrayMap;
-import nars.util.utf8.Utf8;
 
 import java.util.Comparator;
 

@@ -1,4 +1,4 @@
-package nars.nal.filter;
+package nars.nal.task.filter;
 
 import nars.nal.*;
 import nars.nal.task.TaskSeed;

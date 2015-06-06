@@ -14,12 +14,11 @@ import nars.model.impl.Default;
 import nars.nal.Sentence;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
-import nars.nal.filter.ConstantDerivationLeak;
+import nars.nal.task.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.nal.tlink.TermLinkKey;
-import nars.rl.HaiSOMPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -176,8 +175,8 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 4096;
-        int conceptsPerCycle = 100;
+        int concepts = 1024;
+        int conceptsPerCycle = 32;
         final int cyclesPerFrame = 10;
 
 
@@ -276,13 +275,13 @@ public class RunQLAgent extends JPanel {
                         return 0;
                     }
                 },*/
-                ,new HaiSOMPerception("B", 2, 0.2f)
+                //,new HaiSOMPerception("B", 2, 0.2f)
         );
 
         a.agent.setQLFactor(0.5f, 0.5f);
-        a.agent.setInputGain(0.5f);
+        a.agent.setInputGain(1.0f);
 
-        a.agent.ql.brain.setEpsilon(0.08);
+        a.agent.ql.brain.setEpsilon(0.12);
 
 
 

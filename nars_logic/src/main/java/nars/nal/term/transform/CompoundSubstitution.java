@@ -1,8 +1,7 @@
-package nars.nal.transform;
+package nars.nal.term.transform;
 
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
-import nars.nal.transform.CompoundTransform;
 import nars.util.data.FastPutsArrayMap;
 
 import java.util.Map;

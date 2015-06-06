@@ -35,7 +35,7 @@ import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.*;
-import nars.nal.transform.TermVisitor;
+import nars.nal.term.transform.TermVisitor;
 import nars.util.data.Util;
 import nars.util.data.id.Named;
 

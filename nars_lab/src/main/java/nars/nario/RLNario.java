@@ -96,6 +96,7 @@ public class RLNario extends NARio  {
         );
 
         rl.agent.setQLFactor(0.45f, 0.85f);
+        rl.agent.setInputGain(0.7f);
 
         //rl.agent.add(new ShapePerception(rl.getScreenImage()));
 

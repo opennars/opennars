@@ -3,6 +3,7 @@ package nars.nal;
 import com.google.common.collect.Lists;
 import nars.nal.process.ConceptProcess;
 import nars.nal.task.TaskSeed;
+import nars.nal.task.filter.DerivationFilter;
 
 import java.util.ArrayList;
 import java.util.List;

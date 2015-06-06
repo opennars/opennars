@@ -1,4 +1,4 @@
-package nars.nal.transform;
+package nars.nal.term.transform;
 
 import nars.Symbols;
 import nars.nal.term.Term;

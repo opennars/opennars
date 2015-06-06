@@ -1,5 +1,8 @@
-package nars.nal;
+package nars.nal.task.filter;
 
+import nars.nal.NAL;
+import nars.nal.Sentence;
+import nars.nal.Task;
 import nars.nal.task.TaskSeed;
 
 /**

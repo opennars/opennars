@@ -1,6 +1,5 @@
-package nars.nal.filter;
+package nars.nal.task.filter;
 
-import nars.nal.DerivationFilter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;

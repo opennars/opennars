@@ -26,7 +26,7 @@ import nars.Memory;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.transform.*;
+import nars.nal.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;

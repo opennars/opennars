@@ -1,7 +1,4 @@
-package nars.nal.filter;
-
-import nars.Events;
-import nars.Global;
+package nars.nal.task.filter;
 
 /**
  * TODO

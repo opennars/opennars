@@ -5,7 +5,7 @@ import nars.io.in.LibraryInput;
 import nars.io.qa.Answered;
 import nars.model.impl.Solid;
 import nars.nal.Sentence;
-import nars.nal.filter.ConstantDerivationLeak;
+import nars.nal.task.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.testing.TestNAR;
 import org.junit.Test;

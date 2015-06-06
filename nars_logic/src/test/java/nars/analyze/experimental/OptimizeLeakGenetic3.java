@@ -8,7 +8,7 @@ import nars.io.in.LibraryInput;
 import nars.io.in.TextInput;
 import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.filter.ConstantDerivationLeak;
+import nars.nal.task.filter.ConstantDerivationLeak;
 import nars.nal.task.TaskSeed;
 import nars.testing.TestNAR;
 import nars.testing.condition.OutputCondition;

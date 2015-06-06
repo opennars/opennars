@@ -3,7 +3,7 @@ package nars.nal.term;
 import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.transform.TermVisitor;
+import nars.nal.term.transform.TermVisitor;
 import nars.util.data.id.Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
 

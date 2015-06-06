@@ -1,7 +1,6 @@
-package nars.nal.filter;
+package nars.nal.task.filter;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import nars.nal.DerivationFilter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;

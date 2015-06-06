@@ -25,7 +25,7 @@ import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.transform.TermVisitor;
+import nars.nal.term.transform.TermVisitor;
 import nars.util.data.id.Identifier;
 
 import java.io.IOException;
