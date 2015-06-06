@@ -16,6 +16,7 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
     private float forgetCycles;
     private Memory memory;
     public V current = null;
+    private long now;
 
 
     public ForgetNext(Bag<K, V> bag) {
@@ -28,20 +29,25 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
         return null; //signals to the bag updater to use the next item
     }
 
-    protected boolean forgetWillChangeBudget(final Itemized<K> v) {
-        final long now = memory.time();
+    protected static boolean forgettingCouldAffectItemBudget(final long now, final Itemized v) {
 
-        if (v.getBudget().getLastForgetTime() == -1) {
-            v.getBudget().setLastForgetTime(now);
+        final Budget b = v.getBudget();
+        final long lastForgetTime = b.getLastForgetTime();
+
+        if (lastForgetTime == -1) {
+            b.setLastForgetTime(now);
             return false;
         }
-        return (v.getBudget().getLastForgetTime() != now) && //there is >0 time across which forgetting would be applied
-                (v.getBudget().getPriority() > v.getBudget().getQuality() * Global.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
+
+        return (lastForgetTime != now) && //there is >0 time across which forgetting would be applied
+                (b.getPriority() > b.getQuality() * Global.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
     }
 
+    /** updates with current time, etc. call immediately before update() will be called */
     public void set(float forgetCycles, Memory memory) {
         this.forgetCycles = forgetCycles;
         this.memory = memory;
+        this.now = memory.time();
     }
 
     @Override
@@ -53,11 +59,11 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
 
         this.current = v;
 
-        if (!forgetWillChangeBudget(v)) {
+        if (!forgettingCouldAffectItemBudget(now, v)) {
             return null; //unaffected (null means that the item's budget was not changed, so the bag knows it can avoid any reindexing it)
         }
 
-        memory.forget(v, forgetCycles, Global.FORGET_QUALITY_RELATIVE);
+        Memory.forget(now, v, forgetCycles, Global.FORGET_QUALITY_RELATIVE);
 
         return v;
     }

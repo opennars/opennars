@@ -28,7 +28,7 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     public Concept updateItem(Concept c) {
 
         long cyclesSinceLastForgotten = now - c.getLastForgetTime();
-        getMemory().forget(c, cyclesSinceLastForgotten, relativeThreshold);
+        Memory.forget(now, c, cyclesSinceLastForgotten, relativeThreshold);
 
         //if (budget!=null) {
             

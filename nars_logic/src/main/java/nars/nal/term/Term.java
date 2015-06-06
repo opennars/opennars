@@ -127,8 +127,6 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
 
     default boolean hasVar(final char type) {
 
-        if (!hasVar()) return false;
-
         switch (type) {
             case Symbols.VAR_DEPENDENT:
                 return hasVarDep();

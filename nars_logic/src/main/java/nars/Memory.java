@@ -680,14 +680,16 @@ public class Memory implements Serializable, AbstractStamper {
      * this will not remove a concept. it is not good to use directly because it
      * can disrupt the bag's priority order. it should only be used after it has
      * been removed then before inserted
+     *
+     * TODO move to BudgetFunctions
      */
-    public void forget(final Itemized x, final float forgetCycles, final float relativeThreshold) {
+    static public void forget(long now, final Itemized x, final float forgetCycles, final float relativeThreshold) {
         /*switch (param.forgetting) {
             case Iterative:
                 BudgetFunctions.forgetIterative(x.budget, forgetCycles, relativeThreshold);
                 break;
             case Periodic:*/
-                BudgetFunctions.forgetPeriodic(x.getBudget(), forgetCycles, relativeThreshold, time());
+                BudgetFunctions.forgetPeriodic(x.getBudget(), forgetCycles, relativeThreshold, now);
                 //break;
         //}
     }
