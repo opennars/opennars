@@ -97,7 +97,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
             nal.setCurrentBelief(taskSentence);
 
-            if (nal.deriveTask(nal.newTask(newSentence), false, false, dummy, false)!=null) {
+            if (nal.deriveTask(nal.newTask(newSentence).parent(task), false, false, dummy, false)!=null) {
 
                 nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 

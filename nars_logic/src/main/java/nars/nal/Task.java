@@ -112,7 +112,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     public Task(final Sentence<T> s, Budget bv, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
-        this(s, bv.getPriority(), bv.getDurability(), bv.getQuality(), parentTask, parentBelief, solution);
+        this(s, bv!=null ? bv.getPriority() : 0,
+                bv!=null ? bv.getDurability() : 0,
+                bv!=null ? bv.getQuality() : 0,
+                parentTask, parentBelief, solution);
     }
 
     public Task(final Sentence<T> s, final float p, final float d, final float q, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {

@@ -183,7 +183,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
             throw new RuntimeException("both tense " + tense + " and stamp " + stamp + "; only use one to avoid any inconsistency");
         }
 
-        if ((truth == null) && ((punc!=Symbols.QUEST) || (punc!=Symbols.QUESTION))) {
+        if ((truth == null) && !((punc==Symbols.QUEST) || (punc==Symbols.QUESTION))) {
             truth = new DefaultTruth(punc);
         }
 
@@ -217,7 +217,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
 
         Task t = new Task(s,
                 /* Budget*/ this,
-                Global.reference(getParentTask()),
+                getParentTask(),
                 getParentBelief(),
                 solutionBelief);
 

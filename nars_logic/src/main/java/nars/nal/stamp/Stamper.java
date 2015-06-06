@@ -165,11 +165,8 @@ public class Stamper<C extends Compound> implements IStamp<C> {
     @Override
     public boolean isCyclic() {
         long[] eb = getEvidentialBase();
-        if (Stamp.isCyclic(eb)) {
-
-        }
-        throw new RuntimeException(this + " unable to calculate evidentialBase");
-
+        return Stamp.isCyclic(eb);
+        //throw new RuntimeException(this + " unable to calculate evidentialBase");
     }
 
     public boolean isEternal() {

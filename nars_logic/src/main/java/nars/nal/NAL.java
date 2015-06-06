@@ -162,14 +162,14 @@ public abstract class NAL  implements Runnable {
         Task taskCreated;
         if (null != (taskCreated = addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask))) {
 
-            memory.event.emit(Events.TaskDerive.class, task, revised, single, currentTask);
+            memory.event.emit(Events.TaskDerive.class, taskCreated, revised, single, currentTask);
             memory.logic.TASK_DERIVED.hit();
 
             return taskCreated;
         }
 
 
-        if (nal(7)) {
+        if (taskCreated!=null && nal(7)) {
             if (taskCreated.getOccurrenceTime() > memory.time()) {
                 memory.event.emit(Events.TaskDeriveFuture.class, task, this);
             }
@@ -378,7 +378,9 @@ public abstract class NAL  implements Runnable {
                         .punctuation(punctuation)
                         .truth(newTruth)
                         .budget(newBudget, priMult, durMult)
-                        .stamp(stamp), false, true);
+                        .stamp(stamp)
+                        .parent(getCurrentTask())
+                , false, true);
 
     }
 
@@ -512,9 +514,7 @@ public abstract class NAL  implements Runnable {
     /**
      * create a new stamp builder for a specific occurenceTime
      */
-    public Stamper newStamp(Sentence a, Sentence b, long occurrenceTime) {
-        return newStamp(a, b, occurrenceTime);
-    }
+
     public Stamper newStamp(Stamp a, Stamp b, long occurrenceTime) {
         return new Stamper(a, b, time(), occurrenceTime);
     }
@@ -522,10 +522,7 @@ public abstract class NAL  implements Runnable {
         return newStamp(a, null, occurrenceTime);
     }
 
-    public Stamper newStamp(Sentence t, Sentence b) {
-        return newStamp(t != null ? t : null,
-                        b != null ? b : null);
-    }
+
 
     /**
      * create a new stamp builder with an occurenceTime determined by the parent sentence tenses.
