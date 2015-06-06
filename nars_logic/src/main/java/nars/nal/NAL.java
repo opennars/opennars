@@ -278,7 +278,7 @@ public abstract class NAL  implements Runnable {
         return doublePremiseTask(task, temporalAdd, allowOverlap);
     }
 
-    private Task doublePremiseTask(TaskSeed task, boolean temporalAdd, boolean allowOverlap) {
+    public Task doublePremiseTask(TaskSeed task, boolean temporalAdd, boolean allowOverlap) {
 
         final Task parentTask = task.getParentTask();
 

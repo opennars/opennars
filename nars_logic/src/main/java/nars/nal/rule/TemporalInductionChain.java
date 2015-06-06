@@ -85,7 +85,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
         //prevent trying question sentences, causes NPE
         if ((s1.truth == null) || (s2.truth == null))
-            return false;
+            return null;
 
         //try if B1 unifies with B2, if yes, create new judgement
         Implication S1=(Implication) s1.term;
@@ -119,7 +119,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
         }
 
         if(args==null)
-            return false;
+            return null;
 
         //ok we have our B2, no matter if packed as first argument of &/ or directly, lets see if it unifies
         Term[] term = args.toArray(new Term[args.size()]);
@@ -147,7 +147,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             //check if term has a element which is equal to C
             for(Term t : term) {
                 if(equalSubTermsInRespectToImageAndProduct(t, C)) {
-                    return false;
+                    return null;
                 }
                 for(Term u : term) {
                     if(u!=t) { //important: checking reference here is as it should be!

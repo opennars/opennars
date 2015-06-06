@@ -9,6 +9,7 @@ import nars.io.in.TextInput;
 import nars.model.impl.Default;
 import nars.nal.Task;
 import nars.nal.filter.ConstantDerivationLeak;
+import nars.nal.task.TaskSeed;
 import nars.testing.TestNAR;
 import nars.testing.condition.OutputCondition;
 import objenome.op.Node;
@@ -178,7 +179,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
         }
 
-        protected void setDerived(Task d) {
+        protected void setDerived(TaskSeed d) {
 
             derPri.set(d.getPriority());
             derQua.set(d.getQuality());
@@ -215,7 +216,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(0, 0) {
                         @Override
-                        protected boolean leak(Task derived) {
+                        protected boolean leak(TaskSeed derived) {
 
 
                             //System.out.println(derived.getExplanation());

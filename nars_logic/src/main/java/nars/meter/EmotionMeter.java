@@ -78,10 +78,10 @@ public class EmotionMeter implements Serializable {
                 Sentence s=new Sentence(inh, Symbols.JUDGMENT, truth, nal.newStamp(task.getStamp(), nal.time()));
 
                 nal.deriveTask(
-                        new Task(s,
-                            new Budget(Global.DEFAULT_JUDGMENT_PRIORITY,Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth)),
-                        task),
-                        false, false, "emotion"
+                        nal.newTask(s).budget(
+                            Global.DEFAULT_JUDGMENT_PRIORITY,Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth))
+                                .parent(task).reason("emotion"),
+                        false, false
                 );
 
                 if(Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
@@ -93,10 +93,10 @@ public class EmotionMeter implements Serializable {
 
 
                     nal.deriveTask(
-                            new Task(s2,
-                                    new Budget(Global.DEFAULT_GOAL_PRIORITY,Global.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)),
-                            task),
-                            false, true, "metagoal"
+                            nal.newTask(s2).budget(
+                                    Global.DEFAULT_GOAL_PRIORITY,Global.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)
+                            ).parent(task).reason("metagoal"),
+                            false, true
                     );
 
                     //this is a good candidate for innate belief for consider and remind:
@@ -110,11 +110,10 @@ public class EmotionMeter implements Serializable {
                         for(Operation o : new Operation[] { op_remind, op_consider }) {
 
                             nal.deriveTask(
-                                    nal.memory.task(o).parent(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                                    nal.newTask(o).parent(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                             .budgetScaled(InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL, InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                                            .input(),
-                                    false, true,
-                                    "internal experience for consider and remind"
+                                            .reason("internal experience for consider and remind"),
+                                    false, true
                             );
                         }
                     }
@@ -149,8 +148,9 @@ public class EmotionMeter implements Serializable {
                         nal.newStampNow(cause));
 
                 nal.deriveTask(
-                        new Task(s, new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth))),
-                        false, true, "emotion");
+                        nal.newTask(s).budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth)).
+                        parent(cause).reason("emotion"),
+                        false, true);
             }
         }
         lastbusy=busy;

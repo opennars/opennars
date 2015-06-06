@@ -15,12 +15,12 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.*;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -671,7 +671,7 @@ public class NarseseParserTest {
             char punc = str.charAt(last);
 
         /* if -1, will be set right before the Task is input */
-            Stamp stamp = NarseseParser.getNewStamp(memory, newStamp, creationTime, tense);
+            Stamper stamp = new Stamper(memory, creationTime, tense);
 
             Truth truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last));
