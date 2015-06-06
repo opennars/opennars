@@ -63,7 +63,10 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
         //compare components without generating name
 
         //if (operator()!=c.operator()) return false;
-        if (getComplexity() != c.getComplexity()) return false;
+        if (a().getMass() != c.a().getMass()) return false;
+        if (b().getMass() != c.b().getMass()) return false;
+        if (getTotalVariables() != c.getTotalVariables()) return false;
+
         if (getTemporalOrder() != c.getTemporalOrder()) return false;
 
         if (a().equals(c.a()) && b().equals(c.b())) {

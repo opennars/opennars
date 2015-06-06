@@ -408,7 +408,8 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      */
     @Override
     public <T extends Term> T normalized() {
-        if (!hasVar()) return (T) this;
+        //if (!hasVar()) return (T) this;
+
         if (isNormalized()) return (T) this;
 
 
@@ -434,6 +435,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return (T) result;
 
     }
+
 
 
     /**
@@ -759,6 +761,10 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      */
     @Override
     public boolean containsTerm(final Term t) {
+        if (t.getMass() > getMass()) {
+            //if this term has a mass greater than this compound, it can not be a subterm of it
+            return false;
+        }
         return Terms.contains(term, t);
     }
 
@@ -949,7 +955,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
     @Override
-    public int vars() {
+    public int getTotalVariables() {
         return varTotal;
     }
 
@@ -1110,7 +1116,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         this.normalized = true;
     }
 
-//    /** recursively sets all subterms normalization */
+    //    /** recursively sets all subterms normalization */
 //    protected void setNormalizedSubTerms(boolean b) {
 //        setNormalized(b);
 //

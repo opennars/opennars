@@ -261,7 +261,7 @@ public class Atom extends AbstractTerm {
     @Override public boolean hasVar() {
         return false;
     }
-    @Override public int vars() {
+    @Override public int getTotalVariables() {
         return 0;
     }
 

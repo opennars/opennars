@@ -424,7 +424,7 @@ public class TermTest {
         assertEquals(varQuery, t.varQuery());
         assertEquals(varQuery!=0, t.hasVarQuery());
 
-        assertEquals(varDep+varIndep+varQuery, t.vars());
+        assertEquals(varDep+varIndep+varQuery, t.getTotalVariables());
         assertEquals((varDep+varIndep+varQuery) != 0, t.hasVar());
     }
 

@@ -44,7 +44,7 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
 
     /** total number of terms = complexity + # total variables */
     default public int getMass() {
-        return getComplexity() + vars();
+        return getComplexity() + getTotalVariables();
     }
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
@@ -85,7 +85,7 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
     public boolean containsTermRecursivelyOrEquals(final Term target);
 
     @Deprecated default public Term ensureNormalized(String role) {
-        if (hasVar() && !isNormalized()) {
+        if (requiresNormalizing() && !isNormalized()) {
             //System.err.println(this + " is not normalized but as " + role + " should have already been");
             //System.exit(1);
             throw new RuntimeException(this + " is not normalized but as " + role + " should have already been");
@@ -93,8 +93,12 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
         return this;
     }
 
+    default boolean requiresNormalizing() {
+        return false;
+    }
 
-    default char[] toCharSequence(boolean pretty) {
+
+    default char[] chars(boolean pretty) {
         return name().chars(pretty);
     }
 
@@ -110,7 +114,7 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
      * @return Whether the name contains a variable
      */
     default public boolean hasVar() {
-        return vars() != 0;
+        return getTotalVariables() != 0;
     }
 
     default public int getTemporalOrder() {
@@ -139,9 +143,15 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
 
 
     /** total # of variables */
-    default public int vars() {
+    default public int getTotalVariables() {
         return varDep() + varIndep() + varQuery();
     }
+
+    /** tests if num variables of any type exceed a value */
+    default public boolean varsInAnyTypeMoreThan(final int n) {
+        return (varDep() > n) || (varIndep() > n) || (varQuery() > n);
+    }
+
 
     default public boolean hasVarIndep() {
         return varIndep()!=0;

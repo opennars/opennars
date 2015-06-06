@@ -221,7 +221,7 @@ public class Variable extends Atom {
 
 
     @Override public boolean hasVar() { return true;     }
-    @Override public int vars() {
+    @Override public int getTotalVariables() {
         return 1;
     }
 
