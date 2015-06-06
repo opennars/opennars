@@ -41,7 +41,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
+import static java.util.Arrays.copyOf;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
+import static nars.Symbols.INTERVAL_PREFIX;
 import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
 import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 
@@ -655,7 +657,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      * (shallow) Clone the component list
      */
     public Term[] cloneTerms() {
-        return Arrays.copyOf(term, term.length);
+        return copyOf(term, term.length);
     }
 
 
@@ -776,7 +778,14 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      *  (if the target is larger than the maximum combined subterms size,
      *  it would not be contained by this) */
     public boolean impossibleSubTerm(final Term possibleComponent) {
-        return possibleComponent.getMass() > getMass()-1;
+        return impossibleSubTerm(possibleComponent.getMass());
+    }
+    public boolean impossibleSubTerm(final int otherTermsMass) {
+        return otherTermsMass >
+                getMass()
+                        - 1 /* for the compound itself */
+                        - (length() - 1) /* each subterm has a mass >= 1, so if there are more than 1, each reduces the potential space of the insertable */
+                ;
     }
 
     
@@ -980,13 +989,81 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return Terms.containsAny(this, c);
     }
 
+    /** holds a substitution and any metadata that can eliminate matches as early as possible */
+    public static class Substitution {
+        final Map<Term, Term> subs;
+
+        int minMassOfMatch = Integer.MAX_VALUE;
+        int maxMassOfMatch = Integer.MIN_VALUE;
+        int subsEliminated = 0;
+
+        public Substitution(final Compound superterm, final Map<Term, Term> subs) {
+            this.subs = subs;
+
+
+            final int numSubs = subs.size();
+
+            for (final Map.Entry<Term,Term> e : subs.entrySet()) {
+
+                final Term m = e.getKey();
+
+                final int mass = m.getMass();
+                if (superterm.impossibleSubTerm(mass)) {
+                    subsEliminated++;
+                    continue;
+                }
+
+                if (m instanceof Variable) {
+                    if (!superterm.hasVar(((Variable) m).getType())) {
+                        subsEliminated++;
+                        continue;
+                    }
+                }
+
+                if (minMassOfMatch > mass) minMassOfMatch = mass;
+                if (maxMassOfMatch < mass) maxMassOfMatch = mass;
+
+            /* collapse a substitution map to each key's ultimate destination
+             *  in the case of values that are equal to other keys */
+                if (numSubs >= 2) {
+                    final Term o = e.getValue(); //what the original mapping of this entry's key
+
+                    Term k = o, prev = o;
+                    int hops = 1;
+                    while ((k = subs.getOrDefault(k, k)) != prev) {
+                        prev = k;
+                        if (hops++ == numSubs) {
+                            //cycle detected
+                            throw new RuntimeException("Cyclical substitution map: " + subs);
+                        }
+                    }
+                    if (!k.equals(o)) {
+                        //replace with the actual final mapping
+                        e.setValue(k);
+                    }
+                }
+            }
+
+        }
+
+        /** if eliminated all the possible substitutions */
+        public boolean impossible() {
+            return subsEliminated == subs.size();
+        }
+
+        public Term get(final Term t) {
+            return subs.get(t);
+        }
+    }
+
+
     /**
      * Recursively apply a substitute to the current CompoundTerm
      * May return null if the term can not be created
      *
      * @param subs
      */
-    public Term applySubstitute(final Map<Term, Term> subs) {
+    public Compound applySubstitute(final Map<Term, Term> subs) {
 
         //TODO calculate superterm capacity limits vs. subs min/max
 
@@ -994,8 +1071,15 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
             return this;
         }
 
-        flattenSubstitutes(subs);
 
+        Substitution S = new Substitution(this, subs);
+        if (S.impossible())
+            return this;
+
+        return applySubstitute(S);
+    }
+
+    public Compound applySubstitute(final Substitution S) {
         Term[] in = this.term;
         Term[] out = in;
 
@@ -1004,53 +1088,41 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         for (int i = 0; i < subterms; i++) {
             Term t1 = in[i];
 
+            int m = t1.getMass();
+            if (m < S.minMassOfMatch) {
+                //too small to be any of the keys or hold them in a subterm
+                continue;
+            }
+
             Term t2;
-            if ((t2 = subs.get(t1))!=null) {
+            if ((t2 = S.get(t1))!=null) {
 
 
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1)) {
-                    if (out == in) out = Arrays.copyOf(in, subterms);
+                    if (out == in) out = copyOf(in, subterms);
                     out[i] = t2; //t2.clone();
                 }
 
             } else if (t1 instanceof Compound) {
-                Term ss = ((Compound) t1).applySubstitute(subs);
-                if (ss != null) {
-                    if (!ss.equals(in[i])) {
-                        //modification
-                        if (out == in) out = Arrays.copyOf(in, subterms);
-                        out[i] = ss;
-                    }
+
+                //additional constraint here?
+
+                Term ss = ((Compound) t1).applySubstitute(S);
+                if ((ss != null) && (!ss.equals(in[i]))) {
+                    //modification
+                    if (out == in) out = copyOf(in, subterms);
+                    out[i] = ss;
                 }
             }
         }
-        if (out == in)
+
+        if (out == in) //nothing changed
             return this;
 
-        return this.clone(out);
+        return (Compound)this.clone(out);
     }
 
-    /** collapses a substitution map to each key's ultimate destination
-     *  in the case of values that are equal to other keys
-     * */
-    public static void flattenSubstitutes(Map<Term, Term> subs) {
-
-        if (subs.size() < 2) return;
-
-        for (Map.Entry<Term,Term> e : subs.entrySet()) {
-            final Term o = e.getValue(); //what the original mapping of this entry's key
-
-            Term k = o, prev = o;
-            while ((k = subs.getOrDefault(k, k))!=prev) {
-                prev = k;
-            }
-            if (!k.equals(o)) {
-                e.setValue(k);
-            }
-        }
-
-    }
 
 
     /**
