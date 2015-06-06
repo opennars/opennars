@@ -163,13 +163,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     /** configures this selector's current budget for the next bag operation */
-    public Budget set(float subBudget, float durability, float quality) {
+    public Budget budget(float subBudget, float durability, float quality) {
         invalidate();
-        return super.set(subBudget, durability, quality);
+        return super.budget(subBudget, durability, quality);
     }
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder set(TermLinkTemplate temp) {
+    public TermLinkBuilder budget(TermLinkTemplate temp) {
         if (temp != currentTemplate) {
             this.currentTemplate = temp;
             invalidate();
@@ -192,7 +192,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     @Override
-    public Budget set(Budget b) {
+    public Budget budget(Budget b) {
         /** reset the prefix when budget is set in linkTerms */
         return super.set(b);
     }

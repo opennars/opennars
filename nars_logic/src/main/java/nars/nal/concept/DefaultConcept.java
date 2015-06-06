@@ -12,9 +12,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
-import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamper;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -940,7 +938,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     if (linkTerm(t, t.pending, updateTLinks))
                         activity = true;
 
-                    t.pending.set(0,0,0); //reset having spent it
+                    t.pending.budget(0, 0, 0); //reset having spent it
                 }
             }
         }
@@ -956,7 +954,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     boolean linkTerm(TermLinkTemplate template, float priority, float durability, float quality, boolean updateTLinks) {
 
 
-        Term otherTerm = termLinkBuilder.set(template).getOther();
+        Term otherTerm = termLinkBuilder.budget(template).getOther();
 
 
         Budget b = template.pending;
@@ -982,7 +980,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             return false;
         }
 
-        termLinkBuilder.set(b);
+        termLinkBuilder.budget(b);
 
         if (updateTLinks) {
             activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept

@@ -245,6 +245,7 @@ public interface Stamp extends Cloneable, Serializable {
         return order(s.occurrence(), occurrence(), duration) == TemporalRules.ORDER_BACKWARD;
     }
 
+    /** true if this instance is after 's' */
     default public boolean after(Stamp s, int duration) {
         if (isEternal() || s.isEternal())
             return false;

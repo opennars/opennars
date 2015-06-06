@@ -3,6 +3,7 @@ package nars.nal.stamp;
 import nars.Memory;
 import nars.nal.Sentence;
 import nars.nal.nal7.Tense;
+import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
 
 /**
@@ -53,6 +54,13 @@ public class Stamper<C extends Compound> implements IStamp<C> {
         this(memory, creationTime, Stamp.occurrence(creationTime, tense, memory.duration()));
     }
 
+    public Stamper(Operation operation, Memory memory, Tense tense) {
+        this(operation.getTask().sentence, memory, tense);
+    }
+    public Stamper(Sentence s, Memory memory, Tense tense) {
+        this(s, s.getCreationTime(), Stamp.occurrence(s.getCreationTime(), tense, memory.duration()));
+    }
+
     public Stamper(final Memory memory, long creationTime, final long occurenceTime) {
         this.duration = memory.duration();
         this.creationTime = creationTime;
@@ -78,6 +86,10 @@ public class Stamper<C extends Compound> implements IStamp<C> {
 
     public Stamper(long[] evidentialBase, long creationTime, long occurrenceTime, int duration) {
         this(evidentialBase, null, null, creationTime, occurrenceTime, duration);
+    }
+
+    public Stamper(Stamp a, long creationTime, long occurrenceTime) {
+        this(a, null, creationTime, occurrenceTime);
     }
 
     public Stamper(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
@@ -156,4 +168,6 @@ public class Stamper<C extends Compound> implements IStamp<C> {
     public long getOccurrenceTime() {
         return occurrenceTime;
     }
+
+
 }

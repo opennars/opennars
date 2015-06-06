@@ -112,6 +112,11 @@ public abstract class NAL  implements Runnable {
         return deriveTask(task, revised, single, null, false);
     }
 
+    /** TEMPORARY ADAPTER FOR OLD API */
+    @Deprecated public Task deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+        return deriveTask(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
+    }
+
     /**
      * iived task comes from the logic rules.
      *
@@ -369,12 +374,10 @@ public abstract class NAL  implements Runnable {
 
     }
 
-//    /** this should not be used because it requires a sentence to be constructed ahead of time */
-//    @Deprecated public boolean singlePremiseTask(Sentence newSentence, Budget newBudget) {
-//        Task newTask = new Task(newSentence, newBudget, getCurrentTask());
-//        //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
-//        return deriveTask(newTask, false, true);
-//    }
+    public Task singlePremiseTask(Sentence newSentence, Budget newBudget) {
+        //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
+        return deriveTask(newTask(newSentence), false, true);
+    }
 
 
     public long time() {

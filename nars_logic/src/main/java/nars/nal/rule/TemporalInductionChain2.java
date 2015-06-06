@@ -137,9 +137,9 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             prev = otherBelief;
         }
 
-        if(!task.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        /*if(!task.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
-        }
+        }*/
 
         if (current.isEternal() || !TemporalRules.isInputOrTriggeredOperation(task, f.memory)) {
             return false;

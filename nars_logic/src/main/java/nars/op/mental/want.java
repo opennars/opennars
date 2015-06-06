@@ -23,13 +23,12 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -52,11 +51,12 @@ public class want extends SynchOperator implements Mental {
         Term content = operation.arg(0);
         
         Truth truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.GOAL, truth, new Stamp(operation, nar.memory, Tense.Present));
-        
+
         Budget budget = new Budget(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, truth);
 
-        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
+        return Lists.newArrayList(
+                operation.newSubTask(nar.memory, (Compound)content, Symbols.GOAL, truth, Tense.Present, budget)
+        );
     }
 
 //    @Override

@@ -5,6 +5,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.DirectBudget;
 import nars.nal.DefaultTruth;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -21,7 +22,7 @@ import nars.nal.term.Compound;
  *
  *  TODO abstract this and move this into a specialization of it called FluentTaskSeed
  * */
-public class TaskSeed<T extends Compound> {
+public class TaskSeed<T extends Compound> extends DirectBudget {
 
     private final T term;
     private final Memory memory;
@@ -34,13 +35,24 @@ public class TaskSeed<T extends Compound> {
     private Operation cause;
     private String reason;
 
-    /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-    float p = Float.NaN, d = Float.NaN, q = Float.NaN;
+
 
     /** if non-UNPERCEIVED, it is allowed to override the value the Stamp applied */
     private long occurrenceTime = Stamp.UNPERCEIVED;
     private Sentence parentBelief;
     private Sentence solutionBelief;
+
+    /** creates a TaskSeed from an existing Task  */
+    public TaskSeed(Memory memory, Task task) {
+        this(memory, task.sentence);
+
+        parent(task.getParentTask(), task.getParentBelief());
+        solution(task.getBestSolution());
+        budget(task.getBudget());
+
+        /* NOTE: this ignores:
+                task.history         */
+    }
 
 
     public TaskSeed<T> truth(Truth tv) {
@@ -49,9 +61,7 @@ public class TaskSeed<T extends Compound> {
     }
 
     public TaskSeed<T> budget(float p, float d, float q) {
-        this.p = p;
-        this.d = d;
-        this.q = q;
+        budgetDirect(p, d, q);
         return this;
     }
 
@@ -64,11 +74,11 @@ public class TaskSeed<T extends Compound> {
     }
 
     protected boolean ensureBudget() {
-        if (Float.isFinite(this.p)) return true;
+        if (isBudgetValid()) return true;
         if (truth == null) return false;
 
-        this.p = Budget.newDefaultPriority(punc);
-        this.d = Budget.newDefaultDurability(punc);
+        this.priority = Budget.newDefaultPriority(punc);
+        this.durability = Budget.newDefaultDurability(punc);
 
         return true;
     }
@@ -76,12 +86,14 @@ public class TaskSeed<T extends Compound> {
     /** uses default budget generation and multiplies it by gain factors */
     public TaskSeed<T> budgetScaled(float priorityFactor, float durFactor) {
 
+        //TODO maybe lift this to Budget class
         if (!ensureBudget()) {
             throw new RuntimeException("budgetScaled unable to determine original budget values");
         }
 
-        this.p *= priorityFactor;
-        this.d *= durFactor;
+
+        this.priority *= priorityFactor;
+        this.durability *= durFactor;
         return this;
     }
 
@@ -132,6 +144,9 @@ public class TaskSeed<T extends Compound> {
     }
 
     public TaskSeed(Memory memory, T t) {
+        /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
+        super();
+
         this.memory = memory;
         this.term = t;
     }
@@ -183,12 +198,12 @@ public class TaskSeed<T extends Compound> {
 
 
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
-        if (!Float.isFinite(q) && truth != null) {
-            q = BudgetFunctions.truthToQuality(truth);
+        if (!Float.isFinite(quality) && truth != null) {
+            quality = BudgetFunctions.truthToQuality(truth);
         }
 
         Task t = new Task(s,
-                p, d, q, //budget
+                /* Budget*/ this,
                 Global.reference(getParentTask()),
                 getParentBelief(),
                 solutionBelief);
@@ -267,5 +282,10 @@ public class TaskSeed<T extends Compound> {
         this.occurrenceTime = occurenceTime;
         return this;
     }
+
+    public boolean isGoal() { return punc == Symbols.GOAL;     }
+    public boolean isJudgment() { return punc == Symbols.JUDGMENT;     }
+    public boolean isQuestion() { return punc == Symbols.QUESTION;     }
+    public boolean isQuest() { return punc == Symbols.QUEST;     }
 
 }

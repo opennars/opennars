@@ -4,10 +4,11 @@
  */
 package nars.nal.filter;
 
-import nars.nal.NAL;
 import nars.nal.DerivationFilter;
+import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.task.TaskSeed;
 
 /**
 <patham9_> desire value form the entire motivation management, what i did was allowing only input judgements and derived goals (no derived judgements) :D
@@ -16,9 +17,9 @@ import nars.nal.Task;
 public class DeriveOnlyDesired implements DerivationFilter {
 
     @Override
-    public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
-        if (!task.sentence.isGoal()) {
-            if (task.sentence.isEternal())
+    public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+        if (!task.isGoal()) {
+            if (task.isEternal())
                 return "Not Goal";
         }
         return null;        

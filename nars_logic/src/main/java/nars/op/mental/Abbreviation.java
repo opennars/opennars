@@ -10,14 +10,14 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
 import nars.nal.DefaultTruth;
-import nars.nal.process.TaskProcess;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.Stamp;
+import nars.nal.process.TaskProcess;
+import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
@@ -106,7 +106,7 @@ public class Abbreviation extends NARReaction {
                     Similarity.make(compound, atomic),
                     Symbols.JUDGMENT,
                     new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamp(operation, memory, Tense.Present));
+                    new Stamper(operation, memory, Tense.Present));
 
             Budget budget = new Budget(
                     Global.DEFAULT_JUDGMENT_PRIORITY,

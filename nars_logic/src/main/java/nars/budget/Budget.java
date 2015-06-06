@@ -51,7 +51,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 
 
     /** The relative share of time resource to be allocated */
-    private float priority;
+    protected float priority;
 
     /**
      * The percent of priority to be kept in a constant period; All priority
@@ -59,10 +59,10 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * "durability" factor in (0, 1) to specify the percentage of priority level
      * left after each reevaluation
      */
-    private float durability;
+    protected float durability;
 
     /** The overall (context-independent) evaluation */
-    private float quality;
+    protected float quality;
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
     long lastForgetTime = -1;
@@ -171,7 +171,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @return whether the operation had any effect
      */
     @Override
-    public final boolean setPriority(float p) {
+    public boolean setPriority(float p) {
         if(p>1.0)
             p=1.0f;
         else if (p < 0)
@@ -270,6 +270,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     public float getDurability() {
         return durability;
     }
+
 
 
 
@@ -538,7 +539,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         throw new RuntimeException("Unknown sentence type: " + punctuation);
     }
 
-    public Budget set(final float p, final float d, final float q) {
+    public Budget budget(final float p, final float d, final float q) {
         setPriority(p);
         setDurability(d);
         setQuality(q);
@@ -546,7 +547,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     /** fast version which avoids bounds checking, safe to use if getting values from an existing Budget instance */
-    protected Budget setFast(final float p, final float d, final float q) {
+    protected Budget budgetDirect(final float p, final float d, final float q) {
         this.priority = p;
         this.durability = d;
         this.quality = q;
@@ -557,7 +558,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         if (b == null)
             return zero();
         else
-            return setFast(b.getPriority(), b.getDurability(), b.getQuality());
+            return budgetDirect(b.getPriority(), b.getDurability(), b.getQuality());
     }
 
 

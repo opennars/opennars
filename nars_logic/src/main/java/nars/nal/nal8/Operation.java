@@ -31,11 +31,14 @@ import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.eval;
+import nars.nal.stamp.Stamper;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.data.id.UTF8Identifier;
 import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -141,6 +144,12 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     public Task newSubTask(Sentence sentence, Budget budget) {
         return new Task(sentence, budget, getTask());
     }
+
+    public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, Tense tense, Budget budget) {
+        return newSubTask(new Sentence(content, punctuation, truth,
+                new Stamper(this, m, tense)), budget);
+    }
+
 
     public Term[] arg(Memory memory) {
         return arg(memory, false);

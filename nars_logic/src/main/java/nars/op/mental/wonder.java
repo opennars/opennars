@@ -24,9 +24,12 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.Stamper;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -45,11 +48,12 @@ public class wonder extends SynchOperator implements Mental {
     @Override
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term content = operation.arg(0);
-        
-        
-        Sentence sentence = new Sentence(content, Symbols.QUESTION, null, new Stamp(nar.memory, Stamp.ETERNAL));
+
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-        return Lists.newArrayList( new Task(sentence, budget, operation.getTask()) );
+
+        return Lists.newArrayList(
+                operation.newSubTask(nar.memory, (Compound)content, Symbols.QUESTION, null, Tense.Eternal, budget)
+        );
     }
         
 }

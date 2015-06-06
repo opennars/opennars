@@ -4,8 +4,12 @@
  */
 package nars.nal.filter;
 
-import nars.nal.*;
 import nars.budget.Budget;
+import nars.nal.DerivationFilter;
+import nars.nal.NAL;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.task.TaskSeed;
 
 /**
  * experimental: task priority conservation based on NAL's current task
@@ -14,7 +18,7 @@ import nars.budget.Budget;
 public class LimitDerivationPriority implements DerivationFilter {
 
     @Override
-    public String reject(NAL nal, Task task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
 
         Budget currentTaskBudget = nal.getCurrentTask().getBudget();
         task.andPriority(currentTaskBudget.getPriority());
