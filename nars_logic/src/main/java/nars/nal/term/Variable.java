@@ -216,9 +216,11 @@ public class Variable extends Atom {
 //        }
 //    }
 
-    
-    
 
+    @Override
+    public boolean hasVar(char type) {
+        return (type == getType());
+    }
 
     @Override public boolean hasVar() { return true;     }
     @Override public int getTotalVariables() {
@@ -238,9 +240,9 @@ public class Variable extends Atom {
 
     public boolean isCommon() {
         //TODO there is a faster way to make this test rather than forming the String
-        String n = toString();
-        int l = n.length();        
-        return n.charAt(l - 1) == '$';
+        byte[] n = bytes();
+        int l = n.length;
+        return n[l - 1] == '$';
     }
 
 

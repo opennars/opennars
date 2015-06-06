@@ -115,6 +115,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
      * @param punctuation The punctuation indicating the type of the sentence
      * @param truth The truth value of the sentence, null for question
      * @param stamp The stamp of the sentence indicating its derivation time and
+     * @param normalize if false, normalization is not attempted and the compound will be used as-is
      * base
      */
     public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp, boolean normalize) {
@@ -164,6 +165,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
         this.term = normalize ? seedTerm.normalized() : seedTerm;
+
         if (term == null)
             throw new RuntimeException("Term for a new Sentence not valid or could not be normalized: " + seedTerm);
 

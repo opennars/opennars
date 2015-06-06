@@ -49,11 +49,7 @@ public class NarseseParser extends BaseParser<Object> {
 
     //These should be set to something like RecoveringParseRunner for performance
     public final ParseRunner inputParser = new ListeningParseRunner3(Input());
-    public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task(true));
-
-    //use a parameter or something to avoid this extra instance
-    @Deprecated final ParseRunner singleTaskParserNonNewStamp = new ListeningParseRunner3(Task(false));
-
+    public final ParseRunner singleTaskParser = new ListeningParseRunner3(Task());
     public final ParseRunner singleTermParser = new ListeningParseRunner3(Term()); //new ErrorReportingParseRunner(Term(), 0);
 
     public Memory memory;
@@ -77,8 +73,8 @@ public class NarseseParser extends BaseParser<Object> {
                                 s(),
                                 firstOf(
                                         Immediate(),
-                                        Task(true),
-                                        sequence("IN:",s(),Task(true),"\n") //temporary
+                                        Task(),
+                                        sequence("IN:",s(), Task(),"\n") //temporary
                                 )
                         )
                 );
@@ -116,7 +112,7 @@ public class NarseseParser extends BaseParser<Object> {
         );
     }
 
-    public Rule Task(final boolean newStamp) {
+    public Rule Task() {
         //TODO separate goal into an alternate form "!" because it does not use a tense
         Var<float[]> budget = new Var();
         Var<Character> punc = new Var();
@@ -151,13 +147,13 @@ public class NarseseParser extends BaseParser<Object> {
                         )
                 ),
 
-                push(getTask(budget, term, punc, truth, tense, newStamp))
+                push(getTask(budget, term, punc, truth, tense))
 
         );
     }
 
     //TODO return TaskSeed
-    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<Truth> truth, Var<Tense> tense, boolean newStamp) {
+    Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<Truth> truth, Var<Tense> tense) {
 
         char p = punc.get();
 
@@ -178,11 +174,15 @@ public class NarseseParser extends BaseParser<Object> {
             return null;
         }
 
-        content = Sentence.termOrNull(content);
+        //avoid cloning by transforming this new compound directly
+        Compound ccontent = ((Compound)content).normalizeDestructively();
+        if (content!=null)
+            content = Sentence.termOrNull(content);
+
         if (content==null) return null;
 
 
-        return new Task(new Sentence((Compound)content, p, t, memory, false)
+        return new Task(new Sentence(ccontent, p, t, memory, false)
                 .setCreationTime(Stamp.UNPERCEIVED)
                 .setOccurrenceTime(Stamp.UNPERCEIVED, tense.get(), memory.duration()), B );
 
@@ -475,6 +475,7 @@ public class NarseseParser extends BaseParser<Object> {
                 push(match())
         );
     }
+
 
     public final class ValidAtomCharMatcher extends AbstractMatcher
     {
@@ -918,14 +919,11 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * parse one task
      */
-    @Deprecated public Task parseTask(String input, boolean newStamp) throws InvalidInputException {
+    public Task parseTask(String input) throws InvalidInputException {
         ParsingResult r = null;
         try {
             input = input.trim();
-            if (newStamp)
-                r = singleTaskParser.run(input);
-            else
-                r = singleTaskParserNonNewStamp.run(input);
+            r = singleTaskParser.run(input);
         }
         catch (Throwable ge) {
             throw new InvalidInputException(ge.toString() + " " + ge.getCause() + ": parsing: " + input);
@@ -941,12 +939,20 @@ public class NarseseParser extends BaseParser<Object> {
                 return (Task) x;
         }
 
-
         throw newParseException(input, r);
     }
 
+    /** parse one term and normalize it if successful */
+    public <T extends Term> T parseTermNormalized(String s) {
+        Term x = parseTerm(s);
+        if (x==null) return null;
+
+        return x.normalizeDestructively();
+    }
+
+
     /**
-     * parse one term
+     * parse one term. it is more efficient to use parseTermNormalized if possible
      */
     public <T extends Term> T parseTerm(String input) throws InvalidInputException {
         ParsingResult r = singleTermParser.run(input);
@@ -969,10 +975,10 @@ public class NarseseParser extends BaseParser<Object> {
 
         throw newParseException(input, r);
     }
-    public <T extends Compound> T parseCompound(String s) throws InvalidInputException {
+    public <T extends Compound> T parseCompoundNormalized(String s) throws InvalidInputException {
         Term t = parseTerm(s);
         if (t instanceof Compound)
-            return ((T)t);
+            return ((T)t).normalizeDestructively();
         return null;
     }
 

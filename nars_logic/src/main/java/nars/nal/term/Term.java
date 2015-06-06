@@ -80,6 +80,10 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
         return (T) this;
     }
 
+    /** careful: this will modify the term and should not be used unless the instance is new and unreferenced. */
+    default <T extends Term> T normalizeDestructively() {
+        return (T) this;
+    }
 
     public boolean containsTerm(final Term target);
     public boolean containsTermRecursivelyOrEquals(final Term target);
@@ -122,6 +126,9 @@ public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified
     }
 
     default boolean hasVar(final char type) {
+
+        if (!hasVar()) return false;
+
         switch (type) {
             case Symbols.VAR_DEPENDENT:
                 return hasVarDep();

@@ -171,6 +171,11 @@ public class Atom extends AbstractTerm {
         return clone();
     }
 
+    @Override
+    public boolean hasVar(char type) {
+        return false;
+    }
+
     /**
      * Equal terms have identical name, though not necessarily the same
      * reference.

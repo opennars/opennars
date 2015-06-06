@@ -138,7 +138,7 @@ public class NAR extends Container implements Runnable {
 
     /** parses and forms a Task from a string but doesnt input it */
     public Task task(String taskText) {
-        Task t = narsese.parseTask(taskText, true);
+        Task t = narsese.parseTask(taskText);
 
         long now = time();
         if (!t.sentence.isEternal()) {
@@ -174,7 +174,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public <S extends Term, T extends S> T term(final String t) throws InvalidInputException {
-        return narsese.parseTerm(t).normalized();
+        return narsese.parseTermNormalized(t);
     }
 
     public Concept concept(final Term term) {
@@ -183,7 +183,7 @@ public class NAR extends Container implements Runnable {
 
     /** gets a concept if it exists, or returns null if it does not */
     public Concept concept(final String conceptTerm) throws InvalidInputException {
-        return concept((Term)narsese.parseTerm(conceptTerm));
+        return concept((Term)narsese.parseTermNormalized(conceptTerm));
     }
 
 
@@ -198,7 +198,7 @@ public class NAR extends Container implements Runnable {
 
     public Task ask(String termString) throws InvalidInputException {
         //TODO remove '?' if it is attached at end
-        return ask(termString, '?');
+        return ask(termString, Symbols.QUESTION);
     }
 
     public Task quest(String questString) throws InvalidInputException {
@@ -211,7 +211,7 @@ public class NAR extends Container implements Runnable {
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompound(goalTerm),
+                                narsese.parseCompoundNormalized(goalTerm),
                                 Symbols.GOAL,
                                 tv = new DefaultTruth(freq, conf),
                                 memory),
@@ -278,7 +278,7 @@ public class NAR extends Container implements Runnable {
         input(
                 t = new Task(
                         new Sentence(
-                                narsese.parseCompound(termString),
+                                narsese.parseCompoundNormalized(termString),
                                 questionOrQuest,
                                 null,
                                 memory).setCreationTime(Stamp.UNPERCEIVED),

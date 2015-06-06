@@ -388,16 +388,24 @@ public class Terms {
         }
         return true;
     }
+
+    public static <T extends Term> boolean containsAll(final Compound container, final T[] content) {
+        for (final T x : content) {
+            if (!container.containsTerm(x))
+                return false;
+        }
+        return true;
+    }
     
     /** a contains any of b  NOT TESTED YET */
-    public static boolean containsAny(final Term[] a, final Collection<Term> b) {
+    public static boolean containsAny(Compound a, final Collection<Term> b) {
         for (final Term bx : b) {
-            if (contains(a, bx))
+            if (a.containsTerm(bx))
                 return true;
         }
         for (final Term ax : a) {
             if (ax instanceof Compound)
-                if (containsAny(((Compound)ax).term, b))
+                if (containsAny(((Compound)ax), b))
                     return true;
         }
         

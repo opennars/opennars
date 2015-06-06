@@ -8,7 +8,13 @@ import nars.util.utf8.Utf8;
 import java.util.Comparator;
 
 /**
- * Created by me on 6/1/15.
+ * Variable normalization
+ *
+ * Destructive mode modifies the input Compound instance, which is
+ * fine if the concept has been created and unreferenced.
+ *
+ * The term 'destructive' is used because it effectively destroys some
+ * information - the particular labels the input has attached.
  */
 public class VariableNormalization implements VariableTransform {
 
@@ -52,8 +58,17 @@ public class VariableNormalization implements VariableTransform {
     boolean renamed = false;
 
     public VariableNormalization(Compound target) {
+        this(target, false);
+    }
 
-        Compound result1 = target.cloneTransforming(this);
+    public VariableNormalization(Compound target, boolean destructively) {
+
+
+        Compound result1;
+        if (destructively)
+            result1 = target.transform(this);
+        else
+            result1 = target.cloneTransforming(this);
 
         this.result = result1;
 
@@ -80,7 +95,7 @@ public class VariableNormalization implements VariableTransform {
                     true
             );
             rename.put(vname, vv);
-            renamed = vv.name().equals(v.name());
+            renamed = !vv.name().equals(v.name());
         }
 
         return vv;

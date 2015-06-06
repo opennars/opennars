@@ -20,6 +20,8 @@
  */
 package nars.nal;
 
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
@@ -41,6 +43,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
 import java.util.Random;
@@ -647,6 +650,8 @@ public final class CompositionalRules {
         Stamper stamp = nal.newStamp(taskSentence, belief);
 
         Task b = null;
+
+
 
         {
 

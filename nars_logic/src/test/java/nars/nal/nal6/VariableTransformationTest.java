@@ -27,6 +27,17 @@ public class VariableTransformationTest {
     }
 
     @Test
+    public void testDestructiveNormalization() {
+        String t = "<$x --> y>";
+        String n = "<$1 --> y>";
+        NAR nar = new NAR(new Default());
+        Term x = nar.term(t);
+        assertEquals(n, x.toString());
+        assertTrue("immediate construction of a term from a string should automatically be normalized", x.isNormalized());
+
+    }
+
+    @Test
     public void testCombinations() {
 
 

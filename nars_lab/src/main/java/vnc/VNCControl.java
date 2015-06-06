@@ -126,7 +126,7 @@ abstract public class VNCControl extends VNCClient {
 
             for (double i = 0; i < div; i++) {
                 for (double j = 0; j < div; j++) {
-                    seeds.add(n.parseTerm(OCR.get3x3CoordsTree(
+                    seeds.add(n.parseTermNormalized(OCR.get3x3CoordsTree(
                             i / div * 1.5,
                             j / div * 1.5,
                             1.0, 1.0, scale)));

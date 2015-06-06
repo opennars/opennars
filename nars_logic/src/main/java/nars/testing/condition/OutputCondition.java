@@ -11,7 +11,6 @@ import nars.io.Texts;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
 import nars.narsese.InvalidInputException;
-import nars.testing.TestNAR;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,7 +84,7 @@ public abstract class OutputCondition extends NARReaction {
 
 
     public static List<OutputCondition> getConditions(NAR n, String example, int similarResultsToSave)  {
-        return getConditions(n, example, similarResultsToSave, x -> n.narsese.parseTask(x, true));
+        return getConditions(n, example, similarResultsToSave, x -> n.narsese.parseTask(x));
     }
 
     /** with caching, useful for repeated tests to avoid re-parsing the same text */
@@ -93,7 +92,7 @@ public abstract class OutputCondition extends NARReaction {
         return getConditions(n, example, similarsToSave, x -> {
             Task t = conditionCache.get(x);
             if (t == null) {
-                conditionCache.put(x, t = n.narsese.parseTask(x, true));
+                conditionCache.put(x, t = n.narsese.parseTask(x));
             }
             return t;
         });

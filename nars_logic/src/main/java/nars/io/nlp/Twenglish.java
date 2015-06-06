@@ -229,9 +229,9 @@ public class Twenglish {
                 
                 
                 results.add(0, narsese.parseTask(new StringBuilder(
-                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString(), true));
+                        "<{word,pronoun,qpronoun,prepos,conjunc} --] symbol>.").toString()));
                 results.add(0, narsese.parseTask(new StringBuilder(
-                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString(), true));
+                        "$0.90;0.90$ <(*,<$a-->[$d]>,<is-->[verb]>,<$b-->[$d]>) =/> <$a <-> $b>>.").toString()));
                 
                 languageBooted = true;
             }

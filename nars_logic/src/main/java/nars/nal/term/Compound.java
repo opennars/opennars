@@ -402,18 +402,32 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return result;
     } */
 
+
+
+
+    protected boolean requiresNormalization() {
+        return (hasVar() && !isNormalized());
+    }
+
+    @Override
+    public <T extends Term> T normalized() {
+        return normalized(false);
+    }
+
+    /** careful: this will modify the term and should not be used unless the instance is new and unreferenced. */
+    public <T extends Term> T normalizeDestructively() {
+        return normalized(true);
+    }
+
     /**
      * Normalizes if contain variables which need to be finalized for use in a Sentence
      * May return null if the resulting compound term is invalid
      */
-    @Override
-    public <T extends Term> T normalized() {
-        //if (!hasVar()) return (T) this;
+    protected <T extends Term> T normalized(boolean destructive) {
 
-        if (isNormalized()) return (T) this;
+        if (!requiresNormalization()) return (T) this;
 
-
-        VariableNormalization vn = new VariableNormalization(this);
+        VariableNormalization vn = new VariableNormalization(this, destructive);
         Compound result = vn.getResult();
         if (result == null) return null;
 
@@ -423,17 +437,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
         result.setNormalized(); //dont set subterms normalized, in case they are used as pieces for something else they may not actually be normalized unto themselves (ex: <#3 --> x> is not normalized if it were its own term)
 
-
-//        if (!valid(result)) {
-////                UnableToCloneException ntc = new UnableToCloneException("Invalid term discovered after normalization: " + result + " ; prior to normalization: " + this);
-////                ntc.printStackTrace();
-////                throw ntc;
-//            return null;
-//        }
-
-
         return (T) result;
-
     }
 
 
@@ -719,8 +723,9 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         return l;
     }
 
-    public <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans) {
+    public <T extends Compound> T transform(CompoundTransform trans) {
         transform(trans, 0);
+        return (T)this;
     }
 
     protected <I extends Compound, T extends Term> void transform(CompoundTransform<I, T> trans, int depth) {
@@ -761,11 +766,17 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      */
     @Override
     public boolean containsTerm(final Term t) {
-        if (t.getMass() > getMass()) {
-            //if this term has a mass greater than this compound, it can not be a subterm of it
-            return false;
-        }
+        if (impossibleSubTerm(t)) return false;
+
         return Terms.contains(term, t);
+    }
+
+    /** tests if another term is possibly a subterm of this, given
+     *  its mass and this term's mass.
+     *  (if the target is larger than the maximum combined subterms size,
+     *  it would not be contained by this) */
+    public boolean impossibleSubTerm(final Term possibleComponent) {
+        return possibleComponent.getMass() > getMass()-1;
     }
 
     
@@ -835,6 +846,9 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      * TODO parameter for max (int) level to scan down
      */
     public boolean containsTermRecursively(final Term target) {
+        if (impossibleSubTerm(target))
+            return false;
+
         for (Term x : term) {
             if (x.equals(target)) return true;
             if (x instanceof Compound) {
@@ -853,7 +867,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         if (Terms.equalType(this, t)) {
             return Terms.containsAll(term, ((Compound) t).term);
         } else {
-            return Terms.contains(term, t);
+            return this.containsTerm(t);
         }
     }
 
@@ -963,7 +977,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      * NOT TESTED YET
      */
     public boolean containsAnyTermsOf(final Collection<Term> c) {
-        return Terms.containsAny(term, c);
+        return Terms.containsAny(this, c);
     }
 
     /**
@@ -973,123 +987,71 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      * @param subs
      */
     public Term applySubstitute(final Map<Term, Term> subs) {
+
+        //TODO calculate superterm capacity limits vs. subs min/max
+
         if ((subs == null) || (subs.isEmpty())) {
-            return this;//.clone();
+            return this;
         }
 
-        Term[] tt = new Term[length()];
-        boolean modified = false;
+        flattenSubstitutes(subs);
 
-        for (int i = 0; i < tt.length; i++) {
-            Term t1 = tt[i] = term[i];
+        Term[] in = this.term;
+        Term[] out = in;
 
-            if (subs.containsKey(t1)) {
-                Term t2 = subs.get(t1);
-                while (subs.containsKey(t2)) {
-                    t2 = subs.get(t2);
-                }
+        final int subterms = in.length;
+
+        for (int i = 0; i < subterms; i++) {
+            Term t1 = in[i];
+
+            Term t2;
+            if ((t2 = subs.get(t1))!=null) {
+
+
                 //prevents infinite recursion
                 if (!t2.containsTerm(t1)) {
-                    tt[i] = t2; //t2.clone();
-                    modified = true;
+                    if (out == in) out = Arrays.copyOf(in, subterms);
+                    out[i] = t2; //t2.clone();
                 }
+
             } else if (t1 instanceof Compound) {
                 Term ss = ((Compound) t1).applySubstitute(subs);
                 if (ss != null) {
-                    tt[i] = ss;
-                    if (!tt[i].equals(term[i]))
-                        modified = true;
+                    if (!ss.equals(in[i])) {
+                        //modification
+                        if (out == in) out = Arrays.copyOf(in, subterms);
+                        out[i] = ss;
+                    }
                 }
             }
         }
-        if (!modified)
+        if (out == in)
             return this;
 
-        if (this.isCommutative()) {
-            Arrays.sort(tt);
-        }
-
-        return this.clone(tt);
+        return this.clone(out);
     }
 
+    /** collapses a substitution map to each key's ultimate destination
+     *  in the case of values that are equal to other keys
+     * */
+    public static void flattenSubstitutes(Map<Term, Term> subs) {
 
-//    /** caches a static copy of commonly uesd index variables of each variable type */
-//    public static final int maxCachedVariableIndex = 32;
-//    public static final Variable[][] varCache = (Variable[][]) Array.newInstance(Variable.class, 3, maxCachedVariableIndex);
-//    
-//    public static Variable getIndexVariable(final char type, final int i) {
-//        int typeI;
-//        switch (type) {
-//            case '#': typeI = 0; break;
-//            case '$': typeI = 1; break;
-//            case '?': typeI = 2; break;
-//            default: throw new RuntimeException("Invalid variable type: " + type + ", index " + i);
-//        }
-//        
-//        if (i < maxCachedVariableIndex) {
-//            Variable existing = varCache[typeI][i];
-//            if (existing == null)
-//                existing = varCache[typeI][i] = new Variable(type + String.valueOf(i));
-//            return existing;
-//        }
-//        else
-//            return new Variable(type + String.valueOf(i));
-//    }
+        if (subs.size() < 2) return;
 
+        for (Map.Entry<Term,Term> e : subs.entrySet()) {
+            final Term o = e.getValue(); //what the original mapping of this entry's key
 
-//    /**
-//     * Recursively rename the variables in the compound
-//     *
-//     * @param map The substitution established so far
-//     * @return an array of terms, normalized; may return the original Term[] array if nothing changed,
-//     * otherwise a clone of the array will be returned
-//     */
-//    public static Term[] normalizeVariableNames(String prefix, final Term[] s, final HashMap<Variable, Variable> map) {
-//        
-//        boolean renamed = false;
-//        Term[] t = s.clone();
-//        char c = 'a';
-//        for (int i = 0; i < t.length; i++) {
-//            final Term term = t[i];
-//            
-//
-//            if (term instanceof Variable) {
-//
-//                Variable termV = (Variable)term;                
-//                Variable var;
-//
-//                var = map.get(termV);
-//                if (var == null) {
-//                    //var = getIndexVariable(termV.getType(), map.size() + 1);
-//                    var = new Variable(termV.getType() + /*prefix + */String.valueOf(map.size() + 1));
-//                }
-//                
-//                if (!termV.equals(var)) {
-//                    t[i] = var;
-//                    renamed = true;
-//                }
-//
-//                map.put(termV, var);
-//
-//            } else if (term instanceof CompoundTerm) {
-//                CompoundTerm ct = (CompoundTerm)term;
-//                if (ct.containVar()) {
-//                    Term[] d = normalizeVariableNames(prefix + Character.toString(c),  ct.term, map);
-//                    if (d!=ct.term) {                        
-//                        t[i] = ct.clone(d, true);
-//                        renamed = true;
-//                    }
-//                }
-//            }        
-//            c++;
-//        }
-//            
-//        if (renamed) {            
-//            return t;
-//        }
-//        else 
-//            return s;
-//    }
+            Term k = o, prev = o;
+            while ((k = subs.getOrDefault(k, k))!=prev) {
+                prev = k;
+            }
+            if (!k.equals(o)) {
+                e.setValue(k);
+            }
+        }
+
+    }
+
 
     /**
      * returns result of applySubstitute, if and only if it's a CompoundTerm.
@@ -1116,15 +1078,6 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
         this.normalized = true;
     }
 
-    //    /** recursively sets all subterms normalization */
-//    protected void setNormalizedSubTerms(boolean b) {
-//        setNormalized(b);
-//
-//        //recursively set subterms as normalized
-//        for (final Term t : term)
-//            if (t instanceof CompoundTerm)
-//                ((CompoundTerm)t).setNormalizedSubTerms(b);
-//    }
 
     /**
      * compare subterms where any variables matched are not compared
