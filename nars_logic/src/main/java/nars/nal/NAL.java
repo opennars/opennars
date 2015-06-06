@@ -384,9 +384,13 @@ public abstract class NAL  implements Runnable {
 
     }
 
-    public Task singlePremiseTask(Sentence newSentence, Budget newBudget) {
+    public Task singlePremiseTask(Sentence newSentence, Task parentTask, Budget b) {
         //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
-        return deriveTask(newTask(newSentence), false, true);
+        return deriveTask(newTask(newSentence).parent(parentTask).budget(b), false, true);
+    }
+
+    public Task singlePremiseTask(Sentence newSentence, Task parentTask) {
+        return singlePremiseTask(newSentence, parentTask, parentTask);
     }
 
 

@@ -112,8 +112,20 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
 
     public static char[] trim(final CharBuffer c) {
         char[] x = c.array();
-        final int l = c.limit();
+        int l = c.limit();
+
+        boolean needsCopy = false;
+
+        if (x[x.length-1] == '\u0000') {
+            l--; //skip suffix zero charcter
+            needsCopy = true;
+        }
+
         if (l!=c.capacity()) {
+            needsCopy = true;
+        }
+
+        if (needsCopy) {
             x = Arrays.copyOf(x, l);
         }
         return x;
@@ -140,7 +152,9 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         return toUtf8(CharBuffer.wrap(str));
     }
 
+
     public static final byte[] toUtf8(byte prefix, final String str) {
+        //TODO see if this needs trimmed
         return ByteBuf.create(prefix + str.length()).add((byte) prefix).add(str).toBytes();
     }
 

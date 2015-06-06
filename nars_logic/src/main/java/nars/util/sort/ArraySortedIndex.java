@@ -64,6 +64,8 @@ public class ArraySortedIndex<E extends Itemized>  implements SortedIndex<E> {
 
             while (low <= high) {
                 int mid = (low + high) >>> 1;
+                if ((mid == low) && (mid == high))
+                    break;
 
                 E midVal = get(mid);
 

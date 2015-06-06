@@ -672,8 +672,8 @@ public class TemporalRules {
         return budget;
     }
 
-    public static int order(final long timeDiff, final int durationCycles) {
-        final int halfDuration = durationCycles / 2;
+    public static int order(final float timeDiff, final int durationCycles) {
+        final float halfDuration = durationCycles / 2f;
         if (timeDiff >= halfDuration) {
             return ORDER_FORWARD;
         } else if (timeDiff <= -halfDuration) {
@@ -717,12 +717,19 @@ public class TemporalRules {
         }
     }
 
-
+    public static boolean before(long a, long b, int duration) {
+        return after(b, a, duration);
+    }
 
     /** true if B is after A */
     public static boolean after(long a, long b, int duration) {
         if (a == Stamp.ETERNAL || b == Stamp.ETERNAL)
             return false;
         return order(a, b, duration) == TemporalRules.ORDER_FORWARD;
+    }
+
+    /** true if B is after A */
+    public static boolean occurrsAfter(Stamp a, Stamp b) {
+        return after(a.getOccurrenceTime(), b.getOccurrenceTime(), a.getDuration());
     }
 }

@@ -23,6 +23,10 @@ public class DirectBudget extends Budget {
         return true;
     }
 
+    @Override
+    public boolean requireValidStoredValues() {
+        return false;
+    }
 
     /** true if all the components are finite and within 0..1.0 range */
     public boolean isBudgetValid() {

@@ -495,7 +495,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if(TemporalRules.after(then, now, dur)) {
             nal.deriveTask(
                 task.sentence.projection(nal, then, now)
-                    .budget(task.getBudget()),
+                    .budget(task.getBudget())
+                    .parent(task),
                     false, true);
             return true;
 
@@ -563,7 +564,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     Sentence s=new Sentence(q,Symbols.QUESTION,null,st);
                     if(s!=null) {
                         Budget budget=new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                        nal.singlePremiseTask(s, budget);
+                        nal.singlePremiseTask(s, task, budget);
                     }
                 }
             }

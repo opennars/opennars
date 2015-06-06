@@ -179,9 +179,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
-        if (stamp != null && tense!=Tense.Eternal) {
-            throw new RuntimeException("both tense " + tense + " and stamp " + stamp + "; only use one to avoid any inconsistency");
-        }
 
         if ((truth == null) && !((punc==Symbols.QUEST) || (punc==Symbols.QUESTION))) {
             truth = new DefaultTruth(punc);
@@ -199,24 +196,34 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
         if (s == null)
             return null;
 
-        if (stamp == null && !isEternal()) {
 
-            /* apply the Tense on its own, with respect to the creation time and memory duration */
-            s.setOccurrenceTime(Stamp.getOccurrenceTime(s.getCreationTime(), tense, memory.duration()) );
-        }
+        //override occurence time provided by the stamp with either tense or a specific occurrence time:
+        {
+            boolean hasTense = (tense != null);
+            boolean hasSpecificOcccurence = (this.occurrenceTime != Stamp.UNPERCEIVED);
 
-        if (this.occurrenceTime != Stamp.UNPERCEIVED) {
-            s.setOccurrenceTime(this.occurrenceTime);
+            if (hasTense && hasSpecificOcccurence) {
+                throw new RuntimeException("ambiguous choice between tense " + tense + " and specific occurence time " + occurrenceTime + "; only use one to avoid any inconsistency");
+            }
+
+            if (hasTense) {
+                /* apply the Tense on its own, with respect to the creation time and memory duration */
+                s.setOccurrenceTime(Stamp.getOccurrenceTime(s.getCreationTime(), tense, memory.duration()));
+            }
+
+            if (hasSpecificOcccurence) {
+                s.setOccurrenceTime(this.occurrenceTime);
+            }
         }
 
 
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
-        if (!Float.isFinite(quality) && truth != null) {
+        if (Float.isNaN(quality) && truth != null) {
             quality = BudgetFunctions.truthToQuality(truth);
         }
 
         Task t = new Task(s,
-                /* Budget*/ this,
+                getBudget(),
                 getParentTask(),
                 getParentBelief(),
                 solutionBelief);
@@ -225,6 +232,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget {
         if (this.reason!=null) t.addHistory(reason);
 
         return t;
+    }
+
+    private Budget getBudget() {
+        ensureBudget();
+        return this;
     }
 
     public Task getParentTask() {

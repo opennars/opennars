@@ -97,9 +97,21 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * @param q Initial quality
      */
     public Budget(final float p, final float d, final float q) {
+
+        if (requireValidStoredValues()) {
+            if (Float.isNaN(p) || Float.isNaN(d) || Float.isNaN(q))
+                throw new RuntimeException("non-finite values: " + p + "," + q + "," + q);
+        }
+
         setPriority(p);
         setDurability(d);
         setQuality(q);
+    }
+
+    /** whether the 3 component values stored must be valid (finite, 0 <= x <= 1).
+     *  may be overridden in subclasses */
+    public boolean requireValidStoredValues() {
+        return true;
     }
 
     private Budget() {

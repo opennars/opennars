@@ -743,11 +743,11 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     }
 
     public boolean after(Sentence s, int duration) {
-        return after(s, duration);
+        return TemporalRules.occurrsAfter(s, this);
     }
 
     public boolean before(Sentence s, int duration) {
-        return before(s, duration);
+        return TemporalRules.occurrsAfter(this, s);
     }
 
     public Sentence setOccurrenceTime(long occurrenceTime) {
