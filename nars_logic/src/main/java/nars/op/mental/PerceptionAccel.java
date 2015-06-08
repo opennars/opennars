@@ -196,14 +196,16 @@ public class PerceptionAccel extends NARReaction {
                 nal.emit(Events.DEBUG.class, this, "Success", S);
             }
 
-            if (longest_result_derived_already) {
-                //T.setParticipateInTemporalInduction(false);
-                //T.setParticipateInTemporalInductionOnSucceedingEvents(false);
-            }
 
             longest_result_derived_already = true;
 
-            nal.deriveTask(nal.newTask(S).budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth)).parent(task), false, false); //lets make the new event the parent task, and derive it
+            Task T = nal.deriveTask(nal.newTask(S)
+                    .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
+                    .parent(task)
+                    .temporalInduct(!longest_result_derived_already)
+                    , false, false); //lets make the new event the parent task, and derive it
+
+
         }
     }
 

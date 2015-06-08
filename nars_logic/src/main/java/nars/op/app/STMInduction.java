@@ -65,7 +65,7 @@ public class STMInduction extends NARReaction {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
-        if (currentTask == null || !currentTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        if (currentTask == null || !currentTask.isTemporalInducting()) { //todo refine, add directbool in task
             return false;
         }
 

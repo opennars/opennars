@@ -215,7 +215,7 @@ public abstract class NAL  implements Runnable {
         Task taskCreated;
         if ((taskCreated = task.input()) != null) {
 
-            taskCreated.setParticipateInTemporalInduction(false);
+            taskCreated.setTemporalInducting(false);
 
             if (Global.DEBUG && Global.DEBUG_DERIVATION_STACKTRACES) {
                 taskCreated.addHistory(System.nanoTime() + " " + this.toString());
@@ -275,6 +275,7 @@ public abstract class NAL  implements Runnable {
                             .truth(newTruth)
                             .stamp(stamp)
                             .parent(parentTask, getCurrentBelief())
+                            .temporalInduct(!temporalAdd)
                             .budget(newBudget);
 
         return doublePremiseTask(task, temporalAdd, allowOverlap);

@@ -14,7 +14,6 @@ import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
-import nars.nal.term.Term;
 
 /** utility method for creating new tasks following a fluent builder pattern
  *  warning: does not correctly support parent stamps, use .stamp() to specify one
@@ -28,7 +27,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
     private T term;
     private char punc;
-    private Tense tense;
+    private Tense tense = Tense.Unknown;
     private AbstractStamper stamp;
     private Truth truth;
     private Task parent;
@@ -42,6 +41,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     private Sentence parentBelief;
     private Sentence solutionBelief;
     private long occDelta = 0;
+    private boolean temporalInduct = true;
 
     /** creates a TaskSeed from an existing Task  */
     public TaskSeed(Memory memory, Task task) {
@@ -141,8 +141,18 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     public TaskSeed<T> goal() { this.punc = Symbols.GOAL; return this;}
 
 
+    public TaskSeed<T> tense(Tense t) {
+        this.occurr(Stamp.UNPERCEIVED); //reset occurrance time so they dont conflict
+        this.tense = t;
+        return this;
+    }
+
     //TODO make these return the task, as the final call in the chain
-    public TaskSeed<T> eternal() { this.tense = Tense.Eternal; return this;}
+    public TaskSeed<T> eternal() {
+        tense(Tense.Eternal);
+        this.tense = Tense.Eternal;
+        return this;
+    }
     public TaskSeed<T> present() { this.tense = Tense.Present; return this;}
     public TaskSeed<T> past() { this.tense = Tense.Past; return this;}
     public TaskSeed<T> future() { this.tense = Tense.Future; return this;}
@@ -247,6 +257,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
                 getParentBelief(),
                 solutionBelief);
 
+        t.setTemporalInducting(temporalInduct);
+
         if (this.cause!=null) t.setCause(cause);
         if (this.reason!=null) t.addHistory(reason);
 
@@ -290,7 +302,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         if (stamp instanceof Stamper) {
             return ((Stamper)stamp).isEternal();
         }
-        if (tense!=null)
+        if (tense!=Tense.Unknown)
             return tense!=Tense.Eternal;
         return true;
     }
@@ -315,6 +327,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
     public TaskSeed<T> occurr(long occurenceTime) {
+        this.tense = Tense.Unknown; //reset tense so they dont conflict
         this.occurrenceTime = occurenceTime;
         return this;
     }
@@ -345,12 +358,14 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
     @Override
     public void applyToStamp(Stamp target) {
+
+
         if (stamp!=null)
             stamp.applyToStamp(target);
 
         //override occurence time provided by the stamp with either tense or a specific occurrence time:
         {
-            boolean hasTense = (tense != null);
+            boolean hasTense = (tense != Tense.Unknown);
             boolean hasSpecificOcccurence = (this.occurrenceTime != Stamp.UNPERCEIVED);
 
             if (hasTense && hasSpecificOcccurence) {
@@ -385,4 +400,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return occurrenceTime;
     }
 
+    public TaskSeed<T> temporalInduct(boolean b) {
+        this.temporalInduct = b;
+        return this;
+    }
 }

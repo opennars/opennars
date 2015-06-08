@@ -462,11 +462,11 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     /** flag to indicate whether this Event Task participates in tempporal induction */
-    public void setParticipateInTemporalInduction(boolean b) {
+    public void setTemporalInducting(boolean b) {
         this.temporalInducted = b;
     }
 
-    public boolean isParticipatingInTemporalInduction() {
+    public boolean isTemporalInducting() {
         return temporalInducted;
     }
 

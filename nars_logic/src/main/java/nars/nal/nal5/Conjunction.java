@@ -38,7 +38,6 @@ import static java.lang.System.arraycopy;
  */
 public class Conjunction extends Junction {
 
-    transient private int offset;
 
     public final int temporalOrder;
 
@@ -212,7 +211,7 @@ public class Conjunction extends Junction {
             Conjunction cj = new Conjunction(argList, temporalOrder);
 
             if (len != remaining) {
-                cj.setOffset(offset);
+                //cj.setOffset(offset);
                 System.err.println("interval making an assumption temporarily that " + argList + " shifts " + offset + " when represented as" + cj);
             }
             return cj;
@@ -266,8 +265,8 @@ public class Conjunction extends Junction {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             return makeForward(term1, term2);
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
-            //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
-            return makeForward(term2, term1);
+            throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
+            //return makeForward(term2, term1);
             //return null;
         } else {
             if (term1 instanceof Conjunction) {
@@ -331,18 +330,6 @@ public class Conjunction extends Junction {
     @Override
     public int getTemporalOrder() {
         return temporalOrder;
-    }
-
-
-    /** records an amount of cycles that this conjunction will shift the occurence time of a non-eternal sentence it will be a term of */
-    public int setOffset(int deltaCycles) {
-        return offset;
-    }
-
-    @Override
-    public <T extends Compound> Compound sentencize(TaskSeed task) {
-        task.occurr(task.getOccurrenceTime());
-        return this;
     }
 
     public Term first() {

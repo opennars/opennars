@@ -140,7 +140,8 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                         //if it was not already inducted, then Set.add will return true
                         if (alreadyInducted.add(temporalBelief.sentence)) {
 
-                            //if(task.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+                            if(task.isTemporalInducting()) { //todo refine, add directbool in task
+
                                 if (!equalSubTermsInRespectToImageAndProduct(current.term, prev.term)) {
 
                                     this.belief = temporalBelief;
@@ -156,7 +157,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                                     return true;
                                 }
-                            //}
+                            }
                         }
 
                     }

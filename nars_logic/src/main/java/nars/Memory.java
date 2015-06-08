@@ -46,7 +46,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.nal.nal7.Interval;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.AbstractStamper;
@@ -530,7 +530,7 @@ public class Memory implements Serializable, AbstractStamper {
      */
     public Concept conceptualize(final Budget budget, Term term) {
 
-        if ((term instanceof Variable) || (term instanceof Interval))
+        if ((term instanceof Variable) || (term instanceof AbstractInterval))
             return null;
 
         if ((term = term.normalized()) == null)

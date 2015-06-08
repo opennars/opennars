@@ -371,8 +371,6 @@ public class TemporalRules {
 
         if (!concurrent(time1, time2, durationCycles)) {
 
-            //List<Interval> interval = Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
-
             AbstractInterval interval = nal.newInterval(Math.abs(timeDiff));
 
             if (timeDiff > 0) {

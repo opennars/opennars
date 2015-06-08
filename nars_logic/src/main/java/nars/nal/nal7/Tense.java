@@ -5,17 +5,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Tense {
-    
-    
+
+    Eternal(":-:"),
     Past(":\\:"),
     Present(":|:"),
     Future(":/:");
-    
-    
+
+    public static final Tense Unknown = null;
+
     public final String symbol;
 
-    public static final Tense Eternal = null;
-    
     private Tense(String string) {
         this.symbol = string;
     }
