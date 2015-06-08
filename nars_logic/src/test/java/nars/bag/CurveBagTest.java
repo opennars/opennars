@@ -4,7 +4,6 @@ import nars.analyze.experimental.BagPerf.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.model.impl.Default;
-import nars.Memory;
 import nars.NAR;
 import nars.Param;
 import nars.Global;
@@ -12,7 +11,7 @@ import nars.nal.Item;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.util.sort.ArraySortedIndex;
 import nars.util.data.sorted.SortedIndex;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
 import java.util.Random;

@@ -34,7 +34,7 @@ import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
 import nars.util.data.linkedlist.DDNodePool;
 import nars.util.math.Distributor;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

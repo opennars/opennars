@@ -1,4 +1,4 @@
-package objenome.util.random;
+package nars.util.data.random;
 
 import java.util.Random;
 

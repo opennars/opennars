@@ -3,10 +3,9 @@ package nars.bag;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.bag.impl.experimental.BubbleBag;
 import nars.nal.Item;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
 import java.util.Random;

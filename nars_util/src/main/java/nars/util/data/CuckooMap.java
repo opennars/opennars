@@ -22,7 +22,7 @@ package nars.util.data;
 
 
 import com.google.common.collect.Sets;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jgrapht.util.ArrayUnenforcedSet;
 

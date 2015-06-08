@@ -1,10 +1,9 @@
 package nars.bag;
 
-import nars.Memory;
 import nars.analyze.experimental.BagPerf;
 import nars.bag.impl.experimental.ChainBag;
 import nars.nal.Item;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

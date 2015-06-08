@@ -1,8 +1,7 @@
 package nars.nario;
 
-import nars.Memory;
 import nars.nario.level.Level;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

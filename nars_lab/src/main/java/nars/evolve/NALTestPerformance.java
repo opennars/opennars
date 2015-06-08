@@ -4,7 +4,7 @@ import nars.model.impl.Default;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.testing.condition.OutputCondition;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 import org.encog.Encog;
 import org.encog.engine.network.activation.ActivationSigmoid;
 import org.encog.mathutil.randomize.factory.RandomFactory;

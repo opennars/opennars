@@ -1,7 +1,6 @@
 package automenta.vivisect.audio.granular.depr;
 
-import nars.Memory;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

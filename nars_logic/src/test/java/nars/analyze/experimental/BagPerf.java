@@ -19,7 +19,6 @@ package nars.analyze.experimental;
 
 import com.google.common.collect.Lists;
 import nars.model.impl.Default;
-import nars.Memory;
 import nars.NAR;
 import nars.Global;
 import nars.budget.Budget;
@@ -29,7 +28,7 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.util.sort.ArraySortedIndex;
 import com.google.common.util.concurrent.AtomicDouble;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.io.PrintStream;
 import java.util.*;

@@ -7,7 +7,7 @@ package nars.io;
 
 import nars.NAR;
 import nars.io.in.ChangedTextInput;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 /**
  * probability parameter determines the possibility that it re-input

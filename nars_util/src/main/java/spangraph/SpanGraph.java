@@ -1,4 +1,4 @@
-package nars.util.db;
+package spangraph;
 
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;

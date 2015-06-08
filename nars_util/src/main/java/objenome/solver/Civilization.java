@@ -35,7 +35,7 @@ import objenome.solver.evolve.mutate.PointMutation;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
 import objenome.solver.evolve.selection.TournamentSelector;
-import objenome.util.random.MersenneTwisterFast;
+import nars.util.data.random.MersenneTwisterFast;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;

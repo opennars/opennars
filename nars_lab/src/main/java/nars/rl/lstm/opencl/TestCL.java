@@ -1,7 +1,7 @@
 package nars.rl.lstm.opencl;
 
 import nars.rl.lstm.DistractedSequenceRecall;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.util.Random;
 

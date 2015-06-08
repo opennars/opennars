@@ -27,6 +27,7 @@ package vnc.rfb.encoding.decoder;
 /**
  * Resizeable to needed length byte buffer
  * Singleton for share among decoders.
+ * https://github.com/thinkaurelius/titan/blob/titan05/titan-core/src/main/java/com/thinkaurelius/titan/diskstorage/util/StaticArrayBuffer.java
  */
 public class ByteBuffer {
 	private static final ByteBuffer instance = new ByteBuffer();

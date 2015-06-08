@@ -49,7 +49,7 @@ import objenome.op.math.Multiply;
 import objenome.op.math.Subtract;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
-import objenome.util.random.MersenneTwisterFast;
+import nars.util.data.random.MersenneTwisterFast;
 import objenome.solver.evolve.selection.TournamentSelector;
 
 /**

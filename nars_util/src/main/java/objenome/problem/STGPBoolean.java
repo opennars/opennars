@@ -35,7 +35,7 @@ import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
 import objenome.solver.evolve.selection.TournamentSelector;
-import objenome.util.random.MersenneTwisterFast;
+import nars.util.data.random.MersenneTwisterFast;
 
 import java.util.ArrayList;
 import java.util.List;

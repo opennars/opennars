@@ -14,9 +14,14 @@
  */
 package nars.util.data;
 
-import java.util.Arrays;
+import com.google.common.primitives.Bytes;
+import com.google.common.primitives.Longs;
+import nars.util.utf8.Utf8;
+
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  *
@@ -31,6 +36,16 @@ public final class Util {
     final static int PRIME3 = 524287;
     final static int PRIME2 = 92821;
 
+    public String UUIDbase64() {
+        long low = UUID.randomUUID().getLeastSignificantBits();
+        long high = UUID.randomUUID().getMostSignificantBits();
+        return new String(Base64.getEncoder().encode(
+                Bytes.concat(
+                        Longs.toByteArray(low),
+                        Longs.toByteArray(high)
+                )
+        ));
+    }
     public final static int hashL(int a, int b) {
         return PRIME2 * (31 + a ) + b ;
     }

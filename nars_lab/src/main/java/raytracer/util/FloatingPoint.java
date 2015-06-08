@@ -1,6 +1,6 @@
 package raytracer.util;
 
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 /**
  * Diese Klasse stellt zus�tzliche Routinen f�r Gleitkommazahlen bereit.

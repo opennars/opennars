@@ -1,6 +1,6 @@
 package nars.rl.hai;
 
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.util.Random;
 

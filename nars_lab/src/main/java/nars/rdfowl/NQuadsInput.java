@@ -1,6 +1,7 @@
 package nars.rdfowl;
 
 import automenta.vivisect.Video;
+import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Solid;
@@ -615,10 +616,11 @@ public class NQuadsInput {
 
     public static void main(String[] args) throws Exception {
         //Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
-        Solid d = new Solid(32, 4096,1,4,1,3);
+        Solid d = new Solid(32, 4096,1,3,1,2);
         d.setInternalExperience(null).level(7);
         d.inputsMaxPerCycle.set(32);
         d.inputActivationFactor.set(0.15f);
+        Global.TRUTH_EPSILON = 0.1f;
 
 
         NAR n = new NAR(d);

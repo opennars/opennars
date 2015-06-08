@@ -3,7 +3,7 @@ package nars.bag;
 import nars.analyze.experimental.BagPerf.NullItem;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 
 import java.util.Iterator;

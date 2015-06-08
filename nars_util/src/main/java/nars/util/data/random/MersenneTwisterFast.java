@@ -19,7 +19,7 @@
  * 
  * The latest version is available from: http://www.epochx.org
  */
-package objenome.util.random;
+package nars.util.data.random;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

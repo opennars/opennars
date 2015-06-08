@@ -13,7 +13,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.util.event.Reaction;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import java.util.HashSet;
 import java.util.Set;

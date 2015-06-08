@@ -3,7 +3,7 @@
 package nars.grid2d.particle;
 
 import javolution.util.FastTable;
-import objenome.util.random.XORShiftRandom;
+import nars.util.data.random.XORShiftRandom;
 
 import javax.swing.*;
 import java.awt.*;
