@@ -33,7 +33,7 @@ public class Variable extends Atom {
 
 
     @Override
-    public int compareTo(Term that) {
+    public int compareTo(Object that) {
         if (this == that) return 0;
         if (that instanceof Variable) {
             return Variable.compare(this, (Variable)that);

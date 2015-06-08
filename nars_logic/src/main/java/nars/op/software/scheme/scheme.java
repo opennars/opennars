@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import nars.nal.nal4.Product;
+import nars.nal.nal4.Product1;
+import nars.nal.nal4.ProductN;
 import nars.nal.nal8.operator.TermFunction;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
@@ -25,9 +27,9 @@ public class scheme extends TermFunction {
         @Override
         public Expression apply(Term term) {
 
-            if (term instanceof Product) {
+            if (term instanceof ProductN) {
                 //return ListExpression.list(SymbolExpression.symbol("quote"), new SchemeProduct((Product)term));
-                return new SchemeProduct((Product)term);
+                return new SchemeProduct((ProductN)term);
             }
             else if (term instanceof Atom) {
 
@@ -49,12 +51,12 @@ public class scheme extends TermFunction {
     /** adapter class for NARS term -> Scheme expression; temporary until the two API are merged better */
     public static class SchemeProduct extends ListExpression {
 
-        public SchemeProduct(Product p) {
+        public SchemeProduct(ProductN p) {
             super(Cons.copyOf(Iterables.transform(p, narsToScheme)));
         }
     }
 
-    public Expression eval(Product p) {
+    public Expression eval(ProductN p) {
         return Evaluator.evaluate(new SchemeProduct(p), env);
     }
 
@@ -80,12 +82,16 @@ public class scheme extends TermFunction {
     @Override
     public Term function(Term[] x) {
         Term code = x[0];
-        if (code instanceof Product) {
+
+        if (code instanceof Product1) {
+            throw new RuntimeException("TODO");
+        }
+        else if (code instanceof ProductN) {
             //evaluate as an s-expression
             //System.out.println( ((Product) code).first() );
             //System.out.println( ((Product) code).rest() );
 
-            return schemeToNars.apply(eval( ((Product) code)  ));
+            return schemeToNars.apply(eval( ((ProductN) code)  ));
         }
         //Set = evaluate as a cond?
         else {

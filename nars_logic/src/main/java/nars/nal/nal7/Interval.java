@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 
  * @author peiwang / SeH
  */
-public class Interval extends Atom {
+public class Interval extends Atom implements AbstractInterval {
 
     public static class AtomicDuration extends AtomicInteger {
         
@@ -44,7 +44,7 @@ public class Interval extends Atom {
          *  with regard to a "normalized" interval scale determined by duration.
          */
         double linear = 0.5;
-        
+
         transient double log; //caches the value here
         transient int lastValue = -1;
 
@@ -80,7 +80,9 @@ public class Interval extends Atom {
     
     static final int INTERVAL_POOL_SIZE = 16;
     static final Interval[] INTERVAL = new Interval[INTERVAL_POOL_SIZE];
-    
+
+    public final int magnitude;
+
     public static Interval interval(final String i) {
         return interval(Integer.parseInt(i.substring(1)) - 1);
     }
@@ -112,7 +114,6 @@ public class Interval extends Atom {
         return false;
     }
 
-    public final int magnitude;
 
     // time is a positive integer
     protected Interval(final long timeDiff, final AtomicDuration duration) {
@@ -141,7 +142,7 @@ public class Interval extends Atom {
     }
     
     public static long cycles(final int magnitude, final AtomicDuration duration) {
-        return Math.round(time((double) magnitude, duration));
+        return Math.round(time(magnitude, duration));
     }
     
     /** Calculates the average of the -0.5, +0.5 interval surrounding the integer magnitude
@@ -154,15 +155,17 @@ public class Interval extends Atom {
         return Math.round((time(magMin, duration) + time(magMax, duration))/2.0);
     }
 
+    @Override
+    public final long cycles(final Memory m) {
+        return cycles(m.param.duration);
+    }
+
     public final long cycles(final AtomicDuration duration) {
         //TODO use a lookup table for this
         return cycles(magnitude, duration);
     }
     
-    public final long durationCycles(final Memory memory) {
-        return cycles(memory.param.duration);
-    }
-    
+
     @Override
     public Interval clone() {
         //can return this as its own clone since it's immutable.
@@ -176,7 +179,7 @@ public class Interval extends Atom {
             return Lists.newArrayList(interval(t, memory));
 
         Interval first = interval(t, memory);
-        long a = first.durationCycles(memory); //current approximation value
+        long a = first.cycles(memory); //current approximation value
         if (a == t) return Lists.newArrayList(first);
         else if (a < t) {
             //ok we will add to it. nothing to do here
@@ -184,7 +187,7 @@ public class Interval extends Atom {
         else if ((a > t) && (first.magnitude > 0)) {
             //use next lower magnitude
             first = interval(first.magnitude - 1);
-            a = first.durationCycles(memory);
+            a = first.cycles(memory);
         }
                 
         List c = new ArrayList(maxTerms);
@@ -208,7 +211,7 @@ public class Interval extends Atom {
         for (final Object t : s) {
             if (t instanceof Interval) {
                 Interval i = (Interval)t;
-                time += i.durationCycles(memory);
+                time += i.cycles(memory);
             }
         }
         return time;

@@ -14,6 +14,7 @@ import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
+import nars.nal.term.Term;
 
 /** utility method for creating new tasks following a fluent builder pattern
  *  warning: does not correctly support parent stamps, use .stamp() to specify one
@@ -22,7 +23,7 @@ import nars.nal.term.Compound;
  * */
 public class TaskSeed<T extends Compound> extends DirectBudget implements AbstractStamper {
 
-    private final Memory memory;
+    public final Memory memory;
 
 
     private T term;
@@ -40,6 +41,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     private long occurrenceTime = Stamp.UNPERCEIVED;
     private Sentence parentBelief;
     private Sentence solutionBelief;
+    private long occDelta = 0;
 
     /** creates a TaskSeed from an existing Task  */
     public TaskSeed(Memory memory, Task task) {
@@ -189,11 +191,18 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         Task t = get();
         if (t == null) return null;
 
-        if (memory.input(t) == 0) {
-            return null;
+        if (t.isInput()) {
+            if (memory.input(t) > 0) {
+                return t;
+            }
+        }
+        else {
+            if (memory.taskAdd(t)) {
+                return t;
+            }
         }
 
-        return t;
+        return null;
 
     }
 
@@ -214,14 +223,25 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
         AbstractStamper st = (this.stamp == null ? memory : this);
 
-
-
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
         if (Float.isNaN(quality) && truth != null) {
             quality = BudgetFunctions.truthToQuality(truth);
         }
 
-        Task t = new Task(term, punc, truth, st,
+
+        Compound sentenceTerm = term.sentencize(this);
+        if (sentenceTerm == null)
+            return null;
+
+        if (Global.DEBUG) {
+            sentenceTerm.ensureNormalized("Sentence term");
+
+            if (Sentence.invalidSentenceTerm(sentenceTerm))
+                throw new RuntimeException("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
+        }
+
+
+        Task t = new Task(sentenceTerm, punc, truth, st,
                 getBudget(),
                 getParentTask(),
                 getParentBelief(),
@@ -299,6 +319,12 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return this;
     }
 
+    /** sets an amount of cycles to shift the final applied occurence time */
+    public TaskSeed<T> occurrDelta(long occurenceTime) {
+        this.occDelta = occurenceTime;
+        return this;
+    }
+
     public boolean isGoal() { return punc == Symbols.GOAL;     }
     public boolean isJudgment() { return punc == Symbols.JUDGMENT;     }
     public boolean isQuestion() { return punc == Symbols.QUESTION;     }
@@ -339,6 +365,14 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
                 target.setOccurrenceTime(this.occurrenceTime);
             }
         }
+
+
+        if (occDelta!=0) {
+            long applied = target.getOccurrenceTime();
+            if ((applied != Stamp.ETERNAL)&&(applied != Stamp.UNPERCEIVED))
+                target.setOccurrenceTime( applied + occDelta );
+        }
+
     }
 
 

@@ -26,13 +26,13 @@ import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.term.transform.TermVisitor;
-import nars.util.data.id.Identifier;
+import nars.util.data.id.Identified;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 
-public interface Term extends Cloneable, Comparable<Term>, Identifier.Identified, Termed, Serializable {
+public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
 
 
     default Term getTerm() {

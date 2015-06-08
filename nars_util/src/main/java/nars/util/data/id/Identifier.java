@@ -59,17 +59,6 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     }
 
 
-    public interface Identified extends Named<Identifier> {
-        /**
-         * allows a host of an identifier to replace its identifier
-         * with an instance known to be equal, effectively
-         * removing duplicates from the system.
-         */
-        void identifierEquals(Identifier other);
-    }
-
-
-
     public void append(OutputStream o, boolean pretty) throws IOException {
         append(new PrintWriter(o), pretty);
     }

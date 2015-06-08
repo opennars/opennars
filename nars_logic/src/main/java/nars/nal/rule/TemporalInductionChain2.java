@@ -2,17 +2,18 @@ package nars.nal.rule;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.process.ConceptProcess;
 import nars.nal.NALOperator;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.process.ConceptProcess;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -24,7 +25,7 @@ import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
 */
 public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
-    final static class ConceptByOperator implements Predicate<Concept> {
+    static class ConceptByOperator implements Predicate<Concept> {
 
         final NALOperator[] n;
 
@@ -42,7 +43,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     }
 
-    final ConceptByOperator implications = new ConceptByOperator(NALOperator.IMPLICATION);
+    final InductableImplication nextInductedImplication = new InductableImplication();
 
     @Override
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
@@ -57,8 +58,8 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         final Concept concept = f.getCurrentConcept();
 
         Task task = f.getCurrentTask();
-        Sentence taskSentence = task.sentence;
-        if (taskSentence.isEternal())
+
+        if (task.sentence.isEternal())
             return true;
 
         final Memory memory = f.memory;
@@ -72,52 +73,27 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             final float chainSampleSearchSize = Global.TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(taskLink.getPriority());
 
             //prevent duplicate inductions
-            Set<Term> alreadyInducted = null;
+
+            nextInductedImplication.reset(task, f.memory.duration());
 
             for (int i = 0; i < chainSamples; i++) {
 
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
-                Concept next = memory.concepts.nextConcept(implications, chainSampleSearchSize);
+                Concept next = memory.concepts.nextConcept(nextInductedImplication, chainSampleSearchSize);
                 if (next == null || next.equals(concept))
                     continue;
 
-                Term t = next.getTerm();
-
-                if (!(t instanceof Implication))
-                    throw new RuntimeException("nextConcept should have returned implication");
-
-                if (alreadyInducted == null) {
-                    alreadyInducted = Global.newHashSet(chainSamples);
-                    alreadyInducted.add(t);
-                }
-                else {
-                    if (!alreadyInducted.add(t)) continue;
-                }
-
-
-
-
-                //TODO: make this work if it is needed, but i think it just implements a restore point that is not needed due to the refactor
-//                    ///SPECIAL REASONING CONTEXT FOR TEMPORAL INDUCTION
-//                    Stamp SVSTamp=nal.getNewStamp();
-//                    Sentence SVBelief=nal.getCurrentBelief();
-//                    NAL.StampBuilder SVstampBuilder=nal.newStampBuilder;
-
-                //now set the current context:
-//                    f.setCurrentBelief(temporalBelief);
-
+                Implication t = (Implication) next.getTerm();
 
 
                 //select a Non-eternal (temporal) belief
-                Task temporalBelief = next.getStrongestBelief(false, true);
-                if (temporalBelief!=null) {
-                    //if(!temporalBelief.isEternal()) {
-                        induct(f, task, taskSentence, memory, temporalBelief.sentence);
-                    //}
-                }
+                Sentence b = nextInductedImplication.getBelief();
+                f.setCurrentBelief(b);
 
-
+                induct(task,
+                        nextInductedImplication.getPrevious(),
+                        nextInductedImplication.getCurrent(), f);
             }
         }
 
@@ -125,33 +101,8 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     }
 
-    /** should only take non-eternalized beliefs? */
-    private boolean induct(ConceptProcess f, Task task, Sentence taskSentence, Memory memory, Sentence otherBelief) {
-        Sentence current, prev;
 
-        if(otherBelief.after(taskSentence, memory.duration())) {
-            current = otherBelief;
-            prev = task.sentence;
-        } else {
-            current = task.sentence;
-            prev = otherBelief;
-        }
-
-        /*if(!task.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
-            return false;
-        }*/
-
-        if (current.isEternal() || !TemporalRules.isInputOrTriggeredOperation(task, f.memory)) {
-            return false;
-        }
-
-        //temporal inductions for judgments only. this should always be the case
-        /*if(!currentBelief.isJudgment() || !prevBelief.isJudgment())
-            return false;*/
-
-        if (equalSubTermsInRespectToImageAndProduct(current.term, prev.term)) {
-            return false;
-        }
+    boolean induct(Task task, Sentence prev, Sentence current, ConceptProcess f) {
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
         TemporalRules.temporalInduction(current, prev,
@@ -163,4 +114,76 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     }
 
 
+    private static class InductableImplication extends ConceptByOperator {
+
+        Set<Sentence> alreadyInducted = new HashSet();
+        Task belief = null;
+        private Sentence current, prev;
+        private Task task;
+        private int duration;
+
+        public InductableImplication() {
+            super(NALOperator.IMPLICATION);
+        }
+
+        @Override
+        public boolean test(Concept concept) {
+
+            belief = null;
+
+            if (super.test(concept)) {
+
+                Task temporalBelief = concept.getStrongestBelief(false, true);
+                if (temporalBelief != null) {
+                    if (!temporalBelief.isEternal() && TemporalRules.isInputOrTriggeredOperation(temporalBelief)) {
+
+                        //if it was not already inducted, then Set.add will return true
+                        if (alreadyInducted.add(temporalBelief.sentence)) {
+
+                            //if(task.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+                                if (!equalSubTermsInRespectToImageAndProduct(current.term, prev.term)) {
+
+                                    this.belief = temporalBelief;
+
+                                    Sentence otherBelief = temporalBelief.sentence;
+                                    if (otherBelief.after(task.sentence, duration)) {
+                                        current = otherBelief;
+                                        prev = task.sentence;
+                                    } else {
+                                        current = task.sentence;
+                                        prev = otherBelief;
+                                    }
+
+                                    return true;
+                                }
+                            //}
+                        }
+
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /** holds the belief of the current concept that was identified as valid in the test() method, to avoid having to find it again */
+        public Sentence getBelief() {
+            return belief.sentence;
+        }
+
+        public void reset(Task task, int duration) {
+            this.task = task;
+            this.duration = duration;
+            alreadyInducted.clear();
+            prev = current = null;
+            belief = null;
+        }
+
+        public Sentence getPrevious() {
+            return prev;
+        }
+        public Sentence getCurrent() {
+            return current;
+        }
+    }
 }

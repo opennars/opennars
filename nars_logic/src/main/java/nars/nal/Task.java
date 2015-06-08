@@ -20,6 +20,7 @@
  */
 package nars.nal;
 
+import infinispan.com.google.common.collect.Sets;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
@@ -35,7 +36,7 @@ import nars.op.mental.InternalExperience;
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -247,6 +248,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @return Whether the Task is derived from another task
      */
     public boolean isInput() {
+
         return parentTask == null && cause == null;
     }
     
@@ -469,8 +471,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     
-    public static Set<Sentence> getSentences(Iterable<Task> tasks) {
-        Set<Sentence> s = new HashSet();
+    public static Set<Sentence> getSentences(Collection<Task> tasks) {
+        Set<Sentence> s = Global.newHashSet(tasks.size());
         for (Task t : tasks)
             s.add(t.sentence);
         return s;

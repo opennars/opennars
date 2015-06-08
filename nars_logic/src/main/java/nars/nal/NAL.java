@@ -8,6 +8,8 @@ import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamper;
 import nars.nal.task.TaskSeed;
@@ -744,4 +746,9 @@ public abstract class NAL  implements Runnable {
 
     }
 
+    public AbstractInterval newInterval(long cycles) {
+        //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
+        return new CyclesInterval(cycles);
+
+    }
 }

@@ -61,18 +61,18 @@ public class STMInduction extends NARReaction {
         return stmSize;
     }
 
-    boolean inductionOnSucceedingEvents(final Task newEvent, TaskProcess nal) {
+    boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal) {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
-        /*if (newEvent == null || !newEvent.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
+        if (currentTask == null || !currentTask.isParticipatingInTemporalInduction()) { //todo refine, add directbool in task
             return false;
-        }*/
+        }
 
         //new one happened and duration is already over, so add as negative task
-        nal.emit(Events.InduceSucceedingEvent.class, newEvent, nal);
+        nal.emit(Events.InduceSucceedingEvent.class, currentTask, nal);
 
-        if (newEvent.sentence.isEternal() || !isInputOrTriggeredOperation(newEvent, nal.memory)) {
+        if (currentTask.sentence.isEternal() || !isInputOrTriggeredOperation(currentTask, nal.memory)) {
             return false;
         }
 
@@ -88,7 +88,7 @@ public class STMInduction extends NARReaction {
             Task stmLast = ss.next();
 
 
-            if (!equalSubTermsInRespectToImageAndProduct(newEvent.sentence.term, stmLast.sentence.term)) {
+            if (!equalSubTermsInRespectToImageAndProduct(currentTask.sentence.term, stmLast.sentence.term)) {
                 continue;
             }
 
@@ -102,32 +102,32 @@ public class STMInduction extends NARReaction {
         //iterate on a copy because temporalInduction seems like it sometimes calls itself recursively and this will cause a concurrent modification exception otherwise
         Task[] stmCopy = stm.toArray(new Task[stm.size()]);
 
-        for (Task stmLast : stmCopy) {
+        for (Task previousTask : stmCopy) {
 
 
 
 
-            //nal.setCurrentTask(newEvent);
+            //nal.setCurrentTask(currentTask);
 
-            Sentence previousBelief = stmLast.sentence;
-            //nal.setCurrentBelief(previousBelief);
+            Sentence previousBelief = previousTask.sentence;
+            nal.setCurrentBelief(previousBelief);
 
-            Sentence currentBelief = newEvent.sentence;
+            Sentence currentBelief = currentTask.sentence;
 
-            //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
+            //if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
             TemporalRules.temporalInduction(currentBelief, previousBelief,
-                    nal.newStamp(newEvent.sentence, stmLast.sentence),
+                    nal.newStamp(currentTask.sentence, previousTask.sentence),
                     nal);
         }
 
         ////for this heuristic, only use input events & task effects of operations
-        ////if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
-        //stmLast = newEvent;
+        ////if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY) {
+        //stmLast = currentTask;
         ////}
         while (stm.size() > stmSize) {
             stm.removeFirst();
         }
-        stm.add(newEvent);
+        stm.add(currentTask);
 
         return true;
     }

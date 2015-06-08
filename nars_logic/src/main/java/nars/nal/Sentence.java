@@ -104,9 +104,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    public Sentence(T term, char punctuation, Truth newTruth, AbstractStamper newStamp) {
-        this(term, punctuation, newTruth, newStamp, true);
-    }
 
     /**
      * Create a Sentence with the given fields
@@ -118,7 +115,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
      * @param normalize if false, normalization is not attempted and the compound will be used as-is
      * base
      */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp, boolean normalize) {
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp) {
 
         this.punctuation = punctuation;
 
@@ -141,19 +138,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
 
 
-        //HACK special handling for conjunctions which may have a trailing interval
-        if ((seedTerm instanceof Conjunction) && (seedTerm.getTemporalOrder() == TemporalRules.ORDER_FORWARD)) {
-
-            T newSeedTerm = getTerm(seedTerm);
-            if (newSeedTerm == null)
-                throw new RuntimeException("Error creating a sentence for Conjunction term: " + seedTerm);
-            if (newSeedTerm != seedTerm) {
-                normalize = true;
-                seedTerm = newSeedTerm;
-            }
-
-        }
-
         if ((isQuestion() || isQuest()) && !isEternal()) {
             //need to clone in case this stamp is shared by others which are not to eternalize it
             //stamp = stamp.cloneEternal();
@@ -164,65 +148,15 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
-        this.term = normalize ? seedTerm.normalized() : seedTerm;
-
-        if (term == null)
-            throw new RuntimeException("Term for a new Sentence not valid or could not be normalized: " + seedTerm);
-
-        if (Global.DEBUG) {
-            if (invalidSentenceTerm(term))
-                throw new RuntimeException("Invalid sentence content term: " + term + ", seedTerm=" + seedTerm);
-        }
+        this.term = seedTerm;
 
 
-        this.term.ensureNormalized("Sentence term");
 
         invalidateHash();
 
     }
 
-    /**
-     * pre-processes a term for sentence's use; in most cases just returns the term itself
-     */
-    protected T getTerm(T t) {
-        if (t instanceof Conjunction) {
 
-            //cut interval at end for sentence in serial conjunction, and inbetween for parallel
-            //TODO this can be extended to remove N suffix intervals, if we ever use the multiple interval thing
-            Conjunction c = (Conjunction) t;
-            if (c.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
-                if (c.term[c.term.length - 1] instanceof Interval) {
-                    Term[] term2 = new Term[c.term.length - 1];
-                    //TODO use System.arraycopy
-                    for (int i = 0; i < c.term.length - 1; i++) {
-                        term2[i] = c.term[i];
-                    }
-                    Term x = Conjunction.make(term2, c.getTemporalOrder());
-                    if (!(x instanceof Compound)) return null;
-                    T u = (T) x;
-
-                    //if the resulting term is valid for a sentence, adjust the stamp and return the new term
-                    if ((u = termOrNull(u)) != null) {
-
-                        //ok we removed a part of the interval, we have to transform the occurence time of the sentence back
-                        //accordingly
-                        //TODO make this interval not hardcoded
-                        long time = Interval.cycles(((Interval) c.term[c.term.length - 1]).magnitude, new Interval.AtomicDuration(getDuration()));
-                        if (!isEternal())
-                            setOccurrenceTime(getOccurrenceTime() - time);
-                        return u;
-                    } else {
-                        //the result would not be valid, so just return the original input
-                        //this sentence should not be created but in the meantime, this will prevent it from having any effect
-                        if (truth != null)
-                            truth.setConfidence(0);
-                    }
-                }
-            }
-
-        }
-        return t;
-    }
 
 
     public void setRevisible(boolean b) {
@@ -460,7 +394,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         
         final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
 
-        Sentence s = new Sentence(term, punctuation, newTruth, this, false);
+        Sentence s = new Sentence(term, punctuation, newTruth, this);
 
         s.setOccurrenceTime(eternalizing ? Stamp.ETERNAL : targetTime);
 
@@ -498,8 +432,8 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         }
         
         if (newTruth == null) {
-            //newTruth = new DefaultTruth(truth);
-            return truth;
+            newTruth = new DefaultTruth(truth);
+            //return truth;
         }
         
         return newTruth;

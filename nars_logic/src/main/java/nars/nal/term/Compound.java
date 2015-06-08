@@ -26,6 +26,7 @@ import nars.Memory;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
@@ -81,6 +82,15 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
         this.complexity = -1;
         this.term = components;
+    }
+
+    /** called before a term is used in a sentence.  allows the term
+     *  implementation to produce a transformed version of itself
+     *  which will be valid for the sentence it finds itself inserting.
+     *  by default, just returns itself.
+     */
+    public <T extends Compound> Compound sentencize(TaskSeed task) {
+        return this;
     }
 
 
@@ -308,7 +318,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     public abstract Term clone();
 
     @Override
-    public int compareTo(final Term that) {
+    public int compareTo(final Object that) {
         if (that == this) return 0;
 
         // variables have earlier sorting order than non-variables

@@ -37,10 +37,10 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.nal.term.transform.Substitution;
 import nars.op.mental.Mental;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -149,7 +149,7 @@ public class TemporalRules {
     }
 
     //is input or by the system triggered operation
-    public static boolean isInputOrTriggeredOperation(final Task newEvent, Memory mem) {
+    public static boolean isInputOrTriggeredOperation(final Task newEvent) {
         if (newEvent.isInput()) return true;
         if (containsMentalOperator(newEvent)) return true;
         if (newEvent.getCause() != null) return true;
@@ -192,7 +192,7 @@ public class TemporalRules {
                 Conjunction conj = (Conjunction) imp.getSubject();
                 if (conj.term[conj.term.length - 1] instanceof Interval) {
                     Interval intv = (Interval) conj.term[conj.term.length - 1];
-                    long time_offset = intv.durationCycles(memory);
+                    long time_offset = intv.cycles(memory);
                     return (occurrenceTime + time_offset);
                 }
             }
@@ -282,8 +282,10 @@ public class TemporalRules {
                 if (ss2.containsTermRecursively(ss1.getPredicate())) {
                     subs.put(ss1.getPredicate(), var2);
                 }
-                t11 = ss1.applySubstitute(subs);
-                t22 = ss2.applySubstitute(subs);
+
+                Substitution sub = new Substitution(subs);
+                t11 = ss1.applySubstitute(sub);
+                t22 = ss2.applySubstitute(sub);
             }
 
             if (ss1.containsTermRecursively(ss2.getSubject())) {
@@ -294,8 +296,10 @@ public class TemporalRules {
                 if (ss1.containsTermRecursively(ss2.getPredicate())) {
                     subs.put(ss2.getPredicate(), var2);
                 }
-                t11 = ss1.applySubstitute(subs);
-                t22 = ss2.applySubstitute(subs);
+
+                Substitution sub = new Substitution(subs);
+                t11 = ss1.applySubstitute(sub);
+                t22 = ss2.applySubstitute(sub);
             }
 
             //TODO combine the below blocks they are similar
@@ -354,8 +358,7 @@ public class TemporalRules {
         }
 
 
-        final Interval.AtomicDuration duration = nal.memory.param.duration;
-        int durationCycles = duration.get();
+        int durationCycles = nal.memory.duration();
 
         long time1 = s1.getOccurrenceTime();
         long time2 = s2.getOccurrenceTime();
@@ -368,17 +371,19 @@ public class TemporalRules {
 
         if (!concurrent(time1, time2, durationCycles)) {
 
-            List<Interval> interval = Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
+            //List<Interval> interval = Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
+
+            AbstractInterval interval = nal.newInterval(Math.abs(timeDiff));
 
             if (timeDiff > 0) {
-                t1 = Conjunction.make(t1, interval, ORDER_FORWARD);
+                t1 = Conjunction.make(ORDER_FORWARD, t1, interval);
                 if (t11 != null) {
-                    t11 = Conjunction.make(t11, interval, ORDER_FORWARD);
+                    t11 = Conjunction.make(ORDER_FORWARD, t11, interval);
                 }
             } else {
-                t2 = Conjunction.make(t2, interval, ORDER_FORWARD);
+                t2 = Conjunction.make(ORDER_FORWARD, t2, interval);
                 if (t22 != null) {
-                    t22 = Conjunction.make(t22, interval, ORDER_FORWARD);
+                    t22 = Conjunction.make(ORDER_FORWARD, t22, interval);
                 }
             }
         }
@@ -399,13 +404,13 @@ public class TemporalRules {
         if (!SucceedingEventsInduction) { //reduce priority according to temporal distance
             //it was not "semantically" connected by temporal succession
             int tt1 = (int) s1.getOccurrenceTime();
-            int tt2 = (int) s1.getOccurrenceTime();
-            int d = Math.abs(tt1 - tt2) / nal.memory.param.duration.get();
+            int tt2 = (int) s2.getOccurrenceTime();
+            float d = Math.abs(tt1 - tt2) / ((float)nal.memory.param.duration.get());
             if (d != 0) {
-                double mul = 1.0 / ((double) d);
-                budget1.setPriority((float) (budget1.getPriority() * mul));
-                budget2.setPriority((float) (budget2.getPriority() * mul));
-                budget3.setPriority((float) (budget3.getPriority() * mul));
+                float mul = 1.0f / d;
+                budget1.setPriority(budget1.getPriority() * mul);
+                budget2.setPriority(budget2.getPriority() * mul);
+                budget3.setPriority(budget3.getPriority() * mul);
             }
         }
         Statement statement1 = Implication.make(t1, t2, order);

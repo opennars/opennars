@@ -44,14 +44,15 @@ public class Atom extends AbstractTerm {
 
     @Override
     public int length() {
-        return 1;
+        throw new RuntimeException("Atomic terms have no subterms and length() should be zero");
+        //return 0;
     }
 
     /**
      * @param that The Term to be compared with the current Term
      */
     @Override
-    public int compareTo(final Term that) {
+    public int compareTo(final Object that) {
         if (that==this) return 0;
 
         // variables have earlier sorting order than non-variables
@@ -59,7 +60,7 @@ public class Atom extends AbstractTerm {
             if (that.getClass() == Variable.class)
                 return 1;
 
-            return compareHash(that);
+            return compareHash((Atom)that);
         }
         else {
             return -1;
