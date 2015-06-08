@@ -346,4 +346,9 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         BudgetFunctions.compoundForward(this, getTruth(), result, nal);
         return this;
     }
+
+    public long getOccurrenceTime() {
+        return occurrenceTime;
+    }
+
 }

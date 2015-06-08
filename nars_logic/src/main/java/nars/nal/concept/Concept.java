@@ -86,24 +86,25 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     default Task getBelief(final NAL nal, final Task task) {
         if (!hasBeliefs()) return null;
 
-        final long currentTime = getMemory().time();
+        final long now = nal.time();
         long occurrenceTime = task.getOccurrenceTime();
 
         final int b = getBeliefs().size();
         for (int i = 0; i < b; i++) {
-            final Task belief = getBeliefs().get(i);
+            Task belief = getBeliefs().get(i);
 
-            if (task.sentence.isEternal() && belief.isEternal()) return belief;
+            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
-            TaskSeed projectedBelief = belief.projection(nal.memory, occurrenceTime, currentTime);
+            TaskSeed projectedBelief = belief.projection(nal.memory, occurrenceTime, now);
 
-            if (projectedBelief!=null) {
-                Task t = nal.singlePremiseTask(projectedBelief); // return the first satisfying belief
-                if (t!=null) return t;
+            if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
+                belief = nal.singlePremiseTask(projectedBelief); // return the first satisfying belief
             }
+
+            return belief;
         }
 
-        return task;
+        return null;
     }
 
 

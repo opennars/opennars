@@ -498,7 +498,8 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         }
         
         if (newTruth == null) {
-            newTruth = new DefaultTruth(truth);
+            //newTruth = new DefaultTruth(truth);
+            return truth;
         }
         
         return newTruth;

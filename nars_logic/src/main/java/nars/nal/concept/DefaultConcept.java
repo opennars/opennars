@@ -367,28 +367,26 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * To accept a new judgment as belief, and check for revisions and solutions
      *
      * @param judg The judgment to be accepted
-     * @param task The task to be processed
+     * @param newBelief The task to be processed
      * @return Whether to continue the processing of the task
      */
-    public boolean processJudgment(final TaskProcess nal, final Task task) {
+    public boolean processJudgment(final TaskProcess nal, Task newBelief) {
 
         if (hasBeliefs() && isConstant())
             return false;
 
-        final Sentence judg = task.sentence;
-        final Sentence oldBelief;
 
-        oldBelief = getSentence(judg, getBeliefs());   // only revise with the strongest -- how about projection?
+        final Task oldBelief = getTask(newBelief.sentence, getBeliefs());   // only revise with the strongest -- how about projection?
 
-        if ((oldBelief != null) && (oldBelief!=judg)) {
-            if (judg.equalStamp(oldBelief, true, true, false, true)) {
+        if ((oldBelief != null) && (oldBelief.sentence!=newBelief.sentence)) {
+            if (newBelief.sentence.equalStamp(oldBelief.sentence, true, true, false, true)) {
 //                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
 
-                getMemory().removed(task, "Duplicated");
+                getMemory().removed(newBelief, "Duplicated");
                 return false;
-            } else if (revisible(judg, oldBelief)) {
+            } else if (revisible(newBelief.sentence, oldBelief.sentence)) {
                 final long now = getMemory().time();
 
 //                if (nal.setTheNewStamp( //temporarily removed
@@ -404,21 +402,21 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //                //        }
 //                ) != null) {
 
-                Sentence projectedBelief = oldBelief.projectionSentence(judg.getOccurrenceTime(), now);
-                if (projectedBelief!=null) {
+                //TaskSeed projectedBelief = oldBelief.projection(nal.memory, now, task.getOccurrenceTime());
+
+
 
                     /*
                     if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
-                        nal.singlePremiseTask(projectedBelief, task.budget);
                     }
                     */
 
-                    if (nal!=null) {
-                        nal.setCurrentBelief(null);
 
-                        if (revision(judg, projectedBelief, false, nal)!=null)
-                            return false;
-                    }
+
+                Task r = tryRevision(newBelief, oldBelief.sentence, false, nal);
+                if (r!=null) {
+                    newBelief = r;
+                    nal.setCurrentBelief(newBelief.sentence);
                 }
 
             }
@@ -429,14 +427,14 @@ public class DefaultConcept extends Item<Term> implements Concept {
             if (nal!=null) {
                 int nnq = getQuestions().size();
                 for (int i = 0; i < nnq; i++) {
-                    trySolution(judg, getQuestions().get(i), nal);
+                    trySolution(newBelief.sentence, getQuestions().get(i), nal);
                 }
             }
 
 
-            if (!addToTable(task, getBeliefs(), getMemory().param.conceptBeliefsMax.get(), Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class)) {
+            if (!addToTable(newBelief, getBeliefs(), getMemory().param.conceptBeliefsMax.get(), Events.ConceptBeliefAdd.class, Events.ConceptBeliefRemove.class)) {
                 //wasnt added to table
-                getMemory().removed(task, "Insufficient Rank"); //irrelevant
+                getMemory().removed(newBelief, "Insufficient Rank"); //irrelevant
                 return false;
             }
         }
@@ -452,13 +450,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * decide whether to actively pursue it
      *
      * @param judg The judgment to be accepted
-     * @param task The task to be processed
+     * @param newGoal The task to be processed
      * @return Whether to continue the processing of the task
      */
-    protected boolean processGoal(final NAL nal, final Task task) {
+    protected boolean processGoal(final NAL nal, Task newGoal) {
         
-        final Sentence goal = task.sentence;
-        final Task oldGoalT = getTask(goal, goals); // revise with the existing desire values
+
+        final Task oldGoalT = getTask(newGoal.sentence, goals); // revise with the existing desire values
         Sentence oldGoal = null;
 
         long now = memory.time();
@@ -466,84 +464,76 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
 
-            if (goal.equalStamp(oldGoal, false, true, true, false)) {
+            if (newGoal.sentence.equalStamp(oldGoal, false, true, true, false)) {
                 return false; // duplicate
             }
-            if (revisible(goal, oldGoal)) {
+            if (revisible(newGoal.sentence, oldGoal)) {
                 
                 //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
 
 
-                Sentence projectedGoal = oldGoal.projectionSentence(now, task.getOccurrenceTime());
-                if (projectedGoal!=null) {
+                //Truth projectedTruth = oldGoal.projection(now, task.getOccurrenceTime());
+                /*if (projectedGoal!=null)*/ {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
                         //return;
                    // }
-                    nal.setCurrentBelief(projectedGoal);
-                    if(!(task.sentence.term instanceof Operation)) {
-                        Task successOfRevision = revision(task.sentence, projectedGoal, false, nal);
-                        if(successOfRevision!=null) { // it is revised, so there is a new task for which this function will be called
-                            return true; // with higher/lower desire
-                        } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
-                   }
+                    //nal.setCurrentBelief(projectedGoal);
+
+                    Task revisedTask = tryRevision(newGoal, oldGoal, false, nal);
+                    if(revisedTask!=null) { // it is revised, so there is a new task for which this function will be called
+                        newGoal = revisedTask;
+                        //return true; // with higher/lower desire
+                    } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
+
                 }
             }
         } 
         
-        long then = goal.getOccurrenceTime();
+        //long then = goal.getOccurrenceTime();
         int dur = nal.memory.duration();
 
-        //this task is not up to date (now is ahead of then) we have to project it first
-        if(TemporalRules.after(then, now, dur)) {
-
-
-
-
-            nal.deriveTask(
-                    task.sentence.projection(nal, then, now)
-                            .budget(task.getBudget())
-                            .parent(task),
-                    false, true);
-            return true;
-
-        }
+//        //this task is not up to date (now is ahead of then) we have to project it first
+//        if(TemporalRules.after(then, now, dur)) {
+//
+//            nal.singlePremiseTask(task.projection(nal.memory, now, then) );
+//
+//            return true;
+//
+//        }
         
-        if (task.aboveThreshold()) {
+        if (newGoal.aboveThreshold()) {
 
-            final Task beliefT = getTask(goal, beliefs); // check if the Goal is already satisfied
+            final Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
 
-
-
-
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projectionSentence(now, dur);
-                trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
-                AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
+                Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
+                trySolution(projectedBelief, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
+                AntiSatisfaction = newGoal.sentence.truth.getExpDifAbs(belief.truth);
             }    
             
             double Satisfaction=1.0-AntiSatisfaction;
-            Truth T = new DefaultTruth(goal.truth);
+            Truth T = new DefaultTruth(newGoal.sentence.truth);
 
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && goal.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && newGoal.sentence.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
 
-                questionFromGoal(task, nal);
+                questionFromGoal(newGoal, nal);
 
-                if (!addToTable(task, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
+                if (!addToTable(newGoal, getGoals(), getMemory().param.conceptGoalsMax.get(), Events.ConceptGoalAdd.class, Events.ConceptGoalRemove.class)) {
                     //wasnt added to table
-                    getMemory().removed(task, "Insufficient Rank"); //irrelevant
+                    getMemory().removed(newGoal, "Insufficient Rank"); //irrelevant
                     return false;
                 }
 
                 //TODO
                 //InternalExperience.experienceFromTask(nal, task, false);
 
-                getMemory().execute(this, task);
+                getMemory().execute(this, newGoal);
             }
         }
 

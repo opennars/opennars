@@ -103,6 +103,31 @@ public class LocalRules {
     }
 
 
+    public static Task tryRevision(final Task newBelief, Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+        Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
+        if (stamp == null) return null;
+
+        final Task t = nal.getCurrentTask();
+
+        Truth newBeliefTruth = newBelief.getTruth();
+        Truth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
+        Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
+        Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
+
+        Task revised = nal.deriveTask(nal.newTask(newBelief.getTerm())
+                        .punctuation(t.sentence.punctuation)
+                        .truth(truth)
+                        .stamp(stamp)
+                        .budget(budget)
+                        .parent(t, nal.getCurrentBelief()),
+                true, false, t, false);
+
+        if (revised!=null)
+            nal.memory.logic.BELIEF_REVISION.hit();
+
+        return revised;
+    }
+
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
