@@ -847,11 +847,21 @@ public class Memory implements Serializable, AbstractStamper {
 
         event.emit(Events.CycleEnd.class);
 
+        randomUpdate();
 
         timeUpdate();
 
     }
 
+    /** applies entropy to the random number genrator;
+     * if called at the end of each cycle, the entire sequence remains
+     * algorithmically deterministic and repeatable.
+     * this helps overcome low entropy inherent in fast / efficient random
+     * number genreators, we involve NARS as part of the RNG process.
+     * */
+    protected void randomUpdate() {
+        random.setSeed( random.nextLong() * time() );
+    }
 
 
     /**
@@ -960,9 +970,6 @@ public class Memory implements Serializable, AbstractStamper {
 
     public <T extends Compound> TaskSeed<T> task(T t) {
         return new TaskSeed(this, t);
-    }
-    public <T extends Compound> TaskSeed<T> task(Sentence<T> s) {
-        return new TaskSeed(this, s);
     }
 
     @Deprecated public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {

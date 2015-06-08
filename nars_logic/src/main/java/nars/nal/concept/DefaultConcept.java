@@ -13,6 +13,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamper;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -459,7 +460,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         final Sentence goal = task.sentence;
         final Task oldGoalT = getTask(goal, goals); // revise with the existing desire values
         Sentence oldGoal = null;
-        
+
+        long now = memory.time();
+
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
 
@@ -469,8 +472,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
             if (revisible(goal, oldGoal)) {
                 
                 //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
-                
-                Sentence projectedGoal = oldGoal.projectionSentence(task.getOccurrenceTime(), task.getOccurrenceTime());
+
+
+                Sentence projectedGoal = oldGoal.projectionSentence(now, task.getOccurrenceTime());
                 if (projectedGoal!=null) {
                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
                        // nal.singlePremiseTask(projectedGoal, task.budget); 
@@ -488,15 +492,18 @@ public class DefaultConcept extends Item<Term> implements Concept {
         } 
         
         long then = goal.getOccurrenceTime();
-        long now = memory.time();
         int dur = nal.memory.duration();
 
         //this task is not up to date (now is ahead of then) we have to project it first
         if(TemporalRules.after(then, now, dur)) {
+
+
+
+
             nal.deriveTask(
-                task.sentence.projection(nal, then, now)
-                    .budget(task.getBudget())
-                    .parent(task),
+                    task.sentence.projection(nal, then, now)
+                            .budget(task.getBudget())
+                            .parent(task),
                     false, true);
             return true;
 
@@ -508,8 +515,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
+
+
+
+
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projectionSentence(task.getOccurrenceTime(), nal.memory.param.duration.get());
+                Sentence projectedBelief = belief.projectionSentence(now, dur);
                 trySolution(projectedBelief, task, nal); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = task.sentence.truth.getExpDifAbs(belief.truth);
             }    
@@ -541,33 +552,41 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     final static Variable how=new Variable("?how");
 
-    private void questionFromGoal(final Task task, final NAL nal) {
+    public static void questionFromGoal(final Task task, final NAL nal) {
         if(Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
-            ArrayList<Term> qu=new ArrayList<Term>();
+
+            ArrayList<Compound> qu=new ArrayList(3);
+
             if(Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
                 if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
 
-                    Implication imp=Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
-                    Implication imp2=Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                    qu.add(imp);
-                    qu.add(imp2);
+                    Implication i1 = Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    if (i1!=null)
+                        qu.add(i1);
+
+                    Implication i2 = Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                    if (i2!=null)
+                        qu.add(i2);
+
                 }
             }
+
             if(Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
                 qu.add(task.sentence.term);
             }
-            for(Term q : qu) {
-                if(q!=null) {
-                    Stamper st = nal.newStamp(task.sentence, nal.time());
-                    st.setOccurrenceTime(task.sentence.getOccurrenceTime()); //set tense of question to goal tense
-                    Sentence s=new Sentence(q,Symbols.QUESTION,null,st);
-                    if(s!=null) {
-                        Budget budget=new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,1);
-                        nal.singlePremiseTask(s, task, budget);
-                    }
-                }
-            }
+
+            if (qu.isEmpty()) return;
+
+            TaskSeed<Compound> t = nal.newTask()
+                    .question()
+                    .parent(task)
+                    .stamp(nal.newStamp(task.sentence, nal.time())
+                            .setOccurrenceTime(task.sentence.getOccurrenceTime()) //set tense of question to goal tense)
+                    ).budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
+
+            for(Compound q : qu)
+              nal.singlePremiseTask( t.term(q) );
         }
     }
 

@@ -2,6 +2,7 @@ package nars;
 
 import nars.model.ControlCycle;
 import nars.nal.LogicPolicy;
+import nars.util.data.random.XorShift1024StarRandom;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomAdaptor;
 
@@ -15,7 +16,8 @@ import java.util.Random;
  */
 abstract public class NARSeed extends Param {
 
-    public final Random rng = new RandomAdaptor(new MersenneTwister(1));
+    //public final Random rng = new RandomAdaptor(new MersenneTwister(1));
+    public final Random rng = new XorShift1024StarRandom(1);
 
     protected int maxNALLevel;
 
@@ -23,7 +25,6 @@ abstract public class NARSeed extends Param {
 
     public NARSeed() {
     }
-            
     
 //    /** initial runtime parameters */
 //    public Param getParam() {

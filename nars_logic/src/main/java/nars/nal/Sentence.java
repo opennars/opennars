@@ -454,7 +454,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
       * @param currentTime The current time as a reference
       * @return The projected belief
       */    
-    public Sentence projectionSentence(final long targetTime, final long currentTime) {
+    @Deprecated public Sentence projectionSentence(final long targetTime, final long currentTime) {
             
         final Truth newTruth = projection(targetTime, currentTime);
         
@@ -466,6 +466,8 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
         return s;
     }
+
+
 
     public TaskSeed<T> projection(NAL n, long targetTime, final long currentTime) {
 

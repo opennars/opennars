@@ -66,7 +66,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
     public class CurveMap extends CuckooMap<K, E> {  //doesnt seem to work yet in CurveBag
 
         public CurveMap(int initialCapacity) {
-            super(initialCapacity * 1 + 1);
+            super(rng, initialCapacity * 1 + 1);
         }
 
         @Override

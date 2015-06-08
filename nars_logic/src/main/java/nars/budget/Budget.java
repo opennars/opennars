@@ -114,7 +114,8 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return true;
     }
 
-    private Budget() {
+    /** begins with 0.0f for all components */
+    public Budget() {
         super();
     }
 

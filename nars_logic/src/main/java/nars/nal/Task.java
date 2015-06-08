@@ -24,8 +24,10 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.nal8.Operation;
+import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Termed;
 import nars.op.mental.InternalExperience;
@@ -163,6 +165,12 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
     }
+
+    public Task(T term, char punc, Truth truth, AbstractStamper stamp, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
+        this(new Sentence(term, punc, truth, stamp), b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
+    }
+
+
 
     @Override
     public Task clone() {
@@ -573,5 +581,24 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     @Override
     public boolean isCyclic() {
         return sentence.isCyclic();
+    }
+
+    public TaskSeed<T> newChild(Memory memory) {
+        return new TaskSeed(memory, this).parent(this).budget(this);
+    }
+
+    public TaskSeed projection(Memory m, final long targetTime, final long currentTime) {
+
+        final Truth newTruth = sentence.projection(targetTime, currentTime);
+
+        final boolean eternalizing = (newTruth instanceof TruthFunctions.EternalizedTruthValue);
+
+        long occ = eternalizing ? Stamp.ETERNAL : targetTime;
+
+
+        TaskSeed<T> t = newChild(m);
+        t.truth(newTruth);
+        t.occurr(occ);
+        return t;
     }
 }

@@ -6,10 +6,7 @@ import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.DirectBudget;
-import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.Truth;
+import nars.nal.*;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.AbstractStamper;
@@ -25,9 +22,10 @@ import nars.nal.term.Compound;
  * */
 public class TaskSeed<T extends Compound> extends DirectBudget implements AbstractStamper {
 
-    private final T term;
     private final Memory memory;
 
+
+    private T term;
     private char punc;
     private Tense tense;
     private AbstractStamper stamp;
@@ -56,7 +54,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
 
-    public TaskSeed<T> truth(Truth tv) {
+    /** if possible, use the direct value truth(f,c) method instead of allocating a Truth instance as an argument here */
+    @Deprecated public TaskSeed<T> truth(Truth tv) {
         this.truth = tv;
         return this;
     }
@@ -66,11 +65,13 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return this;
     }
 
-    public TaskSeed<T> budget(Budget bv) {
+    /** if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here */
+    @Deprecated public TaskSeed<T> budget(Budget bv) {
         return budget(bv.getPriority(), bv.getDurability(), bv.getQuality());
     }
 
-    public TaskSeed<T> budget(Budget bv, float priMult, float durMult) {
+    /** if possible, use the direct value budget(p,d,q) method instead of allocating a Budget instance as an argument here */
+    @Deprecated public TaskSeed<T> budget(Budget bv, float priMult, float durMult) {
         return budget(bv.getPriority() * priMult, bv.getDurability() * durMult, bv.getQuality());
     }
 
@@ -99,18 +100,35 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
 
+    public TaskSeed<T> term(T t) {
+        this.term = t;
+        return this;
+    }
+
     public TaskSeed<T> truth(boolean freqAsBoolean, float conf) {
         return truth(freqAsBoolean ? 1.0f : 0.0f, conf);
     }
 
     public TaskSeed<T> truth(float freq, float conf) {
-        return truth(freq, conf, Global.TRUTH_EPSILON);
+        if (this.truth == null)
+            this.truth = new DefaultTruth(freq, conf, Global.TRUTH_EPSILON);
+        else {
+            this.truth.set(freq, conf);
+        }
+        return this;
+        //return truth(freq, conf, Global.TRUTH_EPSILON);
     }
 
-    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
-        this.truth = new DefaultTruth(freq, conf, epsilon);
-        return this;
-    }
+//    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
+//        if (this.truth == null)
+//            this.truth = new DefaultTruth(freq, conf, epsilon);
+//        else {
+//            this.truth.set(freq, conf);
+//            this.truth.setEpsilon(epsilon);
+//        }
+//
+//        return this;
+//    }
 
     /** alias for judgment */
     public TaskSeed<T> belief() { return judgment(); }
@@ -144,15 +162,19 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return budget(p, d, Float.NaN);
     }
 
+    public TaskSeed(Memory memory) {
+        super();
+        this.memory = memory;
+    }
+
     public TaskSeed(Memory memory, T t) {
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-        super();
+        this(memory);
 
-        this.memory = memory;
         this.term = t;
     }
 
-    public TaskSeed(Memory memory, Sentence<T> t) {
+    @Deprecated public TaskSeed(Memory memory, Sentence<T> t) {
         this(memory, t.getTerm());
         this.punc = t.punctuation;
         this.truth = t.truth;
@@ -180,8 +202,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         if (punc == 0)
             throw new RuntimeException("Punctuation must be specified before generating a default budget");
 
-
-
         if ((truth == null) && !((punc==Symbols.QUEST) || (punc==Symbols.QUESTION))) {
             truth = new DefaultTruth(punc);
         }
@@ -192,18 +212,16 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 //            this.budget = new Budget(punc, truth);
 //        }
 
-        Sentence s = new Sentence(term, punc, truth,
-                stamp == null ? memory : this);
+        AbstractStamper st = (this.stamp == null ? memory : this);
 
-        if (s == null)
-            return null;
+
 
         /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
         if (Float.isNaN(quality) && truth != null) {
             quality = BudgetFunctions.truthToQuality(truth);
         }
 
-        Task t = new Task(s,
+        Task t = new Task(term, punc, truth, st,
                 getBudget(),
                 getParentTask(),
                 getParentBelief(),
@@ -321,5 +339,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
                 target.setOccurrenceTime(this.occurrenceTime);
             }
         }
+    }
+
+
+    public TaskSeed<T> budgetCompoundForward(Compound result, NAL nal) {
+        BudgetFunctions.compoundForward(this, getTruth(), result, nal);
+        return this;
     }
 }

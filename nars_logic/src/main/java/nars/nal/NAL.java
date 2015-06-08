@@ -190,7 +190,7 @@ public abstract class NAL  implements Runnable {
      *
      * if solution is false, it means it is a derivation
      */
-    protected Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    protected Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single, @Deprecated Sentence currentBelief, @Deprecated Task currentTask) {
 
         if (!nal(7) && !task.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
@@ -312,8 +312,12 @@ public abstract class NAL  implements Runnable {
         return memory.task(term);
     }
 
-    public <T extends Compound> TaskSeed newTask(Sentence<T> s) {
-        return memory.task(s);
+    @Deprecated public <T extends Compound> TaskSeed newTask(Sentence<T> s) {
+        return new TaskSeed(memory, s);
+    }
+
+    public TaskSeed<Compound> newTask() {
+        return new TaskSeed(memory);
     }
 
     /**
@@ -374,23 +378,25 @@ public abstract class NAL  implements Runnable {
         }
 
 
-        return deriveTask(
-                newTask(newContent)
-                        .punctuation(punctuation)
-                        .truth(newTruth)
-                        .budget(newBudget, priMult, durMult)
-                        .stamp(stamp)
-                        .parent(getCurrentTask())
-                , false, true);
+        return singlePremiseTask(newTask(newContent)
+                .punctuation(punctuation)
+                .truth(newTruth)
+                .budget(newBudget, priMult, durMult)
+                .stamp(stamp)
+                .parent(getCurrentTask()));
 
     }
 
-    public Task singlePremiseTask(Sentence newSentence, Task parentTask, Budget b) {
+    public Task singlePremiseTask(TaskSeed t) {
+        return deriveTask(t, false, true);
+    }
+
+    @Deprecated public Task singlePremiseTask(Sentence newSentence, Task parentTask, Budget b) {
         //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
         return deriveTask(newTask(newSentence).parent(parentTask).budget(b), false, true);
     }
 
-    public Task singlePremiseTask(Sentence newSentence, Task parentTask) {
+    @Deprecated public Task singlePremiseTask(Sentence newSentence, Task parentTask) {
         return singlePremiseTask(newSentence, parentTask, parentTask);
     }
 

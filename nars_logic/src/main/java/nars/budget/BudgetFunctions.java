@@ -326,8 +326,12 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return The budget of the conclusion
      */
     public static Budget compoundForward(final Truth truth, final Term content, final NAL nal) {
+        return compoundForward(new DirectBudget(), truth, content, nal);
+    }
+
+    public static Budget compoundForward(Budget target, final Truth truth, final Term content, final NAL nal) {
         final int complexity = (content == null) ? 1 : content.getComplexity();
-        return budgetInference(truthToQuality(truth), complexity, nal);
+        return budgetInference(target, truthToQuality(truth), complexity, nal);
     }
 
     /**
@@ -351,6 +355,9 @@ public final class BudgetFunctions extends UtilityFunctions {
         return budgetInference(w2c(1), content.getComplexity(), nal);
     }
 
+    private static Budget budgetInference(final float qual, final int complexity, final NAL nal) {
+        return budgetInference(new Budget(), qual, complexity, nal );
+    }
     /**
      * Common processing for all logic step
      *
@@ -359,7 +366,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param nal Reference to the memory
      * @return Budget of the conclusion task
      */
-    private static Budget budgetInference(final float qual, final int complexity, final NAL nal) {
+    private static Budget budgetInference(Budget target, final float qual, final int complexity, final NAL nal) {
         Item t = null;
         final boolean conceptProcess;
         if (nal instanceof ConceptProcess) {
@@ -387,7 +394,7 @@ public final class BudgetFunctions extends UtilityFunctions {
             }
         }
 
-        return new Budget(priority, durability, quality);
+        return target.budget(priority, durability, quality);
     }
 
     @Deprecated static Budget solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {

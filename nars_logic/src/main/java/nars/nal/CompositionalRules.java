@@ -323,24 +323,29 @@ public final class CompositionalRules {
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
             nal.doublePremiseTask(content, truth, budget, stamp, false, false);
+
             // special logic to answer conjunctive questions with query variables
             if (taskSentence.term.hasVarQuery()) {
+
                 Concept contentConcept = nal.memory.concept(content);
                 if (contentConcept == null) {
                     return null;
                 }
-                Sentence contentBelief = contentConcept.getBelief(nal, task);
-                if (contentBelief == null) {
+
+                Task contentTask = contentConcept.getBelief(nal, task);
+                if (contentTask == null) {
                     return null;
                 }
-                Task contentTask = new Task(contentBelief, task);
+
                 //nal.setCurrentTask(contentTask);
+
                 Compound conj = Sentence.termOrNull(Conjunction.make(component, content));
                 if (conj != null) {
-                    truth = intersection(contentBelief.truth, belief.truth);
+                    truth = intersection(contentTask.getTruth(), belief.truth);
                     budget = BudgetFunctions.compoundForward(truth, conj, nal);
-                    nal.doublePremiseTask(conj, truth, budget, nal.newStamp(belief, contentBelief), false, contentTask, false);
+                    nal.doublePremiseTask(conj, truth, budget, nal.newStamp(belief, contentTask.sentence), false, contentTask, false);
                 }
+
             }
         } else {
             Truth v1, v2;

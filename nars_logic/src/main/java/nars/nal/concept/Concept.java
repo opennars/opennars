@@ -28,6 +28,8 @@ import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
 import nars.nal.process.TaskProcess;
+import nars.nal.stamp.Stamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.nal.tlink.*;
@@ -81,28 +83,30 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
      * @param task The selected task
      * @return The selected isBelief
      */
-    default Sentence getBelief(final NAL nal, final Task task) {
+    default Task getBelief(final NAL nal, final Task task) {
         if (!hasBeliefs()) return null;
-
 
         final long currentTime = getMemory().time();
         long occurrenceTime = task.getOccurrenceTime();
 
         final int b = getBeliefs().size();
         for (int i = 0; i < b; i++) {
-            Sentence belief = getBeliefs().get(i).sentence;
+            final Task belief = getBeliefs().get(i);
 
-            //if (task.sentence.isEternal() && belief.isEternal()) return belief;
+            if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
-            Sentence projectedBelief = belief.projectionSentence(occurrenceTime, currentTime);
-            if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
-                nal.singlePremiseTask(projectedBelief, task);
+            TaskSeed projectedBelief = belief.projection(nal.memory, occurrenceTime, currentTime);
+
+            if (projectedBelief!=null) {
+                Task t = nal.singlePremiseTask(projectedBelief); // return the first satisfying belief
+                if (t!=null) return t;
             }
-
-            return projectedBelief;     // return the first satisfying belief
         }
-        return null;
+
+        return task;
     }
+
+
 
     /**
      * whether a concept's desire exceeds decision threshold

@@ -1,9 +1,9 @@
 package nars.nal.rule;
 
+import nars.nal.Task;
+import nars.nal.Terms;
 import nars.nal.concept.Concept;
 import nars.nal.process.ConceptProcess;
-import nars.nal.Sentence;
-import nars.nal.Terms;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 
@@ -15,8 +15,18 @@ public class FilterEqualSubtermsInRespectToImageAndProduct extends ConceptFireTa
             return false;
 
         final Concept beliefConcept = f.memory.concept(termLink.target);
-        Sentence belief = (beliefConcept != null) ? beliefConcept.getBelief(f, f.getCurrentTask()) : null;
-        f.setCurrentBelief( belief );  // may be null
+        if (beliefConcept!=null) {
+
+            Task t = beliefConcept.getBelief(f, f.getCurrentTask());
+            if (t!=null)
+                f.setCurrentBelief(t.sentence);
+            else
+                f.setCurrentBelief( null );
+
+            return true;
+        }
+
+        //f.setCurrentBelief( null );
 
         return true;
     }

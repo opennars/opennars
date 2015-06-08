@@ -56,7 +56,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
         final int tds = terms_dependent.size();
         for (int i = 0; i < tds; i++) {
 
-            final Term result = Sentence.termOrNull(terms_dependent.get(i));
+            final Compound result = Sentence.termOrNull(terms_dependent.get(i));
             if (result == null) {
                 //changed this from return to continue,
                 //to allow processing terms_dependent when it has > 1 items
@@ -89,15 +89,18 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                     nal.memory.duration()
             );
 
-            Sentence newSentence = new Sentence(result, mark, truth, sx);
 
 
             Task dummy = new Task(second_belief, budget, task, null);
-            Task newTask = new Task(newSentence, budget, dummy, second_belief);
 
             nal.setCurrentBelief(taskSentence);
 
-            if (nal.deriveTask(nal.newTask(newSentence).parent(task), false, false, dummy, false)!=null) {
+            if (nal.deriveTask(nal.newTask(result)
+                    .punctuation(mark)
+                    .truth(truth)
+                    .stamp(sx)
+                    .parent(dummy, second_belief), false, false, dummy, false)!=null) {
+
 
                 nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
 
@@ -155,6 +158,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             return false;
         }
 
+        final int dur = nal.memory.duration();
 
         boolean unifiedAnything = false;
 
@@ -298,7 +302,6 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         taskSentence.truth, truthSecond, true);
             }
 
-            final int dur = nal.memory.duration();
 
             final int termsIndependent = terms_independent.size();
             for (int i = 0; i < termsIndependent; i++) {
@@ -335,7 +338,6 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     //nal.getTheNewStamp().setOccurrenceTime(time);
                 }
 
-                Budget budget = BudgetFunctions.compoundForward(truth, result, nal);
 
 
                 //same as above?
@@ -353,8 +355,9 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         .punctuation(mark)
                         .truth(truth)
                         .parent(task)
-                        .budget(budget)
+                        .budgetCompoundForward(result, nal)
                         .stamp(new Stamper(taskSentence, second_belief.stamp, nal.time(), occ));
+
 
                 Task newTask = nal.deriveTask(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
 
