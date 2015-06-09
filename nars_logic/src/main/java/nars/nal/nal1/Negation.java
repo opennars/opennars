@@ -80,10 +80,6 @@ public class Negation extends Compound1 {
     }
 
 
-    @Override
-    public UTF8Identifier newName() {
-        return new NegationUTF8Identifier(this);
-    }
 
     /**
      * Try to make a new Negation. Called by StringParser.
@@ -116,23 +112,15 @@ public class Negation extends Compound1 {
     }
 
 
-    public final static class NegationUTF8Identifier extends DynamicUTF8Identifier {
-        private final Negation neg;
+    @Override
+    public byte[] init() {
 
-        public NegationUTF8Identifier(Negation c) {
-            this.neg = c;
-        }
+        return Compound.newCompound1Key(NALOperator.NEGATION, the());
+    }
 
-        @Override
-        public byte[] init() {
-
-            return Compound.newCompound1Key(NALOperator.NEGATION, neg.the());
-        }
-
-        @Override
-        public void append(Writer p, boolean pretty) throws IOException {
-            Compound.writeCompound1(neg.operator(), neg.the(), p, pretty);
-        }
+    @Override
+    public void append(Writer p, boolean pretty) throws IOException {
+        Compound.writeCompound1(operator(), the(), p, pretty);
     }
 
     /*

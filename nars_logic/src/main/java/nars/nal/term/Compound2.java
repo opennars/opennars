@@ -71,7 +71,7 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
 
         if (a().equals(c.a()) && b().equals(c.b())) {
             //must be equal so share the identifier
-            setName(c.name());
+            share(c);
             return true;
         }
         return false;

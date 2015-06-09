@@ -49,6 +49,10 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
     }
 
 
+    public void invalidate() {
+        data = null;
+    }
+
     @Override
     public byte[] bytes() {
         ensureNamed();

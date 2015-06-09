@@ -43,7 +43,7 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
         init(term);
     }
 
-    
+
     /**
      * Clone an object
      * @return A new object, to be casted into a SetExt

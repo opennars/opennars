@@ -25,7 +25,7 @@ abstract public class Compound1<T extends Term> extends Compound {
         nars.nal.term.Compound1 c = (nars.nal.term.Compound1)that;
         if (operator()!=c.operator()) return false;
         if (the().equals(c.the())) {
-            setName(c.name());
+            share(c);
             return true;
         }
         return false;

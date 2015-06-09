@@ -29,6 +29,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
+import nars.util.data.id.Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
 import nars.util.data.sexpression.IPair;
@@ -48,7 +49,7 @@ import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
 /**
  * a compound term
  */
-public abstract class Compound extends AbstractTerm implements Collection<Term>, IPair {
+public abstract class Compound extends DynamicUTF8Identifier implements Term, Collection<Term>, IPair {
 
 
     /**
@@ -95,63 +96,55 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-    public final static class CompoundNIdentifier extends DynamicUTF8Identifier {
-        private final Compound compound;
+    @Override
+    public byte[] init() {
 
-        public CompoundNIdentifier(Compound c) {
-            this.compound = c;
+        final int numArgs = term.length;
+
+        byte[] opBytes = operator().bytes;
+
+        int len = opBytes.length;
+
+        for (final Term t : term) {
+            len += t.bytes().length + 1;
         }
 
-        @Override
-        public byte[] init() {
+        ByteBuf b = ByteBuf.create(len);
 
-            final int numArgs = compound.term.length;
+        b.add(opBytes);
 
-            byte[] opBytes = compound.operator().bytes;
+        for (int i = 0; i < numArgs; i++) {
+            Term t = term[i];
 
-            int len = opBytes.length;
+            byte n;
+            if (i!=0)
+                n = ((byte) ARGUMENT_SEPARATOR);
+            else
+                n = ((byte) COMPOUND_TERM_CLOSER.ch);
 
-            for (final Term t : compound.term) {
-                len += t.bytes().length + 1;
-            }
-
-            ByteBuf b = ByteBuf.create(len);
-
-            b.add(opBytes);
-
-            for (int i = 0; i < numArgs; i++) {
-                Term t = compound.term[i];
-
-                byte n;
-                if (i!=0)
-                    n = ((byte) ARGUMENT_SEPARATOR);
-                else
-                    n = ((byte) COMPOUND_TERM_CLOSER.ch);
-
-                b.add(t.bytes()).add(n);
-            }
-
-            return b.toBytes();
-
+            b.add(t.bytes()).add(n);
         }
 
-        @Override
-        public void append(Writer p, boolean pretty) throws IOException {
+        return b.toBytes();
 
-            p.append(COMPOUND_TERM_OPENER.ch);
-            p.append(compound.operator().str);
+    }
 
-            for (final Term t : compound.term) {
-                p.append(ARGUMENT_SEPARATOR);
-                if (pretty)
-                    p.append(' ');
+    @Override
+    public void append(Writer p, boolean pretty) throws IOException {
 
-                t.append(p, pretty);
-            }
+        p.append(COMPOUND_TERM_OPENER.ch);
+        p.append(operator().str);
 
-            p.append(COMPOUND_TERM_CLOSER.ch);
+        for (final Term t : term) {
+            p.append(ARGUMENT_SEPARATOR);
+            if (pretty)
+                p.append(' ');
 
+            t.append(p, pretty);
         }
+
+        p.append(COMPOUND_TERM_CLOSER.ch);
+
     }
 
 
@@ -349,7 +342,7 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     abstract protected int compare(Compound otherCompoundOfEqualType);
 
     public int compareName(final Compound c) {
-        return name().compareTo(c.name());
+        return super.compareTo(c);
     }
 
     /**
@@ -577,20 +570,11 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
 
     @Override
-    public LiteralUTF8Identifier name() {
-        if (!hasName()) {
-            setName(newName());
-        }
-        return (LiteralUTF8Identifier) super.name();
+    public UTF8Identifier name() {
+        return this;
     }
 
-    /**
-     * creates a new Identifier name for this term
-     */
-    public UTF8Identifier newName() {
-        /* Default implementation */
-        return new CompoundNIdentifier(this);
-    }
+
 
  
 

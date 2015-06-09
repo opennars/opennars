@@ -34,17 +34,6 @@ abstract public class Image extends DefaultCompound {
         init(components);
     }
 
-    @Override
-    public UTF8Identifier newName() {
-        return new ImageUTF8Identifier(this);
-    }
-
-
-    //    @Override
-//    public boolean equals2(final CompoundTerm other) {
-//        return relationIndex == ((Image)other).relationIndex;
-//    }
-
 
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {
@@ -107,36 +96,30 @@ abstract public class Image extends DefaultCompound {
         return r;
     }
 
-    public final static class ImageUTF8Identifier extends DynamicUTF8Identifier {
-        private final Image compound;
-
-        public ImageUTF8Identifier(Image c) {
-            this.compound = c;
-        }
 
         @Override
         public byte[] init() {
 
-            final int len = compound.length();
+            final int len = this.length();
 
             //calculate total size
             int bytes = 2+2+2;
             for (int i = 0; i < len; i++) {
-                Term tt = compound.term(i);
+                Term tt = this.term(i);
                 bytes += tt.name().bytes().length;
                 if (i!=0) bytes++; //comma
             }
 
             ByteBuf b = ByteBuf.create(bytes)
                     .add((byte) COMPOUND_TERM_OPENER.ch)
-                    .add(compound.operator().bytes)
+                    .add(this.operator().bytes)
                     .add((byte) ARGUMENT_SEPARATOR)
-                    .add(compound.relation().bytes());
+                    .add(this.relation().bytes());
 
 
-            final int relationIndex = compound.relationIndex;
+            final int relationIndex = this.relationIndex;
             for (int i = 0; i < len; i++) {
-                Term tt = compound.term(i);
+                Term tt = this.term(i);
                 b.add((byte) ARGUMENT_SEPARATOR);
                 if (i == relationIndex) {
                     b.add((byte) Symbols.IMAGE_PLACE_HOLDER);
@@ -153,20 +136,20 @@ abstract public class Image extends DefaultCompound {
         @Override
         public void append(Writer p, boolean pretty) throws IOException {
 
-            final int len = compound.length();
+            final int len = this.length();
 
             p.append(COMPOUND_TERM_OPENER.ch);
-            p.append(compound.operator().str);
+            p.append(this.operator().str);
 
             p.append(ARGUMENT_SEPARATOR);
             if (pretty)
                 p.append(' ');
 
-            compound.relation().append(p, pretty);
+            this.relation().append(p, pretty);
 
-            final int relationIndex = compound.relationIndex;
+            final int relationIndex = this.relationIndex;
             for (int i = 0; i < len; i++) {
-                Term tt = compound.term(i);
+                Term tt = this.term(i);
 
                 p.append(ARGUMENT_SEPARATOR);
 
@@ -182,7 +165,6 @@ abstract public class Image extends DefaultCompound {
             p.append(COMPOUND_TERM_CLOSER.ch);
 
         }
-    }
 
     public Term relation() {
         return term(relationIndex);

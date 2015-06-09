@@ -174,9 +174,6 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return Terms.equalType(this, t);
     }
 
-    default public boolean equalID(final Term t) {
-        return name().equals(t.name());
-    }
 
     default public byte[] bytes() {
         return name().bytes();

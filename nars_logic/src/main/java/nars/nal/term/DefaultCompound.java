@@ -9,6 +9,7 @@ abstract public class DefaultCompound extends Compound {
         super(components);
     }
 
+
     @Override
     public boolean equals(final Object that) {
         if (this == that) return true;
@@ -28,7 +29,7 @@ abstract public class DefaultCompound extends Compound {
 //                return false;
 //        }
 
-        return equalID(t);
+        return equalTo(t);
 //        if (equalID(t)) {
 //            share(t);
 //            return true;

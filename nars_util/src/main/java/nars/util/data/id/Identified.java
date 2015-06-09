@@ -9,5 +9,7 @@ public interface Identified extends Named<Identifier> {
      * with an instance known to be equal, effectively
      * removing duplicates from the system.
      */
-    void identifierEquals(Identifier other);
+    default void identifierEquals(Identifier other) {
+
+    }
 }

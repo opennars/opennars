@@ -37,8 +37,6 @@ import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.data.id.DynamicUTF8Identifier;
-import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;
@@ -52,13 +50,12 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
     private final Product arg;
     private Task<Operation<T>> task; //this is set automatically prior to executing
-    
-    
+
+
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
 
     /**
      * Constructor with partial values, called by make
-     *
      */
     protected Operation(Product argProduct, T operator) {
 
@@ -68,7 +65,6 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
 
-    
     /**
      * Clone an object
      *
@@ -85,7 +81,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         return x;
     }
 
-   
+
     /**
      * Try to make a new compound from two components. Called by the logic
      * rules.
@@ -109,21 +105,18 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 //            arg2[arg.length] = null;
 //            arg=arg2;
 //        }
-        
-        return new Operation<T>( arg, oper  );
+
+        return new Operation<T>(arg, oper);
     }
 
     public T getOperator() {
-        return (T)getPredicate();
+        return (T) getPredicate();
     }
 
 
-    @Override
-    public UTF8Identifier newName() {
-        return new OperationUTF8Identifier(this);
-    }
-
-    /** stores the currently executed task, which can be accessed by Operator execution */
+    /**
+     * stores the currently executed task, which can be accessed by Operator execution
+     */
     public void setTask(final Task<Operation<T>> task) {
         this.task = task;
     }
@@ -184,8 +177,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
             for (int i = 0; i < numInputs; i++) {
                 x[i] = eval.eval(rawArgs[i], memory);
             }
-        }
-        else  {
+        } else {
             x = Arrays.copyOfRange(rawArgs, 0, numInputs);
         }
 
@@ -193,17 +185,20 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
 
-
-    /** produces a cloned instance with the replaced args + additional terms in a new argument product */
+    /**
+     * produces a cloned instance with the replaced args + additional terms in a new argument product
+     */
     public Operation cloneWithArguments(Term[] args, Term... additional) {
         return (Operation) cloneReplacingSubterm(0, Product.make(args, additional));
     }
 
-    /** returns a reference to the raw arguments as contained by the Product subject of this operation
+    /**
+     * returns a reference to the raw arguments as contained by the Product subject of this operation
      * avoid using this because it may involve creation of unnecessary array
      * if Product1.terms() is called
-     * */
-    @Deprecated public Term[] argArray() {
+     */
+    @Deprecated
+    public Term[] argArray() {
         return arg().terms();
     }
 
@@ -216,6 +211,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         if (c == null) return null;
         return c.getDesire();
     }
+
     public float getConceptExpectation(Memory m) {
         Truth tv = getConceptDesire(m);
         if (tv == null) return 0;
@@ -226,27 +222,31 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     public Truth getTaskDesire() {
         return getTask().getDesire();
     }
+
     public float getTaskExpectation() {
         Truth tv = getTaskDesire();
         if (tv == null) return 0;
         return tv.getExpectation();
     }
 
-    /** deletes the concept of this operation, preventing it from
+    /**
+     * deletes the concept of this operation, preventing it from
      * being executed again (unless invoked again by input).
      */
     public void stop(Memory memory) {
         memory.concept(getTerm()).delete();
     }
 
-    /** if any of the arguments are 'eval' operations, replace its result
+    /**
+     * if any of the arguments are 'eval' operations, replace its result
      * in that position in a cloned Operation instance
+     *
      * @return
      */
     public Operation inline(Memory memory) {
         //TODO avoid clone if it does not involve any eval()
         //if (!hasEval()) return this;
-        return clone(Product.make(arg(memory, true, false /* keep SELF term at this point */ )));
+        return clone(Product.make(arg(memory, true, false /* keep SELF term at this point */)));
     }
 
 //    protected boolean hasEval() {
@@ -261,7 +261,9 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 //        return false;
 //    }
 
-    /** use this to restrict potential operator (predicate terms) */
+    /**
+     * use this to restrict potential operator (predicate terms)
+     */
     public static boolean validOperatorTerm(Term t) {
         return t instanceof Term;
     }
@@ -272,7 +274,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
     public static boolean isA(Term x, Term someOperatorTerm) {
         if (x instanceof Operation) {
-            Operation o = (Operation)x;
+            Operation o = (Operation) x;
             if (o.getOperator().equals(someOperatorTerm))
                 return true;
         }
@@ -280,75 +282,67 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
 
-    public final static class OperationUTF8Identifier extends DynamicUTF8Identifier {
-        private final Operation compound;
+    @Override
+    public byte[] init() {
 
-        public OperationUTF8Identifier(Operation c) {
-            this.compound = c;
+        byte[] op = getPredicate().bytes();
+        //Term[] arg = argArray();
+
+        int len = op.length + 1 + 1;
+        int n = 0;
+
+        final Term[] xt = arg().terms();
+        for (final Term t : xt) {
+            len += t.bytes().length;
+            n++;
         }
-
-        @Override
-        public byte[] init() {
-
-            byte[] op = compound.getPredicate().bytes();
-            //Term[] arg = argArray();
-
-            int len = op.length + 1 + 1;
-            int n = 0;
-
-            final Term[] xt = compound.arg().terms();
-            for (final Term t : xt) {
-                len += t.bytes().length;
-                n++;
-            }
-            if (n > 1) len+=n-1;
+        if (n > 1) len += n - 1;
 
 
-            final ByteBuf b = ByteBuf.create(len);
-            b.append(op); //add the operator name without leading '^'
-            b.append((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+        final ByteBuf b = ByteBuf.create(len);
+        b.append(op); //add the operator name without leading '^'
+        b.append((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
 
 
-            n=0;
-            for (final Term t : xt) {
+        n = 0;
+        for (final Term t : xt) {
             /*if(n==arg.length-1) {
                 break;
             }*/
-                if (n!=0)
-                    b.add((byte) Symbols.ARGUMENT_SEPARATOR);
+            if (n != 0)
+                b.add((byte) Symbols.ARGUMENT_SEPARATOR);
 
-                b.add(t.bytes());
+            b.add(t.bytes());
 
-                n++;
-            }
-
-            b.append((byte) NALOperator.COMPOUND_TERM_CLOSER.ch);
-
-            return b.toBytes();
+            n++;
         }
 
-        @Override
-        public void append(Writer p, boolean pretty) throws IOException {
-            
-            final Term[] xt = compound.arg().terms();
+        b.append((byte) NALOperator.COMPOUND_TERM_CLOSER.ch);
 
-            compound.getPredicate().append(p, pretty); //add the operator name without leading '^'
-            p.append(NALOperator.COMPOUND_TERM_OPENER.ch);
+        return b.toBytes();
+    }
+
+    @Override
+    public void append(Writer p, boolean pretty) throws IOException {
+
+        final Term[] xt = arg().terms();
+
+        getPredicate().append(p, pretty); //add the operator name without leading '^'
+        p.append(NALOperator.COMPOUND_TERM_OPENER.ch);
 
 
-            int n=0;
-            for (final Term t : xt) {
-                if (n!=0)
-                    p.append(Symbols.ARGUMENT_SEPARATOR);
+        int n = 0;
+        for (final Term t : xt) {
+            if (n != 0)
+                p.append(Symbols.ARGUMENT_SEPARATOR);
 
-                t.append(p, pretty);
+            t.append(p, pretty);
 
-                n++;
-            }
-
-            p.append(NALOperator.COMPOUND_TERM_CLOSER.ch);
-
+            n++;
         }
+
+        p.append(NALOperator.COMPOUND_TERM_CLOSER.ch);
+
     }
 
 

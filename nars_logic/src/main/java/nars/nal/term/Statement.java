@@ -212,56 +212,41 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 //        return cb.toString();
     }
 
-//    final protected static byte[] makeStatementKey(final Term subject, final NALOperator relation, final Term predicate) {
-//
-//    }
+    @Override
+    public byte[] init() {
+        final byte[] subjBytes = getSubject().bytes();
+        final byte[] predBytes = getPredicate().bytes();
+        final byte[] relationBytes = operator().bytes;
 
-    public final static class StatementUTF8Identifier extends DynamicUTF8Identifier {
-        private final Statement s;
+        ByteBuf b = ByteBuf.create(
+                subjBytes.length + predBytes.length + relationBytes.length +
+                        + 1  + 1 //separator and end closers
+        );
 
-        public StatementUTF8Identifier(Statement c) {
-            this.s = c;
-        }
-
-        @Override
-        public byte[] init() {
-            final byte[] subjBytes = s.getSubject().bytes();
-            final byte[] predBytes = s.getPredicate().bytes();
-            final byte[] relationBytes = s.operator().bytes;
-
-            ByteBuf b = ByteBuf.create(
-                    subjBytes.length + predBytes.length + relationBytes.length +
-                           + 1  + 1 //separator and end closers
-            );
-
-            return b.add(relationBytes)
-                    .add(subjBytes)
-                    .add((byte)Symbols.STAMP_SEPARATOR)
-                    .add(predBytes)
-                    .add((byte) STATEMENT_CLOSER.ch).toBytes();
-        }
-
-        @Override
-        public void append(final Writer w, final boolean pretty) throws IOException {
-
-            w.append(STATEMENT_OPENER.ch);
-
-            s.getSubject().name().append(w, pretty);
-
-            if (pretty) w.append(' ');
-
-            s.operator().expand(w);
-
-            if (pretty) w.append(' ');
-
-            s.getPredicate().name().append(w, pretty);
-
-            w.append(STATEMENT_CLOSER.ch);
-        }
+        return b.add(relationBytes)
+                .add(subjBytes)
+                .add((byte)Symbols.STAMP_SEPARATOR)
+                .add(predBytes)
+                .add((byte) STATEMENT_CLOSER.ch).toBytes();
     }
 
-    public UTF8Identifier newName() {
-        return new StatementUTF8Identifier(this);
+
+    @Override
+    public void append(final Writer w, final boolean pretty) throws IOException {
+
+        w.append(STATEMENT_OPENER.ch);
+
+        getSubject().name().append(w, pretty);
+
+        if (pretty) w.append(' ');
+
+        operator().expand(w);
+
+        if (pretty) w.append(' ');
+
+        getPredicate().name().append(w, pretty);
+
+        w.append(STATEMENT_CLOSER.ch);
     }
 
 

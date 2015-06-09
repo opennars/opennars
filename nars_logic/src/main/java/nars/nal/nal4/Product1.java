@@ -8,7 +8,7 @@ import nars.util.data.id.UTF8Identifier;
 /**
  * Higher efficiency 1-subterm implementation of Product
  */
-public class Product1<T extends Term> extends Compound1<T> implements Product {
+public class Product1<T extends Term> extends Compound1<T>  implements Product {
 
     public Product1(T the) {
         super(the);
@@ -36,8 +36,5 @@ public class Product1<T extends Term> extends Compound1<T> implements Product {
         return Product.make( replaced );
     }
 
-    public UTF8Identifier newName() {
-        return new CompoundNIdentifier(this);
-    }
 
 }
