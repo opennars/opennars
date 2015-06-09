@@ -25,6 +25,7 @@ import nars.Events.Restart;
 import nars.Events.TaskRemove;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.io.in.Input;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
 import nars.model.ControlCycle;
@@ -128,21 +129,21 @@ public class Memory implements Serializable, AbstractStamper {
 
 
 
-    /** allows an external component to signal to the memory that data is available.
-     * default implementation now just absorbs all the data but different policies
-     * could be implemented (ex: round robin) which will be
-     * more important when heavier data flow occurrs
-     */
-    public void taskAdd(final Supplier<Task> source) {
-        Task next;
-        while ((next = source.get())!=null) {
-            taskAdd(next);
-        }
-    }
+//    /** allows an external component to signal to the memory that data is available.
+//     * default implementation now just absorbs all the data but different policies
+//     * could be implemented (ex: round robin) which will be
+//     * more important when heavier data flow occurrs
+//     */
+//    public void taskAdd(final Supplier<Task> source) {
+//        Task next;
+//        while ((next = source.get())!=null) {
+//            taskAdd((Task)next);
+//        }
+//    }
 
     public void taskAdd(final Iterable<Task> source) {
         for (final Task t : source)
-            taskAdd(t);
+            taskAdd((Task)t);
     }
 
     public Atom self() {

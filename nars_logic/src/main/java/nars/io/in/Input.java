@@ -21,19 +21,19 @@ package nars.io.in;
 
 import nars.nal.Task;
 import nars.nal.nal8.ImmediateOperation;
+import nars.util.data.buffer.Source;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * 
  * Provides a stream of input tasks
  *
  */
-public interface Input extends Supplier<Task>, Consumer<Task> {
+public interface Input extends Source<Task> {
 
     @Override
     abstract public Task get();
@@ -48,7 +48,7 @@ public interface Input extends Supplier<Task>, Consumer<Task> {
     }
 
     /** an input that generates tasks in batches, which are stored in a buffer */
-    abstract public static class BufferedInput implements Input {
+    abstract public static class BufferedInput implements Input , Consumer<Task> {
 
         final Deque<Task> queue = new ArrayDeque();
 

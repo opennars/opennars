@@ -196,6 +196,9 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             creationTime = 0;
         }
 
+        if (tense == null)
+            return Stamp.ETERNAL;
+
         switch (tense) {
             case Present:
                 return creationTime;

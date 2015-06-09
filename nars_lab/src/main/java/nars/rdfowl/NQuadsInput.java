@@ -27,14 +27,13 @@ import java.util.regex.Pattern;
 /**
  * Created by me on 6/4/15.
  */
-public class NQuadsInput {
+abstract public class NQuadsInput {
 
 
     private final static String RDF_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
     private static String parentTagName = null;
 
-    private final Map<String, Entity> entities = new HashMap();
     private final NAR nar;
 
     final float beliefConfidence;
@@ -47,29 +46,8 @@ public class NQuadsInput {
 
 
 
-    final Pattern nQuads = Pattern.compile("((?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?:@\\w+(?:-\\w+)?|\\^\\^<[^>]+>)?)|<[^>]+>|\\_\\:\\w+|\\.)");
+    final static Pattern nQuads = Pattern.compile("((?:\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\"(?:@\\w+(?:-\\w+)?|\\^\\^<[^>]+>)?)|<[^>]+>|\\_\\:\\w+|\\.)");
 
-    static protected class Entity {
-
-        public String name;
-        public final List<String[]> attributes = new LinkedList();
-
-        public Entity() {
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        private void addAttribute(String key, String value) {
-            attributes.add(new String[]{key, value});
-        }
-
-        private String getName() {
-            return name;
-        }
-
-    }
 
     /**
      * These parsing rules were devised by physically looking at the OWL file
@@ -99,209 +77,14 @@ public class NQuadsInput {
      * relation_name tag@rdf:resource = target entity
      */
     public void input(File f) throws Exception {
-//        XMLInputFactory factory = XMLInputFactory.newInstance();
-//        XMLStreamReader parser = factory.createXMLStreamReader(
-//                new FileInputStream(f));
-//        int depth = 0;
-//        for (;;) {
-//            int event = parser.next();
-//            if (event == XMLStreamConstants.END_DOCUMENT) {
-//
-//                break;
-//            }
-//            switch (event) {
-//                case XMLStreamConstants.START_ELEMENT:
-//                    depth++;
-//                    String tagName = formatTag(parser.getName());
-//
-//                    if (tagName.equalsIgnoreCase("owl:Class")) {
-//                        processTag(parser, new TagProcessor() {
-//                            @Override
-//                            public void execute(XMLStreamReader parser) {
-//
-//                                String tagName = formatTag(parser.getName());
-//
-//                                if (tagName.equalsIgnoreCase("owl:Class")) {
-//                                    //String name = parser.getAttributeValue(RDF_URI, "ID");
-//                                    String name = parser.getAttributeValue(0);
-//
-//                                    if (name != null) {
-//                                        Entity classEntity = new Entity();
-//                                        parentTagName = name;
-//                                        classEntity.setName(parentTagName);
-//                                        classEntity.addAttribute("Type", "Class");
-//
-//                                        //saveEntity(classEntity);
-//                                    }
-//                                } else if (tagName.equalsIgnoreCase("rdfs:subClassOf")) {
-//                                    //String name = parser.getAttributeValue(RDF_URI, "resource");
-//                                    String name = parser.getAttributeValue(0);
-//                                    if (name != null) {
-//                                        Entity superclassEntity = new Entity();
-//
-//                                        superclassEntity.setName(name);
-//                                        superclassEntity.addAttribute("Type", name);
-//
-//                                        //saveEntity(superclassEntity);
-//                                        input(parentTagName, superclassEntity.getName(), "parentOf");
-//                                        parentTagName = null;
-//                                    }
-//                                }
-//                            }
-//                        });
-////                    } else if (tagName.equals("Region")) {
-////                        processTag(parser, new TagProcessor() {
-////                            public void execute(XMLStreamReader parser) {
-////                                String tagName = formatTag(parser.getName());
-////                                if (tagName.equals("Region")) {
-////                                    Entity classEntity = new Entity();
-////                                    parentTagName = parser.getAttributeValue(RDF_URI, "ID");
-////                                    classEntity.setName(parentTagName);
-////                                    classEntity.addAttribute("Type", "Region");
-////                                    saveEntity(classEntity);
-////                                } else if (tagName.equals("locatedIn")) {
-////                                    Entity superclassEntity = new Entity();
-////                                    String locationEntityName = parser.getAttributeValue(RDF_URI, "resource");
-////                                    if (locationEntityName.startsWith("#")) {
-////                                        locationEntityName = locationEntityName.substring(1);
-////                                    }
-////                                    superclassEntity.setName(locationEntityName);
-////                                    superclassEntity.addAttribute("Type", "Region");
-////                                    saveEntity(superclassEntity);
-////                                    saveRelation(parentTagName, locationEntityName, "locatedIn");
-////                                    parentTagName = null;
-////                                }
-////                            }
-////                        });
-////                    } else if (tagName.equals("WineBody")
-////                            || tagName.equals("WineColor")
-////                            || tagName.equals("WineFlavor")
-////                            || tagName.equals("WineSugar")
-////                            || tagName.equals("WineGrape")) {
-////                        processTag(parser, new TagProcessor() {
-////                            public void execute(XMLStreamReader parser) {
-////                                Entity entity = new Entity();
-////                                String name = parser.getAttributeValue(RDF_URI, "ID");
-////                                if (name != null) {
-////                                    entity.setName(name);
-////                                    String tagName = parser.getLocalName();
-////                                    Attribute attribute = null;
-////                                    if (tagName.equals("WineBody")) {
-////                                        attribute = new Attribute("Type", "Body");
-////                                    } else if (tagName.equals("WineColor")) {
-////                                        attribute = new Attribute("Type", "Color");
-////                                    } else if (tagName.equals("WineFlavor")) {
-////                                        attribute = new Attribute("Type", "Flavor");
-////                                    } else if (tagName.equals("WineSugar")) {
-////                                        attribute = new Attribute("Type", "Sugar");
-////                                    } else if (tagName.equals("WineGrape")) {
-////                                        attribute = new Attribute("Type", "Grape");
-////                                    }
-////                                    entity.addAttribute(attribute);
-////                                    saveEntity(entity);
-////                                }
-////                            }
-////                        });
-////                    } else if (tagName.equals("vin:Winery")) {
-////                        processTag(parser, new TagProcessor() {
-////                            public void execute(XMLStreamReader parser) {
-////                                String wineryName = parser.getAttributeValue(RDF_URI, "about");
-////                                if (wineryName.startsWith("#")) {
-////                                    wineryName = wineryName.substring(1);
-////                                }
-////                                Entity entity = new Entity();
-////                                entity.setName(wineryName);
-////                                entity.addAttribute("Type", "Winery");
-////                                saveEntity(entity);
-////                            }
-////                        });
-//                    } else if (!tagName.startsWith("owl:")) {
-//                        Entity parentEntity = getEntity(tagName);
-//                        //parentEntity = null;
-//
-//                        /*
-//                         System.out.println(tagName + " " + parser.getAttributeName(0) + " " + parser.getAttributeValue(0) + " " + (parser.hasText() ? parser.getText() : ""));
-//                         */
-//                        if (parentEntity != null) {
-//                            processTag(parser, new TagProcessor() {
-//                                @Override
-//                                public void execute(XMLStreamReader parser) {
-//                                    String tagName = formatTag(parser.getName());
-//                                    //String id = parser.getAttributeValue(RDF_URI, "ID");
-//                                    String id = parser.getAttributeValue(0);
-//
-//                                    System.out.println("  " + tagName);
-//                                    if (id != null && id.length() > 0) {
-//                                        // this is the entity
-//                                        Entity entity = new Entity();
-//                                        entity.setName(id);
-//                                        parentTagName = entity.getName();
-//                                        input(entity);
-//                                    } else {
-//                                        // these are the relations
-//                                        String relationName = tagName;
-//                                        //String targetEntityName = parser.getAttributeValue(RDF_URI, "resource");
-//                                        String targetEntityName = parser.getAttributeValue(0);
-//                                        if (targetEntityName != null && targetEntityName.startsWith("#")) {
-//                                            targetEntityName = targetEntityName.substring(1);
-//                                        }
-//                                        if (targetEntityName != null) {
-//                                            input(parentTagName, targetEntityName, relationName);
-//                                        }
-//                                    }
-//                                }
-//                            });
-//                        }
-//                    } else {
-//
-//                        if (!parser.hasText()) {
-//
-//                            String pred = formatTag(parser.getAttributeName(0));
-//                            String obj = formatTag(new QName(parser.getAttributeValue(0)));
-//
-//                            System.out.println();
-//                            System.out.println(tagName + " " + pred + " " + obj + " " +
-//                                    parser.getAttributeValue(0));
-//                            //(parser.hasText() ? parser.getText() : ""));
-//                        }
-//
-//                    }
-//                    break;
-//                case XMLStreamConstants.END_ELEMENT:
-//                    depth--;
-//                    break;
-//                default:
-//                    break;
-//            }
-//            parser.close();
-//        }
 
         List<String> items = new ArrayList(4);
 
         new Scanner(f).useDelimiter("\n").forEachRemaining(s -> {
-            // remove unicode escaping:
-            //	var regex = new RegExp('\\\\U[0-9a-fA-F]{8}|\\\\u[0-9a-fA-F]{4}', 'g');
-            //https://github.com/j13z/rdf-nx-parser/blob/master/lib/rdf-nx-parser.js
-/*
-
-	// This thing does most of this module's work. See `regex.md` for details.
-	var splitTokensRegex = /((?:"[^"\\]*(?:\\.[^"\\]*)*"(?:@\w+(?:-\w+)?|\^\^<[^>]+>)?)|<[^>]+>|\_\:\w+|\.)/g;
-
-	return function (string, options) {
-
-		var tokens = string.match(splitTokensRegex);
- */
             Matcher m = nQuads.matcher(s);
             int count = 0;
             items.clear();
             while(m.find()) {
-
-//                System.out.println("Match number "
-//                        + count);
-//                System.out.println("start(): "
-//                        + m.start());
-//                System.out.println("end(): "
-//                        + m.end());
                 String t = s.substring(m.start(), m.end());
                 items.add(t);
             }
@@ -371,46 +154,6 @@ public class NQuadsInput {
         return Atom.the(uri);
     }
 
-    // ====================== DB load/save methods =========================
-    /**
-     * Saves an entity to the database. Takes care of setting attribute_types
-     * and attribute objects linked to the entity.
-     *
-     * @param entity the Entity to save.
-     */
-    protected void input(final Entity entity) {
-        //entities.put(entity.getName(), entity);
-
-        Term clas = atom(entity.getName());
-        if (clas!=null)
-            inputClass(clas);
-
-        //System.out.println("Save: " + entity.getName());
-//        // if entity already exists, don't save
-//        long entityId = getEntityIdFromDb(entity.getName());
-//        if (entityId == -1L) {
-//            log.debug("Saving entity:" + entity.getName());
-//            // insert the entity
-//            KeyHolder entityKeyHolder = new GeneratedKeyHolder();
-//            jdbcTemplate.update(new PreparedStatementCreator() {
-//                public PreparedStatement createPreparedStatement(Connection conn)
-//                        throws SQLException {
-//                    PreparedStatement ps = conn.prepareStatement(
-//                            "insert into entities(name) values (?)",
-//                            Statement.RETURN_GENERATED_KEYS);
-//                    ps.setString(1, entity.getName());
-//                    return ps;
-//                }
-//            }, entityKeyHolder);
-//            entityId = entityKeyHolder.getKey().longValue();
-//            List<Attribute> attributes = entity.getAttributes();
-//            for (Attribute attribute : attributes) {
-//                saveAttribute(entityId, attribute);
-//            }
-//            // finally, always save the "english name" of the entity as an attribute
-//            saveAttribute(entityId, new Attribute("EnglishName", getEnglishName(entity.getName())));
-//        }
-    }
 
     //TODO make this abstract for inserting the fact in different ways
     protected void inputClass(Term clas) {
@@ -424,39 +167,6 @@ public class NQuadsInput {
     public static final Atom owlClass = Atom.the("class");
     public static Term isAClass(Term clas) {
         return Instance.make(clas, owlClass);
-    }
-
-    /**
-     * Saves an entity attribute to the database and links the attribute to the
-     * specified entity id.
-     *
-     * @param entityId the entity id.
-     * @param attribute the Attribute object to save.
-     */
-    private void saveAttribute(long entityId, Attribute attribute) {
-//        // check to see if the attribute is defined, if not define it
-//        long attributeId = 0L;
-//        try {
-//            attributeId = jdbcTemplate.queryForLong(
-//                    "select id from attribute_types where attr_name = ?",
-//                    new String[]{attribute.getName()});
-//        } catch (IncorrectResultSizeDataAccessException e) {
-//            KeyHolder keyholder = new GeneratedKeyHolder();
-//            final String attributeName = attribute.getName();
-//            jdbcTemplate.update(new PreparedStatementCreator() {
-//                public PreparedStatement createPreparedStatement(Connection conn)
-//                        throws SQLException {
-//                    PreparedStatement ps = conn.prepareStatement(
-//                            "insert into attribute_types(attr_name) values (?)");
-//                    ps.setString(1, attributeName);
-//                    return ps;
-//                }
-//            }, keyholder);
-//            attributeId = keyholder.getKey().longValue();
-//        }
-//        jdbcTemplate.update(
-//                "insert into attributes(entity_id, attr_id, value) values (?,?,?)",
-//                new Object[]{entityId, attributeId, attribute.getValue()});
     }
 
     static final Atom parentOf = Atom.the("parentOf");
@@ -516,61 +226,18 @@ public class NQuadsInput {
 
         }
         else {
-
             belief = (Operation.make(predicate,
                     Product.make(subject, object)));
         }
 
         if (belief!=null) {
-            float freq = 1.0f;
-            nar.believe(belief, freq, beliefConfidence);
+            believe(belief);
         }
 
-//        // get the entity ids for source and target
-//        long sourceEntityId = getEntityIdFromDb(sourceEntityName);
-//        long targetEntityId = getEntityIdFromDb(targetEntityName);
-//        if (sourceEntityId == -1L || targetEntityId == -1L) {
-//            log.error("Cannot save relation: " + relationName + "("
-//                    + sourceEntityName + "," + targetEntityName + ")");
-//            return;
-//        }
-//        log.debug("Saving relation: " + relationName + "("
-//                + sourceEntityName + "," + targetEntityName + ")");
-//        // get the relation id
-//        long relationTypeId = 0L;
-//        try {
-//            relationTypeId = jdbcTemplate.queryForInt(
-//                    "select id from relation_types where type_name = ?",
-//                    new String[]{relationName});
-//        } catch (IncorrectResultSizeDataAccessException e) {
-//            KeyHolder keyholder = new GeneratedKeyHolder();
-//            jdbcTemplate.update(new PreparedStatementCreator() {
-//                public PreparedStatement createPreparedStatement(Connection conn)
-//                        throws SQLException {
-//                    PreparedStatement ps = conn.prepareStatement(
-//                            "insert into relation_types(type_name) values (?)",
-//                            Statement.RETURN_GENERATED_KEYS);
-//                    ps.setString(1, relationName);
-//                    return ps;
-//                }
-//            }, keyholder);
-//            relationTypeId = keyholder.getKey().longValue();
-//        }
-//        // save it
-//        jdbcTemplate.update(
-//                "insert into relations(src_entity_id, trg_entity_id, relation_id) values (?, ?, ?)",
-//                new Long[]{sourceEntityId, targetEntityId, relationTypeId});
     }
 
-    /**
-     * Looks up the database to get the entity id given the name of the entity.
-     * If the entity is not found, it returns -1.
-     *
-     * @return the entity id, or -1 of the entity.
-     */
-    private Entity getEntity(String name) {
-        return entities.get(name);
-    }
+    abstract protected void believe(Term assertion);
+
 
     // ======== String manipulation methods ========
     /**
@@ -617,8 +284,9 @@ public class NQuadsInput {
     public static void main(String[] args) throws Exception {
         //Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
         Solid d = new Solid(32, 4096,1,3,1,2);
+        d.setSubconceptBagSize(500000);
         d.setInternalExperience(null).level(7);
-        d.inputsMaxPerCycle.set(32);
+        d.inputsMaxPerCycle.set(256);
         d.inputActivationFactor.set(0.15f);
         Global.TRUTH_EPSILON = 0.1f;
 
@@ -629,7 +297,18 @@ public class NQuadsInput {
         //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
 
 
-        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.95f /* conf */);
+        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.95f /* conf */) {
+
+            @Override
+            protected void believe(Term assertion) {
+                float freq = 1.0f;
+
+                //insert with zero priority to bypass main memory go directly to subconcepts
+                n.believe(0f, 0.5f, assertion, Tense.Eternal, freq, beliefConfidence);
+            }
+        };
+
+        n.frame(10000);
 
         Video.themeInvert();
         new NARSwing(n);
@@ -638,7 +317,7 @@ public class NQuadsInput {
         //n.frame(100);
         n.believe(0.95f, 0.8f, n.term("<<$1 <-> decay> =/> <$1 <-> deathCause>>"),
                 Tense.Eternal, 1.0f, 0.95f);
-        n.believe(0.95f, 0.8f, n.term("<Aritocrat <-> decay>. :|:"),
+        n.believe(0.95f, 0.8f, n.term("<Aristocrat <-> decay>. :|:"),
                 Tense.Eternal, 1.0f, 0.95f);
         n.input("<Politician <-> Aristocrat>?");
         //n.frame(5000);

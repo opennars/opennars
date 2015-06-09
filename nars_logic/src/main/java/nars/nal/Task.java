@@ -20,10 +20,10 @@
  */
 package nars.nal;
 
-import infinispan.com.google.common.collect.Sets;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
+import nars.io.in.Input;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
@@ -48,7 +48,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, StampEvidence {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, StampEvidence, Input {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -602,5 +602,15 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         t.truth(newTruth);
         t.occurr(occ);
         return t;
+    }
+
+    @Override
+    public Task get() {
+        return this;
+    }
+
+    @Override
+    public float getAttention() {
+        return 1.0f;
     }
 }

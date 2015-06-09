@@ -7,15 +7,21 @@ import nars.nal.Task;
 import java.util.function.Supplier;
 
 /** input port for external, ex: sensory events */
-public class TaskSource extends Source<Task> {
+public class TaskSource implements Source<Task> {
 
+    private float attention;
     private final Supplier<Task> input;
 
-    public TaskSource(Supplier<Task> input, float priority) {
-        super(priority);
+    public TaskSource(Supplier<Task> input, float attention) {
+
+        this.attention = attention;
         this.input = input;
     }
 
+    @Override
+    public float getAttention() {
+        return attention;
+    }
 
     @Override
     public void stop() {

@@ -53,8 +53,10 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
     @Override
     public Concept newItem() {
 
+        boolean hasSubconcepts = (getSubConcepts()!=null);
+
         //try remembering from subconscious
-        if (getSubConcepts()!=null) {
+        if (hasSubconcepts) {
             Concept concept = getSubConcepts().take(getKey());
             if (concept!=null) {
                 if (concept.isDeleted())
@@ -65,17 +67,31 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
             }
         }
 
+        boolean belowThreshold = getPriority() <= getMinimumActivePriority();
+
         //create new concept, with the applied budget
         if (createIfMissing) {
-            Concept concept = getMemory().newConcept(/*(Budget)*/this, getKey());
+            if (!belowThreshold || (belowThreshold && hasSubconcepts)) {
+                Concept concept = getMemory().newConcept(/*(Budget)*/this, getKey());
 
-            if ( concept == null)
-                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
+                if (concept == null)
+                    throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
 
-            return concept;
+                if (belowThreshold && hasSubconcepts) {
+                    //attempt insert the latent concept into subconcepts but return null
+                    getSubConcepts().put(concept);
+                }
+                else
+                    return concept;
+            }
         }
 
         return null;
+    }
+
+    /** threshold priority for allowing a new concept into the main memory */
+    public float getMinimumActivePriority() {
+        return 0f;
     }
 
     @Override

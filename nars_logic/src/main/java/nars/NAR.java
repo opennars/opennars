@@ -115,12 +115,12 @@ public class NAR extends Container implements Runnable {
 
 
 
-    public TaskSource input(final File input) throws IOException {
+    public Input input(final File input) throws IOException {
         return input(new FileInput(textPerception, input));
     }
 
     /** this needs tested to see if it still works, an asynchronous input interface is probably better */
-    @Deprecated public TaskSource input(final InputStream input) {
+    @Deprecated public Input input(final InputStream input) {
         return input(new ReaderInput(textPerception, input));
     }
 
@@ -319,7 +319,7 @@ public class NAR extends Container implements Runnable {
     }
     
     public NAR input(final Task t) {
-        input(new TaskInput(t));
+        input((Input)t);
         return this;
     }
 
@@ -363,13 +363,9 @@ public class NAR extends Container implements Runnable {
 
     /** Adds an input channel for input from an external sense / sensor.
      *  Will remain added until it closes or it is explicitly removed. */
-    public TaskSource input(final Input channel) {
-
-        TaskSource i = new TaskSource(channel, 1.0f);
-
-        memory.perception.accept(i);
-
-        return i;
+    public Input input(final Input ii) {
+        memory.perception.accept(ii);
+        return ii;
     }
 
 //    /** Explicitly removes an input channel and notifies it, via Input.finished(true) that is has been removed */

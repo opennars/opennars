@@ -5,7 +5,6 @@ import nars.Memory;
 import nars.Symbols;
 import nars.nal.term.Compound;
 import nars.nal.Task;
-import nars.nal.term.Term;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */
@@ -34,7 +33,7 @@ abstract public class ImmediateOperation  {
             throw new RuntimeException("ImmediateTask has no term");
         }
 
-        public ImmediateOperation get() {
+        public ImmediateOperation immediateOperation() {
             return operation;
         }
 
@@ -50,9 +49,9 @@ abstract public class ImmediateOperation  {
 //
 //                if (o instanceof ImmediateOperation) {
                     if (sentence!=null && getPunctuation()!= Symbols.GOAL)
-                        throw new RuntimeException("ImmediateOperation " + get() + " was not specified with goal punctuation");
+                        throw new RuntimeException("ImmediateOperation " + immediateOperation() + " was not specified with goal punctuation");
 
-                    get().execute(memory);
+                    immediateOperation().execute(memory);
 
                     return true;
                 //}

@@ -30,7 +30,7 @@ public class TaskInput implements Input {
     }
 
     @Override
-    public void accept(Task task) {
-        throw new RuntimeException(this + " is a singleton and does not accept more than 1 task");
+    public float getAttention() {
+        return 1.0f;
     }
 }

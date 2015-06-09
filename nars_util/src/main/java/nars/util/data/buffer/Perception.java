@@ -32,7 +32,7 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
     }
 
     @Override
-    public void accept(Source input) {
+    public void accept(Source<T> input) {
         in.add(input);
     }
 
@@ -43,7 +43,7 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
             currentInput = cycle.next();
 
             T t = currentInput.get();
-            if (t == null) {
+            if ((t == null) || (t == currentInput /* returned itself */)) {
                 cycle.remove();
             }
             else {

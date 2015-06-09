@@ -6,24 +6,16 @@ import java.util.function.Supplier;
 /**
  * An attached Input supplier and Attention Allocation State
  */
-abstract public class Source<Y> implements Supplier<Y> {
+public interface Source<Y> extends Supplier<Y> {
 
-    private float attention;
-
-    public Source(float initialAttention) {
-        super();
-        this.attention = initialAttention;
-    }
-
-
-    public float getAttention() {
-        return attention;
+    default public float getAttention() {
+        return 1f;
     }
 
     /** called when perception is terminated, allowing the input supplier to
      *  close connections or free other resources
      */
-    public void stop() {
+    default public void stop() {
 
     }
 
