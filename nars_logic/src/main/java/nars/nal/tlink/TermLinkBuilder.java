@@ -29,10 +29,10 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     final List<TermLinkTemplate> template;
 
     transient int nonTransforms;
-    transient int hash;
+    //transient int hash;
     transient TermLinkTemplate currentTemplate;
     transient boolean incoming;
-    transient private byte[] prefix;
+    //transient private byte[] prefix;
 
     public TermLinkBuilder(Concept c) {
         super();
@@ -162,34 +162,35 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
 
-    /** configures this selector's current budget for the next bag operation */
-    public Budget budget(float subBudget, float durability, float quality) {
-        invalidate();
-        return super.budget(subBudget, durability, quality);
-    }
+//    /** configures this selector's current budget for the next bag operation */
+//    public Budget budget(float subBudget, float durability, float quality) {
+//        //invalidate();
+//        return super.budget(subBudget, durability, quality);
+//    }
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder budget(TermLinkTemplate temp) {
-        if (temp != currentTemplate) {
+    public TermLinkBuilder budget(final TermLinkTemplate temp) {
+        //if (temp != currentTemplate) {
             this.currentTemplate = temp;
-            invalidate();
-        }
+            //invalidate();
+        //}
         return this;
     }
 
-    public TermLinkBuilder setIncoming(boolean b) {
-        if (this.incoming!=b) {
+    public TermLinkBuilder setIncoming(final boolean b) {
+        //if (this.incoming!=b) {
             this.incoming = b;
-            invalidate();
-        }
+            //invalidate();
+        //}
         return this;
     }
 
-
+/*
     protected void invalidate() {
-        this.prefix = null;
-        this.hash = 0;
+        //this.prefix = null;
+        //this.hash = 0;
     }
+    */
 
 
     public Budget budget(Budget b) {
@@ -204,17 +205,19 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     public final byte[] getLinkKey() {
-        byte[] p = this.prefix;
-        if (p == null) {
-            p = this.prefix = currentTemplate.prefix(incoming);
-            this.hash = hash(prefix, getTarget(), currentTemplate.getType(getTarget()));
-        }
-        return p;
+//        byte[] p = this.prefix;
+//        if (p == null) {
+//            p = this.prefix = currentTemplate.prefix(incoming);
+//            //this.hash = hash(prefix, getTarget());
+//        }
+//        return p;
+        return currentTemplate.prefix(incoming);
     }
 
-    public static final int hash(byte[] prefix, Term target, short type) {
-        return Util.hash(Arrays.hashCode(prefix), target) ^ (37 * ((int)type));
-    }
+//    public static final int hash(byte[] prefix, Term target) {
+//        //return Util.hash(Arrays.hashCode(prefix), target.hashCode());
+//        return target.hashCode();
+//    }
 
 
     @Override
@@ -232,25 +235,49 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return termLinkEquals(obj);
+    public boolean equals(final Object obj) {
+
+        //seems that identity comparison is all that's needed here.
+        //no counterexamples were discovered using the below commented code.
+        return (obj!=null) && ((((TermLink)obj)).getTarget() == getTarget());
+
+/*
+        if (obj == null) return false;
+        //experimental identity-only comparison
+        if (obj == null)
+            System.err.println("obj null");
+        if (getTarget() == null)
+            System.err.println("targetnull");
+
+        if ((((TermLink)obj)).getTarget() == getTarget()) {
+            return true;
+        }
+        else {
+            if (termLinkEquals(obj))
+                System.err.println("actually equal but dif instances: " + this + " " + obj);
+        }
+        return false;
+*/
+
+        //Original comparison
+        //return termLinkEquals(obj);
     }
 
 
 
     @Override
     public int hashCode() {
-        if (this.prefix == null) {
-            getLinkKey(); //computes hash:
-        }
-        return hash;
+//        if (this.prefix == null) {
+//            getLinkKey(); //computes hash:
+//        }
+//        return hash;
+        return getTarget().hashCode();
     }
 
     @Override
     public TermLink newItem() {
-        this.prefix = null;
-        byte[] lk = getLinkKey(); //computes .h also
-        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), lk, this.hash);
+        //this.prefix = null;
+        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), getLinkKey(), getTarget().hashCode());
     }
 
 /*    public int size() {
@@ -262,7 +289,6 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
             template.clear();
         nonTransforms = 0;
         currentTemplate = null;
-        prefix = null;
     }
 
     /** count of how many templates are non-transforms */

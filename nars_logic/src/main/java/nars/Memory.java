@@ -847,21 +847,22 @@ public class Memory implements Serializable, AbstractStamper {
 
         event.emit(Events.CycleEnd.class);
 
-        randomUpdate();
+        //randomUpdate();
 
         timeUpdate();
 
     }
 
-    /** applies entropy to the random number genrator;
-     * if called at the end of each cycle, the entire sequence remains
-     * algorithmically deterministic and repeatable.
-     * this helps overcome low entropy inherent in fast / efficient random
-     * number genreators, we involve NARS as part of the RNG process.
-     * */
-    protected void randomUpdate() {
-        random.setSeed( random.nextLong() * time() );
-    }
+//
+//    /** applies entropy to the random number genrator;
+//     * if called at the end of each cycle, the entire sequence remains
+//     * algorithmically deterministic and repeatable.
+//     * this helps overcome low entropy inherent in fast / efficient random
+//     * number genreators, we involve NARS as part of the RNG process.
+//     * */
+//    protected void randomUpdate() {
+//        random.setSeed( random.nextLong() * time() );
+//    }
 
 
     /**

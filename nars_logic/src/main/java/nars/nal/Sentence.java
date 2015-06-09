@@ -195,10 +195,10 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     public int hashCode() {
         if (this.hash == 0) {
 
-            int hashStamp = Util.hashL(Arrays.hashCode(getEvidentialSet()), (int)this.occurrenceTime);
+            int hashStamp = Util.hash(Arrays.hashCode(getEvidentialSet()), (int)this.occurrenceTime);
 
             if (truth == null)
-                this.hash = (Util.hashL(hashStamp, term.hashCode()) * 31) + punctuation;
+                this.hash = (Util.hash(hashStamp, term.hashCode()) * 31) + punctuation;
             else
                 this.hash = (Util.hash(hashStamp, term.hashCode(), truth.hashCode()) * 31) + punctuation;
 

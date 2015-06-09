@@ -241,12 +241,12 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
     public TaskSeed<T> evidence(long[] evidentialBase) {
-        this.evidentialBase = evidentialBase;
+        this.setEvidentialBase(evidentialBase);
         return this;
     }
 
     public TaskSeed<T> duration(int duration) {
-        this.duration = duration;
+        this.setDuration(duration);
         return this;
     }
 
@@ -307,15 +307,15 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
                 throw new RuntimeException("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
         }
 
-        if (evidentialBase == null) {
+        if (getEvidentialBase() == null) {
             if (getParentTask()!=null)
                 throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no evidentialBase was supplied");
 
-            evidentialBase = new long[] {  memory.newStampSerial() };
+            setEvidentialBase(new long[] {  memory.newStampSerial() });
         }
         else {
             if (getParentTask()==null)
-                throw new RuntimeException(this + " has no parent so where did the evidentialBase originate?: " + Arrays.toString(evidentialBase));
+                throw new RuntimeException(this + " has no parent so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialBase()));
         }
 
         Task t = new Task(sentenceTerm, punc, truth, this,
@@ -375,7 +375,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
      * otherwise assume that it is not.
      */
     public boolean isCyclic() {
-        if (evidentialBase!= null)
+        if (getEvidentialBase() != null)
             return Stamp.isCyclic(this);
 
 //        if ((stamp != null) && (stamp instanceof StampEvidence))
@@ -395,7 +395,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
     public TaskSeed<T> occurr(long occurenceTime) {
-        this.occurrenceTime = occurenceTime;
+        this.setOccurrenceTime(occurenceTime);
         return this;
     }
 
@@ -431,6 +431,12 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return truth;
     }
 
+    public int getDuration() {
+        int d = super.getDuration();
+        if (d < 0) d = memory.duration();
+        return d;
+    }
+
 
     public char getPunctuation() {
         return punc;
@@ -459,10 +465,10 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
 
     public long getOccurrenceTime(long creationTime) {
         long o = Stamp.UNPERCEIVED;
-        boolean hasSpecificOcccurence = (this.occurrenceTime != Stamp.UNPERCEIVED);
+        boolean hasSpecificOcccurence = (this.getOccurrenceTime() != Stamp.UNPERCEIVED);
 
         if (hasSpecificOcccurence) {
-            o = this.occurrenceTime;
+            o = this.getOccurrenceTime();
         }
         return o;
     }

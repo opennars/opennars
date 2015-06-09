@@ -87,7 +87,7 @@ public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Ter
         Class oc = o.getClass();
         Class c = getClass();
         if (o.getClass() == getClass()) {
-            return name().compareTo(((ImmutableAtom) o).name());
+            return compare(((ImmutableAtom) o).name());
         }
         return Integer.compare(oc.hashCode(), c.hashCode());
     }

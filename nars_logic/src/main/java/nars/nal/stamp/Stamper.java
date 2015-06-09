@@ -6,7 +6,6 @@ import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 
 /**
@@ -14,24 +13,12 @@ import nars.nal.term.Compound;
  */
 public class Stamper<C extends Compound> extends DirectBudget implements Stamp, StampEvidence, AbstractStamper {
 
-    /**
-     * serial numbers. not to be modified after Stamp constructor has initialized it
-     */
-    public long[] evidentialBase = null;
+    private long[] evidentialBase = null;
 
-    /**
-     * duration (in cycles) which any contained intervals are measured by
-     */
-    protected int duration;
-    /**
-     * creation time of the stamp
-     */
+    private int duration;
     private long creationTime;
 
-    /**
-     * estimated occurrence time of the event*
-     */
-    protected long occurrenceTime;
+    private long occurrenceTime;
 
 //    /**
 //     * used when the occurrence time cannot be estimated, means "unknown"
@@ -39,15 +26,9 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     //public static final long UNKNOWN = Integer.MAX_VALUE;
 
 
-    /**
-     * optional first parent stamp
-     */
-    public Stamp a = null;
+    private Stamp a = null;
 
-    /**
-     * optional second parent stamp
-     */
-    public Stamp b = null;
+    private Stamp b = null;
 
     private long[] evidentialSetCached;
 
@@ -67,18 +48,18 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     public Stamper(final Memory memory, long creationTime, final long occurenceTime) {
-        this.duration = memory.duration();
-        this.creationTime = creationTime;
-        this.occurrenceTime = occurenceTime;
+        this.setDuration(memory.duration());
+        this.setCreationTime(creationTime);
+        this.setOccurrenceTime(occurenceTime);
     }
 
     public Stamper(long[] evidentialBase, Stamp a, Stamp b, long creationTime, long occurrenceTime, int duration) {
-        this.a = a;
-        this.b = b;
-        this.creationTime = creationTime;
-        this.occurrenceTime = occurrenceTime;
-        this.duration = duration;
-        this.evidentialBase = evidentialBase;
+        this.setA(a);
+        this.setB(b);
+        this.setCreationTime(creationTime);
+        this.setOccurrenceTime(occurrenceTime);
+        this.setDuration(duration);
+        this.setEvidentialBase(evidentialBase);
     }
 
     public Stamper(Memory memory, long occurrence) {
@@ -97,11 +78,11 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     public Stamper clone() {
-        return new Stamper(evidentialBase, a, b, creationTime, occurrenceTime, duration);
+        return new Stamper(getEvidentialBase(), getA(), getB(), getCreationTime(), getOccurrenceTime(), getDuration());
     }
 
     public Stamper cloneEternal() {
-        return new Stamper(evidentialBase, a, b, creationTime, Stamp.ETERNAL, duration);
+        return new Stamper(getEvidentialBase(), getA(), getB(), getCreationTime(), Stamp.ETERNAL, getDuration());
     }
 
     public Stamper(long[] evidentialBase, long creationTime, long occurrenceTime, int duration) {
@@ -113,10 +94,10 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     public Stamper(Stamp a, Stamp b, long creationTime, long occurrenceTime) {
-        this.a = a;
-        this.b = b;
-        this.creationTime = creationTime;
-        this.occurrenceTime = occurrenceTime;
+        this.setA(a);
+        this.setB(b);
+        this.setCreationTime(creationTime);
+        this.setOccurrenceTime(occurrenceTime);
     }
 
     @Deprecated
@@ -153,27 +134,36 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
         target.setDuration(getDuration())
               .setTime(getCreationTime(), getOccurrenceTime())
-              .setEvidence(getEvidentialBase(), evidentialSetCached);
+              .setEvidence(getEvidentialBase(), getEvidentialSetCached());
 
     }
 
+    /**
+     * creation time of the stamp
+     */
     @Override
     public long getCreationTime() {
         return 0;
     }
 
+    /**
+     * duration (in cycles) which any contained intervals are measured by
+     */
     public int getDuration() {
         if (this.duration == 0) {
-            if (b!=null)
-                return (this.duration = b.getDuration());
-            else if (a!=null)
-                return (this.duration = a.getDuration());
+            if (getB() !=null)
+                return (this.duration = getB().getDuration());
+            else if (getA() !=null)
+                return (this.duration = getA().getDuration());
             else
-                throw new RuntimeException("Unknown duration");
+                return -1;
         }
         return duration;
     }
 
+    /**
+     * estimated occurrence time of the event*
+     */
     @Override
     public long getOccurrenceTime() {
         return occurrenceTime;
@@ -192,9 +182,12 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     @Override
     public long[] getEvidentialSet() {
         updateEvidence();
-        return evidentialSetCached;
+        return getEvidentialSetCached();
     }
 
+    /**
+     * serial numbers. not to be modified after Stamp constructor has initialized it
+     */
     public long[] getEvidentialBase() {
         updateEvidence();
         return evidentialBase;
@@ -204,29 +197,57 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         if (evidentialBase == null) {
             Stamp p = null; //parent to inherit some properties from
 
-            if ((a == null) && (b == null)) {
+            if ((getA() == null) && (getB() == null)) {
                 //will be assigned a new serial
-            } else if ((a != null) && (b != null)) {
+            } else if ((getA() != null) && (getB() != null)) {
                 //evidentialBase = Stamp.zip(a.getEvidentialSet(), b.getEvidentialSet());
-                evidentialBase = Stamp.zip(a.getEvidentialBase(), b.getEvidentialBase());
-                p = a;
+                setEvidentialBase(Stamp.zip(getA().getEvidentialBase(), getB().getEvidentialBase()));
+                p = getA();
             }
-            else if (a == null) p = b;
-            else if (b == null) p = a;
+            else if (getA() == null) p = getB();
+            else if (getB() == null) p = getA();
 
 
             if (p!=null) {
-                this.evidentialBase = p.getEvidentialBase();
-                this.evidentialSetCached = p.getEvidentialSet();
+                this.setEvidentialBase(p.getEvidentialBase());
+                this.setEvidentialSetCached(p.getEvidentialSet());
             }
         }
     }
 
 
     public boolean isEternal() {
-        return occurrenceTime == Stamp.ETERNAL;
+        return getOccurrenceTime() == Stamp.ETERNAL;
     }
 
 
+    /**
+     * optional first parent stamp
+     */
+    public Stamp getA() {
+        return a;
+    }
 
+    public void setA(Stamp a) {
+        this.a = a;
+    }
+
+    /**
+     * optional second parent stamp
+     */
+    public Stamp getB() {
+        return b;
+    }
+
+    public void setB(Stamp b) {
+        this.b = b;
+    }
+
+    public long[] getEvidentialSetCached() {
+        return evidentialSetCached;
+    }
+
+    public void setEvidentialSetCached(long[] evidentialSetCached) {
+        this.evidentialSetCached = evidentialSetCached;
+    }
 }

@@ -410,7 +410,7 @@ public class NarseseParserTest {
 
         assertEquals("(term) " + t + " != " + u, u.getTerm(), t.getTerm());
         assertEquals("(truth) " + t.sentence.truth + " != " + u.sentence.truth, u.sentence.truth, t.sentence.truth);
-        assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), u.getCreationTime(), t.getCreationTime());
+        //assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), u.getCreationTime(), t.getCreationTime());
         assertEquals("(occurencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), u.getOccurrenceTime(), t.getOccurrenceTime());
         //TODO budget:
         //TODO punctuation:

@@ -134,7 +134,8 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
     @Override
     public boolean equals(final Object obj) {
-        return termLinkEquals(obj);
+        return this == obj;
+        //return termLinkEquals(obj);
     }
 
     

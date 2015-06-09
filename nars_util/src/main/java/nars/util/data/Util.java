@@ -30,11 +30,14 @@ import java.util.UUID;
  */
 public final class Util {
 
+
+
     private Util() {
     }
 
     final static int PRIME3 = 524287;
     final static int PRIME2 = 92821;
+    final static int PRIME1 = 31;
 
     public String UUIDbase64() {
         long low = UUID.randomUUID().getLeastSignificantBits();
@@ -46,15 +49,15 @@ public final class Util {
                 )
         ));
     }
-    public final static int hashL(int a, int b) {
-        return PRIME2 * (31 + a ) + b ;
+    public final static int hash(final int a, final int b) {
+        return PRIME2 * (PRIME1 + a ) + b ;
     }
     public final static int hash(int a, int b, int c) {
         return  PRIME3 * (31 * (PRIME2 + a ) + b ) + c ;
     }
 
     public final static int hash(Object a, Object b) {
-        return hashL(a.hashCode(), b.hashCode());
+        return hash(a.hashCode(), b.hashCode());
     }
 
     public final static int hash(Object a, Object b, Object c) {
