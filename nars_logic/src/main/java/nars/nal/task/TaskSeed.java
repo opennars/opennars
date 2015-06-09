@@ -39,7 +39,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
 
     private boolean temporalInduct = true;
 
-    @Deprecated private long occDelta = 0;
+    //@Deprecated private long occDelta = 0;
 
 
     /**
@@ -222,6 +222,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     public TaskSeed(Memory memory) {
         super();
         setOccurrenceTime(Stamp.ETERNAL);
+        setCreationTime(memory.time());
         this.memory = memory;
     }
 
@@ -308,13 +309,12 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         }
 
         if (getEvidentialBase() == null) {
-            if (getParentTask()!=null)
+            if (getParentTask() != null)
                 throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no evidentialBase was supplied");
 
-            setEvidentialBase(new long[] {  memory.newStampSerial() });
-        }
-        else {
-            if (getParentTask()==null)
+            setEvidentialBase(new long[]{memory.newStampSerial()});
+        } else {
+            if (getParentTask() == null)
                 throw new RuntimeException(this + " has no parent so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialBase()));
         }
 
@@ -352,7 +352,9 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
     public TaskSeed<T> time(long creationTime, long occurrenceTime) {
-        return stamp(new Stamper(memory, creationTime, occurrenceTime));
+        setCreationTime(creationTime);
+        occurr(occurrenceTime);
+        return this;
     }
 
     public TaskSeed<T> cause(Operation operation) {
@@ -399,13 +401,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
     }
 
-    /**
-     * sets an amount of cycles to shift the final applied occurence time
-     */
-    public TaskSeed<T> occurrDelta(long occurenceTime) {
-        this.occDelta = occurenceTime;
-        return this;
-    }
+
 
     public boolean isGoal() {
         return punc == Symbols.GOAL;
@@ -442,36 +438,26 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return punc;
     }
 
-    @Override
-    public void applyToStamp(Stamp target) {
-
-
-            super.applyToStamp(target);
-
-        long o = getOccurrenceTime(target.getCreationTime());
-
-        if (((occDelta != 0) && (o != Stamp.ETERNAL) && (o != Stamp.UNPERCEIVED))) {
-            o += +occDelta;
-        }
-        if (o != Stamp.UNPERCEIVED)
-            target.setOccurrenceTime(o);
-    }
-
+//    @Override
+//    public void applyToStamp(Stamp target) {
+//
+//        super.applyToStamp(target);
+//
+//        long o = getOccurrenceTime( /*target.getCreationTime()*/);
+//
+//        if (((occDelta != 0) && (o != Stamp.ETERNAL) && (o != Stamp.UNPERCEIVED))) {
+//            o += +occDelta;
+//        }
+//        if (o != Stamp.UNPERCEIVED)
+//            target.setOccurrenceTime(o);
+//    }
+//
 
     public TaskSeed<T> budgetCompoundForward(Compound result, NAL nal) {
         BudgetFunctions.compoundForward(this, getTruth(), result, nal);
         return this;
     }
 
-    public long getOccurrenceTime(long creationTime) {
-        long o = Stamp.UNPERCEIVED;
-        boolean hasSpecificOcccurence = (this.getOccurrenceTime() != Stamp.UNPERCEIVED);
-
-        if (hasSpecificOcccurence) {
-            o = this.getOccurrenceTime();
-        }
-        return o;
-    }
 
     public TaskSeed<T> temporalInduct(boolean b) {
         this.temporalInduct = b;
@@ -483,4 +469,12 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         setB(b);
         return this;
     }
+
+    /**
+     //     * sets an amount of cycles to shift the final applied occurence time
+     //     */
+//    public TaskSeed<T> occurrDelta(long occurenceTime) {
+//        this.occDelta = occurenceTime;
+//        return this;
+//    }
 }

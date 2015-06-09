@@ -6,7 +6,7 @@ import java.util.Deque;
 /**
  * Simple object pool implemented by a Deque (ex: ArrayDeque)
  */
-abstract public class DequePool<X> {
+abstract public class DequePool<X> implements Pool<X> {
 
     protected final Deque<X> data;
     private int capacity;
@@ -28,6 +28,7 @@ abstract public class DequePool<X> {
         this.capacity = c;
     }
 
+    @Override
     public void put(final X i) {
         //synchronized (data) {
 
@@ -39,6 +40,7 @@ abstract public class DequePool<X> {
 
     }
 
+    @Override
     public X get() {
         //synchronized (data) {
 
@@ -48,8 +50,6 @@ abstract public class DequePool<X> {
         //}
     }
 
-    abstract public X create();
-
     protected void print() {
         System.out.println(data.size());
     }
@@ -58,6 +58,7 @@ abstract public class DequePool<X> {
         return capacity != 0;
     }
 
+    @Override
     public void delete() {
         capacity = 0;
         data.clear();

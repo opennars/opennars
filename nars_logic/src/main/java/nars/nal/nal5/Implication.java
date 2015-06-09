@@ -21,6 +21,7 @@
 package nars.nal.nal5;
 
 import nars.nal.NALOperator;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.nal7.Interval;
@@ -115,7 +116,7 @@ public class Implication extends Statement {
         }
         
         if ((subject instanceof Implication) || (subject instanceof Equivalence) || (predicate instanceof Equivalence) ||
-                (subject instanceof Interval) || (predicate instanceof Interval)) {
+                (subject instanceof AbstractInterval) || (predicate instanceof AbstractInterval)) {
             return null;
         }
         

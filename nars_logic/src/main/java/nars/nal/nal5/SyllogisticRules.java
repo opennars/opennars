@@ -26,7 +26,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.nal2.Similarity;
-import nars.nal.nal7.Interval;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamper;
@@ -595,15 +595,15 @@ public final class SyllogisticRules {
         final Term content;
         
         long delta = 0;
-        final Interval.AtomicDuration duration = nal.memory.param.duration;
+        final int duration = nal.memory.duration();
         
         if (newCondition != null) {
-             if (newCondition instanceof Interval) {
+             if (newCondition instanceof AbstractInterval) {
                  content = premise1.getPredicate();
-                 delta = ((Interval) newCondition).cycles(duration);
-             } else if ((newCondition instanceof Conjunction) && (((Compound) newCondition).term[0] instanceof Interval)) {
-                 Interval interval = (Interval) ((Compound) newCondition).term[0];
-                 delta = interval.cycles(duration);
+                 delta = ((AbstractInterval) newCondition).cycles(nal.memory);
+             } else if ((newCondition instanceof Conjunction) && (((Compound) newCondition).term[0] instanceof AbstractInterval)) {
+                 AbstractInterval interval = (AbstractInterval) ((Compound) newCondition).term[0];
+                 delta = interval.cycles(nal.memory);
                  newCondition = ((Compound)newCondition).cloneReplacingSubterm(0, null);
                  content = Statement.make(premise1, newCondition, premise1.getPredicate(), premise1.getTemporalOrder());
              } else {

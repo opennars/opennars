@@ -28,7 +28,6 @@ import nars.Symbols;
 import nars.io.Texts;
 import nars.nal.TruthFunctions.EternalizedTruthValue;
 import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.AbstractStamper;

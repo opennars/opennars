@@ -1,7 +1,7 @@
 
 package nars.util.event;
 
-import objenome.op.cas.E;
+import org.apache.commons.collections.FastArrayList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,9 +197,7 @@ abstract public class EventEmitter<K>  {
         public void notify(final K channel, final Object... arg) {
             List<Reaction<K>> c = all(channel);
             if (c!=null) {
-                for (Reaction r : c) {
-                    r.event(channel, arg);
-                }
+                c.forEach( ( Reaction<K> x ) -> x.event(channel,arg) );
             }
         }
 
@@ -208,7 +206,7 @@ abstract public class EventEmitter<K>  {
             DefaultEventRegistration d = new DefaultEventRegistration(channel, o);
             List<Reaction<K>> cl = all(channel);
             if (cl == null)
-                reactions.put(channel, cl = new CopyOnWriteArrayList());
+                reactions.put(channel, cl = new CopyOnWriteArrayList<Reaction<K>>());
 
             cl.add(o);
             return d;

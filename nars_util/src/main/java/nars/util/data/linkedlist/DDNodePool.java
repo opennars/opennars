@@ -8,8 +8,6 @@ import nars.util.data.DequePool;
 */
 public class DDNodePool<E> extends DequePool<DD<E>> {
 
-
-
     public DDNodePool(int initialCapacity) {
         super(initialCapacity);
     }

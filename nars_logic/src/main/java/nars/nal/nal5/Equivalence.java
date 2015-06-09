@@ -21,10 +21,10 @@
 package nars.nal.nal5;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Statement;
-import nars.nal.Terms;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
 
 import java.util.Arrays;
@@ -105,7 +105,7 @@ public class Equivalence extends Statement {
         
         if ((subject instanceof Implication) || (subject instanceof Equivalence)
                 || (predicate instanceof Implication) || (predicate instanceof Equivalence) ||
-                (subject instanceof Interval) || (predicate instanceof Interval)) {
+                (subject instanceof AbstractInterval) || (predicate instanceof AbstractInterval)) {
             return null;
         }
                 

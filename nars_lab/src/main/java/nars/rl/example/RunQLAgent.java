@@ -176,8 +176,8 @@ public class RunQLAgent extends JPanel {
         //Global.BUDGET_EPSILON = 0.02f;
 
         int concepts = 1024;
-        int conceptsPerCycle = 32;
-        final int cyclesPerFrame = 10;
+        int conceptsPerCycle = 8;
+        final int cyclesPerFrame = 5;
 
 
         //Solid dd = new Solid(100, concepts, 1, 1, 1, 8);
@@ -255,8 +255,8 @@ public class RunQLAgent extends JPanel {
         dd.setCyclesPerFrame(cyclesPerFrame);
         dd.conceptForgetDurations.set(2f * 1f);
         //dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
-        dd.duration.set(2);
-        dd.shortTermMemoryHistory.set(2);
+        dd.duration.set(1);
+        dd.shortTermMemoryHistory.set(3);
         dd.decisionThreshold.set(0.55);
         dd.outputVolume.set(5);
 

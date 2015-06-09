@@ -16,7 +16,7 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     private long[] evidentialBase = null;
 
     private int duration;
-    private long creationTime;
+    private long creationTime = Stamp.UNPERCEIVED;
 
     private long occurrenceTime;
 
@@ -143,7 +143,7 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
      */
     @Override
     public long getCreationTime() {
-        return 0;
+        return  creationTime;
     }
 
     /**

@@ -275,7 +275,7 @@ public abstract class NAL  implements Runnable {
                             .truth(newTruth)
                             .stamp(stamp)
                             .parent(parentTask, getCurrentBelief())
-                            .temporalInduct(!temporalAdd)
+                            //.temporalInduct(!temporalAdd)
                             .budget(newBudget);
 
         return doublePremiseTask(task, temporalAdd, allowOverlap);
@@ -749,7 +749,7 @@ public abstract class NAL  implements Runnable {
 
     public AbstractInterval newInterval(long cycles) {
         //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
-        return new CyclesInterval(cycles);
+        return new CyclesInterval(cycles, memory.duration());
 
     }
 }

@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import static nars.nal.nal7.TemporalRules.*;
-import static nars.nal.nal7.Tense.*;
+import static nars.nal.nal7.Tense.Unknown;
 
 /** TODO divide this into a Stamp and Timed interfaces,
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
@@ -196,17 +196,18 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             creationTime = 0;
         }
 
-        if (tense == Past) {
-            return creationTime - duration;
-        } else if (tense == Future) {
-            return creationTime + duration;
-        } else if (tense == Present) {
-            return creationTime;
-        } else if (tense == Unknown) {
-            return Stamp.ETERNAL;
+        switch (tense) {
+            case Present:
+                return creationTime;
+            case Past:
+                return creationTime - duration;
+            case Future:
+                return creationTime + duration;
+            default:
+            //case Unknown:
+            //case Eternal:
+                return Stamp.ETERNAL;
         }
-
-        return Stamp.ETERNAL;
     }
 
 

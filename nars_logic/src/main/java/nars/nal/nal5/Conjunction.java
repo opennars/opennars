@@ -23,9 +23,8 @@ package nars.nal.nal5;
 import nars.Global;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
-import nars.nal.nal7.Interval;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
@@ -190,30 +189,30 @@ public class Conjunction extends Junction {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
 
 
-            int remaining = len;
-            //long cycleOffset = 0;
-            Term l = null;
-            int offset = 0;
-            while (remaining > 0 && ((l = argList[remaining - 1]) instanceof Interval)) {
-                remaining--;
-                offset -= ((Interval) l).cycles(new Interval.AtomicDuration(5));
-            }
-
-            if (len != remaining) {
-                if (remaining == 0) return null;
-                if (remaining == 1) {
-                    return argList[0];
-                }
-
-                argList = Arrays.copyOfRange(argList, 0, remaining);
-            }
+//            int remaining = len;
+//            //long cycleOffset = 0;
+//            Term l = null;
+//            int offset = 0;
+//            while (remaining > 0 && ((l = argList[remaining - 1]) instanceof AbstractInterval)) {
+//                remaining--;
+//                //offset -= ((AbstractInterval) l).cycles(mem);
+//            }
+//
+//            if (len != remaining) {
+//                if (remaining == 0) return null;
+//                if (remaining == 1) {
+//                    return argList[0];
+//                }
+//
+//                argList = Arrays.copyOfRange(argList, 0, remaining);
+//            }
 
             Conjunction cj = new Conjunction(argList, temporalOrder);
 
-            if (len != remaining) {
-                //cj.setOffset(offset);
-                System.err.println("interval making an assumption temporarily that " + argList + " shifts " + offset + " when represented as" + cj);
-            }
+//            if (len != remaining) {
+//                //cj.setOffset(offset);
+//                System.err.println("interval making an assumption temporarily that " + argList + " shifts " + offset + " when represented as" + cj);
+//            }
             return cj;
 
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
@@ -265,8 +264,8 @@ public class Conjunction extends Junction {
         if (temporalOrder == TemporalRules.ORDER_FORWARD) {
             return makeForward(term1, term2);
         } else if (temporalOrder == TemporalRules.ORDER_BACKWARD) {
-            throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
-            //return makeForward(term2, term1);
+            //throw new RuntimeException("Conjunction does not allow reverse order; args=" + term1 + ", " + term2);
+            return makeForward(term2, term1);
             //return null;
         } else {
             if (term1 instanceof Conjunction) {

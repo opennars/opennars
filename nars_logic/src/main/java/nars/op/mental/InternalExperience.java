@@ -9,6 +9,7 @@ import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
@@ -278,7 +279,7 @@ public class InternalExperience extends NARReaction {
                         valid=false; //the expected needed term is not included
                     }
                     for(int i=1;i<conj.term.length;i++) {
-                        if(!(conj.term[i] instanceof Interval)) {
+                        if(!(conj.term[i] instanceof AbstractInterval)) {
                             valid=false;
                             break;
                         }

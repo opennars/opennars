@@ -140,34 +140,12 @@ public class Variables {
     }
 
 
-    /**
-     * Check whether a string represent a name of a term that contains a
-     * variable
-     *
-     * @param n The string name to be checked
-     * @return Whether the name contains a variable
-     */
-    @Deprecated
-    public static boolean containVar(final CharSequence n) {
-        if (n == null) return false;
-        final int l = n.length();
-        for (int i = 0; i < l; i++) {
-            switch (n.charAt(i)) {
-                case Symbols.VAR_INDEPENDENT:
-                case Symbols.VAR_DEPENDENT:
-                case Symbols.VAR_QUERY:
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    public static final boolean containVar(final Term[] t) {
-        for (final Term x : t)
-            if (x instanceof Variable)
-                return true;
-        return false;
-    }
+//    public static final boolean containVar(final Term[] t) {
+//        for (final Term x : t)
+//            if (x instanceof Variable)
+//                return true;
+//        return false;
+//    }
 
 
     /**
@@ -201,6 +179,7 @@ public class Variables {
 
             final Term b = applySubstituteAndRenameVariables(((Compound) compound[1]), map[1]);
             if (b == null) return false;
+
 
             if(compound[0] instanceof Variable && ((Variable)compound[0]).hasVarQuery() && (((Variable)a).hasVarIndep() || ((Variable)a).hasVarDep()) ) {
                 return false;
@@ -260,7 +239,16 @@ public class Variables {
 
     public static Variable makeCommonVariable(final Term v1, final Term v2) {
         //TODO use more efficient string construction
-        return new Variable(v1.toString() + v2.toString() + '$');
+        byte[] bv1 = v1.bytes();
+        byte[] bv2 = v2.bytes();
+        int len = bv1.length + bv2.length + 1;
+        byte[] c = new byte[len];
+        System.arraycopy(bv1, 0, c, 0, bv1.length);
+        System.arraycopy(bv2, 0, c, bv1.length, bv2.length);
+        c[c.length-1] = '$';
+        return new Variable(c);
+
+        //return new Variable(v1.toString() + v2.toString() + '$');
     }
 
 //    public static boolean containVarDepOrIndep(final CharSequence n) {

@@ -83,7 +83,7 @@ public class Interval extends Atom implements AbstractInterval {
 
     public final int magnitude;
 
-    public static Interval interval(final String i) {
+    public static AbstractInterval interval(final String i) {
         return interval(Integer.parseInt(i.substring(1)) - 1);
     }
     
@@ -167,14 +167,14 @@ public class Interval extends Atom implements AbstractInterval {
     
 
     @Override
-    public Interval clone() {
+    public AbstractInterval clone() {
         //can return this as its own clone since it's immutable.
         //originally: return new Interval(magnitude, true);        
         return this;
     }
 
     /** returns a sequence of intervals which approximate a time period with a maximum number of consecutive Interval terms */
-    public static List<Interval> intervalSequence(final long t, final int maxTerms, final Memory memory) {
+    public static List<AbstractInterval> intervalSequence(final long t, final int maxTerms, final Memory memory) {
         if (maxTerms == 1)
             return Lists.newArrayList(interval(t, memory));
 
@@ -209,8 +209,8 @@ public class Interval extends Atom implements AbstractInterval {
     public static long intervalSequence(final Iterable s, final Memory memory) {
         long time = 0;
         for (final Object t : s) {
-            if (t instanceof Interval) {
-                Interval i = (Interval)t;
+            if (t instanceof AbstractInterval) {
+                AbstractInterval i = (AbstractInterval)t;
                 time += i.cycles(memory);
             }
         }

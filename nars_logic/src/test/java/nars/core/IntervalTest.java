@@ -3,6 +3,7 @@ package nars.core;
 import nars.Memory;
 import nars.NAR;
 import nars.model.impl.Default;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Interval.AtomicDuration;
 import org.junit.Test;
@@ -61,12 +62,12 @@ public class IntervalTest {
         NAR n = new NAR(new Default());
         Memory m = n.memory;
         
-        List<Interval> a11 = Interval.intervalSequence(1, 1, m);
+        List<AbstractInterval> a11 = Interval.intervalSequence(1, 1, m);
         assertEquals(1, a11.size());
         assertEquals(Interval.interval(1, m), a11.get(0));
         assertEquals(Interval.interval(0), a11.get(0));
 
-        List<Interval> a12 = Interval.intervalSequence(1, 2, m);
+        List<AbstractInterval> a12 = Interval.intervalSequence(1, 2, m);
         assertEquals(a11, a12);
 
 
@@ -74,13 +75,13 @@ public class IntervalTest {
             //half duration = magnitude 1 ("+2")
             long halfDuration = (n.param).duration.get()/2;
             
-            List<Interval> ad1 = Interval.intervalSequence(halfDuration, 1, m);
+            List<AbstractInterval> ad1 = Interval.intervalSequence(halfDuration, 1, m);
             assertEquals(1, ad1.size());
             assertEquals(Interval.interval(1), ad1.get(0));
             assertEquals(halfDuration+1, Interval.intervalSequence(ad1, m));
 
             //unused extra term because time period was exactly reached
-            List<Interval> ad2 = Interval.intervalSequence(halfDuration, 2, m);
+            List<AbstractInterval> ad2 = Interval.intervalSequence(halfDuration, 2, m);
             assertEquals(2, ad2.size());
             assertEquals(halfDuration, Interval.intervalSequence(ad2, m));
             
@@ -90,7 +91,7 @@ public class IntervalTest {
             long duration = (n.param).duration.get();
             int numTerms = 6;
             for (int t = 1; t < duration * duration * duration; t++) {
-                List<Interval> ad1 = Interval.intervalSequence(t, numTerms, m);
+                List<AbstractInterval> ad1 = Interval.intervalSequence(t, numTerms, m);
                 /*Interval approx = Interval.intervalTime(t, m);                
                 System.out.println(t + " = " + ad1 + "; ~= " + 
                         approx + " (error=" + (approx.getTime(m) - t) + ")");*/

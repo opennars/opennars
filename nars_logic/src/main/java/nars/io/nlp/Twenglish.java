@@ -149,7 +149,7 @@ public class Twenglish {
             for (Span cp : s) {
                 cont.add(lexToTerm(cp.content));
                 //separate each by a duration interval
-                cont.add(Interval.interval(memory.duration(), memory));
+                //cont.add(Interval.interval(memory.duration(), memory));
             }
             cont.removeLast(); //remove trailnig interval term
 

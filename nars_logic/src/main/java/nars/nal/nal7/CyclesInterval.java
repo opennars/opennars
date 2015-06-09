@@ -19,10 +19,12 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     final static int bytesPrecision = 4;
 
     long cyc;
+    int duration;
 
-    public CyclesInterval(long numCycles) {
+    public CyclesInterval(long numCycles, int duration) {
         super(interval(numCycles, bytesPrecision));
         this.cyc = numCycles;
+        this.duration = duration;
     }
 
 
@@ -47,7 +49,7 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
 
     @Override
     public Term clone() {
-        return new CyclesInterval(cyc);
+        return new CyclesInterval(cyc, duration);
     }
 
     @Override

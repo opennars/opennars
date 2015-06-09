@@ -7,18 +7,21 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.process.ConceptProcess;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
-import nars.nal.nal7.Interval;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
-import nars.nal.term.*;
+import nars.nal.process.ConceptProcess;
+import nars.nal.term.Atom;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
+import nars.nal.term.Variable;
+import nars.nal.term.transform.TermVisitor;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.term.transform.TermVisitor;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.jgrapht.ext.*;
 import org.jgrapht.graph.DirectedMaskSubgraph;
@@ -355,7 +358,7 @@ public class Derivations extends DirectedMultigraph {
         else if (t instanceof Compound) {
             return genericLiteral(t, unique);
         }
-        else if (t instanceof Interval) {
+        else if (t instanceof AbstractInterval) {
             //Interval, etc..
             return t.toString();
         }

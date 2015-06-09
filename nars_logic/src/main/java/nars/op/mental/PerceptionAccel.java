@@ -14,6 +14,7 @@ import nars.event.NARReaction;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
+import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Term;
@@ -113,7 +114,7 @@ public class PerceptionAccel extends NARReaction {
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth = TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next = eventbuffer.get(j + 1);
-                    relterms[k + 1] = Interval.interval(next.sentence.getOccurrenceTime() - current.sentence.getOccurrenceTime(), nal.memory);
+                    relterms[k + 1] = nal.newInterval(next.sentence.getOccurrenceTime() - current.sentence.getOccurrenceTime());
                 }
                 k += 2;
             }
@@ -144,7 +145,7 @@ public class PerceptionAccel extends NARReaction {
             //we now have to look at if the first half + the second half already exists as concept, before we add it
             Term[] firstHalf;
             Term[] secondHalf;
-            if (relterms[Len - 1] instanceof Interval) {
+            if (relterms[Len - 1] instanceof AbstractInterval) {
                 //the middle can be a interval, for example in case of a,+1,b , in which case we dont use it
                 firstHalf = new Term[Len - 1]; //so we skip the middle here
                 secondHalf = new Term[Len - 1]; //as well as here
@@ -190,16 +191,16 @@ public class PerceptionAccel extends NARReaction {
 
             Conjunction C = (Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
 
-            Sentence S = new Sentence(C, Symbols.JUDGMENT, truth, st); //importance "summation"
 
-            if (debugMechanism) {
-                nal.emit(Events.DEBUG.class, this, "Success", S);
-            }
+
+//            if (debugMechanism) {
+//                nal.emit(Events.DEBUG.class, this, "Success", S);
+//            }
 
 
             longest_result_derived_already = true;
 
-            Task T = nal.deriveTask(nal.newTask(S)
+            Task T = nal.deriveTask(nal.newTask(C).judgment().truth(truth).stamp(st)
                     .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
                     .parent(task)
                     .temporalInduct(!longest_result_derived_already)

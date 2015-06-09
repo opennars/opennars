@@ -50,6 +50,9 @@ public class Variable extends Atom {
     public Variable(final String name) {
         this(name, false);
     }
+    public Variable(final byte[] name) {
+        this(name, false);
+    }
 
 //    public Variable(char varType, final String name) {
 //        super(Utf8.toUtf8((byte) varType, name));

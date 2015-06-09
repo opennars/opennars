@@ -190,8 +190,8 @@ public class TemporalRules {
             Implication imp = (Implication) temporalStatement;
             if (imp.getSubject() instanceof Conjunction && imp.getTemporalOrder() == TemporalRules.ORDER_FORWARD) {
                 Conjunction conj = (Conjunction) imp.getSubject();
-                if (conj.term[conj.term.length - 1] instanceof Interval) {
-                    Interval intv = (Interval) conj.term[conj.term.length - 1];
+                if (conj.term[conj.term.length - 1] instanceof AbstractInterval) {
+                    AbstractInterval intv = (AbstractInterval) conj.term[conj.term.length - 1];
                     long time_offset = intv.cycles(memory);
                     return (occurrenceTime + time_offset);
                 }
@@ -205,7 +205,7 @@ public class TemporalRules {
      * whether a term can be used in temoralInduction(,,)
      */
     protected static boolean termForTemporalInduction(final Term t) {
-        /*
+        /*//
                 //if(t1 instanceof Operation && t2 instanceof Operation) {
         //   return; //maybe too restrictive
         //}
@@ -215,7 +215,8 @@ public class TemporalRules {
         }
         */
 
-        return (t instanceof Inheritance) || (t instanceof Similarity);
+        //return (t instanceof Inheritance) || (t instanceof Similarity);
+        return (t instanceof Statement);
     }
 
     /*

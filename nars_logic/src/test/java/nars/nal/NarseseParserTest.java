@@ -32,7 +32,6 @@ import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.Symbols.*;
 import static nars.budget.BudgetFunctions.truthToQuality;
-import static nars.nal.Variables.containVar;
 import static nars.nal.term.Statement.make;
 import static org.junit.Assert.*;
 
@@ -967,6 +966,30 @@ public class NarseseParserTest {
                 return Atom.the(s);
             }
         }
+
+        /**
+         * Check whether a string represent a name of a term that contains a
+         * variable
+         *
+         * @param n The string name to be checked
+         * @return Whether the name contains a variable
+         */
+        @Deprecated
+        public static boolean containVar(final CharSequence n) {
+            if (n == null) return false;
+            final int l = n.length();
+            for (int i = 0; i < l; i++) {
+                switch (n.charAt(i)) {
+                    case Symbols.VAR_INDEPENDENT:
+                    case Symbols.VAR_DEPENDENT:
+                    case Symbols.VAR_QUERY:
+                        return true;
+                }
+            }
+            return false;
+        }
+
+
 
         /**
          * Parse a String to create a Statement.
