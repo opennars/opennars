@@ -23,6 +23,7 @@ package nars.nal.tlink;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.Item;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.utf8.Utf8;
@@ -66,7 +67,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     
     
     /** The linked Term */
-    public final Term target;
+    public final Concept target;
 
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
@@ -89,13 +90,14 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
+    public TermLink(Concept concept, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
         super(v);
 
+        Term t = concept.getTerm();
         if (!t.isNormalized()) {
             throw new RuntimeException("not normalized: "+ t);
         }
-        this.target = t;
+        this.target = concept;
 
         this.type = template.getType(t); /* whether this points to subterm */
 
@@ -173,15 +175,15 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     }
 
     @Override
-    public Term getTarget() {
-        return getTerm();
+    public Concept getTarget() {
+        return target;
     }
 
 
 
     @Override
     public Term getTerm() {
-        return target;
+        return target.getTerm();
     }
 
 

@@ -25,6 +25,7 @@ import nars.nal.Item;
 import nars.nal.Sentence;
 import nars.nal.Sentenced;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.data.CircularArrayList;
@@ -43,7 +44,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * The Task linked
      */
     public final Task targetTask;
-
+    private final Concept concept;
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
@@ -101,8 +102,9 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public final short[] index;
 
 
-    public TaskLink(final Task t, final Budget v) {
+    public TaskLink(final Concept c, final Task t, final Budget v) {
         super(v);
+        this.concept = c;
         this.type = TermLink.SELF;
         this.index = null;
 
@@ -118,8 +120,9 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * @param template The TermLink template
      * @param v        The budget
      */
-    public TaskLink(final Task t, final TermLinkTemplate template, final Budget v) {
+    public TaskLink(final Concept c, final Task t, final TermLinkTemplate template, final Budget v) {
         super(v);
+        this.concept = c;
         this.type = template.type;
         this.index = template.index;
 
@@ -185,7 +188,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      */
     public boolean novel(final TermLink termLink, final long currentTime, int noveltyHorizon, int recordLength) {
 
-        final Term bTerm = termLink.target;
+        final Term bTerm = termLink.getTarget().getTerm();
         if (bTerm.equals(targetTask.sentence.term)) {
             return false;
         }
@@ -265,8 +268,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * @return The linked Task
      */
     @Override
-    public Task getTarget() {
-        return getTask();
+    public Concept getTarget() {
+        return concept;
     }
 
     public Task getTask() {
@@ -288,7 +291,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     @Override
     public Sentence getSentence() {
-        return getTarget().sentence;
+        return targetTask.sentence;
     }
 
 

@@ -14,11 +14,9 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.data.Util;
 import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -226,8 +224,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     }
 
     @Override
-    public Term getTarget() {
-        return incoming ? concept.getTerm() : currentTemplate.target;
+    public Concept getTarget() {
+        return incoming ? concept : currentTemplate.concept;
     }
 
     public Term getSource() {

@@ -1,13 +1,14 @@
 package nars.nal.tlink;
 
 import nars.Global;
+import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.util.utf8.Utf8;
 
 
 public interface TermLinkKey {
 
-    public Term getTarget();
+    public Concept getTarget();
 
     public byte[] getLinkKey();
 

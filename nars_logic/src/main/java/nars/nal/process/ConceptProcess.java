@@ -27,9 +27,6 @@ public class ConceptProcess extends NAL implements Premise {
     protected TermLink currentTermLink;
 
 
-    //essentially a cache for a concept lookup
-    private transient Concept currentTermLinkConcept;
-
 
     private int termLinksToFire;
     private int termlinkMatches;
@@ -87,36 +84,37 @@ public class ConceptProcess extends NAL implements Premise {
 
     protected void processTerms() {
 
+        //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
+        int numTermLinks = getCurrentConcept().getTermLinks().size();
+        if (numTermLinks == 0)
+            return;
+
+
         final int noveltyHorizon = memory.param.noveltyHorizon.get();
 
         int termLinkSelectionAttempts = termLinksToFire;
-
-        //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
-        int numTermLinks = getCurrentConcept().getTermLinks().size();
 
         currentConcept.updateTermLinks();
 
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
-
-
             final TermLink bLink = nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
-            if (bLink != null) {
-                //novel termlink available
-
-                processTerm(bLink);
-
-                termLinksSelected++;
-
-
-                emit(Events.TermLinkSelected.class, bLink, this);
-                memory.logic.TERM_LINK_SELECT.hit();
+            if (bLink == null) {
+                break;
             }
 
+            processTerm(bLink);
+
+            termLinksSelected++;
+
+            emit(Events.TermLinkSelected.class, bLink, this);
+            memory.logic.TERM_LINK_SELECT.hit();
         }
-        /*
-        System.out.println(termLinksSelected + "/" + termLinksToFire + " took " +  termlinkMatches + " matches over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords());
-        currentConcept.taskLinks.printAll(System.out);*/
+
+        /*if (termLinksSelected == 0) {
+            System.out.println(termLinksSelected + "/" + termLinksToFire + " took " + termlinkMatches + " matches over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords());
+            //currentConcept.taskLinks.printAll(System.out);
+        }*/
     }
 
     final Concept.TermLinkNoveltyFilter termLinkNovel = new Concept.TermLinkNoveltyFilter();
@@ -212,11 +210,9 @@ public class ConceptProcess extends NAL implements Premise {
 
         if (currentTermLink == null) {
             this.currentTermLink = null;
-            this.currentTermLinkConcept = null;
         }
         else {
             this.currentTermLink = currentTermLink;
-            this.currentTermLinkConcept = null; //this will be fetched if requested, and cached until the termlink changes
             currentTermLink.setUsed(memory.time());
         }
     }
@@ -237,23 +233,20 @@ public class ConceptProcess extends NAL implements Premise {
 
     /** the current belief concept */
     public Concept getCurrentTermLinkConcept() {
-        if (currentTermLinkConcept == null && getCurrentTermLink()!=null) {
-            currentTermLinkConcept = memory.concept( getCurrentTermLink().target );
-        }
-        return currentTermLinkConcept;
+        return getCurrentTermLink().getTarget();
     }
 
-    public float conceptPriority(Term target) {
-        //first check for any cached Concept
-        if (target == getCurrentTermLink().target) {
-            Concept c = getCurrentTermLinkConcept();
-
-            if (c == null) return 0; //if the concept does not exist, use priority = 0
-
-            return c.getPriority();
-        }
-        return super.conceptPriority(target);
-    }
+//    public float conceptPriority(Term target) {
+//        //first check for any cached Concept
+//        if (target == getCurrentTermLink().getTarget()) {
+//            Concept c = getCurrentTermLinkConcept();
+//
+//            if (c == null) return 0; //if the concept does not exist, use priority = 0
+//
+//            return c.getPriority();
+//        }
+//        return super.conceptPriority(target);
+//    }
 
 
     @Override

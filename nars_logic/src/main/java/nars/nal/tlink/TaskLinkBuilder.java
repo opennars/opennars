@@ -1,20 +1,23 @@
 package nars.nal.tlink;
 
 import nars.Memory;
+import nars.bag.tx.BagActivator;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.bag.tx.BagActivator;
+import nars.nal.concept.Concept;
 
 /** adjusts budget of items in a Bag. ex: merge */
 public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
+    private final Concept concept;
     TermLinkTemplate template;
     private Task task;
     public final Memory memory;
 
 
-    public TaskLinkBuilder(Memory memory) {
+    public TaskLinkBuilder(Concept concept, Memory memory) {
         super();
+        this.concept = concept;
         this.memory = memory;
     }
 
@@ -38,9 +41,9 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
     @Override
     public TaskLink newItem() {
         if (template == null)
-            return new TaskLink(getTask(), getBudgetRef());
+            return new TaskLink(concept, getTask(), getBudgetRef());
         else
-            return new TaskLink(getTask(), template, getBudgetRef());
+            return new TaskLink(concept, getTask(), template, getBudgetRef());
     }
 
 

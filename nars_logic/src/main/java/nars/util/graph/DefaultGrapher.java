@@ -246,7 +246,7 @@ public class DefaultGrapher implements NARGraph.Grapher {
             for (int i = 0; i < nt; i++) {
                 TermLink t = termLinks.get(i);
                 if (t.getPriority() < minPriority) continue;
-                Term to = t.target;
+                Term to = t.getTarget().getTerm();
                 if (to != null) {
                     //addEdge(graph, t.getSource(), to, new NARGraph.TermLinkEdge(t));
                 }

@@ -21,7 +21,7 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
     public final short[] index;
 
     /** term of the concept where this template exists, ie. the host */
-    private Term concept;
+    public final Concept concept;
 
     //cached names for new TermLinks
     protected byte[] outgoing;
@@ -42,9 +42,9 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
     public TermLinkTemplate(final Concept host, Term target, final short type, final short... indices) {
         super();
 
-        this.concept = host.getTerm();
+        this.concept = host;
 
-        target.ensureNormalized("TermLink template");
+        target.getTerm().ensureNormalized("TermLink template");
 
         this.target = target;
         this.type = type;

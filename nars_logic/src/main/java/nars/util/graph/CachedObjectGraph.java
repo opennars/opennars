@@ -67,7 +67,7 @@ public class CachedObjectGraph extends AbstractGraph<Object, Object> implements 
 
             /*if (includeConceptTermLinks)*/ {
                 for (TermLink t : c.getTermLinks().values()) {
-                    Term target = t.target;
+                    Term target = t.getTarget().getTerm();
                     addVertex(target);
                     addEdge(source, target, t);
                 }

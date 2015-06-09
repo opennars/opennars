@@ -119,7 +119,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
     @Override
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
-        final Task task = taskLink.getTarget();
+        final Task task = taskLink.getTask();
         final Sentence taskSentence = taskLink.getSentence();
 
         // to be invoked by the corresponding links
