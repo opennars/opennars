@@ -67,7 +67,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     
     
     /** The linked Term */
-    public final Concept target;
+    public final Term target;
 
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
@@ -90,14 +90,13 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(Concept concept, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
+    public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
         super(v);
 
-        Term t = concept.getTerm();
         if (!t.isNormalized()) {
             throw new RuntimeException("not normalized: "+ t);
         }
-        this.target = concept;
+        this.target = t;
 
         this.type = template.getType(t); /* whether this points to subterm */
 
@@ -170,13 +169,13 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
         //}
     }
 
-    @Override public void delete() {
-        
+    @Override
+    public Term getTarget() {
+        return target;
     }
 
-    @Override
-    public Concept getTarget() {
-        return target;
+    @Override public void delete() {
+        
     }
 
 

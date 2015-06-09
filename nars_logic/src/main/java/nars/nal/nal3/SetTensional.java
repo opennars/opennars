@@ -91,4 +91,8 @@ public interface SetTensional extends Term {
         }
     }
 
+    default boolean showsTermOpenerAndCloser() {
+        return false;
+    }
+
 }

@@ -1,10 +1,13 @@
 package nars.nal.nal3;
 
+import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 
 /**
@@ -31,4 +34,7 @@ public interface SetExt extends SetTensional {
         return make(l.toArray(new Term[l.size()]));
     }
 
+    default void appendCloser(Writer p) throws IOException {
+        p.append(NALOperator.SET_EXT_CLOSER.ch);
+    }
 }

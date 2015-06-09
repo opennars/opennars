@@ -29,8 +29,6 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
-import nars.util.data.id.Identifier;
-import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
 import nars.util.data.sexpression.IPair;
 import nars.util.data.sexpression.Pair;
@@ -39,7 +37,6 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
-import java.util.function.Function;
 
 import static java.util.Arrays.copyOf;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
@@ -132,19 +129,35 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public void append(Writer p, boolean pretty) throws IOException {
 
-        p.append(COMPOUND_TERM_OPENER.ch);
+        boolean opener = showsTermOpenerAndCloser();
+        if (opener)
+            p.append(COMPOUND_TERM_OPENER.ch);
+
         p.append(operator().str);
 
-        for (final Term t : term) {
-            p.append(ARGUMENT_SEPARATOR);
-            if (pretty)
-                p.append(' ');
 
-            t.append(p, pretty);
+        int nterms = term.length;
+        for (int i = 0; i < nterms; i++) {
+            if ((i!=0) || (i == 0 && nterms > 1)) {
+                p.append(ARGUMENT_SEPARATOR);
+                if (pretty)
+                    p.append(' ');
+            }
+
+            term[i].append(p, pretty);
         }
 
-        p.append(COMPOUND_TERM_CLOSER.ch);
 
+        appendCloser(p);
+
+    }
+
+    public void appendCloser(Writer p) throws IOException {
+        p.append(COMPOUND_TERM_CLOSER.ch);
+    }
+
+    public boolean showsTermOpenerAndCloser() {
+        return true;
     }
 
 

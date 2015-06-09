@@ -268,8 +268,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * @return The linked Task
      */
     @Override
-    public Concept getTarget() {
-        return concept;
+    public Term getTarget() {
+        return concept.getTerm();
     }
 
     public Task getTask() {

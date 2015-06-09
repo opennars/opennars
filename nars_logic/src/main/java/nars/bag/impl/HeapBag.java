@@ -625,6 +625,7 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
     @Override
     public String toString() {
+
         return super.toString() + '{' + items.getClass().getSimpleName() + '}';
     }
 

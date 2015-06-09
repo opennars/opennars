@@ -1,7 +1,7 @@
 package nars.nal.tlink;
 
 import nars.budget.Budget;
-import nars.nal.concept.Concept;
+import nars.nal.term.Term;
 import nars.nal.term.Termed;
 
 import java.io.PrintStream;
@@ -11,7 +11,7 @@ public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable
 
     public short getIndex(final int i);
     
-    public Concept getTarget();
+    public Term getTarget();
     
     public float getPriority();
 

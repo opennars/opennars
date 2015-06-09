@@ -1,9 +1,12 @@
 package nars.nal.nal3;
 
+import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 
 /**
@@ -24,6 +27,10 @@ public interface SetInt extends SetTensional {
             case 1: return new SetInt1(t[0]);
             default: return new SetIntN(t);
         }
+    }
+
+    default void appendCloser(Writer p) throws IOException {
+        p.append(NALOperator.SET_INT_CLOSER.ch);
     }
 
 }

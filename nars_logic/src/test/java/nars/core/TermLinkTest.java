@@ -53,7 +53,7 @@ public class TermLinkTest {
 
         @Test public void testImplicationTermLinks() {
         Bag<TermLinkKey, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>");
-        assertEquals(2, cj2.size()); //Da:(*,c,d)  and Db:e
+        assertEquals(cj2.values() + " should be: [ Da:(*,c,d) ,  Db:e ] ", 2, cj2.size());
         List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(*,c,d) ==> e>");
         assertEquals(4, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
 
@@ -221,7 +221,8 @@ public class TermLinkTest {
         assertTrue(h.toString() + " must contain " + baix, h.toString().contains(baix));
         TermLinkGraph i = new TermLinkGraph().add(n.concept("x"), true);
         //System.out.println(i);
-        assertTrue(i.toString().contains("Ca:{x}=(x,{x})"));
+
+        assertTrue(i.toString(), i.toString().contains("Ca:{x}=(x,{x})"));
 
     }
 

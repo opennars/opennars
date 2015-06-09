@@ -3,6 +3,9 @@ package nars.nal.nal3;
 import nars.nal.NALOperator;
 import nars.nal.term.Term;
 
+import java.io.IOException;
+import java.io.Writer;
+
 /** efficient implementation of a set with one element */
 public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {
 
@@ -27,6 +30,9 @@ public class SetExt1<T extends Term> extends AbstractSet1<T> implements SetExt {
         return SetExt.make(replaced);
     }
 
+    public void appendCloser(Writer p) throws IOException {
+        p.append(NALOperator.SET_EXT_CLOSER.ch);
+    }
 
 
 

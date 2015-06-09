@@ -302,6 +302,8 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 
     @Override
     public String toString() {
+
+
         return getClass().getSimpleName();// + "(" + size() + "/" + getCapacity() +")";
     }
 
