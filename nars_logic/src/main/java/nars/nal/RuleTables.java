@@ -117,9 +117,12 @@ public class RuleTables {
      * @param beliefTerm The content of belief
      * @param nal Reference to the memory
      */
-    public static void syllogisms(TaskLink tLink, TermLink bLink, Term taskTerm, Term beliefTerm, NAL nal) {
-        Sentence taskSentence = nal.getCurrentTask().sentence;
+     public static void syllogisms(TaskLink tLink, TermLink bLink, Statement taskTerm, Statement beliefTerm, NAL nal) {
+        Sentence<Statement> taskSentence = nal.getCurrentTask().sentence;
         Sentence belief = nal.getCurrentBelief();
+
+        if (!(belief.term instanceof Statement)) return;
+
         int figure;
         if (taskTerm instanceof Inheritance) {
             if (beliefTerm instanceof Inheritance) {
@@ -202,11 +205,11 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal Reference to the memory
      */
-    public static void asymmetricAsymmetric(final Sentence taskSentence, final Sentence belief, int figure, final NAL nal) {
+    public static void asymmetricAsymmetric(final Sentence<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
         final Random r = nal.memory.random;
 
-        Statement taskStatement = (Statement) taskSentence.term;
-        Statement beliefStatement = (Statement) belief.term;
+        Statement taskStatement = taskSentence.term;
+        Statement beliefStatement = belief.term;
         
         Term t1, t2;
         Term[] u = new Term[] { taskStatement, beliefStatement };
@@ -430,9 +433,9 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal Reference to the memory
      */
-    public static void symmetricSymmetric(final Sentence belief, final Sentence taskSentence, int figure, final NAL nal) {
-        Statement s1 = (Statement) belief.term;
-        Statement s2 = (Statement) taskSentence.term;
+    public static void symmetricSymmetric(final Sentence<Statement> belief, final Sentence<Statement> taskSentence, int figure, final NAL nal) {
+        Statement s1 = belief.term;
+        Statement s2 = taskSentence.term;
         
         Term ut1, ut2;  //parameters for unify()
         Term rt1, rt2;  //parameters for resemblance()
@@ -507,20 +510,21 @@ public class RuleTables {
             return;
         }
 
-        Sentence mainSentence = originalMainSentence;   // for substitution
+        Sentence<Statement> mainSentence = originalMainSentence;   // for substitution
 
-        Statement statement = (Statement) mainSentence.term;
+        Statement statement = mainSentence.term;
         
         Term component = statement.term[index];
-        Term content = subSentence.term;
+        Compound content = subSentence.term;
+
         if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getCurrentBelief() != null)) {
-            
-            Term[] u = new Term[] { statement, content };
+
+            Compound[] u = new Compound[] { statement, content };
             
             if (!component.hasVarIndep()) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u, nal.memory.random)) {
-                mainSentence = mainSentence.clone(u[0]);
+                mainSentence = mainSentence.clone((Statement)u[0]);
                 if (mainSentence!=null) {
                     subSentence = subSentence.clone(u[1]);
                     if (subSentence != null)

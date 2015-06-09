@@ -6,7 +6,7 @@ import nars.util.data.id.LiteralUTF8Identifier;
 /**
  * Created by me on 6/2/15.
  */
-abstract public class AbstractTerm implements Term {
+@Deprecated abstract public class AbstractTerm implements Term {
 
     private Identifier id;
 
@@ -18,7 +18,7 @@ abstract public class AbstractTerm implements Term {
         this(new LiteralUTF8Identifier(name));
     }
 
-    public AbstractTerm(Identifier x) {
+    @Deprecated public AbstractTerm(Identifier x) {
         setName(x);
     }
 
@@ -37,8 +37,8 @@ abstract public class AbstractTerm implements Term {
 
     @Override
     public Identifier name() {
-        if (id == null)
-            throw new RuntimeException("null name");
+        /*if (id == null)
+            throw new RuntimeException("null name");*/
         return id;
     }
 

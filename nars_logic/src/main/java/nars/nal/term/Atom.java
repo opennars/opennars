@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by me on 4/25/15.
  */
-public class Atom extends AbstractTerm {
+public class Atom extends ImmutableAtom {
 
     private static final Map<String,Atom> atoms = Global.newHashMap(4096);
 
@@ -89,13 +89,7 @@ public class Atom extends AbstractTerm {
         super(name);
     }
 
-    protected Atom(final Identifier name) {
-        super(name);
-    }
-
-    protected Atom(final byte[] name) {
-        this(new LiteralUTF8Identifier(name));
-    }
+    protected Atom(final byte[] name) {  super(name);    }
 
     /** gets the atomic term given a name, storing it in the static symbol table */
     public final static Atom theCached(final String name) {
@@ -177,26 +171,26 @@ public class Atom extends AbstractTerm {
         return false;
     }
 
-    /**
-     * Equal terms have identical name, though not necessarily the same
-     * reference.
-     *
-     * @return Whether the two Terms are equal
-     * @param that The Term to be compared with the current Term
-     */
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        if (!(that instanceof Atom)) return false;
-        final Atom t = (Atom)that;
-        return equalID(t);
-
-//        if (equalsType(t) && equalsName(t)) {
-//            t.name = name; //share
-//            return true;
-//        }
-//        return false;
-    }
+//    /**
+//     * Equal terms have identical name, though not necessarily the same
+//     * reference.
+//     *
+//     * @return Whether the two Terms are equal
+//     * @param that The Term to be compared with the current Term
+//     */
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that) return true;
+//        if (!(that instanceof Atom)) return false;
+//        final Atom t = (Atom)that;
+//        return equalID(t);
+//
+////        if (equalsType(t) && equalsName(t)) {
+////            t.name = name; //share
+////            return true;
+////        }
+////        return false;
+//    }
 
 
 

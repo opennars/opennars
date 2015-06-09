@@ -37,7 +37,7 @@ public abstract class NAL  implements Runnable {
     public final Memory memory;
     protected final Task currentTask;
     protected final LogicPolicy reasoner;
-    protected Sentence currentBelief;
+    private Sentence currentBelief;
 
 
     /**
@@ -496,8 +496,8 @@ public abstract class NAL  implements Runnable {
         return currentBelief;
     }
 
-    public void setCurrentBelief(Sentence belief) {
-        this.currentBelief = belief;
+    public void setCurrentBelief(Sentence nextBelief) {
+        this.currentBelief = nextBelief;
     }
 
 

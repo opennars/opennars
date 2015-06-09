@@ -65,10 +65,10 @@ public class TermIDTest {
         testInternalRepresentation("xyz\u00e3", 3 + 2);
     }
 
-    //  '-->' 'a' ','  'b' ')' == 4
+    //  '-->' 'a' ','  'b' ')' == 5
     @Test
     public void testInternalRepresentation27() {
-        testInternalRepresentation("<a --> b>", 4);
+        testInternalRepresentation("<a --> b>", 5);
     }
 
 

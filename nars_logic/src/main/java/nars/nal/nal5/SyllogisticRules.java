@@ -285,7 +285,7 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    public static boolean resemblance(Term term1, Term term2, Sentence belief, Sentence sentence, int figure, NAL nal) {
+    public static boolean resemblance(Term term1, Term term2, Sentence<Statement> belief, Sentence<Statement> sentence, int figure, NAL nal) {
         if (Statement.invalidStatement(term1, term2)) {
             return false;
         }
@@ -295,7 +295,7 @@ public final class SyllogisticRules {
         if (order == ORDER_INVALID) {
             return false;
         }
-        Statement st = (Statement) belief.term;
+        Statement st = belief.term;
         Truth truth = null;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {

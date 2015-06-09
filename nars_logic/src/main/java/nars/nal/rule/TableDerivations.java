@@ -28,7 +28,16 @@ public class TableDerivations extends ConceptFireTaskTerm {
         final Term taskTerm = tLink.getTerm();
         final Sentence belief = f.getCurrentBelief();
         final Term beliefTerm = bLink.getTerm();
-        
+
+//        if (belief == null) {
+//            if (beliefTerm!=null) {
+//                System.err.println("belief is null and beliefTerm = " + beliefTerm);
+//            }
+//        }
+//        else if (!beliefTerm.equals(belief.getTerm())) {
+//            System.err.println("beliefTerm " + beliefTerm + " is not equal to beliefLink term " + bLink);
+//        }
+
 
         final short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
@@ -90,7 +99,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                                 if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, f.memory.random)) {
                                     Sentence<Statement> newBelief = belief.clone(u[0], Statement.class);
                                     if (newBelief!=null) {
-                                        Sentence newTaskSentence = taskSentence.clone(u[1]);
+                                        Sentence newTaskSentence = taskSentence.clone((Compound)u[1]);
                                         if (newTaskSentence!=null) {
                                             RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
                                         }
@@ -121,8 +130,8 @@ public class TableDerivations extends ConceptFireTaskTerm {
                         }
                         break;
                     case TermLink.COMPOUND_STATEMENT:
-                        if (belief != null) {
-                            RuleTables.syllogisms(tLink, bLink, taskTerm, beliefTerm, f);
+                        if ((belief != null) && (taskTerm instanceof Statement) && (beliefTerm instanceof Statement)) {
+                            RuleTables.syllogisms(tLink, bLink, (Statement)taskTerm, (Statement)beliefTerm, f);
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:

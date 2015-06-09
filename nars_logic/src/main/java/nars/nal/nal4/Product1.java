@@ -37,7 +37,7 @@ public class Product1<T extends Term> extends Compound1<T> implements Product {
     }
 
     public UTF8Identifier newName() {
-        return new DefaultCompoundUTF8Identifier(this);
+        return new CompoundNIdentifier(this);
     }
 
 }

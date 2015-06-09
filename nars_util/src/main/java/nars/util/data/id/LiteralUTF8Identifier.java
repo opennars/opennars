@@ -88,6 +88,8 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     @Override
     public boolean equalTo(Identifier x) {
+        if (this == x) return true;
+
         if (x instanceof UTF8Identifier) {
 
             LiteralUTF8Identifier u = (LiteralUTF8Identifier) x;

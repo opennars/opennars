@@ -173,7 +173,7 @@ public class LocalRules {
 
             content = u[0];
 
-            belief = belief.clone(content);
+            belief = belief.clone((Compound)content);
             if (belief == null) {
                 throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
                 //return false;

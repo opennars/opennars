@@ -21,6 +21,7 @@
 package nars.nal.term;
 
 import nars.Global;
+import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
@@ -230,16 +231,14 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
             ByteBuf b = ByteBuf.create(
                     subjBytes.length + predBytes.length + relationBytes.length +
-                            + 1 + 1 //beginning and end closers
+                           + 1  + 1 //separator and end closers
             );
 
-            b.append((byte) STATEMENT_OPENER.ch).append(subjBytes);
-
-            b.append(relationBytes);
-
-            b.append(predBytes).append((byte) STATEMENT_CLOSER.ch);
-
-            return b.toBytes();
+            return b.add(relationBytes)
+                    .add(subjBytes)
+                    .add((byte)Symbols.STAMP_SEPARATOR)
+                    .add(predBytes)
+                    .add((byte) STATEMENT_CLOSER.ch).toBytes();
         }
 
         @Override

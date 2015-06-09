@@ -65,7 +65,7 @@ public class Byt {
         int nullCount = 0;
         for ( byte ch : array ) {
 
-            if ( ch == '\0' ) {
+            if ( ch == 0 ) {
                 nullCount++;
             }
         }
@@ -77,12 +77,12 @@ public class Byt {
         int j = 0;
         for ( byte ch : array ) {
 
-            if ( ch == '\0' ) {
+            if ( ch == 0 ) {
                 continue;
             }
 
-            newArray[ j ] = ch;
-            j++;
+
+            newArray[ j++ ] = ch;
         }
         return newArray;
     }
@@ -182,10 +182,7 @@ public class Byt {
             );
         }
         else {
-            //create a copy of the correct size, try to avoid this
-            byte[] newArray = new byte[newLength];
-            System.arraycopy(array, start, newArray, 0, newLength);
-            return newArray;
+            return Arrays.copyOf(array, newLength);
         }
     }
 

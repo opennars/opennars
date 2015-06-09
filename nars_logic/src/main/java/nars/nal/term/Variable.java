@@ -76,11 +76,7 @@ public class Variable extends Atom {
         this.type = ensureValidVariableType(n.charAt(0));
         this.scope = scope;
     }
-    public Variable(final Identifier n, final boolean scope) {
-        super(n);
-        this.type = ensureValidVariableType(n.byteAt(0));
-        this.scope = scope;
-    }
+
 
     public final static char ensureValidVariableType(final byte c) {
         return ensureValidVariableType((char)c);
@@ -108,7 +104,7 @@ public class Variable extends Atom {
 
     public Variable clone(boolean newScope) {
         if (newScope!=scope)
-            return new Variable(name(), newScope);
+            return new Variable(bytes(), newScope);
         return this;
     }
 
@@ -160,11 +156,13 @@ public class Variable extends Atom {
         if (!((Variable) that).isScoped()) return false;
 
 
-        return equalID((Variable) that);
+        return super.equals((Variable) that);
     }
-    public static int compare(final Variable a, final Variable b) {
 
-        int nameCompare = a.name().compareTo(b.name());
+    public static int compare(final Variable a, final Variable b) {
+        if (a == b) return 0;
+
+        int nameCompare = a.name().compare(b.name());
         if (nameCompare != 0)
             return nameCompare;
 

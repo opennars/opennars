@@ -38,6 +38,7 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
+import java.util.function.Function;
 
 import static java.util.Arrays.copyOf;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
@@ -94,10 +95,10 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
     }
 
 
-    public final static class DefaultCompoundUTF8Identifier extends DynamicUTF8Identifier {
+    public final static class CompoundNIdentifier extends DynamicUTF8Identifier {
         private final Compound compound;
 
-        public DefaultCompoundUTF8Identifier(Compound c) {
+        public CompoundNIdentifier(Compound c) {
             this.compound = c;
         }
 
@@ -106,31 +107,31 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
 
             final int numArgs = compound.term.length;
 
-
-            /*if (numArgs == 2) {
-                //experimental compact infix notation
-                return Statement.makeStatementKey(arg[0], op, arg[1]);
-            }*/
-
-
             byte[] opBytes = compound.operator().bytes;
 
-
-            int len = 1 + 1 + opBytes.length +
-                    numArgs; //1 for each arg separator
-            for (final Term t : compound.term) {
-                len += t.bytes().length;
-            }
-
-            ByteBuf b = ByteBuf.create(len)
-                    .append((byte) COMPOUND_TERM_OPENER.ch)
-                    .append(opBytes);
+            int len = opBytes.length;
 
             for (final Term t : compound.term) {
-                b.append((byte) ARGUMENT_SEPARATOR).append(t.bytes());
+                len += t.bytes().length + 1;
             }
 
-            return b.append((byte) COMPOUND_TERM_CLOSER.ch).toBytes();
+            ByteBuf b = ByteBuf.create(len);
+
+            b.add(opBytes);
+
+            for (int i = 0; i < numArgs; i++) {
+                Term t = compound.term[i];
+
+                byte n;
+                if (i!=0)
+                    n = ((byte) ARGUMENT_SEPARATOR);
+                else
+                    n = ((byte) COMPOUND_TERM_CLOSER.ch);
+
+                b.add(t.bytes()).add(n);
+            }
+
+            return b.toBytes();
 
         }
 
@@ -588,8 +589,9 @@ public abstract class Compound extends AbstractTerm implements Collection<Term>,
      */
     public UTF8Identifier newName() {
         /* Default implementation */
-        return new DefaultCompoundUTF8Identifier(this);
+        return new CompoundNIdentifier(this);
     }
+
  
 
     /* ----- utilities for other fields ----- */

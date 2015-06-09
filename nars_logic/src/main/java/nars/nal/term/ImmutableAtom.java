@@ -11,6 +11,11 @@ import nars.util.data.id.LiteralUTF8Identifier;
  * An atomic term type which has an immutable, static Identifier at constructoin
  */
 public abstract class ImmutableAtom extends LiteralUTF8Identifier implements Term {
+
+    public ImmutableAtom(String name) {
+        super(name);
+    }
+
     public ImmutableAtom(byte[] b) {
         super(b);
     }

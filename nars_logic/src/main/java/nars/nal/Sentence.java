@@ -354,7 +354,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     }
 
     /** Clone with a different Term */
-    public <X extends Compound> Sentence<? extends X> clone(Term t) {
+    public <X extends Compound> Sentence<X> clone(X t) {
         X ct = termOrNull(t);
         if (ct == null) return null;
 
