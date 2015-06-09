@@ -37,7 +37,6 @@ public class LogicMetrics extends NARReaction {
 
     public final DoubleMeter CONCEPT_BELIEF_COUNT = new DoubleMeter("concept.belief.count");
     public final DoubleMeter CONCEPT_QUESTION_COUNT = new DoubleMeter("concept.question.count");
-    public final HitMeter TERM_LINK_SELECT = new HitMeter("concept.termlink.select");
     public final HitMeter TERM_LINK_TRANSFORM = new HitMeter("concept.termlink.transform");
 
     SummaryStatistics inputPriority = new SummaryStatistics();

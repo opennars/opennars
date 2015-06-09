@@ -37,7 +37,7 @@ public abstract class MemoryObserver extends NARReaction {
                 Events.TaskRemove.class,
                 Events.TaskDerive.class,
                 TaskProcess.class,
-                Events.TermLinkSelected.class,
+                //Events.TermLinkSelected.class,
                 Events.TermLinkTransformed.class,
                 //Events.UnExecutedGoal.class,
 

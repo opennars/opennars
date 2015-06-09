@@ -183,7 +183,7 @@ public class Derivations extends DirectedMultigraph {
                     result(c, tl, null, null /*n.getNewTasks()*/, n.time()); //TODO see if derivations can be noticed another way
                 }
 
-                else if (event == Events.TermLinkSelected.class) {
+                /*else if (event == Events.TermLinkSelected.class) {
                     TermLink termlink = (TermLink)args[0];
                     ConceptProcess n = (ConceptProcess)args[1];
                     TaskLink tasklink = n.getCurrentTaskLink();
@@ -192,7 +192,7 @@ public class Derivations extends DirectedMultigraph {
                     int taskEnd = (int) args[3];
 
                     result(c, tasklink, termlink, getTasks(n, taskStart, taskEnd), n.time());
-                }
+                }*/
 
                 else if (event == Events.TaskDerive.class) {
                     //System.out.println(args[0]);

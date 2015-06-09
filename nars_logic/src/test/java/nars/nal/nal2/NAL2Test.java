@@ -2,12 +2,13 @@ package nars.nal.nal2;
 
 
 import nars.NARSeed;
-import nars.narsese.InvalidInputException;
-import nars.nal.JavaNALTest;
+import nars.io.out.TextOutput;
+import nars.model.impl.Classic;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
-import nars.model.impl.Classic;
 import nars.model.impl.DefaultMicro;
+import nars.nal.JavaNALTest;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -56,11 +57,10 @@ public class NAL2Test extends JavaNALTest {
             @1750        */
 
         long time = 320;
-        //TextOutput.out(n);
+        TextOutput.out(nar);
 
         nar.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
                 .en("Birdie is similar to Tweety.");
-        nar.frame(1);
         nar.ask("<{Birdie} <-> {Tweety}>")
                 .en("Is Birdie similar to Tweety?");
 

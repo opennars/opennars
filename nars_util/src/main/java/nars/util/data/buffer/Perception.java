@@ -45,6 +45,7 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
             T t = currentInput.get();
             if ((t == null) || (t == currentInput /* returned itself */)) {
                 cycle.remove();
+                return t;
             }
             else {
                 return t;

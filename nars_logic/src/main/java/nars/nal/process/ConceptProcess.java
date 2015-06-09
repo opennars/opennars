@@ -92,7 +92,6 @@ public class ConceptProcess extends NAL implements Premise {
         if (numTermLinks == 0)
             return;
 
-
         final int noveltyHorizon = memory.param.noveltyHorizon.get();
 
         int termLinkSelectionAttempts = termLinksToFire;
@@ -101,17 +100,15 @@ public class ConceptProcess extends NAL implements Premise {
 
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
-            final TermLink bLink = nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
-            if (bLink == null) {
-                break;
-            }
 
-            processTerm(bLink);
+            final TermLink bLink = nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+
+            if (bLink!=null)
+                processTerm(bLink);
 
             termLinksSelected++;
 
-            emit(Events.TermLinkSelected.class, bLink, this);
-            memory.logic.TERM_LINK_SELECT.hit();
+            //emit(Events.TermLinkSelected.class, bLink, this);
         }
 
         /*if (termLinksSelected == 0) {
@@ -146,11 +143,10 @@ public class ConceptProcess extends NAL implements Premise {
             final TermLink termLink = currentConcept.getTermLinks().forgetNext(memory.param.termLinkForgetDurations, memory);
             termlinkMatches++;
 
-            if (termLink == null)
-                return null;
-
-            if (termLinkNovel.apply(termLink)) {
-                return termLink;
+            if (termLink != null) {
+                if (termLinkNovel.apply(termLink)) {
+                    return termLink;
+                }
             }
 
         }
