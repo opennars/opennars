@@ -104,19 +104,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-
-    /**
-     * Create a Sentence with the given fields
-     *
-     * @param seedTerm The Term that forms the content of the sentence
-     * @param punctuation The punctuation indicating the type of the sentence
-     * @param truth The truth value of the sentence, null for question
-     * @param stamp The stamp of the sentence indicating its derivation time and
-     * @param normalize if false, normalization is not attempted and the compound will be used as-is
-     * base
-     */
-    public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp) {
-
+    public Sentence(T seedTerm, final char punctuation, final Truth truth) {
         this.punctuation = punctuation;
 
         boolean isQuestionOrQuest = isQuestion() || isQuest();
@@ -130,22 +118,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
             this.truth = truth;
         }
 
-
-
-
-        //apply the stamp to this
-        stamp.applyToStamp(this);
-
-
-
-        if ((isQuestion() || isQuest()) && !isEternal()) {
-            //need to clone in case this stamp is shared by others which are not to eternalize it
-            //stamp = stamp.cloneEternal();
-            if (Global.DEBUG_NONETERNAL_QUESTIONS)
-                throw new RuntimeException("Questions and Quests require eternal tense");
-        }
-
-
         this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
 
         this.term = seedTerm;
@@ -153,6 +125,35 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
 
         invalidateHash();
+
+    }
+
+    /**
+     * Create a Sentence with the given fields
+     *
+     * @param seedTerm The Term that forms the content of the sentence
+     * @param punctuation The punctuation indicating the type of the sentence
+     * @param truth The truth value of the sentence, null for question
+     * @param stamp The stamp of the sentence indicating its derivation time and
+     * @param normalize if false, normalization is not attempted and the compound will be used as-is
+     * base
+     */
+    public Sentence(T seedTerm, final char punctuation, final Truth truth, AbstractStamper stamp) {
+        this(seedTerm, punctuation, truth);
+
+
+        //apply the stamp to this
+        stamp.applyToStamp(this);
+
+
+//        if ((isQuestion() || isQuest()) && !isEternal()) {
+//            //need to clone in case this stamp is shared by others which are not to eternalize it
+//            //stamp = stamp.cloneEternal();
+//            if (Global.DEBUG_NONETERNAL_QUESTIONS)
+//                throw new RuntimeException("Questions and Quests require eternal tense");
+//        }
+
+
 
     }
 
@@ -400,20 +401,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
         return s;
     }
-
-
-
-    public TaskSeed<T> projection(NAL n, long targetTime, final long currentTime) {
-
-        final Truth newTruth = projection(targetTime, currentTime);
-
-        if (newTruth instanceof EternalizedTruthValue)
-            targetTime = Stamp.ETERNAL;
-
-        return n.newTask(term).punctuation(punctuation).truth(newTruth).
-                stamp(this).occurr(targetTime);
-    }
-
 
 
     public Truth projection(final long targetTime, final long currentTime) {

@@ -29,7 +29,7 @@ import java.util.List;
 public class IRCBot {
 
     private final MarkovObservationsGraph m;
-    boolean outputting = false;
+    boolean outputting = true;
 
     // The server to connect to and our details.
     String server = "irc.freenode.net";
@@ -37,7 +37,7 @@ public class IRCBot {
     String login = "narchy";
 
     // The channel which the bot will join.
-    String channel = "#fukushima";
+    String channel = "#nars";
     private final NAR nar;
     private BufferedWriter writer = null;
 

@@ -21,13 +21,13 @@
 package nars.nal.stamp;
 
 import nars.Global;
+import nars.Memory;
 import nars.Symbols;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import static java.util.Arrays.*;
 
 import static nars.nal.nal7.TemporalRules.*;
 import static nars.nal.nal7.Tense.*;
@@ -184,6 +184,10 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 //        this(evidence, creationTime,  getOccurrenceTime(creationTime, tense, memory.duration()), memory.duration());
 //    }
 
+    public static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
+        return getOccurrenceTime(creationTime, tense, m.duration());
+    }
+
     public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
 
         if (creationTime == Stamp.UNPERCEIVED) {
@@ -198,6 +202,8 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             return creationTime + duration;
         } else if (tense == Present) {
             return creationTime;
+        } else if (tense == Unknown) {
+            return Stamp.ETERNAL;
         }
 
         return Stamp.ETERNAL;

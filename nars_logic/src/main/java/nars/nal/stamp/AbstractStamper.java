@@ -1,6 +1,7 @@
 package nars.nal.stamp;
 
 import nars.nal.Sentence;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 
 import java.util.function.Consumer;
@@ -18,6 +19,7 @@ public interface AbstractStamper {
      *      setEvidentialBase(long[] evidentialBase);
      */
     void applyToStamp(Stamp target);
+
 
 
 }
