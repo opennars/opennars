@@ -336,7 +336,8 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
     public static boolean invalidPair(final Term s1, final Term s2) {
         boolean s1Indep = s1.hasVarIndep();
         boolean s2Indep = s2.hasVarIndep();
-        return (s1Indep && !s2Indep || !s1Indep && s2Indep);
+        //return (s1Indep && !s2Indep || !s1Indep && s2Indep);
+        return s1Indep ^ s2Indep;
     }
 
     public boolean subjectOrPredicateIsIndependentVar() {

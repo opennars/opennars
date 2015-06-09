@@ -50,10 +50,10 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
     private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, Stamper s, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
 
-
         final Sentence taskSentence = task.sentence;
 
         final int tds = terms_dependent.size();
+
         for (int i = 0; i < tds; i++) {
 
             final Compound result = Sentence.termOrNull(terms_dependent.get(i));
@@ -82,14 +82,6 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                 occ = second_belief.getOccurrenceTime();
             }
 
-            final Stamper sx = new Stamper(
-                    s.getEvidentialBase(),
-                    nal.time(),
-                    occ,
-                    nal.memory.duration()
-            );
-
-
 
             Task dummy = new Task(second_belief, budget, task, null);
 
@@ -98,7 +90,9 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
             if (nal.deriveTask(nal.newTask(result)
                     .punctuation(mark)
                     .truth(truth)
-                    .stamp(sx)
+                    .evidence(s.getEvidentialBase())
+                    .occurr(occ)
+                    .budget(budget)
                     .parent(dummy, second_belief), false, false, dummy, false)!=null) {
 
 
@@ -356,8 +350,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         .truth(truth)
                         .parent(task)
                         .budgetCompoundForward(result, nal)
-                        .stamp(new Stamper(taskSentence, second_belief.stamp, nal.time(), occ));
-
+                        .evidence(taskSentence, second_belief.stamp)
+                        .occurr(occ);
 
                 Task newTask = nal.deriveTask(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
 

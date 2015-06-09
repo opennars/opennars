@@ -477,4 +477,10 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         this.temporalInduct = b;
         return this;
     }
+
+    public TaskSeed<T> evidence(Stamp a, Stamp b) {
+        setA(a);
+        setB(b);
+        return this;
+    }
 }

@@ -228,8 +228,9 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         return a;
     }
 
-    public void setA(Stamp a) {
+    public Stamp setA(Stamp a) {
         this.a = a;
+        return this;
     }
 
     /**
@@ -239,8 +240,8 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         return b;
     }
 
-    public void setB(Stamp b) {
-        this.b = b;
+    public Stamp setB(Stamp b) {
+        this.b = b; return this;
     }
 
     public long[] getEvidentialSetCached() {
