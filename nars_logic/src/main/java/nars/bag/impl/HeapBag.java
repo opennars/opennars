@@ -49,6 +49,10 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
 
     private final CurveBag.BagCurve curve;
 
+    //sort iterations
+    final int sortPrecision = 8;
+    //# of max moves per iteration before ending it
+    final int sortMovesMax = 3;
 
 
     public static <E extends Item> SortedIndex<E> getIndex(int capacity) {
@@ -165,10 +169,6 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         items.addFirst(i);
 
 
-        //sort iterations
-        final int sortPrecision = 1;
-        //# of max moves per iteration before ending it
-        final int sortMovesMax = 2;
         for (int j = 0; j < sortPrecision; j++)
             sortNext(sortMovesMax);
 

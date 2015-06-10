@@ -5,8 +5,8 @@ import nars.Memory.Forgetting;
 import nars.Memory.Timing;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
-import nars.bag.impl.HeapBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.model.ControlCycle;
@@ -27,7 +27,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
 import nars.op.app.STMInduction;
 import nars.op.data.Flat;
 import nars.op.data.json;
@@ -404,8 +403,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
-        Bag<Sentence, TaskLink> taskLinks = new HeapBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        Bag<Identifier, TermLink> termLinks = new HeapBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+        Bag<Sentence, TaskLink> taskLinks = new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks(), true);
+        Bag<Identifier, TermLink> termLinks = new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -434,7 +433,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-        return new HeapBag(rng, getNovelTaskBagSize());
+
+        return new CurveBag(rng, getNovelTaskBagSize(), true);
     }
 
     public Default setSubconceptBagSize(int subconceptBagSize) {

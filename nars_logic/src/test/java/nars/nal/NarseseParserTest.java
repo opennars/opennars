@@ -164,7 +164,7 @@ public class NarseseParserTest {
 
     @Test
     public void testQuest() throws InvalidInputException {
-        String tt = "(*, a, b, c)";
+        String tt = "(a, b, c)";
         Task t = task(tt + "@");
         assertNotNull(t);
         assertEquals(NALOperator.PRODUCT, t.sentence.term.operator());

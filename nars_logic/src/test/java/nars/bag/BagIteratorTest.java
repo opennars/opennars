@@ -21,7 +21,7 @@ public class BagIteratorTest {
     int L = 4;
 
 
-    public void testIterator(Bag<CharSequence, NullItem> b) {
+    public void testIterator(Bag<CharSequence, NullItem> b, int expectedCount) {
         int count = 0;
         NullItem first = null, current = null;
         Iterator<NullItem> i = b.iterator();
@@ -30,20 +30,25 @@ public class BagIteratorTest {
             if (first == null)
                 first = n;
             current =n;
-            //System.out.println(current);
             count++;
-        }               
+        }
+
+        assertEquals(expectedCount, count);
         
         if (b.size() > 1) {
             //check correct order
-            assertTrue(first.getPriority() > current.getPriority());
+            b.forEach(x -> System.out.println(x.getPriority() + " " + x));
+
+            assertTrue(first.getPriority() >= current.getPriority());
         }
         
         assertEquals(b.size(), count);
     }
     
     public void testBagIterator(Bag<CharSequence, NullItem> b) {
-        
+
+        b.clear();
+
         b.put(new NullItem(0.1f));
         b.put(new NullItem(0.2f));
         b.put(new NullItem(0.3f));
@@ -52,26 +57,34 @@ public class BagIteratorTest {
         b.put(new NullItem(0.6f));
         b.put(new NullItem(0.7f));
         b.put(new NullItem(0.8f));
-                
+
+        assertEquals(8, b.size());
+
         if (b instanceof LevelBag)
             assert(((LevelBag)b).numEmptyLevels() < L);
         
-        testIterator(b);
+        testIterator(b, 8);
         
         b.clear();
         
-        testIterator(b);        
+        testIterator(b, 0);
         
         b.put(new NullItem(0.6f));
         
-        testIterator(b);
+        testIterator(b, 1);
         
     }
     
     @Test
     public void testBags() {
-        testBagIterator(new LevelBag(L, L*2));
-        testBagIterator(new CurveBag(rng, L*2, false));
+        testBagIterator(new LevelBag(L, L * 2));
+    }
+    @Test
+    public void testCurveBagSequenceIterator() {
+        testBagIterator(new CurveBag(rng, L * 2, false));
+    }
+    @Test
+    public void testCurveBagRandomIterator() {
         testBagIterator(new CurveBag(rng, L*2, true));
         
     }

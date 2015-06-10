@@ -1,6 +1,6 @@
 '********** compound decomposition, one premise
 
-'What differs boys from gials are being strong.
+'What differs boys from girls are being strong.
 <(~, boy, girl) --> [strong]>. %0.90% 
 
 32

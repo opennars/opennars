@@ -24,8 +24,8 @@ import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
-import static nars.nal.NALOperator.SET_EXT_CLOSER;
-import static nars.nal.NALOperator.SET_EXT_OPENER;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * An extensionally defined set, which contains one or more instances.
@@ -64,6 +64,22 @@ public class SetExtN extends AbstractSetN implements SetExt {
     @Override
     public NALOperator operator() {
         return NALOperator.SET_EXT;
+    }
+
+
+    @Override
+    public boolean appendTermOpener() {
+        return false;
+    }
+
+    @Override
+    public boolean appendOperator(Writer p) throws IOException {
+        super.appendOperator(p);
+        return false;
+    }
+
+    public void appendCloser(Writer p) throws IOException {
+        p.append(NALOperator.SET_EXT_CLOSER.ch);
     }
 
 }

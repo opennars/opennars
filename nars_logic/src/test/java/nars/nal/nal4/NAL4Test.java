@@ -1,11 +1,12 @@
 package nars.nal.nal4;
 
+import nars.NARSeed;
+import nars.model.impl.Classic;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
-import nars.NARSeed;
-import nars.narsese.InvalidInputException;
-import nars.nal.JavaNALTest;
 import nars.model.impl.Solid;
+import nars.nal.JavaNALTest;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -23,7 +24,7 @@ public class NAL4Test extends JavaNALTest {
                 {new Default()},
                 {new Default().setInternalExperience(null) },
                 {new Default().level(5)},
-
+                {new Classic().setInternalExperience(null) },
                 //{new DefaultBuffered().setInternalExperience(null) },
 
                 {new Curve().setInternalExperience(null)},

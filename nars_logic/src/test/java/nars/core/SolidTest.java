@@ -22,14 +22,13 @@ public class SolidTest {
     public void testDetective() throws Exception {
 
         int time = 256; //should solve the example in few cycles
-        int timePeriod = 8;
 
 
         Global.DEBUG = true;
 
-        final int numConcepts = 1200;
+        final int numConcepts = 128;
         final float leakRate = 0.3f;
-        Solid s = new Solid(3, numConcepts, 1, 1, 1, 3) {
+        Solid s = new Solid(1, numConcepts, 1, 2, 1, 5) {
 
             @Override
             protected void initDerivationFilters() {
@@ -65,13 +64,19 @@ public class SolidTest {
             }
 
         };
-        for (int i = 0; i < time; i+=timePeriod) {
-            n.input(LibraryInput.get(n, "app/detective.nal"));
-            n.frame(timePeriod);
+
+        n.input(LibraryInput.get(n, "app/detective.nal"));
+
+        for (int i = 0; i < time;  i++) {
+            n.frame(1);
+            if (solutionTerms.size() >= 2)
+                break;
+            //System.out.println("time=" + n.time() + " " + solutionTerms.size());
             if (solutionTerms.size() >= 2)
                 break;
         }
 
+        //n.memory.concepts.forEach(x -> System.out.println(x.getPriority() + " " + x));
 
 
         //System.out.println(solutions);

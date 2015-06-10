@@ -24,6 +24,9 @@ import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import static nars.nal.NALOperator.SET_INT_CLOSER;
 import static nars.nal.NALOperator.SET_INT_OPENER;
 
@@ -61,7 +64,19 @@ public class SetIntN extends AbstractSetN implements SetInt {
         return SetInt.make(replaced);
     }
 
+    @Override
+    public boolean appendOperator(Writer p) throws IOException {
+        super.appendOperator(p);
+        return false;
+    }
 
+    public void appendCloser(Writer p) throws IOException {
+        p.append(NALOperator.SET_INT_CLOSER.ch);
+    }
 
+    @Override
+    public boolean appendTermOpener() {
+        return false;
+    }
 }
 

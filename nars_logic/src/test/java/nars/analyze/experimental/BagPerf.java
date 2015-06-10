@@ -111,7 +111,7 @@ public class BagPerf {
         }
 
         public NullItem(float priority) {
-            super(new Budget(priority, priority, priority));
+            super(priority, priority, priority);
             this.key = "" + (itemID++);
         }
 

@@ -18,9 +18,8 @@ package nars.core;
 
 import nars.Global;
 import nars.NAR;
-import nars.narsese.InvalidInputException;
+import nars.model.impl.Default;
 import nars.nal.NALOperator;
-import nars.nal.term.Statement;
 import nars.nal.Task;
 import nars.nal.Terms;
 import nars.nal.concept.Concept;
@@ -29,8 +28,9 @@ import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
+import nars.nal.term.Statement;
 import nars.nal.term.Term;
-import nars.model.impl.Default;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 
 import java.util.TreeSet;
@@ -39,17 +39,17 @@ import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author me
  */
 public class TermTest {
     static {
         Global.DEBUG = true;
     }
+
     NAR n = new NAR(new Default());
 
     protected void assertEquivalent(String term1String, String term2String) {
@@ -61,15 +61,16 @@ public class TermTest {
 
             assertTrue(term1 instanceof Compound);
             assertTrue(term2 instanceof Compound);
-            assertNotEquals(term1String,term2String);
+            assertNotEquals(term1String, term2String);
 
-            assertEquals(term1,term2);
-            assertEquals(term1,term2);
+            assertEquals(term1, term2);
+            assertEquals(term1, term2);
             assertEquals(0, term1.compareTo(term2));
+        } catch (Exception e) {
+            assertTrue(e.toString(), false);
         }
-        catch (Exception e) { assertTrue(e.toString(), false); }
     }
-    
+
     @Test
     public void testCommutativeCompoundTerm() throws Exception {
         NAR n = new NAR(new Default());
@@ -77,13 +78,13 @@ public class TermTest {
         assertEquivalent("(&&,a,b)", "(&&,b,a)");
         assertEquivalent("(&&,(||,b,c),a)", "(&&,a,(||,b,c))");
         assertEquivalent("(&&,(||,c,b),a)", "(&&,a,(||,b,c))");
-        
+
     }
-    
+
     @Test
     public void testTermSort() throws Exception {
         NAR n = new NAR(new Default());
-        
+
         Term a = n.term("a");
         Term b = n.term("b");
         Term c = n.term("c");
@@ -93,20 +94,19 @@ public class TermTest {
         assertEquals(1, Terms.toSortedSetArray(a, a).length);
         assertEquals(1, Terms.toSortedSetArray(a).length);
         assertEquals("correct natural ordering", a, Terms.toSortedSetArray(a, b)[0]);
-    }    
-    
+    }
+
     @Test
     public void testConjunctionTreeSet() throws InvalidInputException {
         NAR n = new NAR(new Default());
-        
-        
-            
+
+
         //these 2 representations are equal, after natural ordering
-        String term1String =    "<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
+        String term1String = "<#1 --> (&,boy,(/,taller_than,{Tom},_))>";
         Term term1 = n.term(term1String);
         String term1Alternate = "<#1 --> (&,(/,taller_than,{Tom},_),boy)>";
         Term term1a = n.term(term1Alternate);
-        
+
 
         // <#1 --> (|,boy,(/,taller_than,{Tom},_))>
         Term term2 = n.term("<#1 --> (|,boy,(/,taller_than,{Tom},_))>");
@@ -124,17 +124,17 @@ public class TermTest {
 
 
         assertTrue(term1.equals(term1.clone()));
-        assertTrue(term1.compareTo(term1.clone())==0);            
+        assertTrue(term1.compareTo(term1.clone()) == 0);
         assertTrue(term2.equals(term2.clone()));
-        assertTrue(term2.compareTo(term2.clone())==0);
+        assertTrue(term2.compareTo(term2.clone()) == 0);
 
         boolean t1e2 = term1.equals(term2);
         int t1c2 = term1.compareTo(term2);
         int t2c1 = term2.compareTo(term1);
 
         assertTrue(!t1e2);
-        assertTrue("term1 and term2 inequal, so t1.compareTo(t2) should not = 0", t1c2!=0);
-        assertTrue("term1 and term2 inequal, so t2.compareTo(t1) should not = 0", t2c1!=0);
+        assertTrue("term1 and term2 inequal, so t1.compareTo(t2) should not = 0", t1c2 != 0);
+        assertTrue("term1 and term2 inequal, so t2.compareTo(t1) should not = 0", t2c1 != 0);
 
         /*
         System.out.println("t1 equals t2 " + t1e2);
@@ -149,61 +149,61 @@ public class TermTest {
         assertTrue("term 2 added to set", added2);
 
         assertTrue(set.size() == 2);
-        
+
     }
-    
+
     @Test
     public void testUnconceptualizedTermInstancing() throws InvalidInputException {
         NAR n = new NAR(new Default());
-        
-       String term1String ="<a --> b>";
-       Term term1 = n.term(term1String);
-       Term term2 = n.term(term1String);
-       
-       assertTrue(term1.equals(term2));
-       assertTrue(term1.hashCode() == term2.hashCode());
-       
-       Compound cterm1 = ((Compound)term1);
-       Compound cterm2 = ((Compound)term2);
 
-       //test subterms
-       assertTrue(cterm1.term[0].equals(cterm2.term[0])); //'a'
+        String term1String = "<a --> b>";
+        Term term1 = n.term(term1String);
+        Term term2 = n.term(term1String);
+
+        assertTrue(term1.equals(term2));
+        assertTrue(term1.hashCode() == term2.hashCode());
+
+        Compound cterm1 = ((Compound) term1);
+        Compound cterm2 = ((Compound) term2);
+
+        //test subterms
+        assertTrue(cterm1.term[0].equals(cterm2.term[0])); //'a'
 
     }
-    
+
     @Test
     public void testConceptInstancing() throws InvalidInputException {
         NAR n = new NAR(new Default());
-        
-       String statement1 = "<a --> b>.";
-       
-       Term a = n.term("a");
-       assertTrue(a!=null);
-       Term a1 = n.term("a");
-       assertTrue(a.equals(a1));
-       
-       n.input(statement1);
-       n.frame(4);
-              
-       n.input(" <a  --> b>.  ");
-       n.frame(1);
-       n.input(" <a--> b>.  ");
-       n.frame(1);
-       
-       String statement2 = "<a --> c>.";
-       n.input(statement2);
-       n.frame(4);
-       
-       Term a2 = n.term("a");
-       assertTrue(a2!=null);
-                     
-       Concept ca = n.concept(a2);
-       assertTrue(ca!=null);
-       
-       assertEquals(true, n.memory.concepts.iterator().hasNext());
 
-    }    
-    
+        String statement1 = "<a --> b>.";
+
+        Term a = n.term("a");
+        assertTrue(a != null);
+        Term a1 = n.term("a");
+        assertTrue(a.equals(a1));
+
+        n.input(statement1);
+        n.frame(4);
+
+        n.input(" <a  --> b>.  ");
+        n.frame(1);
+        n.input(" <a--> b>.  ");
+        n.frame(1);
+
+        String statement2 = "<a --> c>.";
+        n.input(statement2);
+        n.frame(4);
+
+        Term a2 = n.term("a");
+        assertTrue(a2 != null);
+
+        Concept ca = n.concept(a2);
+        assertTrue(ca != null);
+
+        assertEquals(true, n.memory.concepts.iterator().hasNext());
+
+    }
+
 //    @Test
 //    public void testEscaping() {
 //        bidiEscape("c d", "x$# x", "\\\"sdkf sdfjk", "_ _");
@@ -223,7 +223,7 @@ public class TermTest {
 ////        assertTrue(n.memory.concept(t)!=null);
 //
 //    }
-    
+
 //    protected void bidiEscape(String... tests) {
 //        for (String s : tests) {
 //            s = '"' + s + '"';
@@ -234,31 +234,32 @@ public class TermTest {
 //        }
 //    }
 
-    @Test public void invalidTermIndep() {
-        
+    @Test
+    public void invalidTermIndep() {
+
         String t = "<$1 --> (~,{place4},$1)>";
         NAR n = new NAR(new Default());
 
-        
+
         try {
             Task x = n.inputTask(new StringBuilder(t + ".").toString());
             assertNull(t + " is invalid compound term", x);
         } catch (Throwable tt) {
             assertTrue(true);
         }
-        
+
         Term subj = null, pred = null;
         try {
             subj = n.term("$1");
             pred = n.term("(~,{place4},$1)");
 
             assertTrue(true);
-            
+
         } catch (Throwable ex) {
             assertTrue(false);
         }
-        
-            
+
+
         Term s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0);
         assertEquals(null, s);
 
@@ -270,60 +271,63 @@ public class TermTest {
         try {
             Compound forced = (Compound) n.term("<a --> b>");
             assertTrue(true);
-            
+
             forced.term[0] = subj;
             forced.term[1] = pred;
             forced.invalidate();
-            
+
             assertEquals(t, forced.toString());
-            
+
             Term cloned = forced.clone();
             assertEquals(null, cloned);
-            
-            
+
+
         } catch (Throwable ex) {
             assertTrue(false);
         }
     }
-    
-    
-    @Test public void testParseOperationInFunctionalForm() {
+
+
+    @Test
+    public void testParseOperationInFunctionalForm() {
         Global.FUNCTIONAL_OPERATIONAL_FORMAT = true;
-        
+
         NAR n = new NAR(new Default());
 
         try {
             Term x = n.term("wonder(a,b)");
             assertEquals(Operation.class, x.getClass());
             assertEquals("wonder(a,b,SELF)", x.toString());
-            
+
         } catch (InvalidInputException ex) {
             ex.printStackTrace();
             assertTrue(false);
         }
-        
-        
+
+
     }
 
-    @Test public void testDifferenceImmediate() {
-        {
-            Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
-            Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
-            Term d = DifferenceInt.make(a, b);
-            assertEquals(d.toString(), d.getClass(), SetIntN.class);
-            assertEquals(d.toString(), 2, ((SetInt) d).length());
-            assertEquals(d.toString(), "[a,c]");
-        }
+    @Test
+    public void testDifferenceImmediate() {
 
-        {
-            Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
-            Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
-            Term d = DifferenceExt.make(a, b);
-            assertEquals(d.toString(), d.getClass(), SetExtN.class);
-            assertEquals(d.toString(), 2, ((SetExt)d).length() );
-            assertEquals(d.toString(), "{a,c}");
+        Compound a = SetInt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
+        Compound b = SetInt.make(Atom.the("d"), Atom.the("b"));
+        Term d = DifferenceInt.make(a, b);
+        assertEquals(d.toString(), d.getClass(), SetIntN.class);
+        assertEquals(d.toString(), 2, ((SetInt) d).length());
+        assertEquals("[a, c]", d.toString());
+    }
 
-        }
+    @Test
+    public void testDifferenceImmediate2() {
+
+
+        Compound a = SetExt.make(Atom.the("a"), Atom.the("b"), Atom.the("c"));
+        Compound b = SetExt.make(Atom.the("d"), Atom.the("b"));
+        Term d = DifferenceExt.make(a, b);
+        assertEquals(d.toString(), d.getClass(), SetExtN.class);
+        assertEquals(d.toString(), 2, ((SetExt) d).length());
+        assertEquals("{a, c}", d.toString());
 
     }
 
@@ -352,7 +356,8 @@ public class TermTest {
 //        nullCachedName("{x}");
 //    }
 
-    @Test public void termEqualityWithQueryVariables() {
+    @Test
+    public void termEqualityWithQueryVariables() {
         NAR n = new NAR(new Default());
         String a = "<?1-->bird>";
         assertEquals(n.term(a), n.term(a));
@@ -360,17 +365,20 @@ public class TermTest {
         assertEquals(n.term(b), n.term(b));
     }
 
-    @Test public void validStatement() {
+    @Test
+    public void validStatement() {
         NAR n = new NAR(new Default());
         Term t = n.term("<(*,{tom},{vienna}) --> livingIn>");
-        assertFalse(Statement.invalidStatement((Inheritance)t));
+        assertFalse(Statement.invalidStatement((Inheritance) t));
     }
 
-    @Test public void statementHash() {
+    @Test
+    public void statementHash() {
         statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(9)>");
         statementHash("<<{i0} --> r> ==> A(8)>", "<<{i1} --> r> ==> A(7)>");
-        statementHash("<<{i10} --> r> ==> A(1)>","<<{i11} --> r> ==> A(0)>");
+        statementHash("<<{i10} --> r> ==> A(1)>", "<<{i11} --> r> ==> A(0)>");
     }
+
     public void statementHash(String a, String b) {
         //this is a case where a faulty hash function produced a collision
 
@@ -387,7 +395,8 @@ public class TermTest {
 
     }
 
-    @Test public void testTermComplexityMass() {
+    @Test
+    public void testTermComplexityMass() {
         NAR n = new NAR(new Default());
 
         testTermComplexityMass(n, "x", 1, 1);
@@ -416,23 +425,24 @@ public class TermTest {
         assertEquals(mass, t.getMass());
 
         assertEquals(varDep, t.varDep());
-        assertEquals(varDep!=0, t.hasVarDep());
+        assertEquals(varDep != 0, t.hasVarDep());
 
         assertEquals(varIndep, t.varIndep());
-        assertEquals(varIndep!=0, t.hasVarIndep());
+        assertEquals(varIndep != 0, t.hasVarIndep());
 
         assertEquals(varQuery, t.varQuery());
-        assertEquals(varQuery!=0, t.hasVarQuery());
+        assertEquals(varQuery != 0, t.hasVarQuery());
 
-        assertEquals(varDep+varIndep+varQuery, t.getTotalVariables());
-        assertEquals((varDep+varIndep+varQuery) != 0, t.hasVar());
+        assertEquals(varDep + varIndep + varQuery, t.getTotalVariables());
+        assertEquals((varDep + varIndep + varQuery) != 0, t.hasVar());
     }
 
-    @Test public void testSubtermsVector() {
+    @Test
+    public void testSubtermsVector() {
 
         NAR n = new NAR(new Default());
         Term a = n.term("<<a --> b> </> c>");
-        assertEquals("1000000000000000000000000100010", Long.toBinaryString(a.subterms()) );
+        assertEquals("1000000000000000000000000100010", Long.toBinaryString(a.subterms()));
 
     }
 }

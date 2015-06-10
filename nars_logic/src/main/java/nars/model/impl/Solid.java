@@ -4,6 +4,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
+import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
@@ -79,18 +80,22 @@ public class Solid extends Default implements ControlCycle {
         this.maxTaskLink = maxTaskLink;
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
-        duration.set(3);
-        noveltyHorizon.set(0.5f);
-        termLinkForgetDurations.set(2);
-        taskLinkForgetDurations.set(2);
+        duration.set(1);
+        noveltyHorizon.set(0.9f);
+        termLinkForgetDurations.set(1);
+        taskLinkForgetDurations.set(1);
+        conceptForgetDurations.set(1);
 
         setTermLinkBagSize(16);
         setTaskLinkBagSize(16);
 
         subcon = new GuavaCacheBag(maxSubConcepts);
 
-        //concepts = new CurveBag(maxConcepts, true);
-        concepts = new ChainBag(rng, maxConcepts);
+        concepts = new CurveBag(rng, maxConcepts, true);
+        //concepts = new ChainBag(rng, maxConcepts);
+        //concepts = new BubbleBag(rng, maxConcepts);
+        //concepts = new HeapBag(rng, maxConcepts);
+        //concepts = new LevelBag(100, maxConcepts);
     }
 
     @Override

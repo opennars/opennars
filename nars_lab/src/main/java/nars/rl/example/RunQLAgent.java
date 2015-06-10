@@ -1,8 +1,8 @@
 package nars.rl.example;
 
 import automenta.vivisect.Video;
+import jurls.reinforcementlearning.domains.PoleBalancing2D;
 import jurls.reinforcementlearning.domains.RLEnvironment;
-import jurls.reinforcementlearning.domains.wander.Curiousbot;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
@@ -18,6 +18,7 @@ import nars.nal.task.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.rl.AEPerception;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
@@ -159,12 +160,12 @@ public class RunQLAgent extends JPanel {
 
 
         /* Create and display the form */
-        //RLEnvironment d = new PoleBalancing2D();
+        RLEnvironment d = new PoleBalancing2D();
         //RLEnvironment d = new Follow1D();
         //RLEnvironment d = new Follow1DTwoPoint();
         //RLEnvironment d = new Follow1DThreePoint(0.02, 0.1);
 
-        RLEnvironment d = new Curiousbot();
+        //RLEnvironment d = new Curiousbot();
 
         //RLEnvironment d = new Tetris(10, 14);
         //RLEnvironment d = new Tetris(10, 8);
@@ -264,7 +265,7 @@ public class RunQLAgent extends JPanel {
                 new RawPerception("L", 0.6f)
                 //new RawPerception.BipolarDirectPerception("L", 0.1f)
 
-                //new AEPerception("A", 0.5f, 4, 1).setLearnigRate(0.05).setSigmoid(false)
+                ,new AEPerception("A", 0.5f, 16, 1).setLearningRate(0.05).setSigmoid(false)
                 //new AEPerception("B", 0.2f, 8, 1).setLearningRate(0.02).setSigmoid(false)
 
                 /*new RawPerception("P", 0.8f) {

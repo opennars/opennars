@@ -159,7 +159,8 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     abstract public static class StringKeyItem extends Item<CharSequence> {
         
         public StringKeyItem(final Budget budget) { super(budget);         }
-
+        public StringKeyItem(float p, float d, float q) { super(p, d, q);         }
+        public StringKeyItem(float p) { this(p, p, p);         }
 
         @Override
         public boolean equals(final Object obj) {

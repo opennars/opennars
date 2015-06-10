@@ -167,7 +167,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public void append(final Writer p, final boolean pretty) throws IOException {
 
-        boolean opener = showsTermOpenerAndCloser();
+        boolean opener = appendTermOpener();
         if (opener)
             p.append(COMPOUND_TERM_OPENER.ch);
 
@@ -200,7 +200,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         p.append(COMPOUND_TERM_CLOSER.ch);
     }
 
-    public boolean showsTermOpenerAndCloser() {
+    public boolean appendTermOpener() {
         return true;
     }
 
