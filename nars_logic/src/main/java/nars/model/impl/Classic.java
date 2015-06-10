@@ -2,8 +2,8 @@ package nars.model.impl;
 
 import nars.Memory;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.bag.impl.LevelBag;
+import nars.budget.Budget;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
@@ -12,7 +12,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
+import nars.util.data.id.Identifier;
 
 import static nars.bag.impl.LevelBag.NextNonEmptyLevelMode.Fast;
 
@@ -61,7 +61,7 @@ public class Classic extends Default {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
         Bag<Sentence, TaskLink> taskLinks = new LevelBag<>(getTaskLinkBagLevels(), getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
+        Bag<Identifier, TermLink> termLinks = new LevelBag<>(getTermLinkBagLevels(), getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }

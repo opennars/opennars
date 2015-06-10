@@ -10,14 +10,13 @@ import nars.nal.*;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
-import nars.nal.stamp.Stamper;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
+import nars.util.data.id.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +39,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     private final Bag<Sentence, TaskLink> taskLinks;
 
-    private final Bag<TermLinkKey, TermLink> termLinks;
+    private final Bag<Identifier, TermLink> termLinks;
 
     private Map<Object,Meta> meta = null;
 
@@ -71,7 +70,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<Identifier, TermLink> termLinks, final Memory memory) {
         super(b);
 
 
@@ -110,7 +109,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public Bag<TermLinkKey, TermLink> getTermLinks() {
+    public Bag<Identifier, TermLink> getTermLinks() {
         return termLinks;
     }
 
@@ -303,10 +302,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
     /** called by concept before it fires to update any pending changes */
     public void updateTermLinks() {
 
+        /*
         getTermLinks().forgetNext(
                 getMemory().param.termLinkForgetDurations,
                 getMemory().random.nextFloat() * Global.TERMLINK_FORGETTING_ACCURACY,
                 getMemory());
+                */
 
         getTaskLinks().forgetNext(
                 getMemory().param.taskLinkForgetDurations,

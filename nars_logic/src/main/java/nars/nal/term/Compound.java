@@ -61,6 +61,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     transient public short complexity;
 
+    /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
+    long subterms;
+
 
     /**
      * Whether contains a variable
@@ -133,12 +136,13 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         if (opener)
             p.append(COMPOUND_TERM_OPENER.ch);
 
-        p.append(operator().str);
+
+        final boolean appendedOperator = appendOperator(p);
 
 
         int nterms = term.length;
         for (int i = 0; i < nterms; i++) {
-            if ((i!=0) || (i == 0 && nterms > 1)) {
+            if ((i!=0) || (i == 0 && nterms > 1 && appendedOperator)) {
                 p.append(ARGUMENT_SEPARATOR);
                 if (pretty)
                     p.append(' ');
@@ -150,6 +154,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         appendCloser(p);
 
+    }
+
+    public boolean appendOperator(Writer p) throws IOException {
+        p.append(operator().str);
+        return true;
     }
 
     public void appendCloser(Writer p) throws IOException {

@@ -23,9 +23,10 @@ package nars.nal.tlink;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.Item;
-import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
+import nars.util.data.id.Identifier;
+import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.utf8.Utf8;
 
 /**
@@ -40,7 +41,7 @@ import nars.util.utf8.Utf8;
  * <p>
  * This class is mainly used in logic.RuleTable to dispatch premises to logic rules
  */
-public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, TermLinkKey {
+public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, TermLinkKey {
 
 
 
@@ -72,12 +73,9 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
-    private final int keyHash;
     public final short type;
 
-    byte[] key;
-
-    //final int hash;
+    final Identifier key;
 
 
 
@@ -90,7 +88,7 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] key, int keyHash) {
+    public TermLink(Term t, TermLinkTemplate template, Budget v, Identifier key) {
         super(v);
 
         if (!t.isNormalized()) {
@@ -102,9 +100,8 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
 
         this.index = template.index;
 
+        //this.key = (UTF8Identifier) target;
         this.key = key;
-
-        this.keyHash = keyHash;
     }
 
 
@@ -123,33 +120,44 @@ public class TermLink extends Item<TermLinkKey> implements TLink<Term>, Termed, 
     }
 
     @Override
-    public TermLink name() {
-        return this;
+    public Identifier name() {
+        return key;
     }
 
     @Override
     public int hashCode() {
-        return keyHash;
+        return key.hashCode();
     }
 
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj;
+        if (this==obj) return true;
+        return termLinkEquals(obj);
+
+//        if (this != obj) {
+//            if (termLinkEquals(obj)) {
+//                System.err.println("identity inequal but " + this + "(" + getClass() + ") actually equals " + obj + " (" + obj.getClass() );
+//                return true;
+//            }
+//        }
+//        return false;
+
+
+
         //return termLinkEquals(obj);
     }
 
     
     @Override
     public String toString() {
-        String hk = Utf8.fromUtf8(getLinkKey());
-//        if (!toSubTerm())
-//            return hk;
-//        else
-        return hk + Symbols.TLinkSeparator + getTarget().toString();
+        return new StringBuilder()
+                .append(Utf8.fromUtf8(TermLinkTemplate.prefix(type, index, false)))
+                .append(Symbols.TLinkSeparator)
+                .append(getTarget().toString()).toString();
     }
 
-    public byte[] getLinkKey() { return key; }
+
 
 
 

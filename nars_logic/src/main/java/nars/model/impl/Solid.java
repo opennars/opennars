@@ -10,7 +10,9 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
 import nars.model.cycle.ConceptActivator;
-import nars.nal.*;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.TaskComparator;
 import nars.nal.concept.Concept;
 import nars.nal.concept.DefaultConcept;
 import nars.nal.process.ConceptProcess;
@@ -18,7 +20,7 @@ import nars.nal.process.TaskProcess;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
+import nars.util.data.id.Identifier;
 
 import java.util.Iterator;
 import java.util.SortedSet;
@@ -68,7 +70,7 @@ public class Solid extends Default implements ControlCycle {
         super();
         this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = maxConcepts;
-        this.maxSubConcepts = maxConcepts * 2;
+        this.maxSubConcepts = maxConcepts * 4;
 
         //this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
         this.maxTasksPerCycle = -1;
@@ -78,11 +80,13 @@ public class Solid extends Default implements ControlCycle {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         duration.set(3);
-        noveltyHorizon.set(1.0);
+        noveltyHorizon.set(0.5f);
         termLinkForgetDurations.set(2);
         taskLinkForgetDurations.set(2);
 
         setTermLinkBagSize(16);
+        setTaskLinkBagSize(16);
+
         subcon = new GuavaCacheBag(maxSubConcepts);
 
         //concepts = new CurveBag(maxConcepts, true);
@@ -261,7 +265,7 @@ public class Solid extends Default implements ControlCycle {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
         Bag<Sentence, TaskLink> taskLinks = new ChainBag(rng, getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
+        Bag<Identifier, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
         //return super.newConcept(b, t, m);

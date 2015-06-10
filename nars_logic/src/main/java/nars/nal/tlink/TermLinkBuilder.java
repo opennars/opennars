@@ -14,13 +14,14 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.util.data.id.Identifier;
 import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
 import java.util.List;
 
 
-public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey, Serializable {
+public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implements TermLinkKey, Serializable {
 
     transient public final Concept concept;
 
@@ -55,7 +56,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         }
 
 
-        setKey(this);
+
     }
 
     void prepareComponentLinks(Compound ct) {
@@ -196,31 +197,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
         return super.set(b);
     }
 
-
-
-    @Override public TermLinkKey name() {
-        return this;
+    @Override public Identifier name() {
+        return currentTemplate.key(incoming);
     }
-
-    public final byte[] getLinkKey() {
-//        byte[] p = this.prefix;
-//        if (p == null) {
-//            p = this.prefix = currentTemplate.prefix(incoming);
-//            //this.hash = hash(prefix, getTarget());
-//        }
-//        return p;
-        return currentTemplate.prefix(incoming);
-    }
-
-//    public static final int hash(byte[] prefix, Term target) {
-//        //return Util.hash(Arrays.hashCode(prefix), target.hashCode());
-//        return target.hashCode();
-//    }
-
 
     @Override
-    public TermLinkKey getKey() {
-        return this;
+    public Identifier getKey() {
+        return name();
     }
 
     @Override
@@ -237,7 +220,9 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
         //seems that identity comparison is all that's needed here.
         //no counterexamples were discovered using the below commented code.
-        return (obj!=null) && ((((TermLink)obj)).getTarget() == getTarget());
+        //return (obj!=null) && ((((TermLink)obj)).getTarget() == getTarget());
+
+        return termLinkEquals(obj);
 
 /*
         if (obj == null) return false;
@@ -269,13 +254,13 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 //            getLinkKey(); //computes hash:
 //        }
 //        return hash;
-        return getTarget().hashCode();
+        return name().hashCode();
     }
 
     @Override
     public TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), getLinkKey(), getTarget().hashCode());
+        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), currentTemplate.key(incoming));
     }
 
 /*    public int size() {
@@ -301,8 +286,7 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
     @Override
     public String toString() {
         //return new StringBuilder().append(newKeyPrefix()).append(target!=null ? target.name() : "").toString();
-        return /*getSource() + ":" +*/
-                Utf8.fromUtf8(getLinkKey()) + ":" + getTarget();
+        return name().toString();
     }
 
 

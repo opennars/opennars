@@ -18,10 +18,10 @@ import nars.nal.task.filter.ConstantDerivationLeak;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 import nars.rl.RawPerception;
+import nars.util.data.id.Identifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -175,8 +175,8 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 1024;
-        int conceptsPerCycle = 8;
+        int concepts = 2048;
+        int conceptsPerCycle = 16;
         final int cyclesPerFrame = 5;
 
 
@@ -228,7 +228,7 @@ public class RunQLAgent extends JPanel {
 
 
             @Override
-            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+            protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<Identifier, TermLink> termLinks, Memory m) {
                 return new DefaultConcept(t, b, taskLinks, termLinks, m) {
 //                    @Override
 //                    public float rankBelief(Sentence s, long now) {

@@ -2,11 +2,10 @@ package nars.model.impl;
 
 import nars.Memory;
 import nars.NAR;
-import nars.NARSeed;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
+import nars.budget.Budget;
 import nars.model.ControlCycle;
 import nars.model.cycle.experimental.AntCore;
 import nars.nal.Sentence;
@@ -15,7 +14,7 @@ import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
+import nars.util.data.id.Identifier;
 
 /**
  *
@@ -70,7 +69,7 @@ public class Neuromorphic extends Curve {
             DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(
                     taskLinkForgetDurations, getConceptTaskLinks());
             taskLinks.setMemory(m);
-            DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(
+            DelayBag<Identifier, TermLink> termLinks = new FairDelayBag(
                     termLinkForgetDurations, getConceptTermLinks());
             termLinks.setMemory(m);
             return new DefaultConcept(t, b, taskLinks, termLinks, m);

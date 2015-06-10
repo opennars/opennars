@@ -25,6 +25,8 @@ import nars.nal.NALOperator;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 
 /**
@@ -96,5 +98,6 @@ public interface Product extends Term, Iterable<Term> {
     default public Object first() {
         return term(0);
     }
+
 
 }

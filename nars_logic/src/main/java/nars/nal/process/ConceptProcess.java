@@ -12,7 +12,7 @@ import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
+import nars.util.data.id.Identifier;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -31,6 +31,7 @@ public class ConceptProcess extends NAL implements Premise {
 
     //essentially a cache for a concept lookup
     private transient Concept currentTermLinkConcept;
+    final Concept.TermLinkNoveltyFilter termLinkNovel = new Concept.TermLinkNoveltyFilter();
 
 
     private int termLinksToFire;
@@ -113,24 +114,25 @@ public class ConceptProcess extends NAL implements Premise {
 
            final TermLink bLink = nextTermLink(currentTaskLink, n, noveltyHorizon, termLinksToFire);
 
-            if (bLink!=null)
+            if (bLink!=null) {
                 processTerm(bLink);
-
-            termLinksSelected++;
+                termLinksSelected++;
+                n += subCycle;
+            }
 
             //emit(Events.TermLinkSelected.class, bLink, this);
 
-            n += subCycle;
         }
 
 
         /*if (termLinksSelected == 0) {
-            System.out.println(termLinksSelected + "/" + termLinksToFire + " took " + termlinkMatches + " matches over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords());
+            System.err.println(now + ": " + currentConcept + ": " + termLinksSelected + "/" + termLinksToFire + " firings over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords() + " for TermLinks "
+                    //+ currentConcept.getTermLinks().values()
+            );
             //currentConcept.taskLinks.printAll(System.out);
         }*/
     }
 
-    final Concept.TermLinkNoveltyFilter termLinkNovel = new Concept.TermLinkNoveltyFilter();
 
     /**
      * Replace default to prevent repeated logic, by checking TaskLink
@@ -149,9 +151,11 @@ public class ConceptProcess extends NAL implements Premise {
         //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
         if (links == 1) toMatch = 1;
 
-        Bag<TermLinkKey, TermLink> tl = currentConcept.getTermLinks();
+        Bag<Identifier, TermLink> tl = currentConcept.getTermLinks();
 
         termLinkNovel.set(taskLink, time, noveltyHorizon, tl.size(), termLinksBeingFired);
+
+
 
         for (int i = 0; (i < toMatch); i++) {
 

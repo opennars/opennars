@@ -131,7 +131,7 @@ public class Param implements Serializable {
     public AtomicDouble noveltyHorizon = new AtomicDouble();
 
     /** probability that a completely non-novel termlink/tasklink pair (older than novelty horizon) will be selected */
-    public static float NOVELTY_FLOOR = 0.1f;
+    public static float NOVELTY_FLOOR = 0.25f;
 
 
     /** Reliance factor, the empirical confidence of analytical truth.

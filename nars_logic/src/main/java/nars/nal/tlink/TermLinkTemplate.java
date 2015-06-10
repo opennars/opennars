@@ -4,6 +4,8 @@ import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
+import nars.util.data.id.Identifier;
+import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
@@ -24,8 +26,8 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
     public final Concept concept;
 
     //cached names for new TermLinks
-    protected byte[] outgoing;
-    protected byte[] incoming;
+    protected Identifier outgoing;
+    protected Identifier incoming;
 
     /** accumulates budget to eventually apply to termlinks at a future time */
     public final Budget pending = new Budget(0,0,0);
@@ -86,12 +88,11 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
 
     /** creates a new TermLink key consisting of:
      *      type
-     *      target
      *      index array
      *
      * determined by the current template ('temp')
      */
-    public static byte[] key(short type, short[] index, boolean incoming) {
+    public static byte[] prefix(final short type, final short[] index, final boolean incoming) {
         short t = type;
         if (!incoming) {
             t--; //point to component
@@ -121,31 +122,32 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
     public static final byte typeCharOffset = 'A';
     public static final byte indexCharOffset = 'a';
 
-    public byte[] prefix(boolean in) {
-        byte[] prefix = null;
+    public Term term(final boolean in) {
+        return in ? concept.getTerm() : target;
+    }
+
+    public byte[] prefix(final boolean incoming) {
+        return prefix(type, index, incoming);
+    }
+
+    public Identifier newKey(final boolean in) {
+        //TODO try ConcatenatedBytesIdent
+        return new LiteralUTF8Identifier( term(in).bytes(), prefix(in));
+    }
+
+    public Identifier key(final boolean in) {
         if (in) {
-            if (incoming == null)
-                incoming = key(type, index, true);
-            prefix = incoming;
+            if (incoming == null) {
+                incoming = newKey(true);
+            }
+            return incoming;
         }
         else {
-            if (outgoing == null)
-                outgoing = key(type, index, false);
-            prefix = outgoing;
+            if (outgoing == null) {
+                outgoing = newKey(false);
+            }
+            return outgoing;
         }
-
-        return prefix;
-//        if (includeTerm) {
-//            byte[] tname = target.name();
-//            return ByteBuf.create(prefix.length + tname.length + 1).
-//                    add(prefix).
-//                    add((byte) Symbols.TLinkSeparator).
-//                    add(tname).
-//                    toBytes();
-//        }
-//        else {
-//            return prefix;
-//        }
     }
 
 
@@ -174,4 +176,6 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
 
         return type;
     }
+
+
 }

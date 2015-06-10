@@ -27,9 +27,9 @@ public class SolidTest {
 
         Global.DEBUG = true;
 
-        final int numConcepts = 800;
+        final int numConcepts = 1200;
         final float leakRate = 0.3f;
-        Solid s = new Solid(3, numConcepts, 1, 4, 1, 3) {
+        Solid s = new Solid(3, numConcepts, 1, 1, 1, 3) {
 
             @Override
             protected void initDerivationFilters() {

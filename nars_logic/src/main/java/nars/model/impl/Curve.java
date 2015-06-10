@@ -2,9 +2,9 @@ package nars.model.impl;
 
 import nars.Memory;
 import nars.bag.Bag;
-import nars.budget.Budget;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.FairPriorityProbabilityCurve;
+import nars.budget.Budget;
 import nars.model.ControlCycle;
 import nars.nal.Sentence;
 import nars.nal.Task;
@@ -14,7 +14,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
-import nars.nal.tlink.TermLinkKey;
+import nars.util.data.id.Identifier;
 
 
 public class Curve extends Default {
@@ -61,7 +61,7 @@ public class Curve extends Default {
 
 
         Bag<Sentence, TaskLink> taskLinks = new CurveBag<>(rng, getConceptTaskLinks(), curve, randomRemoval);
-        Bag<TermLinkKey, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve, randomRemoval);
+        Bag<Identifier, TermLink> termLinks = new CurveBag<>(rng, getConceptTermLinks(), curve, randomRemoval);
         
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }

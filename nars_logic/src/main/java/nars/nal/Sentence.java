@@ -286,7 +286,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     public static <X extends Compound> X termOrNull(Term t) {
         //if (invalidSentenceTerm(t))
             //return null;
-        X x = (X)t.normalized();
+        Term x = (X)t.normalized();
 //        if (Global.DEBUG) {
 //            if (invalidSentenceTerm(x)) {
 //                throw new RuntimeException("invalidity determined after normalization, wtf: " + t + " became " + x);
@@ -294,11 +294,11 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 //        }
 
 //        X x = (X)t.normalized();
-        if (x == null || invalidSentenceTerm(x)) {
+        if (invalidSentenceTerm(x)) {
             return null;
         }
 
-        return x;
+        return (X)x;
     }
 
     @Override

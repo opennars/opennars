@@ -32,6 +32,7 @@ import nars.nal.task.TaskSeed;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.nal.tlink.*;
+import nars.util.data.id.Identifier;
 
 import java.io.PrintStream;
 import java.io.Serializable;
@@ -46,7 +47,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     public Bag<Sentence, TaskLink> getTaskLinks();
-    public Bag<TermLinkKey, TermLink> getTermLinks();
+    public Bag<Identifier, TermLink> getTermLinks();
     public Map<Object, Meta> getMeta();
     public void setMeta(Map<Object, Meta> meta);
 
@@ -323,21 +324,28 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             this.numTermLinks = numTermLinksInBag;
             this.termsLinkBeingFired = termsLinkBeingFired;
 
-            /** proportional to an amount of cycles it should take a fired termlink to be considered novel */
-            this.noveltyDuration = (noveltyHorizon * (numTermLinksInBag-1));
+            /** proportional to an amount of cycles it should take a fired termlink
+             * to be considered novel.
+             * there needs to be at least 2 termlinks to use the novelty filter.
+             * if there is one termlink, there is nothing to prioritize it against.
+             * */
+            this.noveltyDuration = (noveltyHorizon *
+                    Math.max(0, numTermLinksInBag-1));
         }
 
         @Override
         public boolean test(TermLink termLink) {
-            if (!taskLink.valid(termLink))
-                return false;
-
             if (noveltyDuration == 0) {
                 //this will happen in the case of one termlink,
                 //in which case there is no other option so duration
                 //will be zero
                 return true;
             }
+
+            if (!taskLink.valid(termLink))
+                return false;
+
+
 
             TaskLink.Recording r = taskLink.get(termLink);
             if (r == null) {

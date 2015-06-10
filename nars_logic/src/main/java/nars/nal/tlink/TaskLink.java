@@ -85,6 +85,10 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         public Term getTerm() {
             return link.getTerm();
         }
+
+        public void setRemoved() {
+            setTime(Float.NaN);
+        }
     }
 
     Map<Term,Recording> records;
@@ -110,6 +114,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         return new LinkedHashMap<Term,Recording>(recordLength) {
             protected boolean removeEldestEntry(Map.Entry<Term,Recording> eldest) {
                 if (size() > recordLength) {
+
+                    eldest.getValue().setRemoved();
                     return true;
                 }
                 return false;
@@ -166,7 +172,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         return getSentence().hashCode();
     }
 
-    protected Collection<Recording> getRecords() {
+    public Collection<Recording> getRecords() {
+        if (records == null) return Collections.EMPTY_LIST;
         return records.values();
     }
 
@@ -236,8 +243,11 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     }
 
     public void put(final Recording r, final float now) {
-        r.setTime(now);
-        put(r);
+        //if the time has changed, then actually insert it.
+        //this works because if the recordlink has been removed by
+        //the collection, it will have its time set to NaN
+        if (r.setTime(now));
+            put(r);
     }
 
     protected void put(final Recording r) {

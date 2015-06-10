@@ -1,11 +1,11 @@
 package nars.nal.nal4;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
 import nars.nal.term.DefaultCompound;
 import nars.nal.term.Term;
 
-import java.util.List;
+import java.io.IOException;
+import java.io.Writer;
 
 /**
  * Created by me on 5/20/15.
@@ -52,6 +52,10 @@ public class ProductN extends DefaultCompound implements Product {
     }
 
 
+    public boolean appendOperator(Writer p) throws IOException {
+        //skip
+        return false;
+    }
 
 
 }

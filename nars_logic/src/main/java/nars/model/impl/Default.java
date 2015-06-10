@@ -15,14 +15,14 @@ import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.concept.ConceptBuilder;
 import nars.nal.concept.DefaultConcept;
-import nars.nal.task.filter.ConstantDerivationLeak;
-import nars.nal.task.filter.DerivationFilter;
-import nars.nal.task.filter.FilterBelowConfidence;
-import nars.nal.task.filter.FilterOperationWithSubjOrPredVariable;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
 import nars.nal.rule.*;
+import nars.nal.task.filter.ConstantDerivationLeak;
+import nars.nal.task.filter.DerivationFilter;
+import nars.nal.task.filter.FilterBelowConfidence;
+import nars.nal.task.filter.FilterOperationWithSubjOrPredVariable;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -42,6 +42,7 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
+import nars.util.data.id.Identifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -114,9 +115,9 @@ public class Default extends NARSeed implements ConceptBuilder {
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         termLinkMaxReasoned.set(termLinksPerCycle);
-        noveltyHorizon.set(1.0f/termLinksPerCycle);
+        noveltyHorizon.set(0.9f/termLinksPerCycle);
 
-        termLinkMaxMatched.set((termLinksPerCycle*3));
+        termLinkMaxMatched.set(3);
 
         //Build Parameters
         this.maxNALLevel = Global.DEFAULT_NAL_LEVEL;
@@ -125,11 +126,11 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         setDerivationMerging(TaskComparator.Merging.Or);
 
-        setTaskLinkBagSize(32);
+        setTaskLinkBagSize(16);
 
-        setTermLinkBagSize(96);
+        setTermLinkBagSize(16);
 
-        setNovelTaskBagSize(48);
+        setNovelTaskBagSize(32);
 
 
 
@@ -159,7 +160,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         inputsMaxPerCycle.set(1);
 
-        termLinkRecordLength.set(10);
+        termLinkRecordLength.set(8);
 
 
 
@@ -404,7 +405,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks = new HeapBag(rng, /*sentenceNodes,*/ getConceptTaskLinks());
-        Bag<TermLinkKey, TermLink> termLinks = new HeapBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+        Bag<Identifier, TermLink> termLinks = new HeapBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -414,7 +415,7 @@ public class Default extends NARSeed implements ConceptBuilder {
         return policy;
     }
 
-    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<TermLinkKey, TermLink> termLinks, Memory m) {
+    protected Concept newConcept(Term t, Budget b, Bag<Sentence, TaskLink> taskLinks, Bag<Identifier, TermLink> termLinks, Memory m) {
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
     }
     
