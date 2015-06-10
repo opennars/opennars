@@ -14,8 +14,11 @@ import java.util.Comparator;
  *
  * The term 'destructive' is used because it effectively destroys some
  * information - the particular labels the input has attached.
+ *
  */
 public class VariableNormalization implements VariableTransform {
+
+
 
     /**
      * overridden keyEquals necessary to implement alternate variable hash/equality test for use in normalization's variable transform hashmap
@@ -51,6 +54,15 @@ public class VariableNormalization implements VariableTransform {
         }
     }
 
+
+    /** for use with compounds that have exactly one variable */
+    public static final VariableTransform singleVariableNormalization = new VariableTransform( ) {
+
+        @Override public Variable apply(Compound c, Variable v, int depth) {
+            return Variable.theUnscoped(v.getType(), 1);
+        }
+    };
+
     VariableMap rename = null;
 
     final Compound result;
@@ -63,11 +75,16 @@ public class VariableNormalization implements VariableTransform {
     public VariableNormalization(Compound target, boolean destructively) {
 
 
+        CompoundTransform tx = target.getTotalVariables() == 1 ?
+                singleVariableNormalization : this;
+
+
         Compound result1;
+
         if (destructively)
-            result1 = target.transform(this);
+            result1 = target.transform(tx);
         else
-            result1 = target.cloneTransforming(this);
+            result1 = target.cloneTransforming(tx);
 
         this.result = result1;
 
@@ -89,15 +106,16 @@ public class VariableNormalization implements VariableTransform {
 
         if (vv == null) {
             //type + id
-            vv = new Variable(
-                    Variable.name(v.getType(), rename.size() + 1),
-                    true
-            );
+            vv = newVariable(v.getType(), rename.size() + 1);
             rename.put(vname, vv);
             renamed = !vv.name().equals(v.name());
         }
 
         return vv;
+    }
+
+    protected Variable newVariable(final char type, int i) {
+        return Variable.theUnscoped(type, i);
     }
 
     public boolean hasRenamed() {

@@ -96,6 +96,33 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
 
+    /**
+     * call this after changing Term[] contents: recalculates variables and complexity
+     */
+    protected void init(Term[] term) {
+
+
+        this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = 9;
+
+        int deps = 0, indeps = 0, queries = 0;
+        int compl = 1;
+        for (final Term t : term) {
+            compl += t.getComplexity();
+            deps += t.varDep();
+            indeps += t.varIndep();
+            queries += t.varQuery();
+        }
+        this.hasVarDeps = (byte) deps;
+        this.hasVarIndeps = (byte) indeps;
+        this.hasVarQueries = (byte) queries;
+        this.varTotal = (short)(deps + indeps + queries);
+        this.complexity = (short) compl;
+
+        invalidate();
+    }
+
+
+
     @Override
     public byte[] init() {
 
@@ -130,7 +157,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     }
 
     @Override
-    public void append(Writer p, boolean pretty) throws IOException {
+    public void append(final Writer p, final boolean pretty) throws IOException {
 
         boolean opener = showsTermOpenerAndCloser();
         if (opener)
@@ -466,30 +493,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
 
-    /**
-     * call this after changing Term[] contents: recalculates variables and complexity
-     */
-    protected void init(Term[] term) {
-
-
-        this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = 9;
-
-        int deps = 0, indeps = 0, queries = 0;
-        int compl = 1;
-        for (final Term t : term) {
-            compl += t.getComplexity();
-            deps += t.varDep();
-            indeps += t.varIndep();
-            queries += t.varQuery();
-        }
-        this.hasVarDeps = (byte) deps;
-        this.hasVarIndeps = (byte) indeps;
-        this.hasVarQueries = (byte) queries;
-        this.varTotal = (short)(deps + indeps + queries);
-        this.complexity = (short) compl;
-
-        invalidate();
-    }
 
 
     /**

@@ -253,7 +253,10 @@ public class Variable extends Atom {
     public static boolean validVariableType(final char c) {
         return (c == VAR_QUERY) || (c == VAR_DEPENDENT) || (c == VAR_INDEPENDENT);
     }
-    
+
+
+    /** TODO cache for unscoped variable terms */
+
     private static final int MAX_CACHED_VARNAME_INDEXES = 64;
     private static final String[] vn1 = new String[MAX_CACHED_VARNAME_INDEXES];
     private static final String[] vn2 = new String[MAX_CACHED_VARNAME_INDEXES];
@@ -301,6 +304,9 @@ public class Variable extends Atom {
 
     public static Variable the(char varDependent, int counter) {
         return new Variable(name(varDependent, counter));
+    }
+    public static Variable theUnscoped(final char varDependent, final int counter) {
+        return new Variable(name(varDependent, counter), true);
     }
 
     /** returns the default dependent variable */
