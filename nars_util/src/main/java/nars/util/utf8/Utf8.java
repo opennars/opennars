@@ -165,12 +165,12 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         /*if (a==null || a2==null)
             return false;*/
 
+        if (a == a2) return true;
 
         final int length = a.length;
         if (a2.length != length)
             return false;
 
-        if (a == a2) return true;
 
         //backwards
         for (int i = length - 1; i >= 0; i--)

@@ -35,7 +35,7 @@ public class TermIDTest {
     // '*' 'a' ',' 'b' ')'
     @Test
     public void testInternalRepresentation2z() {
-        testInternalRepresentation("(*, a, b)", 5);
+        testInternalRepresentation("(a, b)", 5);
     }
 
 

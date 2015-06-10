@@ -13,9 +13,6 @@ abstract public class AbstractSet1<T extends Term> extends Compound1<T> implemen
         super(the);
     }
 
-    public UTF8Identifier newName() {
-        return new SetTensional.SetUTF8Identifier(this);
-    }
 
     @Override
     public boolean showsTermOpenerAndCloser() {

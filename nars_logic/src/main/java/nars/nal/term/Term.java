@@ -179,6 +179,12 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return name().bytes();
     }
 
+
+    /** returns a bitvector representing the presence of ths term and its subterms */
+    default long subterms() {
+        return (1 << operator().ordinal());
+    }
+
     default public void append(Writer w, boolean pretty) throws IOException {
         try {
             name().append(w, pretty);

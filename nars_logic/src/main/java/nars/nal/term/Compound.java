@@ -106,12 +106,17 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1;
+        long subt = (1 << operator().ordinal());
+
         for (final Term t : term) {
             compl += t.getComplexity();
             deps += t.varDep();
             indeps += t.varIndep();
             queries += t.varQuery();
+            subt |= t.subterms();
         }
+        this.subterms = subt;
+
         this.hasVarDeps = (byte) deps;
         this.hasVarIndeps = (byte) indeps;
         this.hasVarQueries = (byte) queries;
@@ -121,7 +126,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         invalidate();
     }
 
-
+    @Override
+    public long subterms() {
+        return subterms;
+    }
 
     @Override
     public byte[] init() {

@@ -657,5 +657,15 @@ public class Terms {
 
         return 0;
     }
+    public static boolean equalSubterms(final Term[] a, final Term[] b) {
+        int al = a.length;
+        int bl = b.length;
+        if (bl!=al) return false;
 
+        for (int i = 0; i < al; i++) {
+            if (!a[i].equals(b[i])) return false;
+        }
+
+        return true;
+    }
 }

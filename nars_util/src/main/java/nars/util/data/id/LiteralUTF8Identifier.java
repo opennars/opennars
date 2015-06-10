@@ -100,33 +100,45 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
 
     @Override
-    public boolean equalTo(Identifier x) {
-        if (this == x) return true;
+    public boolean equalTo(final Identifier x) {
 
-        if (x instanceof UTF8Identifier) {
 
-            LiteralUTF8Identifier u = (LiteralUTF8Identifier) x;
-            if (unequalHash(u))
+
+        //if (x instanceof UTF8Identifier) {
+
+            UTF8Identifier u = (UTF8Identifier) x;
+
+
+            if (hashCode() != u.hashCode())
                 return false;
 
-            return Utf8.equals2(bytes(), u.bytes());
-        }
+            final byte[] ub = u.bytes();
+            if (Utf8.equals2(bytes(), ub)) {
+                //share the same data for fast equality test next time
+                data = ub;
+                return true;
+            }
 
+            return false;
+        //}
+
+        /*
         //this case should be avoided, it is wasteful
         System.err.println(this + " wasteful String comparison");
         return toString().equals(x.toString());
+        */
     }
 
-    /*8 returns true only if the hashes both exist and are different */
-    public boolean unequalHash(final LiteralUTF8Identifier u) {
-        if (!hasHash()) return false;
-        if (!u.hasHash()) return false;
-        return hashCode()!=u.hashCode();
-    }
+//    /*8 returns true only if the hashes both exist and are different */
+//    public boolean unequalHash(final UTF8Identifier u) {
+//        //if (!hasHash()) return false;
+//        //if (!u.hasHash()) return false;
+//        return hashCode()!=u.hashCode();
+//    }
 
 
     @Override
-    public int compare(Identifier o) {
+    public int compare(final Identifier o) {
         int i = Integer.compare(hashCode(), o.hashCode());
         if (i == 0) {
             if (o instanceof UTF8Identifier)

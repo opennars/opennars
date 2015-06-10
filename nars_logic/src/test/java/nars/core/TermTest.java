@@ -428,4 +428,11 @@ public class TermTest {
         assertEquals((varDep+varIndep+varQuery) != 0, t.hasVar());
     }
 
+    @Test public void testSubtermsVector() {
+
+        NAR n = new NAR(new Default());
+        Term a = n.term("<<a --> b> </> c>");
+        assertEquals("1000000000000000000000000100010", Long.toBinaryString(a.subterms()) );
+
+    }
 }

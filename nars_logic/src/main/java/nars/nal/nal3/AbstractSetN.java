@@ -28,8 +28,6 @@ abstract public class AbstractSetN extends DefaultCompound implements SetTension
         init(arg);
     }
 
-    public UTF8Identifier newName() {
-        return new SetUTF8Identifier(this);
-    }
+
 
 }

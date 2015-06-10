@@ -50,12 +50,21 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
 
         Compound2 c = (Compound2) that;
 
-//        if (name().hasName() && c.name().hasName()) {
-//            return equalID(c);
-//        }
 
-        //if names have not been generated then compare by content, avoiding construction of a name string
-        return equalsByContent(c);
+        final int m = getMass();
+        if (c.getMass()!=m) return false;
+
+        if (m < 4) {
+            return equalsByName(c);
+        }
+        else {
+            //avoids generating a byte[] ident
+            return equalsByContent(c);
+        }
+    }
+
+    public boolean equalsByName(final Compound2 c) {
+        return equalTo(c);
     }
 
     public boolean equalsByContent(final Compound2 c) {
@@ -63,9 +72,9 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
         //compare components without generating name
 
         //if (operator()!=c.operator()) return false;
+        if (subterms() != c.subterms()) return false;
         if (a().getMass() != c.a().getMass()) return false;
         if (b().getMass() != c.b().getMass()) return false;
-        if (getTotalVariables() != c.getTotalVariables()) return false;
 
         if (getTemporalOrder() != c.getTemporalOrder()) return false;
 

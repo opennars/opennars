@@ -2,6 +2,8 @@ package nars.nal.term;
 
 import nars.nal.Terms;
 
+import static nars.nal.Terms.equalSubterms;
+
 /** implementation of a compound which generates and stores its name as a CharSequence, which is used for equality and hash*/
 abstract public class DefaultCompound extends Compound {
 
@@ -23,18 +25,20 @@ abstract public class DefaultCompound extends Compound {
 
 
         final nars.nal.term.DefaultCompound t = (nars.nal.term.DefaultCompound)that;
-//        if ((name == null) || (t.name == null)) {
-//            //check operate first because name() may to avoid potential construction of name()
-//            if (/*operator()!=t.operator()|| */ getComplexity() != t.getComplexity() )
-//                return false;
-//        }
 
-        return equalTo(t);
-//        if (equalID(t)) {
-//            share(t);
-//            return true;
-//        }
-//        return false;
+
+        final int m = getMass();
+        if (m != t.getMass()) return false;
+
+        if ((m > 12) && (length() < 3)) {
+            if (subterms()!=t.subterms()) return false;
+            if (getTemporalOrder()!=t.getTemporalOrder()) return false;
+            return equalSubterms(term, t.term);
+        }
+        else {
+            return equalTo(t);
+        }
+
     }
 
     @Override
