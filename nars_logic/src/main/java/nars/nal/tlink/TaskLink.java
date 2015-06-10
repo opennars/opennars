@@ -48,36 +48,33 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public final Task targetTask;
     public final Concept concept;
     private final int recordLength;
-    private long lastFireTime = -1;
+    private float lastFireTime = -1; //float to include the "subcycle"
 
-    public long getLastFireTime() {
-        return lastFireTime;
-    }
+
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
     public final static class Recording {
 
-        public TermLink link;
-        public long time;
+        public final TermLink link;
+        float time;
 
-        public Recording(TermLink link) {
+        public Recording(TermLink link, float time) {
+            this.time = time;
             this.link = link;
         }
 
-        public Recording(TermLink link, long time) {
-            this(link);
-            this.time = time;
-        }
-
-        public long getTime() {
+        public float getTime() {
             return time;
         }
 
 
-        public Recording setTime(long t) {
-            this.time = t;
-            return this;
+        public boolean setTime(float t) {
+            if (this.time!=t) {
+                this.time = t;
+                return true;
+            }
+            return false;
         }
 
         @Override
@@ -109,9 +106,13 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     public Map<Term,Recording> newRecordSet() {
         //TODO use more efficient collection?
-        return new LinkedHashMap<Term,Recording>() {
+
+        return new LinkedHashMap<Term,Recording>(recordLength) {
             protected boolean removeEldestEntry(Map.Entry<Term,Recording> eldest) {
-                return size() > recordLength;
+                if (size() > recordLength) {
+                    return true;
+                }
+                return false;
             }
         };
     }
@@ -201,8 +202,11 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
     }
 
+    public float getLastFireTime() {
+        return lastFireTime;
+    }
 
-    public void setFired(long now) {
+    public void setFired(final float now) {
         this.lastFireTime = now;
     }
 
@@ -211,14 +215,14 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     }
 
     /** returns the record associated with a termlink, or null if none exists (or if no records exist) */
-    public Recording take(final TermLink termLink) {
+    public Recording get(final TermLink termLink) {
         final Term bTerm = termLink.getTarget();
 
         if (records == null) {
             return null;
         }
 
-        Recording r = records.remove(termLink.getTerm());
+        Recording r = records.get(termLink.getTerm());
         if (r == null) {
             return null;
         }
@@ -227,15 +231,16 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
     }
 
-    public void put(final TermLink t, final long now) {
+    public void put(final TermLink t, final float now) {
         put(new Recording(t, now));
     }
 
-    public void put(final Recording r, final long now) {
-        put(r.setTime(now));
+    public void put(final Recording r, final float now) {
+        r.setTime(now);
+        put(r);
     }
 
-    public void put(final Recording r) {
+    protected void put(final Recording r) {
         if (records == null)
             records = newRecordSet();
 
@@ -342,7 +347,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      */
     @Override
     public Term getTarget() {
-        return concept.getTerm();
+        return targetTask.getTerm();
     }
 
     public Task getTask() {
@@ -359,7 +364,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
 
     @Override
     public Term getTerm() {
-        return getTarget().getTerm();
+        return getTarget();
     }
 
     @Override

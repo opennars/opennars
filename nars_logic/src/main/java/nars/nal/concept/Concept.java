@@ -23,6 +23,7 @@ package nars.nal.concept;
 import com.google.common.base.Function;
 import nars.Global;
 import nars.Memory;
+import nars.Param;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
@@ -306,15 +307,24 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     static public final class TermLinkNoveltyFilter implements Predicate<TermLink> {
 
         TaskLink taskLink;
-        private long now;
-        private int noveltyHorizon;
-        private int numTaskLinks; //total # of tasklinks in the bag
+        private float now;
+        private float noveltyHorizon;
+        private int numTermLinks; //total # of tasklinks in the bag
+        private int termsLinkBeingFired;
 
-        public void set(TaskLink t, long now, int noveltyHorizon, int numTaskLinks) {
+        final static float minNovelty = Param.NOVELTY_FLOOR;
+        private float noveltyDuration;
+
+        /** now is float because it is calculated as the fraction of current time + 1/(termlinks matched), thus including the subcycle */
+        public void set(TaskLink t, float now, float noveltyHorizon, int numTermLinksInBag, int termsLinkBeingFired) {
             this.taskLink = t;
             this.now = now;
             this.noveltyHorizon = noveltyHorizon;
-            this.numTaskLinks = numTaskLinks;
+            this.numTermLinks = numTermLinksInBag;
+            this.termsLinkBeingFired = termsLinkBeingFired;
+
+            /** proportional to an amount of cycles it should take a fired termlink to be considered novel */
+            this.noveltyDuration = (noveltyHorizon * (numTermLinksInBag-1));
         }
 
         @Override
@@ -322,7 +332,14 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             if (!taskLink.valid(termLink))
                 return false;
 
-            TaskLink.Recording r = taskLink.take(termLink);
+            if (noveltyDuration == 0) {
+                //this will happen in the case of one termlink,
+                //in which case there is no other option so duration
+                //will be zero
+                return true;
+            }
+
+            TaskLink.Recording r = taskLink.get(termLink);
             if (r == null) {
                 taskLink.put(termLink, now);
                 return true;
@@ -331,17 +348,17 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
                 boolean result;
 
                 //determine age (non-novelty) factor
-                long lft = taskLink.getLastFireTime();
+                float lft = taskLink.getLastFireTime();
                 if (lft == -1) {
                     //this is its first fire
                     result = true;
                 }
                 else {
 
-                    long timeSinceLastFire = now - r.getTime();
+                    float timeSinceLastFire = lft - r.getTime();
                     float factor = noveltyFactor(timeSinceLastFire);
 
-                    if (factor == 0) {
+                    if (factor <= 0) {
                         result = false;
                     }
                     else if (factor >= 1f) {
@@ -358,7 +375,6 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
                     return true;
                 }
                 else {
-                    taskLink.put(r);
                     return false;
                 }
 
@@ -366,8 +382,21 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
         }
 
-        private float noveltyFactor(long timeSinceLastFire) {
-            return Math.min(1f, (timeSinceLastFire / ((float)(numTaskLinks * noveltyHorizon) )) );
+        private float noveltyFactor(final float timeSinceLastFire) {
+
+
+            if (timeSinceLastFire <= 0)
+                return minNovelty;
+
+            float n = Math.max(0,
+                    Math.min(1f,
+                            timeSinceLastFire /
+                                    noveltyDuration) ) ;
+
+
+            n = (minNovelty) + (n * (1.0f - minNovelty));
+
+            return n;
 
         }
 

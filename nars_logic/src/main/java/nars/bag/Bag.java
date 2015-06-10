@@ -273,10 +273,20 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
 //     * @forgetCycles forgetting time in cycles
 //     */
     public V forgetNext(final AtomicDouble forgetDurations, final Memory m) {
-        forgetNext.set(m.param.cycles(forgetDurations), m);
+        setForgetNext(forgetDurations, m);
+        return forgetNext();
+    }
+
+    public V forgetNext() {
         update(forgetNext);
         return forgetNext.current;
     }
+
+    /** call this to set the forgetNext settings prior to calling forgetNext() */
+    public void setForgetNext(final AtomicDouble forgetDurations, final Memory m) {
+        forgetNext.set(m.param.cycles(forgetDurations), m);
+    }
+
 
     public double[] getPriorityHistogram(int bins) {
         return getPriorityHistogram(new double[bins]);

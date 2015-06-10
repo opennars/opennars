@@ -34,7 +34,6 @@ public class ConceptProcess extends NAL implements Premise {
 
 
     private int termLinksToFire;
-    private int termlinkMatches;
 
 
     public ConceptProcess(Concept concept, TaskLink taskLink) {
@@ -92,16 +91,27 @@ public class ConceptProcess extends NAL implements Premise {
         if (numTermLinks == 0)
             return;
 
-        final int noveltyHorizon = memory.param.noveltyHorizon.get();
+        final float noveltyHorizon = memory.param.noveltyHorizon.floatValue();
 
         int termLinkSelectionAttempts = termLinksToFire;
 
         currentConcept.updateTermLinks();
 
+
+        float n = now;
+
+        /** use the time since last cycle as a sort of estimate for how to divide this cycle into subcycles;
+         * this isnt necessary for default mode but realtime mode and others may have
+         * irregular or unpredictable clocks.
+         */
+        long cyclesSincePrevious = memory.timeSinceLastCycle();
+
+        float subCycle = ((float)memory.timeSinceLastCycle()) / (termLinkSelectionAttempts);
+
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
 
-            final TermLink bLink = nextTermLink(currentTaskLink, now, noveltyHorizon);
+           final TermLink bLink = nextTermLink(currentTaskLink, n, noveltyHorizon, termLinksToFire);
 
             if (bLink!=null)
                 processTerm(bLink);
@@ -109,6 +119,8 @@ public class ConceptProcess extends NAL implements Premise {
             termLinksSelected++;
 
             //emit(Events.TermLinkSelected.class, bLink, this);
+
+            n += subCycle;
         }
 
 
@@ -127,7 +139,7 @@ public class ConceptProcess extends NAL implements Premise {
      * @param time The current time
      * @return The selected TermLink
      */
-    TermLink nextTermLink(final TaskLink taskLink, final long time, int noveltyHorizon) {
+    TermLink nextTermLink(final TaskLink taskLink, final float time, float noveltyHorizon, int termLinksBeingFired) {
 
         final int links = currentConcept.getTermLinks().size();
         if (links == 0) return null;
@@ -139,12 +151,11 @@ public class ConceptProcess extends NAL implements Premise {
 
         Bag<TermLinkKey, TermLink> tl = currentConcept.getTermLinks();
 
-        termLinkNovel.set(taskLink, time, noveltyHorizon, tl.size());
+        termLinkNovel.set(taskLink, time, noveltyHorizon, tl.size(), termLinksBeingFired);
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = tl.forgetNext(memory.param.termLinkForgetDurations, memory);
-            termlinkMatches++;
+            final TermLink termLink = tl.forgetNext();
 
             if (termLink != null) {
                 if (termLinkNovel.test(termLink)) {
@@ -189,6 +200,8 @@ public class ConceptProcess extends NAL implements Premise {
 
         currentConcept.setUsed(now);
         currentTaskLink.setUsed(now);
+
+        currentConcept.getTermLinks().setForgetNext(memory.param.termLinkForgetDurations, memory);
 
         processTask();
 

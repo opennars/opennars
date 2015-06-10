@@ -80,10 +80,10 @@ public class Global {
      * Must be >=1.0, usually 1 .. 2
      */
     public static float HORIZON = 1;
-    
 
 
-    
+
+
 
 
 
@@ -239,6 +239,7 @@ public class Global {
 
     public static float DED_SECOND_UNIFICATION_DEPTH = 0.02f;
     public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 4;
+
 
 
     public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {

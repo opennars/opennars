@@ -491,6 +491,8 @@ public class Memory implements Serializable, AbstractStamper {
      * difference in time since last cycle
      */
     public long timeSinceLastCycle() {
+        if (timing == Timing.Cycle) return 1;
+
         return time() - timePreviousCycle;
     }
 

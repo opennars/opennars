@@ -78,7 +78,7 @@ public class Solid extends Default implements ControlCycle {
         this.minTermLink = minTermLink;
         this.maxTermLink = maxTermLink;
         duration.set(3);
-        noveltyHorizon.set(3);
+        noveltyHorizon.set(1.0);
         termLinkForgetDurations.set(2);
         taskLinkForgetDurations.set(2);
 

@@ -112,7 +112,10 @@ public class Default extends NARSeed implements ConceptBuilder {
         setConceptBagSize(maxConcepts);
         setSubconceptBagSize(maxConcepts * 2);
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
+
         termLinkMaxReasoned.set(termLinksPerCycle);
+        noveltyHorizon.set(1.0f/termLinksPerCycle);
+
         termLinkMaxMatched.set((termLinksPerCycle*3));
 
         //Build Parameters
@@ -157,7 +160,8 @@ public class Default extends NARSeed implements ConceptBuilder {
         inputsMaxPerCycle.set(1);
 
         termLinkRecordLength.set(10);
-        noveltyHorizon.set(7); //should probably be less than and not a multiple of other termlink parameters
+
+
 
         setForgetting(Forgetting.Periodic);
         setTiming(Timing.Cycle);

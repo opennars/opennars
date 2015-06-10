@@ -120,9 +120,18 @@ public class Param implements Serializable {
     /** Maximum number of goals kept in a Concept */
     public final AtomicInteger conceptGoalsMax = new AtomicInteger();
 
-    /** what this value represents was originally equal to the termlink record length (10), but we may want to adjust it or make it scaled according to duration since it has more to do with time than # of records.  it can probably be increased several times larger since each item should remain in the recording queue for longer than 1 cycle
-     * prevents a termlinks from redundantly repeated firing */
-    public AtomicInteger noveltyHorizon = new AtomicInteger();
+    /**
+     * this value is multiplied by the size of the termlink bag to determine
+     * how long ago a termlink will be considered completely novel for pairing
+     * with a tasklink during fire,
+     *
+     * a value of 1.0 then means that it should take N cycles before a term
+     * is considered completely novel to a Tasklink.
+     * */
+    public AtomicDouble noveltyHorizon = new AtomicDouble();
+
+    /** probability that a completely non-novel termlink/tasklink pair (older than novelty horizon) will be selected */
+    public static float NOVELTY_FLOOR = 0.1f;
 
 
     /** Reliance factor, the empirical confidence of analytical truth.
