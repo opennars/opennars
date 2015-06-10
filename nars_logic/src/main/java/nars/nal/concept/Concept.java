@@ -21,14 +21,12 @@
 package nars.nal.concept;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.nal.*;
 import nars.nal.process.TaskProcess;
-import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
@@ -39,6 +37,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static com.google.common.collect.Iterators.*;
 
@@ -304,25 +303,76 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     }
 
-    public static final class TermLinkNoveltyFilter implements Predicate<TermLink> {
+    static public final class TermLinkNoveltyFilter implements Predicate<TermLink> {
 
         TaskLink taskLink;
         private long now;
         private int noveltyHorizon;
-        private int recordLength;
+        private int numTaskLinks; //total # of tasklinks in the bag
 
-        public void set(TaskLink t, long now, int noveltyHorizon, int recordLength) {
+        public void set(TaskLink t, long now, int noveltyHorizon, int numTaskLinks) {
             this.taskLink = t;
             this.now = now;
             this.noveltyHorizon = noveltyHorizon;
-            this.recordLength = recordLength;
+            this.numTaskLinks = numTaskLinks;
         }
 
         @Override
-        public boolean apply(TermLink termLink) {
-            return taskLink.novel(termLink, now, noveltyHorizon, recordLength);
+        public boolean test(TermLink termLink) {
+            if (!taskLink.valid(termLink))
+                return false;
+
+            TaskLink.Recording r = taskLink.take(termLink);
+            if (r == null) {
+                taskLink.put(termLink, now);
+                return true;
+            }
+            else {
+                boolean result;
+
+                //determine age (non-novelty) factor
+                long lft = taskLink.getLastFireTime();
+                if (lft == -1) {
+                    //this is its first fire
+                    result = true;
+                }
+                else {
+
+                    long timeSinceLastFire = now - r.getTime();
+                    float factor = noveltyFactor(timeSinceLastFire);
+
+                    if (factor == 0) {
+                        result = false;
+                    }
+                    else if (factor >= 1f) {
+                        result = true;
+                    } else {
+                        float f = taskLink.concept.getMemory().random.nextFloat();
+                        result = (f < factor);
+                    }
+                }
+
+
+                if (result) {
+                    taskLink.put(r, now);
+                    return true;
+                }
+                else {
+                    taskLink.put(r);
+                    return false;
+                }
+
+            }
+
         }
+
+        private float noveltyFactor(long timeSinceLastFire) {
+            return Math.min(1f, (timeSinceLastFire / ((float)(numTaskLinks * noveltyHorizon) )) );
+
+        }
+
     }
+
 
     default public Iterator<? extends Termed> adjacentTermables(boolean termLinks, boolean taskLinks) {
         if (termLinks && taskLinks) {

@@ -30,6 +30,8 @@ import nars.nal.term.Term;
 import nars.nal.term.Termed;
 import nars.util.data.CircularArrayList;
 
+import java.util.*;
+
 /**
  * Reference to a Task.
  * <p>
@@ -44,17 +46,27 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * The Task linked
      */
     public final Task targetTask;
-    private final Concept concept;
+    public final Concept concept;
+    private final int recordLength;
+    private long lastFireTime = -1;
+
+    public long getLastFireTime() {
+        return lastFireTime;
+    }
 
 
     /* Remember the TermLinks, and when they has been used recently with this TaskLink */
-    final static class Recording {
+    public final static class Recording {
 
         public TermLink link;
         public long time;
 
-        public Recording(TermLink link, long time) {
+        public Recording(TermLink link) {
             this.link = link;
+        }
+
+        public Recording(TermLink link, long time) {
+            this(link);
             this.time = time;
         }
 
@@ -72,24 +84,40 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         public String toString() {
             return link + "@" + time;
         }
+
+        public Term getTerm() {
+            return link.getTerm();
+        }
     }
 
-    RecordingList records;
+    Map<Term,Recording> records;
+//
+//
+//    /** allows re-use of the Recording object since it would otherwise be instantiated frequently */
+//    public static class RecordingList extends CircularArrayList<Recording> {
+//
+//        public RecordingList(int capacity) {
+//            super(capacity);
+//        }
+//
+//
+//        public void add(final TermLink t, final long time) {
+//            add(new Recording(t, time));
+//        }
+//
+//    }
 
-
-    /** allows re-use of the Recording object since it would otherwise be instantiated frequently */
-    public static class RecordingList extends CircularArrayList<Recording> {
-
-        public RecordingList(int capacity) {
-            super(capacity);
-        }
-
-
-        public void add(final TermLink t, final long time) {
-            add(new Recording(t, time));
-        }
-
+    public Map<Term,Recording> newRecordSet() {
+        //TODO use more efficient collection?
+        return new LinkedHashMap<Term,Recording>() {
+            protected boolean removeEldestEntry(Map.Entry<Term,Recording> eldest) {
+                return size() > recordLength;
+            }
+        };
     }
+
+
+
 
     /**
      * The type of tlink, one of the above
@@ -102,14 +130,17 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public final short[] index;
 
 
-    public TaskLink(final Concept c, final Task t, final Budget v) {
+    protected TaskLink(Task t, Concept c, Budget v, short[] index, short type) {
         super(v);
-        this.concept = c;
-        this.type = TermLink.SELF;
-        this.index = null;
-
         this.targetTask = t;
+        this.concept = c;
+        this.recordLength = c.getMemory().param.termLinkRecordLength.get();
+        this.index = index;
+        this.type = type;
+    }
 
+    public TaskLink(final Concept c, final Task t, final Budget v) {
+        this(t, c, v, null, TermLink.SELF);
     }
 
     /**
@@ -121,13 +152,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * @param v        The budget
      */
     public TaskLink(final Concept c, final Task t, final TermLinkTemplate template, final Budget v) {
-        super(v);
-        this.concept = c;
-        this.type = template.type;
-        this.index = template.index;
-
-        this.targetTask = t;
-
+        this(t, c, v, template.index, template.type);
     }
 
 
@@ -140,8 +165,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         return getSentence().hashCode();
     }
 
-    public CircularArrayList<Recording> getRecords() {
-        return records;
+    protected Collection<Recording> getRecords() {
+        return records.values();
     }
 
     @Override
@@ -176,85 +201,133 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         }
     }
 
-    /**
-     * To check whether a TaskLink should use a TermLink, return false if they
-     * interacted recently
-     * <p>
-     * called in TermLinkBag only
-     *
-     * @param termLink    The TermLink to be checked
-     * @param currentTime The current time
-     * @return Whether they are novel to each other
-     */
-    public boolean novel(final TermLink termLink, final long currentTime, int noveltyHorizon, int recordLength) {
 
-        final Term bTerm = termLink.getTarget().getTerm();
-        if (bTerm.equals(targetTask.sentence.term)) {
-            return false;
-        }
+    public void setFired(long now) {
+        this.lastFireTime = now;
+    }
 
-        if (noveltyHorizon == 0) return true;
+    public boolean valid(TermLink t) {
+        return !(t.getTarget().equals(getTerm()));
+    }
+
+    /** returns the record associated with a termlink, or null if none exists (or if no records exist) */
+    public Recording take(final TermLink termLink) {
+        final Term bTerm = termLink.getTarget();
 
         if (records == null) {
-            //records = new ArrayDeque(recordLength);
-            //records = new LinkedList();
-            records = new RecordingList(recordLength);
+            return null;
         }
 
-        final long minTime = currentTime - noveltyHorizon;
-
-        long newestRecordTime =
-                (records.isEmpty()) ?
-                        currentTime : records.getLast().time;
-
-        if (newestRecordTime <= minTime) {
-            //just erase the entire record list because its newest entry is older than the noveltyHorizon
-            //faster than iterating and removing individual entries (in the following else condition)
-            records.clear();
-        } else {
-            //iterating the FIFO deque from oldest (first) to newest (last)
-            //  this awkward for-loop with the CircularArrayList replaced an ArrayDeque version because ArrayDeque does not provide indexed access and this required using its Iterator which involved an allocation.  this should be less expensive and it is a critical section
-            int size = records.size();
-            for (int i = 0; i < size; i++) {
-                Recording r = records.get(i);
-                final long rtime = r.getTime();
-
-                if (termLink.termLinkEquals(r.link, true)) {
-                    if (minTime < rtime) {
-                        //too recent, not novel
-                        return false;
-                    } else {
-                        //happened long enough ago that we have forgotten it somewhat, making it seem more novel
-                        records.removeFast(i);
-                        addRecord(r.setTime(currentTime));
-                        return true;
-                    }
-                } else if (minTime > rtime) {
-                    //remove a record which will not apply to any other tlink
-
-                    records.remove(i);
-                    i--; //skip back one so the next iteration will be at the element after the one removed
-                    size--;
-                }
-            }
-
-
-            //keep recordedLinks queue a maximum finite size
-            int toRemove = (records.size() + 1) - recordLength;
-            for (int i = 0; i < toRemove; i++)
-                records.removeFirstFast();
-
+        Recording r = records.remove(termLink.getTerm());
+        if (r == null) {
+            return null;
         }
-
-        // add knowledge reference to recordedLinks
-        records.add(termLink, currentTime);
-
-        return true;
+        else {
+            return r;
+        }
     }
 
-    protected void addRecord(Recording r) {
-        records.addLast(r);
+    public void put(final TermLink t, final long now) {
+        put(new Recording(t, now));
     }
+
+    public void put(final Recording r, final long now) {
+        put(r.setTime(now));
+    }
+
+    public void put(final Recording r) {
+        if (records == null)
+            records = newRecordSet();
+
+        records.put(r.getTerm(), r);
+    }
+
+//    /**
+//     * To check whether a TaskLink should use a TermLink, return false if they
+//     * interacted recently
+//     * <p>
+//     * called in TermLinkBag only
+//     *
+//     * @param termLink    The TermLink to be checked
+//     * @param currentTime The current time
+//     * @return (float) the novelty of the termlink, 0 = entirely non-novel (already processed in this cycle), 1 = totally novel (as far as its limited memory remembers)
+//     */
+//    public float novel(final TermLink termLink, final long currentTime, int noveltyHorizon, int recordLength) {
+//
+//        final Term bTerm = termLink.getTarget().getTerm();
+//        if (bTerm.equals(targetTask.sentence.term)) {
+//            return 0;
+//        }
+//
+//        if ((lastFireTime == -1) || (noveltyHorizon == 0)) return 1; //noveltyHorizon==0: everything novel
+//
+//        if (records == null) {
+//            //records = new ArrayDeque(recordLength);
+//            //records = new LinkedList();
+//            records = new RecordingList(recordLength);
+//        }
+//
+//
+//
+//        final long minTime = lastFireTime - noveltyHorizon;
+//
+//        long newestRecordTime =
+//                (records.isEmpty()) ?
+//                        currentTime : records.getLast().time;
+//
+//        long age = 0;
+//
+//        if (newestRecordTime <= minTime) {
+//            //just erase the entire record list because its newest entry is older than the noveltyHorizon
+//            //faster than iterating and removing individual entries (in the following else condition)
+//            records.clear();
+//        } else {
+//            //iterating the FIFO deque from oldest (first) to newest (last)
+//            //  this awkward for-loop with the CircularArrayList replaced an ArrayDeque version because ArrayDeque does not provide indexed access and this required using its Iterator which involved an allocation.  this should be less expensive and it is a critical section
+//            int size = records.size();
+//            for (int i = 0; i < size; i++) {
+//                Recording r = records.get(i);
+//
+//                if (termLink.termLinkEquals(r.link, true)) {
+//                    records.removeFast(i);
+//                    return r;
+//
+////                    if (minTime < rtime) {
+////                        //too recent, not novel
+////                        return false;
+////                    } else {
+////                        //happened long enough ago that we have forgotten it somewhat, making it seem more novel
+////                        records.removeFast(i);
+////                        addRecord(r.setTime(currentTime));
+////                        return true;
+////                    }
+//                } else if (minTime > rtime) {
+//                    //remove a record which will not apply to any other tlink
+//
+//                    records.remove(i);
+//                    i--; //skip back one so the next iteration will be at the element after the one removed
+//                    size--;
+//                }
+//            }
+//
+//
+//            //keep recordedLinks queue a maximum finite size
+//            int toRemove = (records.size() + 1) - recordLength;
+//            for (int i = 0; i < toRemove; i++)
+//                records.removeFirstFast();
+//
+//        }
+//
+//        // add knowledge reference to recordedLinks
+//        records.add(termLink, currentTime);
+//
+//
+//        return n;
+//    }
+
+//    protected void addRecord(Recording r) {
+//        records.addLast(r);
+//    }
 
     @Override
     public String toString() {

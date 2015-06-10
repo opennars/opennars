@@ -5,12 +5,14 @@
 package nars.nal.process;
 
 import nars.Events;
+import nars.bag.Bag;
 import nars.nal.NAL;
 import nars.nal.Premise;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
@@ -78,14 +80,12 @@ public class ConceptProcess extends NAL implements Premise {
 
     protected void processTask() {
 
-        currentTaskLink.setUsed(memory.time());
-
         setCurrentTerm(currentConcept.getTerm());
         setCurrentTermLink(null);
         reasoner.fire(this);
     }
 
-    protected void processTerms() {
+    protected void processTerms(final long now) {
 
         //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
         int numTermLinks = getCurrentConcept().getTermLinks().size();
@@ -101,7 +101,7 @@ public class ConceptProcess extends NAL implements Premise {
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
 
-            final TermLink bLink = nextTermLink(currentTaskLink, memory.time(), noveltyHorizon);
+            final TermLink bLink = nextTermLink(currentTaskLink, now, noveltyHorizon);
 
             if (bLink!=null)
                 processTerm(bLink);
@@ -110,6 +110,7 @@ public class ConceptProcess extends NAL implements Premise {
 
             //emit(Events.TermLinkSelected.class, bLink, this);
         }
+
 
         /*if (termLinksSelected == 0) {
             System.out.println(termLinksSelected + "/" + termLinksToFire + " took " + termlinkMatches + " matches over " + numTermLinks + " termlinks" + " " + currentTaskLink.getRecords());
@@ -136,17 +137,22 @@ public class ConceptProcess extends NAL implements Premise {
         //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
         if (links == 1) toMatch = 1;
 
-        termLinkNovel.set(taskLink, time, noveltyHorizon, memory.param.termLinkRecordLength.get());
+        Bag<TermLinkKey, TermLink> tl = currentConcept.getTermLinks();
+
+        termLinkNovel.set(taskLink, time, noveltyHorizon, tl.size());
 
         for (int i = 0; (i < toMatch); i++) {
 
-            final TermLink termLink = currentConcept.getTermLinks().forgetNext(memory.param.termLinkForgetDurations, memory);
+            final TermLink termLink = tl.forgetNext(memory.param.termLinkForgetDurations, memory);
             termlinkMatches++;
 
             if (termLink != null) {
-                if (termLinkNovel.apply(termLink)) {
+                if (termLinkNovel.test(termLink)) {
                     return termLink;
                 }
+            }
+            else {
+                break;
             }
 
         }
@@ -179,15 +185,18 @@ public class ConceptProcess extends NAL implements Premise {
     @Override
     protected void process() {
 
-        currentConcept.setUsed(memory.time());
+        final long now = memory.time();
+
+        currentConcept.setUsed(now);
+        currentTaskLink.setUsed(now);
 
         processTask();
 
         if (currentTaskLink.type != TermLink.TRANSFORM) {
-
-            processTerms();
-
+            processTerms(now);
         }
+
+        currentTaskLink.setFired(now);
     }
 
 
