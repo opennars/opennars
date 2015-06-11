@@ -57,7 +57,7 @@ public class NAL2Test extends JavaNALTest {
             @1750        */
 
         long time = 320;
-        TextOutput.out(nar);
+        //TextOutput.out(nar);
 
         nar.believe("<Birdie <-> Tweety>", Eternal, 0.9f, 0.9f)
                 .en("Birdie is similar to Tweety.");

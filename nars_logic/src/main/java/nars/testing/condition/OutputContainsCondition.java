@@ -138,7 +138,7 @@ public class OutputContainsCondition extends OutputCondition {
                 //which also does unescaping, etc..
                 Task t = (Task)signal;
                 Sentence s = t.sentence;
-                o = s.toString(nar, false).toString();
+                o = toString(s);
                 if (o.contains(containing)) {
                     if ((saveSimilar) && (exact.size() < maxExacts)) {
                         exact.add(t);
@@ -153,7 +153,7 @@ public class OutputContainsCondition extends OutputCondition {
                 final StringBuilder buffer = new StringBuilder();
 
                 //o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
-                o = TextOutput.getOutputString(channel, signal, false, nar, buffer).toString();
+                o = toString(channel, signal);
 
                 if (o.contains(containing)) {
                     if ((saveSimilar) && (t!=null) && (exact.size() < maxExacts)) {

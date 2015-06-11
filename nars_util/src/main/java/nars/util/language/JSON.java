@@ -1,9 +1,11 @@
 package nars.util.language;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.databind.type.TypeFactory;
@@ -16,61 +18,63 @@ import java.util.Map;
  */
 public class JSON {
 
-    static com.fasterxml.jackson.jr.ob.JSON def =
-            com.fasterxml.jackson.jr.ob.JSON.std.
-                    with(com.fasterxml.jackson.jr.ob.JSON.Feature.WRITE_NULL_PROPERTIES);
+    static final ObjectMapper om = new ObjectMapper()
 
-    static com.fasterxml.jackson.jr.ob.JSON unRef =
-            com.fasterxml.jackson.jr.ob.JSON.std.
-                    without(com.fasterxml.jackson.jr.ob.JSON.Feature.FORCE_REFLECTION_ACCESS);
+            .enableDefaultTyping()
 
+            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
 
+            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
+            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()))
+            ;
 
+//
 
     public static Map<String,Object> toMap(String json) {
         try {
-            return def.mapFrom(json);
+            return om.readValue(json, Map.class);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
-    public static Object toObj(String json) {
-        try {
-            return def.anyFrom(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
+//
+//    public static Object toObj(String json) {
+//        try {
+//            return def.anyFrom(json);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+//
     public static String stringFrom(Object obj) {
         try {
-            return def.asString(obj);
+            return om.writeValueAsString(obj);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-    public static String stringFromUnreflected(Object obj) {
-        try {
-            return unRef.asString(obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-    public static Map<String,Object> mapFrom(Object obj) {
-        try {
-            return def.mapFrom(obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    public static String stringFromUnreflected(Object obj) {
+//        try {
+//            return unRef.asString(obj);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+//
+//
+//    public static Map<String,Object> mapFrom(Object obj) {
+//        try {
+//            return def.mapFrom(obj);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
 
 }

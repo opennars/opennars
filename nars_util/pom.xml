@@ -47,9 +47,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.fasterxml.jackson.jr</groupId>
-            <artifactId>jackson-jr-objects</artifactId>
-        </dependency>
+	<groupId>com.fasterxml.jackson.core</groupId>
+	<artifactId>jackson-databind</artifactId>
+	<version>2.6.0-rc2</version>
+</dependency>
+
 
         <dependency>
             <groupId>org.javassist</groupId>

@@ -1,9 +1,12 @@
 package nars.testing.condition;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
+import nars.io.JSONOutput;
 import nars.io.Texts;
 import nars.nal.DefaultTruth;
 import nars.nal.Task;
@@ -12,7 +15,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
-import nars.util.language.JSON;
 
 import java.io.Serializable;
 import java.util.*;
@@ -23,6 +25,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
     //@Expose
     public final Class channel;
     //@Expose
+
+    @JsonSerialize(using = ToStringSerializer.class)
     public final Term term;
     //@Expose
     public final char punc;
@@ -40,27 +44,27 @@ public class TaskCondition extends OutputCondition implements Serializable {
     //@Expose
     public final long cycleEnd;  //-1 for not compared
 
-    private final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
+    protected final boolean relativeToCondition; //whether to measure occurence time relative to the compared task's creation time, or the condition's creation time
 
     //@Expose
-    private long creationTime;
+    protected long creationTime;
 
 
     //@Expose
     public Tense tense = Tense.Eternal;
 
-    public final List<Task> exact = new ArrayList();
-    final int maxExact = 4;
+    protected List<Task> exact;
+    transient final int maxExact = 4;
 
-    public final Deque<Task> removals = new ArrayDeque();
+    protected Deque<Task> removals;
 
-    int maxClose = 7;
+    transient int maxClose = 7;
 
-    public final TreeMap<Double,Task> close = new TreeMap();
-    int maxRemovals = 2;
+    protected TreeMap<Double,Task> similar;
+    transient int maxRemovals = 2;
 
     //enable true for more precise temporality constraints; this may be necessary or not
-    private boolean strictDurationWindow = true;
+    transient private boolean strictDurationWindow = true;
 
 
     public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
@@ -219,6 +223,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
             //String rule = (String)args[1];
 
             if (matches(task)) {
+                ensureRemovals();
                 removals.addLast(task);
                 if (removals.size() > maxRemovals)
                     removals.removeFirst();
@@ -242,7 +247,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                 if (!matches(task)) return false;
 
                 double distance = 0;
-                long now = nar.time();
+                long now = time();
 
 
                 boolean match = true;
@@ -322,14 +327,18 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
                 if (match) {
                     //TODO record a different score for fine-tune optimization?
-                    if (exact.size() < maxExact)
+
+                    if (exact==null || (exact.size() < maxExact)) {
+                        ensureExact();
                         exact.add(task);
+                    }
                 }
 
                 if (distance > 0) {
-                    close.put(distance, task);
-                    if (close.size() > maxClose) {
-                        close.remove( close.lastEntry().getKey() );
+                    ensureSimilar();
+                    similar.put(distance, task);
+                    if (similar.size() > maxClose) {
+                        similar.remove( similar.lastEntry().getKey() );
                     }
                 }
 
@@ -340,14 +349,24 @@ public class TaskCondition extends OutputCondition implements Serializable {
         return false;
     }
 
+    private void ensureExact() {
+        if (exact == null) exact = new ArrayList<>();
+    }
+    private void ensureSimilar() {
+        if (similar == null) similar = new TreeMap();
+    }
+    private void ensureRemovals() {
+        if (removals == null) removals = new ArrayDeque();
+    }
+
 
     @Override
     public String getFalseReason() {
         String x = "Unmatched; ";
 
-        if (!close.isEmpty()) {
+        if (similar!=null) {
             x += "Similar:\n";
-            for (Map.Entry<Double,Task> et : close.entrySet()) {
+            for (Map.Entry<Double,Task> et : similar.entrySet()) {
                 Task tt = et.getValue();
                 x += Texts.n4(et.getKey().floatValue()) + ' ' + tt.toString() + ' ' + tt.getHistory() + '\n';
             }
@@ -355,7 +374,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
         else {
             x += "No similar: " + term;
         }
-        if (!removals.isEmpty()) {
+        if (removals!=null) {
             x += " Matching removals:\n";
             for (Task t : removals)
                 x += t.toString() + ' ' + t.getHistory() + '\n';
@@ -383,10 +402,10 @@ public class TaskCondition extends OutputCondition implements Serializable {
         //return exact;
     }
 
-    @Override
-    public String toString() {
-        return succeeded  +": "  + JSON.stringFrom(this);
-    }
+//    @Override
+//    public String toString() {
+//        return succeeded  +": "  + JSONOutput.stringFromFields(this);
+//    }
 
     public long getCreationTime() {
         return creationTime;

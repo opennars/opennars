@@ -20,6 +20,11 @@
  */
 package nars.nal;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializable;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
@@ -33,6 +38,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Termed;
 import nars.op.mental.InternalExperience;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.Reference;
 import java.util.ArrayList;
@@ -48,7 +54,7 @@ import java.util.Set;
  *
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, StampEvidence, Input {
+public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence, Input {
 
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
@@ -612,5 +618,15 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     @Override
     public float getAttention() {
         return 1.0f;
+    }
+
+    @Override
+    public void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        jgen.writeString(toString());
+    }
+
+    @Override
+    public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException, JsonProcessingException {
+        serialize(jgen, provider);
     }
 }

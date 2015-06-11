@@ -121,7 +121,7 @@ public class NALTestPerformance {
                 
                 successes = 0;
                 for (OutputCondition e : expects) {
-                    if (e.succeeded) {
+                    if (e.isTrue()) {
                         successes++;
                     }
                 }                

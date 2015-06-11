@@ -37,7 +37,11 @@ abstract public class ScriptNALTest extends AbstractNALTest {
 
         String result = nar.evaluate();
         if (result!=null) {
-            TestCase.assertTrue(result, false);
+            System.err.println(result);
+            TestCase.assertTrue(false);
+        }
+        else {
+            assertTrue(true);
         }
 
     }

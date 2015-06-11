@@ -5,6 +5,7 @@ import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.event.NARReaction;
+import nars.io.in.TextInput;
 import nars.io.out.TextOutput;
 import nars.nal.Task;
 import nars.nal.nal7.Tense;
@@ -12,8 +13,10 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.testing.condition.OutputCondition;
+import nars.testing.condition.OutputNotContainsCondition;
 import nars.testing.condition.TaskCondition;
 
+import java.awt.peer.ChoicePeer;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,8 @@ public class TestNAR extends NAR {
     public final List<OutputCondition> requires = new ArrayList();
     public final List<ExplainableTask> explanations = new ArrayList();
     private Exception error;
-    private boolean exitOnAllSuccess = true;
+    transient private boolean exitOnAllSuccess = true;
+    public List<Task> inputs = new ArrayList();
 
 
     public TestNAR(NARSeed b) {
@@ -291,6 +295,13 @@ public class TestNAR extends NAR {
                     failures++;
                 }
             }
+            /*else if (oc instanceof OutputNotContainsCondition) {
+                if (!oc.isTrue())
+                    failures++;
+            }*/
+            /*else {
+                throw new RuntimeException("Unrecognized requirement type: " + oc);
+            }*/
         }
 
         int successes = conditions - failures;
@@ -324,8 +335,6 @@ public class TestNAR extends NAR {
 
             for (OutputCondition tc : requires) {
 
-                out.println(tc.toString());
-
                 if (!tc.isTrue()) {
                     if (showFail) {
                         out.println(tc.getFalseReason());
@@ -358,5 +367,18 @@ public class TestNAR extends NAR {
     }
 
 
+    public void inputTest(String script) {
 
+        final TextInput i = new TextInput(textPerception, script) {
+            @Override
+            public void accept(Task task) {
+                super.accept(task);
+                inputs.add(task);
+            }
+        };
+
+        input(i);
+
+
+    }
 }

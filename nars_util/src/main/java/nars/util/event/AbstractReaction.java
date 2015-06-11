@@ -5,9 +5,9 @@ package nars.util.event;
  */
 abstract public class AbstractReaction implements Reaction<Class> {
 
-    protected EventEmitter source;
-    protected EventEmitter.Registrations active;
-    private Class[] events;
+    transient protected EventEmitter source;
+    transient protected EventEmitter.Registrations active;
+    protected Class[] events;
 
     public AbstractReaction() {
         this(null);

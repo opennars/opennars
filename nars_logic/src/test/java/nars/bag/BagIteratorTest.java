@@ -36,9 +36,6 @@ public class BagIteratorTest {
         assertEquals(expectedCount, count);
         
         if (b.size() > 1) {
-            //check correct order
-            b.forEach(x -> System.out.println(x.getPriority() + " " + x));
-
             assertTrue(first.getPriority() >= current.getPriority());
         }
         

@@ -18,12 +18,16 @@ package nars.io;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.nal.term.Term;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *
@@ -32,10 +36,22 @@ import java.io.IOException;
 public class JSONOutput  {
 
     static final ObjectMapper fieldMapper = new ObjectMapper()
-            .enableDefaultTyping()
-            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
-            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
 
+            .enableDefaultTyping()
+
+            .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
+
+            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
+            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
+            .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()))
+            .registerModule(new SimpleModule().addSerializer(Term.class, new ToStringSerializer()))
+            ;
+
+    static final ObjectMapper fieldMapperIndent = fieldMapper.copy()
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            ;
+
+    static final ObjectWriter pretty = fieldMapperIndent.writerWithDefaultPrettyPrinter();
 
 
     public static String stringFromFields(Object obj) {
@@ -46,6 +62,25 @@ public class JSONOutput  {
             return null;
         }
     }
+
+    public static String stringFromFieldsPretty(Object obj) {
+        try {
+            return pretty.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+
+    }
+
+    public static void outputFromFields(Object obj, OutputStream o) {
+        try {
+            fieldMapperIndent.writeValue(o, obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
 //

@@ -73,18 +73,21 @@ public class EmotionMeter implements Serializable {
             if(frequency!=-1) { //ok lets add an event now
                 Term predicate= SetInt.make(satisfied);
                 Term subject= nal.self();
-                Inheritance inh=Inheritance.make(subject, predicate);
-                Truth truth=new DefaultTruth(1.0f,Global.DEFAULT_JUDGMENT_CONFIDENCE);
-                Sentence s=new Sentence(inh, Symbols.JUDGMENT, truth, nal.newStamp(task.getStamp(), nal.time()));
 
-                nal.deriveTask(
-                        nal.newTask(s).budget(
-                            Global.DEFAULT_JUDGMENT_PRIORITY,Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth))
-                                .parent(task).reason("emotion"),
-                        false, false
+                Inheritance inh = Inheritance.make(subject, predicate);
+
+                nal.deriveSingle(
+                        nal.newTask(inh)
+                                .judgment()
+                                .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+                                .parentStamp(task, nal.time())
+                                .reason("emotion")
                 );
 
                 if(Global.REFLECT_META_HAPPY_GOAL) { //remind on the goal whenever happyness changes, should suffice for now
+
+                    //TODO convert to fluent format
 
                     Truth truth2=new DefaultTruth(1.0f,Global.DEFAULT_GOAL_CONFIDENCE);
 
@@ -95,7 +98,7 @@ public class EmotionMeter implements Serializable {
                     nal.deriveSingle(
                             nal.newTask(s2).budget(
                                     Global.DEFAULT_GOAL_PRIORITY,Global.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)
-                            ).parent(task).reason("metagoal")
+                            ).parentStamp(task).reason("metagoal")
                     );
 
                     //this is a good candidate for innate belief for consider and remind:
@@ -109,7 +112,7 @@ public class EmotionMeter implements Serializable {
                         for(Operation o : new Operation[] { op_remind, op_consider }) {
 
                             nal.deriveSingle(
-                                    nal.newTask(o).parent(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                                    nal.newTask(o).parentStamp(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                             .budgetScaled(InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL, InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
                                             .reason("internal experience for consider and remind")
                             );

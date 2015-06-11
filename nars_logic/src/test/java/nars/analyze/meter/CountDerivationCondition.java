@@ -42,7 +42,7 @@ public class CountDerivationCondition extends NARReaction2 {
 
             OutputCondition o = (OutputCondition) args[0];
 
-            if (!o.succeeded) {
+            if (!o.isTrue()) {
                 throw new RuntimeException(o + " signaled when it has not succeeded");
             }
 

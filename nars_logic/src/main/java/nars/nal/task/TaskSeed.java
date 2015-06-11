@@ -216,7 +216,10 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
     public TaskSeed<T> budget(float p, float d) {
-        return budget(p, d, Float.NaN);
+        float q = Float.NaN;
+        if ((getPunctuation()!=Symbols.QUESTION) && (getPunctuation()!=Symbols.QUEST))
+            q = BudgetFunctions.truthToQuality(getTruth());
+        return budget(p, d, q);
     }
 
     public TaskSeed(Memory memory) {
@@ -467,6 +470,33 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     public TaskSeed<T> stamp(Stamp a, Stamp b) {
         setA(a);
         setB(b);
+        return this;
+    }
+
+    public TaskSeed<T> parentStamp(Task parentTask, Task parentBeliefTask) {
+        return parentStamp(parentTask, parentBeliefTask.sentence);
+    }
+
+    public TaskSeed<T> parentStamp(Task parentTask, Sentence parentBelief) {
+        parent(parentTask, parentBelief);
+        stamp(parentTask.sentence, parentBelief);
+        return this;
+    }
+    public TaskSeed<T> parentStamp(Task parentTask, Sentence parentBelief, long occurence) {
+        parentStamp(parentTask, parentBelief);
+        setOccurrenceTime(occurence);
+        return this;
+    }
+
+    public TaskSeed<T> parentStamp(Task task, long occurrenceTime) {
+        parentStamp(task);
+        setOccurrenceTime(occurrenceTime);
+        return this;
+    }
+
+    public TaskSeed<T> parentStamp(Task task) {
+        parent(task);
+        stamp(task);
         return this;
     }
 

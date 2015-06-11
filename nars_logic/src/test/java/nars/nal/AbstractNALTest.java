@@ -1,24 +1,29 @@
 package nars.nal;
 
 import junit.framework.TestCase;
+import nars.Global;
+import nars.NAR;
+import nars.NARSeed;
 import nars.analyze.NALysis;
 import nars.analyze.meter.CountDerivationCondition;
 import nars.analyze.meter.CountOutputEvents;
-import nars.NAR;
-import nars.NARSeed;
-import nars.Global;
+import nars.io.JSONOutput;
 import nars.io.in.LibraryInput;
+import nars.testing.TestNAR;
 import nars.testing.condition.OutputCondition;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
 import nars.util.meter.event.ObjectMeter;
-import nars.testing.TestNAR;
 import org.junit.After;
 import org.junit.Ignore;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,6 +58,7 @@ abstract public class AbstractNALTest extends TestCase {
     static DoubleMeter testCost, testTime, testSeed;
     static HitMeter testConcepts;
     static ObjectMeter<String> testBuild;
+
 
     public static void reset() {
         results = new Metrics().addMeters(
@@ -148,13 +154,49 @@ abstract public class AbstractNALTest extends TestCase {
 
         nar.requires.addAll(OutputCondition.getConditions(nar, script, similarsToSave, conditionsCache));
 
-        nar.input(script);
+
+        nar.inputTest(script);
+
 
         long start = System.nanoTime();
 
         nar.run(maxCycles);
 
         return System.nanoTime() - start;
+    }
+
+
+    public static class Report implements Serializable {
+
+        protected final long time;
+        protected boolean success = true;
+        protected Object error = null;
+        protected Task[] inputs;
+        protected ArrayList<OutputCondition> cond = new ArrayList();
+        transient final int stackElements = 4;
+
+        public Report(long time, List<Task> inputs) {
+            this.time = time;
+            this.inputs = inputs.toArray(new Task[inputs.size()]);
+        }
+
+        public void setError(Exception e) {
+            if (e!=null) {
+                this.error = new Object[]{e.toString(), Arrays.copyOf(e.getStackTrace(), stackElements)};
+                success = false;
+            }
+        }
+
+
+        public void add(OutputCondition o) {
+            cond.add(o);
+            if (!o.isTrue()) success = false;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
     }
 
 
@@ -165,27 +207,20 @@ abstract public class AbstractNALTest extends TestCase {
 
         assertTrue("No cycles elapsed", nar.time() > 0);
 
-        StringBuilder report = new StringBuilder();
-        report.append('@').append(nar.time()).append(":\n");
-        boolean suc = nar.getError()==null;
+
+        Report r = new Report(nar.time(), nar.inputs);
+
+        r.setError(nar.getError());
+
         for (OutputCondition e : nar.requires) {
-            if (!e.succeeded) {
-                report.append(e.toString()).append('\n');
-                report.append(e.getFalseReason()).append('\n');
-                suc = false;
-            }
-            else {
-                report.append(e.getTrueReasons().toString()).append("\n\n");
-            }
+            r.add(e);
         }
-        if (!suc && script!=null) {
-            report.insert(0, script);
-            report.insert(0, "\n\n");
+
+        if (!r.isSuccess()) {
+            String s = JSONOutput.stringFromFieldsPretty(r);
+            assertTrue(s, false);
         }
-        report.insert(0, '\n');
 
-
-        assertTrue(report.toString(), suc);
 
         nar.reset();
     }

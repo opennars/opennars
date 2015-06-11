@@ -8,14 +8,17 @@ import nars.util.data.Util;
 import java.util.regex.Pattern;
 
 /**
- * Created by me on 5/19/15.
+ * WARNING: this can cause significant slowdown because it converts
+ * every new concept term to a string.  For better performance,
+ * use another ConceptBuilder which can compare Terms by structure
  */
-public class PatternConceptBuilder implements ConceptBuilder {
+public class StringPatternConceptBuilder implements ConceptBuilder {
 
     private final Pattern pattern;
     private final ConceptBuilder builder;
+    final boolean pretty = false; //match toString(pretty)
 
-    public PatternConceptBuilder(String glob, ConceptBuilder builder) {
+    public StringPatternConceptBuilder(String glob, ConceptBuilder builder) {
 
         pattern = Pattern.compile(Util.globToRegEx(glob));
         this.builder = builder;
@@ -24,7 +27,9 @@ public class PatternConceptBuilder implements ConceptBuilder {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
 
-        if (pattern.matcher(t.toString()).matches()) {
+        String ts = t.name().toString(pretty);
+
+        if (pattern.matcher(ts).matches()) {
             return builder.newConcept(t, b, m);
         }
         return null;

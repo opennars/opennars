@@ -15,7 +15,7 @@ import java.util.List;
  * @author me
  */
 public class OutputEmptyCondition extends OutputCondition {
-    final List<String> output = new LinkedList();
+    List<String> output;
 
     public OutputEmptyCondition(NAR nar) {
         super(nar);
@@ -31,6 +31,8 @@ public class OutputEmptyCondition extends OutputCondition {
     public boolean condition(Class channel, Object signal) {
         //any OUT or ERR output is a failure
         if ((channel == Events.OUT.class) || (channel == Events.ERR.class)) {
+            if (output == null)
+                output = new LinkedList();
             output.add(channel.getSimpleName() + ": " + signal.toString());
             succeeded = false;
             return false;

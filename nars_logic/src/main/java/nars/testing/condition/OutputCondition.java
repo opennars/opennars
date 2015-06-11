@@ -8,10 +8,13 @@ import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.io.Texts;
+import nars.io.out.TextOutput;
+import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.stamp.Stamp;
 import nars.narsese.InvalidInputException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +28,12 @@ import java.util.function.Function;
  * Parameter O is the type of object which will be remembered that can make
  * the condition true
  */
-public abstract class OutputCondition extends NARReaction {
-    public boolean succeeded = false;
-    
-    
-    
-    public final NAR nar;
+public abstract class OutputCondition extends NARReaction implements Serializable {
+
+    boolean succeeded = false;
+
+    transient private final NAR nar;
+
     long successAt = Stamp.UNPERCEIVED;
 
     public OutputCondition(NAR nar, Class... events) {
@@ -47,6 +50,8 @@ public abstract class OutputCondition extends NARReaction {
         return false;
     }
 
+    public long time() { return nar.time(); }
+
     @Override
     public void event(Class channel, Object... args) {
         if ((succeeded) && (!isInverse() && (!continueAfterSuccess()))) {
@@ -62,6 +67,14 @@ public abstract class OutputCondition extends NARReaction {
         if (condition(channel, signal)) {
             setTrue();
         }
+    }
+
+    public String toString(Sentence s) {
+        return s.toString(nar, false).toString();
+    }
+
+    public String toString(Class channel, Object signal) {
+        return TextOutput.getOutputString(channel, signal, false, nar, new StringBuilder(16)).toString();
     }
 
     protected boolean continueAfterSuccess() { return false; }
@@ -230,4 +243,9 @@ public abstract class OutputCondition extends NARReaction {
             return -1;
 
     }
+
+    public NAR getNAR() {
+        return nar;
+    }
+
 }
