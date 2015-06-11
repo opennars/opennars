@@ -47,11 +47,15 @@
         </dependency>
 
         <dependency>
-	<groupId>com.fasterxml.jackson.core</groupId>
-	<artifactId>jackson-databind</artifactId>
-	<version>2.6.0-rc2</version>
-</dependency>
-
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.6.0-rc2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jsonSchema</artifactId>
+            <version>2.6.0-rc2</version>
+        </dependency>
 
         <dependency>
             <groupId>org.javassist</groupId>
@@ -102,14 +106,14 @@
             </exclusions>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>net.openhft</groupId>-->
-            <!--<artifactId>collections</artifactId>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<artifactId>annotations</artifactId>-->
-                    <!--<groupId>org.kohsuke.jetbrains</groupId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
+        <!--<groupId>net.openhft</groupId>-->
+        <!--<artifactId>collections</artifactId>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--<artifactId>annotations</artifactId>-->
+        <!--<groupId>org.kohsuke.jetbrains</groupId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -120,7 +124,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
 
 
         <dependency>
@@ -136,8 +139,7 @@
             <version>2.6.0</version>
         </dependency>
     </dependencies>
-  
-  
-  
+
+
 </project>
 

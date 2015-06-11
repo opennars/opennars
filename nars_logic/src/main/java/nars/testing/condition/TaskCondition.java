@@ -1,8 +1,9 @@
 package nars.testing.condition;
 
 
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.databind.ser.std.RawSerializer;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
@@ -26,7 +27,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final Class channel;
     //@Expose
 
+    @JsonSerialize(using= JSONOutput.TermSerializer.class)
     public final Term term;
+
     //@Expose
     public final char punc;
 

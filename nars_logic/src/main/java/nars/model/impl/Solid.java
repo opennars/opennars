@@ -4,8 +4,8 @@ import nars.Memory;
 import nars.NAR;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
+import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
@@ -91,11 +91,11 @@ public class Solid extends Default implements ControlCycle {
 
         subcon = new GuavaCacheBag(maxSubConcepts);
 
-        concepts = new CurveBag(rng, maxConcepts, true);
+        //concepts = new CurveBag(rng, maxConcepts, true);
         //concepts = new ChainBag(rng, maxConcepts);
         //concepts = new BubbleBag(rng, maxConcepts);
         //concepts = new HeapBag(rng, maxConcepts);
-        //concepts = new LevelBag(100, maxConcepts);
+        concepts = new LevelBag(100, maxConcepts);
     }
 
     @Override

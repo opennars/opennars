@@ -19,11 +19,16 @@ package nars.io;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.RawSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.customProperties.HyperSchemaFactoryWrapper;
+import nars.Memory;
 import nars.nal.term.Term;
 
 import java.io.IOException;
@@ -32,6 +37,7 @@ import java.io.OutputStream;
 /**
  *
  * http://wiki.fasterxml.com/JacksonJsonSchemaGeneration
+ * https://github.com/FasterXML/jackson-module-jsonSchema*
  */
 public class JSONOutput  {
 
@@ -84,11 +90,31 @@ public class JSONOutput  {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonMappingException {
 
+
+        ObjectMapper m = fieldMapper;
+
+        HyperSchemaFactoryWrapper visitor = new HyperSchemaFactoryWrapper();
+        //SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+        m.acceptJsonFormatVisitor(m.constructType(Memory.class), visitor);
+
+        JsonSchema jsonSchema = visitor.finalSchema();
+
+        System.out.println(stringFromFieldsPretty(jsonSchema));
 
     }
 
+
+
+    public static class TermSerializer extends RawSerializer {
+
+        public TermSerializer() {
+            super(Term.class);
+        }
+
+
+    }
 }
 //
 //    Gson gson;
