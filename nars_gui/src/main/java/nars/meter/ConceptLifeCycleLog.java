@@ -17,7 +17,7 @@ public class ConceptLifeCycleLog extends ConceptReaction {
     }
 
     public void printStat() {
-        int bagActive = memory.cycle.numConcepts();
+        int bagActive = memory.cycle.size();
         System.out.print(bagActive + "," + active + "-" + deleted + ":\t");
     }
 

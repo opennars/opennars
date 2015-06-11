@@ -34,7 +34,7 @@ abstract public class MapCacheBag<K, V extends Itemized<K>> extends CacheBag<K,V
     }
 
     @Override
-    public V take(K key) {
+    public V remove(K key) {
         return data.remove(key);
     }
 

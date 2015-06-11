@@ -56,7 +56,7 @@ public class QLAgentTest {
 
         if (conceptCapacity < 20) {
             //TODO ideally we want the capacity and max size to be equal, but for now it's 1 less than capacity
-            assertTrue(n.memory.cycle.numConcepts() + " concepts for capacity=" + conceptCapacity, Math.abs(conceptCapacity - n.memory.cycle.numConcepts()) <= 1);
+            assertTrue(n.memory.cycle.size() + " concepts for capacity=" + conceptCapacity, Math.abs(conceptCapacity - n.memory.cycle.size()) <= 1);
         }
         else {
 

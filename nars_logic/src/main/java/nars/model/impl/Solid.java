@@ -52,8 +52,15 @@ public class Solid extends Default implements ControlCycle {
             return memory;
         }
 
+        @Override
+        public void remember(Concept c) {
 
+        }
 
+        @Override
+        public void forget(Concept c) {
+
+        }
 
     };
 
@@ -113,6 +120,11 @@ public class Solid extends Default implements ControlCycle {
         throw new RuntimeException("not impl yet");
     }
 
+    @Override
+    public Memory getMemory() {
+        return memory;
+    }
+
 
     @Override
     public Iterator<Concept> iterator() {
@@ -129,7 +141,7 @@ public class Solid extends Default implements ControlCycle {
     }
 
     @Override
-    public int numConcepts() {
+    public int size() {
         return concepts.size();
     }
 
@@ -223,7 +235,7 @@ public class Solid extends Default implements ControlCycle {
     }
 
     @Override
-    public Concept concept(Term term) {
+    public Concept getActiveConcept(Term term) {
         return concepts.get(term);
     }
 

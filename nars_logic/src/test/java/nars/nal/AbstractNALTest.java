@@ -128,7 +128,7 @@ abstract public class AbstractNALTest extends TestCase {
         testCost.set(OutputCondition.cost(nar.requires));
         testSeed.set(seed);
         testTime.set( (((double)nanos)/1000.0) / (nar.time()) ); //in microseconds
-        testConcepts.hit(nar.memory.cycle.numConcepts());
+        testConcepts.hit(nar.memory.cycle.size());
 
         results.update(label);
 

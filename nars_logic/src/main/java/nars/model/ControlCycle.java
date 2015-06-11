@@ -18,7 +18,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     boolean addTask(Task t);
 
-    int numConcepts();
+    int size();
 
     public double conceptMass();
 
@@ -30,7 +30,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      * @param v percentage of bag size # of attempts to search before returning null
      */
     default Concept nextConcept(Predicate<Concept> pred, float v) {
-        int attempts = (int) Math.ceil(numConcepts() * v);
+        int attempts = (int) Math.ceil(size() * v);
         for (int i = 0; i < attempts; i++) {
             Concept c = nextConcept();
             if (pred.test(c)) return c;
@@ -38,6 +38,13 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
         return null;
     }
 
+
+    public Memory getMemory();
+
+    /** gets any concept, including forgotten */
+    default public Concept concept(Term t) {
+        return getMemory().concept(t);
+    }
 
     /** called once during the main memory cycle; 
      *  responsible for executing Memory's:
@@ -56,7 +63,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known */
-    public Concept concept(Term term);
+    public Concept getActiveConcept(Term term);
 
     /**
      * Creates and adds new concept to the memory.  May also be called 'cognize' because

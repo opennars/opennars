@@ -47,6 +47,10 @@ abstract public class ConceptWaveCore implements ControlCycle {
     @Override
     abstract public void cycle();
 
+    @Override
+    public Memory getMemory() {
+        return memory;
+    }
 
     @Override
     public void reset(Memory m, boolean delete) {
@@ -62,18 +66,18 @@ abstract public class ConceptWaveCore implements ControlCycle {
     }
 
     @Override
-    public Concept concept(Term term) {
+    public Concept getActiveConcept(Term term) {
         return concepts.get(term);
     }
 
     @Override
-    public int numConcepts() {
+    public int size() {
         return concepts.size();
     }
 
     @Override
     public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
-        Concept c = concept(term);
+        Concept c = getActiveConcept(term);
         if (c!=null) {
             //existing
             BudgetFunctions.activate(c.getBudget(), budget, BudgetFunctions.Activating.Max);

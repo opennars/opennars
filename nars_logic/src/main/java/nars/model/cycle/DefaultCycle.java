@@ -155,7 +155,7 @@ public class DefaultCycle extends SequentialCycle {
 
         if (task.isInput() || sentence.isQuest() || sentence.isGoal()
                 || sentence.isQuestion()
-                || (concept(sentence.term) != null)
+                || (memory.concept(sentence.term) != null)
                 ) {
 
             //it is a question/quest or a judgment for a concept which exists:

@@ -41,6 +41,15 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
         return concepts.mass();
     }
 
+    @Override
+    public void remember(Concept c) {
+        concepts.put(c);
+    }
+
+    @Override
+    public void forget(Concept c) {
+        concepts.remove(c.getTerm());
+    }
 
     protected static class DefaultConceptProcess extends ConceptProcess {
 
@@ -57,7 +66,7 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
     }
 
     @Override
-    public int numConcepts() {
+    public int size() {
         return concepts.size();
     }
 
@@ -103,13 +112,12 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
         return concepts.values();
     }
 
-    @Override
-    public Concept concept(final Term term) {
-        Concept c = concepts.get(term);
-        if (c == null) {
-            return index().get(term);
-        }
-        return c;
+
+
+
+    /** returns a concept that is in this active concept bag only */
+    @Override public Concept getActiveConcept(final Term term) {
+        return concepts.get(term);
     }
 
 //    /** @return true = deleted, false = forgotten */

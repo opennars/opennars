@@ -21,6 +21,7 @@
 package nars;
 
 import com.google.common.collect.Iterators;
+import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -401,6 +402,8 @@ public class Memory implements Serializable, AbstractStamper {
             if (concept != null) break;
         }
 
+        concepts.put(concept);
+
         return concept;
     }
 
@@ -462,8 +465,8 @@ public class Memory implements Serializable, AbstractStamper {
                 System.err.println("Concept " + c + " aready registered existing questions");
             }
 
-            if (questionConcepts.size() > cycle.numConcepts()) {
-                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + cycle.numConcepts());
+            if (questionConcepts.size() > cycle.size()) {
+                throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + cycle.size());
             }
         }
     }
@@ -603,8 +606,17 @@ public class Memory implements Serializable, AbstractStamper {
             return null;
 
         Concept c = cycle.conceptualize(budget, term, true);
-        if ((c == null) || (c.isDeleted()))
+        if (c == null)
             return null;
+        if ( c.isDeleted()) {
+            concepts.remove( c.getTerm() );
+            return null;
+        }
+
+        if (!c.isActive()) {
+            c.setState(Concept.State.Active);
+        }
+
 
         return c;
     }
@@ -914,8 +926,8 @@ public class Memory implements Serializable, AbstractStamper {
 
     public int numConcepts(boolean active, boolean inactive) {
         int total = 0;
-        if (active && !inactive) return cycle.numConcepts();
-        else if (!active && inactive) return concepts.size() - cycle.numConcepts();
+        if (active && !inactive) return cycle.size();
+        else if (!active && inactive) return concepts.size() - cycle.size();
         else if (active && inactive)
             return concepts.size();
         else

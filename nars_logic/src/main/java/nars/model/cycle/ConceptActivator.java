@@ -20,12 +20,13 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     private boolean createIfMissing;
     private long now;
 
-    /**
-     * last created
-     */
-    private Concept lastRememberance;
 
     abstract public Memory getMemory();
+
+    /** gets a concept from Memory, even if forgotten */
+    public Concept concept(Term t) {
+        return getMemory().concept(t);
+    }
 
     @Override
     public Concept updateItem(Concept c) {
@@ -52,90 +53,75 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return getMemory().getConcepts();
     }
 
-    @Override
-    public synchronized Concept newItem() {
-
-        lastRememberance = null;
-
-        boolean hasSubconcepts = (index() != null);
+    /** returns non-null if the Concept is available for entry into active
+     *  Concept bag. attempts to retrieve an existing concept from the index
+     *  first  otherwise it may attempt to create a new concept and at least
+     *  insert it into the index for potential later activation.
+     */
+    @Override public Concept newItem() {
 
         boolean belowThreshold = getPriority() <= getMemory().param.activeConceptThreshold.floatValue();
 
         //try remembering from subconscious if activation is sufficient
-        if (hasSubconcepts) {
-            Concept concept = index().take(getKey());
-            if (concept != null) {
-                if (concept.isDeleted())
-                    return null;
-
-                if (!belowThreshold) {
-                    //reactivate
-                    return concept;
-                } else {
-                    //remember but dont reactivate
-                    lastRememberance = concept;
-                    return null;
-                }
+        Concept concept = index().get(getKey());
+        if (concept != null) {
+            if (!belowThreshold) {
+                //reactivate
+                return concept;
+            } else {
+                //exists in subconcepts, but is below threshold to activate
+                return null;
             }
         }
 
         //create new concept, with the applied budget
-        if (createIfMissing)       {
-            if (!belowThreshold || (belowThreshold && hasSubconcepts)) {
+        if (createIfMissing) {
 
-                Concept concept = lastRememberance = getMemory().newConcept(/*(Budget)*/this, getKey());
+            //create it regardless, even if this returns null because it wasnt active enough
 
-                if (concept == null)
-                    throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
+            concept = getMemory().newConcept(/*(Budget)*/this, getKey());
 
-                if (belowThreshold && hasSubconcepts) {
-                    //attempt insert the latent concept into subconcepts but return null
-                    index().put(concept);
-                    return null;
-                } else
-                    return concept;
-            }
+            if (concept == null)
+                throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
+
+            if (!belowThreshold)
+                return concept;
         }
 
         return null;
     }
 
-    /**
-     * threshold priority for allowing a new concept into the main memory
-     */
-    public float getMinimumActivePriority() {
-        return 0f;
-    }
 
+    /** called when a Concept enters attention */
+    abstract public void remember(Concept c);
 
-    public void onRemoved(Concept c) {
+    /** called when a Concept leaves attention */
+    abstract public void forget(Concept c);
 
-    }
 
     @Override
     public void overflow(Concept c) {
-        onRemoved(c);
-
-        if (c.isActive())
+        if (c.isActive()) {
             c.setState(Concept.State.Forgotten);
+        }
+
+        forget(c);
     }
 
     public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
-        lastRememberance = null;
+
         set(term, budget, true, getMemory().time());
         Concept c = concepts.update(this);
+
         if (c != null) {
 
             if (!c.isActive())
                 c.setState(Concept.State.Active);
 
-        } else if (lastRememberance != null) {
-            //see if a concept was created but inserted into subconcepts
-            c = lastRememberance;
+            remember(c);
 
-            if (!c.isForgotten())
-                c.setState(Concept.State.Forgotten);
-
+        } else  {
+            return getMemory().concept(term);
         }
 
         return c;

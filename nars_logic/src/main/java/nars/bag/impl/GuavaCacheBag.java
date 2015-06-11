@@ -45,7 +45,7 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
     }
 
     @Override
-    public V take(K key) {
+    public V remove(K key) {
         V v = data.getIfPresent(key);
         if (v !=null) {
             data.invalidate(v);

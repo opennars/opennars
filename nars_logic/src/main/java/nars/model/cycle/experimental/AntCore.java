@@ -43,6 +43,8 @@ public class AntCore extends ConceptWaveCore {
         return 0;
     }
 
+
+
     public AntCore(int numAnts, float cycleSpeed, int maxConcepts) {
         super(maxConcepts);
                 
@@ -60,7 +62,6 @@ public class AntCore extends ConceptWaveCore {
         super.reset(m, delete);
         concepts.setTargetActivated((int) (ants.size() * 0.1f));
     }
-
     @Override
     public boolean addTask(Task t) {
         tasks.addLast(t);
@@ -149,7 +150,7 @@ public class AntCore extends ConceptWaveCore {
     public class Ant {
         
         TLink link = null;
-        Concept concept = null;
+        Concept c = null;
         
         boolean traverseTermLinks = true;
         boolean traverseTaskLinks = true;
@@ -175,10 +176,10 @@ public class AntCore extends ConceptWaveCore {
                 
         synchronized void goRandomConcept(List<Runnable> queue) {
 
-            if (concept!=null)
-                occupied.remove(concept.getTerm());
+            if (c !=null)
+                occupied.remove(c.getTerm());
 
-            concept = null;
+            c = null;
             link = null;
 
             //check if there are enough remaining concepts to transition to */
@@ -198,7 +199,7 @@ public class AntCore extends ConceptWaveCore {
                 if (c == null)
                     return;
 
-                if (c == concept) {
+                if (c == this.c) {
                     //no need to move to self
                 }
                 else {
@@ -223,7 +224,7 @@ public class AntCore extends ConceptWaveCore {
 
             occupied.put(c.getTerm(), this);
 
-            concept = c;
+            this.c = c;
 
         }
         
@@ -239,9 +240,9 @@ public class AntCore extends ConceptWaveCore {
             boolean l = inLink();
             
             
-            if ((c) && (concept!=null)) {
+            if ((c) && (this.c !=null)) {
                                
-                onConcept(concept, eta, queue);
+                onConcept(this.c, eta, queue);
                 
                 eta -= dt * speed;
                 
@@ -257,7 +258,7 @@ public class AntCore extends ConceptWaveCore {
                 eta -= dt * speed;
                 
                 if (eta < 0) {
-                    enterConcept(concept, queue);
+                    enterConcept(this.c, queue);
                 }
                 
             }
@@ -290,13 +291,13 @@ public class AntCore extends ConceptWaveCore {
                 
                 Concept t = null;
                 if (taskSentence!=null)
-                    t = concept(taskSentence.term);               
-                if ((t == null) || (t == concept)) {
+                    t = concept(taskSentence.term);
+                if ((t == null) || (t == c)) {
                     if (bestSolution!=null) {
                         t = concept(bestSolution.term);
                     }
                 }
-                if ((t == null) || (t == concept)) {
+                if ((t == null) || (t == c)) {
                     if (parentSentence!=null) {
                         t = concept(parentSentence.term);
                     }
@@ -319,17 +320,17 @@ public class AntCore extends ConceptWaveCore {
             }
             
             if ((traverseTermLinks) && (!traverseTaskLinks)) {
-                ii = concept.getTermLinks();
+                ii = c.getTermLinks();
             }
             else if ((!traverseTermLinks) && (traverseTaskLinks)) {
-                ii = concept.getTaskLinks();
+                ii = c.getTaskLinks();
             }
             else {
                 if (memory.random.nextInt() % 2 == 0) {
-                    ii = concept.getTermLinks();
+                    ii = c.getTermLinks();
                 }
                 else
-                    ii = concept.getTaskLinks();
+                    ii = c.getTaskLinks();
             }
             return (TLink)Item.selectRandomByPriority(memory, ii);
         }
@@ -353,9 +354,9 @@ public class AntCore extends ConceptWaveCore {
         */
         
         void enterConcept(Concept c, List<Runnable> queue) {
-            Concept previous = concept;
+            Concept previous = this.c;
             
-            concept = c;
+            this.c = c;
             
             if ((c == null) || ((!allowLoops) && previous.equals(c)))  {
                 goRandomConcept(queue);
@@ -363,7 +364,7 @@ public class AntCore extends ConceptWaveCore {
             }
                         
             //tlink remains the same
-            eta = concept.getPriority();     
+            eta = this.c.getPriority();
             onConcept(c, eta, queue);
         }
         
@@ -374,10 +375,10 @@ public class AntCore extends ConceptWaveCore {
             }
             else {
                 if (viaLink instanceof TermLink) {
-                    concept.getTermLinks().putBack((TermLink) viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
+                    c.getTermLinks().putBack((TermLink) viaLink, memory.param.cycles(memory.param.termLinkForgetDurations), memory);
                 }
                 else if (viaLink instanceof TaskLink) {
-                    concept.getTaskLinks().putBack((TaskLink) viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
+                    c.getTaskLinks().putBack((TaskLink) viaLink, memory.param.cycles(memory.param.taskLinkForgetDurations), memory);
                 }
 
                 eta = viaLink.getPriority();
@@ -401,27 +402,27 @@ public class AntCore extends ConceptWaveCore {
         protected synchronized Concept goNextConcept(Termed x, Budget delivery) {
 
             Term ct = x.getTerm();
-            if (concept!=null)
-                occupied.remove(concept.getTerm());
+            if (c !=null)
+                occupied.remove(c.getTerm());
 
             if (occupied.containsKey(ct)) {
-                return concept = null;
+                return c = null;
             }
 
             Concept nextC = conceptualize(delivery, ct, false);
             if (nextC == null)
-                return concept = null;
+                return c = null;
 
             occupied.put(nextC.getTerm(), this);
 
-            return concept = nextC;
+            return c = nextC;
         }
 
         @Override
         public String toString() {
             return "   {" + 
                     (link!=null ? ((Item)link).name() : null)  + " <<< " + 
-                    (concept!=null ? concept.name() : null) +
+                    (c !=null ? c.name() : null) +
                     " | " + eta + ' ' + (inConcept() ? "concept" : (inLink() ? "tlink" : "")) + '}';
         }
 

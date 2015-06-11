@@ -28,30 +28,30 @@ public class CacheBagTest {
         n.input("$0$ <a --> b>.");
         n.frame();
 
-        DefaultCycle con = ((DefaultCycle) n.memory.cycle);
-        CacheBag<Term, Concept> subcon = ((DefaultCycle) n.memory.cycle).index();
+        DefaultCycle active = ((DefaultCycle) n.memory.cycle);
+        CacheBag<Term, Concept> all = ((DefaultCycle) n.memory.cycle).index();
 
 
-        assertEquals(3, subcon.size());
-        assertEquals("[a, <a --> b>, b]", Iterators.toString(subcon.iterator()) );
+        assertEquals(3, all.size());
+        assertEquals("[a, <a --> b>, b]", Iterators.toString(all.iterator()) );
 
-        assertEquals(0, con.numConcepts());
+        assertEquals(0, active.size());
 
         n.input("<b --> c>.");
         n.frame(); //input TaskProcess
         n.frame(); //next cycle: Conceputalization
 
-        assertEquals(3, con.numConcepts());
+        assertEquals(3, active.size());
 
         n.frame();
         n.frame();
 
         assertTrue("active input has activated forgotten knowledge",
-                3 < ((DefaultCycle) n.memory.cycle).numConcepts());
+                3 < ((DefaultCycle) n.memory.cycle).size());
 
-        System.out.println(Iterators.toString(con.iterator()));
-        System.out.println(Iterators.toString(subcon.iterator()));
-
+        System.out.println(Iterators.toString(active.iterator()));
+        System.out.println(Iterators.toString(all.iterator()));
+        assertTrue(all.size() >= active.size());
 
     }
 }
