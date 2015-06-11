@@ -21,6 +21,13 @@
 package nars.nal.term;
 
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializable;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Symbols;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
@@ -32,7 +39,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 
-public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable {
+public interface Term extends Cloneable, Comparable, Identified, Termed, Serializable, JsonSerializable {
 
 
     default Term getTerm() {
@@ -195,6 +202,16 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
     default public StringBuilder toStringBuilder(boolean pretty) {
         return name().toStringBuilder(pretty);
+    }
+
+    @Override
+    default void serialize(JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+        jgen.writeString(toString());
+    }
+
+    @Override
+    default void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException, JsonProcessingException {
+        jgen.writeString(toString());
     }
 
 }

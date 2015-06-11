@@ -81,7 +81,7 @@ public class Contraposition extends ConceptFireTask {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
 
-        return nal.singlePremiseTask(content, sentence.punctuation, truth, budget);
+        return nal.deriveSingle(content, sentence.punctuation, truth, budget);
     }
 
 

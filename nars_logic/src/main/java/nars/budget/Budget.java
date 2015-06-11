@@ -65,7 +65,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     protected float quality;
 
     /** time at which this budget was last forgotten, for calculating accurate memory decay rates */
-    long lastForgetTime = -1;
+    transient long lastForgetTime = -1;
 
     public Budget(char punctuation, Truth qualityFromTruth) {
         this(punctuation == Symbols.JUDGMENT ? Global.DEFAULT_JUDGMENT_PRIORITY :

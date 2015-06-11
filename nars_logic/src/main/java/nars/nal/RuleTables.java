@@ -21,11 +21,9 @@
 package nars.nal;
 
 import nars.Global;
-import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
@@ -34,7 +32,6 @@ import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -44,9 +41,7 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import static nars.Symbols.*;
 
@@ -332,16 +327,16 @@ public class RuleTables {
 
             if(goalterm!=null && (goalterm instanceof Compound) && !goalterm.hasVarIndep()) {
                 Truth truth=new DefaultTruth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
-                nal.singlePremiseTask((Compound) goalterm, Symbols.GOAL, truth,
-                        new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL, BudgetFunctions.truthToQuality(truth)),
-                        nal.newStamp(task.sentence,nal.memory.time())
+                nal.deriveSingle((Compound) goalterm, Symbols.GOAL, truth,
+                        new Budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, BudgetFunctions.truthToQuality(truth)),
+                        nal.newStamp(task.sentence, nal.memory.time())
                 );
             }
             if(goalterm2!=null && (goalterm2 instanceof Compound) && !goalterm2.hasVarIndep()) {
                 Truth truth=new DefaultTruth(1.0f, Global.DEFAULT_GOAL_CONFIDENCE*Global.CURIOSITY_DESIRE_CONFIDENCE_MUL);
-                nal.singlePremiseTask((Compound) goalterm2, Symbols.GOAL, truth,
-                        new Budget(task.getPriority()*Global.CURIOSITY_DESIRE_PRIORITY_MUL,task.getDurability()*Global.CURIOSITY_DESIRE_DURABILITY_MUL,BudgetFunctions.truthToQuality(truth)),
-                        nal.newStamp(task.sentence,nal.memory.time())
+                nal.deriveSingle((Compound) goalterm2, Symbols.GOAL, truth,
+                        new Budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, BudgetFunctions.truthToQuality(truth)),
+                        nal.newStamp(task.sentence, nal.memory.time())
                 );
             }
         }

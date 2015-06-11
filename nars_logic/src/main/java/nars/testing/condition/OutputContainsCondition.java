@@ -6,12 +6,13 @@ package nars.testing.condition;
 
 import nars.Events;
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.io.Texts;
+import nars.io.out.TextOutput;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal8.ExecutionResult;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.TreeSet;
 public class OutputContainsCondition extends OutputCondition {
 
 
-    public static class SimilarOutput implements Comparable<SimilarOutput> {
+    public static class SimilarOutput implements Comparable<SimilarOutput>, Serializable {
         public final String signal;
 
         /** levenshtein text distance */
@@ -127,7 +128,6 @@ public class OutputContainsCondition extends OutputCondition {
         return (channel == Events.OUT.class) || (channel == Events.EXE.class) || (channel == Events.Answer.class);
     }
 
-    final StringBuilder buffer = new StringBuilder();
 
     public boolean cond(Class channel, Object signal) {
 
@@ -149,7 +149,9 @@ public class OutputContainsCondition extends OutputCondition {
                 Task t = null;
                 if (signal instanceof ExecutionResult)
                     t = ((ExecutionResult)signal).getTask();
-                
+
+                final StringBuilder buffer = new StringBuilder();
+
                 //o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
                 o = TextOutput.getOutputString(channel, signal, false, nar, buffer).toString();
 

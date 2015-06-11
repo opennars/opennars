@@ -106,7 +106,7 @@ public class PerceptionAccel extends NARReaction {
                     break;
                 }
                 Task current = eventbuffer.get(j);
-                for (long l : current.sentence.stamp.getEvidentialBase()) {
+                for (long l : current.sentence.getEvidentialBase()) {
                     evBase.add(l);
                 }
 
@@ -200,11 +200,12 @@ public class PerceptionAccel extends NARReaction {
 
             longest_result_derived_already = true;
 
-            Task T = nal.deriveTask(nal.newTask(C).judgment().truth(truth).stamp(st)
-                    .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
-                    .parent(task)
-                    .temporalInduct(!longest_result_derived_already)
-                    , false, false); //lets make the new event the parent task, and derive it
+            //lets make the new event the parent task, and derive it
+            Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth).stamp(st)
+                            .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
+                            .parent(task, newEvent)
+                            .temporalInduct(!longest_result_derived_already)
+            );
 
 
         }

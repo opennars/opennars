@@ -114,6 +114,10 @@ public abstract class NAL  implements Runnable {
         return deriveTask(task, revised, single, null, false);
     }
 
+    public Task deriveDouble(final TaskSeed task) {
+        return deriveTask( task, false, false);
+    }
+
     /** TEMPORARY ADAPTER FOR OLD API */
     @Deprecated public Task deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
         return deriveTask(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
@@ -132,6 +136,9 @@ public abstract class NAL  implements Runnable {
             throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
         }
 
+        if (single != !task.isDouble()) {
+            throw new RuntimeException((single ? "single" : "double") + " premise not consistent with Stamp on derived task: " + task);
+        }
 
         //its revision, of course its cyclic, apply evidental base policy
 
@@ -162,7 +169,7 @@ public abstract class NAL  implements Runnable {
 
 
         Task taskCreated;
-        if (null != (taskCreated = addNewTask(task, "Derived", false, revised, single, currentBelief, currentTask))) {
+        if (null != (taskCreated = addNewTask(task, "Derived", false, revised, single))) {
 
             memory.event.emit(Events.TaskDerive.class, taskCreated, revised, single, currentTask);
             memory.logic.TASK_DERIVED.hit();
@@ -192,20 +199,16 @@ public abstract class NAL  implements Runnable {
      *
      * if solution is false, it means it is a derivation
      */
-    protected Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single, @Deprecated Sentence currentBelief, @Deprecated Task currentTask) {
+    protected Task addNewTask(TaskSeed task, String reason, boolean solution, boolean revised, boolean single) {
 
         if (!nal(7) && !task.isEternal()) {
             throw new RuntimeException("Temporal task derived with non-temporal reasoning");
         }
 
         //use this NAL's instance defaults for the values because specific values were not substituted:
-        if (currentBelief == null)
-            currentBelief = getCurrentBelief();
-        if (currentTask == null)
-            currentTask = getCurrentTask();
 
 
-        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, currentBelief, currentTask);
+        String rejectionReason = reasoner.getDerivationRejection(this, task, solution, revised, single, getCurrentBelief(), getCurrentTask());
         if (rejectionReason != null) {
             memory.removed(task, rejectionReason);
             return null;
@@ -258,14 +261,17 @@ public abstract class NAL  implements Runnable {
      * @param newTruth       The truth value of the sentence in task
      * @param newBudget      The budget value in task
      */
-    public Task doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper newStamp, boolean temporalAdd, boolean allowOverlap) {
-        return doublePremiseTask(newTaskContent, newTruth, newBudget, newStamp, temporalAdd, getCurrentTask(), allowOverlap);
+    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, boolean temporalAdd, boolean allowOverlap) {
+        return deriveDouble(newTaskContent, newTruth, newBudget, stamp, temporalAdd, getCurrentTask(), allowOverlap);
     }
-    public Task doublePremiseTask(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
-        return doublePremiseTask(newTaskContent, parentTask.sentence.punctuation, newTruth, newBudget, stamp, temporalAdd, parentTask, allowOverlap);
+    public Task deriveDouble(Compound newTaskContent, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+        return deriveDouble(newTaskContent, parentTask.sentence.punctuation, newTruth, newBudget, stamp, temporalAdd, parentTask, allowOverlap);
     }
 
-    public Task doublePremiseTask(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+    public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp, final boolean temporalAdd, Task parentTask, boolean allowOverlap) {
+
+
+
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
             return null;
@@ -286,21 +292,18 @@ public abstract class NAL  implements Runnable {
                             //.temporalInduct(!temporalAdd)
                             .budget(newBudget);
 
-        return doublePremiseTask(task, temporalAdd, allowOverlap);
+        return deriveDouble(task, temporalAdd, allowOverlap);
     }
 
-    public Task doublePremiseTask(TaskSeed task, boolean temporalAdd, boolean allowOverlap) {
+    public Task deriveDouble(TaskSeed task, boolean temporalAdd, boolean allowOverlap) {
 
         final Task parentTask = task.getParentTask();
 
         Task derived;
 
-        try {
-            derived = deriveTask(task, false, false, parentTask, allowOverlap);
-        } catch (RuntimeException e) {
-            if (Global.DEBUG) throw e;
-            return null;
-        }
+
+        derived = deriveTask(task, false, false, parentTask, allowOverlap);
+
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (derived!=null && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
@@ -339,12 +342,12 @@ public abstract class NAL  implements Runnable {
      * @param newTruth   The truth value of the sentence in task
      * @param newBudget  The budget value in task
      */
-    public Task singlePremiseTask(Compound newContent, Truth newTruth, Budget newBudget) {
-        return singlePremiseTask(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
+    public Task deriveSingle(Compound newContent, Truth newTruth, Budget newBudget) {
+        return deriveSingle(newContent, getCurrentTask().sentence.punctuation, newTruth, newBudget);
     }
 
-    public Task singlePremiseTask(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
-        return singlePremiseTask(newContent, punctuation, newTruth, newBudget, null);
+    public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
+        return deriveSingle(newContent, punctuation, newTruth, newBudget, null);
     }
     /**
      * Shared final operations by all single-premise rules, called in
@@ -355,11 +358,11 @@ public abstract class NAL  implements Runnable {
      * @param newTruth    The truth value of the sentence in task
      * @param newBudget   The budget value in task
      */
-    public Task singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp) {
-        return singlePremiseTask(newContent, punctuation, newTruth, newBudget, null, 1f, 1f);
+    public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp) {
+        return deriveSingle(newContent, punctuation, newTruth, newBudget, null, 1f, 1f);
     }
 
-    public Task singlePremiseTask(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp, float priMult, float durMult) {
+    public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, Stamper stamp, float priMult, float durMult) {
         Task parentTask = getCurrentTask().getParentTask();
         if (parentTask != null) {
             if (parentTask.getTerm() == null) {
@@ -389,27 +392,19 @@ public abstract class NAL  implements Runnable {
         }
 
 
-        return singlePremiseTask(newTask(newContent)
+        return deriveSingle(newTask(newContent)
                 .punctuation(punctuation)
                 .truth(newTruth)
                 .budget(newBudget, priMult, durMult)
                 .stamp(stamp)
-                .parent(getCurrentTask()));
+                .parent(getCurrentTask(), getCurrentBelief()));
 
     }
 
-    public Task singlePremiseTask(TaskSeed t) {
+    public Task deriveSingle(TaskSeed t) {
         return deriveTask(t, false, true);
     }
 
-    @Deprecated public Task singlePremiseTask(Sentence newSentence, Task parentTask, Budget b) {
-        //newTask.sentence.setRevisible(getCurrentTask().sentence.isRevisible());
-        return deriveTask(newTask(newSentence).parent(parentTask).budget(b), false, true);
-    }
-
-    @Deprecated public Task singlePremiseTask(Sentence newSentence, Task parentTask) {
-        return singlePremiseTask(newSentence, parentTask, parentTask);
-    }
 
 
     public long time() {
@@ -528,7 +523,7 @@ public abstract class NAL  implements Runnable {
                         .parent(currentTask, parentBeliefTask.getParentBelief())
                         .solution(solutionBelief),
                         "Activated",
-                true, false, false, solutionBelief, currentTask);
+                true, false, false);
 
         //.reason(currentTask.getHistory())
     }

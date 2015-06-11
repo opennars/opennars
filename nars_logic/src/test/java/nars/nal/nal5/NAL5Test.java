@@ -113,13 +113,14 @@ public class NAL5Test extends JavaNALTest {
 
         long time = 15;
 
+        /*
         Global.DEBUG = true;
         Global.DEBUG_TRACE_EVENTS = true;
         Global.DEBUG_DERIVATION_STACKTRACES = true;
         Global.DEBUG_TASK_HISTORY = true;
-
         TextOutput.out(nar);
         new DerivationOutput(nar);
+        */
 
         nar.mustBelieve(time, "<robin --> swimmer>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can swim.");

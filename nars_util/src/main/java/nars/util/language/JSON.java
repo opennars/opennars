@@ -1,6 +1,12 @@
 package nars.util.language;
 
-import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,6 +19,11 @@ public class JSON {
     static com.fasterxml.jackson.jr.ob.JSON def =
             com.fasterxml.jackson.jr.ob.JSON.std.
                     with(com.fasterxml.jackson.jr.ob.JSON.Feature.WRITE_NULL_PROPERTIES);
+
+    static com.fasterxml.jackson.jr.ob.JSON unRef =
+            com.fasterxml.jackson.jr.ob.JSON.std.
+                    without(com.fasterxml.jackson.jr.ob.JSON.Feature.FORCE_REFLECTION_ACCESS);
+
 
 
 
@@ -42,6 +53,15 @@ public class JSON {
             return null;
         }
     }
+    public static String stringFromUnreflected(Object obj) {
+        try {
+            return unRef.asString(obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public static Map<String,Object> mapFrom(Object obj) {
         try {

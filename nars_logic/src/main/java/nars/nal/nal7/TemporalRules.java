@@ -25,7 +25,6 @@ import nars.budget.BudgetFunctions;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
-import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
@@ -456,23 +455,23 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if (!tooMuchTemporalStatements(statement11, inductionLimit)) {
-                Task t = nal.doublePremiseTask(statement11, truth1, budget1, stamp, true, subbedTask, false);
+                Task t = nal.deriveDouble(statement11, truth1, budget1, stamp, true, subbedTask, false);
             }
             if (!tooMuchTemporalStatements(statement22, inductionLimit)) {
-                Task t = nal.doublePremiseTask(statement22, truth2, budget2, stamp, true, subbedTask, false);
+                Task t = nal.deriveDouble(statement22, truth2, budget2, stamp, true, subbedTask, false);
             }
             if (!tooMuchTemporalStatements(statement33, inductionLimit)) {
-                Task t = nal.doublePremiseTask(statement33, truth3, budget3, stamp, true, subbedTask, false);
+                Task t = nal.deriveDouble(statement33, truth3, budget3, stamp, true, subbedTask, false);
             }
         }
         if (!tooMuchTemporalStatements(statement1, inductionLimit)) {
-            Task t = nal.doublePremiseTask(statement1, truth1, budget1, stamp, true, subbedTask, false);
+            Task t = nal.deriveDouble(statement1, truth1, budget1, stamp, true, subbedTask, false);
         }
         if (!tooMuchTemporalStatements(statement2, inductionLimit)) {
 
             /*  =/>  */
 
-            Task task = nal.doublePremiseTask(statement2, subbedTask.sentence.punctuation, truth2,
+            Task task = nal.deriveDouble(statement2, subbedTask.sentence.punctuation, truth2,
                     budget2, stamp, true, subbedTask, false);
 
             if (task!=null) {
@@ -501,7 +500,7 @@ public class TemporalRules {
 
         }
         if (!tooMuchTemporalStatements(statement3, inductionLimit)) {
-            nal.doublePremiseTask(statement3, truth3, budget3, stamp, true, subbedTask, false);
+            nal.deriveDouble(statement3, truth3, budget3, stamp, true, subbedTask, false);
         }
 
     }
@@ -560,7 +559,7 @@ public class TemporalRules {
                     if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                         shift=nal.memory.duration();
                     }
-                    occ = (strongest_desire.stamp.getOccurrenceTime()-shift);
+                    occ = (strongest_desire.getOccurrenceTime()-shift);
                 }
                 
 
@@ -571,7 +570,7 @@ public class TemporalRules {
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.doublePremiseTask(s2.term, Symbols.GOAL, T, val, nal.newStamp(belief, occ), false, strongest_desireT, true);
+                nal.deriveDouble(s2.term, Symbols.GOAL, T, val, nal.newStamp(belief, occ), false, strongest_desireT, true);
 
             }
         }
@@ -598,7 +597,7 @@ public class TemporalRules {
                 }
 
                 if(valid) {
-                    nal.singlePremiseTask(task.sentence.term, Symbols.QUESTION, null,
+                    nal.deriveSingle(task.sentence.term, Symbols.QUESTION, null,
                             null, nal.newStamp(task.sentence, nal.memory.time()),
                             Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL
                     );

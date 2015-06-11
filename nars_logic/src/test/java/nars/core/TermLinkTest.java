@@ -112,7 +112,7 @@ public class TermLinkTest {
         n.run(1);
 
         Set<String> tl = getTermLinks(n.concept("<a --> b>").getTermLinks());
-        assertEquals("[Da:a, Db:b]", tl.toString());
+        assertEquals("[Cb:b, Ca:a]", tl.toString());
     }
 
     @Test
@@ -131,11 +131,13 @@ public class TermLinkTest {
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").getTermLinks());
 
         assertTrue( 6 <= ainhb.size());
-        assertTrue(ainhb.contains("Da:a"));
-        assertTrue(ainhb.contains("Db:b"));
+        assertTrue(ainhb.contains("Ca:a"));
+        assertTrue(ainhb.contains("Cb:b"));
         //assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
 
-
+        Set<String> atl = getTermLinks(n.concept("a").getTermLinks());
+        System.out.println(ainhb);
+        System.out.println(atl);
 
 //        System.out.println();
 //
@@ -149,16 +151,16 @@ public class TermLinkTest {
 //
         Set<String> f = getTermLinks(n.concept("f").getTermLinks());
         assertEquals(1, f.size());
-        assertTrue(f.contains("Ea" + Symbols.TLinkSeparator + "<f --> <a --> b>>"));
+        assertTrue(f.contains("Da" + Symbols.TLinkSeparator + "<f --> <a --> b>>"));
 
 
         //this compound involving f has no incoming links, all links are internal
         Set<String> fc = getTermLinks(n.concept("<f --> <a --> b>>").getTermLinks());
         assertEquals(4, fc.size());
-        assertTrue(fc.contains("Da:f"));
-        assertTrue(fc.contains("Db:<a --> b>"));
-        assertTrue(fc.contains("Dba:a"));
-        assertTrue(fc.contains("Dbb:b"));
+        assertTrue(fc.contains("Ca:f"));
+        assertTrue(fc.contains("Cb:<a --> b>"));
+        assertTrue(fc.contains("Cba:a"));
+        assertTrue(fc.contains("Cbb:b"));
 
 
     }
@@ -177,20 +179,21 @@ public class TermLinkTest {
 
 
         NAR n = new NAR(new Default());
+
         n.input(c);
         n.input(d);
-        n.frame(8);
+        n.frame(12);
 
         TermLinkGraph g = new TermLinkGraph(n);
 
 
         ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
         int set = 0;
-        /*for (Set<Term> s : ci.connectedSets()) {
+        for (Set<Term> s : ci.connectedSets()) {
             for (Term v : s)
                 System.out.println(set + ": " + v);
             set++;
-        }*/
+        }
 
         assertTrue("termlinks between the two input concepts form a fully connected graph",
                 ci.isGraphConnected());
@@ -217,12 +220,12 @@ public class TermLinkTest {
 
         TermLinkGraph h = new TermLinkGraph().add(n.concept("{x}"), true);
         //System.out.println(h);
-        String baix = "Ba:x=({x},x)";
+        String baix = "Aa:x=({x},x)";
         assertTrue(h.toString() + " must contain " + baix, h.toString().contains(baix));
         TermLinkGraph i = new TermLinkGraph().add(n.concept("x"), true);
         //System.out.println(i);
 
-        assertTrue(i.toString(), i.toString().contains("Ca:{x}=(x,{x})"));
+        assertTrue(i.toString(), i.toString().contains("Ba:{x}=(x,{x})"));
 
     }
 

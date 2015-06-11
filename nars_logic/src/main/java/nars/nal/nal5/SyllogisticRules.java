@@ -99,8 +99,8 @@ public final class SyllogisticRules {
             return;
 
         final Stamper stamp = nal.newStamp(sentence, belief);
-        nal.doublePremiseTask(content1, truth1, budget1, stamp, false, false);
-        nal.doublePremiseTask(content2, truth2, budget2, stamp, false, false);
+        nal.deriveDouble(content1, truth1, budget1, stamp, false, false);
+        nal.deriveDouble(content2, truth2, budget2, stamp, false, false);
     }
 
     /**
@@ -162,19 +162,19 @@ public final class SyllogisticRules {
             {
                 Statement s = Statement.make(taskContent, term1, term2, order);
                 if (s != null)
-                    nal.doublePremiseTask(s, truth1, budget1, stamp, false, false);
+                    nal.deriveDouble(s, truth1, budget1, stamp, false, false);
             }
 
             {
                 Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
                 if (s != null)
-                    nal.doublePremiseTask(s, truth2, budget2, stamp, false, false);
+                    nal.deriveDouble(s, truth2, budget2, stamp, false, false);
             }
 
             {
                 Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
                 if (s != null)
-                    nal.doublePremiseTask(s, truth3, budget3, stamp, false, false);
+                    nal.deriveDouble(s, truth3, budget3, stamp, false, false);
             }
 
 
@@ -201,7 +201,7 @@ public final class SyllogisticRules {
                     truth2, budget2.clone(),false, false);*/
                 Statement s = Similarity.make(term1, term2);
                 if (s!=null)
-                    nal.doublePremiseTask(s, truth3, budget3, stamp, false, false);
+                    nal.deriveDouble(s, truth3, budget3, stamp, false, false);
             }
 
         }
@@ -268,7 +268,7 @@ public final class SyllogisticRules {
         Compound statement = Sentence.termOrNull(Statement.make(st, subj, pred, order));
         if (statement == null) return false;
 
-        nal.doublePremiseTask(statement, truth, budget,
+        nal.deriveDouble(statement, truth, budget,
                 nal.newStamp(asym, sym), false, true);
 
         nal.memory.logic.ANALOGY.hit();
@@ -326,7 +326,7 @@ public final class SyllogisticRules {
 
         Statement s = Statement.make(eitherHigherOrder ? NALOperator.EQUIVALENCE : NALOperator.SIMILARITY, term1, term2, true, order);
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
-        boolean s1 = null!=nal.doublePremiseTask(s, truth, budget, sb, false, true), s2 = false;
+        boolean s1 = null!=nal.deriveDouble(s, truth, budget, sb, false, true), s2 = false;
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
 
         if (Global.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) &&
@@ -375,7 +375,7 @@ public final class SyllogisticRules {
             nal.doublePremiseTask(
                 Statement.make(NativeOperator.INHERITANCE, term2, term1),
                     truth2, budget2.clone(),false, false);*/
-            s2 = null!=nal.doublePremiseTask(
+            s2 = null!=nal.deriveDouble(
                     Statement.make(NALOperator.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
                     truth3, budget3.clone(), sb, false, false);
 
@@ -503,7 +503,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.doublePremiseTask(content, truth, budget,
+            nal.deriveDouble(content, truth, budget,
                     st,
                     false, strong);
         }
@@ -669,7 +669,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        return nal.doublePremiseTask((Compound)content, truth, budget,
+        return nal.deriveDouble((Compound) content, truth, budget,
                 sb, false, deduction);
     }
 
@@ -777,7 +777,7 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        nal.doublePremiseTask(content, truth, budget, nal.newStamp(taskSentence, belief), false, !conditionalTask);
+        nal.deriveDouble(content, truth, budget, nal.newStamp(taskSentence, belief), false, !conditionalTask);
 
         return true;
     }
@@ -857,7 +857,7 @@ public final class SyllogisticRules {
                     budget = BudgetFunctions.forward(truth, nal);
                 }
 
-                nal.doublePremiseTask((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
+                nal.deriveDouble((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
             }
         }
         
@@ -886,7 +886,7 @@ public final class SyllogisticRules {
                     }
                     budget = BudgetFunctions.forward(truth, nal);
                 }
-                nal.doublePremiseTask((Compound)content, truth, budget, nal.newStamp(sentence, belief), false, false);
+                nal.deriveDouble((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
             }
         }
         
@@ -925,6 +925,6 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.doublePremiseTask((Compound)content, truth, budget, nal.newStamp(sentence, belief), false, false);
+        nal.deriveDouble((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
     }
 }

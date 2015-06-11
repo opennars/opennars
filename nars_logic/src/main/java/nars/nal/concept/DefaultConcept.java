@@ -577,7 +577,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     ).budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
             for(Compound q : qu)
-              nal.singlePremiseTask( t.term(q) );
+              nal.deriveSingle(t.term(q));
         }
     }
 
@@ -1049,7 +1049,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     public static float rankBeliefOriginal(final Sentence judg) {
         final float confidence = judg.truth.getConfidence();
-        final float originality = judg.stamp.getOriginality();
+        final float originality = judg.getOriginality();
         return or(confidence, originality);
     }
 

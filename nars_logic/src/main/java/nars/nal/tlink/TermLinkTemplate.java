@@ -1,5 +1,6 @@
 package nars.nal.tlink;
 
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -132,7 +133,7 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
 
     public Identifier newKey(final boolean in) {
         //TODO try ConcatenatedBytesIdent
-        return new LiteralUTF8Identifier( term(in).bytes(), prefix(in));
+        return new LiteralUTF8Identifier( prefix(in), ((byte) Symbols.TLinkSeparator), term(in).bytes() );
     }
 
     public Identifier key(final boolean in) {

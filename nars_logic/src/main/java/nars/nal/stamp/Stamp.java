@@ -695,6 +695,13 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
     }
 
     static boolean isCyclic(final long[] eb, long[] es) {
+        if (eb == null) {
+            throw new RuntimeException("evidentialBase null");
+        }
+        if (es == null) {
+            throw new RuntimeException("evidentialSet null");
+        }
+
         //if the evidential set contains duplicates, it will be of a smaller size then the original evidence
         return es.length != eb.length;
 

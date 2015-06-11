@@ -183,7 +183,7 @@ public class TransformTask extends ConceptFireTask {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
 
-        nal.singlePremiseTask(content, truth, budget);
+        nal.deriveSingle(content, truth, budget);
     }
 
     /**
@@ -213,7 +213,7 @@ public class TransformTask extends ConceptFireTask {
                     } else {
                         budget = BudgetFunctions.compoundForward(truth, inheritance, nal);
                     }
-                    nal.singlePremiseTask(inheritance, truth, budget);
+                    nal.deriveSingle(inheritance, truth, budget);
                 }
             }
         } else if (subject instanceof ImageInt) {
@@ -235,7 +235,7 @@ public class TransformTask extends ConceptFireTask {
                     } else {
                         budget = BudgetFunctions.compoundForward(truth, inheritance, nal);
                     }
-                    nal.singlePremiseTask(inheritance, truth, budget);
+                    nal.deriveSingle(inheritance, truth, budget);
                 }
             }
         }
@@ -268,7 +268,7 @@ public class TransformTask extends ConceptFireTask {
                     } else {
                         budget = BudgetFunctions.compoundForward(truth, inheritance, nal);
                     }
-                    nal.singlePremiseTask(inheritance, truth, budget);
+                    nal.deriveSingle(inheritance, truth, budget);
                 }
             }
         } else if (predicate instanceof ImageExt) {
@@ -289,7 +289,7 @@ public class TransformTask extends ConceptFireTask {
                     } else {
                         budget = BudgetFunctions.compoundForward(truth, inheritance, nal);
                     }
-                    nal.singlePremiseTask(inheritance, truth, budget);
+                    nal.deriveSingle(inheritance, truth, budget);
                 }
             }
         }

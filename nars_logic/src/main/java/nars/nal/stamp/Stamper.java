@@ -2,6 +2,7 @@ package nars.nal.stamp;
 
 import nars.Memory;
 import nars.budget.DirectBudget;
+import nars.io.JSONOutput;
 import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.Tense;
@@ -13,12 +14,12 @@ import nars.nal.term.Compound;
  */
 public class Stamper<C extends Compound> extends DirectBudget implements Stamp, StampEvidence, AbstractStamper {
 
-    private long[] evidentialBase = null;
+    protected long[] evidentialBase = null;
 
-    private int duration;
-    private long creationTime = Stamp.UNPERCEIVED;
+    protected int duration;
+    protected long creationTime = Stamp.UNPERCEIVED;
 
-    private long occurrenceTime;
+    protected long occurrenceTime;
 
 //    /**
 //     * used when the occurrence time cannot be estimated, means "unknown"
@@ -26,9 +27,9 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     //public static final long UNKNOWN = Integer.MAX_VALUE;
 
 
-    private Stamp a = null;
+    protected Stamp a = null;
 
-    private Stamp b = null;
+    protected Stamp b = null;
 
     private long[] evidentialSetCached;
 
@@ -132,6 +133,13 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
     @Override public void applyToStamp(final Stamp target) {
 
+        if (target instanceof Stamper) {
+            //HACK special handling when target is Stamper: include A and B reference
+            Stamper s = (Stamper)target;
+            s.setA(getA());
+            s.setB(getB());
+        }
+
         target.setDuration(getDuration())
               .setTime(getCreationTime(), getOccurrenceTime())
               .setEvidence(getEvidentialBase(), getEvidentialSetCached());
@@ -182,7 +190,11 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     @Override
     public long[] getEvidentialSet() {
         updateEvidence();
-        return getEvidentialSetCached();
+        long[] es = getEvidentialSetCached();
+        if (es == null) {
+            this.evidentialSetCached = es = Stamp.toSetArray(getEvidentialBase());
+        }
+        return es;
     }
 
     /**
@@ -203,11 +215,10 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
                 this.evidentialBase = (Stamp.zip(getA().getEvidentialBase(), getB().getEvidentialBase()));
             }
             else {
+                //Single premise
+
                 Stamp p = null; //parent to inherit some properties from
-                if (getA() == null) {
-                    p = getB();
-                    throw new RuntimeException("A parentTask for " + this + " is null");
-                }
+                if (getA() == null) p = getB();
                 else if (getB() == null) p = getA();
 
                 if (p!=null) {
@@ -219,6 +230,18 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         }
     }
 
+
+    @Override
+    public String toString() {
+        try {
+            return JSONOutput.stringFromFields(this);
+        }
+        catch (StackOverflowError e) {
+            e.printStackTrace();
+            //TODO prevent this
+            return getClass().getSimpleName() + "[JSON_Error]";
+        }
+    }
 
     public boolean isEternal() {
         return getOccurrenceTime() == Stamp.ETERNAL;
@@ -233,6 +256,8 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     public Stamp setA(Stamp a) {
+        if (a == this)
+            throw new RuntimeException("Circular parent stamp");
         this.a = a;
         return this;
     }
@@ -245,6 +270,8 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     public Stamp setB(Stamp b) {
+        if (b == this)
+            throw new RuntimeException("Circular parent stamp");
         this.b = b; return this;
     }
 
@@ -252,9 +279,6 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         return evidentialSetCached;
     }
 
-    public void setEvidentialSetCached(long[] evidentialSetCached) {
-        this.evidentialSetCached = evidentialSetCached;
-    }
 
     public boolean isDouble() {
         return this.a!=null & this.b!=null;

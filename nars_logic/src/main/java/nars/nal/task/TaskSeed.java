@@ -23,7 +23,7 @@ import java.util.Arrays;
  */
 public class TaskSeed<T extends Compound> extends Stamper<T> implements AbstractStamper {
 
-    public final Memory memory;
+    transient public final Memory memory;
 
 
     private T term;
@@ -241,10 +241,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         t.applyToStamp(this);
     }
 
-    public TaskSeed<T> evidence(long[] evidentialBase) {
-        this.setEvidentialBase(evidentialBase);
-        return this;
-    }
 
     public TaskSeed<T> duration(int duration) {
         this.setDuration(duration);
@@ -387,6 +383,10 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
 
+    public TaskSeed<T> parent(Task parentTask, Task parentBeliefTask) {
+        return parent(parentTask, parentBeliefTask.sentence);
+    }
+
     public TaskSeed<T> parent(Task parentTask, Sentence<?> parentBelief) {
         return parent(parentTask).parent(parentBelief);
     }
@@ -464,7 +464,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
     }
 
-    public TaskSeed<T> evidence(Stamp a, Stamp b) {
+    public TaskSeed<T> stamp(Stamp a, Stamp b) {
         setA(a);
         setB(b);
         return this;

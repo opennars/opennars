@@ -189,7 +189,7 @@ public abstract class OutputCondition extends NARReaction {
     }
     
     /** if false, a reported rule why this condition is false */
-    public abstract String getFalseReason();
+    public abstract Object getFalseReason();
 
     /** if true, when it became true */
     public long getTrueTime() {

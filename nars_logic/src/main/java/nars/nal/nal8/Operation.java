@@ -49,7 +49,8 @@ import java.util.Arrays;
 public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> {
 
     private final Product arg;
-    private Task<Operation<T>> task; //this is set automatically prior to executing
+
+    transient private Task<Operation<T>> task; //this is set automatically prior to executing
 
 
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };

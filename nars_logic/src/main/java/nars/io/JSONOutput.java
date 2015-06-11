@@ -16,15 +16,38 @@
  */
 package nars.io;
 
-import nars.NAR;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import nars.nal.term.Term;
 
-import java.io.PrintStream;
+import java.io.IOException;
 
 /**
  *
  * @author me
  */
-//public class JSONOutput extends TextOutput {
+public class JSONOutput  {
+
+    static final ObjectMapper fieldMapper = new ObjectMapper()
+            .enableDefaultTyping()
+            .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
+            .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
+
+
+
+    public static String stringFromFields(Object obj) {
+        try {
+            return fieldMapper.writeValueAsString(obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+}
 //
 //    Gson gson;
 //

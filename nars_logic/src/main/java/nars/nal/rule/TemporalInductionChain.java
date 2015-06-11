@@ -166,7 +166,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
                 Budget budget = BudgetFunctions.compoundForward(truth,whole, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
 
-                return nal.doublePremiseTask(
+                return nal.deriveDouble(
                         nal.newTask(whole).truth(truth).budget(budget).stamp(nal.newStamp(s1, s2)),
                         true, false);
             }

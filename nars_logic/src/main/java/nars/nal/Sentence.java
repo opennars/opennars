@@ -20,6 +20,8 @@
  */
 package nars.nal;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.google.common.hash.PrimitiveSink;
 import nars.Global;
 import nars.Memory;
@@ -32,7 +34,6 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.*;
 import nars.nal.term.transform.TermVisitor;
 import nars.util.data.Util;
@@ -47,6 +48,7 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
+@JsonSerialize(using = ToStringSerializer.class)
 public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
 
 
@@ -87,7 +89,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
      * caches evidentialBase as a set for comparisons and hashcode.
      * stores the unique Long's in-order for efficiency
      */
-    private long[] evidentialSet = null;
+    transient private long[] evidentialSet = null;
 
 
     private long creationTime = Stamp.UNPERCEIVED;
@@ -96,7 +98,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
     private int duration = 0;
 
-    @Deprecated public final Stamp stamp = this;
 
 
     public Sentence(Term invalidTerm, char punctuation, Truth newTruth, AbstractStamper newStamp) {

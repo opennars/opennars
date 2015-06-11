@@ -92,11 +92,10 @@ public class EmotionMeter implements Serializable {
                             nal.newStampNow(task));
 
 
-                    nal.deriveTask(
+                    nal.deriveSingle(
                             nal.newTask(s2).budget(
                                     Global.DEFAULT_GOAL_PRIORITY,Global.DEFAULT_GOAL_DURABILITY,BudgetFunctions.truthToQuality(truth2)
-                            ).parent(task).reason("metagoal"),
-                            false, true
+                            ).parent(task).reason("metagoal")
                     );
 
                     //this is a good candidate for innate belief for consider and remind:
@@ -109,11 +108,10 @@ public class EmotionMeter implements Serializable {
                         //means it has good chance to be considered after
                         for(Operation o : new Operation[] { op_remind, op_consider }) {
 
-                            nal.deriveTask(
+                            nal.deriveSingle(
                                     nal.newTask(o).parent(task).judgment().present().truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                                             .budgetScaled(InternalExperience.INTERNAL_EXPERIENCE_PRIORITY_MUL, InternalExperience.INTERNAL_EXPERIENCE_DURABILITY_MUL)
-                                            .reason("internal experience for consider and remind"),
-                                    false, true
+                                            .reason("internal experience for consider and remind")
                             );
                         }
                     }
@@ -147,10 +145,10 @@ public class EmotionMeter implements Serializable {
                 Sentence s=new Sentence(inh,Symbols.JUDGMENT,truth,
                         nal.newStampNow(cause));
 
-                nal.deriveTask(
+                nal.deriveSingle(
                         nal.newTask(s).budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(truth)).
-                        parent(cause).reason("emotion"),
-                        false, true);
+                        parent(cause).reason("emotion"));
+
             }
         }
         lastbusy=busy;

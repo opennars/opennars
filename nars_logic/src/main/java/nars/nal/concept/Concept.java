@@ -99,7 +99,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
             TaskSeed projectedBelief = belief.projection(nal.memory, occurrenceTime, now);
 
             if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
-                belief = nal.singlePremiseTask(projectedBelief); // return the first satisfying belief
+                belief = nal.deriveSingle(projectedBelief); // return the first satisfying belief
             }
 
             return belief;

@@ -37,6 +37,15 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         System.arraycopy(prefix, 0, data, 0, plen);
         System.arraycopy(suffix, 0, data, plen, slen);
     }
+    public LiteralUTF8Identifier(final byte[] prefix, byte separator, final byte[] suffix) {
+        int plen = prefix.length;
+        int slen = suffix.length;
+        int len = plen + slen + 1;
+        this.data = new byte[len];
+        System.arraycopy(prefix, 0, data, 0, plen);
+        data[plen] = separator;
+        System.arraycopy(suffix, 0, data, plen+1, slen);
+    }
 
     public LiteralUTF8Identifier(String s) {
         this(Utf8.toUtf8(s));

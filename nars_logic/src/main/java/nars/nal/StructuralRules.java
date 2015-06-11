@@ -102,7 +102,7 @@ public final class StructuralRules {
         Sentence sentence = nal.getCurrentTask().sentence;
         Truth truth = TruthFunctions.deduction(sentence.truth, nal.memory.param.reliance.floatValue());
         Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.singlePremiseTask(content, truth, budget);
+        nal.deriveSingle(content, truth, budget);
     }
 
     /**
@@ -152,7 +152,7 @@ public final class StructuralRules {
         } else {
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.singlePremiseTask(content, truth, budget);
+        nal.deriveSingle(content, truth, budget);
     }
 
     /**
@@ -292,7 +292,7 @@ public final class StructuralRules {
             Statement content = Statement.make((Statement) oldContent, subject, predicate, order);
             if (content != null) {
                 Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
-                nal.singlePremiseTask(content, truth, budget);
+                nal.deriveSingle(content, truth, budget);
             }
         }
     }
@@ -340,7 +340,7 @@ public final class StructuralRules {
         } else {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
-        nal.singlePremiseTask(content, truth, budget);
+        nal.deriveSingle(content, truth, budget);
     }
 
 
@@ -403,7 +403,7 @@ public final class StructuralRules {
         }
 
         if (content instanceof Compound)
-            return nal.singlePremiseTask((Compound)content, truth, budget);
+            return nal.deriveSingle((Compound) content, truth, budget);
         else
             return null;
     }
@@ -429,7 +429,7 @@ public final class StructuralRules {
             budget = BudgetFunctions.compoundBackward(content, nal);
         }
 
-        return nal.singlePremiseTask(content, truth, budget);
+        return nal.deriveSingle(content, truth, budget);
     }
 
 }

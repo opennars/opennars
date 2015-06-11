@@ -278,7 +278,7 @@ public class LocalRules {
         
         Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
-        nal.doublePremiseTask(content, truth, budget,
+        nal.deriveDouble(content, truth, budget,
                 nal.newStamp(asym, sym),
                 false, false);
     }
@@ -345,7 +345,7 @@ public class LocalRules {
         }
         
         if (content != null)
-            nal.singlePremiseTask(content, Symbols.JUDGMENT, newTruth, newBudget);
+            nal.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
     }
 
     
