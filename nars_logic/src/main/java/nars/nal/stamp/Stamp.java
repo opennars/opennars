@@ -688,7 +688,7 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             case 1:
                 return false;
             case 2:
-                return eb[0] != eb[1];
+                return eb[0] == eb[1];
             default:
                 return isCyclic(eb, x.getEvidentialSet());
         }

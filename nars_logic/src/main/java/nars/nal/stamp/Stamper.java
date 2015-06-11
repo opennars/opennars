@@ -195,23 +195,27 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
     protected void updateEvidence() {
         if (evidentialBase == null) {
-            Stamp p = null; //parent to inherit some properties from
 
             if ((getA() == null) && (getB() == null)) {
-                //will be assigned a new serial
-            } else if ((getA() != null) && (getB() != null)) {
-                //evidentialBase = Stamp.zip(a.getEvidentialSet(), b.getEvidentialSet());
-                setEvidentialBase(Stamp.zip(getA().getEvidentialBase(), getB().getEvidentialBase()));
-                p = getA();
+                //supplying no evidence will be assigned a new serial
+                //but this should only happen for input tasks (with no parent)
+            } else if (isDouble()) {
+                this.evidentialBase = (Stamp.zip(getA().getEvidentialBase(), getB().getEvidentialBase()));
             }
-            else if (getA() == null) p = getB();
-            else if (getB() == null) p = getA();
+            else {
+                Stamp p = null; //parent to inherit some properties from
+                if (getA() == null) {
+                    p = getB();
+                    throw new RuntimeException("A parentTask for " + this + " is null");
+                }
+                else if (getB() == null) p = getA();
 
-
-            if (p!=null) {
-                this.setEvidentialBase(p.getEvidentialBase());
-                this.setEvidentialSetCached(p.getEvidentialSet());
+                if (p!=null) {
+                    this.evidentialBase = (p.getEvidentialBase());
+                    this.evidentialSetCached = (p.getEvidentialSet());
+                }
             }
+
         }
     }
 
@@ -250,5 +254,9 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
     public void setEvidentialSetCached(long[] evidentialSetCached) {
         this.evidentialSetCached = evidentialSetCached;
+    }
+
+    public boolean isDouble() {
+        return this.a!=null & this.b!=null;
     }
 }

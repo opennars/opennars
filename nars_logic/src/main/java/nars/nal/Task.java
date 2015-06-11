@@ -487,7 +487,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     /** optional list of strings explaining the reasons that make up this task's [hi-]story.
      *  useful for debugging but can also be applied to meta-analysis */
     public void addHistory(String reason) {
-        if (!Global.TASK_HISTORY)
+        if (!Global.DEBUG_TASK_HISTORY)
             return;
 
         //TODO parameter for max history length, although task history should not grow after they are crystallized with a concept
@@ -521,7 +521,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     public Task addHistory(List<String> historyToCopy) {
-        if (!Global.TASK_HISTORY)
+        if (!Global.DEBUG_TASK_HISTORY)
             return this;
 
         if (historyToCopy!=null) {

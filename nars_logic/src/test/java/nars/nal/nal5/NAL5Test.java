@@ -1,11 +1,17 @@
 package nars.nal.nal5;
 
+import nars.Events;
+import nars.Global;
+import nars.NAR;
+import nars.NARSeed;
+import nars.event.NARReaction;
+import nars.io.out.TextOutput;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
-import nars.NARSeed;
-import nars.narsese.InvalidInputException;
-import nars.nal.JavaNALTest;
 import nars.model.impl.DefaultMicro;
+import nars.nal.JavaNALTest;
+import nars.nal.Task;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -36,7 +42,7 @@ public class NAL5Test extends JavaNALTest {
 
     @Test public void deriveFromConjunctionComponents() {
         nar.believe("(&&,<a --> b>,<b-->a>)", Eternal, 1.0f, 0.9f);
-        nar.mustBelieve(35, "<a <-> b>", 1.0f, 0.66f);
+        nar.mustBelieve(70, "<a <-> b>", 1.0f, 0.66f);
         nar.run();
     }
 
@@ -92,7 +98,28 @@ public class NAL5Test extends JavaNALTest {
 
         */
 
-        long time = 500;
+        /*
+
+        1.6.4 Output:
+       IN (&&,<robin --> [flying]>,<robin --> swimmer>). %0.90;0.90% {0 : 0 : }
+       (&&,<robin --> [flying]>,<robin --> swimmer>). %0.90;0.90% {0 : 0 : }
+
+       <robin --> [flying]>. %1.00;0.73% {1 : 0(&&,<robin --> [flying]>,<robin --> swimmer>)}
+       <robin --> swimmer>. %1.00;0.73% {2 : 0(&&,<robin --> [flying]>,<robin --> swimmer>)}
+
+
+
+         */
+
+        long time = 15;
+
+        Global.DEBUG = true;
+        Global.DEBUG_TRACE_EVENTS = true;
+        Global.DEBUG_DERIVATION_STACKTRACES = true;
+        Global.DEBUG_TASK_HISTORY = true;
+
+        TextOutput.out(nar);
+        new DerivationOutput(nar);
 
         nar.mustBelieve(time, "<robin --> swimmer>", 0.90f, 0.90f, 0.73f, 0.73f)
                 .en("robin can swim.");
@@ -107,5 +134,17 @@ public class NAL5Test extends JavaNALTest {
         nar.run();
 
     }
-    
+
+    private class DerivationOutput extends NARReaction {
+
+        public DerivationOutput(NAR nar) {
+            super(nar, Events.TaskDerive.class);
+        }
+
+        @Override public void event(Class event, Object[] args) {
+            Task t = (Task)args[0];
+            System.out.println("Derived: " + t + " " + t.getStamp() + " "  + t.getHistory());
+        }
+
+    }
 }

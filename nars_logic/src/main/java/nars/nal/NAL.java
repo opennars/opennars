@@ -270,6 +270,14 @@ public abstract class NAL  implements Runnable {
         if (newTaskContent == null)
             return null;
 
+        if (Global.DEBUG) {
+            if (stamp instanceof Stamper) {
+                Stamper s = (Stamper)stamp;
+                if (!s.isDouble())
+                    throw new RuntimeException("should not derive doublePremiseTask with non-double Stamp");
+            }
+        }
+
         TaskSeed task = newTask(newTaskContent)
                             .punctuation(punctuation)
                             .truth(newTruth)

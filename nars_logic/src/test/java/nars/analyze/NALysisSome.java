@@ -28,7 +28,7 @@ public class NALysisSome extends NALysis {
 
         Global.DEBUG = true;
         Global.DEBUG_DERIVATION_STACKTRACES = true;
-        Global.TASK_HISTORY = true;
+        Global.DEBUG_TASK_HISTORY = true;
         showInput = true;
         showOutput = true;
         showTrace = true;
