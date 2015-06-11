@@ -75,8 +75,8 @@ abstract public class ConceptWaveCore implements ControlCycle {
         return concepts.size();
     }
 
-    @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+    //TODO This may be broken after refactoring
+    @Override public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten) {
         Concept c = getActiveConcept(term);
         if (c!=null) {
             //existing
@@ -89,6 +89,10 @@ abstract public class ConceptWaveCore implements ControlCycle {
                 return null;
             concepts.put(c);
         }
+
+        if (!includeForgotten)
+            if (c.isForgotten()) return null;
+
         return c;
     }
 

@@ -38,7 +38,7 @@ public class AntCore extends ConceptWaveCore {
     float conceptVisitDelivery;
 
     @Override
-    public double conceptMass() {
+    public double getPriorityTotal() {
         //TODO implement
         return 0;
     }
@@ -121,8 +121,8 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
-        Concept c = super.conceptualize(budget, term, createIfMissing);
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten) {
+        Concept c = super.conceptualize(budget, term, createIfMissing, includeForgotten);
         /*if (c!=null) {
             immediate.add(c);
         }*/
@@ -409,7 +409,7 @@ public class AntCore extends ConceptWaveCore {
                 return c = null;
             }
 
-            Concept nextC = conceptualize(delivery, ct, false);
+            Concept nextC = conceptualize(delivery, ct, false, false);
             if (nextC == null)
                 return c = null;
 

@@ -20,7 +20,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     int size();
 
-    public double conceptMass();
+    public double getPriorityTotal();
 
     void conceptPriorityHistogram(double[] bins);
 
@@ -70,8 +70,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      * it is like a request to process a symbolic pattern (term).
      * @return the new concept, or null if the memory is full
      */
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing);
-
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten);
     /**
      * Provides a "next" concept for sampling during logic.
      */

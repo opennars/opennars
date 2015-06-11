@@ -189,7 +189,7 @@ public class LogicMetrics extends NARReaction {
             }
 
             CONCEPT_COUNT.set(count);
-            CONCEPT_MASS.set(m.cycle.conceptMass());
+            CONCEPT_MASS.set(m.cycle.getPriorityTotal());
             TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
             TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
             TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());

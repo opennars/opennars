@@ -111,7 +111,7 @@ public class Solid extends Default implements ControlCycle {
 
 
     @Override
-    public double conceptMass() {
+    public double getPriorityTotal() {
         return concepts.mass();
     }
 
@@ -240,10 +240,10 @@ public class Solid extends Default implements ControlCycle {
     }
 
     @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten) {
         //synchronized(activator) {
         if (budget.aboveThreshold(memory.param.newConceptThreshold)) {
-            return activator.conceptualize(term, budget, true, memory.time(), concepts);
+            return activator.conceptualize(term, budget, true, memory.time(), concepts, includeForgotten);
         }
         return null;
         //}

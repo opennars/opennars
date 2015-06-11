@@ -439,6 +439,7 @@ public class NAR extends Container implements Runnable {
      */
     public void stop() {
         running = false;
+        enabled = false;
     }    
 
     /** steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of */
@@ -505,7 +506,7 @@ public class NAR extends Container implements Runnable {
         do {
             frame(1);
         }
-        while ((!memory.perception.isEmpty()) && (running));
+        while ((!memory.perception.isEmpty()) && running && enabled);
                    
         long cyclesCompleted = time() - cycleStart;
         

@@ -37,7 +37,7 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
     }
 
     @Override
-    public double conceptMass() {
+    public double getPriorityTotal() {
         return concepts.mass();
     }
 
@@ -134,11 +134,9 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
 
 
     @Override
-    public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing) {
-        return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
+    public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing, boolean includeForgotten) {
+        return conceptualize(term, budget, createIfMissing, memory.time(), concepts, includeForgotten);
     }
-
-
 
     @Override
     public Concept nextConcept() {

@@ -226,6 +226,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
         return getState() == Concept.State.Deleted;
     }
 
+    default public boolean isNew() { return getState() == State.New;     }
     default public boolean isActive() {
         return getState() == State.Active;
     }

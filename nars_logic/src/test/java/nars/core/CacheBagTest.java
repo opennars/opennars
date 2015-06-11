@@ -2,8 +2,8 @@ package nars.core;
 
 import com.google.common.collect.Iterators;
 import nars.NAR;
+import nars.NARSeed;
 import nars.bag.impl.CacheBag;
-import nars.io.out.TextOutput;
 import nars.model.cycle.DefaultCycle;
 import nars.model.impl.Default;
 import nars.nal.concept.Concept;
@@ -23,7 +23,6 @@ public class CacheBagTest {
 
         NAR n = new NAR(new Default());
 
-        TextOutput.out(n);
 
         n.input("$0$ <a --> b>.");
         n.frame();
@@ -49,9 +48,35 @@ public class CacheBagTest {
         assertTrue("active input has activated forgotten knowledge",
                 3 < ((DefaultCycle) n.memory.cycle).size());
 
-        System.out.println(Iterators.toString(active.iterator()));
-        System.out.println(Iterators.toString(all.iterator()));
         assertTrue(all.size() >= active.size());
 
+        //System.out.println(Iterators.toString(active.iterator()));
+        //System.out.println(Iterators.toString(all.iterator()));
+
+        n.frame(10);
+    }
+
+    @Test public void testPriorityConservation() {
+        testPriorityConservation(1, new Default());
+    }
+
+    public void testPriorityConservation(float p, NARSeed d) {
+
+        NAR n = new NAR(d);
+
+        n.input("$" + p + "$ <a --> b>.");
+        n.input("$" + p + "$ <b --> c>.");
+
+        assertEquals(0, n.memory.cycle.getPriorityTotal(), 0.001f);
+
+        n.frame();
+        assertEquals(3, n.memory.numConcepts(true, false));
+        assertEquals(3, n.memory.numConcepts(true, true));
+
+        n.frame();
+        assertEquals(5, n.memory.numConcepts(true, false));
+        assertEquals(5, n.memory.numConcepts(true, true));
+
+        assertEquals(p, n.memory.cycle.getPriorityTotal(), 0.001f);
     }
 }

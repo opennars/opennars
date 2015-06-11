@@ -65,6 +65,14 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         //try remembering from subconscious if activation is sufficient
         Concept concept = index().get(getKey());
         if (concept != null) {
+            if (concept.isDeleted()) {
+                index().remove(concept.getTerm());
+                concept = null;
+                if (belowThreshold) return null;
+
+                //don't return if above threshold to create a replacement
+            }
+
             if (!belowThreshold) {
                 //reactivate
                 return concept;
@@ -108,22 +116,31 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         forget(c);
     }
 
-    public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
+    public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts, boolean includeForgotten) {
 
         set(term, budget, true, getMemory().time());
         Concept c = concepts.update(this);
 
         if (c != null) {
 
-            if (!c.isActive())
+            if (c.isDeleted()) {
+                throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
+            }
+
+            if (!c.isActive()) {
                 c.setState(Concept.State.Active);
+            }
 
             remember(c);
 
+            return c;
+
         } else  {
-            return getMemory().concept(term);
+            //should this return null?
+            if (includeForgotten)
+                return getMemory().concept(term);
+            return null;
         }
 
-        return c;
     }
 }
