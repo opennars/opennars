@@ -184,7 +184,7 @@ public class Predict2D extends JPanel {
                 if (!c.getBeliefs().isEmpty()) {
                     for (Task s : c.getBeliefs()) {
 
-                        if (s.getStamp().isEternal()) continue;
+                        if (s.getSentence().isEternal()) continue;
                         long o = s.getOccurrenceTime();
                         if (o < whenStart) continue;
                         if (o > whenStop) continue;

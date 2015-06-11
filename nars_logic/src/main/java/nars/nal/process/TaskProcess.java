@@ -40,7 +40,7 @@ public class TaskProcess extends NAL {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("DirectProcess[");
+        sb.append(getClass().getSimpleName());
         getCurrentTask().appendWithBudget(sb);
         sb.append(']');
 
@@ -53,13 +53,12 @@ public class TaskProcess extends NAL {
     @Override
     public void process() {
         Concept c = memory.conceptualize(getCurrentTask(), getCurrentTask().getTerm());
-        if (c == null) return;
-
-        process(c);
+        if (c!=null)
+            process(c);
         
     }
 
-    protected void process(Concept c) {
+    protected void process(final Concept c) {
         setCurrentTerm(currentTask.getTerm());
 
         if (c.process(this)) {
@@ -71,26 +70,33 @@ public class TaskProcess extends NAL {
         }
     }
 
-    public static TaskProcess run(NAR nar, String task) {
+    public static TaskProcess run(final NAR nar, final String task) {
         return run(nar.memory, nar.task(task));
     }
 
     /** create and execute a direct process immediately */
-    public static TaskProcess run(NAR nar, Task task) {
+    public static TaskProcess run(final NAR nar, final Task task) {
         return run(nar.memory, task);
     }
 
-    /** create and execute a direct process immediately */
-    public static TaskProcess run(Memory m, Task task) {
 
-
-        if (!task.aboveThreshold())
+    public static TaskProcess get(final Memory m, final Task task) {
+        if (!task.aboveThreshold(m.param.taskProcessThreshold)) {
+            m.removed(task, "Insufficient budget");
             return null;
-            //throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
+        }
+        //throw new RuntimeException("ImmediateProcess created for sub-threshold task: " + task);
 
 
-        //System.err.println("direct: " + task);
-        TaskProcess d = new TaskProcess(m, task);
+        return new TaskProcess(m, task);
+    }
+
+    /** create and execute a direct process immediately */
+    public static TaskProcess run(final Memory m, final Task task) {
+        TaskProcess d = get(m, task);
+        if (d == null)
+            return null;
+
 
 //        if (task.isInput())
 //            m.emit(Events.IN.class, task); //TODO use a different event than IN

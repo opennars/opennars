@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * Uses iterative heapsort to maintain a partially sorted
@@ -644,6 +645,8 @@ public class HeapBag<K, E extends Item<K>> extends Bag<K, E> {
         return items.descendingIterator();
     }
 
-
-
+    @Override
+    public void forEach(final Consumer<? super E> action) {
+        items.forEach(action);
+    }
 }

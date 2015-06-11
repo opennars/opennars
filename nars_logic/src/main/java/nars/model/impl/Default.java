@@ -163,13 +163,14 @@ public class Default extends NARSeed implements ConceptBuilder {
 
 
 
+
         setForgetting(Forgetting.Periodic);
         setTiming(Timing.Cycle);
         outputVolume.set(100);
 
         reliance.set(0.9f);
 
-        decisionThreshold.set(0.60);
+        executionThreshold.set(0.60);
 
 
         policy = new LogicPolicy(

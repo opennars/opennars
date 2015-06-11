@@ -7,7 +7,6 @@ package nars.op.mental;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
@@ -15,7 +14,6 @@ import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
-import nars.nal.nal7.Interval;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Term;
 
@@ -126,7 +124,7 @@ public class PerceptionAccel extends NARReaction {
                 u++;
             }
 
-            Stamper st = nal.newStamp(task.getStamp(), nal.time(), evB);
+            Stamper st = nal.newStamp(task.getSentence(), nal.time(), evB);
 
             boolean eventBufferDidNotHaveSoMuchEvents = false;
             for (int i = 0; i < relterms.length; i++) {

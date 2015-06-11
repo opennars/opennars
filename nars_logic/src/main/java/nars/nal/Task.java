@@ -522,10 +522,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
 
-    @Deprecated public Sentence getStamp() {
-        return getSentence();
-    }
-
     public Task addHistory(List<String> historyToCopy) {
         if (!Global.DEBUG_TASK_HISTORY)
             return this;
@@ -542,20 +538,28 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
 
-    public void ensurePerceived(Memory memory) {
-        if (sentence!=null) {
-            //if a task has an unperceived creationTime,
-            // set it to the memory's current time here,
-            // and adjust occurenceTime if it's not eternal
-            Stamp s = sentence;
-            if (s.getCreationTime() == Stamp.UNPERCEIVED) {
-                final long now = memory.time();
-                long oc = s.getOccurrenceTime();
-                if (oc!=Stamp.ETERNAL)
-                    oc += now;
-                getStamp().setTime(now, oc);
-            }
+    public boolean perceivable(final Memory memory) {
+        if (!aboveThreshold(memory.param.perceptThreshold))
+            return false;
+
+        if (sentence==null) {
+            return false;
         }
+
+        //if a task has an unperceived creationTime,
+        // set it to the memory's current time here,
+        // and adjust occurenceTime if it's not eternal
+
+        if (getCreationTime() == Stamp.UNPERCEIVED) {
+            final long now = memory.time();
+            long oc = getOccurrenceTime();
+            if (oc!=Stamp.ETERNAL)
+                oc += now;
+
+            sentence.setTime(now, oc);
+        }
+
+        return true;
     }
 
     public Truth getTruth() {
@@ -563,7 +567,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     public boolean isEternal() {
-        return getStamp().isEternal();
+        return sentence.isEternal();
     }
 
     @Override
@@ -629,4 +633,5 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException, JsonProcessingException {
         serialize(jgen, provider);
     }
+
 }

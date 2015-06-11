@@ -8,7 +8,6 @@ import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
 import nars.model.cycle.ConceptActivator;
 import nars.nal.Sentence;
@@ -27,10 +26,11 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-/** processes every concept fairly, according to priority, in each cycle
- *
+/**
+ * processes every concept fairly, according to priority, in each cycle
+ * <p>
  * TODO eliminate ConcurrentSkipListSet like is implemented in DefaultCore
- * */
+ */
 public class Solid extends Default implements ControlCycle {
 
 
@@ -106,61 +106,59 @@ public class Solid extends Default implements ControlCycle {
     }
 
 
+    @Override
+    public double conceptMass() {
+        return concepts.mass();
+    }
 
 
+    @Override
+    public Iterator<Concept> iterator() {
+        return concepts.iterator();
+    }
 
-
-        @Override
-        public double conceptMass() {
-            return concepts.mass();
-        }
-
-
-        @Override
-        public Iterator<Concept> iterator() {
-            return concepts.iterator();
-        }
-
-        @Override
-        public void addTask(Task t) {
-            tasks.add(t);
+    @Override
+    public boolean addTask(Task t) {
+        if (tasks.add(t)) {
             tasksAddedThisCycle++;
+            return true;
         }
+        return false;
+    }
 
-        @Override
-        public int size() {
-            return concepts.size();
-        }
+    @Override
+    public int size() {
+        return concepts.size();
+    }
 
-        protected int num(float p, int min, int max) {
-            return Math.round((p * (max - min)) + min);
-        }
+    protected int num(float p, int min, int max) {
+        return Math.round((p * (max - min)) + min);
+    }
 
 
+    protected void processNewTasks() {
+        int t = 0;
+        final int mt = maxTasksPerCycle;
+        int nt = tasks.size();
 
-        protected void processNewTasks() {
-            int t = 0;
-            final int mt = maxTasksPerCycle;
-            int nt = tasks.size();
+        long now = getMemory().time();
 
-            long now = getMemory().time();
+        float maxPriority = -1, currentPriority = -1;
+        float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
+        for (Task task : tasks) {
 
-            float maxPriority = -1, currentPriority = -1;
-            float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
-            for (Task task : tasks) {
+            currentPriority = task.getPriority();
+            if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
 
-                currentPriority = task.getPriority();
-                if (maxPriority == -1) maxPriority = currentPriority; //first one is highest
+            float currentQuality = task.getQuality();
+            if (currentQuality < minQuality) minQuality = currentQuality;
+            else if (currentQuality > maxQuality) maxQuality = currentQuality;
 
-                float currentQuality = task.getQuality();
-                if (currentQuality < minQuality) minQuality = currentQuality;
-                else if (currentQuality > maxQuality) maxQuality = currentQuality;
-
-                if (TaskProcess.run(getMemory(), task)!=null) {
-                    t++;
-                    if (mt!=-1 && t >= mt) break;
-                }
+            if (TaskProcess.run(getMemory(), task) != null) {
+                t++;
+                if (mt != -1 && t >= mt) break;
             }
+        }
 
             /*
             System.out.print(tasksAddedThisCycle + " added, " + nt + " unique  ");
@@ -169,93 +167,90 @@ public class Solid extends Default implements ControlCycle {
             System.out.println();
             */
 
-            tasks.clear();
-            tasksAddedThisCycle = 0;
-        }
+        tasks.clear();
+        tasksAddedThisCycle = 0;
+    }
 
-        @Override
-        public void cycle() {
-            //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
+    @Override
+    public void cycle() {
+        //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
-            getMemory().perceiveNext(inputsPerCycle);
+        getMemory().perceiveNext(inputsPerCycle);
 
-            processNewTasks();
+        processNewTasks();
 
-            //2. fire all concepts
-            for (Concept c : concepts) {
+        //2. fire all concepts
+        for (Concept c : concepts) {
 
-                if (c == null) break;
+            if (c == null) break;
 
-                int conceptTaskLinks = c.getTaskLinks().size();
-                if (conceptTaskLinks == 0) continue;
+            int conceptTaskLinks = c.getTaskLinks().size();
+            if (conceptTaskLinks == 0) continue;
 
-                float p = c.getPriority();
-                int fires = num(p, minTaskLink, maxTaskLink);
-                if (fires < 1) continue;
-                int termFires = num(p, minTermLink, maxTermLink);
-                if (termFires < 1) continue;
+            float p = c.getPriority();
+            int fires = num(p, minTaskLink, maxTaskLink);
+            if (fires < 1) continue;
+            int termFires = num(p, minTermLink, maxTermLink);
+            if (termFires < 1) continue;
 
-                for (int i = 0; i < fires; i++) {
-                    TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, getMemory());
-                    if (tl==null) break;
-                    new ConceptProcess(c, tl, termFires).run();
-                }
-
+            for (int i = 0; i < fires; i++) {
+                TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, getMemory());
+                if (tl == null) break;
+                new ConceptProcess(c, tl, termFires).run();
             }
 
-            memory.runNextTasks();
         }
 
-        @Override
-        public void reset(boolean delete) {
-            tasks.clear();
+        memory.runNextTasks();
+    }
 
-            if (delete)
-                concepts.delete();
-            else
-                concepts.clear();
+    @Override
+    public void reset(boolean delete) {
+        tasks.clear();
 
-            subcon.clear();
+        if (delete)
+            concepts.delete();
+        else
+            concepts.clear();
+
+        subcon.clear();
+    }
+
+    @Override
+    public Concept concept(Term term) {
+        return concepts.get(term);
+    }
+
+    @Override
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+        //synchronized(activator) {
+        if (budget.aboveThreshold(memory.param.newConceptThreshold)) {
+            return activator.conceptualize(term, budget, true, getMemory().time(), concepts);
         }
+        return null;
+        //}
+    }
 
-        @Override
-        public Concept concept(Term term) {
-            return concepts.get(term);
-        }
+    @Override
+    public Concept nextConcept() {
+        return concepts.peekNext();
+    }
 
-        @Override
-        public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
-            //synchronized(activator) {
-                activator.set(term, budget, true, getMemory().time());
-                return concepts.update(activator);
-            //}
-        }
+    @Override
+    public void init(Memory m) {
+        subcon.setMemory(m);
+    }
 
-        @Override
-        @Deprecated public void activate(Concept c, Budget b, BudgetFunctions.Activating mode) {
+    @Override
+    public boolean conceptRemoved(Concept c) {
+        subcon.put(c);
+        return false;
+    }
 
-        }
-
-        @Override
-        public Concept nextConcept() {
-            return concepts.peekNext();
-        }
-
-        @Override
-        public void init(Memory m) {
-            subcon.setMemory(m);
-        }
-
-        @Override
-        public boolean conceptRemoved(Concept c) {
-            subcon.put(c);
-            return false;
-        }
-
-        @Override
-        public Memory getMemory() {
-            return memory;
-        }
+    @Override
+    public Memory getMemory() {
+        return memory;
+    }
 
 
     @Override

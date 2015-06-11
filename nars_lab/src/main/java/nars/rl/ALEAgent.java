@@ -97,7 +97,7 @@ public class ALEAgent extends AbstractAgent implements RLEnvironment {
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.65);
+        nar.param.executionThreshold.set(0.65);
         nar.param.shortTermMemoryHistory.set(3);
 
         nar.input("schizo(I)!");

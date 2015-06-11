@@ -300,7 +300,7 @@ abstract public class Texts  {
         return (int) ((d * 10.0f + 0.5f));
     }
      
-    public static final CharSequence n2(final float x) {         
+    public static final CharSequence n2(final float x) {
         if ((x < 0) || (x > 1.0f))
             throw new RuntimeException("Invalid value for Texts.n2");
         

@@ -22,7 +22,7 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
 //    private final Supplier<AbstractTask> extIn;
 
     final Queue<Source<T>> in;
-    Source<T> currentInput;
+
     final Iterator<Source<T>> cycle;
 
 
@@ -40,7 +40,7 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
     public T get() {
         while (!in.isEmpty()) {
 
-            currentInput = cycle.next();
+            Source<T> currentInput = cycle.next();
 
             T t = currentInput.get();
             if ((t == null) || (t == currentInput /* returned itself */)) {
@@ -56,7 +56,6 @@ public class Perception<T>  implements Consumer<Source<T>>, Supplier<T> {
     }
 
     public void reset() {
-        currentInput = null;
         for (Source i : in) {
             i.stop();
         }

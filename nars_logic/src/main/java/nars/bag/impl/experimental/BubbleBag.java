@@ -13,6 +13,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * iteratively sorts a items by priority via a partial bubble sorted.
@@ -378,6 +379,9 @@ public class BubbleBag<E extends Item<K>,K> extends Bag<K, E> {
             return (valid(e));
         }
     }
+
+
+
 }
 
 //class SolidBagBroke<E extends Item<K>,K> extends Bag<E,K> {

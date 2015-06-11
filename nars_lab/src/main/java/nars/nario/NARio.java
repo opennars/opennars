@@ -523,7 +523,7 @@ public class NARio extends Run implements RLEnvironment {
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.75);
+        nar.param.executionThreshold.set(0.75);
         nar.param.conceptsFiredPerCycle.set(200);
         nar.param.shortTermMemoryHistory.set(5);
 

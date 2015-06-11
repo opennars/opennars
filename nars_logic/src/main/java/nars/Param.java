@@ -15,6 +15,8 @@ public class Param implements Serializable {
 
     private TaskComparator.Merging merging = TaskComparator.Merging.Or;
 
+
+
     public Param() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
@@ -37,6 +39,7 @@ public class Param implements Serializable {
 
     Memory.Timing timing;
     Memory.Forgetting forgetting;
+
 
 
     
@@ -83,18 +86,37 @@ public class Param implements Serializable {
     
     public final AtomicDouble novelTaskForgetDurations = new AtomicDouble();
 
-    /** The budget threshold rate for task to be accepted.
-     *   Increasing this value decreases the resolution with which
+     /*
+     BUDGET THRESHOLDS
+     * Increasing this value decreases the resolution with which
      *   budgets are propagated or otherwise measured, which can result
-     *   in a performance gain.
-     *   TODO implement, but will require using this value as parameter to aboveThreshold() and greaterThan() budget functions
-     */
-    private final AtomicDouble budgetThreshold = new AtomicDouble();
+     *   in a performance gain.      */
 
-    
+
+    /** budget summary necessary for perception  */
+    public final AtomicDouble perceptThreshold = new AtomicDouble();
+
+    /** budget summary necessary to Conceptualize */
+    public final AtomicDouble newConceptThreshold = new AtomicDouble(0);
+
+    /** budget summary necessary for Concept to be set ACTIVE */
+    public final AtomicDouble activeConceptThreshold = new AtomicDouble(0);
+
+    /** budget summary necessary to execute a desired Goal */
+    public final AtomicDouble goalThreshold = new AtomicDouble(0);
+
+    /** budget summary necessary to run a TaskProcess for a given Task */
+    public final AtomicDouble taskProcessThreshold = new AtomicDouble(0);
+
+    /** budget summary necessary to propagte tasklink activation */
+    public final AtomicDouble taskLinkThreshold = new AtomicDouble(0);
+
+    /** budget summary necessary to propagte termlink activation */
+    public final AtomicDouble termLinkThreshold = new AtomicDouble(0);
+
     /** Minimum expectation for a desire value. 
      *  the range of "now" is [-DURATION, DURATION]; */
-    public final AtomicDouble decisionThreshold = new AtomicDouble();
+    public final AtomicDouble executionThreshold = new AtomicDouble();
 
 
     /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */

@@ -1,7 +1,6 @@
 package nars.model.impl;
 
 import nars.Memory;
-import nars.NARSeed;
 
 /**
  * Created by me on 5/5/15.
@@ -46,7 +45,7 @@ public class DefaultMicro extends Default {
 
         reliance.set(0.9f);
 
-        decisionThreshold.set(0.60);
+        executionThreshold.set(0.60);
 
         //add derivation filters here:
         //param.getDefaultDerivationFilters().add(new BeRational());

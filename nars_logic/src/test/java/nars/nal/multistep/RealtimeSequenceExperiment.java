@@ -17,7 +17,7 @@ public class RealtimeSequenceExperiment {
                 
         (n.param).duration.set(durationMS);
         (n.param).outputVolume.set(0);
-        (n.param).decisionThreshold.set(0.9);
+        (n.param).executionThreshold.set(0.9);
         
 //        new NARSwing(n);
 //        new NWindow("Implication Graph", 

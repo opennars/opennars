@@ -5,6 +5,7 @@ import java.util.AbstractList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.RandomAccess;
+import java.util.function.Consumer;
 
 /* High-performance Circular (Ring) Buffer. Not thread safe, and sacrifices safety for speed in other ways. */
 public class CircularArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E>, Serializable {
@@ -60,6 +61,14 @@ public class CircularArrayList<E> extends AbstractList<E> implements RandomAcces
                 return get(pos--);
             }
         };
+    }
+
+    @Override
+    public void forEach(final Consumer<? super E> action) {
+        /** NOTE: uses the descending iterator's semantics */
+        for (int i = size-1; i >=0; i--) {
+            action.accept(get(i--));
+        }
     }
 
     public int capacity() {

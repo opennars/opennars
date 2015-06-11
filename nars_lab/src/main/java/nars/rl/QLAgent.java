@@ -243,7 +243,7 @@ public class QLAgent<S extends Term> extends NARAgent {
 
         final double epsilon = ql.brain.getEpsilon();
         //do not apply epsilon random decisions if decisionThreshold=1f
-        float decisionThreshold = ql.nar.param.decisionThreshold.floatValue();
+        float decisionThreshold = ql.nar.param.executionThreshold.floatValue();
         if (decisionThreshold < 1.0f && epsilon > 0 && nar.memory.random.nextFloat() < epsilon) {
             int a = nar.memory.random.nextInt(actions);
 

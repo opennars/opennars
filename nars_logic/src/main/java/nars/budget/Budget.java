@@ -20,6 +20,7 @@
  */
 package nars.budget;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
@@ -395,8 +396,16 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * to be revised to depend on how busy the system is
      * @return The decision on whether to process the Item
      */
-    public boolean aboveThreshold() {
-        return summaryNotLessThan(Global.BUDGET_THRESHOLD);
+    public boolean aboveThreshold(final float budgetThreshold) {
+
+        /* since budget can only be positive.. */
+        if (budgetThreshold <= 0) return true;
+
+        return summaryNotLessThan(budgetThreshold);
+    }
+
+    public boolean aboveThreshold(final AtomicDouble budgetThreshold) {
+        return aboveThreshold(budgetThreshold.floatValue());
     }
 
 //    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
@@ -406,8 +415,9 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
 //        return (summary(additionalPriority) >= Global.BUDGET_THRESHOLD);
 //    }
 
-    public static Budget budgetIfAboveThreshold(final float pri, final float dur, final float qua) {
-        if (aveGeoNotLessThan(Global.BUDGET_THRESHOLD, pri, dur, qua))
+    /** creates a new Budget instance, should be avoided if possible */
+    public static Budget budgetIfAboveThreshold(final float budgetThreshold, final float pri, final float dur, final float qua) {
+        if (aveGeoNotLessThan(budgetThreshold, pri, dur, qua))
             return new Budget(pri, dur, qua);
         return null;
     }
@@ -443,31 +453,57 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      */
     @Override
     public String toString() {
+        return budgetAsString();
+    }
+
+    public String budgetAsString() {
         return Budget.toString(this);
     }
 
-    public static String toString(Budget b) {
-        return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
+    public static String toString(final Budget b) {
+        //return MARK + Texts.n4(b.getPriority()) + SEPARATOR + Texts.n4(b.getDurability()) + SEPARATOR + Texts.n4(b.getQuality()) + MARK;
+        return b.toStringBuilder(new StringBuilder(), Texts.n4(b.priority), Texts.n4(b.durability), Texts.n4(b.quality)).toString();
     }
 
     /**
      * Briefly display the BudgetValue
      * @return String representation of the value with 2-digit accuracy
      */
-    public String toStringExternal() {
+    public StringBuilder toStringBuilderExternal() {
+        return toStringBuilderExternal(null);
+    }
+
+    public StringBuilder toStringBuilderExternal(StringBuilder sb) {
         //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
 
         final CharSequence priorityString = Texts.n2(priority);
         final CharSequence durabilityString = Texts.n2(durability);
         final CharSequence qualityString = Texts.n2(quality);
-        return new StringBuilder(1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1)
-                .append(MARK)
+
+        return toStringBuilder(sb, priorityString, durabilityString, qualityString);
+    }
+
+    private StringBuilder toStringBuilder(StringBuilder sb, final CharSequence priorityString, final CharSequence durabilityString, final CharSequence qualityString) {
+        final int c = 1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1;
+        if (sb == null)
+            sb = new StringBuilder(c);
+        else
+            sb.ensureCapacity(c);
+
+        sb.append(MARK)
                 .append(priorityString).append(SEPARATOR)
                 .append(durabilityString).append(SEPARATOR)
                 .append(qualityString)
-                .append(MARK)
-                .toString();
+                .append(MARK);
+
+        return sb;
     }
+
+    public String toStringExternal() {
+        return toStringBuilderExternal().toString();
+    }
+
+
 
     /** 1 digit resolution */
     public String toStringExternalBudget1(boolean includeQuality) {

@@ -543,9 +543,9 @@ public class Memory implements Serializable, AbstractStamper {
 
         switch (c.getState()) {
             case New:
-                c.setState(State.Active);
                 break;
             case Forgotten:
+                break;
             case Deleted:
                 return null;
         }
@@ -746,11 +746,11 @@ public class Memory implements Serializable, AbstractStamper {
      */
     public int input(final Task task) {
 
-        task.ensurePerceived(this);
-
-        if (taskAdd(task, "Perceived")) {
-            emit(Events.IN.class, task);
-            return 1;
+        if (task.perceivable(this)) {
+            if (taskAdd(task, "Perceived")) {
+                emit(Events.IN.class, task);
+                return 1;
+            }
         }
 
         return 0;

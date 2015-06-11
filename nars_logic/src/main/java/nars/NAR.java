@@ -142,10 +142,10 @@ public class NAR extends Container implements Runnable {
 
         long now = time();
         if (!t.sentence.isEternal()) {
-            t.getStamp().setTime(now, now + t.sentence.getOccurrenceTime());
+            t.getSentence().setTime(now, now + t.sentence.getOccurrenceTime());
         }
         else {
-            t.getStamp().setTime(now, Stamp.ETERNAL);
+            t.getSentence().setTime(now, Stamp.ETERNAL);
         }
         return t;
     }
@@ -255,6 +255,7 @@ public class NAR extends Container implements Runnable {
     public Task believe(float pri, float dur, Term belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
         final Task t;
         final Truth tv;
+
         input(
                 t = new Task(
 
@@ -264,15 +265,17 @@ public class NAR extends Container implements Runnable {
                                 tv = new DefaultTruth(freq, conf),
                                 memory).setOccurrenceTime(occurrenceTime),
 
-                        new Budget(
-                                pri,
-                                dur, BudgetFunctions.truthToQuality(tv)))
+                        pri, dur, BudgetFunctions.truthToQuality(tv),
+
+                        null, null, null )
         );
         return t;
     }
 
     public Task ask(String termString, char questionOrQuest) throws InvalidInputException {
 
+
+        //TODO use input method like believe uses which avoids creation of redundant Budget instance
 
         final Task t;
         input(

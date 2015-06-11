@@ -304,7 +304,7 @@ abstract public class NQuadsInput {
                 float freq = 1.0f;
 
                 //insert with zero priority to bypass main memory go directly to subconcepts
-                n.believe(0f, 0.5f, assertion, Tense.Eternal, freq, beliefConfidence);
+                n.believe(0f, 0.1f, assertion, Tense.Eternal, freq, beliefConfidence);
             }
         };
 

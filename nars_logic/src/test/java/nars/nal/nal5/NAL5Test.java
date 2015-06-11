@@ -1,11 +1,9 @@
 package nars.nal.nal5;
 
 import nars.Events;
-import nars.Global;
 import nars.NAR;
 import nars.NARSeed;
 import nars.event.NARReaction;
-import nars.io.out.TextOutput;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.model.impl.DefaultMicro;
@@ -144,7 +142,7 @@ public class NAL5Test extends JavaNALTest {
 
         @Override public void event(Class event, Object[] args) {
             Task t = (Task)args[0];
-            System.out.println("Derived: " + t + " " + t.getStamp() + " "  + t.getHistory());
+            System.out.println("Derived: " + t + " " + t.getSentence() + " "  + t.getHistory());
         }
 
     }

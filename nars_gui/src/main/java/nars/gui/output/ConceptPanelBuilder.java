@@ -480,13 +480,13 @@ public class ConceptPanelBuilder extends NARReaction {
 
             minTime = maxTime = time;
             for (Task s : belief) {
-                if (s == null || s.getStamp().isEternal()) continue;
+                if (s == null || s.getSentence().isEternal()) continue;
                 long when = s.getOccurrenceTime();
                 if (minTime > when) minTime = when;
                 if (maxTime < when) maxTime = when;
             }
             for (Task s : goal) {
-                if (s == null || s.getStamp().isEternal()) continue;
+                if (s == null || s.getSentence().isEternal()) continue;
                 long when = s.getOccurrenceTime();
                 if (minTime > when) minTime = when;
                 if (maxTime < when) maxTime = when;

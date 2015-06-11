@@ -57,11 +57,13 @@ public class DefaultCycle extends SequentialCycle {
     }
 
     @Override
-    public void addTask(Task t) {
-        if (executingNewTasks)
-            incoming.add(t); //buffer it
-        else
-            newTasks.add(t); //add it directly to the newtasks set
+    public boolean addTask(Task t) {
+        if (executingNewTasks) {
+            return incoming.add(t); //buffer it
+        }
+        else {
+            return newTasks.add(t); //add it directly to the newtasks set
+        }
     }
 
 
@@ -128,11 +130,13 @@ public class DefaultCycle extends SequentialCycle {
 
         executingNewTasks = false;
 
-        if (!incoming.isEmpty()) {
-            for (Task t : incoming)
-                newTasks.add(t);
+        int ns = incoming.size();
+        if (ns > 0) {
+            for (int i = 0; i < ns; i++)
+                newTasks.add(incoming.get(i));
             incoming.clear();
         }
+
     }
 
     /** returns whether the task was run */

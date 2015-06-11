@@ -3,13 +3,10 @@ package nars.model.cycle;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
-import nars.bag.impl.LevelBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
-import nars.nal.process.ConceptProcess;
 import nars.nal.concept.Concept;
+import nars.nal.process.ConceptProcess;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 
@@ -21,7 +18,7 @@ import java.util.function.Consumer;
 /**
  * Base class for single-threaded Cores based on the original NARS design
  */
-abstract public class SequentialCycle implements ControlCycle {
+abstract public class SequentialCycle extends ConceptActivator implements ControlCycle {
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**
@@ -47,12 +44,6 @@ abstract public class SequentialCycle implements ControlCycle {
         return concepts.mass();
     }
 
-    /**
-     * for removing a specific concept (if it's not putBack)
-     */
-    /*@Deprecated public Concept takeOut(Term t) {
-        return concepts.remove(t);
-    }*/
     @Override
     public void init(Memory m) {
         this.memory = m;
@@ -141,42 +132,18 @@ abstract public class SequentialCycle implements ControlCycle {
     }
 
 
-    final ConceptActivator activator = new ConceptActivator() {
-        @Override
-        public Memory getMemory() {
-            return memory;
-        }
 
-        @Override
-        public CacheBag<Term, Concept> getSubConcepts() {
-            return subcon;
-        }
-
-    };
-
+    @Override
+    public CacheBag<Term, Concept> getSubConcepts() {
+        return subcon;
+    }
 
     @Override
     public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing) {
-
-        activator.set(term, budget, createIfMissing, memory.time());
-        return concepts.update(activator);
-
+        return conceptualize(term, budget, createIfMissing, getMemory().time(), concepts);
     }
 
 
-    @Deprecated
-    @Override
-    public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
-        concepts.remove(c.name());
-        BudgetFunctions.activate(c.getBudget(), b, mode);
-        concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
-    }
-
-//    @Override
-//    public void forget(Concept c) {
-//        concepts.take(c.name());
-//        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
-//    }
 
     @Override
     public Concept nextConcept() {
@@ -195,19 +162,28 @@ abstract public class SequentialCycle implements ControlCycle {
 
 
     @Override
-    public void forEach(Consumer<? super Concept> action) {
-        //use experimental consumer for levelbag to avoid allocating so many iterators within iterators
-        if (concepts instanceof LevelBag)
-            ((LevelBag) concepts).forEach(action);
-        if (concepts instanceof ChainBag)
-            ((ChainBag) concepts).forEach(action);
-
-        //use default iterator
-        iterator().forEachRemaining(action);
+    public void forEach(final Consumer<? super Concept> action) {
+        concepts.forEach(action);
     }
 
     public void conceptPriorityHistogram(double[] bins) {
         if (bins!=null)
             concepts.getPriorityHistogram(bins);
     }
+
+
+//    @Deprecated
+//    @Override
+//    public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
+//        concepts.remove(c.name());
+//        BudgetFunctions.activate(c.getBudget(), b, mode);
+//        concepts.putBack(c, memory.param.cycles(memory.param.conceptForgetDurations), memory);
+//    }
+
+//    @Override
+//    public void forget(Concept c) {
+//        concepts.take(c.name());
+//        concepts.putBack(c, memory.param.conceptForgetDurations.getCycles(), memory);
+//    }
+
 }

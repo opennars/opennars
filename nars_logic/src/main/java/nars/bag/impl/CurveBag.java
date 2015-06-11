@@ -8,6 +8,7 @@ import nars.util.sort.ArraySortedIndex;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Bag which stores items, sorted, in one array.
@@ -573,6 +574,11 @@ public class CurveBag<K, E extends Item<K>> extends Bag<K, E> {
             return 1f - (x * x);
         }
 
+    }
+
+    @Override
+    public void forEach(final Consumer<? super E> action) {
+        items.forEach(action);
     }
 
 

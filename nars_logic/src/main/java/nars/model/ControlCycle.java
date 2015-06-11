@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
-    void addTask(Task t);
+    boolean addTask(Task t);
 
     int size();
 
@@ -74,10 +74,6 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      */
     public Concept conceptualize(Budget budget, Term term, boolean createIfMissing);
 
-    /** Activates a concept, adjusting its budget.  
-     *  May be invoked by the concept processor or at certain points in the reasoning process.
-     */
-    public void activate(Concept c, Budget b, Activating mode);
 
     //public void forget(Concept c);
     
@@ -132,5 +128,10 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
             }
 
     }
+
+//    /** Activates a concept, adjusting its budget.
+//     *  May be invoked by the concept processor or at certain points in the reasoning process.
+//     */
+//    public void activate(Concept c, Budget b, Activating mode);
 
 }

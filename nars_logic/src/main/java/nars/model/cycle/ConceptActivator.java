@@ -2,6 +2,7 @@ package nars.model.cycle;
 
 import nars.Global;
 import nars.Memory;
+import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.tx.BagActivator;
 import nars.budget.Budget;
@@ -10,17 +11,19 @@ import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 
 /**
-* Created by me on 3/15/15.
-*/
-abstract public class ConceptActivator extends BagActivator<Term,Concept> {
+ * Created by me on 3/15/15.
+ */
+abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
     final float relativeThreshold = Global.FORGET_QUALITY_RELATIVE;
 
     private boolean createIfMissing;
     private long now;
 
-    public ConceptActivator() {
-    }
+    /**
+     * last created
+     */
+    private Concept lastRememberance;
 
     abstract public Memory getMemory();
 
@@ -30,12 +33,9 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         long cyclesSinceLastForgotten = now - c.getLastForgetTime();
         Memory.forget(now, c, cyclesSinceLastForgotten, relativeThreshold);
 
-        //if (budget!=null) {
-            
 
-            final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
-            BudgetFunctions.activate(c.getBudget(), getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
-        //}
+        final float activationFactor = getMemory().param.conceptActivationFactor.floatValue();
+        BudgetFunctions.activate(c.getBudget(), getBudgetRef(), BudgetFunctions.Activating.TaskLink, activationFactor);
 
         return c;
     }
@@ -48,40 +48,51 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         return this;
     }
 
-    abstract public CacheBag<Term,Concept> getSubConcepts();
+    abstract public CacheBag<Term, Concept> getSubConcepts();
 
     @Override
-    public Concept newItem() {
+    public synchronized Concept newItem() {
 
-        boolean hasSubconcepts = (getSubConcepts()!=null);
+        lastRememberance = null;
 
-        //try remembering from subconscious
+        boolean hasSubconcepts = (getSubConcepts() != null);
+
+        boolean belowThreshold = getPriority() <= getMemory().param.activeConceptThreshold.floatValue();
+
+        //try remembering from subconscious if activation is sufficient
         if (hasSubconcepts) {
             Concept concept = getSubConcepts().take(getKey());
-            if (concept!=null) {
+            if (concept != null) {
                 if (concept.isDeleted())
                     return null;
 
-                //reactivate
-                return concept.setState(Concept.State.Active);
+
+                if (!belowThreshold) {
+                    //reactivate
+                    return concept.setState(Concept.State.Active);
+                } else {
+                    //remember but dont reactivate
+                    lastRememberance = concept;
+                    return null;
+                }
             }
         }
 
-        boolean belowThreshold = getPriority() <= getMinimumActivePriority();
-
         //create new concept, with the applied budget
-        if (createIfMissing) {
+        if (createIfMissing)       {
             if (!belowThreshold || (belowThreshold && hasSubconcepts)) {
-                Concept concept = getMemory().newConcept(/*(Budget)*/this, getKey());
+
+                Concept concept = lastRememberance = getMemory().newConcept(/*(Budget)*/this, getKey());
 
                 if (concept == null)
                     throw new RuntimeException("No ConceptBuilder to build: " + getKey() + " " + this + ", builders=" + getMemory().getConceptBuilders());
 
                 if (belowThreshold && hasSubconcepts) {
                     //attempt insert the latent concept into subconcepts but return null
+                    concept.setState(Concept.State.Forgotten);
                     getSubConcepts().put(concept);
-                }
-                else
+                    return null;
+                } else
                     return concept;
             }
         }
@@ -89,7 +100,9 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
         return null;
     }
 
-    /** threshold priority for allowing a new concept into the main memory */
+    /**
+     * threshold priority for allowing a new concept into the main memory
+     */
     public float getMinimumActivePriority() {
         return 0f;
     }
@@ -100,11 +113,24 @@ abstract public class ConceptActivator extends BagActivator<Term,Concept> {
             //make sure it's deleted
             if (!c.isDeleted())
                 c.delete();
-        }
-        else {
+        } else {
             if (c.isActive())
                 c.setState(Concept.State.Forgotten);
         }
     }
 
+    public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
+        lastRememberance = null;
+        set(term, budget, true, getMemory().time());
+        Concept c = concepts.update(this);
+        if (c != null) {
+            c.setState(Concept.State.Active);
+        } else if (lastRememberance != null) {
+            //see if a concept was created but inserted into subconcepts
+            c = lastRememberance;
+            c.setState(Concept.State.Forgotten);
+        }
+
+        return c;
+    }
 }

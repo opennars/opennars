@@ -803,7 +803,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
             pg.add(new NSlider(memory.param.conceptActivationFactor, "Concept Activation", 0.0f, 1.0f), c);
 
             pg.add(new NSlider(memory.param.conceptFireThreshold, "Concepts >", 0.0f, 1.0f), c);
-            pg.add(new NSlider(memory.param.decisionThreshold, "Decisions >", 0.5f, 1.0f), c);
+            pg.add(new NSlider(memory.param.executionThreshold, "Decisions >", 0.5f, 1.0f), c);
 
             pg.add(new NSlider(memory.param.conceptForgetDurations, "Concept Memory Durations", 0.5f, 20), c);
 

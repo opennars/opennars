@@ -38,7 +38,7 @@ public class consider extends SynchOperator implements Mental {
     public static Atom consider = Atom.the("consider");
 
     public static Budget budgetMentalConcept(final Operation o) {
-        return o.getTask().clone();
+        return o.getTask();
     }
     
 

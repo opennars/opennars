@@ -28,6 +28,7 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 //        else
 //            setKey(TaskLink.key(template.type, template.index, t));
         setKey(t.sentence);
+        setBudget(t);
     }
 
     public Task getTask() {

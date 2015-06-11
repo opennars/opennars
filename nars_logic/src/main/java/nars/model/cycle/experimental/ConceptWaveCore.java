@@ -81,10 +81,6 @@ abstract public class ConceptWaveCore implements ControlCycle {
         return c;
     }
 
-    @Override
-    public void activate(Concept c, Budget b, BudgetFunctions.Activating mode) {
-        conceptualize(b, c.getTerm(), false);
-    }
 
     @Override
     public Concept nextConcept() {

@@ -138,7 +138,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
         
         
         if (t < trainingPeriod) {
-            (nar.param).decisionThreshold.set(0.75);
+            (nar.param).executionThreshold.set(0.75);
             if (t % actionTestPeriod == 0) {
                 cangle++;
                 if (cangle > numAngles) {
@@ -148,7 +148,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
             }
         }
         else if (t == trainingPeriod) {
-            (nar.param).decisionThreshold.set(decisionThreshold);
+            (nar.param).executionThreshold.set(decisionThreshold);
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
             System.out.println("AUTONOMOUS");
             System.out.println(); System.out.println(); System.out.println(); System.out.println();
@@ -180,7 +180,7 @@ public class NARPhysicsDemo extends NARPhysics<RobotArm> {
     public static void main(String[] args) {
         NAR n = new NAR(new Default());
         (n.param).duration.set(20);
-        (n.param).decisionThreshold.set(0.75f);
+        (n.param).executionThreshold.set(0.75f);
         (n.param).outputVolume.set(5);
         //PhysicsModel model = new Car();
         //model = new LiquidTimer();

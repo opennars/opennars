@@ -63,8 +63,9 @@ public class AntCore extends ConceptWaveCore {
     @Deprecated final Deque<Task> tasks = new ArrayDeque();
 
     @Override
-    public void addTask(Task t) {
+    public boolean addTask(Task t) {
         tasks.addLast(t);
+        return true;
     }
 
     @Override
@@ -79,7 +80,9 @@ public class AntCore extends ConceptWaveCore {
             for (int i = 0; i < maxNewTasks && !tasks.isEmpty(); ) {
                 Task t = tasks.removeFirst();
                 if (t == null) break;
-                if (t.aboveThreshold()) {
+
+                TaskProcess tp = TaskProcess.get(memory, t);
+                if (tp != null) {
                     run.add(new TaskProcess(memory, t));
                     i++;
                 }

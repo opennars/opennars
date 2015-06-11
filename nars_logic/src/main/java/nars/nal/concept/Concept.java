@@ -114,7 +114,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
      * whether a concept's desire exceeds decision threshold
      */
     default public boolean isDesired() {
-        return isDesired(getMemory().param.decisionThreshold.floatValue());
+        return isDesired(getMemory().param.executionThreshold.floatValue());
     }
 
     default public boolean isDesired(float threshold) {
@@ -237,7 +237,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
     public void delete();
 
     default public boolean ensureActiveFor(String activity) {
-        if (!this.isActive()) {
+        if (!this.isActive() && !this.isForgotten()) {
             System.err.println(activity + " fail: " + this + " (state=" + getState() + ')');
             new Exception().printStackTrace();
             return false;

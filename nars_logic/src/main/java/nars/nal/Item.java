@@ -113,23 +113,13 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     }
 
     public void appendWithBudget(StringBuilder sb) {
-        final String briefBudget = super.toStringExternal();
+        final StringBuilder briefBudget = super.toStringBuilderExternal();
         final String n = name().toString();
         sb.ensureCapacity(briefBudget.length()+n.length()+1);
         sb.append(briefBudget).append(' ').append(n);
     }
 
-    /** similar to toStringExternal but includes budget afterward */
-    public String toStringExternal2(boolean includeBudget) {
-        final String briefBudget = super.toStringExternal();
-        String n = name().toString();
-        StringBuilder sb = new StringBuilder( (includeBudget ? briefBudget.length() : 0) +n.length()+1).append(n);
 
-        if (includeBudget)
-            sb.append(' ').append(briefBudget);
-
-        return sb.toString();
-    }
     
     public String toStringLong() {
     	return toString();

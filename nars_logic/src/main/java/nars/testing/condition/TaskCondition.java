@@ -1,9 +1,7 @@
 package nars.testing.condition;
 
 
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.RawSerializer;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
@@ -81,12 +79,12 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
         if (t.sentence.isEternal()) {
             setEternal();
-            t.getStamp().setTime(creationTimeOffset, Stamp.ETERNAL);
+            t.getSentence().setTime(creationTimeOffset, Stamp.ETERNAL);
         }
         else {
             long oc = t.getOccurrenceTime(); //relative occurenceTime of the original task which may not be at the given creationTimeOffset
             setRelativeOccurrenceTime(oc, n.memory.duration());
-            t.getStamp().setTime(creationTimeOffset, oc);
+            t.getSentence().setTime(creationTimeOffset, oc);
         }
 
 

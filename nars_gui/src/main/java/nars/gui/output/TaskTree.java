@@ -419,7 +419,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
             setBackground(c);
 
             setFont(Video.monofont.deriveFont(14f + taskPri * 4f));
-            setText(t.toStringExternal2(false));
+            setText(t.name().toString());
 
         }
 

@@ -170,7 +170,8 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
     /** configures this selector's current bag key for the next bag operation */
     public TermLinkBuilder budget(final TermLinkTemplate temp) {
         //if (temp != currentTemplate) {
-            this.currentTemplate = temp;
+        this.currentTemplate = temp;
+        super.set(/*(Budget)*/temp);
             //invalidate();
         //}
         return this;
@@ -193,8 +194,8 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
 
 
     public Budget budget(Budget b) {
-        /** reset the prefix when budget is set in linkTerms */
-        return super.set(b);
+        throw new RuntimeException("use: TermLinkBuilder budget(final TermLinkTemplate temp)");
+        //return super.set(b);
     }
 
     @Override public Identifier name() {
@@ -260,7 +261,7 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
     @Override
     public TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTarget(), currentTemplate, getBudgetRef(), currentTemplate.key(incoming));
+        return new TermLink(getTarget(), currentTemplate, this, currentTemplate.key(incoming));
     }
 
 /*    public int size() {

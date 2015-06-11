@@ -12,7 +12,7 @@ import nars.util.utf8.Utf8;
 import java.io.Serializable;
 
 /** contains most of the essential data to populate new TermLinks */
-public class TermLinkTemplate /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
+public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
 
     /** The linked Term */
     public final Term target;
@@ -30,8 +30,6 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
     protected Identifier outgoing;
     protected Identifier incoming;
 
-    /** accumulates budget to eventually apply to termlinks at a future time */
-    public final Budget pending = new Budget(0,0,0);
 
 
     /**
@@ -43,7 +41,7 @@ public class TermLinkTemplate /* extends Budget ?? instead of the pending field 
      * @param indices Component indices in compound, may be 1 to 4
      */
     public TermLinkTemplate(final Concept host, Term target, final short type, final short... indices) {
-        super();
+        super(0,0,0);
 
         this.concept = host;
 

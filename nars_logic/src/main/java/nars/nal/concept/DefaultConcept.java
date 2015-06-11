@@ -194,17 +194,17 @@ public class DefaultConcept extends Item<Term> implements Concept {
     /** returns the same instance, used for fluency */
     public Concept setState(State nextState) {
 
+        State lastState = this.state;
+
+        if (lastState == nextState)
+            return this;
+
         if (nextState == State.New)
             throw new RuntimeException(toInstanceString() + " can not return to New state ");
 
-        State lastState = this.state;
 
         if (lastState == State.Deleted)
             throw new RuntimeException(toInstanceString() + " can not exit from Deleted state");
-
-        if (lastState == nextState)
-            throw new RuntimeException(this + " already in state " + nextState);
-
 
         this.state = nextState;
 
@@ -503,7 +503,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //
 //        }
         
-        if (newGoal.aboveThreshold()) {
+        if (newGoal.aboveThreshold(memory.param.goalThreshold)) {
 
             final Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
 
@@ -521,7 +521,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
             T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
 
-            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && newGoal.sentence.truth.getExpectation() > nal.memory.param.decisionThreshold.get()) {
+            if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && newGoal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
 
                 questionFromGoal(newGoal, nal);
 
@@ -796,15 +796,15 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     protected boolean linkTask(final Task task) {
 
-        if (!isActive()) return false;
+
+        if (!task.aboveThreshold(memory.param.taskLinkThreshold))
+            return false;
 
         Budget taskBudget = task;
         taskLinkBuilder.setTemplate(null);
         taskLinkBuilder.setTask(task);
 
-        taskLinkBuilder.setBudget(taskBudget);
         activateTaskLink(taskLinkBuilder);  // tlink type: SELF
-
 
         List<TermLinkTemplate> templates = termLinkBuilder.templates();
 
@@ -825,7 +825,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
-        if (!subBudget.aboveThreshold()) {
+        if (!subBudget.aboveThreshold(memory.param.taskLinkThreshold)) {
             //unused
             //taskBudgetBalance += taskBudget.getPriority();
             return false;
@@ -939,17 +939,16 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         }
 
+        //TODO merge with above loop, or avoid altogether under certain conditions
 
         List<TermLinkTemplate> tl = getTermLinkTemplates();
         if (tl!=null && updateTLinks) {
             int n = tl.size();
             for (int i = 0; i < n; i++) {
                 TermLinkTemplate t = tl.get(i);
-                if (t.pending.aboveThreshold()) {
-                    if (linkTerm(t, t.pending, updateTLinks))
+                if (t.aboveThreshold(memory.param.termLinkThreshold)) {
+                    if (linkTerm(t, updateTLinks))
                         activity = true;
-
-                    t.pending.budget(0, 0, 0); //reset having spent it
                 }
             }
         }
@@ -958,59 +957,39 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return activity;
     }
 
-    boolean linkTerm(TermLinkTemplate template, Budget b, boolean updateTLinks) {
-        return linkTerm(template, b.getPriority(), b.getDurability(), b.getQuality(), updateTLinks);
+    boolean linkTerm(TermLinkTemplate template, boolean updateTLinks) {
+        return linkTerm(template, 0, 0, 0, updateTLinks);
     }
 
-    boolean linkTerm(TermLinkTemplate template, float priority, float durability, float quality, boolean updateTLinks) {
+    boolean linkTerm(TermLinkTemplate template, float priInc, float durInc, float quaInc, boolean updateTLinks) {
 
-
-        Term otherTerm = termLinkBuilder.budget(template).getOther();
-
-
-        Budget b = template.pending;
-        if (b!=null) {
-            b.setPriority(b.getPriority() + priority);
-            b.setDurability(Math.max(b.getDurability(), durability));
-            b.setQuality(Math.max(b.getQuality(), quality));
-            if (!b.aboveThreshold()) {
-                accumulate(template, b);
-                return false;
-            }
-        }
-        else {
-            if (priority > 0)
-                b = new Budget(priority, durability, quality);
-        }
-
-        if (b == null) return false;
-
-        Concept otherConcept = getMemory().conceptualize(b, otherTerm);
-        if (otherConcept == null) {
-            accumulate(template, b);
+        final Budget b = template;
+        b.accumulate(priInc, durInc, quaInc);
+        if (!updateTLinks) {
             return false;
         }
 
-        termLinkBuilder.budget(b);
+        Term otherTerm = termLinkBuilder.budget(template).getOther();
 
-        if (updateTLinks) {
-            activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
-            otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
+        Concept otherConcept = getMemory().conceptualize(b, otherTerm);
+        if (otherConcept == null) {
+            return false;
         }
-        else {
-            accumulate(template, b);
-        }
+
+
+        activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
+        otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
         if (otherTerm instanceof Compound) {
             otherConcept.linkTerms(termLinkBuilder.getBudgetRef(), false);
         }
 
+        //spent
+        b.zero();
+
         return true;
     }
 
-    protected void accumulate(TermLinkTemplate template, Budget added) {
-        template.pending.accumulate(added);
-    }
 
 
     /**

@@ -597,7 +597,7 @@ public abstract class NAL  implements Runnable {
     }
 
     public Stamper newStamp(Task task, long time) {
-        return newStamp(task.getStamp(), time);
+        return newStamp(task.getSentence(), time);
     }
 
     /** new stamp from one parent stamp, with occurence time = now */

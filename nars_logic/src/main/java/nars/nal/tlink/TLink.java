@@ -18,7 +18,7 @@ public interface TLink<T extends Termed> extends Budget.Budgetable, Serializable
     public static void print(TLink t, PrintStream out) {
         out.print(t.toString());
         out.print(' ');
-        out.print(Budget.toString(t.getBudget()));
+        out.print(t.getBudget());
 
         if (t.getBudget().isNew()) {
             out.print(" (new) ");

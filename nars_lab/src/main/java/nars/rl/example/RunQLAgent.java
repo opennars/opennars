@@ -258,7 +258,7 @@ public class RunQLAgent extends JPanel {
         //dd.duration.set(3 * cyclesPerFrame);         //nar.param.duration.setLinear
         dd.duration.set(1);
         dd.shortTermMemoryHistory.set(3);
-        dd.decisionThreshold.set(0.55);
+        dd.executionThreshold.set(0.55);
         dd.outputVolume.set(5);
 
         RunQLAgent a = new RunQLAgent(d, dd,

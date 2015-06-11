@@ -46,9 +46,10 @@ public class remind extends SynchOperator implements Mental {
     @Override    
     protected ArrayList<Task> execute(Operation operation, Memory memory) {
         Term term = operation.arg(0);
-        Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
+        //Concept concept = nar.memory.conceptualize(consider.budgetMentalConcept(operation), term);
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
-        nar.memory.concepts.activate(concept, budget, Activating.TaskLink);
+        //nar.memory.concepts.activate(concept, budget, Activating.TaskLink);
+        memory.conceptualize(budget, term);
         return null;
     }
 

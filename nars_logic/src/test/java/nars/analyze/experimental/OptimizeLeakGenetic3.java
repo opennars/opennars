@@ -230,7 +230,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
 
                             derived.setPriority(newPriority);
 
-                            if (derived.getPriority() < Global.BUDGET_THRESHOLD)
+                            if (derived.getPriority() < 0)
                                 return false;
 
 

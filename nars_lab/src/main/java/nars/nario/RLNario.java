@@ -84,7 +84,7 @@ public class RLNario extends NARio  {
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.decisionThreshold.set(0.65);
+        nar.param.executionThreshold.set(0.65);
         nar.param.shortTermMemoryHistory.set(3);
 
         RLNario rl = new RLNario(nar,
