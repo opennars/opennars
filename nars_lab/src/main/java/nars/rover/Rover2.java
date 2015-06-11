@@ -120,7 +120,7 @@ public class Rover2 extends PhysicsModel {
                     theRover.mission = (theRover.mission + 1) % 2;
                     System.out.println("Mission: " + theRover.mission);
                 } else if (e.getKeyChar() == 'g') {
-                    System.out.println(nar.memory.concepts);
+                    System.out.println(nar.memory.cycle);
                     //removedConcepts.report(System.out);
                 }
 

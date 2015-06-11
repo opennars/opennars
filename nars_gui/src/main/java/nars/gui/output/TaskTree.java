@@ -55,6 +55,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
 
     private DefaultTreeModel model;
     private DefaultMutableTreeNode amnesia = null;
+    private Set<Task> tasks;
 
     public TaskTree(NAR nar) {
         super(nar, new BorderLayout());
@@ -170,7 +171,8 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
     public void update() {
         //TODO get existing Tasks at the next frame event by new method: memory.getTasks() which iterates all concepts tasklinks
         if (needsRestart) {
-            Set<Task> tasks = nar.memory.getTasks(true, false, false);
+            tasks.clear();
+            nar.memory.getTasks(true, false, false, tasks);
             for (Task t : tasks)
                 if (isVisible(t))
                     add(t);

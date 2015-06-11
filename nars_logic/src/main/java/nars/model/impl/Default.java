@@ -430,15 +430,16 @@ public class Default extends NARSeed implements ConceptBuilder {
     public Bag<Term, Concept> newConceptBag() {
         return new ChainBag(rng, getConceptBagSize());
     }
-    
-    @Deprecated public CacheBag<Term,Concept> newSubconceptBag() {
+
+    @Override
+    public CacheBag<Term,Concept> newIndex() {
         if (getSubconceptBagSize() < 1) return null;
         return new GuavaCacheBag(getSubconceptBagSize());
     }
 
     @Override
     public ControlCycle newControlCycle() {
-        return new DefaultCycle(newConceptBag(), newSubconceptBag(), newNovelTaskBag());
+        return new DefaultCycle(newConceptBag(), newNovelTaskBag());
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {

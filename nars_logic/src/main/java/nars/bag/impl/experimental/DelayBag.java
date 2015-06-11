@@ -7,7 +7,6 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.BudgetFunctions;
 import nars.model.ControlCycle;
-import nars.model.ControlCycle.CoreAware;
 import nars.nal.Itemized;
 import nars.nal.concept.Concept;
 import nars.util.sort.ArraySortedIndex;
@@ -68,7 +67,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * TODO make this abstract and derive ThresholdDelayBag subclass
  */
-public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> implements CoreAware {
+public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E>  {
 
     private final int capacity;
     
@@ -88,7 +87,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     
     private Memory memory;
     private long now;
-    private ControlCycle attention;
+
 
     private AtomicBoolean busyReloading = new AtomicBoolean(false);
     private final AtomicDouble forgetRate;
@@ -166,9 +165,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
     protected E removeItem(final K k) {             
         E x = nameTable.remove(k);
-        if ((attention!=null) && (x != null) && (x instanceof Concept)) {
-            attention.conceptRemoved((Concept)x);
-        }
         return x;
     }
     
@@ -424,12 +420,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     }
 
 
-    @Override
-    public void setCore(ControlCycle a) {
-        this.attention = a;
-        this.memory = a.getMemory();        
-    }
-    
     public void setMemory(Memory m) {
         this.memory = m;
     }

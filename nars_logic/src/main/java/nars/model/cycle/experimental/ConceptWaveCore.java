@@ -49,7 +49,14 @@ abstract public class ConceptWaveCore implements ControlCycle {
 
 
     @Override
-    public void reset(boolean delete) {
+    public void reset(Memory m, boolean delete) {
+        this.memory = m;
+
+        this.concepts = new FairDelayBag(m.param.conceptForgetDurations, maxConcepts);
+
+        if (concepts instanceof MemoryAware)
+            concepts.setMemory(m);
+
         //TODO complete this
         concepts.clear();
     }
@@ -60,7 +67,7 @@ abstract public class ConceptWaveCore implements ControlCycle {
     }
 
     @Override
-    public int size() {
+    public int numConcepts() {
         return concepts.size();
     }
 
@@ -87,22 +94,7 @@ abstract public class ConceptWaveCore implements ControlCycle {
         return concepts.peekNext();
     }
 
-    @Override
-    public void init(Memory m) {
-        this.memory = m;
-        
-        this.concepts = new FairDelayBag(memory.param.conceptForgetDurations, maxConcepts);      
-        
-        if (concepts instanceof MemoryAware)
-            concepts.setMemory(m);
-        if (concepts instanceof CoreAware)
-            concepts.setCore(this);
-    }
 
-    @Override
-    public boolean conceptRemoved(Concept c) {
-        return true;
-    }
 
     @Override
     public Iterator<Concept> iterator() {
@@ -115,9 +107,10 @@ abstract public class ConceptWaveCore implements ControlCycle {
         return super.toString() + "[" + concepts.toString() + "]";
     }
 
+
     @Override
-    public Memory getMemory() {
-        return memory;
+    public void conceptPriorityHistogram(double[] bins) {
+        throw new RuntimeException("not impl yet");
     }
     
 }

@@ -36,24 +36,32 @@ public class DefaultCycle extends SequentialCycle {
 
 
 
-    public DefaultCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
-        super(concepts, subcon);
+    public DefaultCycle(Bag<Term, Concept> concepts, Bag<Sentence<Compound>, Task<Compound>> novelTasks) {
+        super(concepts);
 
 
         this.novelTasks = novelTasks;
-        if (novelTasks instanceof CoreAware) {
-            ((CoreAware) novelTasks).setCore(this);
-        }
 
 
     }
 
-    @Override
-    public void init(Memory m) {
-        super.init(m);
 
-        //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
-        this.newTasks = new TreeSet(new TaskComparator(memory.param.getMerging()));
+    @Override
+    public void reset(Memory m, boolean delete) {
+        super.reset(m, delete);
+
+        if (delete) {
+            this.newTasks = null;
+            novelTasks.delete();
+        }
+        else {
+            //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
+            this.newTasks = new TreeSet(new TaskComparator(memory.param.getMerging()));
+        }
+
+        novelTasks.clear();
+        newTasks.clear();
+        incoming.clear();
     }
 
     @Override
@@ -214,18 +222,7 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-    @Override
-    public void reset(boolean delete) {
-        super.reset(delete);
 
-        if (delete)
-            novelTasks.delete();
-        else
-            novelTasks.clear();
-
-        newTasks.clear();
-        incoming.clear();
-    }
 
 
 }

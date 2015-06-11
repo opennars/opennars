@@ -159,7 +159,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
         int remainingUnifications = 1;
 
         for (int k = 0; k < Global.DED_SECOND_UNIFICATION_ATTEMPTS; k++) {
-            Concept secondConcept = nal.memory.concepts.nextConcept(new Predicate<Concept>() {
+            Concept secondConcept = nal.memory.cycle.nextConcept(new Predicate<Concept>() {
 
                 @Override
                 public boolean test(Concept concept) {

@@ -337,7 +337,7 @@ public class TestChamber {
                                 }
                             }
                             opname="";
-                            nar.memory.enable(true);
+                            nar.enable(true);
                             /*if(!executed && !executed_going)
                                 nar.step(1);*/
                         } else {

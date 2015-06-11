@@ -61,8 +61,8 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
     }
 
     @Override
-    public long size() {
-        return data.size();
+    public int size() {
+        return (int) data.size();
     }
 
     @Override

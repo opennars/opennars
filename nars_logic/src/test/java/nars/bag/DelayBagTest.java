@@ -5,13 +5,11 @@
 package nars.bag;
 
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.model.cycle.experimental.AntCore;
 import nars.narsese.InvalidInputException;
 import nars.nal.term.Term;
 import nars.model.impl.Neuromorphic;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +24,7 @@ public class DelayBagTest {
 
 
     static int numConcepts(NAR n) {
-        return ((AntCore)n.memory.concepts).concepts.size();
+        return ((AntCore)n.memory.cycle).concepts.size();
     }
 
     @Before
@@ -45,7 +43,7 @@ public class DelayBagTest {
 
         NAR n = new NAR(new Neuromorphic(ants));
 
-        assertTrue(n.memory.concepts != null);
+        assertTrue(n.memory.cycle != null);
         
         n.input("<a --> b>.");
         
@@ -66,7 +64,7 @@ public class DelayBagTest {
         n.frame(30);
         assertEquals(6, numConcepts(n) );
         
-        ((AntCore)n.memory.concepts).concepts.remove((Term)n.term("<a --> b>"));
+        ((AntCore)n.memory.cycle).concepts.remove((Term)n.term("<a --> b>"));
         
         assertEquals(5, numConcepts(n) );
         n.frame(10);

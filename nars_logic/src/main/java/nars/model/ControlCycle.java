@@ -4,8 +4,6 @@ import javolution.context.ConcurrentContext;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions.Activating;
-import nars.nal.NALOperator;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
@@ -20,13 +18,11 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     boolean addTask(Task t);
 
-    int size();
+    int numConcepts();
 
     public double conceptMass();
 
-    default public void conceptPriorityHistogram(double[] bins) {
-
-    }
+    void conceptPriorityHistogram(double[] bins);
 
     /** sample concepts for a specific operator type
      *
@@ -34,17 +30,12 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      * @param v percentage of bag size # of attempts to search before returning null
      */
     default Concept nextConcept(Predicate<Concept> pred, float v) {
-        int attempts = (int) Math.ceil(size() * v);
+        int attempts = (int) Math.ceil(numConcepts() * v);
         for (int i = 0; i < attempts; i++) {
             Concept c = nextConcept();
             if (pred.test(c)) return c;
         }
         return null;
-    }
-
-
-    public interface CoreAware {
-        public void setCore(ControlCycle a);
     }
 
 
@@ -61,9 +52,9 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
     /** Invoked during a memory reset to empty all concepts
      *  @param delete  whether to finalize everything (deallocate as much as possible)
      * */
-    public void reset(boolean delete);
+    public void reset(Memory memory, boolean delete);
 
-    /** Maps Term to associated Concept. May also be called 'recognize'
+    /** Maps Term to a Concept active in this Cycle. May also be called 'recognize'
      * as it can be used to determine if a symbolic pattern (term) is known */
     public Concept concept(Term term);
 
@@ -74,24 +65,12 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      */
     public Concept conceptualize(Budget budget, Term term, boolean createIfMissing);
 
-
-    //public void forget(Concept c);
-    
     /**
      * Provides a "next" concept for sampling during logic.
      */
     public Concept nextConcept();
 
-    public void init(Memory m);
 
-    /** used by the bag to explicitly forget an item asynchronously
-     *  returns true if the concept was completely deleted,
-     *  false if it was forgotten (in subconcepts)
-     * */
-    public boolean conceptRemoved(Concept c);
-    
-    public Memory getMemory();
-    
     
     /** Generic utility method for running a list of tasks in current thread */
     public static void run(final Deque<Runnable> tasks) {
@@ -129,9 +108,5 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     }
 
-//    /** Activates a concept, adjusting its budget.
-//     *  May be invoked by the concept processor or at certain points in the reasoning process.
-//     */
-//    public void activate(Concept c, Budget b, Activating mode);
 
 }

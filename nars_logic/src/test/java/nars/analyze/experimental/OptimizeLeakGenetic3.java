@@ -170,7 +170,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
         }
 
         protected void cycle(NAR n) {
-            n.memory.concepts.conceptPriorityHistogram(conPri);
+            n.memory.cycle.conceptPriorityHistogram(conPri);
 
             //these represent the points of the boundaries between histogram bins
             c0.set(conPri[0]);

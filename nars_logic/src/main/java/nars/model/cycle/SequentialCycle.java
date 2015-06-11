@@ -2,7 +2,6 @@ package nars.model.cycle;
 
 import nars.Memory;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.model.ControlCycle;
 import nars.nal.concept.Concept;
@@ -25,17 +24,15 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
      * Concept bag. Containing all Concepts of the system
      */
     public final Bag<Term, Concept> concepts;
-    public final CacheBag<Term, Concept> subcon;
 
 
     protected List<Runnable> run = new ArrayList();
 
     protected Memory memory;
 
-    public SequentialCycle(Bag<Term, Concept> concepts, CacheBag<Term, Concept> subcon) {
+    public SequentialCycle(Bag<Term, Concept> concepts) {
 
         this.concepts = concepts;
-        this.subcon = subcon;
 
     }
 
@@ -44,18 +41,6 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
         return concepts.mass();
     }
 
-    @Override
-    public void init(Memory m) {
-        this.memory = m;
-        if (concepts instanceof CoreAware)
-            ((CoreAware) concepts).setCore(this);
-        if (concepts instanceof Memory.MemoryAware)
-            ((Memory.MemoryAware) concepts).setMemory(m);
-        if (subcon != null)
-            subcon.setMemory(m);
-
-
-    }
 
     protected static class DefaultConceptProcess extends ConceptProcess {
 
@@ -72,7 +57,7 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
     }
 
     @Override
-    public int size() {
+    public int numConcepts() {
         return concepts.size();
     }
 
@@ -97,7 +82,13 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
     }
 
     @Override
-    public void reset(boolean delete) {
+    public void reset(Memory m, boolean delete) {
+
+        this.memory = m;
+
+        if (concepts instanceof Memory.MemoryAware)
+            ((Memory.MemoryAware) concepts).setMemory(m);
+
         run.clear();
 
         if (delete)
@@ -105,8 +96,6 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
         else
             concepts.clear();
 
-        if (subcon != null)
-            subcon.clear();
     }
 
 
@@ -118,33 +107,27 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
     public Concept concept(final Term term) {
         Concept c = concepts.get(term);
         if (c == null) {
-            return getSubConcepts().get(term);
+            return index().get(term);
         }
         return c;
     }
 
-    /** @return true = deleted, false = forgotten */
-    @Override public boolean conceptRemoved(final Concept c) {
-        if ((subcon != null) && (!c.isDeleted())) {
-            subcon.put(c);
+//    /** @return true = deleted, false = forgotten */
+//    @Override public boolean conceptRemoved(final Concept c) {
+//        if ((subcon != null) && (!c.isDeleted())) {
+//            subcon.put(c);
+//
+//            //it may have been set deleted inside the CacheBag processes's so check for it here
+//            return (c.isDeleted());
+//
+//        }
+//        return true;
+//    }
 
-            //it may have been set deleted inside the CacheBag processes's so check for it here
-            return (c.isDeleted());
-
-        }
-        return true;
-    }
-
-
-
-    @Override
-    public CacheBag<Term, Concept> getSubConcepts() {
-        return subcon;
-    }
 
     @Override
     public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing) {
-        return conceptualize(term, budget, createIfMissing, getMemory().time(), concepts);
+        return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
     }
 
 

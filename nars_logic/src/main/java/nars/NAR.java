@@ -86,8 +86,11 @@ public class NAR extends Container implements Runnable {
     private boolean threadYield = false;
 
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
-    
-    
+
+    /** memory activity enabled */
+    private boolean enabled = true;
+
+
     protected NAR(final Memory m) {
         super();
         this.memory = m;        
@@ -577,6 +580,40 @@ public class NAR extends Container implements Runnable {
         memory.error(e);
     }
 
+
+    /**
+     * enable/disable all I/O and memory processing. CycleStart and CycleStop
+     * events will continue to be generated, allowing the memory to be used as a
+     * clock tick while disabled.
+     */
+    public void enable(boolean e) {
+        this.enabled = e;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+
+    /** executes one complete memory cycle (if not disabled) */
+    public void cycle(final boolean newFrame) {
+
+        if (isEnabled()) {
+
+            memory.event.emit(Events.CycleStart.class);
+
+            memory.cycle.cycle();
+
+            memory.event.emit(Events.CycleEnd.class);
+
+            //randomUpdate();
+
+        }
+
+        memory.timeUpdate();
+
+    }
+
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
@@ -589,7 +626,7 @@ public class NAR extends Container implements Runnable {
 
         try {
             for (int i = 0; i < cycles; i++)
-                memory.cycle(i==0);
+                cycle(i == 0);
         }
         catch (Throwable e) {
             Throwable c = e.getCause();

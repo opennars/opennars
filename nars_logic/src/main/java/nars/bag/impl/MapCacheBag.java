@@ -44,8 +44,8 @@ abstract public class MapCacheBag<K, V extends Itemized<K>> extends CacheBag<K,V
     }
 
     @Override
-    public long size() {
-        return 0;
+    public int size() {
+        return data.size();
     }
 
     @Override

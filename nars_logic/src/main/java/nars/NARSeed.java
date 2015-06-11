@@ -1,7 +1,10 @@
 package nars;
 
+import nars.bag.impl.CacheBag;
 import nars.model.ControlCycle;
 import nars.nal.LogicPolicy;
+import nars.nal.concept.Concept;
+import nars.nal.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomAdaptor;
@@ -45,8 +48,10 @@ abstract public class NARSeed extends Param {
 
     protected Memory newMemory(Param narParam, LogicPolicy policy) {
 
-        return new Memory(rng, getMaximumNALLevel(), narParam, policy, newControlCycle());
+        return new Memory(rng, getMaximumNALLevel(), narParam, policy, newIndex(), newControlCycle());
     }
+
+    protected abstract CacheBag<Term,Concept> newIndex();
 
     protected abstract int getMaximumNALLevel();
 
@@ -66,5 +71,6 @@ abstract public class NARSeed extends Param {
         this.maxNALLevel = maxNALlevel;
         return this;
     }
+
 
 }

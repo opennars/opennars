@@ -80,7 +80,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                 //TODO create and use a sampleNextConcept(NALOperator.Implication) method
 
-                Concept next = memory.concepts.nextConcept(nextInductedImplication, chainSampleSearchSize);
+                Concept next = memory.cycle.nextConcept(nextInductedImplication, chainSampleSearchSize);
                 if (next == null || next.equals(concept))
                     continue;
 

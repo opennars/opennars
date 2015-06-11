@@ -28,26 +28,26 @@ public class CacheBagTest {
         n.input("$0$ <a --> b>.");
         n.frame();
 
-        DefaultCycle con = ((DefaultCycle) n.memory.concepts);
-        CacheBag<Term, Concept> subcon = ((DefaultCycle) n.memory.concepts).getSubConcepts();
+        DefaultCycle con = ((DefaultCycle) n.memory.cycle);
+        CacheBag<Term, Concept> subcon = ((DefaultCycle) n.memory.cycle).index();
 
 
         assertEquals(3, subcon.size());
         assertEquals("[a, <a --> b>, b]", Iterators.toString(subcon.iterator()) );
 
-        assertEquals(0, con.size());
+        assertEquals(0, con.numConcepts());
 
         n.input("<b --> c>.");
         n.frame(); //input TaskProcess
         n.frame(); //next cycle: Conceputalization
 
-        assertEquals(3, con.size());
+        assertEquals(3, con.numConcepts());
 
         n.frame();
         n.frame();
 
         assertTrue("active input has activated forgotten knowledge",
-                3 < ((DefaultCycle) n.memory.concepts).size());
+                3 < ((DefaultCycle) n.memory.cycle).numConcepts());
 
         System.out.println(Iterators.toString(con.iterator()));
         System.out.println(Iterators.toString(subcon.iterator()));

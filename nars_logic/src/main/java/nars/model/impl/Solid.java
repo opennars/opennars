@@ -43,20 +43,17 @@ public class Solid extends Default implements ControlCycle {
     private final int inputsPerCycle;
     private Memory memory;
 
-    public final CacheBag<Term, Concept> subcon;
-
     public final Bag<Term, Concept> concepts;
 
     final ConceptActivator activator = new ConceptActivator() {
+
         @Override
         public Memory getMemory() {
             return memory;
         }
 
-        @Override
-        public CacheBag<Term, Concept> getSubConcepts() {
-            return subcon;
-        }
+
+
 
     };
 
@@ -89,7 +86,7 @@ public class Solid extends Default implements ControlCycle {
         setTermLinkBagSize(16);
         setTaskLinkBagSize(16);
 
-        subcon = new GuavaCacheBag(maxSubConcepts);
+
 
         //concepts = new CurveBag(rng, maxConcepts, true);
         //concepts = new ChainBag(rng, maxConcepts);
@@ -111,6 +108,11 @@ public class Solid extends Default implements ControlCycle {
         return concepts.mass();
     }
 
+    @Override
+    public void conceptPriorityHistogram(double[] bins) {
+        throw new RuntimeException("not impl yet");
+    }
+
 
     @Override
     public Iterator<Concept> iterator() {
@@ -127,7 +129,7 @@ public class Solid extends Default implements ControlCycle {
     }
 
     @Override
-    public int size() {
+    public int numConcepts() {
         return concepts.size();
     }
 
@@ -141,7 +143,7 @@ public class Solid extends Default implements ControlCycle {
         final int mt = maxTasksPerCycle;
         int nt = tasks.size();
 
-        long now = getMemory().time();
+        long now = memory.time();
 
         float maxPriority = -1, currentPriority = -1;
         float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
@@ -154,7 +156,7 @@ public class Solid extends Default implements ControlCycle {
             if (currentQuality < minQuality) minQuality = currentQuality;
             else if (currentQuality > maxQuality) maxQuality = currentQuality;
 
-            if (TaskProcess.run(getMemory(), task) != null) {
+            if (TaskProcess.run(memory, task) != null) {
                 t++;
                 if (mt != -1 && t >= mt) break;
             }
@@ -175,7 +177,7 @@ public class Solid extends Default implements ControlCycle {
     public void cycle() {
         //System.out.println("\ncycle " + memory.time() + " : " + concepts.size() + " concepts");
 
-        getMemory().perceiveNext(inputsPerCycle);
+        memory.perceiveNext(inputsPerCycle);
 
         processNewTasks();
 
@@ -194,7 +196,7 @@ public class Solid extends Default implements ControlCycle {
             if (termFires < 1) continue;
 
             for (int i = 0; i < fires; i++) {
-                TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, getMemory());
+                TaskLink tl = c.getTaskLinks().forgetNext(taskLinkForgetDurations, memory);
                 if (tl == null) break;
                 new ConceptProcess(c, tl, termFires).run();
             }
@@ -205,7 +207,7 @@ public class Solid extends Default implements ControlCycle {
     }
 
     @Override
-    public void reset(boolean delete) {
+    public void reset(Memory memory, boolean delete) {
         tasks.clear();
 
         if (delete)
@@ -213,7 +215,11 @@ public class Solid extends Default implements ControlCycle {
         else
             concepts.clear();
 
-        subcon.clear();
+    }
+
+    @Override
+    public CacheBag<Term, Concept> newIndex() {
+        return new GuavaCacheBag(maxSubConcepts);
     }
 
     @Override
@@ -225,7 +231,7 @@ public class Solid extends Default implements ControlCycle {
     public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
         //synchronized(activator) {
         if (budget.aboveThreshold(memory.param.newConceptThreshold)) {
-            return activator.conceptualize(term, budget, true, getMemory().time(), concepts);
+            return activator.conceptualize(term, budget, true, memory.time(), concepts);
         }
         return null;
         //}
@@ -236,21 +242,6 @@ public class Solid extends Default implements ControlCycle {
         return concepts.peekNext();
     }
 
-    @Override
-    public void init(Memory m) {
-        subcon.setMemory(m);
-    }
-
-    @Override
-    public boolean conceptRemoved(Concept c) {
-        subcon.put(c);
-        return false;
-    }
-
-    @Override
-    public Memory getMemory() {
-        return memory;
-    }
 
 
     @Override

@@ -4,13 +4,8 @@ import com.google.common.cache.RemovalListener;
 import nars.Memory;
 
 
-abstract public class CacheBag<K, V> implements Memory.MemoryAware, Iterable<V> {
+abstract public class CacheBag<K, V> implements Iterable<V> {
 
-    protected Memory memory = null;
-
-    @Override public void setMemory(Memory m) {
-        this.memory = m;
-    }
 
     public abstract void clear();
 
@@ -20,6 +15,6 @@ abstract public class CacheBag<K, V> implements Memory.MemoryAware, Iterable<V> 
 
     public abstract void put(V v);
 
-    public abstract long size();
+    public abstract int size();
 
 }

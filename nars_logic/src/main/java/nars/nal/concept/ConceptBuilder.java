@@ -9,6 +9,7 @@ import nars.op.math.count;
 
 
 public interface ConceptBuilder {
+
     public Concept newConcept(Term t, Budget b, Memory m);
 
 }

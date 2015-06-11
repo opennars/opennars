@@ -28,7 +28,7 @@ abstract public class ConceptReaction extends NARReaction {
     protected void init() {
 
         //add existing events
-        memory.concepts.forEach(new Consumer<Concept>() {
+        memory.cycle.forEach(new Consumer<Concept>() {
             @Override
             public void accept(Concept concept) {
                 onConceptActive(concept);
@@ -51,7 +51,7 @@ abstract public class ConceptReaction extends NARReaction {
             onConceptDelete(c);
         }
         else if (event == Events.ResetStart.class) {
-            memory.concepts.forEach(new Consumer<Concept>() {
+            memory.cycle.forEach(new Consumer<Concept>() {
                 @Override
                 public void accept(Concept concept) {
                     onConceptForget(concept);

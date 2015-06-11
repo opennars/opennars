@@ -48,20 +48,22 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return this;
     }
 
-    abstract public CacheBag<Term, Concept> getSubConcepts();
+    public CacheBag<Term, Concept> index() {
+        return getMemory().getConcepts();
+    }
 
     @Override
     public synchronized Concept newItem() {
 
         lastRememberance = null;
 
-        boolean hasSubconcepts = (getSubConcepts() != null);
+        boolean hasSubconcepts = (index() != null);
 
         boolean belowThreshold = getPriority() <= getMemory().param.activeConceptThreshold.floatValue();
 
         //try remembering from subconscious if activation is sufficient
         if (hasSubconcepts) {
-            Concept concept = getSubConcepts().take(getKey());
+            Concept concept = index().take(getKey());
             if (concept != null) {
                 if (concept.isDeleted())
                     return null;
@@ -88,7 +90,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
                 if (belowThreshold && hasSubconcepts) {
                     //attempt insert the latent concept into subconcepts but return null
-                    getSubConcepts().put(concept);
+                    index().put(concept);
                     return null;
                 } else
                     return concept;
@@ -105,16 +107,17 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         return 0f;
     }
 
+
+    public void onRemoved(Concept c) {
+
+    }
+
     @Override
     public void overflow(Concept c) {
-        if (getMemory().concepts.conceptRemoved(c)) {
-            //make sure it's deleted
-            if (!c.isDeleted())
-                c.delete();
-        } else {
-            if (c.isActive())
-                c.setState(Concept.State.Forgotten);
-        }
+        onRemoved(c);
+
+        if (c.isActive())
+            c.setState(Concept.State.Forgotten);
     }
 
     public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {

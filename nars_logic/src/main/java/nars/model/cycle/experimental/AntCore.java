@@ -26,14 +26,14 @@ import java.util.*;
  * simulated Ants navigating through the concept network
  */
 public class AntCore extends ConceptWaveCore {
-    
-
 
     public final Deque<Ant> ants = new ArrayDeque();
     
     /** prevents Ants from moving to a concept in which another Ant occupies */
     public final HashMap<Term,Ant> occupied = new HashMap();
-    
+
+    @Deprecated final Deque<Task> tasks = new ArrayDeque();
+
     float cycleSpeed;
     float conceptVisitDelivery;
 
@@ -55,12 +55,11 @@ public class AntCore extends ConceptWaveCore {
         }
     }
 
-    @Override public void init(Memory m) {
-        super.init(m);
+    @Override
+    public void reset(Memory m, boolean delete) {
+        super.reset(m, delete);
         concepts.setTargetActivated((int) (ants.size() * 0.1f));
     }
-
-    @Deprecated final Deque<Task> tasks = new ArrayDeque();
 
     @Override
     public boolean addTask(Task t) {
