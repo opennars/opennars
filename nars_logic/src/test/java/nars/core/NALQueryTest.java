@@ -49,7 +49,7 @@ public class NALQueryTest {
 
         n.believe("<b --> a>", Eternal, 1.0f, 0.5f);
 
-        n.run(cyclesBeforeQuestion);
+        n.runWhileNewInput(cyclesBeforeQuestion);
 
         new Answered(n, question) {
 
@@ -67,7 +67,7 @@ public class NALQueryTest {
             }
         };
 
-        n.run(cyclesAfterQuestion);
+        n.runWhileNewInput(cyclesAfterQuestion);
 
         assertTrue(b.get());
 

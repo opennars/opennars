@@ -281,7 +281,7 @@ public class LogicPerformance {
             }
         }, ConceptProcessed.class);
         
-        n.run(1);
+        n.runWhileNewInput(1);
         
         Set<Task> solutionTasks = new HashSet();
         

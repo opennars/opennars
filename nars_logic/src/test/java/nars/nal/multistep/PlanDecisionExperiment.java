@@ -70,7 +70,7 @@ public class PlanDecisionExperiment {
             }
         };
         
-        n.run(2000);
+        n.runWhileNewInput(2000);
         
         System.out.println();
         

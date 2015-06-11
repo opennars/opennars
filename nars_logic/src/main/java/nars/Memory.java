@@ -371,7 +371,7 @@ public class Memory implements Serializable, AbstractStamper {
         if (c.isActive()) {
             //index an incoming concept with existing questions or goals
             if (hasQuestions) updateConceptQuestions(c);
-            if (hasGoals) updateConceptGoals(c);
+            //if (hasGoals) updateConceptGoals(c);
         }
         else {
             //unindex an outgoing concept with questions or goals
@@ -390,7 +390,8 @@ public class Memory implements Serializable, AbstractStamper {
         }
         else {
             if (!questionConcepts.add(c)) {
-                throw new RuntimeException("Concept " + c + " aready registered existing questions");
+                //throw new RuntimeException
+                System.err.println("Concept " + c + " aready registered existing questions");
             }
 
             if (questionConcepts.size() > concepts.size()) {

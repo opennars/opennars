@@ -74,7 +74,7 @@ public class BufferedOutputTest {
             }
         };
         n.input("<a --> [b]>.\n <b --> c>. \n <{c} --> a>.\n");
-        n.run(64);
+        n.runWhileNewInput(64);
 
 
     }

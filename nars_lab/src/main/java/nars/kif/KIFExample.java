@@ -48,7 +48,7 @@ public class KIFExample {
         k.start();
         n.input(k);
         
-        n.run(1);
+        n.runWhileNewInput(1);
         
         /*
         TextOutput t = new TextOutput(n, System.out);

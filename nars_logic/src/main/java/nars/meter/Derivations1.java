@@ -23,7 +23,7 @@ public class Derivations1  {
                 n.memory.randomSeed(seed);
                 d.record(n);
                 n.input(LibraryInput.getExample(s));
-                n.run(200);
+                n.runWhileNewInput(200);
             }
         }
 

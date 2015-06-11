@@ -20,7 +20,7 @@ public class NARGraphTest {
         
         n.input("<a --> b>.");
         
-        n.run(2);
+        n.runWhileNewInput(2);
         
         //System.out.println(n);
 

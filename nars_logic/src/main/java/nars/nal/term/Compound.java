@@ -114,6 +114,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             queries += t.varQuery();
             subt |= t.subterms();
         }
+
         this.subterms = subt;
 
         this.hasVarDeps = (byte) deps;
@@ -121,7 +122,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.hasVarQueries = (byte) queries;
         this.varTotal = (short)(deps + indeps + queries);
         this.complexity = (short) compl;
-        this.mass = (short)(varTotal + complexity);
+        if ((this.mass = (short)(varTotal + complexity)) > Global.COMPOUND_MASS_LIMIT) {
+            throw new RuntimeException("mass limit exceeded for new Compound term");
+        }
+
 
         invalidate();
     }

@@ -234,6 +234,11 @@ public class Global {
     public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 4;
 
 
+    /** hard upper-bound limit on Compound term complexity;
+     * if this is exceeded it may indicate a recursively
+     * malformed term due to an inference bug     */
+    public static short COMPOUND_MASS_LIMIT = 8192;
+
 
     public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
         return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts

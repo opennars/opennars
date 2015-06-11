@@ -116,11 +116,15 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
 
     @Override
     public Concept concept(final Term term) {
-        return concepts.get(term);
+        Concept c = concepts.get(term);
+        if (c == null) {
+            return getSubConcepts().get(term);
+        }
+        return c;
     }
 
     /** @return true = deleted, false = forgotten */
-    @Override public boolean conceptRemoved(Concept c) {
+    @Override public boolean conceptRemoved(final Concept c) {
         if ((subcon != null) && (!c.isDeleted())) {
             subcon.put(c);
 

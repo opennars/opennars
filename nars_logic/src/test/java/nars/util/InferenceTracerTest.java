@@ -21,7 +21,7 @@ public class InferenceTracerTest {
         
         n.input("<a --> b>.");
         
-        n.run(2);
+        n.runWhileNewInput(2);
         
         //tracer.printTime(System.out);                
         //System.out.println(tracer.concept);

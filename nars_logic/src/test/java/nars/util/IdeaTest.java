@@ -35,7 +35,7 @@ public class IdeaTest {
         n.input("<a <-> b>.");
         n.input("<b --> a>.");
         
-        n.run(4);
+        n.runWhileNewInput(4);
 
         //System.out.println(i.keySet());
                         
@@ -63,7 +63,7 @@ public class IdeaTest {
         n.input("<a <-> b>!");
         n.input("<b <-> a>?");
         
-        n.run(12);
+        n.runWhileNewInput(12);
 
         /** [<-> ?, <-> ., <-> !, <=> !, <=> ., <=> ?]  */
         assertEquals(i.get("[a, b]").getSentenceTypes().toString(), 6, i.get("[a, b]").getSentenceTypes().size());

@@ -13,10 +13,8 @@ import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.testing.condition.OutputCondition;
-import nars.testing.condition.OutputNotContainsCondition;
 import nars.testing.condition.TaskCondition;
 
-import java.awt.peer.ChoicePeer;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -257,8 +255,8 @@ public class TestNAR extends NAR {
         runUntil(finalCycle);
     }
 
-    public NAR run(long cycles) {
-        return runUntil(time() + cycles);
+    public NAR run(long extraCycles) {
+        return runUntil(time() + extraCycles);
     }
 
     public NAR runUntil(long finalCycle) {
@@ -270,7 +268,7 @@ public class TestNAR extends NAR {
 
 
         try {
-            super.run(finalCycle - time());
+            super.runWhileNewInput(finalCycle - time());
         }
         catch (Exception e) {
             error = e;

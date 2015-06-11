@@ -462,7 +462,7 @@ public class NAR extends Container implements Runnable {
      * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
      * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
      * */
-    public NAR run(long minCycles, long maxCycles) {
+    public NAR runWhileNewInput(long minCycles, long maxCycles) {
 
 
         if (maxCycles <= 0) return this;
@@ -489,10 +489,10 @@ public class NAR extends Container implements Runnable {
     }
 
     /** Execute a fixed number of cycles, then finish any remaining walking steps. */
-    public NAR run(long cycles) {
+    public NAR runWhileNewInput(long extraCycles) {
         //TODO see if this entire method can be implemented as run(0, cycles);
 
-        if (cycles <= 0) return this;
+        if (extraCycles <= 0) return this;
         
         running = true;
 
@@ -507,9 +507,9 @@ public class NAR extends Container implements Runnable {
         long cyclesCompleted = time() - cycleStart;
         
         //queue additional cycles, 
-        cycles -= cyclesCompleted;
-        if (cycles > 0)
-            memory.think(cycles);
+        extraCycles -= cyclesCompleted;
+        if (extraCycles > 0)
+            memory.think(extraCycles);
         
         //finish all remaining cycles
         while (!memory.perceiving() && (running)) {
@@ -663,6 +663,10 @@ public class NAR extends Container implements Runnable {
     /** returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the */
     public Atom the(final String s) {
         return memory.the(s);
+    }
+
+    public void runWhileNewInput() {
+        runWhileNewInput(0);
     }
 
 

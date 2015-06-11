@@ -162,6 +162,14 @@ public class Default extends NARSeed implements ConceptBuilder {
         termLinkRecordLength.set(8);
 
 
+        this.perceptThreshold.set(0.0);
+        this.taskProcessThreshold.set(0.0);
+        this.activeConceptThreshold.set(0.01);
+
+        this.termLinkThreshold.set(0.0);
+        this.taskLinkThreshold.set(0.0);
+
+        this.executionThreshold.set(0.01);
 
 
         setForgetting(Forgetting.Periodic);

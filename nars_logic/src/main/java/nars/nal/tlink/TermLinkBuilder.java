@@ -46,6 +46,7 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
 
             int complexity = host.getComplexity();
 
+
             template = Global.newArrayList(complexity + 1);
             nonTransforms = 0;
 

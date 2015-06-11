@@ -593,7 +593,7 @@ public class GraphPanelNengo<V extends Named, E> extends Nengrow {
         n.input("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>.");
         n.input("<<$y --> [withwings]> ==> <$y --> flyer>>.");
 
-        n.run(5);
+        n.runWhileNewInput(5);
 
         TermLinkGraph g = new TermLinkGraph();
         g.add(n.concept("<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>"), true);

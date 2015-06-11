@@ -66,10 +66,9 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
                 if (concept.isDeleted())
                     return null;
 
-
                 if (!belowThreshold) {
                     //reactivate
-                    return concept.setState(Concept.State.Active);
+                    return concept;
                 } else {
                     //remember but dont reactivate
                     lastRememberance = concept;
@@ -89,7 +88,6 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
                 if (belowThreshold && hasSubconcepts) {
                     //attempt insert the latent concept into subconcepts but return null
-                    concept.setState(Concept.State.Forgotten);
                     getSubConcepts().put(concept);
                     return null;
                 } else
@@ -124,11 +122,17 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         set(term, budget, true, getMemory().time());
         Concept c = concepts.update(this);
         if (c != null) {
-            c.setState(Concept.State.Active);
+
+            if (!c.isActive())
+                c.setState(Concept.State.Active);
+
         } else if (lastRememberance != null) {
             //see if a concept was created but inserted into subconcepts
             c = lastRememberance;
-            c.setState(Concept.State.Forgotten);
+
+            if (!c.isForgotten())
+                c.setState(Concept.State.Forgotten);
+
         }
 
         return c;

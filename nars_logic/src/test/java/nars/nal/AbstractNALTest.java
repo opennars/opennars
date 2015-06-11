@@ -16,7 +16,6 @@ import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
 import nars.util.meter.event.ObjectMeter;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

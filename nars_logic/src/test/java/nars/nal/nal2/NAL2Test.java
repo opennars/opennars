@@ -2,7 +2,6 @@ package nars.nal.nal2;
 
 
 import nars.NARSeed;
-import nars.io.out.TextOutput;
 import nars.model.impl.Classic;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;

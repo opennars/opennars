@@ -196,8 +196,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         State lastState = this.state;
 
-        if (lastState == nextState)
-            return this;
+        if (lastState == nextState) {
+            throw new RuntimeException(toInstanceString() + " already in state " + nextState);
+        }
 
         if (nextState == State.New)
             throw new RuntimeException(toInstanceString() + " can not return to New state ");
@@ -825,11 +826,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
-        if (!subBudget.aboveThreshold(memory.param.taskLinkThreshold)) {
-            //unused
-            //taskBudgetBalance += taskBudget.getPriority();
-            return false;
-        }
 
         taskLinkBuilder.setBudget(subBudget);
 

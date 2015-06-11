@@ -4,7 +4,8 @@ import automenta.vivisect.Video;
 import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.model.impl.Solid;
+import nars.io.out.TextOutput;
+import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
@@ -18,9 +19,10 @@ import nars.narsese.InvalidInputException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.Attribute;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,6 +125,8 @@ abstract public class NQuadsInput {
                 if (a.length == 0) return null;
                 s = a[a.length - 1];
             }
+
+
             return Atom.the(s, true);
         }
         else
@@ -180,6 +184,7 @@ abstract public class NQuadsInput {
     static final Atom domain = Atom.the("domain");
     static final Atom range = Atom.the("range");
     static final Atom sameAs = Atom.the("sameAs");
+    static final Atom dataTypeProperty = Atom.the("DatatypeProperty");
 
     /**
      * Saves the relation into the database. Both entities must exist if the
@@ -194,7 +199,14 @@ abstract public class NQuadsInput {
 
         if (predicate.equals(parentOf) || predicate.equals(type)
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
+
+            //exclude X type dataTypeProperty because these are more or less redundant if they are specified through domain/range
+            if (object.equals(dataTypeProperty)) {
+                return;
+            }
+
             belief = (Inheritance.make(subject, object));
+
         }
         else if (predicate.equals(equivalentClass)) {
             belief = (Equivalence.make(subject, object));
@@ -282,46 +294,50 @@ abstract public class NQuadsInput {
     }
 
     public static void main(String[] args) throws Exception {
-        //Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
-        Solid d = new Solid(32, 4096,1,3,1,2);
+        Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
+        //Solid d = new Solid(32, 4096,1,3,1,2);
         d.setSubconceptBagSize(500000);
         d.setInternalExperience(null).level(7);
         d.inputsMaxPerCycle.set(256);
-        d.inputActivationFactor.set(0.15f);
-        Global.TRUTH_EPSILON = 0.1f;
+        d.setTermLinkBagSize(64);
+        Global.TRUTH_EPSILON = 0.04f;
 
 
         NAR n = new NAR(d);
         //n.input("schizo(I)!"); //needs nal8
 
-        //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
 
 
-        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.95f /* conf */) {
+        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.96f /* conf */) {
 
             @Override
             protected void believe(Term assertion) {
                 float freq = 1.0f;
 
                 //insert with zero priority to bypass main memory go directly to subconcepts
-                n.believe(0f, 0.1f, assertion, Tense.Eternal, freq, beliefConfidence);
+                n.believe(0f, Global.DEFAULT_JUDGMENT_DURABILITY, assertion, Tense.Eternal, freq, beliefConfidence);
             }
         };
 
-        n.frame(10000);
+
+        new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
+
+        n.runWhileNewInput(1);
+
+
 
         Video.themeInvert();
         new NARSwing(n);
 
 
         //n.frame(100);
-        n.believe(0.95f, 0.8f, n.term("<<$1 <-> decay> =/> <$1 <-> deathCause>>"),
+        n.believe(0.75f, 0.8f, n.term("<Spacecraft <-> PopulatedPlace>!"),
                 Tense.Eternal, 1.0f, 0.95f);
-        n.believe(0.95f, 0.8f, n.term("<Aristocrat <-> decay>. :|:"),
+        n.believe(0.75f, 0.8f, n.term("(&&,SpaceMission,Work). :|:"),
                 Tense.Eternal, 1.0f, 0.95f);
-        n.input("<Politician <-> Aristocrat>?");
         //n.frame(5000);
 
+        //n.run();
     }
 }
 

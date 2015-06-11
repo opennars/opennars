@@ -71,7 +71,7 @@ public class IRCBot {
         System.out.print("initializing...");
         for (int i = 0; i < 10; i++) {
             System.out.print(i + " ");
-            n.run(10);
+            n.runWhileNewInput(10);
         }
         System.out.println("ok");
 

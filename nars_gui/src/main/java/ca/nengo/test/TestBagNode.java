@@ -120,7 +120,7 @@ public class TestBagNode extends Nengrow {
             n = new NAR(new Default());
             n.input("<a --> b>.");
             n.input("<b --> c>. :|:");
-            n.run(10);
+            n.runWhileNewInput(10);
         }
 
         public void setFramesPerSecond(Double fps) {

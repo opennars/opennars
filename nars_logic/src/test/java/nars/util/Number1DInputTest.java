@@ -69,10 +69,10 @@ public class Number1DInputTest {
         for (int i = 0; i < 100; i++) {
             v.next(randomArray(N, 1.0, 0));
             //v.next(pulse(N,i%N));            
-            n.run(10);
+            n.runWhileNewInput(10);
         }
         
-        n.run(10000000);
+        n.runWhileNewInput(10000000);
         
         
         //v.close();
@@ -105,7 +105,7 @@ public class Number1DInputTest {
         }
         
         
-        n.run(12);
+        n.runWhileNewInput(12);
         //v.close();
         
         Assert.assertTrue(true);        

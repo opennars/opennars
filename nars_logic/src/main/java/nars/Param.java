@@ -99,13 +99,16 @@ public class Param implements Serializable {
     /** budget summary necessary to Conceptualize */
     public final AtomicDouble newConceptThreshold = new AtomicDouble(0);
 
-    /** budget summary necessary for Concept to be set ACTIVE */
+    /** budget summary necessary for Concept to be set ACTIVE.
+     *  if it is not enough, the concept will be immediately forgotten
+     *  into subconcepts. */
     public final AtomicDouble activeConceptThreshold = new AtomicDouble(0);
 
     /** budget summary necessary to execute a desired Goal */
     public final AtomicDouble goalThreshold = new AtomicDouble(0);
 
-    /** budget summary necessary to run a TaskProcess for a given Task */
+    /** budget summary necessary to run a TaskProcess for a given Task
+     *  this should be equal to zero to allow subconcept seeding. */
     public final AtomicDouble taskProcessThreshold = new AtomicDouble(0);
 
     /** budget summary necessary to propagte tasklink activation */

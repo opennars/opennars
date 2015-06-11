@@ -29,7 +29,7 @@ public class InfiniCacheTest {
         public void init(NAR n) {
             super.init(n);
             n.input("schizo(" + uid + ")!");
-            n.run(1);
+            n.runWhileNewInput(1);
         }
 
         @Override
