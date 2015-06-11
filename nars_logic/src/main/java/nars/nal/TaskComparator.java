@@ -54,7 +54,7 @@ public class TaskComparator implements Comparator<Task> {
         if (priorityComparison != 0)
             return priorityComparison;
 
-        final int complexityComparison = Integer.compare(o1.getTerm().complexity, o2.getTerm().getComplexity());
+        final int complexityComparison = Integer.compare(o1.getTerm().getComplexity(), o2.getTerm().getComplexity());
         if (complexityComparison != 0)
             return complexityComparison;
         else

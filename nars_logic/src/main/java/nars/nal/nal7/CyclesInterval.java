@@ -27,6 +27,15 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
         this.duration = duration;
     }
 
+    @Override
+    public int getMass() {
+        return 1;
+    }
+
+    @Override
+    public boolean requiresNormalizing() {
+        return false;
+    }
 
     public static byte[] interval(long numCycles, int bytesPrecision) {
         /*switch (bytesPrecision) {
@@ -50,6 +59,16 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     @Override
     public Term clone() {
         return new CyclesInterval(cyc, duration);
+    }
+
+    @Override
+    public boolean hasVar() {
+        return false;
+    }
+
+    @Override
+    public int getTotalVariables() {
+        return 0;
     }
 
     @Override

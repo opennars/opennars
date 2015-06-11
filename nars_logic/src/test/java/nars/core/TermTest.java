@@ -35,6 +35,7 @@ import org.junit.Test;
 
 import java.util.TreeSet;
 
+import static java.lang.Long.toBinaryString;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
@@ -441,8 +442,17 @@ public class TermTest {
     public void testSubtermsVector() {
 
         NAR n = new NAR(new Default());
-        Term a = n.term("<<a --> b> </> c>");
-        assertEquals("1000000000000000000000000100010", Long.toBinaryString(a.subterms()));
+
+        Term a3 = n.term("c");
+
+        Compound a = n.term("<<a --> b> </> c>");
+        assertEquals("1000000000000000000000000100001", toBinaryString(a.subterms()));
+
+        Compound b = n.term("<<$a --> #b> </> ?c>");
+        assertEquals("1000000000000000000000000101110", toBinaryString(b.subterms()));
+
+        assertTrue( a.impossibleSubtermByType(b) );
+        assertFalse( a.impossibleSubtermByType(a3) );
 
     }
 }

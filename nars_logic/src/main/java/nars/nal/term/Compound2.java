@@ -88,6 +88,11 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
     }
 
     @Override
+    public boolean hasVar() {
+        return getTotalVariables() > 0;
+    }
+
+    @Override
     protected int compare(Compound otherCompoundOfEqualType) {
         return compareSubterms(otherCompoundOfEqualType);
     }

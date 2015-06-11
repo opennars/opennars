@@ -50,9 +50,11 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     /** total number of terms = complexity + # total variables */
-    default public int getMass() {
+    /*default public int getMass() {
+
         return getComplexity() + getTotalVariables();
-    }
+    }*/
+    public int getMass();
 
     /** total number of leaf terms, excluding variables which have a complexity of zero */
     public int getComplexity();
@@ -104,9 +106,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return this;
     }
 
-    default boolean requiresNormalizing() {
-        return false;
-    }
+    boolean requiresNormalizing();
 
 
     default char[] chars(boolean pretty) {
@@ -124,9 +124,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
      *
      * @return Whether the name contains a variable
      */
-    default public boolean hasVar() {
-        return getTotalVariables() != 0;
-    }
+    public boolean hasVar();
 
     default public int getTemporalOrder() {
         return TemporalRules.ORDER_NONE;
@@ -155,9 +153,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     /** total # of variables */
-    default public int getTotalVariables() {
-        return varDep() + varIndep() + varQuery();
-    }
+    public int getTotalVariables();
 
     /** tests if num variables of any type exceed a value */
     default public boolean varsInAnyTypeMoreThan(final int n) {

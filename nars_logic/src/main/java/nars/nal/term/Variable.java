@@ -22,6 +22,7 @@ package nars.nal.term;
 
 
 import nars.Symbols;
+import nars.nal.NALOperator;
 import nars.util.data.id.Identifier;
 
 import static nars.Symbols.*;
@@ -66,6 +67,19 @@ public class Variable extends Atom {
         this.scope = scope;
 
     }
+
+    @Override
+    public NALOperator operator() {
+        switch (type) {
+            case VAR_INDEPENDENT: return NALOperator.VAR_INDEPENDENT;
+            case VAR_DEPENDENT: return NALOperator.VAR_DEPENDENT;
+            case VAR_QUERY: return NALOperator.VAR_QUERY;
+            default:
+                throw new RuntimeException("Invalid variable type");
+        }
+
+    }
+
     /**
      * Constructor, from a given variable name
      *
@@ -258,17 +272,17 @@ public class Variable extends Atom {
     /** TODO cache for unscoped variable terms */
 
     private static final int MAX_CACHED_VARNAME_INDEXES = 64;
-    private static final String[] vn1 = new String[MAX_CACHED_VARNAME_INDEXES];
-    private static final String[] vn2 = new String[MAX_CACHED_VARNAME_INDEXES];
-    private static final String[] vn3 = new String[MAX_CACHED_VARNAME_INDEXES];
+    private static final byte[][] vn1 = new byte[MAX_CACHED_VARNAME_INDEXES][];
+    private static final byte[][] vn2 = new byte[MAX_CACHED_VARNAME_INDEXES][];
+    private static final byte[][] vn3 = new byte[MAX_CACHED_VARNAME_INDEXES][];
     
     
-    public static String name(char type, int index) {
+    public static byte[] name(final char type, final int index) {
         if (index > MAX_CACHED_VARNAME_INDEXES)
             return newName(type, index);
 
 
-        String[] cache;
+        byte[][] cache;
         switch (type) {
             case VAR_INDEPENDENT: cache = vn1; break;
             case VAR_DEPENDENT: cache = vn2; break;
@@ -277,7 +291,7 @@ public class Variable extends Atom {
                 throw new RuntimeException("Invalid variable type");
         }
 
-        String c = cache[index];
+        byte[] c = cache[index];
         if (c == null) {
             c = newName(type, index);
             cache[index] = c;
@@ -286,21 +300,31 @@ public class Variable extends Atom {
         return c;
     }
     
-    protected static String newName(char type, int index) {
-        
-        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
-        StringBuilder cb  = new StringBuilder(1 + digits).append(type);
-        do {
-            cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
-        } while (index != 0);
-        return cb.toString();
+    protected static byte[] newName(final char type, final int index) {
+
+        byte x;
+        if (index < 10)
+            x = (byte)('0' + index);
+        else if (index < (10+26))
+            x = (byte)(index + 'a');
+        else
+            throw new RuntimeException("variable index out of range for this method");
+
+        return new byte[] { (byte)type, x};
+
+//        int digits = (index >= 256 ? 3 : ((index >= 16) ? 2 : 1));
+//        StringBuilder cb  = new StringBuilder(1 + digits).append(type);
+//        do {
+//            cb.append(  Character.forDigit(index % 16, 16) ); index /= 16;
+//        } while (index != 0);
+//        return cb.toString();
 
     }
 
-    /** returns the part of the variable name beyond the intial type indicator character */
-    public String getIdentifier() {
-        return toString().substring(1);
-    }
+//    /** returns the part of the variable name beyond the intial type indicator character */
+//    public String getIdentifier() {
+//        return toString().substring(1);
+//    }
 
     public static Variable the(char varDependent, int counter) {
         return new Variable(name(varDependent, counter));

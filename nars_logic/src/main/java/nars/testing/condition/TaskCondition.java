@@ -26,7 +26,6 @@ public class TaskCondition extends OutputCondition implements Serializable {
     public final Class channel;
     //@Expose
 
-    @JsonSerialize(using = ToStringSerializer.class)
     public final Term term;
     //@Expose
     public final char punc;

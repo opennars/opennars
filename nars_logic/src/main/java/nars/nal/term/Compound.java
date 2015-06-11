@@ -59,7 +59,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * plus 1
      * TODO make final again
      */
-    transient public short complexity;
 
     /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
     long subterms;
@@ -69,7 +68,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Whether contains a variable
      */
     transient private byte hasVarQueries, hasVarIndeps, hasVarDeps;
-    transient private short varTotal;
+    transient private short varTotal, mass, complexity;
 
     transient private int containedTemporalRelations = -1;
     private boolean normalized;
@@ -92,7 +91,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      *  by default, just returns itself.
      */
     public <T extends Compound> Compound sentencize(TaskSeed task) {
-        return this;
+        return normalized();
     }
 
 
@@ -122,8 +121,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.hasVarQueries = (byte) queries;
         this.varTotal = (short)(deps + indeps + queries);
         this.complexity = (short) compl;
+        this.mass = (short)(varTotal + complexity);
 
         invalidate();
+    }
+
+    @Override
+    public boolean requiresNormalizing() {
+        return true;
     }
 
     @Override
@@ -499,9 +504,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return (T) result;
     }
 
-
-
-
+    @Override
+    public int getMass() {
+        return mass;
+    }
 
     /**
      * Must be Term return type because the type of Term may change with different arguments
@@ -793,7 +799,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     @Override
     public boolean containsTerm(final Term t) {
-        if (impossibleSubTerm(t)) return false;
+        if (impossibleSubTermByMass(t)) return false;
 
         return Terms.contains(term, t);
     }
@@ -802,10 +808,23 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      *  its mass and this term's mass.
      *  (if the target is larger than the maximum combined subterms size,
      *  it would not be contained by this) */
-    public boolean impossibleSubTerm(final Term possibleComponent) {
-        return impossibleSubTerm(possibleComponent.getMass());
+    public boolean impossibleSubTermByMass(final Term possibleComponent) {
+        if (impossibleSubTermByMass(possibleComponent.getMass())) return true;
+        if (impossibleSubtermByType(possibleComponent.subterms())) return true;
+        return false;
     }
-    public boolean impossibleSubTerm(final int otherTermsMass) {
+
+    public boolean impossibleSubtermByType(long subterms) {
+        long t = subterms();
+        if ((t | subterms) != t) {
+            //if the OR produces a different result compared to subterms,
+            // it means there is some component of the other term which is not found
+            return true;
+        }
+        return false;
+    }
+
+    public boolean impossibleSubTermByMass(final int otherTermsMass) {
         return otherTermsMass >
                 getMass()
                         - 1 /* for the compound itself */
@@ -887,7 +906,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * TODO parameter for max (int) level to scan down
      */
     public boolean containsTermRecursively(final Term target) {
-        if (impossibleSubTerm(target))
+        if (impossibleSubTermByMass(target))
             return false;
 
         for (Term x : term) {
@@ -1012,6 +1031,11 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public int getTotalVariables() {
         return varTotal;
+    }
+
+    @Override
+    public boolean hasVar() {
+        return varTotal > 0;
     }
 
     /**
@@ -1274,6 +1298,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public Object setRest(Object rest) {
         throw new RuntimeException(this + " not modifiable");
+    }
+
+    public boolean impossibleSubtermByType(Term b) {
+        return impossibleSubtermByType(b.subterms());
     }
 
     public static class InvalidTermConstruction extends RuntimeException {

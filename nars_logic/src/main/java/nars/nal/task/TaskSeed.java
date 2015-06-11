@@ -216,9 +216,16 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
     public TaskSeed<T> budget(float p, float d) {
-        float q = Float.NaN;
-        if ((getPunctuation()!=Symbols.QUESTION) && (getPunctuation()!=Symbols.QUEST))
-            q = BudgetFunctions.truthToQuality(getTruth());
+        final float q;
+        Truth t = getTruth();
+        if ((getPunctuation()!=Symbols.QUESTION) && (getPunctuation()!=Symbols.QUEST)) {
+            if (t == null)
+                throw new RuntimeException("Truth needs to be defined prior to budget to calculate truthToQuality");
+            q = BudgetFunctions.truthToQuality(t);
+        }
+        else
+            q = Float.NaN;
+
         return budget(p, d, q);
     }
 

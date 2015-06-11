@@ -31,7 +31,7 @@ import java.io.OutputStream;
 
 /**
  *
- * @author me
+ * http://wiki.fasterxml.com/JacksonJsonSchemaGeneration
  */
 public class JSONOutput  {
 
@@ -44,14 +44,17 @@ public class JSONOutput  {
             .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
             .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .registerModule(new SimpleModule().addSerializer(StackTraceElement.class, new ToStringSerializer()))
-            .registerModule(new SimpleModule().addSerializer(Term.class, new ToStringSerializer()))
+            //.registerModule(new SimpleModule().addSerializer(Term.class, new ToStringSerializer()))
             ;
 
     static final ObjectMapper fieldMapperIndent = fieldMapper.copy()
             .configure(SerializationFeature.INDENT_OUTPUT, true)
+
             ;
 
-    static final ObjectWriter pretty = fieldMapperIndent.writerWithDefaultPrettyPrinter();
+    static final ObjectWriter pretty = fieldMapperIndent
+            .configure(SerializationFeature.INDENT_OUTPUT, true)
+            .writerWithDefaultPrettyPrinter();
 
 
     public static String stringFromFields(Object obj) {
@@ -81,6 +84,10 @@ public class JSONOutput  {
         }
     }
 
+    public static void main(String[] args) {
+
+
+    }
 
 }
 //

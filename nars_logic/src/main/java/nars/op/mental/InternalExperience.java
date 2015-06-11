@@ -221,28 +221,25 @@ public class InternalExperience extends NARReaction {
             return null;
         }
         Sentence sentence = task.sentence;
-        Truth truth = new DefaultTruth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        Stamper stamp = new Stamper(task, nal.time());
-        stamp.setOccurrenceTime(nal.time());
         Operation ret = toTerm(sentence, nal);
         if (ret==null) {
             return null;
         }
 
-        Sentence j = new Sentence(ret, Symbols.JUDGMENT, truth, stamp);
-        Budget newbudget=new Budget(
-                Global.DEFAULT_JUDGMENT_CONFIDENCE*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                Global.DEFAULT_JUDGMENT_PRIORITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                BudgetFunctions.truthToQuality(truth));
-        
+        float pri = Global.DEFAULT_JUDGMENT_CONFIDENCE * INTERNAL_EXPERIENCE_PRIORITY_MUL;
+        float dur = Global.DEFAULT_JUDGMENT_PRIORITY * INTERNAL_EXPERIENCE_DURABILITY_MUL;
         if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
-            newbudget.setPriority(task.getPriority()*INTERNAL_EXPERIENCE_PRIORITY_MUL);
-            newbudget.setDurability(task.getDurability()*INTERNAL_EXPERIENCE_DURABILITY_MUL);
+            pri*=INTERNAL_EXPERIENCE_PRIORITY_MUL;
+            dur*=INTERNAL_EXPERIENCE_DURABILITY_MUL;
         }
 
-        return nal.deriveTask(
-                nal.newTask(j).budget((Budget) newbudget).parent(full ? null : task).reason("Remembered Action (Internal Experience)"),
-                false, true);
+        return nal.deriveSingle(
+                nal.newTask(ret).judgment()
+                        .parentStamp(full ? null : task, nal.time())
+                        .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                        .budget(pri, dur)
+                        .reason("Remembered Action (Internal Experience)")
+        );
     }
 
 

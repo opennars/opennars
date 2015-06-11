@@ -16,7 +16,10 @@ import nars.util.meter.event.DoubleMeter;
 import nars.util.meter.event.HitMeter;
 import nars.util.meter.event.ObjectMeter;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -31,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by me on 2/10/15.
  */
 @Ignore
+@RunWith(Parameterized.class)
 abstract public class AbstractNALTest extends TestCase {
 
     public static final long randomSeed = 1;
@@ -80,27 +84,27 @@ abstract public class AbstractNALTest extends TestCase {
 
 
     public final TestNAR nar;
-    public final NARSeed build;
+    public NARSeed build;
 
 
 
     public AbstractNALTest(NARSeed b) {
         super();
 
+        this.build = b;
+        build.rng.setSeed(randomSeed);
 
         Global.DEBUG = true;
 
-        this.build = b;
-        this.nar = new TestNAR(b);
-        nar.memory.randomSeed(randomSeed);
         results.clear();
-        this.eventCounter = new CountOutputEvents(nar, results);
 
-        deriveMethodCounter = null;
+        this.nar = new TestNAR(build);
+
+        this.eventCounter = null; //new CountOutputEvents(nar, results);
+        this.deriveMethodCounter = null;
         //this.deriveMethodCounter = new CountDerivationCondition(nar, results);
 
     }
-
 
     /** called before test runs */
     public static void initAnalysis(NAR nar) {
@@ -110,7 +114,7 @@ abstract public class AbstractNALTest extends TestCase {
             derivations.record(nar);
         }
         */
-        if (analyzeStack) {
+        if (analyzeStack && eventCounter!=null) {
             nar.on(eventCounter);
             if (deriveMethodCounter!=null)
                 nar.on(deriveMethodCounter);

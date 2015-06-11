@@ -222,6 +222,11 @@ public class Atom extends ImmutableAtom {
     }
 
 
+    @Override
+    public boolean requiresNormalizing() {
+        return false;
+    }
+
     /**
      * The syntactic complexity, for constant atomic Term, is 1.
      *

@@ -12,11 +12,13 @@ public enum NALOperator {
 
     //TODO include min/max arity for each operate, if applicable
 
-    /* Syntactical, so is neither relation or isNative */
-    COMPOUND_TERM_OPENER("(", 0, false, false),
-    COMPOUND_TERM_CLOSER(")", 0, false, false),
-    STATEMENT_OPENER("<", 0, false, false),
-    STATEMENT_CLOSER(">", 0, false, false),
+    /** an atomic term (includes interval and variables); this value is set if not a compound term */
+    ATOM(".", 0, false),
+
+    VAR_INDEPENDENT("$",0,false),
+    VAR_DEPENDENT("#",0,false),
+    VAR_QUERY("?",0,false),
+
 
     NEGATION("--", 5, false, true, 1),
 
@@ -67,10 +69,14 @@ public enum NALOperator {
 
     OPERATION("^", 8),
 
-    /** an atomic term (includes interval and variables); this value is set if not a compound term */
-    ATOM(".", 0, false),
 
-    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX), 0, false);
+    INTERVAL(String.valueOf(Symbols.INTERVAL_PREFIX), 0, false),
+
+    /* Syntactical, so is neither relation or isNative */
+    COMPOUND_TERM_OPENER("(", 0, false, false),
+    COMPOUND_TERM_CLOSER(")", 0, false, false),
+    STATEMENT_OPENER("<", 0, false, false),
+    STATEMENT_CLOSER(">", 0, false, false);
 
     //-----------------------------------------------------
 
@@ -173,5 +179,6 @@ public enum NALOperator {
     public boolean has8BitRepresentation() {
         return byt!=0;
     }
+
 
 }

@@ -144,7 +144,7 @@ abstract public class BufferedOutput extends Output {
                     conf = 1.0f;
 
                 c = 1.0f + 0.2f * (1.0f - t.getPriority());
-                c *= 1.0f + 0.02f * (float) Math.sqrt(t.getTerm().complexity);
+                c *= 1.0f + 0.02f * (float) Math.sqrt(t.getTerm().getComplexity());
                 c *= 1.0f + 0.2f * (1.0f - conf);
                 c *= 1.0f + 0.1f * t.sentence.getOriginality();
             }
