@@ -472,27 +472,28 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
      * @param s The Stamp to be compared
      * @return Whether the two have contain the same evidential base
      */
-    default public boolean equalStamp(final Stamp s, final boolean hash, final boolean evidentialBase, final boolean creationTime, final boolean occurrenceTime) {
+    default public boolean equalStamp(final Stamp s, final boolean evidentialSet, final boolean creationTime, final boolean occurrenceTime) {
         if (this == s) return true;
 
-        if (hash && (!occurrenceTime || !evidentialBase))
+        /*if (hash && (!occurrenceTime || !evidentialSet))
             throw new RuntimeException("Hash equality test must be followed by occurenceTime and evidentialSet equality since hash incorporates them");
 
         if (hash)
-            if (hashCode() != s.hashCode()) return false;
+            if (hashCode() != s.hashCode()) return false;*/
         if (creationTime)
             if (getCreationTime() != s.getCreationTime()) return false;
         if (occurrenceTime)
             if (getOccurrenceTime() != s.getOccurrenceTime()) return false;
-        if (evidentialBase) {
+        if (evidentialSet) {
             //iterate in reverse; the ending of the evidence chain is more likely to be different
-            final long[] a = getEvidentialSet();
+            /*final long[] a = getEvidentialSet();
             final long[] b = s.getEvidentialSet();
             //if (evidentialHash!=s.evidentialHash)
             //    return false;
             if (a.length != b.length) return false;
             for (int i = a.length - 1; i >= 0; i--)
-                if (a[i] != b[i]) return false;
+                if (a[i] != b[i]) return false;*/
+            return Arrays.equals(getEvidentialSet(), s.getEvidentialSet());
         }
 
 

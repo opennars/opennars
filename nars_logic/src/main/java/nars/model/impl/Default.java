@@ -19,10 +19,7 @@ import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
 import nars.nal.rule.*;
-import nars.nal.task.filter.ConstantDerivationLeak;
-import nars.nal.task.filter.DerivationFilter;
-import nars.nal.task.filter.FilterBelowConfidence;
-import nars.nal.task.filter.FilterOperationWithSubjOrPredVariable;
+import nars.nal.task.filter.*;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
@@ -210,7 +207,8 @@ public class Default extends NARSeed implements ConceptBuilder {
 
                 new DerivationFilter[] {
                     new FilterBelowConfidence(),
-                    new FilterOperationWithSubjOrPredVariable()
+                    new FilterOperationWithSubjOrPredVariable(),
+                    new FilterDuplicateExistingBelief(),
                     //param.getDefaultDerivationFilters().add(new BeRational());
                 }
 

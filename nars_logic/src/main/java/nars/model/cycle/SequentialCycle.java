@@ -36,10 +36,6 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
 
     }
 
-    @Override
-    public double getPriorityTotal() {
-        return concepts.mass();
-    }
 
     @Override
     public void remember(Concept c) {

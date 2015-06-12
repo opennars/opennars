@@ -4,6 +4,7 @@
  */
 package nars.nal.process;
 
+import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.NAL;
@@ -105,5 +106,9 @@ public class TaskProcess extends NAL {
         return d;
     }
 
-
+    @Override
+    protected void onStart() {
+        emit(Events.TaskAdd.class, currentTask);
+        memory.logic.TASK_ADD_NEW.hit();
+    }
 }

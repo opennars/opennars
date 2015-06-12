@@ -644,6 +644,11 @@ public class Memory implements Serializable, AbstractStamper {
         if (reason!=null)
             t.addHistory(reason);
 
+        if (!Terms.levelValid(t.sentence, nal())) {
+            removed(t, "Insufficient NAL level");
+            return false;
+        }
+
         /* process ImmediateOperation and Operations of ImmediateOperators */
         if (t.executeIfImmediate(this)) {
             return false;
@@ -654,17 +659,8 @@ public class Memory implements Serializable, AbstractStamper {
             t.mulPriority( inputPriorityFactor );
 
 
-        if (!Terms.levelValid(t.sentence, nal())) {
-            removed(t, "Insufficient NAL level");
-            return false;
-        }
 
-        cycle.addTask(t);
-
-        emit(Events.TaskAdd.class, t, reason);
-        logic.TASK_ADD_NEW.hit();
-
-        return true;
+        return cycle.addTask(t);
     }
 
     /**

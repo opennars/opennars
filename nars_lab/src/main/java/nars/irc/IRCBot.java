@@ -54,7 +54,7 @@ public class IRCBot {
         d.setConceptBagSize(2048);
         d.executionThreshold.set(0.7);
         d.temporalRelationsMax.set(2);
-        d.shortTermMemoryHistory.set(4);
+        d.shortTermMemoryHistory.set(3);
         d.duration.set(5);
         d.termLinkMaxReasoned.set(6);
         d.conceptsFiredPerCycle.set(9);
@@ -79,7 +79,7 @@ public class IRCBot {
 
 
         Video.themeInvert();
-        new NARSwing(n).setSpeed(0.1f);
+        new NARSwing(n).setSpeed(0.04f);
 
 
         IRCBot i = new IRCBot(n);

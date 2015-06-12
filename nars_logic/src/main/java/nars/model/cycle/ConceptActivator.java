@@ -124,7 +124,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         if (c != null) {
 
             if (c.isDeleted()) {
-                throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
+                //throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
+                return null;
             }
 
             if (!c.isActive()) {

@@ -111,11 +111,6 @@ public class Solid extends Default implements ControlCycle {
 
 
     @Override
-    public double getPriorityTotal() {
-        return concepts.mass();
-    }
-
-    @Override
     public void conceptPriorityHistogram(double[] bins) {
         throw new RuntimeException("not impl yet");
     }

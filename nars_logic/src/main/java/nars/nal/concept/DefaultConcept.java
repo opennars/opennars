@@ -41,7 +41,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     private final Bag<Identifier, TermLink> termLinks;
 
-    private Map<Object,Meta> meta = null;
+    private Map<Object, Meta> meta = null;
 
 
     private List<Task> questions;
@@ -93,7 +93,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         this.state = State.New;
         memory.emit(Events.ConceptNew.class, this);
-        if (memory.logic!=null)
+        if (memory.logic != null)
             memory.logic.CONCEPT_NEW.hit();
 
 
@@ -113,7 +113,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return termLinks;
     }
 
-    /** metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated */
+    /**
+     * metadata table where processes can store and retrieve concept-specific data by a key. lazily allocated
+     */
     public Map<Object, Meta> getMeta() {
         return meta;
     }
@@ -164,21 +166,25 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (s == null) return false;
         return !s.isEmpty();
     }
+
     public boolean hasBeliefs() {
         final List<Task> s = getBeliefs();
         if (s == null) return false;
         return !s.isEmpty();
     }
+
     public boolean hasQuestions() {
         final List<Task> s = getQuestions();
         if (s == null) return false;
         return !s.isEmpty();
     }
+
     public boolean hasQuests() {
         final List<Task> s = getQuests();
         if (s == null) return false;
         return !s.isEmpty();
     }
+
     public State getState() {
         return state;
     }
@@ -191,7 +197,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return deletionTime;
     }
 
-    /** returns the same instance, used for fluency */
+    /**
+     * returns the same instance, used for fluency
+     */
     public Concept setState(State nextState) {
 
         State lastState = this.state;
@@ -219,7 +227,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
             case Deleted:
 
-                if (lastState==State.Active) //emit forget event if it came directly to delete
+                if (lastState == State.Active) //emit forget event if it came directly to delete
                     getMemory().emit(Events.ConceptForget.class, this);
 
                 deletionTime = getMemory().time();
@@ -234,7 +242,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         getMemory().updateConceptState(this);
 
-        if (getMeta() !=null) {
+        if (getMeta() != null) {
             for (Meta m : getMeta().values()) {
                 m.onState(this, getState());
             }
@@ -243,15 +251,20 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return this;
     }
 
-    @Override public boolean equals(final Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
-        return ((Concept)obj).name().equals(name());
+        return ((Concept) obj).name().equals(name());
     }
 
-    @Override public int hashCode() { return name().hashCode();     }
+    @Override
+    public int hashCode() {
+        return name().hashCode();
+    }
 
     /* ---------- direct processing of tasks ---------- */
+
     /**
      * Directly process a new task. Called exactly once on each task. Using
      * local information and finishing in a constant time. Provide feedback in
@@ -259,7 +272,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * <p>
      * called in Memory.immediateProcess only
      *
-     * @param nal reasoning context it is being processed in
+     * @param nal  reasoning context it is being processed in
      * @param task The task to be processed
      * @return whether it was processed
      */
@@ -300,7 +313,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return true;
     }
 
-    /** called by concept before it fires to update any pending changes */
+    /**
+     * called by concept before it fires to update any pending changes
+     */
     public void updateTermLinks() {
 
         /*
@@ -325,7 +340,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return false;
     }
 
-    /** for batch processing a collection of tasks; more efficient than processing them individually */
+    /**
+     * for batch processing a collection of tasks; more efficient than processing them individually
+     */
     //TODO untested
     public void link(Collection<Task> tasks) {
 
@@ -352,14 +369,15 @@ public class DefaultConcept extends Item<Term> implements Concept {
         }
 
         //linkToTerms the aggregate budget, rather than each task's budget separately
-        if (aggregateBudget!=null) {
+        if (aggregateBudget != null) {
             linkTerms(aggregateBudget, true);
         }
     }
 
 
-
-    /** by default, any Task is valid */
+    /**
+     * by default, any Task is valid
+     */
     public boolean valid(Task t) {
         return true;
     }
@@ -368,7 +386,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     /**
      * To accept a new judgment as belief, and check for revisions and solutions
      *
-     * @param judg The judgment to be accepted
+     * @param judg      The judgment to be accepted
      * @param newBelief The task to be processed
      * @return Whether to continue the processing of the task
      */
@@ -380,8 +398,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         final Task oldBelief = getTask(newBelief.sentence, getBeliefs());   // only revise with the strongest -- how about projection?
 
-        if ((oldBelief != null) && (oldBelief.sentence!=newBelief.sentence)) {
-            if (newBelief.sentence.equalStamp(oldBelief.sentence, true, true, false, true)) {
+        if (oldBelief != null) {
+
+            if (oldBelief.sentence == newBelief.sentence) {
+                return false;
+            }
+
+            if (newBelief.sentence.equalStamp(oldBelief.sentence, true, false, true)) {
 //                if (task.getParentTask() != null && task.getParentTask().sentence.isJudgment()) {
 //                    //task.budget.decPriority(0);    // duplicated task
 //                }   // else: activated belief
@@ -408,15 +431,14 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
 
-                    /*
-                    if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
-                    }
-                    */
-
+                /*
+                if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
+                }
+                */
 
 
                 Task r = tryRevision(newBelief, oldBelief.sentence, false, nal);
-                if (r!=null) {
+                if (r != null) {
                     newBelief = r;
                     nal.setCurrentBelief(newBelief.sentence);
                 }
@@ -424,9 +446,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
         }
 
-        /*if (task.aboveThreshold())*/ {
 
-            if (nal!=null) {
+        /*if (task.aboveThreshold())*/
+        {
+
+            if (nal != null) {
                 int nnq = getQuestions().size();
                 for (int i = 0; i < nnq; i++) {
                     trySolution(newBelief.sentence, getQuestions().get(i), nal);
@@ -444,19 +468,16 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-
-
-
     /**
      * To accept a new goal, and check for revisions and realization, then
      * decide whether to actively pursue it
      *
-     * @param judg The judgment to be accepted
+     * @param judg    The judgment to be accepted
      * @param newGoal The task to be processed
      * @return Whether to continue the processing of the task
      */
     protected boolean processGoal(final NAL nal, Task newGoal) {
-        
+
 
         final Task oldGoalT = getTask(newGoal.sentence, goals); // revise with the existing desire values
         Sentence oldGoal = null;
@@ -466,32 +487,33 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
 
-            if (newGoal.sentence.equalStamp(oldGoal, false, true, true, false)) {
+            if (newGoal.sentence.equalStamp(oldGoal, true, true, false)) {
                 return false; // duplicate
             }
             if (revisible(newGoal.sentence, oldGoal)) {
-                
+
                 //nal.setTheNewStamp(newStamp, oldStamp, memory.time());
 
 
                 //Truth projectedTruth = oldGoal.projection(now, task.getOccurrenceTime());
-                /*if (projectedGoal!=null)*/ {
-                   // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
-                       // nal.singlePremiseTask(projectedGoal, task.budget); 
-                        //return;
-                   // }
+                /*if (projectedGoal!=null)*/
+                {
+                    // if (goal.after(oldGoal, nal.memory.param.duration.get())) { //no need to project the old goal, it will be projected if selected anyway now
+                    // nal.singlePremiseTask(projectedGoal, task.budget);
+                    //return;
+                    // }
                     //nal.setCurrentBelief(projectedGoal);
 
                     Task revisedTask = tryRevision(newGoal, oldGoal, false, nal);
-                    if(revisedTask!=null) { // it is revised, so there is a new task for which this function will be called
+                    if (revisedTask != null) { // it is revised, so there is a new task for which this function will be called
                         newGoal = revisedTask;
                         //return true; // with higher/lower desire
                     } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
 
                 }
             }
-        } 
-        
+        }
+
         //long then = goal.getOccurrenceTime();
         int dur = nal.memory.duration();
 
@@ -503,7 +525,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //            return true;
 //
 //        }
-        
+
         if (newGoal.aboveThreshold(memory.param.goalThreshold)) {
 
             final Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
@@ -515,12 +537,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
                 trySolution(projectedBelief, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = newGoal.sentence.truth.getExpDifAbs(belief.truth);
-            }    
-            
-            double Satisfaction=1.0-AntiSatisfaction;
+            }
+
+            double Satisfaction = 1.0 - AntiSatisfaction;
             Truth T = new DefaultTruth(newGoal.sentence.truth);
 
-            T.setFrequency((float) (T.getFrequency()-Satisfaction)); //decrease frequency according to satisfaction value
+            T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
 
             if (AntiSatisfaction >= Global.SATISFACTION_TRESHOLD && newGoal.sentence.truth.getExpectation() > nal.memory.param.executionThreshold.get()) {
 
@@ -542,29 +564,29 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return true;
     }
 
-    final static Variable how=new Variable("?how");
+    final static Variable how = new Variable("?how");
 
     public static void questionFromGoal(final Task task, final NAL nal) {
-        if(Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+        if (Global.QUESTION_GENERATION_ON_DECISION_MAKING || Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
             //ok, how can we achieve it? add a question of whether it is fullfilled
 
-            ArrayList<Compound> qu=new ArrayList(3);
+            ArrayList<Compound> qu = new ArrayList(3);
 
-            if(Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if(!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+            if (Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
+                if (!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
 
                     Implication i1 = Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
-                    if (i1!=null)
+                    if (i1 != null)
                         qu.add(i1);
 
                     Implication i2 = Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
-                    if (i2!=null)
+                    if (i2 != null)
                         qu.add(i2);
 
                 }
             }
 
-            if(Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
+            if (Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
                 qu.add(task.sentence.term);
             }
 
@@ -577,8 +599,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
                             .setOccurrenceTime(task.sentence.getOccurrenceTime()) //set tense of question to goal tense)
                     ).budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
-            for(Compound q : qu)
-              nal.deriveSingle(t.term(q));
+            for (Compound q : qu)
+                nal.deriveSingle(t.term(q));
         }
     }
 
@@ -596,7 +618,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         List<Task> table = ques.isQuestion() ? getQuestions() : getQuests();
 
         if (Global.DEBUG) {
-            if (n.sentence.truth!=null) {
+            if (n.sentence.truth != null) {
                 System.err.println(n.sentence + " has non-null truth");
                 System.err.println(n.getExplanation());
                 throw new RuntimeException(n.sentence + " has non-null truth");
@@ -648,8 +670,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         if (ques.isQuest()) {
             trySolution(getSentence(ques, getGoals()), n, nal);
-        }
-        else {
+        } else {
             trySolution(getSentence(ques, getBeliefs()), n, nal);
         }
     }
@@ -659,8 +680,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * rank, and remove redundant or low rank one
      *
      * @param newSentence The judgment to be processed
-     * @param table The table to be revised
-     * @param capacity The capacity of the table
+     * @param table       The table to be revised
+     * @param capacity    The capacity of the table
      * @return whether table was modified
      */
     public Task addToTable(final Memory memory, final Task newSentence, final List<Task> table, final int capacity) {
@@ -675,7 +696,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
         int i;
 
         int originalSize = table.size();
-
 
 
         //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top
@@ -704,8 +724,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         final int ts = table.size();
         if (ts > capacity) {
             removed = table.remove(ts - 1);
-        }
-        else if (i == table.size()) { // branch implies implicit table.size() < capacity
+        } else if (i == table.size()) { // branch implies implicit table.size() < capacity
             table.add(newSentence);
             //removed = nothing
         }
@@ -754,7 +773,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * Select a belief value or desire value for a given query
      *
      * @param query The query to be processed
-     * @param list The list of beliefs or goals to be used
+     * @param list  The list of beliefs or goals to be used
      * @return The best candidate selected
      */
     @Override
@@ -820,9 +839,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
         final int numTemplates = templates.size();
 
 
-        //float linkSubBudgetDivisor = (float)numTemplates;
-        float linkSubBudgetDivisor = (float)Math.sqrt(numTemplates);
-
+        float linkSubBudgetDivisor = termLinkBuilder.getNonTransforms();
+        //float linkSubBudgetDivisor = (float) Math.sqrt(numTemplates);
 
 
         final Budget subBudget = divide(taskBudget, linkSubBudgetDivisor);
@@ -846,9 +864,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
                 /** activate the task tlink */
                 componentConcept.activateTaskLink(taskLinkBuilder);
-            }
-
-            else {
+            } else {
                 //taskBudgetBalance += subBudget.getPriority();
             }
 
@@ -859,6 +875,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
     /* ---------- insert Links for indirect processing ---------- */
+
     /**
      * Insert a TaskLink into the TaskLink bag
      * <p>
@@ -872,7 +889,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
         return t;
     }
 
-    @Override public Term name() {
+    @Override
+    public Term name() {
         return getTerm();
     }
 
@@ -882,7 +900,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * <p>
      * called only from Memory.continuedProcess
      *
-     * @param taskBudget The BudgetValue of the task
+     * @param taskBudget   The BudgetValue of the task
      * @param updateTLinks true: causes update of actual termlink bag, false: just queues the activation for future application.  should be true if this concept calls it for itself, not for another concept
      * @return whether any activity happened as a result of this invocation
      */
@@ -899,7 +917,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         }
 
         float dur = 0, qua = 0;
-        if (taskBudget !=null) {
+        if (taskBudget != null) {
             //TODO make this parameterizable
 
             //float linkSubBudgetDivisor = (float)Math.sqrt(recipients);
@@ -907,11 +925,11 @@ public class DefaultConcept extends Item<Term> implements Concept {
             //half of each subBudget is spent on this concept and the other concept's termlink
             //subBudget = taskBudget.getPriority() * (1f / (2 * recipients));
 
-            subPriority = taskBudget.getPriority() * (1f / (float) Math.sqrt(recipients));
+            //subPriority = taskBudget.getPriority() / (float) Math.sqrt(recipients);
+            subPriority = taskBudget.getPriority() / recipients;
             dur = taskBudget.getDurability();
             qua = taskBudget.getQuality();
-        }
-        else {
+        } else {
             subPriority = 0;
         }
 
@@ -938,7 +956,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         //TODO merge with above loop, or avoid altogether under certain conditions
 
         List<TermLinkTemplate> tl = getTermLinkTemplates();
-        if (tl!=null && updateTLinks) {
+        if (tl != null && updateTLinks) {
             int n = tl.size();
             for (int i = 0; i < n; i++) {
                 TermLinkTemplate t = tl.get(i);
@@ -987,19 +1005,18 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-
     /**
      * Insert a new or activate an existing TermLink in the TermLink bag
      * via a caching TermLinkSelector which has been configured for the
      * target Concept and the current budget
-     *
+     * <p>
      * called from buildTermLinks only
-     *
+     * <p>
      * If the tlink already exists, the budgets will be merged
      *
      * @param termLink The termLink to be inserted
      * @return the termlink which was selected or updated
-     * */
+     */
     public TermLink activateTermLink(final TermLinkBuilder termLink) {
 
         return getTermLinks().update(termLink);
@@ -1010,7 +1027,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     /**
      * Determine the rank of a judgment by its quality and originality (stamp
-     baseLength), called from Concept
+     * baseLength), called from Concept
      *
      * @param s The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
@@ -1018,8 +1035,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
     public float rankBelief(final Sentence s, final long now) {
         return rankBeliefOriginal(s);
     }
-
-
 
 
     public static float rankBeliefOriginal(final Sentence judg) {
@@ -1091,12 +1106,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //    }
 
 
-
-
-
-
-
-    @Override public void delete() {
+    @Override
+    public void delete() {
 
         if (isDeleted()) return;
 
@@ -1114,8 +1125,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         quests.clear();
 
 
-
-        if (getMeta() !=null) {
+        if (getMeta() != null) {
             getMeta().clear();
             setMeta(null);
         }
@@ -1156,14 +1166,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //    }
 
 
-
-
     public List<TermLinkTemplate> getTermLinkTemplates() {
         return termLinkBuilder.templates();
     }
-
-
-
 
 
     /**
@@ -1171,7 +1176,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
      *
      * Note: since this is iterated frequently, an array should be used. To
      * avoid iterator allocation, use .get(n) in a for-loop
-     */ /**
+     */
+    /**
      * Return the questions, called in ComposionalRules in
      * dedConjunctionByQuestion only
      */
@@ -1180,8 +1186,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
 
-
-    /** get a random belief, weighted by their sentences confidences */
+    /**
+     * get a random belief, weighted by their sentences confidences
+     */
     public Sentence getBeliefRandomByConfidence(boolean eternal) {
 
         if (getBeliefs().isEmpty()) return null;
@@ -1256,7 +1263,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //    }
 
 
-    /** called when concept is activated; empty and subclassable */
+    /**
+     * called when concept is activated; empty and subclassable
+     */
     protected void onActive() {
 
     }

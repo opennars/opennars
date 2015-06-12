@@ -181,7 +181,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
     /** compares all sentence fields, after comparing hash (which includes them all) */
     private boolean equivalentTo(final Sentence that) {
-        if (that.hashCode()!=hashCode()) return false;
+        //if (that.hashCode()!=hashCode()) return false;
         return equivalentTo(that, true, true, true, true, false);
     }
 
@@ -194,6 +194,8 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     @Override
     public int hashCode() {
         if (this.hash == 0) {
+
+            //stamp (evidentialset, occurrencetime), truth, term, punctuation
 
             int hashStamp = Util.hash(Arrays.hashCode(getEvidentialSet()), (int)this.occurrenceTime);
 
@@ -257,7 +259,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         if (stamp) {
             //uniqueness includes every aspect of stamp except creation time
             //<patham9> if they are only different in creation time, then they are the same
-            if (!this.equalStamp(that, true, true, creationTime, true))
+            if (!this.equalStamp(that, true, creationTime, true))
                 return false;
         }
 

@@ -28,7 +28,6 @@ public class LogicMetrics extends NARReaction {
     public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
 
     public final DoubleMeter CONCEPT_COUNT = new DoubleMeter("concept.count");
-    public final DoubleMeter CONCEPT_MASS = new DoubleMeter("concept.mass");
     public final DoubleMeter TERMLINK_MASS_CONCEPT_MEAN = new DoubleMeter("termlink.mass.concept_mean");
     public final DoubleMeter TERMLINK_MASS_MEAN = new DoubleMeter("termlink.mass.mean");
     public final DoubleMeter TASKLINK_MASS_CONCEPT_MEAN = new DoubleMeter("tasklink.mass.concept_mean");
@@ -40,7 +39,7 @@ public class LogicMetrics extends NARReaction {
     public final HitMeter TERM_LINK_TRANSFORM = new HitMeter("concept.termlink.transform");
 
     SummaryStatistics inputPriority = new SummaryStatistics();
-    public final DoubleMeter INPUT_PRIORITY_SUM = new DoubleMeter("input.mass.sum");
+    public final DoubleMeter INPUT_PRIORITY_SUM = new DoubleMeter("input.pri.sum");
 
     /**
      * triggered for each StructuralRules.contraposition().
@@ -189,7 +188,6 @@ public class LogicMetrics extends NARReaction {
             }
 
             CONCEPT_COUNT.set(count);
-            CONCEPT_MASS.set(m.cycle.getPriorityTotal());
             TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
             TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
             TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());

@@ -37,13 +37,6 @@ public class AntCore extends ConceptWaveCore {
     float cycleSpeed;
     float conceptVisitDelivery;
 
-    @Override
-    public double getPriorityTotal() {
-        //TODO implement
-        return 0;
-    }
-
-
 
     public AntCore(int numAnts, float cycleSpeed, int maxConcepts) {
         super(maxConcepts);

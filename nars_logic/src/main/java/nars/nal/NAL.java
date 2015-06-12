@@ -83,7 +83,7 @@ public abstract class NAL  implements Runnable {
     }
 
     protected void onStart() {
-        /** implement if necessary in subclasses */
+
     }
 
     protected void onFinished() {

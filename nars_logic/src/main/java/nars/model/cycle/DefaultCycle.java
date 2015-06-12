@@ -3,7 +3,6 @@ package nars.model.cycle;
 import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
-import nars.bag.impl.CacheBag;
 import nars.nal.*;
 import nars.nal.concept.Concept;
 import nars.nal.process.ConceptProcess;
@@ -31,7 +30,7 @@ public class DefaultCycle extends SequentialCycle {
      * cycle
      */
     protected SortedSet<Task> newTasks;
-    protected List<Task> incoming = new ArrayList();
+    protected List<Task> newTasksTemp = new ArrayList();
     protected boolean executingNewTasks = false;
 
 
@@ -50,7 +49,7 @@ public class DefaultCycle extends SequentialCycle {
     public void reset(Memory m, boolean delete) {
         super.reset(m, delete);
 
-        incoming.clear();
+        newTasksTemp.clear();
 
         if (delete) {
             newTasks.clear();
@@ -73,7 +72,7 @@ public class DefaultCycle extends SequentialCycle {
     @Override
     public boolean addTask(Task t) {
         if (executingNewTasks) {
-            return incoming.add(t); //buffer it
+            return newTasksTemp.add(t); //buffer it
         }
         else {
             return newTasks.add(t); //add it directly to the newtasks set
@@ -95,7 +94,7 @@ public class DefaultCycle extends SequentialCycle {
         //all new tasks
         int numNewTasks = newTasks.size();
         if (numNewTasks > 0)
-            runNewTasks(numNewTasks);
+            runNewTasks();
 
 
         //1 novel tasks if numNewTasks empty
@@ -129,26 +128,23 @@ public class DefaultCycle extends SequentialCycle {
 
     }
 
-    private void runNewTasks(final int numNewTasks) {
+    private void runNewTasks() {
 
         executingNewTasks = true;
+        {
+            for (Task t : newTasks)
+                run(t);
 
-
-        Iterator<Task> ii = newTasks.iterator();
-        for (int i = 0; ii.hasNext() && i < numNewTasks; i++) {
-            Task task = ii.next();
-
-            run(task);
+            newTasks.clear();
         }
-        newTasks.clear();
-
         executingNewTasks = false;
 
-        int ns = incoming.size();
+
+        //add the generated tasks back to newTasks
+        int ns = newTasksTemp.size();
         if (ns > 0) {
-            for (int i = 0; i < ns; i++)
-                newTasks.add(incoming.get(i));
-            incoming.clear();
+            newTasks.addAll( newTasksTemp );
+            newTasksTemp.clear();
         }
 
     }
