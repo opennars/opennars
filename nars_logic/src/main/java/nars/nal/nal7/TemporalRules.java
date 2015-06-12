@@ -570,7 +570,7 @@ public class TemporalRules {
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.deriveDouble(s2.term, Symbols.GOAL, T, val, nal.newStamp(belief, occ), false, strongest_desireT, true);
+                nal.deriveDouble(s2.term, Symbols.GOAL, T, val, nal.newStamp(strongest_desireT.sentence, belief, occ), false, strongest_desireT, true);
 
             }
         }

@@ -17,6 +17,7 @@ public class Param implements Serializable {
 
 
 
+
     public Param() {    }
 
     /** Silent threshold for task reporting, in [0, 100]. 
@@ -63,12 +64,18 @@ public class Param implements Serializable {
     /** scaling factor for priority of input tasks */
     public AtomicDouble inputActivationFactor = new AtomicDouble(1.0);
 
+    /** minimum expectation necessary to create a concept
+     *  original value: 0.66
+     * */
+    public AtomicDouble conceptCreationExpectation = new AtomicDouble();
+
     /**
      * Minimum required priority for a concept
      * to be fired if it is activated, otherwise
      * it just accumulates the priority in its budget.
      */
     public AtomicDouble conceptFireThreshold = new AtomicDouble(0.0);
+
 
 
     /** Concept decay rate in ConceptBag, in [1, 99].  originally: CONCEPT_FORGETTING_CYCLE 
@@ -255,12 +262,12 @@ public class Param implements Serializable {
 //        json = b.create();
 //    }
 
-    public TaskComparator.Merging getMerging() {
+    public TaskComparator.Merging getInputMerging() {
         return merging;
     }
 
     /** handling behavior for duplicate derivations in bulk processing */
-    public void setDerivationMerging(TaskComparator.Merging merging) {
+    public void setInputMerging(TaskComparator.Merging merging) {
         this.merging = merging;
     }
 }

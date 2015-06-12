@@ -121,7 +121,7 @@ public class InternalExperience extends NARReaction {
         return toTerm(s, mem, enableWantBelieve);
     }
 
-    public static Operation toTerm(final Sentence s, final NAL mem, boolean enableWantBelieve) {
+    public static Operation toTerm(final Sentence s, final NAL nal, boolean enableWantBelieve) {
         Atom opTerm;
         switch (s.punctuation) {
             case Symbols.JUDGMENT:
@@ -147,10 +147,12 @@ public class InternalExperience extends NARReaction {
         Term[] arg = new Term[ 1 + (s.truth==null ? 1 : 2) ];
         arg[0]=s.getTerm();
         int k = 1;
+
         if (s.truth != null) {
-            arg[k++] = s.truth.toWordTerm();
+            final float t = nal.memory.param.conceptCreationExpectation.floatValue();
+            arg[k++] = s.truth.toWordTerm(t);
         }
-        arg[k] = mem.self();
+        arg[k] = nal.self();
         
         Operation operation = Operation.make(opTerm, Product.make(arg));
         if (operation == null) {

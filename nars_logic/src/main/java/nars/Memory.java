@@ -21,7 +21,6 @@
 package nars;
 
 import com.google.common.collect.Iterators;
-import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
@@ -52,6 +51,7 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.process.TaskProcess;
 import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
@@ -461,8 +461,7 @@ public class Memory implements Serializable, AbstractStamper {
         }
         else {
             if (!questionConcepts.add(c)) {
-                //throw new RuntimeException
-                System.err.println("Concept " + c + " aready registered existing questions");
+                throw new RuntimeException("Concept " + c + " aready registered existing questions");
             }
 
             if (questionConcepts.size() > cycle.size()) {
@@ -660,7 +659,12 @@ public class Memory implements Serializable, AbstractStamper {
 
 
 
-        return cycle.addTask(t);
+        if (cycle.addTask(t)) {
+            emit(Events.TaskAdd.class, t);
+            logic.TASK_ADD_NEW.hit();
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -12,6 +12,7 @@ import nars.nal.term.Term;
 import nars.rover.jbox2d.TestbedPanel;
 import nars.rover.jbox2d.TestbedSettings;
 import nars.rover.jbox2d.j2d.SwingDraw;
+import nars.util.data.random.XORShiftRandom;
 import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -23,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * NARS Rover
@@ -195,8 +197,16 @@ public class Rover2 extends PhysicsModel {
         } else if ((i == (angleResolution / 2 - 1)) || (i == -(angleResolution / 2 - 1))) {
             t = "reverse";
         } else {
+
             if (angleTerms[i+ha] == null) {
-                angleTerms[i+ha] = ("a" + i).replace('-','n');
+
+                String s;
+
+                if (i == 0) s = "(a, 0)"; //center is special
+                else
+                    s = "(a," + i + "," + ((i < 0) ? 'l' : 'r') + ")";
+
+                angleTerms[i+ha] = s;
             }
             t = angleTerms[i+ha];
         }
@@ -218,20 +228,21 @@ public class Rover2 extends PhysicsModel {
         int i = (int) (p * 10f);
         switch (i) {
             case 9:
+                return "(n,5)";
             case 8:
             case 7:
-                return "xxxx";
+                return "(n,4)";
             case 6:
             case 5:
-                return "xxx";
+                return "(n,3)";
             case 4:
             case 3:
-                return "xx";
+                return "(n,2)";
             case 2:
             case 1:
-                return "x";
+                return "(n,1)";
             default:
-                return "0";
+                return "(n,0)";
         }
     }
 
@@ -246,25 +257,25 @@ public class Rover2 extends PhysicsModel {
         int i = (int) (p * 10f);
         switch (i) {
             case 9:
-                return "xxxxxxxxx";
+                return "(n,9)";
             case 8:
-                return "xxxxxxxx";
+                return "(n,8)";
             case 7:
-                return "xxxxxxx";
+                return "(n,7)";
             case 6:
-                return "xxxxxx";
+                return "(n,6)";
             case 5:
-                return "xxxxx";
+                return "(n,5)";
             case 4:
-                return "xxxx";
+                return "(n,4)";
             case 3:
-                return "xxx";
+                return "(n,3)";
             case 2:
-                return "xx";
+                return "(n,2)";
             case 1:
-                return "x";
+                return "(n,1)";
             default:
-                return "0";
+                return "(n,0)";
         }
     }
 
@@ -316,16 +327,22 @@ public class Rover2 extends PhysicsModel {
         nar.input("<{Wall,Empty,Food} --> material>.");
         nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
 
-        nar.input("<0 <-> x>. %0.60;0.60%");
-        nar.input("<x <-> xx>. %0.60;0.60%");
-        nar.input("<xx <-> xxx>. %0.60;0.60%");
-        nar.input("<xxx <-> xxxx>. %0.60;0.60%");
-        nar.input("<xxxx <-> xxxxx>. %0.60;0.60%");
-        nar.input("<xxxxx <-> xxxxxx>. %0.60;0.60%");
-        nar.input("<xxxxxx <-> xxxxxxx>. %0.60;0.60%");
-        nar.input("<xxxxxxx <-> xxxxxxxxx>. %0.60;0.60%");
-        nar.input("<xxxxxxxx <-> xxxxxxxxxx>. %0.60;0.60%");
-        nar.input("<0 <-> xxxxxxxxx>. %0.00;0.90%");
+        for (int i = 0; i < 4; i++) {
+            String x = "lessThan(" + XORShiftRandom.global.nextInt(10) + "," +
+                    XORShiftRandom.global.nextInt(10) + ")?";
+
+            nar.input(x);
+        }
+//        nar.input("<0 <-> x>. %0.60;0.60%");
+//        nar.input("<x <-> xx>. %0.60;0.60%");
+//        nar.input("<xx <-> xxx>. %0.60;0.60%");
+//        nar.input("<xxx <-> xxxx>. %0.60;0.60%");
+//        nar.input("<xxxx <-> xxxxx>. %0.60;0.60%");
+//        nar.input("<xxxxx <-> xxxxxx>. %0.60;0.60%");
+//        nar.input("<xxxxxx <-> xxxxxxx>. %0.60;0.60%");
+//        nar.input("<xxxxxxx <-> xxxxxxxxx>. %0.60;0.60%");
+//        nar.input("<xxxxxxxx <-> xxxxxxxxxx>. %0.60;0.60%");
+//        nar.input("<0 <-> xxxxxxxxx>. %0.00;0.90%");
 
     }
 
@@ -338,17 +355,17 @@ public class Rover2 extends PhysicsModel {
                 //seek food
                 curiosity = 0.05f;
 
-                nar.goal(0.95f, 0.9f, "<goal --> Food>", 1.00f, 0.99f);
+                nar.goal(0.95f, 0.9f, "goal(food)", 1.00f, 0.99f);
 
-                nar.input("<goal --> Food>! %1.00;0.99%");
-                nar.input("<goal --> stop>! %0.00;0.99%");
+                nar.input("goal(food)! %1.00;0.99%");
+                nar.input("goal(stop)! %0.00;0.99%");
                 //nar.addInput("Wall! %0.00;0.50%");
-                nar.input("<goal --> feel>! %1.00;0.70%");
+                nar.input("goal(feel)! %1.00;0.70%");
             } else if (mission == 1) {
                 //rest
                 curiosity = 0;
-                nar.input("<goal --> stop>! %1.00;0.99%");
-                nar.input("<goal --> Food>! %0.00;0.99%");
+                nar.input("goal(stop)! %1.00;0.99%");
+                nar.input("goal(food)! %0.00;0.99%");
             }
         }
         catch (Exception e) {
@@ -464,14 +481,18 @@ public class Rover2 extends PhysicsModel {
 
                 float priority = operation.getTask().getPriority();
 
+                int al = args.length;
+                if (args[al-1].equals(memory.self()))
+                    al--;
+
                 String command = "";
-                if (args.length == 1 ) {
+                if (al == 1 ) {
                     command = t1.toString();
                 }
-                if (args.length == 2 ) {
+                if (al == 2 ) {
                     Term t2 = args[1];
                     command = t1.toString() + "," + t2.toString();
-                } else if (args.length == 3 ) {
+                } else if (al == 3 ) {
                     Term t2 = args[1];
                     Term t3 = args[2];
                     command = t1.toString() + "," + t2.toString() + "," + t3.toString();

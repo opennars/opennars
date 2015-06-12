@@ -80,11 +80,11 @@ public class RLNario extends NARio  {
         NAR nar = new NAR(new Default(3000, 30, 4));
         nar.memory.setSelf(Atom.the("I"));
 
-        nar.param.duration.set(memoryCyclesPerFrame * 3);
+        nar.param.duration.set(memoryCyclesPerFrame * 1);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.executionThreshold.set(0.65);
+        nar.param.executionThreshold.set(0.6);
         nar.param.shortTermMemoryHistory.set(3);
 
         RLNario rl = new RLNario(nar,
@@ -96,7 +96,7 @@ public class RLNario extends NARio  {
         );
 
         rl.agent.setQLFactor(0.45f, 0.85f);
-        rl.agent.setInputGain(0.7f);
+        rl.agent.setInputGain(0.6f);
 
         //rl.agent.add(new ShapePerception(rl.getScreenImage()));
 

@@ -204,9 +204,8 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
     }
 
     
-    default public Term toWordTerm() {
+    default public Term toWordTerm(float t) {
         float e = getExpectation();
-        float t = Global.DEFAULT_CREATION_EXPECTATION;
         if (e > t) {
             return Truth_TRUE;
         }

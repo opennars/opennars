@@ -120,7 +120,7 @@ public class Default extends NARSeed implements ConceptBuilder {
         this.internalExperience =
                 maxNALLevel >= 8 ? InternalExperience.InternalExperienceMode.Minimal :  InternalExperience.InternalExperienceMode.None;
 
-        setDerivationMerging(TaskComparator.Merging.Or);
+        setInputMerging(TaskComparator.Merging.Or);
 
         setTaskLinkBagSize(16);
 
@@ -177,6 +177,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         executionThreshold.set(0.60);
 
+        conceptCreationExpectation.set(0.66);
 
         policy = new LogicPolicy(
 
@@ -399,8 +400,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
 
     protected void initDerivationFilters() {
-        final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        final float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_PRIORITY_LEAK=0.5f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_DURABILITY_LEAK=0.9f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
         getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
     }
 
@@ -441,7 +442,6 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
-
         return new CurveBag(rng, getNovelTaskBagSize(), true);
     }
 

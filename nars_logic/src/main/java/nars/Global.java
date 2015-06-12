@@ -95,8 +95,7 @@ public class Global {
     /* ---------- default input values ---------- */
     /** Default expectation for confirmation. */
     public static final float DEFAULT_CONFIRMATION_EXPECTATION = 0.8f;
-    /** Default expectation for confirmation. */
-    public static final float DEFAULT_CREATION_EXPECTATION = 0.66f;
+
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = 0.9f;
     /** Default priority of input judgment */

@@ -4,21 +4,26 @@
  */
 package nars.op.mental;
 
+import com.gs.collections.impl.list.mutable.primitive.LongArrayList;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
-import nars.nal.*;
+import nars.nal.NAL;
+import nars.nal.Task;
+import nars.nal.Truth;
+import nars.nal.TruthFunctions;
 import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.CyclesInterval;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 import static nars.nal.nal7.TemporalRules.ORDER_CONCURRENT;
 import static nars.nal.nal7.TemporalRules.ORDER_FORWARD;
@@ -38,8 +43,9 @@ public class PerceptionAccel extends NARReaction {
     int[] sv = new int[ConjunctionMemorySize]; //use static array, should suffice for now
     boolean debugMechanism = false;
     double partConceptsPrioThreshold = 0.1;
-    ArrayList<Task> eventbuffer = new ArrayList<>();
+    final ArrayList<Task> eventbuffer = new ArrayList<>();
     int cur_maxlen = 1;
+    final LongArrayList evBase = new LongArrayList();
 
 
     public PerceptionAccel(NAR n) {
@@ -52,11 +58,14 @@ public class PerceptionAccel extends NARReaction {
         if (event == Events.InduceSucceedingEvent.class) { //todo misleading event name, it is for a new incoming event
             Task newEvent = (Task) args[0];
             if (/*newEvent.isInput() &&*/ newEvent.sentence.isJudgment() && !newEvent.sentence.isEternal()) {
-                eventbuffer.add(newEvent);
-                while (eventbuffer.size() > cur_maxlen + 1) {
+
+                NAL nal = (NAL) args[1];
+
+                while (eventbuffer.size()+1 > cur_maxlen + 1) {
                     eventbuffer.remove(0);
                 }
-                NAL nal = (NAL) args[1];
+                eventbuffer.add(newEvent);
+
                 perceive(newEvent, nal);
             }
         } else if (event == Events.ConceptForget.class) {
@@ -78,12 +87,11 @@ public class PerceptionAccel extends NARReaction {
     }
 
 
-    public void perceive(Task task, NAL nal) { //implement Peis idea here now
+    public synchronized void perceive(Task task, NAL nal) { //implement Peis idea here now
         //we start with length 2 compounds, and search for patterns which are one longer than the longest observed one
 
         boolean longest_result_derived_already = false;
 
-        List<Long> evBase = Global.newArrayList();
 
         for (int Len = cur_maxlen + 1; Len >= 2; Len--) {
             //ok, this is the length we have to collect, measured from the end of event buffer
@@ -96,6 +104,7 @@ public class PerceptionAccel extends NARReaction {
 
             evBase.clear();
 
+
             int k = 0;
             for (int i = 0; i < Len; i++) {
                 int j = eventbuffer.size() - 1 - (Len - 1) + i; //we go till to the end of the event buffer
@@ -104,27 +113,18 @@ public class PerceptionAccel extends NARReaction {
                     break;
                 }
                 Task current = eventbuffer.get(j);
-                for (long l : current.sentence.getEvidentialBase()) {
-                    evBase.add(l);
-                }
+                evBase.addAll(current.sentence.getEvidentialBase());
 
-                relterms[k] = current.sentence.term;
+                relterms[k++] = current.sentence.term;
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth = TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next = eventbuffer.get(j + 1);
-                    relterms[k + 1] = nal.newInterval(next.sentence.getOccurrenceTime() - current.sentence.getOccurrenceTime());
+
+                    long dt = next.getOccurrenceTime() - current.getOccurrenceTime();
+                    relterms[k++] = nal.newInterval(dt);
                 }
-                k += 2;
             }
 
-            long[] evB = new long[evBase.size()];
-            int u = 0;
-            for (long l : evBase) {
-                evB[u] = l;
-                u++;
-            }
-
-            Stamper st = nal.newStamp(task.getSentence(), nal.time(), evB);
 
             boolean eventBufferDidNotHaveSoMuchEvents = false;
             for (int i = 0; i < relterms.length; i++) {
@@ -135,6 +135,11 @@ public class PerceptionAccel extends NARReaction {
             if (eventBufferDidNotHaveSoMuchEvents) {
                 continue;
             }
+
+            //if (k < 2) continue;
+
+            relterms = Arrays.copyOf(relterms, k); //remove extra null's from end
+
             //decide on the tense of &/ by looking if the first event happens parallel with the last one
             //Todo refine in 1.6.3 if we want to allow input of difference occurence time
             boolean after = newEvent.sentence.after(eventbuffer.get(eventbuffer.size() - 1 - (Len - 1)).sentence, nal.memory.param.duration.get());
@@ -187,8 +192,14 @@ public class PerceptionAccel extends NARReaction {
                 continue; //too less priority
             }
 
-            Conjunction C = (Conjunction) Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            relterms = CyclesInterval.removeZeros(relterms);
+            if (relterms.length < 2) continue;
 
+            Term C0 = Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            if (!(C0 instanceof Conjunction)) {
+                continue;
+            }
+            Conjunction C = (Conjunction)C0;
 
 
 //            if (debugMechanism) {
@@ -197,6 +208,7 @@ public class PerceptionAccel extends NARReaction {
 
 
             longest_result_derived_already = true;
+            Stamper st = nal.newStamp(task.getSentence(), nal.time(), evBase.toArray());
 
             //lets make the new event the parent task, and derive it
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth).stamp(st)

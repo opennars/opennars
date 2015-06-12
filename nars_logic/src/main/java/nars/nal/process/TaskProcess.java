@@ -106,9 +106,5 @@ public class TaskProcess extends NAL {
         return d;
     }
 
-    @Override
-    protected void onStart() {
-        emit(Events.TaskAdd.class, currentTask);
-        memory.logic.TASK_ADD_NEW.hit();
-    }
+
 }

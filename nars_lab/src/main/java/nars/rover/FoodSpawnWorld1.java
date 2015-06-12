@@ -25,8 +25,8 @@ public class FoodSpawnWorld1 extends RoverWorld {
         
         float foodSpawnR = w / 1.5f;
         for (int i = 0; i < numFood; i++) {
-            float minSize = 0.2f;
-            float maxSize = 1.0f;
+            float minSize = 0.8f;
+            float maxSize = 4.0f;
             float mass = 4.0f;
             addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass);
         }

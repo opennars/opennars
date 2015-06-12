@@ -18,11 +18,19 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
 
     final static int bytesPrecision = 4;
 
+    final static CyclesInterval zero = new CyclesInterval(0, 0);
+
     long cyc;
     int duration;
 
-    public CyclesInterval(long numCycles, int duration) {
+    public static CyclesInterval make(long numCycles, int duration) {
+        if (numCycles == 0) return zero;
+        return new CyclesInterval(numCycles, duration);
+    }
+
+    protected CyclesInterval(long numCycles, int duration) {
         super(interval(numCycles, bytesPrecision));
+
         this.cyc = numCycles;
         this.duration = duration;
     }
@@ -74,5 +82,21 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
     @Override
     public void append(Writer output, boolean pretty) throws IOException {
         output.append('/').append(Long.toString(cyc)).append('/');
+    }
+
+    /** filter any zero CyclesIntervals from the list and return a new one */
+    public static Term[] removeZeros(final Term[] relterms) {
+        int zeros = 0;
+        for (Term x : relterms)
+            if (x == zero)
+                zeros++;
+        Term[] t = new Term[relterms.length - zeros];
+
+        int p = 0;
+        for (Term x : relterms)
+            if (x != zero)
+                t[p++] = x;
+
+        return t;
     }
 }

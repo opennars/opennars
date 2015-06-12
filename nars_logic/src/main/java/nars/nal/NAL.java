@@ -750,9 +750,9 @@ public abstract class NAL  implements Runnable {
 
     }
 
-    public AbstractInterval newInterval(long cycles) {
+    public AbstractInterval newInterval(final long cycles) {
         //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
-        return new CyclesInterval(cycles, memory.duration());
+        return CyclesInterval.make(cycles, memory.duration());
 
     }
 }

@@ -5,10 +5,11 @@ import nars.Events.Answer;
 import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.util.event.EventEmitter;
 import nars.nal.nal8.ImmediateOperation;
+import nars.nal.process.TaskProcess;
 import nars.op.io.Echo;
 import nars.op.io.say;
+import nars.util.event.EventEmitter;
 
 /**
  * Output Channel: Implements this and NAR.addOutput(..) to receive output signals on various channels
@@ -25,6 +26,7 @@ public abstract class Output extends NARReaction {
             Echo.class,
             say.class,
             Answer.class
+            //TaskProcess.class
             //Events.PluginsChange.class //this gets annoying
     };
             

@@ -29,7 +29,7 @@ public class DefaultCycle extends SequentialCycle {
      * List of new tasks accumulated in one cycle, to be processed in the next
      * cycle
      */
-    protected SortedSet<Task> newTasks;
+    protected TreeSet<Task> newTasks;
     protected List<Task> newTasksTemp = new ArrayList();
     protected boolean executingNewTasks = false;
 
@@ -59,7 +59,7 @@ public class DefaultCycle extends SequentialCycle {
         else {
             //this.newTasks = new ConcurrentSkipListSet(new TaskComparator(memory.param.getDerivationDuplicationMode()));
             if (newTasks == null)
-                newTasks = new TreeSet(new TaskComparator(memory.param.getMerging()));
+                newTasks = new TreeSet(new TaskComparator(memory.param.getInputMerging()));
             else
                 newTasks.clear();
 
@@ -130,23 +130,31 @@ public class DefaultCycle extends SequentialCycle {
 
     private void runNewTasks() {
 
-        executingNewTasks = true;
+
         {
-            for (Task t : newTasks)
-                run(t);
 
-            newTasks.clear();
+            for (int n = newTasks.size()-1;  n >= 0; n--) {
+                Task highest = newTasks.pollLast();
+
+                executingNewTasks = true;
+                run(highest);
+                executingNewTasks = false;
+
+                commitNewTasks();
+            }
+
         }
-        executingNewTasks = false;
 
 
+    }
+
+    private void commitNewTasks() {
         //add the generated tasks back to newTasks
         int ns = newTasksTemp.size();
         if (ns > 0) {
             newTasks.addAll( newTasksTemp );
             newTasksTemp.clear();
         }
-
     }
 
     /** returns whether the task was run */
@@ -172,11 +180,10 @@ public class DefaultCycle extends SequentialCycle {
             //if (s.isJudgment() || s.isGoal()) {
 
             final double exp = s.truth.getExpectation();
-            if (exp > Global.DEFAULT_CREATION_EXPECTATION) {
+            if (exp > memory.param.conceptCreationExpectation.floatValue()) {//Global.DEFAULT_CREATION_EXPECTATION) {
 
                 // new concept formation
                 Task overflow = novelTasks.put(task);
-                memory.logic.TASK_ADD_NOVEL.hit();
 
                 if (overflow != null) {
                     if (overflow == task) {
@@ -187,6 +194,7 @@ public class DefaultCycle extends SequentialCycle {
                     }
                 }
 
+                memory.logic.TASK_ADD_NOVEL.hit();
                 return true;
 
             } else {
@@ -198,7 +206,7 @@ public class DefaultCycle extends SequentialCycle {
     }
 
 
-    private ConceptProcess nextTaskLink(Concept concept) {
+    private ConceptProcess nextTaskLink(final Concept concept) {
         if (concept == null) return null;
 
 
