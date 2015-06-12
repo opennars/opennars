@@ -12,12 +12,13 @@ import ca.nengo.ui.model.plot.LinePlot;
 import ca.nengo.ui.model.plot.StringView;
 import ca.nengo.ui.model.widget.PadNode;
 import ca.nengo.ui.model.widget.SliderNode;
-import nars.model.impl.Default;
-import nars.model.cycle.DefaultCycle;
 import nars.NAR;
-import nars.io.out.Output;
-import nars.nal.Item;
 import nars.bag.Bag;
+import nars.event.NARReaction;
+import nars.io.out.Output;
+import nars.model.cycle.DefaultCycle;
+import nars.model.impl.Default;
+import nars.nal.Item;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -134,10 +135,10 @@ public class TestBagNode extends Nengrow {
         }
     }
 
-    public static class NAROutput extends Output {
+    public static class NAROutput extends NARReaction {
 
         public NAROutput(NAR n) {
-            super(n);
+            super(n, Output.DefaultOutputEvents);
         }
 
         private String currentOutput = "";

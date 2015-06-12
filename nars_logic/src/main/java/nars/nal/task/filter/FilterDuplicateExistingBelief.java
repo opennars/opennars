@@ -3,6 +3,7 @@ package nars.nal.task.filter;
 import nars.nal.NAL;
 import nars.nal.Sentence;
 import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.task.TaskSeed;
 
@@ -19,7 +20,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
 
         }
 
-    @Override public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
+    @Override public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
         if (!task.isJudgment())
             return null; //only process judgments
 
@@ -29,16 +30,25 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         //  3. occurrence time
         //  4. evidential set
 
-        Concept c = nal.memory.concept(task.getTerm());
+        final Concept c = nal.memory.concept(task.getTerm());
         if (c == null)
             return null; //concept doesnt even exist so this is not a duplciate of anything
 
         if (!c.hasBeliefs())
             return null; //no beliefs exist at this concept
 
-        /* TODO make this faster by terminating the search after confidence drops below the task's */
+
+
+        final float conf = task.getTruth().getConfidence();
+
         for (Task t : c.getBeliefs()) {
-            if (!t.getTruth().equals(task.getTruth()))
+            Truth tt = t.getTruth();
+
+//            /* terminatesthe search after confidence drops below the task's */
+//            if (tt.getConfidence() < conf)
+//                return null;
+
+            if (!tt.equals(task.getTruth()))
                 return null; //different truth value
             if (t.getOccurrenceTime()!=task.getOccurrenceTime())
                 return null; //differnt occurence time

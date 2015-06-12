@@ -4,9 +4,10 @@
  */
 package nars.bag.impl.experimental;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import nars.Memory;
 import nars.nal.Item;
 import nars.util.math.Distributor;
-import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * TODO add a strict probability mode which excludes low priority items from exceeding
@@ -18,15 +19,16 @@ public class FairDelayBag<E extends Item<K>, K> extends DelayBag<K, E> {
     final static int levels = 10;
     
     final static short[] distributor = Distributor.get(levels).order;
-    
-    
-    public FairDelayBag(AtomicDouble forgetRate, int capacity) {
-        super(forgetRate, capacity);
+
+
+    public FairDelayBag(Memory m, AtomicDouble forgetRate, int capacity) {
+        super(m, forgetRate, capacity);
     }
 
     
-    public FairDelayBag(AtomicDouble forgetRate, int capacity, int targetPendingBufferSize) {
-        super(forgetRate, capacity, targetPendingBufferSize);
+    public FairDelayBag(Memory memory, AtomicDouble forgetRate, int capacity, int targetPendingBufferSize) {
+        super(memory, forgetRate, capacity, targetPendingBufferSize);
+
     }
 
     

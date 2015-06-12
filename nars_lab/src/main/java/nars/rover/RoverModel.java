@@ -102,7 +102,7 @@ public class RoverModel {
 
                 @Override
                 public void onTouch(Body touched, float di) {
-                    if (touched!=null && touched.getUserData() == Rover2.Material.Food) {
+                    if (touched!=null && touched.getUserData() == Rover2.Material.food) {
                         if (Math.abs(ii) <= mouthArc)  {
 
                             if (di <= biteDistanceThreshold) {

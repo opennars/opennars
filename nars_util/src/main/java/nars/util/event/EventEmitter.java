@@ -1,10 +1,10 @@
 
 package nars.util.event;
 
-import org.apache.commons.collections.FastArrayList;
+import nars.util.data.DirectCopyOnWriteArrayList;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -158,17 +158,12 @@ abstract public class EventEmitter<K>  {
 //        }
 //    }
 
-    /** simple single-thread synchronous (in-thread) event emitter.
-     * stores lists of reactions as array for fast iteration
-     *
-     * NOTE: event reactions will not be available until cycle() is called (ex: at the beginning of each memory cycle)
-     * this could be surprising if you expect the handler to be immediately available.
-     *
-     * TODO investigate if CopyOnWriteArrayList can eliminate the need for the pending addition/removal queues
+    /** single-thread synchronous (in-thread) event emitter with direct array access
+     * NOT WORKING YET
      * */
-    public static class DefaultEventEmitter<K> extends EventEmitter<K> {
+    public static class DefaultEventEmitter<K,L extends List<Reaction<K>>> extends EventEmitter<K> {
 
-        final Map<K,List<Reaction<K>>> reactions = new HashMap(16);
+        final Map<K,L> reactions = new IdentityHashMap(16);
 
 
         public class DefaultEventRegistration<K> implements EventRegistration {
@@ -206,10 +201,16 @@ abstract public class EventEmitter<K>  {
             DefaultEventRegistration d = new DefaultEventRegistration(channel, o);
             List<Reaction<K>> cl = all(channel);
             if (cl == null)
-                reactions.put(channel, cl = new CopyOnWriteArrayList<Reaction<K>>());
+                reactions.put(channel,
+                        (L) (cl = newChannelList()));
 
+            //PROBLEM IS HERE
             cl.add(o);
             return d;
+        }
+
+        protected List<Reaction<K>> newChannelList() {
+            return new CopyOnWriteArrayList<Reaction<K>>();
         }
 
         @Override
@@ -220,6 +221,36 @@ abstract public class EventEmitter<K>  {
         @Override
         public boolean isActive(Class event) {
             return reactions.containsKey(event);
+        }
+    }
+
+    /** uses DirectCopyOnWriteArrayList for direct access to its array, for
+     * fast non-Lambda, non-Itrator iteration     */
+    public static class FastDefaultEventEmitter<K> extends DefaultEventEmitter<K,DirectCopyOnWriteArrayList<Reaction<K>>> {
+
+
+        static final private Reaction[] nullreactionlist = null;
+
+        @Override
+        public DirectCopyOnWriteArrayList<Reaction<K>> all(K c) {
+            return reactions.get(c);
+        }
+
+        @Override
+        public void notify(final K channel, final Object... arg) {
+
+            final DirectCopyOnWriteArrayList<Reaction<K>> c = all(channel);
+            if (c != null) {
+                for (final Reaction<K> x : c.getArray()) {
+                    x.event(channel, arg);
+                }
+            }
+
+        }
+
+        @Override
+        protected List<Reaction<K>> newChannelList() {
+            return new DirectCopyOnWriteArrayList<Reaction<K>>(Reaction.class);
         }
     }
 

@@ -67,8 +67,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
     transient private boolean strictDurationWindow = true;
 
 
-    public TaskCondition(NAR n, Class channel, Task t, long creationTimeOffset, final boolean relativeToCondition)  {
-        super(n, Events.OUT.class, Events.TaskRemove.class, channel);
+    public TaskCondition(NAR n, Task t, Class channel, long creationTimeOffset, final boolean relativeToCondition, Class... channels)  {
+        super(n, channels);
 
         //TODO verify that channel is included in the listened events
 
@@ -128,8 +128,8 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.term = n.term(sentenceTerm);
     }
 
-    public TaskCondition(NAR n, Class<Events.IN> inClass, Task t, int cycle, boolean b, int similarResultsToSave) {
-        this(n, inClass, t, cycle, b);
+    public TaskCondition(NAR n, Class inClass, Task t, int cycle, boolean b, int similarResultsToSave, Class ...channels) {
+        this(n, t, inClass, cycle, b, channels);
 
         this.maxClose = similarResultsToSave;
 

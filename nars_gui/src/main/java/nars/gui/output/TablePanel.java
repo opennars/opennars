@@ -2,6 +2,7 @@ package nars.gui.output;
 
 import automenta.vivisect.swing.NPanel;
 import nars.NAR;
+import nars.event.NARReaction;
 import nars.io.out.Output;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public abstract class TablePanel extends NPanel  {
     protected final NAR nar;
     protected DefaultTableModel data;
     protected final JTable table;
-    private final Output out;
+    private final NARReaction out;
 
     public TablePanel(NAR nar) {
         super(new BorderLayout());
@@ -27,7 +28,7 @@ public abstract class TablePanel extends NPanel  {
         table.setFillsViewportHeight(true);
         
         add(new JScrollPane(table), CENTER);
-        out = new Output(nar, false) {
+        out = new NARReaction(nar, Output.DefaultOutputEvents) {
 
             @Override
             public void event(Class event, Object[] arguments) {

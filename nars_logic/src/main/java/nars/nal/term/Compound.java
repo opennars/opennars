@@ -160,14 +160,15 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         for (int i = 0; i < numArgs; i++) {
             Term t = term[i];
 
-            byte n;
-            if (i!=0)
-                n = ((byte) ARGUMENT_SEPARATOR);
-            else
-                n = ((byte) COMPOUND_TERM_CLOSER.ch);
+            if (i!=0) {
+                b.add(((byte) ARGUMENT_SEPARATOR));
+            }
 
-            b.add(t.bytes()).add(n);
+            b.add(t.bytes());
+
         }
+
+        b.add((byte)COMPOUND_TERM_CLOSER.byt);
 
         return b.toBytes();
 

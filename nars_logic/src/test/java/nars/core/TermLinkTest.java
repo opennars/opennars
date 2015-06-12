@@ -51,16 +51,19 @@ public class TermLinkTest {
     }
 
 
-        @Test public void testImplicationTermLinks() {
-        Bag<Identifier, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>");
-        assertEquals(cj2.values() + " should be: [ Da:(*,c,d) ,  Db:e ] ", 2, cj2.size());
-        List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(*,c,d) ==> e>");
-        assertEquals(4, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
-
+    @Test
+    public void testImplicationTermLinks() {
         Bag<Identifier, TermLink> cj3 = getTermLinks("<d ==> e>");
         assertEquals(2, cj3.size());
         List<TermLinkTemplate> tj3 = getTermLinkTemplates("<d ==> e>");
         assertEquals(2, tj3.size());
+
+
+        Bag<Identifier, TermLink> cj2 = getTermLinks("<(*,c,d) ==> e>");
+        assertEquals(4, cj2.size());
+        List<TermLinkTemplate> tj2 = getTermLinkTemplates("<(*,c,d) ==> e>");
+        assertEquals(4, tj2.size()); //4 templates: [<(*,c,d) ==> e>:Ea|Da:(*,c,d), <(*,c,d) ==> e>:Iaa|Haa:c, <(*,c,d) ==> e>:Iab|Hab:d, <(*,c,d) ==> e>:Eb|Db:e]
+
 
         /*Bag<Identifier, TermLink> cj2 = getTermLinks("<<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>");
         cj2.printAll(System.out);
@@ -85,13 +88,13 @@ public class TermLinkTest {
         Concept c = n.concept(term);
         assertNotNull(c);
 
-        return ((DefaultConcept)c).getTermLinkTemplates();
+        return ((DefaultConcept) c).getTermLinkTemplates();
     }
 
     public static Bag<Identifier, TermLink> getTermLinks(String term) {
         NAR n = nn(term);
         //Concept c = n.conceptualize(term);
-        Concept c = n.memory.conceptualize(new Budget(1f,1f,1f),
+        Concept c = n.memory.conceptualize(new Budget(1f, 1f, 1f),
                 n.term(term));
         assertNotNull(c);
         n.runWhileNewInput(2);
@@ -127,10 +130,9 @@ public class TermLinkTest {
         n.runWhileNewInput(6);
 
 
-
         Set<String> ainhb = getTermLinks(n.concept("<a --> b>").getTermLinks());
 
-        assertTrue( 6 <= ainhb.size());
+        assertTrue(6 <= ainhb.size());
         assertTrue(ainhb.contains("Ca:a"));
         assertTrue(ainhb.contains("Cb:b"));
         //assertTrue("not necessary to include the term's own name in comopnent links because its index will be unique within the term anyway", !ainhb.contains("Da:a"));
@@ -165,7 +167,8 @@ public class TermLinkTest {
 
     }
 
-    @Test public void termlinkConjunctionImplicationFullyConnected() {
+    @Test
+    public void termlinkConjunctionImplicationFullyConnected() {
         //from nal6.4
         String c = "<(&&,<$x --> flyer>,<$x --> [chirping]>) ==> <$x --> bird>>.";
         String d = "<<$y --> [withwings]> ==> <$y --> flyer>>.";
@@ -177,7 +180,6 @@ public class TermLinkTest {
         assertEquals(4, getTermLinkTemplates(d).size());
 
 
-
         NAR n = new NAR(new Default());
 
         n.input(c);
@@ -187,7 +189,7 @@ public class TermLinkTest {
         TermLinkGraph g = new TermLinkGraph(n);
 
 
-        ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
+        ConnectivityInspector<Term, TermLink> ci = new ConnectivityInspector(g);
         int set = 0;
         for (Set<Term> s : ci.connectedSets()) {
             for (Term v : s)
@@ -200,7 +202,8 @@ public class TermLinkTest {
 
     }
 
-    @Test public void termlinksSetAndElement() {
+    @Test
+    public void termlinksSetAndElement() {
         //from nal6.4
         String c = "<{x} --> y>.";
 
@@ -214,7 +217,7 @@ public class TermLinkTest {
 
         //System.out.println(g);
 
-        ConnectivityInspector<Term,TermLink> ci = new ConnectivityInspector(g);
+        ConnectivityInspector<Term, TermLink> ci = new ConnectivityInspector(g);
         assertTrue("termlinks between the two input concepts form a fully connected graph",
                 ci.isGraphConnected());
 

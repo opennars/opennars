@@ -445,7 +445,7 @@ public class Memory implements Serializable, AbstractStamper {
             if (hasQuestions) updateConceptQuestions(c);
             //if (hasGoals) updateConceptGoals(c);
         }
-        else {
+        else if (c.isForgotten() || c.isDeleted()) {
             //unindex an outgoing concept with questions or goals
             if (hasQuestions) questionConcepts.remove(c);
             //..
@@ -502,10 +502,12 @@ public class Memory implements Serializable, AbstractStamper {
 
         inputPausedUntil = -1;
 
+        questionConcepts.clear();
+
         concepts.clear();
         cycle.reset(this, delete);
 
-        questionConcepts.clear();
+
         goalConcepts.clear();
 
         emotion.set(0.5f, 0.5f);
@@ -605,7 +607,7 @@ public class Memory implements Serializable, AbstractStamper {
         if ((term = term.normalized()) == null)
             return null;
 
-        Concept c = cycle.conceptualize(budget, term, true, true);
+        Concept c = cycle.conceptualize(budget, term, true, false);
         if (c == null)
             return null;
 

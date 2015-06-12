@@ -17,6 +17,7 @@ import nars.Events;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.event.NARReaction;
 import nars.gui.NARSwing;
 import nars.io.out.Output;
 import nars.model.impl.Default;
@@ -79,7 +80,7 @@ public class TestNARNode  {
             nar.param.outputVolume.set(25);
             initOperators();
 
-            new Output(nar) {
+            new NARReaction(nar, Output.DefaultOutputEvents) {
 
                 final float speakThreshold = 0.9f;
 

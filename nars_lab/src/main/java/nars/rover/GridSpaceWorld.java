@@ -85,7 +85,7 @@ public class GridSpaceWorld extends RoverWorld implements LayerDraw {
                             }
 
                             @Override public String toString() {
-                                return "Wall";
+                                return "wall";
                             }
                             
                         });

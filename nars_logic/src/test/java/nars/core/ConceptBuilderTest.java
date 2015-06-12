@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.Memory;
 import nars.NAR;
+import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.DefaultTruth;
 import nars.nal.Truth;
@@ -39,6 +40,7 @@ public class ConceptBuilderTest {
 
     public void eq(float expectedValue, String term) {
         NAR n = new NAR(new Default());
+        //TextOutput.out(n);
         n.input(term + "?");
         n.frame(1);
         assertEquals(expectedValue, n.concept(term).getStrongestBelief().getTruth().getFrequency(), 0.01);

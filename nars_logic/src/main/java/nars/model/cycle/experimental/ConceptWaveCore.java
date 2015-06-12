@@ -56,10 +56,7 @@ abstract public class ConceptWaveCore implements ControlCycle {
     public void reset(Memory m, boolean delete) {
         this.memory = m;
 
-        this.concepts = new FairDelayBag(m.param.conceptForgetDurations, maxConcepts);
-
-        if (concepts instanceof MemoryAware)
-            concepts.setMemory(m);
+        this.concepts = new FairDelayBag(m, m.param.conceptForgetDurations, maxConcepts);
 
         //TODO complete this
         concepts.clear();

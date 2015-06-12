@@ -24,7 +24,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * NARS Rover
@@ -202,9 +201,9 @@ public class Rover2 extends PhysicsModel {
 
                 String s;
 
-                if (i == 0) s = "(a, 0)"; //center is special
+                if (i == 0) s = "(forward, 0)"; //center is special
                 else
-                    s = "(a," + i + "," + ((i < 0) ? 'l' : 'r') + ")";
+                    s = "(" + ((i < 0) ? "left" : "right") + ',' + Math.abs(i) + ")";
 
                 angleTerms[i+ha] = s;
             }
@@ -281,7 +280,7 @@ public class Rover2 extends PhysicsModel {
 
     public static enum Material implements SwingDraw.DrawProperty {
 
-        Food, Wall, Block;
+        food, wall, Block;
 
         static final Color foodStroke = new Color(0.25f, 1f, 0.25f);
         static final Color foodFill = new Color(0.15f, 0.9f, 0.15f);
@@ -292,11 +291,11 @@ public class Rover2 extends PhysicsModel {
         @Override
         public void before(Body b, SwingDraw d) {
             switch (this) {
-                case Food:
+                case food:
                     d.setStrokeColor(foodStroke);
                     d.setFillColor(foodFill);
                     break;
-                case Wall:
+                case wall:
                     d.setStrokeColor(wallStroke);
                     d.setFillColor(wallFill);
                     break;
@@ -324,8 +323,11 @@ public class Rover2 extends PhysicsModel {
     protected void addAxioms() {
 
         nar.input("<{left,right,forward,reverse} --> direction>.");
-        nar.input("<{Wall,Empty,Food} --> material>.");
-        nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
+        nar.input("<{wall,empty,food} --> material>.");
+        //nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
+        nar.input("<{0,1,2,3,4,5,6,7,8,9} --> magnitude>.");
+
+        nar.input("< ( ($n,#x) &| ($n,#y) ) =/> lessThan(#x,#y) >?");
 
         for (int i = 0; i < 4; i++) {
             String x = "lessThan(" + XORShiftRandom.global.nextInt(10) + "," +

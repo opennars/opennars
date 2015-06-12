@@ -32,12 +32,12 @@ abstract public class RoverWorld {
         float a = 0;
         Body b = addBlock(x * 2.0f, y * 2.0f, bw, bh, a, mass);
         b.applyAngularImpulse((float) Math.random());
-        b.setUserData(Rover2.Material.Food);
+        b.setUserData(Rover2.Material.food);
     }
 
     public Body addWall(float x, float y, float w, float h, float a) {
         Body b = addBlock(x, y, w, h, a, 0);
-        b.setUserData(Rover2.Material.Wall);
+        b.setUserData(Rover2.Material.wall);
         return b;
     }
 

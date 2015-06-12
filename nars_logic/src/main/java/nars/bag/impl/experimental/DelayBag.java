@@ -85,7 +85,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     private float mass = 0;
     
     
-    private Memory memory;
     private long now;
 
 
@@ -97,13 +96,16 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
 
     /** size below which to return items in flat, sequential, cyclic iterative order. */
     int flatThreshold = 2;
+    public final Memory memory;
 
     
-    public DelayBag(AtomicDouble forgetRate, int capacity) {
-        this(forgetRate, capacity, (int)(0.25f * capacity));
+    public DelayBag(Memory memory, AtomicDouble forgetRate, int capacity) {
+        this(memory, forgetRate, capacity, (int)(0.25f * capacity));
     }
     
-    public DelayBag(AtomicDouble forgetRate, int capacity, float targetPendingBufferSize) {
+    public DelayBag(Memory memory, AtomicDouble forgetRate, int capacity, float targetPendingBufferSize) {
+        this.memory = memory;
+
         this.capacity = capacity;
         this.forgetRate = forgetRate;
 
@@ -417,11 +419,6 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
     @Override
     public Iterator<E> iterator() {
         return values().iterator();
-    }
-
-
-    public void setMemory(Memory m) {
-        this.memory = m;
     }
 
 

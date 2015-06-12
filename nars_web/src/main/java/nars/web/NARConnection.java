@@ -7,6 +7,7 @@
 package nars.web;
 
 import nars.NAR;
+import nars.io.out.Output;
 import nars.io.out.TextOutput;
 import nars.io.out.TextOutput.LineOutput;
 
@@ -14,18 +15,17 @@ import nars.io.out.TextOutput.LineOutput;
  * An instance of a web socket session to a NAR
  * @author me
  */
-abstract public class NARConnection implements LineOutput {
+abstract public class NARConnection extends TextOutput {
     public final NAR nar;
-    protected final TextOutput writer;
     int cycleIntervalMS;
     //private final TextReaction extraParser;
         
     
     public NARConnection(NAR nar, int cycleIntervalMS) {
+        super(nar);
         this.nar = nar;
         this.cycleIntervalMS = cycleIntervalMS;
              
-        this.writer = new TextOutput(nar, this);
     }
 
     public void read(final String message) {
@@ -34,10 +34,8 @@ abstract public class NARConnection implements LineOutput {
         if (!running)
             resume();
     }
-    
-    @Override
-    abstract public void println(CharSequence output);
-    
+
+
     
     boolean running = false;
     

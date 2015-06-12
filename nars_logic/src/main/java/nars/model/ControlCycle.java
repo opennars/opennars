@@ -80,6 +80,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      * Creates and adds new concept to the memory.  May also be called 'cognize' because
      * it is like a request to process a symbolic pattern (term).
      * @return the new concept, or null if the memory is full
+     *
      */
     public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten);
     /**

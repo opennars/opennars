@@ -4,15 +4,16 @@ import automenta.vivisect.Video;
 import automenta.vivisect.swing.NSlider;
 import nars.Events;
 import nars.Events.FrameEnd;
-import nars.Events.TaskAdd;
+import nars.Events.OUT;
 import nars.Events.TaskRemove;
+import nars.Global;
 import nars.NAR;
-import nars.util.event.Reaction;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
-import nars.nal.concept.Concept;
 import nars.nal.Task;
 import nars.nal.Truth;
+import nars.nal.concept.Concept;
+import nars.util.event.Reaction;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -55,7 +56,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
 
     private DefaultTreeModel model;
     private DefaultMutableTreeNode amnesia = null;
-    private Set<Task> tasks;
+    private final Set<Task> tasks = Global.newHashSet(256);
 
     public TaskTree(NAR nar) {
         super(nar, new BorderLayout());
@@ -132,7 +133,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
     @Override
     public Class[] getEvents() {
 
-        return new Class[]{TaskAdd.class, TaskRemove.class, FrameEnd.class, Events.Restart.class /*, TaskRemove.class*/};
+        return new Class[]{OUT.class, TaskRemove.class, FrameEnd.class, Events.Restart.class /*, TaskRemove.class*/};
     }
 
     public void add(Task t) {
@@ -294,7 +295,7 @@ public class TaskTree extends ReactionPanel implements Reaction<Class>, Runnable
     @Override
     public void event(Class channel, Object[] arguments) {
 
-        if (channel == TaskAdd.class) {
+        if (channel == OUT.class) {
             add((Task) arguments[0]);
         } else if (channel == TaskRemove.class) {
             remove((Task) arguments[0]);
