@@ -21,8 +21,10 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         }
 
     @Override public String reject(final NAL nal, final TaskSeed task, final boolean solution, final boolean revised, final boolean single, final Sentence currentBelief, final Task currentTask) {
-        if (!task.isJudgment())
-            return null; //only process judgments
+
+        //only process non-solution judgments
+        if (solution || !task.isJudgment())
+            return null;
 
         //equality:
         //  1. term (given because it is looking up in concept)

@@ -24,7 +24,7 @@ public class DefaultMicro extends Default {
 
         //Runtime Initial Values
 
-        confidenceThreshold.set(0.05);
+        confidenceThreshold.set(0.02);
 
         temporalRelationsMax.set(4);
 
@@ -37,15 +37,7 @@ public class DefaultMicro extends Default {
         termLinkMaxReasoned.set(3);
         termLinkMaxMatched.set(5);
         termLinkRecordLength.set(6);
-        noveltyHorizon.set(6);
 
-        setForgetting(Memory.Forgetting.Periodic);
-        setTiming(Memory.Timing.Cycle);
-        outputVolume.set(100);
-
-        reliance.set(0.9f);
-
-        executionThreshold.set(0.60);
 
         //add derivation filters here:
         //param.getDefaultDerivationFilters().add(new BeRational());

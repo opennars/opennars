@@ -60,7 +60,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
 
         Object signal;
         if (channel == Events.Answer.class)
-            signal = args[1]; //answer is 2nd arg, question is 1st. we are interested in comparing the answer
+            signal = args[0]; //answer is 1st arg, question is 1st. we are interested in comparing the answer
         else
             signal = args[0];
 
@@ -138,7 +138,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
                     if (t != null)
                         conditions.add(new TaskCondition(n, t, Events.OUT.class,
                                 -Stamp.UNPERCEIVED, /* to cancel it */
-                                false, Events.OUT.class, Events.TaskRemove.class));
+                                false, Events.OUT.class, Events.TaskRemove.class, Events.Answer.class));
                     else
                         conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
                 }

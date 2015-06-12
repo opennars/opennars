@@ -607,7 +607,7 @@ public class Memory implements Serializable, AbstractStamper {
         if ((term = term.normalized()) == null)
             return null;
 
-        Concept c = cycle.conceptualize(budget, term, true, false);
+        Concept c = cycle.conceptualize(budget, term, true, true);
         if (c == null)
             return null;
 

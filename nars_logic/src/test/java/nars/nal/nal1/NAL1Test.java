@@ -2,9 +2,10 @@ package nars.nal.nal1;
 
 import nars.Global;
 import nars.NARSeed;
+import nars.io.out.TextOutput;
 import nars.model.impl.*;
-import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
+import nars.narsese.InvalidInputException;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

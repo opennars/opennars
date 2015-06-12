@@ -22,10 +22,10 @@ package nars.nal.nal1;
 
 import nars.Events.Answer;
 import nars.Memory;
+import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.io.out.Output;
-import nars.Symbols;
 import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
@@ -42,10 +42,10 @@ import java.util.Arrays;
  * matching, the new task is compared with an existing direct Task in that
  * Concept, to carry out:
  * <p>
- *   revision: between judgments or goals on non-overlapping evidence; 
- *   satisfy: between a Sentence and a Question/Goal; 
- *   merge: between items of the same type and stamp; 
- *   conversion: between different inheritance relations.
+ * revision: between judgments or goals on non-overlapping evidence;
+ * satisfy: between a Sentence and a Question/Goal;
+ * merge: between items of the same type and stamp;
+ * conversion: between different inheritance relations.
  */
 public class LocalRules {
 
@@ -72,10 +72,10 @@ public class LocalRules {
      * <p>
      * called from Concept.reviseTable and match
      *
-     * @param newBelief The new belief in task
-     * @param oldBelief The previous belief with the same content
+     * @param newBelief       The new belief in task
+     * @param oldBelief       The previous belief with the same content
      * @param feedbackToLinks Whether to send feedback to the links
-     * @param memory Reference to the memory
+     * @param memory          Reference to the memory
      */
     public static Task revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
         Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
@@ -89,14 +89,14 @@ public class LocalRules {
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
         Task revised = nal.deriveTask(nal.newTask(newBelief.term)
-            .punctuation(t.sentence.punctuation)
-                .truth(truth)
-                .stamp(stamp)
-                .budget(budget)
-                .parent(t, nal.getCurrentBelief()),
+                        .punctuation(t.sentence.punctuation)
+                        .truth(truth)
+                        .stamp(stamp)
+                        .budget(budget)
+                        .parent(t, nal.getCurrentBelief()),
                 true, false, t, false);
 
-        if (revised!=null)
+        if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
 
         return revised;
@@ -122,7 +122,7 @@ public class LocalRules {
                         .parent(t, nal.getCurrentBelief()),
                 true, false, t, false);
 
-        if (revised!=null)
+        if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
 
         return revised;
@@ -131,18 +131,18 @@ public class LocalRules {
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
-     * @param belief The proposed answer
-     * @param task The task to be processed
-     * @param memory Reference to the memory
+     * @param belief       The proposed answer
+     * @param questionTask The task to be processed
+     * @param memory       Reference to the memory
      */
-    public static boolean trySolution(Sentence belief, final Task task, final NAL nal) {
+    public static boolean trySolution(Sentence belief, final Task questionTask, final NAL nal) {
 
         if (belief == null) return false;
 
 
-        Sentence problem = task.sentence;
+        Sentence problem = questionTask.sentence;
         Memory memory = nal.memory;
-        
+
         if (!TemporalRules.matchingOrder(problem, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
@@ -150,30 +150,30 @@ public class LocalRules {
         }
 
         final long now = memory.time();
-        Sentence oldBest = task.getBestSolution();
+        Sentence oldBest = questionTask.getBestSolution();
         float newQ = TemporalRules.solutionQuality(problem, belief, now);
         if (oldBest != null) {
             float oldQ = TemporalRules.solutionQuality(problem, oldBest, now);
             if (oldQ >= newQ) {
                 if (problem.isGoal()) {
-                    memory.emotion.happy(oldQ, task, nal);
+                    memory.emotion.happy(oldQ, questionTask, nal);
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
                 return false;
             }
         }
-        
+
         Term content = belief.term;
         if (content.hasVarIndep()) {
-            Term u[] = new Term[] { content, problem.term };
-            
+            Term u[] = new Term[]{content, problem.term};
+
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
             if (!unified) return false;
 
             content = u[0];
 
-            belief = belief.clone((Compound)content);
+            belief = belief.clone((Compound) content);
             if (belief == null) {
                 throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
                 //return false;
@@ -182,27 +182,18 @@ public class LocalRules {
 
         }
 
-        task.setBestSolution(memory, belief);
+        questionTask.setBestSolution(memory, belief);
 
-        memory.logic.SOLUTION_BEST.set(task.getPriority());
+        memory.logic.SOLUTION_BEST.set(questionTask.getPriority());
 
         if (problem.isGoal()) {
-            memory.emotion.happy(newQ, task, nal);
+            memory.emotion.happy(newQ, questionTask, nal);
         }
-        
-        Budget budget = TemporalRules.solutionEval(problem, belief, task, nal);
+
+        Budget budget = TemporalRules.solutionEval(problem, belief, questionTask, nal);
 
             
-        //Solution Activated
-        if(task.sentence.punctuation==Symbols.QUESTION || task.sentence.punctuation==Symbols.QUEST) {
-            if(task.isInput()) { //only show input tasks as solutions
-                memory.emit(Answer.class, task, belief);
-            } else {
-                memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed
-            }
-        } else {
-            memory.emit(Output.class, task, belief);   //goal things only show silence related
-        }
+
 
 
         /*memory.output(task);
@@ -215,7 +206,20 @@ public class LocalRules {
         }*/
 
         //nal.addSolution(nal.getCurrentTask(), budget, belief, task);
-        nal.addSolution(task, budget, belief, task);
+        Task solutionTask = nal.addSolution(questionTask, budget, belief, questionTask);
+        if (solutionTask != null) {
+            //Solution Activated
+            if (questionTask.sentence.punctuation == Symbols.QUESTION || questionTask.sentence.punctuation == Symbols.QUEST) {
+                //if (questionTask.isInput()) { //only show input tasks as solutions
+                memory.emit(Answer.class, solutionTask, questionTask);
+            /*} else {
+                memory.emit(Output.class, task, belief);   //solution to quests and questions can be always showed
+            }*/
+            } else {
+                memory.emit(Output.class, solutionTask, questionTask);   //goal things only show silence related
+            }
+
+        }
 
         return true;
 
@@ -224,6 +228,7 @@ public class LocalRules {
 
 
     /* -------------------- same terms, difference relations -------------------- */
+
     /**
      * The task and belief match reversely
      *
@@ -245,10 +250,10 @@ public class LocalRules {
     /**
      * Inheritance/Implication matches Similarity/Equivalence
      *
-     * @param asym A Inheritance/Implication sentence
-     * @param sym A Similarity/Equivalence sentence
+     * @param asym   A Inheritance/Implication sentence
+     * @param sym    A Similarity/Equivalence sentence
      * @param figure location of the shared term
-     * @param nal Reference to the memory
+     * @param nal    Reference to the memory
      */
     public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final NAL nal) {
         if (nal.getCurrentTask().sentence.isJudgment()) {
@@ -265,17 +270,17 @@ public class LocalRules {
      * from a Similarity/Equivalence and a reversed Inheritance/Implication
      *
      * @param asym The asymmetric premise
-     * @param sym The symmetric premise
-     * @param nal Reference to the memory
+     * @param sym  The symmetric premise
+     * @param nal  Reference to the memory
      */
     private static void inferToAsym(Sentence asym, Sentence sym, NAL nal) {
         Statement statement = (Statement) asym.term;
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
-        
+
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return;
-        
+
         Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
         Budget budget = BudgetFunctions.forward(truth, nal);
         nal.deriveDouble(content, truth, budget,
@@ -284,6 +289,7 @@ public class LocalRules {
     }
 
     /* -------------------- one-premise logic rules -------------------- */
+
     /**
      * {<P --> S>} |- <S --> P> Produce an Inheritance/Implication from a
      * reversed Inheritance/Implication
@@ -319,8 +325,8 @@ public class LocalRules {
      * called in MatchingRules
      *
      * @param budget The budget value of the new task
-     * @param truth The truth value of the new task
-     * @param nal Reference to the memory
+     * @param truth  The truth value of the new task
+     * @param nal    Reference to the memory
      */
     private static void convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
@@ -334,19 +340,17 @@ public class LocalRules {
 
         if (subjT.hasVarQuery() && predT.hasVarQuery()) {
             throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
-        }
-        else if (subjT.hasVarQuery()) {
+        } else if (subjT.hasVarQuery()) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order);
-        }
-        else if (predT.hasVarQuery()) {
+        } else if (predT.hasVarQuery()) {
             otherTerm = (subjT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, subjT, otherTerm, order);
         }
-        
+
         if (content != null)
             nal.deriveSingle(content, Symbols.JUDGMENT, newTruth, newBudget);
     }
 
-    
+
 }

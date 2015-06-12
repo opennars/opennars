@@ -59,14 +59,14 @@ public abstract class Answered extends NARReaction {
     public void event(Class event, Object[] args) {                
         
         if (event == Answer.class) {
-            Task task = (Task)args[0];
-            Sentence belief = (Sentence)args[1];
+            Task questionTask = (Task)args[1];
+            Sentence belief = ((Task)args[0]).sentence;
 
-            if ((question == null) || task.equals(question)) {
+            if ((question == null) || questionTask.equals(question)) {
                 onSolution(belief);
             }
-            else if (task.hasParent(question)) {
-                onChildSolution(task, belief);
+            else if (questionTask.hasParent(question)) {
+                onChildSolution(questionTask, belief);
             }
         }
     }

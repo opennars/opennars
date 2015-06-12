@@ -106,7 +106,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     public TaskCondition(NAR n, Class channel, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax) throws InvalidInputException {
-        super(n, channel);
+        super(n, TaskCondition.outAndAnswer(channel));
 
         this.relativeToCondition = false;
 
@@ -126,6 +126,15 @@ public class TaskCondition extends OutputCondition implements Serializable {
         this.confMin = Math.max(0.0f, confMin);
         this.punc = punc;
         this.term = n.term(sentenceTerm);
+    }
+
+    private static Class[] outAndAnswer(Class channel) {
+        if (channel == Events.OUT.class) {
+            return new Class[] { Events.OUT.class, Events.Answer.class };
+        }
+        else return new Class[] { channel };
+
+
     }
 
     public TaskCondition(NAR n, Class inClass, Task t, int cycle, boolean b, int similarResultsToSave, Class ...channels) {
@@ -237,6 +246,9 @@ public class TaskCondition extends OutputCondition implements Serializable {
 
     @Override
     public boolean condition(Class channel, Object signal) {
+
+        if (channel == Events.Answer.class)
+            channel = Events.OUT.class;
 
         if (channel == this.channel) {
 

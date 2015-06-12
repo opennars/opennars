@@ -230,9 +230,10 @@ public class TextOutput extends Output {
         }
 
         if ((channel == Answer.class) && (signals != null)) {
-            Task question = (Task) signals[0];
-            Sentence answer = (Sentence) signals[1];
-            question.sentence.toString(buffer, nar.memory, showStamp).append(" = ").append(answer.getTruth());
+            Task question = (Task) signals[1];
+            Task answer = (Task) signals[0];
+            question.sentence.toString(buffer, nar.memory, showStamp).append(" = ");
+            answer.sentence.toString(buffer, nar.memory, showStamp);
 
         } else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class))) {
 
