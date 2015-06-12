@@ -390,9 +390,6 @@ public class Default extends NARSeed implements ConceptBuilder {
             }
         }
 
-
-        n.on(new Events.OUT(n));
-
         //n.on(new RuntimeNARSettings());
 
         initDerivationFilters();

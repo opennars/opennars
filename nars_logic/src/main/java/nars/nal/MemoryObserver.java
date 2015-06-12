@@ -33,7 +33,7 @@ public abstract class MemoryObserver extends NARReaction {
                 Events.ConceptUnification.class,
                 Events.ConceptActive.class,
                 Events.PluginsChange.class,
-                Events.TaskAdd.class,
+                Events.OUT.class,
                 Events.TaskRemove.class,
                 Events.TaskDerive.class,
                 TaskProcess.class,
@@ -59,7 +59,7 @@ public abstract class MemoryObserver extends NARReaction {
             onCycleStart(memory.time());
         } else if (event == CycleEnd.class) {
             onCycleEnd(memory.time());
-        } else if (event == Events.TaskAdd.class) {
+        } else if (event == Events.OUT.class) {
             onTaskAdd((Task)arguments[0]);
         } else {
             output(event, arguments);

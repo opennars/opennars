@@ -37,6 +37,12 @@ public class EventTest {
         testEmitter(e);
     }
 
+    @Test
+    public void testFast() throws InterruptedException {
+        EventEmitter e = new EventEmitter.FastDefaultEventEmitter();
+        testEmitter(e);
+    }
+
     public void testEmitter(EventEmitter e) {
 
 

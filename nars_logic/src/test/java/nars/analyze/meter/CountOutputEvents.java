@@ -58,6 +58,7 @@ public class CountOutputEvents extends NARReaction {
 
     @Override
     public void event(Class event, Object[] args) {
+
         eventMeters.get(event).hit();
     }
 

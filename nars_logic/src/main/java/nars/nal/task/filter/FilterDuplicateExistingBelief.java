@@ -36,6 +36,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         if (!c.hasBeliefs())
             return null; //no beliefs exist at this concept
 
+        /* TODO make this faster by terminating the search after confidence drops below the task's */
         for (Task t : c.getBeliefs()) {
             if (!t.getTruth().equals(task.getTruth()))
                 return null; //different truth value

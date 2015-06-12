@@ -1,7 +1,6 @@
 package nars.meter;
 
 import nars.Events;
-import nars.Events.ConceptNew;
 import nars.Events.InferenceEvent;
 import nars.NAR;
 import nars.nal.MemoryObserver;
@@ -132,7 +131,7 @@ public class NARTrace extends MemoryObserver {
     //TODO use MemoryObserver's event dispatcher
     @Override
     @Deprecated public void event(final Class event, final Object[] arguments) {
-        if (event == Events.TaskAdd.class) {
+        if (event == Events.OUT.class) {
             onTaskAdd((Task)arguments[0]);
         }
         else if (event == Events.TaskRemove.class) {

@@ -52,6 +52,10 @@ public class PerceptionAccel extends NARReaction {
         super(n, Events.InduceSucceedingEvent.class, Events.ConceptForget.class, Events.ConceptActive.class);
     }
 
+    @Override
+    public Class[] getEvents() {
+        return super.getEvents();
+    }
 
     @Override
     public void event(Class event, Object[] args) {

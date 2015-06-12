@@ -21,8 +21,7 @@
 package nars.io;
 
 import nars.Events;
-import nars.Events.ConceptNew;
-import nars.Events.TaskAdd;
+import nars.Events.OUT;
 import nars.Events.TaskRemove;
 import nars.Memory.Timing;
 import nars.NAR;
@@ -129,7 +128,7 @@ public class TraceWriter extends MemoryObserver {
 
     @Override
     public void onTaskAdd(Task task) {
-        output(TaskAdd.class, task, task.getHistory());
+        output(OUT.class, task, task.getHistory());
     }
 
     @Override

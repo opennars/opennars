@@ -2,19 +2,20 @@ package nars.testing.condition;
 
 import nars.Events;
 import nars.NAR;
+import nars.event.NARReaction;
 import nars.io.out.Output;
 
 /**
- * Counts # of outputs
+ * Counts # of outputs of different types
  */
-public class OutputCount extends Output {
+public class OutputCount extends NARReaction {
 
     int inputs = 0;
     int outputs = 0;
     int others = 0;
 
     public OutputCount(NAR n) {
-        super(n);
+        super(n, Output.DefaultOutputEvents);
     }
 
     @Override
@@ -35,4 +36,6 @@ public class OutputCount extends Output {
     public int getOthers() {
         return others;
     }
+
+    public void clear() { inputs = outputs = others = 0; }
 }

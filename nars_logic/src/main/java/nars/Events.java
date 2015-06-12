@@ -21,40 +21,8 @@ public class Events {
     /** for misc debug events */
     public interface DEBUG {     }
 
-    /** conversational (judgments, questions, etc...) output */
-    public static class OUT extends NARReaction {
+    public interface OUT {     }
 
-        AtomicInteger volume;
-        public final NAR n;
-
-        public OUT(NAR nar) {
-            super(nar);
-            this.n = nar;
-            this.volume = n.memory.param.outputVolume;
-        }
-
-
-        @Override
-        public void event(final Class event, final Object[] args) {
-
-            Task t = (Task)args[0];
-            if (t.isInput()) return; //input events will already have been output via IN channel
-
-            final float noiseLevel = 1.0f - (this.volume.get() / 100.0f);
-
-            if (t.summaryNotLessThan(noiseLevel)) {  // only report significant derived Tasks
-                n.emit(Events.OUT.class, t);
-            }
-        }
-
-        @Override
-        public Class[] getEvents() {
-            return new Class[] { TaskAdd.class };
-        }
-
-
-
-    }
 
     /** warnings, errors & exceptions */
     public static interface ERR { }
@@ -181,14 +149,6 @@ public class Events {
     
     public static class ConceptUnification { } //2nd level unification in CompositionalRules
 
-    abstract public static class TaskAdd implements Reaction<Class> {
-        
-        abstract public void onTaskAdd(Task t, String reason);
-        
-        @Override public void event(Class event, Object[] args) {
-            onTaskAdd((Task)args[0], (String)args[1]);
-        }
-    }
     public static class TaskRemove { }
 
     /** when a task has been derived */

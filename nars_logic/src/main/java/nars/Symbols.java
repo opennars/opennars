@@ -27,7 +27,6 @@ import nars.nal.term.Atom;
 import nars.util.utf8.ByteBuf;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

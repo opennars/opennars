@@ -39,18 +39,15 @@ public class TextOutput extends Output {
 
     private final NAR nar;
 
-    private String prefix = "";
-    private LineOutput outExp2;
-    private PrintWriter outExp;
+    private PrintWriter out;
     private boolean showErrors = true;
     //privte boolean showStackTrace = false;
     private boolean showStamp = true;
     private boolean showInput = true;
     private float outputPriorityMin = 0;
+    protected boolean enabled = true;
 
-    public interface LineOutput {
-        public void println(CharSequence s);
-    }
+
 
     public static TextOutput out(NAR n) {
         return new TextOutput(n, System.out);
@@ -69,12 +66,13 @@ public class TextOutput extends Output {
     public TextOutput(NAR n) {
         super(n, true);
         this.nar = n;
+        channel.put(Events.IN.class, new TaskChannel("IN"));
+        channel.put(Events.OUT.class, new TaskChannel("OUT"));
+        channel.put(Events.Answer.class, new TaskChannel("ANS"));
+        channel.put(Echo.class, new TaskChannel("ECH"));
+        channel.put(Events.EXE.class, new TaskChannel("EXE"));
     }
 
-    public TextOutput(NAR n, LineOutput outExp2) {
-        this(n);
-        this.outExp2 = outExp2;
-    }
 
     public TextOutput(NAR n, PrintWriter outExp) {
         this(n, outExp, 0.0f);
@@ -82,7 +80,7 @@ public class TextOutput extends Output {
 
     public TextOutput(NAR n, PrintWriter outExp, float outputPriorityMin) {
         this(n);
-        this.outExp = outExp;
+        this.out = outExp;
         this.outputPriorityMin = outputPriorityMin;
     }
 
@@ -104,7 +102,7 @@ public class TextOutput extends Output {
      */
     public void openSaveFile(String path) {
         try {
-            outExp = new PrintWriter(new FileWriter(path));
+            out = new PrintWriter(new FileWriter(path));
         } catch (IOException ex) {
             System.out.println("i/o error: " + ex.getMessage());
         }
@@ -114,52 +112,59 @@ public class TextOutput extends Output {
      * Close an output experience file
      */
     public void closeSaveFile() {
-        outExp.close();
+        out.close();
         stop();
     }
 
 
-    /**
-     * Process the next chunk of output data
-     */
+
     @Override
-    public void event(final Class channel, final Object... oo) {
-        if (!showErrors && (channel == Events.ERR.class))
+    protected synchronized void output(final Channel channel, final Class event, final Object... args) {
+
+        if (!isEnabled())
             return;
 
-        if (!showInput && (channel == Events.IN.class))
-            return;
-        
-        if ((outExp!=null) && (outExp2!=null)) {
-            throw new RuntimeException("why does this TextOuput exist?");
-        }
+        final String prefix = channel.getLinePrefix(event, args);
+        final CharSequence s = channel.get(event, args);
 
-        final StringBuilder buffer = new StringBuilder();
-        final CharSequence s = process(channel, oo);
         if (s != null) {
-            if (outExp != null) {
-                if (prefix != null)
-                    outExp.print(prefix);
-                outExp.println(s);
-                outExp.flush();
-            }
-            if (outExp2 != null) {
-                if (prefix != null)
-                    outExp2.println(prefix + s);
-                else
-                    outExp2.println(s);
-            }
+            output(prefix, s);
         }
 
     }
 
+    private void output(final String prefix, final CharSequence s) {
+        if (out != null) {
+            if (prefix != null)
+                out.print(prefix);
 
-    public CharSequence process(final Class c, final Object[] o) {
-        if (o[0] instanceof Task) {
-            if (!allowTask((Task) o[0]))
-                return null;
+            out.append(": ");
+
+            if (s != null)
+                out.println(s);
+
+            out.flush();
         }
-        return getOutputString(c, o, true, showStamp, nar, new StringBuilder(), outputPriorityMin);
+    }
+
+    public class TaskChannel extends DefaultChannel {
+
+        public TaskChannel(String prefix) {
+            super(prefix);
+        }
+
+        final StringBuilder buffer = new StringBuilder();
+
+        @Override
+        public synchronized CharSequence get(Class c, Object[] o) {
+            if (o[0] instanceof Task) {
+                Task tt = (Task)o[0];
+                if (!allowTask(tt))
+                    return null;
+            }
+
+            return TextOutput.getOutputString(c, o, false, showStamp, nar, buffer, outputPriorityMin);
+        }
     }
 
     /**
@@ -190,9 +195,13 @@ public class TextOutput extends Output {
 //        return this;
 //    }
 
-    public TextOutput setLinePrefix(String prefix) {
-        this.prefix = prefix;
-        return this;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setOutputPriorityMin(float minPriority) {
@@ -220,25 +229,7 @@ public class TextOutput extends Output {
             buffer.append(channel.getSimpleName()).append(": ");
         }
 
-        if (channel == Events.ERR.class) {
-
-            if (signal instanceof Throwable) {
-                Throwable e = (Throwable) signal;
-
-                buffer.append(e.toString());
-
-                /*if (showStackTrace)*/
-                {
-                    //buffer.append(" ").append(Arrays.asList(e.getStackTrace()));
-                }
-            } else {
-                if (signals != null)
-                    buffer.append(Arrays.toString(signals));
-                else
-                    buffer.append(signal);
-            }
-
-        } else if ((channel == Answer.class) && (signals != null)) {
+        if ((channel == Answer.class) && (signals != null)) {
             Task question = (Task) signals[0];
             Sentence answer = (Sentence) signals[1];
             question.sentence.toString(buffer, nar.memory, showStamp).append(" = ").append(answer.getTruth());

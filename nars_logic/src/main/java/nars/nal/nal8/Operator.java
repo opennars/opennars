@@ -95,7 +95,7 @@ abstract public class Operator implements Reaction<Term> {
         Concept c = (Concept) args[1];
         Memory m = (Memory) args[2];
         if (decider().decide(c, o)) {
-            o = o.inline(getMemory());
+            o = o.inline(getMemory(), false);
             execute(o, c, m);
         }
     }

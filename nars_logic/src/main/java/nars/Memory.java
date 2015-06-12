@@ -51,7 +51,6 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.process.TaskProcess;
 import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
@@ -146,7 +145,9 @@ public class Memory implements Serializable, AbstractStamper {
         this.self = Symbols.DEFAULT_SELF; //default value
 
         this.event = new EventEmitter.DefaultEventEmitter();
+        //this.event = new EventEmitter.FastDefaultEventEmitter();
         this.exe = new EventEmitter.DefaultEventEmitter();
+        //this.exe = new EventEmitter.FastDefaultEventEmitter();
 
 
         this.conceptBuilders = new ArrayList(1);
@@ -632,16 +633,6 @@ public class Memory implements Serializable, AbstractStamper {
     }
 
     public boolean taskAdd(final Task t) {
-        return taskAdd(t, null);
-    }
-
-    /**
-     * add new task that waits to be processed next
-     */
-    public boolean taskAdd(final Task t, final String reason) {
-
-        if (reason!=null)
-            t.addHistory(reason);
 
         if (!Terms.levelValid(t.sentence, nal())) {
             removed(t, "Insufficient NAL level");
@@ -660,7 +651,15 @@ public class Memory implements Serializable, AbstractStamper {
 
 
         if (cycle.addTask(t)) {
-            emit(Events.TaskAdd.class, t);
+
+            //NOTE: if duplicate outputs happen, the budget wil have changed
+            //but they wont be displayed.  to display them,
+            //we need to buffer unique TaskAdd ("OUT") tasks until the end
+            //of the cycle
+
+            if (!t.isInput())
+                emit(Events.OUT.class, t);
+
             logic.TASK_ADD_NEW.hit();
             return true;
         }
@@ -679,7 +678,7 @@ public class Memory implements Serializable, AbstractStamper {
     public int input(final Task task) {
 
         if (task.perceivable(this)) {
-            if (taskAdd(task, "Perceived")) {
+            if (taskAdd(task)) {
                 emit(Events.IN.class, task);
                 return 1;
             }
