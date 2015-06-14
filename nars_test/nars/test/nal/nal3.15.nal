@@ -1,8 +1,0 @@
-
-
-********** compound decomposition, one premise
-<(~, boy, girl) --> [strong]>. %0.90% 
-// What differs boys from gials are being strong.
-5
- OUT: <boy --> [strong]>. %0.90;0.73%
-// Boys are strong.

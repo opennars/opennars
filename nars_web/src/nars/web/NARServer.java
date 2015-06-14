@@ -1,13 +1,12 @@
 package nars.web;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import nars.core.NAR;
+import nars.core.build.DefaultNARBuilder;
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
@@ -34,7 +33,7 @@ public class NARServer  {
 
             if (WEBSOCKET_DEBUG) System.out.println("Connect: " + conn.getRemoteSocketAddress().getAddress().getHostAddress());
 
-            final NARConnection n = new NARConnection(new NAR(), cycleIntervalMS) {
+            final NARConnection n = new NARConnection(new DefaultNARBuilder().build(), cycleIntervalMS) {
                 @Override public void println(String output) {
                     conn.send(output);
                 }
@@ -105,7 +104,7 @@ public class NARServer  {
             
             if (args.length >= 3) {
                 nlpHost = args[1];
-                if (args[2]!="null") {
+                if (!"null".equals(args[2])) {
                     nlpPort = Integer.parseInt(args[2]);
                     //nlp = new NLPInputParser(nlpHost, nlpPort);
                 }

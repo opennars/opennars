@@ -20,9 +20,7 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
@@ -36,8 +34,8 @@ public class Negation extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Negation(ArrayList<Term> arg) {
-        super(arg);
+    private Negation(final CharSequence name, final Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -48,18 +46,23 @@ public class Negation extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private Negation(String n, ArrayList<Term> cs, boolean con, short i) {
+    private Negation(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
+    @Override
+    public int getMinimumRequiredComponents() {
+        return 1;
+    }
+    
     /**
      * Clone an object
      *
      * @return A new object
      */
     @Override
-    public Object clone() {
-        return new Negation(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+    public Negation clone() {
+        return new Negation(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
@@ -71,27 +74,25 @@ public class Negation extends CompoundTerm {
      */
     public static Term make(final Term t, final Memory memory) {
         if (t instanceof Negation) {
-            return ((CompoundTerm) t).cloneComponents().get(0);
+            return ((Negation) t).cloneTerms()[0];
         }         // (--,(--,P)) = P
-        final ArrayList<Term> argument = new ArrayList<>(1);
-        argument.add(t);
-        return make(argument, memory);
+        return make(new Term[] { t }, memory);
     }
 
     /**
      * Try to make a new Negation. Called by StringParser.
      *
      * @return the Term generated from the arguments
-     * @param argument The list of components
+     * @param argument The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(final ArrayList<Term> argument, final Memory memory) {
-        if (argument.size() != 1) {
+    public static Term make(final Term[] argument, final Memory memory) {
+        if (argument.length != 1) {
             return null;
         }
-        final String name = makeCompoundName(Symbols.NEGATION_OPERATOR, argument);
-        final Term t = memory.nameToListedTerm(name);
-        return (t != null) ? t : new Negation(argument);
+        final CharSequence name = makeCompoundName(NativeOperator.NEGATION, argument);
+        final Term t = memory.conceptTerm(name);
+        return (t != null) ? t : new Negation(name, argument);
     }
 
     /**
@@ -100,7 +101,7 @@ public class Negation extends CompoundTerm {
      * @return the operator of the term
      */
     @Override
-    public String operator() {
-        return Symbols.NEGATION_OPERATOR;
+    public NativeOperator operator() {
+        return NativeOperator.NEGATION;
     }
 }

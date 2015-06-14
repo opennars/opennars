@@ -1,0 +1,9 @@
+********** [01 + 03 -> 10]: 
+<{t001} --> [opened]>!
+
+<(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,<(*,{t001}) --> ^open>) =/> <{t001} --> [opened]>>.
+
+5
+
+''outputMustContain('(&/,<(*,SELF,{t002}) --> hold>,<(*,SELF,{t001}) --> at>,<(*,{t001}) --> ^open>)! %1.00;0.81%')
+' working in GUI but not in testcase, maybe the following string needs some escapes? but where?

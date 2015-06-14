@@ -1,9 +1,0 @@
-
-********** compound composition, one premise
-<swan --> bird>. %0.90% 
-// Swan is a type of bird. 
-<(~,swimmer, swan) --> bird>?  
-// Is being bird what differ swimmer from swan?
-2
- OUT: <(~,swimmer, swan) --> bird>. %0.10;0.73% 
-// What differs swimmer from swan is not being bird.

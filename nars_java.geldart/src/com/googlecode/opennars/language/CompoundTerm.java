@@ -387,7 +387,7 @@ public abstract class CompoundTerm extends Term {
     
     public boolean containAllComponents(Term t) {
         if (getClass() == t.getClass())
-            return components.containsAll(((CompoundTerm) t).getComponents());
+            return components.containsAll(((CompoundTerm) t).components);
         else
             return components.contains(t);
     }
@@ -398,7 +398,7 @@ public abstract class CompoundTerm extends Term {
         boolean done;
         ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass())
-            done = list.removeAll(((CompoundTerm) t2).getComponents());
+            done = list.removeAll(((CompoundTerm) t2).components);
         else
             done = list.remove(t2);
         return (done ? make(t1, list, memory) : null);

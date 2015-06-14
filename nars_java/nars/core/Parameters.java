@@ -20,33 +20,40 @@
  */
 package nars.core;
 
-import java.util.Random;
-
 /**
  * NAR operating parameters.
  * All static values will be removed so that this is an entirely dynamic class.
  */
 public class Parameters {
     
-    /**
-     * max complexity of a Term that its name can be stored globally via String.intern().
-     * set to zero to disable this feature.
-     */
-    public static int TERM_NAME_STRING_INTERN_MAX_COMPLEXITY = 4;
-     
-    
-    /** Silent threshold for task reporting, in [0, 100]. */
-    private int silenceLevel = 0;
-    public int getSilenceLevel() { return silenceLevel;    }
-    public void setSilenceLevel(int silenceLevel) { this.silenceLevel = silenceLevel;     }
-
-    
-    
-    
     
     //FIELDS BELOW ARE BEING CONVERTED TO DYNAMIC, NO MORE STATIC: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     //
-    //
+    //Pei comments: parameters will be separated into a dynamic group and a static group
+    //              and the latter contains "personality parameters" that cannot be changed
+    //              in the lifetime of the system, though different systems may take different
+    //              values. For example, to change HORIZON dynamically will cause inconsistency 
+    //              in evidence evaluation.
+    
+    public static int SHORT_TERM_MEMORY_SIZE=30; //up to n events in short term memory
+    
+    //internal experience has less durability?
+    public static float INTERNAL_EXPERIENCE_DURABILITY_MUL=0.5f;
+    //internal experience has less priority?
+    public static float INTERNAL_EXPERIENCE_PRIORITY_MUL=0.5f;
+    //internal experience has less quality?
+    public static float INTERNAL_EXPERIENCE_QUALITY_MUL=0.5f;
+    
+    //let NARS use NARS+ ideas (counting etc.)
+    public static boolean ENABLE_EXPERIMENTAL_NARS_PLUS=false;
+    
+    //let NARS use NAL9 operators to perceive its own mental actions
+    public static boolean ENABLE_INTERNAL_EXPERIENCE=false;
+   
+    //when a concept is important and exceeds a syntactic complexity, let NARS name it:
+    public static int TERM_COMPLEXITY_BEFORE_NAMING_IT=20;
+    //these two are AND-coupled
+    public static float TERM_QUALITY_BEFORE_NAMING_IT=0.9f;
     
     /* ---------- initial values of run-time adjustable parameters ---------- */
     /** Concept decay rate in ConceptBag, in [1, 99]. */
@@ -71,7 +78,11 @@ public class Parameters {
     public static final int HORIZON = 1;    // or 2, can be float
     /** Reliance factor, the empirical confidence of analytical truth. */
     public static final float RELIANCE = (float) 0.9;    // the same as default confidence
-
+    /** Tense usage convention, how far away "past" and "future" is from "now". */
+    public static final int DURATION = 5;    // the range of "now" is [-DURATION, DURATION];
+    /** Minimum expectation for a desire value. */
+    public static final float DECISION_THRESHOLD = (float) 0.30;    // the range of "now" is [-DURATION, DURATION];
+ 
     /* ---------- budget thresholds ---------- */
     /** The budget threshold rate for task to be accepted. */
     public static final float BUDGET_THRESHOLD = (float) 0.01;
@@ -84,35 +95,41 @@ public class Parameters {
     /** Default confidence of input judgment. */
     public static final float DEFAULT_JUDGMENT_CONFIDENCE = (float) 0.9;
     /** Default priority of input judgment */
-    public static final float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
+    public static float DEFAULT_JUDGMENT_PRIORITY = (float) 0.8;
     /** Default durability of input judgment */
-    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5;
+    public static final float DEFAULT_JUDGMENT_DURABILITY = (float) 0.5; //was 0.8 in 1.5.5; 0.5 after
     /** Default priority of input question */
     public static final float DEFAULT_QUESTION_PRIORITY = (float) 0.9;
     /** Default durability of input question */
     public static final float DEFAULT_QUESTION_DURABILITY = (float) 0.9;
 
+    
+     /** Default confidence of input goal. */
+     public static final float DEFAULT_GOAL_CONFIDENCE = (float) 0.9;
+     /** Default priority of input judgment */
+     public static final float DEFAULT_GOAL_PRIORITY = (float) 0.9;
+     /** Default durability of input judgment */
+     public static final float DEFAULT_GOAL_DURABILITY = (float) 0.9;
+     /** Default priority of input question */
+     public static final float DEFAULT_QUEST_PRIORITY = (float) 0.9;
+     /** Default durability of input question */
+     public static final float DEFAULT_QUEST_DURABILITY = (float) 0.9;
+ 
+    
     /* ---------- space management ---------- */
-    /** Level granularity in Bag, two digits */
-    public static final int BAG_LEVEL = 100;
+    
     /** Level separation in Bag, one digit, for display (run-time adjustable) and management (fixed) */
     public static final float BAG_THRESHOLD = 0.1f;
-    /** Hashtable load factor in Bag */
-    public static final float LOAD_FACTOR = (float) 0.5;
-    /** Size of ConceptBag */
-    public static final int CONCEPT_BAG_SIZE = 1000;
-    /** Size of TaskLinkBag */
-    public static final int TASK_LINK_BAG_SIZE = 20;
-    /** Size of TermLinkBag */
-    public static final int TERM_LINK_BAG_SIZE = 100;
+    
+
     /** Size of TaskBuffer */
     public static final int TASK_BUFFER_SIZE = 10;
     
     /* ---------- avoiding repeated reasoning ---------- */
         /** Maximum length of the evidental base of the Stamp, a power of 2 */
-    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 8;
+    public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 20;
     /** Maximum length of the Derivation Chain of the stamp */
-    public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 10;
+    public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 20;
     
     /** Maximum length of Stamp, a power of 2 */
     //public static final int MAXIMUM_STAMP_LENGTH = 8;
@@ -122,4 +139,41 @@ public class Parameters {
     public static final int MAXIMUM_BELIEF_LENGTH = 7;
     /** Maximum number of goals kept in a Concept */
     public static final int MAXIMUM_QUESTIONS_LENGTH = 5;
+
+    
+    /**
+     * max length of a Term name for which it can be stored statically via String.intern().
+     * set to zero to disable this feature.
+     * The problem with indiscriminate use of intern() is that interned strings can not be garbage collected (i.e. permgen) - possible a memory leak if terms disappear.
+     */
+    public static int INTERNED_TERM_NAME_MAXLEN = 0;
+    
+    /** contraposition should have much lower priority considering the flood of implications coming from temporal knowledge.  a lower value means more frequent, must be > 0 */
+    public static double CONTRAPOSITION_PRIORITY = 30;
+    
+
+    /**
+     * The rate of confidence decrease in mental operations Doubt and Hesitate
+     * set to zero to disable this feature.
+     */
+    public static float DISCOUNT_RATE = 0.5f;    
+    
+    /**
+     * Determines when TermLink and TaskLink should use Rope implementation for its Key,
+     * rather than String/StringBuilder.  
+     * 
+     * Set to -1 to disable the Rope entirely, 0 to use always, or a larger number as a threshold
+     * below which uses contiguous char[] implementation, and above which uses 
+     * FastConcatenationRope.
+     * 
+     * While a Rope is potentially more memory efficient (because it can re-use String instances
+     * in its components without a redundant copy being stored) it can be more 
+     * computationally costly than a character array.
+     * 
+     * The value needs to be weighed against the overhead of the comparison and iteration costs.
+     * 
+     * Optimal value to be determined.
+     */
+    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 64;
 }
+

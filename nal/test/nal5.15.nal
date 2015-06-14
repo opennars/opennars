@@ -1,0 +1,13 @@
+'********** compound decomposition, two premises
+
+'If robin is a type of bird then robin is not a type of flying animal. 
+<<robin --> bird> ==> (&&,<robin --> animal>,<robin --> [flying]>)>. %0% 
+
+'If robin is a type of bird then robin can fly. 
+<<robin --> bird> ==> <robin --> [flying]>>.
+
+8
+
+'It is unlikely that if a robin is a type of bird then robin is a type of animal. 
+''outputMustContain('<<robin --> bird> ==> <robin --> animal>>. %0.00;0.81%')
+

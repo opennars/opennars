@@ -1,0 +1,10 @@
+'********** inference on tense 
+
+  IN: <<(*,John,key_101) --> hold> =/> <(*,John,room_101) --> enter>>. 
+
+  IN: <(*,John,key_101) --> hold>. :|:
+  
+20
+
+''outputMustContain('<John --> (/,enter,_,room_101)>. :\\: %1.00;0.81%')
+

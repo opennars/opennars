@@ -20,23 +20,25 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import java.util.Collection;
+import java.util.TreeSet;
+import nars.io.Symbols.NativeOperator;
+import static nars.io.Symbols.NativeOperator.SET_EXT_CLOSER;
+import static nars.io.Symbols.NativeOperator.SET_EXT_OPENER;
 import nars.storage.Memory;
 
 /**
  * An extensionally defined set, which contains one or more instances.
  */
-public class SetExt extends CompoundTerm {
+public class SetExt extends SetTensional {
 
     /**
      * Constructor with partial values, called by make
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private SetExt(final ArrayList<Term> arg) {
-        super(arg);
+    private SetExt(final CharSequence name, final Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -46,16 +48,18 @@ public class SetExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private SetExt(final String n, final ArrayList<Term> cs, final boolean con, final short i) {
+    private SetExt(final CharSequence n, final Term[] cs, final boolean con, final short i) {
         super(n, cs, con, i);
     }
 
+    
     /**
      * Clone a SetExt
      * @return A new object, to be casted into a SetExt
      */
-    public Object clone() {
-        return new SetExt(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+    @Override
+    public SetExt clone() {
+        return new SetExt(name(), cloneTerms(), isConstant(), getComplexity());
     }
 
     /**
@@ -65,7 +69,7 @@ public class SetExt extends CompoundTerm {
      * @return A compound generated or a term it reduced to
      */
     public static Term make(final Term t, final Memory memory) {
-        final TreeSet<Term> set = new TreeSet<Term>();
+        final TreeSet<Term> set = new TreeSet<>();
         set.add(t);
         return make(set, memory);
     }
@@ -73,16 +77,16 @@ public class SetExt extends CompoundTerm {
     /**
      * Try to make a new SetExt. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argList The list of components
+     * @param argList The list of term
      * @param memory Reference to the memeory
      */
-    public static Term make(final ArrayList<Term> argList, final Memory memory) {
-        TreeSet<Term> set = new TreeSet<Term>(argList); // sort/merge arguments
+    public static Term make(final Collection<Term> argList, final Memory memory) {
+        TreeSet<Term> set = new TreeSet<>(argList); // sort/merge arguments
         return make(set, memory);
     }
 
     /**
-     * Try to make a new compound from a set of components. Called by the public make methods.
+     * Try to make a new compound from a set of term. Called by the public make methods.
      * @param set a set of Term as compoments
      * @param memory Reference to the memeory
      * @return the Term generated from the arguments
@@ -91,36 +95,33 @@ public class SetExt extends CompoundTerm {
         if (set.isEmpty()) {
             return null;
         }
-        final ArrayList<Term> argument = new ArrayList<Term>(set);
-        final String name = makeSetName(Symbols.SET_EXT_OPENER, argument, Symbols.SET_EXT_CLOSER);
-        final Term t = memory.nameToListedTerm(name);
-        return (t != null) ? t : new SetExt(argument);
+        Term[] argument = set.toArray(new Term[set.size()]);
+        return make(argument, memory);
     }
 
+    private static Term make(final Term[] termSet, final Memory memory) {
+        final CharSequence name = makeSetName(SET_EXT_OPENER.ch, termSet, SET_EXT_CLOSER.ch);
+        final Term t = memory.conceptTerm(name);
+        return (t != null) ? t : new SetExt(name, termSet);
+    }
+    
     /**
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Character.toString(Symbols.SET_EXT_OPENER);
+    @Override
+    public NativeOperator operator() {
+        return NativeOperator.SET_EXT_OPENER;
     }
 
-    /**
-     * Check if the compound is communitative.
-     * @return true for communitative
-     */
-    @Override
-    public boolean isCommutative() {
-        return true;
-    }
 
     /**
      * Make a String representation of the set, override the default.
      * @return true for communitative
      */
     @Override
-    public String makeName() {
-        return makeSetName(Symbols.SET_EXT_OPENER, components, Symbols.SET_EXT_CLOSER);
+    public CharSequence makeName() {
+        return makeSetName(SET_EXT_OPENER.ch, term, SET_EXT_CLOSER.ch);
     }
 }
 

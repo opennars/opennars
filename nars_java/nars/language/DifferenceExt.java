@@ -20,13 +20,12 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import java.util.TreeSet;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
- * A compound term whose extension is the difference of the extensions of its components
+ * A compound term whose extension is the difference of the extensions of its term
  */
 public class DifferenceExt extends CompoundTerm {
 
@@ -35,8 +34,8 @@ public class DifferenceExt extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private DifferenceExt(ArrayList<Term> arg) {
-        super(arg);
+    private DifferenceExt(final CharSequence name, Term[] arg) {
+        super(name, arg);
     }
 
     /**
@@ -46,7 +45,7 @@ public class DifferenceExt extends CompoundTerm {
      * @param open Open variable list
      * @param i Syntactic complexity of the compound
      */
-    private DifferenceExt(String n, ArrayList<Term> cs, boolean con, short i) {
+    private DifferenceExt(CharSequence n, Term[] cs, boolean con, short i) {
         super(n, cs, con, i);
     }
 
@@ -54,36 +53,37 @@ public class DifferenceExt extends CompoundTerm {
      * Clone an object
      * @return A new object, to be casted into a DifferenceExt
      */
-    public Object clone() {
-        return new DifferenceExt(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+    @Override
+    public DifferenceExt clone() {
+        return new DifferenceExt(name(), cloneTerms(), isConstant(), complexity);
     }
 
     /**
      * Try to make a new DifferenceExt. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argList The list of components
+     * @param argList The list of term
      * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argList, Memory memory) {
-        if (argList.size() == 1) { // special case from CompoundTerm.reduceComponent
-            return argList.get(0);
+    public static Term make(Term[] argList, Memory memory) {
+        if (argList.length == 1) { // special case from CompoundTerm.reduceComponent
+            return argList[0];
         }
-        if (argList.size() != 2) {
+        if (argList.length  != 2) {
             return null;
         }
-        if ((argList.get(0) instanceof SetExt) && (argList.get(1) instanceof SetExt)) {
-            TreeSet<Term> set = new TreeSet<Term>(((CompoundTerm) argList.get(0)).cloneComponents());
-            set.removeAll(((CompoundTerm) argList.get(1)).cloneComponents());           // set difference
+        if ((argList[0] instanceof SetExt) && (argList[1] instanceof SetExt)) {
+            TreeSet<Term> set = new TreeSet<>(((CompoundTerm) argList[0]).cloneTermsList());
+            set.removeAll(((CompoundTerm) argList[1]).cloneTermsList());           // set difference
             return SetExt.make(set, memory);
         }
         
-        String name = makeCompoundName(Symbols.DIFFERENCE_EXT_OPERATOR, argList);
-        Term t = memory.nameToListedTerm(name);
-        return (t != null) ? t : new DifferenceExt(argList);
+        CharSequence name = makeCompoundName(NativeOperator.DIFFERENCE_EXT, argList);
+        Term t = memory.conceptTerm(name);
+        return (t != null) ? t : new DifferenceExt(name, argList);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      * @param t1 The first component
      * @param t2 The second component
      * @param memory Reference to the memory
@@ -93,15 +93,15 @@ public class DifferenceExt extends CompoundTerm {
         if (t1.equals(t2)) {
             return null;
         }
-        ArrayList<Term> list = argumentsToList(t1, t2);
-        return make(list, memory);
+        return make(new Term[]{t1,t2}, memory);
     }
 
     /**
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.DIFFERENCE_EXT_OPERATOR;
+    @Override
+    public NativeOperator operator() {
+        return NativeOperator.DIFFERENCE_EXT;
     }
 }

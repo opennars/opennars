@@ -1,5 +1,6 @@
 package nars.gui.output;
 
+import com.mxgraph.layout.mxCompactTreeLayout;
 import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.model.mxGeometry;
 import java.awt.BorderLayout;
@@ -14,18 +15,26 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import nars.core.NAR;
+import nars.entity.Concept;
 import nars.entity.Sentence;
-import nars.graph.NARGraph;
-import nars.graph.NARGraph.Filter;
-import static nars.graph.NARGraph.IncludeEverything;
 import nars.gui.NSlider;
-import nars.io.TextInput;
+import nars.language.CompoundTerm;
 import nars.language.Term;
 import nars.storage.Memory;
+import nars.util.NARGraph;
+import nars.util.NARGraph.DefaultGraphizer;
 import org.jgrapht.ext.JGraphXAdapter;
 import processing.core.PApplet;
 import static processing.core.PConstants.DOWN;
@@ -55,12 +64,14 @@ class papplet extends PApplet implements ActionListener
     Hamlib hamlib = new Hamlib();
 
 
+    
     public Button getBack;
     public Button conceptsView;
     public Button memoryView;
     public Button fetchMemory;
     Memory mem = null;
 
+    float frameRateFPS = 15f;
     public int mode = 0;
     
     boolean showBeliefs = false;
@@ -68,41 +79,47 @@ class papplet extends PApplet implements ActionListener
     long lasttime = -1;
 
     boolean autofetch = true;
-    private int MAX_UNSELECTED_LABEL_LENGTH = 32;
+    private final int MAX_UNSELECTED_LABEL_LENGTH = 32;
     private boolean updateNext;
     float nodeSize = 90;
     
     NARGraph graph;
     JGraphXAdapter layout;
     public boolean updating;
+    boolean drawn = false;
 
     public void mouseScrolled() {
         hamlib.mouseScrolled();
     }
 
+    @Override
     public void keyPressed() {
         hamlib.keyPressed();
     }
 
+    @Override
     public void mouseMoved() {
         hamlib.mouseMoved();
     }
 
+    @Override
     public void mouseReleased() {
         hamlib.mouseReleased();
     }
 
+    @Override
     public void mouseDragged() {
         hamlib.mouseDragged();
     }
 
+    @Override
     public void mousePressed() {
         hamlib.mousePressed();
     }
 
     @Override
     public void draw() {
-        hamlib.Update(128, 138, 128);
+        hamlib.Update(0, 0, 0);
     }
 
     void hrend_DrawBegin() {
@@ -124,7 +141,9 @@ class papplet extends PApplet implements ActionListener
             Thread.sleep(100);
         } catch (InterruptedException ex) {
         }
-        background(0);
+        
+        frameRate(this.frameRateFPS);
+        
         
     }
 
@@ -149,7 +168,12 @@ class papplet extends PApplet implements ActionListener
         drawArrowAngle(x1, y1, len, a);
     }
     
-    public int getColor(String s) {            
+    public static int getColor(Object o) {
+        return getColor(o.getClass().getSimpleName());
+    }
+    
+
+    public static int getColor(String s) {            
         double hue = (((double)s.hashCode()) / Integer.MAX_VALUE);
         return Color.getHSBColor((float)hue,0.7f,0.8f).getRGB();        
     }
@@ -159,7 +183,6 @@ class papplet extends PApplet implements ActionListener
         if (updating)
             return;
         
-        background(0, 0, 0);
 
 
         try {
@@ -181,10 +204,10 @@ class papplet extends PApplet implements ActionListener
                 if ((sourcePoint == null) || (targetPoint == null))
                     continue;
 
-                float x1 = (float)sourcePoint.getCenterX();
-                float y1 = (float)sourcePoint.getCenterY();
-                float x2 = (float)targetPoint.getCenterX();
-                float y2 = (float)targetPoint.getCenterY();
+                float x1 = (float)sourcePoint.getCenterY();
+                float y1 = (float)sourcePoint.getCenterX();
+                float x2 = (float)targetPoint.getCenterY();
+                float y2 = (float)targetPoint.getCenterX();
                 float cx = (x1 + x2) / 2.0f;
                 float cy = (y1 + y2) / 2.0f;
                 drawArrow(x1, y1, x2, y2);
@@ -201,46 +224,61 @@ class papplet extends PApplet implements ActionListener
                 float vertexAlpha = getVertexAlpha(vertex);
                 fill(rgb, vertexAlpha*255/2);
 
-                float x = (float)b.getCenterX();
-                float y = (float)b.getCenterY();
+                float x = (float)b.getCenterY();
+                float y = (float)b.getCenterX();
                 double w = b.getWidth();
                 double h = b.getHeight();
 
-                float size = getVertexSize(vertex);
+                float size = getVertexSize(vertex, nodeSize);
                 ellipse(x, y, size, size);            
 
                 fill(255,255,255);        
                 textSize(size/4.0f);
+                /*
+                pushMatrix();
+                translate(x, y);
+                rotate(radians(45));
+                */
                 text(vertex.toString(), x, y);
+                //popMatrix();
             }
         }
         catch (ConcurrentModificationException e) { }                    
     }
 
     
-    public float getVertexSize(Object o) {
+    public static float getVertexSize(Object o, float nodeSize) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
-            return (float)(nodeSize * (0.25 + 0.75 * s.getTruth().getConfidence()));
+            if (s.truth!=null)
+                return (float)(nodeSize * (0.25 + 0.75 * s.truth.getConfidence()));
+            else
+                return (float)(nodeSize * (0.5));
         }
         else if (o instanceof Term) {
             Term t = (Term)o;
             return (float)(Math.log(1+1 + t.getComplexity()) * nodeSize);
         }
+        else if (o instanceof Concept) {
+            Term t = ((Concept) o).term;
+            return (float)(Math.log(1+2 + t.getComplexity()) * nodeSize);
+        }
         return nodeSize;
     }
     
-    public float getVertexAlpha(Object o) {
+    public static float getVertexAlpha(Object o) {
         if (o instanceof Sentence) {
             Sentence s = (Sentence)o;
-            return (float)((0.25 + 0.75 * s.getTruth().getConfidence()));
-        }        
+            if (s.truth!=null)
+                return (float)((0.25 + 0.75 * s.truth.getConfidence()));            
+        }
         return 1.0f;
     }    
     
-    private static final float linkWeight = 3.0f;
+    private static final float linkWeight = 6.0f;
 
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         String command = ((Button) e.getSource()).getActionCommand();
         if (command.equals("Fetch")) {
@@ -257,9 +295,11 @@ class papplet extends PApplet implements ActionListener
 
         ProcessingJs() {
             addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+                @Override
                 public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     mouseScroll = -evt.getWheelRotation();
                     mouseScrolled();
+                    drawn = false;
                 }
             }
             );
@@ -270,13 +310,13 @@ class papplet extends PApplet implements ActionListener
 
         private float savepx = 0;
         private float savepy = 0;
-        private int selID = 0;
+        private final int selID = 0;
         private float zoom = 1.0f;
         private float difx = 0;
         private float dify = 0;
-        private int lastscr = 0;
-        private boolean EnableZooming = true;
-        private float scrollcamspeed = 1.1f;
+        private final int lastscr = 0;
+        private final boolean EnableZooming = true;
+        private final float scrollcamspeed = 1.1f;
 
         float MouseToWorldCoordX(int x) {
             return 1 / zoom * (x - difx - width / 2);
@@ -293,6 +333,7 @@ class papplet extends PApplet implements ActionListener
                 savepx = mouseX;
                 savepy = mouseY;
             }
+            drawn = false;            
         }
 
         void mouseReleased() {
@@ -306,9 +347,10 @@ class papplet extends PApplet implements ActionListener
                 savepx = mouseX;
                 savepy = mouseY;
             }
+            drawn = false;            
         }
-        private float camspeed = 20.0f;
-        private float scrollcammult = 0.92f;
+        private final float camspeed = 20.0f;
+        private final float scrollcammult = 0.92f;
         boolean keyToo = true;
 
         void keyPressed() {
@@ -339,6 +381,7 @@ class papplet extends PApplet implements ActionListener
                 difx = (difx) * (zoom / zoomBefore);
                 dify = (dify) * (zoom / zoomBefore);
             }
+            drawn = false;
         }
 
         void Init() {
@@ -461,14 +504,19 @@ class papplet extends PApplet implements ActionListener
         }
 
         void Update(int r, int g, int b) {
-            background(r, g, b);
-            pushMatrix();
-            Camera();
-            hrend_DrawBegin();
-            //hsim.Simulate();
-            drawit();
-            hrend_DrawEnd();
-            popMatrix();
+            if (!drawn) {
+
+                background(r, g, b);
+                //pushMatrix();
+                Camera();
+                hrend_DrawBegin();
+                //hsim.Simulate();
+                drawit();
+                hrend_DrawEnd();
+                //popMatrix();
+                
+                drawn = true;
+            }
         }
     }
 
@@ -478,19 +526,20 @@ public class ProcessingGraphPanel extends JFrame {
 
     papplet app = null;
     private final NAR nar;
-    private final Filter filter;
     float edgeDistance = 10;
     private boolean showSyntax;
-
-    public ProcessingGraphPanel(NAR n) {
-        this(n, IncludeEverything);        
-    }
+    private DefaultGraphizer graphizer;
+    private final List<Sentence> sentences;
+    private int sentenceIndex = -1;
+    String layoutMode;
     
-    public ProcessingGraphPanel(NAR n, Filter filter) {
+
+    
+    public ProcessingGraphPanel(NAR n, List<Sentence> sentences) {
         super("NARS Graph");
         
         this.nar = n;
-        this.filter = filter;
+        this.sentences = sentences;
 
         app = new papplet();
         
@@ -505,12 +554,25 @@ public class ProcessingGraphPanel extends JFrame {
 
         JPanel menu = new JPanel(new FlowLayout(FlowLayout.LEFT));
        
+        final JComboBox layoutSelect = new JComboBox();
+        layoutSelect.addItem("Graph");
+        layoutSelect.addItem("Tree");
+        layoutSelect.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                layoutMode = layoutSelect.getSelectedItem().toString();
+                update();
+                app.drawn = false;
+            }
+        });
+        layoutMode = layoutSelect.getSelectedItem().toString();
+        menu.add(layoutSelect);
         
         final JCheckBox beliefsEnable = new JCheckBox("Syntax");
         beliefsEnable.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 showSyntax = beliefsEnable.isSelected();
                 ProcessingGraphPanel.this.update();
+                app.drawn = false;                                
             }
         });
         menu.add(beliefsEnable);
@@ -519,6 +581,7 @@ public class ProcessingGraphPanel extends JFrame {
             @Override
             public void onChange(double v) {
                 app.nodeSize = (float)v;
+                app.drawn = false;                
             }          
         };
         nodeSize.setPrefix("Node Size: ");
@@ -536,6 +599,32 @@ public class ProcessingGraphPanel extends JFrame {
         edgeDist.setPreferredSize(new Dimension(125, 25));
         menu.add(edgeDist);        
         
+        
+        if (sentences.size() > 1) {
+            final JTextField ssl = new JTextField();
+            final JSlider indexSlider = new JSlider(-1, sentences.size()-1, -1);        
+            indexSlider.setSnapToTicks(true);
+            indexSlider.setMajorTickSpacing(1);
+            indexSlider.setMinorTickSpacing(1);
+            indexSlider.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    int i = indexSlider.getValue();
+                    sentenceIndex = i;
+                    if (i == -1) {
+                        update();
+                        ssl.setText("All Sentences");
+                    }
+                    else {
+                        update();
+                        ssl.setText(ProcessingGraphPanel.this.sentences.get(i).toString());
+                    }
+                }            
+            });
+            menu.add(indexSlider);
+            menu.add(ssl);        
+        }
+
         content.add(menu, BorderLayout.NORTH);
         content.add(app, BorderLayout.CENTER);
 
@@ -553,46 +642,139 @@ public class ProcessingGraphPanel extends JFrame {
             
         });
         
+        
     }
     
     
+    public NARGraph.Filter newSelectedGraphFilter() {
+        
+        final List<Sentence> selected = getSentences();
 
+        final Set<Term> include = new HashSet();
+        for (final Sentence s : selected) {
+            Term t = s.content;
+            include.add(t);
+            if (t instanceof CompoundTerm) {
+                CompoundTerm ct = (CompoundTerm)t;
+                include.addAll(ct.getContainedTerms());
+            }                        
+        }
+        
+        return new NARGraph.Filter() {
+
+            @Override
+            public boolean includePriority(float l) {  return true; }
+
+            @Override
+            public boolean includeConcept(final Concept c) {
+                
+                final Term t = c.term;
+
+                
+                return include.contains(t);
+            }
+            
+        };
+    }
+    
+
+    public List<Sentence> getSentences() {
+        List<Sentence> displayed;
+        if (sentenceIndex == -1) {
+            displayed = sentences;
+        }
+        else {
+            displayed = new ArrayList(1);
+            displayed.add(sentences.get(sentenceIndex));
+        }
+        return displayed;
+    }
 
     public void update() {
+        app.drawn = false;
+        
+        graphizer = new DefaultGraphizer(true,true,true,true,false) {
+
+            @Override
+            public void onTime(NARGraph g, long time) {
+                super.onTime(g, time);
+
+               
+                    
+                for (Sentence s : getSentences()) {
+                    g.addVertex(s);
+                    
+                    Term t = s.content;
+                    addTerm(g, t);
+                    g.addEdge(s, s.content, new NARGraph.SentenceContent());
+                    
+                    if (t instanceof CompoundTerm) {
+                        CompoundTerm ct = ((CompoundTerm)t);
+                        Set<Term> contained = ct.getContainedTerms();
+                        
+                        for (Term x : contained) {                            
+                            addTerm(g, x);
+                            if (ct.containsTerm(x))
+                                g.addEdge(x, t, new NARGraph.TermContent());
+                            
+                            
+                            for (Term y : contained) {
+                                addTerm(g, y);
+                                
+                                if (x != y)
+                                    if (x.containsTerm(y))
+                                        g.addEdge(y, x, new NARGraph.TermContent());
+                            }
+                            
+                                
+                            
+                        }
+                    }
+                    
+                    
+                }
+                //add sentences
+            }
+            
+        };
+        
+        
         app.updating = true;
         
+        graphizer.setShowSyntax(showSyntax);
         
         NARGraph g = new NARGraph();
-        g.add(nar, filter, 
-                new NARGraph.DefaultGraphizer(true,true,false,false,showSyntax)
-        );                
+        g.add(nar, newSelectedGraphFilter(), graphizer);                
         app.graph = g;
         
 
         // create a visualization using JGraph, via an adapter
-        JGraphXAdapter layout = new JGraphXAdapter(g) {           
-            
-        };                
+        JGraphXAdapter layout = new JGraphXAdapter(g);
         app.layout = layout;
         
        
         /*
-        mxCompactTreeLayout layout2 = 
-                new mxCompactTreeLayout(jgxAdapter);                
-        layout2.setUseBoundingBox(false);
-        layout2.setResizeParent(true);
-        layout2.setLevelDistance(30);
-        layout2.setNodeDistance(50);
-        layout2.execute(jgxAdapter.getDefaultParent());
-        */
-        
-        
-        mxFastOrganicLayout l = 
+         */
+        switch (layoutMode) {
+            case "Graph":
+                mxFastOrganicLayout l = new mxFastOrganicLayout(layout);
                 //new mxCompactTreeLayout(jgxAdapter);
-                new mxFastOrganicLayout(layout);
-                //new mxCircleLayout(jgxAdapter);        
-        l.setForceConstant(edgeDistance*10f);
-        l.execute(layout.getDefaultParent());
+                //new mxCircleLayout(jgxAdapter);
+                l.setForceConstant(edgeDistance*10f);
+                l.execute(layout.getDefaultParent());
+                break;
+            case "Tree":
+                mxCompactTreeLayout layout2 =  new mxCompactTreeLayout(layout);
+                layout2.setUseBoundingBox(true);
+                layout2.setResizeParent(true);
+                layout2.setLevelDistance((int)(edgeDistance*1.5f));
+                layout2.setNodeDistance((int)(0.2f * edgeDistance*edgeDistance*2f));
+                layout2.setInvert(true);
+                layout2.execute(layout.getDefaultParent());
+                break;
+        }
+        
+        
         
         
 
@@ -609,24 +791,24 @@ public class ProcessingGraphPanel extends JFrame {
     }
         
     
-    public static void main(String[] args) throws Exception {
-        NAR n = new NAR();
-        
-        /*
-        new TextInput(n, "<a --> b>.");
-        new TextInput(n, "<b --> c>.");
-        new TextInput(n, "<d <-> c>. %0.75;0.90%");
-        new TextInput(n, "<a --> c>?");      
-        new TextInput(n, "<a --> d>?");
-        n.run(12);
-        */
-        
-        new TextInput(n, "<0 --> num>. %1.00;0.90% {0 : 1}");
-        new TextInput(n, "<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}"); 
-        new TextInput(n, "<(*,(*,(*,0))) --> num>?  {0 : 3}");
-       
-        n.run(500);
-        
-        new ProcessingGraphPanel(n);
-    }
+//    public static void main(String[] args) throws Exception {
+//        NAR n = new NAR();
+//        
+//        /*
+//        new TextInput(n, "<a --> b>.");
+//        new TextInput(n, "<b --> c>.");
+//        new TextInput(n, "<d <-> c>. %0.75;0.90%");
+//        new TextInput(n, "<a --> c>?");      
+//        new TextInput(n, "<a --> d>?");
+//        n.run(12);
+//        */
+//        
+//        n.addInput("<0 --> num>. %1.00;0.90% {0 : 1}");
+//        n.addInput("<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2}"); 
+//        n.addInput("<(*,(*,(*,0))) --> num>?  {0 : 3}");
+//       
+//        n.run(500);
+//        
+//        new ProcessingGraphPanel(n);
+//    }
 }

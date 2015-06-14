@@ -20,8 +20,18 @@
  */
 package nars.inference;
 
-import nars.entity.*;
-import nars.language.*;
+import static java.lang.Math.max;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+import nars.entity.BudgetValue;
+import nars.entity.Concept;
+import nars.entity.Item;
+import nars.entity.Sentence;
+import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
+import nars.entity.TruthValue;
+import nars.language.Term;
 import nars.storage.Memory;
 
 /**
@@ -40,58 +50,22 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     public final static float truthToQuality(final TruthValue t) {
         final float exp = t.getExpectation();
-        return (float) Math.max(exp, (1 - exp)*0.75);
+        return (float) max(exp, (1 - exp)*0.75);
     }
 
     /**
      * Determine the rank of a judgment by its quality and originality (stamp
-     * length), called from Concept
+ baseLength), called from Concept
      *
      * @param judg The judgment to be ranked
      * @return The rank of the judgment, according to truth value only
      */
-    public static float rankBelief(final Sentence judg) {
-        final float confidence = judg.getTruth().getConfidence();
-        final float originality = 1.0f / (judg.getStamp().getEvidentialBase().length + 1);
+    public static float rankBelief(final Sentence judg) {        
+        final float confidence = judg.truth.getConfidence();
+        final float originality = 1.0f / (judg.stamp.evidentialBase.length + 1);
         return or(confidence, originality);
     }
 
-    /* ----- Functions used both in direct and indirect processing of tasks ----- */
-    /**
-     * Evaluate the quality of a belief as a solution to a problem, then reward
-     * the belief and de-prioritize the problem
-     *
-     * @param problem The problem (question or goal) to be solved
-     * @param solution The belief as solution
-     * @param task The task to be immediately processed, or null for continued
-     * process
-     * @return The budget for the new task which is the belief activated, if
-     * necessary
-     */
-    static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
-        BudgetValue budget = null;
-        boolean feedbackToLinks = false;
-        if (task == null) {                   // called in continued processing
-            task = memory.currentTask;
-            feedbackToLinks = true;
-        }
-        boolean judgmentTask = task.getSentence().isJudgment();
-        final float quality = LocalRules.solutionQuality(problem, solution);
-        if (judgmentTask) {
-            task.incPriority(quality);
-        } else {
-            float taskPriority = task.getPriority();
-            budget = new BudgetValue(or(taskPriority, quality), task.getDurability(), truthToQuality(solution.getTruth()));
-            task.setPriority(Math.min(1 - quality, taskPriority));
-        }
-        if (feedbackToLinks) {
-            TaskLink tLink = memory.currentTaskLink;
-            tLink.setPriority(Math.min(1 - quality, tLink.getPriority()));
-            TermLink bLink = memory.currentBeliefLink;
-            bLink.incPriority(quality);
-        }
-        return budget;
-    }
 
     /**
      * Evaluate the quality of a revision, then de-prioritize the premises
@@ -103,22 +77,46 @@ public final class BudgetFunctions extends UtilityFunctions {
      */
     static BudgetValue revise(final TruthValue tTruth, final TruthValue bTruth, final TruthValue truth, final boolean feedbackToLinks, final Memory memory) {
         final float difT = truth.getExpDifAbs(tTruth);
-        final Task task = memory.currentTask;
+        final Task task = memory.getCurrentTask();
         task.decPriority(1 - difT);
         task.decDurability(1 - difT);
         if (feedbackToLinks) {
-            TaskLink tLink = memory.currentTaskLink;
+            TaskLink tLink = memory.getCurrentTaskLink();
             tLink.decPriority(1 - difT);
             tLink.decDurability(1 - difT);
-            TermLink bLink = memory.currentBeliefLink;
+            TermLink bLink = memory.getCurrentBeliefLink();
             final float difB = truth.getExpDifAbs(bTruth);
             bLink.decPriority(1 - difB);
             bLink.decDurability(1 - difB);
         }
-        final float dif = truth.getConfidence() - Math.max(tTruth.getConfidence(), bTruth.getConfidence());
-        final float priority = or(dif, task.getPriority());
-        final float durability = aveAri(dif, task.getDurability());
-        final float quality = truthToQuality(truth);
+        float dif = truth.getConfidence() - max(tTruth.getConfidence(), bTruth.getConfidence());
+        
+        //TODO determine if this is correct
+        if (dif < 0) dif = 0;  
+        
+        
+        float priority = or(dif, task.getPriority());
+        float durability = aveAri(dif, task.getDurability());
+        float quality = truthToQuality(truth);
+        
+        /*
+        if (priority < 0) {
+            memory.nar.output(ERR.class, 
+                    new RuntimeException("BudgetValue.revise resulted in negative priority; set to 0"));
+            priority = 0;
+        }
+        if (durability < 0) {
+            memory.nar.output(ERR.class, 
+                    new RuntimeException("BudgetValue.revise resulted in negative durability; set to 0; aveAri(dif=" + dif + ", task.getDurability=" + task.getDurability() +") = " + durability));
+            durability = 0;
+        }
+        if (quality < 0) {
+            memory.nar.output(ERR.class, 
+                    new RuntimeException("BudgetValue.revise resulted in negative quality; set to 0"));
+            quality = 0;
+        }
+        */
+        
         return new BudgetValue(priority, durability, quality);
     }
 
@@ -130,7 +128,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget value of the updating task
      */
     static BudgetValue update(final Task task, final TruthValue bTruth) {
-        final TruthValue tTruth = task.getSentence().getTruth();
+        final TruthValue tTruth = task.sentence.truth;
         final float dif = tTruth.getExpDifAbs(bTruth);
         final float priority = or(dif, task.getPriority());
         final float durability = aveAri(dif, task.getDurability());
@@ -147,7 +145,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget value for each link
      */
     public static BudgetValue distributeAmongLinks(final BudgetValue b, final int n) {
-        final float priority = (float) (b.getPriority() / Math.sqrt(n));
+        final float priority = (float) (b.getPriority() / sqrt(n));
         return new BudgetValue(priority, b.getDurability(), b.getQuality());
     }
 
@@ -186,7 +184,7 @@ public final class BudgetFunctions extends UtilityFunctions {
         double quality = budget.getQuality() * relativeThreshold;      // re-scaled quality
         final double p = budget.getPriority() - quality;                     // priority above quality
         if (p > 0) {
-            quality += p * Math.pow(budget.getDurability(), 1.0 / (forgetRate * p));
+            quality += p * pow(budget.getDurability(), 1.0 / (forgetRate * p));
         }    // priority Durability
         budget.setPriority((float) quality);
     }
@@ -195,13 +193,13 @@ public final class BudgetFunctions extends UtilityFunctions {
      * Merge an item into another one in a bag, when the two are identical
      * except in budget values
      *
-     * @param baseValue The budget value to be modified
-     * @param adjustValue The budget doing the adjusting
+     * @param b The budget baseValue to be modified
+     * @param a The budget adjustValue doing the adjusting
      */
-    public static void merge(final BudgetValue baseValue, final BudgetValue adjustValue) {
-        baseValue.setPriority(Math.max(baseValue.getPriority(), adjustValue.getPriority()));
-        baseValue.setDurability(Math.max(baseValue.getDurability(), adjustValue.getDurability()));
-        baseValue.setQuality(Math.max(baseValue.getQuality(), adjustValue.getQuality()));
+    public static void merge(final BudgetValue b, final BudgetValue a) {        
+        b.priority.setValue((short)max(b.getPriorityShort(), a.getPriorityShort()));
+        b.durability.setValue((short)max(b.durability.getShortValue(), a.durability.getShortValue()));
+        b.quality.setValue((short)max(b.quality.getShortValue(), a.quality.getShortValue()));
     }
 
     /* ----- Task derivation in LocalRules and SyllogisticRules ----- */
@@ -211,7 +209,7 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @param truth The truth value of the conclusion
      * @return The budget value of the conclusion
      */
-    static BudgetValue forward(final TruthValue truth, final Memory memory) {
+    public static BudgetValue forward(final TruthValue truth, final Memory memory) {
         return budgetInference(truthToQuality(truth), 1, memory);
     }
 
@@ -282,21 +280,25 @@ public final class BudgetFunctions extends UtilityFunctions {
      * @return Budget of the conclusion task
      */
     private static BudgetValue budgetInference(final float qual, final int complexity, final Memory memory) {
-        Item t = memory.currentTaskLink;
+        Item t = memory.getCurrentTaskLink();
         if (t == null) {
-            t = memory.currentTask;
+            t = memory.getCurrentTask();
         }
         float priority = t.getPriority();
         float durability = t.getDurability() / complexity;
         final float quality = qual / complexity;
-        final TermLink bLink = memory.currentBeliefLink;
+        final TermLink bLink = memory.getCurrentBeliefLink();
         if (bLink != null) {
             priority = or(priority, bLink.getPriority());
             durability = and(durability, bLink.getDurability());
-            final float targetActivation = memory.getConceptActivation(bLink.getTarget());
+            final float targetActivation = memory.conceptActivation(bLink.target);
             bLink.incPriority(or(quality, targetActivation));
             bLink.incDurability(quality);
         }
         return new BudgetValue(priority, durability, quality);
     }
+
+    @Deprecated static BudgetValue solutionEval(final Sentence problem, final Sentence solution, Task task, final Memory memory) {
+        throw new RuntimeException("Moved to TemporalRules.java");
+    }    
 }

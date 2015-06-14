@@ -1,9 +1,0 @@
-********** compound decomposition, two premises
-<robin --> swimmer>. %0.00%  
-// Robin is not a type of swimmer. 
-<robin --> (-,mammal,swimmer)>. %0.00%  
-// Robin is not a nonswimming mammal. 
-3
- OUT: <robin --> mammal>. %0.00;0.81% 
-// Robin is not a type of mammal.
-

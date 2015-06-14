@@ -1,0 +1,10 @@
+'********** translating instance into inheritance
+
+'Tweety is a bird.
+<Tweety {-- bird>.
+
+1
+
+*expect.outEmpty
+
+

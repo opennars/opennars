@@ -1,0 +1,17 @@
+'********** recursion
+
+'0 is a number
+<0 --> num>. %1.00;0.90% {0 : 1} 
+
+'If n is a number, n+1 is also a number
+<<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2} 
+
+'3 is a number?
+<(*,(*,(*,0))) --> num>?  {0 : 3} 
+
+2000
+
+'I guess 3 is a number
+''outputMustContain('<(*,(*,(*,0))) --> num>. %1.00;0.66%')
+
+

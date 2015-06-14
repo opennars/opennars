@@ -19,10 +19,17 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.gui;
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 /**
  * Pop-up message for the user to accept
@@ -38,7 +45,7 @@ public class MessageDialog extends JDialog implements ActionListener, WindowList
      * @param message The text to be displayed
      */
     public MessageDialog(String message) {
-        super((JDialog)null, "Message", false);
+        super((Dialog)null, "Message", false);
         setLayout(new BorderLayout(5, 5));
         getContentPane().setBackground(Window.SINGLE_WINDOW_COLOR);
         text = new JTextArea(message);
@@ -60,6 +67,7 @@ public class MessageDialog extends JDialog implements ActionListener, WindowList
      * Handling button click
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == button) {
             close();

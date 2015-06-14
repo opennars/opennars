@@ -24,26 +24,15 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
-
-import nars.entity.Item;
-import nars.inference.BudgetFunctions;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import nars.core.Parameters;
+import nars.entity.Item;
 
-/**
- * A Bag is a storage with a constant capacity and maintains an internal
- * priority distribution for retrieval.
- * <p>
- * Each entity in a bag must extend Item, which has a BudgetValue and a key.
- * <p>
- * A name table is used to merge duplicate items that have the same key.
- * <p>
- * The bag space is divided by a threshold, above which is mainly time
- * management, and below, space management. Differences: (1) level selection vs.
- * item selection, (2) decay rate
- *
- * @param <E> The type of the Item in the Bag
- */
-public abstract class Bag<E extends Item>  {
+
+public class Bag<E extends Item> extends AbstractBag<E>  {
 
     /**
      * priority levels
@@ -53,27 +42,21 @@ public abstract class Bag<E extends Item>  {
      * firing threshold
      */
     public final int THRESHOLD;
-    /**
-     * relative threshold, only calculate once
-     */
-    private float RELATIVE_THRESHOLD;
-    /**
-     * hashtable load factor
-     */
-    public static final float LOAD_FACTOR = Parameters.LOAD_FACTOR;       //
     
 
     
     /**
      * shared DISTRIBUTOR that produce the probability distribution
      */
-    private final int[] DISTRIBUTOR;
+    private final short[] DISTRIBUTOR;
     
     
     /**
      * mapping from key to item
      */
-    protected final HashMap<String, E> nameTable;
+    //public final Set<E> nameTable;
+    public final Map<CharSequence, E> nameTable;
+
     /**
      * array of lists of items, for items on different level
      */
@@ -82,7 +65,7 @@ public abstract class Bag<E extends Item>  {
     //this is a cache holding whether itemTable[i] is empty. 
     //it avoids needing to call itemTable.isEmpty() which may improve performance
     //it is maintained each time an item is added or removed from one of the itemTable ArrayLists
-    public final boolean[] itemTableEmpty;
+    protected final boolean[] itemTableEmpty;
     
     /**
      * defined in different bags
@@ -106,36 +89,42 @@ public abstract class Bag<E extends Item>  {
     private int currentCounter;
 
     
-    private BagObserver<E> bagObserver = null;
     
     /**
      * The display level; initialized at lowest
      */
     private int showLevel;
+    
+    
 
+    
     protected Bag(int levels, int capacity) {
+        this(levels, capacity, null);
+    }
+    
+    public Bag(int levels, int capacity, AtomicInteger forgettingRate) {
         this.levels = levels;
-        THRESHOLD = showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
-        RELATIVE_THRESHOLD = Parameters.BAG_THRESHOLD;
+        this.forgettingRate = forgettingRate;
+        
+        THRESHOLD = (int)(Parameters.BAG_THRESHOLD * levels);
+        showLevel = (int)(Parameters.BAG_THRESHOLD * levels);
+        
         this.capacity = capacity;
-        nameTable = new HashMap<>((int) (capacity / LOAD_FACTOR), LOAD_FACTOR);
+        
+        nameTable = new HashMap<>(capacity);
+        
         itemTableEmpty = new boolean[this.levels];
         itemTable = new Deque[this.levels];
+        
         DISTRIBUTOR = Distributor.get(this.levels).order;
+        
         clear();
         //showing = false;        
     }
     
-    /**
-     * constructor, called from subclasses
-     *
-     * @param memory The reference to memory
-     */
-    protected Bag(int capacity) {
-        this(Parameters.BAG_LEVEL, capacity);
-    }
 
-    public void clear() {
+    @Override
+    public final void clear() {
         for (int i = 0; i < levels; i++) {
             itemTableEmpty[i] = true;
             if (itemTable[i]!=null)
@@ -150,28 +139,30 @@ public abstract class Bag<E extends Item>  {
 
 
 
-    /**
-     * Get the item decay rate, which differs in difference subclass, and can be
-     * changed in run time by the user, so not a constant.
-     *
-     * @return The number of times for a decay factor to be fully applied
-     */
-    protected abstract int forgetRate();
 
     /**
      * The number of items in the bag
      *
      * @return The number of items
      */
+    @Override
     public int size() {
         return nameTable.size();
     }
+
+    @Override
+    public Set<CharSequence> keySet() {
+        return nameTable.keySet();
+    }
+    
+    
 
     /**
      * Get the average priority of Items
      *
      * @return The average priority of Items in the bag
      */
+    @Override
     public float getAveragePriority() {
         if (size() == 0) {
             return 0.01f;
@@ -189,6 +180,7 @@ public abstract class Bag<E extends Item>  {
      * @param it An item
      * @return Whether the Item is in the Bag
      */
+    @Override
     public boolean contains(final E it) {
         return nameTable.containsValue(it);
     }
@@ -199,65 +191,64 @@ public abstract class Bag<E extends Item>  {
      * @param key The key of the Item
      * @return The Item with the given key
      */
-    public E get(final String key) {
+    @Override
+    public E get(final CharSequence key) {
         return nameTable.get(key);
     }
 
-    /**
-     * Add a new Item into the Bag
-     *
-     * @param newItem The new Item
-     * @return Whether the new Item is added into the Bag
-     */
-    public boolean putIn(final E newItem) {
-        final String newKey = newItem.getKey();
-                
+
+    @Override 
+    public boolean putIn(final E newItem, boolean nameTableInsert) {        
+                        
+        if (nameTableInsert) {
+            final CharSequence newKey = newItem.getKey();
+            final E oldItem = nameTable.put(newKey, newItem);
+            if (oldItem != null) {                  // merge duplications
+                outOfBase(oldItem);
+                newItem.merge(oldItem);
+            }
+        }        
         
-        final E oldItem = nameTable.put(newKey, newItem);
-        if (oldItem != null) {                  // merge duplications
-            outOfBase(oldItem);
-            newItem.merge(oldItem);
-        }
         final E overflowItem = intoBase(newItem);  // put the (new or merged) item into itemTable
         if (overflowItem != null) {             // remove overflow
-            final String overflowKey = overflowItem.getKey();
+            final CharSequence overflowKey = overflowItem.getKey();
             nameTable.remove(overflowKey);
             return (overflowItem != newItem);
         } else {
             return true;
         }
+        
     }
+    
 
-    /**
-     * Put an item back into the itemTable
-     * <p>
-     * The only place where the forgetting rate is applied
-     *
-     * @param oldItem The Item to put back
-     * @return Whether the new Item is added into the Bag
-     */
-    public boolean putBack(final E oldItem) {
-        BudgetFunctions.forget(oldItem.getBudget(), forgetRate(), RELATIVE_THRESHOLD);
-        return putIn(oldItem);
-    }
 
-    /**
-     * Choose an Item according to priority distribution and take it out of the
-     * Bag
-     *
-     * @return The selected Item
-     */
-    public E takeOut() {
-        if (nameTable.isEmpty()) { // empty bag
-            return null;
-        }
+
+    
+    @Override
+    public E takeOut(boolean removeFromNameTable) {
+        int c = size();
+                
+        if (c == 0) return null; // empty bag                
+                
         if (itemTableEmpty[currentLevel] || (currentCounter == 0)) { // done with the current level
             
             // look for a non-empty level
-            do {
-                currentLevel = DISTRIBUTOR[levelIndex];
-                levelIndex = (levelIndex + 1) % DISTRIBUTOR.length;
-            } while (itemTableEmpty[currentLevel]);
+            if (c == 1) {
+                //optimized case: just find the next non-empty level
+                int levelsTraversed = 0;
+                do {
+                    currentLevel++;    
+                    if (currentLevel == levels) currentLevel = 0; //modulo                        
+                    levelsTraversed++;
+                } while (itemTableEmpty[currentLevel]);
+                levelIndex = (levelIndex + levelsTraversed) % DISTRIBUTOR.length;
+            }   
+            else {
+                do {
+                    currentLevel = DISTRIBUTOR[levelIndex++];
+                    if (levelIndex == DISTRIBUTOR.length) levelIndex = 0; //modulo                        
+                } while (itemTableEmpty[currentLevel]);
+            }
             
             if (currentLevel < THRESHOLD) { // for dormant levels, take one item
                 currentCounter = 1;
@@ -265,10 +256,15 @@ public abstract class Bag<E extends Item>  {
                 currentCounter = getLevelSize(currentLevel);
             }
         }
+        
         final E selected = takeOutFirst(currentLevel); // take out the first item in the level
         currentCounter--;
-        nameTable.remove(selected.getKey());
-        refresh();
+        
+        if (removeFromNameTable) {
+            nameTable.remove(selected.getKey());
+            refresh();
+        }
+        
         return selected;
     }
 
@@ -282,7 +278,8 @@ public abstract class Bag<E extends Item>  {
      * @param key The given key
      * @return The Item with the key
      */
-    public E pickOut(final String key) {
+    @Override
+    public E pickOut(final CharSequence key) {
         final E picked = nameTable.get(key);
         if (picked != null) {
             outOfBase(picked);
@@ -348,8 +345,9 @@ public abstract class Bag<E extends Item>  {
     }
     
     protected Deque<E> newLevel() {
-        //return new LinkedList<E>();
-        return new ArrayDeque<E>(1+capacity/levels);
+        return new ArrayDeque<>(1+capacity/levels);
+        //return new LinkedList<E>();  //not good
+        //return new FastTable<E>(); //slower than arraydeque under current loads    
     }
     
     /**
@@ -373,46 +371,44 @@ public abstract class Bag<E extends Item>  {
      */
     protected void outOfBase(final E oldItem) {
         final int level = getLevel(oldItem);
-        itemTable[level].remove(oldItem);
-        itemTableEmpty[level] = itemTable[level].isEmpty();
-        mass -= (level + 1);
+        
+        //boolean found = false;
+        if (itemTable[level] != null)
+            if (itemTable[level].remove(oldItem)) {
+                //found = true;
+                itemTableEmpty[level] = itemTable[level].isEmpty();                
+                mass -= (level + 1);
+            }
+        
+        /*
+        //If it wasn't found, it probably was removed already.  So this check is probably not necessary
+        
+        if (!found) {
+            //search other levels for this item because it's not where we thought it was according to getLevel()
+            if (!outOfBaseComplete(oldItem)) {
+                throw new RuntimeException("Can not remove missing element " + oldItem + " from " + this.getClass().getSimpleName());
+            }
+        }*/
+        
         refresh();
     }
 
-    /**
-     * To start displaying the Bag in a BagWindow; {@link nars.gui.BagWindow}
-     * implements interface {@link BagObserver};
-     *
-     * @param bagObserver BagObserver to set
-     * @param title The title of the window
-     */
-    public void addBagObserver(BagObserver<E> bagObserver, String title) {
-        this.bagObserver = bagObserver;
-        bagObserver.post(toString());
-        bagObserver.setTitle(title);
-        bagObserver.setBag(this);
+    /** try to avoid calling this, it is expensive.  
+     * a bug in an outOfBase() caller might be causing the need for this. */
+    protected boolean outOfBaseComplete(final E oldItem) {
+        for (int i = 0; i < levels; i++) {
+            if (itemTable[i]!=null)
+                if (itemTable[i].remove(oldItem))
+                    return true;
+        }       
+        return false;
     }
-
-    /**
-     * Resume display
-     */
-    public void play() {
-        if (bagObserver!=null)
-            bagObserver.post(toString());
-    }
-
-    /**
-     * Stop display
-     */
-    public void stop() {
-        if (bagObserver!=null)        
-            bagObserver.stop();
-    }
+    
 
     /**
      * Refresh display
      */
-    protected void refresh() {
+    @Deprecated protected void refresh() {
         if (bagObserver!=null)       
             if (bagObserver.isActive()) {
                 bagObserver.refresh(toString());
@@ -424,7 +420,7 @@ public abstract class Bag<E extends Item>  {
      */
     @Override
     public String toString() {
-        final StringBuffer buf = new StringBuffer(" ");
+        final StringBuilder buf = new StringBuilder(" ");
         for (int i = levels-1; i >= showLevel; i--) {
             if (itemTable[i]!=null && !itemTable[i].isEmpty()) {
                 buf.append("\n --- Level ").append((i+1)).append(":\n");
@@ -440,8 +436,10 @@ public abstract class Bag<E extends Item>  {
      * TODO refactor : paste from preceding method
      */
     public String toStringLong() {
-        StringBuffer buf = new StringBuffer(" BAG " + getClass().getSimpleName());
-        buf.append(" ").append(showSizes());
+        StringBuilder buf = new StringBuilder(32)
+            .append(" BAG ").append(getClass().getSimpleName())
+            .append(" ").append(showSizes());
+        
         for (int i = levels; i >= showLevel; i--) {
             if (!itemTableEmpty[i-1]) {
                 buf = buf.append("\n --- LEVEL ").append(i).append(":\n ");
@@ -477,12 +475,13 @@ public abstract class Bag<E extends Item>  {
         this.showLevel = showLevel;
     }
 
+    @Override
     public float getMass() {
         return mass;
     }
     
     public float getAverageItemsPerLevel() {
-        return ((float)capacity)/((float)levels);
+        return capacity/levels;
     }
     public float getMaxItemsPerLevel() {
         int max = getLevelSize(0);
@@ -501,6 +500,7 @@ public abstract class Bag<E extends Item>  {
         return min;
     }
 
+    @Override
     public int getCapacity() {
         return capacity;
     }
@@ -508,5 +508,76 @@ public abstract class Bag<E extends Item>  {
     public Deque<E> getLevel(final int i) {
         return itemTable[i];
     }
+
+    @Override
+    public Collection<E> values() {
+        return nameTable.values();
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+
+            int l = itemTable.length-1;            
+            private Iterator<E> levelIterator;
+            private E next;
+            final int size = size();
+            int count = 0;
+            
+            @Override
+            public boolean hasNext() {
+                if (next!=null)
+                    return true;
+                
+                if (l >=0 && levelIterator == null) {
+                    while (itemTableEmpty[l]) {
+                        l--;
+                        if (l == -1)
+                            return false; //end of the levels
+                    }
+                    levelIterator = itemTable[l].descendingIterator();
+                }
+                
+                if (levelIterator == null)
+                    return false;
+                
+                next = levelIterator.next();
+                count++;                                
+                
+                if (levelIterator.hasNext()) {
+                    return true;
+                }
+                else {
+                    levelIterator = null;
+                    l--;
+                    return count <= size;
+                }                
+            }
+
+            @Override
+            public E next() {
+                E e = next;
+                next = null;
+                return e;
+            }
+            
+        };
+    }
+
+    public int numEmptyLevels() {
+        int empty = 0;
+        for (int i = 0; i < itemTableEmpty.length; i++) {
+            if (itemTableEmpty[i])
+                empty++;
+        }
+        return empty;
+    }
+
+    @Override public E removeKey(final CharSequence key) {
+        return nameTable.remove(key);
+    }
         
+    
+    
+    
 }

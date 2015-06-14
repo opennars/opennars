@@ -216,6 +216,7 @@ abstract public class HTTPServer {
 
         final ServerSocket ss = new ServerSocket(myTcpPort);
         Thread t = new Thread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     while (true) {
@@ -284,6 +285,7 @@ abstract public class HTTPServer {
             t.start();
         }
 
+        @Override
         public void run() {
             try {
                 InputStream is = mySocket.getInputStream();
@@ -381,7 +383,7 @@ abstract public class HTTPServer {
          */
         private String decodePercent(String str) throws InterruptedException {
             try {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < str.length(); i++) {
                     char c = str.charAt(i);
                     switch (c) {
@@ -491,7 +493,7 @@ abstract public class HTTPServer {
             }
         }
 
-        private Socket mySocket;
+        private final Socket mySocket;
     };
 
     /**
@@ -503,15 +505,19 @@ abstract public class HTTPServer {
         StringTokenizer st = new StringTokenizer(uri, "/ ", true);
         while (st.hasMoreTokens()) {
             String tok = st.nextToken();
-            if (tok.equals("/")) {
-                newUri += "/";
-            } else if (tok.equals(" ")) {
-                newUri += "%20";
-            } else {
-                newUri += URLEncoder.encode(tok,"UTF-8");
-        // For Java 1.4 you'll want to use this instead:
-                // try { newUri += URLEncoder.encode( tok, "UTF-8" ); } catch (
-                // UnsupportedEncodingException uee )
+            switch (tok) {
+                case "/":
+                    newUri += "/";
+                    break;
+                case " ":
+                    newUri += "%20";
+                    break;
+                default:
+                    newUri += URLEncoder.encode(tok,"UTF-8");
+                    // For Java 1.4 you'll want to use this instead:
+                    // try { newUri += URLEncoder.encode( tok, "UTF-8" ); } catch (
+                    // UnsupportedEncodingException uee )
+                    break;
             }
         }
         return newUri;

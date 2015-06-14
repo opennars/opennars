@@ -20,37 +20,33 @@
  */
 package nars.entity;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import nars.core.Parameters;
+import nars.io.Symbols;
+import nars.language.Tense;
+import static nars.language.Tense.Future;
+import static nars.language.Tense.Past;
+import static nars.language.Tense.Present;
 import nars.language.Term;
+import nars.storage.Memory;
 
-/**
- * Each Sentence has a time stamp, consisting the following components: (1) The
- * creation time of the sentence, (2) A evidentialBase of serial numbers of
- * sentence, from which the sentence is derived. Each input sentence gets a
- * unique serial number, though the creation time may be not unique. The derived
- * sentences inherits serial numbers from its parents, cut at the baseLength
- * limit.
- */
+
 public class Stamp implements Cloneable {
 
-    /**
-     * serial number, for the whole system TODO : should it really be static? or
-     * a Stamp be a field in {@link ReasonerBatch} ?
-     */
-    private static long currentSerial = 0;
 
     /**
-     * serial numbers
+     * serial numbers. not to be modified after Stamp constructor has initialized it
      */
-    private final long[] evidentialBase;
+    public final long[] evidentialBase;
 
     /**
      * evidentialBase baseLength
      */
-    private final int baseLength;
+    public final int baseLength;
 
     /**
      * creation time of the stamp
@@ -58,23 +54,61 @@ public class Stamp implements Cloneable {
     public final long creationTime;
 
     /**
-     * derivation chain containing the used premises and conclusions which made
-     * deriving the conclusion c possible *
+     * estimated occurrence time of the event
+     * TODO: make this final
      */
-    public final List<Term> derivationChain;
+    public long occurrenceTime;
 
+    /**
+     * default for atemporal events
+     * means "always" in Judgment/Question, but "current" in Goal/Quest     
+     */
+    public static final long ETERNAL = Integer.MIN_VALUE;
+
+    /**
+     * used when the occurrence time cannot be estimated, means "unknown"
+     */
+    public static final long UNKNOWN = Integer.MAX_VALUE;
+
+    /**
+     * derivation chain containing the used premises and conclusions which made
+     * deriving the conclusion c possible
+     * Uses LinkedHashSet for optimal contains/indexOf performance.
+     */
+    public final LinkedHashSet<Term> derivationChain;
+
+
+    /** caches hashcode value; only computed on-demand since stamp's hashcode does not seem used in inference (yet) */
+    private final Integer hashCode = null;
+    
+    /** caches evidentialBase as a set for comparisons and hashcode */
+    private Set<Long> evidentialSet; 
+    //TODO investigate using a BitVector
+    
     /**
      * Generate a new stamp, with a new serial number, for a new Task
      *
      * @param time Creation time of the stamp
      */
-    public Stamp(final long time) {
-        currentSerial++;
+    public Stamp(final long time, final Tense tense, final long serial) {        
         baseLength = 1;
         evidentialBase = new long[baseLength];
-        evidentialBase[0] = currentSerial;
+        evidentialBase[0] = serial;
         creationTime = time;
-        derivationChain = new ArrayList<Term>();
+        
+        if (tense == null) {
+            occurrenceTime = ETERNAL;
+        } else if (tense == Past) {
+            occurrenceTime = time - Parameters.DURATION;
+        } else if (tense == Future) {
+            occurrenceTime = time + Parameters.DURATION;
+        } else if (tense == Present) {
+            occurrenceTime = time;
+        } else {
+            occurrenceTime = time;
+        }
+        
+        derivationChain = new LinkedHashSet<>(Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH);
     }
 
     /**
@@ -83,10 +117,11 @@ public class Stamp implements Cloneable {
      * @param old The stamp to be cloned
      */
     private Stamp(final Stamp old) {
-        baseLength = old.length();
-        evidentialBase = old.getBase();
-        creationTime = old.getCreationTime();
-        derivationChain = old.getChain();
+        this.baseLength = old.baseLength;
+        this.evidentialBase = old.evidentialBase;
+        this.creationTime = old.creationTime;
+        this.occurrenceTime = old.getOccurrenceTime();
+        this.derivationChain = old.getChain();
     }
 
     /**
@@ -96,15 +131,24 @@ public class Stamp implements Cloneable {
      * For single-premise rules
      *
      * @param old The stamp of the single premise
-     * @param time The current time
+     * @param creationTim The current time
      */
-    public Stamp(final Stamp old, final long time) {
-        baseLength = old.length();
-        evidentialBase = old.getBase();
-        creationTime = time;
-        derivationChain = old.getChain();
+    public Stamp(final Stamp old, final long creationTime) {
+        this.baseLength = old.baseLength;
+        this.evidentialBase = old.evidentialBase;
+        this.creationTime = creationTime;
+        this.occurrenceTime = old.getOccurrenceTime();
+        this.derivationChain = old.getChain();
     }
 
+    public Stamp(final Stamp old, final long creationTime, final Stamp useEvidentialBase) {        
+        this.evidentialBase = useEvidentialBase.evidentialBase;
+        this.baseLength = useEvidentialBase.baseLength;
+        this.creationTime = creationTime;
+        this.occurrenceTime = old.getOccurrenceTime();
+        this.derivationChain = old.getChain();
+    }
+    
     /**
      * Generate a new stamp for derived sentence by merging the two from parents
      * the first one is no shorter than the second
@@ -112,37 +156,45 @@ public class Stamp implements Cloneable {
      * @param first The first Stamp
      * @param second The second Stamp
      */
-    private Stamp(final Stamp first, final Stamp second, final long time) {
-        //TODO use iterators instead of repeated first and second .get's
+    public Stamp(final Stamp first, final Stamp second, final long time) {
+        //TODO use iterators instead of repeated first and second .get's?
+        
         int i1, i2, j;
         i1 = i2 = j = 0;
-        baseLength = Math.min(first.length() + second.length(), Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
-        evidentialBase = new long[baseLength];
+        this.baseLength = Math.min(first.baseLength + second.baseLength, Parameters.MAXIMUM_EVIDENTAL_BASE_LENGTH);
+        this.evidentialBase = new long[baseLength];
 
-        final long[] firstBase = first.getBase();
-        final long[] secondBase = second.getBase();
-
-        while (i2 < second.length() && j < baseLength) {
-            evidentialBase[j++] = firstBase[i1++];
+        final long[] firstBase = first.evidentialBase;
+        final long[] secondBase = second.evidentialBase;     
+        int firstLength = firstBase.length;
+        int secondLength = secondBase.length;
+        
+        //https://code.google.com/p/open-nars/source/browse/trunk/nars_core_java/nars/entity/Stamp.java#143        
+        while (i2 < secondLength && j < baseLength) {
             evidentialBase[j++] = secondBase[i2++];
         }
-        while (i1 < first.length() && j < baseLength) {
+        while (i1 < firstLength && j < baseLength) {
             evidentialBase[j++] = firstBase[i1++];
         }
+        
 
-        final List<Term> chain1 = first.getChain();
-        final List<Term> chain2 = second.getChain();
-        i1 = chain1.size() - 1;
-        i2 = chain2.size() - 1;
+        //TODO create Term[] getChainArray() method
+        final Term[] chain1 = first.getChain().toArray( new Term[ first.getChain().size() ]);        
+        final Term[] chain2 = second.getChain().toArray( new Term[ second.getChain().size() ]);
+        
+        i1 = chain1.length - 1;
+        i2 = chain2.length - 1;
 
-        derivationChain = new ArrayList<Term>(baseLength); //take as long till the chain is full or all elements were taken out of chain1 and chain2:
-
+        //take as long till the chain is full or all elements were taken out of chain1 and chain2:
+        LinkedHashSet<Term> derivationChain = new LinkedHashSet<>(baseLength); 
+        
         j = 0;
         while (j < Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH && (i1 >= 0 || i2 >= 0)) {
             if (j % 2 == 0) {//one time take from first, then from second, last ones are more important
                 if (i1 >= 0) {
-                    if (!derivationChain.contains(chain1.get(i1))) {
-                        derivationChain.add(chain1.get(i1));
+                    final Term c1i1 = chain1[i1];                         
+                    if (!derivationChain.contains(c1i1)) {
+                        derivationChain.add(c1i1);
                     } else {
                         j--; //was double, so we can add one more now
                     }
@@ -150,8 +202,9 @@ public class Stamp implements Cloneable {
                 }
             } else {
                 if (i2 >= 0) {
-                    if (!derivationChain.contains(chain2.get(i2))) {
-                        derivationChain.add(chain2.get(i2));
+                    final Term c2i2 = chain2[i2];
+                    if (!derivationChain.contains(c2i2)) {
+                        derivationChain.add(c2i2);
                     } else {
                        j--; //was double, so we can add one more now
                     }
@@ -160,9 +213,15 @@ public class Stamp implements Cloneable {
             }
             j++;
         } //ok but now the most important elements are at the beginning so let's change that:
-        Collections.reverse(derivationChain); //if jvm implements that correctly this is O(1)
+        
+        //reverse the linkedhashset
+        ArrayList<Term> reverseDerivation = new ArrayList(derivationChain);
+        Collections.reverse(reverseDerivation);
+        
+        this.derivationChain = new LinkedHashSet(reverseDerivation);
 
         creationTime = time;
+        occurrenceTime = first.getOccurrenceTime();    // use the occurrence of task
     }
 
     /**
@@ -183,16 +242,24 @@ public class Stamp implements Cloneable {
          return null;  // do not merge identical bases
          }
          */
-        if (first.length() > second.length()) {
-            return new Stamp(first, second, time);
-        } else {
-            return new Stamp(second, first, time);
-        }
+//        if (first.baseLength() > second.baseLength()) {
+            return new Stamp(first, second, time); // keep the order for projection
+//        } else {
+//            return new Stamp(second, first, time);
+//        }
+    }
+
+    public Stamp(final Memory memory, final Tense tense) {
+        this(memory.getTime(), tense, memory.newStampSerial());
+    }
+
+    public Stamp(final Memory memory) {
+        this(memory, Tense.Present);
     }
 
     /*
      private static boolean equalBases(long[] base1, long[] base2) {
-     if (base1.length != base2.length) {
+     if (base1.baseLength != base2.baseLength) {
      return false;
      }
      for (long n1 : base1) {
@@ -219,21 +286,6 @@ public class Stamp implements Cloneable {
         return new Stamp(this);
     }
 
-    /**
-     * Initialize the stamp mechanism of the system, called in Reasoner
-     */
-    public static void init() {
-        currentSerial = 0;
-    }
-
-    /**
-     * Return the baseLength of the evidentialBase
-     *
-     * @return Length of the Stamp
-     */
-    public int length() {
-        return baseLength;
-    }
 
     /**
      * Get a number from the evidentialBase by index, called in this class only
@@ -245,34 +297,28 @@ public class Stamp implements Cloneable {
         return evidentialBase[i];
     }
 
-    /**
-     * Get the evidentialBase, called from derivedTask in Memory
-     *
-     * @return The evidentialBase of numbers
-     */
-    public long[] getBase() {
-        return evidentialBase;
-    }
 
     /**
      * Get the derivationChain, called from derivedTask in Memory
      *
      * @return The evidentialBase of numbers
      */
-    public List<Term> getChain() {
+    public LinkedHashSet<Term> getChain() {
         return derivationChain;
     }
 
     /**
-     * Add element to the chain
+     * Add element to the chain.
      *
      * @return The evidentialBase of numbers
      */
     public void addToChain(final Term T) {
         derivationChain.add(T);
         if (derivationChain.size() > Parameters.MAXIMUM_DERIVATION_CHAIN_LENGTH) {
-            derivationChain.remove(0);
+            Term next = derivationChain.iterator().next();
+            derivationChain.remove(next); //remove 0th
         }
+
     }
 
     /**
@@ -280,12 +326,13 @@ public class Stamp implements Cloneable {
      *
      * @return The TreeSet representation of the evidential base
      */
-    private TreeSet<Long> toSet() {
-        final TreeSet<Long> set = new TreeSet<>();
-        for (Long l : evidentialBase) {
-            set.add(l);
+    private Set<Long> toSet() {
+        if (evidentialSet == null) {
+            evidentialSet = new HashSet<>(evidentialBase.length);
+            for (final Long l : evidentialBase)
+                evidentialSet.add(l);
         }
-        return set;
+        return evidentialSet;
     }
 
     /**
@@ -300,9 +347,21 @@ public class Stamp implements Cloneable {
             return false;
         }
 
-        final TreeSet<Long> set1 = toSet();
-        final TreeSet<Long> set2 = ((Stamp) that).toSet();
-        return (set1.containsAll(set2) && set2.containsAll(set1));
+        Stamp s = (Stamp)that;
+
+        /*
+        if (occurrenceTime!=s.occurrenceTime)
+            return false;
+        if (creationTime!=s.creationTime)
+            return false;
+        */
+        
+        //TODO see if there is a faster way than creating two set's
+        final Set<Long> set1 = toSet();
+        final Set<Long> set2 = s.toSet();
+
+        //return (set1.containsAll(set2) && set2.containsAll(set1));
+        return set1.equals(set2);
     }
 
     /**
@@ -312,20 +371,106 @@ public class Stamp implements Cloneable {
      */
     @Override
     public int hashCode() {
-        return toString().hashCode();
+//        return Objects.hash(toSet(), creationTime, occurrenceTime);
+        //return Objects.hash(Arrays.hashCode(evidentialBase), creationTime, occurrenceTime);    
+        return toSet().hashCode();
     }
 
-    //return toString().hashCode();
+    public Stamp cloneToTime(long newTime) {
+        return new Stamp(this, newTime);
+    }
+
     /**
-     * Get the creationTime of the truth-value
+     * Get the occurrenceTime of the truth-value
      *
-     * @return The creation time
+     * @return The occurrence time
      */
-    public long getCreationTime() {
-        return creationTime;
+    public long getOccurrenceTime() {
+        return occurrenceTime;
     }
 
-    //String toStringCache = null; //holds pre-allocated string for toString()
+    /**
+     * Get the occurrenceTime of the truth-value
+     *
+     * @return The occurrence time
+     */
+    public String getOccurrenceTimeString() {
+        if (occurrenceTime == ETERNAL) {
+            return "";
+        } else {
+            String ot = String.valueOf(occurrenceTime);
+            return new StringBuilder(ot.length()+2).append('[').append(ot).append(']').toString();
+        }
+    }
+
+    public String getTense(final long currentTime) {
+        
+        if (occurrenceTime == Stamp.ETERNAL) {
+            return "";
+        }
+
+        long timeDiff = occurrenceTime - currentTime;
+        
+        if (timeDiff > Parameters.DURATION) {
+            return Symbols.TENSE_FUTURE;
+        } else if (timeDiff < -Parameters.DURATION) {
+            return  Symbols.TENSE_PAST;
+        } else {
+            return Symbols.TENSE_PRESENT;
+        }
+        
+    }
+
+    public void setOccurrenceTime(final long time) {
+        occurrenceTime = time;
+    }
+
+
+    public CharSequence name() {
+        final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
+
+        final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
+        buffer.append(Symbols.STAMP_OPENER).append(creationTime);
+        if (occurrenceTime != ETERNAL) {
+            buffer.append('|').append(occurrenceTime);
+        }
+        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+        for (int i = 0; i < baseLength; i++) {
+            buffer.append(Long.toString(evidentialBase[i]));
+            if (i < (baseLength - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
+            } else {
+                if (derivationChain.isEmpty()) {
+                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
+                }
+            }
+        }
+        int i = 0;
+        for (Term t : derivationChain) {
+            buffer.append(t);
+            if (i < (derivationChain.size() - 1)) {
+                buffer.append(Symbols.STAMP_SEPARATOR);
+            }
+            i++;
+        }
+        buffer.append(Symbols.STAMP_CLOSER).append(' ');
+
+        //this is for estimating an initial size of the stringbuffer
+        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.baseLength());
+        return buffer;
+    }
+
+    @Override
+    public String toString() {
+        
+        return name().toString();
+    }
+
+
+
+
+
+    //String toStringCache = null; //holds pre-allocated symbol for toString()
     /**
      * Get a String form of the Stamp for display Format: {creationTime [:
      * eventTime] : evidentialBase}
@@ -341,7 +486,7 @@ public class Stamp implements Cloneable {
      public String toString() {
      if (toStringCache == null) {
      int numBases = evidentialBase.size();
-     final StringBuffer b = new StringBuffer(8+numBases*5 // TODO properly estimate this //);
+     final StringBuilder b = new StringBuilder(8+numBases*5 // TODO properly estimate this //);
         
      b.append(stampOpenerSpace).append(creationTime)
      .append(spaceStampStarterSpace);
@@ -360,36 +505,5 @@ public class Stamp implements Cloneable {
      return toStringCache;
      }
      */
-    @Override
-    public String toString() {
-        final int estimatedInitialSize = 10 * (baseLength + derivationChain.size());
 
-        final StringBuilder buffer = new StringBuilder(estimatedInitialSize).append(" " + Symbols.STAMP_OPENER + creationTime);
-        buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-        for (int i = 0; i < baseLength; i++) {
-            buffer.append(Long.toString(evidentialBase[i]));
-            if (i < (baseLength - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
-            } else {
-                if (derivationChain.isEmpty()) {
-                    buffer.append(' ').append(Symbols.STAMP_STARTER).append(' ');
-                }
-            }
-        }
-        for (int i = 0; i < derivationChain.size(); i++) {
-            buffer.append(derivationChain.get(i));
-            if (i < (derivationChain.size() - 1)) {
-                buffer.append(Symbols.STAMP_SEPARATOR);
-            }
-        }
-        buffer.append(Symbols.STAMP_CLOSER).append(' ');
-
-        //this is for estimating an initial size of the stringbuffer
-        //System.out.println(baseLength + " " + derivationChain.size() + " " + buffer.length());
-        return buffer.toString();
-    }
-
-    public long[] getEvidentialBase() {
-        return evidentialBase;
-    }
 }

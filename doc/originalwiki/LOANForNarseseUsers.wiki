@@ -1,0 +1,269 @@
+#summary an introduction to LOAN for the Narsese user
+#labels Serialisations-LOAN,Phase-Design
+
+= Introduction =
+
+NARS provides an amazing system for the balanced handling of uncertain and
+partial information. This is a great fit for the semantic web, which being
+an open system with much of its data being human generated is full of
+uncertainty. LOAN has been developed to provide an easy to use serialisation
+for NAL which is suitable for talking about resources on the Web. It is also
+intended to be eminently 'scribbleable'; one can include snippets of LOAN in
+conversations by email, on IRC, on conference sides, etc. with the knowledge
+that they'll be easy for others to understand.
+
+LOAN owes a significant debt to Notation3, an RDF serialisation with similar
+scribbleable properties. Many aspects of LOAN's syntax have been lifted from
+Notation3 and it is hoped that this will make NARS a more attractive prospect
+for existing semantic web developers. Of course, lots of the syntax comes from
+Narsese too. It is the balancing of these two influences which has been the
+major challenge in designing LOAN. I personally feel that it has worked rather
+well, but I'll leave that up to you to decide for yourself.
+
+LOAN adds to NARS a number of new constant term sorts; URI references and
+numeric, boolean and string literals. URI references are supported in two basic
+forms; as full URIs, either absolute or relative, and as abbreviated URIs,
+often called CURIEs, with a pre-defined prefix and a local part separated by a
+colon. A full URI reference is indicated in the syntax by being surrounded by
+angle brackets; for example {{{<http://open-nars.googlecode.com/>}}} or
+{{{</wiki>}}}. A CURIE is often more convenient especially when referring to
+terms with URIs at other locations to the document; for example to refer to
+the title element from Dublin Core, assuming that the Dublin Core prefix has
+been declared as {{{dc:}}}, one may simply use {{{dc:title}}}. Literals have
+their normal syntax as found in most languages; numbers are sequences of digits
+with a decimal point included for doubles, {{{true}}} and {{{false}}} are
+booleans and strings are surrounded by double quote marks.
+
+Other than the introduction of new atomic terms, LOAN also changes the syntax
+of Narsese to be easier to parse for humans (who haven't transcended to the 
+plane of LISP gods.) Many of the compound term operators in Narsese are here
+represented as infix operators. Products are represented as a familiar tuple
+syntax, as found in many existing languages. In order to support pragmatic
+information for the parser and reasoner, LOAN also includes a range of what
+are called '@-rules'. The most important two @-rules are {{{@base}}} and
+{{{@prefix}}} which declare the base URI (for relative reference) and prefixes
+for CURIEs, respectfully. Other @-rules include {{{@import}}}, which instructs
+the system to download and parse another document, {{{@delay}}}, which pauses
+insertion of sentences for the given number of cycles, {{{@operator}}} which
+declares a new operator, and {{{@budget}}} which is used to attach a budget
+value to a task. The last three are not actually implemented in OpenNARS yet,
+but do not break the parser if they're found in a file.
+
+The rest of this document runs through the specification of an ontology for a
+domain. Each example is given in both LOAN and Narsese with the idea that one
+can compare the two. For a more formal, and complete, description of the syntax
+there is a PDF of the BNF for the grammar in the SVN of the open-nars module.
+Where Narsese doesn't have an equivalent concept, we either leave its entry
+blank, or (in the case of URIs) give a rough approximation using atoms. This
+introduction only runs through first-order NAL, for reasons of simplicity. The
+syntax for higher-order NAL follows the same principles (infix binary operators
+and prefix unary ones with minimal parentheses.) Of note is that negation,
+future, present and past tense operators are indicated with the keywords
+{{{not}}}, {{{future}}}, {{{present}}} and {{{past}}} respectively. This
+ontology doesn't include any questions or goals, but that doesn't mean that
+such things aren't possible in LOAN! The syntax for a goal is the same as that
+for a judgement except with the full-stop replaced by an exclamation mark. A
+question is the same, but lacking a truth-value and including a question mark
+to replace the full-stop. Variables are indicated with the same syntaxes as in
+Narsese. 
+
+= The Wine Domain =
+
+Imagine yourself sitting in a field in France, having taken early retirement to
+live out your dream of being a wine maker. Your vines are planted, and the
+grapes are ripening. To help yourself become an expert, and because you were a
+knowledge engineer before you retired, you want to describe your wine, and the
+processes you've used, formally. Now, the inherent uncertainties of wine making
+haven't escaped you, and so you decide to use NARS to represent the knowledge
+you obtain and to draw inferences from it.
+
+You first want to declare a base URI for your document and a prefix into which
+all your wine-making terms will go:
+
+|| *Narsese*  || *LOAN* ||
+||            || {{{@base <http://www.example.com/wine/cellar/>.}}} ||
+||            || {{{@prefix : <http://www.example.com/wine/ontology#>.}}} ||
+
+Similarly, you define prefixes for Dublin Core (as {{{dc:}}}), FOAF ({{{foaf:}}})
+and WordNet ({{{wn:}}}).
+
+We now define some of our basic terms; particularly red wines and white wines:
+
+|| *Narsese*  || *LOAN* ||
+|| {{{<redwine --> wine>.}}} || {{{:RedWine --> wn:Wine.}}} ||
+|| {{{<whitewine --> wine>.}}} || {{{:WhiteWine --> wn:Wine.}}} ||
+
+We can now describe what it means to be a red or a white wine in terms of
+having the property of being red or white, respectively:
+
+|| *Narsese*  || *LOAN* ||
+|| {{{<redwine --> [red]>.}}} || {{{:RedWine --> [wn:Red].}}} ||
+|| {{{<whitewine --[ white>.}}} || {{{:WhiteWine --[ wn:Wine.}}} ||
+
+You have a large number of friends, and being known as a wine lover they gifted
+you with many bottles of wine before you moved to France. We can describe these
+instances as follows:
+
+|| *Narsese*  || *LOAN* ||
+|| {{{<{bottle-from-james} --> redwine>.}}} || {{{{</bottle-from-james>} --> :RedWine.}}} ||
+|| {{{<bottle-from-sally }-> whitewine>.}}} || {{{</bottle-from-sally> }-> :WhiteWine.}}} ||
+
+The bottle we got given by Peter is medium dry:
+
+|| *Narsese*  || *LOAN* ||
+|| {{{<bottle-from-peter }-[ dry>. %0.5%}}} || {{{</bottle-from-peter> }-[ wn:Dry %0.5%.}}} ||
+
+Now, a wine which is red isn't a wine which is white. We indicate this using a
+similarity statement with a frequency of 0, knowing that NARS will handle the
+inconsistency:
+
+|| *Narsese* || *LOAN* ||
+|| {{{<redwine <-> whitewine>. %0%}}} || {{{:RedWine <-> :WhiteWine %0.0%.}}} ||
+
+But we want to say that we're fairly sure that ros� is a bit like both red and white wine so
+we use a full form truth value with a frequency of 0.4 and a confidence of 0.7:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <rosewine <-> redwine>. %0.4;0.7% }}} || {{{:RoseWine <-> :RedWine %0.4;0.7%.}}} ||
+|| {{{ <rosewine <-> whitewine>. %0.4;0.7% }}} || {{{:RoseWine <-> :WhiteWine %0.4;0.7%.}}} ||
+
+In spite of this, and in spite of NARS being able to infer it, we want to
+explicitly describe what ros� wine is, it is something which is both a wine
+and which has the property of being pink:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <rosewine --> (&,wine,[pink])>. }}} || {{{:RoseWine --> wn:Wine & [wn:Pink].}}} ||
+
+We now get on to describing the vineyard you have taken over. One of our grapes
+is a bit like a cross between Shiraz and Cabernet and any grape of that sort has properties
+from the intersection of those varieties:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <(|,shiraz,cabernet) --> grape1>. }}} || {{{ :Shiraz | :Cabernet --> :Grape1. }}} ||
+
+We also should describe what it means to be 'bad soil'; a bad soil is any instance of soil
+which isn't an instance of the property of being good:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <badsoil --> (-,soil,[good])>. }}} || {{{ :BadSoil --> wn:Soil - [wn:Good]. }}} ||
+
+We also take a moment to detail what you believe about grapes; that grapes which aren't
+red, cannot be good:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <(~,grape,redgrape) --> [good]>. %0% }}} || {{{ wn:Grape ~ :RedGrape --> [wn:Good] %0.0%. }}} ||
+
+Now, knowledge is also relational and a particular important relation for you
+is that between a grape variety and the soil it grows best in. We declare
+such a relation as follows:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <growingsoil --> (*,grape,soil)>. }}} || {{{ :growingSoil --> (wn:Grape, wn:Soil). }}} ||
+
+Our first variety of grape grows well in coarse soil, so we describe that relationship:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <(*,grape1,(&,[coarse],soil)) --> growingsoil>. }}} || {{{ (:Grape1, [wn:Course] & wn:Soil) --> :growingSoil. }}} ||
+
+With LOAN however, we have a second choice for indicating relationships directly;
+the operator shorthand:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <(*,grape2,(&,[moist,alkaline],soil)) --> growingsoil>. }}} || {{{ :growingSoil(:Grape2, [wn:Moist, wn:Alkaline] & wn:Soil). }}} ||
+
+We can say that riesling grapes inherit from those things which like slatey
+soil by using the extensional image syntax. In LOAN such images resemble
+the operator shorthand except with the list of arguments separated into two
+parts using a {{{/}}} or {{{\}}} (for extensional and intensional image,
+respectively). The wildcard is at the position of the slash.
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <riesling --> (/, growingsoil, _, slatey)>. }}} || {{{ :Riesling --> :growingSoil(/ [:Slatey]). }}} ||
+
+We can also join together extensional and intensional images in a single term:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ <(\,region,_,porto) --> (/,growingsoil,_,[bitumeny])>. }}} || {{{ :region(\ :Porto) --> :growingSoil(/ [:Bitumeny]). }}} ||
+
+Finally we can describe some metadata for our ontology. This information
+uses full URIs to refer to resources, both this document and other
+resources like homepages and email addresses:
+
+|| *Narsese* || *LOAN* ||
+|| {{{ }}} || {{{ dc:creator(<http://www.example.com/wine/ontology#>, :JohnSmith). }}} ||
+|| {{{ <johnsmith --> person>. }}} || {{{ :JohnSmith --> foaf:Person. }}} ||
+|| {{{ }}} || {{{ foaf:mbox(:JohnSmith, <mailto:jsmith@example.com>). }}} ||
+|| {{{ }}} || {{{ foaf:homepage(:JohnSmith, <http://www.example.com/blog/>). }}} ||
+|| {{{ }}} || {{{ "Exemplar Wines" }-> foaf:title(<http://www.example.com/blog/> /). }}} || 
+
+= The LOAN Example in Full =
+
+{{{
+  {--- An ontology of wine in LOAN
+   --- Apologies to any wine lovers out there; this is a very simple
+   --- example for pedagogical reasons.
+   ---}
+  @base <http://www.example.com/wine/cellar/>.
+  @prefix : <http://www.example.com/wine/ontology#>.
+  @prefix dc: <http://purl.org/dc/elements/1.1/>.
+  @prefix foaf: <http://xmlns.com/foaf/1.1/>.
+  @prefix wn: <http://xmlns.com/wordnet/1.6/>.
+  
+  --- We define two sorts of wine.
+  :RedWine --> wn:Wine.
+  :WhiteWine --> wn:Wine.
+  
+  --- RedWine is, unsurprisingly, red and WhiteWine is white. 
+  :RedWine --> [wn:Red].
+  :WhiteWine --[ wn:White.
+  
+  --- We have received a bottle of red, and a bottle of white from friends
+  {</bottle-from-james>} --> :RedWine.
+  </bottle-from-sally> }-> :WhiteWine.
+  
+  --- The bottle we got from Peter is medium dry
+  </bottle-from-peter> }-[ wn:Dry %0.5%.
+  
+  --- RedWine and WhiteWine are totally distinct
+  :RedWine <-> :WhiteWine %0.0%.
+  
+  --- But we're quite sure that Ros� is a bit like Red and a bit like White
+  :RoseWine <-> :RedWine %0.4;0.7%.
+  :RoseWine <-> :WhiteWine %0.4;0.7%.
+  
+  --- RoseWine is wine and it is pink
+  :RoseWine --> wn:Wine & [wn:Pink].
+  
+  --- One of the grapes we are growing is like a cross between Shiraz and Cabernet
+  :Shiraz | :Cabernet --> :Grape1.
+  
+  --- Bad soil is any soil which isn't good
+  :BadSoil --> wn:Soil - [wn:Good].
+  
+  --- We're not a fan of any grapes but red ones
+  wn:Grape ~ :RedGrape --> [wn:Good] %0.0%.
+  
+  --- Any grape has an appropriate sort of soil
+  :growingSoil --> (wn:Grape, wn:Soil).
+  
+  --- Our first grape variety grows well in coarse soil
+  (:Grape1, [wn:Coarse] & wn:Soil) --> :growingSoil.
+  
+  --- Our second in moist, alkaline soil
+  :growingSoil(:Grape2, [wn:Moist, wn:Alkaline] & wn:Soil).
+  
+  --- Riesling grapes like slatey soil
+  :Riesling --> :growingSoil(/ [:Slatey]).
+  
+  --- All grapes in Porto grow well in bitumen rich soil
+  :region(\ :Porto) --> :growingSoil(/ [:Bitumeny]).
+  
+  --- Some information about the ontology
+  dc:creator(<http://www.example.com/wine/ontology#>, :JohnSmith).
+  :JohnSmith --> foaf:Person.
+  foaf:mbox(:JohnSmith, <mailto:jsmith@example.com>).
+  foaf:homepage(:JohnSmith, <http://www.example.com/blog/>).
+  "Exemplar Wines" }-> foaf:title(<http://www.example.com/blog/> /). 
+  
+}}} 
+ 

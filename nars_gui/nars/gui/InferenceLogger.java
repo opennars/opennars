@@ -20,84 +20,88 @@
  */
 package nars.gui;
 
-import java.awt.FileDialog;
-import java.io.*;
-
+import java.io.PrintStream;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import nars.entity.Concept;
+import nars.entity.Task;
 
 /**
- * Inference log, which record input/output of each inference step
- * interface with 1 implementation: GUI ( batch not implemented )
+ * Inference log, which record input/output of each inference step interface
+ * with 1 implementation: GUI ( batch not implemented )
  */
 public class InferenceLogger implements nars.inference.InferenceRecorder {
 
-    /** the display window */
-    private InferenceWindow window = new InferenceWindow(this);
-    /** whether to display */
-    private boolean isReporting = false;
-    /** the log file */
-    private PrintWriter logFile = null;
-
-    @Override
-	public void init() {
-        window.clear();
+    public static interface LogOutput {
+        public void logAppend(String s);
     }
+    
+    private final List<LogOutput> outputs = new CopyOnWriteArrayList<LogOutput>();
 
-    @Override
-    public void show() {
-        window.setVisible(true);
+    public InferenceLogger() {
+    }
+    
+    public InferenceLogger(PrintStream p) {
+        addOutput(p);
+    }
+    
+    public void addOutput(LogOutput l) {
+        outputs.add(l);
+    }
+    
+    public void addOutput(PrintStream p) {
+        //TODO removeOutput(p)
+        
+        addOutput(new LogOutput() {
+            @Override public void logAppend(String s) {
+                p.println("    " + s);
+            }
+        });        
+    }
+    
+    public void removeOutput(LogOutput l) {
+        outputs.remove(l);
     }
 
     @Override
     public boolean isActive() {
-        return (isReporting || (logFile!=null));
-    }
-       
-
-    @Override
-    public void play() {
-        isReporting = true;
+        return !outputs.isEmpty();
     }
 
-    @Override
-	public void stop() {
-        isReporting = false;
-    }
 
     @Override
     public void append(String s) {
-        if (isReporting) {
-            window.append(s);
-        }
-        if (logFile != null) {
-            logFile.println(s);
-        }
+        for (LogOutput o : outputs)
+            o.logAppend(s);
+    }
+
+
+    
+
+    @Override
+    public void onCycleStart(long clock) {
+        append("@ " + clock);
     }
 
     @Override
-	public void openLogFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Inference Log", FileDialog.SAVE);
-        dialog.setVisible(true);
-        String directoryName = dialog.getDirectory();
-        String fileName = dialog.getFile();
-        try {
-            logFile = new PrintWriter(new FileWriter(directoryName + fileName));
-        } catch (IOException ex) {
-            System.out.println("i/o error: " + ex.getMessage());
-        }
-        window.switchBackground();
-        window.setVisible(true);
+    public void onCycleEnd(long clock) {
+        
     }
 
     @Override
-	public void closeLogFile() {
-        logFile.close();
-        logFile = null;
-        window.resetBackground();
+    public void onTaskAdd(Task task, String reason) {
+        append("Task Added (" + reason + "): " + task);
     }
 
     @Override
-	public boolean isLogging() {
-        return (logFile != null);
+    public void onTaskRemove(Task task, String reason) {
+        append("Task Removed (" + reason + "): " + task);
     }
+    
+    @Override
+    public void onConceptNew(Concept concept) {
+        append("Concept Created: " + concept);
+    }    
+    
+    
 }
-

@@ -1,0 +1,7 @@
+'********** inference on tense
+  IN: <(&/,<(*, $x, key_101) --> hold>,+1) =/> <(*, $x, room_101) --> enter>>.
+  IN: <(*, John, key_101) --> hold>. :\:
+130
+''outputMustContain('<(*,John,room_101) --> enter>. :\: %1.00;0.81%')
+
+'this one is working, but throws an exception

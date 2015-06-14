@@ -20,18 +20,30 @@
  */
 package nars.io;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import nars.io.Output.ERR;
+import nars.io.Output.IN;
+import nars.io.Output.OUT;
 
-/**
- * The ASCII symbols used in I/O.
- */
+
 public class Symbols {
 
     /* sentence type and delimitors */
     public static final char JUDGMENT_MARK = '.';
     public static final char QUESTION_MARK = '?';
+    public static final char GOAL_MARK = '!';
+    public static final char QUEST_MARK = '@';
 
+    
+    
+    
+    /* Tense markers */
+    public static final String TENSE_MARK = ":";
+    public static final String TENSE_PAST = ":\\:";
+    public static final String TENSE_PRESENT = ":|:";
+    public static final String TENSE_FUTURE = ":/:";
+    
     /* variable type */
     public static final char VAR_INDEPENDENT = '$';
     public static final char VAR_DEPENDENT = '#';
@@ -42,102 +54,190 @@ public class Symbols {
     public static final char TRUTH_VALUE_MARK = '%';
     public static final char VALUE_SEPARATOR = ';';
 
-    /* CompountTerm delimitors, must use 4 different pairs */
-    public static final char COMPOUND_TERM_OPENER = '(';
-    public static final char COMPOUND_TERM_CLOSER = ')';
-    public static final char STATEMENT_OPENER = '<';
-    public static final char STATEMENT_CLOSER = '>';
-    public static final char SET_EXT_OPENER = '{';
-    public static final char SET_EXT_CLOSER = '}';
-    public static final char SET_INT_OPENER = '[';
-    public static final char SET_INT_CLOSER = ']';
-    
-    /* special characors in argument list */
+    /* special characters in argument list */
     public static final char ARGUMENT_SEPARATOR = ',';
     public static final char IMAGE_PLACE_HOLDER = '_';
-
+    
+    /* prefix of special Term name */
+    public static final char INTERVAL_PREFIX = '+';
+    public static final char OPERATOR_PREFIX = '^';
+    public static final char TERM_PREFIX = 'T';
+    public static final char QUOTE = '\"';
+    
 
     
-    public static enum Operator {
+    public enum NativeOperator {
+        
         /* CompountTerm operators, length = 1 */
-        INTERSECTION_EXT { @Override public String toString() { return "&"; } },
-        INTERSECTION_INT { @Override public String toString() { return "|"; } },
-        DIFFERENCE_EXT { @Override public String toString() { return "-"; } },
-        DIFFERENCE_INT { @Override public String toString() { return "~"; } },
-        PRODUCT { @Override public String toString() { return "*"; } },
-        IMAGE_EXT { @Override public String toString() { return "/"; } },
-        IMAGE_INT { @Override public String toString() { return "\\"; } },
+        INTERSECTION_EXT("&", false, true),
+        INTERSECTION_INT("|", false, true),
+        DIFFERENCE_EXT("-", false, true),
+        DIFFERENCE_INT("~", false, true),
+        PRODUCT("*", false, true),
+        IMAGE_EXT("/", false, true),
+        IMAGE_INT("\\", false, true),
 
         /* CompoundStatement operators, length = 2 */        
-        NEGATION { @Override public String toString() { return "--"; } },
-        DISJUNCTION { @Override public String toString() { return "||"; } },
-        CONJUNCTION { @Override public String toString() { return "&&"; } }    
+        NEGATION("--", false, true),
+        DISJUNCTION("||", false, true),
+        CONJUNCTION("&&", false, true),    
+        SEQUENCE("&/", false, true),    
+        PARALLEL("&|", false, true),        
         
-    }
-    
-    /* CompountTerm operators, length = 1 */
-    public static final String INTERSECTION_EXT_OPERATOR = "&";
-    public static final char INTERSECTION_EXT_OPERATORc = '&';
-    public static final String INTERSECTION_INT_OPERATOR = "|";
-    public static final char INTERSECTION_INT_OPERATORc = '|';
-    public static final String DIFFERENCE_EXT_OPERATOR = "-";
-    public static final char DIFFERENCE_EXT_OPERATORc = '-';
-    public static final String DIFFERENCE_INT_OPERATOR = "~";
-    public static final char DIFFERENCE_INT_OPERATORc = '~';
-    public static final String PRODUCT_OPERATOR = "*";
-    public static final char PRODUCT_OPERATORc = '*';
-    public static final String IMAGE_EXT_OPERATOR = "/";        
-    public static final char IMAGE_EXT_OPERATORc = '/';
-    public static final String IMAGE_INT_OPERATOR = "\\";
-    public static final char IMAGE_INT_OPERATORc = '\\';
+        
+        /* CompountTerm delimitors, must use 4 different pairs */
+        SET_INT_OPENER("[", false, true),
+        SET_INT_CLOSER("]", false, false),
+        SET_EXT_OPENER("{", false, true),
+        SET_EXT_CLOSER("}", false, false),    
+        
+        /* Syntactical, so is neither relation or isNative */
+        COMPOUND_TERM_OPENER("(", false, false),
+        COMPOUND_TERM_CLOSER(")", false, false),
+        STATEMENT_OPENER("<", false, false),
+        STATEMENT_CLOSER(">", false, false),
+        
+        
+        /* Relations */
+        INHERITANCE("-->", true),
+        SIMILARITY("<->", true),
+        INSTANCE("{--", true),
+        PROPERTY("--]", true),
+        INSTANCE_PROPERTY("{-]", true),        
+        IMPLICATION("==>", true),
+        
+        /* Temporal Relations */
+        IMPLICATION_AFTER("=/>", true),
+        IMPLICATION_WHEN("=|>", true),
+        IMPLICATION_BEFORE("=\\>", true),
+        EQUIVALENCE("<=>", true),
+        EQUIVALENCE_AFTER("</>", true),
+        EQUIVALENCE_WHEN("<|>", true);
 
-    /* CompoundStatement operators, length = 2 */
-    public static final String NEGATION_OPERATOR = "--";
-    public static final char NEGATION_OPERATORc = '-';    
-    public static final String DISJUNCTION_OPERATOR = "||";
-    public static final char DISJUNCTION_OPERATORc = '|';
-    public static final String CONJUNCTION_OPERATOR = "&&";
-    public static final char CONJUNCTION_OPERATORc = '&';
+        
+        //-----------------------------------------------------
+        
+        
+        /** symbol representation of this getOperator */
+        public final String symbol; 
+        
+        /** character representation of this getOperator if symbol has length 1; else ch = 0 */
+        public final char ch;
+        
+        /** is relation? */
+        public final boolean relation;
+        
+        /** is native */
+        public final boolean isNative;
+        
+        /** opener? */
+        public final boolean opener;
+        
+        /** closer? */
+        public final boolean closer;
 
-    public static enum Relation {
-        INHERITANCE { @Override public String toString() { return "-->"; } },
-        SIMILARITY { @Override public String toString() { return "<->"; } },
-        INSTANCE { @Override public String toString() { return "{--"; } },
-        PROPERTY { @Override public String toString() { return "--]"; } },
-        INSTANCE_PROPERTY { @Override public String toString() { return "{-]"; } },
-        IMPLICATION { @Override public String toString() { return "==>"; } },
-        EQUIVALENCE { @Override public String toString() { return "<=>"; } }
-    }
-    
+        private NativeOperator(String string) {
+            this(string, false);
+        }
+        
+        private NativeOperator(String string, boolean relation) {
+            this(string, relation, !relation);
+        }
 
-    protected static final Map<String,Relation> stringToRelation = new TreeMap();    
+        private NativeOperator(String string, boolean relation, boolean innate) {            
+            this.symbol = string;
+            this.relation = relation;
+            this.isNative = innate;
+            this.ch = string.length() == 1 ? string.charAt(0) : 0;
+            
+            this.opener = name().endsWith("_OPENER");
+            this.closer = name().endsWith("_CLOSER");
+        }
+
+        @Override
+        public String toString() { return symbol; }
+                
+        
+    }    
+
+    protected static final Map<String,NativeOperator> stringToOperator 
+            = new HashMap(NativeOperator.values().length * 2);
+    protected static final Map<Character,NativeOperator> charToOperator 
+            = new HashMap(NativeOperator.values().length * 2);
+            
     static {
-        for (final Relation r : Relation.values())
-            stringToRelation.put(r.toString(), r);
+        //Setup NativeOperator String index hashtable 
+        for (final NativeOperator r : NativeOperator.values())
+            stringToOperator.put(r.toString(), r);
+        
+        //Setup NativeOperator Character index hashtable 
+        for (final NativeOperator r : NativeOperator.values()) {
+            char c = r.ch;
+            if (c!=0)
+                charToOperator.put(c, r);
+        }
+    }    
+
+    public static NativeOperator getOperator(final char c) {
+        return charToOperator.get(c);
     }
     
-    public static Relation getRelation(String s) {
-        return stringToRelation.get(s);
+    public static NativeOperator getOperator(final String s) {
+        return stringToOperator.get(s);
+    }
+    
+    public static NativeOperator getRelation(final String s) {
+        NativeOperator o = getOperator(s);
+        if (o == null) return null;
+        if (o.relation)
+            return o;
+        return null;
+    }
+
+    public static NativeOperator getOpener(final char c) {
+        NativeOperator o = getOperator(c);
+        if (o == null) return null;
+        if (o.opener)
+            return o;
+        return null;
+    }
+    
+    public static NativeOperator getCloser(final char c) {
+        NativeOperator o = getOperator(c);
+        if (o == null) return null;
+        if (o.closer)
+            return o;
+        return null;
+    }
+    
+    /**
+     * Check Statement getRelation symbol, called in StringPaser
+     *
+     * @param s0 The String to be checked
+     * @return if the given String is a getRelation symbol
+     */
+    public static boolean isRelation(final String s) {
+        return getRelation(s)!=null;
     }
     
     
 
     /* experience line prefix */
-    public static final String INPUT_LINE = "IN";
-    public static final String OUTPUT_LINE = "OUT";
-    public static final String ERROR_LINE = "ERR"; 
+    public static final String INPUT_LINE_PREFIX = IN.class.getSimpleName();
+    public static final String OUTPUT_LINE_PREFIX = OUT.class.getSimpleName();
+    public static final String ERROR_LINE_PREFIX = ERR.class.getSimpleName();
 
     public static final char PREFIX_MARK = ':';
     public static final char COMMENT_MARK = '/';
-    public static final char URL_INCLUDE_MARK = '`';
+    //public static final char URL_INCLUDE_MARK = '`';
     public static final char ECHO_MARK = '\'';
-    public static final char NATURAL_LANGUAGE_MARK = '\"';
+    //public static final char NATURAL_LANGUAGE_MARK = '\"';
 
     /* control commands */
     public static final String RESET_COMMAND = "*reset";
     public static final String STOP_COMMAND = "*stop";
     public static final String START_COMMAND = "*start";
-    public static final String SILENCE_COMMAND = "*silence";
+    public static final String SET_NOISE_LEVEL_COMMAND = "*silence";
     
     
     /* Stamp, display only */
@@ -147,8 +247,54 @@ public class Symbols {
     public static final char STAMP_STARTER = ':';
     
     /* TermLink type, display only */
-    public static final String TO_COMPONENT_1 = " @(";
-    public static final String TO_COMPONENT_2 = ")_ ";
-    public static final String TO_COMPOUND_1 = " _@(";
-    public static final String TO_COMPOUND_2 = ") ";
+    public static final String TO_COMPONENT_1 = "@(";
+    public static final String TO_COMPONENT_2 = ")_";
+    public static final String TO_COMPOUND_1 = "_@(";
+    public static final String TO_COMPOUND_2 = ")";
+
+
+
+    /*
+    @Deprecated public static NativeOperator opInnate(final String op) {
+        NativeOperator i = getOperator(op);
+        if (i == null) return null;
+        
+        final int length = op.length();
+        if (length == 1) {
+            final char c = op.charAt(0);
+            switch (c) {
+                case Symbols.SET_EXT_OPENER: 
+                case Symbols.SET_INT_OPENER: 
+                case Symbols.INTERSECTION_EXT_OPERATORc: 
+                case Symbols.INTERSECTION_INT_OPERATORc:
+                case Symbols.DIFFERENCE_EXT_OPERATORc:
+                case Symbols.DIFFERENCE_INT_OPERATORc:
+                case Symbols.PRODUCT_OPERATORc:
+                case Symbols.IMAGE_EXT_OPERATORc:
+                case Symbols.IMAGE_INT_OPERATORc:        
+                    return true;
+            }            
+        }
+        else if (length == 2) {
+            //since these symbols are the same character repeated, we only need to compare the first character
+            final char c1 = op.charAt(0);
+            final char c2 = op.charAt(1);
+            if (c1 == c2) {
+                switch (c1) {
+                    case Symbols.NEGATION_OPERATORc:
+                    case Symbols.DISJUNCTION_OPERATORc:
+                    case Symbols.CONJUNCTION_OPERATORc:
+                        return true;                        
+                }            
+            } else if ((op.equals(Symbols.SEQUENCE_OPERATOR)) || (op.equals(Symbols.PARALLEL_OPERATOR))) {
+                return true;
+            }
+            
+        }        
+        
+        return false;
+    }
+    */
+
+    public static String SELF = "SELF";
 }

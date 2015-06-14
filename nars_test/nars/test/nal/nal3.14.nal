@@ -1,7 +1,0 @@
-
-********** compound decomposition, one premise
-<(|, boy, girl) --> youth>. %0.90% 
-// Boys and gials are youth.
-5
- OUT: <boy --> youth>. %0.90;0.73%
-// Boys are youth.

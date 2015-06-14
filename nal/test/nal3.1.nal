@@ -1,0 +1,17 @@
+'********** compound composition, two premises
+
+'Sport is a type of competition. 
+<sport --> competition>. %0.90% 
+
+'Chess is a type of competition. 
+<chess --> competition>. %0.80%  
+
+16
+
+'If something is either chess or sport, then it is a competition.
+''outputMustContain('<(|,chess,sport) --> competition>. %0.72;0.81%')
+
+'If something is both chess and sport, then it is a competition.
+''outputMustContain('<(&,chess,sport) --> competition>. %0.98;0.81%')
+
+

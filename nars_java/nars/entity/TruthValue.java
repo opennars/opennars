@@ -20,11 +20,10 @@
  */
 package nars.entity;
 
+import nars.core.Parameters;
 import nars.io.Symbols;
 
-/**
- * Frequency and confidence.
- */
+
 public class TruthValue implements Cloneable { // implements Cloneable {
 
     /**
@@ -46,7 +45,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     /**
      * Whether the truth value is derived from a definition
      */
-    private boolean isAnalytic = false;
+    private boolean analytic = false;
 
     /**
      * Constructor with two ShortFloats
@@ -67,8 +66,11 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     public TruthValue(final float f, final float c, final boolean b) {
         frequency = new ShortFloat(f);
+        
+        //if (c < 0) c = 0;
         confidence = (c < 1) ? new ShortFloat(c) : new ShortFloat(0.9999f);
-        isAnalytic = b;
+        
+        analytic = b;
     }
 
     /**
@@ -79,7 +81,7 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     public TruthValue(final TruthValue v) {
         frequency = new ShortFloat(v.getFrequency());
         confidence = new ShortFloat(v.getConfidence());
-        isAnalytic = v.getAnalytic();
+        analytic = v.getAnalytic();
     }
 
     /**
@@ -106,14 +108,14 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      * @return The isAnalytic value
      */
     public boolean getAnalytic() {
-        return isAnalytic;
+        return analytic;
     }
 
     /**
      * Set the isAnalytic flag
      */
     public void setAnalytic() {
-        isAnalytic = true;
+        analytic = true;
     }
 
     /**
@@ -172,7 +174,23 @@ public class TruthValue implements Cloneable { // implements Cloneable {
     public Object clone() {
         return new TruthValue(getFrequency(), getConfidence(), getAnalytic());
     }
+    
+    public TruthValue setFrequency(float f) {
+        frequency.setValue(f);
+        return this;
+    }
+    
+    public TruthValue setConfidence(float f) {
+        confidence.setValue(f);
+        return this;
+    }
+    
+    public TruthValue setAnalytic(boolean b) {
+        this.analytic = b;
+        return this;
+    }
 
+    
     /**
      * The String representation of a TruthValue
      *
@@ -180,16 +198,18 @@ public class TruthValue implements Cloneable { // implements Cloneable {
      */
     @Override
     public String toString() {
-        return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
+        //return DELIMITER + frequency.toString() + SEPARATOR + confidence.toString() + DELIMITER;
+        
+        //1 + 6 + 1 + 6 + 1
+        return new StringBuilder(15).append(DELIMITER).append(frequency.toString())
+                     .append(SEPARATOR).append(confidence.toString()).append(DELIMITER).toString();
     }
 
     /**
      * A simplified String representation of a TruthValue, where each factor is
      * accruate to 1%
-     *
-     * @return The String
      */
-    public String toStringBrief() {
+    public StringBuilder appendStringBrief(final StringBuilder sb) {
         /*String s1 = DELIMITER + frequency.toStringBrief() + SEPARATOR;
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -198,8 +218,8 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             return s1 + s2 + DELIMITER;
         }*/
         
-        StringBuffer sb = 
-                new StringBuffer(12).append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);                    
+        
+        sb.append(DELIMITER).append(frequency.toStringBrief()).append(SEPARATOR);
         
         String s2 = confidence.toStringBrief();
         if (s2.equals("1.00")) {
@@ -208,8 +228,45 @@ public class TruthValue implements Cloneable { // implements Cloneable {
             sb.append(s2);
         }
         
-        sb.append(DELIMITER);
-        
-        return sb.toString();        
+        sb.append(DELIMITER);        
+        return sb;
     }
+
+    public CharSequence name() {
+        //1 + 4 + 1 + 4 + 1
+        StringBuilder sb =  new StringBuilder(11);
+        return appendStringBrief(sb);
+    }
+    
+    public String toStringBrief() {
+        //1 + 4 + 1 + 4 + 1
+        StringBuilder sb =  new StringBuilder(11);
+        return appendStringBrief(sb).toString();
+    }
+    
+    /** displays the truth value as a short string indicating degree of true/false */
+    public String toTrueFalseString() {        
+        //TODO:
+        //  F,f,~,t,T
+        return null;
+    }
+    /** displays the truth value as a short string indicating degree of yes/no */
+    public String toYesNoString() {        
+        //TODO
+        // N,n,~,y,Y
+        return null;
+    }
+
+    public String toWord() {
+        float e = getExpectation();
+        float t = Parameters.DEFAULT_CREATION_EXPECTATION;
+        if (e > t) {
+            return "TRUE";
+        }
+        if (e < 1 - t) {
+            return "FALSE";
+        }
+        return "UNSURE";
+    }
+    
 }

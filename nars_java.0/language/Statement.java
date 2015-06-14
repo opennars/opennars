@@ -170,7 +170,7 @@ public abstract class Statement extends CompoundTerm {
      * @return The nameStr of the term
      */
     protected static String makeStatementName(Term subject, String relation, Term predicate) {
-        StringBuffer nameStr = new StringBuffer();
+        StringBuilder nameStr = new StringBuilder();
         nameStr.append(Symbols.STATEMENT_OPENER);
         nameStr.append(subject.getName());
         nameStr.append(' ' + relation + ' ');

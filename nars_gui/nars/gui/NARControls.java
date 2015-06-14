@@ -20,12 +20,12 @@
  */
 package nars.gui;
 
-import nars.gui.output.MemoryView;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Dialog;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -39,27 +39,31 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import nars.core.NAR;
-import nars.core.NARState;
-import nars.entity.Concept;
-import nars.entity.Task;
+import nars.core.Parameters;
+import nars.grid2d.TestChamber;
+import nars.gui.input.InputPanel;
+import nars.gui.output.LogPanel;
+import nars.gui.output.MemoryView;
+import nars.gui.output.PLineChart;
 import nars.gui.output.SentenceTablePanel;
-import nars.inference.InferenceRecorder;
+import nars.gui.output.SwingLogPanel;
+import nars.gui.output.TermWindow;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.storage.Memory;
+import nars.util.NARState;
 
-/**
- * Main window of NARSwing GUI
- */
+
 public class NARControls extends JPanel implements ActionListener, Runnable {
 
     final int TICKS_PER_TIMER_LABEL_UPDATE = 4 * 1024; //set to zero for max speed, or a large number to reduce GUI updates
@@ -67,20 +71,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     /**
      * Reference to the reasoner
      */
-    private final NAR nar;
+    public final NAR nar;
 
     /**
      * Reference to the memory
      */
     private final Memory memory;
-    /**
-     * Reference to the inference recorder
-     */
-    private InferenceRecorder record;
-    /**
-     * Reference to the experience reader
-     */
-    private TextInput experienceReader;
+    
     /**
      * Reference to the experience writer
      */
@@ -111,32 +108,39 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     private NSlider speedSlider;
     private double currentSpeed = 0;
     private double lastSpeed = 0;
-    private double defaultSpeed = 0.5;
+    private final double defaultSpeed = 0.5;
 
     private final int GUIUpdatePeriodMS = 256;
     private NSlider volumeSlider;
 
-    private List<ChartPanel> charts = new ArrayList();
+    private List<PLineChart> charts = new ArrayList();
+        
+    private boolean allowFullSpeed = false;
+    public final InferenceLogger logger;
 
+    int chartHistoryLength = 400;
+    
     /**
      * Constructor
      *
      * @param nar
      * @param title
      */
+    TestChamber chamber=new TestChamber();
+    private final JMenuItem internalExperienceItem;
+    private final JMenuItem narsPlusItem;
     public NARControls(final NAR nar) {
         super(new BorderLayout());
         
         this.nar = nar;
-        memory = nar.getMemory();        
-        record = memory.getRecorder();
+        memory = nar.memory;        
         
         experienceWriter = new TextOutput(nar);
         conceptWin = new TermWindow(memory);
-
-        record = new InferenceLogger();
-        memory.setRecorder(record);
-
+        
+        logger = new InferenceLogger();
+        nar.memory.setRecorder(logger);
+        
         JMenuBar menuBar = new JMenuBar();
 
         JMenu m = new JMenu("Memory");
@@ -145,22 +149,67 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         addJMenuItem(m, "Load Experience");
         addJMenuItem(m, "Save Experience");
         m.addSeparator();
-        addJMenuItem(m, "Record Inference");
+        
+        internalExperienceItem = addJMenuItem(m, "Enable Internal Experience (NAL9)");
+        narsPlusItem = addJMenuItem(m, "Enable NARS+ Ideas");
         m.addActionListener(this);
         menuBar.add(m);
 
-        m = new JMenu("Window");
+        /*m = new JMenu("Input");
         {
-            JMenuItem mv = new JMenuItem("Memory View");
+            JMenuItem mv = new JMenuItem("+ Text Input");
             mv.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new MemoryView(nar.memory);
+                    InputPanel inputPanel = new InputPanel(nar);
+                    Window inputWindow = new Window("Text Input", inputPanel);                    
+                    inputWindow.setSize(800, 200);
+                    inputWindow.setVisible(true);        
                 }
             });
             m.add(mv);
             
-            JMenuItem st = new JMenuItem("Sentence Table");
+        }
+        menuBar.add(m);*/
+        
+        m = new JMenu("Windows");
+        {
+            
+            JMenuItem mv3 = new JMenuItem("+ Text Input");
+            mv3.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    InputPanel inputPanel = new InputPanel(nar);
+                    Window inputWindow = new Window("Text Input", inputPanel);                    
+                    inputWindow.setSize(800, 200);
+                    inputWindow.setVisible(true);        
+                }
+            });
+            m.add(mv3);
+            
+            JMenuItem ml = new JMenuItem("+ Log");
+            ml.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    LogPanel p = new SwingLogPanel(NARControls.this);
+                    Window w = new Window("Log", p);
+                    w.setSize(500, 300);
+                    w.setVisible(true);      
+                }
+            });
+            m.add(ml);
+
+            
+            JMenuItem mv = new JMenuItem("+ Memory View");
+            mv.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new MemoryView(nar);
+                }
+            });
+            m.add(mv);
+            
+            JMenuItem st = new JMenuItem("+ Sentence Table");
             st.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -171,17 +220,72 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 }
             });
             m.add(st);
-        }
 
-        addJMenuItem(m, "Concepts");
-        addJMenuItem(m, "Buffered Tasks");
-        addJMenuItem(m, "Concept Content");
-        addJMenuItem(m, "Inference Log");
-        m.addActionListener(this);
+            /*JMenuItem ct = new JMenuItem("+ Concepts");
+            ct.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} 
+                    memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");                    
+                }
+            });
+            m.add(ct);
+            
+            JMenuItem bt = new JMenuItem("+ Buffered Tasks");
+            bt.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
+                }
+            });
+            m.add(bt);*/
+            
+            JMenuItem cct = new JMenuItem("+ Concept Content");
+            cct.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    conceptWin.setVisible(true);                
+                }                
+            });
+            m.add(cct);
+            
+            
+            
+            
+            /*
+            JMenuItem it = new JMenuItem("+ Inference Log");
+            it.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    record.show();
+                    record.play();
+                }                
+            });
+            m.add(it);            
+            */
+        }
         menuBar.add(m);
+        
+        m = new JMenu("Demos");
+        {
+            JMenuItem cct2 = new JMenuItem("+ Test Chamber");
+            cct2.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    
+                    chamber.create(nar);
+                }                
+            });
+            m.add(cct2);
+            
+        }
+        menuBar.add(m);
+        
+        
+       
 
         m = new JMenu("Help");
-        addJMenuItem(m, "Related Information");
+        //addJMenuItem(m, "Related Information");
         addJMenuItem(m, "About NARS");
         m.addActionListener(this);
         menuBar.add(m);
@@ -201,24 +305,25 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
      * @param m
      * @param item
      */
-    private void addJMenuItem(JMenu m, String item) {
+    private JMenuItem addJMenuItem(JMenu m, String item) {
         JMenuItem menuItem = new JMenuItem(item);
         m.add(menuItem);
         menuItem.addActionListener(this);
+        return menuItem;
     }
 
     /**
-     * Open an input experience file with a FileDialog
+     * Open an addInput experience file with a FileDialog
      */
     public void openLoadFile() {
-        FileDialog dialog = new FileDialog((FileDialog) null, "Load experience", FileDialog.LOAD);
+        FileDialog dialog = new FileDialog((Dialog) null, "Load experience", FileDialog.LOAD);
         dialog.setVisible(true);
         String directoryName = dialog.getDirectory();
         String fileName = dialog.getFile();
         String filePath = directoryName + fileName;
 
         try {
-            new TextInput(nar, new File(filePath));
+            nar.addInput(new TextInput(new File(filePath)));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -226,7 +331,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
 
     /**
-     * Initialize the system for a new run
+     * Initialize the system for a new finish
      */
     public void init() {
         setSpeed(0);
@@ -241,9 +346,16 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         @Override
         public void run() {
             speedSlider.repaint();
-            for (ChartPanel c : charts) {
-                c.update(new NARState(nar));
+            
+            long nowTime = nar.getTime();
+
+            if (lastTime != nowTime) {                
+                for (PLineChart c : charts) {
+                    c.update(new NARState(nar));
+                }
             }
+
+            lastTime = nowTime;
             
         }
     };
@@ -265,47 +377,52 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 setSpeed(0);
                 updateGUI();
             } else if (obj == walkButton) {
-                nar.walk(1, true);
+                nar.stop();
+                nar.step(1);
                 updateGUI();
             }
         } else if (obj instanceof JMenuItem) {
             String label = e.getActionCommand();
-            if (label.equals("Load Experience")) {
-                experienceReader = new TextInput(nar);
-                openLoadFile();
-            } else if (label.equals("Save Experience")) {
-                if (savingExp) {
-                    experienceWriter.closeSaveFile();
-                } else {
-                    experienceWriter.openSaveFile();
-                }
-                savingExp = !savingExp;
-            } else if (label.equals("Record Inference")) {
-                if (record.isLogging()) {
-                    record.closeLogFile();
-                } else {
-                    record.openLogFile();
-                }
-            } else if (label.equals("Reset")) {
-                /// TODO mixture of modifier and reporting
-                nar.reset();
-            } else if (label.equals("Concepts")) {
-                /* see design for Bag and {@link BagWindow} in {@link Bag#startPlay(String)} */
-                memory.conceptsStartPlay(new BagWindow<Concept>(), "Active Concepts");
-            } else if (label.equals("Buffered Tasks")) {
-                memory.taskBuffersStartPlay(new BagWindow<Task>(), "Buffered Tasks");
-            } else if (label.equals("Concept Content")) {
-                conceptWin.setVisible(true);
-            } else if (label.equals("Inference Log")) {
-                record.show();
-                record.play();
-            } else if (label.equals("Related Information")) {
-//                MessageDialog web = 
-                new MessageDialog(NARSwing.WEBSITE);
-            } else if (label.equals("About NARS")) {
-//                MessageDialog info = 
-                new MessageDialog(NARSwing.INFO);
-            } 
+            switch (label) {
+                case "Enable NARS+ Ideas":
+                    narsPlusItem.setEnabled(false);
+                    Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS=!Parameters.ENABLE_EXPERIMENTAL_NARS_PLUS;
+                    break;
+                case "Enable Internal Experience (NAL9)":
+                    internalExperienceItem.setEnabled(false);
+                    Parameters.ENABLE_INTERNAL_EXPERIENCE=!Parameters.ENABLE_INTERNAL_EXPERIENCE;
+                    break;
+                case "Load Experience":
+                    openLoadFile();
+                    break;
+                case "Save Experience":
+                    if (savingExp) {
+                        experienceWriter.closeSaveFile();
+                    } else {
+                        FileDialog dialog = new FileDialog((Dialog) null, "Save experience", FileDialog.SAVE);
+                        dialog.setVisible(true);
+                        String directoryName = dialog.getDirectory();
+                        String fileName = dialog.getFile();
+                        String path = directoryName + fileName;
+                        experienceWriter.openSaveFile(path);
+                    }
+                    savingExp = !savingExp;
+                    break;
+                case "Reset":
+                    /// TODO mixture of modifier and reporting
+                    narsPlusItem.setEnabled(true);
+                    internalExperienceItem.setEnabled(true);
+                    nar.reset();
+                    break;
+                case "Related Information":
+//                MessageDialog web =
+                    new MessageDialog(NARSwing.WEBSITE); 
+                    break;
+                case "About NARS":
+//                MessageDialog info =
+                    new MessageDialog(NARSwing.INFO+"\n\n"+NARSwing.WEBSITE);
+                    break;
+            }
         }
     }
 
@@ -329,7 +446,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
                 } else if (currentSpeed == 1.0) {
                     s += " - run max speed";
                 } else {
-                    s += " - run " + nar.getMinTickPeriodMS() + " ms / tick";
+                    s += " - run " + nar.getMinCyclePeriodMS() + " ms / step";
                 }
                 return s;
             }
@@ -374,12 +491,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             @Override
             public void setValue(double v) {
                 super.setValue(Math.round(v));
+                repaint(); //needed to update when called from outside, as the 'focus' button does
             }
 
             @Override
             public void onChange(double v) {
-                int level = 100 - (int) v;
-                nar.param.setSilenceLevel(level);
+                int level = (int) v;
+                nar.param().noiseLevel.set(level);
             }
 
         };
@@ -388,7 +506,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
     }
 
     public void setSpeed(double nextSpeed) {
-        final double maxPeriodMS = 256.0;
+        final double maxPeriodMS = 1024.0;
 
         if (nextSpeed == 0) {
             if (currentSpeed == 0) {
@@ -409,12 +527,17 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         speedSlider.setValue(nextSpeed);
         currentSpeed = nextSpeed;
 
+        double logScale = 50;
         if (nextSpeed > 0) {
-            int ms = (int) ((1.0 - (nextSpeed)) * maxPeriodMS);
+            int ms = (int) ((1.0 - Math.log(1+nextSpeed*logScale)/Math.log(1+logScale)) * maxPeriodMS);
             if (ms < 1) {
-                ms = 0;
+                if (allowFullSpeed)
+                    ms = 0;
+                else
+                    ms = 1;
             }
             stopButton.setText(String.valueOf(FA_StopCharacter));
+            nar.setThreadYield(true);
             nar.start(ms);
         } else {
             stopButton.setText(String.valueOf(FA_PlayCharacter));
@@ -422,11 +545,15 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         }
     }
 
+    long lastTime = -1;
+
     @Override
     public void run() {
-        long lastTime = nar.getTime();
+        
 
         updateGUI();
+        
+        lastTime = nar.getTime();
 
         while (true) {
             try {
@@ -434,12 +561,6 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             } catch (InterruptedException ex) {
             }
 
-            long nowTime = nar.getTime();
-
-            if (lastTime == nowTime) {
-                continue;
-            }
-            lastTime = nowTime;
 
             updateGUI();
 
@@ -456,7 +577,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             Font ttfBase;
             try {
                 ttfBase = Font.createFont(Font.TRUETYPE_FONT, in);
-                ttfReal = ttfBase.deriveFont(Font.BOLD, 24);
+                ttfReal = ttfBase.deriveFont(Font.PLAIN, 14);
             } catch (FontFormatException ex) {
                 Logger.getLogger(NARControls.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -465,13 +586,43 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
         }
         public FAButton(char faCode) {
-              if (ttfReal!=null)
-                  setFont(ttfReal);
+            super();
+            setFont(ttfReal);
 
             setText(String.valueOf(faCode));
-            //setForeground(Color.BLACK);          
         }
     }    
+    public static class FAToggleButton extends JToggleButton {
+        private final char codeUnselected;
+        private final char codeSelected;
+        public FAToggleButton(char faCodeUnselected, char faCodeSelected) {
+            super();
+            this.codeUnselected = faCodeUnselected;
+            this.codeSelected = faCodeSelected;
+            setFont(FAButton.ttfReal);
+            setText(String.valueOf(faCodeUnselected));            
+        }
+
+        @Override
+        public void setSelected(boolean b) {
+            super.setSelected(b);
+        }
+
+        
+        @Override
+        public void paint(Graphics g) {
+            if (isSelected()) {
+                setText(String.valueOf(codeSelected));
+            }
+            else {
+                setText(String.valueOf(codeUnselected));
+            }
+            super.paint(g); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+        
+        
+    }
     
     //http://astronautweb.co/snippet/font-awesome/
     private final char FA_PlayCharacter = '\uf04b';
@@ -502,6 +653,7 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
             public void actionPerformed(ActionEvent e) {
                 setSpeed(1.0);
                 volumeSlider.setValue(20);
+                
             }
 
         });
@@ -529,29 +681,65 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
 
         c.ipady = 4;
 
-        p.add(newIntSlider(memory.getTaskForgettingRate(), "Task Forgetting Rate", 1, 99), c);
-        p.add(newIntSlider(memory.getBeliefForgettingRate(), "Belief Forgetting Rate", 1, 99), c);
-        p.add(newIntSlider(memory.getConceptForgettingRate(), "Concept Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.param.taskForgettingRate, "Task Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.param.beliefForgettingRate, "Belief Forgetting Rate", 1, 99), c);
+        p.add(newIntSlider(memory.param.conceptForgettingRate, "Concept Forgetting Rate", 1, 99), c);
 
+        JPanel chartPanel = new JPanel(new GridLayout(0,1));
+        {
+            
+            
+            PLineChart chart0 = new PLineChart("concepts.Total", chartHistoryLength);
+            chartPanel.add(chart0.newPanel());
+            charts.add(chart0);
+            /*
+            ChartPanel chart0 = new ChartPanel("concepts.Total");
+            chart0.setPreferredSize(new Dimension(200, 150));
+            charts.add(chart0);
+            chartPanel.add(chart0);
+            */
 
-        ChartPanel chart0 = new ChartPanel("concepts.Total");
-        chart0.setPreferredSize(new Dimension(200, 150));
-        charts.add(chart0);
-        p.add(chart0, c);
+            PLineChart chart1 = new PLineChart("concepts.Mass", chartHistoryLength);
+            chartPanel.add(chart1.newPanel());
+            charts.add(chart1);
+            PLineChart chart2 = new PLineChart("concepts.AveragePriority", chartHistoryLength);
+            chartPanel.add(chart2.newPanel());
+            charts.add(chart2);
+            
+            PLineChart chart3 = new PLineChart("beliefs.Total", chartHistoryLength);
+            chartPanel.add(chart3.newPanel());
+            charts.add(chart3);
+            
+            PLineChart chart4 = new PLineChart("questions.Total", chartHistoryLength);
+            chartPanel.add(chart4.newPanel());
+            charts.add(chart4);
 
-        ChartPanel chart1 = new ChartPanel("concepts.Mass");
-        chart1.setPreferredSize(new Dimension(200, 200));
-        charts.add(chart1);
-        p.add(chart1, c);
+            PLineChart chart5 = new PLineChart("novelTasks.Total", chartHistoryLength);
+            chartPanel.add(chart5.newPanel());
+            charts.add(chart5);
 
-        ChartPanel chart2 = new ChartPanel("concepts.AveragePriority");
-        chart2.setPreferredSize(new Dimension(200, 200));
-        charts.add(chart2);
-        p.add(chart2, c);
+            PLineChart chart6 = new PLineChart("newTasks.Total", chartHistoryLength);
+            chartPanel.add(chart6.newPanel());
+            charts.add(chart6);
+            
+            PLineChart chart7 = new PLineChart("emotion.happy", chartHistoryLength);
+            chartPanel.add(chart7.newPanel());
+            charts.add(chart7);
 
-        c.fill = c.BOTH;
+            PLineChart chart8 = new PLineChart("emotion.busy", chartHistoryLength);
+            chartPanel.add(chart8.newPanel());
+            charts.add(chart8);
+            
+            
+        }
+        
         c.weighty = 1.0;
-        p.add(Box.createVerticalBox(), c);
+        c.fill = GridBagConstraints.BOTH;        
+        p.add(new JScrollPane(chartPanel), c);
+
+        /*c.fill = c.BOTH;
+        p.add(Box.createVerticalBox(), c);*/
+        
 
         return p;
     }
@@ -579,6 +767,13 @@ public class NARControls extends JPanel implements ActionListener, Runnable {
         return s;
     }
 
+    /** if true, then the speed control allows NAR to run() each iteration with 0 delay.  
+     *  otherwise, the minimum delay is 1ms */
+    public void setAllowFullSpeed(boolean allowFullSpeed) {
+        this.allowFullSpeed = allowFullSpeed;
+    }
+
+    
 
 
 }

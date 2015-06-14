@@ -21,6 +21,7 @@
 package nars.language;
 
 import nars.core.Parameters;
+import nars.inference.TemporalRules;
 
 /**
  * Term is the basic component of Narsese, and the object of processing in NARS.
@@ -31,16 +32,12 @@ import nars.core.Parameters;
  */
 public class Term implements Cloneable, Comparable<Term> {
 
-    /**
-     * A Term is identified uniquely by its name, a sequence of characters in a
-     * given alphabet (ASCII or Unicode)
-     */
-    protected String name;
-
+    protected CharSequence name = "";
+    
     /**
      * Default constructor that build an internal Term
      */
-    protected Term() {        
+    protected Term() {
     }
 
     /**
@@ -57,7 +54,7 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return The name of the term as a String
      */
-    public String getName() {
+    public CharSequence name() {
         return name;
     }
 
@@ -67,8 +64,11 @@ public class Term implements Cloneable, Comparable<Term> {
      * @return The new Term
      */
     @Override
-    public Object clone() {
-        return new Term(name);
+    public Term clone() {
+        //avoids setName and its intern(); the string will already be intern:
+        Term t = new Term();
+        t.name = name;
+        return t;
     }
 
     /**
@@ -80,7 +80,12 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public boolean equals(final Object that) {
-        return (that instanceof Term) && name.equals(((Term) that).getName());
+        if (!(that instanceof Term)) return false;
+        Term t = (Term)that;
+        if (t.hashCode()!=hashCode()) {
+            return false;
+        }        
+        return name.equals(t.name());
     }
 
     /**
@@ -90,7 +95,7 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public int hashCode() {
-        return (name != null ? name.hashCode() : 7);
+        return name.hashCode();
     }
 
     /**
@@ -101,6 +106,12 @@ public class Term implements Cloneable, Comparable<Term> {
     public boolean isConstant() {
         return true;
     }
+    
+    public int getTemporalOrder() {
+        return TemporalRules.ORDER_NONE;
+    }
+    
+
 
     /**
      * Blank method to be override in CompoundTerm
@@ -113,42 +124,78 @@ public class Term implements Cloneable, Comparable<Term> {
      *
      * @return The complexity of the term, an integer
      */
-    public int getComplexity() {
+    public short getComplexity() {
         return 1;
     }
 
-    protected void setName(final String name) {
-        if (getComplexity() <= Parameters.TERM_NAME_STRING_INTERN_MAX_COMPLEXITY) {
-            this.name = name.intern();
+    /** only method that should modify Term.name. also caches hashcode 
+     * @return whether the name was changed
+     */
+    protected boolean setName(final CharSequence newName) {
+        if (this.name!=null) {
+            if (this.name.equals(newName)) {
+                //name is the same
+                return false;
+            }
+        }
+        
+        if ((newName instanceof String) && (newName.length() <= Parameters.INTERNED_TERM_NAME_MAXLEN)) {
+            
+            this.name = ((String)newName).intern();
         }
         else {
-            this.name = name;
+            this.name = newName;
         }
+        return true;
     }
     
     /**
-     * Orders among terms: variable < atomic < compound
      * @param that The Term to be compared with the current Term
      * @return The same as compareTo as defined on Strings
      */
     @Override
     public int compareTo(final Term that) {
+        /*//This removes this class's dependency on CompoundTerm
+        if (that.getClass() == getClass())
+            return name.compareTo(that.name());
+        return that.getClass().getSimpleName().compareTo(getClass().getSimpleName());*/
+        
+        //previously: Orders among terms: variable < atomic < compound
         if (that instanceof CompoundTerm) {
             return -1;
         } else if (that instanceof Variable) {
             return 1;
         } else {
-            return name.compareTo(that.getName());
+            //force comparable, since all CharSequence we use provide it.
+            return ((Comparable)name).compareTo(that.name());            
         }
     }
 
+    /**
+     * Whether this compound term contains any variable term
+     *
+     * @return Whether the name contains a variable
+     */
+    public boolean containVar() {
+        return false;
+    }
+    
+    public int containedTemporalRelations() {
+        return 0;
+    }
+    
     /**
      * Recursively check if a compound contains a term
      *
      * @param target The term to be searched
      * @return Whether the two have the same content
      */
-    public boolean containTerm(final Term target) {
+    public boolean containsTermRecursively(final Term target) {
+        return equals(target);
+    }
+
+    /** whether this contains a term in its components. */
+    public boolean containsTerm(final Term target) {
         return equals(target);
     }
 
@@ -159,6 +206,7 @@ public class Term implements Cloneable, Comparable<Term> {
      */
     @Override
     public final String toString() {
-        return name;
+        return name.toString();
     }
+
 }

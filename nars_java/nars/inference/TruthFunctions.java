@@ -20,7 +20,10 @@
  */
 package nars.inference;
 
-import nars.entity.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.abs;
+import static java.lang.Math.abs;
+import nars.entity.TruthValue;
 
 /**
  * All truth-value (and desire-value) functions used in inference rules 
@@ -73,7 +76,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue revision(final TruthValue v1, final TruthValue v2) {
         final float f1 = v1.getFrequency();
         final float f2 = v2.getFrequency();
         final float c1 = v1.getConfidence();
@@ -154,7 +157,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue abduction(final TruthValue v1, final TruthValue v2) {
+    public static final TruthValue abduction(final TruthValue v1, final TruthValue v2) {
         if (v1.getAnalytic() || v2.getAnalytic()) {
             return new TruthValue(0.5f, 0f);
         }
@@ -190,7 +193,7 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param v2 Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    static final TruthValue induction(final TruthValue v1, final TruthValue v2) {
+    static final TruthValue induction(final TruthValue v1, final TruthValue v2) { 
         return abduction(v2, v1);
     }
 
@@ -372,5 +375,21 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = v1.getConfidence();
         final TruthValue v0 = new TruthValue(f1, w2c(c1));
         return analogy(v2, v0);
+    }
+    
+    /**
+     * From one moment to eternal
+     * @param v1 Truth value of the premise
+     * @return Truth value of the conclusion
+     */
+    public static final TruthValue eternalization(final TruthValue v1) {
+        final float f1 = v1.getFrequency();
+        final float c1 = v1.getConfidence();
+        final float c = w2c(c1);
+        return new TruthValue(f1, c);
+    }
+    
+    public static final float temporalProjection(long sourceTime, long targetTime, long currentTime) {
+        return abs(sourceTime - targetTime) / (float) (abs(sourceTime - currentTime) + abs(targetTime - currentTime));
     }
 }
