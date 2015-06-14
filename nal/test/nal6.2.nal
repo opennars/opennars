@@ -1,0 +1,26 @@
+'********** variable unification
+
+'If something is a swan, then it is a bird.
+<<$x --> swan> ==> <$x --> bird>>. %1.00;0.80%  
+
+'If something is a swan, then it is a swimmer.
+<<$y --> swan> ==> <$y --> swimmer>>. %0.80% 
+
+3
+
+'I believe that if something is a swan, then it is a bird or a swimmer.
+''outputMustContain('<<$1 --> swan> ==> (||,<$1 --> bird>,<$1 --> swimmer>)>. %1.00;0.72%')
+
+'I believe that if something is a swan, then usually, it is both a bird and a swimmer.
+''outputMustContain('<<$1 --> swan> ==> (&&,<$1 --> bird>,<$1 --> swimmer>)>. %0.80;0.72%')
+
+'I guess if something is a swimmer, then it is a bird. 
+''outputMustContain('<<$1 --> swimmer> ==> <$1 --> bird>>. %1.00;0.37%')
+
+'I guess if something is a bird, then it is a swimmer. 
+''outputMustContain('<<$1 --> bird> ==> <$1 --> swimmer>>. %0.80;0.42%')
+
+'I guess something is a bird, if and only if it is a swimmer. 
+''outputMustContain('<<$1 --> bird> <=> <$1 --> swimmer>>. %0.80;0.42%')
+
+

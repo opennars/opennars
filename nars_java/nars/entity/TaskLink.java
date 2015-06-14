@@ -20,8 +20,8 @@
  */
 package nars.entity;
 
-import nars.language.Term;
 import nars.core.Parameters;
+import nars.language.Term;
 
 /**
  * Reference to a Task.
@@ -34,19 +34,19 @@ public class TaskLink extends TermLink {
     /**
      * The Task linked. The "target" field in TermLink is not used here.
      */
-    private final Task targetTask;
+    public final Task targetTask;
     /**
      * Remember the TermLinks that has been used recently with this TaskLink
      */
-    private final String recordedLinks[];
+    public final CharSequence recordedLinks[];
     /**
      * Remember the time when each TermLink is used with this TaskLink
      */
-    private final long recordingTime[];
+    public final long recordingTime[];
     /**
      * The number of TermLinks remembered
      */
-    int counter;
+    private int counter;
 
     /**
      * Constructor
@@ -58,20 +58,22 @@ public class TaskLink extends TermLink {
      * @param v The budget
      */
     public TaskLink(final Task t, final TermLink template, final BudgetValue v) {
-        super("", v);
+        super(v,                 
+                template == null ? 
+                        TermLink.SELF : 
+                        template.type,
+                
+                template == null ?
+                        null : 
+                        template.index
+        );
+        
         targetTask = t;
-        if (template == null) {
-            type = TermLink.SELF;
-            index = null;
-        } else {
-            type = template.getType();
-            index = template.getIndices();
-        }
-        recordedLinks = new String[Parameters.TERM_LINK_RECORD_LENGTH];
+        recordedLinks = new CharSequence[Parameters.TERM_LINK_RECORD_LENGTH];
         recordingTime = new long[Parameters.TERM_LINK_RECORD_LENGTH];
         counter = 0;
-        setKey();   // as defined in TermLink
-        key += t.getKey();
+        setKey(t.getKey());   // as defined in TermLink
+        
     }
 
     /**
@@ -94,11 +96,11 @@ public class TaskLink extends TermLink {
      * @return Whether they are novel to each other
      */
     public boolean novel(final TermLink termLink, final long currentTime) {
-        final Term bTerm = termLink.getTarget();
-        if (bTerm.equals(targetTask.getSentence().getContent())) {
+        final Term bTerm = termLink.target;
+        if (bTerm.equals(targetTask.sentence.content)) {            
             return false;
         }
-        String linkKey = termLink.getKey();
+        CharSequence linkKey = termLink.getKey();
         int next, i;
         for (i = 0; i < counter; i++) {
             next = i % Parameters.TERM_LINK_RECORD_LENGTH;
@@ -122,6 +124,6 @@ public class TaskLink extends TermLink {
 
     @Override
     public String toString() {
-        return super.toString() + " " + getTargetTask().getSentence().getStamp();
+        return super.toString() + " " + getTargetTask().sentence.stamp;
     }
 }

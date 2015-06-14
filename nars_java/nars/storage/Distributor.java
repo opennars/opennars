@@ -30,7 +30,7 @@ import java.util.Map;
 public final class Distributor {
 
     /** Shuffled sequence of index numbers */
-    public final int order[];
+    public final short order[];
     /** Capacity of the array */
     public final int capacity;
 
@@ -51,9 +51,9 @@ public final class Distributor {
     protected Distributor(final int range) {
         int index, rank, time;
         capacity = (range * (range + 1)) / 2;
-        order = new int[capacity];
+        order = new short[capacity];
         
-        Arrays.fill(order, -1);
+        Arrays.fill(order, (short)-1);
         index = capacity;
         
         for (rank = range; rank > 0; rank--) {
@@ -63,7 +63,7 @@ public final class Distributor {
                 while (order[index] >= 0) {
                     index = (index + 1) % capacity;
                 }
-                order[index] = rank - 1;
+                order[index] = (short)(rank - 1);
             }
         }
     }
@@ -73,7 +73,7 @@ public final class Distributor {
      * @param index The current index
      * @return the random value
      */
-    public int pick(final int index) {
+    public short pick(final int index) {
         return order[index];
     }
 

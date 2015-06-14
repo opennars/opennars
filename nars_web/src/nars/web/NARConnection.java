@@ -8,11 +8,10 @@ package nars.web;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import nars.core.NAR;
 import nars.io.TextInput;
 import nars.io.TextOutput;
 import nars.io.TextOutput.LineOutput;
-import nars.core.NAR;
-import nars.io.TextInputParser;
 
 /**
  * An instance of a web socket session to a NAR
@@ -22,28 +21,24 @@ abstract public class NARConnection implements LineOutput {
     public final NAR nar;
     protected final TextOutput writer;
     int cycleIntervalMS;
-    private final TextInputParser extraParser;
+    //private final TextReaction extraParser;
         
-    public NARConnection(NAR nar, int cycleIntervalMS) {
-        this(nar, cycleIntervalMS, null);
-    }
     
-    public NARConnection(NAR nar, int cycleIntervalMS, TextInputParser extraParser) {
+    public NARConnection(NAR nar, int cycleIntervalMS) {
         this.nar = nar;
-        this.extraParser = extraParser;
         this.cycleIntervalMS = cycleIntervalMS;
-     
-        
+             
         this.writer = new TextOutput(nar, this);
     }
 
     public void read(final String message) {
-        TextInput e = new TextInput(nar, new BufferedReader( new StringReader(message)), extraParser);
+        nar.addInput(message);
                 
         if (!running)
             resume();
     }
     
+    @Override
     abstract public void println(String output);
     
     

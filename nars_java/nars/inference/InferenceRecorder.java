@@ -1,27 +1,11 @@
 package nars.inference;
 
+import nars.entity.Concept;
+import nars.entity.Task;
+
 public interface InferenceRecorder {
 
-    /**
-     * Initialize the window and the file
-     */
-    public abstract void init();
 
-    /**
-     * Show the window
-     */
-    public abstract void show();
-
-    /**
-     * Begin the display
-     */
-    public abstract void play();
-
-    /**
-     * Stop the display
-     */
-    public abstract void stop();
-    
     public boolean isActive();
 
     /**
@@ -29,22 +13,21 @@ public interface InferenceRecorder {
      *
      * @param s The line to be displayed
      */
-    public abstract void append(String s);
+    public void append(String s);
 
-    /**
-     * Open the log file
-     */
-    public abstract void openLogFile();
+    /** when a concept is instantiated */
+    public void onConceptNew(Concept concept);
 
-    /**
-     * Close the log file
-     */
-    public abstract void closeLogFile();
+    /** called at the beginning of each inference clock cycle */
+    public void onCycleStart(long clock);
 
-    /**
-     * Check file logging
-     *
-     * @return If the file logging is going on
-     */
-    public abstract boolean isLogging();
+    /** called at the end of each inference clock cycle */
+    public void onCycleEnd(long clock);
+
+    /** Added task */
+    public void onTaskAdd(Task task, String reason);
+
+    /** Neglected task */
+    public void onTaskRemove(Task task, String reason);
+
 }

@@ -25,25 +25,26 @@ import nars.language.Term;
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue
  */
-public class Task extends Item {
+public class Task extends AbstractTask {
 
     /**
      * The sentence of the Task
      */
-    private Sentence sentence;
+    public final Sentence sentence;
     /**
      * Task from which the Task is derived, or null if input
      */
-    private Task parentTask;
+    public final Task parentTask;
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    private Sentence parentBelief;
+    public final Sentence parentBelief;
     /**
      * For Question and Goal: best solution found so far
      */
     private Sentence bestSolution;
-
+    private final CharSequence key;
+    
     /**
      * Constructor for input task
      *
@@ -51,10 +52,9 @@ public class Task extends Item {
      * @param b The budget
      */
     public Task(final Sentence s, final BudgetValue b) {
-        super(s.toKey(), b); // change to toKey()
-        sentence = s;
-        key = sentence.toKey();
+        this(s, b, null, null);
     }
+ 
 
     /**
      * Constructor for a derived task
@@ -65,7 +65,9 @@ public class Task extends Item {
      * @param parentBelief The belief from which this new task is derived
      */
     public Task(final Sentence s, final BudgetValue b, final Task parentTask, final Sentence parentBelief) {
-        this(s, b);
+        super(b);
+        this.sentence = s;
+        this.key = sentence.getKey();        
         this.parentTask = parentTask;
         this.parentBelief = parentBelief;
     }
@@ -84,14 +86,10 @@ public class Task extends Item {
         this.bestSolution = solution;
     }
 
-    /**
-     * Get the sentence
-     *
-     * @return The sentence
-     */
-    public Sentence getSentence() {
-        return sentence;
+    @Override public CharSequence getKey() {
+        return key;
     }
+
 
     /**
      * Directly get the content of the sentence
@@ -99,7 +97,7 @@ public class Task extends Item {
      * @return The content of the sentence
      */
     public Term getContent() {
-        return sentence.getContent();
+        return sentence.content;
     }
 
     /**
@@ -108,7 +106,7 @@ public class Task extends Item {
      * @return The creation time of the sentence
      */
     public long getCreationTime() {
-        return sentence.getStamp().creationTime;
+        return sentence.stamp.creationTime;
     }
 
     /**
@@ -118,6 +116,10 @@ public class Task extends Item {
      */
     public boolean isInput() {
         return parentTask == null;
+    }
+    
+    public boolean aboveThreshold() {
+        return budget.aboveThreshold();
     }
 
     /**
@@ -187,16 +189,30 @@ public class Task extends Item {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder();
-        s.append(super.toString()).append(' ').append(getSentence().getStamp());
+        s.append(super.toString()).append(' ').append(sentence.stamp);
         if (parentTask != null) {
             s.append("  \n from task: ").append(parentTask.toStringBrief());
             if (parentBelief != null) {
-                s.append("  \n from belief: ").append(parentBelief.toStringBrief());
+                s.append("  \n from belief: ").append(parentBelief.toString());
             }
         }
         if (bestSolution != null) {
-            s.append("  \n solution: ").append(bestSolution.toStringBrief());
+            s.append("  \n solution: ").append(bestSolution.toString());
         }
         return s.toString();
     }
+
+    public Task getRootTask() {
+        if (getParentTask() == null) {
+            return null;
+        }
+        Task t, p=this;
+        do {            
+            t = p;
+            p = t.getParentTask();            
+        } while (p!=null);
+        return t;
+    }
+
+    
 }

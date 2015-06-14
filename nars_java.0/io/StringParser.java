@@ -57,7 +57,7 @@ public abstract class StringParser extends Symbols {
      * @param time The current time
      * @return An experienced task
      */
-    public static Task parseExperience(StringBuffer buffer, Memory memory, long time) {
+    public static Task parseExperience(StringBuilder buffer, Memory memory, long time) {
         int i = buffer.indexOf(PREFIX_MARK + "");
         if (i > 0) {
             String prefix = buffer.substring(0, i).trim();
@@ -83,7 +83,7 @@ public abstract class StringParser extends Symbols {
      * @return An experienced task
      */
     public static Task parseTask(String s, Memory memory, long time) throws InvalidInputException {
-        StringBuffer buffer = new StringBuffer(s);
+        StringBuilder buffer = new StringBuilder(s);
         Task task = null;
         try {
             String budgetString = getBudgetString(buffer);
@@ -117,11 +117,11 @@ public abstract class StringParser extends Symbols {
     /* ---------- parse values ---------- */
     /**
      * Return the prefex of a task string that contains a BudgetValue
-     * @param s the input in a StringBuffer
+     * @param s the input in a StringBuilder
      * @return a String containing a BudgetValue
      * @throws nars.io.StringParser.InvalidInputException if the input cannot be parsed into a BudgetValue
      */
-    private static String getBudgetString(StringBuffer s) throws InvalidInputException {
+    private static String getBudgetString(StringBuilder s) throws InvalidInputException {
         if (s.charAt(0) != BUDGET_VALUE_MARK) {
             return null;
         }
@@ -140,10 +140,10 @@ public abstract class StringParser extends Symbols {
     /**
      * Return the postfix of a task string that contains a TruthValue
      * @return a String containing a TruthValue
-     * @param s the input in a StringBuffer
+     * @param s the input in a StringBuilder
      * @throws nars.io.StringParser.InvalidInputException if the input cannot be parsed into a TruthValue
      */
-    private static String getTruthString(StringBuffer s) throws InvalidInputException {
+    private static String getTruthString(StringBuilder s) throws InvalidInputException {
         int last = s.length() - 1;
         if (s.charAt(last) != TRUTH_VALUE_MARK) {       // use default
             return null;

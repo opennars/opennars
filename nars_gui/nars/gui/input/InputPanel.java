@@ -21,103 +21,110 @@
 package nars.gui.input;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import nars.core.NAR;
 import nars.gui.FileTreeModel;
+import nars.gui.NPanel;
+import static nars.gui.output.SwingLogPanel.setConsoleStyle;
 import nars.io.Output.OUT;
-
 import nars.io.TextInput;
 
-/**
- * Input window, accepting user tasks
- */
-public class InputPanel extends JPanel implements ActionListener {
 
-    private NAR reasoner;
+public class InputPanel extends NPanel implements ActionListener {
+
+    private final NAR reasoner;
     /**
      * Control buttons
      */
-    private JButton okButton, holdButton, clearButton;
+    private final JButton eval, evalAll, holdButton, clearButton;
     /**
      * Input area
      */
-    private JTextArea inputText;
+    private final JTextArea inputText;
     /**
-     * Whether the window is ready to accept new input (in fact whether the
-     * Reasoner will read the content of {@link #inputText} )
+     * Whether the window is ready to accept new addInput (in fact whether the
+ Reasoner will read the content of {@link #inputText} )
      */
     private boolean ready;
     /**
      * number of cycles between experience lines
      */
     private int timer;
+    private final JPanel centerPanel;
+    private final JTree fileTree;
 
     /**
      * Constructor
      *
-     * @param reasoner The reasoner
+     * @param nar The reasoner
      * @param title The title of the window
      */
-    public InputPanel(final NAR reasoner) {
+    public InputPanel(final NAR nar) {
         super(new BorderLayout());
         
-        JTabbedPane jt = new JTabbedPane();
-        
-        add(jt, BorderLayout.CENTER);
-        
-        JPanel textInput = new JPanel();
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        textInput.setLayout(gridbag);
-        c.ipadx = 2;
-        c.ipady = 2;
-        c.insets = new Insets(2, 2, 2, 2);
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        inputText = new JTextArea("");
-        inputText.setRows(3);        
-        textInput.add(new JScrollPane(inputText), c);
-        c.weighty = 0.0;
-        c.gridwidth = 1;
-        okButton = new JButton("Eval");
-        okButton.addActionListener(this);
-        gridbag.setConstraints(okButton, c);        
-        textInput.add(okButton);
-        holdButton = new JButton("Hold");
-        holdButton.addActionListener(this);
-        gridbag.setConstraints(holdButton, c);
-        textInput.add(holdButton);
-        clearButton = new JButton("Clear");
-        clearButton.addActionListener(this);
-        gridbag.setConstraints(clearButton, c);
-        textInput.add(clearButton);
-        
-        jt.addTab("Edit", textInput);
+        centerPanel = new JPanel(new BorderLayout());
+                
+        JPanel menu = new JPanel();
+        menu.setLayout(new FlowLayout(FlowLayout.RIGHT,0,0));
+
+        menu.setOpaque(false);
+        setBackground(Color.BLACK);
         
 
+
+        final JComboBox modeSelect = new JComboBox();
+        modeSelect.addItem("Text");
+        modeSelect.addItem("Files");
+        modeSelect.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                updateMode(modeSelect.getSelectedIndex());
+            }
+        });
+        menu.add(modeSelect);
+                
+        eval = new JButton("Evaluate");
+        eval.setDefaultCapable(true);
+        eval.setToolTipText("Input the text, each line executed in successive clock cycles.");
+        eval.addActionListener(this);
+        menu.add(eval);
+        
+        evalAll = new JButton("Eval All");
+        evalAll.setDefaultCapable(true);
+        evalAll.addActionListener(this);
+        evalAll.setToolTipText("Input the text, each line executed in the same clock cycle.  (Ctrl-enter)");
+        
+        evalAll.addActionListener(this);
+        menu.add(evalAll);
+        
+        holdButton = new JButton("Hold");
+        holdButton.addActionListener(this);
+        menu.add(holdButton);
+
+        clearButton = new JButton("Clear");
+        clearButton.addActionListener(this);
+        menu.add(clearButton);
         
         TreeModel model = new FileTreeModel(new File("./nal"));
-        final JTree fileTree = new JTree(model);
+        fileTree = new JTree(model);
         fileTree.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 int selRow = fileTree.getRowForLocation(e.getX(), e.getY());
                 TreePath selPath = fileTree.getPathForLocation(e.getX(), e.getY());
@@ -129,8 +136,8 @@ public class InputPanel extends JPanel implements ActionListener {
 
                         if (!f.isDirectory()) {
                             try {
-                                new TextInput(reasoner, f);
-                                reasoner.output(OUT.class, "Loaded file: " + f.getAbsolutePath());
+                                nar.addInput(new TextInput(f));
+                                nar.output(OUT.class, "Loaded file: " + f.getAbsolutePath());
                             } catch (IOException ex) {
                                 System.err.println(ex);
                             }
@@ -139,9 +146,39 @@ public class InputPanel extends JPanel implements ActionListener {
                 }
             }
         });
-        jt.addTab("Files", new JScrollPane(fileTree));
+
+        inputText = new JTextArea("");
+        inputText.setRows(3);        
+        inputText.addKeyListener(new KeyAdapter() {
+            @Override public void keyReleased(KeyEvent e) {
+                //control-enter evaluates
+                if (e.isControlDown())
+                    if (e.getKeyCode()==10) {
+                        eval.doClick();
+                    }
+            }           
+        });
+        setConsoleStyle(inputText, true);
+
+        updateMode(0);
         
-        this.reasoner = reasoner;
+        add(centerPanel, BorderLayout.CENTER);
+        add(menu, BorderLayout.SOUTH);
+        
+        
+        this.reasoner = nar;
+    }
+
+    private void updateMode(int selectedIndex) {
+        centerPanel.removeAll();
+        if (selectedIndex == 0) {
+            centerPanel.add(inputText, BorderLayout.CENTER);
+        }
+        else if (selectedIndex == 1) {
+            centerPanel.add(new JScrollPane(fileTree), BorderLayout.CENTER);
+        }        
+        centerPanel.validate();
+        repaint();
     }
 
     /**
@@ -152,16 +189,31 @@ public class InputPanel extends JPanel implements ActionListener {
         inputText.setText("");
     }
 
+    @Override
+    protected void onShowing(boolean showing) {
+        if (showing) {
+            
+        }
+        else {
+        
+        }
+    }
+    
     /**
      * Handling button click
      *
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton) e.getSource();
-        if (b == okButton) {
+        if (b == eval) {
             ready = true;
-            evaluate(inputText.getText());
+            evaluateSeq(inputText.getText());
+            inputText.setText("");
+        } else if (b == evalAll) {
+            ready = true;
+            evaluateAll(inputText.getText());
             inputText.setText("");
         } else if (b == holdButton) {
             ready = false;
@@ -170,11 +222,15 @@ public class InputPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void evaluate(String input) {
-        new TextInput(reasoner, input);
-        reasoner.tick();
-        reasoner.run(0);       
-    }    
+    public void evaluateAll(String input) {
+        reasoner.addInput(input);
+        reasoner.step(1);
+    }
+    public void evaluateSeq(String input) {
+        //TODO make sequential evaluation
+        reasoner.addInput(input);
+        reasoner.step(1);
+    }
    
     private void close() {
         setVisible(false);
@@ -182,42 +238,43 @@ public class InputPanel extends JPanel implements ActionListener {
 
     
 
-    /**
-     * Accept text input in a tick, which can be multiple lines TODO some
-     * duplicated code with {@link ExperienceReader#nextInput()}
-     *
-     * @return Whether to check this channel again
-     */
-    public boolean nextInput() {
-        if (timer > 0) {  // wait until the timer
-            timer--;
-            return true;
-        }
-        if (!ready) {
-            return false;
-        }
-        String text = inputText.getText().trim();
-        String line;    // The next line of text
-        int endOfLine;
-        // The process steps at a number or no more text
-        while ((text.length() > 0) && (timer == 0)) {
-            endOfLine = text.indexOf('\n');
-            if (endOfLine < 0) {	// this code is reached at end of text
-                line = text;
-                text = "";
-            } else {	// this code is reached for ordinary lines
-                line = text.substring(0, endOfLine).trim();
-                text = text.substring(endOfLine + 1);	// text becomes rest of text
-            }
-            
-            new TextInput(reasoner, line);
-            
-            inputText.setText(text);	// update input Text widget to rest of text
-            if (text.isEmpty()) {
-                ready = false;
-            }
-        }
-        return ((text.length() > 0) || (timer > 0));
-    }
+//    /**
+//     * Accept text addInput in a tick, which can be multiple lines TODO some
+// duplicated code with {@link ExperienceReader#nextInput()}
+//     *
+//     * @return Whether to check this channel again
+//     */
+//    public boolean nextInput() {
+//        if (timer > 0) {  // wait until the timer
+//            timer--;
+//            return true;
+//        }
+//        if (!ready) {
+//            return false;
+//        }
+//        String text = inputText.getText().trim();
+//        String line;    // The next line of text
+//        int endOfLine;
+//        // The process steps at a number or no more text
+//        while ((text.length() > 0) && (timer == 0)) {
+//            endOfLine = text.indexOf('\n');
+//            if (endOfLine < 0) {	// this code is reached at end of text
+//                line = text;
+//                text = "";
+//            } else {	// this code is reached for ordinary lines
+//                line = text.substring(0, endOfLine).trim();
+//                text = text.substring(endOfLine + 1);	// text becomes rest of text
+//            }
+//            
+//            reasoner.addInput(line);
+//            
+//            inputText.setText(text);	// update addInput Text widget to rest of text
+//            if (text.isEmpty()) {
+//                ready = false;
+//            }
+//        }
+//        return ((text.length() > 0) || (timer > 0));
+//    }
+//
   
 }

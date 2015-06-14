@@ -221,7 +221,7 @@ public class Stamp implements Cloneable {
      */
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer(" " + Symbols.STAMP_OPENER + creationTime);
+        StringBuilder buffer = new StringBuilder(" " + Symbols.STAMP_OPENER + creationTime);
         buffer.append(" " + Symbols.STAMP_STARTER + " ");
         for (int i = 0; i < baseLength; i++) {
             buffer.append(Long.toString(evidentialBase[i]));

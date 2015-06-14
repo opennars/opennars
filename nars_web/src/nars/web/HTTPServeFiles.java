@@ -72,7 +72,7 @@ public class HTTPServeFiles extends HTTPServer {
         }
 
         // Prohibit getting out of current directory
-        if (uri.startsWith("..") || uri.endsWith("..") || uri.indexOf("../") >= 0) {
+        if (uri.startsWith("..") || uri.endsWith("..") || uri.contains("../")) {
             return new Response(HTTP_FORBIDDEN, MIME_PLAINTEXT,
                     "FORBIDDEN: Won't serve ../ for security reasons.");
         }

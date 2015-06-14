@@ -1,0 +1,12 @@
+'********** multiple variable elimination
+
+'Every lock can be opened by every key.
+<(&&,<$x --> key>,<$y --> lock>) ==> <$y --> (/,open,$x,_)>>.  
+
+'Lock-1 is a lock.
+<{lock1} --> lock>. 
+
+20
+
+'Lock-1 can be opened by every key.
+''outputMustContain('<<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.81%')

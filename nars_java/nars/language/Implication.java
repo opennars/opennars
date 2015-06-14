@@ -20,22 +20,23 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import nars.inference.TemporalRules;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
- * A Statement about an Inheritance relation.
+ * A Statement about an Inheritance copula.
  */
 public class Implication extends Statement {
+    private int temporalOrder = TemporalRules.ORDER_NONE;
 
     /**
      * Constructor with partial values, called by make
      * @param arg The component list of the term
      */
-    protected Implication(ArrayList<Term> arg) {
-        super(arg);
+    private Implication(CharSequence name, Term[] arg, int order) {
+        super(name, arg);
+        temporalOrder = order;
     }
 
     /**
@@ -45,26 +46,34 @@ public class Implication extends Statement {
      * @param con Whether it is a constant term
      * @param i Syntactic complexity of the compound
      */
-    protected Implication(String n, ArrayList<Term> cs, boolean con, short i) {
-        super(n, cs, con, i);
+    private Implication(CharSequence n, Term[] cs, boolean con, boolean hasVar, short i, int order) {
+        super(n, cs, con, hasVar, i);
+        temporalOrder = order;
     }
 
+    
+    
     /**
      * Clone an object
      * @return A new object
      */
-    public Object clone() {
-        return new Implication(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+    @Override
+    public Implication clone() {
+        return new Implication(name(), cloneTerms(), isConstant(), containVar(), complexity, temporalOrder);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference rules.
      * @param subject The first component
      * @param predicate The second component
      * @param memory Reference to the memory
      * @return A compound generated or a term it reduced to
      */
     public static Implication make(final Term subject, final Term predicate, final Memory memory) {
+        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
+    }
+    
+    public static Implication make(final Term subject, final Term predicate, int temporalOrder, final Memory memory) {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
@@ -74,8 +83,22 @@ public class Implication extends Statement {
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        final String name = makeStatementName(subject, Symbols.Relation.IMPLICATION.toString(), predicate);
-        final Term t = memory.nameToListedTerm(name);
+        NativeOperator copula;
+        switch (temporalOrder) {
+            case TemporalRules.ORDER_FORWARD:
+                copula = NativeOperator.IMPLICATION_AFTER;
+                break;
+            case TemporalRules.ORDER_CONCURRENT:
+                copula = NativeOperator.IMPLICATION_WHEN;
+                break;
+            case TemporalRules.ORDER_BACKWARD:
+                copula = NativeOperator.IMPLICATION_BEFORE;
+                break;
+            default:
+                copula = NativeOperator.IMPLICATION;
+        }                
+        final CharSequence name = makeStatementName(subject, copula, predicate);
+        final Term t = memory.conceptTerm(name);
         if (t != null) {            
             if (t.getClass()!=Implication.class) {                
                 throw new RuntimeException("Implication.make"  + ": "+ name + " is not Implication; it is " + t.getClass().getSimpleName() + " = " + t.toString() );
@@ -83,15 +106,14 @@ public class Implication extends Statement {
             return (Implication) t;
         }
         if (predicate instanceof Implication) {
-            final Term oldCondition = ((Implication) predicate).getSubject();
-            if ((oldCondition instanceof Conjunction) && ((Conjunction) oldCondition).containComponent(subject)) {
+            final Term oldCondition = ((Statement) predicate).getSubject();
+            if ((oldCondition instanceof Conjunction) && oldCondition.containsTerm(subject)) {
                 return null;
             }
-            final Term newCondition = Conjunction.make(subject, oldCondition, memory);
-            return make(newCondition, ((Implication) predicate).getPredicate(), memory);
+            final Term newCondition = Conjunction.make(subject, oldCondition, temporalOrder, memory);
+            return make(newCondition, ((Statement) predicate).getPredicate(), temporalOrder, memory);
         } else {
-            final ArrayList<Term> argument = argumentsToList(subject, predicate);
-            return new Implication(argument);
+            return new Implication(name, new Term[] { subject, predicate }, temporalOrder);
         }
     }
 
@@ -99,7 +121,21 @@ public class Implication extends Statement {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.Relation.IMPLICATION.toString();
+    @Override
+    public NativeOperator operator() {
+        switch (temporalOrder) {
+            case TemporalRules.ORDER_FORWARD:
+                return NativeOperator.IMPLICATION_AFTER;
+            case TemporalRules.ORDER_CONCURRENT:
+                return NativeOperator.IMPLICATION_WHEN;
+            case TemporalRules.ORDER_BACKWARD:
+                return NativeOperator.IMPLICATION_BEFORE;
+        }
+        return NativeOperator.IMPLICATION;
+    }
+    
+    @Override
+    public int getTemporalOrder() {
+        return temporalOrder;
     }
 }

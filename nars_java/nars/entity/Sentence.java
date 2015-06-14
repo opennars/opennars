@@ -20,8 +20,21 @@
  */
 package nars.entity;
 
+import java.util.ArrayList;
+import nars.core.NAR;
+import nars.core.Parameters;
+import nars.inference.TruthFunctions;
 import nars.io.Symbols;
+import nars.io.Texts;
+import nars.language.Conjunction;
+import nars.language.Inheritance;
+import nars.language.Product;
+import nars.language.Statement;
 import nars.language.Term;
+import nars.language.Variables;
+import nars.operator.Operation;
+import nars.operator.Operator;
+import nars.storage.Memory;
 
 /**
  * A Sentence is an abstract class, mainly containing a Term, a TruthValue, and
@@ -34,29 +47,32 @@ public class Sentence implements Cloneable {
     /**
      * The content of a Sentence is a Term
      */
-    private Term content;
+    public final Term content;
+    
     /**
-     * The punctuation also indicates the type of the Sentence: Judgment,
-     * Question, or Goal
+     * The punctuation also indicates the type of the Sentence: 
+     * Judgment, Question, Goal, or Quest.
+     * Represented by characters: '.', '?', '!', or '@'
      */
-    final public char punctuation;
+    public final char punctuation;
+    
     /**
-     * The truth value of Judgment
+     * The truth value of Judgment, or desire value of Goal     
      */
-    final public TruthValue truth;
+    public final TruthValue truth;
+    
     /**
      * Partial record of the derivation path
      */
-    protected Stamp stamp;
-
+    public final Stamp stamp;
 
     /**
      * Whether the sentence can be revised
      */
     private boolean revisible;
 
-    //caches the 'getKey()' result
-    private String key;
+    /** caches the 'getKey()' result */
+    private CharSequence key;
 
     /**
      * Create a Sentence with the given fields
@@ -67,29 +83,14 @@ public class Sentence implements Cloneable {
      * @param stamp The stamp of the sentence indicating its derivation time and
      * base
      */
-    public Sentence(Term content, char punctuation, TruthValue truth, Stamp stamp) {
-        this(content, punctuation, truth, stamp, true);
-    }
-
-    /**
-     * Create a Sentence with the given fields
-     *
-     * @param content The Term that forms the content of the sentence
-     * @param punctuation The punctuation indicating the type of the sentence
-     * @param truth The truth value of the sentence, null for question
-     * @param stamp The stamp of the sentence indicating its derivation time and
-     * base
-     * @param revisible Whether the sentence can be revised
-     */
-    public Sentence(Term content, char punctuation, TruthValue truth, Stamp stamp, boolean revisible) {
-        this.content = content;
+    public Sentence(final Term content, final char punctuation, final TruthValue truth, final Stamp stamp) {
+        this.content = content;        
         this.content.renameVariables();
+        
         this.punctuation = punctuation;
         this.truth = truth;
         this.stamp = stamp;
-        this.revisible = revisible;
-  
-                
+        this.revisible = !((content instanceof Conjunction) && Variables.containVarDep(content.name()));
     }
 
     /**
@@ -99,10 +100,18 @@ public class Sentence implements Cloneable {
      * @return Whether the two sentences have the same content
      */
     @Override
-    public boolean equals(Object that) {
+    public boolean equals(final Object that) {
         if (that instanceof Sentence) {
-            Sentence t = (Sentence) that;
-            return content.equals(t.getContent()) && punctuation == t.getPunctuation() && truth.equals(t.getTruth()) && stamp.equals(t.getStamp());
+            final Sentence t = (Sentence) that;
+            if (hashCode()!=t.hashCode())
+                return false;
+            return getKey().equals(t.getKey());
+            /*
+            return content.equals(t.content) && 
+                    punctuation == t.punctuation &&
+                    truth.equals(t.truth) &&
+                    stamp.equals(t.stamp);
+            */
         }
         return false;
     }
@@ -114,12 +123,15 @@ public class Sentence implements Cloneable {
      */
     @Override
     public int hashCode() {
+        return getKey().hashCode();
+        /*
         int hash = 5;
         hash = 67 * hash + (this.content != null ? this.content.hashCode() : 0);
-        hash = 67 * hash + this.punctuation;
+        hash = 67 * hash + (this.punctuation);
         hash = 67 * hash + (this.truth != null ? this.truth.hashCode() : 0);
         hash = 67 * hash + (this.stamp != null ? this.stamp.hashCode() : 0);
         return hash;
+        */
     }
 
     /**
@@ -131,8 +143,8 @@ public class Sentence implements Cloneable {
      * @return Whether the two are equivalent
      */
     public boolean equivalentTo(final Sentence that) {
-        assert content.equals(that.getContent()) && punctuation == that.getPunctuation();
-        return (truth.equals(that.getTruth()) && stamp.equals(that.getStamp()));
+        //assert content.equals(content) && punctuation == that.punctuation;
+        return (truth.equals(that.truth) && stamp.equals(that.stamp));
     }
 
     /**
@@ -143,34 +155,53 @@ public class Sentence implements Cloneable {
     @Override
     public Object clone() {
         if (truth == null) {
-            return new Sentence((Term) content.clone(), punctuation, null, (Stamp) stamp.clone());
+            return new Sentence(content.clone(), punctuation, null, (Stamp) stamp.clone());
         }
-        return new Sentence((Term) content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone(), revisible);
+        return new Sentence(content.clone(), punctuation, new TruthValue(truth), (Stamp) stamp.clone());
     }
 
+    /** Clone with a different Term */    
+    public Sentence clone(Term t) {
+        if (truth == null) {
+            return new Sentence(t, punctuation, null, (Stamp) stamp.clone());
+        }
+        return new Sentence(t, punctuation, new TruthValue(truth), (Stamp) stamp.clone());
+    }
+    
     /**
-     * Get the content of the sentence
-     *
-     * @return The content Term
-     */
-    public Term getContent() {
-        return content;
+      * project a judgment to a difference occurrence time
+      *
+      * @param targetTime The time to be projected into
+      * @param currentTime The current time as a reference
+      * @return The projected belief
+      */    
+    public Sentence projection(long targetTime, long currentTime) {
+        TruthValue newTruth = new TruthValue(truth);
+        boolean eternalizing = false;
+        if (stamp.getOccurrenceTime() != Stamp.ETERNAL) {
+            newTruth = TruthFunctions.eternalization(truth);
+            eternalizing = true;
+            if (targetTime != Stamp.ETERNAL) {
+                long occurrenceTime = stamp.getOccurrenceTime();
+                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                float projectedConfidence = factor * truth.getConfidence();
+                if (projectedConfidence > newTruth.getConfidence()) {
+                    newTruth = new TruthValue(truth.getFrequency(), projectedConfidence);
+                    eternalizing = false;
+                }
+            }
+        }
+        Stamp newStamp = (Stamp) stamp.clone();
+        if (eternalizing) {
+            newStamp.setOccurrenceTime(Stamp.ETERNAL);
+        }
+        
+        Sentence newSentence = new Sentence(content.clone(), punctuation, newTruth, newStamp);
+        return newSentence;
     }
-    
-    public void setContent(Term t) {
-        content = t;
-        key = null;
-    }
-    
 
-    /**
-     * Get the punctuation of the sentence
-     *
-     * @return The character '.' or '?'
-     */
-    public char getPunctuation() {
-        return punctuation;
-    }
+
+
 
     /**
      * Clone the content of the sentence
@@ -178,30 +209,13 @@ public class Sentence implements Cloneable {
      * @return A clone of the content Term
      */
     public Term cloneContent() {
-        return (Term) content.clone();
+        return content.clone();
     }
 
 
-    /**
-     * Get the truth value of the sentence
-     *
-     * @return Truth value, null for question
-     */
-    public TruthValue getTruth() {
-        return truth;
-    }
 
     /**
-     * Get the stamp of the sentence
-     *
-     * @return The stamp
-     */
-    public Stamp getStamp() {
-        return stamp;
-    }
-
-    /**
-     * Distinguish Judgment from Goal ("instanceof Judgment" doesn't work)
+     * Recognize a Judgment
      *
      * @return Whether the object is a Judgment
      */
@@ -210,7 +224,7 @@ public class Sentence implements Cloneable {
     }
 
     /**
-     * Distinguish Question from Quest ("instanceof Question" doesn't work)
+     * Recognize a Question
      *
      * @return Whether the object is a Question
      */
@@ -218,18 +232,42 @@ public class Sentence implements Cloneable {
         return (punctuation == Symbols.QUESTION_MARK);
     }
 
+    public boolean isGoal() {
+        return (punctuation == Symbols.GOAL_MARK);
+    }
+ 
+    public boolean isQuest() {
+        return (punctuation == Symbols.QUEST_MARK);
+    }    
+    
     public boolean containQueryVar() {
-        return (content.getName().indexOf(Symbols.VAR_QUERY) >= 0);
+        return Variables.containVarQuery(content.name());
     }
 
     public boolean getRevisible() {
         return revisible;
     }
 
-    public void setRevisible(boolean b) {
+    public void setRevisible(final boolean b) {
         revisible = b;
     }
 
+    public int getTemporalOrder() {
+        return content.getTemporalOrder();
+    }
+    
+    public long getOccurenceTime() {
+        return stamp.getOccurrenceTime();
+    }
+    
+    public Operator getOperator() {
+        if (content instanceof Operation) {
+             return (Operator) ((Statement) content).getPredicate();
+        } else {
+             return null;
+        }
+    }    
+    
     /**
      * Get a String representation of the sentence
      *
@@ -237,50 +275,128 @@ public class Sentence implements Cloneable {
      */
     @Override
     public String toString() {
-        return toStringBrief();
+        return getKey().toString();
     }
 
-    /**
-     * Get a String representation of the sentence, with 2-digit accuracy
-     *
-     * @return The String
-     */
-    public String toStringBrief() {
-        return toKey() + stamp.toString();
-    }
-
+ 
     /**
      * Get a String representation of the sentence for key of Task and TaskLink
      *
      * @return The String
      */
-    public String toKey() {
+    public CharSequence getKey() {
         //key must be invalidated if content or truth change
         if (key == null) {
-            final String contentToString = content.toString();
-            final String truthString = truth!=null ? truth.toStringBrief() : null;
-            //final String stampString = stamp.toString();
+            final CharSequence contentName = content.name();
+            
+            final String occurrenceTimeString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getOccurrenceTimeString() : "";
+            
+            final CharSequence truthString = truth != null ? truth.name() : null;
 
-            int stringLength = contentToString.length() + 1 + 1/* + stampString.length()*/;
-            if (truth!=null)
-                stringLength += truthString.length();
-
-            final StringBuilder k = new StringBuilder(stringLength).append(contentToString)
-                .append(punctuation).append(" ");
+            int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
             if (truth != null) {
-                k.append(truthString);
+                stringLength += occurrenceTimeString.length() + truthString.length();
             }
 
-            key = k.toString();        
-            
+            //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
+            final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
+
+            if (truth != null) {
+                suffix.append(' ').append(truthString);
+            }
+            if (occurrenceTimeString.length() > 0) {
+                suffix.append(' ').append(occurrenceTimeString);
+            }
+
+            key = Texts.yarn(Parameters.ROPE_TERMLINK_TERM_SIZE_THRESHOLD, 
+                    contentName.toString(), 
+                    suffix.toString());
+            //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
+
         }
         return key;
     }
 
-    public void setStamp(Stamp stamp) {
-        this.stamp = stamp;
+    /**
+     * Get a String representation of the sentence for display purpose
+     *
+     * @return The String
+     */
+    public CharSequence toString(NAR nar, boolean showStamp) {
+    
+        CharSequence contentName = content.name();
+        
+        final long t = nar.memory.getTime();
+
+        final String tenseString = ((punctuation == Symbols.JUDGMENT_MARK) || (punctuation == Symbols.QUESTION_MARK)) ? stamp.getTense(t) : "";
+        final String truthString = (truth != null) ? truth.toStringBrief() : null;
+ 
+        CharSequence stampString = showStamp ? stamp.name() : null;
+        
+        int stringLength = contentName.length() + tenseString.length() + 1 + 1;
+                
+        if (truth != null) {
+            stringLength += truthString.length();
+        }
+        if (showStamp) {
+            stringLength += stampString.length();
+        }
+        
+        final StringBuilder buffer = new StringBuilder(stringLength)
+                .append(contentName)
+                .append(punctuation);
+        
+        if (tenseString.length() > 0)
+            buffer.append(' ').append(tenseString);
+        
+        if (truth != null)
+            buffer.append(' ').append(truthString);
+        
+        if (showStamp)
+            buffer.append(' ').append(stampString);
+        
+        return buffer;
     }
     
-    
-    
+   
+    /**
+     * Get the truth value (or desire value) of the sentence
+     *
+     * @return Truth value, null for question
+     */
+    public void discountConfidence() {
+        truth.setConfidence(truth.getConfidence() * Parameters.DISCOUNT_RATE).setAnalytic(false);
+    }
+
+    public Term toTerm(Memory mem) {
+        String opName;
+        switch (punctuation) {
+            case Symbols.JUDGMENT_MARK:
+                opName = "^believe";
+                break;
+            case Symbols.GOAL_MARK:
+                opName = "^want";
+                break;
+            case Symbols.QUESTION_MARK:
+                opName = "^wonder";
+                break;
+            case Symbols.QUEST_MARK:
+                opName = "^assess";
+                break;
+            default:
+                return null;
+        }
+        Term opTerm = mem.getOperator(opName);
+        int size=(truth==null ? 1 : 2);
+        Term[] arg = new Term[size];
+        arg[0]=content;
+        if (truth != null) {
+            String word = truth.toWord();
+            arg[1]=new Term(word);
+        }
+        Term argTerm = Product.make(arg,mem);
+        Term operation = Inheritance.make(argTerm, opTerm, mem);
+        return operation;
+    }
+
 }

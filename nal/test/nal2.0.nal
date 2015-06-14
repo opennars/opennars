@@ -1,0 +1,13 @@
+'********** revision
+
+'Robin is similar to swan.
+<robin <-> swan>.  
+
+'I think robin is not similar to swan.
+<robin <-> swan>. %0.10;0.60% 
+
+1
+
+'Robin is probably similar to swan. 
+''outputMustContain('<robin <-> swan>. %0.87;0.91%')
+

@@ -20,10 +20,29 @@
  */
 package nars.inference;
 
-import nars.entity.*;
-import nars.language.*;
+import nars.core.Parameters;
+import nars.entity.Concept;
+import nars.entity.Sentence;
+import nars.entity.Stamp;
+import nars.entity.Task;
+import nars.entity.TaskLink;
+import nars.entity.TermLink;
+import nars.language.CompoundTerm;
+import nars.language.Conjunction;
+import nars.language.Disjunction;
+import nars.language.Equivalence;
+import nars.language.Implication;
+import nars.language.Inheritance;
+import nars.language.Negation;
+import nars.language.SetExt;
+import nars.language.SetInt;
+import nars.language.Similarity;
+import nars.language.Statement;
+import nars.language.Term;
+import static nars.language.Terms.*;
+import static nars.io.Symbols.*;
+import static nars.language.Variables.unify;
 import nars.storage.Memory;
-import nars.io.Symbols;
 
 /**
  * Table of inference rules, indexed by the TermLinks for the task and the
@@ -40,51 +59,91 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     public static void reason(final TaskLink tLink, final TermLink bLink, final Memory memory) {
-        final Task task = memory.currentTask;
-        Sentence taskSentence = task.getSentence();
-        Term taskTerm = (Term) taskSentence.getContent().clone();         // cloning for substitution
-        Term beliefTerm = (Term) bLink.getTarget().clone();       // cloning for substitution
-        Concept beliefConcept = memory.termToConcept(beliefTerm);
+        
+        final Task task = memory.getCurrentTask();
+        Sentence taskSentence = task.sentence;
+        
+        Term taskTerm = taskSentence.content.clone();         // cloning for substitution
+        Term beliefTerm = bLink.target.clone();       // cloning for substitution
+        
+        if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+            double n=taskTerm.getComplexity() * Parameters.CONTRAPOSITION_PRIORITY; //don't let this rule apply every time, make it dependent on complexity
+            double w=1.0/n; //let's assume hierachical tuple (triangle numbers) amount for this
+            if(Memory.randomNumber.nextDouble()<w) { //so that NARS memory will not be spammed with contrapositions
+                StructuralRules.contraposition((Statement) taskTerm, taskSentence, memory); //before it was the linkage which did that
+            } //now we some sort "emulate" it.
+        }        
+        
+        if(taskTerm instanceof Statement && (taskTerm instanceof Implication) && taskSentence.isJudgment()) {
+            double n=taskTerm.getComplexity(); //don't let this rule apply every time, make it dependent on complexity
+            double w=1.0/((n*(n-1))/2.0); //let's assume hierachical tuple (triangle numbers) amount for this
+            if(Memory.randomNumber.nextDouble()<w) { //so that NARS memory will not be spammed with contrapositions
+                StructuralRules.contraposition((Statement) taskTerm, taskSentence, memory); //before it was the linkage which did that
+            } //now we some sort "emulate" it.
+        }
+        
+        
+        if(equalSubTermsInRespectToImageAndProduct(taskTerm,beliefTerm)) {
+           return;
+        }
+        
+        Concept beliefConcept = memory.concept(beliefTerm);
         Sentence belief = null;
         if (beliefConcept != null) {
             belief = beliefConcept.getBelief(task);
         }
-        memory.currentBelief = belief;  // may be null
+        memory.setCurrentBelief( belief );  // may be null
         if (belief != null) {
+            
             LocalRules.match(task, belief, memory);
+            if (!memory.noResult()) {
+                return;
+            }
         }
-        if (!memory.noResult() && task.getSentence().isJudgment()) {
+        
+        Sentence buf1=memory.getCurrentBelief();
+        Task buf2=memory.getCurrentTask();
+        
+        // to be invoked by the corresponding links 
+        CompositionalRules.dedSecondLayerVariableUnification(task,memory);
+        memory.setCurrentBelief(buf1);
+        memory.setCurrentTask(buf2);
+        
+        if (!memory.noResult() && task.sentence.isJudgment()) {
             return;
         }
+        
+        CompositionalRules.dedConjunctionByQuestion(taskSentence, belief, memory);
+        
         short tIndex = tLink.getIndex(0);
         short bIndex = bLink.getIndex(0);
-        switch (tLink.getType()) {          // dispatch first by TaskLink type
+        switch (tLink.type) {          // dispatch first by TaskLink type
             case TermLink.SELF:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                     case TermLink.COMPONENT:
-                        compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, memory);
+                        compoundAndSelf((CompoundTerm) taskTerm, beliefTerm, true, bIndex,  memory);
                         break;
                     case TermLink.COMPOUND:
-                        compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, memory);
+                        compoundAndSelf((CompoundTerm) beliefTerm, taskTerm, false, bIndex, memory);
                         break;
                     case TermLink.COMPONENT_STATEMENT:
                         if (belief != null) {
-                            SyllogisticRules.detachment(task.getSentence(), belief, bIndex, memory);
+                            SyllogisticRules.detachment(task.sentence, belief, bIndex, memory);
                         }
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
-                            SyllogisticRules.detachment(belief, task.getSentence(), bIndex, memory);
+                            SyllogisticRules.detachment(belief, task.sentence, bIndex, memory);
                         }
                         break;
                     case TermLink.COMPONENT_CONDITION:
-                        if (belief != null) {
+                        if ((belief != null) && (taskTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
                             SyllogisticRules.conditionalDedInd((Implication) taskTerm, bIndex, beliefTerm, tIndex, memory);
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:
-                        if (belief != null) {
+                        if ((belief != null) && (taskTerm instanceof Implication) && (beliefTerm instanceof Implication)) {
                             bIndex = bLink.getIndex(1);
                             SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, tIndex, memory);
                         }
@@ -92,9 +151,9 @@ public class RuleTables {
                 }
                 break;
             case TermLink.COMPOUND:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                     case TermLink.COMPOUND:
-                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, memory);
+                        compoundAndCompound((CompoundTerm) taskTerm, (CompoundTerm) beliefTerm, bIndex, memory);
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         compoundAndStatement((CompoundTerm) taskTerm, tIndex, (Statement) beliefTerm, bIndex, beliefTerm, memory);
@@ -103,7 +162,7 @@ public class RuleTables {
                         if (belief != null) {
                             if (beliefTerm instanceof Implication) {
 
-                                if (Variable.unify(Symbols.VAR_INDEPENDENT, ((Implication) beliefTerm).getSubject(), taskTerm, beliefTerm, taskTerm)) {
+                                if (unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, beliefTerm, taskTerm)) {
                                     detachmentWithVar(belief, taskSentence, bIndex, memory);
                                 } else {
                                     SyllogisticRules.conditionalDedInd((Implication) beliefTerm, bIndex, taskTerm, -1, memory);
@@ -117,9 +176,9 @@ public class RuleTables {
                 }
                 break;
             case TermLink.COMPOUND_STATEMENT:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                     case TermLink.COMPONENT:
-                        componentAndStatement((CompoundTerm) memory.currentTerm, bIndex, (Statement) taskTerm, tIndex, memory);
+                        componentAndStatement((CompoundTerm) memory.getCurrentTerm(), bIndex, (Statement) taskTerm, tIndex, memory);
                         break;
                     case TermLink.COMPOUND:
                         compoundAndStatement((CompoundTerm) beliefTerm, bIndex, (Statement) taskTerm, tIndex, beliefTerm, memory);
@@ -140,7 +199,7 @@ public class RuleTables {
                 }
                 break;
             case TermLink.COMPOUND_CONDITION:
-                switch (bLink.getType()) {
+                switch (bLink.type) {
                       case TermLink.COMPOUND:
                         if (belief != null) {
                             detachmentWithVar(taskSentence, belief, tIndex, memory);
@@ -151,9 +210,9 @@ public class RuleTables {
                         if (belief != null) {
                             if (taskTerm instanceof Implication) // TODO maybe put instanceof test within conditionalDedIndWithVar()
                             {
-                                Term subj = ((Implication) taskTerm).getSubject();
+                                Term subj = ((Statement) taskTerm).getSubject();
                                 if (subj instanceof Negation) {
-                                    if (task.getSentence().isJudgment()) {
+                                    if (task.sentence.isJudgment()) {
                                     componentAndStatement((CompoundTerm) subj, bIndex, (Statement) taskTerm, tIndex, memory);
                                     } else {
                                     componentAndStatement((CompoundTerm) subj, tIndex, (Statement) beliefTerm, bIndex, memory);
@@ -182,8 +241,8 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void syllogisms(TaskLink tLink, TermLink bLink, Term taskTerm, Term beliefTerm, Memory memory) {
-        Sentence taskSentence = memory.currentTask.getSentence();
-        Sentence belief = memory.currentBelief;
+        Sentence taskSentence = memory.getCurrentTask().sentence;
+        Sentence belief = memory.getCurrentBelief();
         int figure;
         if (taskTerm instanceof Inheritance) {
             if (beliefTerm instanceof Inheritance) {
@@ -241,67 +300,78 @@ public class RuleTables {
     /**
      * Syllogistic rules whose both premises are on the same asymmetric relation
      *
-     * @param sentence The taskSentence in the task
+     * @param taskSentence The taskSentence in the task
      * @param belief The judgment in the belief
      * @param figure The location of the shared term
      * @param memory Reference to the memory
      */
-    private static void asymmetricAsymmetric(Sentence sentence, Sentence belief, int figure, Memory memory) {
-        Statement s1 = (Statement) sentence.cloneContent();
-        Statement s2 = (Statement) belief.cloneContent();
+    private static void asymmetricAsymmetric(Sentence taskSentence, Sentence belief, int figure, Memory memory) {
+        Statement taskStatement = (Statement) taskSentence.cloneContent();
+        Statement beliefStatement = (Statement) belief.cloneContent();
+        
         Term t1, t2;
         switch (figure) {
             case 11:    // induction
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getSubject(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (unify(VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s2.getPredicate();
-                    t2 = s1.getPredicate();
-                    CompositionalRules.composeCompound(s1, s2, 0, memory);
-                    SyllogisticRules.abdIndCom(t1, t2, sentence, belief, figure, memory);
+                    t1 = beliefStatement.getPredicate();
+                    t2 = taskStatement.getPredicate();
+                    SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
+
+                    CompositionalRules.composeCompound(taskStatement, beliefStatement, 0, memory);
+                    //if(taskSentence.getOccurenceTime()==Stamp.ETERNAL && belief.getOccurenceTime()==Stamp.ETERNAL)
+                    CompositionalRules.introVarOuter(taskStatement, beliefStatement, 0, memory);//introVarImage(taskContent, beliefContent, index, memory);             
+                    CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,memory);
+                    
                 }
 
                 break;
             case 12:    // deduction
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getPredicate(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (unify(VAR_INDEPENDENT, taskStatement.getSubject(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s2.getSubject();
-                    t2 = s1.getPredicate();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, s1, s2)) {
+                    t1 = beliefStatement.getSubject();
+                    t2 = taskStatement.getPredicate();
+                    if (unify(VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
                         LocalRules.matchReverse(memory);
                     } else {
-                        SyllogisticRules.dedExe(t1, t2, sentence, belief, memory);
+                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, memory);
                     }
                 }
                 break;
             case 21:    // exemplification
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getSubject(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (unify(VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getSubject(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s1.getSubject();
-                    t2 = s2.getPredicate();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, s1, s2)) {
+                    t1 = taskStatement.getSubject();
+                    t2 = beliefStatement.getPredicate();
+                    if (unify(VAR_QUERY, t1, t2, taskStatement, beliefStatement)) {
                         LocalRules.matchReverse(memory);
                     } else {
-                        SyllogisticRules.dedExe(t1, t2, sentence, belief, memory);
+                        SyllogisticRules.dedExe(t1, t2, taskSentence, belief, memory);
                     }
                 }
                 break;
             case 22:    // abduction
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getPredicate(), s1, s2)) {
-                    if (s1.equals(s2)) {
+                if (unify(VAR_INDEPENDENT, taskStatement.getPredicate(), beliefStatement.getPredicate(), taskStatement, beliefStatement)) {
+                    if (taskStatement.equals(beliefStatement)) {
                         return;
                     }
-                    t1 = s1.getSubject();
-                    t2 = s2.getSubject();
-                    if (!SyllogisticRules.conditionalAbd(t1, t2, s1, s2, memory)) {         // if conditional abduction, skip the following
-                        CompositionalRules.composeCompound(s1, s2, 1, memory);
-                        SyllogisticRules.abdIndCom(t1, t2, sentence, belief, figure, memory);
+                    t1 = taskStatement.getSubject();
+                    t2 = beliefStatement.getSubject();
+                    if (!SyllogisticRules.conditionalAbd(t1, t2, taskStatement, beliefStatement, memory)) {         // if conditional abduction, skip the following
+                        SyllogisticRules.abdIndCom(t1, t2, taskSentence, belief, figure, memory);
+                        CompositionalRules.composeCompound(taskStatement, beliefStatement, 1, memory);
+                        CompositionalRules.introVarOuter(taskStatement, beliefStatement, 1, memory);// introVarImage(taskContent, beliefContent, index, memory);
+
                     }
+
+                    CompositionalRules.eliminateVariableOfConditionAbductive(figure,taskSentence,belief,memory);
+                    
                 }
                 break;
             default:
@@ -323,21 +393,22 @@ public class RuleTables {
         Term t1, t2;
         switch (figure) {
             case 11:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), asymSt, symSt)) {
+                if (unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), asymSt, symSt)) {
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getPredicate();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (unify(VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t2, t1, asym, sym, figure, memory);
                     }
+                    
                 }
                 break;
             case 12:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), asymSt, symSt)) {
+                if (unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), asymSt, symSt)) {
                     t1 = asymSt.getPredicate();
                     t2 = symSt.getSubject();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (unify(VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t2, t1, asym, sym, figure, memory);
@@ -345,10 +416,10 @@ public class RuleTables {
                 }
                 break;
             case 21:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), asymSt, symSt)) {
+                if (unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), asymSt, symSt)) {
                     t1 = asymSt.getSubject();
                     t2 = symSt.getPredicate();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (unify(VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t1, t2, asym, sym, figure, memory);
@@ -356,10 +427,10 @@ public class RuleTables {
                 }
                 break;
             case 22:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), asymSt, symSt)) {
+                if (unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), asymSt, symSt)) {
                     t1 = asymSt.getSubject();
                     t2 = symSt.getSubject();
-                    if (Variable.unify(Symbols.VAR_QUERY, t1, t2, asymSt, symSt)) {
+                    if (unify(VAR_QUERY, t1, t2, asymSt, symSt)) {
                         LocalRules.matchAsymSym(asym, sym, figure, memory);
                     } else {
                         SyllogisticRules.analogy(t1, t2, asym, sym, figure, memory);
@@ -380,28 +451,48 @@ public class RuleTables {
     private static void symmetricSymmetric(Sentence belief, Sentence taskSentence, int figure, Memory memory) {
         Statement s1 = (Statement) belief.cloneContent();
         Statement s2 = (Statement) taskSentence.cloneContent();
+        
+        Term ut1, ut2;  //parameters for unify()
+        Term rt1, rt2;  //parameters for resemblance()
+        
         switch (figure) {
             case 11:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getSubject(), s1, s2)) {
-                    SyllogisticRules.resemblance(s1.getPredicate(), s2.getPredicate(), belief, taskSentence, figure, memory);
-                }
+                ut1 = s1.getSubject();
+                ut2 = s2.getSubject();
+                rt1 = s1.getPredicate();
+                rt2 = s2.getPredicate();
                 break;
             case 12:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getSubject(), s2.getPredicate(), s1, s2)) {
-                    SyllogisticRules.resemblance(s1.getPredicate(), s2.getSubject(), belief, taskSentence, figure, memory);
-                }
+                ut1 = s1.getSubject();
+                ut2 = s2.getPredicate();
+                rt1 = s1.getPredicate();
+                rt2 = s2.getSubject();
                 break;
             case 21:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getSubject(), s1, s2)) {
-                    SyllogisticRules.resemblance(s1.getSubject(), s2.getPredicate(), belief, taskSentence, figure, memory);
-                }
+                ut1 = s1.getPredicate();
+                ut2 = s2.getSubject();
+                rt1 = s1.getSubject();
+                rt2 = s2.getPredicate();
                 break;
             case 22:
-                if (Variable.unify(Symbols.VAR_INDEPENDENT, s1.getPredicate(), s2.getPredicate(), s1, s2)) {
-                    SyllogisticRules.resemblance(s1.getSubject(), s2.getSubject(), belief, taskSentence, figure, memory);
-                }
+                ut1 = s1.getPredicate();
+                ut2 = s2.getPredicate();
+                rt1 = s1.getSubject();
+                rt2 = s2.getSubject();
                 break;
+            default: 
+                throw new RuntimeException("Invalid figure: " + figure);
         }
+
+        if (unify(VAR_INDEPENDENT, ut1, ut2, s1, s2)) {
+
+            SyllogisticRules.resemblance(rt1, rt2, belief, taskSentence, figure, memory);
+
+            CompositionalRules.eliminateVariableOfConditionAbductive(
+                    figure, taskSentence, belief, memory);
+            
+        }
+
     }
 
     /* ----- conditional inferences ----- */
@@ -417,19 +508,22 @@ public class RuleTables {
      */
     private static void detachmentWithVar(Sentence originalMainSentence, Sentence subSentence, int index, Memory memory) {
         Sentence mainSentence = (Sentence) originalMainSentence.clone();   // for substitution
-        Statement statement = (Statement) mainSentence.getContent();
-        Term component = statement.componentAt(index);
-        Term content = subSentence.getContent();
-        if (((component instanceof Inheritance) || (component instanceof Negation)) && (memory.currentBelief != null)) {
+        Statement statement = (Statement) mainSentence.content;
+        Term component = statement.term[index];
+        Term content = subSentence.content;
+        if (((component instanceof Inheritance) || (component instanceof Negation)) && (memory.getCurrentBelief() != null)) {
             if (component.isConstant()) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, memory);
-            } else if (Variable.unify(Symbols.VAR_INDEPENDENT, component, content, statement, content)) {
+            } else if (unify(VAR_INDEPENDENT, component, content, statement, content)) {
                 SyllogisticRules.detachment(mainSentence, subSentence, index, memory);
-            } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (memory.currentTask.getSentence().isJudgment())) {
+            } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (memory.getCurrentTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
                 if (s2.getSubject().equals(((Statement) content).getSubject())) {
                     CompositionalRules.introVarInner((Statement) content, s2, statement, memory);
                 }
+                CompositionalRules.IntroVarSameSubjectOrPredicate(originalMainSentence,subSentence,component,content,index,memory);
+            } else if ((statement instanceof Equivalence) && (statement.getPredicate() instanceof Statement) && (memory.getCurrentTask().sentence.isJudgment())) {
+                CompositionalRules.IntroVarSameSubjectOrPredicate(originalMainSentence,subSentence,component,content,index,memory);                
             }
         }
     }
@@ -445,20 +539,25 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void conditionalDedIndWithVar(Implication conditional, short index, Statement statement, short side, Memory memory) {
-        CompoundTerm condition = (CompoundTerm) conditional.getSubject();
-        Term component = condition.componentAt(index);
+        
+        if (!(conditional.getSubject() instanceof CompoundTerm))
+            return;
+        
+        CompoundTerm condition = (CompoundTerm) conditional.getSubject();        
+        
+        Term component = condition.term[index];
         Term component2 = null;
         if (statement instanceof Inheritance) {
             component2 = statement;
             side = -1;
         } else if (statement instanceof Implication) {
-            component2 = statement.componentAt(side);
+            component2 = statement.term[side];
         }
 
         if (component2 != null) {
-            boolean unifiable = Variable.unify(Symbols.VAR_INDEPENDENT, component, component2, conditional, statement);
+            boolean unifiable = unify(VAR_INDEPENDENT, component, component2, conditional, statement);
             if (!unifiable) {
-                unifiable = Variable.unify(Symbols.VAR_DEPENDENT, component, component2, conditional, statement);
+                unifiable = unify(VAR_DEPENDENT, component, component2, conditional, statement);
             }
             if (unifiable) {
                 SyllogisticRules.conditionalDedInd(conditional, index, statement, side, memory);
@@ -475,17 +574,17 @@ public class RuleTables {
      * @param compoundTask Whether the compound comes from the task
      * @param memory Reference to the memory
      */
-    private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, Memory memory) {
+     private static void compoundAndSelf(CompoundTerm compound, Term component, boolean compoundTask, int index, Memory memory) {
         if ((compound instanceof Conjunction) || (compound instanceof Disjunction)) {
-            if (memory.currentBelief != null) {
-                CompositionalRules.decomposeStatement(compound, component, compoundTask, memory);
-            } else if (compound.containComponent(component)) {
-                StructuralRules.structuralCompound(compound, component, compoundTask, memory);
+            if (memory.getCurrentBelief() != null) {
+                CompositionalRules.decomposeStatement(compound, component, compoundTask, index, memory);
+            } else if (compound.containsTerm(component)) {
+                StructuralRules.structuralCompound(compound, component, compoundTask, index, memory);
             }
-//        } else if ((compound instanceof Negation) && !memory.currentTask.isStructural()) {
+//        } else if ((compound instanceof Negation) && !memory.getCurrentTask().isStructural()) {
         } else if (compound instanceof Negation) {
             if (compoundTask) {
-                StructuralRules.transformNegation(((Negation) compound).componentAt(0), memory);
+                StructuralRules.transformNegation(compound.term[0], memory);
             } else {
                 StructuralRules.transformNegation(compound, memory);
             }
@@ -499,12 +598,12 @@ public class RuleTables {
      * @param beliefTerm The compound from the belief
      * @param memory Reference to the memory
      */
-    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, Memory memory) {
+    private static void compoundAndCompound(CompoundTerm taskTerm, CompoundTerm beliefTerm, int index, Memory memory) {
         if (taskTerm.getClass() == beliefTerm.getClass()) {
             if (taskTerm.size() > beliefTerm.size()) {
-                compoundAndSelf(taskTerm, beliefTerm, true, memory);
+                compoundAndSelf(taskTerm, beliefTerm, true, index, memory);
             } else if (taskTerm.size() < beliefTerm.size()) {
-                compoundAndSelf(beliefTerm, taskTerm, false, memory);
+                compoundAndSelf(beliefTerm, taskTerm, false, index, memory);
             }
         }
     }
@@ -520,24 +619,22 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void compoundAndStatement(CompoundTerm compound, short index, Statement statement, short side, Term beliefTerm, Memory memory) {
-        Term component = compound.componentAt(index);
-        Task task = memory.currentTask;
+        Term component = compound.term[index];
+        Task task = memory.getCurrentTask();
         if (component.getClass() == statement.getClass()) {
-            if ((compound instanceof Conjunction) && (memory.currentBelief != null)) {
-                if (Variable.unify(Symbols.VAR_DEPENDENT, component, statement, compound, statement)) {
+            if ((compound instanceof Conjunction) && (memory.getCurrentBelief() != null)) {
+                if (unify(VAR_DEPENDENT, component, statement, compound, statement)) {
                     SyllogisticRules.elimiVarDep(compound, component, statement.equals(beliefTerm), memory);
-                } else if (task.getSentence().isJudgment()) { // && !compound.containComponent(component)) {
+                } else if (task.sentence.isJudgment()) { // && !compound.containsTerm(component)) {
                     CompositionalRules.introVarInner(statement, (Statement) component, compound, memory);
-                } else if (Variable.unify(Symbols.VAR_QUERY, component, statement, compound, statement)) {
-                    CompositionalRules.decomposeStatement(compound, component, true, memory);                    
+                } else if (unify(VAR_QUERY, component, statement, compound, statement)) {
+                    CompositionalRules.decomposeStatement(compound, component, true, index, memory);                    
                 }
             }
         } else {
-//            if (!task.isStructural() && task.getSentence().isJudgment()) {
-            if (task.getSentence().isJudgment()) {
+            if (task.sentence.isJudgment()) {
                 if (statement instanceof Inheritance) {
                     StructuralRules.structuralCompose1(compound, index, statement, memory);
-//                    if (!(compound instanceof SetExt) && !(compound instanceof SetInt)) {
                     if (!(compound instanceof SetExt || compound instanceof SetInt || compound instanceof Negation)) {
                         StructuralRules.structuralCompose2(compound, index, statement, side, memory);
                     }    // {A --> B, A @ (A&C)} |- (A&C) --> (B&C)
@@ -558,7 +655,6 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     private static void componentAndStatement(CompoundTerm compound, short index, Statement statement, short side, Memory memory) {
-//        if (!memory.currentTask.isStructural()) {
         if (statement instanceof Inheritance) {
             StructuralRules.structuralDecompose1(compound, index, statement, memory);
             if (!(compound instanceof SetExt) && !(compound instanceof SetInt)) {
@@ -570,16 +666,17 @@ public class RuleTables {
             StructuralRules.structuralDecompose2(statement, index, memory);        // {(C-B) --> (C-A), A @ (C-A)} |- A --> B
             if ((compound instanceof SetExt) || (compound instanceof SetInt)) {
                 StructuralRules.transformSetRelation(compound, statement, side, memory);
-            }
-        } else if ((statement instanceof Implication) && (compound instanceof Negation)) {
-            if (index == 0) {
-                StructuralRules.contraposition(statement, memory.currentTask.getSentence(), memory);
-            } else {
-                StructuralRules.contraposition(statement, memory.currentBelief, memory);
-            }
+            }            
+        } 
         
-        }
-//        }
+        /*else if ((statement instanceof Implication) && (compound instanceof Negation)) {
+            if (index == 0) {
+                StructuralRules.contraposition(statement, memory.getCurrentTask().getSentence(), memory);
+            } else {
+                StructuralRules.contraposition(statement, memory.getCurrentBelief(), memory);
+            }        
+        }*/
+        
     }
 
     /* ----- inference with one TaskLink only ----- */
@@ -591,17 +688,23 @@ public class RuleTables {
      * @param memory Reference to the memory
      */
     public static void transformTask(TaskLink tLink, Memory memory) {
-        CompoundTerm content = (CompoundTerm) memory.currentTask.getContent().clone();
-        short[] indices = tLink.getIndices();
+        CompoundTerm content = (CompoundTerm) memory.getCurrentTask().getContent().clone();
+        short[] indices = tLink.index;
         Term inh = null;
         if ((indices.length == 2) || (content instanceof Inheritance)) {          // <(*, term, #) --> #>
             inh = content;
         } else if (indices.length == 3) {   // <<(*, term, #) --> #> ==> #>
-            inh = content.componentAt(indices[0]);
+            inh = content.term[indices[0]];
         } else if (indices.length == 4) {   // <(&&, <(*, term, #) --> #>, #) ==> #>
-            Term component = content.componentAt(indices[0]);
+            Term component = content.term[indices[0]];
             if ((component instanceof Conjunction) && (((content instanceof Implication) && (indices[0] == 0)) || (content instanceof Equivalence))) {
-                inh = ((CompoundTerm) component).componentAt(indices[1]);
+                
+                Term[] cterms = ((CompoundTerm) component).term;
+                if (indices[1] < cterms.length-1)
+                    inh = cterms[indices[1]];
+                else
+                    return;
+                
             } else {
                 return;
             }

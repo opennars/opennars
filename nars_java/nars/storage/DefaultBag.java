@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 me
+ * Copyright (C) 2014 OpenNARS
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,12 @@ import nars.entity.Item;
 
 /**
  *
- * @author me
  */
 public class DefaultBag<E extends Item> extends Bag<E> {
-    private final AtomicInteger forgetRate;
 
     public DefaultBag(int levels, int capacity, int forgetRate) {
-        this(levels, capacity, new AtomicInteger(forgetRate));        
+        super(levels, capacity, new AtomicInteger(forgetRate));        
     }
     
-    public DefaultBag(int levels, int capacity, AtomicInteger forgetRate) {
-        super(levels, capacity);
-        this.forgetRate = forgetRate;
-    }
-
-
-    @Override
-    protected int forgetRate() {
-        return forgetRate.get();
-    }
     
 }

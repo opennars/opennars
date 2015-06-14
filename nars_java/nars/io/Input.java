@@ -19,17 +19,23 @@
 
 package nars.io;
 
+import java.io.IOException;
+
 /**
  * 
  * Provides input for the next moment from an input channel that delivers input asynchronously
  */
-public interface Input {
-    /**
-     * Get next input and process it
-     * @return false if no more input is available, true otherwise
-     */
-    public boolean nextInput();
-
+public interface Input<X> {
+   
+    /** returns next input if available, null if none */
+    public X next() throws IOException;
     
-    public boolean isClosed();
+    /**
+     * 
+     * @param stop - if true, this Input should terminate (ex: close connections) because 
+     * it has been removed from NAR.
+     * @return whether this input is finished
+     */
+    public boolean finished(boolean stop);
+    
 }

@@ -19,11 +19,18 @@
  * along with Open-NARS.  If not, see <http://www.gnu.org/licenses/>.
  */
 package nars.gui;
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.GridLayout;
+import java.awt.Scrollbar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JScrollBar;
 
 /**
  * JWindow displaying a system parameter that can be adjusted in run time
@@ -31,14 +38,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ParameterWindow extends Window implements ActionListener, AdjustmentListener, WindowFocusListener {
 
     /** Display label */
-    private JLabel valueLabel;
+    private final JLabel valueLabel;
     /** Control buttons */
-    private JButton hideButton, undoButton, defaultButton;
+    private final JButton hideButton, undoButton, defaultButton;
     /** Adjusting bar */
-    private JScrollBar valueBar;
+    private final JScrollBar valueBar;
     /** parameter values */
     private int defaultValue, previousValue; // , currentValue;
-    private AtomicInteger currentValue;
+    private final AtomicInteger currentValue;
     
     /**
      * Constructor
@@ -99,6 +106,7 @@ public class ParameterWindow extends Window implements ActionListener, Adjustmen
      * Handling button click
      * @param e The ActionEvent
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         Object s = e.getSource();
         if (s == defaultButton) {
@@ -126,6 +134,7 @@ public class ParameterWindow extends Window implements ActionListener, Adjustmen
      * Handling scrollbar movement
      * @param e The AdjustmentEvent
      */
+    @Override
     public void adjustmentValueChanged(AdjustmentEvent e) {
         if (e.getSource() == valueBar) {
             int v = valueBar.getValue();

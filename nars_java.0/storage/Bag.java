@@ -343,7 +343,7 @@ public abstract class Bag<Type extends Item> {
      */
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer(" ");
+        StringBuilder buf = new StringBuilder(" ");
 //        int showLevel = window == null ? 1 : window.showLevel();
 		for (int i = TOTAL_LEVEL; i >= showLevel ; i--) {
             if (!emptyLevel(i - 1)) {
@@ -358,7 +358,7 @@ public abstract class Bag<Type extends Item> {
     
     /** TODO bad paste from preceding */
     public String toStringLong() {
-        StringBuffer buf = new StringBuffer(" BAG " + getClass().getSimpleName() );
+        StringBuilder buf = new StringBuilder(" BAG " + getClass().getSimpleName() );
         buf.append(" ").append( showSizes() );
 		for (int i = TOTAL_LEVEL; i >= showLevel; i--) {
             if (!emptyLevel(i - 1)) {

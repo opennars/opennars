@@ -26,7 +26,7 @@ import nars.storage.Memory;
  * A Statement about an Instance relation, which is used only in Narsese for I/O, 
  * and translated into Inheritance for internal use.
  */
-public abstract class Instance extends Statement {
+public abstract class Instance /*extends Statement*/ {
     
     /**
      * Try to make a new compound from two components. Called by the inference rules.

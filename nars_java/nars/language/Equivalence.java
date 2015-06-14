@@ -20,9 +20,8 @@
  */
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import nars.inference.TemporalRules;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
@@ -30,80 +29,118 @@ import nars.storage.Memory;
  */
 public class Equivalence extends Statement {
 
+    private int temporalOrder = TemporalRules.ORDER_NONE;
+
     /**
      * Constructor with partial values, called by make
+     *
      * @param components The component list of the term
      */
-    protected Equivalence(ArrayList<Term> components) {
-        super(components);
+    private Equivalence(CharSequence name, Term[] components, int order) {
+        super(name, components);
+        temporalOrder = order;
     }
 
     /**
      * Constructor with full values, called by clone
+     *
      * @param n The name of the term
      * @param components Component list
      * @param constant Whether the statement contains open variable
      * @param complexity Syntactic complexity of the compound
      */
-    protected Equivalence(String n, ArrayList<Term> components, boolean constant, short complexity) {
+    private Equivalence(CharSequence n, Term[] components, boolean constant, short complexity, int order) {
         super(n, components, constant, complexity);
+        temporalOrder = order;
     }
 
     /**
      * Clone an object
+     *
      * @return A new object
      */
     @Override
-    public Object clone() {
-        return new Equivalence(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+    public Equivalence clone() {
+        return new Equivalence(name(), cloneTerms(), isConstant(), complexity, temporalOrder);
     }
 
     /**
-     * Try to make a new compound from two components. Called by the inference rules.
+     * Try to make a new compound from two term. Called by the inference
+     * rules.
+     *
      * @param subject The first component
      * @param predicate The second component
      * @param memory Reference to the memory
      * @return A compound generated or null
      */
     public static Equivalence make(Term subject, Term predicate, Memory memory) {  // to be extended to check if subject is Conjunction
-        if ((subject instanceof Implication) || (subject instanceof Equivalence)) {
-            return null;
-        }
-        if ((predicate instanceof Implication) || (predicate instanceof Equivalence)) {
-            return null;
-        }
+        return make(subject, predicate, TemporalRules.ORDER_NONE, memory);
+    }
+
+    public static Equivalence make(Term subject, Term predicate, int temporalOrder, Memory memory) {  // to be extended to check if subject is Conjunction
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        if (subject.compareTo(predicate) > 0) {
+        if ((subject instanceof Implication) || (subject instanceof Equivalence)
+                || (predicate instanceof Implication) || (predicate instanceof Equivalence)) {
+            return null;
+        }
+        if ((temporalOrder == TemporalRules.ORDER_BACKWARD)
+                || ((subject.compareTo(predicate) > 0) && (temporalOrder != TemporalRules.ORDER_FORWARD))) {
             Term interm = subject;
             subject = predicate;
             predicate = interm;
         }
-        String name = makeStatementName(subject, Symbols.Relation.EQUIVALENCE.toString(), predicate);
-        Term t = memory.nameToListedTerm(name);
+        NativeOperator copula;
+        switch (temporalOrder) {
+            case TemporalRules.ORDER_BACKWARD:
+                temporalOrder = TemporalRules.ORDER_FORWARD;
+                //TODO determine if this missing break is intended
+            case TemporalRules.ORDER_FORWARD:
+                copula = NativeOperator.EQUIVALENCE_AFTER;
+                break;
+            case TemporalRules.ORDER_CONCURRENT:
+                copula = NativeOperator.EQUIVALENCE_WHEN;
+                break;
+            default:
+                copula = NativeOperator.EQUIVALENCE;
+        }
+        CharSequence name = makeStatementName(subject, copula, predicate);
+        Term t = memory.conceptTerm(name);
         if (t != null) {
             return (Equivalence) t;
         }
-        ArrayList<Term> argument = argumentsToList(subject, predicate);
-        return new Equivalence(argument);
+        return new Equivalence(name, termArray(subject, predicate), temporalOrder);
     }
 
     /**
      * Get the operator of the term.
+     *
      * @return the operator of the term
      */
     @Override
-    public String operator() {
-        return Symbols.Relation.EQUIVALENCE.toString();
+    public NativeOperator operator() {
+        switch (temporalOrder) {
+            case TemporalRules.ORDER_FORWARD:
+                return NativeOperator.EQUIVALENCE_AFTER;
+            case TemporalRules.ORDER_CONCURRENT:
+                return NativeOperator.EQUIVALENCE_WHEN;
+        }
+        return NativeOperator.EQUIVALENCE;
     }
 
     /**
      * Check if the compound is commutative.
+     *
      * @return true for commutative
      */
     @Override
     public boolean isCommutative() {
-        return true;
+        return (temporalOrder != TemporalRules.ORDER_FORWARD);
+    }
+
+    @Override
+    public int getTemporalOrder() {
+        return temporalOrder;
     }
 }

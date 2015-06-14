@@ -1,0 +1,12 @@
+'********** compound composition, one premise
+
+'Swan is a type of bird. 
+<swan --> bird>. %0.90% 
+
+'Is being bird what differ swimmer from swan?
+<(~,swimmer, swan) --> bird>?  
+
+32
+
+'What differs swimmer from swan is not being bird.
+''outputMustContain('<(~,swimmer,swan) --> bird>. %0.10;0.73%')

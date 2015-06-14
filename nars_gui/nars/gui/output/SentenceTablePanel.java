@@ -14,13 +14,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import nars.core.NAR;
-import nars.entity.Concept;
 import nars.entity.Sentence;
 import nars.entity.TruthValue;
-import nars.graph.NARGraph.Filter;
 import nars.gui.NPanel;
 import nars.io.Output;
-import nars.language.Term;
 
 /**
  *
@@ -91,41 +88,9 @@ public class SentenceTablePanel extends NPanel implements Output {
         return data;
     }
 
-    public Filter newSelectedGraphFilter() {
-        
-        final List<Sentence> selected = getSelectedRows();
-
-        
-        
-        return new Filter() {
-
-            @Override
-            public boolean includeLevel(int l) {  return true; }
-
-            @Override
-            public boolean includeConcept(final Concept c) {
-                final Term t = c.getTerm();
-                
-                
-                for (final Sentence s : selected) {                    
-                    
-                    if (s.getContent() == t)
-                        return true;
-                    if (s.getContent().containTerm(t))
-                        return true;
-                    if (c.beliefs.contains(s))
-                        return true;
-                    
-                    //TODO check if c.questions involves t
-                }                
-                return false;                
-            }
-            
-        };
-    }
     
     public void newSelectedGraphPanel() {
-        new ProcessingGraphPanel(nar, newSelectedGraphFilter());        
+        new ProcessingGraphPanel(nar, getSelectedRows());        
     }
     
     @Override
@@ -135,7 +100,7 @@ public class SentenceTablePanel extends NPanel implements Output {
             
             float freq = -1;
             float conf = -1;
-            TruthValue truth = s.getTruth();
+            TruthValue truth = s.truth;
             if (truth!=null) {
                 freq = truth.getFrequency();
                 conf = truth.getConfidence();
@@ -144,11 +109,10 @@ public class SentenceTablePanel extends NPanel implements Output {
             //TODO use table sort instead of formatting numbers with leading '0's
             data.addRow(new Object[] {
                 s,
-                String.format("%08d",  nar.getTime()),
-                s.getPunctuation(),
+                String.format("%08d",  nar.getTime()), s.punctuation,
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
-                String.format("%03d",  s.getContent().getComplexity())     
+                String.format("%03d",  s.content.getComplexity())     
             });
         }
     }
@@ -156,9 +120,9 @@ public class SentenceTablePanel extends NPanel implements Output {
     @Override
     protected void onShowing(boolean showing) {
         if (showing)
-            nar.addOutputChannel(this);        
+            nar.addOutput(this);        
         else
-            nar.removeOutputChannel(this);                
+            nar.removeOutput(this);                
     }
 
     private List<Sentence> getSelectedRows() {

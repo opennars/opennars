@@ -20,9 +20,12 @@
  */
 package nars.entity;
 
-import nars.inference.*;
-import nars.io.Symbols;
 import nars.core.Parameters;
+import nars.inference.BudgetFunctions;
+import static nars.inference.UtilityFunctions.and;
+import static nars.inference.UtilityFunctions.aveGeo;
+import static nars.inference.UtilityFunctions.or;
+import nars.io.Symbols;
 
 /**
  * A triple of priority (current), durability (decay), and quality (long-term average).
@@ -33,17 +36,21 @@ public class BudgetValue implements Cloneable {
     private static final char MARK = Symbols.BUDGET_VALUE_MARK;
     /** The character that separates the factors in a budget value */
     private static final char SEPARATOR = Symbols.VALUE_SEPARATOR;
+   
+    
     /** The relative share of time resource to be allocated */
-    final protected ShortFloat priority;
-	/**
-	 * The percent of priority to be kept in a constant period; All priority
-	 * values “decay” over time, though at different rates. Each item is given a
-	 * “durability” factor in (0, 1) to specify the percentage of priority level
-	 * left after each reevaluation
-	 */
-    final protected ShortFloat durability;
+    final public ShortFloat priority;
+    
+    /**
+     * The percent of priority to be kept in a constant period; All priority
+     * values "decay" over time, though at different rates. Each item is given a
+     * "durability" factor in (0, 1) to specify the percentage of priority level
+     * left after each reevaluation
+     */
+    final public ShortFloat durability;
+    
     /** The overall (context-independent) evaluation */
-    final protected ShortFloat quality;
+    final public ShortFloat quality;
 
     /** 
      * Default constructor
@@ -91,6 +98,9 @@ public class BudgetValue implements Cloneable {
     public float getPriority() {
         return priority.getValue();
     }
+    public short getPriorityShort() {
+        return priority.getShortValue();
+    }
 
     /**
      * Change priority value
@@ -105,7 +115,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incPriority(final float v) {
-        priority.setValue(UtilityFunctions.or(priority.getValue(), v));
+        priority.setValue(or(priority.getValue(), v));
     }
 
     /**
@@ -113,7 +123,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decPriority(final float v) {
-        priority.setValue(UtilityFunctions.and(priority.getValue(), v));
+        priority.setValue(and(priority.getValue(), v));
     }
 
     /**
@@ -137,7 +147,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incDurability(final float v) {
-        durability.setValue(UtilityFunctions.or(durability.getValue(), v));
+        durability.setValue(or(durability.getValue(), v));
     }
 
     /**
@@ -145,7 +155,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decDurability(final float v) {
-        durability.setValue(UtilityFunctions.and(durability.getValue(), v));
+        durability.setValue(and(durability.getValue(), v));
     }
 
     /**
@@ -169,7 +179,7 @@ public class BudgetValue implements Cloneable {
      * @param v The increasing percent
      */
     public void incQuality(final float v) {
-        quality.setValue(UtilityFunctions.or(quality.getValue(), v));
+        quality.setValue(or(quality.getValue(), v));
     }
 
     /**
@@ -177,7 +187,7 @@ public class BudgetValue implements Cloneable {
      * @param v The decreasing percent
      */
     public void decQuality(final float v) {
-        quality.setValue(UtilityFunctions.and(quality.getValue(), v));
+        quality.setValue(and(quality.getValue(), v));
     }
 
     /**
@@ -193,7 +203,7 @@ public class BudgetValue implements Cloneable {
      * @return The summary value
      */
     public float summary() {
-        return UtilityFunctions.aveGeo(priority.getValue(), durability.getValue(), quality.getValue());
+        return aveGeo(priority.getValue(), durability.getValue(), quality.getValue());
     }
 
     /**
@@ -212,6 +222,8 @@ public class BudgetValue implements Cloneable {
      */
     @Override
     public String toString() {
+        
+        
         return MARK + priority.toString() + SEPARATOR + durability.toString() + SEPARATOR + quality.toString() + MARK;
     }
 
@@ -220,6 +232,17 @@ public class BudgetValue implements Cloneable {
      * @return String representation of the value with 2-digit accuracy
      */
     public String toStringBrief() {
-        return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
+        //return MARK + priority.toStringBrief() + SEPARATOR + durability.toStringBrief() + SEPARATOR + quality.toStringBrief() + MARK;
+
+        final String priorityString = priority.toStringBrief();
+        final String durabilityString = durability.toStringBrief();
+        final String qualityString = quality.toStringBrief();
+        return new StringBuilder(1 + priorityString.length() + 1 + durabilityString.length() + 1 + qualityString.length() + 1)
+            .append(MARK)
+            .append(priorityString).append(SEPARATOR)
+            .append(durabilityString).append(SEPARATOR)
+            .append(qualityString)
+            .append(MARK)
+            .toString();                
     }
 }

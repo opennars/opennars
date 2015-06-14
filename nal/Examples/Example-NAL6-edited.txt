@@ -57,7 +57,7 @@
 // If something can fly and chirp, then it is a bird.
 <<$y --> [with-wings]> ==> <$y --> flyer>>. 
 // If something has wings, then it can fly.
-8
+4
  OUT: <(&&,<$1 --> [chirping]>,<$1 --> [with-wings]>) ==> <$1 --> bird>>. %1.00;0.81% 
 // If something can chirp and has wings, then it is a bird.
 
@@ -66,7 +66,7 @@
 // If something can fly, chirp, and eats worms, then it is a bird.
 <(&&,<$y --> [chirping]>,<$y --> [with-wings]>) ==> <$y --> bird>>.
 // If something can chirp and has wings, then it is a bird.
-6
+10
  OUT: <(&&,<$1 --> flyer>,<(*,$1,worms) --> food>) ==> <$1 --> [with-wings]>>. %1.00;0.45%  
 // If something can fly and eats worms, then I guess it has wings.
  OUT: <<$1 --> [with-wings]> ==> (&&,<$1 --> flyer>,<(*,$1,worms) --> food>)>. %1.00;0.45% 
@@ -77,7 +77,7 @@
 // If something can fly and eats worms, then it is a bird.
 <<$y --> flyer> ==> <$y --> [with-wings]>>.
 // If something can fly, then it has wings.
-4
+12
  OUT: <(&&,<$1 --> [with-wings]>,<worms --> (/,food,$1,_)>) ==> <$1 --> bird>>. %1.00;0.45% 
 // If something has wings and eats worms, then I guess it is a bird.
 
@@ -122,7 +122,7 @@
 // Tweety has wings.
 <(&&,<$x --> [chirping]>,<$x --> [with-wings]>) ==> <$x --> bird>>.
 // If something can chirp and has wings, then it is a bird.
-23
+6
  OUT: <<{Tweety} --> [chirping]> ==> <{Tweety} --> bird>>. %1.00;0.81%
 // If Tweety can chirp, then it is a bird.
 
@@ -131,8 +131,8 @@
 // If something can fly, chirp, and eats worms, then it is a bird.
 <{Tweety} --> flyer>.
 // Tweety can fly.
-7
- OUT: <(&&,<(*,{Tweety},worms) --> food>,<{Tweety} --> [chirping]>) ==> <{Tweety} --> bird>>. %1.00;0.81%
+3
+ OUT: <(&&,<{Tweety} --> [chirping]>,<(*,{Tweety},worms) --> food>) ==> <{Tweety} --> bird>>. %1.00;0.81%
 // If Tweety can chirp and eats worms, then it is a bird.
 
 ********** multiple variable elimination
@@ -140,7 +140,7 @@
 // Every lock can be opened by every key.
 <{lock1} --> lock>. 
 // Lock-1 is a lock.
-20
+5
  OUT: <<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.81%
 // Lock-1 can be opened by every key.
 
@@ -149,7 +149,7 @@
 // Every lock can be opened by some key.
 <{lock1} --> lock>. 
 // Lock-1 is a lock.
-9
+3
  OUT: (&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.81% 
 // Some key can open Lock-1.
 
@@ -158,7 +158,7 @@
 // There is a lock that can be opened by every key.
 <{lock1} --> lock>.
 // Lock-1 is a lock.
-9
+3
  OUT: <<$1 --> key> ==> <{lock1} --> (/,open,$1,_)>>. %1.00;0.43% 
 // I guess Lock-1 can be opened by every key.
 
@@ -167,8 +167,8 @@
 // There is a key that can open some lock.
 <{lock1} --> lock>.
 // Lock-1 is a lock.
-18
- OUT: (&&,<#1 --> key>,<{lock1} --> (/,open,#1,_)>). %1.00;0.43%
+4
+ OUT: (&&,<#1 --> key>,<(*,#1,{lock1}) --> open>). %1.00;0.43%
 // I guess there is a key that can open Lock-1.
 
 ********** variable introduction
@@ -217,7 +217,7 @@
 // Lock-1 can be opened by every key.
 <{lock1} --> lock>. 
 // Lock-1 is a lock.
-166
+15
  OUT: (&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.81%
 // There is a lock that can be opened by every key.
  OUT: <(&&,<$1 --> key>,<$2 --> lock>) ==> <$2 --> (/,open,$1,_)>>. %1.00;0.45%
@@ -228,19 +228,53 @@
 // Lock-1 can be opened by some key.
 <{lock1} --> lock>. 
 // Lock-1 is a lock.
-17
+15
  OUT: (&&,<#1 --> key>,<#2 --> lock>,<#2 --> (/,open,#1,_)>). %1.00;0.81%
 // There is a key that can open some lock.
  OUT: <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.45% 
 // I guess every lock can be opened by some key.
 
-********** recursion
-  IN: <0 --> num>. %1.00;0.90% {0 : 1} 
-// 0 is a number
-  IN: <<$1 --> num> ==> <(*,$1) --> num>>. %1.00;0.90% {0 : 2} 
-// If n is a number, n+1 is also a number
-  IN: <(*,(*,(*,0))) --> num>?  {0 : 3} 
-// 3 is a number?
-1029
- OUT: <(*,(*,(*,0))) --> num>. %1.00;0.66%
-// I guess 3 is a number
+***** second level variable unification
+  IN: (&&,<#1 --> lock>,<<$2 --> key> ==> <#1 --> (/,open,$2,_)>>). %1.00;0.90% 
+//there is a lock which is opened by all keys
+  IN: <{key1} --> key>. %1.00;0.90% 
+//key1 is a key
+5
+ OUT: (&&,<#1 --> lock>,<#1 --> (/,open,{key1},_)>). %1.00;0.81%
+//there is a lock which is opened by key1
+
+***** second level variable unification
+  IN: <<$1 --> lock> ==> (&&,<#2 --> key>,<$1 --> (/,open,#2,_)>)>. %1.00;0.90% 
+//all locks are opened by some key
+  IN: <{key1} --> key>. %1.00;0.90% 
+//key1 is a key
+5
+ OUT: <<$1 --> lock> ==> <$1 --> (/,open,{key1},_)>>. %1.00;0.43%  
+//maybe all locks are opened by key1
+
+***** second variable introduction (induction)
+  IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>.
+//if something opens lock1, it is a key
+  IN: <lock1 --> lock>.
+//lock1 is a key
+7
+ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>. %1.00;0.45%
+//there is a lock with the property that when opened by something, this something is a key (induction)
+
+***** variable elimination (deduction)
+  IN: <lock1 --> lock>. %1.00;0.90%
+//lock1 is a lock
+  IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>. %1.00;0.90% 
+//there is a lock with the property that when opened by something, this something is a key
+4
+ OUT: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.43%
+//whatever opens lock1 is a key
+
+***** abduction with variable elimination (abduction)
+  IN: <<lock1 --> (/,open,$1,_)> ==> <$1 --> key>>. %1.00;0.90% {0 : 1} 
+//whatever opens lock1 is a key
+  IN: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>. %1.00;0.90% {0 : 2} 
+//there is a lock with the property that when opened by something, this something is a key
+10
+ OUT: <lock1 --> lock>. %1.00;0.45% {10 : 1;2} 
+//lock1 is a lock

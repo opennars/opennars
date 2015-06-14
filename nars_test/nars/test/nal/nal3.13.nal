@@ -1,8 +1,0 @@
-
-********** compound decomposition, one premise
-<robin --> (-,bird,swimmer)>. %0.90% 
-// Robin is a type of nonswimming bird. 
-6
- OUT: <robin --> bird>. %0.90;0.73% 
-// Robin is a type of bird. 
-

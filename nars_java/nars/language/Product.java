@@ -21,13 +21,11 @@
 
 package nars.language;
 
-import java.util.*;
-
-import nars.io.Symbols;
+import nars.io.Symbols.NativeOperator;
 import nars.storage.Memory;
 
 /**
- * A Product is a sequence of terms.
+ * A Product is a sequence of 1 or more terms.
  */
 public class Product extends CompoundTerm {
     
@@ -36,8 +34,8 @@ public class Product extends CompoundTerm {
      * @param n The name of the term
      * @param arg The component list of the term
      */
-    private Product(ArrayList<Term> arg) {
-        super(arg);
+    private Product(final CharSequence name, final Term[] arg) {
+        super(name, arg);
     }
     
     /**
@@ -47,28 +45,34 @@ public class Product extends CompoundTerm {
      * @param open Open variable list
      * @param complexity Syntactic complexity of the compound
      */
-    private Product(String n, ArrayList<Term> cs, boolean con, short complexity) {
-        super(n, cs, con, complexity);
+    private Product(final CharSequence n, Term[] cs, final boolean con, final boolean hasVar, final short complexity) {
+        super(n, cs, con, hasVar, complexity);
     }
+    
+    @Override
+    public int getMinimumRequiredComponents() {
+        return 1;
+    }    
     
     /**
      * Clone a Product
      * @return A new object, to be casted into an ImageExt
      */
-    public Object clone() {
-        return new Product(name, (ArrayList<Term>) cloneList(components), isConstant(), complexity);
+    @Override
+    public Product clone() {
+        return new Product(name(), cloneTerms(), isConstant(), containVar(), complexity);
     }
 
      /**
      * Try to make a new compound. Called by StringParser.
      * @return the Term generated from the arguments
-     * @param argument The list of components
-     * @param memory Reference to the memeory
+     * @param argument The list of term
+     * @param memory Reference to the memory
      */
-    public static Term make(ArrayList<Term> argument, Memory memory) {
-        String name = makeCompoundName(Symbols.PRODUCT_OPERATOR, argument);
-        Term t = memory.nameToListedTerm(name);
-        return (t != null) ? t : new Product(argument);
+    public static Term make(Term[] argument, final Memory memory) {
+        final CharSequence name = makeCompoundName(NativeOperator.PRODUCT, argument);
+        final Term t = memory.conceptTerm(name);
+        return (t != null) ? t : new Product(name, argument);
     }
         
     /**
@@ -79,9 +83,9 @@ public class Product extends CompoundTerm {
      * @param memory Reference to the memeory
      * @return A compound generated or a term it reduced to
      */
-    public static Term make(CompoundTerm image, Term component, int index, Memory memory) {
-        ArrayList<Term> argument = image.cloneComponents();
-        argument.set(index, component);
+    public static Term make(final CompoundTerm image, final Term component, final int index, final Memory memory) {
+        Term[] argument = image.cloneTerms();
+        argument[index] = component;
         return make(argument, memory);
     }
     
@@ -89,7 +93,8 @@ public class Product extends CompoundTerm {
      * Get the operator of the term.
      * @return the operator of the term
      */
-    public String operator() {
-        return Symbols.PRODUCT_OPERATOR;
+    @Override
+    public NativeOperator operator() {
+        return NativeOperator.PRODUCT;
     }
 }

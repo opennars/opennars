@@ -173,7 +173,7 @@ public class ReasonerBatch {
 	            int i = Integer.parseInt(text);
 	            walk(i);
 	        } catch (NumberFormatException e) {
-	            Task task = StringParser.parseExperience(new StringBuffer(text), memory, clock);
+	            Task task = StringParser.parseExperience(new StringBuilder(text), memory, clock);
 	            if (task != null) {
 	                memory.inputTask(task);
 	            }

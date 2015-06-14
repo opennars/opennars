@@ -1,0 +1,9 @@
+
+
+********** [04 + 13 -> 14]:
+  IN: <(*,Self,key001) --> reachable>. :|:
+11
+  IN: <(^pick,key001) =/> <(*,Self,key001) --> hold>>. :|: 
+20
+''outputMustContain('<(&/,<(*,Self,key001) --> reachable>,+2,(^pick,key001)) =/> <(*,Self,key001) --> hold>>. :|: %1.00;0.45%') 
+

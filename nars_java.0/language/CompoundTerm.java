@@ -242,7 +242,7 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeCompoundName(String op, ArrayList<Term> arg) {
-        StringBuffer name = new StringBuffer();
+        StringBuilder name = new StringBuilder();
         name.append(Symbols.COMPOUND_TERM_OPENER);
         name.append(op);
         for (Term t : arg) {
@@ -264,7 +264,7 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeSetName(char opener, ArrayList<Term> arg, char closer) {
-        StringBuffer name = new StringBuffer();
+        StringBuilder name = new StringBuilder();
         name.append(opener);
         name.append(arg.get(0).getName());
         for (int i = 1; i < arg.size(); i++) {
@@ -283,7 +283,7 @@ public abstract class CompoundTerm extends Term {
      * @return the oldName of the term
      */
     protected static String makeImageName(String op, ArrayList<Term> arg, int relationIndex) {
-        StringBuffer name = new StringBuffer();
+        StringBuilder name = new StringBuilder();
         name.append(Symbols.COMPOUND_TERM_OPENER);
         name.append(op);
         name.append(Symbols.ARGUMENT_SEPARATOR);
@@ -420,7 +420,7 @@ public abstract class CompoundTerm extends Term {
      */
     public boolean containAllComponents(Term t) {
         if (getClass() == t.getClass()) {
-            return components.containsAll(((CompoundTerm) t).getComponents());
+            return components.containsAll(((CompoundTerm) t).components);
         } else {
             return components.contains(t);
         }
@@ -440,7 +440,7 @@ public abstract class CompoundTerm extends Term {
         boolean success;
         ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass()) {
-            success = list.addAll(((CompoundTerm) t2).getComponents());
+            success = list.addAll(((CompoundTerm) t2).components);
         } else {
             success = list.add(t2);
         }
@@ -458,7 +458,7 @@ public abstract class CompoundTerm extends Term {
         boolean success;
         ArrayList<Term> list = t1.cloneComponents();
         if (t1.getClass() == t2.getClass()) {
-            success = list.removeAll(((CompoundTerm) t2).getComponents());
+            success = list.removeAll(((CompoundTerm) t2).components);
         } else {
             success = list.remove(t2);
         }

@@ -28,34 +28,23 @@ package nars.entity;
  */
 public abstract class Item {
 
-    /** The key of the Item, unique in a Bag */
-    protected String key;
+    
     /** The budget of the Item, consisting of 3 numbers */
-    protected final BudgetValue budget;
+    public final BudgetValue budget;
 
     /**
      * The default constructor
      */
     protected Item() {
-        budget = null;
+        this(new BudgetValue());
     }
-
-    /**
-     * Constructor with default budget
-     * @param key The key value
-     */
-    protected Item(final String key) {
-        this.key = key;
-        this.budget = new BudgetValue();
-     }
 
     /**
      * Constructor with initial budget
      * @param key The key value
      * @param budget The initial budget
      */
-    protected Item(final String key, final BudgetValue budget) {
-        this.key = key;
+    protected Item(final BudgetValue budget) {
         this.budget = new BudgetValue(budget);  // clone, not assignment
     }
 
@@ -64,17 +53,8 @@ public abstract class Item {
      * Get the current key
      * @return Current key value
      */
-    public String getKey() {
-        return key;
-    }
+    abstract public CharSequence getKey();
 
-    /**
-     * Get BudgetValue
-     * @return Current BudgetValue
-     */
-    public BudgetValue getBudget() {
-        return budget;
-    }
 
     /**
      * Get priority value
@@ -161,7 +141,7 @@ public abstract class Item {
      * @param that The Item to be merged
      */
     public void merge(final Item that) {
-        budget.merge(that.getBudget());
+        budget.merge(budget);
     }
 
     /**
@@ -169,8 +149,10 @@ public abstract class Item {
      * @return The String representation of the full content
      */
     @Override
-    public String toString() {
-        return budget + " " + key ;
+    public String toString() {        
+        //return budget + " " + key ;
+        String budgetStr = budget.toString();
+        return new StringBuilder(budgetStr.length()+getKey().length()+1).append(budgetStr).append(' ').append(getKey()).toString();
     }
 
     /**
@@ -178,7 +160,9 @@ public abstract class Item {
      * @return A simplified String representation of the content
      */
     public String toStringBrief() {        
-        return budget.toStringBrief() + " " + key ;
+        //return budget.toStringBrief() + " " + key ;
+        final String briefBudget = budget.toStringBrief();
+        return new StringBuilder(briefBudget.length()+getKey().length()+1).append(briefBudget).append(' ').append(getKey()).toString();
     }
     
     public String toStringLong() {

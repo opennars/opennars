@@ -9,9 +9,9 @@
   "directory": "lib/",
   "dependencies": {
 	"jquery":"",
-	"jquery-ui":"",
 	"lodash":"",
-	"jquery.terminal":""
+	"____jquery-ui":"",
+	"____jquery.terminal":""
   },
   "keywords": [
     "nars",

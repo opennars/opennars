@@ -3,13 +3,13 @@
     <head>
         <script type="text/javascript" src="web_socket.js"></script>
         <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="lib/jquery-ui/ui/minified/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="lib/jquery.terminal/js/jquery.terminal-min.js"></script>
+        <!--<script type="text/javascript" src="lib/jquery-ui/ui/minified/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="lib/jquery.terminal/js/jquery.terminal-min.js"></script>-->
         <script type="text/javascript" src="lib/lodash/dist/lodash.min.js"></script>
         <style type="text/css">
-            @import url("lib/jquery-ui/themes/dot-luv/jquery-ui.min.css");
+            /*@import url("lib/jquery-ui/themes/dot-luv/jquery-ui.min.css");
             @import url("lib/jquery-ui/themes/dot-luv/jquery.ui.theme.css");
-            @import url("lib/jquery.terminal/css/jquery.terminal.css");
+            @import url("lib/jquery.terminal/css/jquery.terminal.css");*/
             @import url("index.css");
         </style>
         <style>
@@ -17,12 +17,9 @@
 
     </head>
     <body>
-        <div id="menu">
-            <div id="menubuttons">
-                <button id="playButton" class="active" title="Go">&vrtri;</button><button id="pauseButton" title="Pause">&timesb; </button><button class="active" id="languageToggle" title="Toggle Language">A</button>                
-            </div>            
+        <div id="menu">         
             <input id="volume" type="number" name="Volume" min="0" max="100" value="100" title="Volume"/>
-            <a id="title">NARS</a>
+            <a id="title">openNARS</a>
         </div>
 
         <div id="io">
@@ -31,7 +28,7 @@
 
         <script type="text/javascript">
 
-            var nlp = 1;
+            var nlp = 0;
             var websocketPort = 10000;
             var ws = new WebSocket('ws://' + window.location.hostname + ':' + websocketPort);
 
@@ -46,7 +43,7 @@
                     return 'out';
                 return null;
             }
-            var begin = 'you are nars. \nnars is intelligent of course, and it is fine. \nfine is a feeling.';
+            var begin = '<tom --> fast>.\n<tim --> fast>.\n<tim <-> ?what>?';
             function addIO(message) {
                 var d = $('<div/>').addClass('section');
 
@@ -228,10 +225,6 @@
                 else {
                     $('#languageToggle').removeClass('active');
                 }
-            });
-
-            $('#title').click(function() {
-                alert('Non Axiomatic Reasoning System, Stanfords NLP Parser, Patricks Stanford to Narsese and Narsese to English Converter, SeHs HTML5 web interface, have fun. Highly experimental prototype. What makes NARS special: Besides the fact that it is the first successful AGI: It has a unified theory of intelligence, and a theory about uncertainty which makes it possible for NARS to handle contradictions like we humans can, and which makes it possible to evaluate the trustworthiness of different sources. Also similar like we do, it handles intension (properties) and extension (instances) symmetrically, NARS way to think is very similar to ours. The right question or information at the right time, will change the flow of its thoughts very similar to how we human observe them. NARS pays special attention to your questions, but it, as a active system, will also think and recognize things without any questions. It may forget information it did not consider being important, reconsider own answers and so on. However, always keep in mind, that intelligence and knowledge are not the same, this version is initialized without any prior knowledge about anything. Everything it will know, it gets from you. Also the system has no idea of human communication. However, the internal language of thought, namely Narsese the system uses has many similarities to simple language, which makes this possible. It is this high-level way of thinking NARS tries to represent and which is characteristic for the abstract way we are able to think. This abstract way of thinking and optimally organizing the own thought processes according to current goals and the things we currently consider altough our thinking (time, memory) is always insufficient to consider absolutely everything, is the ultimative essence of intelligence. Or to cite Pei: NARS is adaptive to its experience, and therefore is situated and embodied. Its beliefs summarize the systems experience (rather than describe the world as it is), and its concepts represent patterns in the experience (rather than denote the objects in the world). Its inference rules are valid, because each conclusion is supported by the evidence provided by the premises (rather than because they derive absolute truth from absolute truth). The system is rational, because its conclusions are the best the system can find under the current knowledge and resources restriction (rather than because they are always absolutely correct or optimal).');
             });
 
 

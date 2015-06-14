@@ -1,0 +1,15 @@
+'********** compound decomposition, two premises
+
+'Robin is a type of bird or a type of swimmer. 
+<robin --> (|,bird,swimmer)>.  
+
+'Robin is not a type of swimmer. 
+<robin --> swimmer>. %0.00% 
+
+32
+
+'Robin is a type of bird. 
+
+''outputMustContain('<robin --> bird>. %1.00;0.81%')
+
+
