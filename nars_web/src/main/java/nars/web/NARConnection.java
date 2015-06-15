@@ -9,7 +9,6 @@ package nars.web;
 import nars.NAR;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
-import nars.io.out.TextOutput.LineOutput;
 
 /**
  * An instance of a web socket session to a NAR

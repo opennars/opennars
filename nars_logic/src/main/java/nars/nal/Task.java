@@ -580,10 +580,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         sentence.applyToStamp(c);
     }
 
-    @Override
-    public long[] getEvidentialBase() {
-        return sentence.getEvidentialBase();
-    }
 
     @Override
     public long[] getEvidentialSet() {

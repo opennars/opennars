@@ -14,12 +14,13 @@ import nars.nal.term.Compound;
  */
 public class Stamper<C extends Compound> extends DirectBudget implements Stamp, StampEvidence, AbstractStamper {
 
-    protected long[] evidentialBase = null;
+
 
     protected int duration;
     protected long creationTime = Stamp.UNPERCEIVED;
 
     protected long occurrenceTime;
+    protected boolean cyclic = false;
 
 //    /**
 //     * used when the occurrence time cannot be estimated, means "unknown"
@@ -31,7 +32,7 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
     protected Stamp b = null;
 
-    private long[] evidentialSetCached;
+    private long[] evidentialSet;
 
     @Deprecated public Stamper(final Memory memory, final Tense tense) {
         this(memory, memory.time(), tense);
@@ -60,7 +61,7 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         this.setCreationTime(creationTime);
         this.setOccurrenceTime(occurrenceTime);
         this.setDuration(duration);
-        this.setEvidentialBase(evidentialBase);
+        this.setEvidentialSet(evidentialSet);
     }
 
     public Stamper(Memory memory, long occurrence) {
@@ -79,11 +80,11 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     public Stamper clone() {
-        return new Stamper(getEvidentialBase(), getA(), getB(), getCreationTime(), getOccurrenceTime(), getDuration());
+        return new Stamper(getEvidentialSet(), getA(), getB(), getCreationTime(), getOccurrenceTime(), getDuration());
     }
 
     public Stamper cloneEternal() {
-        return new Stamper(getEvidentialBase(), getA(), getB(), getCreationTime(), Stamp.ETERNAL, getDuration());
+        return new Stamper(getEvidentialSet(), getA(), getB(), getCreationTime(), Stamp.ETERNAL, getDuration());
     }
 
     public Stamper(long[] evidentialBase, long creationTime, long occurrenceTime, int duration) {
@@ -114,9 +115,13 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     }
 
     @Override
-    public Stamp setEvidentialBase(long[] b) {
-        this.evidentialBase = b;
-        return this;
+    public boolean isCyclic() {
+        return cyclic;
+    }
+
+    @Override
+    public void setCyclic(boolean cyclic) {
+        this.cyclic = cyclic;
     }
 
 
@@ -131,6 +136,7 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
 
 
+
     @Override public void applyToStamp(final Stamp target) {
 
         if (target instanceof Stamper) {
@@ -142,7 +148,8 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
         target.setDuration(getDuration())
               .setTime(getCreationTime(), getOccurrenceTime())
-              .setEvidence(getEvidentialBase(), getEvidentialSetCached());
+              .setEvidence(getEvidentialSet())
+                .setCyclic(isCyclic());
 
     }
 
@@ -190,29 +197,27 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
     @Override
     public long[] getEvidentialSet() {
         updateEvidence();
-        long[] es = getEvidentialSetCached();
-        if (es == null) {
-            this.evidentialSetCached = es = Stamp.toSetArray(getEvidentialBase());
-        }
-        return es;
+        return evidentialSet;
     }
 
-    /**
-     * serial numbers. not to be modified after Stamp constructor has initialized it
-     */
-    public long[] getEvidentialBase() {
-        updateEvidence();
-        return evidentialBase;
-    }
+
 
     protected void updateEvidence() {
-        if (evidentialBase == null) {
+        if (evidentialSet== null) {
 
             if ((getA() == null) && (getB() == null)) {
                 //supplying no evidence will be assigned a new serial
                 //but this should only happen for input tasks (with no parent)
             } else if (isDouble()) {
-                this.evidentialBase = (Stamp.zip(getA().getEvidentialBase(), getB().getEvidentialBase()));
+                long[] as = getA().getEvidentialSet();
+                long[] bs = getB().getEvidentialSet();
+                int len = as.length + bs.length;
+
+                setEvidentialSet(Stamp.toSetArray(Stamp.zip(as, bs)));
+
+                //if the sum of the two parents length is greater than the result then there was some overlap
+                cyclic = (len > evidentialSet.length);
+
             }
             else {
                 //Single premise
@@ -222,14 +227,18 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
                 else if (getB() == null) p = getA();
 
                 if (p!=null) {
-                    this.evidentialBase = (p.getEvidentialBase());
-                    this.evidentialSetCached = (p.getEvidentialSet());
+                    setEvidentialSet(p.getEvidentialSet());
                 }
             }
 
         }
     }
 
+    @Override
+    public Stamp setEvidentialSet(long[] evidentialSet) {
+        this.evidentialSet = evidentialSet;
+        return this;
+    }
 
     @Override
     public String toString() {
@@ -275,9 +284,6 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
         this.b = b; return this;
     }
 
-    public long[] getEvidentialSetCached() {
-        return evidentialSetCached;
-    }
 
 
     public boolean isDouble() {

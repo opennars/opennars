@@ -5,8 +5,6 @@ package nars.nal.stamp;
  */
 public interface StampEvidence extends AbstractStamper {
 
-    /** the evidentialBase array of serials */
-    abstract public long[] getEvidentialBase();
 
     /** deduplicated and sorted version of the evidentialBase.
      * this can always be calculated deterministically from the evidentialBAse
@@ -15,8 +13,6 @@ public interface StampEvidence extends AbstractStamper {
 
 
 
-    default public boolean isCyclic() {
-        return Stamp.isCyclic(this);
-    }
+    public boolean isCyclic();
 
 }

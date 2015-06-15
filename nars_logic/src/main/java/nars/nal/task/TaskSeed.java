@@ -38,6 +38,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     private String reason;
 
     private boolean temporalInduct = true;
+    private boolean cyclic = false;
 
     //@Deprecated private long occDelta = 0;
 
@@ -314,14 +315,15 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
                 throw new RuntimeException("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
         }
 
-        if (getEvidentialBase() == null) {
+        if (getEvidentialSet() == null) {
             if (getParentTask() != null)
                 throw new RuntimeException(this + " has parent " + getParentTask() + " and " + getParentBelief() + " yet no evidentialBase was supplied");
 
-            setEvidentialBase(new long[]{memory.newStampSerial()});
+            setEvidentialSet(new long[]{memory.newStampSerial()});
+
         } else {
             if (getParentTask() == null)
-                throw new RuntimeException(this + " has no parent so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialBase()));
+                throw new RuntimeException(this + " has no parent so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
         }
 
         Task t = new Task(sentenceTerm, punc, truth, this,
@@ -383,8 +385,8 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
      * otherwise assume that it is not.
      */
     public boolean isCyclic() {
-        if (getEvidentialBase() != null)
-            return Stamp.isCyclic(this);
+        if (getEvidentialSet() != null)
+            return cyclic;
 
 //        if ((stamp != null) && (stamp instanceof StampEvidence))
 //            return ((StampEvidence) stamp).isCyclic();

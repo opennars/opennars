@@ -80,14 +80,9 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     transient private int hash;
 
 
-    /**
-     * Partial record of the derivation path
-     */
-    private long[] evidentialBase = null;
 
     /**
-     * caches evidentialBase as a set for comparisons and hashcode.
-     * stores the unique Long's in-order for efficiency
+     * Partial record of the derivation path
      */
     transient private long[] evidentialSet = null;
 
@@ -97,7 +92,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     private long occurrenceTime = Stamp.ETERNAL;
 
     private int duration = 0;
-
+    private boolean cyclic;
 
 
     public Sentence(Term invalidTerm, char punctuation, Truth newTruth, AbstractStamper newStamp) {
@@ -629,16 +624,9 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         return occurrenceTime == Stamp.ETERNAL;
     }
 
-    @Override
-    public long[] getEvidentialBase() {
-        return evidentialBase;
-    }
 
     @Override
     public long[] getEvidentialSet() {
-        if (evidentialSet == null) {
-            this.evidentialSet = Stamp.toSetArray(evidentialBase);
-        }
         return evidentialSet;
     }
 
@@ -680,19 +668,8 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     @Override public void applyToStamp(Stamp target) {
         target.setDuration(getDuration());
         target.setTime(getCreationTime(), getOccurrenceTime());
-        target.setEvidentialBase(getEvidentialBase());
-    }
-
-    @Override
-    public Sentence setEvidentialBase(long[] evidentialBase) {
-
-        if (this.evidentialBase!=null)
-            throw new RuntimeException(this + " already assigned an EvidentialBase: " + Arrays.toString(evidentialBase) + " different from: " + Arrays.toString(this.evidentialBase));
-
-        this.evidentialBase = evidentialBase;
-        this.evidentialSet = null;
-        invalidateHash();
-        return this;
+        target.setEvidentialSet(getEvidentialSet());
+        target.setCyclic(isCyclic());
     }
 
     @Override
@@ -798,6 +775,12 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     @Override
     public boolean isCyclic() {
         //TODO cache this?
-        return Stamp.isCyclic(this);
+        return cyclic;
     }
+
+    @Override
+    public void setCyclic(boolean cyclic) {
+        this.cyclic = cyclic;
+    }
+
 }

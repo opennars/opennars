@@ -428,7 +428,7 @@ public class Memory implements Serializable, AbstractStamper {
 //    }
         t.setCreationTime(time());
         t.setDuration(duration());
-        t.setEvidentialBase(new long[]{ newStampSerial() });
+        t.setEvidentialSet(new long[]{ newStampSerial() });
     }
 
     public void randomSeed(long randomSeed) {

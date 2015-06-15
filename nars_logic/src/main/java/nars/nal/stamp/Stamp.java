@@ -578,10 +578,10 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 
     default public CharSequence stampAsStringBuilder() {
 
-        long[] evidentialBase = getEvidentialBase();
+        long[] evidentialBase = getEvidentialSet();
 
-        final int baseLength = evidentialBase.length;
-        final int estimatedInitialSize = 8 + (baseLength * 3);
+        final int len = getEvidentialSet().length;
+        final int estimatedInitialSize = 8 + (len * 3);
 
         final StringBuilder buffer = new StringBuilder(estimatedInitialSize);
         buffer.append(Symbols.STAMP_OPENER);
@@ -591,9 +591,9 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             buffer.append(getCreationTime());
         }
         buffer.append(Symbols.STAMP_STARTER).append(' ');
-        for (int i = 0; i < baseLength; i++) {
-            buffer.append(Long.toString(evidentialBase[i], 16));
-            if (i < (baseLength - 1)) {
+        for (int i = 0; i < len; i++) {
+            buffer.append(Long.toString(getEvidentialSet()[i], 16));
+            if (i < (len - 1)) {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             }
         }
@@ -613,8 +613,6 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
     public Stamp setOccurrenceTime(long o);
     public Stamp setDuration(int d);
 
-    /** should not call this directly, but use setEvidence() */
-    public Stamp setEvidentialBase(long[] b);
 
     /** default implementation here is just to ignore the cached value
      * because an implementation can generate one anyway.
@@ -624,10 +622,9 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
      *
      *
      */
-    default Stamp setEvidentialSet(long[] evidentialSetCached) {  return this;  }
+    abstract public Stamp setEvidentialSet(long[] evidentialSet);
 
-    default Stamp setEvidence(long[] evidentialBase, long[] evidentialSet) {
-        setEvidentialBase(evidentialBase);
+    default Stamp setEvidence(long[] evidentialSet) {
         setEvidentialSet(evidentialSet);
         return this;
     }
@@ -682,45 +679,35 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
      */
 
 
-    static boolean isCyclic(final StampEvidence x) {
-        long[] eb = x.getEvidentialBase();
-        switch (eb.length) {
-            case 0:
-            case 1:
-                return false;
-            case 2:
-                return eb[0] == eb[1];
-            default:
-                return isCyclic(eb, x.getEvidentialSet());
-        }
-    }
 
-    static boolean isCyclic(final long[] eb, long[] es) {
-        if (eb == null) {
-            throw new RuntimeException("evidentialBase null");
-        }
-        if (es == null) {
-            throw new RuntimeException("evidentialSet null");
-        }
+    abstract void setCyclic(boolean cyclic);
 
-        //if the evidential set contains duplicates, it will be of a smaller size then the original evidence
-        return es.length != eb.length;
-
-
-        /*
-        final int stampLength = evidentialBase.length;
-        for (int i = 0; i < stampLength; i++) {
-            final long baseI = evidentialBase[i];
-            for (int j = 0; j < stampLength; j++) {
-                if ((i != j) && (baseI == evidentialBase[j])) {
-                    return true;
-                }
-            }
-        }
-        return false;
-        */
-
-    }
+    //    static boolean isCyclic(final long[] eb, long[] es) {
+//        if (eb == null) {
+//            throw new RuntimeException("evidentialBase null");
+//        }
+//        if (es == null) {
+//            throw new RuntimeException("evidentialSet null");
+//        }
+//
+//        //if the evidential set contains duplicates, it will be of a smaller size then the original evidence
+//        return es.length != eb.length;
+//
+//
+//        /*
+//        final int stampLength = evidentialBase.length;
+//        for (int i = 0; i < stampLength; i++) {
+//            final long baseI = evidentialBase[i];
+//            for (int j = 0; j < stampLength; j++) {
+//                if ((i != j) && (baseI == evidentialBase[j])) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//        */
+//
+//    }
 
 
     public static boolean evidentialSetOverlaps(final Stamp a, final Stamp b) {
