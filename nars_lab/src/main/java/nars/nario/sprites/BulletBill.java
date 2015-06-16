@@ -132,7 +132,7 @@ public class BulletBill extends Sprite
         {
             if (yD > -height && yD < shell.height)
             {
-                world.sound.play(Art.samples[Art.SAMPLE_MARIO_KICK], this, 1, 1);
+                //world.sound.play(Art.samples[Art.SAMPLE_MARIO_KICK], this, 1, 1);
 
                 dead = true;
 

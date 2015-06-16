@@ -45,17 +45,6 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         this.setEnabled(true);
 
 
-        if (soundEnabled) {
-
-            try {
-                sound = new Audio(16);
-            } catch (LineUnavailableException e) {
-                e.printStackTrace();
-                sound = new FakeSoundEngine();
-            }
-        } else {
-            sound = new FakeSoundEngine();
-        }
 
         setFocusable(true);
     }
@@ -181,9 +170,8 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
         //      scene = new LevelScene(graphicsConfiguration);
         mapScene = new MapScene(graphicsConfiguration, this, new Random().nextLong());
         scene = mapScene;
-        scene.setSound(sound);
 
-        Art.init(graphicsConfiguration, sound);
+        Art.init(graphicsConfiguration);
 
         updateDoubleBuffer(320, 240);
         og = image.getGraphics();

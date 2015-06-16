@@ -66,7 +66,7 @@ public class Art
             //return silentSample;
         }
     }
-    public static void init(GraphicsConfiguration gc, Audio sound)
+    public static void init(GraphicsConfiguration gc)
     {
         try
         {

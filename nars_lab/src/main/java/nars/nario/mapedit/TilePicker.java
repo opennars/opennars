@@ -35,7 +35,7 @@ public class TilePicker extends JComponent implements MouseListener, MouseMotion
     public void addNotify()
     {
         super.addNotify();
-        Art.init(getGraphicsConfiguration(), null);
+        Art.init(getGraphicsConfiguration());
     }
 
     public void paintComponent(Graphics g)

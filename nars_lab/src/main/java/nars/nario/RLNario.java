@@ -5,10 +5,7 @@ import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
 import nars.nal.term.Atom;
-import nars.rl.HaiSOMPerception;
-import nars.rl.Perception;
-import nars.rl.QLAgent;
-import nars.rl.RawPerception;
+import nars.rl.*;
 import nars.rl.example.QVis;
 
 /**
@@ -28,7 +25,6 @@ public class RLNario extends NARio  {
         this.agent = new QLAgent(nar, "A", "<I --> G>", this, p);
 
         agent.ql.brain.setEpsilon(0.15);
-        agent.ql.brain.setAlpha(0.1);
 
         mi = new QVis(agent);
 
@@ -77,21 +73,21 @@ public class RLNario extends NARio  {
     public static void main(String[] args) {
 
 
-        NAR nar = new NAR(new Default(3000, 30, 4));
+        NAR nar = new NAR(new Default(3000, 15, 4));
         nar.memory.setSelf(Atom.the("I"));
 
-        nar.param.duration.set(memoryCyclesPerFrame * 1);
+        nar.param.duration.set(5);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);
-        nar.param.executionThreshold.set(0.6);
+        nar.param.executionThreshold.set(0.55);
         nar.param.shortTermMemoryHistory.set(3);
 
         RLNario rl = new RLNario(nar,
                 new RawPerception("r", 0.1f),
                 //new RawPerception.BipolarDirectPerception("r", 0.7f),
-                new HaiSOMPerception("s", 3, 0.1f)
-                //new AEPerception("a", 0.1f, 3, 2).setLearningRate(0.005).setSigmoid(false)
+                new HaiSOMPerception("s", 3, 0.1f),
+                new AEPerception("a", 0.1f, 3, 2).setLearningRate(0.005).setSigmoid(false)
                 //new AEPerception("b", 0.8f, 4).setLearningRate(0.08).setSigmoid(false)
         );
 

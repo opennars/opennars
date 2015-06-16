@@ -54,7 +54,7 @@ public class LevelEditView extends JComponent implements MouseListener, MouseMot
     public void addNotify()
     {
         super.addNotify();
-        Art.init(getGraphicsConfiguration(), null);
+        Art.init(getGraphicsConfiguration());
         levelRenderer = new LevelRenderer(level, getGraphicsConfiguration(), level.width * 16, level.height * 16);
         levelRenderer.renderBehaviors = true;
     }

@@ -76,7 +76,7 @@ public class Audio implements Runnable
 
 
     public void play(SonarSample sample, SoundSource soundSource, float volume, float priority) {
-        play(new SamplePlayer(sample, rate), soundSource, volume, priority);
+        //play(new SamplePlayer(sample, rate), soundSource, volume, priority);
     }
 
     static class DefaultSource implements SoundSource {

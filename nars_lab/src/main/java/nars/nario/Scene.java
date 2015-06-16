@@ -16,8 +16,8 @@ public abstract class Scene implements SoundListener {
     }
 
     public final void setSound(Audio sound) {
-        sound.setListener(this);
-        this.sound = sound;
+        //sound.setListener(this);
+        //this.sound = sound;
     }
 
     public abstract void init();

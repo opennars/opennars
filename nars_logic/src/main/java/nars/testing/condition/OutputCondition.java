@@ -149,7 +149,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
 
                 Task t = task.apply(match);//n.narsese.parseTask(match);
                 if (t!=null)
-                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle, false, similarResultsToSave));
+                    conditions.add(new TaskCondition(n, Events.IN.class, t, cycle, false, similarResultsToSave, Events.IN.class));
                 else
                     throw new RuntimeException("API upgrade incomplete"); //conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
 
