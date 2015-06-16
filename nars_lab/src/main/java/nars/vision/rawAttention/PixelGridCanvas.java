@@ -29,12 +29,16 @@ public class PixelGridCanvas extends Canvas {
 
                 graphics.setColor(Color.red);
 
-                if( perceptionDescriptor.cachedPerceptionMap[mapX][mapY] ) {
+                if( perceptionDescriptor.cachedPerceptionMap != null && perceptionDescriptor.cachedPerceptionMap[mapX][mapY] ) {
                     graphics.drawRect(x, y, pixelSize, pixelSize);
                 }
             }
         }
 
         graphics.dispose();
+    }
+
+    public void refresh() {
+        repaint();
     }
 }

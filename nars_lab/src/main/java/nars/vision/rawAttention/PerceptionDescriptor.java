@@ -21,7 +21,7 @@ public class PerceptionDescriptor {
     }
 
     // just for visualisation
-    private void recalculatePerceptionMap() {
+    public void recalculatePerceptionMap() {
         cachedPerceptionMap = calculatePerceptionMap();
     }
 
