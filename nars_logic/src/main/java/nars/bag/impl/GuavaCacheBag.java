@@ -17,16 +17,24 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
 
     public final Cache<K, V> data;
 
+
     public GuavaCacheBag(int capacity) {
         super();
 
         data = CacheBuilder.newBuilder()
-            .maximumSize(capacity)
+
+                //TODO note: capacity is ignored
+            //.maximumSize(capacity)
+
+                .softValues()
+
+
             //.expireAfterWrite(10, TimeUnit.MINUTES)
                /*.weakKeys()
                .weakValues()
                .weigher(null)*/
-        .removalListener(this)
+
+                .removalListener(this)
         .build();
 
     }
@@ -68,7 +76,9 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
 
     @Override
     public void onRemoval(RemovalNotification<K, V> rn) {
-        if (rn.getCause()==RemovalCause.SIZE) {
+        RemovalCause cause = rn.getCause();
+
+        if (cause==RemovalCause.SIZE || cause==RemovalCause.COLLECTED) {
             V v = rn.getValue();
             if (v!=null)
                 getOnRemoval().accept(v);

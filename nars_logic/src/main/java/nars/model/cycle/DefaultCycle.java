@@ -163,8 +163,7 @@ public class DefaultCycle extends SequentialCycle {
 
         //memory.emotion.busy(task);
 
-        if (task.isInput() || sentence.isQuest() || sentence.isGoal()
-                || sentence.isQuestion()
+        if (task.isInput() || !(sentence.isJudgment())
                 || (memory.concept(sentence.term) != null)
                 ) {
 

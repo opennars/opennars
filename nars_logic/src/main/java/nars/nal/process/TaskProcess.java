@@ -4,7 +4,6 @@
  */
 package nars.nal.process;
 
-import nars.Events;
 import nars.Memory;
 import nars.NAR;
 import nars.nal.NAL;
@@ -82,7 +81,7 @@ public class TaskProcess extends NAL {
 
 
     public static TaskProcess get(final Memory m, final Task task) {
-        if (!task.aboveThreshold(m.param.taskProcessThreshold)) {
+        if (!task.summaryGreaterOrEqual(m.param.taskProcessThreshold)) {
             m.removed(task, "Insufficient budget");
             return null;
         }

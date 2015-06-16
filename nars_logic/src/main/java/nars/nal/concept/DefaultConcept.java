@@ -525,7 +525,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //
 //        }
 
-        if (newGoal.aboveThreshold(memory.param.goalThreshold)) {
+        if (newGoal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
             final Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
 
@@ -815,7 +815,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     protected boolean linkTask(final Task task) {
 
-        if (!task.aboveThreshold(memory.param.taskLinkThreshold))
+        if (!task.summaryGreaterOrEqual(memory.param.taskLinkThreshold))
             return false;
 
         Budget taskBudget = task;
@@ -958,7 +958,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             int n = tl.size();
             for (int i = 0; i < n; i++) {
                 TermLinkTemplate t = tl.get(i);
-                if (t.aboveThreshold(memory.param.termLinkThreshold)) {
+                if (t.summaryGreaterOrEqual(memory.param.termLinkThreshold)) {
                     if (linkTerm(t, updateTLinks))
                         activity = true;
 

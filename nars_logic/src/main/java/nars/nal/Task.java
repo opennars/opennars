@@ -539,7 +539,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
 
     public boolean perceivable(final Memory memory) {
-        if (!aboveThreshold(memory.param.perceptThreshold))
+        if (!summaryGreaterOrEqual(memory.param.perceptThreshold))
             return false;
 
         if (sentence==null) {

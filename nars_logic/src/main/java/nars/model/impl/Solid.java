@@ -237,7 +237,7 @@ public class Solid extends Default implements ControlCycle {
     @Override
     public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
         //synchronized(activator) {
-        if (budget.aboveThreshold(memory.param.newConceptThreshold)) {
+        if (budget.summaryGreaterOrEqual(memory.param.newConceptThreshold)) {
             return activator.conceptualize(term, budget, true, memory.time(), concepts);
         }
         return null;

@@ -22,7 +22,7 @@ public class FilterBelowBudget implements DerivationFilter {
     }
 
     @Override public String reject(NAL nal, TaskSeed task, boolean solution, boolean revised, boolean single, Sentence currentBelief, Task currentTask) {
-        if (!task.aboveThreshold(threshold)) return INSUFFICIENT_BUDGET;
+        if (!task.summaryGreaterOrEqual(threshold)) return INSUFFICIENT_BUDGET;
         return null;
     }
 }

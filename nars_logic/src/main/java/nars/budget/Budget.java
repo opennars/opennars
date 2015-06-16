@@ -362,7 +362,7 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
     }
 
     /** uses optimized aveGeoNotLessThan to avoid a cube root operation */
-    public boolean summaryNotLessThan(float min) {
+    public boolean summaryNotLessThan(final float min) {
         return aveGeoNotLessThan(min, priority, durability, quality);
     }
 
@@ -394,9 +394,10 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
      * Whether the budget should get any processing at all
      * <p>
      * to be revised to depend on how busy the system is
+     * tests whether summary >= threhsold
      * @return The decision on whether to process the Item
      */
-    public boolean aboveThreshold(final float budgetThreshold) {
+    public boolean summaryGreaterOrEqual(final float budgetThreshold) {
 
         /* since budget can only be positive.. */
         if (budgetThreshold <= 0) return true;
@@ -404,8 +405,8 @@ public class Budget implements Cloneable, BudgetTarget, Prioritized, Serializabl
         return summaryNotLessThan(budgetThreshold);
     }
 
-    public boolean aboveThreshold(final AtomicDouble budgetThreshold) {
-        return aboveThreshold(budgetThreshold.floatValue());
+    public boolean summaryGreaterOrEqual(final AtomicDouble budgetThreshold) {
+        return summaryGreaterOrEqual(budgetThreshold.floatValue());
     }
 
 //    /* Whether budget is above threshold, with the involvement of additional priority (saved previously, or boosting)
