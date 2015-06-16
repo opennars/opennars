@@ -136,7 +136,9 @@ public class Memory implements Serializable, AbstractStamper {
 
         this.random = rng;
         this.level = nalLevel;
+
         this.concepts = concepts;
+        concepts.setOnRemoval(c -> delete(c));
 
         this.param = narParam;
         this.rules = policy;
@@ -950,11 +952,11 @@ public class Memory implements Serializable, AbstractStamper {
 
         event.emit(Events.CycleEnd.class);
 
+        inCycle = false;
+
         deletePendingConcepts();
 
         //randomUpdate();
-
-        inCycle = false;
 
     }
 

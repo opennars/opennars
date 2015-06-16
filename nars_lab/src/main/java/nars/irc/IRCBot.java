@@ -51,7 +51,7 @@ public class IRCBot {
 
         Default d = new Default();
         //Default d = new Solid(4, 64, 0,5, 0,3);
-        d.setConceptBagSize(2048);
+        d.setActiveConcepts(2048);
         d.executionThreshold.set(0.7);
         d.temporalRelationsMax.set(2);
         d.shortTermMemoryHistory.set(3);

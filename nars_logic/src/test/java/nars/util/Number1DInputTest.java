@@ -54,7 +54,7 @@ public class Number1DInputTest {
         double[] x = randomArray(N, 1.0, 0);
 
         NAR n = new NAR(new Curve(true).
-                setConceptBagSize(32367));
+                setActiveConcepts(32367));
                 
         (n.param).conceptsFiredPerCycle.set(1024);
         

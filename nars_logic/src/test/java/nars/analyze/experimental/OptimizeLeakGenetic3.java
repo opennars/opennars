@@ -241,7 +241,7 @@ public class OptimizeLeakGenetic3 extends Civilization<TypedOrganism> {
                 }
             };
             b.level(6);
-            b.setConceptBagSize(512);
+            b.setActiveConcepts(512);
             b.setInternalExperience(null);
 
             TestNAR nar = new TestNAR(b);

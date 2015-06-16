@@ -106,8 +106,8 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
 
-        setConceptBagSize(maxConcepts);
-        setSubconceptBagSize(maxConcepts * 2);
+        setActiveConcepts(maxConcepts);
+        setTotalConcepts(maxConcepts * 2);
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         termLinkMaxReasoned.set(termLinksPerCycle);
@@ -424,13 +424,14 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        return new ChainBag(rng, getConceptBagSize());
+        return new ChainBag(rng, getActiveConcepts());
     }
 
     @Override
     public CacheBag<Term,Concept> newIndex() {
-        if (getSubconceptBagSize() < 1) return null;
-        return new GuavaCacheBag(getSubconceptBagSize());
+        if (getTotalConcepts() < getActiveConcepts())
+            setActiveConcepts(getActiveConcepts());
+        return new GuavaCacheBag(getTotalConcepts());
     }
 
     @Override
@@ -442,12 +443,12 @@ public class Default extends NARSeed implements ConceptBuilder {
         return new CurveBag(rng, getNovelTaskBagSize(), true);
     }
 
-    public Default setSubconceptBagSize(int subconceptBagSize) {
+    public Default setTotalConcepts(int subconceptBagSize) {
         this.subconceptBagSize = subconceptBagSize;
         return this;
     }
 
-    public int getSubconceptBagSize() {
+    public int getTotalConcepts() {
         return subconceptBagSize;
     }
 
@@ -458,8 +459,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     
-    public int getConceptBagSize() { return conceptBagSize; }    
-    public Default setConceptBagSize(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
+    public int getActiveConcepts() { return conceptBagSize; }
+    public Default setActiveConcepts(int conceptBagSize) { this.conceptBagSize = conceptBagSize; return this;   }
 
     
 

@@ -3,6 +3,7 @@ package nars.bag.impl;
 import nars.nal.Itemized;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * CacheBag backed by Infinispan, supporting distributed memory sharing

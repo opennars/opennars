@@ -184,21 +184,30 @@ public class TermLinkTest {
 
         n.input(c);
         n.input(d);
-        n.frame(12);
 
-        TermLinkGraph g = new TermLinkGraph(n);
+        //in each of the first two cycles (for each of the two inputs),
+        //check that termlink connectivity is complete
+        for (int i = 0; i < 2; i++) {
+            n.frame(1);
+
+            TermLinkGraph g = new TermLinkGraph(n);
+
+            ConnectivityInspector<Term, TermLink> ci = new ConnectivityInspector(g);
+            assertTrue("termlinks between the two input concepts form a fully connected graph",
+                    ci.isGraphConnected());
+
+            /*
+            int set = 0;
+            for (Set<Term> s : ci.connectedSets()) {
+                for (Term v : s)
+                    System.out.println(set + ": " + v);
+                set++;
+            }
+            */
 
 
-        ConnectivityInspector<Term, TermLink> ci = new ConnectivityInspector(g);
-        int set = 0;
-        for (Set<Term> s : ci.connectedSets()) {
-            for (Term v : s)
-                System.out.println(set + ": " + v);
-            set++;
+
         }
-
-        assertTrue("termlinks between the two input concepts form a fully connected graph",
-                ci.isGraphConnected());
 
     }
 

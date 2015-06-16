@@ -496,7 +496,7 @@ public class NARio extends Run implements RLEnvironment {
         //NAR nar = new Default().realtime().build();
 
         NAR nar = new NAR(new Default().setInternalExperience(null)
-                .setConceptBagSize(3500));
+                .setActiveConcepts(3500));
 
         Global.EXIT_ON_EXCEPTION = true;
         //Global.TRUTH_EPSILON = 0.01f;

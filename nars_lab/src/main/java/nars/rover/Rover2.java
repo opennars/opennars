@@ -66,8 +66,8 @@ public class Rover2 extends PhysicsModel {
         else*/ {
             Global.THREADS = 1;
             nar = new NAR(new Default().simulationTime().
-                    setConceptBagSize(2500).
-                    setSubconceptBagSize(12000).
+                    setActiveConcepts(2500).
+                    setTotalConcepts(12000).
                     setNovelTaskBagSize(256));
             nar.param.inputsMaxPerCycle.set(100);
             nar.param.conceptsFiredPerCycle.set(4);

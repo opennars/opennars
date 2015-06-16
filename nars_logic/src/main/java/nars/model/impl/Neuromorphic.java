@@ -39,7 +39,7 @@ public class Neuromorphic extends Curve {
     public ControlCycle newControlCycle() {
         if (numAnts == -1)
             numAnts = conceptsFiredPerCycle.get();
-        return new AntCore(numAnts, 2.0f, getConceptBagSize());
+        return new AntCore(numAnts, 2.0f, getActiveConcepts());
     }
 
 

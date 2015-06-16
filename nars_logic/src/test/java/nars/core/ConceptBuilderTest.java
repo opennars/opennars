@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -43,6 +44,8 @@ public class ConceptBuilderTest {
         //TextOutput.out(n);
         n.input(term + "?");
         n.frame(1);
+        assertNotNull(n.concept(term));
+        assertTrue(n.concept(term).hasBeliefs());
         assertEquals(expectedValue, n.concept(term).getStrongestBelief().getTruth().getFrequency(), 0.01);
     }
 

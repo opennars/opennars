@@ -54,7 +54,7 @@ public class Classic extends Default {
 
     @Override
     public Bag<Term, Concept> newConceptBag() {
-        return new LevelBag(getConceptBagLevels(), getConceptBagSize()).setNextNonEmptyMode(Fast);
+        return new LevelBag(getConceptBagLevels(), getActiveConcepts()).setNextNonEmptyMode(Fast);
     }
 
 

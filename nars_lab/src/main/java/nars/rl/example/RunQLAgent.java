@@ -246,7 +246,7 @@ public class RunQLAgent extends JPanel {
             }
         };
 
-        dd.setSubconceptBagSize(4000);
+        dd.setTotalConcepts(4000);
 
         dd.setInternalExperience(null);
 

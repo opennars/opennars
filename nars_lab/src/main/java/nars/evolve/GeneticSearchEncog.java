@@ -235,10 +235,10 @@ public class GeneticSearchEncog {
             }
 
 
-            b.setConceptBagSize(numConcepts);
+            b.setActiveConcepts(numConcepts);
             b.setTaskLinkBagSize(numTaskLinks);
             b.setTermLinkBagSize(numTermLinks);
-            b.setSubconceptBagSize(numSubconcepts);
+            b.setTotalConcepts(numSubconcepts);
 
             NAR n = new NAR(b);
 

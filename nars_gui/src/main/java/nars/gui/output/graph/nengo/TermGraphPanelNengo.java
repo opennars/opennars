@@ -40,7 +40,7 @@ public class TermGraphPanelNengo extends Nengrow {
 
     public static void main(String[] args) {
         Default d = new Default(32, 1, 1);
-        d.setSubconceptBagSize(0);
+        d.setTotalConcepts(0);
         NAR nar = new NAR(d);
         nar.input("<a-->b>.");
         nar.input("<b-->c>.");

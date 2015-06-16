@@ -83,8 +83,8 @@ public class TicTacToe extends JPanel {
         super(new BorderLayout());
 
         nar = new NAR(new Classic().
-                setConceptBagSize(1000).
-                setSubconceptBagSize(10000).
+                setActiveConcepts(1000).
+                setTotalConcepts(10000).
                 simulationTime());
 
         nar.on(new AddO());

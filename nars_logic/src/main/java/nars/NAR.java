@@ -597,14 +597,10 @@ public class NAR extends Container implements Runnable {
 
 
     /** executes one complete memory cycle (if not disabled) */
-    public void cycle(final boolean newFrame) {
+    protected void cycle(final boolean newFrame) {
 
         if (isEnabled()) {
-
             memory.cycle();
-
-
-
         }
 
         memory.timeUpdate();
@@ -621,15 +617,15 @@ public class NAR extends Container implements Runnable {
 
         emit(FrameStart.class);
 
-        try {
+        //try {
             for (int i = 0; i < cycles; i++)
                 cycle(i == 0);
-        }
+        /*}
         catch (Throwable e) {
             Throwable c = e.getCause();
             if (c == null) c = e;
             error(c);
-        }
+        }*/
 
         emit(FrameEnd.class);
 

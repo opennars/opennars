@@ -143,7 +143,7 @@ public class TestQController {
     
     public static NAR newNAR() {
         //return new Default().build();        
-        return new NAR(new Classic().setConceptBagSize(8192))
+        return new NAR(new Classic().setActiveConcepts(8192))
         //return build(g, g.param);
         ;
     }

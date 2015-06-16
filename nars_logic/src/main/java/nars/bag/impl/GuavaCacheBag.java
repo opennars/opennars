@@ -1,10 +1,10 @@
 package nars.bag.impl;
 
 import com.google.common.cache.*;
-import nars.Memory;
 import nars.nal.Itemized;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 /**
  * Index of stored Items (ex: concepts) which is optimized for
@@ -28,6 +28,7 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
                .weigher(null)*/
         .removalListener(this)
         .build();
+
     }
 
 
@@ -69,9 +70,12 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
     public void onRemoval(RemovalNotification<K, V> rn) {
         if (rn.getCause()==RemovalCause.SIZE) {
             V v = rn.getValue();
-            if (v!=null) v.delete();
+            if (v!=null)
+                getOnRemoval().accept(v);
         }
     }
+
+
 
     @Override
     public Iterator<V> iterator() {

@@ -16,7 +16,7 @@ public class Vision extends JFrame {
     private final NAR nar;
 
     public static void main(String[] args) {
-        NAR nar = new NAR(new Default().setSubconceptBagSize(1000));
+        NAR nar = new NAR(new Default().setTotalConcepts(1000));
 
         new NARSwing(nar);
 
@@ -44,10 +44,11 @@ public class Vision extends JFrame {
 
         nar.input(narsese, 1.0f, 0.5f);
 
-        nar.cycle(false);
-        nar.cycle(false);
-        nar.cycle(false);
-        nar.cycle(false);
+        nar.frame(1);
+        nar.frame(1);
+        nar.frame(1);
+        nar.frame(1);
+        nar.frame(1);
     }
 
     public Vision(NAR nar) {

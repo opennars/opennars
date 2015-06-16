@@ -31,7 +31,7 @@ public class KIFExample {
 
 
         NAR n = new NAR(new Curve(true)
-                .setConceptBagSize(16192));
+                .setActiveConcepts(16192));
                 
         
         (n.param).outputVolume.set(40);

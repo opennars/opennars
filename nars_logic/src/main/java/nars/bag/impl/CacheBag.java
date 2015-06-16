@@ -4,9 +4,13 @@ import com.google.common.cache.RemovalListener;
 import nars.Memory;
 import nars.nal.concept.Concept;
 
+import java.util.function.Consumer;
+
 
 abstract public class CacheBag<K, V> implements Iterable<V> {
 
+
+    private Consumer<V> onRemoval;
 
     public abstract void clear();
 
@@ -18,5 +22,11 @@ abstract public class CacheBag<K, V> implements Iterable<V> {
 
     public abstract int size();
 
+    public void setOnRemoval(Consumer<V> onRemoval) {
+        this.onRemoval = onRemoval;
+    }
 
+    public Consumer<V> getOnRemoval() {
+        return onRemoval;
+    }
 }

@@ -27,7 +27,7 @@ public class NALPerfLoop {
         Global.EXIT_ON_EXCEPTION = false;
 
           
-        NAR n = new NAR(new Default().setConceptBagSize(maxConcepts).setInternalExperience(null) );
+        NAR n = new NAR(new Default().setActiveConcepts(maxConcepts).setInternalExperience(null) );
         //NAR n = new NAR( new Neuromorphic(16).setConceptBagSize(maxConcepts) );
         //NAR n = new NAR(new Curve());
         

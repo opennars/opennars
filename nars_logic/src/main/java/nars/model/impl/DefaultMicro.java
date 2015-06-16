@@ -1,7 +1,5 @@
 package nars.model.impl;
 
-import nars.Memory;
-
 /**
  * Created by me on 5/5/15.
  */
@@ -12,8 +10,8 @@ public class DefaultMicro extends Default {
 
         setInternalExperience(null);
 
-        setConceptBagSize(128);
-        setSubconceptBagSize(16);
+        setActiveConcepts(128);
+        setTotalConcepts(16);
 
         setTaskLinkBagSize(16);
 
