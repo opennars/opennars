@@ -235,7 +235,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      * being executed again (unless invoked again by input).
      */
     public void stop(Memory memory) {
-        memory.concept(getTerm()).delete();
+        memory.delete(getTerm());
     }
 
     /**

@@ -237,6 +237,14 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     public void delete();
 
+//    /** debugging utility */
+//    default public void ensureNotDeleted() {
+//        if (isDeleted())
+//            throw new RuntimeException("Deleted concept should not activate TermLinks");
+//    }
+
+
+
     default public boolean ensureActiveFor(String activity) {
         if (!this.isActive() && !this.isForgotten()) {
             System.err.println(activity + " fail: " + this + " (state=" + getState() + ')');

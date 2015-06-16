@@ -58,11 +58,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
             return;
         }
 
-        Object signal;
-        if (channel == Events.Answer.class)
-            signal = args[0]; //answer is 1st arg, question is 1st. we are interested in comparing the answer
-        else
-            signal = args[0];
+        Object signal = args[0];
 
         if (condition(channel, signal)) {
             setTrue();

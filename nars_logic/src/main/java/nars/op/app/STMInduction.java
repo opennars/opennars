@@ -69,12 +69,13 @@ public class STMInduction extends NARReaction {
             return false;
         }
 
-        //new one happened and duration is already over, so add as negative task
-        nal.emit(Events.InduceSucceedingEvent.class, currentTask, nal);
 
         if (currentTask.sentence.isEternal() || !isInputOrTriggeredOperation(currentTask, nal.memory)) {
             return false;
         }
+
+        //new one happened and duration is already over, so add as negative task
+        nal.emit(Events.InduceSucceedingEvent.class, currentTask, nal);
 
         //final long now = nal.memory.time();
 

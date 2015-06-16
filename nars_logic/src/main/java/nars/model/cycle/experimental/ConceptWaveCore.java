@@ -6,7 +6,6 @@ package nars.model.cycle.experimental;
 
 import nars.model.ControlCycle;
 import nars.Memory;
-import nars.Memory.MemoryAware;
 import nars.budget.BudgetFunctions;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
@@ -73,7 +72,7 @@ abstract public class ConceptWaveCore implements ControlCycle {
     }
 
     //TODO This may be broken after refactoring
-    @Override public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten) {
+    @Override public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
         Concept c = getActiveConcept(term);
         if (c!=null) {
             //existing
@@ -86,9 +85,6 @@ abstract public class ConceptWaveCore implements ControlCycle {
                 return null;
             concepts.put(c);
         }
-
-        if (!includeForgotten)
-            if (c.isForgotten()) return null;
 
         return c;
     }

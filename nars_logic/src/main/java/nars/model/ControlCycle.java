@@ -6,6 +6,7 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.Task;
 import nars.nal.concept.Concept;
+import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
 
 import java.util.Deque;
@@ -82,7 +83,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
      * @return the new concept, or null if the memory is full
      *
      */
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten);
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing);
     /**
      * Provides a "next" concept for sampling during logic.
      */
@@ -126,5 +127,7 @@ public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plug
 
     }
 
+
+    Concept remove(Concept c);
 
 }

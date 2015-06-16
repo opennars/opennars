@@ -130,8 +130,8 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
 
 
     @Override
-    public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing, boolean includeForgotten) {
-        return conceptualize(term, budget, createIfMissing, memory.time(), concepts, includeForgotten);
+    public Concept conceptualize(Budget budget, final Term term, boolean createIfMissing) {
+        return conceptualize(term, budget, createIfMissing, memory.time(), concepts);
     }
 
     @Override
@@ -160,8 +160,13 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
             concepts.getPriorityHistogram(bins);
     }
 
+    @Override
+    public Concept remove(Concept cc) {
+        Concept c = concepts.remove(cc.getTerm());
+        return c;
+    }
 
-//    @Deprecated
+    //    @Deprecated
 //    @Override
 //    public void activate(final Concept c, final Budget b, BudgetFunctions.Activating mode) {
 //        concepts.remove(c.name());

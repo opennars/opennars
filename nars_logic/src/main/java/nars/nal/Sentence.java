@@ -774,7 +774,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
     @Override
     public boolean isCyclic() {
-        //TODO cache this?
         return cyclic;
     }
 

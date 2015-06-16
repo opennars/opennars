@@ -601,13 +601,9 @@ public class NAR extends Container implements Runnable {
 
         if (isEnabled()) {
 
-            memory.event.emit(Events.CycleStart.class);
+            memory.cycle();
 
-            memory.cycle.cycle();
 
-            memory.event.emit(Events.CycleEnd.class);
-
-            //randomUpdate();
 
         }
 

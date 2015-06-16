@@ -215,10 +215,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         if (lastState == State.Deleted)
             throw new RuntimeException(toInstanceString() + " can not exit from Deleted state");
 
-        this.state = nextState;
 
         //ok set the state ------
-        switch (this.state) {
+        switch (this.state = nextState) {
 
 
             case Forgotten:
@@ -816,7 +815,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
      */
     protected boolean linkTask(final Task task) {
 
-
         if (!task.aboveThreshold(memory.param.taskLinkThreshold))
             return false;
 
@@ -885,6 +883,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @return the tasklink which was selected or updated
      */
     public TaskLink activateTaskLink(final TaskLinkBuilder taskLink) {
+
         TaskLink t = getTaskLinks().update(taskLink);
         return t;
     }
@@ -905,8 +904,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @return whether any activity happened as a result of this invocation
      */
     public boolean linkTerms(final Budget taskBudget, boolean updateTLinks) {
-
-        //if (!ensureActiveTo("linkTerms")) return false;
 
         final float subPriority;
         int recipients = termLinkBuilder.getNonTransforms();
@@ -941,6 +938,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
             int numTemplates = templates.size();
             for (int i = 0; i < numTemplates; i++) {
+
                 TermLinkTemplate template = templates.get(i);
 
                 //only apply this loop to non-transform termlink templates
@@ -963,6 +961,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 if (t.aboveThreshold(memory.param.termLinkThreshold)) {
                     if (linkTerm(t, updateTLinks))
                         activity = true;
+
                 }
             }
         }
@@ -1020,7 +1019,6 @@ public class DefaultConcept extends Item<Term> implements Concept {
     public TermLink activateTermLink(final TermLinkBuilder termLink) {
 
         return getTermLinks().update(termLink);
-
 
     }
 
@@ -1106,15 +1104,27 @@ public class DefaultConcept extends Item<Term> implements Concept {
 //    }
 
 
-    @Override
-    public void delete() {
+    @Override public void delete() {
+
+        if (getMemory().inCycle())
+            throw new RuntimeException("concept " + this + " attempt to delete() during an active cycle; must be done between cycles");
 
         if (isDeleted()) return;
 
-        zero();
-
         //called first to allow listeners to have a final attempt to interact with this concept before it dies
         setState(State.Deleted);
+
+        {
+            //completely remove from active bags and concept indexes
+
+            memory.concepts.remove(getTerm());
+            Concept removed = memory.cycle.remove(this);
+            if (removed!=null && removed != this) {
+                throw new RuntimeException("Duplicate instances of Concepts with same term: " + this + " (deleting) " + removed);
+            }
+        }
+
+        zero();
 
         super.delete();
 

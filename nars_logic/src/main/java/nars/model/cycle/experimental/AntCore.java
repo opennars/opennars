@@ -114,12 +114,17 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten) {
-        Concept c = super.conceptualize(budget, term, createIfMissing, includeForgotten);
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+        Concept c = super.conceptualize(budget, term, createIfMissing);
         /*if (c!=null) {
             immediate.add(c);
         }*/
         return c;
+    }
+
+    @Override
+    public Concept remove(Concept c) {
+        return concepts.remove(c.getTerm());
     }
 
     public boolean ensureAntsOccupyUniqueConcepts() {
@@ -402,7 +407,7 @@ public class AntCore extends ConceptWaveCore {
                 return c = null;
             }
 
-            Concept nextC = conceptualize(delivery, ct, false, false);
+            Concept nextC = conceptualize(delivery, ct, false);
             if (nextC == null)
                 return c = null;
 

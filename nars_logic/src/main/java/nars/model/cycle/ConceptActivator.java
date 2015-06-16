@@ -66,11 +66,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         Concept concept = index().get(getKey());
         if (concept != null) {
             if (concept.isDeleted()) {
-                index().remove(concept.getTerm());
-                concept = null;
-                if (belowThreshold) return null;
-
-                //don't return if above threshold to create a replacement
+                throw new RuntimeException("deleted concept should not have been returned by index");
             }
 
             if (!belowThreshold) {
@@ -116,7 +112,7 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         forget(c);
     }
 
-    public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts, boolean includeForgotten) {
+    public synchronized Concept conceptualize(Term term, Budget budget, boolean b, long time, Bag<Term, Concept> concepts) {
 
         set(term, budget, true, getMemory().time());
         Concept c = concepts.update(this);
@@ -124,8 +120,9 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         if (c != null) {
 
             if (c.isDeleted()) {
+                throw new RuntimeException("deleted concept should not have been returned by index");
                 //throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
-                return null;
+                //return null;
             }
 
             if (!c.isActive()) {
@@ -136,12 +133,8 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
             return c;
 
-        } else  {
-            //should this return null?
-            if (includeForgotten)
-                return getMemory().concept(term);
-            return null;
         }
 
+        return null;
     }
 }

@@ -112,6 +112,7 @@ public class ConceptProcess extends NAL implements Premise {
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {
 
+
            final TermLink bLink = nextTermLink(currentTaskLink, n, noveltyHorizon, termLinksToFire);
 
             if (bLink!=null) {

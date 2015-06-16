@@ -289,7 +289,7 @@ public abstract class NAL  implements Runnable {
                             .truth(newTruth)
                             .stamp(stamp)
                             .parent(parentTask, getCurrentBelief())
-                            //.temporalInduct(!temporalAdd)
+                            .temporalInduct(!temporalAdd)
                             .budget(newBudget);
 
         return deriveDouble(task, temporalAdd, allowOverlap);

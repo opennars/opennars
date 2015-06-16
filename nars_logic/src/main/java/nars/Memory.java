@@ -98,6 +98,9 @@ public class Memory implements Serializable, AbstractStamper {
     private final Deque<Runnable> nextTasks = new ConcurrentLinkedDeque();
     private final Set<Concept> questionConcepts = Global.newHashSet(16);
     private final Set<Concept> goalConcepts = Global.newHashSet(16);
+
+    private final Set<Concept> pendingDeletions = Global.newHashSet(16);
+
     public LogicPolicy rules;
 
     Timing timing;
@@ -121,6 +124,7 @@ public class Memory implements Serializable, AbstractStamper {
      * The remaining number of steps to be carried out (stepLater mode)
      */
     private long inputPausedUntil = -1;
+    private boolean inCycle = false;
 
     /**
      * Create a new memory
@@ -428,7 +432,7 @@ public class Memory implements Serializable, AbstractStamper {
 //    }
         t.setCreationTime(time());
         t.setDuration(duration());
-        t.setEvidentialSet(new long[]{ newStampSerial() });
+        t.setEvidentialSet(new long[]{newStampSerial()});
     }
 
     public void randomSeed(long randomSeed) {
@@ -465,7 +469,8 @@ public class Memory implements Serializable, AbstractStamper {
                 throw new RuntimeException("Concept " + c + " aready registered existing questions");
             }
 
-            if (questionConcepts.size() > cycle.size()) {
+            //this test was cycle.size() previously:
+            if (questionConcepts.size() > concepts.size()) {
                 throw new RuntimeException("more questionConcepts " +questionConcepts.size() + " than concepts " + cycle.size());
             }
         }
@@ -607,7 +612,7 @@ public class Memory implements Serializable, AbstractStamper {
         if ((term = term.normalized()) == null)
             return null;
 
-        Concept c = cycle.conceptualize(budget, term, true, true);
+        Concept c = cycle.conceptualize(budget, term, true);
         if (c == null)
             return null;
 
@@ -929,6 +934,69 @@ public class Memory implements Serializable, AbstractStamper {
             return concepts.size();
         else
             return 0;
+    }
+
+    public boolean inCycle() {
+        return inCycle;
+    }
+
+    public synchronized void cycle() {
+
+        inCycle = true;
+
+        event.emit(Events.CycleStart.class);
+
+        cycle.cycle();
+
+        event.emit(Events.CycleEnd.class);
+
+        deletePendingConcepts();
+
+        //randomUpdate();
+
+        inCycle = false;
+
+    }
+
+    public void delete(Term term) {
+        Concept c = concept(term);
+        if (c == null) return;
+
+        delete(c);
+    }
+
+    /** queues the deletion of a concept until after the current cycle ends.
+     */
+    public synchronized void delete(Concept c) {
+        if (c.isDeleted())
+            throw new RuntimeException(c + " is already deleted");
+
+        if (!inCycle()) {
+            //immediately delete
+            _delete(c);
+        }
+        else {
+            pendingDeletions.add(c);
+        }
+
+    }
+
+    /** called by Memory at end of each cycle to flush deleted concepts */
+    protected void deletePendingConcepts() {
+        if (!pendingDeletions.isEmpty()) {
+
+            for (Concept c : pendingDeletions)
+                _delete(c);
+
+            pendingDeletions.clear();
+        }
+    }
+
+    /** actually delete procedure for a concept; removes from indexes */
+    protected void _delete(Concept c) {
+        cycle.remove(c);
+        concepts.remove(c.getTerm());
+        c.delete();
     }
 
     @Deprecated public static enum Forgetting {

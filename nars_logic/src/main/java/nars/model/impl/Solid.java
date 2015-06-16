@@ -235,10 +235,10 @@ public class Solid extends Default implements ControlCycle {
     }
 
     @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing, boolean includeForgotten) {
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
         //synchronized(activator) {
         if (budget.aboveThreshold(memory.param.newConceptThreshold)) {
-            return activator.conceptualize(term, budget, true, memory.time(), concepts, includeForgotten);
+            return activator.conceptualize(term, budget, true, memory.time(), concepts);
         }
         return null;
         //}
@@ -309,4 +309,8 @@ public class Solid extends Default implements ControlCycle {
     };
     */
 
+    @Override
+    public Concept remove(Concept c) {
+        return concepts.remove(c.getTerm());
+    }
 }
