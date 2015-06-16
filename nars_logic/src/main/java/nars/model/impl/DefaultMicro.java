@@ -11,7 +11,6 @@ public class DefaultMicro extends Default {
         setInternalExperience(null);
 
         setActiveConcepts(128);
-        setTotalConcepts(16);
 
         setTaskLinkBagSize(16);
 

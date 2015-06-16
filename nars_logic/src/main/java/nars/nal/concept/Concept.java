@@ -39,7 +39,7 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.Random;
 
 import static com.google.common.collect.Iterators.*;
 
@@ -314,7 +314,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     }
 
-    static public final class TermLinkNoveltyFilter implements Predicate<TermLink> {
+    static public final class TermLinkNoveltyFilter  {
 
         TaskLink taskLink;
         private float now;
@@ -342,8 +342,8 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
                     Math.max(0, numTermLinksInBag-1));
         }
 
-        @Override
-        public boolean test(TermLink termLink) {
+
+        public boolean test(TermLink termLink, Random rng) {
             if (noveltyDuration == 0) {
                 //this will happen in the case of one termlink,
                 //in which case there is no other option so duration
@@ -381,7 +381,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
                     else if (factor >= 1f) {
                         result = true;
                     } else {
-                        float f = taskLink.concept.getMemory().random.nextFloat();
+                        float f = rng.nextFloat();
                         result = (f < factor);
                     }
                 }

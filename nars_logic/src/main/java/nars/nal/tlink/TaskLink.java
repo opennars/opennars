@@ -46,7 +46,6 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * The Task linked
      */
     public final Task targetTask;
-    public final Concept concept;
     private final int recordLength;
     private float lastFireTime = -1; //float to include the "subcycle"
 
@@ -137,17 +136,16 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
     public final short[] index;
 
 
-    protected TaskLink(Task t, Concept c, Budget v, short[] index, short type) {
+    protected TaskLink(Task t, Budget v, short[] index, short type, int recordLength) {
         super(v);
         this.targetTask = t;
-        this.concept = c;
-        this.recordLength = c.getMemory().param.termLinkRecordLength.get();
+        this.recordLength = recordLength;
         this.index = index;
         this.type = type;
     }
 
-    public TaskLink(final Concept c, final Task t, final Budget v) {
-        this(t, c, v, null, TermLink.SELF);
+    public TaskLink(final Task t, final Budget v, int recordLength) {
+        this(t, v, null, TermLink.SELF, recordLength);
     }
 
     /**
@@ -158,8 +156,8 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
      * @param template The TermLink template
      * @param v        The budget
      */
-    public TaskLink(final Concept c, final Task t, final TermLinkTemplate template, final Budget v) {
-        this(t, c, v, template.index, template.type);
+    public TaskLink(final Task t, final TermLinkTemplate template, final Budget v, int recordLength) {
+        this(t, v, template.index, template.type, recordLength);
     }
 
 

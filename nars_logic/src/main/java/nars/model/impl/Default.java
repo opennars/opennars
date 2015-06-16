@@ -74,9 +74,6 @@ public class Default extends NARSeed implements ConceptBuilder {
     int conceptBagSize;
 
 
-    /** max # subconscious "subconcept" concepts */
-    int subconceptBagSize;
-
     /** Size of TaskBuffer */
     int taskBufferSize;
     
@@ -107,7 +104,6 @@ public class Default extends NARSeed implements ConceptBuilder {
     public Default(int maxConcepts, int conceptsFirePerCycle, int termLinksPerCycle) {
 
         setActiveConcepts(maxConcepts);
-        setTotalConcepts(maxConcepts * 2);
         conceptsFiredPerCycle.set(conceptsFirePerCycle);
 
         termLinkMaxReasoned.set(termLinksPerCycle);
@@ -429,9 +425,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     @Override
     public CacheBag<Term,Concept> newIndex() {
-        if (getTotalConcepts() < getActiveConcepts())
-            setActiveConcepts(getActiveConcepts());
-        return new GuavaCacheBag(getTotalConcepts());
+        return new GuavaCacheBag();
     }
 
     @Override
@@ -441,15 +435,6 @@ public class Default extends NARSeed implements ConceptBuilder {
     
     public Bag<Sentence<Compound>, Task<Compound>> newNovelTaskBag() {
         return new CurveBag(rng, getNovelTaskBagSize(), true);
-    }
-
-    public Default setTotalConcepts(int subconceptBagSize) {
-        this.subconceptBagSize = subconceptBagSize;
-        return this;
-    }
-
-    public int getTotalConcepts() {
-        return subconceptBagSize;
     }
 
 

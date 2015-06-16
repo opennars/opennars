@@ -18,12 +18,11 @@ public class GuavaCacheBag<K, V extends Itemized<K>> extends CacheBag<K, V> impl
     public final Cache<K, V> data;
 
 
-    public GuavaCacheBag(int capacity) {
+    public GuavaCacheBag() {
         super();
 
         data = CacheBuilder.newBuilder()
 
-                //TODO note: capacity is ignored
             //.maximumSize(capacity)
 
                 .softValues()

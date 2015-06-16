@@ -24,7 +24,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     public final short[] index;
 
     /** term of the concept where this template exists, ie. the host */
-    public final Concept concept;
+    public final Term concept;
 
     //cached names for new TermLinks
     protected Identifier outgoing;
@@ -43,7 +43,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     public TermLinkTemplate(final Concept host, Term target, final short type, final short... indices) {
         super(0,0,0);
 
-        this.concept = host;
+        this.concept = host.getTerm();
 
         target.getTerm().ensureNormalized("TermLink template");
 
@@ -122,7 +122,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     public static final byte indexCharOffset = 'a';
 
     public Term term(final boolean in) {
-        return in ? concept.getTerm() : target;
+        return in ? concept : target;
     }
 
     public byte[] prefix(final boolean incoming) {
@@ -152,7 +152,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     @Override
     public String toString() {
-        return concept.getTerm() + ":" + Utf8.fromUtf8(prefix(true)) + '|' + Utf8.fromUtf8(prefix(false)) + ':' + target;
+        return concept + ":" + Utf8.fromUtf8(prefix(true)) + '|' + Utf8.fromUtf8(prefix(false)) + ':' + target;
     }
 
     @Override

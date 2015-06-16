@@ -84,7 +84,6 @@ public class TicTacToe extends JPanel {
 
         nar = new NAR(new Classic().
                 setActiveConcepts(1000).
-                setTotalConcepts(10000).
                 simulationTime());
 
         nar.on(new AddO());

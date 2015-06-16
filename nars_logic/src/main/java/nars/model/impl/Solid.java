@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class Solid extends Default implements ControlCycle {
 
 
-    private final int maxConcepts, maxSubConcepts;
+    private final int maxConcepts;
     private int maxTasksPerCycle = -1; //if ==-1, no limit
     private final int minTaskLink;
     private final int maxTaskLink;
@@ -75,7 +75,6 @@ public class Solid extends Default implements ControlCycle {
         super();
         this.inputsPerCycle = inputsPerCycle;
         this.maxConcepts = maxConcepts;
-        this.maxSubConcepts = maxConcepts * 4;
 
         //this.maxTasks = maxConcepts * maxTaskLink * maxTermLink * 2;
         this.maxTasksPerCycle = -1;
@@ -226,7 +225,7 @@ public class Solid extends Default implements ControlCycle {
 
     @Override
     public CacheBag<Term, Concept> newIndex() {
-        return new GuavaCacheBag(maxSubConcepts);
+        return new GuavaCacheBag();
     }
 
     @Override

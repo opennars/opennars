@@ -9,15 +9,13 @@ import nars.nal.concept.Concept;
 /** adjusts budget of items in a Bag. ex: merge */
 public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
-    private final Concept concept;
     TermLinkTemplate template;
     private Task task;
     public final Memory memory;
 
 
-    public TaskLinkBuilder(Concept concept, Memory memory) {
+    public TaskLinkBuilder(Memory memory) {
         super();
-        this.concept = concept;
         this.memory = memory;
     }
 
@@ -41,10 +39,11 @@ public class TaskLinkBuilder extends BagActivator<Sentence,TaskLink> {
 
     @Override
     public TaskLink newItem() {
+        final int recordLen = memory.param.termLinkRecordLength.get();
         if (template == null)
-            return new TaskLink(concept, getTask(), getBudgetRef());
+            return new TaskLink(getTask(), getBudgetRef(), recordLen);
         else
-            return new TaskLink(concept, getTask(), template, getBudgetRef());
+            return new TaskLink(getTask(), template, getBudgetRef(), recordLen);
     }
 
 

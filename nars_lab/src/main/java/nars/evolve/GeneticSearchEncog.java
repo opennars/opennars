@@ -213,7 +213,6 @@ public class GeneticSearchEncog {
             int numConcepts = i("conceptMax");
             int numTaskLinks = i("conceptTaskLinks");
             int numTermLinks = i("conceptTermLinks");
-            int numSubconcepts = i("subConceptMax");
             float conceptForget = (float) d("conceptForgetDurations");
             float beliefForget = (float) d("termLinkForgetDurations");
             float taskForget = (float) d("taskLinkForgetDurations");
@@ -238,7 +237,6 @@ public class GeneticSearchEncog {
             b.setActiveConcepts(numConcepts);
             b.setTaskLinkBagSize(numTaskLinks);
             b.setTermLinkBagSize(numTermLinks);
-            b.setTotalConcepts(numSubconcepts);
 
             NAR n = new NAR(b);
 

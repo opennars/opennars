@@ -296,7 +296,6 @@ abstract public class NQuadsInput {
     public static void main(String[] args) throws Exception {
         Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
         //Solid d = new Solid(32, 4096,1,3,1,2);
-        d.setTotalConcepts(500000);
         d.setInternalExperience(null).level(7);
         d.inputsMaxPerCycle.set(256);
         d.setTermLinkBagSize(64);

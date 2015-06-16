@@ -60,8 +60,8 @@ public class InfiniCacheTest {
     public static void main(String[] args) throws InterruptedException {
         P2PDefault ap, bp;
 
-        NAR a = new NAR((ap = new P2PDefault("a")).setActiveConcepts(4).setTotalConcepts(8));
-        NAR b = new NAR((bp = new P2PDefault("b")).setActiveConcepts(4).setTotalConcepts(8));
+        NAR a = new NAR((ap = new P2PDefault("a")).setActiveConcepts(4));
+        NAR b = new NAR((bp = new P2PDefault("b")).setActiveConcepts(4));
 
         TextOutput.out(a);
         TextOutput.out(b);

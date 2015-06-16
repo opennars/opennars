@@ -14,6 +14,8 @@ import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
 import nars.util.data.id.Identifier;
 
+import java.util.Random;
+
 /** Firing a concept (reasoning event). Derives new Tasks via reasoning rules
  *
  *  Concept
@@ -157,13 +159,13 @@ public class ConceptProcess extends NAL implements Premise {
         termLinkNovel.set(taskLink, time, noveltyHorizon, tl.size(), termLinksBeingFired);
 
 
-
+        Random rng = memory.random;
         for (int i = 0; (i < toMatch); i++) {
 
             final TermLink termLink = tl.forgetNext();
 
             if (termLink != null) {
-                if (termLinkNovel.test(termLink)) {
+                if (termLinkNovel.test(termLink, rng)) {
                     return termLink;
                 }
             }

@@ -89,7 +89,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         this.termLinks = termLinks;
 
         this.termLinkBuilder = new TermLinkBuilder(this);
-        this.taskLinkBuilder = new TaskLinkBuilder(this, memory);
+        this.taskLinkBuilder = new TaskLinkBuilder(memory);
 
         this.state = State.New;
         memory.emit(Events.ConceptNew.class, this);

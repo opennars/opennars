@@ -16,7 +16,7 @@ public class Vision extends JFrame {
     private final NAR nar;
 
     public static void main(String[] args) {
-        NAR nar = new NAR(new Default().setTotalConcepts(1000));
+        NAR nar = new NAR(new Default().setActiveConcepts(1000));
 
         new NARSwing(nar);
 
