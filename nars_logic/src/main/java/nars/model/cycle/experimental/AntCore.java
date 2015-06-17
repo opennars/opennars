@@ -51,10 +51,26 @@ public class AntCore extends ConceptWaveCore {
     }
 
     @Override
+    public void forget(Concept c) {
+        concepts.remove(c.getTerm());
+    }
+
+    @Override
+    public void remember(Concept c) {
+        concepts.put(c);
+    }
+
+    @Override
     public void reset(Memory m, boolean delete) {
         super.reset(m, delete);
         concepts.setTargetActivated((int) (ants.size() * 0.1f));
     }
+
+    @Override
+    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+        return conceptualize(term, budget, createIfMissing, getMemory().time(), concepts);
+    }
+
     @Override
     public boolean addTask(Task t) {
         tasks.addLast(t);
@@ -113,14 +129,6 @@ public class AntCore extends ConceptWaveCore {
         
     }
 
-    @Override
-    public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
-        Concept c = super.conceptualize(budget, term, createIfMissing);
-        /*if (c!=null) {
-            immediate.add(c);
-        }*/
-        return c;
-    }
 
     @Override
     public Concept remove(Concept c) {

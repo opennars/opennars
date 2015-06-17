@@ -53,6 +53,7 @@ public final class TruthFunctions extends UtilityFunctions {
         return new DefaultTruth(f, c);
     }
 
+
     /**
      * {<A ==> B>} |- <(--, B) ==> (--, A)>
      * @param v1 Truth value of the premise
@@ -350,7 +351,7 @@ public final class TruthFunctions extends UtilityFunctions {
      */
     public static final Truth reduceConjunction(final Truth v1, final Truth v2) {
         final Truth v0 = intersection(negation(v1), v2);
-        return negation(deduction(v0, 1f));
+        return deduction(v0, 1f).negate();
     }
 
     /**

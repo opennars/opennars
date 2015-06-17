@@ -7,6 +7,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
+import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
 import nars.model.ControlCycle;
@@ -420,7 +421,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
     
     public Bag<Term, Concept> newConceptBag() {
-        return new ChainBag(rng, getActiveConcepts());
+        //return new ChainBag(rng, getActiveConcepts());
+        return new LevelBag(64, getActiveConcepts());
     }
 
     @Override

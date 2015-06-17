@@ -322,20 +322,21 @@ abstract public class NQuadsInput {
         new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
 
         n.runWhileNewInput(1);
+        n.frame(1); //one more to be sure
 
 
 
         Video.themeInvert();
         new NARSwing(n);
 
-
+/*
         //n.frame(100);
         n.believe(0.75f, 0.8f, n.term("<Spacecraft <-> PopulatedPlace>!"),
                 Tense.Eternal, 1.0f, 0.95f);
         n.believe(0.75f, 0.8f, n.term("(&&,SpaceMission,Work). :|:"),
                 Tense.Eternal, 1.0f, 0.95f);
         //n.frame(5000);
-
+*/
         //n.run();
     }
 }

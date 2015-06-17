@@ -27,7 +27,8 @@ public class LogicMetrics extends NARReaction {
 
     public final HitMeter TASKLINK_FIRE = new HitMeter("tasklink.fire");
 
-    public final DoubleMeter CONCEPT_COUNT = new DoubleMeter("concept.count");
+    public final DoubleMeter CONCEPTS_ACTIVE = new DoubleMeter("concepts.active");
+    public final DoubleMeter CONCEPTS_TOTAL = new DoubleMeter("concepts.total");
     public final DoubleMeter TERMLINK_MASS_CONCEPT_MEAN = new DoubleMeter("termlink.mass.concept_mean");
     public final DoubleMeter TERMLINK_MASS_MEAN = new DoubleMeter("termlink.mass.mean");
     public final DoubleMeter TASKLINK_MASS_CONCEPT_MEAN = new DoubleMeter("tasklink.mass.concept_mean");
@@ -109,7 +110,6 @@ public class LogicMetrics extends NARReaction {
 
         double prioritySum = 0;
         double prioritySumSq = 0;
-        int count = 0;
         int totalQuestions = 0;
         int totalBeliefs = 0;
         int histogramBins = 4;
@@ -122,7 +122,7 @@ public class LogicMetrics extends NARReaction {
 
         public void reset() {
             prioritySum = prioritySumSq = 0;
-            count = totalQuestions = totalBeliefs = 0;
+            totalQuestions = totalBeliefs = 0;
             histogramBins = 4;
             termLinkMassPerConcept.clear();
             termLinkMass.clear();
@@ -170,12 +170,12 @@ public class LogicMetrics extends NARReaction {
             taskLinkMassPerConcept.addValue(taskLinksMass);
             taskLinkMass.addValue((numTaskLinks > 0) ? taskLinksMass / numTaskLinks : 0);
 
-            count++;
         }
 
         public void commit(Memory m) {
             double mean, variance;
-            if (conceptMeter.count > 0) {
+            final int count = m.cycle.size();
+            if (count > 0) {
                 mean = prioritySum / count;
 
                 //http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
@@ -187,7 +187,8 @@ public class LogicMetrics extends NARReaction {
                 mean = variance = 0;
             }
 
-            CONCEPT_COUNT.set(count);
+            CONCEPTS_ACTIVE.set(count);
+            CONCEPTS_TOTAL.set(m.concepts.size());
             TERMLINK_MASS_CONCEPT_MEAN.set(termLinkMassPerConcept.getMean());
             TERMLINK_MASS_MEAN.set(termLinkMass.getMean());
             TASKLINK_MASS_CONCEPT_MEAN.set(taskLinkMassPerConcept.getMean());

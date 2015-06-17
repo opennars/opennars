@@ -221,6 +221,14 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
         return this;
     }
 
+    /** negation that modifies the truth instance itself */
+    default public Truth negate() {
+        final float f = 1 - getFrequency();
+        final float c = getConfidence();
+        set(f, c);
+        return this;
+    }
+
 
     public enum TruthComponent {
         Frequency, Confidence, Expectation

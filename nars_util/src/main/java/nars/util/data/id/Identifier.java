@@ -5,6 +5,8 @@ import nars.util.utf8.Utf8;
 
 import java.io.*;
 
+import static nars.util.utf8.Utf8.trim;
+
 /**
  * Generic abstract identifier for symbols, tags, and other identifiables.
  * It is responsible for maintaining efficient time and space equality,
@@ -39,7 +41,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return caw.toCharArray();
+        return trim(caw.toCharArray());
     }
 
     /** use this if the input is constant and already known (static).
@@ -182,7 +184,7 @@ abstract public class Identifier<E extends Identifier> implements Comparable, Se
     private char[] chars(boolean pretty, boolean trim) {
         char[] c = chars(pretty);
         if (trim)
-            c = Utf8.trim(c);
+            c = trim(c);
         return c;
     }
 

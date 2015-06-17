@@ -127,13 +127,15 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         if (c == null) {
 
             c = forgottenOrNewConcept();
-            if (budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold) ) {
-                c.setState(Concept.State.Active);
-                remember(c);
-            }
-            else {
-                if (!c.isForgotten())
-                    c.setState(Concept.State.Forgotten);
+
+            if (!c.isActive()) {
+                if (budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold)) {
+                    c.setState(Concept.State.Active);
+                    remember(c);
+                } else {
+                    if (!c.isForgotten())
+                        c.setState(Concept.State.Forgotten);
+                }
             }
 
         }

@@ -15,4 +15,8 @@ public interface StampEvidence extends AbstractStamper {
 
     public boolean isCyclic();
 
+    default public boolean isInput() {
+        return false;
+    }
+
 }

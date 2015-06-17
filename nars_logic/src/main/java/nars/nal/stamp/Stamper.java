@@ -214,18 +214,23 @@ public class Stamper<C extends Compound> extends DirectBudget implements Stamp, 
 
                 setEvidentialSet(Stamp.toSetArray(Stamp.zip(as, bs)));
 
-                /*
-                <patham9> since evidental overlap is not checked on deduction, a derivation can be cyclic
-                <patham9> its on revision when it finally matters, but not whether the two parents are cyclic, but whether the combination of both evidental bases of both parents would be cyclic/have an overlap
-                <patham9> else deductive conclusions could not lead to revisions altough the overlap is only local to the parent (the deductive conclusion)
-                <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
-                */
-                boolean bothParentsCyclic = getA().isCyclic() && getB().isCyclic();
+                if (getA().isInput() || getB().isInput()) {
+                    setCyclic(false);
+                }
+                else {
+                    /*
+                    <patham9> since evidental overlap is not checked on deduction, a derivation can be cyclic
+                    <patham9> its on revision when it finally matters, but not whether the two parents are cyclic, but whether the combination of both evidental bases of both parents would be cyclic/have an overlap
+                    <patham9> else deductive conclusions could not lead to revisions altough the overlap is only local to the parent (the deductive conclusion)
+                    <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
+                    */
+                    boolean bothParentsCyclic = getA().isCyclic() && getB().isCyclic();
 
-                boolean overlapBetweenParents = ((as.length + bs.length) > evidentialSet.length);
+                    boolean overlapBetweenParents = ((as.length + bs.length) > evidentialSet.length);
 
-                //if the sum of the two parents length is greater than the result then there was some overlap
-                cyclic = bothParentsCyclic || overlapBetweenParents;
+                    //if the sum of the two parents length is greater than the result then there was some overlap
+                    setCyclic(bothParentsCyclic || overlapBetweenParents);
+                }
 
             }
             else {

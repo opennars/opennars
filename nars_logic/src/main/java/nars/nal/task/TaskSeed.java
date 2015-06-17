@@ -380,13 +380,23 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return (o == Stamp.UNPERCEIVED) || (o == Stamp.ETERNAL);
     }
 
+
     /**
      * if a stamp exists, determine if it will be cyclic;
      * otherwise assume that it is not.
      */
     public boolean isCyclic() {
-        if (getEvidentialSet() != null)
+        if (getEvidentialSet() != null) {
+            //HACK when Stamp and parents are unified the extra conditoins here will not be necessary:
+            if (getParentTask()!=null && getParentTask().isInput()) {
+                cyclic = false;
+            }
+            else if (getParentBelief()!=null && getParentBelief().isInput()) {
+                cyclic = false;
+            }
+
             return cyclic;
+        }
 
 //        if ((stamp != null) && (stamp instanceof StampEvidence))
 //            return ((StampEvidence) stamp).isCyclic();
@@ -394,6 +404,10 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         throw new RuntimeException(this + " has no evidence to determine cyclicity");
     }
 
+    @Override
+    public void setCyclic(boolean cyclic) {
+        this.cyclic = cyclic;
+    }
 
     public TaskSeed<T> parent(Task parentTask, Task parentBeliefTask) {
         return parent(parentTask, parentBeliefTask.sentence);

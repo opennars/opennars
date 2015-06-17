@@ -12,7 +12,7 @@ import java.util.Arrays;
  */
 public class LiteralUTF8Identifier extends UTF8Identifier {
 
-    protected byte[] data = null;
+    private byte[] data = null;
     transient protected int hash = 0;
 
 
@@ -20,31 +20,39 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
     protected LiteralUTF8Identifier() { }
 
     public LiteralUTF8Identifier(byte[] b) {
-        this.data = b;
+        setData(b);
     }
 
     public LiteralUTF8Identifier(byte[] b, int start, int stop) {
         int len = stop - start;
-        this.data = new byte[len];
-        System.arraycopy(b, start, data, 0, len);
+        byte[] d = new byte[len];
+        System.arraycopy(b, start, d, 0, len);
+        setData(d);
+    }
+
+    protected void setData(byte[] d) {
+        this.data = d;
+        this.hash = makeHash();
     }
 
     public LiteralUTF8Identifier(final byte[] prefix, final byte[] suffix) {
         int plen = prefix.length;
         int slen = suffix.length;
         int len = plen + slen;
-        this.data = new byte[len];
-        System.arraycopy(prefix, 0, data, 0, plen);
-        System.arraycopy(suffix, 0, data, plen, slen);
+        byte[] d = new byte[len];
+        System.arraycopy(prefix, 0, d, 0, plen);
+        System.arraycopy(suffix, 0, d, plen, slen);
+        setData(d);
     }
     public LiteralUTF8Identifier(final byte[] prefix, byte separator, final byte[] suffix) {
         int plen = prefix.length;
         int slen = suffix.length;
         int len = plen + slen + 1;
-        this.data = new byte[len];
-        System.arraycopy(prefix, 0, data, 0, plen);
-        data[plen] = separator;
-        System.arraycopy(suffix, 0, data, plen+1, slen);
+        byte[] d = new byte[len];
+        System.arraycopy(prefix, 0, d, 0, plen);
+        d[plen] = separator;
+        System.arraycopy(suffix, 0, d, plen+1, slen);
+        setData(d);
     }
 
     public LiteralUTF8Identifier(String s) {
@@ -62,9 +70,9 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     public boolean hasName() { return data !=null;  }
 
-    public boolean hasHash() {
+/*    public boolean hasHash() {
         return hash!=0;
-    }
+    }*/
 
 
     public void invalidate() {
@@ -92,15 +100,14 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
 
     @Override
     public int hashCode() {
-        ensureHashed();
         return hash;
     }
 
-    private void ensureHashed() {
-        if (!hasHash()) {
-            this.hash = makeHash();
-        }
-    }
+//    private void ensureHashed() {
+//        if (!hasHash()) {
+//            this.hash = makeHash();
+//        }
+//    }
 
 
     protected void ensureNamed() {
@@ -124,7 +131,7 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
             final byte[] ub = u.bytes();
             if (Utf8.equals2(bytes(), ub)) {
                 //share the same data for fast equality test next time
-                data = ub;
+                //data = ub;
                 return true;
             }
 

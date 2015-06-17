@@ -19,9 +19,11 @@ public class UTF8IdentifierTest {
     @Test
     public void test1() {
         testDynamic("abcd1234");
+        testDynamic("\u2342");
+        testDynamic("\u2342a");
         testDynamic("\u2342abc\u2344");
 
-        testLazyHash("abcd31342");
+        //testLazyHash("abcd31342");
 
 
         testConstantAndDynamicEquality("abcdefg1234");
@@ -43,13 +45,7 @@ public class UTF8IdentifierTest {
 
     }
 
-    public void testLazyHash(final String b) {
-        LiteralUTF8Identifier y = new LiteralUTF8Identifier(b);
-        assertTrue(y.hasName());
-        assertTrue(!y.hasHash());
-        assertTrue(y.hashCode()!=0);
-        assertTrue(y.hasHash());
-    }
+
 
     public void testDynamic(final String b) {
         UTF8Identifier x = new DynamicallyConstructedConstantUTF8Identifier(b);

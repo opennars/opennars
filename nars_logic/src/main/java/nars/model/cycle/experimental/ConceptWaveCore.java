@@ -4,14 +4,15 @@
  */
 package nars.model.cycle.experimental;
 
-import nars.model.ControlCycle;
 import nars.Memory;
-import nars.budget.BudgetFunctions;
-import nars.budget.Budget;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
+import nars.budget.Budget;
+import nars.budget.BudgetFunctions;
+import nars.model.ControlCycle;
+import nars.model.cycle.ConceptActivator;
+import nars.nal.concept.Concept;
+import nars.nal.term.Term;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,7 +28,7 @@ import java.util.List;
  *
  * TODO not tested
  */
-abstract public class ConceptWaveCore implements ControlCycle {
+abstract public class ConceptWaveCore extends ConceptActivator implements ControlCycle {
     
 
     public DelayBag<Term, Concept> concepts;
@@ -71,23 +72,23 @@ abstract public class ConceptWaveCore implements ControlCycle {
         return concepts.size();
     }
 
-    //TODO This may be broken after refactoring
-    @Override public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
-        Concept c = getActiveConcept(term);
-        if (c!=null) {
-            //existing
-            BudgetFunctions.activate(c.getBudget(), budget, BudgetFunctions.Activating.Max);
-        }
-        else {
-            if (createIfMissing)
-                c = memory.newConcept(budget, term);
-            if (c == null)
-                return null;
-            concepts.put(c);
-        }
-
-        return c;
-    }
+//    //TODO This may be broken after refactoring
+//    @Override public Concept conceptualize(Budget budget, Term term, boolean createIfMissing) {
+//        Concept c = getActiveConcept(term);
+//        if (c!=null) {
+//            //existing
+//            BudgetFunctions.activate(c.getBudget(), budget, BudgetFunctions.Activating.Max);
+//        }
+//        else {
+//            if (createIfMissing)
+//                c = memory.newConcept(budget, term);
+//            if (c == null)
+//                return null;
+//            concepts.put(c);
+//        }
+//
+//        return c;
+//    }
 
 
     @Override

@@ -516,6 +516,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
 
+
+
     /** a task is considered amnesiac (origin not rememebered) if its parent task has been forgotten (garbage collected via a soft/weakref) */
     public boolean isAmnesiac() {
         return !isInput() && getParentTask() == null;

@@ -254,10 +254,16 @@ public class Utf8 implements CharSequence, Comparable<Utf8> {
         return fromUtf8(bytes, length);
     }
 
+    /** removes any trailing \0 chars from the array, creating a new array if necessar y*/
     public static char[] trim(final char[] c) {
-        int firstZero = Chars.indexOf(c, (char) 0);
-        if (firstZero!=-1)
-            return Arrays.copyOf(c, firstZero);
+        int i = c.length-1;
+        if (c[i]=='\0') {
+            //scan from end
+            for (; i >=0; i--) {
+                if (c[i]!='\0') break;
+            }
+            return Arrays.copyOf(c, i+1);
+        }
         return c;
     }
 

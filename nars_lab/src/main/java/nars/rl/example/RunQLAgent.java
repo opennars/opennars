@@ -176,7 +176,7 @@ public class RunQLAgent extends JPanel {
         //Global.TRUTH_EPSILON = 0.01f;
         //Global.BUDGET_EPSILON = 0.02f;
 
-        int concepts = 2048;
+        int concepts = 512;
         int conceptsPerCycle = 16;
         final int cyclesPerFrame = 5;
 
