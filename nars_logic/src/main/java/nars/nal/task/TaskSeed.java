@@ -5,11 +5,14 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.DirectBudget;
+import nars.io.JSONOutput;
 import nars.nal.*;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
+import nars.nal.stamp.StampEvidence;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 
@@ -21,9 +24,16 @@ import java.util.Arrays;
  * <p>
  * TODO abstract this and move this into a specialization of it called FluentTaskSeed
  */
-public class TaskSeed<T extends Compound> extends Stamper<T> implements AbstractStamper {
+public class TaskSeed<T extends Compound> extends DirectBudget implements AbstractStamper, StampEvidence, Stamp {
 
     transient public final Memory memory;
+
+    protected int duration;
+    protected long creationTime = Stamp.UNPERCEIVED;
+
+    protected long occurrenceTime;
+
+    private long[] evidentialSet;
 
 
     private T term;
@@ -55,6 +65,127 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
 
         /* NOTE: this ignores:
                 task.history         */
+    }
+
+
+    public TaskSeed(Memory memory) {
+        super();
+        setOccurrenceTime(Stamp.ETERNAL);
+        setCreationTime(memory.time());
+        this.memory = memory;
+    }
+
+    public TaskSeed(Memory memory, T t) {
+        /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
+        this(memory);
+
+        this.term = t;
+    }
+
+    @Deprecated
+    public TaskSeed(Memory memory, Sentence<T> t) {
+        this(memory, t.getTerm());
+        this.punc = t.punctuation;
+        this.truth = t.truth;
+        t.applyToStamp(this);
+    }
+
+
+    public TaskSeed setOccurrenceTime(long occurrenceTime) {
+        this.occurrenceTime = occurrenceTime;
+        return this;
+    }
+    public boolean isDouble() {
+        return this.getParentTask()!=null & this.getParentBelief()!=null;
+    }
+
+
+    public TaskSeed setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+        return this;
+    }
+
+
+    /**
+     * duration (in cycles) which any contained intervals are measured by
+     */
+    public int getDuration() {
+        if (this.duration == 0) {
+            if (getParentBelief() !=null)
+                return (this.duration = getParentBelief().getDuration());
+            else if (getParentTask() !=null)
+                return (this.duration = getParentTask().sentence.getDuration());
+            else {
+                return memory.duration();
+            }
+        }
+        return duration;
+    }
+
+
+    @Override public void applyToStamp(final Stamp target) {
+
+
+        target.setDuration(getDuration())
+                .setTime(getCreationTime(), getOccurrenceTime())
+                .setEvidence(getEvidentialSet())
+                .setCyclic(isCyclic());
+
+    }
+
+    @Override
+    public long[] getEvidentialSet() {
+        updateEvidence();
+        return evidentialSet;
+    }
+
+
+
+    protected void updateEvidence() {
+        if (evidentialSet== null) {
+
+            if ((getParentTask() == null) && (getParentBelief() == null)) {
+                //supplying no evidence will be assigned a new serial
+                //but this should only happen for input tasks (with no parent)
+            } else if (isDouble()) {
+                long[] as = getParentTask().getEvidentialSet();
+                long[] bs = getParentBelief().getEvidentialSet();
+
+                setEvidentialSet(Stamp.toSetArray(Stamp.zip(as, bs)));
+
+                if (getParentTask().isInput() || getParentBelief().isInput()) {
+                    setCyclic(false);
+                }
+                else {
+                    /*
+                    <patham9> since evidental overlap is not checked on deduction, a derivation can be cyclic
+                    <patham9> its on revision when it finally matters, but not whether the two parents are cyclic, but whether the combination of both evidental bases of both parents would be cyclic/have an overlap
+                    <patham9> else deductive conclusions could not lead to revisions altough the overlap is only local to the parent (the deductive conclusion)
+                    <patham9> revision is allowed here because the two premises to revise dont have an overlapping evidental base element
+                    */
+                    boolean bothParentsCyclic = getParentTask().isCyclic() && getParentBelief().isCyclic();
+
+                    boolean overlapBetweenParents = ((as.length + bs.length) > evidentialSet.length);
+
+                    //if the sum of the two parents length is greater than the result then there was some overlap
+                    setCyclic(bothParentsCyclic || overlapBetweenParents);
+                }
+
+            }
+            else {
+                //Single premise
+
+                Stamp p = null; //parent to inherit some properties from
+                if (getParentTask() == null) p = getParentBelief();
+                else if (getParentBelief() == null) p = getParentTask().sentence;
+
+                if (p!=null) {
+                    setEvidentialSet(p.getEvidentialSet());
+                    setCyclic(p.isCyclic());
+                }
+            }
+
+        }
     }
 
 
@@ -114,6 +245,16 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
     }
 
+//    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
+//        if (this.truth == null)
+//            this.truth = new DefaultTruth(freq, conf, epsilon);
+//        else {
+//            this.truth.set(freq, conf);
+//            this.truth.setEpsilon(epsilon);
+//        }
+//
+//        return this;
+//    }
 
     public TaskSeed<T> term(T t) {
         this.term = t;
@@ -133,17 +274,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
         //return truth(freq, conf, Global.TRUTH_EPSILON);
     }
-
-//    public TaskSeed<T> truth(float freq, float conf, float epsilon) {
-//        if (this.truth == null)
-//            this.truth = new DefaultTruth(freq, conf, epsilon);
-//        else {
-//            this.truth.set(freq, conf);
-//            this.truth.setEpsilon(epsilon);
-//        }
-//
-//        return this;
-//    }
 
     /**
      * alias for judgment
@@ -172,7 +302,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
     }
 
-
     public TaskSeed<T> tense(Tense t) {
         this.occurr(Stamp.getOccurrenceTime(memory.time(), t, memory));
         return this;
@@ -200,21 +329,16 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
     }
 
-    public TaskSeed<T> parent(Sentence<?> parentBelief) {
-        this.parentBelief = parentBelief;
-        return this;
-    }
-
     public TaskSeed<T> stamp(Task t) {
         //should this set parent too?
         t.sentence.applyToStamp(this);
         return this;
     }
 
-    public TaskSeed<T> stamp(Stamper s) {
-        s.applyToStamp(this);
-        return this;
-    }
+//    public TaskSeed<T> stamp(Stamper s) {
+//        s.applyToStamp(this);
+//        return this;
+//    }
 
     public TaskSeed<T> budget(float p, float d) {
         final float q;
@@ -229,29 +353,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
 
         return budget(p, d, q);
     }
-
-    public TaskSeed(Memory memory) {
-        super();
-        setOccurrenceTime(Stamp.ETERNAL);
-        setCreationTime(memory.time());
-        this.memory = memory;
-    }
-
-    public TaskSeed(Memory memory, T t) {
-        /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
-        this(memory);
-
-        this.term = t;
-    }
-
-    @Deprecated
-    public TaskSeed(Memory memory, Sentence<T> t) {
-        this(memory, t.getTerm());
-        this.punc = t.punctuation;
-        this.truth = t.truth;
-        t.applyToStamp(this);
-    }
-
 
     public TaskSeed<T> duration(int duration) {
         this.setDuration(duration);
@@ -327,7 +428,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         }
 
         Task t = new Task(sentenceTerm, punc, truth, this,
-                getBudget(),
+                getParentBeliefudget(),
                 getParentTask(),
                 getParentBelief(),
                 solutionBelief);
@@ -340,7 +441,58 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return t;
     }
 
-    private Budget getBudget() {
+
+    public TaskSeed setEvidentialSet(long[] evidentialSet) {
+        this.evidentialSet = evidentialSet;
+        return this;
+    }
+
+    public TaskSeed setDuration(int d) {
+        this.duration = d;
+        return this;
+    }
+
+
+    /**
+     * creation time of the stamp
+     */
+    public long getCreationTime() {
+        return  creationTime;
+    }
+
+    /**
+     * estimated occurrence time of the event*
+     */
+    public long getOccurrenceTime() {
+        return occurrenceTime;
+    }
+
+
+    @Override
+    public Stamp cloneWithNewCreationTime(long newCreationTime) {
+        throw new UnsupportedOperationException("Not impl");
+    }
+
+    @Override
+    public Stamp cloneWithNewOccurrenceTime(long newOcurrenceTime) {
+        throw new UnsupportedOperationException("Not impl");
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return JSONOutput.stringFromFields(this);
+        }
+        catch (StackOverflowError e) {
+            e.printStackTrace();
+            //TODO prevent this
+            return getClass().getSimpleName() + "[JSON_Error]";
+        }
+    }
+
+
+
+    private Budget getParentBeliefudget() {
         ensureBudget();
         return this;
     }
@@ -414,7 +566,7 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
     }
 
     public TaskSeed<T> parent(Task parentTask, Sentence<?> parentBelief) {
-        return parent(parentTask).parent(parentBelief);
+        return parent(parentTask, parentBelief);
     }
 
     public TaskSeed<T> solution(Sentence<?> solutionBelief) {
@@ -453,11 +605,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return truth;
     }
 
-    public int getDuration() {
-        int d = super.getDuration();
-        if (d < 0) d = memory.duration();
-        return d;
-    }
 
 
     public char getPunctuation() {
@@ -490,11 +637,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
         return this;
     }
 
-    public TaskSeed<T> stamp(Stamp a, Stamp b) {
-        setA(a);
-        setB(b);
-        return this;
-    }
 
     public TaskSeed<T> parentStamp(Task parentTask, Task parentBeliefTask) {
         return parentStamp(parentTask, parentBeliefTask.sentence);
@@ -502,7 +644,6 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
 
     public TaskSeed<T> parentStamp(Task parentTask, Sentence parentBelief) {
         parent(parentTask, parentBelief);
-        stamp(parentTask.sentence, parentBelief);
         return this;
     }
     public TaskSeed<T> parentStamp(Task parentTask, Sentence parentBelief, long occurence) {
@@ -519,8 +660,11 @@ public class TaskSeed<T extends Compound> extends Stamper<T> implements Abstract
 
     public TaskSeed<T> parentStamp(Task task) {
         parent(task);
-        stamp(task);
         return this;
+    }
+
+    public TaskSeed<Compound> occurrNow() {
+        return setOccurrenceTime(memory.time());
     }
 
     /**

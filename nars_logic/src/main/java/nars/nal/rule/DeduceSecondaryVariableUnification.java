@@ -48,7 +48,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
     Map<Term, Term> Values4 = null;*/
     Map<Term, Term> smap = null;
 
-    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, Stamper s, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
+    private static void dedSecondLayerVariableUnificationTerms(final NAL nal, Task task, Sentence second_belief, ArrayList<Term> terms_dependent, Truth truth, Truth t1, Truth t2, boolean strong) {
 
         final Sentence taskSentence = task.sentence;
 
@@ -90,10 +90,8 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
             if (nal.deriveTask(nal.newTask(result)
                     .punctuation(mark)
                     .truth(truth)
-                    .stamp(s, second_belief)
-                    .occurr(occ)
                     .budget(budget)
-                    .parent(task, second_belief), false, false, dummy, false)!=null) {
+                    .parentStamp(task, second_belief, occ), false, false, dummy, false)!=null) {
 
 
                 nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
@@ -280,18 +278,18 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 throw new RuntimeException("Task sentence truth must be non-null: " + taskSentence);
 
 
-            final Stamper stamp = new Stamper(taskSentence, second_belief, nal.time(), taskSentence.getOccurrenceTime());
+
 
             if (!terms_dependent.isEmpty()) {
                 dedSecondLayerVariableUnificationTerms(nal, task,
-                        second_belief, stamp, terms_dependent,
+                        second_belief, terms_dependent,
                         anonymousAnalogy(taskSentence.truth, truthSecond),
                         taskSentence.truth, truthSecond, false);
             }
 
             if (!terms_independent.isEmpty()) {
                 dedSecondLayerVariableUnificationTerms(nal, task,
-                        second_belief, stamp, terms_independent,
+                        second_belief, terms_independent,
                         deduction(taskSentence.truth, truthSecond),
                         taskSentence.truth, truthSecond, true);
             }
@@ -348,10 +346,8 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 final TaskSeed seed = nal.newTask(result)
                         .punctuation(mark)
                         .truth(truth)
-                        .parent(task)
                         .budgetCompoundForward(result, nal)
-                        .stamp(taskSentence, second_belief)
-                        .occurr(occ);
+                        .parentStamp(task, second_belief, occ);
 
                 Task newTask = nal.deriveTask(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
 

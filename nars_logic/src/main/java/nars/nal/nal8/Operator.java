@@ -181,7 +181,6 @@ abstract public class Operator implements Reaction<Term> {
                 judgment().
                 truth(1f, Global.OPERATOR_EXECUTION_CONFIDENCE).
                 budget(operation.getTask()).
-                stamp(opTask).
                 present().
                 parent(opTask).
                 cause(operation).

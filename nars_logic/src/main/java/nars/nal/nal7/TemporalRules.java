@@ -472,7 +472,7 @@ public class TemporalRules {
             /*  =/>  */
 
             Task task = nal.deriveDouble(statement2, subbedTask.sentence.punctuation, truth2,
-                    budget2, stamp, true, subbedTask, false);
+                    budget2, true, subbedTask, stamp, false);
 
             if (task!=null) {
             
@@ -570,7 +570,7 @@ public class TemporalRules {
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.deriveDouble(s2.term, Symbols.GOAL, T, val, nal.newStamp(strongest_desireT.sentence, belief, occ), false, strongest_desireT, true);
+                nal.deriveDouble(s2.term, Symbols.GOAL, T, val, false, strongest_desireT, nal.newStamp(strongest_desireT.sentence, belief, occ), true);
 
             }
         }
