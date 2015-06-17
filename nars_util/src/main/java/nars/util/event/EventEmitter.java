@@ -164,7 +164,7 @@ abstract public class EventEmitter<K>  {
      * */
     public static class DefaultEventEmitter<K,L extends List<Reaction<K>>> extends EventEmitter<K> {
 
-        final Map<K,L> reactions = new HashMap(16);
+        final Map<K,L> reactions = new HashMap(64);
 
 
         public class DefaultEventRegistration<K> implements EventRegistration {
@@ -231,7 +231,9 @@ abstract public class EventEmitter<K>  {
     }
 
     /** uses DirectCopyOnWriteArrayList for direct access to its array, for
-     * fast non-Lambda, non-Itrator iteration     */
+     * fast non-Lambda, non-Itrator iteration
+     * NOT WORKING YET
+     * */
     public static class FastDefaultEventEmitter<K> extends DefaultEventEmitter<K,DirectCopyOnWriteArrayList<Reaction<K>>> {
 
 

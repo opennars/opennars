@@ -7,6 +7,7 @@ import nars.gui.NARSwing;
 import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
@@ -39,6 +40,7 @@ abstract public class NQuadsInput {
     private final NAR nar;
 
     final float beliefConfidence;
+    private boolean includeDataType = true;
 
     public NQuadsInput(NAR n, String nqLoc, float beliefConfidence) throws Exception {
         this.nar = n;
@@ -158,21 +160,21 @@ abstract public class NQuadsInput {
         return Atom.the(uri);
     }
 
+//
+//    //TODO make this abstract for inserting the fact in different ways
+//    protected void inputClass(Term clas) {
+//        inputClassBelief(clas);
+//    }
 
-    //TODO make this abstract for inserting the fact in different ways
-    protected void inputClass(Term clas) {
-        inputClassBelief(clas);
-    }
+//    private void inputClassBelief(Term clas) {
+//        nar.believe(isAClass(clas));
+//    }
 
-    private void inputClassBelief(Term clas) {
-        nar.believe(isAClass(clas));
-    }
+//    public static Term isAClass(Term clas) {
+//        return Instance.make(clas, owlClass);
+//    }
 
-    public static final Atom owlClass = Atom.the("class");
-    public static Term isAClass(Term clas) {
-        return Instance.make(clas, owlClass);
-    }
-
+    public static final Atom owlClass = Atom.the("Class");
     static final Atom parentOf = Atom.the("parentOf");
     static final Atom type = Atom.the("type");
     static final Atom subClassOf = Atom.the("subClassOf");
@@ -200,9 +202,14 @@ abstract public class NQuadsInput {
         if (predicate.equals(parentOf) || predicate.equals(type)
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
 
-            //exclude X type dataTypeProperty because these are more or less redundant if they are specified through domain/range
-            if (object.equals(dataTypeProperty)) {
+            if (object.equals(owlClass)) {
                 return;
+            }
+
+            if (includeDataType) {
+                if (object.equals(dataTypeProperty)) {
+                    return;
+                }
             }
 
             belief = (Inheritance.make(subject, object));
@@ -213,31 +220,40 @@ abstract public class NQuadsInput {
         }
         else if (predicate.equals(sameAs)) {
             belief = (Similarity.make(subject, object));
+            //belief = (Equivalence.make(subject, object));
         }
         else if (predicate.equals(domain)) {
             // PROPERTY domain CLASS
             //<PROPERTY($subj, $obj) ==> <$subj {-- CLASS>>.
 
             belief = nar.term(
-                "<" + subject + "($subj,$obj) ==> <$subj {-- " + object + ">>"
+                //"<" + subject + "($subj,$obj) ==> <$subj {-- " + object + ">>"
+                    "(" + subject + "($subj,$obj) && <$subj {-- " + object + ">)"
             );
             //System.err.println(belief);
         }
         else if (predicate.equals(range)) {
             // PROPERTY range CLASS
             //<PROPERTY($subj, $obj) ==> <$obj {-- CLASS>>.
+            belief = nar.term(
+                    //"<" + subject + "($subj,$obj) ==> <$obj {-- " + object + ">>"
+                    "(" + subject + "($subj,$obj) && <$obj {-- " + object + ">)"
+            );
 
         }
         else if (predicate.equals(equivalentProperty)) {
-
+            belief = (Equivalence.make(subject, object));
         }
         else if (predicate.equals(inverseOf)) {
 
+            //TODO: PREDSUBJ(#subj, #obj) <=> PREDOBJ(#obj, #subj)
         }
         else if (predicate.equals(disjointWith)) {
-
+            //System.out.println(subject + " " + predicate + " " + object);
+            belief = Negation.make(Similarity.make(subject, object));
         }
         else {
+            //System.out.println(subject + " " + predicate + " " + object);
             belief = (Operation.make(predicate,
                     Product.make(subject, object)));
         }
@@ -294,12 +310,12 @@ abstract public class NQuadsInput {
     }
 
     public static void main(String[] args) throws Exception {
-        Default d = new Default(4096,16,3).setInternalExperience(null).level(7);
+        Default d = new Default(1000,16,3).setInternalExperience(null).level(7);
         //Solid d = new Solid(32, 4096,1,3,1,2);
         d.setInternalExperience(null).level(7);
         d.inputsMaxPerCycle.set(256);
         d.setTermLinkBagSize(64);
-        Global.TRUTH_EPSILON = 0.04f;
+        Global.TRUTH_EPSILON = 0.02f;
 
 
         NAR n = new NAR(d);
@@ -307,7 +323,7 @@ abstract public class NQuadsInput {
 
 
 
-        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.96f /* conf */) {
+        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
 
             @Override
             protected void believe(Term assertion) {

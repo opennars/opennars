@@ -69,6 +69,7 @@ public class js extends TermFunction implements Mental {
     }
 
     /** create dynamic javascript functions */
+    //TODO make this an ImmediateOperator that will not conceptualize its subterms
     public class jsop extends SynchOperator {
 
         @Override
@@ -84,6 +85,8 @@ public class js extends TermFunction implements Mental {
 
             return null;
         }
+
+
 
     }
 

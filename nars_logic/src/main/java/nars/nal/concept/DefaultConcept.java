@@ -732,6 +732,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
     }
 
     protected void onTableUpdated(char punctuation, int originalSize) {
+        if (!isActive()) return;
+
         switch (punctuation) {
             /*case Symbols.GOAL:
                 break;*/

@@ -991,8 +991,19 @@ public class Memory implements Serializable, AbstractStamper {
 
     /** actually delete procedure for a concept; removes from indexes */
     protected void _delete(Concept c) {
-        cycle.remove(c);
-        concepts.remove(c.getTerm());
+        Concept removedFromActive = cycle.remove(c);
+        if (c!=removedFromActive) {
+            throw new RuntimeException("another instances of active concept " + c + " detected on removal: " + removedFromActive);
+        }
+
+        Concept removedFromIndex = concepts.remove(c.getTerm());
+        if (removedFromIndex == null) {
+            throw new RuntimeException("concept " + c + " was not removed from memory");
+        }
+        if (c!=removedFromIndex) {
+            throw new RuntimeException("another instances of concept " + c + " detected on removal: " + removedFromActive);
+        }
+
         c.delete();
     }
 

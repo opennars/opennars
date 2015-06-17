@@ -304,9 +304,10 @@ abstract public class Symbols {
         switch(c) {
             case ' ':
             case ',':
-            case '.':
-            case '!':
-            case '?':
+            case Symbols.JUDGMENT:
+            case Symbols.GOAL:
+            case Symbols.QUESTION:
+            case Symbols.QUEST:
             case '\"':
             case Symbols.INTERVAL_PREFIX:
             case '<':

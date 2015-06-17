@@ -45,24 +45,7 @@ public class Solid extends Default implements ControlCycle {
 
     public final Bag<Term, Concept> concepts;
 
-    final ConceptActivator activator = new ConceptActivator() {
-
-        @Override
-        public Memory getMemory() {
-            return memory;
-        }
-
-        @Override
-        public void remember(Concept c) {
-
-        }
-
-        @Override
-        public void forget(Concept c) {
-
-        }
-
-    };
+    ConceptActivator activator;
 
     final SortedSet<Task> tasks = new ConcurrentSkipListSet<>(new TaskComparator(TaskComparator.Merging.Or));
     //final SortedSet<Task> tasks = new TreeSet(new TaskComparator(TaskComparator.Duplication.Or));
@@ -106,6 +89,7 @@ public class Solid extends Default implements ControlCycle {
         super.init(n);
         this.memory = n.memory;
 
+        activator = new DefaultConceptActivator(memory, concepts);
     }
 
 
@@ -311,5 +295,33 @@ public class Solid extends Default implements ControlCycle {
     @Override
     public Concept remove(Concept c) {
         return concepts.remove(c.getTerm());
+    }
+
+    public static class DefaultConceptActivator extends ConceptActivator {
+
+        private final Memory memory;
+        private final Bag<Term, Concept> conceptBag;
+
+        DefaultConceptActivator(Memory memory, Bag<Term,Concept> conceptBag) {
+            this.memory = memory;
+            this.conceptBag = conceptBag;
+        }
+
+        @Override
+        public Memory getMemory() {
+            return memory;
+        }
+
+
+        @Override
+        public void remember(Concept c) {
+            conceptBag.put(c);
+        }
+
+        @Override
+        public void forget(Concept c) {
+            conceptBag.remove(c.getTerm());
+        }
+
     }
 }
