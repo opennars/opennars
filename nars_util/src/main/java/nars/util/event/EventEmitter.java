@@ -4,7 +4,7 @@ package nars.util.event;
 import nars.util.data.DirectCopyOnWriteArrayList;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -164,7 +164,7 @@ abstract public class EventEmitter<K>  {
      * */
     public static class DefaultEventEmitter<K,L extends List<Reaction<K>>> extends EventEmitter<K> {
 
-        final Map<K,L> reactions = new IdentityHashMap(16);
+        final Map<K,L> reactions = new HashMap(16);
 
 
         public class DefaultEventRegistration<K> implements EventRegistration {

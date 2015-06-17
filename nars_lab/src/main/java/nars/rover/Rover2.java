@@ -66,7 +66,7 @@ public class Rover2 extends PhysicsModel {
         else*/ {
             Global.THREADS = 1;
             nar = new NAR(new Default().simulationTime().
-                    setActiveConcepts(2500).
+                    setActiveConcepts(512).
                     setNovelTaskBagSize(256));
             nar.param.inputsMaxPerCycle.set(100);
             nar.param.conceptsFiredPerCycle.set(4);
@@ -326,9 +326,9 @@ public class Rover2 extends PhysicsModel {
         //nar.input("<{0,x,xx,xxx,xxxx,xxxxx,xxxxxx,xxxxxxx,xxxxxxxx,xxxxxxxxx,xxxxxxxxxx} --> magnitude>.");
         nar.input("<{0,1,2,3,4,5,6,7,8,9} --> magnitude>.");
 
-        nar.input("< ( ($n,#x) &| ($n,#y) ) =/> lessThan(#x,#y) >?");
+        //nar.input("< ( ($n,#x) &| ($n,#y) ) =/> lessThan(#x,#y) >?");
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             String x = "lessThan(" + XORShiftRandom.global.nextInt(10) + "," +
                     XORShiftRandom.global.nextInt(10) + ")?";
 
@@ -503,16 +503,16 @@ public class Rover2 extends PhysicsModel {
 
                 switch (command) {
                     case "right":
-                        rotateRelative(-10);
+                        rotateRelative(-60);
                         break;
                     case "right,right":
-                        rotateRelative(-20);
+                        rotateRelative(-120);
                         break;
                     case "left":
-                        rotateRelative(10);
+                        rotateRelative(60);
                         break;
                     case "left,left":
-                        rotateRelative(20);
+                        rotateRelative(120);
                         break;
                     case "forward,forward":
                         thrustRelative(3);

@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author me
  */
-public class EventTest {
+public class EventEmitterTest {
 
 
 //    @Test
