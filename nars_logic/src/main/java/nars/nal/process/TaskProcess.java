@@ -97,10 +97,6 @@ public class TaskProcess extends NAL {
         if (d == null)
             return null;
 
-
-//        if (task.isInput())
-//            m.emit(Events.IN.class, task); //TODO use a different event than IN
-
         d.run();
         return d;
     }

@@ -618,11 +618,6 @@ public class Memory implements Serializable, AbstractStamper {
         if (c == null)
             return null;
 
-        if (!c.isActive()) {
-            c.setState(Concept.State.Active);
-        }
-
-
         return c;
     }
 

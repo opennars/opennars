@@ -1,10 +1,9 @@
 package nars.nario;
 
+
 import automenta.vivisect.Audio;
-import automenta.vivisect.audio.FakeSoundEngine;
 import nars.nario.sprites.Mario;
 
-import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
@@ -22,7 +21,7 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
     private boolean running = false;
     GraphicsConfiguration graphicsConfiguration;
     protected Scene scene;
-    Audio sound;
+
     private boolean focused = false;
     protected MapScene mapScene;
     private BufferedImage image;
@@ -278,7 +277,6 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
     public LevelScene startLevel(long seed, int difficulty, int type) {
         scene = newLevel(seed, difficulty, type);
-        scene.setSound(sound);
         scene.init();
         return (LevelScene) scene;
     }
@@ -316,20 +314,17 @@ public class MarioComponent extends JComponent implements Runnable, KeyListener,
 
     public void win() {
         scene = new WinScene(this);
-        scene.setSound(sound);
         scene.init();
     }
 
     public void toTitle() {
         Mario.resetStatic();
         scene = new TitleScene(this, graphicsConfiguration);
-        scene.setSound(sound);
         scene.init();
     }
 
     public void lose() {
         scene = new LoseScene(this);
-        scene.setSound(sound);
         scene.init();
     }
 

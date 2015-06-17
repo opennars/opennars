@@ -59,8 +59,13 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
      *  insert it into the index for potential later activation.
      */
     @Override public Concept newItem() {
+        //default behavior overriden; a new item will be maanually inserted into the bag under certain conditons to be determined by this class
+        return null;
+    }
 
-        boolean belowThreshold = getPriority() <= getMemory().param.activeConceptThreshold.floatValue();
+
+    public Concept forgottenOrNewConcept() {
+        boolean belowThreshold = getPriority() < getMemory().param.newConceptThreshold.floatValue();
 
         //try remembering from subconscious if activation is sufficient
         Concept concept = index().get(getKey());
@@ -96,10 +101,10 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
     }
 
 
-    /** called when a Concept enters attention */
+    /** called when a Concept enters attention. its state should be set active prior to call */
     abstract public void remember(Concept c);
 
-    /** called when a Concept leaves attention */
+    /** called when a Concept leaves attention. its state should be set forgotten prior to call */
     abstract public void forget(Concept c);
 
 
@@ -117,24 +122,54 @@ abstract public class ConceptActivator extends BagActivator<Term, Concept> {
         set(term, budget, true, getMemory().time());
         Concept c = concepts.update(this);
 
-        if (c != null) {
 
-            if (c.isDeleted()) {
-                throw new RuntimeException("deleted concept should not have been returned by index");
-                //throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
-                //return null;
-            }
 
-            if (!c.isActive()) {
+        if (c == null) {
+
+            c = forgottenOrNewConcept();
+            if (budget.summaryGreaterOrEqual(getMemory().param.activeConceptThreshold) ) {
                 c.setState(Concept.State.Active);
+                remember(c);
             }
-
-            remember(c);
-
-            return c;
+            else {
+                if (!c.isForgotten())
+                    c.setState(Concept.State.Forgotten);
+            }
 
         }
+        else {
+            if (c.isDeleted()) {
+                throw new RuntimeException("deleted concept should not have been returned by index");
+            }
+        }
 
-        return null;
+        return c;
+
+//        if (c != null) {
+//
+//            if (c.isDeleted()) {
+//                throw new RuntimeException("deleted concept should not have been returned by index");
+//                //throw new RuntimeException(c + " is invalid state " + c.getState() + " after conceptualization");
+//                //return null;
+//            }
+//
+//            if (!c.isActive()) {
+//
+//                if (c.getBudget().summaryGreaterOrEqual(getMemory().param.activeConceptThreshold) ) {
+//                    c.setState(Concept.State.Active);
+//                    remember(c);
+//                }
+//                else {
+//                    if (c.getState()!= Concept.State.Forgotten)
+//                        c.setState(Concept.State.Forgotten);
+//                }
+//
+//            }
+//
+//
+//            return c;
+//
+//        }
+//        return null;
     }
 }

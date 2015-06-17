@@ -701,7 +701,7 @@ public class NARio extends Run implements RLEnvironment {
 
         level = (LevelScene) scene;
 
-        level.setSound(sound);
+
         level.init();
 
         mario = level.mario;

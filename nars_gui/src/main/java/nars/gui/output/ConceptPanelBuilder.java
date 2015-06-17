@@ -114,7 +114,7 @@ public class ConceptPanelBuilder extends NARReaction {
                 Concept c = (Concept) args[0];
                 changed.add(c);
             } else {
-                throw new RuntimeException(this + " unable to process unknown event format: " + event + " with " + Arrays.toString(args));
+                throw new RuntimeException(this + " " + event + " unable to process unknown event format: " + event + " with " + Arrays.toString(args) + " 0:" + args[0].getClass());
             }
         }
     }

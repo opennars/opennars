@@ -5,7 +5,6 @@ import nars.nario.Art;
 import nars.nario.LevelScene;
 import nars.nario.Scene;
 import nars.nario.level.Level;
-import automenta.vivisect.audio.FixedSoundSource;
 
 
 public class Mario extends Sprite

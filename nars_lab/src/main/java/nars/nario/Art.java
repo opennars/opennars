@@ -1,17 +1,17 @@
 package nars.nario;
 
+import automenta.vivisect.audio.sample.SampleLoader;
+import automenta.vivisect.audio.sample.SonarSample;
+
+import javax.imageio.ImageIO;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.imageio.ImageIO;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
-import automenta.vivisect.Audio;
-import automenta.vivisect.audio.sample.SampleLoader;
-import automenta.vivisect.audio.sample.SonarSample;
 
 
 public class Art

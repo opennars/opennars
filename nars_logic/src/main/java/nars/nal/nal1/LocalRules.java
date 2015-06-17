@@ -339,7 +339,8 @@ public class LocalRules {
         Term otherTerm;
 
         if (subjT.hasVarQuery() && predT.hasVarQuery()) {
-            throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
+            System.err.println("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
+            //throw new RuntimeException("both subj and pred have query; this case is not implemented yet (if it ever occurrs)");
         } else if (subjT.hasVarQuery()) {
             otherTerm = (predT.equals(subjB)) ? predB : subjB;
             content = Statement.make(content, otherTerm, predT, order);

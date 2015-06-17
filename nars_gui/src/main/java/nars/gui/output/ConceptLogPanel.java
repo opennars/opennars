@@ -42,6 +42,10 @@ public class ConceptLogPanel extends LogPanel implements Runnable {
 
             @Override
             public void event(Class event, Object[] args) {
+                //TODO prevent this from even being called by correctly removing the event handler
+                if (!isShowing())
+                    return;
+
                 if (event == Events.ConceptActive.class) {
 //                    SwingUtilities.invokeLater(new Runnable() {
 //                        @Override

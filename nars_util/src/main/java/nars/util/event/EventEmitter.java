@@ -8,6 +8,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  * TODO separate this into a single-thread and multithread implementation
@@ -192,7 +193,12 @@ abstract public class EventEmitter<K>  {
         public void notify(final K channel, final Object... arg) {
             List<Reaction<K>> c = all(channel);
             if (c!=null) {
-                c.forEach( ( Reaction<K> x ) -> x.event(channel,arg) );
+                c.forEach(new Consumer<Reaction<K>>() {
+                    @Override
+                    public void accept(Reaction<K> x) {
+                        x.event(channel, arg);
+                    }
+                });
             }
         }
 
