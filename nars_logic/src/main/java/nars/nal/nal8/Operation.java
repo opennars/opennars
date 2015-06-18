@@ -24,16 +24,13 @@ import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.NALOperator;
-import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.eval;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -136,7 +133,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
 
     public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
-        return  m.task(content)
+        return  m.newTask(content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(budget)

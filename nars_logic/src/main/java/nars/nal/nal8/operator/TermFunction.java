@@ -87,7 +87,7 @@ public abstract class TermFunction<O> extends SynchOperator {
 
         float confidence = 0.99f;
         return Lists.newArrayList(
-                nar.memory.task(inh).
+                nar.memory.newTask(inh).
                         truth(1f, confidence).
                         budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY).
                         judgment().
@@ -140,7 +140,7 @@ public abstract class TermFunction<O> extends SynchOperator {
 
         return Lists.newArrayList(
 
-                nar.memory.task(actual).judgment()
+                nar.memory.newTask(actual).judgment()
                         .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                         .truth(1f, confidence)
                         .present()
@@ -148,7 +148,7 @@ public abstract class TermFunction<O> extends SynchOperator {
                         .get(),
 
                 actual_dep_part != null ?
-                        nar.memory.task(actual_dep_part).judgment()
+                        nar.memory.newTask(actual_dep_part).judgment()
                                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                                 .truth(1f, confidence)
                                 .present()
@@ -198,9 +198,9 @@ public abstract class TermFunction<O> extends SynchOperator {
             //this will get the original input operation term, not after it has been inlined.
             Compound inputTerm = (Compound)operation.getTask().getTerm();
 
-            Task b = memory.task(
-                            inputTerm
-                    ).judgment().eternal().truth((Truth) y).get();
+            Task b = memory.newTask(
+                    inputTerm
+            ).judgment().eternal().truth((Truth) y).get();
 
             TaskProcess.run(nar, b);
 

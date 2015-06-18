@@ -869,17 +869,11 @@ public class Memory implements Serializable, AbstractStamper {
 
     }
 
-    public <T extends Compound> TaskSeed<T> task(T t) {
+    public <T extends Compound> TaskSeed<T> newTask(T t) {
         return new TaskSeed(this, t);
     }
 
-    @Deprecated public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
-        return task(s, new Budget(s.punctuation, s.truth), parentTask);
-    }
 
-    @Deprecated public <T extends Compound> Task<T> task(Sentence<T> s, Budget b, Task parentTask) {
-        return new Task(s, b, parentTask);
-    }
 
     /**
      * samples a next active concept for processing;

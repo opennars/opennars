@@ -292,7 +292,7 @@ public class AntCore extends ConceptWaveCore {
                 TaskLink taskLink = (TaskLink)l;
                 
                 Sentence taskSentence = taskLink.getTask().sentence;
-                Sentence parentSentence = taskLink.getTask().parentBelief;
+                Sentence parentSentence = taskLink.getTask().getParentBelief();
                 Sentence bestSolution = taskLink.getTask().getBestSolution();
                 
                 Concept t = null;

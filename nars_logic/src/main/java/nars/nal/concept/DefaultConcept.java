@@ -429,6 +429,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 //TaskSeed projectedBelief = oldBelief.projection(nal.memory, now, task.getOccurrenceTime());
 
 
+                TaskSeed newBeliefSeed = oldBelief.projection(nal.memory, now, newBelief.getOccurrenceTime());
 
                 /*
                 if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
@@ -436,7 +437,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 */
 
 
-                Task r = tryRevision(newBelief, oldBelief, false, nal);
+                //TODO avoid instantiating Task here because it may get reinstantiated again in tryRevision
+                Task r = tryRevision(newBeliefSeed.get(), oldBelief, false, nal);
                 if (r != null) {
                     newBelief = r;
                     nal.setCurrentBelief(r);
@@ -452,7 +454,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             if (nal != null) {
                 int nnq = getQuestions().size();
                 for (int i = 0; i < nnq; i++) {
-                    trySolution(newBelief.sentence, getQuestions().get(i), nal);
+                    trySolution(newBelief, getQuestions().get(i), nal);
                 }
             }
 
@@ -528,14 +530,17 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         if (newGoal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
-            final Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
+            Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefT != null) {
 
                 Sentence belief = beliefT.sentence;
-                Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
-                trySolution(projectedBelief, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
+
+                Truth projectedTruth = belief.projection(newGoal.getOccurrenceTime(), dur);
+                //Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
+
+                beliefT = trySolution(beliefT, projectedTruth, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
                 AntiSatisfaction = newGoal.sentence.truth.getExpDifAbs(belief.truth);
             }
 
@@ -668,9 +673,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
         if (ques.isQuest()) {
-            trySolution(getSentence(ques, getGoals()), n, nal);
+            trySolution(getTask(ques, getGoals()), null, n, nal);
         } else {
-            trySolution(getSentence(ques, getBeliefs()), n, nal);
+            trySolution(getTask(ques, getBeliefs()), null, n, nal);
         }
     }
 
@@ -791,6 +796,29 @@ public class DefaultConcept extends Item<Term> implements Concept {
             for (int i = 0; i < lsv; i++) {
                 Task judg = list.get(i);
                 beliefQuality = solutionQuality(query, judg.sentence, now);
+                if (beliefQuality > currentBest) {
+                    currentBest = beliefQuality;
+                    candidate = judg;
+                }
+            }
+        }
+
+        return candidate;
+    }
+    @Override
+    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, final List<Task>... lists) {
+        float currentBest = 0;
+        float beliefQuality;
+        Task candidate = null;
+
+        final long now = getMemory().time();
+        for (List<Task> list : lists) {
+            if (list.isEmpty()) continue;
+
+            int lsv = list.size();
+            for (int i = 0; i < lsv; i++) {
+                Task judg = list.get(i);
+                beliefQuality = solutionQuality(hasQueryVar, occTime, judg.sentence, truth, now);
                 if (beliefQuality > currentBest) {
                     currentBest = beliefQuality;
                     candidate = judg;

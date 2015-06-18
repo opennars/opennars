@@ -183,11 +183,11 @@ public class InternalExperience extends NARReaction {
         }
     }
 
-    public Task experienceFromBelief(NAL nal, Budget b, Sentence belief) {
-        return experienceFromTask(nal,
-                new Task(belief.clone(), b, null),
-                false);
-    }
+//    public Task experienceFromBelief(NAL nal, Budget b, Sentence belief) {
+//        return experienceFromTask(nal,
+//                new Task(belief.clone(), b, null),
+//                false);
+//    }
     
     public Task experienceFromTask(NAL nal, Task task, boolean full) {
         if(!OLD_BELIEVE_WANT_EVALUATE_WONDER_STRATEGY) {
@@ -318,7 +318,7 @@ public class InternalExperience extends NARReaction {
 
     //TODO
     public static void experienceFromBelief(Memory memory, Task task, Sentence belief) {
-        Task T=new Task(belief.clone(),new Budget(task),null);
+        //Task T=new Task(belief.clone(),new Budget(task),null);
         ///InternalExperienceFromTask(memory,T,false);
     }
 

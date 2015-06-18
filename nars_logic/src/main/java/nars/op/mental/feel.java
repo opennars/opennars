@@ -19,19 +19,13 @@ package nars.op.mental;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
-import nars.Symbols;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
@@ -61,7 +55,7 @@ public abstract class feel extends SynchOperator implements Mental {
         final Term selfSubject = SetExt.make(self);
         Inheritance content = Inheritance.make(selfSubject, predicate);
 
-        return Lists.newArrayList( memory.task(content)
+        return Lists.newArrayList( memory.newTask(content)
                 .judgment().truth(new DefaultTruth(value, 0.999f))
                 .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
                 .occurrNow().get()

@@ -23,6 +23,7 @@ package nars.nal;
 import nars.Global;
 import nars.Symbols;
 import nars.io.Texts;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -228,6 +229,31 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
         set(f, c);
         return this;
     }
+
+    default float projectionQuality(Sentence s, long targetTime, long currentTime, boolean problemHasQueryVar) {
+        float freq = getFrequency();
+        float conf = getConfidence();
+
+        if (!s.isEternal() && (targetTime != s.getOccurrenceTime())) {
+            conf = TruthFunctions.eternalizedConfidence(conf);
+            if (targetTime != Stamp.ETERNAL) {
+                long occurrenceTime = s.getOccurrenceTime();
+                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
+                float projectedConfidence = factor * s.truth.getConfidence();
+                if (projectedConfidence > conf) {
+                    conf = projectedConfidence;
+                }
+            }
+        }
+
+        if (problemHasQueryVar) {
+            return Truth.expectation(freq, conf) / s.getTerm().getComplexity();
+        } else {
+            return conf;
+        }
+
+    }
+
 
 
     public enum TruthComponent {

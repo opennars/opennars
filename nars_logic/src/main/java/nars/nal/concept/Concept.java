@@ -54,7 +54,11 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     public Memory getMemory();
 
-    Task getTask(Sentence query, List<Task>... lists);
+    public Task getTask(boolean hasQueryVar, long occTime, Truth truth, List<Task>... lists);
+
+    default public Task getTask(Sentence query, List<Task>... lists) {
+        return getTask(query.hasQueryVar(), query.getOccurrenceTime(), query.getTruth(), lists);
+    }
 
     TaskLink activateTaskLink(TaskLinkBuilder taskLinkBuilder);
 

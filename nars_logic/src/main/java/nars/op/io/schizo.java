@@ -31,7 +31,7 @@ public class schizo extends SynchOperator {
             Variable v = Variable.theDependent();
 
             return Lists.newArrayList(
-                memory.task(
+                memory.newTask(
                         Implication.make(
                                 Inheritance.make(v, oldSelf),
                                 Inheritance.make(v, newSelf),

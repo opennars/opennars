@@ -322,7 +322,7 @@ public abstract class NAL implements Runnable {
     }
 
     public <T extends Compound> TaskSeed newTask(T term) {
-        return memory.task(term);
+        return memory.newTask(term);
     }
 
     @Deprecated

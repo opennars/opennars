@@ -20,19 +20,15 @@ public class ExplainableTask extends Task {
     /** the Task instance that was input to the reasoner */
     public final Task task;
 
-    ExplainableTask(Sentence s) {
-        super(s, null);
-        this.task = null;
-    }
 
     public ExplainableTask(TaskCondition tc) {
-        this(tc.getMemory().task((Compound)tc.term).punctuation(tc.punc)
+        this(tc.getMemory().newTask((Compound) tc.term).punctuation(tc.punc)
         .truth(tc.getTruthMean()).time(tc.getCreationTime(),
                         Stamp.getOccurrenceTime(tc.getCreationTime(), tc.tense, tc.getMemory())).get());
     }
 
-    public ExplainableTask(Task t) {
-        super(t.sentence, t);
+    @Deprecated public ExplainableTask(Task t) {
+        super(t.sentence, t.getBudget(), t.getParentTask(), t.getParentBelief());
         this.task = t;
     }
 

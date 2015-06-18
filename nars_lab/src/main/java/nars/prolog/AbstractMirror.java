@@ -44,12 +44,13 @@ abstract public class AbstractMirror extends NARReaction {
     
     public boolean input(Sentence s, InputMode mode, Task parent) {
         if (mode == InputMode.Perceive) {
-            nar.input(s);
-            return true;
+            throw new RuntimeException("not updated yet");
+            //nar.input(s);
+            //return true;
         }
         else if ((mode == InputMode.InputTask)|| (mode == InputMode.ImmediateProcess)) {
 
-            Task t = new Task(s, Budget.newDefault(s, nar.memory), parent  );
+            Task t = new Task(s, Budget.newDefault(s, nar.memory), parent, null );
 
             //System.err.println("  " + t);
 

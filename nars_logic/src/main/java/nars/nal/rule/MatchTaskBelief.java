@@ -13,9 +13,10 @@ import nars.nal.term.Term;
 public class MatchTaskBelief extends ConceptFireTaskTerm {
 
     @Override public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
-        Sentence currentBelief = f.getCurrentBelief();
+        Task currentBelief = f.getCurrentBeliefTask();
         if (currentBelief!=null){
             if (match(taskLink.targetTask, currentBelief, f)) {
+                System.err.println("MatchTaskBelief: false: " + taskLink.targetTask + " : " + currentBelief);
                 //Filter this from further processing
                 return false;
             }
@@ -33,7 +34,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
      * @param task The task
      * @param belief The belief
      */
-    public static boolean match(final Task task, final Sentence belief, final NAL nal) {
+    public static boolean match(final Task task, final Task belief, final NAL nal) {
         final Sentence taskSentence = task.sentence;
 
         if (taskSentence.isJudgment()) {
@@ -44,7 +45,9 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
             if (TemporalRules.matchingOrder(taskSentence, belief)) {
                 Term[] u = new Term[] { taskSentence.term, belief.term };
                 if (Variables.unify(Symbols.VAR_QUERY, u, nal.memory.random)) {
-                    return LocalRules.trySolution(belief, task, nal);
+                    //TODO see if this is correct because it will be producing
+                    //a Task which isnt used
+                    return LocalRules.trySolution(belief, task, nal)!=null;
                 }
             }
         }

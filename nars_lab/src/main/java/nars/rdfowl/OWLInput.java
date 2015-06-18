@@ -8,6 +8,7 @@ import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import javax.xml.namespace.QName;
@@ -381,7 +382,7 @@ public class OWLInput  {
     }
 
     public static final Atom owlClass = Atom.the("class");
-    public static Term isAClass(Term clas) {
+    public static Compound isAClass(Term clas) {
         return Instance.make(clas, owlClass);
     }
 

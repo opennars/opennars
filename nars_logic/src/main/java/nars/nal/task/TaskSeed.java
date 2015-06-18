@@ -428,11 +428,12 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
                 throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
         }
 
-        Task t = new Task(sentenceTerm, punc, truth, this,
-                getParentBeliefudget(),
+        Task t = new Task(sentenceTerm, punc, truth, getBudget(),
                 getParentTask(),
                 getParentBelief(),
                 solutionBelief);
+
+        applyToStamp(t);
 
         t.setTemporalInducting(temporalInduct);
 
@@ -493,7 +494,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
 
 
-    private Budget getParentBeliefudget() {
+    private Budget getBudget() {
         ensureBudget();
         return this;
     }

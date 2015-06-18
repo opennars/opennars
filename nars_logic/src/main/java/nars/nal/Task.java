@@ -24,7 +24,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializable;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
@@ -57,6 +59,7 @@ import static nars.Global.reference;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
+@JsonSerialize(using = ToStringSerializer.class)
 public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence, Input {
 
 
@@ -68,7 +71,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     /**
      * Task from which the Task is derived, or null if input
      */
-    transient final Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
+    transient public final Reference<Task> parentTask; //should this be transient? we may want a Special kind of Reference that includes at least the parent's Term
 
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
@@ -110,12 +113,16 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 //    }
 
 
-    public Task(T term, final char punctuation, final Truth truth, Budget bv, final Task parentTask, final Sentence parentBelief, Sentence solution) {
+    public Task(T term, final char punctuation, final Truth truth, final Budget bv, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(term, punctuation, truth,
                 bv != null ? bv.getPriority() : 0,
                 bv != null ? bv.getDurability() : 0,
                 bv != null ? bv.getQuality() : 0,
                 parentTask, parentBelief, solution);
+    }
+
+    public Task(T term, final char punc, final Truth truth, final float p, final float d, final float q) {
+        this(term, punc, truth, p, d, q, (Task)null, null, null);
     }
 
     public Task(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Sentence parentBelief, Sentence solution) {
@@ -126,7 +133,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
                 reference(solution)
         );
     }
-    public Task(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Sentence> parentBelief, Reference<Sentence> solution) {
+    public Task(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Sentence> parentBelief, final Reference<Sentence> solution) {
         super(term, punctuation, truth, p, d, q);
 
 
@@ -157,6 +164,16 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         }
 
 
+    }
+
+    public Task(Sentence<T> s, Budget budget, Task parentTask, Sentence parentBelief) {
+        this(s.getTerm(), s.punctuation, s.truth, budget, parentTask, parentBelief, null);
+    }
+
+    protected Task() {
+        super();
+        this.parentTask = null;
+        this.parentBelief = null;
     }
 
 //    /**
@@ -192,7 +209,24 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     /** clones this Task with a new Term */
     public <X extends Compound> Task<X> clone(X t) {
-        return new Task(getTerm(), getPunctuation(), getTruth(),
+        return new Task(t, getPunctuation(), getTruth(),
+                getPriority(), getDurability(), getQuality(),
+                parentTask, parentBelief, bestSolution
+        );
+    }
+    /** clones this Task with a new Term and truth  */
+    public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
+        return new Task(t, getPunctuation(), newTruth,
+                getPriority(), getDurability(), getQuality(),
+                parentTask, parentBelief, bestSolution
+        );
+    }
+    /** clones this Task with a new truth */
+    public Task<T> clone(Truth newTruth) {
+
+        if (truth == null && newTruth == null) return this;
+
+        return new Task(getTerm(), getPunctuation(), newTruth,
                 getPriority(), getDurability(), getQuality(),
                 parentTask, parentBelief, bestSolution
         );

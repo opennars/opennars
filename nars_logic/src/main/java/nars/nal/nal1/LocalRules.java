@@ -132,16 +132,21 @@ public class LocalRules {
         return revised;
     }
 
+    public static Task trySolution(Task belief, final Task questionTask, final NAL nal) {
+        return trySolution(belief, belief.getTruth(), questionTask, nal);
+    }
+
     /**
      * Check if a Sentence provide a better answer to a Question or Goal
      *
      * @param belief       The proposed answer
      * @param questionTask The task to be processed
      * @param memory       Reference to the memory
+     * @return the projected Task, or the original Task
      */
-    public static boolean trySolution(Sentence belief, final Task questionTask, final NAL nal) {
+    public static Task trySolution(Task belief, final Truth projectedTruth, final Task questionTask, final NAL nal) {
 
-        if (belief == null) return false;
+        if (belief == null) return null;
 
 
         Sentence problem = questionTask.sentence;
@@ -150,12 +155,12 @@ public class LocalRules {
         if (!TemporalRules.matchingOrder(problem, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
-            return false;
+            return belief;
         }
 
         final long now = memory.time();
         Sentence oldBest = questionTask.getBestSolution();
-        float newQ = TemporalRules.solutionQuality(problem, belief, now);
+        float newQ = TemporalRules.solutionQuality(problem, belief, projectedTruth, now);
         if (oldBest != null) {
             float oldQ = TemporalRules.solutionQuality(problem, oldBest, now);
             if (oldQ >= newQ) {
@@ -164,7 +169,7 @@ public class LocalRules {
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
-                return false;
+                return belief;
             }
         }
 
@@ -173,17 +178,18 @@ public class LocalRules {
             Term u[] = new Term[]{content, problem.term};
 
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
-            if (!unified) return false;
+            if (!unified) return belief;
 
             content = u[0];
 
-            belief = belief.clone((Compound) content);
+            belief = belief.clone((Compound) content, projectedTruth);
             if (belief == null) {
                 throw new RuntimeException("Unification invalid: " + Arrays.toString(u) + " while cloning into " + belief);
                 //return false;
             }
-
-
+        }
+        else {
+            belief = belief.clone(projectedTruth);
         }
 
         questionTask.setBestSolution(memory, belief);
@@ -225,7 +231,7 @@ public class LocalRules {
 
         }
 
-        return true;
+        return belief;
 
 
     }

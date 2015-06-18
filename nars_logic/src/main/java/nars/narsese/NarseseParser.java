@@ -182,9 +182,10 @@ public class NarseseParser extends BaseParser<Object> {
         if (content==null) return null;
 
 
-        return new Task(new Sentence(ccontent, p, t, memory)
-                .setCreationTime(Stamp.UNPERCEIVED)
-                .setOccurrenceTime(Stamp.UNPERCEIVED, tense.get(), memory.duration()), B );
+        Task ttt = new Task(ccontent, p, t, B, null, null, null);
+        ttt.setTime(Stamp.UNPERCEIVED,
+                Stamp.getOccurrenceTime(Stamp.UNPERCEIVED, tense.get(), memory.duration()));
+        return ttt;
 
         /*public static Stamp getNewStamp(Memory memory, boolean newStamp, long creationTime, Tense tense) {
             return new Stamp(

@@ -10,6 +10,7 @@ import nars.io.out.TextOutput;
 import nars.nal.Task;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.testing.condition.OutputCondition;
@@ -217,7 +218,7 @@ public class TestNAR extends NAR {
     public ExplainableTask believe(float pri, float dur, String beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         //Override believe to input beliefs that have occurrenceTime set on input
         // "lazy timing" appropriate for test cases that can have delays
-        Task t = super.believe(pri, dur, (Term)term(beliefTerm), tense, freq, conf);
+        Task t = super.believe(pri, dur, (Compound) term(beliefTerm), tense, freq, conf);
 
         return explainable(t);
     }

@@ -48,7 +48,6 @@ import java.util.*;
  * <p>
  * It is used as the premises and conclusions of all logic rules.
  */
-@JsonSerialize(using = ToStringSerializer.class)
 public class Sentence<T extends Compound> extends Item<Sentence<T>> implements Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
 
 
@@ -95,14 +94,21 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     private boolean cyclic;
 
 
-    public Sentence(Term invalidTerm, char punctuation, Truth newTruth, AbstractStamper newStamp) {
+    @Deprecated Sentence() {
+        super(0,0,0);
+        this.punctuation = 0;
+        this.truth = null;
+        this.term = null;
+    }
+
+    Sentence(Term invalidTerm, char punctuation, Truth newTruth, AbstractStamper newStamp) {
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    @Deprecated public Sentence(T seedTerm, final char punctuation, final Truth truth) {
+    @Deprecated Sentence(T seedTerm, final char punctuation, final Truth truth) {
         this(seedTerm, punctuation, truth, 0, 0, 0);
     }
-    public Sentence(T term, final char punctuation, final Truth truth, float p, float d, float q) {
+    Sentence(T term, final char punctuation, final Truth truth, float p, float d, float q) {
         super(p,d,q);
         this.punctuation = punctuation;
 
@@ -267,15 +273,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return true;
     }
 
-    /**
-     * Clone the Sentence
-     *
-     * @return The clone
-     */
-    @Override
-    public Sentence clone() {
-        return clone(term);
-    }
+
 
     /** returns a valid sentence CompoundTerm, or throws an exception */
     public static Compound termOrException(Term t) {
@@ -330,31 +328,40 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
-    
-    public Sentence clone(final boolean makeEternal) {
-        Sentence clon = clone(term);
-        if(clon.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
-            //change occurence time of clone
-            clon.setEternal();
-        }
-        return clon;
+//
+//    public Sentence clone(final boolean makeEternal) {
+//        Sentence clon = clone(term);
+//        if(clon.getOccurrenceTime()!=Stamp.ETERNAL && makeEternal) {
+//            //change occurence time of clone
+//            clon.setEternal();
+//        }
+//        return clon;
+//    }
+
+    /**
+     * Clone the Sentence
+     *
+     * @return The clone
+     */
+    @Override
+    public Sentence clone() {
+        return clone(term);
     }
 
-
-    public final <X extends Compound> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
-        X ct = termOrNull(t);
-        if (ct == null) return null;
-
-        if (!ct.getClass().isInstance(necessaryTermType))
-            return null;
-
-        if (ct.equals(term)) {
-            return (Sentence<X>) this;
-        }
-        return clone_(ct);
-
-    }
-
+//    public final <X extends Compound> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
+//        X ct = termOrNull(t);
+//        if (ct == null) return null;
+//
+//        if (!ct.getClass().isInstance(necessaryTermType))
+//            return null;
+//
+//        if (ct.equals(term)) {
+//            return (Sentence<X>) this;
+//        }
+//        return clone_(ct);
+//
+//    }
+//
     /** Clone with a different Term */
     public <X extends Compound> Sentence<X> clone(X t) {
         X ct = termOrNull(t);
@@ -382,26 +389,26 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 //        return null;
 //    }
 
-
-    /**
-      * project a judgment to a difference occurrence time
-      *
-      * @param targetTime The time to be projected into
-      * @param currentTime The current time as a reference
-      * @return The projected belief
-      */    
-    @Deprecated public Sentence projectionSentence(final long targetTime, final long currentTime) {
-            
-        final Truth newTruth = projection(targetTime, currentTime);
-        
-        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
-
-        Sentence s = new Sentence(term, punctuation, newTruth, this);
-
-        s.setOccurrenceTime(eternalizing ? Stamp.ETERNAL : targetTime);
-
-        return s;
-    }
+//
+//    /**
+//      * project a judgment to a difference occurrence time
+//      *
+//      * @param targetTime The time to be projected into
+//      * @param currentTime The current time as a reference
+//      * @return The projected belief
+//      */
+//    @Deprecated public Sentence projectionSentence(final long targetTime, final long currentTime) {
+//
+//        final Truth newTruth = projection(targetTime, currentTime);
+//
+//        final boolean eternalizing = (newTruth instanceof EternalizedTruthValue);
+//
+//        Sentence s = new Sentence(term, punctuation, newTruth, this);
+//
+//        s.setOccurrenceTime(eternalizing ? Stamp.ETERNAL : targetTime);
+//
+//        return s;
+//    }
 
 
     public Truth projection(final long targetTime, final long currentTime) {
@@ -429,28 +436,14 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
     /** calculates projection truth quality without creating new TruthValue instances */
     public float projectionTruthQuality(long targetTime, long currentTime, boolean problemHasQueryVar) {
-        float freq = truth.getFrequency();
-        float conf = truth.getConfidence();
+        return projectionTruthQuality(truth, targetTime, currentTime, problemHasQueryVar);
 
-        if (!isEternal() && (targetTime != getOccurrenceTime())) {
-            conf = TruthFunctions.eternalizedConfidence(conf);
-            if (targetTime != Stamp.ETERNAL) {
-                long occurrenceTime = getOccurrenceTime();
-                float factor = TruthFunctions.temporalProjection(occurrenceTime, targetTime, currentTime);
-                float projectedConfidence = factor * truth.getConfidence();
-                if (projectedConfidence > conf) {
-                    conf = projectedConfidence;
-                }
-            }
-        }
-
-        if (problemHasQueryVar) {
-            return Truth.expectation(freq, conf) / term.getComplexity();
-        } else {
-            return conf;
-        }
     }
 
+    /** calculates projection truth quality without creating new TruthValue instances */
+    public float projectionTruthQuality(final Truth t, long targetTime, long currentTime, boolean problemHasQueryVar) {
+        return t.projectionQuality(this, targetTime, currentTime, problemHasQueryVar);
+    }
 
 
 

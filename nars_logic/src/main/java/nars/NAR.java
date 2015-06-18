@@ -3,11 +3,16 @@ package nars;
 import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
 import nars.Memory.Timing;
-import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.io.*;
-import nars.io.in.*;
-import nars.nal.*;
+import nars.io.TextPerception;
+import nars.io.in.FileInput;
+import nars.io.in.Input;
+import nars.io.in.ReaderInput;
+import nars.io.in.TextInput;
+import nars.nal.DefaultTruth;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.concept.ConceptBuilder;
 import nars.nal.nal7.Tense;
@@ -32,13 +37,13 @@ import java.io.InputStream;
 
 /**
  * Non-Axiomatic Reasoner
- * 
+ * <p>
  * Instances of this represent a reasoner connected to a Memory, and set of Input and Output channels.
- * 
+ * <p>
  * All state is contained within Memory.  A NAR is responsible for managing I/O channels and executing
  * memory operations.  It executesa series sof cycles in two possible modes:
- *   * step mode - controlled by an outside system, such as during debugging or testing
- *   * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
+ * * step mode - controlled by an outside system, such as during debugging or testing
+ * * thread mode - runs in a pausable closed-loop at a specific maximum framerate.
  */
 public class NAR extends Container implements Runnable {
 
@@ -46,15 +51,15 @@ public class NAR extends Container implements Runnable {
      * The information about the version and date of the project.
      */
     public static final String VERSION = "Open-NARS v1.7.0";
-    
+
     /**
      * The project web sites.
      */
     public static final String WEBSITE =
-              " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
-            + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
-              "    Github website:  http://github.com/opennars/ \n" + 
-            "    IRC:  http://webchat.freenode.net/?channels=nars \n";
+            " Open-NARS website:  http://code.google.com/p/open-nars/ \n"
+                    + "      NARS website:  http://sites.google.com/site/narswang/ \n" +
+                    "    Github website:  http://github.com/opennars/ \n" +
+                    "    IRC:  http://webchat.freenode.net/?channels=nars \n";
     public final NarseseParser narsese;
     public final TextPerception textPerception;
 
@@ -80,20 +85,24 @@ public class NAR extends Container implements Runnable {
     }
 
 
-    /** Flag for running continuously  */
+    /**
+     * Flag for running continuously
+     */
     private boolean running = false;
 
     private boolean threadYield = false;
 
     private int cyclesPerFrame = 1; //how many memory cycles to execute in one NAR cycle
 
-    /** memory activity enabled */
+    /**
+     * memory activity enabled
+     */
     private boolean enabled = true;
 
 
     protected NAR(final Memory m) {
         super();
-        this.memory = m;        
+        this.memory = m;
         this.param = m.param;
 
         the(NAR.class, this);
@@ -111,57 +120,56 @@ public class NAR extends Container implements Runnable {
         memory.reset(true, false);
     }
 
-    /** Resets and deletes the entire system */
+    /**
+     * Resets and deletes the entire system
+     */
     public void delete() {
         memory.delete();
     }
-
 
 
     public Input input(final File input) throws IOException {
         return input(new FileInput(textPerception, input));
     }
 
-    /** this needs tested to see if it still works, an asynchronous input interface is probably better */
-    @Deprecated public Input input(final InputStream input) {
+    /**
+     * this needs tested to see if it still works, an asynchronous input interface is probably better
+     */
+    @Deprecated
+    public Input input(final InputStream input) {
         return input(new ReaderInput(textPerception, input));
     }
 
-    /** inputs a task, only if the parsed text is valid; returns null if invalid */
+    /**
+     * inputs a task, only if the parsed text is valid; returns null if invalid
+     */
     public Task inputTask(final String taskText) {
         try {
             Task t = task(taskText);
             input(t);
             return t;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return null;
         }
     }
 
-    /** parses and forms a Task from a string but doesnt input it */
+    /**
+     * parses and forms a Task from a string but doesnt input it
+     */
     public Task task(String taskText) {
         Task t = narsese.parseTask(taskText);
 
         long now = time();
         if (!t.sentence.isEternal()) {
             t.getSentence().setTime(now, now + t.sentence.getOccurrenceTime());
-        }
-        else {
+        } else {
             t.getSentence().setTime(now, Stamp.ETERNAL);
         }
         return t;
     }
+
     public <T extends Compound> TaskSeed<T> task(T t) {
-        return memory.task(t);
-    }
-
-    public <T extends Compound> Task<T> task(Sentence<T> s) {
-        return task(s, null);
-    }
-
-    public <T extends Compound> Task<T> task(Sentence<T> s, Task parentTask) {
-        return memory.task(s, parentTask);
+        return memory.newTask(t);
     }
 
     public TextInput input(final String text) {
@@ -171,7 +179,7 @@ public class NAR extends Container implements Runnable {
         input(i);
         return i;
     }
-    
+
     public NAR input(final String taskText, final float frequency, final float confidence) throws InvalidInputException {
         return input(-1, -1, taskText, frequency, confidence);
     }
@@ -184,19 +192,17 @@ public class NAR extends Container implements Runnable {
         return memory.concept(term);
     }
 
-    /** gets a concept if it exists, or returns null if it does not */
+    /**
+     * gets a concept if it exists, or returns null if it does not
+     */
     public Concept concept(final String conceptTerm) throws InvalidInputException {
-        return concept((Term)narsese.parseTermNormalized(conceptTerm));
+        return concept((Term) narsese.parseTermNormalized(conceptTerm));
     }
-
 
 
     public Task goal(final String goalTerm, final float freq, final float conf) {
         return goal(Global.DEFAULT_GOAL_PRIORITY, Global.DEFAULT_GOAL_DURABILITY, goalTerm, freq, conf);
     }
-
-
-
 
 
     public Task ask(String termString) throws InvalidInputException {
@@ -213,15 +219,16 @@ public class NAR extends Container implements Runnable {
         final Truth tv;
         input(
                 t = new Task(
-                        new Sentence(
-                                narsese.parseCompoundNormalized(goalTerm),
-                                Symbols.GOAL,
-                                tv = new DefaultTruth(freq, conf),
-                                memory),
 
-                        new Budget(
-                                pri,
-                                dur, BudgetFunctions.truthToQuality(tv)))
+                        narsese.parseCompoundNormalized(goalTerm),
+                        Symbols.GOAL,
+                        tv = new DefaultTruth(freq, conf),
+
+
+                        pri,
+                        dur, BudgetFunctions.truthToQuality(tv)
+
+                )
         );
         return t;
     }
@@ -233,45 +240,47 @@ public class NAR extends Container implements Runnable {
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term(termString), tense, freq, conf);
     }
-    public Task believe(Term term, float freq, float conf) throws InvalidInputException {
+
+    public Task believe(Compound term, float freq, float conf) throws InvalidInputException {
         return believe(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, term, Tense.Eternal, freq, conf);
     }
+
     public Task believe(String termString, float freq, float conf) throws InvalidInputException {
-        return believe((Term)term(termString), freq, conf);
+        return believe((Compound) term(termString), freq, conf);
     }
+
     public Task believe(String termString, float conf) throws InvalidInputException {
         return believe(termString, 1.0f, conf);
     }
+
     public Task believe(String termString) throws InvalidInputException {
         return believe(termString, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     }
-    public Task believe(Term term) throws InvalidInputException {
+
+    public Task believe(Compound term) throws InvalidInputException {
         return believe(term, 1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE);
     }
 
-    public Task believe(float pri, float dur, Term beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
+    public Task believe(float pri, float dur, Compound beliefTerm, Tense tense, float freq, float conf) throws InvalidInputException {
         return believe(pri, dur, beliefTerm, Stamp.getOccurrenceTime(time(), tense, memory.duration()), freq, conf);
     }
+
     public Task believe(float pri, float dur, String beliefTerm, long occurrenceTime, float freq, float conf) throws InvalidInputException {
-        return believe(pri, dur, (Term)term(beliefTerm), occurrenceTime, freq, conf);
+        return believe(pri, dur, (Compound) term(beliefTerm), occurrenceTime, freq, conf);
     }
-    public Task believe(float pri, float dur, Term belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
-        final Task t;
+
+    public Task believe(float pri, float dur, Compound belief, long occurrenceTime, float freq, float conf) throws InvalidInputException {
+
         final Truth tv;
 
-        input(
-                t = new Task(
+        Task t = new Task(belief,
+                Symbols.JUDGMENT,
+                tv = new DefaultTruth(freq, conf),
+                pri, dur, BudgetFunctions.truthToQuality(tv));
+        t.setOccurrenceTime(occurrenceTime);
 
-                        new Sentence(
-                                belief,
-                                Symbols.JUDGMENT,
-                                tv = new DefaultTruth(freq, conf),
-                                memory).setOccurrenceTime(occurrenceTime),
+        input(t);
 
-                        pri, dur, BudgetFunctions.truthToQuality(tv),
-
-                        null, null, null )
-        );
         return t;
     }
 
@@ -283,15 +292,12 @@ public class NAR extends Container implements Runnable {
         final Task t;
         input(
                 t = new Task(
-                        new Sentence(
-                                narsese.parseCompoundNormalized(termString),
-                                questionOrQuest,
-                                null,
-                                memory).setCreationTime(Stamp.UNPERCEIVED),
-                        new Budget(
-                                Global.DEFAULT_QUESTION_PRIORITY,
-                                Global.DEFAULT_QUESTION_DURABILITY,
-                                1))
+                        narsese.parseCompoundNormalized(termString),
+                        questionOrQuest,
+                        null,
+                        Global.DEFAULT_QUESTION_PRIORITY,
+                        Global.DEFAULT_QUESTION_DURABILITY,
+                        1)
         );
 
         return t;
@@ -299,15 +305,9 @@ public class NAR extends Container implements Runnable {
         //ex: return new Answered(this, t);
 
     }
-    
-    public NAR input(final Sentence sentence) {
-        return input(
-                new Task(sentence, Budget.newDefault(sentence, memory))
-        );
-    }
-    
+
     public NAR input(float priority, float durability, final String taskText, float frequency, float confidence) throws InvalidInputException {
-        
+
         narsese.parse(taskText, t -> {
             if (frequency != -1)
                 t.sentence.truth.setFrequency(frequency);
@@ -323,17 +323,20 @@ public class NAR extends Container implements Runnable {
 
         return this;
     }
-    
+
     public NAR input(final Task t) {
-        input((Input)t);
+        input((Input) t);
         return this;
     }
 
 
-    /** attach event handler to one or more event (classes) */
+    /**
+     * attach event handler to one or more event (classes)
+     */
     public EventEmitter.Registrations on(Reaction<Class> o, Class... c) {
         return memory.event.on(o, c);
     }
+
     public EventEmitter.Registrations on(NARReaction2 o) {
         return memory.event.on(o, o.getEvents());
     }
@@ -353,22 +356,35 @@ public class NAR extends Container implements Runnable {
         return reg;
     }
 
-    /** activate a concept builder */
-    public void on(ConceptBuilder c) {         memory.on(c);    }
-    /** deactivate a concept builder */
-    public void off(ConceptBuilder c) {        memory.off(c);    }
+    /**
+     * activate a concept builder
+     */
+    public void on(ConceptBuilder c) {
+        memory.on(c);
+    }
 
-    @Deprecated public int getCyclesPerFrame() {
+    /**
+     * deactivate a concept builder
+     */
+    public void off(ConceptBuilder c) {
+        memory.off(c);
+    }
+
+    @Deprecated
+    public int getCyclesPerFrame() {
         return cyclesPerFrame;
     }
 
-    @Deprecated public void setCyclesPerFrame(int cyclesPerFrame) {
+    @Deprecated
+    public void setCyclesPerFrame(int cyclesPerFrame) {
         this.cyclesPerFrame = cyclesPerFrame;
     }
 
 
-    /** Adds an input channel for input from an external sense / sensor.
-     *  Will remain added until it closes or it is explicitly removed. */
+    /**
+     * Adds an input channel for input from an external sense / sensor.
+     * Will remain added until it closes or it is explicitly removed.
+     */
     public Input input(final Input ii) {
         memory.perception.accept(ii);
         return ii;
@@ -407,8 +423,9 @@ public class NAR extends Container implements Runnable {
 //        return Collections.unmodifiableList(plugins);
 //    }
 
-    
-    @Deprecated public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
+
+    @Deprecated
+    public void start(final long minCyclePeriodMS, int cyclesPerFrame) {
         throw new RuntimeException("WARNING: this threading model is not safe and deprecated");
 
 //        if (isRunning()) stop();
@@ -420,38 +437,45 @@ public class NAR extends Container implements Runnable {
 //            thread.start();
 //        }
     }
-    
+
     /**
      * Repeatedly execute NARS working cycle in a new thread with Iterative timing.
-     * 
+     *
      * @param minCyclePeriodMS minimum cycle period (milliseconds).
-     */    
-    @Deprecated public void start(final long minCyclePeriodMS) {
+     */
+    @Deprecated
+    public void start(final long minCyclePeriodMS) {
         start(minCyclePeriodMS, getCyclesPerFrame());
     }
 
-    
-    public EventEmitter event() { return memory.event; }
-    
-    
+
+    public EventEmitter event() {
+        return memory.event;
+    }
+
+
     /**
      * Exits an iteration loop if running
      */
     public void stop() {
         running = false;
         enabled = false;
-    }    
+    }
 
-    /** steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of */
+    /**
+     * steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of
+     */
     public double frame() {
         return frame(1);
     }
 
-    /** Runs multiple frames, unless already running (then it return -1).
+    /**
+     * Runs multiple frames, unless already running (then it return -1).
+     *
      * @return total time in seconds elapsed in realtime
-     * */
+     */
     public double frame(final int frames) {
-        
+
         final boolean wasRunning = running;
         double elapsed = 0;
         running = true;
@@ -464,8 +488,9 @@ public class NAR extends Container implements Runnable {
 
     /**
      * Execute a minimum number of cycles, allowing additional cycles (less than maxCycles) for finishing any pending inputs
+     *
      * @param maxCycles max cycles, or -1 to allow any number of additional cycles until input finishes
-     * */
+     */
     public NAR runWhileNewInput(long minCycles, long maxCycles) {
 
 
@@ -485,93 +510,97 @@ public class NAR extends Container implements Runnable {
 
             if (elapsed >= minCycles)
                 running = (!memory.perception.isEmpty()) &&
-                    (elapsed < maxCycles);
+                        (elapsed < maxCycles);
         }
         while (running);
 
         return this;
     }
 
-    /** Execute a fixed number of cycles, then finish any remaining walking steps. */
+    /**
+     * Execute a fixed number of cycles, then finish any remaining walking steps.
+     */
     public NAR runWhileNewInput(long extraCycles) {
         //TODO see if this entire method can be implemented as run(0, cycles);
 
         if (extraCycles <= 0) return this;
-        
+
         running = true;
 
         //clear existing input
-        
+
         long cycleStart = time();
         do {
             frame(1);
         }
         while ((!memory.perception.isEmpty()) && running && enabled);
-                   
+
         long cyclesCompleted = time() - cycleStart;
-        
+
         //queue additional cycles, 
         extraCycles -= cyclesCompleted;
         if (extraCycles > 0)
             memory.think(extraCycles);
-        
+
         //finish all remaining cycles
         while (!memory.perceiving() && (running)) {
             frame(1);
         }
-        
+
         running = false;
-        
+
         return this;
     }
-    
 
-    /** Run until stopped, at full speed */
+
+    /**
+     * Run until stopped, at full speed
+     */
     public void run() {
         runAtRate(0);
     }
 
-    /** Runs until stopped, at a given delay period between frames (0= no delay). Main loop */
+    /**
+     * Runs until stopped, at a given delay period between frames (0= no delay). Main loop
+     */
     public void runAtRate(long minFramePeriodMS) {
         //TODO use DescriptiveStatistics to track history of frametimes to slow down (to decrease speed rate away from desired) or speed up (to reach desired framerate).  current method is too nervous, it should use a rolling average
 
         running = true;
 
         while (running) {
-            
+
 
             double frameTime = frame(1); //in seconds
 
             if (minFramePeriodMS > 0) {
-                
-                double remainingTime = minFramePeriodMS - (frameTime/ 1.0E3);
+
+                double remainingTime = minFramePeriodMS - (frameTime / 1.0E3);
                 if (remainingTime > 0) {
                     try {
                         Thread.sleep(minFramePeriodMS);
                     } catch (InterruptedException ee) {
                         //error(ee);
                     }
-                }
-                else if (remainingTime < 0) {
+                } else if (remainingTime < 0) {
                     minFramePeriodMS++;
                     System.err.println("Expected framerate not achieved: " + remainingTime + "ms too slow; incresing frame period to " + minFramePeriodMS + "ms");
                 }
-            }
-            else if (threadYield) {
+            } else if (threadYield) {
                 Thread.yield();
             }
         }
     }
-    
-    
 
-    /** returns the configured NAL level */
+
+    /**
+     * returns the configured NAL level
+     */
     public int nal() {
         return memory.nal();
     }
 
 
-    
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }
@@ -596,7 +625,9 @@ public class NAR extends Container implements Runnable {
     }
 
 
-    /** executes one complete memory cycle (if not disabled) */
+    /**
+     * executes one complete memory cycle (if not disabled)
+     */
     protected void cycle(final boolean newFrame) {
 
         if (isEnabled()) {
@@ -618,8 +649,8 @@ public class NAR extends Container implements Runnable {
         emit(FrameStart.class);
 
         //try {
-            for (int i = 0; i < cycles; i++)
-                cycle(i == 0);
+        for (int i = 0; i < cycles; i++)
+            cycle(i == 0);
         /*}
         catch (Throwable e) {
             Throwable c = e.getCause();
@@ -638,7 +669,7 @@ public class NAR extends Container implements Runnable {
             if (frameTime > d) {
                 emit(Events.ERR.class,
                         "Real-time consumed by frame (" +
-                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)" );
+                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)");
             }
         }
 
@@ -650,7 +681,7 @@ public class NAR extends Container implements Runnable {
         return "NAR[" + memory.toString() + "]";
     }
 
-     /**
+    /**
      * Get the current time from the clock Called in {@link nars.logic.entity.stamp.Stamp}
      *
      * @return The current time
@@ -658,23 +689,25 @@ public class NAR extends Container implements Runnable {
     public long time() {
         return memory.time();
     }
-    
+
 
     public boolean isRunning() {
         return running;
-    }    
+    }
 
 
-
-    /** When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay). 
-     *  This is for improving program responsiveness when NAR is run with no delay.
+    /**
+     * When b is true, NAR will call Thread.yield each run() iteration that minCyclePeriodMS==0 (no delay).
+     * This is for improving program responsiveness when NAR is run with no delay.
      */
     public void setThreadYield(boolean b) {
         this.threadYield = b;
     }
 
 
-    /** create a NAR given the class of a Build.  its default constructor will be used */
+    /**
+     * create a NAR given the class of a Build.  its default constructor will be used
+     */
     public static NAR build(Class<? extends NARSeed> g) {
         try {
             return new NAR(g.newInstance());
@@ -684,13 +717,17 @@ public class NAR extends Container implements Runnable {
         return null;
     }
 
-    /** normal way to construct a NAR, using a particular Build instance */
+    /**
+     * normal way to construct a NAR, using a particular Build instance
+     */
     public NAR(NARSeed b) {
         this(b.newMemory(b, b.getLogicPolicy()));
         b.init(this);
     }
 
-    /** returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the */
+    /**
+     * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the
+     */
     public Atom the(final String s) {
         return memory.the(s);
     }

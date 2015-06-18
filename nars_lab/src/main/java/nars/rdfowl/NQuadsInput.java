@@ -8,13 +8,13 @@ import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
-import nars.nal.nal2.Instance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Atom;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 
@@ -142,6 +142,8 @@ abstract public class NQuadsInput {
         return a;
     }
 
+    protected abstract void believe(Compound assertion);
+
     abstract public static class TagProcessor {
 
         abstract protected void execute(XMLStreamReader parser);
@@ -197,7 +199,7 @@ abstract public class NQuadsInput {
 
         //http://www.w3.org/TR/owl-ref/
 
-        Term belief = null;
+        Compound belief = null;
 
         if (predicate.equals(parentOf) || predicate.equals(type)
                 ||predicate.equals(subClassOf)||predicate.equals(subPropertyOf)) {
@@ -250,7 +252,7 @@ abstract public class NQuadsInput {
         }
         else if (predicate.equals(disjointWith)) {
             //System.out.println(subject + " " + predicate + " " + object);
-            belief = Negation.make(Similarity.make(subject, object));
+            belief = (Compound)Negation.make(Similarity.make(subject, object));
         }
         else {
             //System.out.println(subject + " " + predicate + " " + object);
@@ -264,7 +266,6 @@ abstract public class NQuadsInput {
 
     }
 
-    abstract protected void believe(Term assertion);
 
 
     // ======== String manipulation methods ========
@@ -326,7 +327,7 @@ abstract public class NQuadsInput {
         new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
 
             @Override
-            protected void believe(Term assertion) {
+            protected void believe(Compound assertion) {
                 float freq = 1.0f;
 
                 //insert with zero priority to bypass main memory go directly to subconcepts

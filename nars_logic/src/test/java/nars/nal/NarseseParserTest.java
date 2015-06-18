@@ -645,7 +645,7 @@ public class NarseseParserTest {
             if (sentence == null) return null;
 
             Budget budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);
-            Task task = new Task(sentence, budget);
+            Task task = new Task(sentence, budget, null, null);
             return task;
 
         }

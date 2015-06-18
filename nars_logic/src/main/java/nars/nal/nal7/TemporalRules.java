@@ -31,6 +31,7 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -538,13 +539,17 @@ public class TemporalRules {
                     !(((Statement)belief.term).getPredicate() instanceof Operation)) {
                 Task a_desire = S1_State_C.getStrongestGoal(true, true);
 
-                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
-                        new DefaultTruth(1.0f,0.99f), a_desire.sentence);
+//                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
+//                        new DefaultTruth(1.0f,0.99f), a_desire.sentence);
+//
+//
+//                g.setOccurrenceTime(s1.getOccurrenceTime());
 
-                g.setOccurrenceTime(s1.getOccurrenceTime()); //strongest desire for that time is what we want to know
-                Task strongest_desireT=S1_State_C.getTask(g, S1_State_C.getGoals());
-                Sentence strongest_desire=strongest_desireT.sentence.projectionSentence(s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
-                Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.truth);
+                //strongest desire for that time is what we want to know
+                Task strongest_desireT = S1_State_C.getTask(S1_State_C.getTerm().hasVarQuery(),  s1.getOccurrenceTime(), s1.getTruth(), S1_State_C.getGoals());
+
+                TaskSeed strongest_desire=strongest_desireT.projection(nal.memory, s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
+                Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.getTruth());
 
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());
 
@@ -609,34 +614,52 @@ public class TemporalRules {
         }
     }
 
+    public static float solutionQuality(boolean hasQueryVar, long occTime, final Sentence solution, final Truth projectedTruth, long time) {
+        return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
+    }
+
     /**
-     * Evaluate the quality of the judgment as a solution to a problem
+     * Evaluate the quality of a truth judgment as a solution to a problem
      *
      * @param problem  A goal or question
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
-
-        return solution.projectionTruthQuality(problem.getOccurrenceTime(), time, problem.hasQueryVar());
-
-//        if (!matchingOrder(problem, solution)) {
-//            return 0.0F;
-//        }
-
-//        Truth truth;
-//        if (ptime!=solution.getOccurrenceTime())
-//            truth = solution.projectionTruth(ptime, memory.time());
-//        else
-//            truth = solution.truth;
-//
-//        if (problem.hasQueryVar()) {
-//            return truth.getExpectation() / solution.term.getComplexity();
-//        } else {
-//            return truth.getConfidence();
-//        }
-
+        return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, solution.truth, time);
     }
+    public static float solutionQuality(final Sentence problem, final Sentence solution, Truth truth, long time) {
+        return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
+    }
+
+//    /**
+//     * Evaluate the quality of a truth judgment with a new projected turth value as a solution to a problem
+//     *
+//     * @param problem  A goal or question
+//     * @param solution The solution to be evaluated
+//     * @return The quality of the judgment as the solution
+//     */
+//    public static float solutionQuality(final Sentence problem, final Sentence solution, final Truth projectedTruth, long time) {
+//
+//        return solution.projectionTruthQuality(projectedTruth, problem.getOccurrenceTime(), time, problem.hasQueryVar());
+//
+////        if (!matchingOrder(problem, solution)) {
+////            return 0.0F;
+////        }
+//
+////        Truth truth;
+////        if (ptime!=solution.getOccurrenceTime())
+////            truth = solution.projectionTruth(ptime, memory.time());
+////        else
+////            truth = solution.truth;
+////
+////        if (problem.hasQueryVar()) {
+////            return truth.getExpectation() / solution.term.getComplexity();
+////        } else {
+////            return truth.getConfidence();
+////        }
+//
+//    }
 
 
     /* ----- Functions used both in direct and indirect processing of tasks ----- */

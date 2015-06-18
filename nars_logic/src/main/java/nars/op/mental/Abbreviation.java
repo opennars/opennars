@@ -6,15 +6,10 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
-import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
 import nars.nal.term.Atom;
@@ -101,7 +96,7 @@ public class Abbreviation extends NARReaction {
 
             Term atomic = newSerialTerm();
 
-            TaskProcess.run(memory, memory.task(Similarity.make(compound, atomic))
+            TaskProcess.run(memory, memory.newTask(Similarity.make(compound, atomic))
                     .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                     .parent(operation.getTask()).occurrNow()
                     .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
