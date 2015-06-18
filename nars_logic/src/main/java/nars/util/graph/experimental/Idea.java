@@ -141,7 +141,7 @@ public class Idea implements Iterable<Concept> {
             return op.toString() + " " + punc;
         }
         
-        public List<Sentence> getSentences() {
+        public List<Truthed> getSentences() {
             if (sentences == null) {
                 sentences = new ArrayList();
                 for (Concept c : concepts) {

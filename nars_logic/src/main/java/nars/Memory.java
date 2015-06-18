@@ -638,13 +638,13 @@ public class Memory implements Serializable, AbstractStamper {
 
     public boolean taskAdd(final Task t) {
 
-        if (!Terms.levelValid(t.sentence, nal())) {
-            removed(t, "Insufficient NAL level");
+        /* process ImmediateOperation and Operations of ImmediateOperators */
+        if (t.executeIfImmediate(this)) {
             return false;
         }
 
-        /* process ImmediateOperation and Operations of ImmediateOperators */
-        if (t.executeIfImmediate(this)) {
+        if (!Terms.levelValid(t.sentence, nal())) {
+            removed(t, "Insufficient NAL level");
             return false;
         }
 

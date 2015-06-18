@@ -24,7 +24,7 @@ abstract public class ImmediateOperation  {
         public final ImmediateOperation operation;
 
         ImmediateTask(ImmediateOperation o) {
-            super();
+            super(Symbols.GOAL);
             this.operation = o;
         }
 

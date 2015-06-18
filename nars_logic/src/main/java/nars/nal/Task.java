@@ -170,8 +170,8 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         this(s.getTerm(), s.punctuation, s.truth, budget, parentTask, parentBelief, null);
     }
 
-    protected Task() {
-        super();
+    protected Task(char punctuation) {
+        super(punctuation);
         this.parentTask = null;
         this.parentBelief = null;
     }
@@ -243,17 +243,9 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         if (obj == this) return true;
         if (obj instanceof Task) {
             Task t = (Task) obj;
-            Sentence ts = t.sentence;
-            if (sentence == null && ts != null) return false;
-            return sentence.equals(ts);// && equalParents(t);
+            return super.equals(t);// && equalParents(t);
         }
         return false;
-    }
-
-    @Override
-    public int hashCode() {
-        if (sentence == null) return toString().hashCode();
-        return sentence.hashCode();
     }
 
     public boolean equalParents(Task t) {
@@ -272,20 +264,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 //            return parent.hashCode();
 //        return 0;
 //    }
-
-
-    /**
-     * Directly get the creation time of the sentence
-     *
-     * @return The creation time of the sentence
-     */
-    public long getCreationTime() {
-        return sentence.getCreationTime();
-    }
-
-    public long getOccurrenceTime() {
-        return sentence.getOccurrenceTime();
-    }
 
 
     /**
@@ -366,7 +344,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     public StringBuilder appendToString(StringBuilder sb, Memory memory) {
         if (sb == null) sb = new StringBuilder();
-        sentence.toString(sb, memory, false);
+        toString(sb, memory, false);
         return sb;
     }
 
@@ -455,7 +433,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     public Truth getDesire() {
-        return sentence.truth;
+        return getTruth();
     }
 
 
@@ -525,16 +503,11 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
 
-    public static Set<Sentence> getSentences(Collection<Task> tasks) {
-        Set<Sentence> s = Global.newHashSet(tasks.size());
+    public static Set<Truthed> getSentences(Collection<Task> tasks) {
+        Set<Truthed> s = Global.newHashSet(tasks.size());
         for (Task t : tasks)
-            s.add(t.sentence);
+            s.add(t);
         return s;
-    }
-
-    @Override
-    public T getTerm() {
-        return sentence.getTerm();
     }
 
 
@@ -558,11 +531,11 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     public boolean equalPunctuations(Task t) {
-        return sentence.equalPunctuations(t.sentence);
+        return equalPunctuations(t);
     }
 
     public char getPunctuation() {
-        return sentence.punctuation;
+        return punctuation;
     }
 
 
@@ -594,9 +567,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         if (!summaryGreaterOrEqual(memory.param.perceptThreshold))
             return false;
 
-        if (sentence == null) {
-            return false;
-        }
 
         //if a task has an unperceived creationTime,
         // set it to the memory's current time here,
@@ -608,37 +578,18 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
             if (oc != Stamp.ETERNAL)
                 oc += now;
 
-            sentence.setTime(now, oc);
+            setTime(now, oc);
         }
 
         return true;
     }
 
-    public Truth getTruth() {
-        return sentence.getTruth();
-    }
-
-
     @Override
     public Sentence<T> getSentence() {
-        return sentence;
-    }
-
-    @Override
-    public void applyToStamp(Stamp c) {
-        sentence.applyToStamp(c);
+        return this;
     }
 
 
-    @Override
-    public long[] getEvidentialSet() {
-        return sentence.getEvidentialSet();
-    }
-
-    @Override
-    public boolean isCyclic() {
-        return sentence.isCyclic();
-    }
 
     public TaskSeed<T> newChild(Memory memory) {
         return new TaskSeed(memory, this).parent(this).budget(this);
@@ -646,7 +597,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     public TaskSeed projection(Memory m, final long targetTime, final long currentTime) {
 
-        final Truth newTruth = sentence.projection(targetTime, currentTime);
+        final Truth newTruth = projection(targetTime, currentTime);
 
         final boolean eternalizing = (newTruth instanceof TruthFunctions.EternalizedTruthValue);
 
@@ -683,20 +634,5 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return getTerm().getTemporalOrder();
     }
 
-    public boolean isQuestion() {
-        return getSentence().isQuestion();
-    }
-
-    public boolean isJudgment() {
-        return getSentence().isJudgment();
-    }
-
-    public boolean isGoal() {
-        return getSentence().isGoal();
-    }
-
-    public boolean isQuest() {
-        return getSentence().isQuest();
-    }
 
 }

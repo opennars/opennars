@@ -94,9 +94,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     private boolean cyclic;
 
 
-    @Deprecated Sentence() {
+    @Deprecated Sentence(char punctuation) {
         super(0,0,0);
-        this.punctuation = 0;
+        this.punctuation = punctuation;
         this.truth = null;
         this.term = null;
     }
