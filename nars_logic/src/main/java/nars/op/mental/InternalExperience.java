@@ -10,12 +10,10 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
-import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
-import nars.nal.stamp.Stamp;
 import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
@@ -311,7 +309,7 @@ public class InternalExperience extends NARReaction {
                 Global.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
                 quality);
 
-        return nal.deriveTask(nal.newTask(sentence).budget(budget), false, false);
+        return nal.derive(nal.newTask(sentence).budget(budget), false, false);
 
     }
 

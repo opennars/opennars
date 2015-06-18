@@ -1052,7 +1052,7 @@ OUT: <lock1 --> lock>.
             return false;
         }
 
-        Compound T = originalMainSentence.term;
+        Compound T = originalMainSentenceTask.getTerm();
         Compound T2 = (Compound) content;
 
 
@@ -1091,10 +1091,10 @@ OUT: <lock1 --> lock>.
                 Conjunction res = (Conjunction) Conjunction.make(zw, T2);
                 T = (Compound) T.cloneReplacingSubterm(index, res);
             }
-            Truth truth = induction(originalMainSentence.truth, subSentence.truth);
+            Truth truth = induction(originalMainSentenceTask.getTruth(), subSentence.truth);
             Budget budget = BudgetFunctions.compoundForward(truth, T, nal);
-            nal.deriveDouble(T, originalMainSentence.punctuation,
-                    truth, budget, originalMainSentence, subSentence, false, false);
+            nal.deriveDouble(T, originalMainSentenceTask.getPunctuation(),
+                    truth, budget, originalMainSentenceTask, subSentence, false, false);
             return true;
         }
         return false;

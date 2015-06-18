@@ -36,7 +36,7 @@ public abstract class NAL implements Runnable {
     public final Memory memory;
     protected final Task currentTask;
     protected final LogicPolicy reasoner;
-    private Sentence currentBelief;
+    private Task currentBelief;
 
 
     /**
@@ -105,20 +105,28 @@ public abstract class NAL implements Runnable {
     }
 
 
-    public Task deriveTask(final TaskSeed task, final boolean revised, final boolean single) {
-        return deriveTask(task, revised, single, null, false);
+    public Task derive(final TaskSeed task) {
+        return derive(task, false);
+    }
+
+    public Task derive(final TaskSeed task, final boolean revised) {
+        return derive(task, revised, !task.isDouble());
+    }
+
+    @Deprecated public Task derive(final TaskSeed task, final boolean revised, final boolean single) {
+        return derive(task, revised, single, null, false);
     }
 
     public Task deriveDouble(final TaskSeed task) {
-        return deriveTask(task, false, false);
+        return derive(task, false, false);
     }
 
     /**
      * TEMPORARY ADAPTER FOR OLD API
      */
     @Deprecated
-    public Task deriveTask(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
-        return deriveTask(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
+    public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
     }
 
     /**
@@ -127,7 +135,7 @@ public abstract class NAL implements Runnable {
      * @param task         the derived task
      * @param allowOverlap
      */
-    public Task deriveTask(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+    @Deprecated public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
 
 
         if (task.getParentTask() == null) {
@@ -280,7 +288,7 @@ public abstract class NAL implements Runnable {
                 .punctuation(punctuation)
                 .truth(newTruth)
                 .parent(parentTask, getCurrentBelief())
-                .temporalInduct(!temporalAdd)
+                .temporalInducted(!temporalAdd)
                 .budget(newBudget);
 
         return deriveDouble(task, temporalAdd, allowOverlap);
@@ -293,13 +301,13 @@ public abstract class NAL implements Runnable {
         Task derived;
 
 
-        derived = deriveTask(task, false, false, parentTask, allowOverlap);
+        derived = derive(task, false, false, parentTask, allowOverlap);
 
 
         //"Since in principle it is always valid to eternalize a tensed belief"
         if (derived != null && temporalAdd && nal(7) && Global.IMMEDIATE_ETERNALIZATION) {
             //temporal induction generated ones get eternalized directly
-            deriveTask(
+            derive(
                     newTask(task.getTerm())
                             .punctuation(task.getPunctuation())
                             .truth(TruthFunctions.eternalize(task.getTruth()))
@@ -385,7 +393,7 @@ public abstract class NAL implements Runnable {
     }
 
     public Task deriveSingle(TaskSeed t) {
-        return deriveTask(t, false, true);
+        return derive(t, false, true);
     }
 
 
@@ -478,10 +486,13 @@ public abstract class NAL implements Runnable {
      * @return the currentBelief
      */
     public Sentence getCurrentBelief() {
+        return currentBelief.sentence;
+    }
+    public Task getCurrentBeliefTask() {
         return currentBelief;
     }
 
-    public void setCurrentBelief(Sentence nextBelief) {
+    public void setCurrentBelief(Task nextBelief) {
         this.currentBelief = nextBelief;
     }
 

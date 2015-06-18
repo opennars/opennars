@@ -88,12 +88,12 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                     alreadyInducted.add(t);
                 }
 
-                Sentence s = null;
+                Task s = null;
                 if ((taskLinkTask.sentence.punctuation == Symbols.JUDGMENT) && (next.hasBeliefs())) {
-                    s = next.getStrongestBelief().sentence;
+                    s = next.getStrongestBelief();
                 }
                 else if ((taskLinkTask.sentence.punctuation == Symbols.GOAL) && (next.hasGoals())) {
-                    s = next.getStrongestGoal(true, true).sentence;
+                    s = next.getStrongestGoal(true, true);
                 }
                 if (s == null) continue;
 
@@ -123,18 +123,18 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                         continue;
 
                     //todo add
-                    Truth truth = TruthFunctions.deduction(s.truth, taskLinkTask.sentence.truth);
+                    Truth truth = TruthFunctions.deduction(s.getTruth(), taskLinkTask.sentence.truth);
 
 
                     Task newTask = new Task(
-                            new Sentence(resImp, s.punctuation, truth,
+                            new Sentence(resImp, s.getPunctuation(), truth,
                                     f.newStamp(taskLinkTask.sentence, f.memory.time())),
                             new Budget(BudgetFunctions.forward(truth, f)),
                             taskLinkTask
                             );
 
                     f.setCurrentBelief(s);
-                    f.deriveTask(newTask, false, false, taskLinkTask, false);
+                    f.derive(newTask, false, false, taskLinkTask, false);
 
                 }
             }

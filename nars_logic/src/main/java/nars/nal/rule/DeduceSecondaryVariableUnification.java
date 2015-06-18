@@ -85,9 +85,9 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
 
             Task dummy = new Task(second_belief, budget, task, null);
 
-            nal.setCurrentBelief(taskSentence);
+            nal.setCurrentBelief(task);
 
-            if (nal.deriveTask(nal.newTask(result)
+            if (nal.derive(nal.newTask(result)
                     .punctuation(mark)
                     .truth(truth)
                     .budget(budget)
@@ -341,7 +341,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
 
 
 
-                nal.setCurrentBelief(taskSentence);
+                nal.setCurrentBelief(task);
 
                 final TaskSeed seed = nal.newTask(result)
                         .punctuation(mark)
@@ -349,7 +349,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         .budgetCompoundForward(result, nal)
                         .parentStamp(task, second_belief, occ);
 
-                Task newTask = nal.deriveTask(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
+                Task newTask = nal.derive(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
 
                 if (null!=newTask) {
 

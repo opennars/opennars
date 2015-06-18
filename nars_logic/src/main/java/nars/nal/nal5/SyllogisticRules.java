@@ -114,33 +114,35 @@ public final class SyllogisticRules {
      * removed?
      * @param nal Reference to the memory
      */
-    public static void abdIndCom(final Term term1, final Term term2, final Sentence sentence1, final Sentence sentence2, final int figure, final NAL nal) {
+    public static void abdIndCom(final Term term1, final Term term2, final Task sentence1, final Sentence sentence2, final int figure, final NAL nal) {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return;
         }
-        int order1 = sentence1.term.getTemporalOrder();
+        int order1 = sentence1.getTerm().getTemporalOrder();
         int order2 = sentence2.term.getTemporalOrder();
         int order = abdIndComOrder(order1, order2);
         if (order == ORDER_INVALID) {
             return;
         }
-        Statement taskContent = (Statement) sentence1.term;
+        Statement taskContent = (Statement) sentence1.getTerm();
         Truth truth1 = null;
         Truth truth2 = null;
         Truth truth3 = null;
         Budget budget1, budget2, budget3;
-        Truth value1 = sentence1.truth;
+        Truth value1 = sentence1.getTruth();
         Truth value2 = sentence2.truth;
-        if (sentence1.isQuestion()) {
+
+        char p = sentence1.getPunctuation();
+        if (p == Symbols.QUESTION) {
             budget1 = BudgetFunctions.backward(value2, nal);
             budget2 = BudgetFunctions.backwardWeak(value2, nal);
             budget3 = BudgetFunctions.backward(value2, nal);
-        } else if (sentence1.isQuest()) {
+        } else if (p == Symbols.QUEST) {
             budget1 = BudgetFunctions.backwardWeak(value2, nal);
             budget2 = BudgetFunctions.backward(value2, nal);
             budget3 = BudgetFunctions.backwardWeak(value2, nal);            
         } else {
-            if (sentence1.isGoal()) {
+            if (p == Symbols.GOAL) {
                 truth1 = TruthFunctions.desireStrong(value1, value2);
                 truth2 = TruthFunctions.desireWeak(value2, value1);
                 truth3 = TruthFunctions.desireStrong(value1, value2);
@@ -157,24 +159,24 @@ public final class SyllogisticRules {
         }
 
         if (order != ORDER_INVALID) {
-            final Stamper stamp = nal.newStamp(sentence1, sentence2);
+            //final Stamper stamp = nal.newStamp(sentence1, sentence2);
 
             {
                 Statement s = Statement.make(taskContent, term1, term2, order);
                 if (s != null)
-                    nal.deriveDouble(s, truth1, budget1, stamp, false, false);
+                    nal.deriveDouble(s, p, truth1, budget1, sentence1, sentence2, false, false);
             }
 
             {
                 Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
                 if (s != null)
-                    nal.deriveDouble(s, truth2, budget2, stamp, false, false);
+                    nal.deriveDouble(s, p, truth2, budget2, sentence1, sentence2, false, false);
             }
 
             {
                 Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
                 if (s != null)
-                    nal.deriveDouble(s, truth3, budget3, stamp, false, false);
+                    nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
             }
 
 
@@ -201,7 +203,7 @@ public final class SyllogisticRules {
                     truth2, budget2.clone(),false, false);*/
                 Statement s = Similarity.make(term1, term2);
                 if (s!=null)
-                    nal.deriveDouble(s, truth3, budget3, stamp, false, false);
+                    nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
             }
 
         }
@@ -224,27 +226,31 @@ public final class SyllogisticRules {
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    public static boolean analogy(Term subj, Term pred, Sentence asym, Sentence sym, int figure, NAL nal) {
+    public static boolean analogy(Term subj, Term pred, Task asym, Sentence sym, int figure, NAL nal) {
         if (Statement.invalidStatement(subj, pred)) {
             return false;
         }
-        int order1 = asym.term.getTemporalOrder();
+
+
+        int order1 = asym.getTerm().getTemporalOrder();
         int order2 = sym.term.getTemporalOrder();
         int order = analogyOrder(order1, order2, figure);
         if (order == ORDER_INVALID)
             return false;
 
-        Statement st = (Statement) asym.term;
+        Truth atru = asym.getTruth();
+
+        Statement st = (Statement) asym.getTerm();
         Truth truth = null;
         Budget budget;
         Sentence sentence = nal.getCurrentTask().sentence;
         Compound taskTerm = sentence.term;
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
-                if(asym.truth==null) { //a question for example
+                if(atru==null) { //a question for example
                     return false;
                 }
-                budget = BudgetFunctions.backwardWeak(asym.truth, nal);
+                budget = BudgetFunctions.backwardWeak(atru, nal);
             } else {
                 if(sym.truth==null) { //a question for example
                     return false;
@@ -254,12 +260,12 @@ public final class SyllogisticRules {
         } else {
             if (sentence.isGoal()) {
                 if (taskTerm.isCommutative()) {
-                    truth = TruthFunctions.desireWeak(asym.truth, sym.truth);
+                    truth = TruthFunctions.desireWeak(atru, sym.truth);
                 } else {
-                    truth = TruthFunctions.desireStrong(asym.truth, sym.truth);
+                    truth = TruthFunctions.desireStrong(atru, sym.truth);
                 }
             } else {
-                truth = TruthFunctions.analogy(asym.truth, sym.truth);
+                truth = TruthFunctions.analogy(atru, sym.truth);
             }
             
             budget = BudgetFunctions.forward(truth, nal);
@@ -268,8 +274,8 @@ public final class SyllogisticRules {
         Compound statement = Sentence.termOrNull(Statement.make(st, subj, pred, order));
         if (statement == null) return false;
 
-        nal.deriveDouble(statement, truth, budget,
-                nal.newStamp(asym, sym), false, true);
+        nal.deriveDouble(statement, asym.getPunctuation(), truth, budget,
+                asym, sym, false, true);
 
         nal.memory.logic.ANALOGY.hit();
         return true;

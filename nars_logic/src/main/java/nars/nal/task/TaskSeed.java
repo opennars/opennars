@@ -13,7 +13,6 @@ import nars.nal.nal8.Operation;
 import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 
 import java.util.Arrays;
@@ -632,7 +631,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
 
-    public TaskSeed<T> temporalInduct(boolean b) {
+    public TaskSeed<T> temporalInducted(boolean b) {
         this.temporalInduct = b;
         return this;
     }
@@ -663,7 +662,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return this;
     }
 
-    public TaskSeed<Compound> occurrNow() {
+    public TaskSeed<T> occurrNow() {
         return setOccurrenceTime(memory.time());
     }
 

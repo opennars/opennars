@@ -439,7 +439,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 Task r = tryRevision(newBelief, oldBelief.sentence, false, nal);
                 if (r != null) {
                     newBelief = r;
-                    nal.setCurrentBelief(newBelief.sentence);
+                    nal.setCurrentBelief(newBelief);
                 }
 
             }
@@ -594,9 +594,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
             TaskSeed<Compound> t = nal.newTask()
                     .question()
                     .parent(task)
-                    .stamp(nal.newStamp(task.sentence, nal.time())
-                            .setOccurrenceTime(task.sentence.getOccurrenceTime()) //set tense of question to goal tense)
-                    ).budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
+                    .occurr(task.sentence.getOccurrenceTime()) //set tense of question to goal tense)
+                    .budget(task.getPriority() * Global.CURIOSITY_DESIRE_PRIORITY_MUL, task.getDurability() * Global.CURIOSITY_DESIRE_DURABILITY_MUL, 1);
 
             for (Compound q : qu)
                 nal.deriveSingle(t.term(q));

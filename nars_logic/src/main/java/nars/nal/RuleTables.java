@@ -116,6 +116,8 @@ public class RuleTables {
     public static void syllogisms(TaskLink tLink, TermLink bLink, Statement taskTerm, Statement beliefTerm, NAL nal) {
         final Task task = nal.getCurrentTask();
         Sentence<Statement> taskSentence = task.sentence;
+
+        Task beliefTask = nal.getCurrentBeliefTask();
         Sentence belief = nal.getCurrentBelief();
 
         if (!(belief.term instanceof Statement)) return;
@@ -124,10 +126,10 @@ public class RuleTables {
         if (taskTerm instanceof Inheritance) {
             if (beliefTerm instanceof Inheritance) {
                 figure = indexToFigure(tLink, bLink);
-                asymmetricAsymmetric(taskSentence, belief, figure, nal);
+                asymmetricAsymmetric(task, belief, figure, nal);
             } else if (beliefTerm instanceof Similarity) {
                 figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(taskSentence, belief, figure, nal);
+                asymmetricSymmetric(task, belief, figure, nal);
             } else {
                 detachmentWithVar(task, belief, bLink.getIndex(0), nal);
             }
@@ -135,14 +137,14 @@ public class RuleTables {
 
             if (beliefTerm instanceof Inheritance) {
                 figure = indexToFigure(bLink, tLink);
-                asymmetricSymmetric(belief, taskSentence, figure, nal);
+                asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Similarity) {
                 figure = indexToFigure(bLink, tLink);
                 symmetricSymmetric(belief, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Implication) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(belief, taskSentence, figure, nal);
+                asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
@@ -152,21 +154,21 @@ public class RuleTables {
         } else if (taskTerm instanceof Implication) {
             if (beliefTerm instanceof Implication) {
                 figure = indexToFigure(tLink, bLink);
-                asymmetricAsymmetric(taskSentence, belief, figure, nal);
+                asymmetricAsymmetric(task, belief, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(taskSentence, belief, figure, nal);
+                asymmetricSymmetric(task, belief, figure, nal);
             } else if (beliefTerm instanceof Inheritance) {
                 detachmentWithVar(task, belief, tLink.getIndex(0), nal);
             } else if (beliefTerm instanceof Similarity) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
-                asymmetricSymmetric(taskSentence, belief, figure, nal);
+                asymmetricSymmetric(task, belief, figure, nal);
             }
         } else if (taskTerm instanceof Equivalence) {
             if (beliefTerm instanceof Implication) {
                 figure = indexToFigure(bLink, tLink);
-                asymmetricSymmetric(belief, taskSentence, figure, nal);
+                asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 figure = indexToFigure(bLink, tLink);
                 symmetricSymmetric(belief, taskSentence, figure, nal);
@@ -202,10 +204,10 @@ public class RuleTables {
      * @param figure       The location of the shared term
      * @param nal          Reference to the memory
      */
-    public static void asymmetricAsymmetric(final Sentence<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
+    public static void asymmetricAsymmetric(final Task<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
         final Random r = nal.memory.random;
 
-        Statement taskStatement = taskSentence.term;
+        Statement taskStatement = taskSentence.getTerm();
         Statement beliefStatement = belief.term;
 
         Term t1, t2;
@@ -350,10 +352,10 @@ public class RuleTables {
      * @param figure The location of the shared term
      * @param nal    Reference to the memory
      */
-    public static void asymmetricSymmetric(final Sentence asym, final Sentence sym, final int figure, final NAL nal) {
+    public static void asymmetricSymmetric(final Task asym, final Sentence sym, final int figure, final NAL nal) {
         final Random r = nal.memory.random;
 
-        Statement asymSt = (Statement) asym.term;
+        Statement asymSt = (Statement) asym.getTerm();
         Statement symSt = (Statement) sym.term;
         Term t1, t2;
         Term[] u = new Term[]{asymSt, symSt};

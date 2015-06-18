@@ -218,7 +218,7 @@ public class PerceptionAccel extends NARReaction {
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth).stamp(st)
                             .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
                             .parentStamp(task, newEvent)
-                            .temporalInduct(!longest_result_derived_already)
+                            .temporalInducted(!longest_result_derived_already)
             );
 
 

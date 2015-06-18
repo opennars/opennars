@@ -38,7 +38,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
 
         if (taskSentence.isJudgment()) {
             if (LocalRules.revisible(taskSentence, belief)) {
-                return LocalRules.revision(taskSentence, belief, true, nal)!=null;
+                return LocalRules.revision(task, belief, true, nal)!=null;
             }
         } else {
             if (TemporalRules.matchingOrder(taskSentence, belief)) {

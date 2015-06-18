@@ -28,7 +28,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
@@ -52,7 +51,7 @@ public class wonder extends SynchOperator implements Mental {
         Budget budget = new Budget(Global.DEFAULT_QUESTION_PRIORITY, Global.DEFAULT_QUESTION_DURABILITY, 1);
 
         return Lists.newArrayList(
-                operation.newSubTask(nar.memory, (Compound)content, Symbols.QUESTION, null, Tense.Eternal, budget)
+                operation.newSubTask(nar.memory, (Compound)content, Symbols.QUESTION, null, Stamp.ETERNAL, budget)
         );
     }
         

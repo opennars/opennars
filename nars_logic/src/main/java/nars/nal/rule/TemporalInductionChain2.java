@@ -88,7 +88,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
 
                 //select a Non-eternal (temporal) belief
-                Sentence b = nextInductedImplication.getBelief();
+                Task b = nextInductedImplication.getTask();
                 f.setCurrentBelief(b);
 
                 induct(task,
@@ -165,6 +165,10 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
             }
 
             return false;
+        }
+
+        public Task getTask() {
+            return belief;
         }
 
         /** holds the belief of the current concept that was identified as valid in the test() method, to avoid having to find it again */

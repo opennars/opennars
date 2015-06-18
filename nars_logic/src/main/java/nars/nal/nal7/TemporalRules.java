@@ -31,7 +31,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -234,15 +233,15 @@ public class TemporalRules {
     }*/
 
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamper stamp, final NAL nal) {
-        temporalInduction(s1, s2, stamp, nal, nal.getCurrentTask(), true);
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal) {
+        temporalInduction(s1, s2, nal, nal.getCurrentTask(), true);
     }
 
     final static Variable var1 = new Variable("$0");
     final static Variable v91 = new Variable("$91");
     final static Variable v92 = new Variable("$92");
 
-    public static void temporalInduction(final Sentence s1, final Sentence s2, Stamper stamp, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
+    public static void temporalInduction(final Sentence s1, final Sentence s2, final NAL nal, Task subbedTask, boolean SucceedingEventsInduction) {
 
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT || s2.punctuation!=Symbols.JUDGMENT)
             return;
@@ -455,24 +454,23 @@ public class TemporalRules {
             Statement statement22 = Implication.make(t22, t11, reverseOrder(order));
             Statement statement33 = Equivalence.make(t11, t22, order);
             if (!tooMuchTemporalStatements(statement11, inductionLimit)) {
-                Task t = nal.deriveDouble(statement11, truth1, budget1, stamp, true, subbedTask, false);
+                Task t = nal.deriveDouble(statement11, truth1, budget1, true, subbedTask, false);
             }
             if (!tooMuchTemporalStatements(statement22, inductionLimit)) {
-                Task t = nal.deriveDouble(statement22, truth2, budget2, stamp, true, subbedTask, false);
+                Task t = nal.deriveDouble(statement22, truth2, budget2, true, subbedTask, false);
             }
             if (!tooMuchTemporalStatements(statement33, inductionLimit)) {
-                Task t = nal.deriveDouble(statement33, truth3, budget3, stamp, true, subbedTask, false);
+                Task t = nal.deriveDouble(statement33, truth3, budget3, true, subbedTask, false);
             }
         }
         if (!tooMuchTemporalStatements(statement1, inductionLimit)) {
-            Task t = nal.deriveDouble(statement1, truth1, budget1, stamp, true, subbedTask, false);
+            Task t = nal.deriveDouble(statement1, truth1, budget1, true, subbedTask, false);
         }
         if (!tooMuchTemporalStatements(statement2, inductionLimit)) {
 
             /*  =/>  */
 
-            Task task = nal.deriveDouble(statement2, subbedTask.sentence.punctuation, truth2,
-                    budget2, true, subbedTask, stamp, false);
+            Task task = nal.deriveDouble(statement2, truth2, budget2, true, subbedTask, false);
 
             if (task!=null) {
             
@@ -500,7 +498,7 @@ public class TemporalRules {
 
         }
         if (!tooMuchTemporalStatements(statement3, inductionLimit)) {
-            nal.deriveDouble(statement3, truth3, budget3, stamp, true, subbedTask, false);
+            nal.deriveDouble(statement3, truth3, budget3, true, subbedTask, false);
         }
 
     }
@@ -564,13 +562,16 @@ public class TemporalRules {
                 
 
                 
-                nal.setCurrentBelief(belief);
+                //nal.setCurrentBelief(belief);
                 
                 //Sentence W=new Sentence(s2.term,Symbols.GOAL,T, belief).setOccurrenceTime(occ);
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.deriveDouble(s2.term, Symbols.GOAL, T, val, false, strongest_desireT, nal.newStamp(strongest_desireT.sentence, belief, occ), true);
+                nal.derive(nal.newTask(s2.term).goal().truth(T).budget(val)
+                                .parent(task, strongest_desireT.sentence)
+                                .occurrNow().temporalInducted(true)
+                );
 
             }
         }
@@ -597,9 +598,11 @@ public class TemporalRules {
                 }
 
                 if(valid) {
-                    nal.deriveSingle(task.sentence.term, Symbols.QUESTION, null,
-                            null, nal.newStamp(task.sentence, nal.memory.time()),
-                            Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL
+                    nal.derive(nal.newTask(task.getTerm())
+                                    .question()
+                                    .parent(task)
+                                    .occurrNow()
+                                    .budget(Global.CURIOSITY_DESIRE_PRIORITY_MUL, Global.CURIOSITY_DESIRE_DURABILITY_MUL)
                     );
                 }
 

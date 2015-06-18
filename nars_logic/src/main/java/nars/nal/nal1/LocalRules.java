@@ -29,7 +29,6 @@ import nars.io.out.Output;
 import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -77,24 +76,22 @@ public class LocalRules {
      * @param feedbackToLinks Whether to send feedback to the links
      * @param memory          Reference to the memory
      */
-    public static Task revision(final Sentence newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
-        if (stamp == null) return null;
+    public static Task revision(final Task newBelief, final Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+        //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
+        //if (stamp == null) return null;
 
-        final Task t = nal.getCurrentTask();
 
-        Truth newBeliefTruth = newBelief.truth;
+        Truth newBeliefTruth = newBelief.getTruth();
         Truth oldBeliefTruth = oldBelief.truth;
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        Task revised = nal.deriveTask(nal.newTask(newBelief.term)
-                        .punctuation(t.sentence.punctuation)
+        Task revised = nal.derive(nal.newTask(newBelief.getTerm())
+                        .punctuation(newBelief.getPunctuation())
                         .truth(truth)
-                        .stamp(stamp)
                         .budget(budget)
-                        .parent(t, nal.getCurrentBelief()),
-                true, false, t, false);
+                        .parent(newBelief),
+                true, false);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
@@ -104,23 +101,21 @@ public class LocalRules {
 
 
     public static Task tryRevision(final Task newBelief, Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
-        Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
-        if (stamp == null) return null;
+        //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
+        //if (stamp == null) return null;
 
-        final Task t = nal.getCurrentTask();
 
         Truth newBeliefTruth = newBelief.getTruth();
         Truth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
         Truth truth = TruthFunctions.revision(newBeliefTruth, oldBeliefTruth);
         Budget budget = BudgetFunctions.revise(newBeliefTruth, oldBeliefTruth, truth, nal);
 
-        Task revised = nal.deriveTask(nal.newTask(newBelief.getTerm())
-                        .punctuation(t.sentence.punctuation)
+        Task revised = nal.derive(nal.newTask(newBelief.getTerm())
+                        .punctuation(newBelief.getPunctuation())
                         .truth(truth)
-                        .stamp(stamp)
                         .budget(budget)
-                        .parent(t, nal.getCurrentBelief()),
-                true, false, t, false);
+                        .parent(newBelief),
+                true, false);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
@@ -240,7 +235,7 @@ public class LocalRules {
         Sentence sentence = task.sentence;
         if (TemporalRules.matchingOrder(sentence.getTemporalOrder(), TemporalRules.reverseOrder(belief.getTemporalOrder()))) {
             if (sentence.isJudgment()) {
-                NAL2.inferToSym(sentence, belief, nal);
+                NAL2.inferToSym(task, belief, nal);
             } else {
                 conversion(nal);
             }
@@ -255,7 +250,7 @@ public class LocalRules {
      * @param figure location of the shared term
      * @param nal    Reference to the memory
      */
-    public static void matchAsymSym(final Sentence asym, final Sentence sym, int figure, final NAL nal) {
+    public static void matchAsymSym(final Task asym, final Sentence sym, int figure, final NAL nal) {
         if (nal.getCurrentTask().sentence.isJudgment()) {
             inferToAsym(asym, sym, nal);
         } else {
@@ -273,18 +268,21 @@ public class LocalRules {
      * @param sym  The symmetric premise
      * @param nal  Reference to the memory
      */
-    private static void inferToAsym(Sentence asym, Sentence sym, NAL nal) {
-        Statement statement = (Statement) asym.term;
+    private static void inferToAsym(Task asym, Sentence sym, NAL nal) {
+        Statement statement = (Statement) asym.getTerm();
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
 
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return;
 
-        Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.truth);
-        Budget budget = BudgetFunctions.forward(truth, nal);
-        nal.deriveDouble(content, truth, budget,
-                nal.newStamp(asym, sym),
+        Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
+
+        nal.deriveDouble(
+                nal.newTask(content).punctuation(asym.getPunctuation())
+                .truth(truth)
+                .budget(BudgetFunctions.forward(truth, nal))
+                .parent(asym, sym),
                 false, false);
     }
 

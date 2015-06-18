@@ -33,7 +33,7 @@ import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.eval;
-import nars.nal.stamp.Stamper;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
@@ -139,9 +139,14 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         return new Task(sentence, budget, getTask());
     }
 
-    public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, Tense tense, Budget budget) {
-        return newSubTask(new Sentence(content, punctuation, truth,
-                new Stamper(this, m, tense)), budget);
+    public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
+        return m.task(content)
+                .punctuation(punctuation)
+                .truth(truth)
+                .budget(budget)
+                .parent(getTask())
+                .occurr(occ)
+                .get();
     }
 
 

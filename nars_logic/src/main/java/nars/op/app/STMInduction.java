@@ -111,7 +111,7 @@ public class STMInduction extends NARReaction {
             //nal.setCurrentTask(currentTask);
 
             Sentence previousBelief = previousTask.sentence;
-            nal.setCurrentBelief(previousBelief);
+            nal.setCurrentBelief(previousTask);
 
             Sentence currentBelief = currentTask.sentence;
 
