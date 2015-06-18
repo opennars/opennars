@@ -325,6 +325,10 @@ public class NAR extends Container implements Runnable {
     }
 
     public NAR input(final Task t) {
+        if (t.getCreationTime() == Stamp.UNPERCEIVED)
+            t.setCreationTime(time());
+        if (t.getEvidentialSet() == null)
+            t.setEvidentialSet(memory.newStampSerial());
         input((Input) t);
         return this;
     }

@@ -605,10 +605,6 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         
         return buffer;
     }
-    
-   
-
-
 
     final public boolean equalTerms(final Sentence s) {
         return term.equals(s.term);

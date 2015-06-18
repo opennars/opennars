@@ -406,8 +406,8 @@ public class NarseseParserTest {
         Task u = oldParser.parseTaskOld(s, true);
         assertNotNull(u);
 
-        assertEquals("(term) " + t + " != " + u, u.getTerm(), t.getTerm());
-        assertEquals("(truth) " + t.sentence.truth + " != " + u.sentence.truth, u.sentence.truth, t.sentence.truth);
+        assertEquals(u.getTerm() + " != " + t.getTerm(), u.getTerm(), t.getTerm());
+        assertEquals("(truth) " + t.getTruth() + " != " + u.getTruth(), u.getTruth(), t.getTruth());
         //assertEquals("(creationTime) " + u.getCreationTime() + " != " + t.getCreationTime(), u.getCreationTime(), t.getCreationTime());
         assertEquals("(occurencetime) " + u.getOccurrenceTime() + " != " + t.getOccurrenceTime(), u.getOccurrenceTime(), t.getOccurrenceTime());
         //TODO budget:

@@ -133,6 +133,8 @@ public class LocalRules {
     }
 
     public static Task trySolution(Task belief, final Task questionTask, final NAL nal) {
+        if (belief == null) return null;
+
         return trySolution(belief, belief.getTruth(), questionTask, nal);
     }
 
@@ -157,6 +159,7 @@ public class LocalRules {
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
             return belief;
         }
+
 
         final long now = memory.time();
         Sentence oldBest = questionTask.getBestSolution();

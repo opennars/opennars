@@ -673,9 +673,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
 
         if (ques.isQuest()) {
-            trySolution(getTask(ques, getGoals()), null, n, nal);
+            trySolution(getTask(ques, getGoals()), n, nal);
         } else {
-            trySolution(getTask(ques, getBeliefs()), null, n, nal);
+            trySolution(getTask(ques, getBeliefs()), n, nal);
         }
     }
 

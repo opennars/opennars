@@ -48,7 +48,7 @@ public class SolidTest {
         TestNAR n = new TestNAR(s);
         n.memory.randomSeed(1);
 
-        TextOutput.out(n).setOutputPriorityMin(0f);
+        //TextOutput.out(n).setOutputPriorityMin(0f);
 
         Set<Term> solutionTerms = new HashSet();
         Set<Sentence> solutions = new HashSet();

@@ -298,8 +298,8 @@ public class Global {
 
 
     public static Reference<Task> reference(Task t) {
+        if (t == null) return null;
         return new SoftReference(t);
-        //return new WeakReference(t);
     }
 
     public static <C> Reference<C> reference(C s) {

@@ -152,6 +152,12 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
                 long[] as = getParentTask().getEvidentialSet();
                 long[] bs = getParentBelief().getEvidentialSet();
 
+                //temporary
+                if (as == null)
+                    throw new RuntimeException("parentTask " + getParentTask() + " has no evidentialSet");
+                if (bs == null)
+                    throw new RuntimeException("parentBelief " + getParentBelief() + " has no evidentialSet");
+
                 setEvidentialSet(Stamp.toSetArray(Stamp.zip(as, bs)));
 
                 if (getParentTask().isInput() || getParentBelief().isInput()) {

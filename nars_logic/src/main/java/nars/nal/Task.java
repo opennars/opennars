@@ -32,7 +32,6 @@ import nars.Memory;
 import nars.budget.Budget;
 import nars.io.in.Input;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.AbstractStamper;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
 import nars.nal.task.TaskSeed;
@@ -93,10 +92,9 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     private List<String> history = null;
 
-    /** indicates this Task was the result of temporal induction, to prevent that
-     * from being applied again (cyclically)
+    /** indicates this Task can be used in Temporal induction
      */
-    private boolean temporalInducted = true;
+    private boolean temporallyInductable = true;
 
 
 
@@ -209,27 +207,22 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     /** clones this Task with a new Term */
     public <X extends Compound> Task<X> clone(X t) {
-        return new Task(t, getPunctuation(), getTruth(),
-                getPriority(), getDurability(), getQuality(),
-                parentTask, parentBelief, bestSolution
-        );
+        return clone(t, getTruth());
     }
+
     /** clones this Task with a new Term and truth  */
     public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
-        return new Task(t, getPunctuation(), newTruth,
+        Task tt = new Task(t, getPunctuation(), newTruth,
                 getPriority(), getDurability(), getQuality(),
                 parentTask, parentBelief, bestSolution
         );
+        tt.setEvidentialSet(getEvidentialSet());
+        return tt;
     }
+
     /** clones this Task with a new truth */
     public Task<T> clone(Truth newTruth) {
-
-        if (truth == null && newTruth == null) return this;
-
-        return new Task(getTerm(), getPunctuation(), newTruth,
-                getPriority(), getDurability(), getQuality(),
-                parentTask, parentBelief, bestSolution
-        );
+        return clone(getTerm(), newTruth);
     }
 
     @Override
@@ -334,7 +327,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     @Override
     @Deprecated
     public String toString() {
-        return toStringWithBudget();
+        return appendToString(null,null).toString();
     }
 
 
@@ -495,11 +488,11 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
      * flag to indicate whether this Event Task participates in tempporal induction
      */
     public void setTemporalInducting(boolean b) {
-        this.temporalInducted = b;
+        this.temporallyInductable = b;
     }
 
     public boolean isTemporalInducting() {
-        return temporalInducted;
+        return temporallyInductable;
     }
 
 
@@ -531,7 +524,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
     public boolean equalPunctuations(Task t) {
-        return equalPunctuations(t);
+        return getPunctuation() == t.getPunctuation();
     }
 
     public char getPunctuation() {
@@ -635,4 +628,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
     }
 
 
+    public void setEvidentialSet(long serial) {
+        setEvidentialSet(new long[] { serial } );
+    }
 }
