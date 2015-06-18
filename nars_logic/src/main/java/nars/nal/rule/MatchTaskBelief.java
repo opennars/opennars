@@ -16,7 +16,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
         Task currentBelief = f.getCurrentBeliefTask();
         if (currentBelief!=null){
             if (match(taskLink.targetTask, currentBelief, f)) {
-                System.err.println("MatchTaskBelief: false: " + taskLink.targetTask + " : " + currentBelief);
+                //System.err.println("MatchTaskBelief: false: " + taskLink.targetTask + " : " + currentBelief);
                 //Filter this from further processing
                 return false;
             }

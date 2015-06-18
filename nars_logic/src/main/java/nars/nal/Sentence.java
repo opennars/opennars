@@ -314,6 +314,10 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
+    public Sentence setOccurrenceTime(Tense tense, int duration) {
+        return setOccurrenceTime(getCreationTime(), tense, duration);
+    }
+
     public Sentence setOccurrenceTime(long creation, Tense tense, int duration) {
         return setOccurrenceTime(Stamp.getOccurrenceTime(creation, tense, duration));
     }

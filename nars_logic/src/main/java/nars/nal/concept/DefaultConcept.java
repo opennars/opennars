@@ -429,19 +429,20 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 //TaskSeed projectedBelief = oldBelief.projection(nal.memory, now, task.getOccurrenceTime());
 
 
-                TaskSeed newBeliefSeed = oldBelief.projection(nal.memory, now, newBelief.getOccurrenceTime());
+                //Task r = oldBelief.projection(nal.memory, now, newBelief.getOccurrenceTime());
 
+                //Truth r = oldBelief.projection(now, newBelief.getOccurrenceTime());
                 /*
                 if (projectedBelief.getOccurrenceTime()!=oldBelief.getOccurrenceTime()) {
                 }
                 */
 
 
-                //TODO avoid instantiating Task here because it may get reinstantiated again in tryRevision
-                Task r = tryRevision(newBeliefSeed.get(), oldBelief, false, nal);
-                if (r != null) {
-                    newBelief = r;
-                    nal.setCurrentBelief(r);
+
+                Task revised = tryRevision(newBelief, oldBelief, false, nal);
+                if (revised != null) {
+                    newBelief = revised;
+                    nal.setCurrentBelief(revised);
                 }
 
             }

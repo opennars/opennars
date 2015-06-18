@@ -183,8 +183,8 @@ public class NarseseParser extends BaseParser<Object> {
 
 
         Task ttt = new Task(ccontent, p, t, B, null, null, null);
-        ttt.setTime(Stamp.UNPERCEIVED,
-                Stamp.getOccurrenceTime(Stamp.UNPERCEIVED, tense.get(), memory.duration()));
+        ttt.setCreationTime(Stamp.UNPERCEIVED);
+        ttt.setOccurrenceTime(tense.get(), memory.duration());
         ttt.setEvidentialSet(new long[] { memory.newStampSerial() });
 
         return ttt;

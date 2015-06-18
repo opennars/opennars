@@ -81,6 +81,8 @@ public class LocalRules {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief, oldBelief);
         //if (stamp == null) return null;
 
+        if (Stamp.evidentialSetOverlaps(newBelief, oldBelief))
+            return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
         Truth oldBeliefTruth = oldBelief.truth;
@@ -104,10 +106,6 @@ public class LocalRules {
     public static Task tryRevision(final Task newBelief, Task oldBeliefTask, final boolean feedbackToLinks, final NAL nal) {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
         //if (stamp == null) return null;
-
-        if (newBelief.equals(oldBeliefTask))  {
-            return null;
-        }
 
         if (Stamp.evidentialSetOverlaps(newBelief, oldBeliefTask))
             return null;

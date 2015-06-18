@@ -548,7 +548,7 @@ public class TemporalRules {
                 //strongest desire for that time is what we want to know
                 Task strongest_desireT = S1_State_C.getTask(S1_State_C.getTerm().hasVarQuery(),  s1.getOccurrenceTime(), s1.getTruth(), S1_State_C.getGoals());
 
-                TaskSeed strongest_desire=strongest_desireT.projection(nal.memory, s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
+                Task strongest_desire=strongest_desireT.projection(nal.memory, s1.getOccurrenceTime(), strongest_desireT.getOccurrenceTime());
                 Truth T=TruthFunctions.desireDed(belief.truth, strongest_desire.getTruth());
 
                 //Stamp st=new Stamp(strongest_desire.sentence.stamp.clone(),belief.stamp, nal.memory.time());

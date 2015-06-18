@@ -100,10 +100,12 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
             //if (task.sentence.isEternal() && belief.isEternal()) return belief;
 
-            TaskSeed projectedBelief = belief.projection(nal.memory, occurrenceTime, now);
+            Task projectedBelief = belief.projection(nal.memory, occurrenceTime, now);
 
+            //TODO detect this condition before constructing Task
             if (projectedBelief.getOccurrenceTime()!=belief.getOccurrenceTime()) {
-                belief = nal.derive(projectedBelief); // return the first satisfying belief
+                //belief = nal.derive(projectedBelief); // return the first satisfying belief
+                return projectedBelief;
             }
 
             return belief;

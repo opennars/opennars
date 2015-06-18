@@ -346,9 +346,11 @@ public class NarseseParserTest {
 
     @Test
     public void testTenses() throws InvalidInputException {
-        taskEqualsOldParser("<a --> b>. :|:");
-        taskEqualsOldParser("<a --> b>. :/:");
-        taskEqualsOldParser("<a --> b>. :\\:");
+        Task now = task("<a --> b>. :|:");
+        Task f = task("<a --> b>. :/:");
+        Task p = task("<a --> b>. :\\:");
+        assertTrue(now.getOccurrenceTime() > p.getOccurrenceTime());
+        assertTrue(now.getOccurrenceTime() < f.getOccurrenceTime());
     }
 
     @Test
@@ -681,7 +683,7 @@ public class NarseseParserTest {
 
             Sentence s = new Sentence((Compound)content, punc, truth);
             s.setCreationTime(creationTime);
-            s.setOccurrenceTime(creationTime, tense, memory.duration());
+            s.setOccurrenceTime(tense, memory.duration());
 
             //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
             //    sentence.setRevisible(false);

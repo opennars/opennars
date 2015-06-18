@@ -216,6 +216,11 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
                 getPriority(), getDurability(), getQuality(),
                 parentTask, parentBelief, bestSolution
         );
+        tt.setTemporalInducting(isTemporalInductable());
+        tt.setCyclic(isCyclic());
+        tt.setCause(getCause());
+        tt.setRevisible(isRevisible());
+        tt.setLastForgetTime(getLastForgetTime());
         tt.setEvidentialSet(getEvidentialSet());
         return tt;
     }
@@ -372,8 +377,10 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
      * generally, op will be an Operation instance
      */
     public Task setCause(final Operation op) {
-        if (this.equals(op.getTask()))
-            return this; //dont set the cause to itself
+        if (op!=null) {
+            if (this.equals(op.getTask()))
+                return this; //dont set the cause to itself
+        }
 
         this.cause = op;
 
@@ -491,7 +498,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         this.temporallyInductable = b;
     }
 
-    public boolean isTemporalInducting() {
+    public boolean isTemporalInductable() {
         return temporallyInductable;
     }
 
@@ -588,7 +595,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return new TaskSeed(memory, this).parent(this).budget(this);
     }
 
-    public TaskSeed projection(Memory m, final long targetTime, final long currentTime) {
+    public Task projection(Memory m, final long targetTime, final long currentTime) {
 
         final Truth newTruth = projection(targetTime, currentTime);
 
@@ -596,11 +603,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
         long occ = eternalizing ? Stamp.ETERNAL : targetTime;
 
-
-        TaskSeed<T> t = newChild(m);
-        t.truth(newTruth);
-        t.occurr(occ);
-        return t;
+        return clone(newTruth);
     }
 
     @Override
