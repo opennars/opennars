@@ -131,7 +131,7 @@ public class NAL1Test extends JavaNALTest {
     public void backwardInference() throws InvalidInputException {
         long time = build instanceof Solid ? 15 : 350;
 
-        //TextOutput.out(n);
+        TextOutput.out(nar);
         nar.believe("<bird --> swimmer>", 1.0f, 0.8f);
         nar.ask("<?1 --> swimmer>");
         nar.mustOutput(time, "<?1 --> bird>?").en("What is a type of bird?");

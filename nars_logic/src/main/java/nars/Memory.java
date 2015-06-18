@@ -644,11 +644,6 @@ public class Memory implements Serializable, AbstractStamper {
         }
 
 
-        //TEMPORARY
-        if (t.getEvidentialSet() == null) {
-            throw new RuntimeException("null evidential set on input");
-        }
-
         if (!Terms.levelValid(t.sentence, nal())) {
             removed(t, "Insufficient NAL level");
             return false;

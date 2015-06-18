@@ -107,6 +107,9 @@ public class LocalRules {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
         //if (stamp == null) return null;
 
+        if (newBelief.equals(oldBeliefTask))
+            return null;
+
         if (Stamp.evidentialSetOverlaps(newBelief, oldBeliefTask))
             return null;
 

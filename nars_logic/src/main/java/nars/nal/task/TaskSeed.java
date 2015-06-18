@@ -465,6 +465,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
      * creation time of the stamp
      */
     public long getCreationTime() {
+        if (creationTime == Stamp.UNPERCEIVED)
+            return memory.time();
         return  creationTime;
     }
 

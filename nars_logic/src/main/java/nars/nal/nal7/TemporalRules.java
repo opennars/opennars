@@ -614,20 +614,35 @@ public class TemporalRules {
         }
     }
 
-    public static float solutionQuality(boolean hasQueryVar, long occTime, final Sentence solution, final Truth projectedTruth, long time) {
-        return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
-    }
-
     /**
-     * Evaluate the quality of a truth judgment as a solution to a problem
+     * Evaluate the quality of the judgment as a solution to a problem
      *
-     * @param problem  A goal or question
+     * @param problem A goal or question
      * @param solution The solution to be evaluated
      * @return The quality of the judgment as the solution
      */
     public static float solutionQuality(final Sentence problem, final Sentence solution, long time) {
-        return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, solution.truth, time);
+
+        if (!matchingOrder(problem.getTemporalOrder(), solution.getTemporalOrder())) {
+            return 0.0F;
+        }
+
+        Truth truth = solution.truth;
+        if (problem.getOccurrenceTime()!=solution.getOccurrenceTime()) {
+            truth = solution.projection(problem.getOccurrenceTime(), time);
+        }
+
+        if (problem.hasQueryVar()) {
+            return truth.getExpectation() / solution.term.getComplexity();
+        } else {
+            return truth.getConfidence();
+        }
     }
+
+    public static float solutionQuality(boolean hasQueryVar, long occTime, final Sentence solution, final Truth projectedTruth, long time) {
+        return solution.projectionTruthQuality(projectedTruth, occTime, time, hasQueryVar);
+    }
+
     public static float solutionQuality(final Sentence problem, final Sentence solution, Truth truth, long time) {
         return solutionQuality(problem.hasQueryVar(), problem.getOccurrenceTime(), solution, truth, time);
     }
