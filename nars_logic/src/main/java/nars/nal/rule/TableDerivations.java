@@ -26,6 +26,8 @@ public class TableDerivations extends ConceptFireTaskTerm {
 
         final Sentence taskSentence = tLink.getSentence();
         final Term taskTerm = tLink.getTerm();
+
+        final Task beliefTask = f.getCurrentBeliefTask();
         final Sentence belief = f.getCurrentBelief();
         final Term beliefTerm = bLink.getTerm();
 
@@ -53,7 +55,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                     case TermLink.COMPONENT_STATEMENT:
                         if (belief != null) {
                             if (taskTerm instanceof Statement) {
-                                SyllogisticRules.detachment(taskSentence, belief, bIndex, f);
+                                SyllogisticRules.detachment(tLink.getTask(), belief, bIndex, f);
                             }
                         } else {
                             goalFromQuestion(f.getCurrentTask(), taskTerm, f);
@@ -62,7 +64,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                     case TermLink.COMPOUND_STATEMENT:
                         if (belief != null) {
                             if (belief.getTerm() instanceof Statement)
-                                SyllogisticRules.detachment(belief, taskSentence, bIndex, f);
+                                SyllogisticRules.detachment(beliefTask, taskSentence, bIndex, f);
                             /*else {
                                 new RuntimeException(belief + " not a statement via termlink " + tLink).printStackTrace();
                             }*/
@@ -97,11 +99,13 @@ public class TableDerivations extends ConceptFireTaskTerm {
                             if (beliefTerm instanceof Implication) {
                                 Term[] u = new Term[] { beliefTerm, taskTerm };
                                 if (Variables.unify(VAR_INDEPENDENT, ((Statement) beliefTerm).getSubject(), taskTerm, u, f.memory.random)) {
-                                    Sentence<Statement> newBelief = belief.clone(u[0], Statement.class);
-                                    if (newBelief!=null) {
-                                        Sentence newTaskSentence = taskSentence.clone((Compound)u[1]);
-                                        if (newTaskSentence!=null) {
-                                            RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
+                                    if (u[0] instanceof Compound) {
+                                        Task<Statement> newBelief = beliefTask.clone((Compound) u[0]/*, Statement.class*/);
+                                        if (newBelief != null) {
+                                            Sentence newTaskSentence = taskSentence.clone((Compound) u[1]);
+                                            if (newTaskSentence != null) {
+                                                RuleTables.detachmentWithVar(newBelief, newTaskSentence, bIndex, f);
+                                            }
                                         }
                                     }
                                 } else {
@@ -131,7 +135,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                         break;
                     case TermLink.COMPOUND_STATEMENT:
                         if ((belief != null) && (taskTerm instanceof Statement) && (beliefTerm instanceof Statement)) {
-                            RuleTables.syllogisms(tLink, bLink, (Statement)taskTerm, (Statement)beliefTerm, f);
+                            RuleTables.syllogisms(tLink, bLink, tLink.getTask(), (Statement)beliefTerm, f);
                         }
                         break;
                     case TermLink.COMPOUND_CONDITION:
@@ -151,7 +155,7 @@ public class TableDerivations extends ConceptFireTaskTerm {
                 switch (bLink.type) {
                     case TermLink.COMPOUND:
                         if (belief != null) {
-                            RuleTables.detachmentWithVar(taskSentence, belief, tIndex, f);
+                            RuleTables.detachmentWithVar(tLink.getTask(), belief, tIndex, f);
                         }
                         break;
 

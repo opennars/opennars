@@ -135,12 +135,8 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
 
-    public Task newSubTask(Sentence sentence, Budget budget) {
-        return new Task(sentence, budget, getTask());
-    }
-
     public Task newSubTask(Memory m, Compound content, char punctuation, Truth truth, long occ, Budget budget) {
-        return m.task(content)
+        return  m.task(content)
                 .punctuation(punctuation)
                 .truth(truth)
                 .budget(budget)

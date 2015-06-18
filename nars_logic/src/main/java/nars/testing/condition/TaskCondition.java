@@ -4,6 +4,7 @@ package nars.testing.condition;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import nars.Events;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.io.JSONOutput;
 import nars.io.Texts;
@@ -424,4 +425,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
 
+    public Memory getMemory() {
+        return getNAR().memory;
+    }
 }

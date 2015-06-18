@@ -29,7 +29,6 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -57,17 +56,18 @@ public final class SyllogisticRules {
      * @param belief The second premise
      * @param nal Reference to the memory
      */
-    public static void dedExe(Term term1, Term term2, Sentence sentence, Sentence belief, NAL nal) {
+    public static void dedExe(Term term1, Term term2, Task<Statement> sentence, Sentence belief, NAL nal) {
         if (Statement.invalidStatement(term1, term2)) {
             return;
         }
-        int order1 = sentence.term.getTemporalOrder();
+        int order1 = sentence.
+                getTemporalOrder();
         int order2 = belief.term.getTemporalOrder();
         int order =  dedExeOrder(order1, order2);
         if (order == ORDER_INVALID) {
             return;
         }
-        Truth value1 = sentence.truth;
+        Truth value1 = sentence.getTruth();
         Truth value2 = belief.truth;
         Truth truth1 = null;
         Truth truth2 = null;
@@ -91,16 +91,16 @@ public final class SyllogisticRules {
             budget1 = BudgetFunctions.forward(truth1, nal);
             budget2 = BudgetFunctions.forward(truth2, nal);
         }
-        Statement content = (Statement) sentence.term;
+        Statement content = sentence.getTerm();
         Statement content1 = Statement.make(content, term1, term2, order);
         Statement content2 = Statement.make(content, term2, term1, reverseOrder(order));
         
         if ((content1 == null) || (content2 == null))
             return;
 
-        final Stamper stamp = nal.newStamp(sentence, belief);
-        nal.deriveDouble(content1, truth1, budget1, stamp, false, false);
-        nal.deriveDouble(content2, truth2, budget2, stamp, false, false);
+        //final Stamper stamp = nal.newStamp(sentence, belief);
+        nal.deriveDouble(content1, sentence.getPunctuation(), truth1, budget1, sentence, belief, false, false);
+        nal.deriveDouble(content2, sentence.getPunctuation(), truth2, budget2, sentence, belief, false, false);
     }
 
     /**
@@ -283,66 +283,65 @@ public final class SyllogisticRules {
 
     /**
      * {<S <=> M>, <M <=> P>} |- <S <=> P>
-     *
-     * @param term1 Subject of the new task
+     *  @param term1 Subject of the new task
      * @param term2 Predicate of the new task
-     * @param belief The first premise
      * @param sentence The second premise
+     * @param belief The first premise
      * @param figure Locations of the shared term in premises
      * @param nal Reference to the memory
      */
-    public static boolean resemblance(Term term1, Term term2, Sentence<Statement> belief, Sentence<Statement> sentence, int figure, NAL nal) {
+    public static boolean resemblance(Term term1, Term term2, Task<Statement> sentence, Sentence<Statement> belief, int figure, NAL nal) {
         if (Statement.invalidStatement(term1, term2)) {
             return false;
         }
-        int order1 = belief.term.getTemporalOrder();
-        int order2 = sentence.term.getTemporalOrder();
+        int order1 = belief.getTerm().getTemporalOrder();
+        int order2 = sentence.getTerm().getTemporalOrder();
         int order = resemblanceOrder(order1, order2, figure);
         if (order == ORDER_INVALID) {
             return false;
         }
-        Statement st = belief.term;
+        Statement st = belief.getTerm();
         Truth truth = null;
         Budget budget;
         if (sentence.isQuestion() || sentence.isQuest()) {
-            budget = BudgetFunctions.backward(belief.truth, nal);
+            budget = BudgetFunctions.backward(belief.getTruth(), nal);
         } else {
             if (sentence.isGoal()) {
-                truth = TruthFunctions.desireStrong(sentence.truth, belief.truth);
+                truth = TruthFunctions.desireStrong(sentence.getTruth(), belief.getTruth());
             } else {
-                truth = TruthFunctions.resemblance(belief.truth, sentence.truth);
+                truth = TruthFunctions.resemblance(belief.getTruth(), sentence.getTruth());
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        boolean beliefTermHO = isHigherOrderStatement(belief.term);
-        boolean sentenceTermHO = isHigherOrderStatement(sentence.term);
+        boolean beliefTermHO = isHigherOrderStatement(belief.getTerm());
+        boolean sentenceTermHO = isHigherOrderStatement(sentence.getTerm());
         boolean eitherHigherOrder = (beliefTermHO || sentenceTermHO);
         boolean bothHigherOrder = (beliefTermHO && sentenceTermHO);
 
         if (!bothHigherOrder && eitherHigherOrder) {
             if (beliefTermHO) {
-                order = belief.term.getTemporalOrder();
+                order = belief.getTerm().getTemporalOrder();
             } else if (sentenceTermHO) {
-                order = sentence.term.getTemporalOrder();
+                order = sentence.getTerm().getTemporalOrder();
             }
         }
 
-        Stamper sb = nal.newStamp(belief, sentence);
+        //Stamper sb = nal.newStamp(belief, sentence);
 
         Statement s = Statement.make(eitherHigherOrder ? NALOperator.EQUIVALENCE : NALOperator.SIMILARITY, term1, term2, true, order);
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
-        boolean s1 = null!=nal.deriveDouble(s, truth, budget, sb, false, true), s2 = false;
+        boolean s1 = null!=nal.deriveDouble(s, sentence.getPunctuation(), truth, budget, sentence, belief, false, true), s2 = false;
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
 
-        if (Global.BREAK_NAL_HOL_BOUNDARY && !sentence.term.hasVarIndep() && (st instanceof Equivalence) &&
+        if (Global.BREAK_NAL_HOL_BOUNDARY && !sentence.getTerm().hasVarIndep() && (st instanceof Equivalence) &&
                 order1 == order2 &&
                 beliefTermHO && sentenceTermHO) {
 
             Budget budget1 = null, budget2 = null, budget3 = null;
             Truth truth1 = null, truth2 = null, truth3 = null;
-            Truth value1 = sentence.truth;
-            Truth value2 = belief.truth;
+            Truth value1 = sentence.getTruth();
+            Truth value2 = belief.getTruth();
 
             if (sentence.isQuestion()) {
                /* budget1 = BudgetFunctions.backward(value2, nal);
@@ -383,7 +382,8 @@ public final class SyllogisticRules {
                     truth2, budget2.clone(),false, false);*/
             s2 = null!=nal.deriveDouble(
                     Statement.make(NALOperator.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
-                    truth3, budget3.clone(), sb, false, false);
+                    sentence.getPunctuation(),
+                    truth3, budget3.clone(), sentence, belief, false, false);
 
 
         }
@@ -413,8 +413,8 @@ public final class SyllogisticRules {
      * @param side The location of s2 in s1
      * @param nal Reference to the memory
      */
-    public static void detachment(Sentence<Statement> mainSentence, Sentence subSentence, int side, NAL nal) {
-        Statement statement = mainSentence.term;
+    public static void detachment(Task<Statement> mainSentence, Sentence subSentence, int side, NAL nal) {
+        Statement statement = mainSentence.getTerm();
         if (!(statement instanceof Implication) && !(statement instanceof Equivalence)) {
             return;
         }
@@ -441,27 +441,30 @@ public final class SyllogisticRules {
 
         final boolean temporalReasoning = nal.nal(7);
 
-        Stamper st = null;
-        if (temporalReasoning) {
-            int order = statement.getTemporalOrder();
-            if ((order != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() /*&& (!taskSentence.isQuestion()*/)) {
+        //Stamper st = null;
+        long occ;
+        int order = statement.getTemporalOrder();
+
+        if ((temporalReasoning)
+
+            && ((statement.getTemporalOrder() != ORDER_NONE) && (order != ORDER_INVALID) && (!taskSentence.isGoal()) && (!taskSentence.isQuest() /*&& (!taskSentence.isQuestion()*/))) {
                 long baseTime = subSentence.getOccurrenceTime();
                 if (baseTime == Stamp.ETERNAL) {
                     baseTime = nal.time();
                 }
                 long inc = order * nal.memory.duration();
                 long occurTime = (side == 0) ? baseTime + inc : baseTime - inc;
-                st = nal.newStamp(mainSentence, subSentence, occurTime);
-            }
+                //st = nal.newStamp(mainSentence, subSentence, occurTime);
+                occ = occurTime;
         }
-
-        if (st == null) {
+        else {
             //new stamp, inferring occurence time from the sentences
-            st = nal.newStamp(mainSentence, subSentence);
+            //st = nal.newStamp(mainSentence, subSentence);
+            occ = NAL.inferOccurenceTime(mainSentence.sentence, subSentence);
         }
 
         Truth beliefTruth = beliefSentence.truth;
-        Truth truth1 = mainSentence.truth;
+        Truth truth1 = mainSentence.getTruth();
         Truth truth2 = subSentence.truth;
         Truth truth = null;
         Budget budget;
@@ -509,8 +512,8 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
         if(!Variables.indepVarUsedInvalid(content)) {
-            nal.deriveDouble(content, truth, budget,
-                    st,
+            nal.deriveDouble(content, mainSentence.getPunctuation(), truth, budget,
+                    mainSentence, subSentence,
                     false, strong);
         }
     }
@@ -624,14 +627,14 @@ public final class SyllogisticRules {
             return null;
 
 
-        Stamper sb;
+        long occ;
         if (nal.nal(7) && (delta != 0)) {
-            final long now = nal.time();
+
             long baseTime = (belief.term instanceof Implication) ?
                 taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
 
             if (baseTime == Stamp.ETERNAL) {
-                baseTime = now;
+                baseTime = nal.time();
             }
 
             if(premise1.getTemporalOrder()== TemporalRules.ORDER_CONCURRENT) {
@@ -642,10 +645,12 @@ public final class SyllogisticRules {
             baseTime += delta;
 
             long occurTime = baseTime;
-            sb = nal.newStamp(taskSentence, belief, occurTime); //     //TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
+            occ = occurTime;
+            //sb = nal.newStamp(taskSentence, belief, occurTime); //     //TemporalRules.applyExpectationOffset(nal.memory, premise1, occurTime)),
         }
         else {
-            sb = nal.newStamp(taskSentence, belief, Stamp.ETERNAL);
+            occ = Stamp.ETERNAL; //should this be NAL.inferTime..
+            //sb = nal.newStamp(taskSentence, belief, Stamp.ETERNAL);
         }
         
         Truth truth1 = taskSentence.truth;
@@ -675,8 +680,8 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        return nal.deriveDouble((Compound) content, truth, budget,
-                sb, false, deduction);
+        return nal.deriveDouble((Compound) content, task.getPunctuation(), truth, budget,
+                task, belief, false, deduction);
     }
 
     /**
@@ -783,7 +788,9 @@ public final class SyllogisticRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        nal.deriveDouble(content, truth, budget, nal.newStamp(taskSentence, belief), false, !conditionalTask);
+        nal.deriveDouble(content, task.getPunctuation(), truth, budget,
+                task, belief,
+                false, !conditionalTask);
 
         return true;
     }
@@ -863,7 +870,8 @@ public final class SyllogisticRules {
                     budget = BudgetFunctions.forward(truth, nal);
                 }
 
-                nal.deriveDouble((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
+                nal.deriveDouble((Compound) content, task.getPunctuation(), truth, budget,
+                        task, belief, false, false);
             }
         }
         
@@ -892,7 +900,7 @@ public final class SyllogisticRules {
                     }
                     budget = BudgetFunctions.forward(truth, nal);
                 }
-                nal.deriveDouble((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
+                nal.deriveDouble((Compound) content, task.getPunctuation(), truth, budget, task, belief, false, false);
             }
         }
         
@@ -931,6 +939,7 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.compoundForward(truth, content, nal);
         }
-        nal.deriveDouble((Compound) content, truth, budget, nal.newStamp(sentence, belief), false, false);
+        nal.deriveDouble((Compound) content, task.getPunctuation(), truth, budget,
+                task, belief, false, false);
     }
 }

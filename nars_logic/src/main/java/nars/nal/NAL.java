@@ -121,13 +121,13 @@ public abstract class NAL implements Runnable {
         return derive(task, false, false);
     }
 
-    /**
-     * TEMPORARY ADAPTER FOR OLD API
-     */
-    @Deprecated
-    public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
-        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
-    }
+//    /**
+//     * TEMPORARY ADAPTER FOR OLD API
+//     */
+//    @Deprecated
+//    public Task derive(final Task task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
+//        return derive(new TaskSeed(memory, task), revised, single, currentTask, allowOverlap);
+//    }
 
     /**
      * iived task comes from the logic rules.

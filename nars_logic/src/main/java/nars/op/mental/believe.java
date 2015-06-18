@@ -33,7 +33,6 @@ import nars.nal.Truth;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Compound;
 
 import java.util.ArrayList;
@@ -57,12 +56,10 @@ public class believe extends SynchOperator implements Mental {
 
         Compound content = Sentence.termOrException(operation.arg(0));
 
-        Truth truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, new Stamper(operation, nar.memory, Tense.Present));
-        float quality = BudgetFunctions.truthToQuality(truth);
-        Budget budget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, quality);
-
-        return Lists.newArrayList( operation.newSubTask(sentence, budget) );
+        DefaultTruth truth;
+        return Lists.newArrayList( operation.newSubTask(memory,
+                content, Symbols.JUDGMENT, truth = new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE), memory.time(),
+                new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, truth)) );
 
 
     }

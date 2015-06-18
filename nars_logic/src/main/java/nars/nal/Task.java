@@ -51,7 +51,7 @@ import java.util.Set;
  * A task references its parent and an optional causal factor (usually an Operation instance).  These are implemented as WeakReference to allow forgetting via the
  * garbage collection process.  Otherwise, Task ancestry would grow unbounded,
  * violating the assumption of insufficient resources (AIKR).
- *
+ * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
 public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence, Input {
@@ -59,7 +59,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 //    /** placeholder for a forgotten task */
 //    public static final Task Forgotten = new Task();
 
-    
 
     /**
      * The sentence of the Task
@@ -81,12 +80,14 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * For Question and Goal: best solution found so far
      */
     private Sentence bestSolution;
-    
-    /** causal factor if executed; an instance of Operation */
+
+    /**
+     * causal factor if executed; an instance of Operation
+     */
     private Operation cause;
 
     private List<String> history = null;
-    private boolean temporalInducted=true;
+    private boolean temporalInducted = true;
 
 
     /**
@@ -96,24 +97,24 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @param b The budget
      */
     public Task(final Sentence s, final Budget b) {
-        this(s, b, (Task)null, null, null);
+        this(s, b, (Task) null, null, null);
     }
- 
+
     public Task(final Sentence s, final Budget b, final Task parentTask) {
-        this(s, b, parentTask, null);        
+        this(s, b, parentTask, null);
     }
 
     protected Task() {
         this(null, null);
     }
-    
+
 
     /**
      * Constructor for a derived task
      *
-     * @param s The sentence
-     * @param b The budget
-     * @param parentTask The task from which this new task is derived
+     * @param s            The sentence
+     * @param b            The budget
+     * @param parentTask   The task from which this new task is derived
      * @param parentBelief The belief from which this new task is derived
      */
     public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief) {
@@ -121,9 +122,9 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     public Task(final Sentence<T> s, Budget bv, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
-        this(s, bv!=null ? bv.getPriority() : 0,
-                bv!=null ? bv.getDurability() : 0,
-                bv!=null ? bv.getQuality() : 0,
+        this(s, bv != null ? bv.getPriority() : 0,
+                bv != null ? bv.getDurability() : 0,
+                bv != null ? bv.getQuality() : 0,
                 parentTask, parentBelief, solution);
     }
 
@@ -141,7 +142,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
 
         if (Global.DEBUG) {
-            if ((parentTask!=null && parentTask.get() == null))
+            if ((parentTask != null && parentTask.get() == null))
                 throw new RuntimeException("parentTask must be null itself, or reference a non-null Task");
 
             ///*if (this.equals(getParentTask())) {
@@ -157,17 +158,16 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         }
 
 
-
     }
 
     /**
      * Constructor for an activated task
      *
-     * @param s The sentence
-     * @param b The budget
-     * @param parentTask The task from which this new task is derived
+     * @param s            The sentence
+     * @param b            The budget
+     * @param parentTask   The task from which this new task is derived
      * @param parentBelief The belief from which this new task is derived
-     * @param solution The belief to be used in future logic
+     * @param solution     The belief to be used in future logic
      */
     public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
         this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
@@ -178,7 +178,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
 
-
     @Override
     public Task clone() {
 
@@ -187,12 +186,16 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
         return new Task(sentence.clone(), this, parentTask, parentBelief, bestSolution);
     }
-    
-    public Task clone(final Sentence replacedSentence) {
+
+    public <X extends Compound> Task<X> clone(final Sentence<X> replacedSentence) {
         return new Task(replacedSentence, this, parentTask, parentBelief, bestSolution);
     }
-    
-    @Override public Sentence name() {
+    public <X extends Compound> Task<X> clone(X t) {
+        return clone(getSentence().clone(t));
+    }
+
+    @Override
+    public Sentence name() {
         return sentence;
     }
 
@@ -201,12 +204,12 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         if (obj == null) return false;
         if (obj == this) return true;
         if (obj instanceof Task) {
-            Task t = (Task)obj;
+            Task t = (Task) obj;
             Sentence ts = t.sentence;
-            if (sentence == null && ts !=null) return false;
+            if (sentence == null && ts != null) return false;
             return sentence.equals(ts);// && equalParents(t);
         }
-        return false;        
+        return false;
     }
 
     @Override
@@ -220,8 +223,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         Task tp = t.getParentTask();
         if (p == null) {
             return (tp == null);
-        }
-        else {
+        } else {
             return p.equals(tp);
         }
     }
@@ -257,7 +259,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
         return parentTask == null && cause == null;
     }
-    
+
 //    public boolean aboveThreshold() {
 //        return budget.aboveThreshold();
 //    }
@@ -273,7 +275,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 //    public boolean isStructural() {
 //        return (parentBelief == null) && (parentTask != null);
 //    }
-
 
 
     /**
@@ -316,7 +317,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
     @Override
-    @Deprecated public String toString() {
+    @Deprecated
+    public String toString() {
         return toStringWithBudget();
     }
 
@@ -334,31 +336,33 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     public boolean hasParent(Task t) {
         if (getParentTask() == null)
             return false;
-        Task p=getParentTask();
-        do {            
+        Task p = getParentTask();
+        do {
             Task n = p.getParentTask();
             if (n == null) break;
             if (n.equals(t))
                 return true;
             p = n;
         } while (true);
-        return false;        
-    }    
-    
+        return false;
+    }
+
     public Task getRootTask() {
         if (getParentTask() == null) {
             return null;
         }
-        Task p=getParentTask();
-        do {            
+        Task p = getParentTask();
+        do {
             Task n = p.getParentTask();
-            if (n==null) break;
+            if (n == null) break;
             p = n;
         } while (true);
         return p;
     }
 
-    /** generally, op will be an Operation instance */
+    /**
+     * generally, op will be an Operation instance
+     */
     public Task setCause(final Operation op) {
         if (this.equals(op.getTask()))
             return this; //dont set the cause to itself
@@ -368,7 +372,9 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         return this;
     }
 
-    /** the causing Operation, or null if not applicable. */
+    /**
+     * the causing Operation, or null if not applicable.
+     */
     public Operation getCause() {
         return cause;
     }
@@ -387,9 +393,9 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
         task.appendToString(sb, null).append(" history=").append(task.getHistory());
 
-        if (task.getCause()!=null)
+        if (task.getCause() != null)
             sb.append(" cause=").append(task.getCause());
-        if (task.getBestSolution()!=null) {
+        if (task.getBestSolution() != null) {
             if (!task.getTerm().equals(task.getBestSolution().term))
                 sb.append(" solution=").append(task.getBestSolution());
         }
@@ -397,22 +403,23 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         Task pt = task.getParentTask();
 
         Sentence pb = task.getParentBelief();
-        if (pb!=null) {
-            if (pt!=null && pb.equals(pt.sentence)) {
+        if (pb != null) {
+            if (pt != null && pb.equals(pt.sentence)) {
 
-            }
-            else {
+            } else {
                 sb.append(" parentBelief=").append(task.getParentBelief()).append(task.getParentBelief().getStamp());
             }
         }
         sb.append('\n');
 
-        if (pt!=null) {
-            getExplanation(pt, indent+1, sb);
+        if (pt != null) {
+            getExplanation(pt, indent + 1, sb);
         }
     }
 
-    public Truth getDesire() { return sentence.truth; }
+    public Truth getDesire() {
+        return sentence.truth;
+    }
 
 
 //    /**
@@ -461,13 +468,17 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 //
 
 
-    
-    /** signaling that the Task has ended or discarded */
-    @Override public void delete() {
+    /**
+     * signaling that the Task has ended or discarded
+     */
+    @Override
+    public void delete() {
 
     }
 
-    /** flag to indicate whether this Event Task participates in tempporal induction */
+    /**
+     * flag to indicate whether this Event Task participates in tempporal induction
+     */
     public void setTemporalInducting(boolean b) {
         this.temporalInducted = b;
     }
@@ -476,7 +487,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         return temporalInducted;
     }
 
-    
+
     public static Set<Sentence> getSentences(Collection<Task> tasks) {
         Set<Sentence> s = Global.newHashSet(tasks.size());
         for (Task t : tasks)
@@ -490,8 +501,10 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
 
-    /** optional list of strings explaining the reasons that make up this task's [hi-]story.
-     *  useful for debugging but can also be applied to meta-analysis */
+    /**
+     * optional list of strings explaining the reasons that make up this task's [hi-]story.
+     * useful for debugging but can also be applied to meta-analysis
+     */
     public void addHistory(String reason) {
         if (!Global.DEBUG_TASK_HISTORY)
             return;
@@ -516,9 +529,9 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     }
 
 
-
-
-    /** a task is considered amnesiac (origin not rememebered) if its parent task has been forgotten (garbage collected via a soft/weakref) */
+    /**
+     * a task is considered amnesiac (origin not rememebered) if its parent task has been forgotten (garbage collected via a soft/weakref)
+     */
     public boolean isAmnesiac() {
         return !isInput() && getParentTask() == null;
     }
@@ -528,8 +541,8 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         if (!Global.DEBUG_TASK_HISTORY)
             return this;
 
-        if (historyToCopy!=null) {
-            if (this.history==null) this.history = new ArrayList(historyToCopy.size());
+        if (historyToCopy != null) {
+            if (this.history == null) this.history = new ArrayList(historyToCopy.size());
             history.addAll(historyToCopy);
         }
         return this;
@@ -544,7 +557,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         if (!summaryGreaterOrEqual(memory.param.perceptThreshold))
             return false;
 
-        if (sentence==null) {
+        if (sentence == null) {
             return false;
         }
 
@@ -555,7 +568,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         if (getCreationTime() == Stamp.UNPERCEIVED) {
             final long now = memory.time();
             long oc = getOccurrenceTime();
-            if (oc!=Stamp.ETERNAL)
+            if (oc != Stamp.ETERNAL)
                 oc += now;
 
             sentence.setTime(now, oc);
@@ -630,6 +643,26 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     @Override
     public void serializeWithType(JsonGenerator jgen, SerializerProvider provider, TypeSerializer typeSer) throws IOException, JsonProcessingException {
         serialize(jgen, provider);
+    }
+
+    public int getTemporalOrder() {
+        return getTerm().getTemporalOrder();
+    }
+
+    public boolean isQuestion() {
+        return getSentence().isQuestion();
+    }
+
+    public boolean isJudgment() {
+        return getSentence().isJudgment();
+    }
+
+    public boolean isGoal() {
+        return getSentence().isGoal();
+    }
+
+    public boolean isQuest() {
+        return getSentence().isQuest();
     }
 
 }

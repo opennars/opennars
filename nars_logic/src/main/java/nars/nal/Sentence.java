@@ -449,14 +449,6 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
 
 
 
-    /**
-     * Recognize a Judgment
-     *
-     * @return Whether the object is a Judgment
-     */
-    public boolean isJudgment() {
-        return (punctuation == Symbols.JUDGMENT);
-    }
 
     /**
      * Recognize a Question
@@ -465,6 +457,15 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
      */
     public boolean isQuestion() {
         return (punctuation == Symbols.QUESTION);
+    }
+
+    /**
+     * Recognize a Judgment
+     *
+     * @return Whether the object is a Judgment
+     */
+    public boolean isJudgment() {
+        return (punctuation == Symbols.JUDGMENT);
     }
 
     public boolean isGoal() {

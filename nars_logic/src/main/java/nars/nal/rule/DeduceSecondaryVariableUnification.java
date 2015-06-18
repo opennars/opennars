@@ -13,7 +13,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.process.ConceptProcess;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamper;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;

@@ -19,7 +19,7 @@ import nars.nal.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.stamp.Stamper;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Term;
 
 import java.util.ArrayList;
@@ -212,12 +212,14 @@ public class PerceptionAccel extends NARReaction {
 
 
             longest_result_derived_already = true;
-            Stamper st = nal.newStamp(task.getSentence(), nal.time(), evBase.toArray());
+            //Stamper st = nal.newStamp(task.getSentence(), nal.time(), evBase.toArray());
 
             //lets make the new event the parent task, and derive it
-            Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth).stamp(st)
+            Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth)
                             .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
                             .parentStamp(task, newEvent)
+                            .occurrNow()
+                            .setEvidentialSet(Stamp.toSetArray(evBase.toArray()))
                             .temporalInducted(!longest_result_derived_already)
             );
 

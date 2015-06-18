@@ -34,7 +34,7 @@ import nars.nal.*;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.stamp.Stamper;
+import nars.nal.term.Compound;
 import nars.nal.term.Term;
 
 import java.util.Collection;
@@ -65,10 +65,10 @@ public class Anticipate extends NARReaction implements Mental {
     final static Budget expiredBudget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, BudgetFunctions.truthToQuality(expiredTruth));
 
 
-    final Multimap<Term,TaskTime> anticipations = LinkedHashMultimap.create();
+    final Multimap<Compound,TaskTime> anticipations = LinkedHashMultimap.create();
 
     /** buffers the terms of new incoming tasks */
-    final Set<Term> newTaskTerms = Global.newHashSet(16);
+    final Set<Compound> newTaskTerms = Global.newHashSet(16);
 
     NAL nal;
     nars.event.NARReaction reaction;
@@ -91,7 +91,7 @@ public class Anticipate extends NARReaction implements Mental {
     }
 
 
-    public void anticipate(Term term, long occurenceTime, Task t) {
+    public void anticipate(Compound term, long occurenceTime, Task t) {
         if (memory == null)
             memory = nal.memory;
 
@@ -142,7 +142,7 @@ public class Anticipate extends NARReaction implements Mental {
         */
     }
 
-    protected void deriveDidntHappen(Term prediction, TaskTime tt) {
+    protected void deriveDidntHappen(Compound prediction, TaskTime tt) {
 
         long expectedOccurenceTime = tt.getOccurrenceTime();
 
@@ -150,23 +150,19 @@ public class Anticipate extends NARReaction implements Mental {
         //happen is exactly the time it was expected
         //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
 
-        Task task = new Task(
-                new Sentence(prediction,
-                        Symbols.JUDGMENT,
-                        expiredTruth,
-                        new Stamper(nal.memory, expectedOccurenceTime)),
-                //expiredBudget
-                tt.getBudget().clone(),
-                tt.task
-        );
 
         if (debug)
-            System.err.println("Anticipation Negated " + task);
+            System.err.println("Anticipation Negated " + tt.task);
 
-        nal.derive(task, false, true, null, false);
+        nal.derive(nal.newTask(prediction)
+                .judgment()
+                .truth(expiredTruth)
+                .parent(tt.task)
+                .occurr(expectedOccurenceTime)
+                .budget(tt.getBudget())
+                .temporalInducted(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
+        );
 
-        //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
-        task.setTemporalInducting(true);
     }
 
     /** called each cycle to update calculations of anticipations */
@@ -181,7 +177,7 @@ public class Anticipate extends NARReaction implements Mental {
         int news = newTaskTerms.size(), dids = 0, didnts =0, expireds = 0;
 
         //1. filter anticipations which occurred
-        for (Term t : newTaskTerms) {
+        for (Compound t : newTaskTerms) {
 
             Collection<TaskTime> a = anticipations.get(t);
             if (a == null) continue;
@@ -216,11 +212,11 @@ public class Anticipate extends NARReaction implements Mental {
 
         //2. derive from remaining anticipations
 
-        Iterator<Map.Entry<Term, TaskTime>> it = anticipations.entries().iterator();
+        Iterator<Map.Entry<Compound, TaskTime>> it = anticipations.entries().iterator();
         while (it.hasNext()) {
 
-            Map.Entry<Term, TaskTime> t = it.next();
-            Term term = t.getKey();
+            Map.Entry<Compound, TaskTime> t = it.next();
+            Compound term = t.getKey();
             TaskTime tt = t.getValue();
 
             if (tt.didNotAlreadyOccurr(now)) {

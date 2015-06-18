@@ -628,6 +628,7 @@ public class Terms {
     public static boolean shareAnyTerms(Term[] a, Term[] b) {
 
         //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
+        //TODO special 2 x 2 case: tests= {a1, b1}, {a1, b2}, {a2,b1}, {a2,b2}
 
 
         for (final Term x : b)

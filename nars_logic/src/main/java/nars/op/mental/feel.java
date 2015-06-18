@@ -32,7 +32,6 @@ import nars.nal.nal3.SetInt;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.operator.SynchOperator;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
@@ -54,19 +53,20 @@ public abstract class feel extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
-        Stamper stamp = new Stamper(memory, Tense.Present);
         Truth truth = new DefaultTruth(value, 0.999f);
                 
         Term predicate = SetInt.make(feelingTerm);
 
         final Term self = memory.self();
         final Term selfSubject = SetExt.make(self);
-        Term content = Inheritance.make(selfSubject, predicate);
-        Sentence sentence = new Sentence(content, Symbols.JUDGMENT, truth, stamp);
-        float quality = BudgetFunctions.truthToQuality(truth);
-        Budget budget = new Budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY, quality);
-        
-        return Lists.newArrayList( new Task(sentence, budget) );        
+        Inheritance content = Inheritance.make(selfSubject, predicate);
+
+        return Lists.newArrayList( memory.task(content)
+                .judgment().truth(new DefaultTruth(value, 0.999f))
+                .budget(Global.DEFAULT_JUDGMENT_PRIORITY, Global.DEFAULT_JUDGMENT_DURABILITY)
+                .occurrNow().get()
+        );
+
 
     }
 }

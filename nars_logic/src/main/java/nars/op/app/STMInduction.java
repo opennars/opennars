@@ -117,7 +117,7 @@ public class STMInduction extends NARReaction {
 
             //if(currentTask.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
             TemporalRules.temporalInduction(currentBelief, previousBelief,
-                    nal.newStamp(currentTask.sentence, previousTask.sentence),
+                    //nal.newStamp(currentTask.sentence, previousTask.sentence),
                     nal);
         }
 

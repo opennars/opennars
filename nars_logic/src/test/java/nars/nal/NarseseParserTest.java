@@ -15,7 +15,6 @@ import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.*;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
@@ -669,8 +668,8 @@ public class NarseseParserTest {
             int last = str.length() - 1;
             char punc = str.charAt(last);
 
-        /* if -1, will be set right before the Task is input */
-            Stamper stamp = new Stamper(memory, creationTime, tense);
+            /* if -1, will be set right before the Task is input */
+            //Stamper stamp = new Stamper(memory, creationTime, tense);
 
             Truth truth = parseTruth(truthString, punc);
             Term content = parseTerm(str.substring(0, last));
@@ -680,11 +679,15 @@ public class NarseseParserTest {
             content = ((Compound) content).normalized();
             if (content == null) return null;
 
-            return new Sentence((Compound)content, punc, truth, stamp);
+            Sentence s = new Sentence((Compound)content, punc, truth);
+            s.setCreationTime(creationTime);
+            s.setOccurrenceTime(creationTime, tense, memory.duration());
+
             //if ((content instanceof Conjunction) && Variable.containVarDep(content.getName())) {
             //    sentence.setRevisible(false);
             //}
 
+            return s;
         }
 
     /* ---------- react values ---------- */

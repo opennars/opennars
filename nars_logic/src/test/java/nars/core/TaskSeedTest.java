@@ -3,7 +3,6 @@ package nars.core;
 import nars.NAR;
 import nars.model.impl.Default;
 import nars.nal.Task;
-import nars.nal.stamp.Stamper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -42,22 +41,22 @@ public class TaskSeedTest {
     }
 
 
-    @Test public void testStampTenseOccurenceOverrides() {
-
-        NAR n = new NAR(new Default());
-
-        Task parent = n.task("<x --> y>.");
-
-
-        String t = "<a --> b>.";
-
-
-        Stamper st = new Stamper(parent, 10);
-
-        //the final occurr() or tense() is the value applied
-        assertTrue(!n.memory.task(n.term(t)).eternal().stamp(st).isEternal());
-        assertTrue(n.memory.task(n.term(t)).stamp(st).eternal().isEternal());
-        assertEquals(20, n.memory.task(n.term(t)).judgment().parent(parent).stamp(st).occurr(20).get().getOccurrenceTime());
-    }
+//    @Test public void testStampTenseOccurenceOverrides() {
+//
+//        NAR n = new NAR(new Default());
+//
+//        Task parent = n.task("<x --> y>.");
+//
+//
+//        String t = "<a --> b>.";
+//
+//
+//        Stamper st = new Stamper(parent, 10);
+//
+//        //the final occurr() or tense() is the value applied
+//        assertTrue(!n.memory.task(n.term(t)).eternal().stamp(st).isEternal());
+//        assertTrue(n.memory.task(n.term(t)).stamp(st).eternal().isEternal());
+//        assertEquals(20, n.memory.task(n.term(t)).judgment().parent(parent).stamp(st).occurr(20).get().getOccurrenceTime());
+//    }
 
 }

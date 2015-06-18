@@ -4,7 +4,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import nars.nal.Sentence;
 import nars.nal.Task;
-import nars.nal.stamp.Stamper;
+import nars.nal.stamp.Stamp;
+import nars.nal.term.Compound;
 import nars.testing.condition.TaskCondition;
 
 import java.io.PrintStream;
@@ -25,7 +26,9 @@ public class ExplainableTask extends Task {
     }
 
     public ExplainableTask(TaskCondition tc) {
-        this(new Sentence(tc.term, tc.punc, tc.getTruthMean(), new Stamper(tc.getNAR().memory, tc.getCreationTime(), tc.tense)));
+        this(tc.getMemory().task((Compound)tc.term).punctuation(tc.punc)
+        .truth(tc.getTruthMean()).time(tc.getCreationTime(),
+                        Stamp.getOccurrenceTime(tc.getCreationTime(), tc.tense, tc.getMemory())).get());
     }
 
     public ExplainableTask(Task t) {

@@ -14,7 +14,6 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -178,10 +177,9 @@ public class InternalExperience extends NARReaction {
         else if (event == Events.BeliefReason.class) {
             //belief, beliefTerm, taskTerm, nal
             Sentence belief = (Sentence)a[0];
-            Term beliefTerm = (Term)a[1];
-            Term taskTerm = (Term)a[2];
-            NAL nal = (NAL)a[3];
-            beliefReason(belief, beliefTerm, taskTerm, nal);
+            Task task = (Task)a[1];
+            NAL nal = (NAL)a[2];
+            beliefReason(belief, task, nal);
         }
     }
 
@@ -248,18 +246,20 @@ public class InternalExperience extends NARReaction {
     }; 
     
     /** used in full internal experience mode only */
-    protected void beliefReason(Sentence belief, Term beliefTerm, Term taskTerm, NAL nal) {
-        
+    protected void beliefReason(Sentence belief, Task task, NAL nal) {
+
+        Term taskTerm = task.getTerm();
+        Term beliefTerm = belief.getTerm();
         Memory memory = nal.memory;
         Random r = memory.random;
-    
+
         if (r.nextFloat() < INTERNAL_EXPERIENCE_RARE_PROBABILITY ) {
-            
+
             //the operators which dont have a innate belief
             //also get a chance to reveal its effects to the system this way
             Atom op = memory.the(nonInnateBeliefOperators[r.nextInt(nonInnateBeliefOperators.length)]);
             if(op!=null) {
-                beliefReasonDerive(
+                beliefReasonDerive(task,
                         Inheritance.make(Product.only(belief.term), op),
                 nal);
             }
@@ -285,10 +285,10 @@ public class InternalExperience extends NARReaction {
                     if(!imp.getSubject().equals(taskTerm)) {
                         valid=false;
                     }
-                }    
+                }
 
                 if(valid) {
-                    beliefReasonDerive(
+                    beliefReasonDerive(task,
                             Operation.make(anticipate, Product.only(imp.getPredicate())),
                             nal);
                 }
@@ -296,20 +296,17 @@ public class InternalExperience extends NARReaction {
         }
     }
 
-    protected static Task beliefReasonDerive(Compound new_term, NAL nal) {
+    protected static Task beliefReasonDerive(Task parent, Compound new_term, NAL nal) {
 
-        Sentence sentence = new Sentence(
-                new_term, Symbols.GOAL,
-                new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                new Stamper(nal.memory, Tense.Present));
 
-        float quality = BudgetFunctions.truthToQuality(sentence.truth);
-        Budget budget = new Budget(
-                Global.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL,
-                Global.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL,
-                quality);
+        //TODO should this be a mew stamp or attached to parent.. originally it was a fresh new stamp from memory
 
-        return nal.derive(nal.newTask(sentence).budget(budget), false, false);
+        return nal.derive(nal.newTask(new_term).goal().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                .budget(Global.DEFAULT_GOAL_PRIORITY*INTERNAL_EXPERIENCE_PRIORITY_MUL,
+                        Global.DEFAULT_GOAL_DURABILITY*INTERNAL_EXPERIENCE_DURABILITY_MUL)
+                .parent(parent).occurrNow()
+
+        );
 
     }
 

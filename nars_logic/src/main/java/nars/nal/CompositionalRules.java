@@ -744,11 +744,12 @@ public final class CompositionalRules {
 OUT: <lock1 --> lock>.
     http://code.google.com/p/open-nars/issues/detail?id=40&can=1
     */
-    public static void eliminateVariableOfConditionAbductive(final int figure, final Sentence sentence, final Sentence belief, final NAL nal) {
+    public static void eliminateVariableOfConditionAbductive(final int figure, final Task<Statement> sentence, final Sentence<Statement> belief, final NAL nal) {
         final Random m = nal.memory.random;
 
-        Statement T1 = (Statement) sentence.term;
-        Statement T2 = (Statement) belief.term;
+        Statement T1 = sentence.getTerm();
+        Statement T2 = belief.term;
+        Truth stu = sentence.getTruth();
 
         Term S1 = T2.getSubject();
         Term S2 = T1.getSubject();
@@ -792,8 +793,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -818,8 +819,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -863,8 +864,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -889,8 +890,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -935,8 +936,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if ((!s2.equals(s1)) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if ((!s2.equals(s1)) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -962,8 +963,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -1007,8 +1008,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (!s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
@@ -1034,8 +1035,8 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (s2 != null && !s2.equals(s1) && (sentence.truth != null) && (belief.truth != null)) {
-                                Truth truth = abduction(sentence.truth, belief.truth);
+                            if (s2 != null && !s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                                Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }

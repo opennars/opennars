@@ -34,6 +34,8 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
 
         if (!f.nal(7)) return true;
+
+        final Task beliefTask = f.getCurrentBeliefTask();
         final Sentence belief = f.getCurrentBelief();
         if (belief == null) return true;
 
@@ -64,10 +66,10 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
                     if (implication.isForward() || implication.isConcurrent()) {
 
-                        Sentence s = next.getStrongestBelief().sentence;
+                        Task s = next.getStrongestBelief();
                         if (s!=null) {
                             temporalInductionChain(s, belief, f);
-                            temporalInductionChain(belief, s, f);
+                            temporalInductionChain(beliefTask, s.sentence, f);
                         }
                     }
                 }
@@ -81,14 +83,14 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
     // { A =/> B, B =/> C } |- (&/,A,B) =/> C
     // { A =/> B, (&/,B,...) =/> C } |-  (&/,A,B,...) =/> C
     //https://groups.google.com/forum/#!topic/open-nars/L1spXagCOh4
-    public static Task temporalInductionChain(final Sentence s1, final Sentence s2, final NAL nal) {
+    public static Task temporalInductionChain(final Task s1, final Sentence s2, final NAL nal) {
 
         //prevent trying question sentences, causes NPE
-        if ((s1.truth == null) || (s2.truth == null))
+        if ((s1.getTruth() == null) || (s2.truth == null))
             return null;
 
         //try if B1 unifies with B2, if yes, create new judgement
-        Implication S1=(Implication) s1.term;
+        Implication S1=(Implication) s1.getTerm();
         Implication S2=(Implication) s2.term;
         Term A=S1.getSubject();
         Term B1=S1.getPredicate();
@@ -162,13 +164,13 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
             Implication whole=Implication.make(S, C,order2);
 
             if(whole!=null) {
-                Truth truth = TruthFunctions.induction(s1.truth, s2.truth);
+                Truth truth = TruthFunctions.induction(s1.getTruth(), s2.truth);
                 Budget budget = BudgetFunctions.compoundForward(truth,whole, nal);
                 budget.setPriority((float) Math.min(0.99, budget.getPriority()));
 
                 return nal.deriveDouble(
-                        nal.newTask(whole).truth(truth).budget(budget).stamp(nal.newStamp(s1, s2)),
-                        true, false);
+                        nal.newTask(whole).truth(truth).budget(budget)
+                                .parent(s1, s2).temporalInducted(true));
             }
         }
         return null;

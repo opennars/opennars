@@ -17,7 +17,6 @@ import nars.nal.nal4.Product;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
-import nars.nal.stamp.Stamper;
 import nars.nal.term.Atom;
 import nars.nal.term.Term;
 
@@ -102,21 +101,11 @@ public class Abbreviation extends NARReaction {
 
             Term atomic = newSerialTerm();
 
-            Sentence sentence = new Sentence(
-                    Similarity.make(compound, atomic),
-                    Symbols.JUDGMENT,
-                    new DefaultTruth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE),  // a naming convension
-                    new Stamper(operation, memory, Tense.Present));
-
-            Budget budget = new Budget(
-                    Global.DEFAULT_JUDGMENT_PRIORITY,
-                    Global.DEFAULT_JUDGMENT_DURABILITY,
-                    BudgetFunctions.truthToQuality(sentence.truth));
-
-            TaskProcess.run(memory, memory.task(sentence, budget, task));
-
-            //memory.execute(operation);
-            //abbreviate.execute(operation, memory);
+            TaskProcess.run(memory, memory.task(Similarity.make(compound, atomic))
+                    .judgment().truth(1, Global.DEFAULT_JUDGMENT_CONFIDENCE)
+                    .parent(operation.getTask()).occurrNow()
+                    .budget(Global.DEFAULT_JUDGMENT_PRIORITY,
+                            Global.DEFAULT_JUDGMENT_DURABILITY).get());
         }
     }
 

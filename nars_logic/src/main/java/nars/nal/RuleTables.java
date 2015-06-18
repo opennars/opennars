@@ -22,8 +22,6 @@ package nars.nal;
 
 import nars.Global;
 import nars.Symbols;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
@@ -109,18 +107,20 @@ public class RuleTables {
      *
      * @param tLink      The tlink to task
      * @param bLink      The tlink to belief
-     * @param taskTerm   The content of task
+     * @param task   The content of task
      * @param beliefTerm The content of belief
      * @param nal        Reference to the memory
      */
-    public static void syllogisms(TaskLink tLink, TermLink bLink, Statement taskTerm, Statement beliefTerm, NAL nal) {
-        final Task task = nal.getCurrentTask();
+    public static void syllogisms(TaskLink tLink, TermLink bLink, Task<Statement> task, Statement beliefTerm, NAL nal) {
+        //final Task task = nal.getCurrentTask();
         Sentence<Statement> taskSentence = task.sentence;
 
         Task beliefTask = nal.getCurrentBeliefTask();
         Sentence belief = nal.getCurrentBelief();
 
         if (!(belief.term instanceof Statement)) return;
+
+        final Term taskTerm = task.getTerm();
 
         int figure;
         if (taskTerm instanceof Inheritance) {
@@ -140,7 +140,7 @@ public class RuleTables {
                 asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Similarity) {
                 figure = indexToFigure(bLink, tLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
+                symmetricSymmetric(task, belief, figure, nal);
             } else if (beliefTerm instanceof Implication) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
@@ -148,7 +148,7 @@ public class RuleTables {
             } else if (beliefTerm instanceof Equivalence) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
+                symmetricSymmetric(task, belief, figure, nal);
             }
 
         } else if (taskTerm instanceof Implication) {
@@ -171,13 +171,13 @@ public class RuleTables {
                 asymmetricSymmetric(beliefTask, taskSentence, figure, nal);
             } else if (beliefTerm instanceof Equivalence) {
                 figure = indexToFigure(bLink, tLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
+                symmetricSymmetric(task, belief, figure, nal);
             } else if (beliefTerm instanceof Inheritance) {
                 detachmentWithVar(task, belief, tLink.getIndex(0), nal);
             } else if (beliefTerm instanceof Similarity) {
                 //Bridge to higher order statements:
                 figure = indexToFigure(tLink, bLink);
-                symmetricSymmetric(belief, taskSentence, figure, nal);
+                symmetricSymmetric(task, belief, figure, nal);
             }
         }
     }
@@ -423,15 +423,14 @@ public class RuleTables {
 
     /**
      * Syllogistic rules whose both premises are on the same symmetric relation
-     *
+     *  @param taskSentence The premise that comes from a task
      * @param belief       The premise that comes from a belief
-     * @param taskSentence The premise that comes from a task
      * @param figure       The location of the shared term
      * @param nal          Reference to the memory
      */
-    public static void symmetricSymmetric(final Sentence<Statement> belief, final Sentence<Statement> taskSentence, int figure, final NAL nal) {
+    public static void symmetricSymmetric(final Task<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
         Statement s1 = belief.term;
-        Statement s2 = taskSentence.term;
+        Statement s2 = taskSentence.getTerm();
 
         Term ut1, ut2;  //parameters for unify()
         Term rt1, rt2;  //parameters for resemblance()
@@ -490,7 +489,7 @@ public class RuleTables {
                     throw new RuntimeException("Invalid figure: " + figure);
             }
 
-            SyllogisticRules.resemblance(rt1, rt2, belief, taskSentence, figure, nal);
+            SyllogisticRules.resemblance(rt1, rt2, taskSentence, belief, figure, nal);
 
             CompositionalRules.eliminateVariableOfConditionAbductive(
                     figure, taskSentence, belief, nal);
@@ -511,7 +510,7 @@ public class RuleTables {
      * @param index                The location of the second premise in the first
      * @param nal                  Reference to the memory
      */
-    public static void detachmentWithVar(Task originalMainSentenceTask, Sentence subSentence, int index, NAL nal) {
+    public static void detachmentWithVar(Task<Statement> originalMainSentenceTask, Sentence subSentence, int index, NAL nal) {
         if (originalMainSentenceTask == null)
             return;
 
@@ -531,13 +530,13 @@ public class RuleTables {
             Compound[] u = new Compound[]{statement, content};
 
             if (!component.hasVarIndep()) {
-                SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
+                SyllogisticRules.detachment(originalMainSentenceTask, subSentence, index, nal);
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u, nal.memory.random)) {
-                mainSentence = mainSentence.clone((Statement) u[0]);
+                Task mainSentenceTask = originalMainSentenceTask.clone((Statement) u[0]);
                 if (mainSentence != null) {
                     subSentence = subSentence.clone(u[1]);
                     if (subSentence != null)
-                        SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
+                        SyllogisticRules.detachment(mainSentenceTask, subSentence, index, nal);
                 }
             } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();

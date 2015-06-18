@@ -30,7 +30,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
     public boolean apply(ConceptProcess f, TaskLink taskLink, TermLink termLink) {
         if (f.getCurrentBelief()!=null)
             dedConjunctionByQuestion(
-                    taskLink.getSentence(), f.getCurrentBelief(), f);
+                    taskLink.getTask(), f.getCurrentBelief(), f);
         return true;
     }
 
@@ -40,7 +40,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
      * @param belief   The second premise
      * @param nal      Reference to the memory
      */
-    static void dedConjunctionByQuestion(final Sentence sentence, final Sentence belief, final NAL nal) {
+    static void dedConjunctionByQuestion(final Task sentence, final Sentence belief, final NAL nal) {
         if (sentence == null || belief == null || !sentence.isJudgment() || !belief.isJudgment()) {
             return;
         }
@@ -50,7 +50,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
 
 
-        final Term term1 = sentence.term;
+        final Term term1 = sentence.getTerm();
         final boolean term1ContainVar = term1.hasVar();
         final boolean term1Conjunction = term1 instanceof Conjunction;
 
@@ -130,9 +130,9 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
                 Truth truthAnd = intersection(truthT, truthB);
                 Budget budget = BudgetFunctions.compoundForward(truthAnd, conj, nal);
-                nal.deriveDouble(conj, truthAnd, budget,
-                        nal.newStamp(sentence, belief),
-                        false, true);
+
+                nal.derive(nal.newTask(conj).truth(truthAnd).budget(budget)
+                        .parent(sentence, belief).temporalInducted(true));
 
                 nal.memory.logic.DED_CONJUNCTION_BY_QUESTION.hit();
 

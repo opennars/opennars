@@ -106,7 +106,6 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
         //if(newEvent.getPriority()>Parameters.TEMPORAL_INDUCTION_MIN_PRIORITY)
         TemporalRules.temporalInduction(current, prev,
-                f.newStamp(current, prev),
                 f, task,
                 false
         );
