@@ -194,7 +194,7 @@ public class Variable extends Atom {
         else if (ascoped && !bscoped) {
             return 1;
         }
-        else if (bscoped && !ascoped) {
+        else if (/*bscoped && */ !ascoped) {
             return -1;
         }
         else {

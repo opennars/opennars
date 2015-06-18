@@ -229,8 +229,7 @@ public class Conjunction extends Junction {
     final public static Term make(final int temporalOrder, final Term prefix, final Term... suffix) {
         final int suffixLen = suffix.length;
         Term[] t = new Term[suffixLen + 1];
-        int i = 0;
-        t[i++] = prefix;
+        t[0] = prefix;
         System.arraycopy(suffix, 0, t, 1, suffixLen);
         return make(t, temporalOrder);
     }

@@ -212,6 +212,10 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     /** clones this Task with a new Term and truth  */
     public <X extends Compound> Task<X> clone(X t, Truth newTruth) {
+        return clone(t, newTruth, getOccurrenceTime());
+    }
+
+    public <X extends Compound> Task<X> clone(X t, Truth newTruth, long occ) {
         Task tt = new Task(t, getPunctuation(), newTruth,
                 getPriority(), getDurability(), getQuality(),
                 parentTask, parentBelief, bestSolution
@@ -222,6 +226,8 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         tt.setRevisible(isRevisible());
         tt.setLastForgetTime(getLastForgetTime());
         tt.setEvidentialSet(getEvidentialSet());
+        tt.setCreationTime(getCreationTime());
+        tt.setOccurrenceTime(occ);
         return tt;
     }
 
@@ -342,8 +348,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
     public StringBuilder appendToString(StringBuilder sb, Memory memory) {
         if (sb == null) sb = new StringBuilder();
-        toString(sb, memory, false);
-        return sb;
+        return toString(sb, memory, false);
     }
 
     public boolean hasParent(Task t) {
@@ -530,9 +535,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         return history;
     }
 
-    public boolean equalPunctuations(Task t) {
-        return getPunctuation() == t.getPunctuation();
-    }
 
     public char getPunctuation() {
         return punctuation;
@@ -603,7 +605,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
         long occ = eternalizing ? Stamp.ETERNAL : targetTime;
 
-        return clone(newTruth);
+        return clone(getTerm(), newTruth, occ);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     private Operation cause;
     private String reason;
 
-    private boolean temporalInduct = true;
+    private boolean temporalInducatable = true;
     private boolean cyclic = false;
 
 
@@ -331,10 +331,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return tense(Tense.Future);
     }
 
-    public TaskSeed<T> parent(Task task) {
-        this.parent = task;
-        return this;
-    }
 
     public TaskSeed<T> stamp(Task t) {
         //should this set parent too?
@@ -441,7 +437,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
         applyToStamp(t);
 
-        t.setTemporalInducting(temporalInduct);
+        t.setTemporalInducting(temporalInducatable);
 
         if (this.cause != null) t.setCause(cause);
         if (this.reason != null) t.addHistory(reason);
@@ -571,10 +567,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         this.cyclic = cyclic;
     }
 
-    public TaskSeed<T> parent(Task parentTask, Task parentBeliefTask) {
-        return parent(parentTask, parentBeliefTask.sentence);
-    }
-
     public TaskSeed<T> parent(final Task parentTask, final Sentence<?> parentBelief) {
         this.parent = parentTask;
         this.parentBelief = parentBelief;
@@ -644,34 +636,26 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
 
-    public TaskSeed<T> temporalInducted(boolean b) {
-        this.temporalInduct = b;
+    public TaskSeed<T> temporalInductable(boolean b) {
+        this.temporalInducatable = b;
         return this;
     }
 
 
-    public TaskSeed<T> parentStamp(Task parentTask, Task parentBeliefTask) {
-        return parentStamp(parentTask, parentBeliefTask.sentence);
-    }
-
-    public TaskSeed<T> parentStamp(Task parentTask, Sentence parentBelief) {
+    public TaskSeed<T> parent(Task parentTask, Sentence parentBelief, long occurence) {
         parent(parentTask, parentBelief);
-        return this;
-    }
-    public TaskSeed<T> parentStamp(Task parentTask, Sentence parentBelief, long occurence) {
-        parentStamp(parentTask, parentBelief);
         setOccurrenceTime(occurence);
         return this;
     }
 
-    public TaskSeed<T> parentStamp(Task task, long occurrenceTime) {
-        parentStamp(task);
+    public TaskSeed<T> parent(Task task, long occurrenceTime) {
+        parent(task, null);
         setOccurrenceTime(occurrenceTime);
         return this;
     }
 
-    public TaskSeed<T> parentStamp(Task task) {
-        parent(task);
+    public TaskSeed<T> parent(Task task) {
+        parent(task, null);
         return this;
     }
 

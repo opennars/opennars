@@ -28,6 +28,7 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.nal1.Inheritance;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.eval;
@@ -45,21 +46,23 @@ import java.util.Arrays;
  */
 public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> {
 
-    private final Product arg;
 
     transient private Task<Operation<T>> task; //this is set automatically prior to executing
 
 
     //public final static Term[] SELF_TERM_ARRAY = new Term[] { SELF };
 
+    protected Operation(SetExt1<Product> s, T operator) {
+        super(s, operator);
+        //this.arg = s.the();
+    }
+
     /**
+     *
      * Constructor with partial values, called by make
      */
     protected Operation(Product argProduct, T operator) {
-
-        super(new SetExt1(argProduct), operator);
-
-        this.arg = argProduct;
+        this(new SetExt1(argProduct), operator);
     }
 
 
@@ -104,8 +107,17 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 //            arg=arg2;
 //        }
 
-        return new Operation<T>(arg, oper);
+        SetExt1<Product> subject = new SetExt1(arg);
+
+
+        if (invalidStatement(subject, oper)) {
+            return null;
+        }
+
+
+        return new Operation<T>(subject, oper);
     }
+
 
     public T getOperator() {
         return (T) getPredicate();
@@ -124,7 +136,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
     public Product arg() {
-        return arg;//getSubject().the();
+        return getSubject().the();
     }
 
     public Term arg(int i) {
@@ -264,7 +276,8 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
      * use this to restrict potential operator (predicate terms)
      */
     public static boolean validOperatorTerm(Term t) {
-        return t instanceof Term;
+        //return t instanceof Term;
+        return true;
     }
 
     public int args() {

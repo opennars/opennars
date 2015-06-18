@@ -254,79 +254,14 @@ public class TextPerception  {
     }
 
 
-//    /* Perceive an input object by calling an appropriate perception system according to the object type. */
-//    public Iterator<Task> perceive(final Object o) {
-//
-//        Exception error;
-//        try {
-//            if (o instanceof String) {
-//                return perceive((String) o);
-//            } else if (o instanceof Sentence) {
-//                //TEMPORARY
-//                Sentence s = (Sentence) o;
-//                return perceive(s.term.toString() + s.punctuation + ' ' + s.truth.toString());
-//            } else if (o instanceof Task) {
-//                return Iterators.forArray((Task)o);
-//            }
-//            error = new IOException("Input unrecognized: " + o + " [" + o.getClass() + ']');
-//        }
-//        catch (Exception e) {
-//            if (Global.DEBUG)
-//                throw e;
-//            error = e;
-//        }
-//
-//        return singletonIterator( new Echo(Events.ERR.class, error).newTask() );
-//    }
-//
-
     public void perceive(final String line, Consumer<Task> receiver) {
 
-        Exception lastException = null;
         
         for (final TextReaction p : parsers) {            
             
             p.react(line, receiver);
-            
-//            if (result!=null) {
-//                if (result instanceof Iterator) {
-//                    return (Iterator<Task>)result;
-//                }
-//                if (result instanceof Collection) {
-//                    return ((Collection<Task>)result).iterator();
-//                }
-//                if (result instanceof ImmediateOperation) {
-//                    return singletonIterator( ((ImmediateOperation)result).newTask() );
-//                }
-//                if (result instanceof Task) {
-//                    return singletonIterator((Task)result);
-//                }
-//                else if (result.equals(Boolean.TRUE)) {
-//                    return Iterators.emptyIterator();
-//                }
-//                else if (result instanceof Exception) {
-//                    lastException = (Exception)result;
-//                }
-//            }
         }
 
-//        String errorMessage = "Invalid input: \'" + line + '\'';
-//
-//        if (lastException!=null) {
-//            errorMessage += " : " + lastException.toString();
-//        }
-//
-//        memory.emit(Events.ERR.class, errorMessage);
     }
 
-//    public void enableEnglisch(boolean enableEnglisch) {
-//        this.enableEnglisch = enableEnglisch;
-//    }
-//
-//    public void enableNarsese(boolean enableNarsese) {
-//        this.enableNarsese = enableNarsese;
-//    }
-
-    
-    
 }

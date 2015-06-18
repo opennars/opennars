@@ -149,7 +149,7 @@ public class OutputContainsCondition extends OutputCondition {
                 if (signal instanceof ExecutionResult)
                     t = ((ExecutionResult)signal).getTask();
 
-                final StringBuilder buffer = new StringBuilder();
+                //final StringBuilder buffer = new StringBuilder();
 
                 //o = TextOutput.getOutputString(channel, signal, false, false, nar).toString();
                 o = toString(channel, signal);

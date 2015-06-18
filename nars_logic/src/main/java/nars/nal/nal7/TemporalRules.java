@@ -31,7 +31,6 @@ import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -486,7 +485,7 @@ public class TemporalRules {
                     Truth cur = bel.truth;
                     conf = Math.max(cur.getConfidence(), conf); //no matter if revision is possible, it wont be below max
                     //if there is no overlapping evidental base, use revision:
-                    boolean revisable = true;
+                    boolean revisable;
                     revisable = !Stamp.evidentialSetOverlaps(bel, task.sentence);
                     if (revisable) {
                         conf = TruthFunctions.revision(task.sentence.truth, bel.truth).getConfidence();
@@ -575,7 +574,7 @@ public class TemporalRules {
 
                 nal.derive(nal.newTask(s2.term).goal().truth(T).budget(val)
                                 .parent(task, strongest_desireT.sentence)
-                                .occurrNow().temporalInducted(true)
+                                .occurr(occ).temporalInductable(true)
                 );
 
             }

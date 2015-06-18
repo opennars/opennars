@@ -56,8 +56,7 @@ abstract public class BufferedOutput extends Output {
 
             final float oCost = o.cost;
             if (oCost == cost) {
-                //equal cost, so sort by their hashcode
-                return o.hashCode() - hashCode();
+                return -1;
             }
 
             //arrange by highest cost first

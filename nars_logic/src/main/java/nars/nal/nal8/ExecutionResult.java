@@ -34,8 +34,8 @@ public class ExecutionResult {
         /*if (operation instanceof ImmediateOperation) {
             return operation.toString();
         } else */{
-            Term[] args = operation.argArray();
-            Term operator = operation.getOperator();
+            //Term[] args = operation.argArray();
+            //Term operator = operation.getOperator();
             StringBuilder sb = new StringBuilder();
 
             t.appendToString(sb, memory);

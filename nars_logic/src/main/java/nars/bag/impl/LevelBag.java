@@ -167,12 +167,12 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         public EE removeFirst() {
             DD<EE> first = getFirstNode();
             if (first == null) return null;
-            return remove(first);
+            return this.remove(first);
         }
 
         public void print() {
             System.out.println("head=" + super.getFirst() + ", tail=" + super.getLast() + ", ");
-            System.out.println("  " + Lists.newArrayList(iterator()));
+            System.out.println("  " + Lists.newArrayList(this.iterator()));
         }
 
         /*public E removeFirst() {
@@ -187,7 +187,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
         public Iterator<EE> descendingIterator() {
             //order wont matter within the level
-            return iterator();
+            return this.iterator();
             //return items.descendingIterator();
         }
 
@@ -705,10 +705,13 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
             if (mass < -1 - Global.BUDGET_EPSILON) throw new RuntimeException(this + " mass below -1: " + mass + " during addition " + x);
 
         final int itemsMargin = (x > 0) ? 1 : 0; //allow +1 margin, when an item is being added
-        final float maxMass = (size()+itemsMargin) * 1.0f + Global.BUDGET_EPSILON;
 
-        if (Global.DEBUG_BAG && Global.DEBUG_BAG_MASS)
-            if (mass > maxMass) throw new RuntimeException(this + " mass above maximum (mass=" + mass + " , size=" + size() + ")");
+
+        if (Global.DEBUG_BAG && Global.DEBUG_BAG_MASS) {
+            final float maxMass = (size() + itemsMargin) * 1.0f + Global.BUDGET_EPSILON;
+            if (mass > maxMass)
+                throw new RuntimeException(this + " mass above maximum (mass=" + mass + " , size=" + size() + ")");
+        }
     }
 
     protected void removeMass(E item) {

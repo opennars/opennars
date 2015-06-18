@@ -168,10 +168,11 @@ public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, T
      */
     @Override
     public final short getIndex(final int i) {
-        if ((i < 0) || ( i >= index.length))
-            throw new RuntimeException(this + " index fault: " + i);
+        /*if ((i < 0) || ( i >= index.length))
+            throw new RuntimeException(this + " index fault: " + i);*/
         //if (/*(index != null) &&*/ (i < index.length)) {
-            return index[i];
+
+        return index[i];
         //} else {
             //return -1;
         //}

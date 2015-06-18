@@ -25,17 +25,23 @@ package nars.op.mental;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import nars.*;
+import nars.Events;
 import nars.Events.CycleEnd;
+import nars.Global;
+import nars.Memory;
+import nars.NAR;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
-import nars.nal.*;
+import nars.nal.DefaultTruth;
+import nars.nal.NAL;
+import nars.nal.Task;
+import nars.nal.Truth;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
-import nars.nal.term.Term;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -160,7 +166,7 @@ public class Anticipate extends NARReaction implements Mental {
                 .parent(tt.task)
                 .occurr(expectedOccurenceTime)
                 .budget(tt.getBudget())
-                .temporalInducted(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
+                .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         );
 
     }

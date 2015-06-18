@@ -221,7 +221,7 @@ public abstract class TermFunction<O> extends SynchOperator {
 
 
         String ys = y.toString();
-        char ysz = ys.charAt(ys.length() - 1);
+
 
         //1. try to parse as task
         char mustBePuncToBeTask = ys.charAt(ys.length()-1); //early prevention from invoking parser

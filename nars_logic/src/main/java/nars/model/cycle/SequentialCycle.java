@@ -91,9 +91,6 @@ abstract public class SequentialCycle extends ConceptActivator implements Contro
 
         this.memory = m;
 
-        if (concepts instanceof Memory.MemoryAware)
-            ((Memory.MemoryAware) concepts).setMemory(m);
-
         run.clear();
 
         if (delete)

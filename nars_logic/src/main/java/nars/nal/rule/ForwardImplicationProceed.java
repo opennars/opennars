@@ -80,13 +80,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
             final Conjunction conj2 = (Conjunction) t;
 
-            if (conj.getTemporalOrder() == conj2.getTemporalOrder() &&
-                    (alreadyInducted == null ||alreadyInducted.add(t))) {
-
-                if (alreadyInducted == null && PERCEPTION_DECISION_ACCEL_SAMPLES > 1) {
-                    alreadyInducted = Global.newHashSet(PERCEPTION_DECISION_ACCEL_SAMPLES);
-                    alreadyInducted.add(t);
-                }
+            if (conj.getTemporalOrder() == conj2.getTemporalOrder() && alreadyInducted.add(t)) {
 
                 Task s = null;
                 if ((taskLinkTask.sentence.punctuation == Symbols.JUDGMENT) && (next.hasBeliefs())) {
@@ -102,14 +96,9 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
                 //the case where its equal is already handled by other inference rule
                 if (conj2.term.length < conj.term.length) {
 
-                    boolean equal = true;
 
                     //ok now check if it is really a minor (subsequence)
-                    for (int j = 0; j < conj2.term.length; j++) {
-                        if (!conj.term[j].equals(conj2.term[j])) {
-                            equal = false;
-                        }
-                    }
+                    boolean equal = Terms.equals(conj2.term, conj2.term);
                     if (!equal) continue;
 
                     //ok its a minor, we have to construct the residue implication now

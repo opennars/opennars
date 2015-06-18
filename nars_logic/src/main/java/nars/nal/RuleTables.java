@@ -433,32 +433,23 @@ public class RuleTables {
         Statement s2 = taskSentence.getTerm();
 
         Term ut1, ut2;  //parameters for unify()
-        Term rt1, rt2;  //parameters for resemblance()
 
         switch (figure) {
             case 11:
                 ut1 = s1.getSubject();
                 ut2 = s2.getSubject();
-                rt1 = s1.getPredicate();
-                rt2 = s2.getPredicate();
                 break;
             case 12:
                 ut1 = s1.getSubject();
                 ut2 = s2.getPredicate();
-                rt1 = s1.getPredicate();
-                rt2 = s2.getSubject();
                 break;
             case 21:
                 ut1 = s1.getPredicate();
                 ut2 = s2.getSubject();
-                rt1 = s1.getSubject();
-                rt2 = s2.getPredicate();
                 break;
             case 22:
                 ut1 = s1.getPredicate();
                 ut2 = s2.getPredicate();
-                rt1 = s1.getSubject();
-                rt2 = s2.getSubject();
                 break;
             default:
                 throw new RuntimeException("Invalid figure: " + figure);
@@ -466,6 +457,8 @@ public class RuleTables {
 
         Term[] u = new Term[]{s1, s2};
         if (Variables.unify(VAR_INDEPENDENT, ut1, ut2, u, nal.memory.random)) {
+
+            Term rt1, rt2;  //parameters for resemblance()
 
             //recalculate rt1, rt2 from above:
             switch (figure) {
@@ -510,15 +503,13 @@ public class RuleTables {
      * @param index                The location of the second premise in the first
      * @param nal                  Reference to the memory
      */
-    public static void detachmentWithVar(Task<Statement> originalMainSentenceTask, Sentence subSentence, int index, NAL nal) {
-        if (originalMainSentenceTask == null)
+    public static void detachmentWithVar(Task<Statement> mainSentence, Sentence subSentence, int index, NAL nal) {
+        if (mainSentence == null)
             return;
 
-        if (!(originalMainSentenceTask.getTerm() instanceof Statement)) {
+        /*if (!(originalMainSentenceTask.getTerm() instanceof Statement)) {
             return;
-        }
-
-        Sentence<Statement> mainSentence = originalMainSentenceTask.sentence;   // for substitution
+        }*/
 
         Statement statement = mainSentence.term;
 
@@ -530,23 +521,23 @@ public class RuleTables {
             Compound[] u = new Compound[]{statement, content};
 
             if (!component.hasVarIndep()) {
-                SyllogisticRules.detachment(originalMainSentenceTask, subSentence, index, nal);
+                SyllogisticRules.detachment(mainSentence, subSentence, index, nal);
             } else if (Variables.unify(VAR_INDEPENDENT, component, content, u, nal.memory.random)) {
-                Task mainSentenceTask = originalMainSentenceTask.clone((Statement) u[0]);
-                if (mainSentence != null) {
-                    subSentence = subSentence.clone(u[1]);
-                    if (subSentence != null)
-                        SyllogisticRules.detachment(mainSentenceTask, subSentence, index, nal);
-                }
+                Task<Statement> mainSentenceTask = mainSentence.clone((Statement) u[0]);
+
+                subSentence = subSentence.clone(u[1]);
+                if (subSentence != null)
+                    SyllogisticRules.detachment(mainSentenceTask, subSentence, index, nal);
+
             } else if ((statement instanceof Implication) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
                 Statement s2 = (Statement) statement.getPredicate();
                 if ((content instanceof Statement) && (s2.getSubject().equals(((Statement) content).getSubject()))) {
                     CompositionalRules.introVarInner((Statement) content, s2, statement, nal);
                 }
 
-                CompositionalRules.introVarSameSubjectOrPredicate(originalMainSentenceTask, subSentence, component, content, index, nal);
+                CompositionalRules.introVarSameSubjectOrPredicate(mainSentence, subSentence, component, content, index, nal);
             } else if ((statement instanceof Equivalence) && (statement.getPredicate() instanceof Statement) && (nal.getCurrentTask().sentence.isJudgment())) {
-                CompositionalRules.introVarSameSubjectOrPredicate(originalMainSentenceTask, subSentence, component, content, index, nal);
+                CompositionalRules.introVarSameSubjectOrPredicate(mainSentence, subSentence, component, content, index, nal);
             }
         }
     }

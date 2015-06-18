@@ -88,14 +88,19 @@ public class LibraryInput extends TextInput {
 
         for (String dir : directories ) {
 
-            File folder = new File(getExamplePath(dir));
+            String se = getExamplePath(dir);
+            File folder = new File(se);
             File[] files = folder.listFiles();
             if (files == null) {
                 System.err.println(folder.getAbsoluteFile() + " is not a directory or does not exist");
                 break;
             }
 
-            for (final File file : folder.listFiles()) {
+            File[] ff = folder.listFiles();
+            if (ff == null)
+                throw new RuntimeException(se + " not found");
+
+            for (final File file : ff) {
                 if (file.isDirectory() || file.getName().equals("README.txt") || file.getName().contains(".png"))
                     continue;
                 if(!("extra".equals(file.getName()))) {

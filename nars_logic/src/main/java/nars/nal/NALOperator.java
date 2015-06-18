@@ -129,9 +129,6 @@ public enum NALOperator {
         if (!hasCompact) {
             bb = Utf8.toUtf8(string);
         } else {
-            if (ibytes.length > 1)
-                throw new RuntimeException("compact representation can only be 1-byte"); //current implementation's limitation
-
             bb = new byte[ibytes.length];
             for (int i = 0; i < ibytes.length; i++)
                 bb[i] = (byte) ibytes[i];
@@ -139,7 +136,7 @@ public enum NALOperator {
 
         this.bytes = bb;
 
-        if (hasCompact && hasCompact) {
+        if (hasCompact) {
             int p = bb[0];
             if (p < 31) //do not assign if it's an ordinary non-control char
                 this.byt = (byte)(p);

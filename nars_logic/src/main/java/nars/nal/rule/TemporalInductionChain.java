@@ -170,7 +170,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
                 return nal.deriveDouble(
                         nal.newTask(whole).truth(truth).budget(budget)
-                                .parent(s1, s2).temporalInducted(true));
+                                .parent(s1, s2).temporalInductable(true));
             }
         }
         return null;

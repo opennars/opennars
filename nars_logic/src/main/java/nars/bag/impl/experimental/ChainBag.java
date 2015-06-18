@@ -239,7 +239,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     protected DD<V> next(boolean byPriority) {
         final int s = size();
         if (s == 0) return null;
-        final boolean atCapacity = s >= capacity();
+        //final boolean atCapacity = s >= capacity();
 
         DD<V> next = after(current);
 

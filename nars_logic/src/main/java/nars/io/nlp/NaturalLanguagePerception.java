@@ -138,7 +138,7 @@ public class NaturalLanguagePerception {
         
         if(currentLine.size() != 0) {
             resultList.add(currentLine);
-            currentLine = new ArrayList<>();
+            //currentLine = new ArrayList<>();
         }
         
         return resultList;

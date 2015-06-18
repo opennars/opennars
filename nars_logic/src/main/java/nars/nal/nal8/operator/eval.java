@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class eval extends TermFunction {
 
-    public final static Term term = Atom.the("eval");
+    public final static Term evalTterm = Atom.the("eval");
 
     public static Term eval(final Term x, final Memory m) {
 
@@ -25,11 +25,18 @@ public class eval extends TermFunction {
             final Operation o = (Operation)x;
             final Term op = o.getOperator();
             TermFunction tf = getTheTermFunction(op, m);
-            if (tf instanceof TermFunction) {
-                Object result = ((TermFunction) tf).function(o.arg(m, true));
-                if (result != null)
-                    return term(result);
-            }
+
+            if (tf == null)
+                throw new RuntimeException("termfunction for " + op + " is null");
+
+            Term[] v = o.arg(m, true);
+            if (v == null)
+                throw new RuntimeException(o + " has null args");
+
+            Object result = tf.function(v);
+            if (result != null)
+                return term(result);
+
         }
 
         if (x instanceof Compound) {

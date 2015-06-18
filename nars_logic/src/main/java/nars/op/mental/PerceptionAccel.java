@@ -187,7 +187,7 @@ public class PerceptionAccel extends NARReaction {
 
             if (C1 == null || C2 == null) {
                 if (debugMechanism) {
-                    System.out.println("one didn't exist: " + firstC.toString() + " or " + secondC.toString());
+                    System.out.println("one didn't exist: " + firstC + " or " + secondC);
                 }
                 continue; //the components were not observed, so don't allow creating this compound
             }
@@ -217,10 +217,10 @@ public class PerceptionAccel extends NARReaction {
             //lets make the new event the parent task, and derive it
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth)
                             .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
-                            .parentStamp(task, newEvent)
+                            .parent(task, newEvent)
                             .occurrNow()
                             .setEvidentialSet(Stamp.toSetArray(evBase.toArray()))
-                            .temporalInducted(!longest_result_derived_already)
+                            .temporalInductable(!longest_result_derived_already)
             );
 
 

@@ -732,7 +732,7 @@ public class NAR extends Container implements Runnable {
     /**
      * returns the Atom for the given string. since the atom is unique to itself it can be considered 'the' the
      */
-    public Atom the(final String s) {
+    public Atom atom(final String s) {
         return memory.the(s);
     }
 

@@ -109,11 +109,11 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         //use compact 1-char representation for type and each index component
         x[j++] = (byte) (typeCharOffset + t);
 
-        if (index!=null) {
-            for (short s : index) {
-                x[j++] = ((byte) (indexCharOffset + s));
-            }
+
+        for (short s : index) {
+            x[j++] = ((byte) (indexCharOffset + s));
         }
+
 
         return x;
     }

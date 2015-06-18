@@ -411,7 +411,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 getMemory().removed(newBelief, "Duplicated");
                 return false;
             } else if (revisible(newBelief.sentence, oldBelief.sentence)) {
-                final long now = getMemory().time();
+                //final long now = getMemory().time();
 
 //                if (nal.setTheNewStamp( //temporarily removed
 //                /*
@@ -482,9 +482,9 @@ public class DefaultConcept extends Item<Term> implements Concept {
         
 
         final Task oldGoalT = getTask(newGoal.sentence, goals); // revise with the existing desire values
-        Sentence oldGoal = null;
+        Sentence oldGoal;
 
-        long now = memory.time();
+
 
         if (oldGoalT != null) {
             oldGoal = oldGoalT.sentence;
@@ -531,18 +531,19 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
         if (newGoal.summaryGreaterOrEqual(memory.param.goalThreshold)) {
 
-            Task beliefT = getTask(newGoal.sentence, beliefs); // check if the Goal is already satisfied
+            // check if the Goal is already satisfied
+            Task beliefSatisfied = getTask(newGoal.sentence, beliefs);
 
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
-            if (beliefT != null) {
+            if (beliefSatisfied != null) {
 
-                Sentence belief = beliefT.sentence;
+                Sentence belief = beliefSatisfied.sentence;
 
                 Truth projectedTruth = belief.projection(newGoal.getOccurrenceTime(), dur);
                 //Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
 
-                beliefT = trySolution(beliefT, projectedTruth, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
-                AntiSatisfaction = newGoal.sentence.truth.getExpDifAbs(belief.truth);
+                beliefSatisfied = trySolution(beliefSatisfied, projectedTruth, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
+                AntiSatisfaction = newGoal.sentence.truth.getExpDifAbs(beliefSatisfied.truth);
             }
 
             double Satisfaction = 1.0 - AntiSatisfaction;
@@ -700,7 +701,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
         float rank2;
         int i;
 
-        int originalSize = table.size();
+        //int originalSize = table.size();
 
 
         //TODO decide if it's better to iterate from bottom up, to find the most accurate replacement index rather than top

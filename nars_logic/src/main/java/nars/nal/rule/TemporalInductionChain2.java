@@ -84,7 +84,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
                 if (next == null || next.equals(concept))
                     continue;
 
-                Implication t = (Implication) next.getTerm();
+                //Implication t = (Implication) next.getTerm();
 
 
                 //select a Non-eternal (temporal) belief
@@ -113,7 +113,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
     }
 
 
-    private static class InductableImplication extends ConceptByOperator {
+    static class InductableImplication extends ConceptByOperator {
 
         Set<Sentence> alreadyInducted = new HashSet();
         Task belief = null;

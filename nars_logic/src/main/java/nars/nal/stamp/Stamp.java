@@ -214,178 +214,26 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
     }
 
 
-    /** Deduplicating heap sort for long[] arrays.
-     *  WARNING doesnt seem to work
-     * */
-    public static class LongDeduplicatingHeapSort {
-
-
-        /**
-         * Standard heapsort.
-         * @param a an array of Comparable items.
-         * @return how many duplicates were removed
-         */
-        public static int sort( long[ ] a )
-        {
-            int duplicates = 0;
-
-
-            int al = a.length;
-
-            for( int i = al / 2; i >= 0; ) { /* buildHeap */
-
-                int dd = percDown(a, i, al);
-
-                boolean dupLimit = ( duplicates >= al-1);
-
-                if ((dd > 0) && (!dupLimit)) {
-                    duplicates += dd;
-                    dupLimit = ( duplicates >= al-1);
-                }
-
-
-                //proceed only if there was no duplicate, or if we have reached the duplicate limit
-                if ((dd == 0) || dupLimit) {
-                    i--;
-                }
-            }
-
-            for( int i = al - 1; i > 0;  ) {
-
-                swapReferences( a, 0, i );  /* deleteMax */
-
-                int dd = percDown( a, 0, i );
-
-                boolean dupLimit = ( duplicates >= al-1);
-
-                if ((dd > 0) && (!dupLimit)) {
-                    duplicates += dd;
-                    dupLimit = ( duplicates >= al-1);
-                }
-
-
-                //proceed only if there was no duplicate, or if we have reached the duplicate limit
-                if ((dd == 0) || dupLimit) {
-                    i--;
-                }
-                else {
-                    //go backwards
-                    if (i < al - 1)
-                        i++;
-                }
-
-            }
-
-            return duplicates;
-        }
-
-        /**
-         * Internal method for heapsort.
-         * @param i the index of an item in the heap.
-         * @return the index of the left child.
-         */
-        private static int leftChild( final int i ) {
-            return 2 * i + 1;
-        }
-
-        /**
-         * Internal method for heapsort that is used in
-         * deleteMax and buildHeap.
-         * @param a an array of Comparable items.
-         * @index i the position from which to percolate down.
-         * @int n the logical size of the binary heap.
-         * @return how many duplicates were removed
-         */
-        private static int percDown( long [] a, int i, int n )
-        {
-            int c;
-            long tmp;
-            int dups = 0;
-
-            for( tmp = a[ i ]; leftChild( i ) < n; i = c ) {
-                c = leftChild(i);
 
 
 
-                if( c != n-1 ) {
-                    final long ac1 = a[c+1];
-
-                    int c1 = Long.compare(a[c], ac1 );
-                    if ((c1 == 0) && (a[c]!=-1)) {
-                        a[c] = -1;
-                        //dups++;
-                        return 1;
-                    }
-
-                    if (c1 < 0 )
-                        c++;
-                }
-
-
-                int c2 = Long.compare(tmp, a[c]);
-                if ((c2 == 0) && (tmp!=-1)) {
-                    tmp = -1;
-                    return 1;
-                    //dups++;
-                }
-
-                if( c2 >= 0 ) {
-                    break;
-                }
-
-                a[i] = a[c];
-            }
-
-            a[ i ] = tmp;
-
-            return 0;
-        }
-
-
-        /**
-         * Method to swap to elements in an array.
-         * @param a an array of objects.
-         * @param index1 the index of the first object.
-         * @param index2 the index of the second object.
-         */
-        public static final void swapReferences( final long[ ] a, final int index1, final int index2 ) {
-            final long tmp = a[ index1 ];
-            a[ index1 ] = a[ index2 ];
-            a[ index2 ] = tmp;
-        }
-    }
+//    public static long[] toSetArrayHeap(final long[] x) {
+//        final int l = x.length;
+//
+//        if (l < 2)
+//            return x;
+//
+//        long[] y = Arrays.copyOf(x, l);
+//
+//        int duplicates = LongDeduplicatingHeapSort.sort(y);
+//        if (duplicates == 0)
+//            return y;
+//        else {
+//            return Arrays.copyOfRange(y, duplicates, l);
+//        }
+//    }
 
     public static long[] toSetArray(final long[] x) {
-        long[] z = toSetArrayOLD(x);
-
-        /*if (x.length!=1) {
-            long[] y = toSetArrayHeap(x);
-
-            if (!Arrays.equals(z, y)) {
-                System.err.println("inconsistent toSetArray: " + Arrays.toString(x) + "  " + Arrays.toString(y) + "  " + Arrays.toString(z));
-            }
-        }*/
-
-        return z;
-    }
-
-    public static long[] toSetArrayHeap(final long[] x) {
-        final int l = x.length;
-
-        if (l < 2)
-            return x;
-
-        long[] y = Arrays.copyOf(x, l);
-
-        int duplicates = LongDeduplicatingHeapSort.sort(y);
-        if (duplicates == 0)
-            return y;
-        else {
-            return Arrays.copyOfRange(y, duplicates, l);
-        }
-    }
-
-    public static long[] toSetArrayOLD(final long[] x) {
         final int l = x.length;
 
         if (l < 2)
@@ -578,8 +426,6 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 
     default public CharSequence stampAsStringBuilder() {
 
-        long[] evidentialBase = getEvidentialSet();
-
         final int len = getEvidentialSet().length;
         final int estimatedInitialSize = 8 + (len * 3);
 
@@ -770,3 +616,145 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
         return new Stamp(evidentialBase, creationTime, occurenceTime, duration);
     }
     */
+
+///** Deduplicating heap sort for long[] arrays.
+// *  WARNING doesnt seem to work
+// * */
+//public static class LongDeduplicatingHeapSort {
+//
+//
+//    /**
+//     * Standard heapsort.
+//     * @param a an array of Comparable items.
+//     * @return how many duplicates were removed
+//     */
+//    public static int sort( long[ ] a )
+//    {
+//        int duplicates = 0;
+//
+//
+//        int al = a.length;
+//
+//        for( int i = al / 2; i >= 0; ) { /* buildHeap */
+//
+//            int dd = percDown(a, i, al);
+//
+//            boolean dupLimit = ( duplicates >= al-1);
+//
+//            if ((dd > 0) && (!dupLimit)) {
+//                duplicates += dd;
+//                dupLimit = ( duplicates >= al-1);
+//            }
+//
+//
+//            //proceed only if there was no duplicate, or if we have reached the duplicate limit
+//            if ((dd == 0) || dupLimit) {
+//                i--;
+//            }
+//        }
+//
+//        for( int i = al - 1; i > 0;  ) {
+//
+//            swapReferences( a, 0, i );  /* deleteMax */
+//
+//            int dd = percDown( a, 0, i );
+//
+//            boolean dupLimit = ( duplicates >= al-1);
+//
+//            if ((dd > 0) && (!dupLimit)) {
+//                duplicates += dd;
+//                dupLimit = ( duplicates >= al-1);
+//            }
+//
+//
+//            //proceed only if there was no duplicate, or if we have reached the duplicate limit
+//            if ((dd == 0) || dupLimit) {
+//                i--;
+//            }
+//            else {
+//                //go backwards
+//                if (i < al - 1)
+//                    i++;
+//            }
+//
+//        }
+//
+//        return duplicates;
+//    }
+//
+//    /**
+//     * Internal method for heapsort.
+//     * @param i the index of an item in the heap.
+//     * @return the index of the left child.
+//     */
+//    private static int leftChild( final int i ) {
+//        return 2 * i + 1;
+//    }
+//
+//    /**
+//     * Internal method for heapsort that is used in
+//     * deleteMax and buildHeap.
+//     * @param a an array of Comparable items.
+//     * @index i the position from which to percolate down.
+//     * @int n the logical size of the binary heap.
+//     * @return how many duplicates were removed
+//     */
+//    private static int percDown( long [] a, int i, int n )
+//    {
+//        int c;
+//        long tmp;
+//        int dups = 0;
+//
+//        for( tmp = a[ i ]; leftChild( i ) < n; i = c ) {
+//            c = leftChild(i);
+//
+//
+//
+//            if( c != n-1 ) {
+//                final long ac1 = a[c+1];
+//
+//                int c1 = Long.compare(a[c], ac1 );
+//                if ((c1 == 0) && (a[c]!=-1)) {
+//                    a[c] = -1;
+//                    //dups++;
+//                    return 1;
+//                }
+//
+//                if (c1 < 0 )
+//                    c++;
+//            }
+//
+//
+//            int c2 = Long.compare(tmp, a[c]);
+//            if ((c2 == 0) && (tmp!=-1)) {
+//                tmp = -1;
+//                return 1;
+//                //dups++;
+//            }
+//
+//            if( c2 >= 0 ) {
+//                break;
+//            }
+//
+//            a[i] = a[c];
+//        }
+//
+//        a[ i ] = tmp;
+//
+//        return 0;
+//    }
+//
+//
+//    /**
+//     * Method to swap to elements in an array.
+//     * @param a an array of objects.
+//     * @param index1 the index of the first object.
+//     * @param index2 the index of the second object.
+//     */
+//    public static final void swapReferences( final long[ ] a, final int index1, final int index2 ) {
+//        final long tmp = a[ index1 ];
+//        a[ index1 ] = a[ index2 ];
+//        a[ index2 ] = tmp;
+//    }
+//}
+

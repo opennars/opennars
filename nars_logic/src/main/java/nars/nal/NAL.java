@@ -180,14 +180,13 @@ public abstract class NAL implements Runnable {
             memory.event.emit(Events.TaskDerive.class, taskCreated);
             memory.logic.TASK_DERIVED.hit();
 
-            return taskCreated;
-        }
-
-
-        if (taskCreated != null && nal(7)) {
-            if (taskCreated.getOccurrenceTime() > memory.time()) {
-                memory.event.emit(Events.TaskDeriveFuture.class, task, this);
+            if (nal(7)) {
+                if (taskCreated.getOccurrenceTime() > memory.time()) {
+                    memory.event.emit(Events.TaskDeriveFuture.class, taskCreated, this);
+                }
             }
+
+            return taskCreated;
         }
 
         return null;
@@ -288,7 +287,7 @@ public abstract class NAL implements Runnable {
                 .punctuation(punctuation)
                 .truth(newTruth)
                 .parent(parentTask, getCurrentBelief())
-                .temporalInducted(!temporalAdd)
+                .temporalInductable(!temporalAdd)
                 .budget(newBudget);
 
         return deriveDouble(task, temporalAdd, allowOverlap);
@@ -624,7 +623,7 @@ public abstract class NAL implements Runnable {
         if (tEternal && bEternal) {
             /* eternal belief, eternal task => eternal conclusion */
             oc = Stamp.ETERNAL;
-        } else if (tEternal && !bEternal) {
+        } else if (tEternal /*&& !bEternal*/) {
             /*
             The task is eternal, while the belief is tensed.
             In this case, the conclusion will be eternal, by generalizing the belief
@@ -635,7 +634,7 @@ public abstract class NAL implements Runnable {
             where G is the eternal form of B."
             */
             oc = Stamp.ETERNAL;
-        } else if (bEternal && !tEternal) {
+        } else if (bEternal /*&& !tEternal*/) {
             /*
             The belief is eternal, while the task is tensed.
             In this case, the conclusion will get the occurrenceTime of the task,
@@ -694,7 +693,7 @@ public abstract class NAL implements Runnable {
         String prefix = "";
 
         boolean tracing = false;
-        String prevMethodID = null;
+        //String prevMethodID;
 
         List<String> path = new ArrayList();
         int i;
@@ -726,7 +725,7 @@ public abstract class NAL implements Runnable {
 
                 path.add(sm);
 
-                prevMethodID = methodID;
+                //prevMethodID = methodID;
 
 
                 //Termination conditions

@@ -239,7 +239,7 @@ public class TextOutput extends Output {
 
 
             Task t = (Task) signal;
-            if (t != null && t.sentence != null) {
+            if (t.sentence != null) {
                 if (channel == Events.OUT.class && t.getPriority() < outputMinPriority)
                     return null;
 

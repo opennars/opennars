@@ -169,12 +169,13 @@ public final class CompositionalRules {
         if ((subject == null) || (predicate == null)) {
             return null;
         }
-        Term content = Statement.make(statement, subject, predicate, order);
-        if ((content == null) || statement == null || (!(content instanceof Compound)) || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().term)) {
+        Statement content = Statement.make(statement, subject, predicate, order);
+        if ((content == null) || statement == null /*|| (!(content instanceof Compound))*/
+                || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().term)) {
             return null;
         }
 
-        return nal.deriveDouble((Compound) content, truth,
+        return nal.deriveDouble(content, truth,
                 BudgetFunctions.compoundForward(truth, content, nal),
                 false, true);
     }
@@ -315,7 +316,7 @@ public final class CompositionalRules {
 
         if (taskSentence.isQuestion() || taskSentence.isQuest()) {
             budget = BudgetFunctions.compoundBackward(content, nal);
-            nal.deriveDouble(content, truth, budget, false, false);
+            nal.deriveDouble(content, null /*truth*/, budget, false, false);
 
             // special logic to answer conjunctive questions with query variables
             if (taskSentence.term.hasVarQuery()) {
@@ -418,7 +419,7 @@ public final class CompositionalRules {
                 }
 
 
-                if(commonTerm == null && term12 instanceof ImageExt) {
+                if(commonTerm == null /*&& term12 instanceof ImageExt*/) {
                     commonTerm = ((ImageExt) term12).getTheOtherComponent();
                     if ((commonTerm == null) || (!(term22.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
@@ -448,7 +449,7 @@ public final class CompositionalRules {
                     commonTerm = term12;
                 }
 
-                if(commonTerm == null && term22 instanceof ImageExt) {
+                if(commonTerm == null /*&& term22 instanceof ImageExt*/) {
                     commonTerm = ((ImageExt) term22).getTheOtherComponent();
                     if (commonTerm == null || (!(term12.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
@@ -487,7 +488,7 @@ public final class CompositionalRules {
                     commonTerm = term11;
                 }
 
-                if(term11 instanceof ImageInt && commonTerm == null && term21 instanceof ImageInt) {
+                if(term11 instanceof ImageInt && commonTerm == null /*&& term21 instanceof ImageInt*/) {
                     commonTerm = ((ImageInt) term11).getTheOtherComponent();
                     if ((commonTerm == null) || (!(term21.containsTermRecursivelyOrEquals(commonTerm)))) {
                         commonTerm=null;
@@ -1035,7 +1036,7 @@ OUT: <lock1 --> lock>.
                             if (s2 == null || s2.hasVarIndep()) {
                                 continue;
                             }
-                            if (s2 != null && !s2.equals(s1) && (stu != null) && (belief.truth != null)) {
+                            if (!s2.equals(s1) && (stu != null) && (belief.truth != null)) {
                                 Truth truth = abduction(stu, belief.truth);
                                 Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
                                 nal.deriveDouble((Compound) s2, truth, budget, false, false);

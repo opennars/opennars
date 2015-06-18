@@ -155,7 +155,9 @@ public class NarseseParser extends BaseParser<Object> {
     //TODO return TaskSeed
     Task getTask(Var<float[]> budget, Var<Term> term, Var<Character> punc, Var<Truth> truth, Var<Tense> tense) {
 
-        char p = punc.get();
+        Character p = punc.get();
+        if (p == null)
+            throw new RuntimeException("character is null");
 
         Truth t = truth.get();
         if ((t == null) && ((p == Symbols.JUDGMENT) || (p == Symbols.GOAL)))
@@ -176,10 +178,10 @@ public class NarseseParser extends BaseParser<Object> {
 
         //avoid cloning by transforming this new compound directly
         Compound ccontent = ((Compound)content).normalizeDestructively();
-        if (content!=null)
-            content = Sentence.termOrNull(content);
+        if (ccontent!=null)
+            ccontent = Sentence.termOrNull(ccontent);
 
-        if (content==null) return null;
+        if (ccontent==null) return null;
 
 
         Task ttt = new Task(ccontent, p, t, B, null, null, null);
@@ -492,14 +494,11 @@ public class NarseseParser extends BaseParser<Object> {
             return MatcherType.TERMINAL;
         }
 
-        public <V> boolean match(MatcherContext<V> context)
-        {
-            char c;
-
+        public <V> boolean match(MatcherContext<V> context) {
             int count = 0;
             int max= context.getInputBuffer().length() - context.getCurrentIndex();
 
-            while (count < max && Symbols.isValidAtomChar(c = context.getCurrentChar())) {
+            while (count < max && Symbols.isValidAtomChar(context.getCurrentChar())) {
                 context.advanceIndex(1);
                 count++;
             }
@@ -690,7 +689,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     @Cached
-    Rule MultiArgTerm(NALOperator open, NALOperator close, boolean allowInitialOp, boolean allowInternalOp, boolean allowSpaceToSeparate) {
+    Rule MultiArgTerm(NALOperator open, NALOperator close, boolean allowInitialOp, boolean allowInternalOp, @Deprecated boolean allowSpaceToSeparate) {
         return MultiArgTerm(open, /*open, */close, allowInitialOp, allowInternalOp, allowSpaceToSeparate, false);
     }
 
@@ -702,7 +701,7 @@ public class NarseseParser extends BaseParser<Object> {
      * list of terms prefixed by a particular compound term operate
      */
     @Cached
-    Rule MultiArgTerm(NALOperator defaultOp, /*NALOperator open, */NALOperator close, boolean initialOp, boolean allowInternalOp, boolean spaceSeparates, boolean operatorPrecedes) {
+    Rule MultiArgTerm(NALOperator defaultOp, /*NALOperator open, */NALOperator close, boolean initialOp, boolean allowInternalOp, @Deprecated boolean spaceSeparates, boolean operatorPrecedes) {
 
 
         return sequence(
@@ -823,7 +822,7 @@ public class NarseseParser extends BaseParser<Object> {
 
         if (vectorterms.isEmpty()) return null;
 
-        int v = vectorterms.size();
+        //int v = vectorterms.size();
 
         Collections.reverse(vectorterms);
 
@@ -923,7 +922,7 @@ public class NarseseParser extends BaseParser<Object> {
      * parse one task
      */
     public Task parseTask(String input) throws InvalidInputException {
-        ParsingResult r = null;
+        ParsingResult r;
         try {
             input = input.trim();
             r = singleTaskParser.run(input);

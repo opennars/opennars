@@ -44,7 +44,7 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         }
 
 
-        final float conf = task.getTruth().getConfidence();
+        //final float conf = task.getTruth().getConfidence();
 
         for (Task t : c.getBeliefs()) {
             Truth tt = t.getTruth();

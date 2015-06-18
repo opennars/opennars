@@ -52,7 +52,7 @@ public abstract class Output extends NARReaction {
         public CharSequence get(final Class c, final Object[] args) {
             switch (args.length) {
                 case 0: return "";
-                case 1: return args.toString();
+                case 1: return args[0].toString();
                 default: return Arrays.toString(args);
             }
         }

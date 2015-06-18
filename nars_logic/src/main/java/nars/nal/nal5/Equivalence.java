@@ -120,7 +120,7 @@ public class Equivalence extends Statement {
         if (temporalOrder == TemporalRules.ORDER_BACKWARD)
             temporalOrder = TemporalRules.ORDER_FORWARD;
 
-        Term[] t;
+        //Term[] t;
         if (temporalOrder==TemporalRules.ORDER_FORWARD) {
             //t = new Term[]{subject, predicate};
         }

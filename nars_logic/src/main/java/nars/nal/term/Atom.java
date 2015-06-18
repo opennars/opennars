@@ -99,13 +99,6 @@ public class Atom extends ImmutableAtom {
         return x;
     }
 
-    /** gets the atomic term given a name */
-    public final static Atom the(final String name) {
-        if (name.length() <= 2)
-            return theCached(name);
-        return new Atom(name);
-    }
-
     public final static Atom the(final String name, boolean quoteIfNecessary) {
         if (quoteIfNecessary) {
             if (quoteNecessary(name))
@@ -114,17 +107,26 @@ public class Atom extends ImmutableAtom {
         return the(name);
     }
 
-    public final static Term the(Object o) {
-        if (o instanceof Term) return (Term)o;
-        else if (o instanceof Number) {
-            return quote(((Number)o).toString());
-        }
-        else if (o instanceof String) {
-            return the((String) o);
-        }
-
-        return null;
+    public final static Term the(Term x) {
+        return x;
     }
+    public final static Atom the(Number o) {
+        return quote(String.valueOf((Number) o));
+    }
+
+    /** gets the atomic term given a name */
+    public final static Atom the(String o) {
+        return new Atom(o);
+    }
+
+    /*
+    // similar to String.intern()
+    public final static Atom the(final String name) {
+        if (name.length() <= 2)
+            return theCached(name);
+        return new Atom(name);
+    }
+    */
 
     /** gets the atomic term of an integer */
     public final static Term the(final int i) {
@@ -291,6 +293,13 @@ public class Atom extends ImmutableAtom {
             return x.substring(1, x.length()-1);
         }
         return x;
+    }
+
+    public static Term the(final Object o) {
+        if (o instanceof Term) return ((Term)o);
+        else if (o instanceof String) return the((String)o);
+        else if (o instanceof Number) return the((Number)o);
+        return null;
     }
 
 

@@ -1,8 +1,6 @@
 package nars.op.mental;
 
 import nars.*;
-import nars.budget.Budget;
-import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
 import nars.nal.*;
 import nars.nal.nal1.Inheritance;
@@ -11,7 +9,6 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
 import nars.nal.term.Atom;
@@ -233,7 +230,7 @@ public class InternalExperience extends NARReaction {
 
         return nal.deriveSingle(
                 nal.newTask(ret).judgment()
-                        .parentStamp(full ? null : task, nal.time())
+                        .parent(full ? null : task, nal.time())
                         .truth(1.0f, Global.DEFAULT_JUDGMENT_CONFIDENCE)
                         .budget(pri, dur)
                         .reason("Remembered Action (Internal Experience)")

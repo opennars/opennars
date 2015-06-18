@@ -21,8 +21,6 @@ public abstract class Answered extends NARReaction {
     private Task question;
     private NAR nar;
     
-    final static Class[] events = new Class[] { Answer.class
- };
 
 
     /** reacts to all questions */

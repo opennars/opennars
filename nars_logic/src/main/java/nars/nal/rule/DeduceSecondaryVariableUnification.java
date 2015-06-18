@@ -12,7 +12,6 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.process.ConceptProcess;
-import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -27,8 +26,6 @@ import java.util.function.Predicate;
 import static nars.nal.Terms.reduceUntilLayer2;
 import static nars.nal.Terms.unwrapNegation;
 import static nars.nal.TruthFunctions.*;
-import static nars.nal.nal7.TemporalRules.ORDER_INVALID;
-import static nars.nal.nal7.TemporalRules.ORDER_NONE;
 
 /**
  * Because of the re-use of temporary collections, each thread must have its own
@@ -90,7 +87,7 @@ public class DeduceSecondaryVariableUnification extends ConceptFireTaskTerm {
                     .punctuation(mark)
                     .truth(truth)
                     .budget(budget)
-                    .parentStamp(task, second_belief, occ), false, false, dummy, false)!=null) {
+                    .parent(task, second_belief, occ), false, false, dummy, false)!=null) {
 
 
                 nal.memory.logic.DED_SECOND_LAYER_VARIABLE_UNIFICATION_TERMS.hit();
@@ -313,7 +310,11 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                 } else {
                     truth = deduction(taskSentence.truth, truthSecond);
                 }
-                
+
+
+                //REMOVED THIS WHICH APPARENTLY CAME FROM: https://github.com/opennars/opennars/commit/2faf08c41a6015bf0722b73cf769724afdcb541f
+                //because side=1 produces a constant condition in the block
+                /*
                 int order = taskSentence.getTemporalOrder();
                 int side = 1;
                 boolean eternal = true;
@@ -328,6 +329,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                     eternal = false;
                     //nal.getTheNewStamp().setOccurrenceTime(time);
                 }
+                */
 
 
 
@@ -346,7 +348,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
                         .punctuation(mark)
                         .truth(truth)
                         .budgetCompoundForward(result, nal)
-                        .parentStamp(task, second_belief, occ);
+                        .parent(task, second_belief, occ);
 
                 Task newTask = nal.derive(seed, false, false, secondConceptStrongestBelief, true /* allow overlap */);
 

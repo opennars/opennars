@@ -107,9 +107,9 @@ public class ConceptProcess extends NAL implements Premise {
          * this isnt necessary for default mode but realtime mode and others may have
          * irregular or unpredictable clocks.
          */
-        long cyclesSincePrevious = memory.timeSinceLastCycle();
+        float cyclesSincePrevious = memory.timeSinceLastCycle();
 
-        float subCycle = ((float)memory.timeSinceLastCycle()) / (termLinkSelectionAttempts);
+        float subCycle = (cyclesSincePrevious) / (termLinkSelectionAttempts);
 
         int termLinksSelected = 0;
         while (termLinkSelectionAttempts-- > 0) {

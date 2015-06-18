@@ -47,8 +47,7 @@ public abstract class feel extends SynchOperator implements Mental {
      * @return Immediate results as Tasks
      */
     protected ArrayList<Task> feeling(float value, Memory memory) {
-        Truth truth = new DefaultTruth(value, 0.999f);
-                
+
         Term predicate = SetInt.make(feelingTerm);
 
         final Term self = memory.self();

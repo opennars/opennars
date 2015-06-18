@@ -1032,11 +1032,6 @@ public class Memory implements Serializable, AbstractStamper {
     }
 
 
-    public interface MemoryAware {
-        public void setMemory(Memory m);
-    }
-
-
 //    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
 //        return item == null ? "" : "\n " + title + ":\n"
 //                + item.toString();

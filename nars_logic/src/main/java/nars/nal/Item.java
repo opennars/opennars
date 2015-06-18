@@ -35,22 +35,6 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
 
 
 
-    public static class ItemPriorityComparator<E extends Item> implements Comparator<E> {
-
-        @Override public int compare(final E a, final E b) {
-            float ap = a.getPriority();
-            float bp = b.getPriority();
-
-            if ((a == b) || (a.name().equals(b.name())) || (ap==bp))
-                return a.hashCode() - b.hashCode();
-            else if (ap < bp) return 1;
-            else return -1;
-        }        
-        
-    }
-
-    public static final Comparator<Item> priorityComparator = new ItemPriorityComparator<>();
-
 
     protected Item( ) {
         this(null);
@@ -93,7 +77,7 @@ public abstract class Item<K> extends Budget implements Itemized<K> {
     public String toString() {        
         //return budget + " " + key ;
         
-        String budgetStr = this !=null ? super.toString() : "";
+        String budgetStr = super.toString();
         String n = name().toString();
         return new StringBuilder(budgetStr.length()+n.length()+1).append(budgetStr).append(' ').append(n).toString();
     }

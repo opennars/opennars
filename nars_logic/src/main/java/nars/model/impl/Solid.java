@@ -131,11 +131,11 @@ public class Solid extends Default implements ControlCycle {
     protected void processNewTasks() {
         int t = 0;
         final int mt = maxTasksPerCycle;
-        int nt = tasks.size();
 
-        long now = memory.time();
+        //int nt = tasks.size();
+        //long now = memory.time();
 
-        float maxPriority = -1, currentPriority = -1;
+        float maxPriority = -1, currentPriority;
         float maxQuality = Float.MIN_VALUE, minQuality = Float.MAX_VALUE;
         for (Task task : tasks) {
 

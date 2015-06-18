@@ -227,7 +227,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
             return null;
         }
 
-        Recording r = records.get(termLink.getTerm());
+        Recording r = records.get(bTerm);
         if (r == null) {
             return null;
         }
@@ -244,7 +244,7 @@ public class TaskLink extends Item<Sentence> implements TLink<Task>, Termed, Sen
         //if the time has changed, then actually insert it.
         //this works because if the recordlink has been removed by
         //the collection, it will have its time set to NaN
-        if (r.setTime(now));
+        if (r.setTime(now))
             put(r);
     }
 
