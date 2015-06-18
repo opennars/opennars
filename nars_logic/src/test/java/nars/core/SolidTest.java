@@ -2,6 +2,7 @@ package nars.core;
 
 import nars.Global;
 import nars.io.in.LibraryInput;
+import nars.io.out.TextOutput;
 import nars.io.qa.Answered;
 import nars.model.impl.Solid;
 import nars.nal.Sentence;
@@ -21,12 +22,12 @@ public class SolidTest {
     @Test
     public void testDetective() throws Exception {
 
-        int time = 266; //should solve the example in few cycles
+        int time = 2266; //should solve the example in few cycles
 
 
         Global.DEBUG = false;
 
-        final int numConcepts = 64;
+        final int numConcepts = 128;
         final float leakRate = 0.2f;
         Solid s = new Solid(1, numConcepts, 1, 2, 1, 5) {
 
@@ -41,12 +42,13 @@ public class SolidTest {
 
         s.level(6);
         s.setInternalExperience(null);
+
         //s.setMaxTasksPerCycle(numConcepts);
 
         TestNAR n = new TestNAR(s);
         n.memory.randomSeed(1);
 
-        //TextOutput.out(n).setOutputPriorityMin(1.0f);
+        TextOutput.out(n).setOutputPriorityMin(0f);
 
         Set<Term> solutionTerms = new HashSet();
         Set<Sentence> solutions = new HashSet();

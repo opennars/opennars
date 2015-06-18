@@ -23,6 +23,7 @@ package nars.nal.stamp;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 
@@ -30,7 +31,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import static nars.nal.nal7.TemporalRules.*;
-import static nars.nal.nal7.Tense.Unknown;
 
 /** TODO divide this into a Stamp and Timed interfaces,
  *  with a subclass of Time additionally responsible for NAL7+ occurenceTime
@@ -709,6 +709,10 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 //
 //    }
 
+    public static boolean evidentialSetOverlaps(final Task a, final Task b) {
+        if ( a.isInput() || b.isInput() ) return false;
+        return evidentialSetOverlaps(a.sentence, b.sentence);
+    }
 
     public static boolean evidentialSetOverlaps(final Stamp a, final Stamp b) {
         /** TODO since these are sorted, we can compare these faster by

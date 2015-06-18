@@ -101,12 +101,18 @@ public class LocalRules {
     }
 
 
-    public static Task tryRevision(final Task newBelief, Sentence oldBelief, final boolean feedbackToLinks, final NAL nal) {
+    public static Task tryRevision(final Task newBelief, Task oldBeliefTask, final boolean feedbackToLinks, final NAL nal) {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
         //if (stamp == null) return null;
 
-        if (Stamp.evidentialSetOverlaps(newBelief.sentence, oldBelief))
+        if (newBelief.equals(oldBeliefTask))  {
             return null;
+        }
+
+        if (Stamp.evidentialSetOverlaps(newBelief, oldBeliefTask))
+            return null;
+
+        Sentence oldBelief = oldBeliefTask.sentence;
 
         Truth newBeliefTruth = newBelief.getTruth();
         Truth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
@@ -117,7 +123,7 @@ public class LocalRules {
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
-                        .parent(null, oldBelief),
+                        .parent(oldBeliefTask),
                 true, true);
 
         if (revised != null)

@@ -436,10 +436,10 @@ public class DefaultConcept extends Item<Term> implements Concept {
                 */
 
 
-                Task r = tryRevision(newBelief, oldBelief.sentence, false, nal);
+                Task r = tryRevision(newBelief, oldBelief, false, nal);
                 if (r != null) {
                     newBelief = r;
-                    nal.setCurrentBelief(newBelief);
+                    nal.setCurrentBelief(r);
                 }
 
             }
@@ -476,7 +476,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @return Whether to continue the processing of the task
      */
     protected boolean processGoal(final NAL nal, Task newGoal) {
-
+        
 
         final Task oldGoalT = getTask(newGoal.sentence, goals); // revise with the existing desire values
         Sentence oldGoal = null;
@@ -503,12 +503,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
                     // }
                     //nal.setCurrentBelief(projectedGoal);
 
-                    Task revisedTask = tryRevision(newGoal, oldGoal, false, nal);
+                    Task revisedTask = tryRevision(newGoal, oldGoalT, false, nal);
                     if (revisedTask != null) { // it is revised, so there is a new task for which this function will be called
                         newGoal = revisedTask;
                         //return true; // with higher/lower desire
                     } //it is not allowed to go on directly due to decision making https://groups.google.com/forum/#!topic/open-nars/lQD0no2ovx4
 
+                    //nal.setCurrentBelief(revisedTask);
                 }
             }
         }
