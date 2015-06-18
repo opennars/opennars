@@ -39,6 +39,9 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         if (!c.hasBeliefs())
             return null; //no beliefs exist at this concept
 
+        if (task.getTruth()==null) {
+            throw new RuntimeException("judgment has no truth value: " + task);
+        }
 
 
         final float conf = task.getTruth().getConfidence();

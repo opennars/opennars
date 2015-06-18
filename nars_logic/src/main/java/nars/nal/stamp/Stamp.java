@@ -718,6 +718,8 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             or at least compare a triangular half of the matrix with these
             2 loops
          */
+        if (a == b) return true;
+
         for (long l : a.getEvidentialSet()) {
             for (long h : b.getEvidentialSet()) {
                 if (l == h) {

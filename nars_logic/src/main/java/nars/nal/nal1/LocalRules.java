@@ -29,6 +29,7 @@ import nars.io.out.Output;
 import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -91,7 +92,7 @@ public class LocalRules {
                         .truth(truth)
                         .budget(budget)
                         .parent(newBelief),
-                true, false);
+                true, true);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();
@@ -104,6 +105,8 @@ public class LocalRules {
         //Stamper stamp = nal.newStampIfNotOverlapping(newBelief.sentence, oldBelief);
         //if (stamp == null) return null;
 
+        if (Stamp.evidentialSetOverlaps(newBelief.sentence, oldBelief))
+            return null;
 
         Truth newBeliefTruth = newBelief.getTruth();
         Truth oldBeliefTruth = oldBelief.projection(nal.time(), newBelief.getOccurrenceTime());
@@ -114,8 +117,8 @@ public class LocalRules {
                         .punctuation(newBelief.getPunctuation())
                         .truth(truth)
                         .budget(budget)
-                        .parent(newBelief),
-                true, false);
+                        .parent(null, oldBelief),
+                true, true);
 
         if (revised != null)
             nal.memory.logic.BELIEF_REVISION.hit();

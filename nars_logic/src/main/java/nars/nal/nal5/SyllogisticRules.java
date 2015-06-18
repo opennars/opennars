@@ -267,14 +267,14 @@ public final class SyllogisticRules {
             } else {
                 truth = TruthFunctions.analogy(atru, sym.truth);
             }
-            
+
             budget = BudgetFunctions.forward(truth, nal);
         }
 
         Compound statement = Sentence.termOrNull(Statement.make(st, subj, pred, order));
         if (statement == null) return false;
 
-        nal.deriveDouble(statement, asym.getPunctuation(), truth, budget,
+        nal.deriveDouble(statement, nal.getCurrentTask().getPunctuation(), truth, budget,
                 asym, sym, false, true);
 
         nal.memory.logic.ANALOGY.hit();

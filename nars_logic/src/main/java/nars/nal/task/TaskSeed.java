@@ -49,6 +49,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     private boolean temporalInduct = true;
     private boolean cyclic = false;
 
+
+
     //@Deprecated private long occDelta = 0;
 
 
@@ -95,7 +97,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return this;
     }
     public boolean isDouble() {
-        return this.getParentTask()!=null & this.getParentBelief()!=null;
+        return this.getParentTask()!=null && this.getParentBelief()!=null;
     }
 
 
@@ -422,8 +424,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
             setEvidentialSet(new long[]{memory.newStampSerial()});
 
         } else {
-            if (getParentTask() == null)
-                throw new RuntimeException(this + " has no parent so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
+            if (getParentTask() == null && getParentBelief()==null)
+                throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
         }
 
         Task t = new Task(sentenceTerm, punc, truth, this,
@@ -564,8 +566,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return parent(parentTask, parentBeliefTask.sentence);
     }
 
-    public TaskSeed<T> parent(Task parentTask, Sentence<?> parentBelief) {
-        return parent(parentTask, parentBelief);
+    public TaskSeed<T> parent(final Task parentTask, final Sentence<?> parentBelief) {
+        this.parent = parentTask;
+        this.parentBelief = parentBelief;
+        return this;
     }
 
     public TaskSeed<T> solution(Sentence<?> solutionBelief) {

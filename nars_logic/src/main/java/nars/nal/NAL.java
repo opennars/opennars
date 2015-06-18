@@ -138,8 +138,8 @@ public abstract class NAL implements Runnable {
     @Deprecated public Task derive(final TaskSeed task, @Deprecated final boolean revised, final boolean single, Task currentTask, boolean allowOverlap) {
 
 
-        if (task.getParentTask() == null) {
-            throw new RuntimeException("Derived task must have a parent: " + task + " via " + this);
+        if (task.getParentTask() == null && task.getParentBelief() == null) {
+            throw new RuntimeException("Derived task must have a parent task or belief: " + task + " via " + this);
         }
 
         if (single != !task.isDouble()) {
@@ -347,7 +347,7 @@ public abstract class NAL implements Runnable {
     }
 
     public Task deriveSingle(final Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget) {
-        return deriveSingle(newContent, punctuation, newTruth, newBudget);
+        return deriveSingle(newContent, punctuation, newTruth, newBudget, 1f, 1f);
     }
 
     public Task deriveSingle(Compound newContent, final char punctuation, final Truth newTruth, final Budget newBudget, float priMult, float durMult) {
@@ -486,8 +486,11 @@ public abstract class NAL implements Runnable {
      * @return the currentBelief
      */
     public Sentence getCurrentBelief() {
-        return currentBelief.sentence;
+        final Task t = currentBelief;
+        if (t == null) return null;
+        return t.sentence;
     }
+
     public Task getCurrentBeliefTask() {
         return currentBelief;
     }

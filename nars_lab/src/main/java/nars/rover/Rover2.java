@@ -47,7 +47,9 @@ public class Rover2 extends PhysicsModel {
 
 
     public static void main(String[] args) {
-        Global.DEBUG = false;
+        Global.DEBUG = true;
+        Global.EXIT_ON_EXCEPTION = true;
+
         boolean multithread = false;
 
         Video.themeInvert();
