@@ -302,8 +302,13 @@ public class Global {
         //return new WeakReference(t);
     }
 
-    public static <C> Reference<Stamp> reference(Stamp s) {
+    public static <C> Reference<C> reference(C s) {
+        if (s == null) return null;
         return new SoftReference(s);
+    }
+    public static <C> C dereference(Reference<C> s) {
+        if (s == null) return null;
+        return s.get();
     }
 
 

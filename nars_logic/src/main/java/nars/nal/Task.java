@@ -46,6 +46,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static nars.Global.dereference;
+import static nars.Global.reference;
+
 /**
  * A task to be processed, consists of a Sentence and a BudgetValue.
  * A task references its parent and an optional causal factor (usually an Operation instance).  These are implemented as WeakReference to allow forgetting via the
@@ -54,16 +57,13 @@ import java.util.Set;
  * <p>
  * TODO decide if the Sentence fields need to be Reference<> also
  */
-public class Task<T extends Compound> extends Item<Sentence<T>> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence, Input {
-
-//    /** placeholder for a forgotten task */
-//    public static final Task Forgotten = new Task();
+public class Task<T extends Compound> extends Sentence<T> implements Termed, Budget.Budgetable, Truthed, Sentenced, Serializable, JsonSerializable, StampEvidence, Input {
 
 
     /**
      * The sentence of the Task
      */
-    public final Sentence<T> sentence;
+    @Deprecated public final Sentence<T> sentence = this;
 
     /**
      * Task from which the Task is derived, or null if input
@@ -73,64 +73,63 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
     /**
      * Belief from which the Task is derived, or null if derived from a theorem
      */
-    transient public final Sentence parentBelief;
+    transient public final Reference<Sentence> parentBelief;
 
 
     /**
+     * TODO move to SolutionTask subclass
      * For Question and Goal: best solution found so far
      */
-    private Sentence bestSolution;
+    private Reference<Sentence> bestSolution;
 
     /**
+     * TODO move to DesiredTask subclass
      * causal factor if executed; an instance of Operation
      */
     private Operation cause;
 
     private List<String> history = null;
+
+    /** indicates this Task was the result of temporal induction, to prevent that
+     * from being applied again (cyclically)
+     */
     private boolean temporalInducted = true;
 
 
-    /**
-     * Constructor for input task
-     *
-     * @param s The sentence
-     * @param b The budget
-     */
-    public Task(final Sentence s, final Budget b) {
-        this(s, b, (Task) null, null, null);
-    }
 
-    public Task(final Sentence s, final Budget b, final Task parentTask) {
-        this(s, b, parentTask, null);
-    }
-
-    protected Task() {
-        this(null, null);
-    }
+//    public Task(final Sentence s, final Budget b) {
+//        this(s, b, (Task) null, null, null);
+//    }
+//
+//    public Task(final Sentence s, final Budget b, final Task parentTask) {
+//        this(s, b, parentTask, null);
+//    }
+//
+//    protected Task() {
+//        this(null, null);
+//    }
 
 
-    /**
-     * Constructor for a derived task
-     *
-     * @param s            The sentence
-     * @param b            The budget
-     * @param parentTask   The task from which this new task is derived
-     * @param parentBelief The belief from which this new task is derived
-     */
-    public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief) {
-        this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, null);
-    }
-
-    public Task(final Sentence<T> s, Budget bv, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
-        this(s, bv != null ? bv.getPriority() : 0,
+    public Task(T term, final char punctuation, final Truth truth, Budget bv, final Task parentTask, final Sentence parentBelief, Sentence solution) {
+        this(term, punctuation, truth,
+                bv != null ? bv.getPriority() : 0,
                 bv != null ? bv.getDurability() : 0,
                 bv != null ? bv.getQuality() : 0,
                 parentTask, parentBelief, solution);
     }
 
-    public Task(final Sentence<T> s, final float p, final float d, final float q, final Reference<Task> parentTask, final Sentence parentBelief, Sentence solution) {
-        super(p, d, q);
-        this.sentence = s;
+    public Task(T term, final char punc, final Truth truth, final float p, final float d, final float q, final Task parentTask, final Sentence parentBelief, Sentence solution) {
+        this(term, punc, truth,
+                p,d,q,
+                reference(parentTask),
+                reference(parentBelief),
+                reference(solution)
+        );
+    }
+    public Task(T term, final char punctuation, final Truth truth, final float p, final float d, final float q, final Reference<Task> parentTask, final Reference<Sentence> parentBelief, Reference<Sentence> solution) {
+        super(term, punctuation, truth, p, d, q);
+
+
         this.parentTask = parentTask;
 
 
@@ -160,38 +159,43 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
 
     }
 
-    /**
-     * Constructor for an activated task
-     *
-     * @param s            The sentence
-     * @param b            The budget
-     * @param parentTask   The task from which this new task is derived
-     * @param parentBelief The belief from which this new task is derived
-     * @param solution     The belief to be used in future logic
-     */
-    public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
-    }
+//    /**
+//     * Constructor for an activated task
+//     *
+//     * @param s            The sentence
+//     * @param b            The budget
+//     * @param parentTask   The task from which this new task is derived
+//     * @param parentBelief The belief from which this new task is derived
+//     * @param solution     The belief to be used in future logic
+//     */
+//    public Task(final Sentence<T> s, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
+//        this(s, b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
+//    }
+//
+//    public Task(T term, char punc, Truth truth, AbstractStamper stamp, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
+//        this(new Sentence(term, punc, truth, stamp), b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
+//    }
 
-    public Task(T term, char punc, Truth truth, AbstractStamper stamp, final Budget b, final Task parentTask, final Sentence parentBelief, final Sentence solution) {
-        this(new Sentence(term, punc, truth, stamp), b, parentTask == null ? null : Global.reference(parentTask), parentBelief, solution);
-    }
 
+//    @Override
+//    public Task clone() {
+//
+//        if (sentence == null)
+//            return this;
+//
+//        return new Task(sentence.clone(), this, parentTask, parentBelief, bestSolution);
+//    }
 
-    @Override
-    public Task clone() {
+//    public <X extends Compound> Task<X> clone(final Sentence<X> replacedSentence) {
+//        return new Task(replacedSentence, this, parentTask, parentBelief, bestSolution);
+//    }
 
-        if (sentence == null)
-            return this;
-
-        return new Task(sentence.clone(), this, parentTask, parentBelief, bestSolution);
-    }
-
-    public <X extends Compound> Task<X> clone(final Sentence<X> replacedSentence) {
-        return new Task(replacedSentence, this, parentTask, parentBelief, bestSolution);
-    }
+    /** clones this Task with a new Term */
     public <X extends Compound> Task<X> clone(X t) {
-        return clone(getSentence().clone(t));
+        return new Task(getTerm(), getPunctuation(), getTruth(),
+                getPriority(), getDurability(), getQuality(),
+                parentTask, parentBelief, bestSolution
+        );
     }
 
     @Override
@@ -283,7 +287,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @return The stored Sentence or null
      */
     public Sentence getBestSolution() {
-        return bestSolution;
+        return dereference(bestSolution);
     }
 
     /**
@@ -294,7 +298,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      */
     public void setBestSolution(final Memory memory, final Sentence judg) {
         InternalExperience.experienceFromBelief(memory, this, judg);
-        bestSolution = judg;
+        bestSolution = reference(judg);
     }
 
     /**
@@ -303,7 +307,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @return The belief from which the task is derived
      */
     public Sentence getParentBelief() {
-        return parentBelief;
+        return dereference(parentBelief);
     }
 
     /**
@@ -312,8 +316,7 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
      * @return The task from which the task is derived
      */
     public Task getParentTask() {
-        if (parentTask == null) return null;
-        return parentTask.get();
+        return dereference(parentTask);
     }
 
     @Override
@@ -581,9 +584,6 @@ public class Task<T extends Compound> extends Item<Sentence<T>> implements Terme
         return sentence.getTruth();
     }
 
-    public boolean isEternal() {
-        return sentence.isEternal();
-    }
 
     @Override
     public Sentence<T> getSentence() {

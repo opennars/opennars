@@ -49,7 +49,7 @@ import java.util.*;
  * It is used as the premises and conclusions of all logic rules.
  */
 @JsonSerialize(using = ToStringSerializer.class)
-public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sentence>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
+public class Sentence<T extends Compound> extends Item<Sentence<T>> implements Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
 
 
     /**
@@ -84,7 +84,7 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
     /**
      * Partial record of the derivation path
      */
-    transient private long[] evidentialSet = null;
+    private long[] evidentialSet = null;
 
 
     private long creationTime = Stamp.UNPERCEIVED;
@@ -99,7 +99,11 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
         this((T)Sentence.termOrException(invalidTerm), punctuation, newTruth, newStamp);
     }
 
-    public Sentence(T seedTerm, final char punctuation, final Truth truth) {
+    @Deprecated public Sentence(T seedTerm, final char punctuation, final Truth truth) {
+        this(seedTerm, punctuation, truth, 0, 0, 0);
+    }
+    public Sentence(T term, final char punctuation, final Truth truth, float p, float d, float q) {
+        super(p,d,q);
         this.punctuation = punctuation;
 
         boolean isQuestionOrQuest = isQuestion() || isQuest();
@@ -113,9 +117,9 @@ public class Sentence<T extends Compound> implements Cloneable, Stamp, Named<Sen
             this.truth = truth;
         }
 
-        this.revisible = !((seedTerm instanceof Conjunction) && seedTerm.hasVarDep());
+        this.revisible = !((term instanceof Conjunction) && term.hasVarDep());
 
-        this.term = seedTerm;
+        this.term = term;
 
 
 
