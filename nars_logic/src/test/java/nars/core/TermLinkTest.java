@@ -152,7 +152,7 @@ public class TermLinkTest {
 //        System.out.println();
 //
         Set<String> f = getTermLinks(n.concept("f").getTermLinks());
-        assertEquals(1, f.size());
+        assertEquals(f.toString(), 2, f.size());
         assertTrue(f.contains("Da" + Symbols.TLinkSeparator + "<f --> <a --> b>>"));
 
 

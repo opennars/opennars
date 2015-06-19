@@ -310,10 +310,15 @@ public final class CompositionalRules {
         final boolean isQ = task.isQuestion() || task.isQuest();
 
         TaskSeed nonCyclic = nal.newDoublePremise(task, belief);
-        if (!isQ && nonCyclic == null) //dont skip the query var section is isQ true
-            return;
+        if (nonCyclic==null) {
+            if (!isQ) //dont skip the query var section is isQ true
+                return;
+        }
+        else {
+            nonCyclic.punctuation(task.getPunctuation());
+        }
 
-        nonCyclic.punctuation(task.getPunctuation());
+
 
         Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null)
