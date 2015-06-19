@@ -751,6 +751,7 @@ public abstract class NAL implements Runnable {
 
     }
 
+    /** for producing a non-cyclic derivation; returns null if the premise is cyclic */
     public TaskSeed newDoublePremise(Task asym, Sentence sym) {
         return newDoublePremise(asym, sym, false);
     }

@@ -73,10 +73,10 @@ public class RLNario extends NARio  {
     public static void main(String[] args) {
 
 
-        NAR nar = new NAR(new Default(3000, 15, 4));
+        NAR nar = new NAR(new Default(768, 32, 4));
         nar.memory.setSelf(Atom.the("I"));
 
-        nar.param.duration.set(5);
+        nar.param.duration.set(4);
         nar.setCyclesPerFrame(memoryCyclesPerFrame);
 
         nar.param.outputVolume.set(0);

@@ -233,6 +233,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         this.priority = Budget.newDefaultPriority(punc);
         this.durability = Budget.newDefaultDurability(punc);
 
+        /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
+        if (Float.isNaN(quality)) {
+            quality = BudgetFunctions.truthToQuality(truth);
+        }
+
         return true;
     }
 
@@ -400,16 +405,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
             truth = new DefaultTruth(punc);
         }
 
-//        if (this.budget == null) {
-//            //if budget not specified, use the default given the punctuation and truth
-//            //TODO avoid creating a Budget instance here, it is just temporary because Task is its own Budget instance
-//            this.budget = new Budget(punc, truth);
-//        }
+//
 
-        /** if q was not specified, and truth is, then we can calculate q from truthToQuality */
-        if (Float.isNaN(quality) && truth != null) {
-            quality = BudgetFunctions.truthToQuality(truth);
-        }
 
 
         Compound sentenceTerm = term.sentencize(this);
@@ -434,7 +431,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
                 throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
         }
 
-        Task t = new Task(sentenceTerm, punc, truth, getBudget(),
+
+
+        Task t = new Task(sentenceTerm, punc,
+                (truth != null) ? new DefaultTruth(truth) : null, //clone the truth so that this class can be re-used multiple times with different values to create different tasks
+                getBudget(),
                 getParentTask(),
                 getParentBelief(),
                 solutionBelief);

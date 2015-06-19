@@ -36,6 +36,7 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -45,7 +46,6 @@ import java.util.Map;
 import java.util.Random;
 
 import static nars.nal.Terms.*;
-import static nars.nal.Terms.reduceComponents;
 import static nars.nal.TruthFunctions.*;
 
 /**
@@ -299,84 +299,113 @@ public final class CompositionalRules {
      * @param compoundTask    Whether the implication comes from the task
      * @param nal             Reference to the memory
      */
-    static Task decomposeStatement(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static void decomposeStatement(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return null;
+            return;
         }
 
-        Task task = nal.getCurrentTask();
-        Sentence taskSentence = task.sentence;
+        final Task task = nal.getCurrentTask();
         final Sentence belief = nal.getCurrentBelief();
-        Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory));
-        if (content == null) {
-            return null;
-        }
-        Truth truth = null;
-        Budget budget;
 
-        if (taskSentence.isQuestion() || taskSentence.isQuest()) {
-            budget = BudgetFunctions.compoundBackward(content, nal);
-            nal.deriveDouble(content, null /*truth*/, budget, false, false);
+        final boolean isQ = task.isQuestion() || task.isQuest();
+
+        TaskSeed nonCyclic = nal.newDoublePremise(task, belief)
+                .punctuation(task.getPunctuation());
+        if (!isQ && nonCyclic == null) //dont skip the query var section is isQ true
+            return;
+
+        Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory));
+        if (content == null)
+            return;
+
+        if (isQ) {
+
+            if (nonCyclic!=null) {
+                nal.deriveDouble(nonCyclic.term(content)
+                                .truth(null)
+                                .budget(BudgetFunctions.compoundBackward(content, nal))
+                );
+            }
+            //nal.deriveDouble(content, null /*truth*/, budget, false, false);
 
             // special logic to answer conjunctive questions with query variables
-            if (taskSentence.term.hasVarQuery()) {
+            if (task.term.hasVarQuery()) {
 
                 Concept contentConcept = nal.memory.concept(content);
                 if (contentConcept == null) {
-                    return null;
+                    return;
                 }
 
                 Task contentTask = contentConcept.getBelief(nal, task);
                 if (contentTask == null) {
-                    return null;
+                    return;
                 }
 
-                //nal.setCurrentTask(contentTask);
+                TaskSeed qd = nal.newDoublePremise(contentTask, belief);
+                if (qd != null) {
 
-                Compound conj = Sentence.termOrNull(Conjunction.make(component, content));
-                if (conj != null) {
-                    truth = intersection(contentTask.getTruth(), belief.truth);
-                    budget = BudgetFunctions.compoundForward(truth, conj, nal);
-                    nal.deriveDouble(conj, contentTask.getPunctuation(), truth, budget, contentTask, belief, false, false);
+                    Compound conj = Sentence.termOrNull(Conjunction.make(component, content));
+
+                    if (conj != null) {
+                        Truth truth;
+
+                        nal.deriveDouble(qd.term(conj)
+                            .punctuation(contentTask.getPunctuation())
+                            .truth(truth = intersection(contentTask.getTruth(), belief.truth))
+                            .budget(BudgetFunctions.compoundForward(truth, conj, nal)),
+                            false, false
+                        );
+
+                        //nal.deriveDouble(conj, contentTask.getPunctuation(), truth, budget, contentTask, belief, false, false);
+                    }
                 }
 
             }
         } else {
             Truth v1, v2;
             if (compoundTask) {
-                v1 = taskSentence.truth;
+                v1 = task.truth;
                 v2 = belief.truth;
             } else {
                 v1 = belief.truth;
-                v2 = taskSentence.truth;
+                v2 = task.truth;
             }
+
+            Truth truth;
             if (compound instanceof Conjunction) {
-                if (taskSentence.isGoal()) {
+                if (task.isGoal()) {
                     if (compoundTask) {
                         truth = intersection(v1, v2);
                     } else {
-                        return null;
+                        return;
                     }
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
                 }
             } else if (compound instanceof Disjunction) {
-                if (taskSentence.isGoal()) {
+                if (task.isGoal()) {
                     if (compoundTask) {
                         truth = reduceConjunction(v2, v1);
                     } else {
-                        return null;
+                        return;
                     }
                 } else {  // isJudgment
                     truth = reduceDisjunction(v1, v2);
                 }
             } else {
-                return null;
+                return;
             }
-            budget = BudgetFunctions.compoundForward(truth, content, nal);
+
+
+            nal.deriveDouble(nonCyclic.term(content)
+                            .truth(truth)
+                            .budget(BudgetFunctions.compoundForward(truth, content, nal))
+            );
+
+            //nal.deriveDouble(content, truth, budget, false, false);
         }
 
-        return nal.deriveDouble(content, truth, budget, false, false);
+
     }
 
 
@@ -397,6 +426,15 @@ public final class CompositionalRules {
             return;
         }
 
+        TaskSeed seed = nal.newDoublePremise(nal.getCurrentTask(), nal.getCurrentBelief());
+        if (seed == null) //all derivations here are non-cyclic, so test first
+            return;
+
+        Truth truthT = nal.getCurrentTask().getTruth();
+        Truth truthB = nal.getCurrentBelief().getTruth();
+        if ((truthT == null) || (truthB == null)) {
+            return;
+        }
 
         Term term11dependent=null, term12dependent=null, term21dependent=null, term22dependent=null;
         Term term11, term12, term21, term22, commonTerm = null;
@@ -552,39 +590,42 @@ public final class CompositionalRules {
             return;
         }
 
-        Truth truthT = nal.getCurrentTask().sentence.truth;
-        Truth truthB = nal.getCurrentBelief().truth;
-        /*
-        if (truthT == null)
-            throw new RuntimeException("CompositionalRules.introVarOuter: current task has null truth: " + memory.getCurrentTask());
 
-        if (truthB == null)
-            throw new RuntimeException("CompositionalRules.introVarOuter: current belief has null truth: " + memory.getCurrentBelief());
-         */
-        if ((truthT == null) || (truthB == null)) {
-            return;
+        seed.punctuation(nal.getCurrentTask().getPunctuation());
+
+        {
+            Truth truth;
+            nal.deriveDouble(seed.term(content)
+                    .truth(truth = induction(truthT, truthB))
+                    .budget(BudgetFunctions.compoundForward(truth, content, nal)));
+            //nal.deriveDouble(content, truth, budget, false, false);
         }
-
-
-        Truth truth = induction(truthT, truthB);
-        Budget budget = BudgetFunctions.compoundForward(truth, content, nal);
-        nal.deriveDouble(content, truth, budget, false, false);
 
         {
             Compound ct = compoundOrNull(Implication.makeTerm(state2, state1));
             if (ct != null) {
-                truth = induction(truthB, truthT);
-                budget = BudgetFunctions.compoundForward(truth, ct, nal);
-                nal.deriveDouble(ct, truth, budget, false, false);
+                Truth truth;
+                nal.deriveDouble(seed.term(ct)
+                        .truth(truth = induction(truthB, truthT))
+                        .budget(BudgetFunctions.compoundForward(truth, ct, nal))
+                );
+                //truth = induction(truthB, truthT);
+                //budget = BudgetFunctions.compoundForward(truth, ct, nal);
+                //nal.deriveDouble(ct, truth, budget, false, false);
             }
         }
 
         {
             Compound ct = compoundOrNull(Equivalence.makeTerm(state1, state2));
             if (ct != null) {
-                truth = comparison(truthT, truthB);
-                budget = BudgetFunctions.compoundForward(truth, ct, nal);
-                nal.deriveDouble(ct, truth, budget, false, false);
+                Truth truth;
+                nal.deriveDouble(seed.term(ct)
+                                .truth(truth = comparison(truthT, truthB))
+                                .budget(BudgetFunctions.compoundForward(truth, ct, nal))
+                );
+//                truth = comparison(truthT, truthB);
+//                budget = BudgetFunctions.compoundForward(truth, ct, nal);
+//                nal.deriveDouble(ct, truth, budget, false, false);
             }
         }
 
@@ -601,9 +642,14 @@ public final class CompositionalRules {
 
         Compound ct = compoundOrNull(Conjunction.make(state1, state2));
         if (ct != null) {
-            truth = intersection(truthT, truthB);
-            budget = BudgetFunctions.compoundForward(truth, ct, nal);
-            nal.deriveDouble(ct, truth, budget, false, false);
+            Truth truth;
+            nal.deriveDouble(seed.term(ct)
+                            .truth(truth = intersection(truthT, truthB))
+                            .budget(BudgetFunctions.compoundForward(truth, ct, nal))
+            );
+//            truth = intersection(truthT, truthB);
+//            budget = BudgetFunctions.compoundForward(truth, ct, nal);
+//            nal.deriveDouble(ct, truth, budget, false, false);
         }
     }
 
