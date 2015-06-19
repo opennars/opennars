@@ -13,6 +13,7 @@ import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 import nars.util.data.id.Identifier;
 
 import java.util.Random;
@@ -263,7 +264,7 @@ public class ConceptProcess extends NAL implements Premise {
         //optimization case: if there is only one termlink, we will never get anything different from calling repeatedly
         if (links == 1) toMatch = 1;
 
-        Bag<Identifier, TermLink> tl = currentConcept.getTermLinks();
+        Bag<TermLinkKey, TermLink> tl = currentConcept.getTermLinks();
 
         termLinkNovel.set(noveltyHorizon, tl.size(), termLinksBeingFired);
 

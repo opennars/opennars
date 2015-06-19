@@ -54,25 +54,12 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     //@Deprecated private long occDelta = 0;
 
 
-    /**
-     * creates a TaskSeed from an existing Task
-     */
-    public TaskSeed(Memory memory, Task task) {
-        this(memory, task.sentence);
-
-        parent(task.getParentTask(), task.getParentBelief());
-        solution(task.getBestSolution());
-        budget(task.getBudget());
-
-        /* NOTE: this ignores:
-                task.history         */
-    }
 
 
     public TaskSeed(Memory memory) {
         super();
-        setOccurrenceTime(Stamp.ETERNAL);
-        setCreationTime(memory.time());
+        //setOccurrenceTime(Stamp.ETERNAL);
+        //setCreationTime(memory.time());
         this.memory = memory;
     }
 
@@ -409,13 +396,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
 
 
-        Compound sentenceTerm = term.sentencize(this);
+        Compound sentenceTerm = getTerm();
         if (sentenceTerm == null)
             return null;
 
         if (Global.DEBUG) {
-            sentenceTerm.ensureNormalized("Sentence term");
-
             if (Sentence.invalidSentenceTerm(sentenceTerm))
                 throw new RuntimeException("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
         }
@@ -466,8 +451,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
      * creation time of the stamp
      */
     public long getCreationTime() {
-        if (creationTime == Stamp.TIMELESS)
+        if (creationTime == Stamp.TIMELESS) {
+            //Default: created now
             return memory.time();
+        }
         return  creationTime;
     }
 
@@ -609,7 +596,8 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
     public T getTerm() {
-        return term;
+        //return normalized version no matter what, and save it to prevent redundant work
+        return this.term = this.term.normalized();
     }
 
     public Truth getTruth() {

@@ -112,6 +112,8 @@ public class VariableTest extends JavaNALTest {
 
     void unaffected(String left, String right) {
 
+        TextOutput.out(nar);
+
         nar.mustInput(1, "<" + left + " ==> " + right + ">.");
         nar.input("<" + left + " ==> " + right + ">.");
 

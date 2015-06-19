@@ -593,10 +593,6 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
 
 
 
-    public TaskSeed<T> newChild(Memory memory) {
-        return new TaskSeed(memory, this).parent(this).budget(this);
-    }
-
     public Task projection(Memory m, final long targetTime, final long currentTime) {
 
         final Truth newTruth = projection(targetTime, currentTime);

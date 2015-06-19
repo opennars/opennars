@@ -14,6 +14,7 @@ import nars.nal.concept.DefaultConcept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 import nars.util.data.id.Identifier;
 
 /**
@@ -68,7 +69,7 @@ public class Neuromorphic extends Curve {
         if (fairdelaybag) {
             DelayBag<Sentence, TaskLink> taskLinks = new FairDelayBag(m,
                     taskLinkForgetDurations, getConceptTaskLinks());
-            DelayBag<Identifier, TermLink> termLinks = new FairDelayBag(m,
+            DelayBag<TermLinkKey, TermLink> termLinks = new FairDelayBag(m,
                     termLinkForgetDurations, getConceptTermLinks());
             return new DefaultConcept(t, b, taskLinks, termLinks, m);
         }

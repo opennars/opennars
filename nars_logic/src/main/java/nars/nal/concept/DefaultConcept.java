@@ -39,7 +39,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
     private final Bag<Sentence, TaskLink> taskLinks;
 
-    private final Bag<Identifier, TermLink> termLinks;
+    private final Bag<TermLinkKey, TermLink> termLinks;
 
     private Map<Object, Meta> meta = null;
 
@@ -70,7 +70,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @param termLinks
      * @param memory    A reference to the memory
      */
-    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<Identifier, TermLink> termLinks, final Memory memory) {
+    public DefaultConcept(final Term term, final Budget b, final Bag<Sentence, TaskLink> taskLinks, final Bag<TermLinkKey, TermLink> termLinks, final Memory memory) {
         super(b);
 
 
@@ -109,7 +109,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
     /**
      * Term links between the term and its components and compounds; beliefs
      */
-    public Bag<Identifier, TermLink> getTermLinks() {
+    public Bag<TermLinkKey, TermLink> getTermLinks() {
         return termLinks;
     }
 
@@ -1016,7 +1016,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             return false;
         }
 
-        Term otherTerm = termLinkBuilder.budget(template).getOther();
+        Term otherTerm = termLinkBuilder.budget(template, false).getOther();
 
         Concept otherConcept = getMemory().conceptualize(b, otherTerm);
         if (otherConcept == null) {

@@ -344,6 +344,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
                     if (exact==null || (exact.size() < maxExact)) {
                         ensureExact();
                         exact.add(task);
+                        return true;
                     }
                 }
 
@@ -363,7 +364,7 @@ public class TaskCondition extends OutputCondition implements Serializable {
     }
 
     private void ensureExact() {
-        if (exact == null) exact = new ArrayList<>();
+        if (exact == null) exact = Global.newArrayList(1);
     }
     private void ensureSimilar() {
         if (similar == null) similar = new TreeMap();

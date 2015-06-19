@@ -611,6 +611,7 @@ public class Memory implements Serializable, AbstractStamper {
         if (!validConceptTerm(term))
             return null;
 
+
         if ((term = term.normalized()) == null)
             return null;
 
@@ -715,6 +716,10 @@ public class Memory implements Serializable, AbstractStamper {
     /** sends an event signal to listeners subscribed to channel 'c' */
     final public void emit(final Class c, final Object... signal) {
         event.emit(c, signal);
+    }
+    /** sends an event signal to listeners subscribed to channel 'c' */
+    final public void emit(final Class c) {
+        event.emit(c);
     }
 
     /** tells whether a given channel has any listeners that might react to something emitted to it */

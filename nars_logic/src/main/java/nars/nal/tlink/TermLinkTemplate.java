@@ -26,9 +26,9 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     /** term of the concept where this template exists, ie. the host */
     public final Term concept;
 
-    //cached names for new TermLinks
-    protected Identifier outgoing;
-    protected Identifier incoming;
+    //cached names for prefix arrays
+    protected byte[] outgoing;
+    protected byte[] incoming;
 
 
 
@@ -129,21 +129,21 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         return prefix(type, index, incoming);
     }
 
-    public Identifier newKey(final boolean in) {
-        //TODO try ConcatenatedBytesIdent
-        return new LiteralUTF8Identifier( prefix(in), ((byte) Symbols.TLinkSeparator), term(in).bytes() );
-    }
+//    public Identifier newKey(final boolean in) {
+//        //TODO try ConcatenatedBytesIdent
+//        return new LiteralUTF8Identifier( prefix(in), ((byte) Symbols.TLinkSeparator), term(in).bytes() );
+//    }
 
-    public Identifier key(final boolean in) {
+    public byte[] key(final boolean in) {
         if (in) {
             if (incoming == null) {
-                incoming = newKey(true);
+                incoming = prefix(true);
             }
             return incoming;
         }
         else {
             if (outgoing == null) {
-                outgoing = newKey(false);
+                outgoing = prefix(false);
             }
             return outgoing;
         }

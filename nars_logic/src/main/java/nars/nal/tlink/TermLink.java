@@ -41,7 +41,7 @@ import nars.util.utf8.Utf8;
  * <p>
  * This class is mainly used in logic.RuleTable to dispatch premises to logic rules
  */
-public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, TermLinkKey {
+public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Term>, Termed {
 
 
 
@@ -74,9 +74,8 @@ public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, T
     /** The index of the component in the component list of the compound, may have up to 4 levels */
     public final short[] index;
     public final short type;
-
-    final Identifier key;
-
+    private final int hash;
+    private final byte[] prefix;
 
 
     /**
@@ -88,7 +87,7 @@ public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, T
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(Term t, TermLinkTemplate template, Budget v, Identifier key) {
+    public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] prefix, int hash) {
         super(v);
 
         if (!t.isNormalized()) {
@@ -100,12 +99,20 @@ public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, T
 
         this.index = template.index;
 
-        //this.key = (UTF8Identifier) target;
-        this.key = key;
+        this.prefix = prefix;
+
+        this.hash = hash;
     }
 
+    @Override
+    public byte[] prefix() {
+        return prefix;
+    }
 
-
+    @Override
+    public TermLinkKey name() {
+        return this;
+    }
 
     public boolean toSelfOrTransform() {
         return ((type == SELF) || (type == TRANSFORM));
@@ -119,20 +126,15 @@ public class TermLink extends Item<Identifier> implements TLink<Term>, Termed, T
         return type % 2 == 0;
     }
 
-    @Override
-    public Identifier name() {
-        return key;
-    }
 
     @Override
     public int hashCode() {
-        return key.hashCode();
+        return hash;
     }
 
 
     @Override
     public boolean equals(final Object obj) {
-        if (this==obj) return true;
         return termLinkEquals(obj);
 
 //        if (this != obj) {

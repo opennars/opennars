@@ -1,13 +1,17 @@
 package nars.nal.tlink;
 
 import nars.nal.term.Term;
-import nars.util.data.id.Identifier;
-import nars.util.data.id.Named;
+import nars.nal.term.Termed;
+import nars.util.data.Util;
+import nars.util.utf8.Utf8;
 
 
-public interface TermLinkKey extends Named<Identifier> {
+public interface TermLinkKey  {
 
     public Term getTarget();
+
+    public byte[] prefix();
+
 
 
 //    default public int termLinkHashCode() {
@@ -16,11 +20,17 @@ public interface TermLinkKey extends Named<Identifier> {
 //    }
 
     default public boolean termLinkEquals(final Object obj) {
+        if (obj == null) return false;
+        if (this == obj) return true;
         if (obj instanceof TermLinkKey) {
             TermLinkKey tl = (TermLinkKey) obj;
-            return name().equals(tl.name());
+            return getTarget().equals(tl.getTarget()) && Utf8.equals2(prefix(), tl.prefix());
         }
         return false;
+    }
+
+    default int hash() {
+        return (int)(getTarget().hashCode() + (31 * Util.ELFHash(prefix())));
     }
 
 //    /** key + target */

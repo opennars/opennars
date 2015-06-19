@@ -604,6 +604,10 @@ public class NAR extends Container implements Runnable {
     }
 
 
+    public void emit(final Class c) {
+        memory.emit(c);
+    }
+
     public void emit(final Class c, final Object... o) {
         memory.emit(c, o);
     }

@@ -60,8 +60,10 @@ public class RoverModel {
     int mouthArc = 2;
     float mass = 2.25f;
     Vec2[] vertices = {new Vec2(0.0f, 2.0f), new Vec2(+2.0f, -2.0f), new Vec2(-2.0f, -2.0f)};
-    float linearDamping = 0.9f;
-    float angularDamping = 0.9f;
+
+    float linearDamping = 0.8f;
+    float angularDamping = 0.6f;
+
     float restitution = 0.01f; //bounciness
     float friction = 0.5f;
 

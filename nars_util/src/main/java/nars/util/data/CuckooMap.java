@@ -344,7 +344,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     }
 
     @Override
-    public V get (Object key) {
+    public V get (final Object key) {
         if (key == null) return null;
         if (isEmpty()) return null;
 

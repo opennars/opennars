@@ -176,6 +176,9 @@ public abstract class NAL implements Runnable {
                 task.occurr(o);
             }
         }
+        else {
+            task.eternal();
+        }
 
 
         Task taskCreated;

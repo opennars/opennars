@@ -14,24 +14,22 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
-import nars.util.data.id.Identifier;
-import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
 import java.util.List;
 
 
-public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implements TermLinkKey, Serializable {
+public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implements TermLinkKey, Serializable {
 
     transient public final Concept concept;
 
     final List<TermLinkTemplate> template;
 
     transient int nonTransforms;
-    //transient int hash;
     transient TermLinkTemplate currentTemplate;
     transient boolean incoming;
-    //transient private byte[] prefix;
+    private byte[] prefix;
+    private int hash;
 
     public TermLinkBuilder(Concept c) {
         super();
@@ -162,51 +160,45 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
     }
 
 
-//    /** configures this selector's current budget for the next bag operation */
-//    public Budget budget(float subBudget, float durability, float quality) {
-//        //invalidate();
-//        return super.budget(subBudget, durability, quality);
-//    }
 
     /** configures this selector's current bag key for the next bag operation */
-    public TermLinkBuilder budget(final TermLinkTemplate temp) {
-        //if (temp != currentTemplate) {
-        this.currentTemplate = temp;
-        super.set(/*(Budget)*/temp);
-            //invalidate();
-        //}
+    public TermLinkBuilder budget(final TermLinkTemplate temp, boolean initialDirection) {
+        if ((temp != currentTemplate) || (this.incoming != initialDirection)) {
+            this.currentTemplate = temp;
+            this.incoming = initialDirection;
+            super.set(/*(Budget)*/temp);
+            validate();
+        }
         return this;
     }
 
     public TermLinkBuilder setIncoming(final boolean b) {
-        //if (this.incoming!=b) {
+        if (this.incoming!=b) {
             this.incoming = b;
-            //invalidate();
-        //}
+            validate();
+        }
         return this;
     }
 
-/*
-    protected void invalidate() {
-        //this.prefix = null;
-        //this.hash = 0;
+    @Override
+    public byte[] prefix() {
+        return prefix;
     }
-    */
+
+
+
+    protected void validate() {
+        this.prefix = currentTemplate.key(incoming);
+        this.hash = hash();
+    }
+
 
 
     public Budget budget(Budget b) {
         throw new RuntimeException("use: TermLinkBuilder budget(final TermLinkTemplate temp)");
-        //return super.set(b);
     }
 
-    @Override public Identifier name() {
-        return currentTemplate.key(incoming);
-    }
 
-    @Override
-    public Identifier getKey() {
-        return name();
-    }
 
     @Override
     public Term getTarget() {
@@ -252,18 +244,15 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
 
     @Override
     public int hashCode() {
-//        if (this.prefix == null) {
-//            getLinkKey(); //computes hash:
-//        }
-//        return hash;
-        return name().hashCode();
+        return hash;
     }
 
     @Override
     public TermLink newItem() {
         //this.prefix = null;
-        return new TermLink(getTarget(), currentTemplate, this, currentTemplate.key(incoming));
+        return new TermLink(getTarget(), currentTemplate, this, prefix, hash);
     }
+
 
 /*    public int size() {
         return template.size();
@@ -291,8 +280,12 @@ public class TermLinkBuilder extends BagActivator<Identifier,TermLink> implement
         return name().toString();
     }
 
+    @Override
+    public TermLinkKey name() {
+        return this;
+    }
 
-//    public TermLink get(boolean createIfMissing) {
+    //    public TermLink get(boolean createIfMissing) {
 //        TermLink t = concept.termLinks.GET(name());
 //        if ((t == null) && createIfMissing) {
 //            t = newItem();

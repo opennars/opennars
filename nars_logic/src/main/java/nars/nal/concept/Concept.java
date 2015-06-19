@@ -47,7 +47,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
 
     public Bag<Sentence, TaskLink> getTaskLinks();
-    public Bag<Identifier, TermLink> getTermLinks();
+    public Bag<TermLinkKey, TermLink> getTermLinks();
     public Map<Object, Meta> getMeta();
     public void setMeta(Map<Object, Meta> meta);
 

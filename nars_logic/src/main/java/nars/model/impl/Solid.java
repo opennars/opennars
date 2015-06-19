@@ -20,6 +20,7 @@ import nars.nal.process.TaskProcess;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
 import nars.nal.tlink.TermLink;
+import nars.nal.tlink.TermLinkKey;
 import nars.util.data.id.Identifier;
 
 import java.util.Iterator;
@@ -246,7 +247,7 @@ public class Solid extends Default implements ControlCycle {
     @Override
     public Concept newConcept(Term t, Budget b, Memory m) {
         Bag<Sentence, TaskLink> taskLinks = new ChainBag(rng, getConceptTaskLinks());
-        Bag<Identifier, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
+        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(rng, getConceptTermLinks());
 
         return new DefaultConcept(t, b, taskLinks, termLinks, m);
         //return super.newConcept(b, t, m);

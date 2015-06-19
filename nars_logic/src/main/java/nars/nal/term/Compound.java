@@ -88,14 +88,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         this.term = components;
     }
 
-    /** called before a term is used in a sentence.  allows the term
-     *  implementation to produce a transformed version of itself
-     *  which will be valid for the sentence it finds itself inserting.
-     *  by default, just returns itself.
-     */
-    public <T extends Compound> Compound sentencize(TaskSeed task) {
-        return normalized();
-    }
+
 
 
     /**
