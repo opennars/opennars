@@ -596,8 +596,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     }
 
     public T getTerm() {
+        final T t = this.term;
+        if (t == null) return null;
+
         //return normalized version no matter what, and save it to prevent redundant work
-        return this.term = this.term.normalized();
+        return this.term = t.normalized();
     }
 
     public Truth getTruth() {

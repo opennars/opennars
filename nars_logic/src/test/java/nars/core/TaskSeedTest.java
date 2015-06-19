@@ -19,7 +19,7 @@ public class TaskSeedTest {
 
         assertTrue(n.memory.newTask(n.term(s)).eternal().isEternal());
 
-        assertTrue("default is eternal", n.memory.newTask(n.term(s)).isEternal());
+        assertTrue("default is timeless", n.memory.newTask(n.term(s)).isTimeless());
 
         assertTrue("tense=eternal is eternal", n.memory.newTask(n.term(s)).eternal().isEternal());
 

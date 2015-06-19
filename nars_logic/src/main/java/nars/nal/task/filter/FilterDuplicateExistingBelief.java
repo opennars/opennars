@@ -6,6 +6,7 @@ import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
 import nars.nal.task.TaskSeed;
+import nars.nal.term.Compound;
 
 import java.util.Arrays;
 
@@ -26,13 +27,17 @@ public class FilterDuplicateExistingBelief implements DerivationFilter {
         if (solution || !task.isJudgment())
             return null;
 
+        Compound taskTerm = task.getTerm();
+        if (taskTerm == null)
+            return null;
+
         //equality:
         //  1. term (given because it is looking up in concept)
         //  2. truth
         //  3. occurrence time
         //  4. evidential set
 
-        final Concept c = nal.memory.concept(task.getTerm());
+        final Concept c = nal.memory.concept(taskTerm);
         if (c == null)
             return null; //concept doesnt even exist so this is not a duplciate of anything
 

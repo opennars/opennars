@@ -31,7 +31,6 @@ import java.util.UUID;
 public final class Util {
 
 
-
     private Util() {
     }
 
@@ -49,11 +48,13 @@ public final class Util {
                 )
         ));
     }
+
     public final static int hash(final int a, final int b) {
-        return PRIME2 * (PRIME1 + a ) + b ;
+        return PRIME2 * (PRIME1 + a) + b;
     }
+
     public final static int hash(int a, int b, int c) {
-        return  PRIME3 * (31 * (PRIME2 + a ) + b ) + c ;
+        return PRIME3 * (31 * (PRIME2 + a) + b) + c;
     }
 
     public final static int hash(Object a, Object b) {
@@ -61,13 +62,15 @@ public final class Util {
     }
 
     public final static int hash(Object a, Object b, Object c) {
-        return  hash(a.hashCode(), b.hashCode(), c.hashCode());
+        return hash(a.hashCode(), b.hashCode(), c.hashCode());
     }
+
     public final static int hash(Object a, Object b, Object c, Object d) {
-        return 31 * (PRIME3 * (31 * (PRIME2 + a.hashCode() ) + b.hashCode() ) + c.hashCode() ) + d.hashCode() ;
+        return 31 * (PRIME3 * (31 * (PRIME2 + a.hashCode()) + b.hashCode()) + c.hashCode()) + d.hashCode();
     }
+
     public final static int hash(int a, int b, Object c, Object d) {
-        return 31 * (PRIME3 * (31 * (PRIME2 + a  ) + d.hashCode() ) + a ) + c.hashCode() ;
+        return 31 * (PRIME3 * (31 * (PRIME2 + a) + d.hashCode()) + a) + c.hashCode();
     }
 
     public static void assertNotNull(final Object test, final String varName) {
@@ -136,22 +139,18 @@ public final class Util {
         int strLen = line.length();
         StringBuilder sb = new StringBuilder(strLen);
         // Remove beginning and ending * globs because they're useless
-        if (line.startsWith("*"))
-        {
+        if (line.startsWith("*")) {
             line = line.substring(1);
             strLen--;
         }
-        if (line.endsWith("*"))
-        {
-            line = line.substring(0, strLen-1);
+        if (line.endsWith("*")) {
+            line = line.substring(0, strLen - 1);
             strLen--;
         }
         boolean escaping = false;
         int inCurlies = 0;
-        for (char currentChar : line.toCharArray())
-        {
-            switch (currentChar)
-            {
+        for (char currentChar : line.toCharArray()) {
+            switch (currentChar) {
                 case '*':
                     if (escaping)
                         sb.append("\\*");
@@ -180,44 +179,35 @@ public final class Util {
                     escaping = false;
                     break;
                 case '\\':
-                    if (escaping)
-                    {
+                    if (escaping) {
                         sb.append("\\\\");
                         escaping = false;
-                    }
-                    else
+                    } else
                         escaping = true;
                     break;
                 case '{':
-                    if (escaping)
-                    {
+                    if (escaping) {
                         sb.append("\\{");
-                    }
-                    else
-                    {
+                    } else {
                         sb.append('(');
                         inCurlies++;
                     }
                     escaping = false;
                     break;
                 case '}':
-                    if (inCurlies > 0 && !escaping)
-                    {
+                    if (inCurlies > 0 && !escaping) {
                         sb.append(')');
                         inCurlies--;
-                    }
-                    else if (escaping)
+                    } else if (escaping)
                         sb.append("\\}");
                     else
                         sb.append("}");
                     escaping = false;
                     break;
                 case ',':
-                    if (inCurlies > 0 && !escaping)
-                    {
+                    if (inCurlies > 0 && !escaping) {
                         sb.append('|');
-                    }
-                    else if (escaping)
+                    } else if (escaping)
                         sb.append("\\,");
                     else
                         sb.append(",");
@@ -255,86 +245,84 @@ public final class Util {
     {*/
 
 
-        public long RSHash(String str)
-        {
-            int b     = 378551;
-            int a     = 63689;
-            long hash = 0;
+    public long RSHash(String str) {
+        int b = 378551;
+        int a = 63689;
+        long hash = 0;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = hash * a + str.charAt(i);
-                a    = a * b;
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash = hash * a + str.charAt(i);
+            a = a * b;
         }
+
+        return hash;
+    }
    /* End Of RS Hash Function */
 
 
-        public long JSHash(String str)
-        {
-            long hash = 1315423911;
+    public long JSHash(String str) {
+        long hash = 1315423911;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash ^= ((hash << 5) + str.charAt(i) + (hash >> 2));
-            }
-
-            return hash;
+        for (int i = 0; i < str.length(); i++) {
+            hash ^= ((hash << 5) + str.charAt(i) + (hash >> 2));
         }
+
+        return hash;
+    }
    /* End Of JS Hash Function */
 
 
-        public long PJWHash(String str)
-        {
-            long BitsInUnsignedInt = (long)(4 * 8);
-            long ThreeQuarters     = (long)((BitsInUnsignedInt  * 3) / 4);
-            long OneEighth         = (long)(BitsInUnsignedInt / 8);
-            long HighBits          = (long)(0xFFFFFFFF) << (BitsInUnsignedInt - OneEighth);
-            long hash              = 0;
-            long test              = 0;
+    public long PJWHash(String str) {
+        long BitsInUnsignedInt = (long) (4 * 8);
+        long ThreeQuarters = (long) ((BitsInUnsignedInt * 3) / 4);
+        long OneEighth = (long) (BitsInUnsignedInt / 8);
+        long HighBits = (long) (0xFFFFFFFF) << (BitsInUnsignedInt - OneEighth);
+        long hash = 0;
+        long test = 0;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = (hash << OneEighth) + str.charAt(i);
+        for (int i = 0; i < str.length(); i++) {
+            hash = (hash << OneEighth) + str.charAt(i);
 
-                if((test = hash & HighBits)  != 0)
-                {
-                    hash = (( hash ^ (test >> ThreeQuarters)) & (~HighBits));
-                }
+            if ((test = hash & HighBits) != 0) {
+                hash = ((hash ^ (test >> ThreeQuarters)) & (~HighBits));
             }
-
-            return hash;
         }
+
+        return hash;
+    }
    /* End Of  P. J. Weinberger Hash Function */
 
 
-        public long ELFHash(String str)
-        {
-            long hash = 0;
-            long x    = 0;
+    public long ELFHash(String str) {
+        long hash = 0;
+        long x = 0;
 
-            for(int i = 0; i < str.length(); i++)
-            {
-                hash = (hash << 4) + str.charAt(i);
+        for (int i = 0; i < str.length(); i++) {
+            hash = (hash << 4) + str.charAt(i);
 
-                if((x = hash & 0xF0000000L) != 0)
-                {
-                    hash ^= (x >> 24);
-                }
-                hash &= ~x;
+            if ((x = hash & 0xF0000000L) != 0) {
+                hash ^= (x >> 24);
             }
-
-            return hash;
+            hash &= ~x;
         }
 
-    public static long ELFHash(byte[] str)
+        return hash;
+    }
+
+    public static long ELFHash(final byte[] str) {
+        return ELFHash(str, 0);
+    }
+
+
+
+    public static long ELFHash(final byte[] str, final long seed)
     {
-        long hash = 0;
+        long hash = seed;
         long x    = 0;
 
-        for(int i = 0; i < str.length; i++)
+        final int len = str.length;
+
+        for(int i = 0; i < len; i++)
         {
             hash = (hash << 4) + str[i];
 
@@ -348,7 +336,6 @@ public final class Util {
         return hash;
     }
 
-   /* End Of ELF Hash Function */
 
 
         public long BKDRHash(String str)

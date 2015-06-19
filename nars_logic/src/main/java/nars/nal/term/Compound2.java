@@ -63,29 +63,29 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
 //        }
 //    }
 
-    public boolean equalsByName(final Compound2 c) {
-        return equalTo(c);
-    }
-
-    public boolean equalsByContent(final Compound2 c) {
-
-        //compare components without generating name
-
-        //if (operator()!=c.operator()) return false;
-        if (structuralHash() != c.structuralHash()) return false;
-        if (a().getMass() != c.a().getMass()) return false;
-        if (b().getMass() != c.b().getMass()) return false;
-
-        if (getTemporalOrder() != c.getTemporalOrder()) return false;
-
-        if (a().equals(c.a()) && b().equals(c.b())) {
-            //must be equal so share the identifier
-            share(c);
-            return true;
-        }
-        return false;
-
-    }
+//    public boolean equalsByName(final Compound2 c) {
+//        return equalTo(c);
+//    }
+//
+//    public boolean equalsByContent(final Compound2 c) {
+//
+//        //compare components without generating name
+//
+//        //if (operator()!=c.operator()) return false;
+//        if (structuralHash() != c.structuralHash()) return false;
+//        if (a().getMass() != c.a().getMass()) return false;
+//        if (b().getMass() != c.b().getMass()) return false;
+//
+//        if (getTemporalOrder() != c.getTemporalOrder()) return false;
+//
+//        if (a().equals(c.a()) && b().equals(c.b())) {
+//            //must be equal so share the identifier
+//            share(c);
+//            return true;
+//        }
+//        return false;
+//
+//    }
 
     @Override
     public boolean hasVar() {

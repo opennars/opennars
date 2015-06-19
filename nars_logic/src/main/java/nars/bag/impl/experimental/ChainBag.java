@@ -69,17 +69,18 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     private float estimatedMin = 0.5f;
     private float estimatedMean = 0.5f;
 
-    final short d[] = Distributor.get(64).order;
-    final int dLen = d.length;
+    final short d[];
     int dp = 0;
 
     public ChainBag(final Random rng, final DDNodePool<V> nodePool, int capacity) {
         super();
 
+        d = Distributor.get((int)(Math.sqrt(capacity))).order;
+
         this.rng = rng;
         this.capacity = capacity;
         this.mass = 0;
-        this.index = new CuckooMap(rng, (capacity/2+1));
+        this.index = new CuckooMap(rng, (capacity/2));
 
 
         this.nodePool = nodePool;
@@ -353,7 +354,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     protected boolean selectPercentileDistributor(final double percentileEstimate) {
-        final int dLen = this.dLen;
+        final int dLen = d.length;
         return d[ (dp++)%dLen ]/((double)dLen) < (percentileEstimate);
     }
 
@@ -416,7 +417,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     @Override
-    public V remove(K key) {
+    public V remove(final K key) {
         DD<V> d = index.remove(key);
         if (d!=null) {
             V v = d.item; //save it here because chain.remove will nullify .item field
@@ -447,7 +448,7 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
     }
 
     @Override
-    public void forEach(Consumer<? super V> value) {
+    public void forEach(final Consumer<? super V> value) {
         chain.forEach(value);
     }
 }

@@ -351,15 +351,16 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         final K[] keyTable = this.keyTable;
 
         int hashCode = key.hashCode();
-        int index = hashCode & mask;
-        if (!key.equals(keyTable[index])) {
+        int index;
 
-            ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
+        K kk = keyTable[index = hashCode & mask];
+        if (kk == null || !key.equals(kk)) {
 
-            index = hash2(hashCode);
-            if (!key.equals(keyTable[index])) {
-                index = hash3(hashCode);
-                if (!key.equals(keyTable[index])) return getStash((K)key);
+            kk = keyTable[index = hash2(hashCode)];
+            if (kk == null || !key.equals(kk)) {
+
+                kk = keyTable[index = hash3(hashCode)];
+                if (kk == null || !key.equals(kk)) return getStash((K)key);
             }
         }
         return valueTable[index];
@@ -368,13 +369,18 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
     private V getStash (final K key) {
         final K[] keyTable = this.keyTable;
         final int stashSize = this.stashSize;
-        for (int i = capacity, n = i + stashSize; i < n; i++)
-            if (key.equals(keyTable[i])) return valueTable[i];
+
+        final V[] vt = this.valueTable;
+        for (int i = capacity, n = i + stashSize; i < n; i++) {
+            final K kk = keyTable[i];
+            if (kk!=null && key.equals(kk)) return vt[i];
+        }
         return null;
     }
 
     /** Returns the value for the specified key, or the default value if the key is not in the map. */
-    public V get (final K key, final V defaultValue) {
+    //TODO optimize like above get(k)
+    public V get(final K key, final V defaultValue) {
         int hashCode = key.hashCode();
         int index = hashCode & mask;
         final K[] keyTable = this.keyTable;
@@ -392,6 +398,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         return valueTable[index];
     }
 
+    //TODO optimize like above getStash(k)
     private V getStash (final K key, final V defaultValue) {
         final K[] keyTable = this.keyTable;
         final int stashSize = this.stashSize;
@@ -412,35 +419,32 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
         int hashCode = key.hashCode();
         int index = hashCode & mask;
-        if (key.equals(keyTable[index])) {
-            keyTable[index] = null;
-            V oldValue = valueTable[index];
-            valueTable[index] = null;
-            size--;
-            return oldValue;
+        K kk = keyTable[index];
+        if (kk!=null && key.equals(kk)) {
+            return removeTableEntry(keyTable, valueTable[index], index);
         }
 
-        ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
-
         index = hash2(hashCode);
-        if (key.equals(keyTable[index])) {
-            keyTable[index] = null;
-            V oldValue = valueTable[index];
-            valueTable[index] = null;
-            size--;
-            return oldValue;
+        kk = keyTable[index];
+        if (kk!=null && key.equals(kk)) {
+            return removeTableEntry(keyTable, valueTable[index], index);
         }
 
         index = hash3(hashCode);
-        if (key.equals(keyTable[index])) {
-            keyTable[index] = null;
-            V oldValue = valueTable[index];
-            valueTable[index] = null;
-            size--;
-            return oldValue;
+        kk = keyTable[index];
+        if (kk!=null && key.equals(kk)) {
+            return removeTableEntry(keyTable, valueTable[index], index);
         }
 
         return removeStash((K)key);
+    }
+
+    private V removeTableEntry(final K[] keyTable, final V v, int index) {
+        keyTable[index] = null;
+        //V oldValue = v;
+        //v = null;
+        size--;
+        return v;
     }
 
     V removeStash (final K key) {

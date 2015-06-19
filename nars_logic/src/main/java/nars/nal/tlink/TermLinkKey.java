@@ -24,13 +24,14 @@ public interface TermLinkKey  {
         if (this == obj) return true;
         if (obj instanceof TermLinkKey) {
             TermLinkKey tl = (TermLinkKey) obj;
-            return getTarget().equals(tl.getTarget()) && Utf8.equals2(prefix(), tl.prefix());
+            return Utf8.equals2(prefix(), tl.prefix()) && getTarget().equals(tl.getTarget());
         }
         return false;
     }
 
+    /** the result of this should be cached */
     default int hash() {
-        return (int)(getTarget().hashCode() + (31 * Util.ELFHash(prefix())));
+        return (int)Util.ELFHash(prefix(), getTarget().hashCode());
     }
 
 //    /** key + target */
