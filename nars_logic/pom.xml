@@ -34,7 +34,7 @@
                         <!-- because they dont all have the pattern: ____Test.java yet -->
                         <include>**/*.java</include>
                     </includes>
-                    <skipTests>true</skipTests>
+                    <!--<skipTests>true</skipTests>-->
                     <useFile>false</useFile>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>

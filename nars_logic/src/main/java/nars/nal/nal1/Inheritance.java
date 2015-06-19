@@ -21,7 +21,7 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
-import nars.nal.nal3.SetExt1;
+import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.term.Compound;
@@ -52,7 +52,7 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
         return make(getSubject(), getPredicate());
     }
 
-    @Override public Inheritance clone(Term[] t) {
+    @Override public Inheritance clone(final Term[] t) {
         if (t.length!=2)
             return null;
             //throw new RuntimeException("Invalid terms for " + getClass().getSimpleName() + ": " + Arrays.toString(t));
@@ -79,14 +79,13 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
         if (invalidStatement(subject, predicate)) {
             return null;
         }
-        
-        boolean subjectSetExt = subject instanceof SetExt1;
-        boolean predicateOperator = Operation.validOperatorTerm(predicate);
 
-        if (subjectSetExt && predicateOperator) {
-            Term p = ((SetExt1) subject).the();
-            if (p instanceof Product)
-                return Operation.make(predicate, ((Product)p));
+        if (Operation.validOperatorTerm(predicate) && (subject.getMass() > 2)) {
+            //subject mass > 1 means it is a compound, > 2 ensures that it is a set wrapping a product wrapping > 0 arguments
+            Product operationArgument = Operation.getArgumentProduct((Compound)subject);
+            if (operationArgument!=null) {
+                return Operation.make(predicate, operationArgument);
+            }
         }
 
         return new Inheritance(subject, predicate);

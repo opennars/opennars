@@ -185,7 +185,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     /** lower 32 bits of structure hash */
-    default public int structuralSubterms() {
+    default public int subtermStructure() {
         return (int)(structuralHash() & 0xffffffff);
     }
 

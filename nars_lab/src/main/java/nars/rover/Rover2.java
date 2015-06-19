@@ -36,14 +36,14 @@ public class Rover2 extends PhysicsModel {
     float curiosity = 0.05f;
 
     /* how often to input mission, in frames */
-    int missionPeriod = 200;
+    int missionPeriod = 100;
 
     boolean wraparound = false;
 
     public RoverModel rover;
     final NAR nar;
     int mission = 0;
-    final int angleResolution = 18;
+    final int angleResolution = 12;
 
 
     public static void main(String[] args) {
@@ -69,9 +69,9 @@ public class Rover2 extends PhysicsModel {
             Global.THREADS = 1;
             nar = new NAR(new Default().simulationTime().
                     setActiveConcepts(1024).
-                    setNovelTaskBagSize(32));
+                    setNovelTaskBagSize(128));
             nar.param.inputsMaxPerCycle.set(100);
-            nar.param.conceptsFiredPerCycle.set(6);
+            nar.param.conceptsFiredPerCycle.set(64);
             nar.setCyclesPerFrame(8);
         }
 
@@ -330,12 +330,15 @@ public class Rover2 extends PhysicsModel {
 
         //nar.input("< ( ($n,#x) &| ($n,#y) ) =/> lessThan(#x,#y) >?");
 
+        /*
         for (int i = 0; i < 2; i++) {
             String x = "lessThan(" + XORShiftRandom.global.nextInt(10) + "," +
                     XORShiftRandom.global.nextInt(10) + ")?";
 
             nar.input(x);
         }
+        */
+
 //        nar.input("<0 <-> x>. %0.60;0.60%");
 //        nar.input("<x <-> xx>. %0.60;0.60%");
 //        nar.input("<xx <-> xxx>. %0.60;0.60%");

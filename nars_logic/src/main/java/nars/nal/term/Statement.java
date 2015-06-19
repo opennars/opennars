@@ -281,13 +281,14 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
             final Term t11 = s1.getSubject();
             final Term t22 = s2.getPredicate();
-            if (!t11.equals(t22)) return false;
+            if (!t11.equals(t22))
+                return false;
 
             final Term t12 = s1.getPredicate();
             final Term t21 = s2.getSubject();
-            if (t12.equals(t21)) {
+            if (t12.equals(t21))
                 return true;
-            }
+
 
             /*if (t11.equals(t22) && t12.equals(t21))
                 return true;

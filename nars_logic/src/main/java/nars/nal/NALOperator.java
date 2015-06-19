@@ -178,4 +178,11 @@ public enum NALOperator {
     }
 
 
+    public static int bitStructure(final NALOperator... o) {
+        int bits = 0;
+        for (NALOperator n : o) {
+            bits |= (1 << n.ordinal());
+        }
+        return bits;
+    }
 }

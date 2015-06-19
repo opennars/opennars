@@ -325,6 +325,7 @@ public class RuleTables {
             }
 
 
+            //TODO run each goalTerm through the same TaskSeed to save memory
             if (goalterm != null && (goalterm instanceof Compound) && !goalterm.hasVarIndep()) {
                 goalFromTask(task, nal, (Compound) goalterm);
             }
@@ -357,67 +358,63 @@ public class RuleTables {
 
         Statement asymSt = (Statement) asym.getTerm();
         Statement symSt = (Statement) sym.term;
-        Term t1, t2;
-        Term[] u = new Term[]{asymSt, symSt};
+        final Term[] u = new Term[]{asymSt, symSt};
+
         switch (figure) {
             case 11:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getSubject(), u, r)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
-                    t1 = asymSt.getPredicate();
-                    t2 = symSt.getPredicate();
 
-                    if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-
-                    } else {
-                        SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                    }
-
+                    asymmetricSymmetric(asym, sym, figure, nal, r,
+                            asymSt.getPredicate(), symSt.getPredicate(), u);
                 }
                 break;
             case 12:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getSubject(), symSt.getPredicate(), u, r)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
-                    t1 = asymSt.getPredicate();
-                    t2 = symSt.getSubject();
 
-                    if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
-                    }
+
+                    asymmetricSymmetric(asym, sym, figure, nal, r,
+                            asymSt.getPredicate(), symSt.getSubject(), u);
                 }
                 break;
             case 21:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getSubject(), u, r)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
-                    t1 = asymSt.getSubject();
-                    t2 = symSt.getPredicate();
 
-                    if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    }
+                    asymmetricSymmetric(asym, sym, figure, nal, r,
+                            asymSt.getSubject(), symSt.getPredicate(), u);
                 }
                 break;
             case 22:
                 if (Variables.unify(VAR_INDEPENDENT, asymSt.getPredicate(), symSt.getPredicate(), u, r)) {
                     asymSt = (Statement) u[0];
                     symSt = (Statement) u[1];
-                    t1 = asymSt.getSubject();
-                    t2 = symSt.getSubject();
 
-                    if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
-                        LocalRules.matchAsymSym(asym, sym, figure, nal);
-                    } else {
-                        SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
-                    }
+                    asymmetricSymmetric(asym, sym, figure, nal, r,
+                            asymSt.getSubject(), symSt.getSubject(), u);
                 }
                 break;
+        }
+    }
+
+    private static void asymmetricSymmetric(Task asym, Sentence sym, int figure, NAL nal, Random r, Term t1, Term t2, Term[] u) {
+        if (Variables.unify(VAR_QUERY, t1, t2, u, r)) {
+            LocalRules.matchAsymSym(asym, sym, figure, nal);
+        } else {
+            switch (figure) {
+                case 11:
+                case 12:
+                    SyllogisticRules.analogy(t2, t1, asym, sym, figure, nal);
+                    break;
+                case 21:
+                case 22:
+                    SyllogisticRules.analogy(t1, t2, asym, sym, figure, nal);
+                    break;
+            }
         }
     }
 

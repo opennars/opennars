@@ -30,6 +30,7 @@ import nars.nal.*;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -282,26 +283,29 @@ public class LocalRules {
     /**
      * {<S <-> P>, <P --> S>} |- <S --> P> Produce an Inheritance/Implication
      * from a Similarity/Equivalence and a reversed Inheritance/Implication
-     *
-     * @param asym The asymmetric premise
+     *  @param asym The asymmetric premise
      * @param sym  The symmetric premise
      * @param nal  Reference to the memory
      */
-    private static void inferToAsym(Task asym, Sentence sym, NAL nal) {
+    private static Task inferToAsym(Task asym, Sentence sym, NAL nal) {
+        TaskSeed s = nal.newDoublePremise(asym, sym);
+        if (s == null)
+            return null;
+
         Statement statement = (Statement) asym.getTerm();
         Term sub = statement.getPredicate();
         Term pre = statement.getSubject();
 
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
-        if (content == null) return;
+        if (content == null) return null;
 
         Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
 
-        nal.deriveDouble(
-                nal.newTask(content).punctuation(asym.getPunctuation())
+        return nal.deriveDouble(
+                s.term(content)
+                .punctuation(asym.getPunctuation())
                 .truth(truth)
-                .budget(BudgetFunctions.forward(truth, nal))
-                .parent(asym, sym),
+                .budget(BudgetFunctions.forward(truth, nal)),
                 false, false);
     }
 
@@ -327,7 +331,7 @@ public class LocalRules {
      */
     private static void convertRelation(final NAL nal) {
         Truth truth = nal.getCurrentBelief().truth;
-        if (((Compound) nal.getCurrentTask().getTerm()).isCommutative()) {
+        if ((nal.getCurrentTask().getTerm()).isCommutative()) {
             truth = TruthFunctions.abduction(truth, 1.0f);
         } else {
             truth = TruthFunctions.deduction(truth, 1.0f);

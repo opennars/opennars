@@ -100,7 +100,9 @@ public class VariableNormalization implements VariableTransform {
 //                vname = vname.toString() + v.getScope().name();
 
 
-        if (rename == null) rename = new VariableMap(2); //lazy allocate
+        VariableMap rename = this.rename;
+
+        if (rename == null) this.rename = rename = new VariableMap(2); //lazy allocate
 
         Variable vv = rename.get(vname);
 

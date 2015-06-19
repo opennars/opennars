@@ -166,10 +166,9 @@ public abstract class NAL implements Runnable {
         if (nal(7)) {
             //adjust occurence time
             Task parent = task.getParentTask();
-            final Sentence occurence = parent != null ? parent.sentence : null;
-            if (occurence != null && !occurence.isEternal()) {
+            if (parent != null && !parent.isEternal()) {
                 //if (occurence.getOccurrenceTime()!=task.getStamp().getOccurrenceTime())
-                task.occurr(occurence.getOccurrenceTime());
+                task.occurr(parent.getOccurrenceTime());
             }
         }
 
@@ -300,10 +299,7 @@ public abstract class NAL implements Runnable {
 
         final Task parentTask = task.getParentTask();
 
-        Task derived;
-
-
-        derived = derive(task, false, false, parentTask, allowOverlap);
+        Task derived = derive(task, false, false, parentTask, allowOverlap);
 
 
         //"Since in principle it is always valid to eternalize a tensed belief"
@@ -753,5 +749,17 @@ public abstract class NAL implements Runnable {
         //return Interval.intervalSequence(Math.abs(timeDiff), Global.TEMPORAL_INTERVAL_PRECISION, nal.memory);
         return CyclesInterval.make(cycles, memory.duration());
 
+    }
+
+    public TaskSeed newDoublePremise(Task asym, Sentence sym) {
+        return newDoublePremise(asym, sym, false);
+    }
+
+    public TaskSeed newDoublePremise(Task a, Sentence b, boolean allowOverlap) {
+        TaskSeed x = newTask().parent(a, b);
+        if (!allowOverlap)
+            if (x.isCyclic())
+                return null;
+        return x;
     }
 }

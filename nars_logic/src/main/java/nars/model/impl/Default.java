@@ -423,7 +423,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     
     public Bag<Term, Concept> newConceptBag() {
         //return new ChainBag(rng, getActiveConcepts());
-        return new LevelBag(64, getActiveConcepts());
+        return new LevelBag((int)Math.sqrt(getActiveConcepts()), getActiveConcepts());
     }
 
     @Override

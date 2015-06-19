@@ -72,7 +72,7 @@ public class Substitution {
         int subsApplicable = numSubs;
 
         if (superterm instanceof Compound) {
-            if (((Compound)superterm).impossibleSubTermOrEqual(minMassOfMatch)) {
+            if (((Compound)superterm).impossibleSubTermOrEqualityMass(minMassOfMatch)) {
                 //none of the subs could possibly fit inside or be equal to the superterm
                 return true;
             }

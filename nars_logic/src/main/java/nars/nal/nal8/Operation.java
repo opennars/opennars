@@ -36,6 +36,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.util.utf8.ByteBuf;
+import oracle.jrockit.jfr.openmbean.ProducerDescriptorType;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -358,4 +359,23 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
     }
 
 
+    final static int ProductInSetExtPattern =
+            NALOperator.bitStructure(
+                    NALOperator.SET_EXT,
+                    NALOperator.PRODUCT );
+
+    public static Product getArgumentProduct(Compound c) {
+        if (!c.impossibleSubStructure(ProductInSetExtPattern)) {
+            if (c instanceof SetExt) {
+                SetExt sc = ((SetExt)c);
+                if (sc.length() ==1) {
+                    final Term scp = sc.term(0);
+                    if (scp instanceof Product) {
+                        return (Product) scp;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

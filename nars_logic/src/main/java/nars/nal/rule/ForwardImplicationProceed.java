@@ -98,7 +98,7 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
 
                     //ok now check if it is really a minor (subsequence)
-                    boolean equal = Terms.equals(conj2.term, conj2.term);
+                    boolean equal = Terms.equals(conj.term, conj2.term);
                     if (!equal) continue;
 
                     //ok its a minor, we have to construct the residue implication now

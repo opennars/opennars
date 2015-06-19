@@ -119,6 +119,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
 
         for (final Term t : term) {
+            if (t == null)
+                throw new RuntimeException("null subterm");
             compl += t.getComplexity();
             deps += t.varDep();
             indeps += t.varIndep();
@@ -585,15 +587,15 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return (Compound) c.cloneTransforming(new TransformIndependentToDependentVariables());
     }
 
-    public <X extends Compound> X cloneTransforming(CompoundTransform t) {
-        return (X) cloneTransforming(t, 0);
-    }
-
-    protected <X extends Compound> X cloneTransforming(CompoundTransform t, int level) {
-        if (t.testSuperTerm(this))
-            return (X) clone(cloneTermsTransforming(t, level));
+    public <X extends Compound> X cloneTransforming(final CompoundTransform t) {
+        if (t.testSuperTerm(this)) {
+            Term[] cls = cloneTermsTransforming(t, 0);
+            if (cls == null) return null;
+            return (X) clone(cls);
+        }
         return (X) this;
     }
+
 
 
     /**
@@ -850,9 +852,14 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     @Override
     public boolean containsTerm(final Term t) {
-        if (impossibleSubTermByMass(t.getMass())) return false;
-
+        if (impossibleSubterm(t))
+            return false;
         return Terms.contains(term, t);
+    }
+
+    public boolean impossibleSubterm(final Term target) {
+        return ((impossibleSubStructure(target.subtermStructure())) ||
+        (impossibleSubTermMass(target.getMass())));
     }
 
 //    /** tests if another term is possibly a subterm of this, given
@@ -865,18 +872,18 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 //        return false;
 //    }
 
-    public boolean impossibleSubtermByType(Term c) {
-        final long t = structuralSubterms();
+    public boolean impossibleSubStructure(final Term c) {
+        return impossibleSubStructure(c.subtermStructure());
+    }
+    public boolean impossibleSubStructure(final int possibleSubtermStructure) {
+        final int existingStructure = subtermStructure();
 
-        if ((c.structuralSubterms() | t) != t) {
-            //if the OR produces a different result compared to subterms,
-            // it means there is some component of the other term which is not found
-            return true;
-        }
-        return false;
+        //if the OR produces a different result compared to subterms,
+        // it means there is some component of the other term which is not found
+        return ((possibleSubtermStructure | existingStructure) != existingStructure);
     }
 
-    public boolean impossibleSubTermByMass(final int otherTermsMass) {
+    public boolean impossibleSubTermMass(final int otherTermsMass) {
         return otherTermsMass >
                 getMass()
                         - 1 /* for the compound itself */
@@ -887,7 +894,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     /** if it's larger than this term it can not be equal to this.
      * if it's larger than some number less than that, it can't be a subterm.
      */
-    public boolean impossibleSubTermOrEqual(int otherTermsMass) {
+    public boolean impossibleSubTermOrEqualityMass(int otherTermsMass) {
         return otherTermsMass > getMass();
     }
 
@@ -958,8 +965,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * TODO parameter for max (int) level to scan down
      */
     public boolean containsTermRecursively(final Term target) {
-        if (impossibleSubTermByMass(target.getMass()))
-            return false;
+        if (impossibleSubterm(target)) return false;
 
         for (Term x : term) {
             if (x.equals(target)) return true;
@@ -1228,13 +1234,21 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     protected <I extends Compound, T extends Term> Term[] cloneTermsTransforming(final CompoundTransform<I, T> trans, final int level) {
         Term[] y = new Term[length()];
         int i = 0;
+        boolean mod = false;
         for (Term x : this.term) {
-            if (trans.test(x))
+            if (trans.test(x)) {
                 x = trans.apply((I) this, (T) x, level);
+            }
             else if (x instanceof Compound) {
                 //recurse
-                x = ((Compound) x).cloneTransforming(trans, level + 1);
+                Compound cx = (Compound)x;
+                if (trans.testSuperTerm(cx)) {
+                    Term[] cls = cx.cloneTermsTransforming(trans, level + 1);
+                    if (cls == null) return null;
+                    x = cx.clone(cls);
+                }
             }
+            if (x == null) return null;
             y[i++] = x;
         }
         return y;

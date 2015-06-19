@@ -5,6 +5,7 @@
 package nars.nal.process;
 
 import nars.Events;
+import nars.Param;
 import nars.bag.Bag;
 import nars.nal.NAL;
 import nars.nal.Premise;
@@ -33,10 +34,11 @@ public class ConceptProcess extends NAL implements Premise {
 
     //essentially a cache for a concept lookup
     private transient Concept currentTermLinkConcept;
-    final Concept.TermLinkNoveltyFilter termLinkNovel = new Concept.TermLinkNoveltyFilter();
+    final TermLinkNoveltyFilter termLinkNovel = new TermLinkNoveltyFilter();
 
 
     private int termLinksToFire;
+    private long now;
 
 
     public ConceptProcess(Concept concept, TaskLink taskLink) {
@@ -87,7 +89,7 @@ public class ConceptProcess extends NAL implements Premise {
         reasoner.fire(this);
     }
 
-    protected void processTerms(final long now) {
+    protected void processTerms() {
 
         //TODO early termination condition of this loop when (# of termlinks) - (# of non-novel) <= 0
         int numTermLinks = getCurrentConcept().getTermLinks().size();
@@ -101,7 +103,6 @@ public class ConceptProcess extends NAL implements Premise {
         currentConcept.updateTermLinks();
 
 
-        float n = now;
 
         /** use the time since last cycle as a sort of estimate for how to divide this cycle into subcycles;
          * this isnt necessary for default mode but realtime mode and others may have
@@ -112,10 +113,12 @@ public class ConceptProcess extends NAL implements Premise {
         float subCycle = (cyclesSincePrevious) / (termLinkSelectionAttempts);
 
         int termLinksSelected = 0;
+        float n = now;
+
         while (termLinkSelectionAttempts-- > 0) {
 
 
-           final TermLink bLink = nextTermLink(currentTaskLink, n, noveltyHorizon, termLinksToFire);
+           final TermLink bLink = nextTermLink(noveltyHorizon, termLinksToFire);
 
             if (bLink!=null) {
                 processTerm(bLink);
@@ -136,6 +139,112 @@ public class ConceptProcess extends NAL implements Premise {
         }*/
     }
 
+    final static float minNovelty = Param.NOVELTY_FLOOR;
+
+
+    public final class TermLinkNoveltyFilter  {
+
+        private float noveltyHorizon;
+        private int numTermLinks; //total # of tasklinks in the bag
+        private int termsLinkBeingFired;
+
+        private float noveltyDuration;
+
+        /** now is float because it is calculated as the fraction of current time + 1/(termlinks matched), thus including the subcycle */
+        public void set(float noveltyHorizon, int numTermLinksInBag, int termsLinkBeingFired) {
+            this.noveltyHorizon = noveltyHorizon;
+            this.numTermLinks = numTermLinksInBag;
+            this.termsLinkBeingFired = termsLinkBeingFired;
+
+            /** proportional to an amount of cycles it should take a fired termlink
+             * to be considered novel.
+             * there needs to be at least 2 termlinks to use the novelty filter.
+             * if there is one termlink, there is nothing to prioritize it against.
+             * */
+            this.noveltyDuration = (noveltyHorizon *
+                    Math.max(0, numTermLinksInBag-1));
+        }
+
+
+        public boolean test(TermLink termLink, Random rng) {
+            if (noveltyDuration == 0) {
+                //this will happen in the case of one termlink,
+                //in which case there is no other option so duration
+                //will be zero
+                return true;
+            }
+
+            final TaskLink taskLink = currentTaskLink;
+
+            if (!taskLink.valid(termLink))
+                return false;
+
+
+
+
+            TaskLink.Recording r = taskLink.get(termLink);
+            if (r == null) {
+                taskLink.put(termLink, now);
+                return true;
+            }
+            else {
+                boolean result;
+
+                //determine age (non-novelty) factor
+                float lft = taskLink.getLastFireTime();
+                if (lft == -1) {
+                    //this is its first fire
+                    result = true;
+                }
+                else {
+
+                    float timeSinceLastFire = lft - r.getTime();
+                    float factor = noveltyFactor(timeSinceLastFire);
+
+                    if (factor <= 0) {
+                        result = false;
+                    }
+                    else if (factor >= 1f) {
+                        result = true;
+                    } else {
+                        float f = rng.nextFloat();
+                        result = (f < factor);
+                    }
+                }
+
+
+                if (result) {
+                    taskLink.put(r, now);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
+            }
+
+        }
+
+        private float noveltyFactor(final float timeSinceLastFire) {
+
+
+            if (timeSinceLastFire <= 0)
+                return minNovelty;
+
+            float n = Math.max(0,
+                    Math.min(1f,
+                            timeSinceLastFire /
+                                    noveltyDuration) ) ;
+
+
+            n = (minNovelty) + (n * (1.0f - minNovelty));
+
+            return n;
+
+        }
+
+    }
+
 
     /**
      * Replace default to prevent repeated logic, by checking TaskLink
@@ -144,7 +253,7 @@ public class ConceptProcess extends NAL implements Premise {
      * @param time The current time
      * @return The selected TermLink
      */
-    TermLink nextTermLink(final TaskLink taskLink, final float time, float noveltyHorizon, int termLinksBeingFired) {
+    TermLink nextTermLink(float noveltyHorizon, int termLinksBeingFired) {
 
         final int links = currentConcept.getTermLinks().size();
         if (links == 0) return null;
@@ -156,7 +265,7 @@ public class ConceptProcess extends NAL implements Premise {
 
         Bag<Identifier, TermLink> tl = currentConcept.getTermLinks();
 
-        termLinkNovel.set(taskLink, time, noveltyHorizon, tl.size(), termLinksBeingFired);
+        termLinkNovel.set(noveltyHorizon, tl.size(), termLinksBeingFired);
 
 
         Random rng = memory.random;
@@ -203,7 +312,7 @@ public class ConceptProcess extends NAL implements Premise {
     @Override
     protected void process() {
 
-        final long now = memory.time();
+        final long now = this.now = memory.time();
 
         currentConcept.setUsed(now);
         currentTaskLink.setUsed(now);
@@ -213,7 +322,7 @@ public class ConceptProcess extends NAL implements Premise {
         processTask();
 
         if (currentTaskLink.type != TermLink.TRANSFORM) {
-            processTerms(now);
+            processTerms();
         }
 
         currentTaskLink.setFired(now);

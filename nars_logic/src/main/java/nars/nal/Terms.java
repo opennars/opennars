@@ -421,6 +421,13 @@ public class Terms {
         return false;
     }
 
+    public static boolean contains(final Term[] container, final Term v) {
+        for (final Term e : container)
+            if (v.equals(e))
+                return true;
+        return false;
+    }
+
     public static boolean equals(final Term[] a, final Term[] b) {
         if (a.length!=b.length) return false;
         for (int i = 0; i < a.length; i++) {

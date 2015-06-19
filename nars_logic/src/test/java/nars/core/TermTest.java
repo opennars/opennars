@@ -460,14 +460,14 @@ public class TermTest {
         Compound a = testStructure("<<a --> b> </> c>", "1000000000000000000000000100001");
         Compound b = testStructure("<<$a --> #b> </> ?c>", "1000000000000000000000000101110");
 
-        assertTrue( a.impossibleSubtermByType(b) );
-        assertFalse( a.impossibleSubtermByType(a3));
+        assertTrue( a.impossibleSubStructure(b) );
+        assertFalse( a.impossibleSubStructure(a3));
 
 
         assertEquals("no additional structure code in upper bits",
-                 a.structuralHash(), a.structuralSubterms());
+                 a.structuralHash(), a.subtermStructure());
         assertEquals("no additional structure code in upper bits",
-                b.structuralHash(), b.structuralSubterms());
+                b.structuralHash(), b.subtermStructure());
 
 
     }
@@ -478,9 +478,34 @@ public class TermTest {
         Compound a = testStructure("(/,x, y, _)", "100000000000000001000000000000001");
         Compound b = testStructure("(/,x, _, y)",                  "1000000000000001");
         assertNotEquals("additional structure code in upper bits",
-                a.structuralHash(), a.structuralSubterms());
+                a.structuralHash(), a.subtermStructure());
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
+
+    }
+
+    @Test public void testOperationArguments() {
+        NAR n = new NAR(new Default());
+
+        assertNotNull( Operation.getArgumentProduct(n.term("{(a)}")) );
+        assertNotNull( Operation.getArgumentProduct(n.term("{(a,b)}")) );
+        assertNull(Operation.getArgumentProduct(n.term("(a,b)")));
+        assertNull( Operation.getArgumentProduct(n.term("({a})")) );
+    }
+
+    @Test public void testSubTermStructure() {
+        NAR n = new NAR(new Default());
+
+        assertTrue(
+                ((Compound)n.term("<a --> b>")).impossibleSubterm(
+                        n.term("<a-->b>")
+                )
+        );
+        assertTrue(
+                ((Compound)n.term("<a --> b>")).impossibleSubStructure(
+                        n.term("<a-->#b>")
+                )
+        );
 
     }
 }

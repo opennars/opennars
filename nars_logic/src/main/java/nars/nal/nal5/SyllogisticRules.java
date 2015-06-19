@@ -29,6 +29,7 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.stamp.Stamp;
+import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
@@ -118,6 +119,13 @@ public final class SyllogisticRules {
         if (Statement.invalidStatement(term1, term2) || Statement.invalidPair(term1, term2)) {
             return;
         }
+
+
+        TaskSeed seed = nal.newDoublePremise(sentence1, sentence2);
+        if (seed == null) //all derivations in this method must be non-cyclic, so test them here to prevent them all
+            return;
+
+
         int order1 = sentence1.getTerm().getTemporalOrder();
         int order2 = sentence2.term.getTemporalOrder();
         int order = abdIndComOrder(order1, order2);
@@ -159,24 +167,31 @@ public final class SyllogisticRules {
         }
 
 
-            //final Stamper stamp = nal.newStamp(sentence1, sentence2);
+
+        seed.punctuation(p);
 
         {
             Statement s = Statement.make(taskContent, term1, term2, order);
-            if (s != null)
-                nal.deriveDouble(s, p, truth1, budget1, sentence1, sentence2, false, false);
+            if (s != null) {
+                nal.deriveDouble(seed.term(s).truth(truth1).budget(budget1));
+                //nal.deriveDouble(s, p, truth1, budget1, sentence1, sentence2, false, false);
+            }
         }
 
         {
             Statement s = Statement.make(taskContent, term2, term1, reverseOrder(order));
-            if (s != null)
-                nal.deriveDouble(s, p, truth2, budget2, sentence1, sentence2, false, false);
+            if (s != null) {
+                nal.deriveDouble(seed.term(s).truth(truth2).budget(budget2));
+                //nal.deriveDouble(s, p, truth2, budget2, sentence1, sentence2, false, false);
+            }
         }
 
         {
             Statement s = Terms.makeSymStatement(taskContent, term1, term2, order);
-            if (s != null)
-                nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
+            if (s != null) {
+                nal.deriveDouble(seed.term(s).truth(truth3).budget(budget3));
+                //nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
+            }
         }
 
 
@@ -202,8 +217,10 @@ public final class SyllogisticRules {
             Statement.make(NativeOperator.INHERITANCE, term2, term1),
                 truth2, budget2.clone(),false, false);*/
             Statement s = Similarity.make(term1, term2);
-            if (s!=null)
-                nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
+            if (s!=null) {
+                nal.deriveDouble(seed.term(s).truth(truth3).budget(budget2));
+                //nal.deriveDouble(s, p, truth3, budget3, sentence1, sentence2, false, false);
+            }
         }
 
 
@@ -245,6 +262,9 @@ public final class SyllogisticRules {
         Budget budget;
         Sentence sentence = nal.getCurrentTask().sentence;
         Compound taskTerm = sentence.term;
+
+        final Truth symTrut = sym.truth;
+
         if (sentence.isQuestion() || sentence.isQuest()) {
             if (taskTerm.isCommutative()) {
                 if(atru==null) { //a question for example
@@ -252,20 +272,20 @@ public final class SyllogisticRules {
                 }
                 budget = BudgetFunctions.backwardWeak(atru, nal);
             } else {
-                if(sym.truth==null) { //a question for example
+                if(symTrut ==null) { //a question for example
                     return false;
                 }
-                budget = BudgetFunctions.backward(sym.truth, nal);
+                budget = BudgetFunctions.backward(symTrut, nal);
             }
         } else {
             if (sentence.isGoal()) {
                 if (taskTerm.isCommutative()) {
-                    truth = TruthFunctions.desireWeak(atru, sym.truth);
+                    truth = TruthFunctions.desireWeak(atru, symTrut);
                 } else {
-                    truth = TruthFunctions.desireStrong(atru, sym.truth);
+                    truth = TruthFunctions.desireStrong(atru, symTrut);
                 }
             } else {
-                truth = TruthFunctions.analogy(atru, sym.truth);
+                truth = TruthFunctions.analogy(atru, symTrut);
             }
 
             budget = BudgetFunctions.forward(truth, nal);

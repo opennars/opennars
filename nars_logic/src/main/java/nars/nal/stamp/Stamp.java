@@ -23,6 +23,7 @@ package nars.nal.stamp;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
+import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
@@ -555,12 +556,11 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 //
 //    }
 
-    public static boolean evidentialSetOverlaps(final Task a, final Task b) {
-        if ( a.isInput() || b.isInput() ) return false;
-        return evidentialSetOverlaps(a.sentence, b.sentence);
-    }
+    public static boolean evidentialSetOverlaps(final Sentence a, final Sentence b) {
+        if (a == b) return true;
 
-    public static boolean evidentialSetOverlaps(final Stamp a, final Stamp b) {
+        if ( a.isInput() || b.isInput() ) return false;
+
         /** TODO since these are sorted, we can compare these faster by
             iterating both arrays simultaneously skipping ahead when one
             has a higher value than the other until the shorter reaches the end
@@ -568,7 +568,6 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
             or at least compare a triangular half of the matrix with these
             2 loops
          */
-        if (a == b) return true;
 
         for (long l : a.getEvidentialSet()) {
             for (long h : b.getEvidentialSet()) {
