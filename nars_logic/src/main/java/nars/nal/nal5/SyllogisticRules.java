@@ -433,6 +433,10 @@ public final class SyllogisticRules {
         if (content == null || (content instanceof Statement) && ((Statement) content).invalid())
             return;
 
+        if(Variables.indepVarUsedInvalid(content)) {
+            return;
+        }
+
         final Sentence taskSentence = nal.getCurrentTask().sentence;
         final Sentence beliefSentence = nal.getCurrentBelief();
         
@@ -511,15 +515,15 @@ public final class SyllogisticRules {
             }
             budget = BudgetFunctions.forward(truth, nal);
         }
-        if(!Variables.indepVarUsedInvalid(content)) {
+
             nal.deriveDouble(nal.newTask(content)
-                    .punctuation(mainSentence.getPunctuation())
+                    .punctuation(taskSentence.punctuation)
                     .truth(truth)
                     .budget(budget)
                     .parent(mainSentence, subSentence)
                     .occurr(occ),
                     false, strong);
-        }
+
     }
 
     /**

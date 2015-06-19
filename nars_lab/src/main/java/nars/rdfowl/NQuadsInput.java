@@ -40,7 +40,7 @@ abstract public class NQuadsInput {
     private final NAR nar;
 
     final float beliefConfidence;
-    private boolean includeDataType = true;
+    private boolean includeDataType = false;
 
     public NQuadsInput(NAR n, String nqLoc, float beliefConfidence) throws Exception {
         this.nar = n;

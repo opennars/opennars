@@ -100,7 +100,7 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void conversion() throws InvalidInputException {
-        long time = nar.nal() == 1 ? 25 : 305;
+        long time = nar.nal() == 1 ? 35 : 305;
         nar.believe("<bird --> swimmer>");
         nar.ask("<swimmer --> bird>")
                 .en("Is swimmer a type of bird?");
@@ -132,6 +132,7 @@ public class NAL1Test extends JavaNALTest {
         long time = build instanceof Solid ? 15 : 350;
 
         TextOutput.out(nar);
+
         nar.believe("<bird --> swimmer>", 1.0f, 0.8f);
         nar.ask("<?1 --> swimmer>");
         nar.mustOutput(time, "<?1 --> bird>?").en("What is a type of bird?");

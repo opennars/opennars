@@ -158,7 +158,7 @@ public class LocalRules {
         if (!TemporalRules.matchingOrder(problem, belief)) {
             //System.out.println("Unsolved: Temporal order not matching");
             //memory.emit(Unsolved.class, task, belief, "Non-matching temporal Order");
-            return belief;
+            return null;
         }
 
 
@@ -173,7 +173,7 @@ public class LocalRules {
                 }
                 //System.out.println("Unsolved: Solution of lesser quality");
                 //memory.emit(Unsolved.class, task, belief, "Lower quality");
-                return belief;
+                return null;
             }
         }
 
@@ -182,7 +182,7 @@ public class LocalRules {
             Term u[] = new Term[]{content, problem.term};
 
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
-            if (!unified) return belief;
+            if (!unified) return null;
 
             content = u[0];
 
