@@ -36,7 +36,7 @@ public class CacheBagTest {
 
         assertEquals(3, all.size());
         assertEquals(Concept.State.Forgotten, n.concept("<a --> b>").getState());
-        assertEquals("[a, <a --> b>, b]", Iterators.toString(all.iterator()) );
+        assertEquals("[a, b, <a --> b>]", Iterators.toString(all.iterator()) );
 
         assertEquals(0, active.size());
 

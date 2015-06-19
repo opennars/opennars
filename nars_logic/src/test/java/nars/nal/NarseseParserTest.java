@@ -643,7 +643,7 @@ public class NarseseParserTest {
             String budgetString = getBudgetString(buffer);
 
 
-            Sentence sentence = parseSentenceOld(buffer, newStamp, Stamp.UNPERCEIVED);
+            Sentence sentence = parseSentenceOld(buffer, newStamp, Stamp.TIMELESS);
             if (sentence == null) return null;
 
             Budget budget = parseBudget(budgetString, sentence.punctuation, sentence.truth);

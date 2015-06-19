@@ -34,7 +34,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
 
     transient private final NAR nar;
 
-    long successAt = Stamp.UNPERCEIVED;
+    long successAt = Stamp.TIMELESS;
 
     public OutputCondition(NAR nar, Class... events) {
         super(nar, events);
@@ -78,7 +78,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
     protected void setTrue() {
         succeeded = true;
 
-        if (successAt == Stamp.UNPERCEIVED) {
+        if (successAt == Stamp.TIMELESS) {
             successAt = nar.time();
             nar.emit(OutputCondition.class, this);
         }
@@ -133,7 +133,7 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
                     Task t = task.apply(match);
                     if (t != null)
                         conditions.add(new TaskCondition(n, t, Events.OUT.class,
-                                -Stamp.UNPERCEIVED, /* to cancel it */
+                                -Stamp.TIMELESS, /* to cancel it */
                                 false, Events.OUT.class, Events.TaskRemove.class, Events.Answer.class));
                     else
                         conditions.add(new OutputContainsCondition(n, match, similarResultsToSave));
@@ -211,15 +211,15 @@ public abstract class OutputCondition extends NARReaction implements Serializabl
      *  if any conditions were not successful, the cost is infinity
      * */
     public static double cost(Iterable<OutputCondition> conditions) {
-        long lastSuccess = Stamp.UNPERCEIVED;
+        long lastSuccess = Stamp.TIMELESS;
         for (OutputCondition e : conditions) {
-            if (e.getTrueTime() != Stamp.UNPERCEIVED) {
+            if (e.getTrueTime() != Stamp.TIMELESS) {
                 if (lastSuccess < e.getTrueTime()) {
                     lastSuccess = e.getTrueTime();
                 }
             }
         }
-        if (lastSuccess != Stamp.UNPERCEIVED) {
+        if (lastSuccess != Stamp.TIMELESS) {
             //score = 1.0 + 1.0 / (1+lastSuccess);
             return lastSuccess;
         }

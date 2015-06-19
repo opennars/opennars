@@ -574,7 +574,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         // set it to the memory's current time here,
         // and adjust occurenceTime if it's not eternal
 
-        if (getCreationTime() == Stamp.UNPERCEIVED) {
+        if (getCreationTime() == Stamp.TIMELESS) {
             final long now = memory.time();
             long oc = getOccurrenceTime();
             if (oc != Stamp.ETERNAL)

@@ -28,9 +28,9 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
     transient public final Memory memory;
 
     protected int duration;
-    protected long creationTime = Stamp.UNPERCEIVED;
 
-    protected long occurrenceTime;
+    protected long creationTime = Stamp.TIMELESS;
+    protected long occurrenceTime = Stamp.TIMELESS;
 
     private long[] evidentialSet;
 
@@ -466,7 +466,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
      * creation time of the stamp
      */
     public long getCreationTime() {
-        if (creationTime == Stamp.UNPERCEIVED)
+        if (creationTime == Stamp.TIMELESS)
             return memory.time();
         return  creationTime;
     }
@@ -538,9 +538,11 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         return this;
     }
 
+    public boolean isTimeless() {
+        return getOccurrenceTime() == Stamp.TIMELESS;
+    }
     public boolean isEternal() {
-        long o = getOccurrenceTime();
-        return (o == Stamp.UNPERCEIVED) || (o == Stamp.ETERNAL);
+        return getOccurrenceTime() == Stamp.ETERNAL;
     }
 
 

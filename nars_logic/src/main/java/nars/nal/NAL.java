@@ -165,9 +165,15 @@ public abstract class NAL implements Runnable {
 
         if (nal(7)) {
             //adjust occurence time
-            Task parent = task.getParentTask();
-            if (task.isEternal() && parent != null && !parent.isEternal()) {
-                task.occurr(parent.getOccurrenceTime());
+            final Task parent = task.getParentTask();
+            if (task.isTimeless()) {
+                final long o;
+                if (parent != null && !parent.isEternal())
+                    o = parent.getOccurrenceTime(); //inherit parent's occurence time
+                else
+                    o = Stamp.ETERNAL; //default ETERNAL
+
+                task.occurr(o);
             }
         }
 

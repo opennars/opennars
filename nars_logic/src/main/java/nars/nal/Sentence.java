@@ -20,15 +20,12 @@
  */
 package nars.nal;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.google.common.hash.PrimitiveSink;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.io.Texts;
-import nars.nal.TruthFunctions.EternalizedTruthValue;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
@@ -86,7 +83,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     private long[] evidentialSet = null;
 
 
-    private long creationTime = Stamp.UNPERCEIVED;
+    private long creationTime = Stamp.TIMELESS;
 
     private long occurrenceTime = Stamp.ETERNAL;
 

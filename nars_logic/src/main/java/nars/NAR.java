@@ -10,7 +10,6 @@ import nars.io.in.Input;
 import nars.io.in.ReaderInput;
 import nars.io.in.TextInput;
 import nars.nal.DefaultTruth;
-import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.nal.Truth;
 import nars.nal.concept.Concept;
@@ -325,7 +324,7 @@ public class NAR extends Container implements Runnable {
     }
 
     public NAR input(final Task t) {
-        if (t.getCreationTime() == Stamp.UNPERCEIVED)
+        if (t.getCreationTime() == Stamp.TIMELESS)
             t.setCreationTime(time());
         if (t.getEvidentialSet() == null)
             t.setEvidentialSet(memory.newStampSerial());

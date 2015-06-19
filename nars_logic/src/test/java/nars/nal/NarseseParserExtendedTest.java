@@ -22,10 +22,10 @@ public class NarseseParserExtendedTest  {
         assertEquals("named", t.getSubject().toString());
 
 
-        Compound u = NarseseParserTest.term("<a.b <-> c.d>");
-        assertEquals("<<b --> a> <-> <d --> c>>", u.toString());
+        Compound u = NarseseParserTest.term("<a.b --> c.d>");
+        assertEquals("<<b --> a> --> <d --> c>>", u.toString());
 
-        Task ut = NarseseParserTest.task("<a.b <-> c.d>.");
+        Task ut = NarseseParserTest.task("<a.b --> c.d>.");
         assertNotNull(ut);
         assertEquals(ut.getTerm(), u);
 

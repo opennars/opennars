@@ -2,7 +2,6 @@ package nars.narsese;
 
 import com.github.fge.grappa.Grappa;
 import com.github.fge.grappa.annotations.Cached;
-import com.github.fge.grappa.matchers.CharRangeMatcher;
 import com.github.fge.grappa.matchers.MatcherType;
 import com.github.fge.grappa.matchers.base.AbstractMatcher;
 import com.github.fge.grappa.parsers.BaseParser;
@@ -11,10 +10,7 @@ import com.github.fge.grappa.run.ParseRunner;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
 import com.github.fge.grappa.stack.ValueStack;
-import com.github.fge.grappa.support.Characters;
-import com.github.fge.grappa.support.Chars;
 import com.github.fge.grappa.support.Var;
-import com.google.common.base.Preconditions;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
@@ -185,7 +181,7 @@ public class NarseseParser extends BaseParser<Object> {
 
 
         Task ttt = new Task(ccontent, p, t, B, null, null, null);
-        ttt.setCreationTime(Stamp.UNPERCEIVED);
+        ttt.setCreationTime(Stamp.TIMELESS);
         ttt.setOccurrenceTime(tense.get(), memory.duration());
         ttt.setEvidentialSet(new long[] { memory.newStampSerial() });
 

@@ -24,7 +24,6 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.nal.Sentence;
-import nars.nal.Task;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 
@@ -45,9 +44,11 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
      */
     public static final long ETERNAL = Integer.MIN_VALUE;
     /**
-     * flag for an un-perceived stamp, which signals to be set to the current time if it is eventually perceived
+     * flag for an unknown time, or as-yet-un-perceived time,
+     * signalling a missing value to set to some default
+     * if eventually perceived or derived
      */
-    public static final long UNPERCEIVED = Integer.MIN_VALUE + 1;
+    public static final long TIMELESS = Integer.MIN_VALUE + 1;
 
 
 
@@ -191,7 +192,7 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 
     public static long getOccurrenceTime(long creationTime, final Tense tense, final int duration) {
 
-        if (creationTime == Stamp.UNPERCEIVED) {
+        if (creationTime == Stamp.TIMELESS) {
             //in this case, occurenceTime must be considered relative to whatever creationTime will be set when perceived
             //so we base it at zero to make this possible
             creationTime = 0;
