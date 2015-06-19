@@ -385,6 +385,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
     }
 
+    public boolean isInput() {
+        return getParentTask() == null;
+    }
+
     /**
      * attempt to build the task. returns non-null if successful
      */

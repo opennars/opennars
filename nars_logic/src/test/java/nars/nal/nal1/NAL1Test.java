@@ -26,7 +26,8 @@ public class NAL1Test extends JavaNALTest {
                 {new Curve().setInternalExperience(null)},
                 {new DefaultMicro() },
                 {new Classic()},
-                {new Solid(1, 64, 0, 4, 0, 3)}
+                {new Solid(1, 64, 1, 4, 1, 3).setInternalExperience(null)},
+                {new Solid(1, 64, 1, 4, 1, 3)}
                 //{new Neuromorphic(4).setMaxInputsPerCycle(1).level(4)},
         });
     }
@@ -100,7 +101,9 @@ public class NAL1Test extends JavaNALTest {
 
     @Test
     public void conversion() throws InvalidInputException {
-        long time = nar.nal() == 1 ? 35 : 305;
+        //TextOutput.out(nar);
+
+        long time = nar.nal() == 1 ? 15 : 305;
         nar.believe("<bird --> swimmer>");
         nar.ask("<swimmer --> bird>")
                 .en("Is swimmer a type of bird?");
@@ -131,7 +134,6 @@ public class NAL1Test extends JavaNALTest {
     public void backwardInference() throws InvalidInputException {
         long time = build instanceof Solid ? 15 : 350;
 
-        TextOutput.out(nar);
 
         nar.believe("<bird --> swimmer>", 1.0f, 0.8f);
         nar.ask("<?1 --> swimmer>");

@@ -127,7 +127,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
             contentHash = (contentHash + t.hashCode()) * PRIME2;
         }
 
-        this.structureHash = subt | (asc << 32);
+        this.structureHash = subt | (((long)asc) << 32);
         this.contentHash = (int)contentHash;
 
         this.hasVarDeps = (byte) deps;

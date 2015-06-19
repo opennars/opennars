@@ -219,6 +219,9 @@ public abstract class NAL implements Runnable {
             return null;
         }
 
+        if (task.isInput()) {
+            throw new RuntimeException("derived task must have one parentTask: " + task);
+        }
 
         Task taskCreated;
         if ((taskCreated = task.input()) != null) {
@@ -378,8 +381,8 @@ public abstract class NAL implements Runnable {
             pbelief = null;
         } else {
             // to answer a question with negation in NAL-5 --- move to activated task?
-            ptask = null;
-            pbelief = getCurrentBelief();
+            pbelief = null;
+            ptask = getCurrentBeliefTask();
         }
 
 

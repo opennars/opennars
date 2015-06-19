@@ -284,7 +284,7 @@ public class TermTest {
 
 
         } catch (Throwable ex) {
-            assertTrue(false);
+            assertTrue(ex.toString(), false);
         }
     }
 
@@ -458,12 +458,29 @@ public class TermTest {
         Term a3 = n.term("c");
 
         Compound a = testStructure("<<a --> b> </> c>", "1000000000000000000000000100001");
-        Compound b = testStructure("<<$a --> #b> </> ?c>", "1000000000000000000000000100001");
+        Compound b = testStructure("<<$a --> #b> </> ?c>", "1000000000000000000000000101110");
 
         assertTrue( a.impossibleSubtermByType(b) );
         assertFalse( a.impossibleSubtermByType(a3));
 
-        testStructure("(/,x, y, _", "1022002002100101");
+
+        assertEquals("no additional structure code in upper bits",
+                 a.structuralHash(), a.structuralSubterms());
+        assertEquals("no additional structure code in upper bits",
+                b.structuralHash(), b.structuralSubterms());
+
+
+    }
+
+    @Test
+    public void testImageStructuralVector() {
+
+        Compound a = testStructure("(/,x, y, _)", "100000000000000001000000000000001");
+        Compound b = testStructure("(/,x, _, y)",                  "1000000000000001");
+        assertNotEquals("additional structure code in upper bits",
+                a.structuralHash(), a.structuralSubterms());
+        assertNotEquals("structure code influenced contentHash",
+                b.hashCode(), a.hashCode());
 
     }
 }
