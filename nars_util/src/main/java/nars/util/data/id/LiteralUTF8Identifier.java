@@ -1,7 +1,13 @@
 package nars.util.data.id;
 
+import com.google.common.hash.Hashing;
+import com.google.common.primitives.Bytes;
+import nars.util.data.Hash2;
+import nars.util.data.Util;
 import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
+import org.apache.commons.digester.Digester;
+import org.infinispan.commons.hash.Hash;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -63,9 +69,8 @@ public class LiteralUTF8Identifier extends UTF8Identifier {
         this(Utf8.toUtf8(s));
     }
 
-    /** should set the hashCode, but this may need to call makeName */
     public int makeHash() {
-        return Arrays.hashCode(data) * 31;
+        return (int)Util.ELFHash(data);
     }
 
     public boolean hasName() { return data !=null;  }

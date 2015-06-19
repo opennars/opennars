@@ -21,6 +21,8 @@
 package nars.nal.term;
 
 import com.google.common.collect.Iterators;
+import com.google.common.primitives.UnsignedInts;
+import com.google.common.primitives.UnsignedLongs;
 import nars.Global;
 import nars.Memory;
 import nars.nal.NALOperator;
@@ -61,7 +63,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
 
     /** bitvector of subterm types, indexed by NALOperator's .ordinal() and OR'd into by each subterm */
-    long subterms;
+    long structureHash;
+    int contentHash;
 
 
     /**
@@ -101,21 +104,31 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     protected void init(Term[] term) {
 
 
-        this.hasVarDeps = this.hasVarIndeps = this.hasVarQueries = 9;
 
         int deps = 0, indeps = 0, queries = 0;
         int compl = 1;
-        long subt = (1 << operator().ordinal());
+
+        final int opOrdinal = operator().ordinal();
+        int subt = (1 << opOrdinal);
+
+        final int PRIME1 = 31;
+        final int PRIME2 = 92821;
+
+        int asc = additionalStructureCode();
+        long contentHash = opOrdinal + PRIME1 * asc;
+
 
         for (final Term t : term) {
             compl += t.getComplexity();
             deps += t.varDep();
             indeps += t.varIndep();
             queries += t.varQuery();
-            subt |= t.subterms();
+            subt |= t.structuralHash();
+            contentHash = (contentHash + t.hashCode()) * PRIME2;
         }
 
-        this.subterms = subt;
+        this.structureHash = subt | (asc << 32);
+        this.contentHash = (int)contentHash;
 
         this.hasVarDeps = (byte) deps;
         this.hasVarIndeps = (byte) indeps;
@@ -130,15 +143,23 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         invalidate();
     }
 
+    /** allows implementations to include a 32 bit identifier within the struturehash
+     * which will be used to exclude inequalities. by default, it returns 0 which
+     * will not change the default structureHash structure
+     * @return
+     */
+    public int additionalStructureCode() { return 0; }
+
     @Override
     public boolean requiresNormalizing() {
         return true;
     }
 
     @Override
-    public long subterms() {
-        return subterms;
+    public long structuralHash() {
+        return structureHash;
     }
+
 
     @Override
     public byte[] init() {
@@ -269,35 +290,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
                 .toBytes();
     }
 
-    /**
-     * default method to make the oldName of a compound term from given fields
-     *
-     * @param op  the term operate
-     * @param arg the list of term
-     * @return the oldName of the term
-     */
-    protected static CharSequence makeCompoundName(final NALOperator op, final Term... arg) {
-        throw new RuntimeException("Not necessary, utf8 keys should be used instead");
-//
-//        int size = 1 + 1;
-//
-//        String opString = op.toString();
-//        size += opString.length();
-//        /*for (final Term t : arg)
-//            size += 1 + t.name().length();*/
-//
-//
-//        final StringBuilder n = new StringBuilder(size)
-//                .append(COMPOUND_TERM_OPENER.ch).append(opString);
-//
-//        for (final Term t : arg) {
-//            n.append(Symbols.ARGUMENT_SEPARATOR).append(t.toString());
-//        }
-//
-//        n.append(COMPOUND_TERM_CLOSER.ch);
-//
-//        return n.toString();
-    }
+
+
 
     /**
      * Shallow clone an array list of terms
@@ -378,20 +372,20 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     @Override
     public abstract Term clone();
 
-    @Override
-    public int compareTo(final Object that) {
-        if (that == this) return 0;
-
-        // variables have earlier sorting order than non-variables
-        if (!(that instanceof Compound)) return 1;
-
-        final Compound c = (Compound) that;
-
-        int opdiff = compareClass(this, c);
-        if (opdiff != 0) return opdiff;
-
-        return compare(c);
-    }
+//    @Override
+//    public int compareTo(final Object that) {
+//        if (that == this) return 0;
+//
+//        // variables have earlier sorting order than non-variables
+//        if (!(that instanceof Compound)) return 1;
+//
+//        final Compound c = (Compound) that;
+//
+//        int opdiff = compareClass(this, c);
+//        if (opdiff != 0) return opdiff;
+//
+//        return compare(c);
+//    }
 
     public static int compareClass(final Object b, final Object c) {
         Class c1 = b.getClass();
@@ -418,7 +412,58 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     abstract public int compareSubterms(final Compound otherCompoundOfEqualType);
 
     @Override
-    abstract public boolean equals(final Object that);
+    final public int hashCode() {
+        return contentHash;
+    }
+
+    @Override
+    final public boolean equals(final Object that) {
+        if (this == that) return true;
+        if (!(that instanceof Compound)) return false;
+        Compound c = (Compound)that;
+        if (contentHash != c.contentHash ||
+                structureHash != c.structureHash ||
+                    length()!=c.length())
+                     return false;
+
+        final int s = this.length();
+        for (int i = 0; i < s; i++) {
+            Term a = term(i);
+            Term b = c.term(i);
+            if (!a.equals(b)) return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public int compareTo(final Object o) {
+        if (this == o) return 0;
+        if (!(o instanceof Compound)) return 1;
+
+
+        int diff;
+        if ((diff = UnsignedInts.compare(o.hashCode(), hashCode()))!=0)
+            return diff;
+
+        final Compound c = (Compound)o;
+        if ((diff = UnsignedLongs.compare(c.structureHash, structureHash))!=0)
+            return diff;
+
+        final int s = this.length();
+        if ((diff = c.length() - s)!=0)
+            return diff;
+
+        for (int i = 0; i < s; i++) {
+            Term a = term(i);
+            Term b = c.term(i);
+            diff = a.compareTo(b);
+            if (diff!=0) return diff;
+        }
+
+        return 0;
+    }
 
     public void recurseTerms(final TermVisitor v, Term parent) {
         v.visit(this, parent);
@@ -716,6 +761,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         if ((!removed) && (requireModification))
             return null;
 
+
         return l.toArray(new Term[l.size()]);
     }
 
@@ -804,24 +850,25 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      */
     @Override
     public boolean containsTerm(final Term t) {
-        if (impossibleSubTermByMass(t)) return false;
+        if (impossibleSubTermByMass(t.getMass())) return false;
 
         return Terms.contains(term, t);
     }
 
-    /** tests if another term is possibly a subterm of this, given
-     *  its mass and this term's mass.
-     *  (if the target is larger than the maximum combined subterms size,
-     *  it would not be contained by this) */
-    public boolean impossibleSubTermByMass(final Term possibleComponent) {
-        if (impossibleSubTermByMass(possibleComponent.getMass())) return true;
-        if (impossibleSubtermByType(possibleComponent.subterms())) return true;
-        return false;
-    }
+//    /** tests if another term is possibly a subterm of this, given
+//     *  its mass and this term's mass.
+//     *  (if the target is larger than the maximum combined subterms size,
+//     *  it would not be contained by this) */
+//    public boolean impossibleSubTermByMass(final Compound possibleComponent) {
+//        if (impossibleSubtermByType(possibleComponent)) return true;
+//        if (impossibleSubTermByMass(possibleComponent.getMass())) return true;
+//        return false;
+//    }
 
-    public boolean impossibleSubtermByType(long subterms) {
-        long t = subterms();
-        if ((t | subterms) != t) {
+    public boolean impossibleSubtermByType(Term c) {
+        final long t = structuralSubterms();
+
+        if ((c.structuralSubterms() | t) != t) {
             //if the OR produces a different result compared to subterms,
             // it means there is some component of the other term which is not found
             return true;
@@ -911,7 +958,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * TODO parameter for max (int) level to scan down
      */
     public boolean containsTermRecursively(final Term target) {
-        if (impossibleSubTermByMass(target))
+        if (impossibleSubTermByMass(target.getMass()))
             return false;
 
         for (Term x : term) {
@@ -1305,9 +1352,6 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         throw new RuntimeException(this + " not modifiable");
     }
 
-    public boolean impossibleSubtermByType(Term b) {
-        return impossibleSubtermByType(b.subterms());
-    }
 
     public static class InvalidTermConstruction extends RuntimeException {
         public InvalidTermConstruction(String reason) {

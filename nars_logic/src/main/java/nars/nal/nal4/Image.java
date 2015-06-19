@@ -34,6 +34,13 @@ abstract public class Image extends DefaultCompound {
         init(components);
     }
 
+    /** apply the relation index as the additional structure code to differnetiate
+     * images with different relations
+     */
+    public int additionalStructureCode() { return relationIndex; }
+
+
+
 
     //TODO replace with a special Term type
     public static boolean isPlaceHolder(final Term t) {

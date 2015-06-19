@@ -179,9 +179,16 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
 
 
     /** returns a bitvector representing the presence of ths term and its subterms */
-    default long subterms() {
+    default long structuralHash() {
         return (1 << operator().ordinal());
     }
+
+
+    /** lower 32 bits of structure hash */
+    default public int structuralSubterms() {
+        return (int)(structuralHash() & 0xffffffff);
+    }
+
 
     default public void append(Writer w, boolean pretty) throws IOException {
         try {

@@ -7,6 +7,7 @@ package nars.nal.nal6;
 import nars.Events.Answer;
 import nars.NARSeed;
 import nars.event.NARReaction;
+import nars.io.out.TextOutput;
 import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.nal.JavaNALTest;
@@ -91,10 +92,9 @@ public class VariableTest extends JavaNALTest {
 //            }
 //        };
 
-//        TextOutput.out(nar);
+        TextOutput.out(nar);
 
-        nar.input(
-                "<a --> 3>. :|:" + '\n' +
+        nar.input("<a --> 3>. :|:" + '\n' +
                         "<a --> 4>. :/:" + '\n' +
                         "<(&/,<a --> 3>,?what) =/> <a --> ?wat>>?");
 

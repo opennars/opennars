@@ -15,33 +15,25 @@ abstract public class Compound1<T extends Term> extends Compound {
         return (T)term[0];
     }
 
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        if (that == null) return false;
-
-        if (getClass()!=that.getClass()) return false;
-
-        nars.nal.term.Compound1 c = (nars.nal.term.Compound1)that;
-        if (operator()!=c.operator()) return false;
-        if (the().equals(c.the())) {
-            share(c);
-            return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that) return true;
+//        if (that == null) return false;
+//
+//        if (getClass()!=that.getClass()) return false;
+//
+//        nars.nal.term.Compound1 c = (nars.nal.term.Compound1)that;
+//        if (operator()!=c.operator()) return false;
+//        if (the().equals(c.the())) {
+//            share(c);
+//            return true;
+//        }
+//        return false;
+//    }
 
 
     @Override final public int length() {
         return 1;
-    }
-
-    @Override
-    protected void init(Term[] term) {
-        super.init(term);
-
-//        if (!hasVar()) //only do this here if not hasVar, because if it does have var it will calculate it in invalidate()
-//            updateHash();
     }
 
 

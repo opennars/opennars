@@ -12,34 +12,34 @@ abstract public class DefaultCompound extends Compound {
     }
 
 
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-
-        if (that == null) return false;
-
-        //if the other class is not a DefaultCompound it is considered non-equal, so the use of implementations must be consistent
-        //if (!(that instanceof nars.nal.term.DefaultCompound)) return false;
-
-        if (getClass() != that.getClass()) return false;
-
-
-        final nars.nal.term.DefaultCompound t = (nars.nal.term.DefaultCompound)that;
-
-
-        final int m = getMass();
-        if (m != t.getMass()) return false;
-
-        if ((m > 12) && (length() < 3)) {
-            if (subterms()!=t.subterms()) return false;
-            if (getTemporalOrder()!=t.getTemporalOrder()) return false;
-            return equalSubterms(term, t.term);
-        }
-        else {
-            return equalTo(t);
-        }
-
-    }
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that) return true;
+//
+//        if (that == null) return false;
+//
+//        //if the other class is not a DefaultCompound it is considered non-equal, so the use of implementations must be consistent
+//        //if (!(that instanceof nars.nal.term.DefaultCompound)) return false;
+//
+//        if (getClass() != that.getClass()) return false;
+//
+//
+//        final nars.nal.term.DefaultCompound t = (nars.nal.term.DefaultCompound)that;
+//
+//
+//        final int m = getMass();
+//        if (m != t.getMass()) return false;
+//
+//        if ((m > 12) && (length() < 3)) {
+//            if (structuralHash()!=t.structuralHash()) return false;
+//            if (getTemporalOrder()!=t.getTemporalOrder()) return false;
+//            return equalSubterms(term, t.term);
+//        }
+//        else {
+//            return equalTo(t);
+//        }
+//
+//    }
 
     @Override
     public int compareSubterms(final Compound otherCompoundOfEqualType) {

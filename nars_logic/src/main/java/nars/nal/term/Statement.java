@@ -220,7 +220,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 
         ByteBuf b = ByteBuf.create(
                 subjBytes.length + predBytes.length + relationBytes.length +
-                        + 1  + 1 //separator and end closers
+                        + 1 + 1 //separator and end closers
         );
 
         return b.add(relationBytes)

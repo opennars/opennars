@@ -537,17 +537,19 @@ public class DefaultConcept extends Item<Term> implements Concept {
             double AntiSatisfaction = 0.5f; //we dont know anything about that goal yet, so we pursue it to remember it because its maximally unsatisfied
             if (beliefSatisfied != null) {
 
-                Sentence belief = beliefSatisfied.sentence;
 
-                Truth projectedTruth = belief.projection(newGoal.getOccurrenceTime(), dur);
+
+                Truth projectedTruth = beliefSatisfied.projection(newGoal.getOccurrenceTime(), dur);
                 //Sentence projectedBelief = belief.projectionSentence(newGoal.getOccurrenceTime(), dur);
 
                 beliefSatisfied = trySolution(beliefSatisfied, projectedTruth, newGoal, nal); // check if the Goal is already satisfied (manipulate budget)
-                AntiSatisfaction = newGoal.sentence.truth.getExpDifAbs(beliefSatisfied.truth);
+                if (beliefSatisfied!=null) {
+                    AntiSatisfaction = newGoal.getTruth().getExpDifAbs(beliefSatisfied.truth);
+                }
             }
 
             double Satisfaction = 1.0 - AntiSatisfaction;
-            Truth T = new DefaultTruth(newGoal.sentence.truth);
+            Truth T = new DefaultTruth(newGoal.getTruth());
 
             T.setFrequency((float) (T.getFrequency() - Satisfaction)); //decrease frequency according to satisfaction value
 

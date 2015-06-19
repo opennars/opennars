@@ -16,7 +16,10 @@ import java.util.List;
  */
 public class eval extends TermFunction {
 
+    public static boolean ENABLED = false;
+
     public final static Term evalTterm = Atom.the("eval");
+
 
     public static Term eval(final Term x, final Memory m) {
 

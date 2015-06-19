@@ -375,24 +375,30 @@ public class TermTest {
 
     @Test
     public void statementHash() {
+        //this is a case where a faulty hash function produced a collision
+        statementHash("i4", "i2");
+        statementHash("{i4}", "{i2}");
+        statementHash("<{i4} --> r>", "<{i2} --> r>");
         statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(9)>");
+        statementHash("<<{i4} --> r> ==> A(7)>", "<<{i2} --> r> ==> A(7)>");
+
+        //this is a case where a faulty hash function produced a collision
         statementHash("<<{i0} --> r> ==> A(8)>", "<<{i1} --> r> ==> A(7)>");
+
+        //this is a case where a faulty hash function produced a collision
         statementHash("<<{i10} --> r> ==> A(1)>", "<<{i11} --> r> ==> A(0)>");
     }
 
     public void statementHash(String a, String b) {
-        //this is a case where a faulty hash function produced a collision
 
         NAR n = new NAR(new Default());
 
         Term ta = n.term(a).normalized();
         Term tb = n.term(b).normalized();
 
-
         assertNotEquals(ta, tb);
         assertNotEquals(ta.hashCode(), tb.hashCode());
 
-        //-1169543707
 
     }
 
@@ -438,6 +444,12 @@ public class TermTest {
         assertEquals((varDep + varIndep + varQuery) != 0, t.hasVar());
     }
 
+    public Compound testStructure(String term, String bits) {
+        Compound a = n.term(term);
+        assertEquals(bits, toBinaryString(a.structuralHash()));
+        return a;
+    }
+
     @Test
     public void testSubtermsVector() {
 
@@ -445,14 +457,13 @@ public class TermTest {
 
         Term a3 = n.term("c");
 
-        Compound a = n.term("<<a --> b> </> c>");
-        assertEquals("1000000000000000000000000100001", toBinaryString(a.subterms()));
-
-        Compound b = n.term("<<$a --> #b> </> ?c>");
-        assertEquals("1000000000000000000000000101110", toBinaryString(b.subterms()));
+        Compound a = testStructure("<<a --> b> </> c>", "1000000000000000000000000100001");
+        Compound b = testStructure("<<$a --> #b> </> ?c>", "1000000000000000000000000100001");
 
         assertTrue( a.impossibleSubtermByType(b) );
-        assertFalse( a.impossibleSubtermByType(a3) );
+        assertFalse( a.impossibleSubtermByType(a3));
+
+        testStructure("(/,x, y, _", "1022002002100101");
 
     }
 }

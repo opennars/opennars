@@ -40,28 +40,28 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
         }
     }
 
-    @Override
-    public boolean equals(final Object that) {
-        if (this == that) return true;
-        if (that == null) return false;
-
-        if (getClass() != that.getClass()) return false;
-
-
-        Compound2 c = (Compound2) that;
-
-
-        final int m = getMass();
-        if (c.getMass()!=m) return false;
-
-        if (m < 4) {
-            return equalsByName(c);
-        }
-        else {
-            //avoids generating a byte[] ident
-            return equalsByContent(c);
-        }
-    }
+//    @Override
+//    public boolean equals(final Object that) {
+//        if (this == that) return true;
+//        if (that == null) return false;
+//
+//        if (getClass() != that.getClass()) return false;
+//
+//
+//        Compound2 c = (Compound2) that;
+//
+//
+//        final int m = getMass();
+//        if (c.getMass()!=m) return false;
+//
+//        if (m < 4) {
+//            return equalsByName(c);
+//        }
+//        else {
+//            //avoids generating a byte[] ident
+//            return equalsByContent(c);
+//        }
+//    }
 
     public boolean equalsByName(final Compound2 c) {
         return equalTo(c);
@@ -72,7 +72,7 @@ abstract public class Compound2<A extends Term, B extends Term> extends Compound
         //compare components without generating name
 
         //if (operator()!=c.operator()) return false;
-        if (subterms() != c.subterms()) return false;
+        if (structuralHash() != c.structuralHash()) return false;
         if (a().getMass() != c.a().getMass()) return false;
         if (b().getMass() != c.b().getMass()) return false;
 

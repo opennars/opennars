@@ -36,7 +36,7 @@ public class Rover2 extends PhysicsModel {
     float curiosity = 0.05f;
 
     /* how often to input mission, in frames */
-    int missionPeriod = 50;
+    int missionPeriod = 200;
 
     boolean wraparound = false;
 
