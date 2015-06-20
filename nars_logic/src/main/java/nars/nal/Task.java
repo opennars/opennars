@@ -31,6 +31,7 @@ import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.io.in.Input;
+import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
@@ -574,7 +575,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
             if (getTruth().getConfidence() < memory.param.confidenceThreshold.floatValue())
                 return false;
         }
-        if (getTerm() == null) {
+        if (!(this instanceof ImmediateOperation.ImmediateTask) && getTerm() == null) {
             throw new RuntimeException(this + " null term");
             //return false;
         }

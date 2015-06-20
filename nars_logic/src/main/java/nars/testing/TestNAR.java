@@ -273,6 +273,7 @@ public class TestNAR extends NAR {
             super.runWhileNewInput(finalCycle - time());
         }
         catch (Exception e) {
+            e.printStackTrace();
             error = e;
         }
 
