@@ -20,8 +20,9 @@ package nars.launcher;
 import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.nario.NARio;
 import nars.model.impl.Default;
+import nars.nario.NARio;
+import nars.rover.run.SomeRovers;
 import nars.web.NARServer;
 
 import javax.imageio.ImageIO;
@@ -342,7 +343,7 @@ public class Launcher extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseEntered
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-        nars.rover.Rover2.main(new String[]{});
+        SomeRovers.main(new String[]{});
         this.dispose();
     }//GEN-LAST:event_jLabel7MouseClicked
 

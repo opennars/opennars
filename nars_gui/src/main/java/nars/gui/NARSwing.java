@@ -84,7 +84,9 @@ public class NARSwing extends NARControlPanel {
 
         }
         else {
-            new TextOutput(nar, System.out);
+
+            //new TextOutput(nar, System.out);
+
             //new Log4JOutput(nar, false);            
         }
 

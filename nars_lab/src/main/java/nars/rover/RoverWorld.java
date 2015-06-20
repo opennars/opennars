@@ -24,7 +24,7 @@ abstract public class RoverWorld {
     }
 
     
-    public void addFood(float w, float h, float minSize, float maxSize, float mass, Rover2.Material m) {
+    public void addFood(float w, float h, float minSize, float maxSize, float mass, RoverEngine.Material m) {
         float x = (float) Math.random() * w - w / 2f;
         float y = (float) Math.random() * h - h / 2f;
         float bw = (float) (minSize + Math.random() * (maxSize - minSize));
@@ -37,7 +37,7 @@ abstract public class RoverWorld {
 
     public Body addWall(float x, float y, float w, float h, float a) {
         Body b = addBlock(x, y, w, h, a, 0);
-        b.setUserData(Rover2.Material.wall);
+        b.setUserData(RoverEngine.Material.wall);
         return b;
     }
 

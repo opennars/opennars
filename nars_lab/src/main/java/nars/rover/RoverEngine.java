@@ -2,13 +2,9 @@ package nars.rover;
 
 import automenta.vivisect.Video;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
+import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import nars.nal.Task;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.operator.NullOperator;
-import nars.nal.term.Term;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglDraw;
@@ -19,11 +15,6 @@ import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +23,7 @@ import java.util.List;
  *
  * @author me
  */
-public class Rover2 extends PhysicsModel {
+public class RoverEngine extends PhysicsModel {
 
 
 
@@ -44,85 +35,11 @@ public class Rover2 extends PhysicsModel {
     public final List<RoverModel> rovers = new ArrayList();
     final int angleResolution = 9;
 
-    float framesPerSecond = 20f;
-    PhysicsRun phy = new PhysicsRun(1.0f / framesPerSecond, this);
 
-
-    public static void main(String[] args) {
-        Global.DEBUG = true;
-        Global.EXIT_ON_EXCEPTION = true;
-
-        boolean multithread = false;
-
-        Video.themeInvert();
-
-        /*if (multithread) {
-            Global.THREADS = 4;
-            nar = new NAR(new Neuromorphic(16).simulationTime()
-                    .setConceptBagSize(1500).setSubconceptBagSize(4000)
-                    .setNovelTaskBagSize(512)
-                    .setTermLinkBagSize(150)
-                    .setTaskLinkBagSize(60)
-                    .setInternalExperience(null));
-            nar.setCyclesPerFrame(128);
-        }
-        else*/ {
-            Global.THREADS = 1;
-
-        }
-
-        //NAR nar = new CurveBagNARBuilder().
-
-        //NAR nar = new Discretinuous().temporalPlanner(8, 64, 16).
-
-
-        //new NARPrologMirror(nar, 0.95f, true, true, false);
-
-
-
-
-
-        final Rover2 game = new Rover2();
-        game.init();
-
-
-
-        game.cycle();
-
-        {
-
-            NAR nar;
-            nar = new NAR(new Default().simulationTime().
-                    setActiveConcepts(768).
-                    setNovelTaskBagSize(32).setTermLinkBagSize(32));
-            nar.param.inputsMaxPerCycle.set(100);
-            nar.param.conceptsFiredPerCycle.set(128);
-            nar.setCyclesPerFrame(4);
-            nar.param.shortTermMemoryHistory.set(2);
-            nar.param.temporalRelationsMax.set(3);
-
-            (nar.param).outputVolume.set(3);
-            (nar.param).duration.set(5);
-            //nar.param.budgetThreshold.set(0.02);
-            //nar.param.confidenceThreshold.set(0.02);
-            (nar.param).conceptForgetDurations.set(5f);
-            (nar.param).taskLinkForgetDurations.set(10f);
-            (nar.param).termLinkForgetDurations.set(10f);
-            (nar.param).novelTaskForgetDurations.set(10f);
-
-            game.add(new RoverModel(nar, game));
-        }
-        //nar.start((long)(1000f/framesPerSecond));
-
-        // new NWindow("Tasks",new TaskTree(nar)).show(300,600);
-
-        while (true) {
-            game.cycle();
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-            }
-        }
+    PhysicsRun phy = new PhysicsRun(60, this);
+    private long delayMS;
+    private float fps;
+    private boolean running = false;
 
 
 //        //new NARPrologMirror(nar,0.75f, true).temporal(true, true);
@@ -192,8 +109,29 @@ public class Rover2 extends PhysicsModel {
 //
 //        };
 
+
+    public void setFPS(float f) {
+        this.fps = f;
+        delayMS = (long) (1000f / fps);
     }
 
+    public void run(float fps) {
+        setFPS(fps);
+
+        running = true;
+        while (running) {
+            cycle();
+            try {
+                Thread.sleep(delayMS);
+            } catch (InterruptedException e) {
+            }
+        }
+
+    }
+
+    public void stop() {
+        running = false;
+    }
 
 
     public void add(RoverModel r) {
@@ -309,7 +247,7 @@ public class Rover2 extends PhysicsModel {
 
     public static class FoodMaterial extends Material implements Edible {
 
-        static final Color3f foodFill = new Color3f(0.15f, 0.9f, 0.15f);
+        static final Color3f foodFill = new Color3f(0.15f, 0.6f, 0.15f);
 
         @Override
         public void before(Body b, JoglDraw d, float time) {
@@ -335,7 +273,7 @@ public class Rover2 extends PhysicsModel {
     }
     public static class PoisonMaterial extends Material implements Edible {
 
-        static final Color3f poisonFill = new Color3f(0.75f, 0.25f, 0.25f);
+        static final Color3f poisonFill = new Color3f(0.45f, 0.15f, 0.15f);
 
         @Override
         public void before(Body b, JoglDraw d, float time) {
@@ -347,8 +285,8 @@ public class Rover2 extends PhysicsModel {
         }
     }
 
-    public Rover2() {
-
+    public RoverEngine() {
+        init();
     }
 
 
@@ -411,6 +349,7 @@ public class Rover2 extends PhysicsModel {
 
     public void init() {
         init(phy.model);
+        cycle();
     }
 
     @Override
@@ -427,7 +366,7 @@ public class Rover2 extends PhysicsModel {
     }
 
     protected void cycle() {
-        phy.cycle();
+        phy.cycle(fps);
     }
 
 

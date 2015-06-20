@@ -4,6 +4,7 @@
  */
 package nars.rover.robot;
 
+import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
 import nars.io.SometimesChangedTextInput;
@@ -14,7 +15,8 @@ import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.term.Term;
 import nars.rover.PhysicsModel;
-import nars.rover.Rover2;
+import nars.rover.RoverEngine;
+import nars.rover.RoverEngine.Material;
 import nars.rover.depr.RobotArm;
 import nars.rover.physics.gl.JoglDraw;
 import nars.rover.physics.j2d.SwingDraw.LayerDraw;
@@ -25,6 +27,7 @@ import org.jbox2d.common.MathUtils;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 
+import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -49,7 +52,7 @@ public class RoverModel {
     Deque<Vec2> positions = new ArrayDeque();
     List<VisionRay> vision = new ArrayList();
     //public class ChangedNumericInput //discretizer
-    private final Rover2 sim;
+    private final RoverEngine sim;
     public final NAR nar;
     private final ChangedTextInput feltAngularVelocity;
     private final ChangedTextInput feltOrientation;
@@ -84,9 +87,39 @@ public class RoverModel {
 
     public static boolean allow_imitate = true;
 
+    public class RoverMaterial extends Material {
+
+        final String id;
+        private final Color3f color;
+        private final Color c;
+
+        public RoverMaterial(String id) {
+            this.id = id;
+
+
+
+            float h = ((id + id).hashCode() % 10)/10f;
+            c = Color.getHSBColor(h, 0.5f, 0.95f);
+            color = new Color3f();
+
+        }
+
+        @Override
+        public void before(Body b, JoglDraw d, float time) {
+            float bb = nar.memory.emotion.busy() * 0.5f + 0.5f;
+            color.set(c.getRed()/256.0f * bb, c.getGreen()/256.0f * bb, c.getBlue()/256.0f * bb);
+            d.setFillColor(color);
+        }
+
+        @Override
+        public String toString() {
+            return id;
+        }
+    }
+
     //public class DistanceInput extends ChangedTextInput
-    public RoverModel(NAR nar, PhysicsModel p) {
-        this.sim = (Rover2) p;
+    public RoverModel(String id, NAR nar, PhysicsModel p) {
+        this.sim = (RoverEngine) p;
 
         this.nar = nar;
         
@@ -114,6 +147,8 @@ public class RoverModel {
         f.setRestitution(restitution);
         f.setFriction(friction);
 
+        torso.setUserData(new RoverMaterial(id));
+
         for (int i = -pixels / 2; i <= pixels / 2; i++) {
             final int ii = i;
             VisionRay v = new VisionRay(torso, frontRetina, MathUtils.PI / 2f + aStep * i, aStep, retinaResolution, L, distanceResolution) {
@@ -123,7 +158,7 @@ public class RoverModel {
                 public void onTouch(Body touched, float di) {
                     if (touched == null) return;
 
-                    if (touched.getUserData() instanceof Rover2.Edible) {
+                    if (touched.getUserData() instanceof RoverEngine.Edible) {
                         if (Math.abs(ii) <= mouthArc)  {
 
                             if (di <= biteDistanceThreshold) {
@@ -246,18 +281,19 @@ public class RoverModel {
 
                 //System.out.println(operation + " "+ command);
 
+                int rspeed = 30;
                 switch (command) {
                     case "right":
-                        rotateRelative(-60);
+                        rotateRelative(-rspeed);
                         break;
                     case "right,right":
-                        rotateRelative(-120);
+                        rotateRelative(-rspeed*2);
                         break;
                     case "left":
-                        rotateRelative(60);
+                        rotateRelative(+rspeed);
                         break;
                     case "left,left":
-                        rotateRelative(120);
+                        rotateRelative(+rspeed*2);
                         break;
                     case "forward,forward":
                         thrustRelative(3);
@@ -326,20 +362,20 @@ public class RoverModel {
     }
 
     public void eat(Body eaten) {
-        Rover2.Material m = (Rover2.Material)eaten.getUserData();
-        if (m instanceof Rover2.FoodMaterial) {
+        Material m = (Material)eaten.getUserData();
+        if (m instanceof RoverEngine.FoodMaterial) {
             nar.input("<goal --> food>. :|: %0.90;0.90%");
             nar.input("<goal --> health>. :|: %0.90;0.90%");
         }
-        else if (m instanceof Rover2.PoisonMaterial) {
+        else if (m instanceof RoverEngine.PoisonMaterial) {
             nar.input("<goal --> health>. :|: %0.00;0.90%");
         }
         else {
             return;
         }
 
-        float x = (float) Math.random() * Rover2.sz - Rover2.sz / 2f;
-        float y = (float) Math.random() * Rover2.sz - Rover2.sz / 2f;
+        float x = (float) Math.random() * RoverEngine.sz - RoverEngine.sz / 2f;
+        float y = (float) Math.random() * RoverEngine.sz - RoverEngine.sz / 2f;
         //random new position
         eaten.setTransform(new Vec2(x * 2.0f, y * 2.0f), eaten.getAngle());
     }
@@ -528,7 +564,7 @@ public class RoverModel {
 
             if (conf < 0.01f) return;
 
-            String dist = Rover2.f(minDist);
+            String dist = RoverEngine.f(minDist);
             
             String material = hit.getUserData() != null ? hit.getUserData().toString() : "sth";
             //float freq = 0.5f + 0.5f * di;
@@ -610,7 +646,7 @@ public class RoverModel {
             a = maxAngleVelocityFelt;
         }
         if (a < 0.1) {
-            feltAngularVelocity.set("rotated(" + Rover2.f(0) + "). :|: %0.95;0.90%");
+            feltAngularVelocity.set("rotated(" + RoverEngine.f(0) + "). :|: %0.95;0.90%");
             //feltAngularVelocity.set("feltAngularMotion. :|: %0.00;0.90%");
         } else {
             String direction;
@@ -619,7 +655,7 @@ public class RoverModel {
             } else /*if (xa > 0)*/ {
                 direction = sim.angleTerm(+MathUtils.PI);
             }
-            feltAngularVelocity.set("rotated(" + Rover2.f(a) + "," + direction + "). :|:");
+            feltAngularVelocity.set("rotated(" + RoverEngine.f(a) + "," + direction + "). :|:");
             // //feltAngularVelocity.set("<" + direction + " --> feltAngularMotion>. :|: %" + da + ";0.90%");
         }
         feltOrientation.set("oriented(" + sim.angleTerm(torso.getAngle()) + "). :|:");
@@ -631,7 +667,7 @@ public class RoverModel {
         if (speed == 0)
             feltSpeed.set("moved(0). :|:");
         else
-            feltSpeed.set("moved(" + (lvel < 0 ? "n" : "p") +  "," + Rover2.f(speed) + "). :|:");
+            feltSpeed.set("moved(" + (lvel < 0 ? "n" : "p") +  "," + RoverEngine.f(speed) + "). :|:");
         //feltSpeed.set("feltSpeed. :|: %" + sp + ";0.90%");
         int positionWindow1 = 16;
         Vec2 currentPosition = torso.getWorldCenter();

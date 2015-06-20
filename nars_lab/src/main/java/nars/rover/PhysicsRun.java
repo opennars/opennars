@@ -174,4 +174,10 @@ public class PhysicsRun {
         controller.cycle(simulationRate);
 
     }
+
+    public void cycle(float fps) {
+
+        controller.cycle(1f/simulationRate);
+
+    }
 }

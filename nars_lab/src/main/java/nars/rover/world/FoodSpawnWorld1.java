@@ -5,13 +5,8 @@
 package nars.rover.world;
 
 import nars.rover.PhysicsModel;
-import nars.rover.Rover2;
+import nars.rover.RoverEngine;
 import nars.rover.RoverWorld;
-import org.jbox2d.collision.shapes.ChainShape;
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
 
 /**
  *
@@ -33,7 +28,7 @@ public class FoodSpawnWorld1 extends RoverWorld {
             float mass = 4.0f;
             addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass,
                     Math.random() < 0.5 ?
-                            Rover2.Material.food : Rover2.Material.poison
+                            RoverEngine.Material.food : RoverEngine.Material.poison
                     );
         }
         float wt = 1f;
