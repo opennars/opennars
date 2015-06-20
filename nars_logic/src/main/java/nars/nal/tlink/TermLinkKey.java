@@ -20,7 +20,6 @@ public interface TermLinkKey  {
 //    }
 
     default public boolean termLinkEquals(final Object obj) {
-        if (obj == null) return false;
         if (this == obj) return true;
         if (obj instanceof TermLinkKey) {
             TermLinkKey tl = (TermLinkKey) obj;
@@ -29,9 +28,13 @@ public interface TermLinkKey  {
         return false;
     }
 
-    /** the result of this should be cached */
-    default int hash() {
-        return (int)Util.ELFHash(prefix(), getTarget().hashCode());
+//    /** the result of this should be cached */
+//    default int hash() {
+//        return hash(prefix(), getTarget());
+//    }
+
+    public static int hash(byte[] prefix, Term target) {
+        return (int)Util.ELFHash(prefix, target.hashCode());
     }
 
 //    /** key + target */

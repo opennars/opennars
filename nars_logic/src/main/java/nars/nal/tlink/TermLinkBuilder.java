@@ -188,8 +188,8 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
 
     protected void validate() {
-        this.prefix = currentTemplate.key(incoming);
-        this.hash = hash();
+        this.prefix = currentTemplate.prefix(incoming);
+        this.hash = currentTemplate.hash(incoming);
     }
 
 

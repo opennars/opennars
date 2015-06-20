@@ -87,7 +87,7 @@ public class TermLink extends Item<TermLinkKey> implements TermLinkKey, TLink<Te
      * @param template TermLink template previously prepared
      * @param v Budget value of the tlink
      */
-    public TermLink(Term t, TermLinkTemplate template, Budget v, byte[] prefix, int hash) {
+    public TermLink(final Term t, final TermLinkTemplate template, final Budget v, final byte[] prefix, final int hash) {
         super(v);
 
         if (!t.isNormalized()) {

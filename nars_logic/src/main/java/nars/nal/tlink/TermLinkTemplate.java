@@ -25,7 +25,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     //cached names for prefix arrays
     protected byte[] outgoing;
     protected byte[] incoming;
-
+    private int hashIn, hashOut;
 
 
     /**
@@ -60,8 +60,14 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
             index = indices;
         }
 
+        this.hashIn = newHash(true);
+        this.hashOut = newHash(false);
+
     }
 
+    protected int newHash(boolean in) {
+        return TermLinkKey.hash(prefix(in), term(in));
+    }
 
     public TermLinkTemplate(final Concept host, final short type, final Term target, final int i0) {
         this(host, target, type, (short)i0);
@@ -121,25 +127,23 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
         return in ? concept : getTarget();
     }
 
-    public byte[] prefix(final boolean incoming) {
-        return prefix(type, index, incoming);
-    }
+
 
 //    public Identifier newKey(final boolean in) {
 //        //TODO try ConcatenatedBytesIdent
 //        return new LiteralUTF8Identifier( prefix(in), ((byte) Symbols.TLinkSeparator), term(in).bytes() );
 //    }
 
-    public byte[] key(final boolean in) {
+    public byte[] prefix(final boolean in) {
         if (in) {
             if (incoming == null) {
-                incoming = prefix(true);
+                incoming = prefix(type, index, true);
             }
             return incoming;
         }
         else {
             if (outgoing == null) {
-                outgoing = prefix(false);
+                outgoing = prefix(type, index, false);
             }
             return outgoing;
         }
@@ -185,5 +189,10 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
      */
     public void setTargetInstance(Term target) {
         this.target = target;
+    }
+
+    public int hash(boolean incoming) {
+        if (incoming) return hashIn;
+        return hashOut;
     }
 }
