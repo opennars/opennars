@@ -246,8 +246,8 @@ public class TemporalRules {
         if ((s1.truth==null) || (s2.truth==null) || s1.punctuation!=Symbols.JUDGMENT || s2.punctuation!=Symbols.JUDGMENT)
             return;
 
-        Term t1 = s1.term;
-        Term t2 = s2.term;
+        Term t1 = s1.getTerm();
+        Term t2 = s2.getTerm();
 
         if (Statement.invalidStatement(t1, t2))
             return;
@@ -479,7 +479,7 @@ public class TemporalRules {
                 //micropsi inspired strive for knowledge
                 //get strongest belief of that concept and use the revison truth, if there is no, use this truth
                 double conf = task.sentence.truth.getConfidence();
-                Concept C = nal.memory.concept(task.sentence.term);
+                Concept C = nal.memory.concept(task.sentence.getTerm());
                 if (C != null && C.hasBeliefs()) {
                     Sentence bel = C.getBeliefs().get(0).sentence;
                     Truth cur = bel.truth;
@@ -533,9 +533,9 @@ public class TemporalRules {
         */
         if (s1.isJudgment()) { //necessary check?
             Sentence belief=task.sentence;
-            Concept S1_State_C=nal.memory.concept(s1.term);
+            Concept S1_State_C=nal.memory.concept(s1.getTerm());
             if(S1_State_C != null && S1_State_C.hasGoals() &&
-                    !(((Statement)belief.term).getPredicate() instanceof Operation)) {
+                    !(((Statement) belief.getTerm()).getPredicate() instanceof Operation)) {
                 Task a_desire = S1_State_C.getStrongestGoal(true, true);
 
 //                Sentence g = new Sentence(S1_State_C.getTerm(),Symbols.JUDGMENT,
@@ -558,7 +558,7 @@ public class TemporalRules {
                     occ = Stamp.ETERNAL;
                 } else {
                     long shift=0;
-                    if(((Implication)task.sentence.term).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
+                    if(((Implication) task.sentence.getTerm()).getTemporalOrder()==TemporalRules.ORDER_FORWARD) {
                         shift=nal.memory.duration();
                     }
                     occ = (strongest_desire.getOccurrenceTime()-shift);
@@ -572,7 +572,7 @@ public class TemporalRules {
 
                 Budget val=BudgetFunctions.forward(T, nal);
 
-                nal.derive(nal.newTask(s2.term).goal().truth(T).budget(val)
+                nal.derive(nal.newTask(s2.getTerm()).goal().truth(T).budget(val)
                                 .parent(task, strongest_desireT.sentence)
                                 .occurr(occ).temporalInductable(true)
                 );
@@ -586,7 +586,7 @@ public class TemporalRules {
 
 
     private static void questionFromLowConfidenceHighPriorityJudgement(Task task, double conf, final NAL nal) {
-        if(!(task.sentence.term instanceof Implication)) return;
+        if(!(task.sentence.getTerm() instanceof Implication)) return;
 
         if(nal.memory.emotion.busy()<Global.CURIOSITY_BUSINESS_THRESHOLD
                 && Global.CURIOSITY_ALSO_ON_LOW_CONFIDENT_HIGH_PRIORITY_BELIEF
@@ -596,7 +596,7 @@ public class TemporalRules {
 
                 boolean valid=false;
 
-                Implication equ=(Implication) task.sentence.term;
+                Implication equ=(Implication) task.sentence.getTerm();
                 if(equ.getTemporalOrder()!=TemporalRules.ORDER_NONE) {
                     valid=true;
                 }
@@ -632,7 +632,7 @@ public class TemporalRules {
         }
 
         if (problem.hasQueryVar()) {
-            return truth.getExpectation() / solution.term.getComplexity();
+            return truth.getExpectation() / solution.getTerm().getComplexity();
         } else {
             return truth.getConfidence();
         }

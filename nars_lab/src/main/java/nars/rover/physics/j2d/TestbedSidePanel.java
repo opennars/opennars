@@ -21,15 +21,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package nars.rover.jbox2d.j2d;
+package nars.rover.physics.j2d;
 
 import nars.rover.PhysicsModel;
-import nars.rover.jbox2d.PhysicsController;
-import nars.rover.jbox2d.TestbedSetting;
-import nars.rover.jbox2d.TestbedSetting.SettingType;
-import nars.rover.jbox2d.TestbedSettings;
-import nars.rover.jbox2d.TestbedState;
-import nars.rover.jbox2d.TestbedState.ListItem;
+import nars.rover.physics.PhysicsController;
+import nars.rover.physics.TestbedSetting;
+import nars.rover.physics.TestbedSetting.SettingType;
+import nars.rover.physics.TestbedSettings;
+import nars.rover.physics.TestbedState;
+import nars.rover.physics.TestbedState.ListItem;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;

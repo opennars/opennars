@@ -401,8 +401,10 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
             return null;
 
         if (Global.DEBUG) {
-            if (Sentence.invalidSentenceTerm(sentenceTerm))
-                throw new RuntimeException("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
+            if (Sentence.invalidSentenceTerm(sentenceTerm)) {
+                System.err.println("Invalid sentence content term: " + sentenceTerm + ", seedTerm=" + term);
+                return null;
+            }
         }
 
         if (getEvidentialSet() == null) {

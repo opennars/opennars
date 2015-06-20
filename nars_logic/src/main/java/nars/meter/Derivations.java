@@ -14,7 +14,6 @@ import nars.nal.concept.Concept;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operator;
-import nars.nal.process.ConceptProcess;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
 import nars.nal.term.Term;
@@ -326,7 +325,7 @@ public class Derivations extends DirectedMultigraph {
     }
 
     public static String genericString(Sentence s, Map<Term,Integer> unique, long now, boolean includeTruth) {
-        String t = genericString(s.term, unique);
+        String t = genericString(s.getTerm(), unique);
         t += s.punctuation;
 
         if (!s.isEternal())

@@ -26,7 +26,7 @@ public class NAL8ScriptTests extends ScriptNALTest {
         );
     }
 
-    public int getMaxCycles() { return 1500; }
+    public int getMaxCycles() { return 650; }
 
 
 }

@@ -202,11 +202,11 @@ public class TermLinkBuilder extends BagActivator<TermLinkKey,TermLink> implemen
 
     @Override
     public Term getTarget() {
-        return incoming ? concept.getTerm() : currentTemplate.target;
+        return incoming ? concept.getTerm() : currentTemplate.getTarget();
     }
 
     public Term getSource() {
-        return incoming ? currentTemplate.target : concept.getTerm();
+        return incoming ? currentTemplate.getTarget() : concept.getTerm();
     }
 
     @Override

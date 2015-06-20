@@ -22,25 +22,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 /**
- * Created at 2:12:15 PM Jul 17, 2010
+ * Created at 3:13:48 AM Jul 17, 2010
  */
-package nars.rover.jbox2d;
-
-import org.jbox2d.collision.Collision.PointState;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Fixture;
+package nars.rover.physics;
 
 /**
- * Contact point for {@link TestbedTest}.
+ * A TestbedPanel encapsulates the graphical panel displayed to the user. Also it is responsible for
+ * populating panel-specific data in the model (like panel width).
+ * 
  * @author Daniel Murphy
  */
-public class ContactPoint {
-	public Fixture fixtureA;
-	public Fixture fixtureB;
-	public final Vec2 normal = new Vec2();
-	public final Vec2 position = new Vec2();
-	public PointState state;
-	public float normalImpulse;
-	public float tangentImpulse;
-	public float separation;
+public interface TestbedPanel {
+
+  public void grabFocus();
+
+  /**
+   * Renders the world
+   * @return if the renderer is ready for drawing
+   */
+  public boolean render();
+
+  /**
+   * Paints the rendered world to the screen
+   */
+  public void paintScreen();
 }

@@ -21,7 +21,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package nars.rover.jbox2d;
+package nars.rover.physics;
 
 import nars.rover.PhysicsModel;
 import org.jbox2d.callbacks.DebugDraw;

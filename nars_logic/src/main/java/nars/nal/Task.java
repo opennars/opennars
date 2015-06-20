@@ -34,7 +34,6 @@ import nars.io.in.Input;
 import nars.nal.nal8.Operation;
 import nars.nal.stamp.Stamp;
 import nars.nal.stamp.StampEvidence;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Termed;
 import nars.op.mental.InternalExperience;
@@ -416,7 +415,7 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         if (task.getCause() != null)
             sb.append(" cause=").append(task.getCause());
         if (task.getBestSolution() != null) {
-            if (!task.getTerm().equals(task.getBestSolution().term))
+            if (!task.getTerm().equals(task.getBestSolution().getTerm()))
                 sb.append(" solution=").append(task.getBestSolution());
         }
 
@@ -569,6 +568,16 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
         if (!summaryGreaterOrEqual(memory.param.perceptThreshold))
             return false;
 
+
+        //confidence threshold filter
+        if (getTruth()!=null) {
+            if (getTruth().getConfidence() < memory.param.confidenceThreshold.floatValue())
+                return false;
+        }
+        if (getTerm() == null) {
+            throw new RuntimeException(this + " null term");
+            //return false;
+        }
 
         //if a task has an unperceived creationTime,
         // set it to the memory's current time here,

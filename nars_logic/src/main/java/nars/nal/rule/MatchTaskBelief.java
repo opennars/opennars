@@ -43,7 +43,7 @@ public class MatchTaskBelief extends ConceptFireTaskTerm {
             }
         } else {
             if (TemporalRules.matchingOrder(taskSentence, belief)) {
-                Term[] u = new Term[] { taskSentence.term, belief.term };
+                Term[] u = new Term[] {taskSentence.getTerm(), belief.getTerm()};
                 if (Variables.unify(Symbols.VAR_QUERY, u, nal.memory.random)) {
                     //TODO see if this is correct because it will be producing
                     //a Task which isnt used

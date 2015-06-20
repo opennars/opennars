@@ -141,7 +141,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
                             if(task.isTemporalInductable()) { //todo refine, add directbool in task
 
-                                if (!equalSubTermsInRespectToImageAndProduct(current.term, prev.term)) {
+                                if (!equalSubTermsInRespectToImageAndProduct(current.getTerm(), prev.getTerm())) {
 
                                     this.belief = temporalBelief;
 

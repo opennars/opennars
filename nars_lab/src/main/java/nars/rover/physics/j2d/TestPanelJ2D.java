@@ -23,16 +23,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************
  */
-package nars.rover.jbox2d.j2d;
+package nars.rover.physics.j2d;
 
-import nars.rover.jbox2d.PhysicsController;
-import nars.rover.jbox2d.TestbedPanel;
-import nars.rover.jbox2d.TestbedState;
+import nars.rover.physics.PhysicsController;
+import nars.rover.physics.TestbedPanel;
+import nars.rover.physics.TestbedState;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 /**
  * @author Daniel Murphy

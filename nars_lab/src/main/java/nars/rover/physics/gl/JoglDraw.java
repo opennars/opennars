@@ -21,12 +21,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package nars.rover.jbox2d.j2d;
+package nars.rover.physics.gl;
 
 import automenta.vivisect.Video;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import nars.rover.jbox2d.PhysicsCamera;
+import nars.rover.physics.PhysicsCamera;
+import nars.rover.physics.j2d.SwingDraw;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.CircleShape;
@@ -70,7 +71,8 @@ public class JoglDraw extends DebugDraw {
         layers.remove(l);
     }
 
-    public void draw(World w) {
+    public void draw(World w, float time) {
+
 
 
         if (w == null) return;
@@ -89,7 +91,7 @@ public class JoglDraw extends DebugDraw {
 
         //if ((flags & DebugDraw.e_shapeBit) != 0) {
         for (Body b = w.getBodyList(); b != null; b = b.getNext()) {
-            drawBody(b);
+            drawBody(b, time);
         }
         //drawParticleSystem(m_particleSystem);
         //}
@@ -111,19 +113,19 @@ public class JoglDraw extends DebugDraw {
 
 
 
-    Color defaultFillColor = new Color(0.75f, 0.75f, 0.75f);
-    Color defaultStrokeColor = new Color(1, 1, 1);
+    Color3f defaultFillColor = new Color3f(0.75f, 0.75f, 0.75f);
+    Color3f defaultStrokeColor = new Color3f(1, 1, 1);
     Stroke defaultStroke = new BasicStroke(2);
 
     Stroke stroke = defaultStroke;
-    Color fillColor = defaultFillColor;
-    Color strokeColor = defaultStrokeColor;
+    Color3f fillColor = defaultFillColor;
+    Color3f strokeColor = defaultStrokeColor;
 
-    public void setStrokeColor(Color strokeColor) {
+    public void setStrokeColor(Color3f strokeColor) {
         this.strokeColor = strokeColor;
     }
 
-    public void setFillColor(Color fillColor) {
+    public void setFillColor(Color3f fillColor) {
         this.fillColor = fillColor;
     }
 
@@ -131,19 +133,20 @@ public class JoglDraw extends DebugDraw {
         this.stroke = stroke;
     }
 
-    Color3f color = new Color3f();
 
 
-    void drawBody(Body b) {
+    public interface DrawProperty {
+        public void before(Body b, JoglDraw d, float time);
+    }
+
+
+    void drawBody(Body b, float time) {
         boolean wireframe = false;
 
         Object o = b.getUserData();
-        if (o instanceof SwingDraw.DrawProperty) {
-            SwingDraw.DrawProperty d = (SwingDraw.DrawProperty) o;
-            //d.before(b, this);
-
-            if ((fillColor == null) && (stroke == null))
-                return;
+        if (o instanceof JoglDraw.DrawProperty) {
+            JoglDraw.DrawProperty d = (JoglDraw.DrawProperty) o;
+            d.before(b, this, time);
         } else {
             strokeColor = defaultStrokeColor;
             fillColor = defaultFillColor;
@@ -155,20 +158,15 @@ public class JoglDraw extends DebugDraw {
 
         for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
             if (b.isActive() == false) {
-                color.set(0.5f, 0.5f, 0.3f);
-                drawShape(f, xf, color, wireframe);
+                drawShape(f, xf, fillColor, wireframe);
             } else if (b.getType() == BodyType.STATIC) {
-                color.set(0.5f, 0.9f, 0.3f);
-                drawShape(f, xf, color, wireframe);
+                drawShape(f, xf, fillColor, wireframe);
             } else if (b.getType() == BodyType.KINEMATIC) {
-                color.set(0.5f, 0.5f, 0.9f);
-                drawShape(f, xf, color, wireframe);
+                drawShape(f, xf, fillColor, wireframe);
             } else if (b.isAwake() == false) {
-                color.set(0.5f, 0.5f, 0.5f);
-                drawShape(f, xf, color, wireframe);
+                drawShape(f, xf, fillColor, wireframe);
             } else {
-                color.set(0.9f, 0.7f, 0.7f);
-                drawShape(f, xf, color, wireframe);
+                drawShape(f, xf, fillColor, wireframe);
             }
         }
     }

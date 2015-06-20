@@ -297,15 +297,15 @@ public class AntCore extends ConceptWaveCore {
                 
                 Concept t = null;
                 if (taskSentence!=null)
-                    t = concept(taskSentence.term);
+                    t = concept(taskSentence.getTerm());
                 if ((t == null) || (t == c)) {
                     if (bestSolution!=null) {
-                        t = concept(bestSolution.term);
+                        t = concept(bestSolution.getTerm());
                     }
                 }
                 if ((t == null) || (t == c)) {
                     if (parentSentence!=null) {
-                        t = concept(parentSentence.term);
+                        t = concept(parentSentence.getTerm());
                     }
                 }
                 

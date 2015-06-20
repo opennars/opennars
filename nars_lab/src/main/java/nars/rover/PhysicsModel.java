@@ -25,8 +25,8 @@
  */
 package nars.rover;
 
-import nars.rover.jbox2d.*;
-import nars.rover.jbox2d.j2d.SwingDraw;
+import nars.rover.physics.*;
+import nars.rover.physics.j2d.SwingDraw;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
@@ -100,6 +100,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
     private TestbedSettings settings;
     private float timeStep;
     private TestbedPanel panel;
+    private float time;
 
     public PhysicsModel() {
         identity.setIdentity();
@@ -333,11 +334,16 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
     
     AtomicBoolean drawingQueued = new AtomicBoolean(false);
 
+    public float getTime() {
+        return time;
+    }
+
     synchronized public void step(float timeStep, TestbedSettings settings, TestbedPanel panel) {
     //float hz = settings.getSetting(TestbedSettings.Hz).value;
 
         
         this.timeStep = timeStep;
+        this.time += timeStep;
         this.settings = settings;
         camera.update(timeStep);
 
@@ -378,7 +384,7 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
 
     /** only for drawing called by SwingUtilities */
     @Override public void run() {
-        //drawNext();
+        drawNext();
     }
     
     public synchronized void drawNext() {
@@ -386,80 +392,80 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
             return;
         
  
-        final DebugDraw debugDraw = model.getDebugDraw();
-        m_textLine = 20;
-
-        if (title != null) {
-            debugDraw.drawString(camera.getTransform().getExtents().x, 15, title, Color3f.WHITE);
-            m_textLine += TEXT_LINE_SPACE;
-        }
-
-        int flags = 0;
-        flags += settings.getSetting(TestbedSettings.DrawShapes).enabled ? DebugDraw.e_shapeBit : 0;
-        flags += settings.getSetting(TestbedSettings.DrawJoints).enabled ? DebugDraw.e_jointBit : 0;
-        flags += settings.getSetting(TestbedSettings.DrawAABBs).enabled ? DebugDraw.e_aabbBit : 0;
-        flags
-                += settings.getSetting(TestbedSettings.DrawCOMs).enabled ? DebugDraw.e_centerOfMassBit : 0;
-        flags += settings.getSetting(TestbedSettings.DrawTree).enabled ? DebugDraw.e_dynamicTreeBit : 0;
-        /*flags +=
-         settings.getSetting(TestbedSettings.DrawWireframe).enabled
-         ? wireframeDrawing
-         : 0;*/
-        debugDraw.setFlags(flags);
-
-//m_world.drawDebugData();
-        Vec2 cc = getCamera().getTransform().getCenter();
-
-        debugDraw.getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
-
-        ((SwingDraw) debugDraw).draw(m_world);
-
-        
-
-    //debugDraw.drawString(5, m_textLine, "Engine Info", color4);
-        //m_textLine += TEXT_LINE_SPACE;
-        debugDraw.drawString(5, m_textLine, "Framerate: " + (int) model.getCalculatedFps(), Color3f.WHITE);
-        m_textLine += TEXT_LINE_SPACE;
-
-        if (settings.getSetting(TestbedSettings.DrawStats).enabled) {
-
-            m_textLine += TEXT_LINE_SPACE;
-
-            debugDraw.drawString(5, m_textLine, "World mouse position: " + mouseWorld.toString(),
-                    Color3f.WHITE);
-            m_textLine += TEXT_LINE_SPACE;
-
-            statsList.clear();
-            Profile p = getWorld().getProfile();
-            p.toDebugStrings(statsList);
-
-            for (String s : statsList) {
-                debugDraw.drawString(5, m_textLine, s, Color3f.WHITE);
-                m_textLine += TEXT_LINE_SPACE;
-            }
-            m_textLine += TEXT_SECTION_SPACE;
-        }
-
-        if (settings.getSetting(TestbedSettings.DrawHelp).enabled) {
-            debugDraw.drawString(5, m_textLine, "Help", color4);
-            m_textLine += TEXT_LINE_SPACE;
-            List<String> help = model.getImplSpecificHelp();
-            for (String string : help) {
-                debugDraw.drawString(5, m_textLine, string, Color3f.WHITE);
-                m_textLine += TEXT_LINE_SPACE;
-            }
-            m_textLine += TEXT_SECTION_SPACE;
-        }
-
-        if (!textList.isEmpty()) {
-            debugDraw.drawString(5, m_textLine, "Test Info", color4);
-            m_textLine += TEXT_LINE_SPACE;
-            for (String s : textList) {
-                debugDraw.drawString(5, m_textLine, s, Color3f.WHITE);
-                m_textLine += TEXT_LINE_SPACE;
-            }
-            textList.clear();
-        }
+//        final DebugDraw debugDraw = model.getDebugDraw();
+//        m_textLine = 20;
+//
+//        if (title != null) {
+//            debugDraw.drawString(camera.getTransform().getExtents().x, 15, title, Color3f.WHITE);
+//            m_textLine += TEXT_LINE_SPACE;
+//        }
+//
+//        int flags = 0;
+//        flags += settings.getSetting(TestbedSettings.DrawShapes).enabled ? DebugDraw.e_shapeBit : 0;
+//        flags += settings.getSetting(TestbedSettings.DrawJoints).enabled ? DebugDraw.e_jointBit : 0;
+//        flags += settings.getSetting(TestbedSettings.DrawAABBs).enabled ? DebugDraw.e_aabbBit : 0;
+//        flags
+//                += settings.getSetting(TestbedSettings.DrawCOMs).enabled ? DebugDraw.e_centerOfMassBit : 0;
+//        flags += settings.getSetting(TestbedSettings.DrawTree).enabled ? DebugDraw.e_dynamicTreeBit : 0;
+//        /*flags +=
+//         settings.getSetting(TestbedSettings.DrawWireframe).enabled
+//         ? wireframeDrawing
+//         : 0;*/
+//        debugDraw.setFlags(flags);
+//
+////m_world.drawDebugData();
+//        Vec2 cc = getCamera().getTransform().getCenter();
+//
+//        debugDraw.getViewportTranform().setCamera(cc.x, cc.y, getCamera().getTargetScale());
+//
+//        ((SwingDraw) debugDraw).draw(m_world);
+//
+//
+//
+//    //debugDraw.drawString(5, m_textLine, "Engine Info", color4);
+//        //m_textLine += TEXT_LINE_SPACE;
+//        debugDraw.drawString(5, m_textLine, "Framerate: " + (int) model.getCalculatedFps(), Color3f.WHITE);
+//        m_textLine += TEXT_LINE_SPACE;
+//
+//        if (settings.getSetting(TestbedSettings.DrawStats).enabled) {
+//
+//            m_textLine += TEXT_LINE_SPACE;
+//
+//            debugDraw.drawString(5, m_textLine, "World mouse position: " + mouseWorld.toString(),
+//                    Color3f.WHITE);
+//            m_textLine += TEXT_LINE_SPACE;
+//
+//            statsList.clear();
+//            Profile p = getWorld().getProfile();
+//            p.toDebugStrings(statsList);
+//
+//            for (String s : statsList) {
+//                debugDraw.drawString(5, m_textLine, s, Color3f.WHITE);
+//                m_textLine += TEXT_LINE_SPACE;
+//            }
+//            m_textLine += TEXT_SECTION_SPACE;
+//        }
+//
+//        if (settings.getSetting(TestbedSettings.DrawHelp).enabled) {
+//            debugDraw.drawString(5, m_textLine, "Help", color4);
+//            m_textLine += TEXT_LINE_SPACE;
+//            List<String> help = model.getImplSpecificHelp();
+//            for (String string : help) {
+//                debugDraw.drawString(5, m_textLine, string, Color3f.WHITE);
+//                m_textLine += TEXT_LINE_SPACE;
+//            }
+//            m_textLine += TEXT_SECTION_SPACE;
+//        }
+//
+//        if (!textList.isEmpty()) {
+//            debugDraw.drawString(5, m_textLine, "Test Info", color4);
+//            m_textLine += TEXT_LINE_SPACE;
+//            for (String s : textList) {
+//                debugDraw.drawString(5, m_textLine, s, Color3f.WHITE);
+//                m_textLine += TEXT_LINE_SPACE;
+//            }
+//            textList.clear();
+//        }
 
         if (mouseTracing && mouseJoint == null) {
             float delay = 0.1f;
@@ -480,12 +486,12 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
             mouseJoint.getAnchorB(p1);
             Vec2 p2 = mouseJoint.getTarget();
 
-            debugDraw.drawSegment(p1, p2, mouseColor);
+            draw().drawSegment(p1, p2, mouseColor);
         }
 
-        if (bombSpawning) {
-            debugDraw.drawSegment(bombSpawnPoint, bombMousePoint, Color3f.WHITE);
-        }
+//        if (bombSpawning) {
+//            draw().drawSegment(bombSpawnPoint, bombMousePoint, Color3f.WHITE);
+//        }
 
         if (settings.getSetting(TestbedSettings.DrawContactPoints).enabled) {
             final float k_impulseScale = 0.1f;
@@ -496,27 +502,27 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
                 ContactPoint point = points[i];
 
                 if (point.state == PointState.ADD_STATE) {
-                    debugDraw.drawPoint(point.position, 10f, color1);
+                    draw().drawPoint(point.position, 10f, color1);
                 } else if (point.state == PointState.PERSIST_STATE) {
-                    debugDraw.drawPoint(point.position, 5f, color2);
+                    draw().drawPoint(point.position, 5f, color2);
                 }
 
                 if (settings.getSetting(TestbedSettings.DrawContactNormals).enabled) {
                     p1.set(point.position);
                     p2.set(point.normal).mulLocal(axisScale).addLocal(p1);
-                    debugDraw.drawSegment(p1, p2, color3);
+                    draw().drawSegment(p1, p2, color3);
 
                 } else if (settings.getSetting(TestbedSettings.DrawContactImpulses).enabled) {
                     p1.set(point.position);
                     p2.set(point.normal).mulLocal(k_impulseScale).mulLocal(point.normalImpulse).addLocal(p1);
-                    debugDraw.drawSegment(p1, p2, color5);
+                    draw().drawSegment(p1, p2, color5);
                 }
 
                 if (settings.getSetting(TestbedSettings.DrawFrictionImpulses).enabled) {
                     Vec2.crossToOutUnsafe(point.normal, 1, tangent);
                     p1.set(point.position);
                     p2.set(tangent).mulLocal(k_impulseScale).mulLocal(point.tangentImpulse).addLocal(p1);
-                    debugDraw.drawSegment(p1, p2, color5);
+                    draw().drawSegment(p1, p2, color5);
                 }
             }
         }
@@ -572,9 +578,9 @@ public abstract class PhysicsModel implements ContactListener, Runnable {
         if (button == MOUSE_JOINT_BUTTON) {
             updateMouseJoint(p);
         }
-        if (button == BOMB_SPAWN_BUTTON) {
+        /*if (button == BOMB_SPAWN_BUTTON) {
             bombMousePoint.set(p);
-        }
+        }*/
     }
 
     /**

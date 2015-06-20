@@ -178,9 +178,9 @@ public class LocalRules {
             }
         }
 
-        Term content = belief.term;
+        Term content = belief.getTerm();
         if (content.hasVarIndep()) {
-            Term u[] = new Term[]{content, problem.term};
+            Term u[] = new Term[]{content, problem.getTerm()};
 
             boolean unified = Variables.unify(Symbols.VAR_INDEPENDENT, u, nal.memory.random);
             if (!unified) return null;
@@ -351,7 +351,7 @@ public class LocalRules {
      */
     private static void convertedJudgment(final Truth newTruth, final Budget newBudget, final NAL nal) {
         Statement content = (Statement) nal.getCurrentTask().getTerm();
-        Statement beliefContent = (Statement) nal.getCurrentBelief().term;
+        Statement beliefContent = (Statement) nal.getCurrentBelief().getTerm();
         int order = TemporalRules.reverseOrder(beliefContent.getTemporalOrder());
         final Term subjT = content.getSubject();
         final Term predT = content.getPredicate();

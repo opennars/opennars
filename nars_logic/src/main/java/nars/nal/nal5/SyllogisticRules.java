@@ -63,7 +63,7 @@ public final class SyllogisticRules {
         }
         int order1 = sentence.
                 getTemporalOrder();
-        int order2 = belief.term.getTemporalOrder();
+        int order2 = belief.getTerm().getTemporalOrder();
         int order =  dedExeOrder(order1, order2);
         if (order == ORDER_INVALID) {
             return;
@@ -127,7 +127,7 @@ public final class SyllogisticRules {
 
 
         int order1 = sentence1.getTerm().getTemporalOrder();
-        int order2 = sentence2.term.getTemporalOrder();
+        int order2 = sentence2.getTerm().getTemporalOrder();
         int order = abdIndComOrder(order1, order2);
         if (order == ORDER_INVALID) {
             return;
@@ -195,7 +195,7 @@ public final class SyllogisticRules {
         }
 
 
-        if(Global.BREAK_NAL_HOL_BOUNDARY && order1==order2 && isHigherOrderStatement(taskContent) && isHigherOrderStatement(sentence2.term)) { //
+        if(Global.BREAK_NAL_HOL_BOUNDARY && order1==order2 && isHigherOrderStatement(taskContent) && isHigherOrderStatement(sentence2.getTerm())) { //
             /* Bridge to higher order statements:
             <a ==> c>.
             <b ==> c>.
@@ -250,7 +250,7 @@ public final class SyllogisticRules {
 
 
         int order1 = asym.getTerm().getTemporalOrder();
-        int order2 = sym.term.getTemporalOrder();
+        int order2 = sym.getTerm().getTemporalOrder();
         int order = analogyOrder(order1, order2, figure);
         if (order == ORDER_INVALID)
             return false;
@@ -261,7 +261,7 @@ public final class SyllogisticRules {
         Truth truth = null;
         Budget budget;
         Sentence sentence = nal.getCurrentTask().sentence;
-        Compound taskTerm = sentence.term;
+        Compound taskTerm = sentence.getTerm();
 
         final Truth symTrut = sym.truth;
 
@@ -440,7 +440,7 @@ public final class SyllogisticRules {
         }
         Term subject = statement.getSubject();
         Term predicate = statement.getPredicate();
-        Term term = subSentence.term;
+        Term term = subSentence.getTerm();
 
         final Compound content;
         if ((side == 0) && term.equals(subject)) {
@@ -564,7 +564,7 @@ public final class SyllogisticRules {
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
         boolean deduction = (side != 0);
-        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term, nal.memory.random);
+        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), nal.memory.random);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {
@@ -658,7 +658,7 @@ public final class SyllogisticRules {
         long occ;
         if (nal.nal(7) && (delta != 0)) {
 
-            long baseTime = (belief.term instanceof Implication) ?
+            long baseTime = (belief.getTerm() instanceof Implication) ?
                 taskSentence.getOccurrenceTime() : belief.getOccurrenceTime();
 
             if (baseTime == Stamp.ETERNAL) {
@@ -737,7 +737,7 @@ public final class SyllogisticRules {
         Task task = nal.getCurrentTask();
         final Sentence taskSentence = task.sentence;
         final Sentence belief = nal.getCurrentBelief();
-        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.term, r);
+        boolean conditionalTask = Variables.hasSubstitute(Symbols.VAR_INDEPENDENT, premise2, belief.getTerm(), r);
         Term commonComponent;
         Term newComponent = null;
         if (side == 0) {

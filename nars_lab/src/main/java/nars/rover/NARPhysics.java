@@ -15,7 +15,7 @@ public class NARPhysics<P extends PhysicsModel> extends NARGame implements Runna
     public NARPhysics(NAR nar, float simulationRate, P model) {
         super(nar);
         this.model = model;
-        this.phy = new PhysicsRun(nar,simulationRate, model) {
+        this.phy = new PhysicsRun(simulationRate, model) {
 
             @Override
             public void keyPressed(KeyEvent e) {

@@ -2,8 +2,11 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.rover;
+package nars.rover.world;
 
+import nars.rover.PhysicsModel;
+import nars.rover.Rover2;
+import nars.rover.RoverWorld;
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
@@ -28,7 +31,10 @@ public class FoodSpawnWorld1 extends RoverWorld {
             float minSize = 0.8f;
             float maxSize = 4.0f;
             float mass = 4.0f;
-            addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass);
+            addFood(foodSpawnR, foodSpawnR, minSize, maxSize, mass,
+                    Math.random() < 0.5 ?
+                            Rover2.Material.food : Rover2.Material.poison
+                    );
         }
         float wt = 1f;
         addWall(0, h, w, wt, 0);

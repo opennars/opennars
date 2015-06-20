@@ -21,7 +21,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package nars.rover.jbox2d;
+package nars.rover.physics;
 
 import com.google.common.base.Preconditions;
 import org.jbox2d.common.IViewportTransform;
@@ -154,7 +154,7 @@ public class PhysicsCamera {
   public void moveWorld(Vec2 screenDiff) {
     targetTransform.getScreenVectorToWorld(screenDiff, worldDiff);
     if (targetTransform.isYFlip()) {
-      worldDiff.y = -worldDiff.y;
+      worldDiff.y = +worldDiff.y;
     }
     targetTransform.setCenter(targetTransform.getCenter().addLocal(worldDiff));
   }

@@ -171,7 +171,7 @@ public final class CompositionalRules {
         }
         Statement content = Statement.make(statement, subject, predicate, order);
         if ((content == null) || statement == null /*|| (!(content instanceof Compound))*/
-                || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().term)) {
+                || content.equals(statement.getTerm()) || content.equals(nal.getCurrentBelief().getTerm())) {
             return null;
         }
 
@@ -335,7 +335,7 @@ public final class CompositionalRules {
             //nal.deriveDouble(content, null /*truth*/, budget, false, false);
 
             // special logic to answer conjunctive questions with query variables
-            if (task.term.hasVarQuery()) {
+            if (task.getTerm().hasVarQuery()) {
 
                 Concept contentConcept = nal.memory.concept(content);
                 if (contentConcept == null) {
@@ -740,7 +740,7 @@ public final class CompositionalRules {
 
                 Truth truth;
 
-                if (premise1.equals(taskSentence.term)) {
+                if (premise1.equals(taskSentence.getTerm())) {
                     truth = induction(belief.truth, taskSentence.truth);
                 } else {
                     truth = induction(taskSentence.truth, belief.truth);
@@ -801,7 +801,7 @@ OUT: <lock1 --> lock>.
         final Random m = nal.memory.random;
 
         Statement T1 = sentence.getTerm();
-        Statement T2 = belief.term;
+        Statement T2 = belief.getTerm();
         Truth stu = sentence.getTruth();
 
         Term S1 = T2.getSubject();

@@ -48,10 +48,7 @@ import java.util.*;
 public class Sentence<T extends Compound> extends Item<Sentence<T>> implements Cloneable, Stamp, Named<Sentence<T>>, Termed, Truthed, Sentenced, Serializable, AbstractStamper {
 
 
-    /**
-     * The content of a Sentence is a Term
-     */
-    public final T term;
+    protected T term;
     
     /**
      * The punctuation also indicates the type of the Sentence: 
@@ -202,9 +199,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
             int hashStamp = Util.hash(Arrays.hashCode(getEvidentialSet()), (int)this.occurrenceTime);
 
             if (truth == null)
-                this.hash = (Util.hash(hashStamp, term.hashCode()) * 31) + punctuation;
+                this.hash = (Util.hash(hashStamp, getTerm().hashCode()) * 31) + punctuation;
             else
-                this.hash = (Util.hash(hashStamp, term.hashCode(), truth.hashCode()) * 31) + punctuation;
+                this.hash = (Util.hash(hashStamp, getTerm().hashCode(), truth.hashCode()) * 31) + punctuation;
 
         }
 
@@ -213,7 +210,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
 
     public void hash(PrimitiveSink into) {
 
-        into.putBytes(term.bytes());
+        into.putBytes(getTerm().bytes());
         into.putByte((byte)punctuation);
 
         getStamp().hash(into);
@@ -346,7 +343,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      */
     @Override
     public Sentence clone() {
-        return clone(term);
+        return clone(getTerm());
     }
 
 //    public final <X extends Compound> Sentence<X> clone(final Term t, final Class<? extends X> necessaryTermType) {
@@ -368,7 +365,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         X ct = termOrNull(t);
         if (ct == null) return null;
 
-        if (ct.equals(term)) {
+        if (ct.equals(getTerm())) {
             //throw new RuntimeException("Clone with " + t + " would produces exact sentence");
             return (Sentence<X>) this;
         }
@@ -475,7 +472,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }    
     
     public boolean hasQueryVar() {
-        return term.hasVarQuery();
+        return getTerm().hasVarQuery();
     }
 
     public boolean isRevisible() {
@@ -488,7 +485,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }*/
 
     public int getTemporalOrder() {
-        int t = term.getTemporalOrder();
+        int t = getTerm().getTemporalOrder();
         if (t == TemporalRules.ORDER_INVALID)
             throw new RuntimeException(this + " has INVALID temporal order");
         return t;
@@ -518,7 +515,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      *      2. if the stamp or other component changes, it would need to be re-calculated
      */
     public CharSequence getKey() {
-        final String contentName = term.toString();
+        final String contentName = getTerm().toString();
 
         final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
         //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
@@ -566,7 +563,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      */
     @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
     
-        String contentName = term.toString();
+        String contentName = getTerm().toString();
 
         final CharSequence tenseString;
         if (memory!=null) {
@@ -608,7 +605,7 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     }
 
     final public boolean equalTerms(final Sentence s) {
-        return term.equals(s.term);
+        return getTerm().equals(s.getTerm());
     }
 
     final public boolean equalPunctuations(Sentence s) {
@@ -682,6 +679,13 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
+    /** WARNING: calling this should not change the value of term, but just the
+     * particular instance that it references
+     */
+    public void setTermInstance(T term) {
+        this.term = term;
+    }
+
 
     public static final class ExpectationComparator implements Comparator<Sentence> {
         final static Comparator the = new ExpectationComparator();
@@ -732,6 +736,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return false;
     }
 
+    /**
+     * The content of a Sentence is a Term
+     */
     @Override
     public T getTerm() {
         return term;

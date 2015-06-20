@@ -1,17 +1,15 @@
-package nars.rover.jbox2d.j2d;
+package nars.rover.physics.gl;
 
-import automenta.spacegraph.physics.light.LightEngine;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
-import nars.rover.jbox2d.PhysicsController;
-import nars.rover.jbox2d.TestbedPanel;
-import nars.rover.jbox2d.TestbedState;
+import nars.rover.physics.PhysicsController;
+import nars.rover.physics.TestbedPanel;
+import nars.rover.physics.TestbedState;
+import nars.rover.physics.j2d.AWTPanelHelper;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
@@ -58,7 +56,7 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
     public JoglPanel(final TestbedState model, final PhysicsController controller, GLCapabilitiesImmutable config) {
         super(config);
         this.controller = controller;
-        setSize(600, 600);
+        setSize(800, 800);
         //(new Dimension(600, 600));
         //setAutoSwapBufferMode(true);
         addGLEventListener(this);
@@ -114,7 +112,7 @@ public class JoglPanel extends GLCanvas implements TestbedPanel, GLEventListener
 
 
         JoglDraw drawer = ((JoglDraw) model.getDebugDraw());
-        drawer.draw(model.model.m_world);
+        drawer.draw(model.model.m_world, model.model.getTime());
 
 
         //https://www.opengl.org/sdk/docs/man2/xhtml/glAccum.xml

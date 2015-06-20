@@ -153,17 +153,15 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
         int index1 = hashCode & mask;
         K key1 = keyTable[index1];
-        if (key.equals(key1)) {
+        if (key1!=null && key.equals(key1)) {
             V oldValue = vt[index1];
             vt[index1] = value;
             return oldValue;
         }
 
-        ///* EXPERIMENTAL */ if (key instanceof Hash2) hashCode = ((Hash2)key).hashCode2();
-
         int index2 = hash2(hashCode);
         K key2 = keyTable[index2];
-        if (key.equals(key2)) {
+        if (key2!=null && key.equals(key2)) {
             V oldValue = vt[index2];
             vt[index2] = value;
             return oldValue;
@@ -171,7 +169,7 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
         int index3 = hash3(hashCode);
         K key3 = keyTable[index3];
-        if (key.equals(key3)) {
+        if (key3!=null && key.equals(key3)) {
             V oldValue = vt[index3];
             vt[index3] = value;
             return oldValue;

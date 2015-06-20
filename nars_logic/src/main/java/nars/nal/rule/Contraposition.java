@@ -20,7 +20,7 @@ public class Contraposition extends ConceptFireTask {
     public boolean apply(ConceptProcess f, TaskLink taskLink) {
         final Sentence taskSentence = taskLink.getSentence();
 
-        final Term taskTerm = taskSentence.term;
+        final Term taskTerm = taskSentence.getTerm();
 
         if ((taskLink.type!= TermLink.TRANSFORM) && (taskTerm instanceof Implication)) {
             //there would only be one concept which has a term equal to another term... so samplingis totally unnecessary
@@ -48,7 +48,7 @@ public class Contraposition extends ConceptFireTask {
     protected static Task contraposition(final Sentence sentence, final NAL nal) {
         //TODO this method can end earlier if it detects an input implication with freq=1, because the resulting confidence should be 0 which is useless
 
-        final Statement statement = (Statement)sentence.term;
+        final Statement statement = (Statement) sentence.getTerm();
 
         Memory memory = nal.memory;
         memory.logic.CONTRAPOSITION.hit();

@@ -1,4 +1,4 @@
-package nars.rover.jbox2d;
+package nars.rover.physics;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;

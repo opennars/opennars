@@ -2,13 +2,13 @@ package nars.core;
 
 import nars.Memory;
 import nars.NAR;
-import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.DefaultTruth;
 import nars.nal.Truth;
 import nars.nal.concept.ConstantConceptBuilder;
 import nars.nal.concept.StringPatternConceptBuilder;
 import nars.nal.term.Term;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -33,7 +33,7 @@ public class ConceptBuilderTest {
                 n.concept("lessThan(4,3)").getStrongestBelief().getTruth().isNegative());
     }
 
-    @Test
+    @Test @Ignore
     public void testEval() {
         eq(0, "lessThan(eval(add(1,1)), 1)");
         eq(1, "lessThan(eval(add(1,1)), 3)");

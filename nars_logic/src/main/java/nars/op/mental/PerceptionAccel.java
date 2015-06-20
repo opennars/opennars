@@ -119,7 +119,7 @@ public class PerceptionAccel extends NARReaction {
                 Task current = eventbuffer.get(j);
                 evBase.addAll(current.sentence.getEvidentialSet());
 
-                relterms[k++] = current.sentence.term;
+                relterms[k++] = current.sentence.getTerm();
                 if (i != Len - 1) { //if its not the last one, then there is a next one for which we have to put an interval
                     truth = TruthFunctions.deduction(truth, current.sentence.truth);
                     Task next = eventbuffer.get(j + 1);

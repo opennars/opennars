@@ -23,8 +23,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ****************************************************************************
  */
-package nars.rover.jbox2d.j2d;
+package nars.rover.physics.j2d;
 
+import nars.rover.physics.gl.JoglDraw;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.ChainShape;

@@ -135,7 +135,7 @@ OUT: <(&&,<#1 --> lock>,<#1 --> (/,open,$2,_)>) ==> <$2 --> key>>.
             return false;
         }
 
-        Term firstTerm = taskSentence.term;
+        Term firstTerm = taskSentence.getTerm();
 
         if (!firstTerm.hasVar()) {
             return false;

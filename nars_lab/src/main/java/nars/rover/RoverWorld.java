@@ -24,7 +24,7 @@ abstract public class RoverWorld {
     }
 
     
-    public void addFood(float w, float h, float minSize, float maxSize, float mass) {
+    public void addFood(float w, float h, float minSize, float maxSize, float mass, Rover2.Material m) {
         float x = (float) Math.random() * w - w / 2f;
         float y = (float) Math.random() * h - h / 2f;
         float bw = (float) (minSize + Math.random() * (maxSize - minSize));
@@ -32,7 +32,7 @@ abstract public class RoverWorld {
         float a = 0;
         Body b = addBlock(x * 2.0f, y * 2.0f, bw, bh, a, mass);
         b.applyAngularImpulse((float) Math.random());
-        b.setUserData(Rover2.Material.food);
+        b.setUserData(m);
     }
 
     public Body addWall(float x, float y, float w, float h, float a) {

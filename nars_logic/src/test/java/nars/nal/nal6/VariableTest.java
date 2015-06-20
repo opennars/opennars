@@ -12,6 +12,7 @@ import nars.model.impl.Curve;
 import nars.model.impl.Default;
 import nars.nal.JavaNALTest;
 import nars.testing.condition.OutputContainsCondition;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -134,7 +135,9 @@ public class VariableTest extends JavaNALTest {
     @Test public void testNormalizeSomeVars1ba() {
         unaffected(normB, normA);
     }
-    @Test public void testNormalizeSomeVars1ac() {
+
+    @Test @Ignore
+    public void testNormalizeSomeVars1ac() {
         unaffected(normA, normC);
     }
 

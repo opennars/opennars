@@ -28,7 +28,6 @@ import nars.Memory;
 import nars.nal.NALOperator;
 import nars.nal.Terms;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.task.TaskSeed;
 import nars.nal.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.UTF8Identifier;
@@ -413,7 +412,8 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
 
     @Override
     final public boolean equals(final Object that) {
-        if (this == that) return true;
+        if (this == that)
+            return true;
         if (!(that instanceof Compound)) return false;
         Compound c = (Compound)that;
         if (contentHash != c.contentHash ||
@@ -854,6 +854,10 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return ((impossibleSubStructure(target.subtermStructure())) ||
         (impossibleSubTermMass(target.getMass())));
     }
+    public boolean impossibleSubTermOrEquality(final Term target) {
+        return ((impossibleSubStructure(target.subtermStructure())) ||
+                (impossibleSubTermOrEqualityMass(target.getMass())));
+    }
 
 //    /** tests if another term is possibly a subterm of this, given
 //     *  its mass and this term's mass.
@@ -960,7 +964,9 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
     public boolean containsTermRecursively(final Term target) {
         if (impossibleSubterm(target)) return false;
 
-        for (Term x : term) {
+        for (final Term x : term) {
+            if (impossibleSubTermOrEquality(target))
+                continue;
             if (x.equals(target)) return true;
             if (x instanceof Compound) {
                 if (((Compound) x).containsTermRecursively(target)) {

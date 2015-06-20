@@ -1,12 +1,9 @@
 package nars.nal.tlink;
 
-import nars.Symbols;
 import nars.budget.Budget;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.term.Termed;
-import nars.util.data.id.Identifier;
-import nars.util.data.id.LiteralUTF8Identifier;
 import nars.util.utf8.Utf8;
 
 import java.io.Serializable;
@@ -14,8 +11,7 @@ import java.io.Serializable;
 /** contains most of the essential data to populate new TermLinks */
 public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the pending field */ implements Termed, Serializable {
 
-    /** The linked Term */
-    public final Term target;
+    protected Term target;
 
     /** The type of tlink, one of the above */
     public final short type;
@@ -122,7 +118,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     public static final byte indexCharOffset = 'a';
 
     public Term term(final boolean in) {
-        return in ? concept : target;
+        return in ? concept : getTarget();
     }
 
     public byte[] prefix(final boolean incoming) {
@@ -152,12 +148,12 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
     @Override
     public String toString() {
-        return concept + ":" + Utf8.fromUtf8(prefix(true)) + '|' + Utf8.fromUtf8(prefix(false)) + ':' + target;
+        return concept + ":" + Utf8.fromUtf8(prefix(true)) + '|' + Utf8.fromUtf8(prefix(false)) + ':' + getTarget();
     }
 
     @Override
     public Term getTerm() {
-        return target;
+        return getTarget();
     }
 
     @Override
@@ -168,7 +164,7 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
 
 
     public short getType(Term target) {
-        if (this.target.equals(target)) {
+        if (this.getTarget().equals(target)) {
             //points in the same direction as to the subterms, so it is a component
             return (short)(type-1);
         }
@@ -177,4 +173,17 @@ public class TermLinkTemplate extends Budget /* extends Budget ?? instead of the
     }
 
 
+    /** The linked Term */
+    public Term getTarget() {
+        return target;
+    }
+
+    /** for updating this target's field with an equivalent instance.
+     * calling this should not change the equals() value of target
+     * but just helps to share common term instances
+     * @param target
+     */
+    public void setTargetInstance(Term target) {
+        this.target = target;
+    }
 }

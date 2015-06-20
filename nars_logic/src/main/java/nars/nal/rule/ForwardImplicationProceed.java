@@ -1,8 +1,6 @@
 package nars.nal.rule;
 
 
-import nars.Global;
-import nars.budget.Budget;
 import nars.Symbols;
 import nars.budget.BudgetFunctions;
 import nars.nal.*;
@@ -47,9 +45,9 @@ public class ForwardImplicationProceed extends ConceptFireTaskTerm {
 
         if (!(taskLinkTask.sentence.isJudgment() || taskLinkTask.sentence.isGoal())) return true;
 
-        Term taskTerm = taskLinkTask.sentence.term;
+        Term taskTerm = taskLinkTask.sentence.getTerm();
         if (!(taskTerm instanceof Implication)) return true;
-        Implication imp = (Implication) taskLinkTask.sentence.term;
+        Implication imp = (Implication) taskLinkTask.sentence.getTerm();
 
         if (!((imp.getTemporalOrder() == ORDER_FORWARD || (imp.getTemporalOrder() == ORDER_CONCURRENT))))
             return true;

@@ -118,7 +118,7 @@ public class RuleTables {
         Task beliefTask = nal.getCurrentBeliefTask();
         Sentence belief = nal.getCurrentBelief();
 
-        if (!(belief.term instanceof Statement)) return;
+        if (!(belief.getTerm() instanceof Statement)) return;
 
         final Term taskTerm = task.getTerm();
 
@@ -208,7 +208,7 @@ public class RuleTables {
         final Random r = nal.memory.random;
 
         Statement taskStatement = taskSentence.getTerm();
-        Statement beliefStatement = belief.term;
+        Statement beliefStatement = belief.getTerm();
 
         Term t1, t2;
         Term[] u = new Term[]{taskStatement, beliefStatement};
@@ -357,7 +357,7 @@ public class RuleTables {
         final Random r = nal.memory.random;
 
         Statement asymSt = (Statement) asym.getTerm();
-        Statement symSt = (Statement) sym.term;
+        Statement symSt = (Statement) sym.getTerm();
         final Term[] u = new Term[]{asymSt, symSt};
 
         switch (figure) {
@@ -426,7 +426,7 @@ public class RuleTables {
      * @param nal          Reference to the memory
      */
     public static void symmetricSymmetric(final Task<Statement> taskSentence, final Sentence<Statement> belief, int figure, final NAL nal) {
-        Statement s1 = belief.term;
+        Statement s1 = belief.getTerm();
         Statement s2 = taskSentence.getTerm();
 
         Term ut1, ut2;  //parameters for unify()
@@ -508,10 +508,10 @@ public class RuleTables {
             return;
         }*/
 
-        Statement statement = mainSentence.term;
+        Statement statement = mainSentence.getTerm();
 
         Term component = statement.term[index];
-        Compound content = subSentence.term;
+        Compound content = subSentence.getTerm();
 
         if (((component instanceof Inheritance) || (component instanceof Negation)) && (nal.getCurrentBelief() != null)) {
 
@@ -638,9 +638,9 @@ public class RuleTables {
      */
     public static void compoundAndStatement(Compound compound, short index, Statement statement, short side, Term beliefTerm, NAL nal) {
 
-        if (index >= compound.term.length) {
+        /*if (index >= compound.term.length) {
             throw new RuntimeException(index + " index out of bounds for compound " + compound + "( " + compound.getClass() + " = " + Arrays.toString(compound.term) + ") in compoundAndStatement with statement=" + statement);
-        }
+        }*/
         Term component = compound.term[index];
 
         Task task = nal.getCurrentTask();

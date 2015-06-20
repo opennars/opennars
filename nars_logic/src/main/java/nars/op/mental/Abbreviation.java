@@ -88,7 +88,7 @@ public class Abbreviation extends NARReaction {
         if (canAbbreviate(task)) {
 
             Operation operation = Operation.make(
-                    abbreviate, Product.make(termArray(task.sentence.term)));
+                    abbreviate, Product.make(termArray(task.sentence.getTerm())));
 
             operation.setTask(task);
 

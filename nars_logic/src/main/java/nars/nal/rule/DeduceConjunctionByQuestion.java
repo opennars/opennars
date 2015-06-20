@@ -58,7 +58,7 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
             return;
         }
 
-        final Term term2 = belief.term;
+        final Term term2 = belief.getTerm();
         final boolean term2ContainVar = term2.hasVar();
         final boolean term2Conjunction = term2 instanceof Conjunction;
 

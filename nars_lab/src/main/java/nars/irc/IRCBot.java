@@ -8,10 +8,12 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import nars.Global;
+import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
+import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.concept.Concept;
 import nars.nal.term.Atom;
@@ -29,7 +31,7 @@ import java.util.List;
 public class IRCBot {
 
     private final MarkovObservationsGraph m;
-    boolean outputting = true;
+    boolean outputting = false;
 
     // The server to connect to and our details.
     String server = "irc.freenode.net";
@@ -51,24 +53,31 @@ public class IRCBot {
 
         Default d = new Default();
         //Default d = new Solid(4, 64, 0,5, 0,3);
-        d.setActiveConcepts(2048);
+        d.setActiveConcepts(768);
 
-        d.executionThreshold.set(0.7);
-        d.temporalRelationsMax.set(2);
-        d.shortTermMemoryHistory.set(3);
-        d.duration.set(5);
-        d.termLinkMaxReasoned.set(6);
-        d.conceptsFiredPerCycle.set(9);
-        //d.setTiming(Memory.Timing.RealMS);
+        d.executionThreshold.set(0.5);
+
+        d.temporalRelationsMax.set(4);
+
+        d.shortTermMemoryHistory.set(4);
+
+        d.termLinkMaxReasoned.set(4);
+
+        d.conceptsFiredPerCycle.set(64);
+
+        d.duration.set(100 /* ms */);
+        d.setTiming(Memory.Timing.RealMS);
 
 
         //d.temporalPlanner(16f,8,8,2);
 
         NAR n = new NAR( d );
 
+        TextOutput.out(n);
 
         File corpus = new File("/tmp/h.nal");
         n.input(corpus);
+
         System.out.print("initializing...");
         for (int i = 0; i < 10; i++) {
             System.out.print(i + " ");
@@ -139,20 +148,15 @@ public class IRCBot {
                     if (s.length() < 2) continue;
 
                     if (!s.endsWith(".")  && !s.endsWith("?") && !s.endsWith("!")) s=s+'.';
-                    if (hear("book", s, priority) == 0) continue;
+                    if (hear("book", s, priority, delayMS) == 0) continue;
 
-                    try {
-                        Thread.sleep(delayMS);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
         }).start();
     }
 
 
-    public int hear(String channel, String m, float priority) {
+    public int hear(String channel, String m, float priority, long wordDelay) {
         final int delay = 25 /*cycles */, endDelay = 1000, tokenMax = 16, tokenMin = 1;
         List<Twokenize.Span> tokens = Twokenize.twokenize(m);
         int nonPunc = Iterables.size(Iterables.filter(tokens, new Predicate<Twokenize.Span>() {
@@ -214,17 +218,23 @@ public class IRCBot {
 //                }
                 if (a.isEmpty()) return "";
                 //return "<{\"" + a + "\"}-->WORD>.";
-                return "say(\"" + a + "\")!";
+                return "(say, \"" + a + "\", " + channel + "). :|:";
             }
         });
-        String xs = "say()!\n" + delay + "\n"; //clear the buffer before
+        //String xs = "say()!\n" + delay + "\n"; //clear the buffer before
         for (String w : s) {
-            xs += "$" + Texts.n2(priority) + "$ " + w + "\n";
-            xs += delay + "\n";
+            String xs = "$" + Texts.n2(priority) + "$ " + w + "\n";
+
+            System.err.println(xs);
+            nar.input(xs);
+
+            try {
+                Thread.sleep(wordDelay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
-        //System.err.println(xs);
-        nar.input(xs);
 //
 //        System.out.println(nar.time() + " HEAR: " + tokens);
 //        //System.out.println("HEAR: " + i);
@@ -372,13 +382,21 @@ public class IRCBot {
                             // Print the raw line received by the bot.
                             //System.out.println(line);
                             if (line.contains(" PRIVMSG " )) {
+                                System.err.println(line);
                                 String part = "PRIVMSG " + channel;
                                 int s = line.indexOf(part);
                                 if (s!=-1) {
                                     String msg = line.substring(s + part.length() + 2);
-                                    hear(channel, msg, 0.8f);
+                                    String ch = channel;
+                                    if (ch.startsWith("#"))
+                                        ch = ch.substring(1);
+
+                                    new Thread( () -> { hear(channel, msg, 0.7f, 100); } ).start();
                                 }
 
+                            }
+                            else {
+                                System.err.println("unknown: " + line);
                             }
                         }
                     }

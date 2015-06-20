@@ -89,7 +89,7 @@ public class STMInduction extends NARReaction {
             Task stmLast = ss.next();
 
 
-            if (!equalSubTermsInRespectToImageAndProduct(currentTask.sentence.term, stmLast.sentence.term)) {
+            if (!equalSubTermsInRespectToImageAndProduct(currentTask.sentence.getTerm(), stmLast.sentence.getTerm())) {
                 continue;
             }
 

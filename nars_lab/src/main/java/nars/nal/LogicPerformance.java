@@ -89,10 +89,10 @@ public class LogicPerformance {
                 explain(causeTask, maxLevels-1);
             }
             if (bestSolution!=null) {
-                if (!t.getTerm().equals(bestSolution.term)) {
+                if (!t.getTerm().equals(bestSolution.getTerm())) {
                     
-                    addVertex(bestSolution.term);
-                    addEdge(bestSolution.term, t, new UniqueEdge("t"));
+                    addVertex(bestSolution.getTerm());
+                    addEdge(bestSolution.getTerm(), t, new UniqueEdge("t"));
                     
                     addVertex(bestSolution);
                     addEdge(t, bestSolution,new UniqueEdge("bestSolution"));
@@ -101,8 +101,8 @@ public class LogicPerformance {
                 }
             }
             if (parentBelief!=null) {
-                addVertex(parentBelief.term);
-                addEdge(parentBelief.term, t, new UniqueEdge("t"));
+                addVertex(parentBelief.getTerm());
+                addEdge(parentBelief.getTerm(), t, new UniqueEdge("t"));
                 
                 addVertex(parentBelief);
                 addEdge(parentBelief, t, new UniqueEdge("belief"));

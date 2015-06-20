@@ -2,14 +2,15 @@
  * Here comes the text of your license
  * Each line should be prefixed with  * 
  */
-package nars.rover;
+package nars.rover.world;
 
-import nars.Memory;
 import nars.grid2d.*;
 import nars.grid2d.map.Maze;
-import nars.rover.jbox2d.j2d.SwingDraw;
-import nars.rover.jbox2d.j2d.SwingDraw.LayerDraw;
-import nars.rover.jbox2d.j2d.JoglDraw;
+import nars.rover.PhysicsModel;
+import nars.rover.RoverWorld;
+import nars.rover.physics.j2d.SwingDraw;
+import nars.rover.physics.j2d.SwingDraw.LayerDraw;
+import nars.rover.physics.gl.JoglDraw;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 

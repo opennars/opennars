@@ -208,7 +208,7 @@ public class SentenceTablePanel extends TablePanel {
                 s.punctuation,
                 freq == -1 ? "" : freq,
                 conf == -1 ? "" : conf,
-                String.format("%03d", s.term.getComplexity()),
+                String.format("%03d", s.getTerm().getComplexity()),
                 priority,
                 parentTask
             });

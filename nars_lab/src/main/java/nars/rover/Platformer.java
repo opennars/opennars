@@ -1,6 +1,5 @@
 package nars.rover;
 
-import nars.rover.jbox2d.TestbedSettings;
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.EdgeShape;

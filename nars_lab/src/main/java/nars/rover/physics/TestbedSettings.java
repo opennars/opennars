@@ -24,11 +24,11 @@
 /**
  * Created at 1:58:18 PM Jul 17, 2010
  */
-package nars.rover.jbox2d;
+package nars.rover.physics;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import nars.rover.jbox2d.TestbedSetting.SettingType;
+import nars.rover.physics.TestbedSetting.SettingType;
 
 import java.util.Collections;
 import java.util.List;

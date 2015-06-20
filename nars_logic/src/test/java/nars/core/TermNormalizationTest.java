@@ -20,7 +20,7 @@ public class TermNormalizationTest {
         //test for re-use of variable instances during normalization
         NAR n = new NAR(new Default());
         Task t = n.inputTask(term + ".");
-        Compound ct = t.sentence.term;
+        Compound ct = t.sentence.getTerm();
         Variable a = ct.subterm(v1Index);
         assertNotNull(a);
         Variable b = ct.subterm(v2Index);

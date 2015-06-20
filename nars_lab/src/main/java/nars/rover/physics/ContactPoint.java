@@ -4,11 +4,11 @@
  * 
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- *  * Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ * 	* Redistributions of source code must retain the above copyright notice,
+ * 	  this list of conditions and the following disclaimer.
+ * 	* Redistributions in binary form must reproduce the above copyright notice,
+ * 	  this list of conditions and the following disclaimer in the documentation
+ * 	  and/or other materials provided with the distribution.
  * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -21,8 +21,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-package nars.rover.jbox2d;
+/**
+ * Created at 2:12:15 PM Jul 17, 2010
+ */
+package nars.rover.physics;
 
-public interface TestbedErrorHandler {
-  void serializationError(Exception e, String message);
+import org.jbox2d.collision.Collision.PointState;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Fixture;
+
+/**
+ * Contact point for {@link TestbedTest}.
+ * @author Daniel Murphy
+ */
+public class ContactPoint {
+	public Fixture fixtureA;
+	public Fixture fixtureB;
+	public final Vec2 normal = new Vec2();
+	public final Vec2 position = new Vec2();
+	public PointState state;
+	public float normalImpulse;
+	public float tangentImpulse;
+	public float separation;
 }

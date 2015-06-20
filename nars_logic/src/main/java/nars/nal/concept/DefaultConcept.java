@@ -6,6 +6,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.bag.Bag;
 import nars.budget.Budget;
+import nars.meter.LogicMetrics;
 import nars.nal.*;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
@@ -16,7 +17,6 @@ import nars.nal.term.Compound;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
 import nars.nal.tlink.*;
-import nars.util.data.id.Identifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -254,12 +254,12 @@ public class DefaultConcept extends Item<Term> implements Concept {
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Concept)) return false;
-        return ((Concept) obj).name().equals(name());
+        return ((Concept) obj).getTerm().equals(getTerm());
     }
 
     @Override
     public int hashCode() {
-        return name().hashCode();
+        return getTerm().hashCode();
     }
 
     /* ---------- direct processing of tasks ---------- */
@@ -287,23 +287,28 @@ public class DefaultConcept extends Item<Term> implements Concept {
             return false;
         }
 
-        char type = task.sentence.punctuation;
+        //share the same Term instance for fast comparison and reduced memory usage (via GC)
+        task.setTermInstance((Compound) getTerm());
+
+        final char type = task.sentence.punctuation;
+        final LogicMetrics logicMeter = getMemory().logic;
+
         switch (type) {
             case Symbols.JUDGMENT:
                 if (!processJudgment(nal, task))
                     return false;
 
-                getMemory().logic.JUDGMENT_PROCESS.hit();
+                logicMeter.JUDGMENT_PROCESS.hit();
                 break;
             case Symbols.GOAL:
                 if (!processGoal(nal, task))
                     return false;
-                getMemory().logic.GOAL_PROCESS.hit();
+                logicMeter.GOAL_PROCESS.hit();
                 break;
             case Symbols.QUESTION:
             case Symbols.QUEST:
                 processQuestion(nal, task);
-                getMemory().logic.QUESTION_PROCESS.hit();
+                logicMeter.QUESTION_PROCESS.hit();
                 break;
             default:
                 throw new RuntimeException("Invalid sentence type: " + task);
@@ -362,7 +367,8 @@ public class DefaultConcept extends Item<Term> implements Concept {
             if (linkTask(t)) {
                 if (aggregateBudget == null) aggregateBudget = new Budget(t);
                 else {
-                    aggregateBudget.merge(t);
+                    //aggregateBudget.merge(t);
+                    aggregateBudget.accumulate(t);
                 }
             }
         }
@@ -582,13 +588,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
             ArrayList<Compound> qu = new ArrayList(3);
 
             if (Global.HOW_QUESTION_GENERATION_ON_DECISION_MAKING) {
-                if (!(task.sentence.term instanceof Equivalence) && !(task.sentence.term instanceof Implication)) {
+                if (!(task.sentence.getTerm() instanceof Equivalence) && !(task.sentence.getTerm() instanceof Implication)) {
 
-                    Implication i1 = Implication.make(how, task.sentence.term, TemporalRules.ORDER_CONCURRENT);
+                    Implication i1 = Implication.make(how, task.sentence.getTerm(), TemporalRules.ORDER_CONCURRENT);
                     if (i1 != null)
                         qu.add(i1);
 
-                    Implication i2 = Implication.make(how, task.sentence.term, TemporalRules.ORDER_FORWARD);
+                    Implication i2 = Implication.make(how, task.sentence.getTerm(), TemporalRules.ORDER_FORWARD);
                     if (i2 != null)
                         qu.add(i2);
 
@@ -596,7 +602,7 @@ public class DefaultConcept extends Item<Term> implements Concept {
             }
 
             if (Global.QUESTION_GENERATION_ON_DECISION_MAKING) {
-                qu.add(task.sentence.term);
+                qu.add(task.sentence.getTerm());
             }
 
             if (qu.isEmpty()) return;
@@ -884,13 +890,15 @@ public class DefaultConcept extends Item<Term> implements Concept {
 
             //if (!(task.isStructural() && (termLink.getType() == TermLink.TRANSFORM))) { // avoid circular transform
 
-            Term componentTerm = termLink.target;
+            Term componentTerm = termLink.getTarget();
             if (componentTerm.equals(getTerm())) // avoid circular transform
                 continue;
 
             Concept componentConcept = getMemory().conceptualize(subBudget, componentTerm);
 
             if (componentConcept != null) {
+
+                termLink.setTargetInstance(componentConcept.getTerm());
 
                 taskLinkBuilder.setTemplate(termLink);
 

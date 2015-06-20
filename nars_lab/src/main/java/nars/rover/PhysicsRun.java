@@ -28,12 +28,14 @@ package nars.rover;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import nars.NAR;
-import nars.rover.jbox2d.PhysicsController;
-import nars.rover.jbox2d.PhysicsController.MouseBehavior;
-import nars.rover.jbox2d.PhysicsController.UpdateBehavior;
-import nars.rover.jbox2d.TestbedErrorHandler;
-import nars.rover.jbox2d.TestbedState;
-import nars.rover.jbox2d.j2d.*;
+import nars.rover.physics.PhysicsController;
+import nars.rover.physics.PhysicsController.MouseBehavior;
+import nars.rover.physics.PhysicsController.UpdateBehavior;
+import nars.rover.physics.TestbedErrorHandler;
+import nars.rover.physics.TestbedState;
+import nars.rover.physics.gl.JoglDraw;
+import nars.rover.physics.gl.JoglPanel;
+import nars.rover.physics.j2d.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,13 +49,11 @@ import java.awt.event.KeyListener;
  */
 public class PhysicsRun {
     public final PhysicsController controller;
-    private final TestbedState model;
+    public final TestbedState model;
     // private static final Logger log = LoggerFactory.getLogger(TestbedMain.class);
 
-    NAR nar;
     private final float simulationRate;
-    public PhysicsRun(NAR nar, float simulationRate, PhysicsModel... tests) {
-        this.nar=nar;
+    public PhysicsRun(float simulationRate, PhysicsModel... tests) {
         this.simulationRate = simulationRate;
     // try {
         // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");

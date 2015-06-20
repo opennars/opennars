@@ -23,7 +23,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ****************************************************************************
  */
-package nars.rover.jbox2d;
+package nars.rover.physics;
 
 import nars.rover.PhysicsModel;
 import org.jbox2d.common.IViewportTransform;

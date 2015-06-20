@@ -97,7 +97,7 @@ public class NarseseParserTest {
     public void testIncompleteTask() throws InvalidInputException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(NALOperator.INHERITANCE, t.sentence.term.operator());
+        assertEquals(NALOperator.INHERITANCE, t.sentence.getTerm().operator());
         Inheritance i = (Inheritance) t.getTerm();
         assertEquals("a", i.getSubject().toString());
         assertEquals("b", i.getPredicate().toString());
@@ -120,7 +120,7 @@ public class NarseseParserTest {
     public void testNoBudget() throws InvalidInputException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(NALOperator.EQUIVALENCE, t.sentence.term.operator());
+        assertEquals(NALOperator.EQUIVALENCE, t.sentence.getTerm().operator());
 
         assertEquals('.', t.getPunctuation());
         assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
@@ -134,7 +134,7 @@ public class NarseseParserTest {
         String tt = "<<a <=> b> --> <c ==> d>>";
         Task t = task(tt + "?");
         assertNotNull(t);
-        assertEquals(NALOperator.INHERITANCE, t.sentence.term.operator());
+        assertEquals(NALOperator.INHERITANCE, t.sentence.getTerm().operator());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.sentence.truth);
@@ -166,7 +166,7 @@ public class NarseseParserTest {
         String tt = "(a, b, c)";
         Task t = task(tt + "@");
         assertNotNull(t);
-        assertEquals(NALOperator.PRODUCT, t.sentence.term.operator());
+        assertEquals(NALOperator.PRODUCT, t.sentence.getTerm().operator());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('@', t.getPunctuation());
         assertNull(t.sentence.truth);

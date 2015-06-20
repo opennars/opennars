@@ -87,8 +87,10 @@ public class VariableTransformationTest {
         Term c = Conjunction.make(ta, tb).normalized();
 
         Term e = n.term(expect);
+        Term d = e.normalized();
         assertNotNull(e);
-        assertEquals(a + " (" + scopedB + ")  +    "   + b + " (" + scopedB + ")", e, c);
+        assertEquals(a + " (" + scopedA + ")  +    "   + b + " (" + scopedB + ")", d, c);
+        assertEquals(a + " (" + scopedA + ")  +    "   + b + " (" + scopedB + ")", e, c);
     }
 }
 

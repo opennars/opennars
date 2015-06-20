@@ -1,10 +1,10 @@
-package nars.rover.jbox2d.j2d;
+package nars.rover.physics.j2d;
 
 import com.google.common.collect.Lists;
 import nars.rover.PhysicsModel;
-import nars.rover.jbox2d.PhysicsCamera.ZoomType;
-import nars.rover.jbox2d.PhysicsController;
-import nars.rover.jbox2d.TestbedState;
+import nars.rover.physics.PhysicsCamera.ZoomType;
+import nars.rover.physics.PhysicsController;
+import nars.rover.physics.TestbedState;
 import org.jbox2d.common.Vec2;
 
 import java.awt.*;

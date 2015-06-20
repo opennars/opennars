@@ -91,7 +91,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
 
         //try if B1 unifies with B2, if yes, create new judgement
         Implication S1=(Implication) s1.getTerm();
-        Implication S2=(Implication) s2.term;
+        Implication S2=(Implication) s2.getTerm();
         Term A=S1.getSubject();
         Term B1=S1.getPredicate();
         Term B2=S2.getSubject();

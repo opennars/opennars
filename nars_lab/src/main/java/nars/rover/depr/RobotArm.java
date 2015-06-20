@@ -1,8 +1,9 @@
-package nars.rover;
+package nars.rover.depr;
 
-import nars.rover.jbox2d.PhysicsCamera;
-import nars.rover.jbox2d.TestbedPanel;
-import nars.rover.jbox2d.TestbedSettings;
+import nars.rover.PhysicsModel;
+import nars.rover.physics.PhysicsCamera;
+import nars.rover.physics.TestbedPanel;
+import nars.rover.physics.TestbedSettings;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.shapes.EdgeShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -268,10 +269,10 @@ public class RobotArm extends PhysicsModel {
 
     public static class RayCastClosestCallback implements RayCastCallback {
 
-      boolean m_hit;
-      Vec2 m_point;
+      public boolean m_hit;
+      public Vec2 m_point;
       Vec2 m_normal;
-      Body body;
+      public Body body;
 
       public void init() {
         m_hit = false;

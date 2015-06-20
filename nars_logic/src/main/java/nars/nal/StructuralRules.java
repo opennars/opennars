@@ -311,7 +311,8 @@ public final class StructuralRules {
             return;
         }
         if (statement instanceof Inheritance) {
-            if (((compound instanceof SetExt) && (side == 0)) || ((compound instanceof SetInt) && (side == 1))) {
+            if ( ((compound instanceof SetExt) && (side == 0)) ||
+                 ((compound instanceof SetInt) && (side == 1)) ) {
                 return;
             }
         }
@@ -365,6 +366,8 @@ public final class StructuralRules {
         }        
         
         final Term content = compoundTask ? component : compound;
+        if (!(content instanceof Compound))
+            return null;
         
         
         Task task = nal.getCurrentTask();
@@ -402,10 +405,8 @@ public final class StructuralRules {
             budget = BudgetFunctions.forward(truth, nal);
         }
 
-        if (content instanceof Compound)
-            return nal.deriveSingle((Compound) content, truth, budget);
-        else
-            return null;
+
+        return nal.deriveSingle((Compound) content, truth, budget);
     }
 
     /* --------------- Negation related rules --------------- */
