@@ -46,7 +46,7 @@ public class NodeToTriplesMap extends NodeToTriplesMapBase
 
     private static class OpenSetBunch extends SetBunch
         {
-        private static final TripleBunch empty = new ArrayBunch();
+        private static final TripleBunch empty = new ArrayBunch(0);
         
         public OpenSetBunch()
             { super( empty ); }

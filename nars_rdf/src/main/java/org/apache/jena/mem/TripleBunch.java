@@ -18,8 +18,10 @@
 
 package org.apache.jena.mem;
 
-import org.apache.jena.graph.Triple ;
-import org.apache.jena.util.iterator.ExtendedIterator ;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.util.iterator.ExtendedIterator;
+
+import java.util.Iterator;
 
 /**
     A bunch of triples - a stripped-down set with specialized methods. A
