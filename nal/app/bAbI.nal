@@ -94,6 +94,11 @@ https://drive.google.com/file/d/0BxKBnD5y2M8NVHRiVXBnOVpiYUk/edit
 //Answer <(*,{daniel},{milk}) --> pick>. %1.00;0.90%
 
 //(7) Counting
+//background knowledge
+//counting
+<<{$1} --> $rel> =/> <(*,1,$rel,(*,$1)) --> count>>.
+<<{$1,$2} --> $rel> =/> <(*,2,$rel,(*,$1,$2)) --> count>>.
+<<{$1,$2,$3} --> $rel> =/> <(*,3,$rel,(*,$1,$2,$3)) --> count>>.
 //Daniel picked up the football.
 <{football} --> (/,hold,{daniel},_)>. :|:
 //Daniel dropped the football.
@@ -103,14 +108,9 @@ https://drive.google.com/file/d/0BxKBnD5y2M8NVHRiVXBnOVpiYUk/edit
 //Daniel took the apple.
 <{apple} --> (/,hold,{daniel},_)>. :|:
 //How many objects is Daniel holding?
-<{?What} --> (/,hold,{daniel},_)>?
-<{?What,?What2} --> (/,hold,{daniel},_)>?
-<{?What,?What2,?What3} --> (/,hold,{daniel},_)>?
-<{?What} --> (/,hold,{daniel},_)>?
-<{?What,?What2} --> (/,hold,{daniel},_)>?
-<{?What,?What2,?What3} --> (/,hold,{daniel},_)>?
+<(*,?HowMany,(/,hold,{daniel},_),?M) --> count>?
 //A:two, ehm oops at least one, but under AIKR this is fine... ^^
-//Answer <{apple} --> (/,hold,{daniel},_)>. %1.00;0.47%
+Answer <(*,1,(/,hold,{daniel},_),(*,apple)) --> count>. %1.00;0.43%
 
 //(8) Lists/Sets
 //Daniel picks up the football.
