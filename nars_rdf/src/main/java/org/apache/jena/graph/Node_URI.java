@@ -78,6 +78,7 @@ public class Node_URI extends Node_Concrete
     @Override
     public boolean hasURI( String uri )
         { return label.equals( uri ); }
-    
-    
+
+//        @Override
+//        public int hashCode() { return label.hashCode() * 101; }
     }

@@ -52,4 +52,7 @@ public class Node_ANY extends Node_Fluid
     @Override
     public String toString( PrefixMapping pm, boolean quoting )
         { return "ANY"; }
+
+        @Override
+        public int hashCode() { return 0; }
     }

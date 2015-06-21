@@ -18,29 +18,38 @@
 
 package org.apache.jena.graph;
 
-import org.apache.jena.rdf.model.* ;
+import org.apache.jena.rdf.model.AnonId;
 
 /**
-    RDF blank nodes, ie nodes with identity but without URIs.
-*/
+ * RDF blank nodes, ie nodes with identity but without URIs.
+ */
 
-public class Node_Blank extends Node_Concrete
-    {    
-    /* package */ Node_Blank( Object id ) { super( id ); }
-
-    @Override
-    public boolean isBlank() { return true; }
+public class Node_Blank extends Node_Concrete {
+    /* package */ Node_Blank(Object id) {
+        super(id);
+    }
 
     @Override
-    public AnonId getBlankNodeId()  { return (AnonId) label; }
-    
+    public boolean isBlank() {
+        return true;
+    }
+
     @Override
-    public Object visitWith( NodeVisitor v )
-        { return v.visitBlank( this, (AnonId) label ); }
-    
+    public AnonId getBlankNodeId() {
+        return (AnonId) label;
+    }
+
     @Override
-    public boolean equals( Object other )
-        {
-        if ( this == other ) return true ;
-        return other instanceof Node_Blank && label.equals( ((Node_Blank) other).label ); }
-        }
+    public Object visitWith(NodeVisitor v) {
+        return v.visitBlank(this, (AnonId) label);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        return other instanceof Node_Blank && label.equals(((Node_Blank) other).label);
+    }
+
+//    @Override
+//    public int hashCode() { return label.hashCode() * 37; }
+}

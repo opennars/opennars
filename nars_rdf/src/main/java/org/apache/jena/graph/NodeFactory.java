@@ -47,7 +47,7 @@ public class NodeFactory {
     }
 
     /** make a URI node with the specified URIref string */
-    public static Node createURI(String uri) {
+    public static Node createURI(final String uri) {
         return Node.create(Node.makeURI, uri) ;
     }
 

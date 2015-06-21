@@ -468,7 +468,7 @@ public class XSDDatatype extends BaseDatatype {
      	@param number
      	@return Number
     */
-    protected static Number suitableInteger( long number )
+    protected static Number suitableInteger( final long number )
         {
         if (number > Integer.MAX_VALUE || number < Integer.MIN_VALUE)
             return new Long( number );
