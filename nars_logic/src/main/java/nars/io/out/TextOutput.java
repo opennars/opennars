@@ -24,7 +24,6 @@ package nars.io.out;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
-import nars.nal.Sentence;
 import nars.nal.Task;
 import nars.op.io.Echo;
 
@@ -119,21 +118,23 @@ public class TextOutput extends Output {
 
 
     @Override
-    protected synchronized void output(final Channel channel, final Class event, final Object... args) {
+    protected synchronized boolean output(final Channel channel, final Class event, final Object... args) {
 
         if (!isEnabled())
-            return;
+            return false;
 
         final String prefix = channel.getLinePrefix(event, args);
         final CharSequence s = channel.get(event, args);
 
         if (s != null) {
-            output(prefix, s);
+            return output(prefix, s);
         }
 
+
+        return false;
     }
 
-    protected void output(final String prefix, final CharSequence s) {
+    protected boolean output(final String prefix, final CharSequence s) {
         if (out != null) {
             if (prefix != null)
                 out.print(prefix);
@@ -144,7 +145,10 @@ public class TextOutput extends Output {
                 out.println(s);
 
             out.flush();
+
+            return true;
         }
+        return false;
     }
 
     public class TaskChannel extends DefaultChannel {

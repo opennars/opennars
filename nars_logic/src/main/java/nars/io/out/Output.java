@@ -118,7 +118,7 @@ public abstract class Output extends NARReaction {
                 output(c, event, args);
     }
 
-    abstract protected void output(Channel channel, Class event, Object... args);
+    abstract protected boolean output(Channel channel, Class event, Object... args);
 
 //    /** conversational (judgments, questions, etc...) output */
 //    public static class OUT extends NARReaction {

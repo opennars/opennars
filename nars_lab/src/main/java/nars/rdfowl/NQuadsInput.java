@@ -336,7 +336,7 @@ abstract public class NQuadsInput {
         };
 
 
-        new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
+        //new TextOutput(n, System.out).setShowStamp(false).setOutputPriorityMin(0.25f);
 
         n.runWhileNewInput(1);
         n.frame(1); //one more to be sure

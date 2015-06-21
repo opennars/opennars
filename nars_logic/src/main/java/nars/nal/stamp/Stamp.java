@@ -440,7 +440,8 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
         }
         buffer.append(Symbols.STAMP_STARTER).append(' ');
         for (int i = 0; i < len; i++) {
-            buffer.append(Long.toString(getEvidentialSet()[i], 16));
+
+            buffer.append(Long.toString(getEvidentialSet()[i], 36));
             if (i < (len - 1)) {
                 buffer.append(Symbols.STAMP_SEPARATOR);
             }
