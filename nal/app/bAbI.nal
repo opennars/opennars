@@ -175,7 +175,7 @@ https://drive.google.com/file/d/0BxKBnD5y2M8NVHRiVXBnOVpiYUk/edit
 //Answer <(*,{daniel},{studio}) --> at>. %1.00;0.47%
 
 //(13) Compound Coreference
-//Daniel and Sandra journeyed to the office. (implicit knowledge: lastly happened things more confidence)
+//Daniel and Sandra journeyed to the office.
 <{sandra} --> (/,at,_,{office})>. :|: 
 <{daniel} --> (/,at,_,{office})>. :|:
 1000
