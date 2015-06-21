@@ -96,13 +96,16 @@ public class Node_Literal extends Node_Concrete
      * override this.</p>
      */
     @Override
-    public boolean sameValueAs(Object o) {
+    public boolean sameValueAs(final Object o) {
+        if (this == o)
+            return true;
+
         return o instanceof Node_Literal 
               && ((LiteralLabel)label).sameValueAs( ((Node_Literal) o).getLiteral() );
     }
     
     @Override
-    public boolean matches( Node x )
+    public boolean matches( final Node x )
         { return sameValueAs( x ); }
     
 }

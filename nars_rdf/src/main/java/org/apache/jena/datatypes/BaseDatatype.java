@@ -60,7 +60,9 @@ public class BaseDatatype implements RDFDatatype {
         }
         
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(final Object other) {
+            if (other == this)
+                return true;
             if (other instanceof TypedValue) {
                 return lexicalValue.equals(((TypedValue)other).lexicalValue) 
                          && datatypeURI.equals(((TypedValue)other).datatypeURI);

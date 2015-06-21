@@ -88,4 +88,7 @@ public class Node_Variable extends Node_Fluid
         public String toString()
             { return '?' + name; }
         }
+
+//        @Override
+//        public int hashCode() { return label.hashCode() * 41; }
     }

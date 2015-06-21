@@ -31,7 +31,7 @@ import java.util.List;
 abstract public class IRCBot {
 
     private final String server;
-    private final String nick;
+    public final String nick;
     private final String login;
     protected final String channel;
     boolean outputting = false;
@@ -54,7 +54,7 @@ abstract public class IRCBot {
         this.login = login;
         this.channel = channel;
 
-        new NWindow(this.toString(), new ReflectPanel(this)).show(500,300);
+        //new NWindow(this.toString(), new ReflectPanel(this)).show(500,300);
 
 
         /*
@@ -107,9 +107,10 @@ abstract public class IRCBot {
                     writer.flush();
                     // Keep reading lines from the server.
                     while ((line = reader.readLine( )) != null) {
-                        if (line.toLowerCase( ).startsWith("PING ")) {
+                        String pingHead = "unknown: PING ";
+                        if (line.toLowerCase( ).startsWith(pingHead)) {
                             // We must respond to PINGs to avoid being disconnected.
-                            writer.write("PONG " + line.substring(5) + "\r\n");
+                            writer.write("PONG " + line.substring(pingHead.length()) + "\r\n");
                             //writer.write("PRIVMSG " + channel + " :I got pinged!\r\n");
                             //writer.flush( );
                         }

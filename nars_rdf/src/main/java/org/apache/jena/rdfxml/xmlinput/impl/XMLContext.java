@@ -24,9 +24,11 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
-import org.apache.jena.iri.IRI ;
-import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers ;
-import org.xml.sax.SAXParseException ;
+import org.apache.jena.iri.IRI;
+import org.apache.jena.rdfxml.xmlinput.ARPErrorNumbers;
+import org.xml.sax.SAXParseException;
+
+import java.util.function.Supplier;
 
 /**
  * 
@@ -111,9 +113,12 @@ public class XMLContext extends AbsXMLContext implements ARPErrorNumbers
         if (!isSameAsDocument()) {
             String other = document.uri.create(relUri).toString();
             if (!other.equals(resolvedURI)) {
-                forErrors.warning(taintMe, IGN_XMLBASE_SIGNIFICANT,
-                        "Use of attribute xml:base changes interpretation of relative URI: \""
-                                + relUri + "\".");
+                forErrors.warning(taintMe, IGN_XMLBASE_SIGNIFICANT, new Supplier<String>() {
+                    @Override public String get() {
+                        return "Use of attribute xml:base changes interpretation of relative URI: \""
+                                + relUri + "\".";
+                    }
+                } ) ;
             }
         }
 

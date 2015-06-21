@@ -18,20 +18,22 @@
 
 package org.apache.jena.rdfxml.xmlinput.impl;
 
+import org.apache.jena.rdfxml.xmlinput.FatalParsingErrorException;
+import org.apache.jena.rdfxml.xmlinput.SAX2RDF;
+import org.apache.jena.util.CharEncoding;
+import org.apache.xerces.parsers.NonValidatingConfiguration;
+import org.apache.xerces.parsers.SAXParser;
+import org.apache.xerces.parsers.StandardParserConfiguration;
+import org.apache.xerces.xni.Augmentations;
+import org.apache.xerces.xni.parser.XMLParserConfiguration;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UTFDataFormatException;
-
-import org.apache.jena.rdfxml.xmlinput.FatalParsingErrorException ;
-import org.apache.jena.rdfxml.xmlinput.SAX2RDF ;
-import org.apache.jena.util.CharEncoding ;
-import org.apache.xerces.parsers.SAXParser;
-import org.apache.xerces.parsers.StandardParserConfiguration;
-import org.apache.xerces.xni.Augmentations;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * 
@@ -121,7 +123,7 @@ public class RDFXMLParser extends XMLHandler {
 		}
     }
 
-    public static RDFXMLParser create() {
+    public static RDFXMLParser createNannyState() {
         StandardParserConfiguration c = new StandardParserConfiguration();
         SAXParserWithEncodingCheck msp = new SAXParserWithEncodingCheck(c);
         RDFXMLParser a = new RDFXMLParser(msp);
@@ -129,6 +131,12 @@ public class RDFXMLParser extends XMLHandler {
         return a;
     }
 
+    public static RDFXMLParser create() {
+        XMLParserConfiguration c = new NonValidatingConfiguration();
+        SAXParser msp = new SAXParser(c);
+        RDFXMLParser a = new RDFXMLParser(msp);
+        return a;
+    }
 
     public void parse(InputSource input) throws IOException, SAXException {
         parse(input, input.getSystemId());

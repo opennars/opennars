@@ -32,11 +32,10 @@ import org.apache.jena.shared.PrefixMapping ;
     enough.    
 */
 
-public abstract class Node {
+public abstract class Node<L> {
     
-    final protected Object label;
-    static final int THRESHOLD = 10000;
-    
+    final protected L label;
+
     /**
         The canonical instance of Node_ANY. No other instances are required.
     */       
@@ -177,7 +176,7 @@ public abstract class Node {
         { return false; }
         
     /** an abstraction to allow code sharing */
-    static abstract class NodeMaker { abstract Node construct( Object x ); }
+    static abstract class NodeMaker<L> { abstract Node<L> construct( L x ); }
 
     static final NodeMaker makeAnon = new NodeMaker()
         { @Override
@@ -203,13 +202,13 @@ public abstract class Node {
     @Deprecated
     public static final Node NULL = new Node_NULL(); 
     
-    /* package visibility only */ Node( Object label ) 
+    /* package visibility only */ Node( L label )
         { this.label = label; }
         
     /**
         We object strongly to null labels: for example, they make .equals flaky.
     */
-    public static Node create( NodeMaker maker, Object label )
+    public  static <L> Node<L> create( NodeMaker<L> maker, L label )
         {
         if (label == null) throw new JenaException( "Node.make: null label" );
         return maker.construct( label ) ;
