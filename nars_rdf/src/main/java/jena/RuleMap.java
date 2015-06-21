@@ -19,22 +19,29 @@
 package jena;
 
 
-import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
-
-import java.util.*;
-import java.io.*;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
-import org.apache.jena.graph.* ;
-import org.apache.jena.rdf.model.* ;
-import org.apache.jena.reasoner.Reasoner ;
-import org.apache.jena.reasoner.rulesys.* ;
-import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin ;
-import org.apache.jena.util.FileManager ;
-import org.apache.jena.util.FileUtils ;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.Triple;
+import org.apache.jena.rdf.model.InfModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.rulesys.*;
+import org.apache.jena.reasoner.rulesys.builtins.BaseBuiltin;
+import org.apache.jena.util.FileManager;
+import org.apache.jena.util.FileUtils;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.jena.atlas.logging.LogCtl.setCmdLogging;
 
 /**
  * General command line utility to process one RDF file into another
