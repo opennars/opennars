@@ -133,7 +133,7 @@ public class TextOutput extends Output {
 
     }
 
-    private void output(final String prefix, final CharSequence s) {
+    protected void output(final String prefix, final CharSequence s) {
         if (out != null) {
             if (prefix != null)
                 out.print(prefix);
@@ -233,7 +233,7 @@ public class TextOutput extends Output {
             Task question = (Task) signals[1];
             Task answer = (Task) signals[0];
             question.sentence.toString(buffer, nar.memory, showStamp).append(" = ");
-            answer.sentence.toString(buffer, nar.memory, showStamp);
+            answer.sentence.toString(buffer, nar.memory, false, showStamp);
 
         } else if ((signal instanceof Task) && ((channel == Events.OUT.class) || (channel == Events.IN.class) || (channel == Echo.class) || (channel == Events.EXE.class))) {
 

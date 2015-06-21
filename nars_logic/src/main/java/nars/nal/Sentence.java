@@ -554,6 +554,9 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return toString(new StringBuilder(), memory, showStamp);
     }
 
+    @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
+        return toString(buffer, memory, true, true);
+    }
     /**
      * Get a String representation of the sentence for display purpose
      *
@@ -561,9 +564,13 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      * @param memory may be null in which case the tense is expressed in numbers without any relativity to memory's current time or duration
      * @return The String
      */
-    @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean showStamp) {
-    
-        String contentName = getTerm().toString();
+    @Deprecated public StringBuilder toString(StringBuilder buffer, final Memory memory, final boolean term, final boolean showStamp) {
+
+        String contentName;
+        if (term) {
+             contentName = getTerm().toString();
+        }
+        else contentName = "";
 
         final CharSequence tenseString;
         if (memory!=null) {
