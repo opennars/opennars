@@ -37,10 +37,10 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
     LPInterpreter interpreter;
 
     /** The parent InfGraph -- retained on close to allow CME detection */
-    BackwardRuleInfGraphI infgraph;
+    final BackwardRuleInfGraphI infgraph;
     
     /** The set of choice points that the top level interpter is waiting for */
-    protected Set<ConsumerChoicePointFrame> choicePoints = new HashSet<>();
+    protected Set<ConsumerChoicePointFrame> choicePoints;
 
     /** The choice point most recently notified as ready to run. */
     protected ConsumerChoicePointFrame nextToRun;
@@ -55,7 +55,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
     boolean lookaheadValid = false;
 
     /** Version stamp of the graph when we start */
-    protected int initialVersion;
+    protected final int initialVersion;
     
     /**
      * Constructor. Wraps a top level goal state as an iterator
@@ -97,7 +97,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
                 Object next = interpreter.next();
                 lookAhead = next instanceof Triple ? (Triple) next : null;
                 if (next == StateFlag.FAIL) {
-                    if (choicePoints.isEmpty()) {
+                    if (choicePoints == null || choicePoints.isEmpty()) {
                         // Nothing left to try
                         close();
                     } else {
@@ -121,8 +121,15 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
      *  results from the given generator. */
     @Override
     public void notifyBlockedOn(ConsumerChoicePointFrame ccp) {
-        choicePoints.add(ccp);
-        checkReadyNeeded = true;
+        if (ensureCP().add(ccp)) {
+            checkReadyNeeded = true;
+        }
+    }
+
+    private Set<ConsumerChoicePointFrame> ensureCP() {
+        if (choicePoints==null)
+            return choicePoints = new LinkedHashSet();
+        return choicePoints;
     }
 
     /**
@@ -131,8 +138,11 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
      */
     @Override
     public void notifyFinished(ConsumerChoicePointFrame ccp) {
-        choicePoints.remove(ccp);
-        checkReadyNeeded = true;
+        if (choicePoints!=null) {
+            if (choicePoints.remove(ccp)) {
+                checkReadyNeeded = true;
+            }
+        }
     }
 
     /**
@@ -154,16 +164,15 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
     public boolean isReady() {
         if (checkReadyNeeded) {
             isReady = false;
-            for ( ConsumerChoicePointFrame ccp : choicePoints )
-            {
-                if ( ccp.isReady() )
-                {
-                    if ( nextToRun == null )
-                    {
-                        nextToRun = ccp;
+            if (choicePoints!=null) {
+                for (ConsumerChoicePointFrame ccp : choicePoints) {
+                    if (ccp.isReady()) {
+                        if (nextToRun == null) {
+                            nextToRun = ccp;
+                        }
+                        isReady = true;
+                        break;
                     }
-                    isReady = true;
-                    break;
                 }
             }
             checkReadyNeeded = false;
