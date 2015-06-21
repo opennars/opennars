@@ -1,0 +1,347 @@
+https://drive.google.com/file/d/0BxKBnD5y2M8NVHRiVXBnOVpiYUk/edit
+
+//(1) Basic Factoid QA with Single Supporting Fact
+//john is in the playground.
+<(*,{john},{playground}) --> isin>.
+//Bob is in the office.
+<(*,bob,office) --> isin>.
+//Where is john?
+<(*,{john},{?where}) --> isin>?
+//A:playground
+//Answer <(*,{john},{playground}) --> isin>. %1.00;0.90%
+
+//(2) Factoid QA with Two Supporting Facts
+//background knowledge (multiple input for priority boost to have the answer faster ^^)
+//if something is picked, it means that the object which is picked is where the person is
+<(&&,<(*,$Person,$Object) --> pick>,<(*,$Person,$Place) --> isin>) =|> <(*,$Object,$Place) --> isin>>.
+<(&&,<(*,$Person,$Object) --> pick>,<(*,$Person,$Place) --> isin>) =|> <(*,$Object,$Place) --> isin>>.
+<(&&,<(*,$Person,$Object) --> pick>,<(*,$Person,$Place) --> isin>) =|> <(*,$Object,$Place) --> isin>>.
+//input:
+//John is in the playground.
+<(*,{john},{playground}) --> isin>. :|:
+//Bob is in the office.
+<(*,{bob},{office}) --> isin>. :|:
+//John picked up the football.
+<(*,{john},{football}) --> pick>. :|:
+//Bob went to the kitchen.
+<(*,{bob},{kitchen}) --> isin>. :|:
+//Where is the football? A:playground
+<(*,{football},{?where}) --> isin>?
+//A:playground
+//Answer <(*,{football},{playground}) --> isin>. %1.00;0.28%
+//Where was Bob before the kitchen?
+10000
+<(&/,<(*,{bob},{?Where}) --> isin>,?1) =/> <(*,{bob},{kitchen}) --> isin>>?
+<(&/,<(*,{bob},{?Where}) --> isin>,?1) =/> <(*,{bob},{kitchen}) --> isin>>?
+<(&/,<(*,{bob},{?Where}) --> isin>,?1) =/> <(*,{bob},{kitchen}) --> isin>>?
+<(&/,<(*,{bob},{?Where}) --> isin>,?1) =/> <(*,{bob},{kitchen}) --> isin>>?
+<(&/,<(*,{bob},{?Where}) --> isin>,?1) =/> <(*,{bob},{kitchen}) --> isin>>?
+//A:office
+//Answer <(&/,<(*,{bob},{office}) --> isin>,+3) =/> <(*,{bob},{kitchen}) --> isin>>. %1.00;0.31%
+
+//(4) Two Argument Relations: Subject vs. Object
+//The office is north of the bedroom.
+<(*,{office},{bedroom}) --> northof>.
+//The bedroom is north of the bathroom.
+<(*,{bedroom},{bathroom}) --> northof>.
+//What is north of the bedroom? 
+<(*,{?What},{bedroom}) --> northof>?
+//What is the bedroom north of? 
+<(*,{bedroom},{?What}) --> northof>?
+//A:office
+//Answer <(*,{office},{bedroom}) --> northof>. %1.00;0.90%
+//A:bathroom
+//Answer <(*,{bedroom},{bathroom}) --> northof>. %1.00;0.90%
+
+//(5) Three Argument Relations
+//Mary gave the cake to Fred.
+<(*,mary,cake,fred) --> gave>.
+//Fred gave the cake to Bill.
+<(*,fred,cake,bill) --> gave>.
+//Jeff was given the milk by Bill.
+<(*,bill,milk,jeff) --> gave>.
+//Who gave the cake to Fred? 
+<(*,?Who,cake,fred) --> gave>?
+//Who did Fred give the cake to? 
+<(*,fred,cake,?Who) --> gave>?
+//What did Jeff receive? 
+<(*,?1,?WhatReceived,jeff) --> gave>?
+//Who gave the milk?
+<(*,?Who,milk,?1) --> gave>?
+//A:Mary
+//Answer <(*,mary,cake,fred) --> gave>. %1.00;0.90%
+//A:Bill
+//Answer <(*,fred,cake,bill) --> gave>. %1.00;0.90%
+//A:milk
+//Answer <(*,bill,milk,jeff) --> gave>. %1.00;0.90%
+//A:Bill
+//Answer <(*,bill,milk,jeff) --> gave>. %1.00;0.90%
+
+//(6) Yes/No Questions
+//background knowledge:
+<<(*,{john},{playground}) --> isin> ==> (--,<(*,{john},{classroom}) --> isin>)>.
+//John is in the playground.
+<(*,{john},{playground}) --> isin>.
+//Daniel picks up the milk.
+<(*,{daniel},{milk}) --> pick>.
+//Is John in the classroom? 
+<(*,{john},{classroom}) --> isin>?
+//A:no
+//Answer <(*,{john},{classroom}) --> isin>. %0.00;0.81%
+//Does Daniel have the milk? 
+<(*,{daniel},{milk}) --> pick>?
+//A:yes
+//Answer <(*,{daniel},{milk}) --> pick>. %1.00;0.90%
+
+//(7) Counting
+//Daniel picked up the football.
+<{football} --> (/,hold,{daniel},_)>. :|:
+//Daniel dropped the football.
+<{football} --> (/,hold,{daniel},_)>. :|: %0%
+//Daniel got the milk.
+<{milk} --> (/,hold,{daniel},_)>. :|:
+//Daniel took the apple.
+<{apple} --> (/,hold,{daniel},_)>. :|:
+//How many objects is Daniel holding?
+<{?What} --> (/,hold,{daniel},_)>?
+<{?What,?What2} --> (/,hold,{daniel},_)>?
+<{?What,?What2,?What3} --> (/,hold,{daniel},_)>?
+<{?What} --> (/,hold,{daniel},_)>?
+<{?What,?What2} --> (/,hold,{daniel},_)>?
+<{?What,?What2,?What3} --> (/,hold,{daniel},_)>?
+//A:two, ehm oops at least one, but under AIKR this is fine... ^^
+//Answer <{apple} --> (/,hold,{daniel},_)>. %1.00;0.47%
+
+//(8) Lists/Sets
+//Daniel picks up the football.
+<{football} --> (/,hold,daniel,_)>. :|:
+//Daniel drops the newspaper.
+<{newspaper} --> (/,hold,daniel,_)>. :|: %0%
+//Daniel picks up the milk.
+<{milk} --> (/,hold,daniel,_)>. :|:
+//What is Daniel holding? A:milk,football
+<{?What} --> (/,hold,daniel,_)>?
+<{?What,?What2} --> (/,hold,daniel,_)>?
+<{?What,?What2,?What3} --> (/,hold,{daniel},_)>?
+//Answer <{milk} --> (/,hold,daniel,_)>. %1.00;0.47%
+//Answer <{football,milk} --> (/,hold,daniel,_)>. %1.00;0.30%
+
+//(9) Simple Negation
+//Sandra travelled to the office.
+<(*,{sandra},{office}) --> at>. :|:
+//Fred is no longer in the office.
+<(*,{fred},{office}) --> at>. :|: %0%
+//Is Fred in the office? 
+<(*,{fred},{office}) --> at>?
+//A:no
+//Answer <(*,{fred},{office}) --> at>. :\: %0.00;0.90%
+//Is Sandra in the office? 
+<(*,{sandra},{office}) --> at>?
+//A:yes
+//Answer <(*,{sandra},{office}) --> at>. :\: %1.00;0.90%
+
+//(10) Indefinite knowledge
+//background knowledge:
+//also Johny can't be at the classroom or playground but at the same time in the office
+<<john --> (/,at,_,classroom)> ==> (--,<john --> (/,at,_,office)>)>.
+<<john --> (/,at,_,playground)> ==> (--,<john --> (/,at,_,office)>)>.
+//John is either in the classroom or the playground.
+<john --> (/,at,_,classroom)>.
+<john --> (/,at,_,playground)>.
+<<john --> (/,at,_,classroom)> ==> (--,<john --> (/,at,_,playground)>)>.
+<<john --> (/,at,_,playground)> ==> (--,<john --> (/,at,_,classroom)>)>.
+//Sandra is in the garden.
+<sandra --> (/,at,_,garden)>.
+//Is John in the classroom?
+<john --> (/,at,_,classroom)>?
+//Is John in the office?
+<john --> (/,at,_,office)>?
+//A:maybe
+//Answer <john --> (/,at,_,classroom)>. %0.68;0.93%
+//A:no
+//Answer <john --> (/,at,_,office)>. %0.00;0.90%
+
+//(11) Basic Coreference
+//Daniel was in the kitchen.
+<(*,{daniel},{kitchen}) --> at>. :\:
+//Then he went to the studio.
+(--,<(*,{daniel},{kitchen}) --> at>). :|:
+<(*,{daniel},{studio}) --> at>. :|:
+//Sandra was in the office.
+<(*,{sandra},{kitchen}) --> at>. :\:
+//Where is Daniel? A:studio
+<(*,{daniel},?where) --> at>?
+//A:studio
+//Answer <(*,{daniel},{studio}) --> at>. %1.00;0.47%
+
+//(13) Compound Coreference
+//Daniel and Sandra journeyed to the office.
+<{sandra} --> (/,at,_,{office})>. :|: 
+<{daniel} --> (/,at,_,{office})>. :|:
+1000
+//Then they went to the garden.
+<{sandra} --> (/,at,_,{office})>. :|: %0%
+<{daniel} --> (/,at,_,{office})>. :|: %0%
+<{daniel} --> (/,at,_,{garden})>. :|:
+<{sandra} --> (/,at,_,{garden})>. :|:
+//Sandra and John travelled to the kitchen.
+<{sandra,john} --> (/,at,_,{kitchen})>. :|:
+//After that they moved to the hallway.
+1000
+<{sandra,john} --> (/,at,_,{hallway})>. :|:
+//Where is Daniel? 
+<{daniel} --> (/,at,_,?Where)>?
+<{daniel} --> (/,at,_,?Where)>?
+//A:garden
+//Answer <{daniel} --> (/,at,_,{garden})>. %1.00;0.47%
+
+//(14) Time manipulation
+//In the afternoon Julie went to the park. 
+<(*,{julie},park) --> go>. :|:
+//Yesterday Julie was at school.
+<(*,{julie},school) --> go>. :\:
+//Julie went to the cinema this evening.
+<(*,{julie},cinema) --> go>. :/:
+//Where did Julie go after the park? 
+<(&/,<(*,{julie},park) --> go>,?1) =/> <(*,{julie},?where) --> go>>?
+////////////////////////////////////
+//A:cinema
+//Answer <(&/,<(*,julie,park) --> go>,+3) =/> <(*,julie,cinema) --> go>>. %1.00;0.31%
+
+//(15) Basic Deduction
+//Sheep are afraid of wolves.
+<(*,sheep,wolves) --> afraidof>.
+//Cats are afraid of dogs.
+<(*,cats,dogs) --> afraidof>.
+//Mice are afraid of cats.
+<(*,mice,cats) --> afraidof>.
+//Gertrude is a sheep.
+<gertrude --> sheep>.
+//What is Gertrude afraid of? A:wolves
+<(*,gertrude,?what) --> afraidof>?
+<(*,gertrude,?what) --> afraidof>?
+////////////////////////////////////
+//A:wolves
+//Answer <(*,gertrude,wolves) --> afraidof>. %1.00;0.73%
+
+//(16) Basic Induction
+//Lily is a swan.
+<{lily} --> swan>.
+//Lily is white.
+<{lily} --> [white]>.
+//Greg is a swan.
+<{greg} --> swan>.
+//What color is Greg?
+<{greg} --> [?whatColor]>?
+////////////////////////////////////
+//A:white
+//Answer <{greg} --> [white]>. %1.00;0.33%
+
+//(17) Positional Reasoning
+//background knowledge about the relation between X and Y in 2-dimensional space:
+//if A is on top of B and B is on the right of C, then A is to the right of C
+<(&&,<(*,$A,#B) --> topof>,<(*,$C,#B) --> rightof>) ==> <(*,$C,$A) --> rightof>>.
+//if A is to the right of B and B is on top of C, then A is on top of C
+<(&&,<(*,$A,#B) --> rightof>,<(*,#B,$C) --> topof>) ==> <(*,$A,$C) --> topof>>.
+//input:
+//The triangle is to the right of the blue square.
+<(*,triangle,(&,[blue],square)) --> rightof>.
+//The red square is on top of the blue square.
+<(*,(&,[red],square),(&,[blue],square)) --> topof>.
+//The red sphere is to the right of the blue square.
+<(*,(&,[red],sphere),(&,[blue],square)) --> rightof>.
+//Is the red sphere to the right of the blue square?
+<(*,(&,[red],sphere),(&,[blue],square)) --> rightof>?
+//Is the red square to the left of the triangle?
+<(*,triangle,(&,[red],square)) --> rightof>?
+//A: yes
+//Answer <(*,(&,[red],sphere),(&,[blue],square)) --> rightof>. %1.00;0.90%
+//A: yes
+//Answer <(*,triangle,(&,[red],square)) --> rightof>. %1.00;0.15%
+
+//(18) Reasoning about size
+//background knowledge
+//transitivity of size:
+<(&&,<(*,$A,$B) --> fitsin>,<(*,$B,$C) --> fitsin>) ==> <(*,$A,$C) --> fitsin>>.
+//input:
+//The football fits in the suitcase.
+<(*,{football},{suitcase}) --> fitsin>.
+//The suitcase fits in the cupboard.
+<(*,{suitcase},{cupboard}) --> fitsin>.
+//The box of chocolates is smaller than the football.
+<(*,{chocolatebox},{football}) --> fitsin>.
+//Will the box of chocolates fit in the suitcase?
+<(*,{chocolatebox},{suitcase}) --> fitsin>?
+//A: yes
+//Answer <(*,{chocolatebox},{suitcase}) --> fitsin>. %1.00;0.73%
+
+//(19) Path Finding
+//background knowledge
+//path of length2 defined as:
+<(&&,<(*,$1,$2) --> starttarget>,<(*,$1,$B,$C) --> positioned>,<(*,$B,$2,$C2) --> positioned>) ==> (&&,<(*,id,$C,id,$C2) --> path>,<(*,$1,$2,$B) --> chunk>)>.
+<(&&,<(*,$1,$2) --> starttarget>,<(*,$1,$B,$C) --> positioned>,<(*,$2,$B,$C2) --> positioned>) ==> (&&,<(*,id,$C,neg,$C2) --> path>,<(*,$1,$2,$B) --> chunk>)>.
+<(&&,<(*,$1,$2) --> starttarget>,<(*,$B,$1,$C) --> positioned>,<(*,$B,$2,$C2) --> positioned>) ==> (&&,<(*,neg,$C,id,$C2) --> path>,<(*,$1,$2,$B) --> chunk>)>.
+<(&&,<(*,$1,$2) --> starttarget>,<(*,$B,$1,$C) --> positioned>,<(*,$2,$B,$C2) --> positioned>) ==> (&&,<(*,neg,$C,neg,$C2) --> path>,<(*,$1,$2,$B) --> chunk>)>.
+//The kitchen is north of the hallway.
+<(*,kitchen,hallway,south) --> positioned>.
+//The den is east of the hallway.
+<(*,den,hallway,west) --> positioned>.
+//How do you go from den to kitchen?
+<(*,den,kitchen) --> starttarget>.
+<?what --> path>?
+<?what --> path>?
+<?what --> path>?
+<?what --> path>?
+//A:west,north
+//Answer <(*,id,west,neg,south) --> path>. %1.00;0.35%
+
+//(20) Reasoning about Agent’s Motivations
+//John is hungry.
+<john --> [hungry]>. :|:
+//John goes to the kitchen.
+<john --> (/,go,_,kitchen)>. :|:
+//John eats the apple.
+<john --> (/,eat,_,apple)>. :|:
+//Daniel is hungry.
+<daniel --> [hungry]>. :|:
+//Where does Daniel go? 
+<daniel --> (/,go,_,?Where)>?
+<daniel --> (/,go,_,?Where)>?
+<daniel --> (/,go,_,?Where)>?
+//A:kitchen
+//Answer <daniel --> (/,go,_,kitchen)>. %1.00;0.29%
+//Why did John go to the kitchen? 
+5000
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+<?Why =/> <daniel --> (/,go,_,kitchen)>>?
+//A:hungry
+//Nope because John went into the kitchen before (maybe this is what made Daniel hungry in first place ^^)
+//Answer <(&/,<john --> (/,go,_,kitchen)>,+3) =/> <daniel --> (/,go,_,kitchen)>>. %1.00;0.29%
