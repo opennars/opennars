@@ -45,10 +45,6 @@
             <artifactId>opennars-util</artifactId>
         </dependency>
         <dependency>
-            <groupId>opennars</groupId>
-            <artifactId>opennars-logic</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
         </dependency>
@@ -111,6 +107,11 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>opennars-logic</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
