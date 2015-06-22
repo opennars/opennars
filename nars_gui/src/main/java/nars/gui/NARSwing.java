@@ -41,7 +41,7 @@ import java.lang.management.ManagementFactory;
 public class NARSwing extends NARControlPanel {
 
 
-    public final NWindow mainWindow; //testcommit
+    public final NWindow mainWindow;
 
     public NARSwing(NAR nar) {
         this(nar, true);

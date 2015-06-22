@@ -40,8 +40,10 @@ import nars.nal.Truth;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.process.TaskProcess;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
+import nars.op.app.STMInduction;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -76,7 +78,7 @@ public class Anticipate extends NARReaction implements Mental {
     /** buffers the terms of new incoming tasks */
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
 
-    NAL nal;
+    TaskProcess nal;
     nars.event.NARReaction reaction;
 
     //a parameter which tells whether NARS should know if it anticipated or not
@@ -154,13 +156,11 @@ public class Anticipate extends NARReaction implements Mental {
 
         //it did not happen, so the time of when it did not
         //happen is exactly the time it was expected
-        //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
-
 
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        nal.derive(nal.newTask(prediction)
+        Task derived=nal.derive(nal.newTask(prediction)
                 .judgment()
                 .truth(expiredTruth)
                 .parent(tt.task)
@@ -168,6 +168,10 @@ public class Anticipate extends NARReaction implements Mental {
                 .budget(tt.getBudget())
                 .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         );
+        if(derived!=null) {
+
+            STMInduction.I.inductionOnSucceedingEvents(derived,nal);
+        }
 
     }
 
@@ -268,13 +272,13 @@ public class Anticipate extends NARReaction implements Mental {
         if (event == Events.TaskDeriveFuture.class) {
 
             Task newEvent = (Task) args[0];
-            this.nal = (NAL)args[1];
+            this.nal = (TaskProcess)args[1];
             anticipate(newEvent);
 
         } else if (event == Events.InduceSucceedingEvent.class) {
 
             Task newEvent = (Task) args[0];
-            this.nal = (NAL)args[1];
+            this.nal = (TaskProcess)args[1];
             if (newEvent.sentence.truth != null)
                 newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
 

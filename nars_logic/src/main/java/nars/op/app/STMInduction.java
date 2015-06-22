@@ -25,11 +25,13 @@ public class STMInduction extends NARReaction {
 
     public final Deque<Task> stm;
     int stmSize;
+    public static STMInduction I=null;
 
     public STMInduction(NAR nar) {
         super(nar);
         this.stmSize = 1;
         stm = Global.THREADS == 1 ? new ArrayDeque() : new ConcurrentLinkedDeque<>();
+        I=this; //hm there needs to be a way to query plugins from the NAR/NAL object like in 1.6.x, TODO find out
     }
 
     @Override
@@ -61,7 +63,7 @@ public class STMInduction extends NARReaction {
         return stmSize;
     }
 
-    boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal) {
+    public boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal) {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
