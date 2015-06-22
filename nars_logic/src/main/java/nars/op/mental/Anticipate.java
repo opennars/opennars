@@ -172,8 +172,8 @@ public class Anticipate extends NARReaction implements Mental {
                 .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         );
         if(derived!=null) {
-
-            STMInduction.I.inductionOnSucceedingEvents(derived,tp); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
+            derived.setTemporalInducting(true); //since its reset on derivation we have to set it true here again to let it participate now:
+            STMInduction.I.inductionOnSucceedingEvents(derived,tp,true); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
         }
 
     }

@@ -45,7 +45,7 @@ public class STMInduction extends NARReaction {
         if (event == TaskProcess.class) {
             Task t = (Task) args[0];
             TaskProcess n = (TaskProcess) args[1];
-            inductionOnSucceedingEvents(t, n);
+            inductionOnSucceedingEvents(t, n, false);
         }
         else if (event == Events.ResetStart.class) {
             stm.clear();
@@ -63,7 +63,7 @@ public class STMInduction extends NARReaction {
         return stmSize;
     }
 
-    public boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal) {
+    public boolean inductionOnSucceedingEvents(final Task currentTask, TaskProcess nal, boolean anticipation) {
 
         stmSize = nal.memory.param.shortTermMemoryHistory.get();
 
@@ -72,7 +72,7 @@ public class STMInduction extends NARReaction {
         }
 
 
-        if (currentTask.sentence.isEternal() || !isInputOrTriggeredOperation(currentTask, nal.memory)) {
+        if (currentTask.sentence.isEternal() || (!isInputOrTriggeredOperation(currentTask, nal.memory) && !anticipation)) {
             return false;
         }
 
