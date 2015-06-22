@@ -40,8 +40,10 @@ import nars.nal.Truth;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
+import nars.nal.process.TaskProcess;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
+import nars.op.app.STMInduction;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -77,6 +79,8 @@ public class Anticipate extends NARReaction implements Mental {
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
 
     NAL nal;
+    TaskProcess tp;
+
     nars.event.NARReaction reaction;
 
     //a parameter which tells whether NARS should know if it anticipated or not
@@ -93,6 +97,7 @@ public class Anticipate extends NARReaction implements Mental {
     public Anticipate(NAR nar) {
         super(nar, Events.TaskDeriveFuture.class,
                 Events.InduceSucceedingEvent.class,
+                TaskProcess.class,
                 Events.CycleEnd.class);
     }
 
@@ -154,13 +159,11 @@ public class Anticipate extends NARReaction implements Mental {
 
         //it did not happen, so the time of when it did not
         //happen is exactly the time it was expected
-        //todo analyze, why do i need to substract duration here? maybe it is just accuracy thing
-
 
         if (debug)
             System.err.println("Anticipation Negated " + tt.task);
 
-        nal.derive(nal.newTask(prediction)
+        Task derived=nal.derive(nal.newTask(prediction)
                 .judgment()
                 .truth(expiredTruth)
                 .parent(tt.task)
@@ -168,6 +171,10 @@ public class Anticipate extends NARReaction implements Mental {
                 .budget(tt.getBudget())
                 .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         );
+        if(derived!=null) {
+            derived.setTemporalInducting(true); //since its reset on derivation we have to set it true here again to let it participate now:
+            STMInduction.I.inductionOnSucceedingEvents(derived,tp,true); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
+        }
 
     }
 
@@ -282,6 +289,8 @@ public class Anticipate extends NARReaction implements Mental {
 
             updateAnticipations();
 
+        } else if(event == TaskProcess.class) { //we also need Mr task process to be able to have the task process, this is a hack..
+            this.tp = (TaskProcess)args[1];
         }
 
     }
