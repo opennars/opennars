@@ -78,7 +78,9 @@ public class Anticipate extends NARReaction implements Mental {
     /** buffers the terms of new incoming tasks */
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
 
-    TaskProcess nal;
+    NAL nal;
+    TaskProcess tp;
+
     nars.event.NARReaction reaction;
 
     //a parameter which tells whether NARS should know if it anticipated or not
@@ -95,6 +97,7 @@ public class Anticipate extends NARReaction implements Mental {
     public Anticipate(NAR nar) {
         super(nar, Events.TaskDeriveFuture.class,
                 Events.InduceSucceedingEvent.class,
+                TaskProcess.class,
                 Events.CycleEnd.class);
     }
 
@@ -170,7 +173,7 @@ public class Anticipate extends NARReaction implements Mental {
         );
         if(derived!=null) {
 
-            STMInduction.I.inductionOnSucceedingEvents(derived,nal);
+            STMInduction.I.inductionOnSucceedingEvents(derived,tp); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
         }
 
     }
@@ -272,13 +275,13 @@ public class Anticipate extends NARReaction implements Mental {
         if (event == Events.TaskDeriveFuture.class) {
 
             Task newEvent = (Task) args[0];
-            this.nal = (TaskProcess)args[1];
+            this.nal = (NAL)args[1];
             anticipate(newEvent);
 
         } else if (event == Events.InduceSucceedingEvent.class) {
 
             Task newEvent = (Task) args[0];
-            this.nal = (TaskProcess)args[1];
+            this.nal = (NAL)args[1];
             if (newEvent.sentence.truth != null)
                 newTaskTerms.add(newEvent.getTerm()); //new: always add but keep truth value in mind
 
@@ -286,6 +289,8 @@ public class Anticipate extends NARReaction implements Mental {
 
             updateAnticipations();
 
+        } else if(event == TaskProcess.class) { //we also need Mr task process to be able to have the task process, this is a hack..
+            this.tp = (TaskProcess)args[1];
         }
 
     }
