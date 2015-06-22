@@ -37,10 +37,10 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
     LPInterpreter interpreter;
 
     /** The parent InfGraph -- retained on close to allow CME detection */
-    final BackwardRuleInfGraphI infgraph;
-    
+    BackwardRuleInfGraphI infgraph;
+
     /** The set of choice points that the top level interpter is waiting for */
-    protected Set<ConsumerChoicePointFrame> choicePoints;
+    protected Set<ConsumerChoicePointFrame> choicePoints = new LinkedHashSet<>();
 
     /** The choice point most recently notified as ready to run. */
     protected ConsumerChoicePointFrame nextToRun;
@@ -56,7 +56,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
 
     /** Version stamp of the graph when we start */
     protected final int initialVersion;
-    
+
     /**
      * Constructor. Wraps a top level goal state as an iterator
      */
@@ -69,13 +69,13 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
     }
 
     /* A Note on lock ordering:
-     * 
+     *
      * Elsewhere code takes an LPBRuleEngine then an LPTopGoalIterator
-     * Ensure we do that lock order here as well as just synchronized 
+     * Ensure we do that lock order here as well as just synchronized
      * on the method reverses the lock ordering, leading to deadlock.
      */
-    
-    
+
+
     /**
      * Find the next result in the goal state and put it in the
      * lookahead buffer.
@@ -97,7 +97,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
                 Object next = interpreter.next();
                 lookAhead = next instanceof Triple ? (Triple) next : null;
                 if (next == StateFlag.FAIL) {
-                    if (choicePoints == null || choicePoints.isEmpty()) {
+                    if (choicePoints.isEmpty()) {
                         // Nothing left to try
                         close();
                     } else {
@@ -121,15 +121,8 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
      *  results from the given generator. */
     @Override
     public void notifyBlockedOn(ConsumerChoicePointFrame ccp) {
-        if (ensureCP().add(ccp)) {
-            checkReadyNeeded = true;
-        }
-    }
-
-    private Set<ConsumerChoicePointFrame> ensureCP() {
-        if (choicePoints==null)
-            return choicePoints = new LinkedHashSet();
-        return choicePoints;
+        choicePoints.add(ccp);
+        checkReadyNeeded = true;
     }
 
     /**
@@ -138,11 +131,8 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
      */
     @Override
     public void notifyFinished(ConsumerChoicePointFrame ccp) {
-        if (choicePoints!=null) {
-            if (choicePoints.remove(ccp)) {
-                checkReadyNeeded = true;
-            }
-        }
+        choicePoints.remove(ccp);
+        checkReadyNeeded = true;
     }
 
     /**
@@ -164,15 +154,16 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
     public boolean isReady() {
         if (checkReadyNeeded) {
             isReady = false;
-            if (choicePoints!=null) {
-                for (ConsumerChoicePointFrame ccp : choicePoints) {
-                    if (ccp.isReady()) {
-                        if (nextToRun == null) {
-                            nextToRun = ccp;
-                        }
-                        isReady = true;
-                        break;
+            for ( ConsumerChoicePointFrame ccp : choicePoints )
+            {
+                if ( ccp.isReady() )
+                {
+                    if ( nextToRun == null )
+                    {
+                        nextToRun = ccp;
                     }
+                    isReady = true;
+                    break;
                 }
             }
             checkReadyNeeded = false;
@@ -186,20 +177,18 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
      * @see org.apache.jena.util.iterator.ClosableIterator#close()
      */
     @Override
-    public void close() {
+    public synchronized void close() {
         LPBRuleEngine lpEngine ;
-        synchronized(this)
-        {
-            if ( interpreter == null ) return ;
-            lpEngine = interpreter.getEngine();
-        }
+
+        if ( interpreter == null ) return ;
+        lpEngine = interpreter.getEngine();
 
         synchronized (lpEngine) {
             // Elsewhere code takes an LPBRuleEngine then an LPTopGoalIterator
             // Ensure we do that lock order here as well as just synchronized 
             // on the method reverses the locks takne, leading to deadlock.
-            synchronized(this)
-            {
+            /*synchronized(this)
+            {*/
                 if (interpreter != null) {
                     // LogFactory.getLog( getClass() ).debug( "Entering close sync block on " + interpreter.getEngine() );
 
@@ -218,7 +207,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
                     //                choicePoints = null;  // disabled to prevent async close causing problems
                     //LogFactory.getLog( getClass() ).debug( "Leaving close sync block " );
                 }
-            }
+            //}
         }
     }
 
@@ -246,7 +235,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
         lookaheadValid = false;
         return result;
     }
-    
+
     /**
      * Check that the iterator has either cleanly closed or
      * the version stamp is still valid
@@ -256,7 +245,7 @@ public class LPTopGoalIterator implements ClosableIterator<Triple>, LPInterprete
             throw new ConcurrentModificationException();
         }
     }
-    
+
     /**
      * Check if the iterator has been closed and so we can't move forward safely
      */

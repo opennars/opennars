@@ -18,11 +18,13 @@
 
 package org.apache.jena.mem;
 
+import org.apache.jena.ext.com.google.common.collect.Iterators;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.apache.jena.util.iterator.NiceIterator;
 
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 
 /**
  * An ArrayBunch implements TripleBunch with a linear search of a short-ish
@@ -37,7 +39,11 @@ public class ArrayBunch implements TripleBunch {
     protected volatile int changes = 0;
 
     public ArrayBunch() {
-        elements = new Triple[5];
+        this(5);
+    }
+
+    public ArrayBunch(int i) {
+        elements = new Triple[i];
     }
 
     @Override
@@ -81,8 +87,6 @@ public class ArrayBunch implements TripleBunch {
     @Override
     public void remove(Triple t) {
         changes += 1;
-
-        final Triple[] elements = this.elements;
         for (int i = 0; i < size; i += 1) {
             if (t.equals(elements[i])) {
                 elements[i] = elements[--size];
@@ -91,22 +95,16 @@ public class ArrayBunch implements TripleBunch {
         }
     }
 
-    final static HashCommon.NotifyEmpty emptyNotification = new HashCommon.NotifyEmpty() {
-        @Override public void emptied() { }
-    };
-
-//    @Override
-//    public ExtendedIterator<Triple> iterator() {
-//        return iterator(new HashCommon.NotifyEmpty() {
-//            @Override
-//            public void emptied() {
-//            }
-//        });
-//    }
-
     @Override
     public ExtendedIterator<Triple> iterator() {
-        return iterator(emptyNotification);
+
+
+        return iterator(new HashCommon.NotifyEmpty() {
+            @Override
+            public void emptied() {
+            }
+        });
+
     }
 
     @Override
