@@ -447,7 +447,7 @@ abstract public class VNCControl extends VNCClient {
                 float ocrConf = u.getConfidence();
 
                 try {
-                    Task t = nar.believe(ii, u.getInputTime(), 1.0f, ocrConf, pri);
+                    Task t = nar.believe(pri, ii, u.getInputTime(), 1.0f, ocrConf);
                 }
                 catch (Throwable x) {
                     System.err.println(ii + " -> " + x);

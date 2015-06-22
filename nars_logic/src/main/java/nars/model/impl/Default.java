@@ -288,7 +288,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
                 new schizo(),     //change Memory's SELF term (default: SELF)
 
-                new js(), //javascdript evalaution
+                //  new js(), //javascdript evalaution
 
                 new json.jsonfrom(),
                 new json.jsonto()

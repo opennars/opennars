@@ -17,20 +17,20 @@
 package nars.io.nlp;
 
 import nars.Memory;
+import nars.nal.Sentence;
+import nars.nal.Task;
+import nars.nal.nal2.Instance;
+import nars.nal.nal2.Property;
+import nars.nal.nal4.Product;
+import nars.nal.nal5.Conjunction;
+import nars.nal.nal7.TemporalRules;
+import nars.nal.term.Atom;
+import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.util.language.Twokenize;
 import nars.util.language.Twokenize.Span;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.term.Term;
-import nars.nal.nal2.Instance;
-import nars.nal.nal4.Product;
-import nars.nal.nal5.Conjunction;
-import nars.nal.nal7.Interval;
-import nars.nal.nal7.TemporalRules;
 
 import java.util.*;
 
@@ -51,7 +51,7 @@ public class Twenglish {
     boolean inputConjSeq = true;
     
     
-    public Map<String,String> POS = new HashMap(){{
+    public static final Map<String,String> POS = new HashMap(){{
         //https://www.englishclub.com/grammar/parts-of-speech-table.htm
         
         put("i", "pronoun");
@@ -134,7 +134,7 @@ public class Twenglish {
         if (inputProduct) {
             Term p = 
                     /*Conjunction*/Product.make(t.toArray(new Term[t.size()]));
-            Compound q = Sentence.termOrNull( Instance.make( p, Atom.the(sentenceType)) );
+            Compound q = Sentence.termOrNull( Instance.make( p, Atom.the(sentenceType,true)) );
             if (q != null) {
                 throw new RuntimeException("API Upgrade not finished here:");
                 /*tt.add(
@@ -166,25 +166,36 @@ public class Twenglish {
         
     }
 
-    
-    
-    public Term spanToTerm(Span c) {
+
+
+    public static Term spanToTerm(Span c) {
+        return spanToTerm(c, false);
+    }
+
+    public static Term spanToTerm(Span c, boolean includeWordPOS) {
         if (c.pattern.equals("word")) {
             //TODO support >1 and probabalistic POS
-            String pos = POS.get(c.content.toLowerCase());
-            if (pos!=null) {
-                return Instance.make(lexToTerm(c.content), tagToTerm(pos));
+            if (!includeWordPOS) {
+                return lexToTerm(c.content);
+            }
+            else {
+                String pos = POS.get(c.content.toLowerCase());
+                if (pos != null) {
+                    return Property.make(lexToTerm(c.content), tagToTerm(pos));
+                }
             }
         }
             
-        return Instance.make( lexToTerm(c.content), tagToTerm(c.pattern) );
+        return Property.make( lexToTerm(c.content), tagToTerm(c.pattern) );
     }
     
-    public Term lexToTerm(String c) {
-        return Atom.the(c);
+    public static Term lexToTerm(String c) {
+        return Atom.the(c, true);
     }
-    public Term tagToTerm(String c) {
-        return Atom.the(c.toLowerCase());
+    public static Term tagToTerm(String c) {
+        c = c.toLowerCase();
+        if (c.equals("word")) return Atom.quote(" "); //space surrounded by quotes
+        return Atom.the(c, true);
     }
     
     

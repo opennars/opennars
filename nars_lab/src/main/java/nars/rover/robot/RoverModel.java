@@ -62,11 +62,11 @@ public class RoverModel {
     private final World world;
     private DebugDraw draw = null;
 
-    final double minVisionInputProbability = 0.5f;
-    final double maxVisionInputProbability = 0.9f;
+    final double minVisionInputProbability = 0.4f;
+    final double maxVisionInputProbability = 0.5f;
     float biteDistanceThreshold = 0.10f;
     float tasteDistanceThreshold = 1.0f;
-    int pixels = 32;
+    int pixels = 16;
     int retinaResolution = 1; //should be odd # to balance
     float aStep = (float)Math.PI*2f / pixels;
     float L = 35.0f;

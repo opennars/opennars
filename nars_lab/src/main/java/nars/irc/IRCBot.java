@@ -1,32 +1,10 @@
 package nars.irc;
 
 
-import automenta.vivisect.Video;
-import automenta.vivisect.swing.NWindow;
-import automenta.vivisect.swing.ReflectPanel;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.event.NARReaction;
-import nars.gui.NARSwing;
-import nars.io.Texts;
-import nars.io.out.TextOutput;
-import nars.model.impl.Default;
-import nars.nal.concept.Concept;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
-import nars.op.io.say;
-import nars.rl.example.MarkovObservationsGraph;
-import nars.util.language.Twokenize;
-
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 abstract public class IRCBot {
 
@@ -36,6 +14,7 @@ abstract public class IRCBot {
     protected final String channel;
     boolean outputting = false;
 
+    final static String pingHead = "PING ";
 
     protected BufferedWriter writer = null;
 
@@ -107,37 +86,33 @@ abstract public class IRCBot {
                     writer.flush();
                     // Keep reading lines from the server.
                     while ((line = reader.readLine( )) != null) {
-                        String pingHead = "unknown: PING ";
-                        if (line.toLowerCase( ).startsWith(pingHead)) {
-                            // We must respond to PINGs to avoid being disconnected.
-                            writer.write("PONG " + line.substring(pingHead.length()) + "\r\n");
-                            //writer.write("PRIVMSG " + channel + " :I got pinged!\r\n");
-                            //writer.flush( );
+
+                        try {
+                            Message m = Message.parse(line);
+
+                            System.err.println("in: " + m + " from " + line);
+
+                            switch (m.command) {
+                                case "PING":
+                                    writer.write("PONG " + m.params.get(0) + "\r\n");
+                                    writer.flush();
+                                    break;
+                                case "PRIVMSG":
+                                    System.err.println(line);
+
+                                    onMessage(IRCBot.this, m.params.get(0), m.nick, m.params.get(1));
+                                    break;
+                                default:
+                                    System.err.println("unknown: " + m + " from " + line);
+                            }
                         }
-                        else {
-                            // Print the raw line received by the bot.
-                            //System.out.println(line);
-                            if (line.contains(" PRIVMSG " )) {
-                                System.err.println(line);
-                                String part = "PRIVMSG " + channel;
-                                int s = line.indexOf(part);
-                                if (s!=-1) {
-                                    String msg = line.substring(s + part.length() + 2);
-                                    String ch = channel;
-                                    if (ch.startsWith("#"))
-                                        ch = ch.substring(1);
-
-                                    onMessage(IRCBot.this, channel, msg);
-                                }
-
-                            }
-                            else {
-                                System.err.println("unknown: " + line);
-                            }
+                        catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return;
                 }
 
 
@@ -145,7 +120,7 @@ abstract public class IRCBot {
         }).start();
     }
 
-    protected abstract void onMessage(IRCBot bot, String channel, String msg);
+    protected abstract void onMessage(IRCBot bot, String channel, String nick, String msg);
 
     protected boolean send(String channel, String message) {
         try {
@@ -164,4 +139,114 @@ abstract public class IRCBot {
         return send(channel, message);
     }
 
+
+
+    public static class Message extends HashMap<String,Object> {
+
+        String prefix;
+        String nick;
+        String command;
+        ArrayList<String> params = new ArrayList<String>();
+
+        @Override
+        public String toString() {
+            return command + ", " + prefix + ", " + super.toString() + ", " + params;
+        }
+
+        public static Message parse(String line) {
+            Message message = new Message();
+            int position = 0;
+            int nextspace = 0;
+            // parsing!
+            if (line.charAt(0) == '@') {
+                String[] rawTags;
+
+                nextspace = line.indexOf(" ");
+                System.out.println(nextspace);
+                if (nextspace == -1) {
+                    return null;
+                }
+
+                rawTags = line.substring(1, nextspace).split(";");
+
+                for (int i = 0; i < rawTags.length; i++) {
+                    String tag = rawTags[i];
+                    String[] pair = tag.split("=");
+
+                    if (pair.length == 2) {
+                        message.put(pair[0], pair[1]);
+                    } else {
+                        message.put(pair[0], true);
+                    }
+                }
+                position = nextspace + 1;
+            }
+
+            while (line.charAt(position) == ' ') {
+                position++;
+            }
+
+            if (line.charAt(position) == ':') {
+                nextspace = line.indexOf(" ", position);
+                if (nextspace == -1) {
+                    return null;
+                }
+                message.prefix = line.substring(position + 1, nextspace);
+                position = nextspace + 1;
+
+                while (line.charAt(position) == ' ') {
+                    position++;
+                }
+
+                if ((message.prefix.length() > 1) && (message.prefix.indexOf('!')!=-1))
+                    message.nick = message.prefix.substring(0, message.prefix.indexOf('!'));
+            }
+
+            nextspace = line.indexOf(" ", position);
+
+            if (nextspace == -1) {
+                if (line.length() > position) {
+                    message.command = line.substring(position);
+                }
+                return message;
+            }
+
+            message.command = line.substring(position, nextspace);
+
+            position = nextspace + 1;
+
+            while (line.charAt(position) == ' ') {
+                position++;
+            }
+
+            while (position < line.length()) {
+                nextspace = line.indexOf(" ", position);
+
+                if (line.charAt(position) == ':') {
+                    String param = line.substring(position + 1);
+                    message.params.add(param);
+                    break;
+                }
+
+                if (nextspace != -1) {
+                    String param = line.substring(position, nextspace);
+                    message.params.add(param);
+                    position = nextspace + 1;
+
+                    while (line.charAt(position) == ' ') {
+                        position++;
+                    }
+                    continue;
+                }
+
+                if (nextspace == -1) {
+                    String param = line.substring(position);
+                    message.params.add(param);
+                    break;
+                }
+            }
+
+            return message;
+        }
+    }
 }

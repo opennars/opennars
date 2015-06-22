@@ -1,15 +1,26 @@
 package nars.irc;
 
+import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
+import nars.io.nlp.Twenglish;
 import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.Task;
+import nars.nal.nal2.Similarity;
+import nars.nal.nal3.SetExt;
+import nars.nal.nal4.Product;
+import nars.nal.nal5.Conjunction;
+import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.term.Atom;
 import nars.nal.term.Compound;
+import nars.nal.term.Term;
 import nars.rdfowl.NQuadsInput;
+import nars.util.language.Twokenize;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
+import java.util.List;
 
 /**
  * Created by me on 6/20/15.
@@ -65,7 +76,7 @@ public class NarseseIRCBot extends IRCBot {
             }
 
             Task t = (Task)args[0];
-            float pri = t.getPriority();
+            float pri = t.summary();
 
             prioritiesSendable.addValue(pri);
 
@@ -175,10 +186,10 @@ public class NarseseIRCBot extends IRCBot {
             @Override
             protected void believe(Compound assertion) {
                 float freq = 1.0f;
-                float beliefConfidence = 0.25f;
+                float beliefConfidence = 0.95f;
 
                 //insert with zero priority to bypass main memory go directly to subconcepts
-                n.believe(0f, Global.DEFAULT_JUDGMENT_DURABILITY, assertion, Tense.Eternal, freq, beliefConfidence);
+                n.believe(0f, Global.DEFAULT_JUDGMENT_DURABILITY/4f, assertion, Tense.Eternal, freq, beliefConfidence);
             }
         };
 
@@ -191,8 +202,10 @@ public class NarseseIRCBot extends IRCBot {
     public NarseseIRCBot(Default d) throws Exception {
         super("irc.freenode.net", "NARchy", "#nars");
 
+        d.setInternalExperience(null);
+
         d.inputsMaxPerCycle.set(1024);
-        d.setTermLinkBagSize(64);
+        d.setTermLinkBagSize(32);
         d.conceptsFiredPerCycle.set(16);
 
 
@@ -244,14 +257,13 @@ public class NarseseIRCBot extends IRCBot {
     }
 
     @Override
-    protected void onMessage(IRCBot bot, String channel, String msg) {
+    protected void onMessage(IRCBot bot, String channel, String nick, String msg) {
         if (msg.equals("quiet()!")) {
             throttle.set(1f/(60*10), 1f/(60*5));
             send("now quiet. use 'ready()!' for noise");
-
         }
         else if (msg.equals("ready()!")) {
-            throttle.set(0.1f, 0.25f);
+            throttle.set(0.05f, 0.15f);
             send("ready. use 'quiet()!' to stfu");
         }
         else if (msg.equals("status()!")) {
@@ -267,17 +279,37 @@ public class NarseseIRCBot extends IRCBot {
             }
             send("ready.");
         }
-        try {
-            n.input(msg);
-        }
-        catch (Exception e) {
+        else {
+            try {
+                Task t = n.task(msg);
+                n.input(t);
+            } catch (Throwable e) {
 
-            /*
-            if (sentenceLike(msg)) {
-                interpretAsText(...)
+                if (msg.indexOf('>')==-1 && msg.indexOf('<') == -1 && msg.indexOf('(') == -1) {
+                    List<Twokenize.Span> sp = Twokenize.tokenize(msg);
+
+                    List<Term> ll = Lists.transform(sp, x -> Twenglish.spanToTerm(x));
+                    List<List<Term>> m = Lists.partition(ll, 8);
+                    for (List<Term> l : m) {
+
+
+                        /*Implication subj = Implication.make(Product.make(Atom.the(nick), Atom.the("say")),
+                                cc, TemporalRules.ORDER_FORWARD);*/
+                        Similarity subj = Similarity.make(
+                                Product.make( Atom.the("say"), Atom.the(nick) ),
+                                SetExt.make(Conjunction.make(l, TemporalRules.ORDER_FORWARD)));
+                        if (subj != null) {
+                            Task b = n.believe(
+                                    Global.DEFAULT_JUDGMENT_PRIORITY / 8f,
+                                    subj,
+                                    n.time(),
+                                    0.9f, 0.85f / (1 + m.size()));
+                            System.err.println(b);
+                        }
+                    }
+                }
+
             }
-            */
-
         }
     }
 }

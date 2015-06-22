@@ -208,7 +208,7 @@ abstract public class NQuadsInput {
                 return;
             }
 
-            if (includeDataType) {
+            if (!includeDataType) {
                 if (object.equals(dataTypeProperty)) {
                     return;
                 }

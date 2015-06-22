@@ -232,8 +232,12 @@ public class NAR extends Container implements Runnable {
         return t;
     }
 
-    public Task believe(String termString, long when, float freq, float conf, float priority) throws InvalidInputException {
+    public Task believe(float priority, String termString, long when, float freq, float conf) throws InvalidInputException {
         return believe(priority, Global.DEFAULT_JUDGMENT_DURABILITY, termString, when, freq, conf);
+    }
+
+    public Task believe(float priority, Compound term, long when, float freq, float conf) throws InvalidInputException {
+        return believe(priority, Global.DEFAULT_JUDGMENT_DURABILITY, term, when, freq, conf);
     }
 
     public Task believe(String termString, Tense tense, float freq, float conf) throws InvalidInputException {
