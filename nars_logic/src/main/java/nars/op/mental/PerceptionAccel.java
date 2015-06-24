@@ -205,7 +205,8 @@ public class PerceptionAccel extends NARReaction {
             for(int i=0; i<relterms.length; i++) {
                 if(!(relterms[i] instanceof AbstractInterval)) {
                     //ok it is not an interval, so it has to exist as concept else it needs to be eliminated
-                    if(nal.memory.concept(relterms[i]) !=null ) {
+                    Concept C=nal.memory.concept(relterms[i]);
+                    if(C !=null && C.getPriority() >= partConceptsPrioThreshold) {
                         relterms2[u] = relterms[i];
                         u++;
                     }
