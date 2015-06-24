@@ -154,6 +154,7 @@ public class PerceptionAccel extends NARReaction {
             Term[] secondHalf;
             if (relterms[Len - 1] instanceof AbstractInterval) {
                 //the middle can be a interval, for example in case of a,+1,b , in which case we dont use it
+
                 firstHalf = new Term[Len - 1]; //so we skip the middle here
                 secondHalf = new Term[Len - 1]; //as well as here
                 int h = 0; //make index mapping easier by counting
@@ -185,9 +186,9 @@ public class PerceptionAccel extends NARReaction {
             Concept C1 = nal.memory.concept(firstC);
             Concept C2 = nal.memory.concept(secondC);
 
-            if (C1 == null || C2 == null) {
-                if (debugMechanism) {
-                    System.out.println("one didn't exist: " + firstC + " or " + secondC);
+            if (after && (C1 == null || C2 == null)) { //everything which happens now we can summarize for now on
+                if (debugMechanism) {                  //but only if the atomic events are also existing as concepts
+                    System.out.println("one didn't exist: " + firstC + " or " + secondC); //and are above partConcepts priority threshold
                 }
                 continue; //the components were not observed, so don't allow creating this compound
             }
@@ -199,7 +200,28 @@ public class PerceptionAccel extends NARReaction {
             relterms = CyclesInterval.removeZeros(relterms);
             if (relterms.length < 2) continue;
 
-            Term C0 = Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Term[] relterms2=new Term[relterms.length];
+            int u=0;
+            for(int i=0; i<relterms.length; i++) {
+                if(!(relterms[i] instanceof AbstractInterval)) {
+                    //ok it is not an interval, so it has to exist as concept else it needs to be eliminated
+                    if(nal.memory.concept(relterms[i]) !=null ) {
+                        relterms2[u] = relterms[i];
+                        u++;
+                    }
+                }
+                else {
+                    relterms2[u] = relterms[i];
+                    u++;
+                }
+            }
+
+            Term[] relterms2_real=new Term[u];
+            for(int i=0; i<u; i++) {
+                relterms2_real[i] = relterms2[i];
+            }
+
+            Term C0 = Conjunction.make(relterms2_real, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             if (!(C0 instanceof Conjunction)) {
                 continue;
             }
