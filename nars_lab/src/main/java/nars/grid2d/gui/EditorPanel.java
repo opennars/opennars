@@ -140,208 +140,206 @@ public class EditorPanel extends JPanel {
         DefaultMutableTreeNode save = new DefaultMutableTreeNode("Save Scenario");
         root.add(save);
 
+        //String levelPath2="C:\\Users\\patrick.hammer\\IdeaProjects\\opennars\\nars_lab\\src\\main\\java\\nars\\grid2d\\level";
         File f = new File(levelPath); // current directory
+        try {
+            File[] files = f.listFiles();
+            for (File file : files) {
+                boolean is_file = false;
+                if (!file.isDirectory()) {
+                    if (file.getName().endsWith(".lvl")) {
+                        try {
+                            String path = file.getCanonicalPath();
+                            String name = file.getName();
 
-        File[] files = f.listFiles();
-        for (File file : files) {
-            boolean is_file=false;
-            if (!file.isDirectory()) {
-                if(file.getName().endsWith(".lvl")) {
-                    try {
-                        String path=file.getCanonicalPath();
-                        String name=file.getName();
-
-                        load.add(new EditorMode(name) {
-                            @Override
-                            public void run() {
-                                String allText = null;
-                                try {
-                                    allText = FileUtils.readFileToString(new File(path));
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                //todo: fill level according to read text
-                                String[] values=allText.split("OBJECTS")[0].split(";");
-                                for(String cell : values) {
-                                    String[] c=cell.split(",");
-                                    if(c.length<14) {
-                                        continue;
+                            load.add(new EditorMode(name) {
+                                @Override
+                                public void run() {
+                                    String allText = null;
+                                    try {
+                                        allText = FileUtils.readFileToString(new File(path));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
                                     }
-
-                                    if(!c[11].equals("") && !c[11].contains("{")) {
-                                        c[11]="{"+c[11]+"}";
-                                    }
-
-                                    int i=Integer.valueOf(c[0]);
-                                    int j=Integer.valueOf(c[1]);
-                                    s.cells.readCells[i][j].charge=Float.valueOf(c[2]);
-                                    s.cells.writeCells[i][j].charge=Float.valueOf(c[2]);
-
-                                    s.cells.readCells[i][j].chargeFront=Boolean.valueOf(c[3]);
-                                    s.cells.writeCells[i][j].chargeFront=Boolean.valueOf(c[3]);
-
-                                    s.cells.readCells[i][j].conductivity=Float.valueOf(c[4]);
-                                    s.cells.writeCells[i][j].conductivity=Float.valueOf(c[4]);
-
-                                    s.cells.readCells[i][j].height=Float.valueOf(c[5]);
-                                    s.cells.writeCells[i][j].height=Float.valueOf(c[5]);
-
-                                    s.cells.readCells[i][j].is_solid=Boolean.valueOf(c[6]);
-                                    s.cells.writeCells[i][j].is_solid=Boolean.valueOf(c[6]);
-
-                                    s.cells.readCells[i][j].light=Float.valueOf(c[7]);
-                                    s.cells.writeCells[i][j].light=Float.valueOf(c[7]);
-
-                                    s.cells.readCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
-                                    s.cells.writeCells[i][j].logic=Logic.values()[Integer.valueOf(c[8])];
-                                    if(s.cells.readCells[i][j].logic==Logic.SWITCH) {
-                                        if(TestChamber.staticInformation)
-                                            s.nar.input("<" + c[11] + " --> switch>.");
-                                        if(s.cells.readCells[i][j].light==1.0f) {
-                                            //s.nar.input("<"+c[11]+" --> on>. :|:");
+                                    //todo: fill level according to read text
+                                    String[] values = allText.split("OBJECTS")[0].split(";");
+                                    for (String cell : values) {
+                                        String[] c = cell.split(",");
+                                        if (c.length < 14) {
+                                            continue;
                                         }
-                                        else {
-                                            //s.nar.input("<"+c[11]+" --> off>.");
-                                        }
-                                    }
-                                    if(s.cells.readCells[i][j].logic==Logic.OFFSWITCH) {
-                                        if(TestChamber.staticInformation)
-                                            s.nar.input("<" + c[11] + " --> switch>.");
-                                        if(s.cells.readCells[i][j].light==1.0f) {
-                                            //s.nar.input("<"+c[11]+" --> on>. :|:");
-                                        }
-                                        else {
-                                            //s.nar.input("<"+c[11]+" --> off>. :|:");
-                                        }
-                                    }
 
-                                    if(!c[9].equals("")) {
-                                        s.cells.readCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
-                                        s.cells.writeCells[i][j].machine=Machine.values()[Integer.valueOf(c[9])];
-                                        if(s.cells.readCells[i][j].machine==Machine.Turret) {
-                                            if(TestChamber.staticInformation)
-                                                s.nar.input("<" + c[11] + " --> firework>.");
-                                            if(s.cells.readCells[i][j].light==1.0f) {
+                                        if (!c[11].equals("") && !c[11].contains("{")) {
+                                            c[11] = "{" + c[11] + "}";
+                                        }
+
+                                        int i = Integer.valueOf(c[0]);
+                                        int j = Integer.valueOf(c[1]);
+                                        s.cells.readCells[i][j].charge = Float.valueOf(c[2]);
+                                        s.cells.writeCells[i][j].charge = Float.valueOf(c[2]);
+
+                                        s.cells.readCells[i][j].chargeFront = Boolean.valueOf(c[3]);
+                                        s.cells.writeCells[i][j].chargeFront = Boolean.valueOf(c[3]);
+
+                                        s.cells.readCells[i][j].conductivity = Float.valueOf(c[4]);
+                                        s.cells.writeCells[i][j].conductivity = Float.valueOf(c[4]);
+
+                                        s.cells.readCells[i][j].height = Float.valueOf(c[5]);
+                                        s.cells.writeCells[i][j].height = Float.valueOf(c[5]);
+
+                                        s.cells.readCells[i][j].is_solid = Boolean.valueOf(c[6]);
+                                        s.cells.writeCells[i][j].is_solid = Boolean.valueOf(c[6]);
+
+                                        s.cells.readCells[i][j].light = Float.valueOf(c[7]);
+                                        s.cells.writeCells[i][j].light = Float.valueOf(c[7]);
+
+                                        s.cells.readCells[i][j].logic = Logic.values()[Integer.valueOf(c[8])];
+                                        s.cells.writeCells[i][j].logic = Logic.values()[Integer.valueOf(c[8])];
+                                        if (s.cells.readCells[i][j].logic == Logic.SWITCH) {
+                                            if (TestChamber.staticInformation)
+                                                s.nar.input("<" + c[11] + " --> switch>.");
+                                            if (s.cells.readCells[i][j].light == 1.0f) {
                                                 //s.nar.input("<"+c[11]+" --> on>. :|:");
+                                            } else {
+                                                //s.nar.input("<"+c[11]+" --> off>.");
                                             }
-                                            else {
+                                        }
+                                        if (s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
+                                            if (TestChamber.staticInformation)
+                                                s.nar.input("<" + c[11] + " --> switch>.");
+                                            if (s.cells.readCells[i][j].light == 1.0f) {
+                                                //s.nar.input("<"+c[11]+" --> on>. :|:");
+                                            } else {
                                                 //s.nar.input("<"+c[11]+" --> off>. :|:");
                                             }
                                         }
-                                        if(s.cells.readCells[i][j].machine==Machine.Light) {
-                                            if(TestChamber.staticInformation)
-                                                s.nar.input("<" + c[11] + " --> light>.");
-                                            if(s.cells.readCells[i][j].light==1.0f) {
-                                                //s.nar.input("<"+c[11]+" --> on>. :|:");
+
+                                        if (!c[9].equals("")) {
+                                            s.cells.readCells[i][j].machine = Machine.values()[Integer.valueOf(c[9])];
+                                            s.cells.writeCells[i][j].machine = Machine.values()[Integer.valueOf(c[9])];
+                                            if (s.cells.readCells[i][j].machine == Machine.Turret) {
+                                                if (TestChamber.staticInformation)
+                                                    s.nar.input("<" + c[11] + " --> firework>.");
+                                                if (s.cells.readCells[i][j].light == 1.0f) {
+                                                    //s.nar.input("<"+c[11]+" --> on>. :|:");
+                                                } else {
+                                                    //s.nar.input("<"+c[11]+" --> off>. :|:");
+                                                }
                                             }
-                                            else {
-                                                //s.nar.input("<"+c[11]+" --> off>. :|:");
+                                            if (s.cells.readCells[i][j].machine == Machine.Light) {
+                                                if (TestChamber.staticInformation)
+                                                    s.nar.input("<" + c[11] + " --> light>.");
+                                                if (s.cells.readCells[i][j].light == 1.0f) {
+                                                    //s.nar.input("<"+c[11]+" --> on>. :|:");
+                                                } else {
+                                                    //s.nar.input("<"+c[11]+" --> off>. :|:");
+                                                }
+                                            }
+                                        } else {
+                                            s.cells.readCells[i][j].machine = null;
+                                            s.cells.writeCells[i][j].machine = null;
+                                        }
+
+                                        s.cells.readCells[i][j].material = Material.values()[Integer.valueOf(c[10])];
+                                        s.cells.writeCells[i][j].material = Material.values()[Integer.valueOf(c[10])];
+
+                                        if (s.cells.readCells[i][j].material == Material.Door) {
+                                            if (TestChamber.staticInformation)
+                                                s.nar.input("<" + c[11] + " --> door>.");
+                                            //s.nar.input("<"+c[11]+" --> closed>. :|:");
+                                        }
+
+                                        s.cells.readCells[i][j].name = c[11];
+                                        s.cells.writeCells[i][j].name = c[11];
+
+                                        try {
+                                            if (!c[11].equals("")) {
+                                                String value = c[11].replaceAll("[A-Za-z]", "").replaceAll("\\}", "").replaceAll("\\{", "");
+                                                int res = Integer.parseInt(value);
+                                                if (res > Hauto.entityID) {
+                                                    Hauto.entityID = res + 1;
+                                                }
+                                            }
+                                        } catch (Exception ex) {
+                                        }
+
+
+                                        s.cells.readCells[i][j].value = Float.valueOf(c[12]);
+                                        s.cells.writeCells[i][j].value = Float.valueOf(c[12]);
+
+                                        s.cells.readCells[i][j].value2 = Float.valueOf(c[13]);
+                                        s.cells.writeCells[i][j].value2 = Float.valueOf(c[13]);
+                                    }
+                                    String[] objs = allText.split("OBJECTS")[1].split(";");
+                                    ArrayList<GridObject> newobj = new ArrayList<>(); //new ArrayList we have to fill
+                                    for (String obj : objs) {
+                                        if (obj.equals("\n"))
+                                            continue;
+                                        String[] val = obj.split(",");
+                                        if (val.length == 0) {
+                                            continue;
+                                        }
+
+                                        if (!val[1].equals("") && !val[1].contains("{")) {
+                                            val[1] = "{" + val[1] + "}";
+                                        }
+
+                                        String name = val[1];
+
+                                        try {
+                                            if (!name.equals("")) {
+                                                String value = name.replaceAll("[A-Za-z]", "");
+                                                int res = Integer.parseInt(value);
+                                                if (res > Hauto.entityID) {
+                                                    Hauto.entityID = res + 1;
+                                                }
+                                            }
+                                        } catch (Exception ex) {
+                                        }
+
+                                        float cx = Float.valueOf(val[2]);
+                                        float cy = Float.valueOf(val[3]);
+                                        int x = Integer.valueOf(val[5]);
+                                        int y = Integer.valueOf(val[6]);
+                                        if (val[0].equals("GridAgent")) {
+                                            for (GridObject z : s.objects) {
+                                                if (z instanceof GridAgent) {
+                                                    ((GridAgent) z).cx = cx;
+                                                    ((GridAgent) z).cy = cy;
+                                                    ((GridAgent) z).x = x;
+                                                    ((GridAgent) z).y = y;
+                                                    newobj.add(z);
+                                                    s.target = new PVector(x, y);
+                                                    s.current = new PVector(x, y);
+                                                }
                                             }
                                         }
-                                    } else {
-                                        s.cells.readCells[i][j].machine=null;
-                                        s.cells.writeCells[i][j].machine=null;
-                                    }
-
-                                    s.cells.readCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
-                                    s.cells.writeCells[i][j].material=Material.values()[Integer.valueOf(c[10])];
-
-                                    if(s.cells.readCells[i][j].material==Material.Door) {
-                                        if(TestChamber.staticInformation)
-                                            s.nar.input("<" + c[11] + " --> door>.");
-                                        //s.nar.input("<"+c[11]+" --> closed>. :|:");
-                                    }
-
-                                    s.cells.readCells[i][j].name=c[11];
-                                    s.cells.writeCells[i][j].name=c[11];
-
-                                    try {
-                                        if(!c[11].equals("")) {
-                                            String value=c[11].replaceAll("[A-Za-z]","").replaceAll("\\}", "").replaceAll("\\{", "");
-                                            int res=Integer.parseInt(value);
-                                            if(res>Hauto.entityID) {
-                                                Hauto.entityID=res+1;
-                                            }
+                                        if (val[0].equals("Key")) {
+                                            Key addu = new Key(x, y, name);
+                                            if (TestChamber.staticInformation)
+                                                s.nar.input("<" + name + " --> Key>.");
+                                            addu.space = s;
+                                            newobj.add(addu);
+                                        }
+                                        if (val[0].equals("Pizza")) {
+                                            Pizza addu = new Pizza(x, y, name);
+                                            if (TestChamber.staticInformation)
+                                                s.nar.input("<" + name + " --> pizza>.");
+                                            addu.space = s;
+                                            newobj.add(addu);
                                         }
                                     }
-                                    catch(Exception ex){}
-
-
-                                    s.cells.readCells[i][j].value=Float.valueOf(c[12]);
-                                    s.cells.writeCells[i][j].value=Float.valueOf(c[12]);
-
-                                    s.cells.readCells[i][j].value2=Float.valueOf(c[13]);
-                                    s.cells.writeCells[i][j].value2=Float.valueOf(c[13]);
+                                    s.objects = newobj;
                                 }
-                                String[] objs=allText.split("OBJECTS")[1].split(";");
-                                ArrayList<GridObject> newobj=new ArrayList<>(); //new ArrayList we have to fill
-                                for(String obj : objs) {
-                                    if(obj.equals("\n"))
-                                        continue;
-                                    String[] val=obj.split(",");
-                                    if(val.length==0) {
-                                        continue;
-                                    }
+                            });
 
-                                    if(!val[1].equals("") && !val[1].contains("{")) {
-                                        val[1]="{"+val[1]+"}";
-                                    }
-
-                                    String name=val[1];
-
-                                    try {
-                                        if(!name.equals("")) {
-                                            String value=name.replaceAll("[A-Za-z]","");
-                                            int res=Integer.parseInt(value);
-                                            if(res>Hauto.entityID) {
-                                                Hauto.entityID=res+1;
-                                            }
-                                        }
-                                    }
-                                    catch(Exception ex){}
-
-                                    float cx=Float.valueOf(val[2]);
-                                    float cy=Float.valueOf(val[3]);
-                                    int x=Integer.valueOf(val[5]);
-                                    int y=Integer.valueOf(val[6]);
-                                    if(val[0].equals("GridAgent")) {
-                                        for(GridObject z : s.objects) {
-                                            if(z instanceof GridAgent) {
-                                                ((GridAgent)z).cx=cx;
-                                                ((GridAgent)z).cy=cy;
-                                                ((GridAgent)z).x=x;
-                                                ((GridAgent)z).y=y;
-                                                newobj.add(z);
-                                                s.target=new PVector(x,y);
-                                                s.current=new PVector(x,y);
-                                            }
-                                        }
-                                    }
-                                    if(val[0].equals("Key")) {
-                                        Key addu=new Key(x,y,name);
-                                        if(TestChamber.staticInformation)
-                                            s.nar.input("<" + name + " --> Key>.");
-                                        addu.space=s;
-                                        newobj.add(addu);
-                                    }
-                                    if(val[0].equals("Pizza")) {
-                                        Pizza addu=new Pizza(x,y,name);
-                                        if(TestChamber.staticInformation)
-                                            s.nar.input("<" + name + " --> pizza>.");
-                                        addu.space=s;
-                                        newobj.add(addu);
-                                    }
-                                }
-                                s.objects=newobj;
-                            }
-                        });
-
-                    } catch (IOException ex) {
-                        System.out.println("not able to get path of "+file.getName());
+                        } catch (IOException ex) {
+                            System.out.println("not able to get path of " + file.getName());
+                        }
                     }
                 }
             }
-        }
+        } catch(Exception ex) {}
 
         save.add(new EditorMode("Save") {
             @Override
@@ -543,7 +541,7 @@ public class EditorPanel extends JPanel {
 
             @Override
             public void run() {
-                s.cells.click("", "go-to", "");
+                s.cells.click("", "goto", "");
                 TestChamber.active=true;
             }
         });
@@ -607,8 +605,8 @@ public class EditorPanel extends JPanel {
                             cnt+=1;
                         }
                         if (s.cells.readCells[i][j].logic == Logic.SWITCH || s.cells.readCells[i][j].logic == Logic.OFFSWITCH) {
-                            s.nar.input("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^activate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
-                            s.nar.input("<(&/,"+"(^go-to,"+s.cells.readCells[i][j].name+"),(^deactivate," + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.input("<(&/,"+"goto("+s.cells.readCells[i][j].name+"),activate(" + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
+                            s.nar.input("<(&/,"+"goto("+s.cells.readCells[i][j].name+"),deactivate(" + s.cells.readCells[i][j].name + ")) =/> <Self --> [curious]>>.");
                             cnt+=1;
                         }
                     }
@@ -682,11 +680,11 @@ public class EditorPanel extends JPanel {
                 s.nar.input("<(--,<$1 --> [opened]>) <=> <(*,$1,SHOULD,BE,CLOSED) --> sentence>>.");
                 s.nar.input("<<$1 --> [hold]> <=> <(*,$1,SHOULD,BE,HOLD) --> sentence>>.");
                 s.nar.input("<<$1 --> [at]> <=> <(*,SHOULD,BE,AT,$1) --> sentence>>.");
-                s.nar.input("<(^pick,$1) <=> <(*,$1,SHOULD,BE,PICKED) --> sentence>>.");
-                s.nar.input("<(^activate,$1) <=> <(*,$1,SHOULD,BE,ACTIVE) --> sentence>>.");
-                s.nar.input("<(^deactivate,$1) <=> <(*,$1,SHOULD,BE,NOT,ACTIVE) --> sentence>>.");
-                s.nar.input("<(^go-to,$1) <=> <(*,SHOULD,GO,TO,$1) --> sentence>>.");
-                s.nar.input("<(&&,<$1 --> sentence>,(^say,$1)) =/> <I --> chatty>>.");
+                s.nar.input("<pick($1) <=> <(*,$1,SHOULD,BE,PICKED) --> sentence>>.");
+                s.nar.input("<activate($1) <=> <(*,$1,SHOULD,BE,ACTIVE) --> sentence>>.");
+                s.nar.input("<deactivate($1) <=> <(*,$1,SHOULD,BE,NOT,ACTIVE) --> sentence>>.");
+                s.nar.input("<goto($1) <=> <(*,SHOULD,GO,TO,$1) --> sentence>>.");
+                s.nar.input("<(&&,<$1 --> sentence>,say($1)) =/> <I --> chatty>>.");
                 s.nar.input("<I --> chatty>!");
                 s.nar.input("<I --> chatty>!");
                 s.nar.input("<I --> chatty>!");
@@ -699,10 +697,10 @@ public class EditorPanel extends JPanel {
         knowMenu.add(new EditorMode("common sense") {
             @Override
             public void run() {
-                s.nar.input("<(&/,<$1 --> [at]>,(^pick,$1)) =/> <$1 --> [hold]>>.");
-                s.nar.input("<(^go-to,$1) =/> <$1 --> [at]>>.");
-                s.nar.input("<(&/,<$1 --> [at]>,(^activate,$1)) =/> <$1 --> [on]>>.");
-                s.nar.input("<(&/,<$1 --> [at]>,(^deactivate,$1)) =/> <$1 --> [on]>>. %0.00;0.90%");
+                s.nar.input("<(&/,<$1 --> [at]>,pick($1)) =/> <$1 --> [hold]>>.");
+                s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
+                s.nar.input("<(&/,<$1 --> [at]>,activate($1)) =/> <$1 --> [on]>>.");
+                s.nar.input("<(&/,<$1 --> [at]>,deactivate($1)) =/> <$1 --> [on]>>. %0.00;0.90%");
                 //s.nar.input("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> on>>).");
                 //s.nar.input("(&&,<#1 --> on>,<<#1 --> on> =/> <#2 --> opened>>).");
             }
@@ -711,7 +709,7 @@ public class EditorPanel extends JPanel {
         knowMenu.add(new EditorMode("if you go to somewhere you will be there") {
             @Override
             public void run() {
-                s.nar.input("<(^go-to,$1) =/> <$1 --> [at]>>.");
+                s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
             }
         });
 
@@ -723,7 +721,7 @@ public class EditorPanel extends JPanel {
                     if (g instanceof LocalGridObject) {
                         LocalGridObject obi = (LocalGridObject) g;
                         if (obi instanceof Key) {
-                            s.nar.input("<(&/,<" + obi.doorname + " --> [at]>,(^pick," + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
+                            s.nar.input("<(&/,<" + obi.doorname + " --> [at]>,pick(" + obi.doorname + ")) =/> <" + obi.doorname + " --> [hold]>>.");
                         }
                     }
                 }
@@ -739,7 +737,7 @@ public class EditorPanel extends JPanel {
             public void run() {
                 wu.run();
                 //s.nar.input("<(&&,<$1 --> pizza>,(^go-to,$1)) =/> <$1 --> eat>>."); //also works but better:
-                s.nar.input("<(^go-to,$1) =/> <$1 --> [at]>>.");
+                s.nar.input("<goto($1) =/> <$1 --> [at]>>.");
                 TestChamber.needpizza=true;
             }
         });
