@@ -189,9 +189,28 @@ public class RasterHierarchy extends JPanel
 
         workImage = new BufferedImage(actualSize.width, actualSize.height, BufferedImage.TYPE_INT_RGB);
 
+        //int counter = 0;
 
         while( true ) {
+                /*
+                 * Uncomment this section to scan the focal point across the frame
+                 * automatically - just for demo purposes.
+                 */
+                /*
+                int xx = this.focusPoint.getX();
+                int yy = this.focusPoint.getY();
+                xx += 1;
 
+                if(xx > frameWidth)
+                {
+                    xx = 0;
+                    yy += 1;
+                    if (yy > frameHeight)
+                        yy = 0;
+                }
+
+                this.setFocus(xx, yy);
+                */
             input = webcam.getImage();
 
             synchronized( workImage ) {
