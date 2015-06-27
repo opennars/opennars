@@ -42,7 +42,7 @@ public class PerceptionAccel extends NARReaction {
 
     int[] sv = new int[ConjunctionMemorySize]; //use static array, should suffice for now
     boolean debugMechanism = false;
-    double partConceptsPrioThreshold = 0.1;
+    float partConceptsPrioThreshold = 0.1f;
     final ArrayList<Task> eventbuffer = new ArrayList<>();
     int cur_maxlen = 1;
     final LongArrayList evBase = new LongArrayList();
@@ -82,7 +82,7 @@ public class PerceptionAccel extends NARReaction {
     }
 
 
-    public void setPartConceptsPrioThreshold(double value) {
+    public void setPartConceptsPrioThreshold(float value) {
         partConceptsPrioThreshold = value;
     }
 
@@ -193,7 +193,9 @@ public class PerceptionAccel extends NARReaction {
                 continue; //the components were not observed, so don't allow creating this compound
             }
 
-            if (C1.getPriority() < partConceptsPrioThreshold || C2.getPriority() < partConceptsPrioThreshold) {
+
+
+            if (C1 == null || C2 == null || C1.getPriority() < partConceptsPrioThreshold || C2.getPriority() < partConceptsPrioThreshold) {
                 continue; //too less priority
             }
 
