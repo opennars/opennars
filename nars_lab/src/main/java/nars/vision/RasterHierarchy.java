@@ -6,10 +6,15 @@ import boofcv.alg.misc.ImageMiscOps;
 import boofcv.struct.image.*;
 import com.github.sarxos.webcam.Webcam;
 import georegression.struct.point.Point2D_I32;
+import nars.gui.NARSwing;
+import nars.NAR;
+import nars.model.impl.Default;
+import org.infinispan.commons.hash.Hash;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 
 /**
@@ -87,8 +92,38 @@ public class RasterHierarchy extends JPanel
      * @param input The image to rasterize
      * @return The rasterized image.
      */
+    int updaterate=30;
+    int cnt=1;
+    static int arrsz=1000; //todo refine
+    HashMap<Integer,Float> lastvalR=new HashMap<>();
+    HashMap<Integer,Float> lastvalG=new HashMap<>();
+    HashMap<Integer,Float> lastvalB=new HashMap<>();
+    HashMap<Integer,Value> voter=new HashMap<>();
+
+    public class Value
+    {
+        public int x;
+        public int y;
+        public int r;
+        public double value;
+        public Value(int r, int x, int y, double value) {
+            this.x=x;
+            this.y=y;
+            this.r=r;
+            this.value=value;
+        }
+    }
+
     public BufferedImage rasterizeImage(BufferedImage input)
     {
+        voter = new HashMap<>();
+        boolean putin=false; //vladimir
+        cnt--;
+        if(cnt==0) {
+            putin = true;
+            cnt=updaterate;
+        }
+
         int red, green, blue;
         int redSum, greenSum, blueSum;
         int x, y, startX, startY;
@@ -139,8 +174,11 @@ public class RasterHierarchy extends JPanel
 
             int pixelCount = blockXSize * blockYSize; // Number of pixels per block
 
+            int h=0,j=0;
             for (x = newX; x < ((step == 1 ? 0 : startX) + regionWidth); x += blockXSize) {
+                h++;
                 for (y = newY; y < ((step == 1 ? 0 : startY) + regionHeight); y += blockYSize) {
+                    j++;
 
                     redSum = 0;
                     greenSum = 0;
@@ -158,12 +196,55 @@ public class RasterHierarchy extends JPanel
                     green = greenSum / pixelCount;
                     blue = blueSum / pixelCount;
 
+                    float fred = ((float) red) / 255.0f;
+                    float fgreen = ((float) red) / 255.0f;
+                    float fblue = ((float) red) / 255.0f;
+
+                    //manage move heuristic
+                    int brightness = (red+green+blue)/3; //maybe not needed
+                    int key=step+10*x+10000*y;
+
+                    if(lastvalR.containsKey(key) && putin) {
+
+                        double area = blockXSize * blockYSize;
+                        double diff = Math.abs(fred - (lastvalR.get(key))) + Math.abs(fgreen - (lastvalG.get(key))) + Math.abs(fblue - (lastvalB.get(key)));
+                        double vote = diff;// / area;
+                       // vote*=step;
+                        voter.put(key, new Value(step, x + blockXSize / 2, y + blockYSize / 2, vote));
+                    }
+                    lastvalR.put(key, fred);
+                    lastvalG.put(key, fgreen);
+                    lastvalB.put(key, fblue);
+
+
+                    if(putin) {
+                        //input Narsese translation
+                        String st="<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+"%";
+                        nar.input(st);
+                    }
                     // Here we can generate NAL, since we know all of the required values.
 
                     ImageMiscOps.fillRectangle(output.getBand(0), red, x, y, blockXSize, blockYSize);
                     ImageMiscOps.fillRectangle(output.getBand(1), green, x, y, blockXSize, blockYSize);
                     ImageMiscOps.fillRectangle(output.getBand(2), blue, x, y, blockXSize, blockYSize);
                 }
+            }
+        }
+
+        //search for maximum vote to move heuristic
+        if(putin) {
+            Value maxvalue = null;
+            float threshold = 0.05f;
+            for (Integer key : voter.keySet()) {
+                Value value = voter.get(key);
+                if (maxvalue == null || value.value > maxvalue.value) {
+                    if (value.value > threshold)
+                        maxvalue = value;
+                }
+            }
+
+            if (maxvalue != null && maxvalue.x!=0 && maxvalue.y!=0) {
+                this.setFocus(maxvalue.x, maxvalue.y);
             }
         }
 
@@ -235,9 +316,16 @@ public class RasterHierarchy extends JPanel
         }
     }
 
+    static NAR nar;
     public static void main(String[] args) {
 
-        RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
+        //RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
+       // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
+        nar = new NAR(new Default.CommandLineNARBuilder(args));
+
+        NARSwing swing = new NARSwing(nar);
+
+        RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 4, 3);
 
         rh.process();
     }
