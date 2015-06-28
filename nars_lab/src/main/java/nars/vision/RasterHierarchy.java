@@ -6,6 +6,9 @@ import boofcv.alg.misc.ImageMiscOps;
 import boofcv.struct.image.*;
 import com.github.sarxos.webcam.Webcam;
 import georegression.struct.point.Point2D_I32;
+import nars.gui.NARSwing;
+import nars.NAR;
+import nars.model.impl.Default;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,8 +90,17 @@ public class RasterHierarchy extends JPanel
      * @param input The image to rasterize
      * @return The rasterized image.
      */
+    int updaterate=30;
+    int cnt=1;
     public BufferedImage rasterizeImage(BufferedImage input)
     {
+        boolean putin=false; //vladimir
+        cnt--;
+        if(cnt==0) {
+            putin = true;
+            cnt=updaterate;
+        }
+
         int red, green, blue;
         int redSum, greenSum, blueSum;
         int x, y, startX, startY;
@@ -158,6 +170,16 @@ public class RasterHierarchy extends JPanel
                     green = greenSum / pixelCount;
                     blue = blueSum / pixelCount;
 
+
+                    if(putin) {
+                        float fred=((float) red)/255.0f;
+                        float fgreen=((float) red)/255.0f;
+                        float fblue=((float) red)/255.0f;
+                        float brightness = (fred+fgreen+fblue)/3.0f; //maybe not needed
+
+                        String st="<(*,raster"+ String.valueOf(step)+","+String.valueOf(x)+","+String.valueOf(y)+") --> RED>. :|: %"+String.valueOf(fred)+"%";
+                        nar.input(st);
+                    }
                     // Here we can generate NAL, since we know all of the required values.
 
                     ImageMiscOps.fillRectangle(output.getBand(0), red, x, y, blockXSize, blockYSize);
@@ -235,9 +257,16 @@ public class RasterHierarchy extends JPanel
         }
     }
 
+    static NAR nar;
     public static void main(String[] args) {
 
-        RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
+        //RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
+       // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
+        nar = new NAR(new Default.CommandLineNARBuilder(args));
+
+        NARSwing swing = new NARSwing(nar);
+
+        RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 4, 4);
 
         rh.process();
     }
