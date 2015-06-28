@@ -365,6 +365,9 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
         int li = levelIndex;
         final boolean le[] = levelEmpty;
 
+        if (li < 0)
+            throw new RuntimeException("levelIndex is < 0, may need additional check for overflow");
+
         while (le[ D[li++ % numLevels]]);
 
         currentLevel = D[(li-1) % numLevels];

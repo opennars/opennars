@@ -349,7 +349,9 @@ public class NAR extends Container implements Runnable {
     }
 
     public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
-        return on(the(c));
+        Reaction<Class> v = the(c);
+        the(c, v); //register singleton
+        return on(v);
     }
 
     public EventEmitter.Registrations on(Reaction<Term> o, Term... c) {

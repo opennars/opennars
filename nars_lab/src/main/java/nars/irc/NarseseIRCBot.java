@@ -189,12 +189,12 @@ public class NarseseIRCBot extends IRCBot {
     public synchronized void reset() throws Exception {
         n.reset();
 
-        System.out.println("Existing concepts");
+        System.out.println("Existing concepts: " + n.memory.concepts.size());
         n.memory.concepts.forEach(x -> {
-            System.out.println("  " + x);
+            System.out.print('\t' + x.toString());
         });
 
-        /*
+
         new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f ) {
 
             @Override
@@ -206,7 +206,7 @@ public class NarseseIRCBot extends IRCBot {
                 n.believe(0f, Global.DEFAULT_JUDGMENT_DURABILITY/4f, assertion, Tense.Eternal, freq, beliefConfidence);
             }
         };
-        */
+
 
 
         n.runWhileNewInput(1);
