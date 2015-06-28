@@ -164,6 +164,10 @@ public class XMLHandler extends LexicalHandlerImpl implements ARPErrorNumbers,
         frame.processingInstruction(target, data);
     }
 
+    public boolean warning(int id) {
+        return (options.getErrorMode(id) != EM_IGNORE);
+    }
+
     public void warning(Taint taintMe,int id, Supplier<String> msg) throws SAXParseException {
         if (options.getErrorMode(id) != EM_IGNORE)
             warning(taintMe,id, location(), msg.get());

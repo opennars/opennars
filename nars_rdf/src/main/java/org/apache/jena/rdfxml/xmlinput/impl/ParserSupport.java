@@ -62,22 +62,26 @@ public class ParserSupport implements ARPErrorNumbers, Names {
 			}
 			ARPLocation prev = idsUsedForBase.get(str);
 			if (prev != null) {
-				arp.warning(taintMe,
-					WARN_REDEFINITION_OF_ID,
-					"Redefinition of ID: " + str);
-				arp.warning(taintMe,
-					WARN_REDEFINITION_OF_ID,
-					prev,
-					"Previous definition of '" + str + "'.");
+				if (arp.warning(WARN_REDEFINITION_OF_ID)) {
+
+					arp.warning(taintMe,
+							WARN_REDEFINITION_OF_ID,
+							"Redefinition of ID: " + str);
+					arp.warning(taintMe,
+							WARN_REDEFINITION_OF_ID,
+							prev,
+							"Previous definition of '" + str + "'.");
+				}
 			} else {
 				idsUsedForBase.put(str, arp.location());
 				arp.idsUsedCount++;
 				if (arp.idsUsedCount > 10000) {
 					arp.idsUsed = null;
-				arp.warning(taintMe,
-						WARN_BIG_FILE,
-						"Input is large. Switching off checking for illegal reuse of rdf:ID's.");
-				}
+				if (arp.warning(WARN_BIG_FILE))
+					arp.warning(taintMe,
+							WARN_BIG_FILE,
+							"Input is large. Switching off checking for illegal reuse of rdf:ID's.");
+					}
 			}
 		}
 
@@ -88,9 +92,10 @@ public class ParserSupport implements ARPErrorNumbers, Names {
 	protected void checkXMLName( Taint taintMe, String str) throws SAXParseException {
 		if (!XMLChar.isValidNCName(str)) {
 			//   	System.err.println("not name (id): " + str);
-			warning(taintMe,
-				WARN_BAD_NAME,
-				"Not an XML Name: '" + str + '\'');
+			if (arp.warning(WARN_BAD_NAME))
+				warning(taintMe,
+					WARN_BAD_NAME,
+					"Not an XML Name: " + str);
 		}
 
 	}
@@ -103,27 +108,31 @@ public class ParserSupport implements ARPErrorNumbers, Names {
 //	}
 	public void checkString(Taint taintMe,String t) throws SAXParseException {
 		if (!CharacterModel.isNormalFormC(t))
-			warning(taintMe,
-				WARN_STRING_NOT_NORMAL_FORM_C,
-				"String not in Unicode Normal Form C: \"" + t + '"');
+			if (arp.warning(WARN_STRING_NOT_NORMAL_FORM_C))
+				warning(taintMe,
+					WARN_STRING_NOT_NORMAL_FORM_C,
+					"String not in Unicode Normal Form C: " + t);
 		checkEncoding(taintMe,t);
 		checkComposingChar(taintMe,t);
 	}
 	void checkComposingChar(Taint taintMe,String t) throws SAXParseException {
 		if (CharacterModel.startsWithComposingCharacter(t))
-			warning(taintMe,
-				WARN_STRING_COMPOSING_CHAR,
-				"String is not legal in XML 1.1; starts with composing char: \""
-					+ t
-					+ "\" (" + ((int)t.charAt(0))+ ')');
+			if (arp.warning(WARN_STRING_COMPOSING_CHAR))
+				warning(taintMe,
+					WARN_STRING_COMPOSING_CHAR,
+					"String is not legal in XML 1.1; starts with composing char: \""
+						+ t
+						+ " " + ((int)t.charAt(0)));
 	}
     public void checkComposingChar(Taint taintMe,char ch[], int st, int ln) throws SAXParseException {
         if (ln>0 && CharacterModel.isComposingChar(ch[st]))
-            warning(taintMe,
-                WARN_STRING_COMPOSING_CHAR,
-                "String is not legal in XML 1.1; starts with composing char: \""
-                    + new String(ch,st,ln)
-                    + "\" (" + (int)ch[st]+ ')');
+
+			if (arp.warning(WARN_STRING_COMPOSING_CHAR))
+				warning(taintMe,
+					WARN_STRING_COMPOSING_CHAR,
+					"String is not legal in XML 1.1; starts with composing char: \""
+						+ new String(ch,st,ln)
+						+ " " + (int)ch[st]);
     }
 
 	
@@ -192,7 +201,7 @@ public class ParserSupport implements ARPErrorNumbers, Names {
      * @param msg
      */
     protected void warning(Taint taintMe, int i, String msg) throws SAXParseException {
-        arp.warning(taintMe, i,msg);
+		arp.warning(taintMe, i,msg);
     }
 	protected void warning(Taint taintMe, int i, Supplier<String> msg) throws SAXParseException {
 		arp.warning(taintMe, i,msg);
