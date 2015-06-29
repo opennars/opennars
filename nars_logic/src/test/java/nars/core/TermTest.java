@@ -475,12 +475,24 @@ public class TermTest {
     @Test
     public void testImageStructuralVector() {
 
-        Compound a = testStructure("(/,x, y, _)", "100000000000000001000000000000001");
-        Compound b = testStructure("(/,x, _, y)",                  "1000000000000001");
+        String i1 = "(/,x, y, _)";
+        String i2 = "(/,x, _, y)";
+        Compound a = testStructure(i1, "100000000000000001000000000000001");
+        Compound b = testStructure(i2,                  "1000000000000001");
         assertNotEquals("additional structure code in upper bits",
                 a.structuralHash(), a.subtermStructure());
         assertNotEquals("structure code influenced contentHash",
                 b.hashCode(), a.hashCode());
+
+        NAR n = new NAR(new Default());
+        Compound x3 = n.term("<" + i1 + " --> y>");
+        Compound x4 = n.term("<" + i1 + " --> y>");
+
+        assertFalse("i2 is a possible subterm of x3, structurally, even if the upper bits differ",
+                x3.impossibleSubTermOrEquality(n.term(i2)));
+        assertFalse(
+                x4.impossibleSubTermOrEquality(n.term(i1)));
+
 
     }
 

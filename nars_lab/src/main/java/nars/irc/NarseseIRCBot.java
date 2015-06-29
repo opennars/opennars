@@ -215,7 +215,7 @@ public class NarseseIRCBot extends IRCBot {
     }
 
     public NarseseIRCBot(Default d) throws Exception {
-        super("irc.freenode.net", "NARchy", "#narsbots");
+        super("irc.freenode.net", "NARchy", "#netention");
 
         d.setInternalExperience(null);
 

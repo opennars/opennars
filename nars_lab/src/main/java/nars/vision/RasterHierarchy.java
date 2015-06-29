@@ -1,15 +1,20 @@
 package nars.vision;
 
+import boofcv.alg.misc.ImageMiscOps;
 import boofcv.core.image.ConvertBufferedImage;
 import boofcv.io.webcamcapture.UtilWebcamCapture;
-import boofcv.alg.misc.ImageMiscOps;
-import boofcv.struct.image.*;
+import boofcv.struct.image.ImageUInt8;
+import boofcv.struct.image.MultiSpectral;
 import com.github.sarxos.webcam.Webcam;
+import com.gs.collections.api.map.primitive.IntFloatMap;
+import com.gs.collections.api.map.primitive.IntObjectMap;
+import com.gs.collections.impl.map.mutable.primitive.IntFloatHashMap;
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import georegression.struct.point.Point2D_I32;
-import nars.gui.NARSwing;
 import nars.NAR;
+import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import org.infinispan.commons.hash.Hash;
+import org.jboss.marshalling.util.IntMap;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,18 +101,22 @@ public class RasterHierarchy extends JPanel
     int updaterate=20;
     int cnt=1;
     static int arrsz=1000; //todo refine
-    HashMap<Integer,Float> lastvalR=new HashMap<>();
-    HashMap<Integer,Float> lastvalG=new HashMap<>();
-    HashMap<Integer,Float> lastvalB=new HashMap<>();
-    HashMap<Integer,Value> voter=new HashMap<>();
+
+    IntFloatHashMap lastvalR = new IntFloatHashMap();
+    IntFloatHashMap lastvalG = new IntFloatHashMap();
+    IntFloatHashMap lastvalB = new IntFloatHashMap();
+    IntObjectHashMap<Value> voter = new IntObjectHashMap();
 
     public class Value
     {
         public int x;
         public int y;
         public int r;
-        public double value;
-        public Value(int r, int x, int y, double value) {
+        public float value;
+
+        public Value() {         }
+
+        public void set(int step, int x, int y, float vote) {
             this.x=x;
             this.y=y;
             this.r=r;
@@ -115,9 +124,9 @@ public class RasterHierarchy extends JPanel
         }
     }
 
-    public BufferedImage rasterizeImage(BufferedImage input)
-    {
-        voter = new HashMap<>();
+    public synchronized BufferedImage rasterizeImage(BufferedImage input)     {
+        voter.clear();
+
         boolean putin=false; //vladimir
         cnt--;
         if(cnt==0) {
@@ -137,6 +146,10 @@ public class RasterHierarchy extends JPanel
         int blockYSize = height/divisions;
 
         MultiSpectral<ImageUInt8> image = ConvertBufferedImage.convertFromMulti(input,null,true,ImageUInt8.class);
+        final ImageUInt8 ib0 = image.getBand(0);
+        final ImageUInt8 ib1 = image.getBand(1);
+        final ImageUInt8 ib2 = image.getBand(2);
+
         MultiSpectral<ImageUInt8> output = new MultiSpectral<>(ImageUInt8.class, width, height, 3);
 
         BufferedImage rasterizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -187,11 +200,13 @@ public class RasterHierarchy extends JPanel
                     greenSum = 0;
                     blueSum = 0;
 
+
+
                     for (int pixelX = 0; (pixelX < blockXSize) && (x + pixelX < width); pixelX++) {
                         for (int pixelY = 0; (pixelY < blockYSize) && (y + pixelY < height); pixelY++) {
-                            redSum += image.getBand(0).get(x + pixelX, y + pixelY);
-                            greenSum += image.getBand(1).get(x + pixelX, y + pixelY);
-                            blueSum += image.getBand(2).get(x + pixelX, y + pixelY);
+                            redSum += ib0.get(x + pixelX, y + pixelY);
+                            greenSum += ib1.get(x + pixelX, y + pixelY);
+                            blueSum += ib2.get(x + pixelX, y + pixelY);
                         }
                     }
 
@@ -199,9 +214,9 @@ public class RasterHierarchy extends JPanel
                     green = greenSum / pixelCount;
                     blue = blueSum / pixelCount;
 
-                    float fred = ((float) red) / 255.0f;
-                    float fgreen = ((float) red) / 255.0f;
-                    float fblue = ((float) red) / 255.0f;
+                    float fred = red / 256.0f;
+                    float fgreen = (green) / 256.0f; //was: red / 255f
+                    float fblue = (blue) / 256.0f; //was: blue/255f
 
                     //manage move heuristic
                     int brightness = (red+green+blue)/3; //maybe not needed
@@ -209,11 +224,21 @@ public class RasterHierarchy extends JPanel
 
                     if(lastvalR.containsKey(key) && putin) {
 
-                        double area = blockXSize * blockYSize;
-                        double diff = Math.abs(fred - (lastvalR.get(key))) + Math.abs(fgreen - (lastvalG.get(key))) + Math.abs(fblue - (lastvalB.get(key)));
-                        double vote = diff;// / area;
+                        float area = blockXSize * blockYSize;
+                        float diff = Math.abs(fred - (lastvalR.get(key))) + Math.abs(fgreen - (lastvalG.get(key))) + Math.abs(fblue - (lastvalB.get(key)));
+                        float vote = diff;// / area;
+
                        // vote*=step;
-                        voter.put(key, new Value(step, x + blockXSize / 2, y + blockYSize / 2, vote));
+                        Value value = voter.get(key);
+                        if (value == null) {
+                            value = new Value();
+                            voter.put(key, value);
+                        }
+
+                        value.set(step,
+                                x + blockXSize / 2,
+                                y + blockYSize / 2,
+                                vote);
                     }
                     lastvalR.put(key, fred);
                     lastvalG.put(key, fgreen);
@@ -251,18 +276,18 @@ public class RasterHierarchy extends JPanel
 
         //search for maximum vote to move heuristic
         if(putin) {
-            Value maxvalue = null;
+            final Value[] maxvalue = {null};
             float threshold = 0.05f;
-            for (Integer key : voter.keySet()) {
-                Value value = voter.get(key);
-                if (maxvalue == null || value.value > maxvalue.value) {
+            voter.forEachKeyValue((key,value) -> {
+                if (maxvalue[0] == null || value.value > maxvalue[0].value) {
                     if (value.value > threshold)
-                        maxvalue = value;
+                        maxvalue[0] = value;
                 }
-            }
+            });
 
-            if (maxvalue != null && maxvalue.x!=0 && maxvalue.y!=0) {
-                this.setFocus(maxvalue.x, maxvalue.y);
+            Value maxValue = maxvalue[0];
+            if (maxValue != null && maxValue.x!=0 && maxValue.y!=0) {
+                this.setFocus(maxValue.x, maxValue.y);
             }
         }
 
