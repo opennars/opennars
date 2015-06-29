@@ -14,9 +14,7 @@ import nars.gui.NARSwing;
 import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
-import nars.nal.nal7.Tense;
 import nars.nal.term.Atom;
-import nars.nal.term.Term;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,9 +62,6 @@ public class RasterHierarchy extends JPanel
     int cnt=1;
     static int arrsz=1000; //todo refine
 
-    IntFloatHashMap lastvalR = new IntFloatHashMap();
-    IntFloatHashMap lastvalG = new IntFloatHashMap();
-    IntFloatHashMap lastvalB = new IntFloatHashMap();
     IntObjectHashMap<Value> voter = new IntObjectHashMap();
 
     final Atom GRAY = Atom.the("GRAY");
@@ -143,21 +138,41 @@ public class RasterHierarchy extends JPanel
     {
         public int x;
         public int y;
-        public int r;
-        public float value;
+        public float r, g, b;
+        public float diff;
 
         public Value() {         }
 
-        public void set(int step, int x, int y, float vote) {
+        public void set(float r, float g, float b, int xsize, int ysize, int x, int y) {
             this.x=x;
             this.y=y;
-            this.r=r;
-            this.value=value;
+
+            float dr = (r - (this.r));
+            float dg = (g - (this.g));
+            float db = (b - (this.b));
+            float newDiff = (dr*dr + dg*dg + db*db) * xsize * ysize;
+            if (this.diff < newDiff) {
+                this.diff = newDiff;
+                this.r = r;
+                this.g = g;
+                this.b = b;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return x + "," + y + ":" + r + "=" + diff;
+        }
+
+        public void fade() {
+            diff *= 0.9f;
         }
     }
 
     public synchronized BufferedImage rasterizeImage(BufferedImage input)     {
-        voter.clear();
+        if (input == null) return null;
+
+        //voter.clear();
 
         boolean putin=false; //vladimir
         cnt--;
@@ -257,29 +272,23 @@ public class RasterHierarchy extends JPanel
                     //manage move heuristic
                     float brightness = (red+green+blue)/3; //maybe not needed
                     //int key=step+10*x+10000*y;
-                    int key = y * frameWidth + x;
+                    //int key = (step * (int)pixelCount) + y * frameWidth + x;
+                    int key = /*(step * (int)pixelCount) +*/ y * frameWidth + x;
 
-                    if(lastvalR.containsKey(key) && putin) {
+                    if (putin) {
 
-                        float area = blockXSize * blockYSize;
-                        float diff = Math.abs(fred - (lastvalR.get(key))) + Math.abs(fgreen - (lastvalG.get(key))) + Math.abs(fblue - (lastvalB.get(key)));
-                        float vote = diff;// / area;
-
-                       // vote*=step;
                         Value value = voter.get(key);
+
                         if (value == null) {
                             value = new Value();
                             voter.put(key, value);
                         }
 
-                        value.set(step,
+                        value.set(fred, fgreen, fblue, blockXSize, blockYSize,
                                 x + blockXSize / 2,
-                                y + blockYSize / 2,
-                                vote);
+                                y + blockYSize / 2
+                                );
                     }
-                    lastvalR.put(key, fred);
-                    lastvalG.put(key, fgreen);
-                    lastvalB.put(key, fblue);
 
                     if ((putin && step==numberRasters) && (ntime!=lastInputTime)) {
                         //input Narsese translation, one statement for each band.
@@ -299,19 +308,19 @@ public class RasterHierarchy extends JPanel
                         //nar.input("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GRAY>. :|: %" + String.valueOf(dgray) + System.getProperty("line.separator"));
 
 
-                        float pri = 0.75f;
-                        float dur = 0.5f;
+                        float pri = 0.5f;
+                        float dur = 0.25f;
                         float conf = 0.95f;
-                        nar.inputDirect( nar.memory.newTask( Inheritance.make(
-                                Product.make(
-                                        Atom.the("r" + step),
-                                        Atom.the(h),
-                                        Atom.the(j)
-                                ), GRAY ))
-                                .belief()
-                                .truth(dgray, conf)
-                                .budget(pri, dur)
-                                .present()
+                        nar.inputDirect(nar.memory.newTask(Inheritance.make(
+                                        Product.make(
+                                                Atom.the("r" + step),
+                                                Atom.the(h),
+                                                Atom.the(j)
+                                        ), GRAY))
+                                        .belief()
+                                        .truth(dgray, conf)
+                                        .budget(pri, dur)
+                                        .present()
                         );
 
                     }
@@ -329,14 +338,17 @@ public class RasterHierarchy extends JPanel
             final Value[] maxvalue = {null};
             float threshold = 0.05f;
             voter.forEachKeyValue((key,value) -> {
-                if (maxvalue[0] == null || value.value > maxvalue[0].value) {
-                    if (value.value > threshold)
+                if (maxvalue[0] == null || value.diff > maxvalue[0].diff) {
+                    if (value.diff > threshold)
                         maxvalue[0] = value;
                 }
+                value.fade();
             });
+
 
             Value maxValue = maxvalue[0];
             if (maxValue != null && maxValue.x!=0 && maxValue.y!=0) {
+                System.out.println("saccade: "+ maxValue.x + " , " + maxValue.y);
                 this.setFocus(maxValue.x, maxValue.y);
             }
 
@@ -422,8 +434,8 @@ public class RasterHierarchy extends JPanel
         NARSwing swing = new NARSwing(nar);
 
         RasterHierarchy rh = new RasterHierarchy(6, 800, 600, 16, 1.619f);
-
-        rh.process();
+        if (rh!=null)
+            rh.process();
     }
 
     public int getNumberRasters() {

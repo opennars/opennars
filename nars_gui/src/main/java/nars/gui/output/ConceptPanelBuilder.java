@@ -103,6 +103,7 @@ public class ConceptPanelBuilder extends NARReaction {
     @Override
     public void event(Class event, Object[] args) {
 
+
         if (event == FrameEnd.class) {
             //SwingUtilities.invokeLater(this);
             if (isAutoRemove())
