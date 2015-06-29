@@ -6,8 +6,6 @@ import boofcv.io.webcamcapture.UtilWebcamCapture;
 import boofcv.struct.image.ImageUInt8;
 import boofcv.struct.image.MultiSpectral;
 import com.github.sarxos.webcam.Webcam;
-import com.gs.collections.impl.map.mutable.primitive.IntFloatHashMap;
-import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import georegression.struct.point.Point2D_I32;
 import nars.NAR;
 import nars.gui.NARSwing;
@@ -30,8 +28,7 @@ import java.awt.image.BufferedImage;
  *
  * @author James McLaughlin
  */
-public class RasterHierarchy extends JPanel
-{
+public class RasterHierarchy extends JPanel {
     // The number of rasters to calculate.
     int numberRasters;
 
@@ -58,26 +55,26 @@ public class RasterHierarchy extends JPanel
     transient private MultiSpectral<ImageUInt8> multiInputImg;
     private boolean running = true;
 
-    int updaterate=20;
-    int cnt=1;
-    static int arrsz=1000; //todo refine
+    int updaterate = 20;
+    int cnt = 1;
+    static int arrsz = 1000; //todo refine
 
-    IntObjectHashMap<Value> voter = new IntObjectHashMap();
+    //IntObjectHashMap<Value> voter = new IntObjectHashMap();
 
     final Atom GRAY = Atom.the("GRAY");
     private long lastInputTime;
+    private BufferedImage buffered;
 
     /**
      * Configure the Raster Hierarchy
      *
      * @param numberRasters The number of rasters to generate
-     * @param frameWidth The desired size of the input stream
-     * @param frameHeight The desired height of the input stream
-     * @param divisions The number of blocks to divide the coarsest grained raster into
+     * @param frameWidth    The desired size of the input stream
+     * @param frameHeight   The desired height of the input stream
+     * @param divisions     The number of blocks to divide the coarsest grained raster into
      * @param scalingFactor The scaling factor for each raster in the heirarchy.
      */
-    public  RasterHierarchy(int numberRasters, int frameWidth, int frameHeight, int divisions, float scalingFactor)
-    {
+    public RasterHierarchy(int numberRasters, int frameWidth, int frameHeight, int divisions, float scalingFactor) {
         this.numberRasters = numberRasters;
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
@@ -86,7 +83,7 @@ public class RasterHierarchy extends JPanel
         this.scalingFactor = scalingFactor;
 
         // Set the default focus to the center
-        this.setFocus(frameWidth/2, frameHeight/2);
+        this.setFocus(frameWidth / 2, frameHeight / 2);
 
         window = new JFrame("Hierarchical Raster Vision Representation");
         window.setContentPane(this);
@@ -99,8 +96,8 @@ public class RasterHierarchy extends JPanel
 
     final MouseAdapter ma = new MouseAdapter() {
         protected void update(MouseEvent e) {
-            float px = e.getX() / ((float)getWidth());
-            float py = e.getY() / ((float)getHeight());
+            float px = e.getX() / ((float) getWidth());
+            float py = e.getY() / ((float) getHeight());
             setFocus(Math.round(px * frameWidth), Math.round(py * frameHeight));
         }
 
@@ -122,63 +119,64 @@ public class RasterHierarchy extends JPanel
      * @param x The x-coordinate of the focal point
      * @param y The y-coordinate of the focal point
      */
-    public void setFocus(int x, int y)
-    {
+    public void setFocus(int x, int y) {
+
+        System.out.println("focus: " + x + " , " + y);
         this.focusPoint.set(x, y);
     }
 
-    /**
-     * Generate the raster hierarchy for a given image.
-     *
-     * @param input The image to rasterize
-     * @return The rasterized image.
-     */
+//    /**
+//     * Generate the raster hierarchy for a given image.
+//     *
+//     * @param input The image to rasterize
+//     * @return The rasterized image.
+//     */
+//
+//    public class Value {
+//        public int x;
+//        public int y;
+//        public float r, g, b;
+//        public float diff;
+//
+//        public Value() {
+//        }
+//
+//        public void set(float r, float g, float b, int xsize, int ysize, int x, int y) {
+//            this.x = x;
+//            this.y = y;
+//
+//            float dr = (r - (this.r));
+//            float dg = (g - (this.g));
+//            float db = (b - (this.b));
+//            float newDiff = (dr * dr + dg * dg + db * db) * xsize * ysize;
+//            if (this.diff < newDiff) {
+//                this.diff = newDiff;
+//                this.r = r;
+//                this.g = g;
+//                this.b = b;
+//            }
+//        }
+//
+//        @Override
+//        public String toString() {
+//            return x + "," + y + ":" + r + "=" + diff;
+//        }
+//
+//        public void fade() {
+//            diff *= 0.9f;
+//        }
+//    }
 
-    public class Value
-    {
-        public int x;
-        public int y;
-        public float r, g, b;
-        public float diff;
-
-        public Value() {         }
-
-        public void set(float r, float g, float b, int xsize, int ysize, int x, int y) {
-            this.x=x;
-            this.y=y;
-
-            float dr = (r - (this.r));
-            float dg = (g - (this.g));
-            float db = (b - (this.b));
-            float newDiff = (dr*dr + dg*dg + db*db) * xsize * ysize;
-            if (this.diff < newDiff) {
-                this.diff = newDiff;
-                this.r = r;
-                this.g = g;
-                this.b = b;
-            }
-        }
-
-        @Override
-        public String toString() {
-            return x + "," + y + ":" + r + "=" + diff;
-        }
-
-        public void fade() {
-            diff *= 0.9f;
-        }
-    }
-
-    public synchronized BufferedImage rasterizeImage(BufferedImage input)     {
+    public synchronized BufferedImage rasterizeImage(BufferedImage input) {
         if (input == null) return null;
 
         //voter.clear();
 
-        boolean putin=false; //vladimir
+        boolean putin = false; //vladimir
         cnt--;
-        if(cnt==0) {
+        if (cnt == 0) {
             putin = true;
-            cnt=updaterate;
+            cnt = updaterate;
         }
 
         long ntime = nar.time();
@@ -191,8 +189,8 @@ public class RasterHierarchy extends JPanel
         int width = input.getWidth();
         int height = input.getHeight();
 
-        float fblockXSize = width/divisions;
-        float fblockYSize = height/divisions;
+        float fblockXSize = width / divisions;
+        float fblockYSize = height / divisions;
 
         multiInputImg = ConvertBufferedImage.convertFromMulti(input, multiInputImg, true, ImageUInt8.class);
         final ImageUInt8 ib0 = multiInputImg.getBand(0);
@@ -218,28 +216,36 @@ public class RasterHierarchy extends JPanel
             if (step > 1) {
                 newX = startX + (regionWidth - regionWidth / scalingFactor) / scalingFactor;
                 newY = startY + (regionHeight - regionHeight / scalingFactor) / scalingFactor;
-                if (newX < 0) {newX = 0;}
-                if (newY < 0) {newY = 0;}
+                if (newX < 0) {
+                    newX = 0;
+                }
+                if (newY < 0) {
+                    newY = 0;
+                }
 
-                regionWidth  = regionWidth/ scalingFactor;
-                regionHeight = regionHeight/ scalingFactor;
+                regionWidth = regionWidth / scalingFactor;
+                regionHeight = regionHeight / scalingFactor;
 
-                fblockXSize = fblockXSize/ scalingFactor;
-                fblockYSize = fblockYSize/ scalingFactor;
-                if (fblockXSize < 1) { fblockXSize = 1;}
-                if (fblockYSize < 1) { fblockYSize = 1;}
+                fblockXSize = fblockXSize / scalingFactor;
+                fblockYSize = fblockYSize / scalingFactor;
+                if (fblockXSize < 1) {
+                    fblockXSize = 1;
+                }
+                if (fblockYSize < 1) {
+                    fblockYSize = 1;
+                }
             }
 
             // Set the starting point for the next step
             startX = Math.round(this.focusPoint.getX() - ((regionWidth) / 2));
-            startY = Math.round(this.focusPoint.getY() - ((regionHeight)/2));
+            startY = Math.round(this.focusPoint.getY() - ((regionHeight) / 2));
 
             int blockXSize = Math.round(fblockXSize);
             int blockYSize = Math.round(fblockYSize);
 
             float pixelCount = blockXSize * blockYSize; // Number of pixels per block
 
-            int h=0,j=0;
+            int h = 0, j = 0;
 
             // StringBuilder to hold the Narsese translation
             for (x = Math.round(newX); x < ((step == 1 ? 0 : startX) + regionWidth); x += blockXSize) {
@@ -250,7 +256,6 @@ public class RasterHierarchy extends JPanel
                     redSum = 0;
                     greenSum = 0;
                     blueSum = 0;
-
 
 
                     for (int pixelX = 0; (pixelX < blockXSize) && (x + pixelX < width); pixelX++) {
@@ -270,27 +275,27 @@ public class RasterHierarchy extends JPanel
                     float fblue = blue / 256.0f; //was: blue/255f
 
                     //manage move heuristic
-                    float brightness = (red+green+blue)/3; //maybe not needed
+                    float brightness = (red + green + blue) / 3; //maybe not needed
                     //int key=step+10*x+10000*y;
                     //int key = (step * (int)pixelCount) + y * frameWidth + x;
                     int key = /*(step * (int)pixelCount) +*/ y * frameWidth + x;
 
                     if (putin) {
 
-                        Value value = voter.get(key);
-
-                        if (value == null) {
-                            value = new Value();
-                            voter.put(key, value);
-                        }
-
-                        value.set(fred, fgreen, fblue, blockXSize, blockYSize,
-                                x + blockXSize / 2,
-                                y + blockYSize / 2
-                                );
+//                        Value value = voter.get(key);
+//
+//                        if (value == null) {
+//                            value = new Value();
+//                            voter.put(key, value);
+//                        }
+//
+//                        value.set(fred, fgreen, fblue, blockXSize, blockYSize,
+//                                x + blockXSize / 2,
+//                                y + blockYSize / 2
+//                                );
                     }
 
-                    if ((putin && step==numberRasters) && (ntime!=lastInputTime)) {
+                    if (putin/* && step == numberRasters)*/ && (ntime != lastInputTime)) {
                         //input Narsese translation, one statement for each band.
                         //ArrayList<String> nalStrings = new ArrayList<String>();
 
@@ -301,27 +306,14 @@ public class RasterHierarchy extends JPanel
                         /* Here we use the gamma corrected, grayscale version of the image.  Use CCIR 601 weights to convert.
                          * If it is desirable to use only one sentence (vs RGB for example) then use this.
                          *  see: https://en.wikipedia.org/wiki/Luma_%28video%29 or http://cadik.posvete.cz/color_to_gray_evaluation */
-                        float dgray = 0.2989f*red + 0.5870f*green + 0.1140f*blue;
+                        float dgray = 0.2989f * red + 0.5870f * green + 0.1140f * blue;
                         dgray /= 256.0f;
 
                         //TODO create the Term / Task programmaticaly
                         //nar.input("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GRAY>. :|: %" + String.valueOf(dgray) + System.getProperty("line.separator"));
 
 
-                        float pri = 0.5f;
-                        float dur = 0.25f;
-                        float conf = 0.95f;
-                        nar.inputDirect(nar.memory.newTask(Inheritance.make(
-                                        Product.make(
-                                                Atom.the("r" + step),
-                                                Atom.the(h),
-                                                Atom.the(j)
-                                        ), GRAY))
-                                        .belief()
-                                        .truth(dgray, conf)
-                                        .budget(pri, dur)
-                                        .present()
-                        );
+                        input(h, j, fblockXSize, fblockYSize, dgray);
 
                     }
 
@@ -333,32 +325,56 @@ public class RasterHierarchy extends JPanel
             }
         }
 
-        //search for maximum vote to move heuristic
-        if(putin) {
-            final Value[] maxvalue = {null};
-            float threshold = 0.05f;
-            voter.forEachKeyValue((key,value) -> {
-                if (maxvalue[0] == null || value.diff > maxvalue[0].diff) {
-                    if (value.diff > threshold)
-                        maxvalue[0] = value;
-                }
-                value.fade();
-            });
+//        //search for maximum vote to move heuristic
+//        if (putin) {
+//            final Value[] maxvalue = {null};
+//            float threshold = 0.05f;
+//            voter.forEachKeyValue((key, value) -> {
+//                if (maxvalue[0] == null || value.diff > maxvalue[0].diff) {
+//                    if (value.diff > threshold)
+//                        maxvalue[0] = value;
+//                }
+//                value.fade();
+//            });
+//
+//
+//            Value maxValue = maxvalue[0];
+//            if (maxValue != null && maxValue.x != 0 && maxValue.y != 0) {
+//                this.setFocus(maxValue.x, maxValue.y);
+//            }
+//
+//        }
 
 
-            Value maxValue = maxvalue[0];
-            if (maxValue != null && maxValue.x!=0 && maxValue.y!=0) {
-                System.out.println("saccade: "+ maxValue.x + " , " + maxValue.y);
-                this.setFocus(maxValue.x, maxValue.y);
-            }
-
-        }
 
         lastInputTime = ntime;
 
         ConvertBufferedImage.convertTo(output, rasterizedImage, true);
         return rasterizedImage;
     }
+
+    protected void input(int x, int y, float pixelWidth, float pixelHeight, float grayness) {
+        float pri = 0.5f;
+        float dur = 0.25f;
+        float conf = 1.0f / (Math.max(pixelWidth, pixelHeight));
+
+        //coordinate calculation #1: relative to focus point center
+        int cx = x - focusPoint.getX();
+        int cy = y - focusPoint.getY();
+
+        nar.inputDirect(nar.memory.newTask(Inheritance.make(
+                        Product.make(
+                                //Atom.the("r" + step),
+                                Atom.the(cx),
+                                Atom.the(cy)
+                        ), GRAY))
+                        .belief()
+                        .truth(grayness, conf)
+                        .budget(pri, dur)
+                        .present()
+        );
+    }
+
 
     /**
      * Invoke to start the main processing loop.
@@ -374,13 +390,13 @@ public class RasterHierarchy extends JPanel
         window.setPreferredSize(actualSize);
         window.setVisible(true);
 
-        BufferedImage input, buffered;
+        BufferedImage input;
 
         workImage = new BufferedImage(actualSize.width, actualSize.height, BufferedImage.TYPE_INT_RGB);
 
         //int counter = 0;
 
-        while( running ) {
+        while (running) {
                 /*
                  * Uncomment this section to scan the focal point across the frame
                  * automatically - just for demo purposes.
@@ -402,12 +418,12 @@ public class RasterHierarchy extends JPanel
                 */
             input = webcam.getImage();
 
-            synchronized( workImage ) {
+            synchronized (workImage) {
                 // copy the latest image into the work buffer
-                Graphics2D g2 = workImage.createGraphics();
+                //Graphics2D g2 = workImage.createGraphics();
 
                 buffered = this.rasterizeImage(input);
-                g2.drawImage(buffered,0,0,null);
+
             }
 
             repaint();
@@ -415,26 +431,30 @@ public class RasterHierarchy extends JPanel
     }
 
     @Override
-    public void paint (Graphics g) {
-        if( workImage != null ) {
-            // draw the work image and be careful to make sure it isn't being manipulated at the same time
-            synchronized (workImage) {
-                ((Graphics2D) g).drawImage(workImage, 0, 0, getWidth(), getHeight(), null);
-            }
+    public void paint(Graphics g) {
+//        if( workImage != null ) {
+//            // draw the work image and be careful to make sure it isn't being manipulated at the same time
+//            //synchronized (workImage) {
+//                ((Graphics2D) g).drawImage(workImage, 0, 0, getWidth(), getHeight(), null);
+//            //}
+//        }
+        if (buffered != null) {
+            g.drawImage(buffered, 0, 0, getWidth(), getHeight(), null);
         }
     }
 
     static NAR nar;
+
     public static void main(String[] args) {
 
         //RasterHierarchy rh = new RasterHierarchy(8, 640, 480, 12, 2);
-       // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
+        // RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 5, 2);
         nar = new NAR(new Default.CommandLineNARBuilder(args));
 
         NARSwing swing = new NARSwing(nar);
 
         RasterHierarchy rh = new RasterHierarchy(6, 800, 600, 16, 1.619f);
-        if (rh!=null)
+        if (rh != null)
             rh.process();
     }
 

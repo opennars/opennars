@@ -25,6 +25,7 @@ import nars.nal.Truthed;
 import nars.nal.concept.Concept;
 import nars.nal.term.Term;
 import nars.nal.tlink.TaskLink;
+import org.infinispan.util.concurrent.ConcurrentHashSet;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +51,7 @@ public class ConceptPanelBuilder extends NARReaction {
     private Map<Concept, ConceptPanel> concept = new FastMap().atomic();
     static float conceptGraphFPS = 4; //default update frames per second
 
-    final Set<Concept> changed = new LinkedHashSet();
+    final Set<Concept> changed = new ConcurrentHashSet<>();
 
     public ConceptPanelBuilder(NAR n) {
         super(n, Events.FrameEnd.class,
@@ -132,7 +133,9 @@ public class ConceptPanelBuilder extends NARReaction {
         final long now = nar.time();
 
 
-        for (Concept c : changed) {
+        Iterator<Concept> ci = changed.iterator();
+        while (ci.hasNext()) {
+            Concept c = ci.next();
             ConceptPanel cp = concept.get(c);
             if (cp == null) {
                 continue;
@@ -142,10 +145,8 @@ public class ConceptPanelBuilder extends NARReaction {
             else {
                 concept.remove(c);
             }
+            ci.remove();
         }
-
-
-        changed.clear();
 
 
     }
@@ -181,7 +182,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
     public void off() {
         super.off();
-        changed.clear();
+        //changed.clear();
         //concept.clear();
         concept = new FastMap().atomic();
     }
