@@ -43,7 +43,7 @@ public class RasterHierarchy extends JPanel
     int divisions;
 
     // The scaling factor for each raster in the hierarchy.
-    int scalingFactor;
+    float scalingFactor;
 
     // The center of the region of focus
     Point2D_I32 focusPoint = new Point2D_I32();
@@ -54,6 +54,9 @@ public class RasterHierarchy extends JPanel
     // Window for visualization
     JFrame window;
 
+    //holds multispectralization of input image
+    transient private MultiSpectral<ImageUInt8> multiInputImg;
+
     /**
      * Configure the Raster Hierarchy
      *
@@ -63,7 +66,7 @@ public class RasterHierarchy extends JPanel
      * @param divisions The number of blocks to divide the coarsest grained raster into
      * @param scalingFactor The scaling factor for each raster in the heirarchy.
      */
-    public  RasterHierarchy(int numberRasters, int frameWidth, int frameHeight, int divisions, int scalingFactor)
+    public  RasterHierarchy(int numberRasters, int frameWidth, int frameHeight, int divisions, float scalingFactor)
     {
         this.numberRasters = numberRasters;
         this.frameWidth = frameWidth;
@@ -137,26 +140,25 @@ public class RasterHierarchy extends JPanel
         int red, green, blue;
         int redSum, greenSum, blueSum;
         int x, y, startX, startY;
-        int newX, newY;
+        float newX, newY;
 
         int width = input.getWidth();
         int height = input.getHeight();
 
-        int blockXSize = width/divisions;
-        int blockYSize = height/divisions;
+        float fblockXSize = width/divisions;
+        float fblockYSize = height/divisions;
 
-        MultiSpectral<ImageUInt8> image = ConvertBufferedImage.convertFromMulti(input,null,true,ImageUInt8.class);
-        final ImageUInt8 ib0 = image.getBand(0);
-        final ImageUInt8 ib1 = image.getBand(1);
-        final ImageUInt8 ib2 = image.getBand(2);
+        multiInputImg = ConvertBufferedImage.convertFromMulti(input, multiInputImg, true, ImageUInt8.class);
+        final ImageUInt8 ib0 = multiInputImg.getBand(0);
+        final ImageUInt8 ib1 = multiInputImg.getBand(1);
+        final ImageUInt8 ib2 = multiInputImg.getBand(2);
 
         MultiSpectral<ImageUInt8> output = new MultiSpectral<>(ImageUInt8.class, width, height, 3);
 
         BufferedImage rasterizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         // Set the initial raster region
-        int regionWidth = width;
-        int regionHeight = height;
+        float regionWidth = width, regionHeight = height;
         newX = 0;
         newY = 0;
         startX = 0;
@@ -176,24 +178,27 @@ public class RasterHierarchy extends JPanel
                 regionWidth  = regionWidth/ scalingFactor;
                 regionHeight = regionHeight/ scalingFactor;
 
-                blockXSize = blockXSize/ scalingFactor;
-                blockYSize = blockYSize/ scalingFactor;
-                if (blockXSize < 1) {blockXSize = 1;}
-                if (blockYSize < 1) {blockYSize = 1;}
+                fblockXSize = fblockXSize/ scalingFactor;
+                fblockYSize = fblockYSize/ scalingFactor;
+                if (fblockXSize < 1) { fblockXSize = 1;}
+                if (fblockYSize < 1) { fblockYSize = 1;}
             }
 
             // Set the starting point for the next step
-            startX = this.focusPoint.getX() - ((regionWidth)/2);
-            startY = this.focusPoint.getY() - ((regionHeight)/2);
+            startX = Math.round(this.focusPoint.getX() - ((regionWidth) / 2));
+            startY = Math.round(this.focusPoint.getY() - ((regionHeight)/2));
+
+            int blockXSize = Math.round(fblockXSize);
+            int blockYSize = Math.round(fblockYSize);
 
             int pixelCount = blockXSize * blockYSize; // Number of pixels per block
 
             int h=0,j=0;
 
             // StringBuilder to hold the Narsese translation
-            for (x = newX; x < ((step == 1 ? 0 : startX) + regionWidth); x += blockXSize) {
+            for (x = Math.round(newX); x < ((step == 1 ? 0 : startX) + regionWidth); x += blockXSize) {
                 h++;
-                for (y = newY; y < ((step == 1 ? 0 : startY) + regionHeight); y += blockYSize) {
+                for (y = Math.round(newY); y < ((step == 1 ? 0 : startY) + regionHeight); y += blockYSize) {
                     j++;
 
                     redSum = 0;
@@ -215,8 +220,8 @@ public class RasterHierarchy extends JPanel
                     blue = blueSum / pixelCount;
 
                     float fred = red / 256.0f;
-                    float fgreen = (green) / 256.0f; //was: red / 255f
-                    float fblue = (blue) / 256.0f; //was: blue/255f
+                    float fgreen = green / 256.0f; //was: red / 255f
+                    float fblue = blue / 256.0f; //was: blue/255f
 
                     //manage move heuristic
                     int brightness = (red+green+blue)/3; //maybe not needed
@@ -246,7 +251,7 @@ public class RasterHierarchy extends JPanel
 
                     if(putin && step==numberRasters) {
                         //input Narsese translation, one statement for each band.
-                        ArrayList<String> nalStrings = new ArrayList<String>();
+                        //ArrayList<String> nalStrings = new ArrayList<String>();
 
                         //nalStrings.add("<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+System.getProperty("line.separator"));
                         //nalStrings.add("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GREEN>. :|: %" + String.valueOf(fgreen) + System.getProperty("line.separator"));
@@ -258,12 +263,9 @@ public class RasterHierarchy extends JPanel
                         double dgray = 0.2989*red + 0.5870*green + 0.1140*blue;
                         dgray /= 255.0;
 
-                        nalStrings.add("<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> GRAY>. :|: %"+String.valueOf(dgray)+System.getProperty("line.separator"));
+                        //TODO create the Term / Task programmaticaly
+                        nar.input("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GRAY>. :|: %" + String.valueOf(dgray) + System.getProperty("line.separator"));
 
-                        for (String st : nalStrings)
-                        {
-                            nar.input(st);
-                        }
 
                     }
 
@@ -368,7 +370,7 @@ public class RasterHierarchy extends JPanel
 
         NARSwing swing = new NARSwing(nar);
 
-        RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 4, 3);
+        RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 4, 1.619f);
 
         rh.process();
     }
@@ -389,7 +391,7 @@ public class RasterHierarchy extends JPanel
         this.divisions = divisions;
     }
 
-    public int getScalingFactor() {
+    public float getScalingFactor() {
         return scalingFactor;
     }
 
