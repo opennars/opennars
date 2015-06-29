@@ -92,7 +92,7 @@ public class RasterHierarchy extends JPanel
      * @param input The image to rasterize
      * @return The rasterized image.
      */
-    int updaterate=30;
+    int updaterate=60;
     int cnt=1;
     static int arrsz=1000; //todo refine
     HashMap<Integer,Float> lastvalR=new HashMap<>();
@@ -217,7 +217,7 @@ public class RasterHierarchy extends JPanel
                     lastvalB.put(key, fblue);
 
 
-                    if(putin) {
+                    if(putin && step==numberRasters) {
                         //input Narsese translation
                         String st="<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+"%";
                         nar.input(st);
