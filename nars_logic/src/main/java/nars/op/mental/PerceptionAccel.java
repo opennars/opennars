@@ -241,7 +241,7 @@ public class PerceptionAccel extends NARReaction {
 
             //lets make the new event the parent task, and derive it
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth)
-                            .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
+                            .budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
                             .parent(task, newEvent)
                             .occurrNow()
                             .setEvidentialSet(Stamp.toSetArray(evBase.toArray()))

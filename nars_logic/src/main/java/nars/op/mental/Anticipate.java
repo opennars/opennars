@@ -77,6 +77,7 @@ public class Anticipate extends NARReaction implements Mental {
 
     /** buffers the terms of new incoming tasks */
     final Set<Compound> newTaskTerms = Global.newHashSet(16);
+    private final NAR nar;
 
     NAL nal;
     TaskProcess tp;
@@ -89,16 +90,19 @@ public class Anticipate extends NARReaction implements Mental {
     private Memory memory;
     private boolean debug = false;
     private long nextUpdateTime = -1;
+    private STMInduction stm;
 
 
     /*public Anticipate() {
         super("^anticipate");
     }*/
-    public Anticipate(NAR nar) {
+    public Anticipate(NAR nar, STMInduction stm) {
         super(nar, Events.TaskDeriveFuture.class,
                 Events.InduceSucceedingEvent.class,
                 TaskProcess.class,
                 Events.CycleEnd.class);
+        this.nar = nar;
+        this.stm = stm;
     }
 
 
@@ -172,9 +176,8 @@ public class Anticipate extends NARReaction implements Mental {
                 .temporalInductable(true) //should this happen before derivedTask?  it might get stuck in a loop if derivation proceeds before this sets
         );
         if(derived!=null) {
-            STMInduction.I.inductionOnSucceedingEvents(derived,tp,true); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
+            stm.inductionOnSucceedingEvents(derived, tp, true); //why we need a NAL and a TaskProcess now? *confused* but this hack seems to work
         }
-
     }
 
     /** called each cycle to update calculations of anticipations */

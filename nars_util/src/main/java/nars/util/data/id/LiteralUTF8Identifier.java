@@ -6,7 +6,6 @@ import nars.util.data.Hash2;
 import nars.util.data.Util;
 import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
-import org.apache.commons.digester.Digester;
 import org.infinispan.commons.hash.Hash;
 
 import java.io.IOException;

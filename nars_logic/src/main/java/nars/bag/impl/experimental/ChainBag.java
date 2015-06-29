@@ -12,6 +12,10 @@ import nars.util.math.Distributor;
 import org.apache.commons.math3.stat.Frequency;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -34,25 +38,55 @@ import java.util.function.Consumer;
  * fine-tune behavior.
  *
  */
-public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
+public class ChainBag<V extends Item<K>, K> extends Bag<K, V> implements Externalizable {
 
 
-    private final Mean mean; //priority mean, continuously calculated
-    private final Random rng;
+    transient private final Mean mean; //priority mean, continuously calculated
+    private Random rng;
 
     private boolean ownsNodePool = false;
 
     private int capacity;
-    private float mass;
-    DD<V> current = null;
+    transient private float mass;
 
-    public Frequency removal = new Frequency();
+    transient DD<V> current = null;
+
+    transient public Frequency removal = new Frequency();
 
     float minMaxMomentum = 0.98f;
 
-    private final DDNodePool<? extends Item> nodePool;
+    transient private final DDNodePool<? extends Item> nodePool;
 
     V nextRemoval = null;
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        int n = size();
+        out.writeInt(n);
+        out.writeObject(rng);
+        forEach(c -> {
+            try {
+                out.writeObject(c);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        int num = in.readInt();
+        if (num > capacity())
+            throw new RuntimeException(this + " invalid capacity for readExternal results");
+
+        //TODO this might cause a problem if RNG were shared before externalizing, after internalizing they will be unique
+        rng = (Random)in.readObject();
+
+        for (int i = 0; i < num; i++) {
+            V c = (V)in.readObject();
+            put(c);
+        }
+    }
 
     /**
      * mapping from key to item
@@ -71,6 +105,10 @@ public class ChainBag<V extends Item<K>, K> extends Bag<K, V> {
 
     final short d[];
     int dp = 0;
+
+    public ChainBag() {
+        this(null, 0);
+    }
 
     public ChainBag(final Random rng, final DDNodePool<V> nodePool, int capacity) {
         super();

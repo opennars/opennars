@@ -140,11 +140,11 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>blueprints-core</artifactId>
-            <version>2.6.0</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.tinkerpop.blueprints</groupId>-->
+            <!--<artifactId>blueprints-core</artifactId>-->
+            <!--<version>2.6.0</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 

@@ -14,18 +14,16 @@ abstract public class MapCacheBag<K, V extends Itemized<K>> extends CacheBag<K,V
     protected final Map<K, V> data;
 
 
-    public MapCacheBag() {
+    public MapCacheBag(Map<K, V> data) {
         super();
 
-        data = newMap();
+        this.data = data;
 
     }
 
-    abstract public Map<K,V> newMap();
-
     @Override
     public void clear() {
-        //throw new RuntimeException("unable to clear() shared concept bag " + concepts);
+        data.clear();
     }
 
     @Override

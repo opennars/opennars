@@ -45,6 +45,7 @@ public class NARRun {
     int maxTime = 0;
 
 
+    boolean inputPerLine = true;
 
     
     /**
@@ -86,23 +87,45 @@ public class NARRun {
         else {
             Scanner sc = new Scanner(System.in);
 
-            String entire  = "";
-            while(sc.hasNext()) {
-                String l = sc.next();
-                entire += l;
+            if (inputPerLine) {
+                new Thread(() -> {
+                    readPerLine(sc);
+                }).start();
             }
-
-            nar.input(entire);
+            else {
+                readEntirely(sc);
+            }
         }
-        
+
+        run();
+    }
+
+    protected void readPerLine(Scanner sc) {
+        while (sc.hasNextLine()) {
+            String l = sc.nextLine();
+            nar.input(l);
+        }
+    }
+
+    protected void readEntirely(Scanner sc) {
+        String entire = "";
+        while (sc.hasNext()) {
+            String l = sc.next();
+            entire += l;
+        }
+
+        nar.input(entire);
+    }
+
+    protected void run() {
         while (true) {
             if (logging)
                 log("NARSBatch.run():"
                         + " step " + nar.time());
 
             nar.frame(1);
-            
-            
+
+
             if (logging)
                 log("NARSBatch.run(): after tick"
                         + " step " + nar.time());
@@ -113,8 +136,8 @@ public class NARRun {
                 }
             }
         }
-               
-        System.exit(0);
+
+
     }
 
     public void setPrintStream(PrintStream out) {
