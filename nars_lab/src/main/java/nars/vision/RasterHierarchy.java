@@ -18,6 +18,8 @@ import org.jboss.marshalling.util.IntMap;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +58,7 @@ public class RasterHierarchy extends JPanel
 
     //holds multispectralization of input image
     transient private MultiSpectral<ImageUInt8> multiInputImg;
+    private boolean running = true;
 
     /**
      * Configure the Raster Hierarchy
@@ -81,7 +84,29 @@ public class RasterHierarchy extends JPanel
         window = new JFrame("Hierarchical Raster Vision Representation");
         window.setContentPane(this);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+
+        addMouseListener(ma);
+        addMouseMotionListener(ma);
     }
+
+    final MouseAdapter ma = new MouseAdapter() {
+        protected void update(MouseEvent e) {
+            float px = e.getX() / ((float)getWidth());
+            float py = e.getY() / ((float)getHeight());
+            setFocus(Math.round(px * frameWidth), Math.round(py * frameHeight));
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            update(e);
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            update(e);
+        }
+    };
 
     /**
      * Set the focus to the given location.  All rasters (other than the most coarse-grained) are centered on
@@ -317,7 +342,7 @@ public class RasterHierarchy extends JPanel
 
         //int counter = 0;
 
-        while( true ) {
+        while( running ) {
                 /*
                  * Uncomment this section to scan the focal point across the frame
                  * automatically - just for demo purposes.
@@ -356,7 +381,7 @@ public class RasterHierarchy extends JPanel
         if( workImage != null ) {
             // draw the work image and be careful to make sure it isn't being manipulated at the same time
             synchronized (workImage) {
-                ((Graphics2D) g).drawImage(workImage, 0, 0, null);
+                ((Graphics2D) g).drawImage(workImage, 0, 0, getWidth(), getHeight(), null);
             }
         }
     }
@@ -370,7 +395,7 @@ public class RasterHierarchy extends JPanel
 
         NARSwing swing = new NARSwing(nar);
 
-        RasterHierarchy rh = new RasterHierarchy(3, 640, 480, 4, 1.619f);
+        RasterHierarchy rh = new RasterHierarchy(6, 800, 600, 16, 1.619f);
 
         rh.process();
     }
