@@ -6,23 +6,23 @@ import boofcv.io.webcamcapture.UtilWebcamCapture;
 import boofcv.struct.image.ImageUInt8;
 import boofcv.struct.image.MultiSpectral;
 import com.github.sarxos.webcam.Webcam;
-import com.gs.collections.api.map.primitive.IntFloatMap;
-import com.gs.collections.api.map.primitive.IntObjectMap;
 import com.gs.collections.impl.map.mutable.primitive.IntFloatHashMap;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import georegression.struct.point.Point2D_I32;
 import nars.NAR;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
-import org.jboss.marshalling.util.IntMap;
+import nars.nal.nal1.Inheritance;
+import nars.nal.nal4.Product;
+import nars.nal.nal7.Tense;
+import nars.nal.term.Atom;
+import nars.nal.term.Term;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
@@ -59,6 +59,18 @@ public class RasterHierarchy extends JPanel
     //holds multispectralization of input image
     transient private MultiSpectral<ImageUInt8> multiInputImg;
     private boolean running = true;
+
+    int updaterate=20;
+    int cnt=1;
+    static int arrsz=1000; //todo refine
+
+    IntFloatHashMap lastvalR = new IntFloatHashMap();
+    IntFloatHashMap lastvalG = new IntFloatHashMap();
+    IntFloatHashMap lastvalB = new IntFloatHashMap();
+    IntObjectHashMap<Value> voter = new IntObjectHashMap();
+
+    final Atom GRAY = Atom.the("GRAY");
+    private long lastInputTime;
 
     /**
      * Configure the Raster Hierarchy
@@ -126,14 +138,6 @@ public class RasterHierarchy extends JPanel
      * @param input The image to rasterize
      * @return The rasterized image.
      */
-    int updaterate=20;
-    int cnt=1;
-    static int arrsz=1000; //todo refine
-
-    IntFloatHashMap lastvalR = new IntFloatHashMap();
-    IntFloatHashMap lastvalG = new IntFloatHashMap();
-    IntFloatHashMap lastvalB = new IntFloatHashMap();
-    IntObjectHashMap<Value> voter = new IntObjectHashMap();
 
     public class Value
     {
@@ -162,7 +166,9 @@ public class RasterHierarchy extends JPanel
             cnt=updaterate;
         }
 
-        int red, green, blue;
+        long ntime = nar.time();
+
+        float red, green, blue;
         int redSum, greenSum, blueSum;
         int x, y, startX, startY;
         float newX, newY;
@@ -216,7 +222,7 @@ public class RasterHierarchy extends JPanel
             int blockXSize = Math.round(fblockXSize);
             int blockYSize = Math.round(fblockYSize);
 
-            int pixelCount = blockXSize * blockYSize; // Number of pixels per block
+            float pixelCount = blockXSize * blockYSize; // Number of pixels per block
 
             int h=0,j=0;
 
@@ -249,8 +255,9 @@ public class RasterHierarchy extends JPanel
                     float fblue = blue / 256.0f; //was: blue/255f
 
                     //manage move heuristic
-                    int brightness = (red+green+blue)/3; //maybe not needed
-                    int key=step+10*x+10000*y;
+                    float brightness = (red+green+blue)/3; //maybe not needed
+                    //int key=step+10*x+10000*y;
+                    int key = y * frameWidth + x;
 
                     if(lastvalR.containsKey(key) && putin) {
 
@@ -274,7 +281,7 @@ public class RasterHierarchy extends JPanel
                     lastvalG.put(key, fgreen);
                     lastvalB.put(key, fblue);
 
-                    if(putin && step==numberRasters) {
+                    if ((putin && step==numberRasters) && (ntime!=lastInputTime)) {
                         //input Narsese translation, one statement for each band.
                         //ArrayList<String> nalStrings = new ArrayList<String>();
 
@@ -285,18 +292,31 @@ public class RasterHierarchy extends JPanel
                         /* Here we use the gamma corrected, grayscale version of the image.  Use CCIR 601 weights to convert.
                          * If it is desirable to use only one sentence (vs RGB for example) then use this.
                          *  see: https://en.wikipedia.org/wiki/Luma_%28video%29 or http://cadik.posvete.cz/color_to_gray_evaluation */
-                        double dgray = 0.2989*red + 0.5870*green + 0.1140*blue;
-                        dgray /= 255.0;
+                        float dgray = 0.2989f*red + 0.5870f*green + 0.1140f*blue;
+                        dgray /= 256.0f;
 
                         //TODO create the Term / Task programmaticaly
-                        nar.input("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GRAY>. :|: %" + String.valueOf(dgray) + System.getProperty("line.separator"));
+                        //nar.input("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GRAY>. :|: %" + String.valueOf(dgray) + System.getProperty("line.separator"));
 
+
+                        float pri = 0.75f;
+                        float dur = 0.5f;
+                        float conf = 0.95f;
+                        nar.believe( pri, dur, Inheritance.make(
+                                Product.make(
+                                        Atom.the("r" + step),
+                                        Atom.the(h),
+                                        Atom.the(j)
+                                ),
+                                GRAY
+                        ), Tense.Present, dgray, conf);
 
                     }
 
-                    ImageMiscOps.fillRectangle(output.getBand(0), red, x, y, blockXSize, blockYSize);
-                    ImageMiscOps.fillRectangle(output.getBand(1), green, x, y, blockXSize, blockYSize);
-                    ImageMiscOps.fillRectangle(output.getBand(2), blue, x, y, blockXSize, blockYSize);
+                    ImageMiscOps.fillRectangle(output.getBand(0), Math.round(red), x, y, blockXSize, blockYSize);
+                    ImageMiscOps.fillRectangle(output.getBand(1), Math.round(green), x, y, blockXSize, blockYSize);
+                    ImageMiscOps.fillRectangle(output.getBand(2), Math.round(blue), x, y, blockXSize, blockYSize);
+
                 }
             }
         }
@@ -316,7 +336,10 @@ public class RasterHierarchy extends JPanel
             if (maxValue != null && maxValue.x!=0 && maxValue.y!=0) {
                 this.setFocus(maxValue.x, maxValue.y);
             }
+
         }
+
+        lastInputTime = ntime;
 
         ConvertBufferedImage.convertTo(output, rasterizedImage, true);
         return rasterizedImage;
