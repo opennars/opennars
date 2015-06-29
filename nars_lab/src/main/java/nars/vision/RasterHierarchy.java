@@ -302,14 +302,17 @@ public class RasterHierarchy extends JPanel
                         float pri = 0.75f;
                         float dur = 0.5f;
                         float conf = 0.95f;
-                        nar.believe( pri, dur, Inheritance.make(
+                        nar.inputDirect( nar.memory.newTask( Inheritance.make(
                                 Product.make(
                                         Atom.the("r" + step),
                                         Atom.the(h),
                                         Atom.the(j)
-                                ),
-                                GRAY
-                        ), Tense.Present, dgray, conf);
+                                ), GRAY ))
+                                .belief()
+                                .truth(dgray, conf)
+                                .budget(pri, dur)
+                                .present()
+                        );
 
                     }
 
