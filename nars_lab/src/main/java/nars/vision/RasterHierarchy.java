@@ -14,6 +14,7 @@ import org.infinispan.commons.hash.Hash;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -88,11 +89,11 @@ public class RasterHierarchy extends JPanel
 
     /**
      * Generate the raster hierarchy for a given image.
-     * C
+     *
      * @param input The image to rasterize
      * @return The rasterized image.
      */
-    int updaterate=60;
+    int updaterate=20;
     int cnt=1;
     static int arrsz=1000; //todo refine
     HashMap<Integer,Float> lastvalR=new HashMap<>();
@@ -175,6 +176,8 @@ public class RasterHierarchy extends JPanel
             int pixelCount = blockXSize * blockYSize; // Number of pixels per block
 
             int h=0,j=0;
+
+            // StringBuilder to hold the Narsese translation
             for (x = newX; x < ((step == 1 ? 0 : startX) + regionWidth); x += blockXSize) {
                 h++;
                 for (y = newY; y < ((step == 1 ? 0 : startY) + regionHeight); y += blockYSize) {
@@ -216,13 +219,28 @@ public class RasterHierarchy extends JPanel
                     lastvalG.put(key, fgreen);
                     lastvalB.put(key, fblue);
 
-
                     if(putin && step==numberRasters) {
-                        //input Narsese translation
-                        String st="<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+"%";
-                        nar.input(st);
+                        //input Narsese translation, one statement for each band.
+                        ArrayList<String> nalStrings = new ArrayList<String>();
+
+                        //nalStrings.add("<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> RED>. :|: %"+String.valueOf(fred)+System.getProperty("line.separator"));
+                        //nalStrings.add("<(*,r" + String.valueOf(step) + "," + String.valueOf(h) + "," + String.valueOf(j) + ") --> GREEN>. :|: %" + String.valueOf(fgreen) + System.getProperty("line.separator"));
+                        //nalStrings.add("<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> BLUE>. :|: %"+String.valueOf(fblue)+System.getProperty("line.separator"));
+
+                        /* Here we use the gamma corrected, grayscale version of the image.  Use CCIR 601 weights to convert.
+                         * If it is desirable to use only one sentence (vs RGB for example) then use this.
+                         *  see: https://en.wikipedia.org/wiki/Luma_%28video%29 or http://cadik.posvete.cz/color_to_gray_evaluation */
+                        double dgray = 0.2989*red + 0.5870*green + 0.1140*blue;
+                        dgray /= 255.0;
+
+                        nalStrings.add("<(*,r"+ String.valueOf(step)+","+String.valueOf(h)+","+String.valueOf(j)+") --> GRAY>. :|: %"+String.valueOf(dgray)+System.getProperty("line.separator"));
+
+                        for (String st : nalStrings)
+                        {
+                            nar.input(st);
+                        }
+
                     }
-                    // Here we can generate NAL, since we know all of the required values.
 
                     ImageMiscOps.fillRectangle(output.getBand(0), red, x, y, blockXSize, blockYSize);
                     ImageMiscOps.fillRectangle(output.getBand(1), green, x, y, blockXSize, blockYSize);
