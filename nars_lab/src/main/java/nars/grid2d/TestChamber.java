@@ -94,7 +94,7 @@ public class TestChamber {
         for (int i = 0; i < cells.w; i++) {
             for (int j = 0; j < cells.h; j++) {
                 if (cells.readCells[i][j].name.equals(arg)) {
-                    if(opname.equals("go-to"))
+                    if(opname.equals("goto"))
                         space.target = new PVector(i, j);
                 }
             }
@@ -103,7 +103,7 @@ public class TestChamber {
             for(GridObject gridi : space.objects) {
                 if(gridi instanceof LocalGridObject && ((LocalGridObject)gridi).doorname.equals(goal)) { //Key && ((Key)gridi).doorname.equals(goal)) {
                     LocalGridObject gridu=(LocalGridObject) gridi;
-                    if(opname.equals("go-to"))
+                    if(opname.equals("goto"))
                         space.target = new PVector(gridu.x, gridu.y);
                 }
             }
@@ -312,7 +312,7 @@ public class TestChamber {
                                             }
                                         }
                                     }
-                                    if("go-to".equals(opname)) {
+                                    if("goto".equals(opname)) {
                                         executed_going=false;
                                         nar.input("<" + goal + " --> [at]>. :|:");
                                         if (goal.startsWith("{pizza")) {
@@ -378,13 +378,13 @@ public class TestChamber {
                 }
             }
         };
-        Goto wu = new Goto(this, "^go-to");
+        Goto wu = new Goto(this, "goto");
         nar.on(wu);
-        Pick wa = new Pick(this, "^pick");
+        Pick wa = new Pick(this, "pick");
         nar.on(wa);
-        Activate waa = new Activate(this, "^activate");
+        Activate waa = new Activate(this, "activate");
         nar.on(waa);
-        Deactivate waaa = new Deactivate(this, "^deactivate");
+        Deactivate waaa = new Deactivate(this, "deactivate");
         nar.on(waaa);
         space.add(a);
 

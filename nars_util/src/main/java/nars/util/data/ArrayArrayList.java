@@ -1,6 +1,8 @@
 package nars.util.data;
 
-import org.apache.commons.lang.ArrayUtils;
+import objenome.op.cas.util.ArrayLists;
+import org.apache.commons.lang3.ArrayUtils;
+import org.infinispan.cdi.util.Arrays2;
 
 import java.io.Serializable;
 import java.util.*;
@@ -22,7 +24,7 @@ public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     public boolean add(E e) {
-        this.array = (E[]) ArrayUtils.add(array, e);
+        this.array = ArrayUtils.add(array, e);
         return true;
     }
 

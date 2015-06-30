@@ -24,19 +24,19 @@ public class SomeRovers {
         Global.EXIT_ON_EXCEPTION = true;
 
 
-        float fps = 60;
-        boolean cpanels = false;
+        float fps = 120;
+        boolean cpanels = true;
 
         final RoverEngine game = new RoverEngine();
 
 
-        int rovers = 3;
+        int rovers = 1;
 
         for (int i = 0; i < rovers; i++)  {
 
             NAR nar;
             nar = new NAR(new Default().simulationTime().
-                    setActiveConcepts(768).
+                    setActiveConcepts(1600).
                     setNovelTaskBagSize(48).setTermLinkBagSize(24));
             nar.param.inputsMaxPerCycle.set(100);
             nar.param.conceptsFiredPerCycle.set(128);

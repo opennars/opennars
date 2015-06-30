@@ -109,7 +109,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     public Rule Task() {
-        //TODO separate goal into an alternate form "!" because it does not use a tense
+
         Var<float[]> budget = new Var();
         Var<Character> punc = new Var();
         Var<Term> term = new Var();

@@ -41,6 +41,7 @@ import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
 import nars.util.data.id.Identifier;
+import objenome.solution.dependency.ConstructorDependency;
 
 import java.io.File;
 import java.io.IOException;
@@ -288,7 +289,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
                 new schizo(),     //change Memory's SELF term (default: SELF)
 
-                //  new js(), //javascdript evalaution
+                new js(), //javascdript evalaution
 
                 new json.jsonfrom(),
                 new json.jsonto()
@@ -360,32 +361,35 @@ public class Default extends NARSeed implements ConceptBuilder {
     @Override public void init(NAR n) {
 
         n.setCyclesPerFrame(cyclesPerFrame);
+
+
         
 
         if (maxNALLevel >= 7) {
             n.on(PerceptionAccel.class);
             n.on(STMInduction.class);
-        }
 
-        if (maxNALLevel >= 8) {
 
-            for (Operator o : defaultOperators)
-                n.on(o);
-            for (Operator o : exampleOperators)
-                n.on(o);
+            if (maxNALLevel >= 8) {
 
-            for (ConceptBuilder c  : defaultConceptBuilders) {
-                n.on(c);
-            }
+                for (Operator o : defaultOperators)
+                    n.on(o);
+                for (Operator o : exampleOperators)
+                    n.on(o);
 
-            n.on(Anticipate.class);      // expect an event
+                for (ConceptBuilder c : defaultConceptBuilders) {
+                    n.on(c);
+                }
 
-            if (internalExperience == Minimal) {
-                new InternalExperience(n);
-                new Abbreviation(n);
-            } else if (internalExperience == Full) {
-                new FullInternalExperience(n);
-                n.on(new Counting());
+                n.on(Anticipate.class);      // expect an event
+
+                if (internalExperience == Minimal) {
+                    new InternalExperience(n);
+                    new Abbreviation(n);
+                } else if (internalExperience == Full) {
+                    new FullInternalExperience(n);
+                    n.on(new Counting());
+                }
             }
         }
 

@@ -42,7 +42,7 @@ public class PerceptionAccel extends NARReaction {
 
     int[] sv = new int[ConjunctionMemorySize]; //use static array, should suffice for now
     boolean debugMechanism = false;
-    double partConceptsPrioThreshold = 0.1;
+    float partConceptsPrioThreshold = 0.1f;
     final ArrayList<Task> eventbuffer = new ArrayList<>();
     int cur_maxlen = 1;
     final LongArrayList evBase = new LongArrayList();
@@ -82,7 +82,7 @@ public class PerceptionAccel extends NARReaction {
     }
 
 
-    public void setPartConceptsPrioThreshold(double value) {
+    public void setPartConceptsPrioThreshold(float value) {
         partConceptsPrioThreshold = value;
     }
 
@@ -154,6 +154,7 @@ public class PerceptionAccel extends NARReaction {
             Term[] secondHalf;
             if (relterms[Len - 1] instanceof AbstractInterval) {
                 //the middle can be a interval, for example in case of a,+1,b , in which case we dont use it
+
                 firstHalf = new Term[Len - 1]; //so we skip the middle here
                 secondHalf = new Term[Len - 1]; //as well as here
                 int h = 0; //make index mapping easier by counting
@@ -185,21 +186,45 @@ public class PerceptionAccel extends NARReaction {
             Concept C1 = nal.memory.concept(firstC);
             Concept C2 = nal.memory.concept(secondC);
 
-            if (C1 == null || C2 == null) {
-                if (debugMechanism) {
-                    System.out.println("one didn't exist: " + firstC + " or " + secondC);
+            if (after && (C1 == null || C2 == null)) { //everything which happens now we can summarize for now on
+                if (debugMechanism) {                  //but only if the atomic events are also existing as concepts
+                    System.out.println("one didn't exist: " + firstC + " or " + secondC); //and are above partConcepts priority threshold
                 }
                 continue; //the components were not observed, so don't allow creating this compound
             }
 
-            if (C1.getPriority() < partConceptsPrioThreshold || C2.getPriority() < partConceptsPrioThreshold) {
+
+
+            if (C1 == null || C2 == null || C1.getPriority() < partConceptsPrioThreshold || C2.getPriority() < partConceptsPrioThreshold) {
                 continue; //too less priority
             }
 
             relterms = CyclesInterval.removeZeros(relterms);
             if (relterms.length < 2) continue;
 
-            Term C0 = Conjunction.make(relterms, after ? ORDER_FORWARD : ORDER_CONCURRENT);
+            Term[] relterms2=new Term[relterms.length];
+            int u=0;
+            for(int i=0; i<relterms.length; i++) {
+                if(!(relterms[i] instanceof AbstractInterval)) {
+                    //ok it is not an interval, so it has to exist as concept else it needs to be eliminated
+                    Concept C=nal.memory.concept(relterms[i]);
+                    if(C !=null && C.getPriority() >= partConceptsPrioThreshold) {
+                        relterms2[u] = relterms[i];
+                        u++;
+                    }
+                }
+                else {
+                    relterms2[u] = relterms[i];
+                    u++;
+                }
+            }
+
+            Term[] relterms2_real=new Term[u];
+            for(int i=0; i<u; i++) {
+                relterms2_real[i] = relterms2[i];
+            }
+
+            Term C0 = Conjunction.make(relterms2_real, after ? ORDER_FORWARD : ORDER_CONCURRENT);
             if (!(C0 instanceof Conjunction)) {
                 continue;
             }
@@ -216,7 +241,7 @@ public class PerceptionAccel extends NARReaction {
 
             //lets make the new event the parent task, and derive it
             Task T = nal.deriveDouble(nal.newTask(C).judgment().truth(truth)
-                            .budget(new Budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY, truth))
+                            .budget(BudgetFunctions.or(C1.getPriority(), C2.getPriority()), Global.DEFAULT_JUDGMENT_DURABILITY)
                             .parent(task, newEvent)
                             .occurrNow()
                             .setEvidentialSet(Stamp.toSetArray(evBase.toArray()))

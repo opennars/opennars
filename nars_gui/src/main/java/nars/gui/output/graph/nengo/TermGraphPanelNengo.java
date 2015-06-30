@@ -69,6 +69,7 @@ public class TermGraphPanelNengo extends Nengrow {
             networkUI = (UINetwork) addNodeModel(graphNode);
             window = networkUI.openViewer(Window.WindowState.MAXIMIZED);
             window.getGridLayer().setBgColor(Color.BLACK);
+            window.getGridLayer().setGridColor(Color.BLACK);
         } catch (ContainerException e) {
             e.printStackTrace();
         }

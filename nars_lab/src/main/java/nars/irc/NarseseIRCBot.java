@@ -3,10 +3,13 @@ package nars.irc;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.NAR;
+import nars.bag.impl.CacheBag;
+import nars.bag.impl.InfiniCacheBag;
 import nars.io.nlp.Twenglish;
 import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
@@ -33,7 +36,12 @@ public class NarseseIRCBot extends IRCBot {
     int updateMS = 3;
 
     public static void main(String[] arg) throws Exception {
-        new NarseseIRCBot(new Default());
+        new NarseseIRCBot(new Default() {
+            @Override
+            public CacheBag<Term, Concept> newIndex() {
+                return InfiniCacheBag.file("main", "/tmp/narseseirc", 1024*1024);
+            }
+        });
     }
 
 
@@ -181,7 +189,13 @@ public class NarseseIRCBot extends IRCBot {
     public synchronized void reset() throws Exception {
         n.reset();
 
-        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f /* conf */) {
+        System.out.println("Existing concepts: " + n.memory.concepts.size());
+        n.memory.concepts.forEach(x -> {
+            System.out.print('\t' + x.toString());
+        });
+
+
+        new NQuadsInput(n, "/home/me/Downloads/dbpedia.n4", 0.94f ) {
 
             @Override
             protected void believe(Compound assertion) {
@@ -194,13 +208,14 @@ public class NarseseIRCBot extends IRCBot {
         };
 
 
+
         n.runWhileNewInput(1);
         n.frame(1); //one more to be sure
 
     }
 
     public NarseseIRCBot(Default d) throws Exception {
-        super("irc.freenode.net", "NARchy", "#nars");
+        super("irc.freenode.net", "NARchy", "#netention");
 
         d.setInternalExperience(null);
 

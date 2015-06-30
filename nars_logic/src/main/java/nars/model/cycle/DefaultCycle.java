@@ -135,6 +135,7 @@ public class DefaultCycle extends SequentialCycle {
 
             for (int n = newTasks.size()-1;  n >= 0; n--) {
                 Task highest = newTasks.pollLast();
+                if (highest == null) break;
 
                 executingNewTasks = true;
                 run(highest);

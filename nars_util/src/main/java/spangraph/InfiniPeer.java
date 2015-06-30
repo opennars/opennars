@@ -17,9 +17,13 @@ import org.infinispan.notifications.cachelistener.event.Event;
 import org.infinispan.notifications.cachemanagerlistener.annotation.Merged;
 import org.infinispan.notifications.cachemanagerlistener.annotation.ViewChanged;
 import org.infinispan.notifications.cachemanagerlistener.event.ViewChangedEvent;
+import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
+import org.jgroups.protocols.UDP;
 
 import java.io.PrintStream;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Peer-to-peer node manager : wraps CacheManager functionality
@@ -29,27 +33,33 @@ import java.util.function.Consumer;
 @Listener(sync = true)
 public class InfiniPeer extends DefaultCacheManager  {
 
+    static {
+        Logger.getLogger(JGroupsTransport.class.getName()).setLevel(Level.WARNING);
+        Logger.getLogger(UDP.class.getName()).setLevel(Level.SEVERE);
+    }
+
     public final String userID;
 
-    public InfiniPeer(String userID, GlobalConfiguration globalConfig, Configuration config) {
+    public InfiniPeer(GlobalConfiguration globalConfig, Configuration config) {
         super(globalConfig, config);
 
-        this.userID = userID;
+        if (globalConfig.transport()!=null)
+            this.userID = globalConfig.transport().nodeName();
+        else
+            this.userID = null;
 
         addListener(this);
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                stop();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            InfiniPeer.this.stop();
+        }));
 
 
     }
 
     public void print(Cache cache, PrintStream out) {
 
-        System.out.println(userID +  " -----");
+        System.out.println(userID + " -----");
         System.out.println(cache + " " + cache.size());
         System.out.println(cache.entrySet());
         System.out.println("---\n");
@@ -115,13 +125,63 @@ public class InfiniPeer extends DefaultCacheManager  {
 
     }
 
+    public static InfiniPeer the(GlobalConfigurationBuilder gconf, Configuration conf) {
+        return new InfiniPeer(
+
+                gconf.build(),
+                conf
+        );
+    }
+
+
+
+    /** for local only mode on the same host, saved to disk */
+    public static InfiniPeer local(String userID, String diskPath, int maxEntries) {
+
+
+        GlobalConfigurationBuilder globalConfigBuilder = new GlobalConfigurationBuilder();
+
+        globalConfigBuilder.transport().nodeName(userID)
+                .defaultTransport();
+                //.addProperty("configurationFile", "fast.xml");
+
+
+
+        globalConfigBuilder.globalJmxStatistics().allowDuplicateDomains(true)
+                .build();
+
+        Configuration config = new ConfigurationBuilder()
+                .persistence()
+                .addSingleFileStore()
+                .location(diskPath)
+                .maxEntries(maxEntries)
+                .fetchPersistentState(true)
+                .ignoreModifications(false)
+
+                        //.purgeOnStartup(true)
+
+                .unsafe()
+                .clustering()
+                        //.cacheMode(CacheMode.DIST_SYNC)
+                .cacheMode(CacheMode.DIST_SYNC)
+                .sync()
+                .l1().lifespan(25000L)
+                .hash().numOwners(3)
+                .build();
+
+        return new InfiniPeer(
+                globalConfigBuilder.build(),
+                config
+        );
+
+    }
 
     /** creates a cluster infinipeer */
     public static InfiniPeer cluster(String userID) {
         return cluster(userID, t ->
                         t.nodeName(userID)
-                        .defaultTransport()
-                        .addProperty("configurationFile", "udp-largecluster.xml")
+                                .defaultTransport()
+                                .addProperty("configurationFile", "udp-largecluster.xml")
         );
 
     }
@@ -130,9 +190,9 @@ public class InfiniPeer extends DefaultCacheManager  {
     /** creates a web-scale (> 100 nodes) infinipeer */
     public static InfiniPeer webLarge(String userID) {
         return cluster(userID, t ->
-            t.nodeName(userID)
-            .defaultTransport()
-            .addProperty("configurationFile", "udp-largecluster.xml")
+                        t.nodeName(userID)
+                                .defaultTransport()
+                                .addProperty("configurationFile", "udp-largecluster.xml")
         );
 
         //https://github.com/infinispan/infinispan/tree/master/core/src/main/resources/default-configs
@@ -154,7 +214,6 @@ public class InfiniPeer extends DefaultCacheManager  {
                 .build();
 
         Configuration config = new ConfigurationBuilder()
-
                 .unsafe()
                 .clustering()
                         //.cacheMode(CacheMode.DIST_SYNC)
@@ -165,10 +224,13 @@ public class InfiniPeer extends DefaultCacheManager  {
                 .build();
 
         return new InfiniPeer(
-                userID,
                 globalConfigBuilder.build(),
                 config
         );
+    }
+
+    public static InfiniPeer local() {
+        return local("");
     }
 
 //    public static void main(String args[]) throws Exception {

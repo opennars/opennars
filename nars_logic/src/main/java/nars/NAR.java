@@ -17,6 +17,7 @@ import nars.nal.concept.ConceptBuilder;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
+import nars.nal.process.TaskProcess;
 import nars.nal.stamp.Stamp;
 import nars.nal.task.TaskSeed;
 import nars.nal.term.Atom;
@@ -327,12 +328,28 @@ public class NAR extends Container implements Runnable {
         return this;
     }
 
-    public NAR input(final Task t) {
+    protected void preprocessInput(Task t) {
         if (t.getCreationTime() == Stamp.TIMELESS)
             t.setCreationTime(time());
         if (t.getEvidentialSet() == null)
             t.setEvidentialSet(memory.newStampSerial());
+    }
+
+    /** input a task via perception buffers */
+    public NAR input(final Task t) {
+        preprocessInput(t);
         input((Input) t);
+        return this;
+    }
+
+    public NAR inputDirect(final TaskSeed t) {
+        return inputDirect(t.get());
+    }
+
+    /** input a task via direct TaskProcessing */
+    public NAR inputDirect(final Task t) {
+        preprocessInput(t);
+        TaskProcess.run(this, t);
         return this;
     }
 
@@ -349,7 +366,9 @@ public class NAR extends Container implements Runnable {
     }
 
     public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
-        return on(the(c));
+        Reaction<Class> v = the(c);
+        the(c, v); //register singleton
+        return on(v);
     }
 
     public EventEmitter.Registrations on(Reaction<Term> o, Term... c) {
