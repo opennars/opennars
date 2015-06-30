@@ -1,0 +1,41 @@
+package some.geo;
+
+
+option java_package = "some.geo";//superfluous, but not with all parsers...
+
+option java_outer_classname = "SomeGeo";
+
+message Atom {
+
+    //    { "I": "usgs-25-today", "geojson": "usgs-eq", "geoDataSrc": "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson", "source": "United States Geological Society (USGS) Earthquake Hazards Program", "sourceURL": "http://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php", "N": "USGS - M2.5+ Earthquakes (Today)"},
+    required string I = 1;
+    required string N = 2;
+    required string source = 3;
+    required string sourceUrl = 4;
+    optional string geoDataSrc = 5;
+    optional string geojson = 6;
+    optional bool kml = 7;
+    optional bool tree = 8;
+    optional bool zoom = 9;
+}
+
+message Folder {
+    required string N = 1;
+    required string icon = 2;
+    repeated Atom C = 3;
+}
+
+
+message SecondLevel {
+    required string N = 1;
+    optional Folder Report = 2;
+    optional Folder Earthquake = 3;
+    optional Folder Volcano = 4;
+    optional Folder Fire = 5;
+    optional Folder FEMA = 6;
+}
+
+message Top {
+    required string I = 1;
+    required SecondLevel alerts = 2;
+}
