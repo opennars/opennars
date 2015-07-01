@@ -37,6 +37,7 @@
         <module>nars_gui</module>
         <module>nars_web</module>
 	<module>nars_rdf</module>
+        <module>nars-rpc</module>
     </modules>
 
     <build>
