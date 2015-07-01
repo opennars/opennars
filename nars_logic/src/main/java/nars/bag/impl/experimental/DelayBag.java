@@ -6,9 +6,7 @@ import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.BudgetFunctions;
-import nars.model.ControlCycle;
 import nars.nal.Itemized;
-import nars.nal.concept.Concept;
 import nars.util.sort.ArraySortedIndex;
 
 import java.util.*;
@@ -201,7 +199,7 @@ public class DelayBag<K, E extends Itemized<K>> extends Bag/*.IndexedBag*/<K,E> 
             e = ee.getValue();
                            
             if (forgettable(e))
-                BudgetFunctions.forgetPeriodic(e.getBudget(), forgetCycles, Global.FORGET_QUALITY_RELATIVE, now);
+                BudgetFunctions.forgetPeriodic(e.getBudget(), forgetCycles, Global.MIN_FORGETTABLE_PRIORITY, now);
             
             float p = e.getPriority();
             

@@ -102,7 +102,7 @@ public class BagPerf {
         public String key;
     
         public NullItem() {
-            this(rng.nextFloat() * (1.0f - Global.TRUTH_EPSILON));
+            this(rng.nextFloat() * (1.0f - Global.DEFAULT_TRUTH_EPSILON));
         }
 
         public NullItem(float priority, String key) {

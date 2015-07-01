@@ -49,41 +49,35 @@ public class RuntimeNARSettings extends AbstractReaction {
         Global.HORIZON=(float) val;
     }
 
-    public double getDerivationPriorityLeak() {
-        return Global.DERIVATION_PRIORITY_LEAK;
-    }
-    public void setDerivationPriorityLeak(double val) {
-        Global.DERIVATION_PRIORITY_LEAK=(float) val;
-    }
-    
-    public double getDerivationDurabilityLeak() {
-        return Global.DERIVATION_DURABILITY_LEAK;
-    }
-    public void setDerivationDurabilityLeak(double val) {
-        Global.DERIVATION_DURABILITY_LEAK=(float) val;
-    }
-    
-        public boolean isInductionOnSucceedingEvents() {
-        return Global.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS;
-    }
-    public void setInductionOnSucceedingEvents(boolean val) {
-        Global.TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=val;
-    }
-    
-    public double getInductionChainSamples() {
-        return Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
-    }
-    public void setInductionChainSamples(double val) {
-        Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES=(int) val;
-    }
-    
-    public double getInductionSamples() {
-        return Global.TEMPORAL_INDUCTION_SAMPLES;
-    }
-    public void setInductionSamples(double val) {
-        Global.TEMPORAL_INDUCTION_SAMPLES=(int) val;
-    }
-    
+//    public double getDerivationPriorityLeak() {
+//        return Global.DERIVATION_PRIORITY_LEAK;
+//    }
+//    public void setDerivationPriorityLeak(double val) {
+//        Global.DERIVATION_PRIORITY_LEAK=(float) val;
+//    }
+//
+//    public double getDerivationDurabilityLeak() {
+//        return Global.DERIVATION_DURABILITY_LEAK;
+//    }
+//    public void setDerivationDurabilityLeak(double val) {
+//        Global.DERIVATION_DURABILITY_LEAK=(float) val;
+//    }
+//
+//
+//    public double getInductionChainSamples() {
+//        return Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES;
+//    }
+//    public void setInductionChainSamples(double val) {
+//        Global.TEMPORAL_INDUCTION_CHAIN_SAMPLES=(int) val;
+//    }
+//
+//    public double getInductionSamples() {
+//        return Global.TEMPORAL_INDUCTION_SAMPLES;
+//    }
+//    public void setInductionSamples(double val) {
+//        Global.TEMPORAL_INDUCTION_SAMPLES=(int) val;
+//    }
+//
     public double getCuriosityDesireConfidenceMul() {
         return Global.CURIOSITY_DESIRE_CONFIDENCE_MUL;
     }

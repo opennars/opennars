@@ -11,7 +11,6 @@ import nars.nal.Task;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.Stamp;
 import nars.nal.term.Compound;
-import nars.nal.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.testing.condition.OutputCondition;
 import nars.testing.condition.TaskCondition;
@@ -123,7 +122,7 @@ public class TestNAR extends NAR {
     }
 
     public ExplainableTask mustEmit(Class c, long cycleStart, long cycleEnd, String sentenceTerm, char punc, float freqMin, float freqMax, float confMin, float confMax, long ocRelative) throws InvalidInputException {
-        float h = (freqMin!=-1) ? Global.TRUTH_EPSILON/ 2.0f : 0;
+        float h = (freqMin!=-1) ? Global.DEFAULT_TRUTH_EPSILON / 2.0f : 0;
 
         if (freqMin == -1) freqMin = freqMax;
 

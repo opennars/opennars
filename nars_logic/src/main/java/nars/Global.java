@@ -24,10 +24,7 @@ package nars;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.nal.Item;
 import nars.nal.Task;
-import nars.nal.stamp.Stamp;
-import nars.util.data.linkedlist.DD;
 
 
 import java.lang.ref.Reference;
@@ -122,12 +119,8 @@ public class Global {
     
     /* ---------- space management ---------- */
     
-    /** Level separation in LevelBag, one digit, for display (run-time adjustable) and management (fixed)
-     */
-    @Deprecated public static final float BAG_THRESHOLD = 1.0f; //should be an option for LevelBag instances
-
     /** (see its use in budgetfunctions iterative forgetting) */
-    public static float FORGET_QUALITY_RELATIVE = 0.1f;
+    public static float MIN_FORGETTABLE_PRIORITY = 0f;
 
     
     
@@ -136,7 +129,7 @@ public class Global {
     public static final int MAXIMUM_EVIDENTAL_BASE_LENGTH = 8;
     /** Maximum length of the Derivation Chain of the stamp */
     public static final int MAXIMUM_DERIVATION_CHAIN_LENGTH = 8;
-    
+
 
 
     /**
@@ -156,34 +149,14 @@ public class Global {
     //RUNTIME PERFORMANCE (should not affect logic): ----------------------------------
 
           
-    /**
-     * Determines when TermLink and TaskLink should use Rope implementation for its Key,
-     * rather than String/StringBuilder.  
-     * 
-     * Set to -1 to disable the Rope entirely, 0 to use always, or a larger number as a threshold
-     * below which uses contiguous char[] implementation, and above which uses 
-     * FastConcatenationRope.
-     * 
-     * While a Rope is potentially more memory efficient (because it can re-use String instances
-     * in its components without a redundant copy being stored) it can be more 
-     * computationally costly than a character array.
-     * 
-     * The value needs to be weighed against the overhead of the comparison and iteration costs.
-     * 
-     * Optimal value to be determined.
-     */
-    public static int ROPE_TERMLINK_TERM_SIZE_THRESHOLD = 128;
-    
-    /** max number of interval to combine in sequence to approximate a time period (cycles) */
-    public static int TEMPORAL_INTERVAL_PRECISION = 1;
 
     public static final float TESTS_TRUTH_ERROR_TOLERANCE = 0.05f;
 
     //default
-    public static float TRUTH_EPSILON = 0.01f;
+    public static float DEFAULT_TRUTH_EPSILON = 0.01f;
 
     public static float MAX_CONFIDENCE = 1.0f; //0.99f;// - TRUTH_EPSILON;
-    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - TRUTH_EPSILON;
+    public static float OPERATOR_EXECUTION_CONFIDENCE = MAX_CONFIDENCE - DEFAULT_TRUTH_EPSILON;
 
     //temporary parameter for setting #threads to use, globally
     @Deprecated public static int THREADS = 1;
@@ -226,22 +199,29 @@ public class Global {
     public static final float TERMLINK_FORGETTING_ACCURACY = 0.05f;
     public static final float TASKLINK_FORGETTING_ACCURACY = 0.2f;
 
-    public static boolean OVERLAP_ALLOW = false; //global switch for derivation evidence overlap detection
+    /** global switch to allow derivation evidence to overlap */
+    public static boolean OVERLAP_ALLOW = false;
 
 
-    public static float DED_SECOND_UNIFICATION_DEPTH = 0.02f;
-    public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 4;
+    /** approx max percentage of concepts considered during a unification attempt */
+    public static float DED_SECOND_UNIFICATION_DEPTH = 0.01f;
+    public static final int DED_SECOND_UNIFICATION_ATTEMPTS = 1;
 
 
     /** hard upper-bound limit on Compound term complexity;
      * if this is exceeded it may indicate a recursively
-     * malformed term due to an inference bug     */
-    public static short COMPOUND_MASS_LIMIT = 8192;
+     * malformed term due to a serious inference bug */
+    public static short COMPOUND_MASS_LIMIT = 1024;
 
 
     public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
         return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts
     }
+
+    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
+
+
+
 
     public static boolean equals(double a, double b) {
         return Math.abs(a - b) <= Double.MIN_VALUE*2;
@@ -316,18 +296,7 @@ public class Global {
 
 
     //TODO eventually sort out in case that a parameter is not needed anymore
-    
 
-    public static boolean TEMPORAL_INDUCTION_ON_SUCCEEDING_EVENTS=true; //this should be true to restore 1.6.1 strategy
-    
-    public static int TEMPORAL_INDUCTION_CHAIN_SAMPLES = 1; //normal inference rule , this should be 10 to restore 1.6.1 behavior
-    
-    public static int TEMPORAL_INDUCTION_SAMPLES = 1; //normal inference rule, this should be 0 to restore 1.6.1 strategy, 1 to restore 1.6.3 strategy
-    
-    public static float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-    
-    public static float DERIVATION_DURABILITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-    
     public static float CURIOSITY_BUSINESS_THRESHOLD=0.15f; //dont be curious if business is above
     public static float CURIOSITY_PRIORITY_THRESHOLD=0.3f; //0.3f in 1.6.3
     public static float CURIOSITY_CONFIDENCE_THRESHOLD=0.8f;
@@ -343,6 +312,7 @@ public class Global {
     public static float BUSY_EVENT_LOWER_THRESHOLD=0.1f;
     public static boolean REFLECT_META_HAPPY_GOAL=false;
     public static boolean CONSIDER_REMIND=false;
+
     public static boolean BREAK_NAL_HOL_BOUNDARY=true;
     
     public static boolean QUESTION_GENERATION_ON_DECISION_MAKING=false;
@@ -351,12 +321,7 @@ public class Global {
     public static float ANTICIPATION_CONFIDENCE=0.95f;
     
     public static float SATISFACTION_TRESHOLD = 0.0f; //decision threshold is enough for now
-    
-     public static int NOVEL_TASKS_TRACK_SIZE=1000; //inference rules like temporal induction
-    //work a bit differently, in order for it not to bypass the novelty strategy (because it doesn't use a termlink
-    //for inference, we track the tasks extra for now
 
-    
 
 
 }

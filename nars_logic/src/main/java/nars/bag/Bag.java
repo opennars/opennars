@@ -9,7 +9,6 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
 import nars.nal.Itemized;
-import objenome.op.cas.E;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;
@@ -240,7 +239,7 @@ public abstract class Bag<K, V extends Itemized<K>> extends BudgetSource.Default
      */
     public V putBack(final V oldItem, final float forgetCycles, final Memory m) {
         if (forgetCycles > 0)
-            Memory.forget(m.time(), oldItem, getForgetCycles(forgetCycles, oldItem), Global.FORGET_QUALITY_RELATIVE);
+            Memory.forget(m.time(), oldItem, getForgetCycles(forgetCycles, oldItem), Global.MIN_FORGETTABLE_PRIORITY);
         return put(oldItem);
     }
 

@@ -500,7 +500,8 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
      */
     @Override
     public String toString() {
-        return getKey().toString();
+        throw new RuntimeException("should not need to be called");
+        //return getKey().toString();
     }
 
     @Override
@@ -508,43 +509,51 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
         return this;
     }
 
-    /**
-     * Get a String representation of the sentence for key of Task and TaskLink
-     * We don't cache the Sentence string for 2 reasons:
-     *      1. it is not ordinarily generated except for output
-     *      2. if the stamp or other component changes, it would need to be re-calculated
-     */
-    public CharSequence getKey() {
-        final String contentName = getTerm().toString();
-
-        final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
-        //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
-
-        //final CharSequence truthString = truth != null ? truth.name() : null;
-
-        int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
-        if (truth != null) {
-            stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
-        }
-
-        //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
-        final StringBuilder suffix = new StringBuilder(stringLength).append(punctuation);
-
-        if (truth != null) {
-            suffix.append(' ');
-            truth.appendString(suffix, false);
-        }
-        if (showOcurrenceTime) {
-            suffix.append(" {"); //space + stamp opener
-            appendOcurrenceTime(suffix);
-            suffix.append('}'); //stamp closer
-        }
-
-        return Texts.yarn(Global.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
-                contentName,//.toString(),
-                suffix); //.toString());
-        //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
-    }
+//    /**
+//     * Get a String representation of the sentence for key of Task and TaskLink
+//     * We don't cache the Sentence string for 2 reasons:
+//     *      1. it is not ordinarily generated except for output
+//     *      2. if the stamp or other component changes, it would need to be re-calculated
+//     */
+//    public CharSequence getKey() {
+//        //final String contentName = getTerm().toString();
+//
+//        final boolean showOcurrenceTime = !isEternal(); //((punctuation == Symbols.JUDGMENT) || (punctuation == Symbols.QUESTION));
+//        //final String occurrenceTimeString =  ? stamp.getOccurrenceTimeString() : "";
+//
+//        //final CharSequence truthString = truth != null ? truth.name() : null;
+//
+//        int stringLength = 0; //contentToString.length() + 1 + 1/* + stampString.baseLength()*/;
+//        if (truth != null) {
+//            stringLength += (showOcurrenceTime ? 8 : 0) + 11 /*truthString.length()*/;
+//        }
+//
+//        String termString = getTerm().toString();
+//
+//        stringLength += termString.length();
+//
+//        //suffix = [punctuation][ ][truthString][ ][occurenceTimeString]
+//        final StringBuilder suffix = new StringBuilder(stringLength).append(termString).append(punctuation);
+//
+//        if (truth != null) {
+//            suffix.append(' ');
+//            truth.appendString(suffix, false);
+//        }
+//        if (showOcurrenceTime) {
+//            suffix.append(" {"); //space + stamp opener
+//            appendOcurrenceTime(suffix);
+//            suffix.append('}'); //stamp closer
+//        }
+//
+//        if (suffix.length()!=stringLength) {
+//            System.err.println("length mismatch: " + suffix.length() + " != " + stringLength);
+//        }
+//        return suffix;
+////        return Texts.yarn(Global.ROPE_TERMLINK_TERM_SIZE_THRESHOLD,
+////                contentName,//.toString(),
+////                suffix); //.toString());
+//        //key = new FlatCharArrayRope(StringUtil.getCharArray(k));
+//    }
 
     public CharSequence toString(NAR nar, boolean showStamp) {
         return toString(nar.memory, showStamp);

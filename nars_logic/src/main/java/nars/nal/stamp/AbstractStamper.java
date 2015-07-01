@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 /**
  * Indicates that this can be used to "stamp" a sentence
  */
-public interface AbstractStamper {
+@Deprecated public interface AbstractStamper {
 
     /**
      * responsible for setting some or all of the following Stamp setters:

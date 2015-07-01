@@ -40,7 +40,7 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
         }
 
         return (lastForgetTime != now) && //there is >0 time across which forgetting would be applied
-                (b.getPriority() > b.getQuality() * Global.FORGET_QUALITY_RELATIVE); //there is sufficient priority for forgetting to occurr
+                (b.getPriority() > b.getQuality() * Global.MIN_FORGETTABLE_PRIORITY); //there is sufficient priority for forgetting to occurr
     }
 
     /** updates with current time, etc. call immediately before update() will be called */
@@ -63,7 +63,7 @@ public class ForgetNext<K, V extends Itemized<K>> implements BagTransaction<K,V>
             return null; //unaffected (null means that the item's budget was not changed, so the bag knows it can avoid any reindexing it)
         }
 
-        Memory.forget(now, v, forgetCycles, Global.FORGET_QUALITY_RELATIVE);
+        Memory.forget(now, v, forgetCycles, Global.MIN_FORGETTABLE_PRIORITY);
 
         return v;
     }

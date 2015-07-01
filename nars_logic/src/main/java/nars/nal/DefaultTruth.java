@@ -63,7 +63,7 @@ public class DefaultTruth implements Truth {
      * @param c The confidence value
      */
     public DefaultTruth(final float f, final float c, final boolean b) {
-        this(f, c, b, Global.TRUTH_EPSILON);
+        this(f, c, b, Global.DEFAULT_TRUTH_EPSILON);
     }
 
     public DefaultTruth(final float f, final float c, float epsilon) {
@@ -76,7 +76,7 @@ public class DefaultTruth implements Truth {
      * @param v The truth value to be cloned
      */
     public DefaultTruth(final Truth v) {
-        this(v.getFrequency(), v.getConfidence(), v.getAnalytic(), Global.TRUTH_EPSILON);
+        this(v.getFrequency(), v.getConfidence(), v.getAnalytic(), Global.DEFAULT_TRUTH_EPSILON);
     }
 
     public DefaultTruth(final nars.nal.DefaultTruth v) {
@@ -84,7 +84,7 @@ public class DefaultTruth implements Truth {
     }
 
     public DefaultTruth(char punctuation) {
-        this.epsilon = Global.TRUTH_EPSILON;
+        this.epsilon = Global.DEFAULT_TRUTH_EPSILON;
         float c;
         switch (punctuation) {
             case Symbols.JUDGMENT:

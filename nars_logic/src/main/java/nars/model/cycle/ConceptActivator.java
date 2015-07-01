@@ -15,7 +15,7 @@ import nars.nal.term.Term;
  */
 abstract public class ConceptActivator extends BagActivator<Term, Concept> {
 
-    final float relativeThreshold = Global.FORGET_QUALITY_RELATIVE;
+    final float relativeThreshold = Global.MIN_FORGETTABLE_PRIORITY;
 
     private boolean createIfMissing;
     private long now;

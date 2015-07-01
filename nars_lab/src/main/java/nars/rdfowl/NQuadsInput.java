@@ -4,7 +4,6 @@ import automenta.vivisect.Video;
 import nars.Global;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.io.out.TextOutput;
 import nars.model.impl.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
@@ -316,7 +315,7 @@ abstract public class NQuadsInput {
         d.setInternalExperience(null).level(7);
         d.inputsMaxPerCycle.set(256);
         d.setTermLinkBagSize(64);
-        Global.TRUTH_EPSILON = 0.02f;
+        Global.DEFAULT_TRUTH_EPSILON = 0.02f;
 
 
         NAR n = new NAR(d);

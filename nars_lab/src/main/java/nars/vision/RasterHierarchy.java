@@ -1,11 +1,19 @@
 package nars.vision;
 
+import boofcv.abst.feature.detect.interest.ConfigFastHessian;
+import boofcv.abst.feature.detect.interest.InterestPointDetector;
 import boofcv.alg.misc.ImageMiscOps;
 import boofcv.core.image.ConvertBufferedImage;
+import boofcv.factory.feature.detect.interest.FactoryInterestPoint;
+import boofcv.gui.feature.FancyInterestPointRender;
+import boofcv.gui.image.ShowImages;
 import boofcv.io.webcamcapture.UtilWebcamCapture;
+import boofcv.struct.BoofDefaults;
+import boofcv.struct.image.ImageSingleBand;
 import boofcv.struct.image.ImageUInt8;
 import boofcv.struct.image.MultiSpectral;
 import com.github.sarxos.webcam.Webcam;
+import georegression.struct.point.Point2D_F64;
 import georegression.struct.point.Point2D_I32;
 import nars.NAR;
 import nars.gui.NARSwing;
@@ -46,7 +54,7 @@ public class RasterHierarchy extends JPanel {
     Point2D_I32 focusPoint = new Point2D_I32();
 
     // Image for visualization
-    BufferedImage workImage;
+    //BufferedImage workImage;
 
     // Window for visualization
     JFrame window;
@@ -196,6 +204,9 @@ public class RasterHierarchy extends JPanel {
         final ImageUInt8 ib0 = multiInputImg.getBand(0);
         final ImageUInt8 ib1 = multiInputImg.getBand(1);
         final ImageUInt8 ib2 = multiInputImg.getBand(2);
+
+
+
 
         MultiSpectral<ImageUInt8> output = new MultiSpectral<>(ImageUInt8.class, width, height, 3);
 
@@ -350,7 +361,55 @@ public class RasterHierarchy extends JPanel {
         lastInputTime = ntime;
 
         ConvertBufferedImage.convertTo(output, rasterizedImage, true);
+
+        // Create a Fast Hessian detector from the SURF paper.
+        // Other detectors can be used in this example too.
+        InterestPointDetector detector = FactoryInterestPoint.fastHessian(
+                new ConfigFastHessian(4, 2, 8, 2, 9, 3, 8));
+
+        detector.detect(ib0); // find interest points in the image
+        displayResults(rasterizedImage, detector, Color.RED);
+        detector.detect(ib1); // find interest points in the image
+        displayResults(rasterizedImage, detector, Color.BLUE);
+        detector.detect(ib2); // find interest points in the image
+        displayResults(rasterizedImage, detector, Color.GREEN);
+//        for (int i = 0; i < detector.getNumberOfFeatures(); i++) {
+//            Point2D_F64 f = detector.getLocation(i);
+//        }
+
+
+
         return rasterizedImage;
+    }
+
+    private static <T extends ImageSingleBand> void displayResults(BufferedImage image,
+                                                                   InterestPointDetector<T> detector, Color c)
+    {
+        Graphics2D g2 = image.createGraphics();
+        FancyInterestPointRender render = new FancyInterestPointRender();
+
+        g2.setStroke(new BasicStroke(3));
+
+
+        g2.setColor(c);
+
+        for( int i = 0; i < detector.getNumberOfFeatures(); i++ ) {
+            Point2D_F64 pt = detector.getLocation(i);
+
+            // note how it checks the capabilities of the detector
+            if( detector.hasScale() ) {
+                double scale = detector.getScale(i);
+                int radius = (int)(scale* BoofDefaults.SCALE_SPACE_CANONICAL_RADIUS);
+                render.addCircle((int)pt.x,(int)pt.y,radius, c);
+            } else {
+                render.addPoint((int) pt.x, (int) pt.y, 1, c);
+            }
+        }
+        // make the circle's thicker
+
+
+        // just draw the features onto the input image
+        render.draw(g2);
     }
 
     protected void input(int x, int y, float pixelWidth, float pixelHeight, float grayness) {
@@ -392,7 +451,7 @@ public class RasterHierarchy extends JPanel {
 
         BufferedImage input;
 
-        workImage = new BufferedImage(actualSize.width, actualSize.height, BufferedImage.TYPE_INT_RGB);
+        //workImage = new BufferedImage(actualSize.width, actualSize.height, BufferedImage.TYPE_INT_RGB);
 
         //int counter = 0;
 
@@ -418,13 +477,13 @@ public class RasterHierarchy extends JPanel {
                 */
             input = webcam.getImage();
 
-            synchronized (workImage) {
+            //synchronized (workImage) {
                 // copy the latest image into the work buffer
                 //Graphics2D g2 = workImage.createGraphics();
 
                 buffered = this.rasterizeImage(input);
 
-            }
+            //}
 
             repaint();
         }

@@ -266,7 +266,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
 
     public TaskSeed<T> truth(float freq, float conf) {
         if (this.truth == null)
-            this.truth = new DefaultTruth(freq, conf, Global.TRUTH_EPSILON);
+            this.truth = new DefaultTruth(freq, conf, Global.DEFAULT_TRUTH_EPSILON);
         else {
             this.truth.set(freq, conf);
         }

@@ -60,7 +60,7 @@ public class UniformVector  {
     }
 
     public boolean different(final double a, final double b) {
-        return Math.abs(a - b) >= Global.TRUTH_EPSILON;
+        return Math.abs(a - b) >= Global.DEFAULT_TRUTH_EPSILON;
     }
     
     public UniformVector setPriority(float p) {

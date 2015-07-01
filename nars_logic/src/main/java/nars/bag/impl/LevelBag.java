@@ -113,7 +113,7 @@ public class LevelBag<E extends Item<K>, K> extends Bag<K, E> {
 
 
     public LevelBag(int levels, int capacity) {
-        this(levels, capacity, (int) (Global.BAG_THRESHOLD * levels));
+        this(levels, capacity, 0);
     }
 
     /**

@@ -400,8 +400,8 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
 
     protected void initDerivationFilters() {
-        final float DERIVATION_PRIORITY_LEAK=0.4f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
-        final float DERIVATION_DURABILITY_LEAK=0.45f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_PRIORITY_LEAK=0.9f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
+        final float DERIVATION_DURABILITY_LEAK=0.9f; //https://groups.google.com/forum/#!topic/open-nars/y0XDrs2dTVs
         getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
     }
 
