@@ -73,12 +73,10 @@ public class Global {
     public static final int METRICS_HISTORY_LENGTH = 256;
 
     /* ---------- logical parameters ---------- */
-    /** Evidential Horizon, the amount of future evidence to be considered. 
+    /** Evidential Horizon, the amount of future evidence to be considered (during revision).
      * Must be >=1.0, usually 1 .. 2
      */
     public static float HORIZON = 1;
-
-
 
 
 
@@ -118,9 +116,9 @@ public class Global {
  
     
     /* ---------- space management ---------- */
-    
-    /** (see its use in budgetfunctions iterative forgetting) */
-    public static float MIN_FORGETTABLE_PRIORITY = 0f;
+    /** lowest priority which can be considered for forgetting
+     * if 0, then any budget value is subject to forgetting  */
+    public static float MIN_FORGETTABLE_PRIORITY = BUDGET_EPSILON;
 
     
     

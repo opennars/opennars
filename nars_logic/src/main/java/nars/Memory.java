@@ -1007,12 +1007,9 @@ public class Memory implements Serializable, AbstractStamper {
         c.delete();
     }
 
-    @Deprecated public static enum Forgetting {
-        @Deprecated Iterative,
-        Periodic
-    }
 
-    public enum Timing {
+    //TODO replace with abtract Clock interface
+    @Deprecated public enum Timing {
 
         /**
          * internal, subjective time (1 cycle = 1 time step)

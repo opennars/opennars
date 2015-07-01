@@ -1,7 +1,6 @@
 package nars.model.impl;
 
 import nars.*;
-import nars.Memory.Forgetting;
 import nars.Memory.Timing;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
@@ -168,12 +167,10 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         this.executionThreshold.set(0.01);
 
-
-        setForgetting(Forgetting.Periodic);
         setTiming(Timing.Cycle);
         outputVolume.set(100);
 
-        reliance.set(0.9f);
+        reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
 
         executionThreshold.set(0.60);
 
@@ -405,14 +402,13 @@ public class Default extends NARSeed implements ConceptBuilder {
         getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
     }
 
-    //public final DDNodePool<Sentence> sentenceNodes = new DDNodePool(1024);
-    //public final DDNodePool<TermLinkKey> termlinkKeyNodes = new DDNodePool(1024);
-
     @Override
     public Concept newConcept(final Term t, final Budget b, final Memory m) {
 
         Bag<Sentence, TaskLink> taskLinks = new CurveBag(rng, /*sentenceNodes,*/ getConceptTaskLinks(), true);
-        Bag<TermLinkKey, TermLink> termLinks = new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
+        Bag<TermLinkKey, TermLink> termLinks =
+                new CurveBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks(), true);
+                //new ChainBag(rng, /*termlinkKeyNodes,*/ getConceptTermLinks());
 
         return newConcept(t, b, taskLinks, termLinks, m);
     }
@@ -491,12 +487,10 @@ public class Default extends NARSeed implements ConceptBuilder {
     
     public Default realTime() {
         setTiming(Timing.RealMS);
-        setForgetting(Forgetting.Periodic);
         return this;
     }
     public Default simulationTime() {
         setTiming(Timing.Simulation);
-        setForgetting(Forgetting.Periodic);
         return this;
     }
 

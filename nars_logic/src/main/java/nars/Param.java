@@ -12,6 +12,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Param implements Serializable {
 
+    //TODO only SequentialCycle implementations should be using these and should be moved to that:
+
+    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
+    @Deprecated public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger();
+
+    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
+    @Deprecated public final AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
+
+    //-------------------
+
 
     private TaskComparator.Merging merging = TaskComparator.Merging.Or;
 
@@ -39,10 +49,6 @@ public class Param implements Serializable {
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
 
     Memory.Timing timing;
-    Memory.Forgetting forgetting;
-
-
-
     
 
     /** converts durations to cycles */
@@ -69,12 +75,7 @@ public class Param implements Serializable {
      * */
     public AtomicDouble conceptCreationExpectation = new AtomicDouble();
 
-    /**
-     * Minimum required priority for a concept
-     * to be fired if it is activated, otherwise
-     * it just accumulates the priority in its budget.
-     */
-    public AtomicDouble conceptFireThreshold = new AtomicDouble(0.0);
+
 
 
 
@@ -106,6 +107,13 @@ public class Param implements Serializable {
     /** budget summary necessary to Conceptualize */
     public final AtomicDouble newConceptThreshold = new AtomicDouble(0);
 
+    /**
+     * Minimum required priority for a concept
+     * to be allowed to process if it has been sampled from the bag,
+     * (TODO otherwise it accumulates the priority in its budget?)
+     */
+    public AtomicDouble conceptFireThreshold = new AtomicDouble(0.0);
+
     /** budget summary necessary for Concept to be set ACTIVE.
      *  if it is not enough, the concept will be immediately forgotten
      *  into subconcepts. */
@@ -129,12 +137,11 @@ public class Param implements Serializable {
     public final AtomicDouble executionThreshold = new AtomicDouble();
 
 
-    /** How many concepts to fire each cycle; measures degree of parallelism in each cycle */
-    public final AtomicInteger conceptsFiredPerCycle = new AtomicInteger(); //TODO Core implementations should obey this value
-    
+
+
     /** Maximum TermLinks checked for novelty for each TaskLink in TermLinkBag */
     public final AtomicInteger termLinkMaxMatched = new AtomicInteger();
-            
+
 
 
     /** Maximum TermLinks used in reasoning for each Task in Concept */
@@ -163,32 +170,24 @@ public class Param implements Serializable {
     public AtomicDouble noveltyHorizon = new AtomicDouble();
 
     /** probability that a completely non-novel termlink/tasklink pair (older than novelty horizon) will be selected */
-    public static float NOVELTY_FLOOR = 0.25f;
+    public static float NOVELTY_FLOOR = 0.1f;
 
 
     /** Reliance factor, the empirical confidence of analytical truth.
-        the same as default confidence  */        
+        (generally, the same as default judgment confidence)  */
     public final AtomicDouble reliance = new AtomicDouble();
 
-    /** max # of inputs to perceive per cycle; -1 means unlimited (attempts to drains input to empty each cycle) */
-    public AtomicInteger inputsMaxPerCycle = new AtomicInteger(1);
+
     
     /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
-    public void setTiming(Memory.Timing time) {
+    @Deprecated public void setTiming(Memory.Timing time) {
         this.timing = time;
     }
 
-    public Memory.Timing getTiming() {
+    @Deprecated public Memory.Timing getTiming() {
         return timing;
     }
 
-    public Memory.Forgetting getForgetMode() {
-        return forgetting;
-    }
-
-    public void setForgetting(Memory.Forgetting forgetMode) {
-        this.forgetting = forgetMode;
-    }
 
 
 
