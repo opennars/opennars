@@ -36,22 +36,25 @@ public class SomeRovers {
 
             NAR nar;
             nar = new NAR(new Default().simulationTime().
-                    setActiveConcepts(1600).
-                    setNovelTaskBagSize(48).setTermLinkBagSize(24));
+                    setActiveConcepts(600) );
             nar.param.inputsMaxPerCycle.set(100);
-            nar.param.conceptsFiredPerCycle.set(128);
-            nar.setCyclesPerFrame(3);
+            nar.param.conceptsFiredPerCycle.set(256);
+
+            nar.setCyclesPerFrame(8);
+            (nar.param).duration.set(5*8);
+
             nar.param.shortTermMemoryHistory.set(3);
-            nar.param.temporalRelationsMax.set(3);
 
             (nar.param).outputVolume.set(3);
-            (nar.param).duration.set(7);
             //nar.param.budgetThreshold.set(0.02);
             //nar.param.confidenceThreshold.set(0.02);
+
+            /*
             (nar.param).conceptForgetDurations.set(15f);
             (nar.param).taskLinkForgetDurations.set(10f);
             (nar.param).termLinkForgetDurations.set(10f);
             (nar.param).novelTaskForgetDurations.set(10f);
+            */
 
 
 

@@ -1073,9 +1073,24 @@ public class DefaultConcept extends Item<Term> implements Concept {
      * @return The rank of the judgment, according to truth value only
      */
     public float rankBelief(final Sentence s, final long now) {
-        return rankBeliefOriginal(s);
+        return rankBeliefConfidenceTime(s, now);
     }
 
+    public static float rankBeliefConfidenceTime(final Sentence judg, long now) {
+        float c = judg.getTruth().getConfidence();
+        if (!judg.isEternal()) {
+            float dur = judg.getDuration();
+            float durationsToNow = Math.abs(judg.getOccurrenceTime() - now) / dur;
+
+            float ageFactor = 1.0f / (1.0f + durationsToNow * Global.rankDecayPerTimeDuration);
+            c *= ageFactor;
+        }
+        return c;
+    }
+
+    public static float rankBeliefConfidence(final Sentence judg) {
+        return judg.getTruth().getConfidence();
+    }
 
     public static float rankBeliefOriginal(final Sentence judg) {
         final float confidence = judg.truth.getConfidence();

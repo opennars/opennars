@@ -67,6 +67,7 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
         /** budget triple - to be valid, at least the first 2 of these must be non-NaN (unless it is a question)  */
         this(memory);
 
+        this.duration = memory.duration();
         this.term = t;
     }
 
@@ -99,10 +100,15 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
      */
     public int getDuration() {
         if (this.duration == 0) {
-            if (getParentBelief() !=null)
-                return (this.duration = getParentBelief().getDuration());
-            else if (getParentTask() !=null)
-                return (this.duration = getParentTask().sentence.getDuration());
+            int d;
+            if (getParentBelief() !=null) {
+                d = (this.duration = getParentBelief().getDuration());
+                if (d!=0) return d;
+            }
+            if (getParentTask() !=null) {
+                d = (this.duration = getParentTask().sentence.getDuration());
+                if (d!=0) return d;
+            }
             else {
                 return memory.duration();
             }
@@ -417,7 +423,6 @@ public class TaskSeed<T extends Compound> extends DirectBudget implements Abstra
             if (getParentTask() == null && getParentBelief()==null)
                 throw new RuntimeException(this + " has no parent task or belief so where did the evidentialBase originate?: " + Arrays.toString(getEvidentialSet()));
         }
-
 
 
         Task t = new Task(sentenceTerm, punc,

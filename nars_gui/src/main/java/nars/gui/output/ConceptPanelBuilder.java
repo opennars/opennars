@@ -51,7 +51,7 @@ public class ConceptPanelBuilder extends NARReaction {
     private Map<Concept, ConceptPanel> concept = new FastMap().atomic();
     static float conceptGraphFPS = 4; //default update frames per second
 
-    final Set<Concept> changed = new ConcurrentHashSet<>();
+    Set<Concept> changed = null;
 
     public ConceptPanelBuilder(NAR n) {
         super(n, Events.FrameEnd.class,
@@ -102,7 +102,7 @@ public class ConceptPanelBuilder extends NARReaction {
     }
 
     @Override
-    public void event(Class event, Object[] args) {
+    public synchronized void event(Class event, Object[] args) {
 
 
         if (event == FrameEnd.class) {
@@ -112,6 +112,9 @@ public class ConceptPanelBuilder extends NARReaction {
             else
                 updateChanged();
         } else {
+            if (changed==null) {
+                changed = new ConcurrentHashSet<>();
+            }
             if (args[0] instanceof Concept) {
                 Concept c = (Concept) args[0];
                 changed.add(c);
@@ -128,7 +131,7 @@ public class ConceptPanelBuilder extends NARReaction {
 
     public synchronized void updateChanged() {
 
-        if (changed.isEmpty()) return;
+        if (changed == null || changed.isEmpty()) return;
 
         final long now = nar.time();
 

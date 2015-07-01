@@ -62,16 +62,16 @@ public class RoverModel {
     private final World world;
     private DebugDraw draw = null;
 
-    final double minVisionInputProbability = 0.4f;
-    final double maxVisionInputProbability = 0.5f;
+    final double minVisionInputProbability = 0.1f;
+    final double maxVisionInputProbability = 1.0f;
     float biteDistanceThreshold = 0.05f;
     float tasteDistanceThreshold = 1.0f;
-    int pixels = 32;
-    int retinaResolution = 1; //should be odd # to balance
+    int pixels = 1;
+    int retinaResolution = 24; //should be odd # to balance
     float aStep = (float)Math.PI*2f / pixels;
     float L = 35.0f;
     Vec2 frontRetina = new Vec2(0, 0.5f);
-    int distanceResolution = 6;
+    int distanceResolution = 5;
     int mouthArc = 2;
     float mass = 2.25f;
     Vec2[] vertices = {new Vec2(0.0f, 2.0f), new Vec2(+2.0f, -2.0f), new Vec2(-2.0f, -2.0f)};
@@ -432,7 +432,8 @@ public class RoverModel {
                 conceptPriority = angleConcept.getPriority();
                 conceptDurability = angleConcept.getDurability();
                 conceptQuality = angleConcept.getQuality();
-                sight.setProbability(Math.max(minVisionInputProbability, Math.min(1.0f, maxVisionInputProbability * conceptPriority)));
+                //sight.setProbability(Math.max(minVisionInputProbability, Math.min(1.0f, maxVisionInputProbability * conceptPriority)));
+                sight.setProbability(minVisionInputProbability);
             }
 
             if (angleConcept == null) {
@@ -528,6 +529,7 @@ public class RoverModel {
                     conf = 0.99f;
                 }
                 
+                //perceiveDist(hit, conf, meanDist);
                 perceiveDist(hit, conf, meanDist);
             } else {
                 perceiveDist(hit, 0.5f, 1.0f);

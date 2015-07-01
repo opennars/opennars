@@ -53,55 +53,17 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 
 
 
-//
-//    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
-//        super();
-//        this.creationTime = creationTime;
-//        this.occurrenceTime = occurenceTime;
-//        this.duration = duration;
-//        this.evidentialBase = evidentialBase;
-//    }
-//
-//    protected Stamp(final long serial, final long creationTime, final long occurenceTime, final int duration) {
-//        this(new long[]{serial}, creationTime, occurenceTime, duration);
-//    }
-//
-//
-//
-//    public Stamp(final Stamp parent, final Memory memory, final Tense tense) {
-//        this(parent, memory.time(), getOccurrenceTime(memory.time(), tense, memory.duration()));
-//    }
-//
-//
-//    public Stamp(Operation operation, Memory memory, Tense tense) {
-//        this(operation.getTask().sentence.getStamp(), memory, tense);
-//    }
+    public long getCreationTime();
 
-//    /**
-//     * Generate a new stamp identical with a given one
-//     *
-//     * @param parent The stamp to be cloned
-//     */
-//    protected Stamp(final Stamp parent) {
-//        this(parent, parent.creationTime, parent.occurrenceTime);
-//    }
+    public int getDuration();
 
-//    public Stamp(final Stamp parent, final long creationTime, final long occurenceTime) {
-//        this(parent.evidentialBase, creationTime, occurenceTime, parent.duration);
-//    }
-//
+    public long getOccurrenceTime();
 
 
+    public Stamp cloneWithNewCreationTime(long newCreationTime);
 
-    abstract public long getCreationTime();
+    public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime);
 
-    abstract public int getDuration();
-
-    abstract public long getOccurrenceTime();
-
-
-    abstract public Stamp cloneWithNewCreationTime(long newCreationTime);
-    abstract public Stamp cloneWithNewOccurrenceTime(final long newOcurrenceTime);
     default public Stamp cloneEternal() {
         return cloneWithNewOccurrenceTime(ETERNAL);
     }
@@ -128,63 +90,6 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
         return c;
     }
 
-//    /**
-//     * Generate a new stamp for derived sentence by merging the two from parents
-//     * the first one is no shorter than the second
-//     *
-//     * @param first  The first Stamp
-//     * @param second The second Stamp
-//     */
-//    @Deprecated public static Stamp zip(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
-//
-////        if (first==second) {
-////            throw new RuntimeException("Same stamp: " + first);
-////        }
-//
-////        if (first.equals(second, true, true, true, true)) {
-////            throw new RuntimeException("Equal stamp: " + first);
-////        }
-//        //this may not be a problem, but let's deal with that when we use different durations in the same system(s):
-//        if (second.duration != first.duration)
-//            throw new RuntimeException("Stamp can not be created from parents with different durations: " + first + ", " + second);
-//
-//
-//
-//        return new Stamp(zip(first.evidentialBase, second.evidentialBase), creationTime, occurenceTime, first.duration);
-//
-//
-//    }
-//
-////
-//
-//    /**
-//     * create an original stamp at current memory time, with a tense offset
-//     */
-
-//
-//    /**
-//     * create an original stamp at current memory time, with a specific occurence time
-//     */
-//    public Stamp(final Memory memory, long occurenceTime) {
-//        this(memory, memory.time(), occurenceTime);
-//    }
-//
-//    /**
-//     * create an original stamp at current memory time, with a specific creation and occurence time
-//     */
-//    public Stamp(final Memory memory, long creationTime, long occurenceTime) {
-//        this(memory.newStampSerial(), creationTime, occurenceTime, memory.duration());
-//    }
-//
-//    /**
-//     * create an original stamp at current memory time, with a specific creation and tense offset
-//     */
-//    public Stamp(final Memory memory, long creationTime, final Tense tense) {
-//        this(memory, creationTime, getOccurrenceTime(creationTime, tense, memory.duration()));
-//    }
-//    public Stamp(final long[] evidence, Memory memory, long creationTime, final Tense tense) {
-//        this(evidence, creationTime,  getOccurrenceTime(creationTime, tense, memory.duration()), memory.duration());
-//    }
 
     public static long getOccurrenceTime(long creationTime, final Tense tense, Memory m) {
         return getOccurrenceTime(creationTime, tense, m.duration());
@@ -241,32 +146,39 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
         if (l < 2)
             return x;
 
-        long[] set = Arrays.copyOf(x, l);
 
-        //1. copy evidentialBse
-        //2. sorted
-        //3. count duplicates
-        //4. create new array
+        //1. copy evidentialBase and sort it
+        long[] sorted = Arrays.copyOf(x, l);
+        Arrays.sort(sorted);
 
-        Arrays.sort(set);
+        //2. count unique elements
         long lastValue = -1;
-        int j = 0; //# of unique items
-        for (int i = 0; i < set.length; i++) {
-            long v = set[i];
+        int uniques = 0; //# of unique items
+        final int sLen = sorted.length;
+
+        for (int i = 0; i < sLen; i++) {
+            long v = sorted[i];
             if (lastValue != v)
-                j++;
+                uniques++;
             lastValue = v;
         }
+
+        if (uniques == sLen) {
+            //if no duplicates, just return it
+            return sorted;
+        }
+
+        //3. de-duplicate
         lastValue = -1;
-        long[] sorted = new long[j];
-        j = 0;
-        for (int i = 0; i < set.length; i++) {
-            long v = set[i];
+        long[] deduplicated = new long[uniques];
+        uniques = 0;
+        for (int i = 0; i < sLen; i++) {
+            long v = sorted[i];
             if (lastValue != v)
-                sorted[j++] = v;
+                deduplicated[uniques++] = v;
             lastValue = v;
         }
-        return sorted;
+        return deduplicated;
     }
 
     default public boolean before(Stamp s, int duration) {
@@ -759,3 +671,101 @@ public interface Stamp extends StampEvidence, Cloneable, Serializable {
 //    }
 //}
 
+
+
+
+//
+//    public Stamp(final long[] evidentialBase, final long creationTime, final long occurenceTime, final int duration) {
+//        super();
+//        this.creationTime = creationTime;
+//        this.occurrenceTime = occurenceTime;
+//        this.duration = duration;
+//        this.evidentialBase = evidentialBase;
+//    }
+//
+//    protected Stamp(final long serial, final long creationTime, final long occurenceTime, final int duration) {
+//        this(new long[]{serial}, creationTime, occurenceTime, duration);
+//    }
+//
+//
+//
+//    public Stamp(final Stamp parent, final Memory memory, final Tense tense) {
+//        this(parent, memory.time(), getOccurrenceTime(memory.time(), tense, memory.duration()));
+//    }
+//
+//
+//    public Stamp(Operation operation, Memory memory, Tense tense) {
+//        this(operation.getTask().sentence.getStamp(), memory, tense);
+//    }
+
+//    /**
+//     * Generate a new stamp identical with a given one
+//     *
+//     * @param parent The stamp to be cloned
+//     */
+//    protected Stamp(final Stamp parent) {
+//        this(parent, parent.creationTime, parent.occurrenceTime);
+//    }
+
+//    public Stamp(final Stamp parent, final long creationTime, final long occurenceTime) {
+//        this(parent.evidentialBase, creationTime, occurenceTime, parent.duration);
+//    }
+//
+
+//    /**
+//     * Generate a new stamp for derived sentence by merging the two from parents
+//     * the first one is no shorter than the second
+//     *
+//     * @param first  The first Stamp
+//     * @param second The second Stamp
+//     */
+//    @Deprecated public static Stamp zip(final Stamp first, final Stamp second, final long creationTime, final long occurenceTime) {
+//
+////        if (first==second) {
+////            throw new RuntimeException("Same stamp: " + first);
+////        }
+//
+////        if (first.equals(second, true, true, true, true)) {
+////            throw new RuntimeException("Equal stamp: " + first);
+////        }
+//        //this may not be a problem, but let's deal with that when we use different durations in the same system(s):
+//        if (second.duration != first.duration)
+//            throw new RuntimeException("Stamp can not be created from parents with different durations: " + first + ", " + second);
+//
+//
+//
+//        return new Stamp(zip(first.evidentialBase, second.evidentialBase), creationTime, occurenceTime, first.duration);
+//
+//
+//    }
+//
+////
+//
+//    /**
+//     * create an original stamp at current memory time, with a tense offset
+//     */
+
+//
+//    /**
+//     * create an original stamp at current memory time, with a specific occurence time
+//     */
+//    public Stamp(final Memory memory, long occurenceTime) {
+//        this(memory, memory.time(), occurenceTime);
+//    }
+//
+//    /**
+//     * create an original stamp at current memory time, with a specific creation and occurence time
+//     */
+//    public Stamp(final Memory memory, long creationTime, long occurenceTime) {
+//        this(memory.newStampSerial(), creationTime, occurenceTime, memory.duration());
+//    }
+//
+//    /**
+//     * create an original stamp at current memory time, with a specific creation and tense offset
+//     */
+//    public Stamp(final Memory memory, long creationTime, final Tense tense) {
+//        this(memory, creationTime, getOccurrenceTime(creationTime, tense, memory.duration()));
+//    }
+//    public Stamp(final long[] evidence, Memory memory, long creationTime, final Tense tense) {
+//        this(evidence, creationTime,  getOccurrenceTime(creationTime, tense, memory.duration()), memory.duration());
+//    }

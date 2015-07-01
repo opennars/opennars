@@ -212,6 +212,10 @@ public class Global {
     public static short COMPOUND_MASS_LIMIT = 1024;
 
 
+    //TEMPORARY
+    public static float rankDecayPerTimeDuration = 0.1f;
+
+
     public static float TEMPORAL_INDUCTION_CHAIN_SAMPLE_DEPTH(float taskPriority) {
         return 0.02f + taskPriority * 0.02f; //search up to 4% of concepts
     }

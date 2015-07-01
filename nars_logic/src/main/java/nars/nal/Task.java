@@ -593,6 +593,9 @@ public class Task<T extends Compound> extends Sentence<T> implements Termed, Bud
             setTime(now, oc);
         }
 
+        if (getDuration() == 0)
+            setDuration(memory.duration());
+
         return true;
     }
 

@@ -48,7 +48,7 @@ public class Param implements Serializable {
 
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
 
-    Memory.Timing timing;
+    @Deprecated Memory.Timing timing;
     
 
     /** converts durations to cycles */
