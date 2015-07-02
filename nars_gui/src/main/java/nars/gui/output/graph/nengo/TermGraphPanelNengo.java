@@ -8,7 +8,7 @@ import ca.nengo.ui.model.node.UINetwork;
 import ca.nengo.ui.model.viewer.NodeViewer;
 import nars.NAR;
 import nars.gui.WrapLayout;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import javax.swing.*;

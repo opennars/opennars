@@ -20,10 +20,9 @@
  */
 package nars.nal.nal2;
 
-import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
+import nars.term.Statement;
+import nars.term.Term;
 
 /**
  * A Statement about a Similarity relation.

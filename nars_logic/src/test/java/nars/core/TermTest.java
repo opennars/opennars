@@ -18,18 +18,18 @@ package nars.core;
 
 import nars.Global;
 import nars.NAR;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.nal.NALOperator;
-import nars.nal.Task;
-import nars.nal.Terms;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.term.Terms;
+import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Statement;
+import nars.term.Term;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;
 

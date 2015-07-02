@@ -1,10 +1,5 @@
 package nars.rover;
 
-import automenta.vivisect.Video;
-import nars.Global;
-import nars.NAR;
-import nars.gui.NARSwing;
-import nars.model.impl.Default;
 import nars.rover.physics.TestbedPanel;
 import nars.rover.physics.TestbedSettings;
 import nars.rover.physics.gl.JoglDraw;

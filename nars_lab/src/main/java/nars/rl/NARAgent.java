@@ -5,7 +5,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.Operator;
-import nars.nal.term.Term;
+import nars.term.Term;
 import nars.util.event.EventEmitter;
 
 /**

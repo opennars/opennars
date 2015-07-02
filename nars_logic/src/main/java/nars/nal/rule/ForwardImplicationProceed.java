@@ -3,16 +3,17 @@ package nars.nal.rule;
 
 import nars.Symbols;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
-import nars.nal.term.Term;
-import nars.nal.truth.Truth;
-import nars.nal.truth.TruthFunctions;
+import nars.term.Term;
+import nars.term.Terms;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 import java.util.HashSet;
 import java.util.Set;

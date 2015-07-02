@@ -7,17 +7,17 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.event.NARReaction;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.nal.process.TaskProcess;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static nars.nal.term.Compound.termArray;
+import static nars.term.Compound.termArray;
 
 /**
  * 1-step abbreviation, which calls ^abbreviate directly and not through an added Task.

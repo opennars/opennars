@@ -22,12 +22,15 @@ package nars.budget;
 
 import nars.Memory;
 import nars.nal.*;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
-import nars.nal.term.Term;
-import nars.nal.truth.Truth;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.term.Term;
+import nars.truth.Truth;
 
 import static java.lang.Math.max;
 import static java.lang.Math.pow;

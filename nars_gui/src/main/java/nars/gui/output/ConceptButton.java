@@ -5,8 +5,8 @@
 package nars.gui.output;
 
 import nars.NAR;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.term.Term;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

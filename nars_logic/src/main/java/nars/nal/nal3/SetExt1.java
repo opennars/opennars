@@ -1,7 +1,7 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.Writer;

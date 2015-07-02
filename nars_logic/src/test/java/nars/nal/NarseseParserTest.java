@@ -5,7 +5,9 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.model.impl.Default;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.nar.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.Intersect;
 import nars.nal.nal3.IntersectionInt;
@@ -14,14 +16,14 @@ import nars.nal.nal7.Interval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.Stamp;
-import nars.nal.term.*;
-import nars.nal.truth.DefaultTruth;
-import nars.nal.truth.Truth;
+import nars.task.stamp.Stamp;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.PauseInput;
+import nars.term.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import static java.lang.Float.parseFloat;
 import static java.lang.String.valueOf;
 import static nars.Symbols.*;
 import static nars.budget.BudgetFunctions.truthToQuality;
-import static nars.nal.term.Statement.make;
+import static nars.term.Statement.make;
 import static org.junit.Assert.*;
 
 

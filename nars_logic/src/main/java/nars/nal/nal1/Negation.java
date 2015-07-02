@@ -21,11 +21,9 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
-import nars.nal.term.Compound1;
-import nars.nal.term.Term;
-import nars.util.data.id.UTF8Identifier;
-import nars.util.data.id.DynamicUTF8Identifier;
+import nars.term.Compound;
+import nars.term.Compound1;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.Writer;

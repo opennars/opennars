@@ -6,25 +6,28 @@ import nars.Global;
 import nars.budget.Budget;
 import nars.Symbols;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.truth.Truth;
-import nars.nal.truth.TruthFunctions;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Variables;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
 * Created by me on 2/7/15.
@@ -132,7 +135,7 @@ public class TemporalInductionChain extends ConceptFireTaskTerm {
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
 
-        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1, res2,nal.memory.random)) {
+        if(Variables.findSubstitute(Symbols.VAR_INDEPENDENT, B1, realB2, res1, res2, nal.memory.random)) {
             //ok it unifies, so lets create a &/ term
             for(int i=0;i<term.length;i++) {
                 final Term ti = term[i];

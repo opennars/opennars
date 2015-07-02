@@ -4,7 +4,7 @@ import nars.Global;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.nal.NALTest;
-import nars.model.impl.Default;
+import nars.nar.Default;
 
 import java.util.Collection;
 

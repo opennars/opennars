@@ -2,10 +2,10 @@ package nars.nal.nal2;
 
 
 import nars.NARSeed;
-import nars.model.impl.Classic;
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
-import nars.model.impl.DefaultMicro;
+import nars.nar.Classic;
+import nars.nar.Curve;
+import nars.nar.Default;
+import nars.nar.DefaultMicro;
 import nars.nal.JavaNALTest;
 import nars.narsese.InvalidInputException;
 import org.junit.Test;

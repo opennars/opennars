@@ -8,7 +8,7 @@ package nars.op.app.farg;
 import nars.Events.CycleEnd;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 
 /**
  *

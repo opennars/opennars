@@ -5,8 +5,8 @@ import nars.Global;
 import nars.NAR;
 import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
-import nars.model.impl.Default;
-import nars.nal.task.filter.ConstantDerivationLeak;
+import nars.nar.Default;
+import nars.task.filter.ConstantDerivationLeak;
 import nars.rover.RoverEngine;
 import nars.rover.robot.RoverModel;
 

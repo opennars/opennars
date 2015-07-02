@@ -3,7 +3,7 @@ package nars.nal.multistep;
 import nars.Global;
 import nars.NAR;
 import nars.io.in.LibraryInput;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

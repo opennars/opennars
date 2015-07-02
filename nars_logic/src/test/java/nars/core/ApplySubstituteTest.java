@@ -2,10 +2,10 @@ package nars.core;
 
 import nars.Global;
 import nars.NAR;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.narsese.InvalidInputException;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Compound;
+import nars.term.Term;
 import org.junit.Test;
 
 import java.util.HashMap;

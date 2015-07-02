@@ -5,29 +5,32 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.process.ConceptProcess;
-import nars.nal.task.TaskSeed;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
-import nars.nal.truth.Truth;
-import nars.nal.truth.TruthFunctions;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.term.Variables;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Predicate;
 
-import static nars.nal.Terms.reduceUntilLayer2;
-import static nars.nal.Terms.unwrapNegation;
-import static nars.nal.truth.TruthFunctions.*;
+import static nars.term.Terms.reduceUntilLayer2;
+import static nars.term.Terms.unwrapNegation;
+import static nars.truth.TruthFunctions.*;
 
 /**
  * Because of the re-use of temporary collections, each thread must have its own

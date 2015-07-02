@@ -1,6 +1,6 @@
 package nars.util;
 
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.NAR;
 import nars.meter.NARTrace;
 import org.junit.Test;

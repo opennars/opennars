@@ -7,10 +7,10 @@ import nars.analyze.meter.CountOutputEvents;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.io.out.TextOutput;
-import nars.model.cycle.DefaultCycle;
-import nars.model.impl.Default;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.cycle.DefaultCycle;
+import nars.nar.Default;
+import nars.concept.Concept;
+import nars.term.Term;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

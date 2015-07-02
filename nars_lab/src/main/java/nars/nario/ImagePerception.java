@@ -2,8 +2,8 @@ package nars.nario;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
-import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.task.Task;
+import nars.term.Term;
 import nars.rl.Perception;
 import nars.rl.QLAgent;
 

@@ -4,7 +4,7 @@ package nars.event;
 import nars.Events;
 import nars.Memory;
 import nars.NAR;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 
 import java.util.function.Consumer;
 

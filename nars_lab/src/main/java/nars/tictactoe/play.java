@@ -21,11 +21,11 @@ import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.model.impl.Default;
-import nars.nal.Task;
+import nars.nar.Default;
+import nars.task.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 import javax.swing.*;
 import java.util.List;

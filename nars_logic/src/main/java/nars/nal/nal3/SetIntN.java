@@ -21,14 +21,11 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.Writer;
-
-import static nars.nal.NALOperator.SET_INT_CLOSER;
-import static nars.nal.NALOperator.SET_INT_OPENER;
 
 /**
  * An intensionally defined set, which contains one or more instances defining the Term.

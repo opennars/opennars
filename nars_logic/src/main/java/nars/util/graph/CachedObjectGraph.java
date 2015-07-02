@@ -1,11 +1,11 @@
 package nars.util.graph;
 
-import nars.nal.concept.Concept;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.term.Term;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.graph.AbstractGraph;

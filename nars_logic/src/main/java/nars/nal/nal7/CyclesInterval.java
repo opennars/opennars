@@ -3,8 +3,8 @@ package nars.nal.nal7;
 import com.google.common.primitives.Longs;
 import nars.Memory;
 import nars.nal.NALOperator;
-import nars.nal.term.ImmutableAtom;
-import nars.nal.term.Term;
+import nars.term.ImmutableAtom;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.Writer;

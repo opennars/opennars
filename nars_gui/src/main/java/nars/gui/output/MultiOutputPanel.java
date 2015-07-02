@@ -5,7 +5,7 @@ import automenta.vivisect.swing.dock.DockingContent;
 import automenta.vivisect.swing.dock.DockingRegionRoot;
 import nars.NAR;
 import nars.gui.NARControlPanel;
-import nars.nal.Task;
+import nars.task.Task;
 
 import javax.swing.*;
 import java.awt.*;

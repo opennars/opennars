@@ -27,14 +27,13 @@ import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.CuckooMap;
 import nars.util.data.ReversibleRecyclableArrayIterator;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;
 import nars.util.data.linkedlist.DDNodePool;
 import nars.util.math.Distributor;
-import nars.util.data.random.XORShiftRandom;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

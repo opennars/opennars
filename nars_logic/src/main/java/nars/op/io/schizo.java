@@ -3,15 +3,15 @@ package nars.op.io;
 
 import com.google.common.collect.Lists;
 import nars.Memory;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
+import nars.term.Atom;
+import nars.term.Term;
+import nars.term.Variable;
 
 import java.util.List;
 

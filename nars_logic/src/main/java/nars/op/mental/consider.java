@@ -20,13 +20,13 @@ package nars.op.mental;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.nal.process.ConceptProcess;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
-import nars.nal.tlink.TaskLink;
+import nars.term.Atom;
+import nars.term.Term;
+import nars.link.TaskLink;
 
 import java.util.ArrayList;
 

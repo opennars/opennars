@@ -2,13 +2,10 @@ package nars;
 
 import nars.bag.impl.CacheBag;
 import nars.clock.Clock;
-import nars.model.ControlCycle;
 import nars.nal.LogicPolicy;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomAdaptor;
 
 import java.util.Random;
 

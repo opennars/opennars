@@ -2,7 +2,7 @@ package nars.nal.nal7;
 
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import org.junit.Test;
 
 /**

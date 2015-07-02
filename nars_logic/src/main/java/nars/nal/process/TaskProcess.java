@@ -6,9 +6,8 @@ package nars.nal.process;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nal.NAL;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.concept.Concept;
 
 /**
  * "Direct" processing of a new task, in constant time Local processing,

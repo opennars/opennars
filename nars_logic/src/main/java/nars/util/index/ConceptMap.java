@@ -3,7 +3,7 @@ package nars.util.index;
 import nars.Events;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 
 /**
  * Created by me on 4/16/15.

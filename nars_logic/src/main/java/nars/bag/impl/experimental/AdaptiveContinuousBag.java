@@ -1,7 +1,7 @@
 package nars.bag.impl.experimental;
 
 import nars.bag.impl.CurveBag;
-import nars.nal.Item;
+import nars.budget.Item;
 
 import java.util.Random;
 

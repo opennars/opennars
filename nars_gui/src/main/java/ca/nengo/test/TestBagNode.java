@@ -16,9 +16,9 @@ import nars.NAR;
 import nars.bag.Bag;
 import nars.event.NARReaction;
 import nars.io.out.Output;
-import nars.model.cycle.DefaultCycle;
-import nars.model.impl.Default;
-import nars.nal.Item;
+import nars.cycle.DefaultCycle;
+import nars.nar.Default;
+import nars.budget.Item;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

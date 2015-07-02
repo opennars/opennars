@@ -9,6 +9,7 @@ import nars.analyze.meter.CountDerivationCondition;
 import nars.analyze.meter.CountOutputEvents;
 import nars.io.JSONOutput;
 import nars.io.in.LibraryInput;
+import nars.task.Task;
 import nars.testing.TestNAR;
 import nars.testing.condition.OutputCondition;
 import nars.util.meter.Metrics;

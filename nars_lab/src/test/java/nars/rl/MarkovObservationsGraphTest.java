@@ -1,8 +1,8 @@
 package nars.rl;
 
 import nars.NAR;
-import nars.model.impl.Default;
-import nars.nal.concept.Concept;
+import nars.nar.Default;
+import nars.concept.Concept;
 import nars.rl.example.MarkovObservationsGraph;
 import org.junit.Test;
 

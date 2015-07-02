@@ -1,8 +1,8 @@
 package nars.nal.nal4;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound1;
-import nars.nal.term.Term;
+import nars.term.Compound1;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.Writer;

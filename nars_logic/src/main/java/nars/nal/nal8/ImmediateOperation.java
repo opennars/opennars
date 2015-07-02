@@ -3,8 +3,8 @@ package nars.nal.nal8;
 
 import nars.Memory;
 import nars.Symbols;
-import nars.nal.term.Compound;
-import nars.nal.Task;
+import nars.term.Compound;
+import nars.task.Task;
 
 /** an operation that executes immediately, and without logical consequences;
  *  used for system control functions  */

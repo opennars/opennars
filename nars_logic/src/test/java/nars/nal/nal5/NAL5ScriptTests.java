@@ -1,8 +1,8 @@
 package nars.nal.nal5;
 
 
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
+import nars.nar.Curve;
+import nars.nar.Default;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;

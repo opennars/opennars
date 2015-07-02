@@ -3,21 +3,21 @@ package nars.nal.rule;
 import nars.Global;
 import nars.Memory;
 import nars.nal.NALOperator;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.process.ConceptProcess;
-import nars.nal.term.Term;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.term.Term;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
 * Patrick's new version which 'restores the special reasoning context'

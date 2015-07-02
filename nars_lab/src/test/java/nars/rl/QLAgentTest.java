@@ -4,8 +4,8 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import jurls.reinforcementlearning.domains.follow.Follow1D;
 import nars.Global;
 import nars.NAR;
-import nars.model.impl.Default;
-import nars.nal.concept.Concept;
+import nars.nar.Default;
+import nars.concept.Concept;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

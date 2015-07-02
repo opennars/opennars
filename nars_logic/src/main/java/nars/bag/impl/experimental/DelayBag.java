@@ -6,7 +6,7 @@ import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.BudgetFunctions;
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 import nars.util.sort.ArraySortedIndex;
 
 import java.util.*;

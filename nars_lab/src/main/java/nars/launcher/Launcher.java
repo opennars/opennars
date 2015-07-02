@@ -20,7 +20,7 @@ package nars.launcher;
 import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.nario.NARio;
 import nars.rover.run.SomeRovers;
 import nars.web.NARServer;

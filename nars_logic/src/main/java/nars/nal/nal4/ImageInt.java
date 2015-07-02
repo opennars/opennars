@@ -21,7 +21,7 @@
 package nars.nal.nal4;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 
 /**

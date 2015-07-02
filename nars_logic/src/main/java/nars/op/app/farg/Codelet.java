@@ -7,9 +7,9 @@ package nars.op.app.farg;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.nal.Item;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.budget.Item;
+import nars.term.Atom;
+import nars.term.Term;
 
 /**
  *

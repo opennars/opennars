@@ -24,7 +24,7 @@ package nars.io.out;
 import nars.Events;
 import nars.Events.Answer;
 import nars.NAR;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.op.io.Echo;
 
 import java.io.*;

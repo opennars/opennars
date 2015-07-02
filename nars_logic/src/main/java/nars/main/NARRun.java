@@ -20,7 +20,7 @@ package nars.main;
 
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.model.impl.Default.CommandLineNARBuilder;
+import nars.nar.Default.CommandLineNARBuilder;
 
 import java.io.File;
 import java.io.PrintStream;

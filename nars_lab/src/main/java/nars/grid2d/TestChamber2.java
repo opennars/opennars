@@ -1,7 +1,7 @@
 package nars.grid2d;
 
 import nars.NAR;
-import nars.model.impl.Curve;
+import nars.nar.Curve;
 import nars.grid2d.Action.Forward;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;

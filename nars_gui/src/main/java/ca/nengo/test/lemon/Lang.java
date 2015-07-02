@@ -4,7 +4,7 @@ package ca.nengo.test.lemon;
 import com.sun.org.apache.xerces.internal.impl.xpath.regex.Match;
 import nars.NAR;
 import nars.narsese.NarseseParser;
-import nars.model.impl.Default;
+import nars.nar.Default;
 
 /**
  * autocompletion and structural editing of narsese

@@ -1,10 +1,8 @@
 package nars.bag.impl;
 
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 import org.infinispan.Cache;
 import spangraph.InfiniPeer;
-
-import java.util.Map;
 
 /**
  * CacheBag backed by Infinispan, supporting distributed memory sharing

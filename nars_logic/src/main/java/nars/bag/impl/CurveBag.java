@@ -2,7 +2,7 @@ package nars.bag.impl;
 
 import nars.Global;
 import nars.bag.Bag;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.CuckooMap;
 import nars.util.data.sorted.SortedIndex;
 import nars.util.sort.ArraySortedIndex;

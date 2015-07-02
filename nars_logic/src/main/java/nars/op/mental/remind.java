@@ -19,13 +19,11 @@ package nars.op.mental;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.budget.BudgetFunctions.Activating;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 
 import java.util.ArrayList;
 

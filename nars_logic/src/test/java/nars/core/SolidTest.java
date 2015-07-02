@@ -2,12 +2,11 @@ package nars.core;
 
 import nars.Global;
 import nars.io.in.LibraryInput;
-import nars.io.out.TextOutput;
 import nars.io.qa.Answered;
-import nars.model.impl.Solid;
-import nars.nal.Sentence;
-import nars.nal.task.filter.ConstantDerivationLeak;
-import nars.nal.term.Term;
+import nars.nar.Solid;
+import nars.task.Sentence;
+import nars.task.filter.ConstantDerivationLeak;
+import nars.term.Term;
 import nars.testing.TestNAR;
 import org.junit.Test;
 

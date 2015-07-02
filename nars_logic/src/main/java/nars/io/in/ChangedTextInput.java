@@ -1,7 +1,7 @@
 package nars.io.in;
 
 import nars.NAR;
-import nars.nal.Task;
+import nars.task.Task;
 
 
 /** TextInput subclass that only inputs when the next input value changes from previous */

@@ -24,7 +24,7 @@ package nars;
 import com.gs.collections.impl.list.mutable.FastList;
 import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
-import nars.nal.Task;
+import nars.task.Task;
 
 
 import java.lang.ref.Reference;

@@ -23,7 +23,7 @@ package nars;
 
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
 import nars.nal.NALOperator;
-import nars.nal.term.Atom;
+import nars.term.Atom;
 import nars.util.utf8.ByteBuf;
 
 import java.io.PrintWriter;

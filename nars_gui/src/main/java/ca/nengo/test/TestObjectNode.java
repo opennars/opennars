@@ -6,8 +6,8 @@ import ca.nengo.model.impl.NetworkImpl;
 import ca.nengo.model.impl.ObjectNode;
 import ca.nengo.ui.NengrowPanel;
 import nars.NAR;
-import nars.model.impl.Default;
-import nars.nal.truth.DefaultTruth;
+import nars.nar.Default;
+import nars.truth.DefaultTruth;
 
 
 public class TestObjectNode {

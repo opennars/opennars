@@ -6,7 +6,7 @@ import nars.NAR;
 import nars.testing.condition.OutputCondition;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.util.data.CuckooMap;
 
 import java.util.*;

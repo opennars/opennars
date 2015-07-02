@@ -1,8 +1,8 @@
 package nars.core;
 
-import nars.nal.truth.BasicTruth;
-import nars.nal.truth.DefaultTruth;
-import nars.nal.truth.Truth;
+import nars.truth.BasicTruth;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

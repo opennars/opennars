@@ -1,10 +1,10 @@
 package nars.nal.rule;
 
 import nars.Memory;
-import nars.nal.*;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 
 /**
  * Created by me on 6/1/15.

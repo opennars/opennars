@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.customProperties.HyperSchemaFactoryWrapper;
 import nars.Memory;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.OutputStream;

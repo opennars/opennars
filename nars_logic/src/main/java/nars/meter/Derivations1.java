@@ -1,6 +1,6 @@
 package nars.meter;
 
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.NAR;
 import nars.Global;
 import nars.io.in.LibraryInput;

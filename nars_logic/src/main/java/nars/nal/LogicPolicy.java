@@ -2,8 +2,11 @@ package nars.nal;
 
 import com.google.common.collect.Lists;
 import nars.nal.process.ConceptProcess;
-import nars.nal.task.TaskSeed;
-import nars.nal.task.filter.DerivationFilter;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.task.filter.DerivationFilter;
 
 import java.util.ArrayList;
 import java.util.List;

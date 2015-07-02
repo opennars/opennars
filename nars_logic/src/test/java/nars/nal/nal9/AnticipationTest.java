@@ -4,7 +4,7 @@ import nars.NARSeed;
 import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;
 import nars.nal.nal7.Tense;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

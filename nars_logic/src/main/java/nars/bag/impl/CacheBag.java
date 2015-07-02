@@ -1,9 +1,5 @@
 package nars.bag.impl;
 
-import com.google.common.cache.RemovalListener;
-import nars.Memory;
-import nars.nal.concept.Concept;
-
 import java.util.function.Consumer;
 
 

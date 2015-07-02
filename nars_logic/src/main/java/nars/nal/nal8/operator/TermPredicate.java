@@ -1,11 +1,11 @@
 package nars.nal.nal8.operator;
 
 import nars.Memory;
-import nars.nal.truth.Truth;
-import nars.nal.concept.ConstantConceptBuilder;
+import nars.truth.Truth;
+import nars.concept.ConstantConceptBuilder;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 
 /**
  * A termfunction which evaluates to a Truth value,

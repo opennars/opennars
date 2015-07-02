@@ -1,6 +1,6 @@
 package nars.nal.multistep;
 
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.NAR;
 import nars.testing.condition.OutputContainsCondition;
 import nars.narsese.InvalidInputException;

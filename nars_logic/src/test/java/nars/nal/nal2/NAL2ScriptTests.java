@@ -3,10 +3,10 @@ package nars.nal.nal2;
 
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
-import nars.model.impl.Classic;
-import nars.model.impl.DefaultMicro;
+import nars.nar.Curve;
+import nars.nar.Default;
+import nars.nar.Classic;
+import nars.nar.DefaultMicro;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;

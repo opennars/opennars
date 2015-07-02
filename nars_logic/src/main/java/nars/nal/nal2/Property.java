@@ -21,7 +21,7 @@
 
 package nars.nal.nal2;
 
-import nars.nal.term.Term;
+import nars.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetInt;
 

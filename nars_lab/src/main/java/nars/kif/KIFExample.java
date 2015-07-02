@@ -17,7 +17,7 @@
 
 package nars.kif;
 
-import nars.model.impl.Curve;
+import nars.nar.Curve;
 import nars.NAR;
 
 /**

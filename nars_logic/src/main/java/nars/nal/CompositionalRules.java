@@ -24,7 +24,7 @@ import nars.Global;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal3.*;
@@ -36,19 +36,19 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.task.TaskSeed;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
-import nars.nal.truth.AnalyticTruth;
-import nars.nal.truth.Truth;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.term.*;
+import nars.truth.AnalyticTruth;
+import nars.truth.Truth;
 
 import java.util.Map;
 import java.util.Random;
 
-import static nars.nal.Terms.*;
-import static nars.nal.truth.TruthFunctions.*;
+import static nars.term.Terms.*;
+import static nars.truth.TruthFunctions.*;
 
 /**
  * Compound term composition and decomposition rules, with two premises.

@@ -21,8 +21,8 @@
 package nars.nal.nal3;
 
 import nars.nal.NALOperator;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.io.IOException;
 import java.io.Writer;

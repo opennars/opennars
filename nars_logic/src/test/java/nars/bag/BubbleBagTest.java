@@ -4,7 +4,7 @@ package nars.bag;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import nars.bag.impl.experimental.BubbleBag;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 

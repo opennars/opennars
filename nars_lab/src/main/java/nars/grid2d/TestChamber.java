@@ -5,7 +5,7 @@ import nars.util.event.Reaction;
 import nars.Events;
 import nars.NAR;
 import nars.Global;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.grid2d.Cell.Logic;
 import nars.grid2d.Cell.Material;
 import nars.grid2d.map.Maze;
@@ -15,8 +15,6 @@ import nars.grid2d.operator.Deactivate;
 import nars.grid2d.operator.Goto;
 import nars.grid2d.operator.Pick;
 import nars.gui.NARSwing;
-import nars.op.mental.FullInternalExperience;
-import nars.op.mental.InternalExperience;
 import processing.core.PVector;
 
 import java.util.List;

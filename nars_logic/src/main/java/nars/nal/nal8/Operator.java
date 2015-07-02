@@ -25,12 +25,12 @@ import nars.Events.EXE;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.nal.nal8.decide.DecideAboveDecisionThreshold;
 import nars.nal.nal8.decide.Decider;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 import nars.util.event.Reaction;
 
 import java.util.List;

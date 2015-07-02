@@ -2,7 +2,6 @@ package nars.op.mental;
 
 import nars.*;
 import nars.event.NARReaction;
-import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
@@ -10,10 +9,13 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.nal.process.NAL;
 import nars.nal.process.TaskProcess;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -162,7 +164,7 @@ public class InternalExperience extends NARReaction {
 
         if (event==TaskProcess.class) {
 
-            Task task = (Task)a[0];  
+            Task task = (Task)a[0];
             TaskProcess tp = (TaskProcess)a[1];
 
             //old strategy always, new strategy only for QUESTION and QUEST:

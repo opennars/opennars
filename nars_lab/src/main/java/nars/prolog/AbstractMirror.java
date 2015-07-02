@@ -9,8 +9,8 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.event.NARReaction;
 import nars.nal.process.TaskProcess;
-import nars.nal.Sentence;
-import nars.nal.Task;
+import nars.task.Sentence;
+import nars.task.Task;
 
 /**
  * Interface with which to implement a "mirror" - a mental prosthetic which

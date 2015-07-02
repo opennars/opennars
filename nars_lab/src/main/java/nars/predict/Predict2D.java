@@ -6,12 +6,12 @@ import nars.Global;
 import nars.NAR;
 import nars.clock.SimulatedClock;
 import nars.event.NARReaction;
-import nars.model.impl.Default;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.nar.Default;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 import javax.swing.*;
 import java.awt.*;

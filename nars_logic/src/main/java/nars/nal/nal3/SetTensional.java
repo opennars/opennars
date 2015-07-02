@@ -3,8 +3,7 @@ package nars.nal.nal3;
 
 import nars.Symbols;
 import nars.nal.NALOperator;
-import nars.nal.term.Term;
-import nars.util.data.id.DynamicUTF8Identifier;
+import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;

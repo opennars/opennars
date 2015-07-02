@@ -1,7 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Memory;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 /**
  * Created by me on 6/8/15.

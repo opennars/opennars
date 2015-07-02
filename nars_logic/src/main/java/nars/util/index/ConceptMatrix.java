@@ -3,8 +3,8 @@ package nars.util.index;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.event.ConceptReaction;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.term.Term;
 
 /**
  * Maintains a growing/sparse matrix consisting of a mapping of R row label concepts (ex: states),

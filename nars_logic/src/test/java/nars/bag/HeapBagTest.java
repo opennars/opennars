@@ -2,7 +2,6 @@ package nars.bag;
 
 import com.google.common.collect.Iterables;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
 import nars.Param;
 import nars.analyze.experimental.BagPerf.NullItem;
@@ -10,8 +9,8 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.HeapBag;
 import nars.bag.impl.LevelBag;
-import nars.model.impl.Default;
-import nars.nal.Item;
+import nars.nar.Default;
+import nars.budget.Item;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

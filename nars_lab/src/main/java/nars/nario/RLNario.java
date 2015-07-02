@@ -3,8 +3,8 @@ package nars.nario;
 import automenta.vivisect.Video;
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.model.impl.Default;
-import nars.nal.term.Atom;
+import nars.nar.Default;
+import nars.term.Atom;
 import nars.rl.*;
 import nars.rl.example.QVis;
 

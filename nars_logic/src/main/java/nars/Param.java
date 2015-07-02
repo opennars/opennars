@@ -2,7 +2,7 @@ package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.clock.Clock;
-import nars.nal.TaskComparator;
+import nars.task.TaskComparator;
 import nars.nal.nal7.Interval.AtomicDuration;
 
 import java.io.Serializable;

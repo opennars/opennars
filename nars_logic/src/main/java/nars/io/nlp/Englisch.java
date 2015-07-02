@@ -16,7 +16,7 @@
  */
 package nars.io.nlp;
 
-import nars.nal.Task;
+import nars.task.Task;
 import nars.narsese.InvalidInputException;
 import nars.narsese.NarseseParser;
 

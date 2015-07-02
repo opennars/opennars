@@ -13,8 +13,8 @@ import nars.io.out.Output;
 import nars.Symbols;
 import nars.io.TraceWriter;
 import nars.io.TraceWriter.LogOutput;
-import nars.nal.Sentence;
-import nars.nal.Task;
+import nars.task.Sentence;
+import nars.task.Task;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

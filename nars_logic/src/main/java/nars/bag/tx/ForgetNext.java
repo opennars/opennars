@@ -5,7 +5,7 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 
 /**
 * Applies forgetting to the next sequence of sampled bag items

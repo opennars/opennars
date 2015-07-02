@@ -4,9 +4,9 @@
  */
 package nars.evolve;
 
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
-import nars.model.impl.Neuromorphic;
+import nars.nar.Curve;
+import nars.nar.Default;
+import nars.nar.Neuromorphic;
 import nars.NAR;
 import nars.Global;
 import nars.util.data.MultiOutputStream;

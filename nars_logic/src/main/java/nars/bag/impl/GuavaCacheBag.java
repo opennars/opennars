@@ -1,10 +1,9 @@
 package nars.bag.impl;
 
 import com.google.common.cache.*;
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 /**
  * Index of stored Items (ex: concepts) which is optimized for

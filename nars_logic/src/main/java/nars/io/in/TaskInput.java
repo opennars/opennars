@@ -4,7 +4,7 @@
  */
 package nars.io.in;
 
-import nars.nal.Task;
+import nars.task.Task;
 
 
 /**

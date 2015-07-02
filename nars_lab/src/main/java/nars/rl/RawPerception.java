@@ -3,12 +3,12 @@ package nars.rl;
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
 import nars.nal.NALOperator;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.util.ArrayList;
 import java.util.List;

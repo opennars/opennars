@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.Global;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
-import nars.nal.Task;
+import nars.task.Task;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;

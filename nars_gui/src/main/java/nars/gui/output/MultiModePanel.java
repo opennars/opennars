@@ -7,7 +7,7 @@ import automenta.vivisect.swing.NSlider;
 import nars.NAR;
 import nars.util.event.Reaction;
 import nars.io.out.Output;
-import nars.nal.Task;
+import nars.task.Task;
 
 import javax.swing.*;
 import java.awt.*;

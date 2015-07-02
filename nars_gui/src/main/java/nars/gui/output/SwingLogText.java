@@ -6,11 +6,11 @@ import nars.Events;
 import nars.Events.OUT;
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.truth.Truth;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.truth.Truth;
+import nars.concept.Concept;
+import nars.term.Term;
 
 import javax.swing.*;
 import java.awt.*;

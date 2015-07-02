@@ -6,7 +6,7 @@ package nars.bag.impl.experimental;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import nars.Memory;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.math.Distributor;
 
 /**

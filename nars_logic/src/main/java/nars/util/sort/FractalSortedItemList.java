@@ -2,7 +2,7 @@ package nars.util.sort;
 
 import javolution.util.FastSortedTable;
 import javolution.util.function.Equality;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.sorted.SortedIndex;
 
 /**

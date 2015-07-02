@@ -4,7 +4,6 @@ import nars.Events;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.ImageExt;
 import nars.nal.nal4.ImageInt;
@@ -13,12 +12,14 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.process.ConceptProcess;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
-import nars.nal.truth.Truth;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.term.Compound;
+import nars.term.Statement;
+import nars.term.Term;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.truth.Truth;
 
 import java.util.Arrays;
 

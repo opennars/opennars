@@ -2,10 +2,10 @@ package nars.io;
 
 import nars.NAR;
 import nars.Symbols;
-import nars.model.impl.Default;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
+import nars.nar.Default;
+import nars.term.Compound;
+import nars.term.Statement;
+import nars.term.Term;
 import nars.narsese.InvalidInputException;
 import nars.util.data.rope.Rope;
 import nars.util.data.rope.impl.FastConcatenationRope;

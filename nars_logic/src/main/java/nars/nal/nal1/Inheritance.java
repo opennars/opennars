@@ -21,12 +21,11 @@
 package nars.nal.nal1;
 
 import nars.nal.NALOperator;
-import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
+import nars.term.Compound;
+import nars.term.Statement;
+import nars.term.Term;
 
 /**
  * A Statement about an Inheritance relation.

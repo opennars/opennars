@@ -2,7 +2,7 @@ package nars.io;
 
 import nars.io.in.Input;
 import nars.util.data.buffer.Source;
-import nars.nal.Task;
+import nars.task.Task;
 
 import java.util.function.Supplier;
 

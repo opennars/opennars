@@ -8,7 +8,7 @@ import nars.bag.tx.ForgetNext;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.BudgetSource;
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 import org.apache.commons.math3.util.FastMath;
 
 import java.io.PrintStream;

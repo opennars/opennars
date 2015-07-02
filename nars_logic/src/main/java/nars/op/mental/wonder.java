@@ -22,14 +22,12 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.nal7.Tense;
+import nars.task.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.stamp.Stamp;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.task.stamp.Stamp;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,8 @@
 package nars.util.index;
 
 import nars.NAR;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.term.Term;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;

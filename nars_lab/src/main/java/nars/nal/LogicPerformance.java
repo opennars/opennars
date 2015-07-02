@@ -11,10 +11,12 @@ import nars.Events.ConceptProcessed;
 import nars.NAR;
 import nars.Global;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.model.impl.Default;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.nar.Default;
 import nars.gui.output.JGraphXGraphPanel;
 import nars.io.in.LibraryInput;
 import nars.testing.condition.OutputCondition;
@@ -60,7 +62,7 @@ public class LogicPerformance {
         public <T extends Compound> void explain(Task<T> t, int maxLevels, List<Task> generated) {
             //String x = toString() + "\n";
             Term cause = t.getCause();
-            Sentence bestSolution = t.getBestSolution();            
+            Sentence bestSolution = t.getBestSolution();
             Sentence parentBelief = t.getParentBelief();
             Task parentTask = t.getParentTask();
             

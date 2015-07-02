@@ -1,13 +1,16 @@
 package nars.nal.rule;
 
 import nars.Symbols;
-import nars.nal.*;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.term.Term;
+import nars.term.Term;
+import nars.term.Variables;
 
 
 public class MatchTaskBelief extends ConceptFireTaskTerm {

@@ -10,9 +10,9 @@ import nars.Global;
 import nars.NAR;
 import nars.gui.ReactionPanel;
 import nars.gui.WrapLayout;
-import nars.nal.Task;
-import nars.nal.truth.Truth;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.truth.Truth;
+import nars.concept.Concept;
 import nars.util.event.Reaction;
 
 import javax.swing.*;

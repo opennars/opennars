@@ -22,11 +22,11 @@ package nars.nal.nal5;
 
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
+import nars.term.Terms;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.util.Arrays;
 import java.util.Collection;

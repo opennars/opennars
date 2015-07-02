@@ -1,9 +1,9 @@
 package nars.util.graph;
 
-import nars.nal.Sentence;
-import nars.nal.Sentenced;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Sentence;
+import nars.task.Sentenced;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import org.jgrapht.graph.DirectedMultigraph;
 

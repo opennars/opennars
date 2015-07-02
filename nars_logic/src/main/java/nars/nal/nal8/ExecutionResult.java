@@ -1,8 +1,7 @@
 package nars.nal.nal8;
 
 import nars.Memory;
-import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.task.Task;
 
 /**
  * Created by me on 5/16/15.

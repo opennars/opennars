@@ -2,7 +2,7 @@ package nars.bag.tx;
 
 import nars.bag.BagTransaction;
 import nars.budget.Budget;
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 
 /**
 * Created by me on 1/19/15.

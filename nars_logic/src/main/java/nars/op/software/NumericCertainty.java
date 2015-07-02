@@ -1,15 +1,5 @@
 package nars.op.software;
 
-import nars.nal.term.Compound;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.term.Term;
-import nars.nal.nal8.Operation;
-import nars.nal.nal8.Operator;
-import nars.op.mental.Mental;
-
-import java.util.ArrayList;
-
 //// Usage:
 //// (^numericCertainty, min, max, value, term)
 //public class NumericCertainty extends Operator implements Mental{

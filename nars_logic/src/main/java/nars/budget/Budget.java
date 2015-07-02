@@ -25,8 +25,8 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
-import nars.nal.Sentence;
-import nars.nal.truth.Truth;
+import nars.task.Sentence;
+import nars.truth.Truth;
 
 import java.io.Serializable;
 import java.util.Objects;

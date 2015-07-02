@@ -2,14 +2,14 @@ package nars.rdfowl;
 
 import nars.NAR;
 import nars.io.out.TextOutput;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;

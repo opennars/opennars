@@ -3,7 +3,7 @@ package nars.bag.impl.experimental;
 import nars.Global;
 import nars.bag.Bag;
 import nars.bag.BagTransaction;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.CuckooMap;
 import nars.util.data.linkedlist.DD;
 import nars.util.data.linkedlist.DDList;

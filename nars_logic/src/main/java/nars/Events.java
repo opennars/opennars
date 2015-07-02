@@ -1,15 +1,13 @@
 package nars;
 
-import nars.event.NARReaction;
 import nars.nal.process.ConceptProcess;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.util.event.Reaction;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /* NAR reasoner events */
 public class Events {

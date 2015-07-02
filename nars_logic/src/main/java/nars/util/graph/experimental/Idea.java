@@ -11,15 +11,17 @@ import nars.Global;
 import nars.NAR;
 import nars.nal.*;
 import nars.nal.process.TaskProcess;
-import nars.nal.truth.Truthed;
+import nars.task.Task;
+import nars.term.Terms;
+import nars.truth.Truthed;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import nars.Symbols;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.nal4.Image;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.term.Termed;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.*;
 

@@ -28,18 +28,19 @@ import nars.nal.*;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.stamp.Stamp;
-import nars.nal.task.TaskSeed;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-import nars.nal.truth.AbstractTruth;
-import nars.nal.truth.Truth;
-import nars.nal.truth.TruthFunctions;
+import nars.nal.process.NAL;
+import nars.task.stamp.Stamp;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.term.*;
+import nars.truth.AbstractTruth;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 import java.util.Random;
 
-import static nars.nal.Terms.reduceComponents;
+import static nars.term.Terms.reduceComponents;
 import static nars.nal.nal7.TemporalRules.*;
 
 

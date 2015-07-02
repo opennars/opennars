@@ -1,7 +1,7 @@
 package nars.op.mental;
 
 import nars.Memory;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
 

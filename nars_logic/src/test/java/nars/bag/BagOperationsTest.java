@@ -7,7 +7,7 @@ package nars.bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 

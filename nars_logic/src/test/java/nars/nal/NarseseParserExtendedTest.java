@@ -1,7 +1,8 @@
 package nars.nal;
 
 import nars.nal.nal1.Inheritance;
-import nars.nal.term.Compound;
+import nars.task.Task;
+import nars.term.Compound;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

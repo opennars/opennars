@@ -21,20 +21,19 @@
 package nars;
 
 import com.google.common.collect.Iterators;
-import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.budget.Itemized;
 import nars.clock.Clock;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
-import nars.model.ControlCycle;
 import nars.nal.*;
-import nars.nal.concept.Concept;
-import nars.nal.concept.ConceptBuilder;
+import nars.concept.Concept;
+import nars.concept.ConceptBuilder;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -53,13 +52,12 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.stamp.AbstractStamper;
-import nars.nal.stamp.Stamp;
-import nars.nal.task.TaskSeed;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
+import nars.nal.process.NAL;
+import nars.task.stamp.AbstractStamper;
+import nars.task.stamp.Stamp;
+import nars.task.Task;
+import nars.task.TaskSeed;
+import nars.term.*;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
 import nars.util.meter.ResourceMeter;
@@ -438,7 +436,7 @@ public class Memory implements Serializable, AbstractStamper {
 
     /** called when a Concept's lifecycle has changed */
     public void updateConceptState(Concept c) {
-        boolean hasQuestions = !c.getQuestions().isEmpty();
+        boolean hasQuestions = c.hasQuestions();
         boolean hasGoals = !c.getGoals().isEmpty();
 
         if (c.isActive()) {
@@ -457,7 +455,7 @@ public class Memory implements Serializable, AbstractStamper {
     /** handles maintenance of concept question/goal indices when concepts change according to reports by certain events
         called by a Concept when its questions state changes (becomes empty or becomes un-empty) */
     public void updateConceptQuestions(Concept c) {
-        if (c.getQuestions().isEmpty()) {
+        if (!c.hasQuestions()) {
             if (!questionConcepts.remove(c))
                 throw new RuntimeException("Concept " + c + " never registered any questions");
         }

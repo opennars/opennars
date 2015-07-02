@@ -4,7 +4,7 @@
  */
 package nars.nal.multistep;
 
-import nars.model.impl.Neuromorphic;
+import nars.nar.Neuromorphic;
 import nars.NAR;
 
 import java.io.File;

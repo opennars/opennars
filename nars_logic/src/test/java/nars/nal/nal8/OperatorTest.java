@@ -2,11 +2,11 @@ package nars.nal.nal8;
 
 import nars.Memory;
 import nars.NAR;
-import nars.model.impl.Default;
-import nars.nal.Task;
+import nars.nar.Default;
+import nars.task.Task;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 import nars.util.event.Reaction;
 import org.junit.Test;
 

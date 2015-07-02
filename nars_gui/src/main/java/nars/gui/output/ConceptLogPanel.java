@@ -7,8 +7,8 @@ import nars.NAR;
 import nars.event.NARReaction;
 import nars.io.out.TextOutput;
 import nars.util.data.id.Named;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.concept.Concept;
 
 import javax.swing.*;
 import java.awt.*;

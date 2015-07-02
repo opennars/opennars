@@ -1,8 +1,7 @@
 package nars.nal.nal3;
 
-import nars.nal.term.Compound1;
-import nars.nal.term.Term;
-import nars.util.data.id.UTF8Identifier;
+import nars.term.Compound1;
+import nars.term.Term;
 
 /**
  * Created by me on 6/2/15.

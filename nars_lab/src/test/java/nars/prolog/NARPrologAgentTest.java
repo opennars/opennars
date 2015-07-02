@@ -1,7 +1,7 @@
 package nars.prolog;
 
 import nars.NAR;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import org.junit.Test;
 
 /**

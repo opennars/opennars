@@ -17,7 +17,7 @@ import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.model.Default;
-import nars.model.cycle.NAL;
+import nars.cycle.NAL;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.narsese.Narsese;
@@ -26,7 +26,7 @@ import nars.nal.entity.Task;
 import nars.nal.language.Interval;
 import nars.nal.language.Tense;
 import nars.nal.language.Term;
-import nars.nal.task.filter.LimitDerivationPriority;
+import nars.task.task.filter.LimitDerivationPriority;
 
 import javax.swing.*;
 import java.awt.*;

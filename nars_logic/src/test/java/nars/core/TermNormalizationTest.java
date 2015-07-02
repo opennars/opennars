@@ -1,10 +1,10 @@
 package nars.core;
 
 import nars.NAR;
-import nars.model.impl.Default;
-import nars.nal.term.Compound;
-import nars.nal.Task;
-import nars.nal.term.Variable;
+import nars.nar.Default;
+import nars.term.Compound;
+import nars.task.Task;
+import nars.term.Variable;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

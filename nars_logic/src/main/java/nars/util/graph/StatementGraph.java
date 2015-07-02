@@ -1,11 +1,9 @@
 package nars.util.graph;
 
 import nars.NAR;
-import nars.nal.concept.Concept;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-
-import java.io.Serializable;
+import nars.concept.Concept;
+import nars.term.Statement;
+import nars.term.Term;
 
 
 abstract public class StatementGraph extends SentenceGraph {

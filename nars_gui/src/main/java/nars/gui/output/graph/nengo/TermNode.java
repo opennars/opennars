@@ -5,10 +5,10 @@ import ca.nengo.model.SimulationException;
 import ca.nengo.ui.lib.object.model.ModelObject;
 import ca.nengo.ui.model.icon.ModelIcon;
 import ca.nengo.ui.model.icon.NodeIcon;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.util.data.id.Named;
-import nars.nal.Task;
-import nars.nal.term.Term;
+import nars.task.Task;
+import nars.term.Term;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

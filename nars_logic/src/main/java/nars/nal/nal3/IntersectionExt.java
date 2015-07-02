@@ -23,9 +23,9 @@ package nars.nal.nal3;
 import com.google.common.collect.ObjectArrays;
 import nars.Global;
 import nars.nal.NALOperator;
-import nars.nal.Terms;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Terms;
+import nars.term.Compound;
+import nars.term.Term;
 
 import java.util.ArrayList;
 import java.util.Collection;

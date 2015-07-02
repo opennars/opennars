@@ -2,7 +2,7 @@ package nars.io.signal;
 
 import nars.Global;
 import nars.NAR;
-import nars.nal.truth.DefaultTruth;
+import nars.truth.DefaultTruth;
 
 import java.util.Arrays;
 

@@ -1,7 +1,7 @@
 package nars.bag.impl;
 
 
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 
 import java.util.Iterator;
 import java.util.Map;

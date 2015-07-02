@@ -22,7 +22,7 @@ package nars.nal.nal8.operator;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal8.Operation;
 
 import java.util.List;

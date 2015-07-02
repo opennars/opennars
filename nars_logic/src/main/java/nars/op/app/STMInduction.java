@@ -6,8 +6,8 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.nal.process.TaskProcess;
-import nars.nal.Sentence;
-import nars.nal.Task;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.nal.nal7.TemporalRules;
 
 import java.util.ArrayDeque;
@@ -15,7 +15,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static nars.nal.Terms.equalSubTermsInRespectToImageAndProduct;
+import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 import static nars.nal.nal7.TemporalRules.containsMentalOperator;
 
 /**

@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Global;
 import nars.bag.Bag;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.CircularArrayList;
 import nars.util.data.CuckooMap;
 import org.apache.commons.math3.stat.Frequency;
@@ -13,7 +13,6 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * iteratively sorts a items by priority via a partial bubble sorted.

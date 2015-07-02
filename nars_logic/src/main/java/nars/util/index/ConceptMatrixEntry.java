@@ -1,7 +1,7 @@
 package nars.util.index;
 
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.term.Term;
 
 /**
  * base type for cell entries in the matrix. subclass to add additional information per cell

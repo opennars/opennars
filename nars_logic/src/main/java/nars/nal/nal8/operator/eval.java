@@ -3,9 +3,9 @@ package nars.nal.nal8.operator;
 import nars.Memory;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
 import nars.util.event.Reaction;
 
 import java.util.List;

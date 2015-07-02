@@ -12,7 +12,7 @@ import nars.core.Events.TaskImmediateProcess;
 import nars.core.NAR;
 import nars.core.Parameters;
 import nars.model.Default;
-import nars.model.cycle.NAL;
+import nars.cycle.NAL;
 import nars.gui.NARSwing;
 import nars.io.ChangedTextInput;
 import nars.narsese.Narsese;

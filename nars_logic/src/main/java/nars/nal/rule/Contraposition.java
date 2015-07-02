@@ -3,17 +3,19 @@ package nars.nal.rule;
 import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
 import nars.nal.process.ConceptProcess;
-import nars.nal.term.Statement;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Statement;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.term.Term;
-import nars.nal.truth.Truth;
-import nars.nal.truth.TruthFunctions;
+import nars.term.Term;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 
 public class Contraposition extends ConceptFireTask {

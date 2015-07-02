@@ -1,12 +1,12 @@
 package nars.analyze;
 
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.Events;
 import nars.NARSeed;
 import nars.Global;
 import nars.util.event.Reaction;
 import nars.testing.TestNAR;
-import nars.nal.Task;
+import nars.task.Task;
 import org.junit.Ignore;
 
 import java.io.FileNotFoundException;

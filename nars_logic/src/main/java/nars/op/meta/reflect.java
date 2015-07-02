@@ -4,14 +4,14 @@
  */
 package nars.op.meta;
 
-import nars.nal.term.Statement;
+import nars.term.Statement;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.TermFunction;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
 
 /**
  * Produces canonical "Reflective-Narsese" representation of a parameter term

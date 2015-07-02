@@ -2,7 +2,7 @@ package nars.bag;
 
 import nars.analyze.experimental.BagPerf;
 import nars.bag.impl.experimental.ChainBag;
-import nars.nal.Item;
+import nars.budget.Item;
 import nars.util.data.random.XORShiftRandom;
 import org.junit.Test;
 

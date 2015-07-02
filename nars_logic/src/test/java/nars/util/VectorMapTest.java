@@ -4,7 +4,7 @@ import nars.Events.CycleStart;
 import nars.NAR;
 import nars.io.signal.UniformVector;
 import nars.io.signal.VectorMap;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.util.event.Reaction;
 import nars.util.signal.Autoencoder;
 import org.junit.Test;

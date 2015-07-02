@@ -2,10 +2,9 @@ package nars.testing;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import nars.nal.Sentence;
-import nars.nal.Task;
-import nars.nal.stamp.Stamp;
-import nars.nal.term.Compound;
+import nars.task.Task;
+import nars.task.stamp.Stamp;
+import nars.term.Compound;
 import nars.testing.condition.TaskCondition;
 
 import java.io.PrintStream;

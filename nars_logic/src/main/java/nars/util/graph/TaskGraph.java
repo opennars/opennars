@@ -2,8 +2,8 @@ package nars.util.graph;
 
 import nars.NAR;
 import nars.nal.MemoryObserver;
-import nars.nal.concept.Concept;
-import nars.nal.Task;
+import nars.concept.Concept;
+import nars.task.Task;
 import nars.util.data.CuckooMap;
 import org.jgrapht.graph.DefaultEdge;
 

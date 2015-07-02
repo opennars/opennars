@@ -8,7 +8,7 @@ import automenta.vivisect.swing.NPanel;
 import nars.util.event.Reaction;
 import nars.Events.FrameEnd;
 import nars.NAR;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 
 import javax.swing.*;
 import java.awt.*;

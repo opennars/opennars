@@ -6,10 +6,10 @@ package nars.bag;
 
 import nars.Global;
 import nars.NAR;
-import nars.model.cycle.experimental.AntCore;
+import nars.cycle.experimental.AntCore;
 import nars.narsese.InvalidInputException;
-import nars.nal.term.Term;
-import nars.model.impl.Neuromorphic;
+import nars.term.Term;
+import nars.nar.Neuromorphic;
 import org.junit.Before;
 import org.junit.Test;
 

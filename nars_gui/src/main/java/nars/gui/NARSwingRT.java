@@ -1,11 +1,10 @@
 package nars.gui;
 
 import automenta.vivisect.Video;
-import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
 import nars.clock.RealtimeMSClock;
-import nars.model.impl.Default;
+import nars.nar.Default;
 
 /**
  * NARSwing for a Real-time NAR

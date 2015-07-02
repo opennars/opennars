@@ -17,7 +17,7 @@
 package nars.op.math;
 
 import nars.nal.nal8.operator.TermFunction;
-import nars.nal.term.Term;
+import nars.term.Term;
 import nars.op.mental.Mental;
 
 /**

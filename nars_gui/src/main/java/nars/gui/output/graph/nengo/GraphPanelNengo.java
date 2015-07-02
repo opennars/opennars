@@ -18,7 +18,7 @@ import ca.nengo.ui.model.viewer.NodeViewer;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.gui.WrapLayout;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.util.data.id.Named;
 import nars.util.graph.TermLinkGraph;
 import org.apache.commons.math3.linear.ArrayRealVector;

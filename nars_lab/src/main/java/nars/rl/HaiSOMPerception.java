@@ -2,10 +2,10 @@ package nars.rl;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal1.Inheritance;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 import nars.rl.hai.Hsom;
 
 import java.util.Collections;

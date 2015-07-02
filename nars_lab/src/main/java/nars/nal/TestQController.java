@@ -1,7 +1,7 @@
 package nars.nal;
 
 
-import nars.model.impl.Classic;
+import nars.nar.Classic;
 import nars.NAR;
 import nars.Param;
 

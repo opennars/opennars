@@ -1,6 +1,6 @@
 package nars.nal.nal8.decide;
 
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 
 

@@ -8,9 +8,9 @@ import nars.Events.Answer;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.narsese.InvalidInputException;
-import nars.nal.concept.Concept;
-import nars.nal.Sentence;
-import nars.nal.Task;
+import nars.concept.Concept;
+import nars.task.Sentence;
+import nars.task.Task;
 
 /**
  *

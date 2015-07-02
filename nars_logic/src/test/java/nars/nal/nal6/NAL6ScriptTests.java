@@ -2,9 +2,9 @@ package nars.nal.nal6;
 
 
 import nars.NARSeed;
-import nars.model.impl.Classic;
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
+import nars.nar.Classic;
+import nars.nar.Curve;
+import nars.nar.Default;
 import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;
 

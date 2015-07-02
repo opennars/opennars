@@ -1,8 +1,8 @@
 package nars.nal;
 
-import nars.nal.concept.Concept;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.concept.Concept;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 
 /**
  * Defines the conditions used in an instance of a derivation

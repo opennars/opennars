@@ -1,7 +1,7 @@
 package nars.core;
 
 import nars.NAR;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.util.data.id.Identifier;
 import org.junit.Test;
 

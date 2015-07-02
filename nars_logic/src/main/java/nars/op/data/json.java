@@ -3,9 +3,9 @@ package nars.op.data;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.TermFunction;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Compound;
+import nars.term.Term;
 import nars.util.language.JSON;
 
 import java.util.ArrayList;

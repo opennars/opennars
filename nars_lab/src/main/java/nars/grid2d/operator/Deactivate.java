@@ -22,10 +22,10 @@ package nars.grid2d.operator;
 
 import nars.Memory;
 import nars.grid2d.TestChamber;
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Term;
+import nars.term.Term;
 
 import java.util.List;
 

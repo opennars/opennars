@@ -20,8 +20,7 @@ package nars.op.math;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.TermFunction;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
+import nars.term.Term;
 import nars.op.mental.Mental;
 
 /**

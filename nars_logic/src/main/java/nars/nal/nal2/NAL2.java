@@ -2,14 +2,16 @@ package nars.nal.nal2;
 
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Equivalence;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-import nars.nal.truth.Truth;
-import nars.nal.truth.TruthFunctions;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Compound;
+import nars.term.Statement;
+import nars.term.Term;
+import nars.truth.Truth;
+import nars.truth.TruthFunctions;
 
 /**
  * Created by me on 1/13/15.

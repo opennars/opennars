@@ -3,7 +3,7 @@ package nars.util;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
-import nars.nal.Sentence;
+import nars.task.Sentence;
 
 /**
  * http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/hash/BloomFilter.html

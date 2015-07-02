@@ -2,7 +2,7 @@ package nars.nal.nal9;
 
 
 import nars.NARSeed;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;
 

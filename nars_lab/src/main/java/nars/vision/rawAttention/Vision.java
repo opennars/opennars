@@ -2,7 +2,7 @@ package nars.vision.rawAttention;
 
 import nars.NAR;
 import nars.gui.NARSwing;
-import nars.model.impl.Default;
+import nars.nar.Default;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,14 +1,14 @@
 package nars.meter;
 
 import nars.Global;
-import nars.nal.NAL;
-import nars.nal.Task;
+import nars.nal.process.NAL;
+import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Atom;
-import nars.nal.term.Compound;
+import nars.term.Atom;
+import nars.term.Compound;
 import nars.op.mental.InternalExperience;
 import nars.op.mental.consider;
 import nars.op.mental.remind;

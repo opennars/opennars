@@ -2,7 +2,7 @@ package nars.meter;
 
 import nars.NAR;
 import nars.event.ConceptReaction;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 
 /**
  * Created by me on 5/8/15.

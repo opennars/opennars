@@ -1,7 +1,7 @@
 package nars.bag;
 
 import nars.budget.Budget;
-import nars.nal.Itemized;
+import nars.budget.Itemized;
 
 /** transaction interface for lazily constructing bag items, and efficiently updating existing items.
   * this avoids construction when only updating the budget of an item already in the bag  */

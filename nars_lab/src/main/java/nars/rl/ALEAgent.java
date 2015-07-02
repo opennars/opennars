@@ -9,10 +9,9 @@ import jurls.reinforcementlearning.domains.arcade.io.RLData;
 import jurls.reinforcementlearning.domains.arcade.rl.FeatureMap;
 import jurls.reinforcementlearning.domains.arcade.rl.FrameHistory;
 import jurls.reinforcementlearning.domains.arcade.screen.ScreenMatrix;
-import nars.Global;
 import nars.NAR;
-import nars.model.impl.Default;
-import nars.nal.Task;
+import nars.nar.Default;
+import nars.task.Task;
 import nars.rl.example.QVis;
 
 import java.awt.*;

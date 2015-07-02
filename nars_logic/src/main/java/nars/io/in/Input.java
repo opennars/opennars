@@ -19,7 +19,7 @@
 
 package nars.io.in;
 
-import nars.nal.Task;
+import nars.task.Task;
 import nars.nal.nal8.ImmediateOperation;
 import nars.util.data.buffer.Source;
 

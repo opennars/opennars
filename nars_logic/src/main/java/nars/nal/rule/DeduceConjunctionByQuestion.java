@@ -2,21 +2,22 @@ package nars.nal.rule;
 
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
-import nars.nal.concept.Concept;
+import nars.concept.Concept;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
-import nars.nal.term.Compound;
-import nars.nal.term.Term;
-import nars.nal.truth.Truth;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.truth.Truth;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static nars.nal.truth.TruthFunctions.intersection;
+import static nars.truth.TruthFunctions.intersection;
 
 /** --------------- questions which contain answers which are of no value for NARS but need to be answered ---------------
  * {(&&,A,B,...)?, A,B} |- {(&&,A,B)} {(&&,A,_components_1_)?,
@@ -74,8 +75,8 @@ public class DeduceConjunctionByQuestion extends ConceptFireTaskTerm {
 
                 final Term pcontent = concept.getTerm();
 
-                final List<Task> cQuestions = concept.getQuestions();
-                if (/*cQuestions == null || */ cQuestions.isEmpty())
+                //final List<Task> cQuestions = concept.getQuestions();
+                if (/*cQuestions == null || */ !concept.hasQuestions())
                     throw new RuntimeException("Concept " + concept + " present in Concept Questions index, but has no questions");
 
 

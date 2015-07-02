@@ -1,15 +1,12 @@
 package nars.nal;
 
 import junit.framework.TestCase;
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.NAR;
 import nars.NARSeed;
 import nars.Global;
 import nars.io.in.LibraryInput;
-import nars.io.out.TextOutput;
-import nars.io.TraceWriter;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.experimental.ParallelComputer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;

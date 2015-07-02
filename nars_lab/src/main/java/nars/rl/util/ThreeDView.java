@@ -60,7 +60,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 import nars.gui.output.graph.nengo.UIVertex;
-import nars.nal.term.Term;
+import nars.term.Term;
 import org.apache.commons.math3.linear.ArrayRealVector;
 
 import static javafx.application.Application.launch;

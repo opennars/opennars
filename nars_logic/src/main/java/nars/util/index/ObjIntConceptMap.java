@@ -2,8 +2,8 @@ package nars.util.index;
 
 import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import nars.NAR;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
+import nars.concept.Concept;
+import nars.term.Term;
 
 import java.util.Iterator;
 

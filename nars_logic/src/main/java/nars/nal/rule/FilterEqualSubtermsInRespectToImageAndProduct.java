@@ -1,11 +1,11 @@
 package nars.nal.rule;
 
-import nars.nal.Task;
-import nars.nal.Terms;
-import nars.nal.concept.Concept;
+import nars.task.Task;
+import nars.term.Terms;
+import nars.concept.Concept;
 import nars.nal.process.ConceptProcess;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 
 public class FilterEqualSubtermsInRespectToImageAndProduct extends ConceptFireTaskTerm {
 

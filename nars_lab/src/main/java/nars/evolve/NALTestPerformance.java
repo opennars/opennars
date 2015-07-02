@@ -1,6 +1,6 @@
 package nars.evolve;
 
-import nars.model.impl.Default;
+import nars.nar.Default;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.testing.condition.OutputCondition;

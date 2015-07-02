@@ -1,7 +1,7 @@
 package nars.nal.nal6;
 
-import nars.model.impl.Curve;
-import nars.model.impl.Default;
+import nars.nar.Curve;
+import nars.nar.Default;
 import nars.NARSeed;
 import nars.narsese.InvalidInputException;
 import nars.nal.JavaNALTest;

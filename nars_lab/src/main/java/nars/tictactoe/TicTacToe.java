@@ -30,13 +30,13 @@ import nars.NAR;
 import nars.budget.Budget;
 import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
-import nars.model.impl.Classic;
-import nars.nal.Task;
-import nars.nal.concept.Concept;
+import nars.nar.Classic;
+import nars.task.Task;
+import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
-import nars.nal.term.Atom;
-import nars.nal.term.Term;
+import nars.term.Atom;
+import nars.term.Term;
 import nars.util.event.Reaction;
 
 import javax.swing.*;

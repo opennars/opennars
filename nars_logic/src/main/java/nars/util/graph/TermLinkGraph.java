@@ -2,9 +2,9 @@ package nars.util.graph;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nal.concept.Concept;
-import nars.nal.term.Term;
-import nars.nal.tlink.TermLink;
+import nars.concept.Concept;
+import nars.term.Term;
+import nars.link.TermLink;
 import org.jgrapht.graph.DirectedMultigraph;
 
 ;

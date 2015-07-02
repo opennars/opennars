@@ -30,15 +30,14 @@ import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.term.Compound;
-import nars.nal.term.Statement;
-import nars.nal.term.Term;
-import nars.nal.term.Variable;
-import nars.nal.tlink.TLink;
-import nars.nal.tlink.TaskLink;
-import nars.nal.tlink.TermLink;
+import nars.nal.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.*;
+import nars.link.TLink;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 
-import java.util.Arrays;
 import java.util.Random;
 
 import static nars.Symbols.*;
