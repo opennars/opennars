@@ -1,9 +1,6 @@
 package nars.nal;
 
-import nars.Global;
-import nars.Memory;
-import nars.NAR;
-import nars.Symbols;
+import nars.*;
 import nars.budget.Budget;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -101,7 +98,7 @@ public class NarseseParserTest {
     public void testIncompleteTask() throws InvalidInputException {
         Task t = task("<a --> b>.");
         assertNotNull(t);
-        assertEquals(NALOperator.INHERITANCE, t.sentence.getTerm().operator());
+        assertEquals(Op.INHERITANCE, t.sentence.getTerm().operator());
         Inheritance i = (Inheritance) t.getTerm();
         assertEquals("a", i.getSubject().toString());
         assertEquals("b", i.getPredicate().toString());
@@ -124,7 +121,7 @@ public class NarseseParserTest {
     public void testNoBudget() throws InvalidInputException {
         Task t = task("<a <=> b>. %0.00;0.93");
         assertNotNull(t);
-        assertEquals(NALOperator.EQUIVALENCE, t.sentence.getTerm().operator());
+        assertEquals(Op.EQUIVALENCE, t.sentence.getTerm().operator());
 
         assertEquals('.', t.getPunctuation());
         assertEquals(Global.DEFAULT_JUDGMENT_PRIORITY, t.getPriority(), 0.001);
@@ -138,7 +135,7 @@ public class NarseseParserTest {
         String tt = "<<a <=> b> --> <c ==> d>>";
         Task t = task(tt + "?");
         assertNotNull(t);
-        assertEquals(NALOperator.INHERITANCE, t.sentence.getTerm().operator());
+        assertEquals(Op.INHERITANCE, t.sentence.getTerm().operator());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('?', t.getPunctuation());
         assertNull(t.sentence.truth);
@@ -170,7 +167,7 @@ public class NarseseParserTest {
         String tt = "(a, b, c)";
         Task t = task(tt + "@");
         assertNotNull(t);
-        assertEquals(NALOperator.PRODUCT, t.sentence.getTerm().operator());
+        assertEquals(Op.PRODUCT, t.sentence.getTerm().operator());
         assertEquals(tt, t.getTerm().toString());
         assertEquals('@', t.getPunctuation());
         assertNull(t.sentence.truth);
@@ -183,7 +180,7 @@ public class NarseseParserTest {
         Product pt = term("(a, b, c)");
 
         assertNotNull(pt);
-        assertEquals(NALOperator.PRODUCT, pt.operator());
+        assertEquals(Op.PRODUCT, pt.operator());
 
         testProductABC(pt);
 
@@ -200,24 +197,24 @@ public class NarseseParserTest {
     @Test
     public void testInfix2() throws InvalidInputException {
         Intersect t = term("(x & y)");
-        assertEquals(NALOperator.INTERSECTION_EXT, t.operator());
+        assertEquals(Op.INTERSECTION_EXT, t.operator());
         assertEquals(2, t.length());
         assertEquals("x", t.term[0].toString());
         assertEquals("y", t.term[1].toString());
 
         IntersectionInt a = term("(x | y)");
-        assertEquals(NALOperator.INTERSECTION_INT, a.operator());
+        assertEquals(Op.INTERSECTION_INT, a.operator());
         assertEquals(2, a.length());
 
         Product b = term("(x * y)");
-        assertEquals(NALOperator.PRODUCT, b.operator());
+        assertEquals(Op.PRODUCT, b.operator());
         assertEquals(2, b.length());
 
         Compound c = term("(<a -->b> && y)");
-        assertEquals(NALOperator.CONJUNCTION, c.operator());
+        assertEquals(Op.CONJUNCTION, c.operator());
         assertEquals(2, c.length());
         assertEquals(5, c.getComplexity());
-        assertEquals(NALOperator.INHERITANCE, c.term[1].operator());
+        assertEquals(Op.INHERITANCE, c.term[1].operator());
     }
 
 
@@ -284,7 +281,7 @@ public class NarseseParserTest {
         Term a = term("<a --> b>");
         Term x = term("(a --> b)");
         Term y = term("(a-->b)");
-        assertEquals(NALOperator.INHERITANCE, x.operator());
+        assertEquals(Op.INHERITANCE, x.operator());
         assertEquals(x, a);
         assertEquals(x, y);
 
@@ -298,7 +295,7 @@ public class NarseseParserTest {
 
         Term abcd = term("((a,b) --> (c,d))");
         Term ABCD = term("<(*,a,b) --> (*,c,d)>");
-        assertEquals(NALOperator.INHERITANCE, x.operator());
+        assertEquals(Op.INHERITANCE, x.operator());
         assertEquals(abcd + " != " + ABCD, abcd, ABCD);
     }
 
@@ -327,12 +324,12 @@ public class NarseseParserTest {
     @Test
     public void testSet() {
         Compound xInt = term("[x]");
-        assertEquals(NALOperator.SET_INT_OPENER, xInt.operator());
+        assertEquals(Op.SET_INT_OPENER, xInt.operator());
         assertEquals(1, xInt.length());
         assertEquals("x", xInt.term[0].toString());
 
         Compound xExt = term("{x}");
-        assertEquals(NALOperator.SET_EXT_OPENER, xExt.operator());
+        assertEquals(Op.SET_EXT_OPENER, xExt.operator());
         assertEquals(1, xExt.length());
         assertEquals("x", xExt.term[0].toString());
 

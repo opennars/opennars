@@ -7,7 +7,7 @@ import nars.Global;
 import nars.NAR;
 import nars.Symbols;
 import nars.truth.DefaultTruth;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.concept.Concept;
 import nars.nal.nal5.Implication;

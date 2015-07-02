@@ -30,7 +30,7 @@ import nars.nal.nal3.SetTensional;
 import nars.nal.nal5.*;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.*;

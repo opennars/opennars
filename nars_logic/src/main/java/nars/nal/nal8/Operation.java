@@ -23,7 +23,7 @@ package nars.nal.nal8;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.concept.Concept;
@@ -313,7 +313,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
 
         final ByteBuf b = ByteBuf.create(len);
         b.append(op); //add the operator name without leading '^'
-        b.append((byte) NALOperator.COMPOUND_TERM_OPENER.ch);
+        b.append((byte) Op.COMPOUND_TERM_OPENER.ch);
 
 
         n = 0;
@@ -329,7 +329,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
             n++;
         }
 
-        b.append((byte) NALOperator.COMPOUND_TERM_CLOSER.ch);
+        b.append((byte) Op.COMPOUND_TERM_CLOSER.ch);
 
         return b.toBytes();
     }
@@ -340,7 +340,7 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
         final Term[] xt = arg().terms();
 
         getPredicate().append(p, pretty); //add the operator name without leading '^'
-        p.append(NALOperator.COMPOUND_TERM_OPENER.ch);
+        p.append(Op.COMPOUND_TERM_OPENER.ch);
 
 
         int n = 0;
@@ -353,15 +353,15 @@ public class Operation<T extends Term> extends Inheritance<SetExt1<Product>, T> 
             n++;
         }
 
-        p.append(NALOperator.COMPOUND_TERM_CLOSER.ch);
+        p.append(Op.COMPOUND_TERM_CLOSER.ch);
 
     }
 
 
     final static int ProductInSetExtPattern =
-            NALOperator.bitStructure(
-                    NALOperator.SET_EXT,
-                    NALOperator.PRODUCT );
+            Op.bitStructure(
+                    Op.SET_EXT,
+                    Op.PRODUCT);
 
     public static Product getArgumentProduct(Compound c) {
         if (!c.impossibleSubStructure(ProductInSetExtPattern)) {

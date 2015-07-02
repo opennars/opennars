@@ -1,6 +1,6 @@
 package nars.nal.nal4;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.DefaultCompound;
 import nars.term.Term;
 
@@ -22,8 +22,8 @@ public class ProductN extends DefaultCompound implements Product {
     }
 
     @Override
-    public NALOperator operator() {
-        return NALOperator.PRODUCT;
+    public Op operator() {
+        return Op.PRODUCT;
     }
 
     /*public ProductN(final List<Term> x) {

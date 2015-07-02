@@ -21,7 +21,7 @@ import nars.budget.Itemized;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.concept.Concept;
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.term.Term;
 import nars.link.TaskLink;
 import nars.truth.Truthed;

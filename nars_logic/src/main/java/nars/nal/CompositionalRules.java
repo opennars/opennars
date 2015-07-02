@@ -36,7 +36,7 @@ import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;

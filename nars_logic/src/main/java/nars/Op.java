@@ -1,14 +1,13 @@
-package nars.nal;
+package nars;
 
 
-import nars.Symbols;
 import nars.util.utf8.Utf8;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /** NAL symbol table */
-public enum NALOperator {
+public enum Op {
 
     //TODO include min/max arity for each operate, if applicable
 
@@ -110,15 +109,15 @@ public enum NALOperator {
     public final byte byt;
 
 
-    NALOperator(String string, int minLevel, int... bytes) {
+    Op(String string, int minLevel, int... bytes) {
         this(string, minLevel, false, bytes);
     }
 
-    NALOperator(String string, int minLevel, boolean relation, int... bytes) {
+    Op(String string, int minLevel, boolean relation, int... bytes) {
         this(string, minLevel, relation, !relation, bytes);
     }
 
-    NALOperator(String string, int minLevel, boolean relation, boolean innate, int... ibytes) {
+    Op(String string, int minLevel, boolean relation, boolean innate, int... ibytes) {
 
         this.str = string;
 
@@ -161,8 +160,8 @@ public enum NALOperator {
     public String toString() { return str; }
 
     /** alias */
-    public static final NALOperator SET_EXT = NALOperator.SET_EXT_OPENER;
-    public static final NALOperator SET_INT = NALOperator.SET_INT_OPENER;
+    public static final Op SET_EXT = Op.SET_EXT_OPENER;
+    public static final Op SET_INT = Op.SET_INT_OPENER;
 
 
     /** writes this operator to a Writer in (human-readable) expanded UTF16 mode */
@@ -178,9 +177,9 @@ public enum NALOperator {
     }
 
 
-    public static int bitStructure(final NALOperator... o) {
+    public static int bitStructure(final Op... o) {
         int bits = 0;
-        for (NALOperator n : o) {
+        for (Op n : o) {
             bits |= (1 << n.ordinal());
         }
         return bits;

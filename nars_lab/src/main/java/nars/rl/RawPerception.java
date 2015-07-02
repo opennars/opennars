@@ -2,7 +2,7 @@ package nars.rl;
 
 import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.NAR;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
@@ -124,7 +124,7 @@ public class RawPerception implements Perception {
             Inheritance ii = (Inheritance)t;
             if (!ii.getPredicate().equals(idTerm))
                 return false;
-            if (ii.getSubject().operator() == NALOperator.SET_EXT) {
+            if (ii.getSubject().operator() == Op.SET_EXT) {
                 Term subj = ((Compound)ii.getSubject()).term(0);
                 if (subj instanceof Atom) {
                     return true;

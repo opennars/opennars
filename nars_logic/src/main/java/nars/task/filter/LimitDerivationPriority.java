@@ -5,7 +5,7 @@
 package nars.task.filter;
 
 import nars.budget.Budget;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;

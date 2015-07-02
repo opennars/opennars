@@ -10,7 +10,7 @@ import com.google.common.collect.Sets;
 import nars.Events.ConceptProcessed;
 import nars.NAR;
 import nars.Global;
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.link.TaskLink;

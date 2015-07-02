@@ -3,28 +3,27 @@ package nars;
 import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
 import nars.budget.BudgetFunctions;
+import nars.concept.Concept;
+import nars.concept.ConceptBuilder;
 import nars.io.TextPerception;
 import nars.io.in.FileInput;
 import nars.io.in.Input;
 import nars.io.in.ReaderInput;
 import nars.io.in.TextInput;
-import nars.truth.DefaultTruth;
-import nars.task.Task;
-import nars.truth.Truth;
-import nars.concept.Concept;
-import nars.concept.ConceptBuilder;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operator;
-import nars.nal.process.TaskProcess;
-import nars.task.stamp.Stamp;
+import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
+import nars.process.TaskProcess;
+import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.narsese.InvalidInputException;
-import nars.narsese.NarseseParser;
-import nars.op.NARReaction2;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
 import objenome.Container;
@@ -360,9 +359,6 @@ public class NAR extends Container implements Runnable {
         return memory.event.on(o, c);
     }
 
-    public EventEmitter.Registrations on(NARReaction2 o) {
-        return memory.event.on(o, o.getEvents());
-    }
 
     public EventEmitter.Registrations on(Class<? extends Reaction<Class>> c) {
         Reaction<Class> v = the(c);

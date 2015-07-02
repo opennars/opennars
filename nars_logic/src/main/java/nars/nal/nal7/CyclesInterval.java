@@ -2,7 +2,7 @@ package nars.nal.nal7;
 
 import com.google.common.primitives.Longs;
 import nars.Memory;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.ImmutableAtom;
 import nars.term.Term;
 
@@ -69,8 +69,8 @@ public class CyclesInterval extends ImmutableAtom implements AbstractInterval {
 
 
     @Override
-    public NALOperator operator() {
-        return NALOperator.INTERVAL;
+    public Op operator() {
+        return Op.INTERVAL;
     }
 
     @Override

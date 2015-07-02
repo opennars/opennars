@@ -22,7 +22,7 @@ package nars.term;
 
 
 import nars.Symbols;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 import nars.util.data.id.Identified;
@@ -38,7 +38,7 @@ public interface Term extends Cloneable, Comparable, Identified, Termed, Seriali
         return this;
     }
 
-    public NALOperator operator();
+    public Op operator();
 
 
     /** total number of terms = complexity + # total variables */

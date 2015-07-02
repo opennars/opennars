@@ -1,18 +1,18 @@
 package nars.analyze.meter;
 
-import nars.op.NARReaction2;
 import nars.Events;
 import nars.NAR;
+import nars.event.NARReaction;
+import nars.task.Task;
 import nars.testing.condition.OutputCondition;
+import nars.util.data.CuckooMap;
 import nars.util.meter.Metrics;
 import nars.util.meter.event.HitMeter;
-import nars.task.Task;
-import nars.util.data.CuckooMap;
 
 import java.util.*;
 
 
-public class CountDerivationCondition extends NARReaction2 {
+public class CountDerivationCondition extends NARReaction {
 
     //SM = success method
     final static String methodInvolvedInSuccessfulDerivation_Prefix = "D";
@@ -31,9 +31,6 @@ public class CountDerivationCondition extends NARReaction2 {
         this.metrics = m;
     }
 
-    @Override public void onEnabled(NAR n) {       }
-
-    @Override public void onDisabled(NAR n) {        }
 
     @Override
     public void event(Class event, Object[] args) {

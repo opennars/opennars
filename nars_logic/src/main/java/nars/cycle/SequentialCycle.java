@@ -3,10 +3,10 @@ package nars.cycle;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.ControlCycle;
+import nars.process.CycleProcess;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.term.Term;
 import nars.link.TaskLink;
 
@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 /**
  * Base class for single-threaded Cores based on the original NARS design
  */
-abstract public class SequentialCycle extends ConceptActivator implements ControlCycle {
+abstract public class SequentialCycle extends ConceptActivator implements CycleProcess {
 
     /* ---------- Long-term storage for multiple cycles ---------- */
     /**

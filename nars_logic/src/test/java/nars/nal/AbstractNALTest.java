@@ -141,7 +141,7 @@ abstract public class AbstractNALTest extends TestCase {
         if (analyzeStack) {
             eventCounter.reset();
             eventCounter.off();
-            deriveMethodCounter.cancel();
+            deriveMethodCounter.off();
         }
 
 

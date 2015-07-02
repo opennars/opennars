@@ -1,7 +1,7 @@
 package nars.util.graph;
 
 import nars.NAR;
-import nars.nal.MemoryObserver;
+import nars.event.MemoryReaction;
 import nars.concept.Concept;
 import nars.task.Task;
 import nars.util.data.CuckooMap;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class TaskGraph  {
 
-    private final MemoryObserver reaction;
+    private final MemoryReaction reaction;
     private final NAR nar;
     private boolean started;
 
@@ -30,7 +30,7 @@ public class TaskGraph  {
     public TaskGraph(NAR n) {
 
         this.nar = n;
-        reaction = new MemoryObserver(n.memory, false) {
+        reaction = new MemoryReaction(n.memory, false) {
 
             @Override
             public void output(Class channel, Object... args) {

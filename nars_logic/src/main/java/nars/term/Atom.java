@@ -1,7 +1,7 @@
 package nars.term;
 
 import nars.Global;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.TermVisitor;
 
@@ -31,8 +31,8 @@ public class Atom extends ImmutableAtom {
         return false;
     }
 
-    public NALOperator operator() {
-        return NALOperator.ATOM;
+    public Op operator() {
+        return Op.ATOM;
     }
 
 

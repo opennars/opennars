@@ -19,7 +19,7 @@ package nars.core;
 import nars.Global;
 import nars.NAR;
 import nars.nar.Default;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.task.Task;
 import nars.term.Terms;
 import nars.concept.Concept;
@@ -261,7 +261,7 @@ public class TermTest {
         }
 
 
-        Term s = Statement.make(NALOperator.INHERITANCE, subj, pred, false, 0);
+        Term s = Statement.make(Op.INHERITANCE, subj, pred, false, 0);
         assertEquals(null, s);
 
 

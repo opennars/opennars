@@ -6,7 +6,7 @@ import nars.bag.Bag;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
 import nars.budget.Budget;
-import nars.ControlCycle;
+import nars.process.CycleProcess;
 import nars.cycle.experimental.AntCore;
 import nars.task.Sentence;
 import nars.concept.Concept;
@@ -36,7 +36,7 @@ public class Neuromorphic extends Curve {
     }
 
     @Override
-    public ControlCycle newControlCycle() {
+    public CycleProcess newControlCycle() {
         if (numAnts == -1)
             numAnts = conceptsFiredPerCycle.get();
         return new AntCore(numAnts, 2.0f, getActiveConcepts());

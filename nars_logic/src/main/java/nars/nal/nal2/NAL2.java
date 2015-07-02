@@ -4,7 +4,7 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal5.Equivalence;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;

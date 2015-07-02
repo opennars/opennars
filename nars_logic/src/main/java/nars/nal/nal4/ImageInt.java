@@ -20,7 +20,7 @@
  */
 package nars.nal.nal4;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Term;
 
 
@@ -147,7 +147,7 @@ public class ImageInt extends Image {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.IMAGE_INT;
+    public Op operator() {
+        return Op.IMAGE_INT;
     }
 }

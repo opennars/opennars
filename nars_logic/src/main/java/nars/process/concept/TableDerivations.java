@@ -1,11 +1,11 @@
-package nars.nal.rule;
+package nars.process.concept;
 
 import nars.nal.*;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal5.SyllogisticRules;
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Compound;

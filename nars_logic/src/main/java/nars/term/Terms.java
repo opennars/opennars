@@ -2,7 +2,7 @@ package nars.term;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Similarity;
@@ -495,7 +495,7 @@ public class Terms {
     }
 
     public static boolean levelValid(Term t, int nal) {
-        NALOperator o = t.operator();
+        Op o = t.operator();
         int minLevel = o.level;
         if (minLevel > 0) {
             if (nal < minLevel)

@@ -1,6 +1,6 @@
 package nars;
 
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.concept.Concept;

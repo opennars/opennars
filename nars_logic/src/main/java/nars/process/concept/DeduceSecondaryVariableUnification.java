@@ -1,4 +1,4 @@
-package nars.nal.rule;
+package nars.process.concept;
 
 import nars.Events;
 import nars.Global;
@@ -10,8 +10,8 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Disjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
-import nars.nal.process.ConceptProcess;
-import nars.nal.process.NAL;
+import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;

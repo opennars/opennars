@@ -9,7 +9,7 @@ import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
 import nars.clock.CycleClock;
 import nars.clock.RealtimeMSClock;
-import nars.ControlCycle;
+import nars.process.CycleProcess;
 import nars.cycle.DefaultCycle;
 import nars.nal.*;
 import nars.concept.Concept;
@@ -18,7 +18,7 @@ import nars.concept.DefaultConcept;
 import nars.nal.nal8.Operator;
 import nars.nal.nal8.operator.NullOperator;
 import nars.nal.nal8.operator.eval;
-import nars.nal.rule.*;
+import nars.process.concept.*;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskComparator;
@@ -434,7 +434,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     }
 
     @Override
-    public ControlCycle newControlCycle() {
+    public CycleProcess newControlCycle() {
         return new DefaultCycle(newConceptBag(), newNovelTaskBag());
     }
     

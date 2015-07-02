@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import nars.Memory;
 import nars.NAR;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.concept.Concept;
 import nars.term.Term;
 import nars.link.TermLink;
@@ -30,7 +30,7 @@ abstract class TermGraph /* extends AbstractReaction */ implements UndirectedGra
         private final boolean sub;
         private final boolean supr;
 
-        public ParameterizedTermGraph(NAR nar, NALOperator theOperator, boolean sub, boolean supr) {
+        public ParameterizedTermGraph(NAR nar, Op theOperator, boolean sub, boolean supr) {
             this(nar, new Predicate<Term>() {
                 @Override public boolean apply(Term term) {
                     return term.operator() == theOperator;

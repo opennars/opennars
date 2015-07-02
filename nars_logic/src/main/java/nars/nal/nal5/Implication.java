@@ -20,7 +20,7 @@
  */
 package nars.nal.nal5;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal7.AbstractInterval;
 import nars.term.Statement;
 import nars.term.Term;
@@ -92,19 +92,19 @@ public class Implication extends Statement {
     }
 
     public static CharSequence makeName(final Term subject, final int temporalOrder, final Term predicate) {
-        NALOperator copula;
+        Op copula;
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                copula = NALOperator.IMPLICATION_AFTER;
+                copula = Op.IMPLICATION_AFTER;
                 break;
             case TemporalRules.ORDER_CONCURRENT:
-                copula = NALOperator.IMPLICATION_WHEN;
+                copula = Op.IMPLICATION_WHEN;
                 break;
             case TemporalRules.ORDER_BACKWARD:
-                copula = NALOperator.IMPLICATION_BEFORE;
+                copula = Op.IMPLICATION_BEFORE;
                 break;
             default:
-                copula = NALOperator.IMPLICATION;
+                copula = Op.IMPLICATION;
         }                
         return makeStatementName(subject, copula, predicate);
     }
@@ -137,16 +137,16 @@ public class Implication extends Statement {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
+    public Op operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NALOperator.IMPLICATION_AFTER;
+                return Op.IMPLICATION_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
-                return NALOperator.IMPLICATION_WHEN;
+                return Op.IMPLICATION_WHEN;
             case TemporalRules.ORDER_BACKWARD:
-                return NALOperator.IMPLICATION_BEFORE;
+                return Op.IMPLICATION_BEFORE;
         }
-        return NALOperator.IMPLICATION;
+        return Op.IMPLICATION;
     }
     
     @Override

@@ -1,9 +1,9 @@
-package nars.nal.rule;
+package nars.process.concept;
 
 import nars.task.Task;
 import nars.term.Terms;
 import nars.concept.Concept;
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 

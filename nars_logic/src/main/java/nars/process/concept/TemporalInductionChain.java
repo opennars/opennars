@@ -1,4 +1,4 @@
-package nars.nal.rule;
+package nars.process.concept;
 
 import com.google.common.collect.Lists;
 import nars.Memory;
@@ -7,8 +7,8 @@ import nars.budget.Budget;
 import nars.Symbols;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.nal.process.ConceptProcess;
-import nars.nal.process.NAL;
+import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.link.TaskLink;

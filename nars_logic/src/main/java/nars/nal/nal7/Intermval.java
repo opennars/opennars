@@ -1,10 +1,5 @@
 package nars.nal.nal7;
 
-import nars.nal.NALOperator;
-import nars.nal.nal5.Conjunction;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.util.MathArrays;
-
 /**
  * Stores a set of intervals that will be associated with a
  * conjunction sequence or other temporal term with which

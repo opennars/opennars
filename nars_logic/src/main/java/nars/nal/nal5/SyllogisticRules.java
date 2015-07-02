@@ -21,14 +21,14 @@
 package nars.nal.nal5;
 
 import nars.Global;
+import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
-import nars.nal.*;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.stamp.Stamp;
 import nars.task.Sentence;
 import nars.task.Task;
@@ -368,7 +368,7 @@ public final class SyllogisticRules {
 
         //Stamper sb = nal.newStamp(belief, sentence);
 
-        Statement s = Statement.make(eitherHigherOrder ? NALOperator.EQUIVALENCE : NALOperator.SIMILARITY, term1, term2, true, order);
+        Statement s = Statement.make(eitherHigherOrder ? Op.EQUIVALENCE : Op.SIMILARITY, term1, term2, true, order);
         //if(!Terms.equalSubTermsInRespectToImageAndProduct(term2, term2))
         boolean s1 = null != nal.deriveDouble(s, sentence.getPunctuation(), truth, budget, sentence, belief, false, true), s2 = false;
         // nal.doublePremiseTask( Statement.make(st, term1, term2, order), truth, budget,false, true );
@@ -420,7 +420,7 @@ public final class SyllogisticRules {
                 Statement.make(NativeOperator.INHERITANCE, term2, term1),
                     truth2, budget2.clone(),false, false);*/
             s2 = null != nal.deriveDouble(
-                    Statement.make(NALOperator.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
+                    Statement.make(Op.SIMILARITY, term1, term2, true, TemporalRules.ORDER_NONE),
                     sentence.getPunctuation(),
                     truth3, budget3.clone(), sentence, belief, false, false);
 

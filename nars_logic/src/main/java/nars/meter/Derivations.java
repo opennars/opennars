@@ -7,7 +7,7 @@ import nars.Events;
 import nars.Global;
 import nars.NAR;
 import nars.event.NARReaction;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.concept.Concept;

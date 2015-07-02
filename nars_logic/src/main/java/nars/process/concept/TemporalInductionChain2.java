@@ -1,14 +1,14 @@
-package nars.nal.rule;
+package nars.process.concept;
 
 import nars.Global;
 import nars.Memory;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.concept.Concept;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.process.ConceptProcess;
+import nars.process.ConceptProcess;
 import nars.term.Term;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -27,15 +27,15 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
 
     static class ConceptByOperator implements Predicate<Concept> {
 
-        final NALOperator[] n;
+        final Op[] n;
 
-        public ConceptByOperator(NALOperator... n) {
+        public ConceptByOperator(Op... n) {
             this.n = n;
         }
 
         @Override
         public boolean test(Concept concept) {
-            for (NALOperator x : n)
+            for (Op x : n)
                 if (concept.operator() == x)
                     return true;
             return false;
@@ -122,7 +122,7 @@ public class TemporalInductionChain2 extends ConceptFireTaskTerm {
         private int duration;
 
         public InductableImplication() {
-            super(NALOperator.IMPLICATION);
+            super(Op.IMPLICATION);
         }
 
         @Override

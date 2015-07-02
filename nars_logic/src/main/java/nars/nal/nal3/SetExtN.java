@@ -20,7 +20,7 @@
  */
 package nars.nal.nal3;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -62,8 +62,8 @@ public class SetExtN extends AbstractSetN implements SetExt {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.SET_EXT;
+    public Op operator() {
+        return Op.SET_EXT;
     }
 
 
@@ -79,7 +79,7 @@ public class SetExtN extends AbstractSetN implements SetExt {
     }
 
     public void appendCloser(Writer p) throws IOException {
-        p.append(NALOperator.SET_EXT_CLOSER.ch);
+        p.append(Op.SET_EXT_CLOSER.ch);
     }
 
 }

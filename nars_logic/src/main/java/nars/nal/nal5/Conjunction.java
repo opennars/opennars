@@ -21,7 +21,7 @@
 package nars.nal.nal5;
 
 import nars.Global;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Terms;
 import nars.nal.nal7.Sequence;
 import nars.nal.nal7.TemporalRules;
@@ -136,14 +136,14 @@ public class Conjunction extends Junction {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
+    public Op operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
                 throw new RuntimeException("use Sequence subclass of Conjunction");    //return NALOperator.SEQUENCE;
             case TemporalRules.ORDER_CONCURRENT:
-                return NALOperator.PARALLEL;
+                return Op.PARALLEL;
             default:
-                return NALOperator.CONJUNCTION;
+                return Op.CONJUNCTION;
         }
     }
 

@@ -22,7 +22,7 @@ package nars.nal.nal3;
 
 import com.google.common.collect.ObjectArrays;
 import nars.Global;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Terms;
 import nars.term.Compound;
 import nars.term.Term;
@@ -135,8 +135,8 @@ public class IntersectionInt extends Intersect {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.INTERSECTION_INT;
+    public Op operator() {
+        return Op.INTERSECTION_INT;
     }
 
 

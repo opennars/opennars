@@ -1,6 +1,6 @@
 package nars.nal.nal3;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Terms;
 import nars.term.Compound;
 import nars.term.Term;
@@ -15,8 +15,8 @@ import java.util.Collection;
 public interface SetExt extends SetTensional {
 
     @Override
-    default public NALOperator operator() {
-        return NALOperator.SET_EXT;
+    default public Op operator() {
+        return Op.SET_EXT;
     }
 
 
@@ -34,6 +34,6 @@ public interface SetExt extends SetTensional {
     }
 
     default void appendCloser(Writer p) throws IOException {
-        p.append(NALOperator.SET_EXT_CLOSER.ch);
+        p.append(Op.SET_EXT_CLOSER.ch);
     }
 }

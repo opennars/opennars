@@ -25,7 +25,7 @@ import nars.Events.OUT;
 import nars.Events.TaskRemove;
 import nars.NAR;
 import nars.clock.Clock;
-import nars.nal.MemoryObserver;
+import nars.event.MemoryReaction;
 import nars.task.Task;
 import nars.concept.Concept;
 
@@ -38,7 +38,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Inference log, which record input/output of each logic step interface
  * with 1 implementation: GUI ( batch not implemented )
  */
-public class TraceWriter extends MemoryObserver {
+public class TraceWriter extends MemoryReaction {
 
 
     public static interface LogOutput {

@@ -1,5 +1,6 @@
 package nars.nal;
 
+import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.task.Task;
 import nars.term.Compound;
@@ -18,7 +19,7 @@ public class NarseseParserExtendedTest  {
     @Test
     public void testNamespaceTerms() {
         Inheritance t = NarseseParserTest.term("namespace.named");
-        assertEquals(t.operator(), NALOperator.INHERITANCE);
+        assertEquals(t.operator(), Op.INHERITANCE);
         assertEquals("namespace", t.getPredicate().toString());
         assertEquals("named", t.getSubject().toString());
 

@@ -52,7 +52,8 @@ import nars.nal.nal5.Implication;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
-import nars.nal.process.NAL;
+import nars.process.CycleProcess;
+import nars.process.NAL;
 import nars.task.stamp.AbstractStamper;
 import nars.task.stamp.Stamp;
 import nars.task.Task;
@@ -87,7 +88,7 @@ public class Memory implements Serializable, AbstractStamper {
 
     public final Random random;
     public final Perception<Task> perception;
-    public final ControlCycle cycle;
+    public final CycleProcess cycle;
     public final EventEmitter<Class> event;
     public final EventEmitter<Term> exe;
     public final EmotionMeter emotion = new EmotionMeter();
@@ -123,7 +124,7 @@ public class Memory implements Serializable, AbstractStamper {
      * @param narParam reasoner paramerters
      * @param policy logic parameters
      */
-    public Memory(Random rng, int nalLevel, Param narParam, LogicPolicy policy, CacheBag<Term,Concept> concepts, ControlCycle cycle) {
+    public Memory(Random rng, int nalLevel, Param narParam, LogicPolicy policy, CacheBag<Term,Concept> concepts, CycleProcess cycle) {
 
         this.random = rng;
         this.level = nalLevel;
@@ -198,7 +199,7 @@ public class Memory implements Serializable, AbstractStamper {
      * @param op Term operate
      * @return A term or null
      */
-    public static Term term(final NALOperator op, final Term... a) {
+    public static Term term(final Op op, final Term... a) {
 
 
         switch (op) {
@@ -755,7 +756,7 @@ public class Memory implements Serializable, AbstractStamper {
         int originalSize = nextTasks.size();
         if (originalSize == 0) return;
 
-        ControlCycle.run(nextTasks, originalSize);
+        CycleProcess.run(nextTasks, originalSize);
     }
 
     /** signals an error through one or more event notification systems */

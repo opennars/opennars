@@ -5,7 +5,7 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.FairPriorityProbabilityCurve;
 import nars.budget.Budget;
-import nars.ControlCycle;
+import nars.process.CycleProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.concept.Concept;
@@ -50,7 +50,7 @@ public class Curve extends Default {
     
 
     @Override
-    public ControlCycle newControlCycle() {
+    public CycleProcess newControlCycle() {
         //return new BalancedSequentialMemoryCycle(newConceptBag(p), c);
         //return new DefaultCore(newConceptBag(), newSubconceptBag(), getConceptBuilder(), newNovelTaskBag());
         return super.newControlCycle();

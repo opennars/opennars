@@ -4,6 +4,7 @@ import nars.bag.impl.CacheBag;
 import nars.clock.Clock;
 import nars.nal.LogicPolicy;
 import nars.concept.Concept;
+import nars.process.CycleProcess;
 import nars.term.Term;
 import nars.util.data.random.XorShift1024StarRandom;
 
@@ -22,7 +23,7 @@ abstract public class NARSeed extends Param {
 
     protected int maxNALLevel;
 
-    abstract public ControlCycle newControlCycle();
+    abstract public CycleProcess newControlCycle();
 
     public NARSeed() {
     }

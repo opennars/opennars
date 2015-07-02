@@ -21,7 +21,7 @@
 
 package nars.nal.nal4;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -37,8 +37,8 @@ public interface Product extends Term, Iterable<Term> {
      * @return the operate of the term
      */
     @Override
-    default public NALOperator operator() {
-        return NALOperator.PRODUCT;
+    default public Op operator() {
+        return Op.PRODUCT;
     }
 
     /**

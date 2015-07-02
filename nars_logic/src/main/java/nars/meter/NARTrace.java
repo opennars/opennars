@@ -3,7 +3,7 @@ package nars.meter;
 import nars.Events;
 import nars.Events.InferenceEvent;
 import nars.NAR;
-import nars.nal.MemoryObserver;
+import nars.event.MemoryReaction;
 import nars.concept.Concept;
 import nars.task.Task;
 
@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * Records all sensors, output, and trace events in an indexed data structure for runtime or subsequent analysis of a NAR's execution telemetry.
  */
-public class NARTrace extends MemoryObserver {
+public class NARTrace extends MemoryReaction {
 
     /**
      * utility method for diagnosing stack overflow errors caused by unbounded

@@ -8,15 +8,15 @@ import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
 import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
-import nars.ControlCycle;
+import nars.process.CycleProcess;
 import nars.concept.ConceptActivator;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskComparator;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.nal.process.ConceptProcess;
-import nars.nal.process.TaskProcess;
+import nars.process.ConceptProcess;
+import nars.process.TaskProcess;
 import nars.term.Term;
 import nars.link.TaskLink;
 import nars.link.TermLink;
@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * <p>
  * TODO eliminate ConcurrentSkipListSet like is implemented in DefaultCore
  */
-public class Solid extends Default implements ControlCycle {
+public class Solid extends Default implements CycleProcess {
 
 
     private final int maxConcepts;
@@ -235,7 +235,7 @@ public class Solid extends Default implements ControlCycle {
 
 
     @Override
-    public ControlCycle newControlCycle() {
+    public CycleProcess newControlCycle() {
         return this;
     }
 

@@ -22,7 +22,7 @@ package nars.term;
 
 import nars.Global;
 import nars.Symbols;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.InstanceProperty;
@@ -38,8 +38,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
 
-import static nars.nal.NALOperator.STATEMENT_CLOSER;
-import static nars.nal.NALOperator.STATEMENT_OPENER;
+import static nars.Op.STATEMENT_CLOSER;
+import static nars.Op.STATEMENT_OPENER;
 
 /**
  * A statement or relation is a compound term, consisting of a subject, a predicate, and a
@@ -93,7 +93,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
      * @param predicate The second component
      * @return The Statement built
      */
-    final public static Statement make(final NALOperator o, final Term subject, final Term predicate, boolean customOrder, int order) {
+    final public static Statement make(final Op o, final Term subject, final Term predicate, boolean customOrder, int order) {
 
         switch (o) {
             case INHERITANCE:
@@ -186,7 +186,7 @@ public abstract class Statement<A extends Term, B extends Term> extends Compound
 //    }
 
     @Deprecated
-    final protected static CharSequence makeStatementName(final Term subject, final NALOperator relation, final Term predicate) {
+    final protected static CharSequence makeStatementName(final Term subject, final Op relation, final Term predicate) {
         throw new RuntimeException("Not necessary, utf8 keys should be used instead");
 //        final CharSequence subjectName = subject.toString();
 //        final CharSequence predicateName = predicate.toString();

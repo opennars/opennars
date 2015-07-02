@@ -1,4 +1,4 @@
-package nars.nal;
+package nars.event;
 
 import nars.Events;
 import nars.Events.CycleEnd;
@@ -7,18 +7,18 @@ import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
 import nars.concept.Concept;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Task;
 
-public abstract class MemoryObserver extends NARReaction {
+public abstract class MemoryReaction extends NARReaction {
 
     private final Memory memory;
 
-    public MemoryObserver(NAR n, boolean active) {
+    public MemoryReaction(NAR n, boolean active) {
         this(n.memory, active);
     }
 
-    public MemoryObserver(Memory m, boolean active) {
+    public MemoryReaction(Memory m, boolean active) {
         super(m.event, active,
                 Events.CycleStart.class,
                 Events.CycleEnd.class,

@@ -20,7 +20,7 @@
  */
 package nars.nal.nal3;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Compound;
 import nars.term.Term;
 
@@ -107,7 +107,7 @@ public class DifferenceExt extends Difference {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.DIFFERENCE_EXT;
+    public Op operator() {
+        return Op.DIFFERENCE_EXT;
     }
 }

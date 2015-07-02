@@ -14,7 +14,7 @@ import nars.concept.Concept;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.CyclesInterval;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.stamp.Stamp;
 import nars.task.Task;
 import nars.term.Term;

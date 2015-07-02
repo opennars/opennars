@@ -1,6 +1,6 @@
 package nars.nal.nal3;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Terms;
 import nars.term.Compound;
 import nars.term.Term;
@@ -30,7 +30,7 @@ public interface SetInt extends SetTensional {
     }
 
     default void appendCloser(Writer p) throws IOException {
-        p.append(NALOperator.SET_INT_CLOSER.ch);
+        p.append(Op.SET_INT_CLOSER.ch);
     }
 
 }

@@ -5,7 +5,7 @@ import nars.NAR;
 import nars.Symbols;
 import nars.event.NARReaction;
 import nars.io.Texts;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.concept.Concept;

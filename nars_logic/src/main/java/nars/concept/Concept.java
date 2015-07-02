@@ -23,13 +23,13 @@ package nars.concept;
 import com.google.common.base.Function;
 import nars.Global;
 import nars.Memory;
+import nars.Op;
 import nars.bag.Bag;
 import nars.budget.Budget;
 import nars.budget.Itemized;
 import nars.link.*;
-import nars.nal.*;
-import nars.nal.process.NAL;
-import nars.nal.process.TaskProcess;
+import nars.process.NAL;
+import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Term;
@@ -75,7 +75,7 @@ abstract public interface Concept extends Termed, Itemized<Term>, Serializable {
 
     boolean link(Task currentTask);
 
-    default NALOperator operator() {
+    default Op operator() {
         return getTerm().operator();
     }
 

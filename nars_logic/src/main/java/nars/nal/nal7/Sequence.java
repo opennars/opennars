@@ -1,7 +1,7 @@
 package nars.nal.nal7;
 
 import nars.Symbols;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal5.Conjunction;
 import nars.term.Compound;
 import nars.term.Term;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import static java.lang.System.arraycopy;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
+import static nars.Op.COMPOUND_TERM_OPENER;
 
 /**
  * Created by me on 7/1/15.
@@ -59,8 +59,8 @@ public class Sequence extends Conjunction implements Intermval {
     }
 
     @Override
-    public NALOperator operator() {
-        return NALOperator.SEQUENCE;
+    public Op operator() {
+        return Op.SEQUENCE;
     }
 
     /**

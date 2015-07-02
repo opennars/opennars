@@ -20,7 +20,7 @@
  */
 package nars.nal.nal2;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Statement;
 import nars.term.Term;
 
@@ -92,8 +92,8 @@ public class Similarity extends Statement {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.SIMILARITY;
+    public Op operator() {
+        return Op.SIMILARITY;
     }
 
     /**

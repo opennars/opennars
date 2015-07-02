@@ -1,10 +1,10 @@
-package nars.nal.rule;
+package nars.process.concept;
 
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.nal.process.ConceptProcess;
-import nars.nal.process.NAL;
+import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.link.TaskLink;

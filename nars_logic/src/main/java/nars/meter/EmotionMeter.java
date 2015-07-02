@@ -1,7 +1,7 @@
 package nars.meter;
 
 import nars.Global;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetInt;

@@ -1,8 +1,8 @@
 package nars.nal;
 
 import com.google.common.collect.Lists;
-import nars.nal.process.ConceptProcess;
-import nars.nal.process.NAL;
+import nars.process.ConceptProcess;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
@@ -38,7 +38,7 @@ public class LogicPolicy {
         final List<LogicRule<ConceptProcess>> rules = conceptProcessing.rules;
         final int n = rules.size();
         for (int l = 0; l < n; l++) {
-            if (!rules.get(l).accept(fireConcept))
+            if (!rules.get(l).test(fireConcept))
                 break;
         }
     }

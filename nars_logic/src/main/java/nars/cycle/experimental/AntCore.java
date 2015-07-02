@@ -9,7 +9,7 @@ import nars.Memory;
 import nars.Global;
 import nars.budget.Budget;
 import nars.budget.Item;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.Termed;

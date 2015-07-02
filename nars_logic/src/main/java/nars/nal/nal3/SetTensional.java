@@ -2,7 +2,7 @@ package nars.nal.nal3;
 
 
 import nars.Symbols;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 
@@ -20,7 +20,7 @@ public interface SetTensional extends Term {
         return true;
     }
 
-    abstract public NALOperator operator();
+    abstract public Op operator();
 
 
 
@@ -38,8 +38,8 @@ public interface SetTensional extends Term {
             final int len = length();
 
             final char opener, closer;
-            if (this instanceof SetExt) { opener = NALOperator.SET_EXT_OPENER.ch; closer = NALOperator.SET_EXT_CLOSER.ch;            }
-            else { opener = NALOperator.SET_INT_OPENER.ch;  closer = NALOperator.SET_INT_CLOSER.ch; }
+            if (this instanceof SetExt) { opener = Op.SET_EXT_OPENER.ch; closer = Op.SET_EXT_CLOSER.ch;            }
+            else { opener = Op.SET_INT_OPENER.ch;  closer = Op.SET_INT_CLOSER.ch; }
 
             //calculate total size
             int bytes = 2;
@@ -70,8 +70,8 @@ public interface SetTensional extends Term {
 
             //duplicated from above, dont want to store this as a field in the class
             final char opener, closer;
-            if (this instanceof SetExt) { opener = NALOperator.SET_EXT_OPENER.ch; closer = NALOperator.SET_EXT_CLOSER.ch;            }
-            else { opener = NALOperator.SET_INT_OPENER.ch;  closer = NALOperator.SET_INT_CLOSER.ch; }
+            if (this instanceof SetExt) { opener = Op.SET_EXT_OPENER.ch; closer = Op.SET_EXT_CLOSER.ch;            }
+            else { opener = Op.SET_INT_OPENER.ch;  closer = Op.SET_INT_CLOSER.ch; }
 
             p.append(opener);
             for (int i = 0; i < len; i++) {

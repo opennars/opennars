@@ -34,13 +34,13 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.event.NARReaction;
 import nars.truth.DefaultTruth;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.term.Compound;
 import nars.op.app.STMInduction;
 

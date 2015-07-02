@@ -11,7 +11,7 @@ import nars.task.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.term.Atom;
 import nars.term.Term;
 

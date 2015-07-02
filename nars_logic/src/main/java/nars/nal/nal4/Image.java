@@ -1,7 +1,7 @@
 package nars.nal.nal4;
 
 import nars.Symbols;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Compound;
 import nars.term.DefaultCompound;
 import nars.term.Term;
@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.io.Writer;
 
 import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
+import static nars.Op.COMPOUND_TERM_CLOSER;
+import static nars.Op.COMPOUND_TERM_OPENER;
 
 /**
  *
@@ -56,7 +56,7 @@ abstract public class Image extends DefaultCompound {
      * @param relationIndex the location of the place holder
      * @return the oldName of the term
      */
-    protected static CharSequence makeImageName(final NALOperator op, final Term[] arg, final int relationIndex) {
+    protected static CharSequence makeImageName(final Op op, final Term[] arg, final int relationIndex) {
         throw new RuntimeException("should not be used, utf8 instead");
 //        final int sizeEstimate = 24 * arg.length + 2;
 //

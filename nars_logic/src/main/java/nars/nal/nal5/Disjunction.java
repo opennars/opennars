@@ -21,7 +21,7 @@
 package nars.nal.nal5;
 
 import nars.Global;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Terms;
 import nars.term.Compound;
 import nars.term.Term;
@@ -124,8 +124,8 @@ public class Disjunction extends Junction {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.DISJUNCTION;
+    public Op operator() {
+        return Op.DISJUNCTION;
     }
 
     /**

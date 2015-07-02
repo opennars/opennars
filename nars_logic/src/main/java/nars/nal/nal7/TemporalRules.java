@@ -30,7 +30,7 @@ import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
 import nars.nal.nal8.Operation;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.stamp.Stamp;
 import nars.task.Sentence;
 import nars.task.Task;

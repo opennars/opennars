@@ -28,7 +28,7 @@ import nars.budget.BudgetFunctions;
 import nars.io.out.Output;
 import nars.nal.nal2.NAL2;
 import nars.nal.nal7.TemporalRules;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.stamp.Stamp;
 import nars.task.Sentence;
 import nars.task.Task;

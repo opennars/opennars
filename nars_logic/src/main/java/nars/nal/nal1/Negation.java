@@ -20,7 +20,7 @@
  */
 package nars.nal.nal1;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Compound;
 import nars.term.Compound1;
 import nars.term.Term;
@@ -98,8 +98,8 @@ public class Negation extends Compound1 {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.NEGATION;
+    public Op operator() {
+        return Op.NEGATION;
     }
 
     
@@ -113,7 +113,7 @@ public class Negation extends Compound1 {
     @Override
     public byte[] init() {
 
-        return Compound.newCompound1Key(NALOperator.NEGATION, the());
+        return Compound.newCompound1Key(Op.NEGATION, the());
     }
 
     @Override

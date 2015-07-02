@@ -1,6 +1,6 @@
 package nars.task.filter;
 
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.truth.Truth;

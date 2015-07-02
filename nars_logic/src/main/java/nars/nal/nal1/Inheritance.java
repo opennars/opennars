@@ -20,7 +20,7 @@
  */
 package nars.nal.nal1;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.term.Compound;
@@ -97,8 +97,8 @@ public class Inheritance<A extends Term, B extends Term> extends Statement<A,B> 
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
-        return NALOperator.INHERITANCE;
+    public Op operator() {
+        return Op.INHERITANCE;
     }
 
 }

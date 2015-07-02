@@ -25,7 +25,7 @@ import com.google.common.primitives.UnsignedInts;
 import com.google.common.primitives.UnsignedLongs;
 import nars.Global;
 import nars.Memory;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal7.TemporalRules;
 import nars.term.transform.*;
 import nars.util.data.id.DynamicUTF8Identifier;
@@ -40,8 +40,8 @@ import java.util.*;
 
 import static java.util.Arrays.copyOf;
 import static nars.Symbols.ARGUMENT_SEPARATOR;
-import static nars.nal.NALOperator.COMPOUND_TERM_CLOSER;
-import static nars.nal.NALOperator.COMPOUND_TERM_OPENER;
+import static nars.Op.COMPOUND_TERM_CLOSER;
+import static nars.Op.COMPOUND_TERM_OPENER;
 
 /**
  * a compound term
@@ -247,7 +247,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * single term version of makeCompoundName without iteration for efficiency
      */
     @Deprecated
-    protected static CharSequence makeCompoundName(final NALOperator op, final Term singleTerm) {
+    protected static CharSequence makeCompoundName(final Op op, final Term singleTerm) {
         int size = 2; // beginning and end parens
         String opString = op.toString();
         size += opString.length();
@@ -256,7 +256,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         return new StringBuilder(size).append(COMPOUND_TERM_OPENER.ch).append(opString).append(ARGUMENT_SEPARATOR).append(tString).append(COMPOUND_TERM_CLOSER.ch).toString();
     }
 
-    public static void writeCompound1(final NALOperator op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
+    public static void writeCompound1(final Op op, final Term singleTerm, Writer writer, boolean pretty) throws IOException {
 
         writer.append(COMPOUND_TERM_OPENER.ch);
         writer.append(op.str);
@@ -265,7 +265,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
         writer.append(COMPOUND_TERM_CLOSER.ch);
     }
 
-    public static byte[] newCompound1Key(final NALOperator op, final Term singleTerm) {
+    public static byte[] newCompound1Key(final Op op, final Term singleTerm) {
 
         final byte[] opBytes = op.bytes;
 
@@ -355,7 +355,7 @@ public abstract class Compound extends DynamicUTF8Identifier implements Term, Co
      * Abstract method to get the operate of the compound
      */
     @Override
-    public abstract NALOperator operator();
+    public abstract Op operator();
 
     /**
      * Abstract clone method

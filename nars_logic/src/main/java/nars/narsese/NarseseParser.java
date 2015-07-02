@@ -14,7 +14,7 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.nal.nal1.Inheritance;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static nars.Symbols.IMAGE_PLACE_HOLDER;
-import static nars.nal.NALOperator.*;
+import static nars.Op.*;
 
 /**
  * NARese, syntax and language for interacting with a NAR in NARS.
@@ -366,7 +366,7 @@ public class NarseseParser extends BaseParser<Object> {
 //        }
 //    }
 
-    static Term getTerm(Term predicate, NALOperator op, Term subject) {
+    static Term getTerm(Term predicate, Op op, Term subject) {
         return Memory.term(op, subject, predicate);
     }
 
@@ -404,13 +404,13 @@ public class NarseseParser extends BaseParser<Object> {
                         sequence(
                                 includeOperation,
                                 NonOperationTerm(),
-                                NALOperator.COMPOUND_TERM_OPENER.str,
-                                MultiArgTerm(NALOperator.OPERATION, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, true)
+                                Op.COMPOUND_TERM_OPENER.str,
+                                MultiArgTerm(Op.OPERATION, Op.COMPOUND_TERM_CLOSER, false, false, false, true)
                         ),
 
 
-                        sequence( NALOperator.STATEMENT_OPENER.str,
-                                MultiArgTerm(null, NALOperator.STATEMENT_CLOSER, false, true, true, false)
+                        sequence( Op.STATEMENT_OPENER.str,
+                                MultiArgTerm(null, Op.STATEMENT_CLOSER, false, true, true, false)
                         ),
 
                         Variable(),
@@ -424,26 +424,26 @@ public class NarseseParser extends BaseParser<Object> {
 
 
                         sequence(
-                                NALOperator.SET_EXT_OPENER.str,
-                                MultiArgTerm(NALOperator.SET_EXT_OPENER, NALOperator.SET_EXT_CLOSER, false, false, false)
+                                Op.SET_EXT_OPENER.str,
+                                MultiArgTerm(Op.SET_EXT_OPENER, Op.SET_EXT_CLOSER, false, false, false)
                         ),
 
                         sequence(
-                                NALOperator.SET_INT_OPENER.str,
-                                MultiArgTerm(NALOperator.SET_INT_OPENER, NALOperator.SET_INT_CLOSER, false, false, false)
+                                Op.SET_INT_OPENER.str,
+                                MultiArgTerm(Op.SET_INT_OPENER, Op.SET_INT_CLOSER, false, false, false)
                         ),
 
 
 
-                        sequence( NALOperator.COMPOUND_TERM_OPENER.str,
+                        sequence( Op.COMPOUND_TERM_OPENER.str,
                                 firstOf(
 
-                                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_CLOSER, true, false, false, false),
+                                        MultiArgTerm(null, Op.COMPOUND_TERM_CLOSER, true, false, false, false),
 
                                         //default to product if no operator specified in ( )
-                                        MultiArgTerm(NALOperator.PRODUCT, NALOperator.COMPOUND_TERM_CLOSER, false, false, false, false),
+                                        MultiArgTerm(Op.PRODUCT, Op.COMPOUND_TERM_CLOSER, false, false, false, false),
 
-                                        MultiArgTerm(null, NALOperator.COMPOUND_TERM_CLOSER, false, true, true, false)
+                                        MultiArgTerm(null, Op.COMPOUND_TERM_CLOSER, false, true, true, false)
                                 )
                         ),
 
@@ -646,18 +646,18 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator() {
         return sequence(
                 trie(
-                        NALOperator.NEGATION.str,
-                        NALOperator.DISJUNCTION.str,
-                        NALOperator.CONJUNCTION.str,
-                        NALOperator.SEQUENCE.str,
-                        NALOperator.PARALLEL.str,
-                        NALOperator.DIFFERENCE_EXT.str,
-                        NALOperator.DIFFERENCE_INT.str,
-                        NALOperator.INTERSECTION_EXT.str,
-                        NALOperator.INTERSECTION_INT.str,
-                        NALOperator.PRODUCT.str,
-                        NALOperator.IMAGE_EXT.str,
-                        NALOperator.IMAGE_INT.str
+                        Op.NEGATION.str,
+                        Op.DISJUNCTION.str,
+                        Op.CONJUNCTION.str,
+                        Op.SEQUENCE.str,
+                        Op.PARALLEL.str,
+                        Op.DIFFERENCE_EXT.str,
+                        Op.DIFFERENCE_INT.str,
+                        Op.INTERSECTION_EXT.str,
+                        Op.INTERSECTION_INT.str,
+                        Op.PRODUCT.str,
+                        Op.IMAGE_EXT.str,
+                        Op.IMAGE_INT.str
                         //NALOperator.OPERATION.ch
                 ),
                 push(Symbols.getOperator(match()))
@@ -670,17 +670,17 @@ public class NarseseParser extends BaseParser<Object> {
     Rule CompoundOperator2() {
         return sequence(
                 trie(
-                        NALOperator.DISJUNCTION.str,
-                        NALOperator.CONJUNCTION.str,
-                        NALOperator.SEQUENCE.str,
-                        NALOperator.PARALLEL.str,
-                        NALOperator.DIFFERENCE_EXT.str,
-                        NALOperator.DIFFERENCE_INT.str,
-                        NALOperator.INTERSECTION_EXT.str,
-                        NALOperator.INTERSECTION_INT.str,
-                        NALOperator.PRODUCT.str,
-                        NALOperator.IMAGE_EXT.str,
-                        NALOperator.IMAGE_INT.str
+                        Op.DISJUNCTION.str,
+                        Op.CONJUNCTION.str,
+                        Op.SEQUENCE.str,
+                        Op.PARALLEL.str,
+                        Op.DIFFERENCE_EXT.str,
+                        Op.DIFFERENCE_INT.str,
+                        Op.INTERSECTION_EXT.str,
+                        Op.INTERSECTION_INT.str,
+                        Op.PRODUCT.str,
+                        Op.IMAGE_EXT.str,
+                        Op.IMAGE_INT.str
                 ),
                 push(Symbols.getOperator(match()))
         );
@@ -702,7 +702,7 @@ public class NarseseParser extends BaseParser<Object> {
     }
 
     @Cached
-    Rule MultiArgTerm(NALOperator open, NALOperator close, boolean allowInitialOp, boolean allowInternalOp, @Deprecated boolean allowSpaceToSeparate) {
+    Rule MultiArgTerm(Op open, Op close, boolean allowInitialOp, boolean allowInternalOp, @Deprecated boolean allowSpaceToSeparate) {
         return MultiArgTerm(open, /*open, */close, allowInitialOp, allowInternalOp, allowSpaceToSeparate, false);
     }
 
@@ -714,7 +714,7 @@ public class NarseseParser extends BaseParser<Object> {
      * list of terms prefixed by a particular compound term operate
      */
     @Cached
-    Rule MultiArgTerm(NALOperator defaultOp, /*NALOperator open, */NALOperator close, boolean initialOp, boolean allowInternalOp, @Deprecated boolean spaceSeparates, boolean operatorPrecedes) {
+    Rule MultiArgTerm(Op defaultOp, /*NALOperator open, */Op close, boolean initialOp, boolean allowInternalOp, @Deprecated boolean spaceSeparates, boolean operatorPrecedes) {
 
 
         return sequence(
@@ -750,9 +750,9 @@ public class NarseseParser extends BaseParser<Object> {
 
                 OperationPrefixTerm(),
 
-                s(), NALOperator.COMPOUND_TERM_OPENER.ch, s(), NALOperator.COMPOUND_TERM_CLOSER.ch,
+                s(), Op.COMPOUND_TERM_OPENER.ch, s(), Op.COMPOUND_TERM_CLOSER.ch,
 
-                push(nextTermVector(NALOperator.OPERATION, false))
+                push(nextTermVector(Op.OPERATION, false))
         );
     }
 
@@ -778,7 +778,7 @@ public class NarseseParser extends BaseParser<Object> {
     /**
      * produce a term from the terms (& <=1 NALOperator's) on the value stack
      */
-    Term nextTermVector(NALOperator op /*default */, boolean allowInternalOp) {
+    Term nextTermVector(Op op /*default */, boolean allowInternalOp) {
 
 
 
@@ -819,7 +819,7 @@ public class NarseseParser extends BaseParser<Object> {
             } else if (p instanceof Term) {
                 Term t = (Term) p;
                 vectorterms.add(t);
-            } else if (p instanceof NALOperator) {
+            } else if (p instanceof Op) {
 
                 if (op != null) {
                     if ((!allowInternalOp) && (!p.equals(op)))
@@ -828,7 +828,7 @@ public class NarseseParser extends BaseParser<Object> {
                     throw new InvalidInputException("Too many operators involved: " + op + "," + p + " in " + stack + ":" + vectorterms);
                 }
 
-                op = (NALOperator)p;
+                op = (Op)p;
             }
         }
 
@@ -843,7 +843,7 @@ public class NarseseParser extends BaseParser<Object> {
 //            op = NALOperator.OPERATION;
 //        }
 
-        if (op == null) op = NALOperator.PRODUCT;
+        if (op == null) op = Op.PRODUCT;
 
 
 

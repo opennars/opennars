@@ -5,18 +5,14 @@
 package nars.util.graph.experimental;
 
 import com.google.common.base.Objects;
-import nars.Events;
+import nars.*;
 import nars.Events.ConceptForget;
-import nars.Global;
-import nars.NAR;
-import nars.nal.*;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.term.Terms;
 import nars.truth.Truthed;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
-import nars.Symbols;
 import nars.concept.Concept;
 import nars.nal.nal4.Image;
 import nars.term.Compound;
@@ -35,7 +31,7 @@ public class Idea implements Iterable<Concept> {
     final public Set<Concept> concepts = Collections.synchronizedSet(new HashSet());
     final CharSequence key;
     final Set<SentenceType> feature = new HashSet();
-    final Set<NALOperator> operators = new HashSet<NALOperator>();
+    final Set<Op> operators = new HashSet<Op>();
 
 
     public static CharSequence getKey(Termed tt) {
@@ -80,7 +76,7 @@ public class Idea implements Iterable<Concept> {
             add(x);
     }
     
-    public Set<NALOperator> operators() {
+    public Set<Op> operators() {
         return operators;
     }
     
@@ -107,13 +103,13 @@ public class Idea implements Iterable<Concept> {
     
     public class SentenceType implements Comparable<SentenceType> {
         
-        public final NALOperator op;
+        public final Op op;
         public final char punc;
                 
         transient private final int hash;
         private ArrayList sentences;
 
-        public SentenceType(NALOperator o, char c) {
+        public SentenceType(Op o, char c) {
             this.op = o;
             this.punc = c;
             this.hash = Objects.hashCode(op, punc);
@@ -207,7 +203,7 @@ public class Idea implements Iterable<Concept> {
         feature.clear();
         
         for (Concept c : this) {
-            NALOperator o = c.operator();
+            Op o = c.operator();
             operators.add(o);
             
             if (!c.getBeliefs().isEmpty())

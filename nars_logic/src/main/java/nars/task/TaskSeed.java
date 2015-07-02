@@ -9,7 +9,7 @@ import nars.budget.DirectBudget;
 import nars.io.JSONOutput;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.Operation;
-import nars.nal.process.NAL;
+import nars.process.NAL;
 import nars.task.stamp.AbstractStamper;
 import nars.task.stamp.Stamp;
 import nars.task.stamp.StampEvidence;

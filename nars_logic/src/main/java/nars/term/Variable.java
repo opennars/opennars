@@ -22,7 +22,7 @@ package nars.term;
 
 
 import nars.Symbols;
-import nars.nal.NALOperator;
+import nars.Op;
 
 import static nars.Symbols.*;
 
@@ -68,11 +68,11 @@ public class Variable extends Atom {
     }
 
     @Override
-    public NALOperator operator() {
+    public Op operator() {
         switch (type) {
-            case VAR_INDEPENDENT: return NALOperator.VAR_INDEPENDENT;
-            case VAR_DEPENDENT: return NALOperator.VAR_DEPENDENT;
-            case VAR_QUERY: return NALOperator.VAR_QUERY;
+            case VAR_INDEPENDENT: return Op.VAR_INDEPENDENT;
+            case VAR_DEPENDENT: return Op.VAR_DEPENDENT;
+            case VAR_QUERY: return Op.VAR_QUERY;
             default:
                 throw new RuntimeException("Invalid variable type");
         }

@@ -8,7 +8,7 @@ package nars.prolog;
 import nars.NAR;
 import nars.budget.Budget;
 import nars.event.NARReaction;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
 

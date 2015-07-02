@@ -20,7 +20,7 @@
  */
 package nars.nal.nal5;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.term.Statement;
@@ -143,14 +143,14 @@ public class Equivalence extends Statement {
      * @return the operate of the term
      */
     @Override
-    public NALOperator operator() {
+    public Op operator() {
         switch (temporalOrder) {
             case TemporalRules.ORDER_FORWARD:
-                return NALOperator.EQUIVALENCE_AFTER;
+                return Op.EQUIVALENCE_AFTER;
             case TemporalRules.ORDER_CONCURRENT:
-                return NALOperator.EQUIVALENCE_WHEN;
+                return Op.EQUIVALENCE_WHEN;
         }
-        return NALOperator.EQUIVALENCE;
+        return Op.EQUIVALENCE;
     }
 
     /**

@@ -6,7 +6,7 @@ import jurls.reinforcementlearning.domains.RLEnvironment;
 import nars.Memory;
 import nars.NAR;
 import nars.event.FrameReaction;
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.concept.Concept;
@@ -168,7 +168,7 @@ public class QLAgent<S extends Term> extends NARAgent {
     /** fast immediate checks to discount terms which are definitely not representative of a state */
     public boolean isRowPrefilter(Term s) {
         //TODO use a standard subject for all state data that can be tested quickly
-        return (s.operator()== NALOperator.INHERITANCE);
+        return (s.operator()== Op.INHERITANCE);
     }
 
     /* the effective action desire value, as aggregated between frames from NARS executions */

@@ -1,6 +1,6 @@
 package nars.nal.nal3;
 
-import nars.nal.NALOperator;
+import nars.Op;
 import nars.term.Term;
 
 import java.io.IOException;
@@ -16,8 +16,8 @@ public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt {
     }
 
     @Override
-    public NALOperator operator() {
-        return NALOperator.SET_INT;
+    public Op operator() {
+        return Op.SET_INT;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SetInt1<T extends Term> extends AbstractSet1<T> implements SetInt {
     }
 
     public void appendCloser(Writer p) throws IOException {
-        p.append(NALOperator.SET_INT_CLOSER.ch);
+        p.append(Op.SET_INT_CLOSER.ch);
     }
 
 }

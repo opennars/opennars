@@ -22,7 +22,6 @@ package nars;
 
 
 import com.gs.collections.impl.map.mutable.primitive.CharObjectHashMap;
-import nars.nal.NALOperator;
 import nars.term.Atom;
 import nars.util.utf8.ByteBuf;
 
@@ -96,9 +95,9 @@ abstract public class Symbols {
 
     /** index of operators which are encoded by 1 byte: must be less than 31 because this is the range for control characters */
     final static int numByteSymbols = 15;
-    private static final NALOperator[] byteSymbols = new NALOperator[numByteSymbols];
+    private static final Op[] byteSymbols = new Op[numByteSymbols];
 
-    public static NALOperator symbol(final byte b) {
+    public static Op symbol(final byte b) {
         if (b > byteSymbols.length)
             throw new RuntimeException("value of " + b + " exceeds special character range");
         return byteSymbols[b];
@@ -119,7 +118,7 @@ abstract public class Symbols {
             return false;
         }
     }
-    public static void compact(final ByteBuf b, final NALOperator n) {
+    public static void compact(final ByteBuf b, final Op n) {
         if (n.has8BitRepresentation()) {
             b.append(n.byt);
         }
@@ -128,14 +127,14 @@ abstract public class Symbols {
         }
     }
 
-    private static final Map<String,NALOperator> _stringToOperator
-            = new HashMap(NALOperator.values().length * 2);
+    private static final Map<String,Op> _stringToOperator
+            = new HashMap(Op.values().length * 2);
 
-    private static final CharObjectHashMap<NALOperator> _charToOperator
-            = new CharObjectHashMap(NALOperator.values().length * 2);
+    private static final CharObjectHashMap<Op> _charToOperator
+            = new CharObjectHashMap(Op.values().length * 2);
     static {
         //Setup NativeOperator String index hashtable 
-        for (final NALOperator r : NALOperator.values()) {
+        for (final Op r : Op.values()) {
             _stringToOperator.put(r.toString(), r);
 
 
@@ -156,16 +155,16 @@ abstract public class Symbols {
         }
 
         //Setup NativeOperator Character index hashtable 
-        for (final NALOperator r : NALOperator.values()) {
+        for (final Op r : Op.values()) {
             char c = r.ch;
             if (c!=0)
                 _charToOperator.put(c, r);
         }
     }
 
-    protected static final Map<String,NALOperator> stringToOperator
+    protected static final Map<String,Op> stringToOperator
             = Collections.unmodifiableMap(_stringToOperator);
-    protected static final CharObjectHashMap<NALOperator> charToOperator
+    protected static final CharObjectHashMap<Op> charToOperator
             = (_charToOperator);
 
     //TODO use 'I' for SELf, it is 3 characters shorter
@@ -176,32 +175,32 @@ abstract public class Symbols {
     final public static char TLinkSeparator = ':';
 
 
-    public static NALOperator getOperator(final char c) {
+    public static Op getOperator(final char c) {
         return charToOperator.get(c);
     }
     
-    public static NALOperator getOperator(final String s) {
+    public static Op getOperator(final String s) {
         return stringToOperator.get(s);
     }
     
-    public static NALOperator getRelation(final String s) {
-        NALOperator o = getOperator(s);
+    public static Op getRelation(final String s) {
+        Op o = getOperator(s);
         if (o == null) return null;
         if (o.relation)
             return o;
         return null;
     }
 
-    public static NALOperator getOpener(final char c) {
-        NALOperator o = getOperator(c);
+    public static Op getOpener(final char c) {
+        Op o = getOperator(c);
         if (o == null) return null;
         if (o.opener)
             return o;
         return null;
     }
     
-    public static NALOperator getCloser(final char c) {
-        NALOperator o = getOperator(c);
+    public static Op getCloser(final char c) {
+        Op o = getOperator(c);
         if (o == null) return null;
         if (o.closer)
             return o;

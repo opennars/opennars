@@ -6,7 +6,7 @@ import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
 import nars.truth.DefaultTruth;
-import nars.nal.process.TaskProcess;
+import nars.process.TaskProcess;
 import nars.task.Task;
 import nars.truth.Truth;
 import nars.nal.nal1.Inheritance;

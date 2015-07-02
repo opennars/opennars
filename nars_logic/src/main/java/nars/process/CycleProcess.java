@@ -1,6 +1,8 @@
-package nars;
+package nars.process;
 
 import javolution.context.ConcurrentContext;
+import nars.Global;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.task.Task;
 import nars.concept.Concept;
@@ -11,7 +13,7 @@ import java.util.function.Predicate;
 
 
 /** Core implements a central reasoning component which references a set of Concepts and activates them during a memory cycle.*/
-public interface ControlCycle extends Iterable<Concept> /* TODO: implements Plugin */ {
+public interface CycleProcess extends Iterable<Concept> /* TODO: implements Plugin */ {
 
 
     boolean addTask(Task t);
