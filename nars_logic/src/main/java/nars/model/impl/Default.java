@@ -133,7 +133,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         duration.set(5);
 
-        confidenceThreshold.set(0.02);
+        confidenceThreshold.set(0.01);
 
         shortTermMemoryHistory.set(1);
         temporalRelationsMax.set(7);

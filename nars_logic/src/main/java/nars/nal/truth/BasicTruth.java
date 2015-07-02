@@ -30,12 +30,16 @@ public class BasicTruth extends AbstractTruth {
     }
 
     /** creates a new truth using the maximum epsilon (least precision) of 2 parent truth's */
-    public static AbstractTruth make(final float f, final float c, final Truth a, final Truth b) {
-        return make(f, c, Math.max( a.getEpsilon(), b.getEpsilon() ));
+    public static AbstractTruth get(final float f, final float c, final Truth a, final Truth b) {
+        return get(f, c, Math.max(a.getEpsilon(), b.getEpsilon()));
+    }
+
+    public static AbstractTruth make(final float f, final float c, final Truth copyEpsilonFrom) {
+        return get(f, c, copyEpsilonFrom.getEpsilon());
     }
 
     /** use this instead of a constructor to automatically have DefaultTruth used when epsilon is default, saving the storage of a float */
-    public static AbstractTruth make(final float f, final float c, final float epsilon) {
+    public static AbstractTruth get(final float f, final float c, final float epsilon) {
         if (epsilon == DefaultTruth.DEFAULT_TRUTH_EPSILON)
             return new DefaultTruth(f, c);
         else
@@ -43,6 +47,6 @@ public class BasicTruth extends AbstractTruth {
     }
 
     public static Truth clone(final Truth truth) {
-        return make(truth.getFrequency(), truth.getConfidence(), truth.getEpsilon());
+        return get(truth.getFrequency(), truth.getConfidence(), truth.getEpsilon());
     }
 }

@@ -288,6 +288,11 @@ public abstract class NAL implements Runnable {
     @Deprecated public Task deriveDouble(Compound newTaskContent, char punctuation, final Truth newTruth, final Budget newBudget, Task parentTask, Sentence parentBelief, final boolean temporalAdd, boolean allowOverlap) {
 
 
+        //experimental: quick filter for below confidence threshold truths.
+        // this is also applied in derivation filters but this avoids some overhead
+        if (newTruth!=null && newTruth.getConfidence() < memory.param.confidenceThreshold.floatValue())
+            return null;
+
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)
             return null;

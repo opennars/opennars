@@ -34,6 +34,7 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.nal.truth.AnalyticTruth;
 import nars.nal.truth.Truth;
 import nars.nal.truth.TruthFunctions;
 
@@ -189,8 +190,8 @@ public final class StructuralRules {
         Truth truth = sentence.truth;
         
         final float reliance = nal.memory.param.reliance.floatValue();
-        Truth truthDed = TruthFunctions.deduction(truth, reliance);
-        Truth truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
+        AnalyticTruth truthNDed = TruthFunctions.deduction(truth, reliance).negate();
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
@@ -246,8 +247,8 @@ public final class StructuralRules {
         }
         
         final float reliance = nal.memory.param.reliance.floatValue();
-        Truth truthDed = TruthFunctions.deduction(truth, reliance);
-        Truth truthNDed = TruthFunctions.negation(TruthFunctions.deduction(truth, reliance));
+        AnalyticTruth truthDed = TruthFunctions.deduction(truth, reliance);
+        AnalyticTruth truthNDed = TruthFunctions.deduction(truth, reliance).negate(); //TODO clone from truthDed instead of calculate Deducation entirely
         
         Term subj = statement.getSubject();
         Term pred = statement.getPredicate();
@@ -403,6 +404,9 @@ public final class StructuralRules {
                 Truth v2 = TruthFunctions.deduction(v1, reliance);
                 truth = TruthFunctions.negation(v2);
             }
+
+            if (truth == null)
+                return null;
 
             budget = BudgetFunctions.forward(truth, nal);
         }

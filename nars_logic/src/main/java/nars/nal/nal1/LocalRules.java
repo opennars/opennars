@@ -34,6 +34,7 @@ import nars.nal.task.TaskSeed;
 import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
+import nars.nal.truth.AnalyticTruth;
 import nars.nal.truth.Truth;
 import nars.nal.truth.TruthFunctions;
 
@@ -302,14 +303,18 @@ public class LocalRules {
         Statement content = Statement.make(statement, sub, pre, statement.getTemporalOrder());
         if (content == null) return null;
 
-        Truth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
+        AnalyticTruth truth = TruthFunctions.reduceConjunction(sym.truth, asym.getTruth());
 
-        return nal.deriveDouble(
-                s.term(content)
-                .punctuation(asym.getPunctuation())
-                .truth(truth)
-                .budget(BudgetFunctions.forward(truth, nal)),
-                false, false);
+        if (truth!=null) {
+            return nal.deriveDouble(
+                    s.term(content)
+                            .punctuation(asym.getPunctuation())
+                            .truth(truth)
+                            .budget(BudgetFunctions.forward(truth, nal)),
+                    false, false);
+        }
+
+        return null;
     }
 
     /* -------------------- one-premise logic rules -------------------- */
@@ -333,11 +338,12 @@ public class LocalRules {
      * @param nal Reference to the memory
      */
     private static Task convertRelation(final NAL nal) {
-        Truth truth = nal.getCurrentBelief().truth;
+        final Truth beliefTruth = nal.getCurrentBelief().truth;
+        final AnalyticTruth truth;
         if ((nal.getCurrentTask().getTerm()).isCommutative()) {
-            truth = TruthFunctions.abduction(truth, 1.0f);
+            truth = TruthFunctions.abduction(beliefTruth, 1.0f);
         } else {
-            truth = TruthFunctions.deduction(truth, 1.0f);
+            truth = TruthFunctions.deduction(beliefTruth, 1.0f);
         }
         if (truth!=null) {
             Budget budget = BudgetFunctions.forward(truth, nal);

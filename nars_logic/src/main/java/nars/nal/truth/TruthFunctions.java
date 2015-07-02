@@ -40,7 +40,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = t.getConfidence();
         final float w = and(f1, c1);
         final float c = w2c(w);
-        return new DefaultTruth(1, c);
+        return BasicTruth.make(1, c, t);
     }
 
     /* ----- Single argument functions, called in StructuralRules ----- */
@@ -50,9 +50,14 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final Truth negation(final Truth t) {
+        if (t == null) return null;
         final float f = 1 - t.getFrequency();
         final float c = t.getConfidence();
-        return new DefaultTruth(f, c);
+
+        if (t.isAnalytic())
+            return AnalyticTruth.get(f, c, t); //experimental: for cases where analytic is inverted, to preserve analytic state
+        else
+            return BasicTruth.make(f, c, t);
     }
 
 
@@ -66,7 +71,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c1 = v1.getConfidence();
         final float w = and(1 - f1, c1);
         final float c = w2c(w);
-        return new DefaultTruth(0, c);
+        return BasicTruth.make(0, c, v1);
     }
 
     /* ----- double argument functions, called in MatchingRules ----- */
@@ -77,7 +82,8 @@ public final class TruthFunctions extends UtilityFunctions {
      * @return Truth value of the conclusion
      */
     public static final Truth revision(final Truth a, final Truth b) {
-        return revision(a, b, new DefaultTruth());
+
+        return revision(a, b, BasicTruth.get(0, 0, a, b));
     }
     
     static final Truth revision(final Truth a, final Truth b, final Truth result) {
@@ -102,7 +108,7 @@ public final class TruthFunctions extends UtilityFunctions {
     public static final Truth deduction(final Truth a, final Truth b) {
         final float f = and(a.getFrequency(), b.getFrequency());
         final float c = and(a.getConfidence(), b.getConfidence(), f);
-        return new DefaultTruth(f, c);
+        return BasicTruth.get(f, c, a, b);
     }
 
     /**
@@ -111,11 +117,10 @@ public final class TruthFunctions extends UtilityFunctions {
      * @param reliance Confidence of the second (analytical) premise
      * @return AnalyticTruth value of the conclusion, because it is structural
      */
-    public static final Truth deduction(final Truth t, final float reliance) {
-        final float f1 = t.getFrequency();
-        final float c1 = t.getConfidence();
-        final float c = and(f1, c1, reliance);
-        return new AnalyticTruth(f1, c, t.getEpsilon());
+    public static final AnalyticTruth deduction(final Truth t, final float reliance) {
+        final float f = t.getFrequency();
+        final float c = and(f, t.getConfidence(), reliance);
+        return AnalyticTruth.get(f, c, t);
     }
 
     /**
@@ -131,7 +136,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2);
-        return new DefaultTruth(f, c);
+        return BasicTruth.get(f, c, a, b);
     }
 
     /**
@@ -147,7 +152,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, or(f1, f2));
-        return new DefaultTruth(f, c);
+        return BasicTruth.get(f, c, a, b);
     }
 
     /**
@@ -166,24 +171,24 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float w = and(f2, c1, c2);
         final float c = w2c(w);
-        return new DefaultTruth(f1, c);
+        return BasicTruth.get(f1, c, a, b);
     }
 
     /**
      * {M, <P ==> M>} |- P
-     * @param v1 Truth value of the first premise
+     * @param t Truth value of the first premise
      * @param reliance Confidence of the second (analytical) premise
      * @return Truth value of the conclusion
      */
-    public static final Truth abduction(final Truth v1, final float reliance) {
-        if (v1.isAnalytic()) {
+    public static final AnalyticTruth abduction(final Truth t, final float reliance) {
+        if (t.isAnalytic()) {
             return null;
         }
-        final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
+        final float f1 = t.getFrequency();
+        final float c1 = t.getConfidence();
         final float w = and(c1, reliance);
         final float c = w2c(w);
-        return new AnalyticTruth(f1, c, v1.getEpsilon());
+        return AnalyticTruth.get(f1, c, t);
     }
 
     /**
@@ -212,7 +217,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float w = and(f1, f2, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.make(1, c, a, b);
+        return BasicTruth.get(1, c, a, b);
     }
 
     /**
@@ -230,7 +235,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float f = (f0 == 0) ? 0 : (and(f1, f2) / f0);
         final float w = and(f0, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.make(f, c, a, b);
+        return BasicTruth.get(f, c, a, b);
     }
 
     /* ----- desire-value functions, called in SyllogisticRules ----- */
@@ -247,7 +252,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = b.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2);
-        return BasicTruth.make(f, c, a, b);
+        return BasicTruth.get(f, c, a, b);
     }
 
     /**
@@ -263,7 +268,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2, f2, w2c(1.0f));
-        return BasicTruth.make(f, c, v1, v2);
+        return BasicTruth.get(f, c, v1, v2);
     }
 
     /**
@@ -279,7 +284,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2);
-        return BasicTruth.make(f, c, v1, v2);
+        return BasicTruth.get(f, c, v1, v2);
     }
 
     /**
@@ -295,7 +300,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float w = and(f2, c1, c2);
         final float c = w2c(w);
-        return BasicTruth.make(f1, c, v1, v2);
+        return BasicTruth.get(f1, c, v1, v2);
     }
 
     /* ----- double argument functions, called in CompositionalRules ----- */
@@ -312,7 +317,7 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = or(f1, f2);
         final float c = and(c1, c2);
-        return BasicTruth.make(f, c, v1, v2);
+        return BasicTruth.get(f, c, v1, v2);
     }
 
     /**
@@ -328,70 +333,79 @@ public final class TruthFunctions extends UtilityFunctions {
         final float c2 = v2.getConfidence();
         final float f = and(f1, f2);
         final float c = and(c1, c2);
-        return BasicTruth.make(f, c, v1, v2);
+        return BasicTruth.get(f, c, v1, v2);
     }
 
     /**
      * {(||, A, B), (--, B)} |- A
-     * @param v1 Truth value of the first premise
-     * @param v2 Truth value of the second premise
+     * @param a Truth value of the first premise
+     * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final Truth reduceDisjunction(final Truth v1, final Truth v2) {
-        final Truth v0 = intersection(v1, negation(v2));
-        return deduction(v0, 1f);
+    public static final AnalyticTruth reduceDisjunction(final Truth a, final Truth b) {
+        return deduction(intersection(a, negation(b)), 1f);
     }
 
     /**
      * {(--, (&&, A, B)), B} |- (--, A)
-     * @param v1 Truth value of the first premise
-     * @param v2 Truth value of the second premise
+     * @param a Truth value of the first premise
+     * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final Truth reduceConjunction(final Truth v1, final Truth v2) {
-        final Truth v0 = intersection(negation(v1), v2);
-        return deduction(v0, 1f).negate();
+    public static final AnalyticTruth reduceConjunction(final Truth a, final Truth b) {
+        AnalyticTruth x = deduction(
+                intersection(negation(a), b),
+                1f
+        );
+        if (x!=null)
+            return x.negate();
+        else
+            return null;
     }
 
     /**
      * {(--, (&&, A, (--, B))), (--, B)} |- (--, A)
-     * @param v1 Truth value of the first premise
-     * @param v2 Truth value of the second premise
+     * @param a Truth value of the first premise
+     * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final Truth reduceConjunctionNeg(final Truth v1, final Truth v2) {
-        return reduceConjunction(v1, negation(v2));
+    public static final AnalyticTruth reduceConjunctionNeg(final Truth a, final Truth b) {
+        return reduceConjunction(a, negation(b));
     }
 
     /**
      * {(&&, <#x() ==> M>, <#x() ==> P>), S ==> M} |- <S ==> P>
-     * @param v1 Truth value of the first premise
-     * @param v2 Truth value of the second premise
+     * @param a Truth value of the first premise
+     * @param b Truth value of the second premise
      * @return Truth value of the conclusion
      */
-    public static final Truth anonymousAnalogy(final Truth v1, final Truth v2) {
-        final float f1 = v1.getFrequency();
-        final float c1 = v1.getConfidence();
-        final Truth v0 = new DefaultTruth(f1, w2c(c1));
-        return analogy(v2, v0);
+    public static final Truth anonymousAnalogy(final Truth a, final Truth b) {
+        final float f1 = a.getFrequency();
+        final float c1 = a.getConfidence();
+        final Truth v0 = BasicTruth.get(f1, w2c(c1), a, b);
+        return analogy(b, v0);
     }
     
     
     /** functions the same as TruthValue, but being a separate class,
      *  indicates it was the result of eternalization */
-    public static final class EternalizedTruthValue extends DefaultTruth {
-        public EternalizedTruthValue(final float f, final float c) {
-            super(f, c);
+    public static final class EternalizedTruthValue extends BasicTruth {
+        EternalizedTruthValue(final float f, final float c, float epsilon) {
+            super(f, c, epsilon);
         }        
     }
     
     /**
      * From one moment to eternal
-     * @param v1 Truth value of the premise
+     * @param t Truth value of the premise
      * @return Truth value of the conclusion
      */
-    public static final EternalizedTruthValue eternalize(final Truth v1) {
-        return new EternalizedTruthValue(v1.getFrequency(), eternalizedConfidence(v1.getConfidence()));
+    public static final EternalizedTruthValue eternalize(final Truth t) {
+        return new EternalizedTruthValue(
+                t.getFrequency(),
+                eternalizedConfidence(t.getConfidence()),
+                t.getEpsilon()
+        );
     }
     public static final float eternalizedConfidence(float conf) {
         return w2c(conf);

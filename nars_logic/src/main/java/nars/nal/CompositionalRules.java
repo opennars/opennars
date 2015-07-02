@@ -41,6 +41,7 @@ import nars.nal.term.Compound;
 import nars.nal.term.Statement;
 import nars.nal.term.Term;
 import nars.nal.term.Variable;
+import nars.nal.truth.AnalyticTruth;
 import nars.nal.truth.Truth;
 
 import java.util.Map;
@@ -226,7 +227,7 @@ public final class CompositionalRules {
             v1 = belief.truth;
             v2 = sentence.truth;
         }
-        Truth truth = null;
+        AnalyticTruth truth = null;
         Compound content;
         if (index == 0) {
             content = Statement.make(oldContent, term1, term2, order);
@@ -300,9 +301,9 @@ public final class CompositionalRules {
      * @param compoundTask    Whether the implication comes from the task
      * @param nal             Reference to the memory
      */
-    static void decomposeStatement(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
+    static Task decomposeStatement(Compound compound, Term component, boolean compoundTask, int index, NAL nal) {
         if ((compound instanceof Conjunction) && (compound.getTemporalOrder() == TemporalRules.ORDER_FORWARD) && (index != 0)) {
-            return;
+            return null;
         }
 
         final Task task = nal.getCurrentTask();
@@ -313,7 +314,7 @@ public final class CompositionalRules {
         TaskSeed nonCyclic = nal.newDoublePremise(task, belief);
         if (nonCyclic==null) {
             if (!isQ) //dont skip the query var section is isQ true
-                return;
+                return null;
         }
         else {
             nonCyclic.punctuation(task.getPunctuation());
@@ -323,7 +324,7 @@ public final class CompositionalRules {
 
         Compound content = compoundOrNull(reduceComponents(compound, component, nal.memory));
         if (content == null)
-            return;
+            return null;
 
         if (isQ) {
 
@@ -340,12 +341,12 @@ public final class CompositionalRules {
 
                 Concept contentConcept = nal.memory.concept(content);
                 if (contentConcept == null) {
-                    return;
+                    return null;
                 }
 
                 Task contentTask = contentConcept.getBelief(nal, task);
                 if (contentTask == null) {
-                    return;
+                    return null;
                 }
 
                 TaskSeed qd = nal.newDoublePremise(contentTask, belief);
@@ -384,7 +385,7 @@ public final class CompositionalRules {
                     if (compoundTask) {
                         truth = intersection(v1, v2);
                     } else {
-                        return;
+                        return null;
                     }
                 } else { // isJudgment
                     truth = reduceConjunction(v1, v2);
@@ -394,23 +395,26 @@ public final class CompositionalRules {
                     if (compoundTask) {
                         truth = reduceConjunction(v2, v1);
                     } else {
-                        return;
+                        return null;
                     }
                 } else {  // isJudgment
                     truth = reduceDisjunction(v1, v2);
                 }
             } else {
-                return;
+                return null;
             }
 
 
-            nal.deriveDouble(nonCyclic.term(content)
-                            .truth(truth)
-                            .budget(BudgetFunctions.compoundForward(truth, content, nal))
-            );
+            if (truth!=null) {
+                return nal.deriveDouble(nonCyclic.term(content)
+                                .truth(truth)
+                                .budget(BudgetFunctions.compoundForward(truth, content, nal))
+                );
+            }
 
-            //nal.deriveDouble(content, truth, budget, false, false);
         }
+
+        return null;
 
 
     }
@@ -812,8 +816,10 @@ OUT: <lock1 --> lock>.
 
         Term S1 = T2.getSubject();
         Term S2 = T1.getSubject();
+
         Term P1 = T2.getPredicate();
         Term P2 = T1.getPredicate();
+
 
         Map<Term, Term> res1 = Global.newHashMap();
         Map<Term, Term> res2 = Global.newHashMap();
@@ -942,12 +948,14 @@ OUT: <lock1 --> lock>.
                 Map<Term, Term> res3 = Global.newHashMap();
                 Map<Term, Term> res4 = Global.newHashMap();
 
+                Term[] cp1Terms = ((Compound) P1).term;
+
                 //try to unify S2 with a component
-                for (final Term s1 : ((Compound) P1).term) {
+                for (final Term s1 : cp1Terms) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, S2, res3, res4, m)) {
-                        for (Term s2 : ((Compound) P1).term) {
+                        for (Term s2 : cp1Terms) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
                             }
@@ -990,12 +998,14 @@ OUT: <lock1 --> lock>.
                 Map<Term, Term> res3 = Global.newHashMap();
                 Map<Term, Term> res4 = Global.newHashMap();
 
+                Term[] cp1Terms = ((Compound) P1).term;
+
                 //try to unify P2 with a component
-                for (final Term s1 : ((Compound) P1).term) {
+                for (final Term s1 : cp1Terms) {
                     res3.clear();
                     res4.clear(); //here the dependent part matters, see example of Issue40
                     if (Variables.findSubstitute(Symbols.VAR_DEPENDENT, s1, P2, res3, res4, m)) {
-                        for (Term s2 : ((Compound) P1).term) {
+                        for (Term s2 : cp1Terms) {
                             if (!(s2 instanceof Compound)) {
                                 continue;
                             }
@@ -1005,10 +1015,8 @@ OUT: <lock1 --> lock>.
                             }
                             if ((!s2.equals(s1)) && (stu != null) && (belief.truth != null)) {
                                 Truth truth = abduction(stu, belief.truth);
-                                if (truth!=null) {
-                                    Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
-                                    nal.deriveDouble((Compound) s2, truth, budget, false, false);
-                                }
+                                Budget budget = BudgetFunctions.compoundForward(truth, s2, nal);
+                                nal.deriveDouble((Compound) s2, truth, budget, false, false);
                             }
                         }
                     }

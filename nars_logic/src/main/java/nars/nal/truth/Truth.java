@@ -223,9 +223,7 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
     /** negation that modifies the truth instance itself */
     default public Truth negate() {
         final float f = 1 - getFrequency();
-        final float c = getConfidence();
-        set(f, c);
-        return this;
+        return setFrequency(1 - getFrequency());
     }
 
     default float projectionQuality(Sentence s, long targetTime, long currentTime, boolean problemHasQueryVar) {
@@ -286,7 +284,7 @@ abstract public interface Truth extends Cloneable, Serializable { // implements 
      * @return Truth value, null for question
      */
     default public AnalyticTruth discountConfidence() {
-        return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE, getEpsilon());
+        return new AnalyticTruth(getFrequency(), getConfidence() * Global.DISCOUNT_RATE, this);
     }
 
 }

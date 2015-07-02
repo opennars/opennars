@@ -25,6 +25,7 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.nal.nal5.Conjunction;
+import nars.nal.nal7.Intermval;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
 import nars.nal.stamp.AbstractStamper;
@@ -698,7 +699,12 @@ public class Sentence<T extends Compound> extends Item<Sentence<T>> implements C
     /** WARNING: calling this should not change the value of term, but just the
      * particular instance that it references
      */
-    public void setTermInstance(T term) {
+    public void setTermInstance(final T term) {
+
+        //intermval generally contains unique information that should not be replaced
+        if (this.term instanceof Intermval)
+            return;
+
         this.term = term;
     }
 

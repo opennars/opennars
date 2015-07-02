@@ -39,16 +39,16 @@ public class TruthTest {
     @Test public void testEpsilon() {
         float e = 0.1f;
 
-        Truth a = BasicTruth.make(1.0f, 0.9f, e);
+        Truth a = BasicTruth.get(1.0f, 0.9f, e);
         assertEquals(a.getEpsilon(), e, 0.0001);
 
-        Truth aCopy = BasicTruth.make(1.0f, 0.9f, e);
+        Truth aCopy = BasicTruth.get(1.0f, 0.9f, e);
         assertEquals(a, aCopy);
 
-        Truth aEqualWithinThresh = BasicTruth.make(1.0f- a.getEpsilon()/2, 0.9f, e);
+        Truth aEqualWithinThresh = BasicTruth.get(1.0f - a.getEpsilon() / 2, 0.9f, e);
         assertEquals(a, aEqualWithinThresh);
 
-        Truth aNotWithinThresh = BasicTruth.make(1.0f - a.getEpsilon(), 0.9f, e);
+        Truth aNotWithinThresh = BasicTruth.get(1.0f - a.getEpsilon(), 0.9f, e);
         assertNotEquals(a, aNotWithinThresh);
     }
 }
