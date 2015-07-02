@@ -88,8 +88,8 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
 
             nar.frame();
 
-            if (timer != null)
-                timer.restart();
+            /*if (timer != null)
+                timer.restart();*/
 
         }
     };
@@ -551,12 +551,12 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
     }
 
     public void setFrameRate(float fps) {
-        this.GUIUpdatePeriodMS = (int)(1000.0/fps);
+        this.GUIUpdatePeriodMS = (int)(1000.0f/fps);
     }
 
     public void frame() {
-        if (timer!=null)
-            timer.stop();
+        /*if (timer!=null)
+            timer.stop();*/
         narexe.execute(narrun);
     }
     /**
@@ -565,7 +565,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
      * @param e The ActionEvent
      */
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         Object obj = e.getSource();
 
         if (obj == timer) {
@@ -728,13 +728,14 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
 
         if (timer == null) {
             timer = new Timer(ms, this);
-            timer.setCoalesce(false);
-            timer.setRepeats(false);
+            //timer.setCoalesce(false);
+            timer.setInitialDelay(0);
+            timer.setRepeats(true);
             timer.restart();
             //System.out.println("timer start: " + ms);
         }
         else {
-            timer.setInitialDelay(ms);
+            timer.setDelay(ms);
             timer.restart();
             //System.out.println("timer restart: " + ms);
         }
@@ -743,7 +744,9 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
         stopButton.setText(String.valueOf(FA_StopCharacter));
     }
 
-    protected void stop() {
+    protected synchronized void stop() {
+        fullSpeed = false;
+
         if (timer != null) {
             timer.stop();
             timer = null;

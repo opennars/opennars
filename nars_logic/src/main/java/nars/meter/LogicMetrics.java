@@ -21,6 +21,8 @@ import java.util.function.Consumer;
  */
 public class LogicMetrics extends NARReaction {
 
+
+
     public final Memory m;
 
     public final HitMeter TASK_IMMEDIATE_PROCESS = new HitMeter("task.immediate_process");
@@ -71,6 +73,7 @@ public class LogicMetrics extends NARReaction {
     //public final DoubleMeter DERIVATION_LATENCY = new DoubleMeter("rule.derivation.latency");
     public final DoubleMeter SOLUTION_BEST = new DoubleMeter("task.solution.best");
 
+    /*
     public final DoubleMeter PLAN_GRAPH_IN_DELAY_MAGNITUDE = new DoubleMeter("plan.graph.add#delay_magnitude");
     public final DoubleMeter PLAN_GRAPH_IN_OPERATION = new DoubleMeter("plan.graph.add#operation");
     public final DoubleMeter PLAN_GRAPH_IN_OTHER = new DoubleMeter("plan.graph.add#other");
@@ -78,6 +81,7 @@ public class LogicMetrics extends NARReaction {
     public final DoubleMeter PLAN_GRAPH_VERTEX = new DoubleMeter("plan.graph.vertex");
     public final DoubleMeter PLAN_TASK_PLANNED = new DoubleMeter("plan.task.planned");
     public final DoubleMeter PLAN_TASK_EXECUTABLE = new DoubleMeter("plan.task.executable");
+    */
 
     //public final ValueMeter TASK_INPUT = new ValueMeter("task.input");
 

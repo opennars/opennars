@@ -676,7 +676,8 @@ public class NAR extends Container implements Runnable {
      */
     protected void frameCycles(final int cycles) {
 
-        memory.resource.FRAME_DURATION.start();
+        if (memory.resource!=null)
+            memory.resource.FRAME_DURATION.start();
 
         memory.clock.preFrame(memory);
 

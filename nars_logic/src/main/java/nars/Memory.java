@@ -154,7 +154,7 @@ public class Memory implements Serializable, AbstractStamper {
         this.conceptBuilders = new ArrayList(1);
 
         //optional:
-        this.resource = new ResourceMeter();
+        this.resource = null; //new ResourceMeter();
         this.logic = new LogicMetrics(this);
 
         //after this line begins actual logic, now that the essential data strucures are allocated

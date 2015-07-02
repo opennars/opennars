@@ -103,6 +103,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         double max = Double.NEGATIVE_INFINITY;
 
 
+
         Iterator<Object[]> ii = iterator(); //signal);
         while (ii.hasNext()) {
             Object e = ii.next()[signal];

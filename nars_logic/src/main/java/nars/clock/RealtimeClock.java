@@ -44,17 +44,19 @@ abstract public class RealtimeClock implements Clock {
             update();
 
 
-        final double frameTime = memory.resource.FRAME_DURATION.stop();
+        if (memory.resource!=null) {
+            final double frameTime = memory.resource.FRAME_DURATION.stop();
 
-        //in real-time mode, warn if frame consumed more time than reasoner duration
-        final int d = memory.param.duration.get();
+            //in real-time mode, warn if frame consumed more time than reasoner duration
+            final int d = memory.param.duration.get();
 
-        if (frameTime > d) {
-            memory.emit(Events.ERR.class,
-                    "Real-time consumed by frame (" +
-                            frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)");
+            if (frameTime > d) {
+                memory.emit(Events.ERR.class,
+                        "Real-time consumed by frame (" +
+                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)");
+            }
+
         }
-
     }
 
     protected void update() {
