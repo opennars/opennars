@@ -117,7 +117,7 @@ public class Grid2DSpace extends PApplet {
         
         return j;
     }
-    
+
 
     @Override
     protected void resizeRenderer(int newWidth, int newHeight) {
