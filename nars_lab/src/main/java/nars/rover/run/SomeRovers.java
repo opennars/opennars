@@ -3,6 +3,7 @@ package nars.rover.run;
 import automenta.vivisect.Video;
 import nars.Global;
 import nars.NAR;
+import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
 import nars.model.impl.Default;
 import nars.nal.task.filter.ConstantDerivationLeak;
@@ -36,6 +37,7 @@ public class SomeRovers {
         for (int i = 0; i < rovers; i++)  {
 
             NAR nar;
+            SimulatedClock clock;
             nar = new NAR(new Default() {
 
                 protected void initDerivationFilters() {
@@ -44,8 +46,9 @@ public class SomeRovers {
                     getLogicPolicy().derivationFilters.add(new ConstantDerivationLeak(DERIVATION_PRIORITY_LEAK, DERIVATION_DURABILITY_LEAK));
                 }
 
-            }.simulationTime().
-                    setActiveConcepts(1200) );
+            }.setActiveConcepts(1200).setClock(clock = new SimulatedClock())
+            );
+
             nar.param.inputsMaxPerCycle.set(32);
             nar.param.conceptsFiredPerCycle.set(48);
 

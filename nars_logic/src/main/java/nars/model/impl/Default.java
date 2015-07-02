@@ -1,14 +1,15 @@
 package nars.model.impl;
 
+import jdk.nashorn.internal.runtime.Timing;
 import nars.*;
-import nars.Memory.Timing;
 import nars.bag.Bag;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.GuavaCacheBag;
 import nars.bag.impl.LevelBag;
-import nars.bag.impl.experimental.ChainBag;
 import nars.budget.Budget;
+import nars.clock.CycleClock;
+import nars.clock.RealtimeMSClock;
 import nars.model.ControlCycle;
 import nars.model.cycle.DefaultCycle;
 import nars.nal.*;
@@ -39,8 +40,6 @@ import nars.op.meta.complexity;
 import nars.op.meta.reflect;
 import nars.op.software.js;
 import nars.op.software.scheme.scheme;
-import nars.util.data.id.Identifier;
-import objenome.solution.dependency.ConstructorDependency;
 
 import java.io.File;
 import java.io.IOException;
@@ -167,7 +166,7 @@ public class Default extends NARSeed implements ConceptBuilder {
 
         this.executionThreshold.set(0.01);
 
-        setTiming(Timing.Cycle);
+        setClock(new CycleClock());
         outputVolume.set(100);
 
         reliance.set(Global.DEFAULT_JUDGMENT_CONFIDENCE);
@@ -486,13 +485,10 @@ public class Default extends NARSeed implements ConceptBuilder {
 
     
     public Default realTime() {
-        setTiming(Timing.RealMS);
+        setClock(new RealtimeMSClock(true));
         return this;
     }
-    public Default simulationTime() {
-        setTiming(Timing.Simulation);
-        return this;
-    }
+
 
 
     @Override
@@ -564,6 +560,7 @@ public class Default extends NARSeed implements ConceptBuilder {
     public InternalExperience.InternalExperienceMode getInternalExperience() {
         return internalExperience;
     }
+
 
     public Default setInternalExperience(InternalExperience.InternalExperienceMode i) {
         if (i == null) i = InternalExperience.InternalExperienceMode.None;

@@ -1,6 +1,7 @@
 package nars;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import nars.clock.Clock;
 import nars.nal.TaskComparator;
 import nars.nal.nal7.Interval.AtomicDuration;
 
@@ -48,7 +49,7 @@ public class Param implements Serializable {
 
     public AtomicInteger temporalRelationsMax = new AtomicInteger();
 
-    @Deprecated Memory.Timing timing;
+    protected Clock clock;
     
 
     /** converts durations to cycles */
@@ -179,13 +180,9 @@ public class Param implements Serializable {
 
 
     
-    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
-    @Deprecated public void setTiming(Memory.Timing time) {
-        this.timing = time;
-    }
 
-    @Deprecated public Memory.Timing getTiming() {
-        return timing;
+    public Clock getTiming() {
+        return clock;
     }
 
 
@@ -268,5 +265,9 @@ public class Param implements Serializable {
     /** handling behavior for duplicate derivations in bulk processing */
     public void setInputMerging(TaskComparator.Merging merging) {
         this.merging = merging;
+    }
+
+    public Clock getClock() {
+        return clock;
     }
 }

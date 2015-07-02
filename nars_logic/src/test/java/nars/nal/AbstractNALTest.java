@@ -208,7 +208,7 @@ abstract public class AbstractNALTest extends TestCase {
 
         assertTrue("No conditions tested", !nar.requires.isEmpty());
 
-        assertTrue("No cycles elapsed", nar.time() > 0);
+        assertTrue("No cycles elapsed", nar.memory.timeSinceLastCycle() > 0);
 
 
         Report r = new Report(nar.time(), nar.inputs);

@@ -4,6 +4,7 @@ import automenta.vivisect.swing.NWindow;
 import nars.Events;
 import nars.Global;
 import nars.NAR;
+import nars.clock.SimulatedClock;
 import nars.event.NARReaction;
 import nars.model.impl.Default;
 import nars.nal.Sentence;
@@ -278,7 +279,8 @@ public class Predict2D extends JPanel {
         super();
         Global.IMMEDIATE_ETERNALIZATION = false;
 
-        NAR n = new NAR(new Default().setInternalExperience(null).simulationTime());
+        SimulatedClock clock;
+        NAR n = new NAR(new Default().setInternalExperience(null).setClock(clock = new SimulatedClock()));
         n.param.shortTermMemoryHistory.set(5);
         n.param.duration.set(5);
         n.param.duration.setLinear(4);
@@ -322,7 +324,7 @@ public class Predict2D extends JPanel {
 
             update(t);
 
-            n.memory.timeSimulationAdd(1);
+            clock.add(1);
             n.frame(20);
 
             t += 1;

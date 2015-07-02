@@ -3,18 +3,18 @@ package vnc;
 import automenta.vivisect.Video;
 import automenta.vivisect.swing.NWindow;
 import nars.Global;
-import nars.Memory;
 import nars.NAR;
+import nars.clock.RealtimeMSClock;
 import nars.gui.NARSwing;
 import nars.io.Texts;
-import nars.narsese.NarseseParser;
-import nars.nal.concept.Concept;
-import nars.nal.Task;
-import nars.nal.nal4.Product;
-import nars.nal.nal8.operator.NullOperator;
-import nars.nal.nal8.Operation;
-import nars.nal.term.Term;
 import nars.model.impl.Default;
+import nars.nal.Task;
+import nars.nal.concept.Concept;
+import nars.nal.nal4.Product;
+import nars.nal.nal8.Operation;
+import nars.nal.nal8.operator.NullOperator;
+import nars.nal.term.Term;
+import nars.narsese.NarseseParser;
 import nars.util.index.SeedConceptMap;
 import vnc.drawing.Renderer;
 import vnc.rfb.client.ClientToServerMessage;
@@ -307,12 +307,12 @@ abstract public class VNCControl extends VNCClient {
 
         Global.DEBUG = true;
 
-        NAR nar = new NAR(new Default(4000, 1, 3)) {
+        NAR nar = new NAR(new Default(4000, 1, 3).setClock(new RealtimeMSClock(false))) {
 
 
         };
 
-        nar.param.setTiming(Memory.Timing.RealMS);
+
         nar.param.duration.set(50); //ms
         nar.param.outputVolume.set(12);
 

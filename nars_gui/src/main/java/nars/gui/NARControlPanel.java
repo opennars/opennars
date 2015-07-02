@@ -52,8 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.NORTH;
-import static nars.Memory.Timing.RealMS;
-import static nars.Memory.Timing.Simulation;
+
 
 
 public class NARControlPanel extends TimeControl implements Reaction<Class> {
@@ -913,18 +912,12 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
     public String getTimeText() {
 
 
-        Memory.Timing tt = memory.param.getTiming();
-
         if (sb.length() > 0) sb.setLength(0);
 
         sb.append('@');
 
-        if ((tt == RealMS) || (tt == Simulation)) {
-            sb.append(memory.time() + "|" + memory.timeCycle());
-        }
-        else {
-            sb.append(memory.time());
-        }
+
+        sb.append(memory.clock.toString());
 
 
 

@@ -23,11 +23,11 @@ package nars.io;
 import nars.Events;
 import nars.Events.OUT;
 import nars.Events.TaskRemove;
-import nars.Memory.Timing;
 import nars.NAR;
+import nars.clock.Clock;
 import nars.nal.MemoryObserver;
-import nars.nal.concept.Concept;
 import nars.nal.Task;
+import nars.nal.concept.Concept;
 
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -118,7 +118,7 @@ public class TraceWriter extends MemoryObserver {
 
     @Override
     public void onCycleStart(long clock) {
-        output(Timing.class, clock);
+        output(Clock.class, clock);
     }
 
     @Override

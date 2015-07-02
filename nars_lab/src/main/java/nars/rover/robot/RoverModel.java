@@ -4,9 +4,9 @@
  */
 package nars.rover.robot;
 
-import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
+import nars.clock.SimulatedClock;
 import nars.io.SometimesChangedTextInput;
 import nars.io.in.ChangedTextInput;
 import nars.nal.Task;
@@ -643,7 +643,7 @@ public class RoverModel {
 
         nar.frame();
 
-        nar.memory.timeSimulationAdd(1);
+        ((SimulatedClock)nar.memory.clock).add(1);
 
     }
 

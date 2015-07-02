@@ -1,10 +1,10 @@
 package nars.rover;
 
-import nars.util.event.Reaction;
 import nars.Events;
-import nars.Memory;
 import nars.NAR;
+import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
+import nars.util.event.Reaction;
 
 /**
  * Game event-loop interface for NARS sensory and motor interaction
@@ -16,8 +16,7 @@ abstract public class NARGame implements Reaction<Class> {
 
     public NARGame(NAR nar) {        
         this.nar = nar;        
-        if (nar.memory.getTiming()!=Memory.Timing.Simulation)
-            throw new RuntimeException(this + " requires NAR use Simulation timing");
+
         
         nar.memory.event.on(Events.FrameEnd.class, this);
         sw=new NARSwing(nar);
@@ -42,7 +41,7 @@ abstract public class NARGame implements Reaction<Class> {
         if (event == Events.FrameEnd.class) {
             frame();
         }
-        nar.memory.timeSimulationAdd(cyclesPerFrame);
+        ((SimulatedClock)nar.memory.clock).add(cyclesPerFrame);
         
     }
     

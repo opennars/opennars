@@ -38,7 +38,7 @@ public class NALStressMeasure  {
                 n.frame(1);
                 n.runWhileNewInput(extraCycles);
                 
-                totalCycles += n.memory.timeCycle();
+                totalCycles += n.memory.time();
             }
                         
 

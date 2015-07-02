@@ -28,6 +28,7 @@ import nars.Events.OUT;
 import nars.Memory;
 import nars.NAR;
 import nars.budget.Budget;
+import nars.clock.SimulatedClock;
 import nars.gui.NARSwing;
 import nars.model.impl.Classic;
 import nars.nal.Task;
@@ -82,9 +83,10 @@ public class TicTacToe extends JPanel {
     public TicTacToe() {
         super(new BorderLayout());
 
+        SimulatedClock clock;
         nar = new NAR(new Classic().
                 setActiveConcepts(1000).
-                simulationTime());
+                setClock(clock = new SimulatedClock()));
 
         nar.on(new AddO());
         (nar.param).duration.set(100);
@@ -96,7 +98,7 @@ public class TicTacToe extends JPanel {
 
             @Override
             public void event(Class event, Object[] args) {
-                nar.memory.timeSimulationAdd(500);
+                clock.add(500);
             }
 
         }, FrameEnd.class);

@@ -4,7 +4,7 @@ import automenta.vivisect.Video;
 import nars.Memory;
 import nars.NAR;
 import nars.NARSeed;
-import nars.Param;
+import nars.clock.RealtimeMSClock;
 import nars.model.impl.Default;
 
 /**
@@ -16,7 +16,7 @@ public class NARSwingRT {
         Video.themeInvert();
 
         NARSeed d = new Default();
-        d.setTiming(Memory.Timing.RealMS);
+        d.setClock(new RealtimeMSClock(false));
         d.duration.set(50);
         d.outputVolume.set(50);
 

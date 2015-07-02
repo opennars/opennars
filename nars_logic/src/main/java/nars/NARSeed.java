@@ -1,6 +1,7 @@
 package nars;
 
 import nars.bag.impl.CacheBag;
+import nars.clock.Clock;
 import nars.model.ControlCycle;
 import nars.nal.LogicPolicy;
 import nars.nal.concept.Concept;
@@ -28,7 +29,14 @@ abstract public class NARSeed extends Param {
 
     public NARSeed() {
     }
-    
+
+    /** avoid calling this directly; use Default.simulationTime() which also sets the forgetting mode */
+    public NARSeed setClock(Clock clock) {
+        this.clock = clock;
+        return this;
+    }
+
+
 //    /** initial runtime parameters */
 //    public Param getParam() {
 //        return param;

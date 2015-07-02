@@ -2,7 +2,6 @@ package nars;
 
 import nars.Events.FrameEnd;
 import nars.Events.FrameStart;
-import nars.Memory.Timing;
 import nars.budget.BudgetFunctions;
 import nars.io.TextPerception;
 import nars.io.in.FileInput;
@@ -491,8 +490,8 @@ public class NAR extends Container implements Runnable {
     /**
      * steps 1 frame forward. cyclesPerFrame determines how many cycles this frame consists of
      */
-    public double frame() {
-        return frame(1);
+    public void frame() {
+        frame(1);
     }
 
     /**
@@ -500,16 +499,19 @@ public class NAR extends Container implements Runnable {
      *
      * @return total time in seconds elapsed in realtime
      */
-    public double frame(final int frames) {
+    public void frame(final int frames) {
 
         final boolean wasRunning = running;
-        double elapsed = 0;
+
         running = true;
+
+        final int cpf = cyclesPerFrame;
         for (int f = 0; (f < frames) && running; f++) {
-            elapsed += frameCycles(cyclesPerFrame);
+            frameCycles(cpf);
         }
+
         running = wasRunning;
-        return elapsed;
+
     }
 
     /**
@@ -552,6 +554,7 @@ public class NAR extends Container implements Runnable {
         if (extraCycles <= 0) return this;
 
         running = true;
+        enabled = true;
 
         //clear existing input
 
@@ -569,7 +572,7 @@ public class NAR extends Container implements Runnable {
             memory.think(extraCycles);
 
         //finish all remaining cycles
-        while (!memory.perceiving() && (running)) {
+        while (!memory.perceiving() && running && enabled) {
             frame(1);
         }
 
@@ -597,11 +600,15 @@ public class NAR extends Container implements Runnable {
         while (running) {
 
 
-            double frameTime = frame(1); //in seconds
+            long start = System.currentTimeMillis();
+
+            frame(1); //in seconds
+
+            long frameTimeMS = System.currentTimeMillis() - start;
 
             if (minFramePeriodMS > 0) {
 
-                double remainingTime = minFramePeriodMS - (frameTime / 1.0E3);
+                double remainingTime = (minFramePeriodMS - frameTimeMS) / 1.0E3;
                 if (remainingTime > 0) {
                     try {
                         Thread.sleep(minFramePeriodMS);
@@ -659,22 +666,19 @@ public class NAR extends Container implements Runnable {
      * executes one complete memory cycle (if not disabled)
      */
     protected void cycle(final boolean newFrame) {
-
         if (isEnabled()) {
             memory.cycle();
         }
-
-        memory.timeUpdate();
-
     }
 
     /**
      * A frame, consisting of one or more NAR memory cycles
      */
-    protected double frameCycles(final int cycles) {
-
+    protected void frameCycles(final int cycles) {
 
         memory.resource.FRAME_DURATION.start();
+
+        memory.clock.preFrame(memory);
 
         emit(FrameStart.class);
 
@@ -690,20 +694,6 @@ public class NAR extends Container implements Runnable {
 
         emit(FrameEnd.class);
 
-        final double frameTime = memory.resource.FRAME_DURATION.stop();
-
-        //in real-time mode, warn if frame consumed more time than reasoner duration
-        if (memory.getTiming() == Timing.RealMS) {
-            final int d = param.duration.get();
-
-            if (frameTime > d) {
-                emit(Events.ERR.class,
-                        "Real-time consumed by frame (" +
-                                frameTime + " ms) exceeds reasoner Duration (" + d + " cycles)");
-            }
-        }
-
-        return frameTime;
     }
 
     @Override

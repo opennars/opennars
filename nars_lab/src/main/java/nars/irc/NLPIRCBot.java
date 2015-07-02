@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import nars.Global;
 import nars.Memory;
 import nars.NAR;
+import nars.clock.RealtimeMSClock;
 import nars.event.NARReaction;
 import nars.gui.NARSwing;
 import nars.io.Texts;
@@ -113,7 +114,7 @@ public class NLPIRCBot extends IRCBot {
         d.conceptsFiredPerCycle.set(64);
 
         d.duration.set(100 /* ms */);
-        d.setTiming(Memory.Timing.RealMS);
+        d.setClock(new RealtimeMSClock(false));
 
 
         //d.temporalPlanner(16f,8,8,2);

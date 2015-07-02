@@ -21,12 +21,14 @@
 package nars;
 
 import com.google.common.collect.Iterators;
+import jdk.nashorn.internal.runtime.Timing;
 import nars.Events.ResetStart;
 import nars.Events.Restart;
 import nars.Events.TaskRemove;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
+import nars.clock.Clock;
 import nars.meter.EmotionMeter;
 import nars.meter.LogicMetrics;
 import nars.model.ControlCycle;
@@ -103,21 +105,12 @@ public class Memory implements Serializable, AbstractStamper {
 
     public LogicPolicy rules;
 
-    Timing timing;
+    public final Clock clock;
     ExecutorService laterTasks = null;
 
     public final CacheBag<Term, Concept> concepts;
 
 
-    /**
-     * System clock, relatively defined to guarantee the repeatability of
-     * behaviors
-     */
-    private long timeNow;
-    private long timeRealStart;
-    private long timeRealNow;
-    private long timePreviousCycle;
-    private long timeSimulation;
     private int level;
     private long currentStampSerial = 1;
     /**
@@ -136,6 +129,8 @@ public class Memory implements Serializable, AbstractStamper {
 
         this.random = rng;
         this.level = nalLevel;
+
+        this.clock = narParam.getClock();
 
         this.concepts = concepts;
         concepts.setOnRemoval(c -> delete(c));
@@ -502,10 +497,7 @@ public class Memory implements Serializable, AbstractStamper {
 
         event.emit(ResetStart.class);
 
-        timing = param.getTiming();
-        timeNow = 0;
-        timeRealStart = timeRealNow = System.currentTimeMillis();
-        timePreviousCycle = time();
+        clock.reset();
 
         inputPausedUntil = -1;
 
@@ -525,56 +517,21 @@ public class Memory implements Serializable, AbstractStamper {
     }
 
     public long time() {
-        switch (timing) {
-            case Cycle:
-                return timeCycle();
-            case RealMS:
-                return timeReal();
-            case Simulation:
-                return timeSimulation();
-        }
-        return 0;
+        return clock.time();
     }
 
     public int duration() {
         return param.duration.get();
     }
 
-    /**
-     * internal, subjective time (logic steps)
-     */
-    public long timeCycle() {
-        return timeNow;
-    }
-
-    /**
-     * hard real-time, uses system clock
-     */
-    public long timeReal() {
-        return timeRealNow - timeRealStart;
-    }
 
 
-    /* ---------- conversion utilities ---------- */
-
-    /**
-     * soft real-time, uses controlled simulation time
-     */
-    public long timeSimulation() {
-        return timeSimulation;
-    }
-
-    public void timeSimulationAdd(long dt) {
-        timeSimulation += dt;
-    }
 
     /**
      * difference in time since last cycle
      */
     public long timeSinceLastCycle() {
-        if (timing == Timing.Cycle) return 1;
-
-        return time() - timePreviousCycle;
+        return clock.timeSinceLastCycle();
     }
 
 
@@ -763,15 +720,7 @@ public class Memory implements Serializable, AbstractStamper {
         return perceived;
     }
 
-    /**
-     * automatically called each cycle
-     */
-    protected void timeUpdate() {
-        timePreviousCycle = time();
-        timeNow++;
-        if (getTiming()==Timing.RealMS)
-            timeRealNow = System.currentTimeMillis();
-    }
+
 
     /** queues a task to (hopefully) be executed at an unknown time in the future,
      *  in its own thread in a thread pool */
@@ -903,8 +852,8 @@ public class Memory implements Serializable, AbstractStamper {
         return cycle.nextConcept(pred, v);
     }
 
-    public Timing getTiming() {
-        return timing;
+    public Clock getClock() {
+        return clock;
     }
 
     /** returns the concept index */
@@ -940,6 +889,8 @@ public class Memory implements Serializable, AbstractStamper {
     public synchronized void cycle() {
 
         inCycle = true;
+
+        clock.preCycle();
 
         event.emit(Events.CycleStart.class);
 
@@ -1007,31 +958,6 @@ public class Memory implements Serializable, AbstractStamper {
         c.delete();
     }
 
-
-    //TODO replace with abtract Clock interface
-    @Deprecated public enum Timing {
-
-        /**
-         * internal, subjective time (1 cycle = 1 time step)
-         */
-        Cycle,
-
-        //TODO absolute realtime - does not cache a value throughout a cycle, but each call to time() yields an actual realtime measurement so that multiple time() calls during cycle may return different (increasing) values
-
-        //RealS, //seconds
-
-        /**
-         * actual millisecond real-time, uses system clock; time value is cached at beginning of each cycle for the remainder of it
-         */
-        RealMS,
-
-        //RealNano, //nanoseconds
-
-        /**
-         * simulated real-time, uses externally controlled simulation time units
-         */
-        Simulation
-    }
 
 
 //    private String toStringLongIfNotNull(Bag<?, ?> item, String title) {
