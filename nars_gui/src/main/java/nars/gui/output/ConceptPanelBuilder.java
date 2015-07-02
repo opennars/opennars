@@ -46,12 +46,13 @@ import static java.awt.BorderLayout.WEST;
  */
 public class ConceptPanelBuilder extends NARReaction {
 
+    private Set<Concept> changed = null;
 
     private final NAR nar;
     private Map<Concept, ConceptPanel> concept = new FastMap().atomic();
     static float conceptGraphFPS = 4; //default update frames per second
 
-    Set<Concept> changed = null;
+
 
     public ConceptPanelBuilder(NAR n) {
         super(n, Events.FrameEnd.class,
@@ -66,6 +67,11 @@ public class ConceptPanelBuilder extends NARReaction {
 
     }
 
+    public Set<Concept> changes() {
+        if (changed == null)
+            return changed = new ConcurrentHashSet();
+        return changed;
+    }
 
     public static Color getBeliefColor(float freq, float conf, float factor) {
         //float ii = 0.45f + (factor*conf) * 0.55f;
@@ -102,7 +108,7 @@ public class ConceptPanelBuilder extends NARReaction {
     }
 
     @Override
-    public synchronized void event(Class event, Object[] args) {
+    public void event(Class event, Object[] args) {
 
 
         if (event == FrameEnd.class) {
@@ -112,12 +118,9 @@ public class ConceptPanelBuilder extends NARReaction {
             else
                 updateChanged();
         } else {
-            if (changed==null) {
-                changed = new ConcurrentHashSet<>();
-            }
             if (args[0] instanceof Concept) {
                 Concept c = (Concept) args[0];
-                changed.add(c);
+                changes().add(c);
             } else {
                 throw new RuntimeException(this + " " + event + " unable to process unknown event format: " + event + " with " + Arrays.toString(args) + " 0:" + args[0].getClass());
             }
@@ -129,12 +132,11 @@ public class ConceptPanelBuilder extends NARReaction {
         return true;
     }
 
-    public synchronized void updateChanged() {
+    public void updateChanged() {
 
-        if (changed == null || changed.isEmpty()) return;
+        if (changed == null || changes().isEmpty()) return;
 
         final long now = nar.time();
-
 
         Iterator<Concept> ci = changed.iterator();
         while (ci.hasNext()) {
@@ -150,6 +152,7 @@ public class ConceptPanelBuilder extends NARReaction {
             }
             ci.remove();
         }
+
 
 
     }
@@ -185,8 +188,6 @@ public class ConceptPanelBuilder extends NARReaction {
 
     public void off() {
         super.off();
-        //changed.clear();
-        //concept.clear();
         concept = new FastMap().atomic();
     }
 

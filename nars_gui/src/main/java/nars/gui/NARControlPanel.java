@@ -71,7 +71,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
     /**
      * Reference to the experience writer
      */
-    private final TextOutput experienceWriter;
+    private TextOutput experienceWriter;
     private final MeterNode meters;
     private NengrowPanel meterPanel;
 
@@ -79,17 +79,30 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
     /**
      * Whether the experience is saving into a file
      */
-    private boolean savingExp = false;
+
 
     private Timer timer;
     final Executor narexe = Executors.newSingleThreadExecutor();
     final Runnable narrun = new Runnable() {
         @Override public void run() {
-            synchronized(nar) {
-                nar.frame();
-                if (timer != null)
-                    timer.restart();
+
+            nar.frame();
+
+            if (timer != null)
+                timer.restart();
+
+        }
+    };
+    final Runnable narrunFull = new Runnable() {
+        @Override public void run() {
+
+            nar.frame();
+
+            if (fullSpeed) {
+                //continuing at full speed?
+                narexe.execute(narrunFull);
             }
+
         }
     };
 
@@ -98,6 +111,7 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
 
     private final NARMetrics metrics;
     private long currentSpeedMS;
+    private boolean fullSpeed = false;
 
     public NARControlPanel(final NAR nar) {
         this(nar, null, true);
@@ -588,17 +602,17 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
                     openLoadFile();
                     break;
                 case "Save Experience":
-                    if (savingExp) {
+                    if (experienceWriter!=null) {
                         experienceWriter.closeSaveFile();
+                        experienceWriter = null;
                     } else {
                         FileDialog dialog = new FileDialog((Dialog) null, "Save experience", FileDialog.SAVE);
                         dialog.setVisible(true);
                         String directoryName = dialog.getDirectory();
                         String fileName = dialog.getFile();
                         String path = directoryName + fileName;
-                        experienceWriter.openSaveFile(path);
+                        this.experienceWriter = TextOutput.openOutputFile(nar, path);
                     }
-                    savingExp = !savingExp;
                     break;
                 case "Reset":
                     /// TODO mixture of modifier and reporting
@@ -701,9 +715,20 @@ public class NARControlPanel extends TimeControl implements Reaction<Class> {
     }
 
     protected void restart(int ms) {
+        if (ms == 0) {
+            if (timer!=null)
+                timer.stop();
+            timer = null;
+            narexe.execute(narrunFull);
+            fullSpeed = true;
+            return;
+        }
+
+        fullSpeed = false;
+
         if (timer == null) {
             timer = new Timer(ms, this);
-            timer.setCoalesce(true);
+            timer.setCoalesce(false);
             timer.setRepeats(false);
             timer.restart();
             //System.out.println("timer start: " + ms);

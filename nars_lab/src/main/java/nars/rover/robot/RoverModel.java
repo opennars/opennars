@@ -68,7 +68,7 @@ public class RoverModel {
     //float tasteDistanceThreshold = 1.0f;
     int pixels = 1;
 
-    float biteDistanceThreshold = 0.5f;
+    float biteDistanceThreshold = 0.55f;
     int retinaResolution = 48; //should be odd # to balance
     int mouthArc = retinaResolution / 12;
 

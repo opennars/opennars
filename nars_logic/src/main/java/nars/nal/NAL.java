@@ -290,8 +290,8 @@ public abstract class NAL implements Runnable {
 
         //experimental: quick filter for below confidence threshold truths.
         // this is also applied in derivation filters but this avoids some overhead
-        if (newTruth!=null && newTruth.getConfidence() < memory.param.confidenceThreshold.floatValue())
-            return null;
+        /*if (newTruth!=null && newTruth.getConfidence() < memory.param.confidenceThreshold.floatValue())
+            return null;*/
 
         newTaskContent = Sentence.termOrNull(newTaskContent);
         if (newTaskContent == null)

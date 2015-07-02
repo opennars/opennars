@@ -499,7 +499,7 @@ public class NAR extends Container implements Runnable {
      *
      * @return total time in seconds elapsed in realtime
      */
-    public void frame(final int frames) {
+    public synchronized void frame(final int frames) {
 
         final boolean wasRunning = running;
 
