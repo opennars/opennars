@@ -1,20 +1,16 @@
 package objenome.util.bean;
 
-import static objenome.util.bean.Annotations.isAnnotated;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyDescriptor;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
-import java.lang.reflect.Method;
-import java.util.Collection;
-
 import objenome.util.bean.anno.IgnoreVeto;
 import objenome.util.bean.anno.PropertyChangeEventMethod.Type;
 import objenome.util.bean.anno.Unbound;
 import objenome.util.bean.listener.BeanListenerSupport;
 import objenome.util.bean.listener.BeanListenerSupportSoftRef;
+
+import java.beans.*;
+import java.lang.reflect.Method;
+import java.util.Collection;
+
+import static objenome.util.bean.Annotations.isAnnotated;
 
 /**
  * ProxyInvocationHandler that supports PropertyChangeSupport.

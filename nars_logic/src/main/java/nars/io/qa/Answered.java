@@ -6,9 +6,9 @@ package nars.io.qa;
 
 import nars.Events.Answer;
 import nars.NAR;
+import nars.concept.Concept;
 import nars.event.NARReaction;
 import nars.narsese.InvalidInputException;
-import nars.concept.Concept;
 import nars.task.Sentence;
 import nars.task.Task;
 

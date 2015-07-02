@@ -21,26 +21,22 @@
  */
 package objenome.solver.evolve.init;
 
+import objenome.op.Node;
+import objenome.problem.ProblemSTGP;
+import objenome.solver.evolve.*;
+import objenome.solver.evolve.event.ConfigEvent;
+import objenome.solver.evolve.event.InitialisationEvent;
+import objenome.solver.evolve.event.Listener;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import objenome.solver.evolve.GPContainer;
-import objenome.solver.evolve.OrganismBuilder;
-import objenome.solver.evolve.Population;
+
 import static objenome.solver.evolve.Population.SIZE;
-import objenome.problem.ProblemSTGP;
-import objenome.solver.evolve.RandomSequence;
 import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.TypedOrganism;
-import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.TypedOrganism.RETURN_TYPE;
-import static objenome.solver.evolve.TypedOrganism.SYNTAX;
-import objenome.solver.evolve.event.ConfigEvent;
-import objenome.solver.evolve.event.InitialisationEvent;
-import objenome.solver.evolve.event.Listener;
-import objenome.op.Node;
+import static objenome.solver.evolve.TypedOrganism.*;
 
 /**
  * Initialisation method which produces <code>STGPIndividual</code>s with
@@ -382,7 +378,7 @@ public class Grow implements TypedInitialization, Listener<ConfigEvent> {
      * TODO We should only do this once at each depth for a particular arity
      * TODO This is a duplicate of the same method in FullInitialisation
      */
-    private Class<?>[][] dataTypeCombinations(int arity, Class<?>[] dataTypes) {
+    private static Class<?>[][] dataTypeCombinations(int arity, Class<?>[] dataTypes) {
         int noTypes = dataTypes.length;
         int noCombinations = (int) Math.pow(noTypes, arity);
         Class<?>[][] possibleTypes = new Class<?>[noCombinations][arity];

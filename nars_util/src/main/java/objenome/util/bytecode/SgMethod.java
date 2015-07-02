@@ -140,24 +140,24 @@ public final class SgMethod extends SgBehavior {
         final StringBuffer sb = new StringBuffer();
         if (getModifiers().length() > 0) {
             sb.append(getModifiers());
-            sb.append(" ");
+            sb.append(' ');
         }
         sb.append(returnType.getName());
-        sb.append(" ");
+        sb.append(' ');
         sb.append(getName());
-        sb.append("(");
+        sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
             }
             sb.append(getArguments().get(i));
         }
-        sb.append(")");
+        sb.append(')');
         if (getExceptions().size() > 0) {
             sb.append(" throws ");
             for (int i = 0; i < getExceptions().size(); i++) {
                 if (i > 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
                 sb.append(getExceptions().get(i).getName());
             }
@@ -173,7 +173,7 @@ public final class SgMethod extends SgBehavior {
     public final String getCallSignature() {
         final StringBuffer sb = new StringBuffer();
         sb.append(getName());
-        sb.append("(");
+        sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
@@ -181,7 +181,7 @@ public final class SgMethod extends SgBehavior {
             final SgArgument arg = getArguments().get(i);
             sb.append(arg.getName());
         }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 
@@ -194,7 +194,7 @@ public final class SgMethod extends SgBehavior {
     public final String getTypeSignature() {
         final StringBuffer sb = new StringBuffer();
         sb.append(getName());
-        sb.append("(");
+        sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
@@ -202,7 +202,7 @@ public final class SgMethod extends SgBehavior {
             final SgArgument arg = getArguments().get(i);
             sb.append(arg.getType().getSimpleName());
         }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 
@@ -216,10 +216,10 @@ public final class SgMethod extends SgBehavior {
     public final String getUnderscoredNameAndTypes() {
         final StringBuffer sb = new StringBuffer();
         sb.append(SgUtils.firstCharUpper(getName()));
-        sb.append("_");
+        sb.append('_');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
-                sb.append("_");
+                sb.append('_');
             }
             final SgArgument arg = getArguments().get(i);
             final String typeName = arg.getType().getSimpleName();
@@ -250,15 +250,15 @@ public final class SgMethod extends SgBehavior {
         if (showAnnotations && (getAnnotations().size() > 0)) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
-                    sb.append(" ");
+                    sb.append(' ');
                 }
                 sb.append(getAnnotations().get(i));
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         sb.append(getSignature());
         if (getOwner().isInterface()) {
-            sb.append(";");
+            sb.append(';');
         } else {
             sb.append("{\n");
             if (body.size() == 0) {
@@ -266,7 +266,7 @@ public final class SgMethod extends SgBehavior {
             } else {
                 for (int i = 0; i < body.size(); i++) {
                     sb.append(body.get(i));
-                    sb.append("\n");
+                    sb.append('\n');
                 }
             }
             sb.append("}\n");

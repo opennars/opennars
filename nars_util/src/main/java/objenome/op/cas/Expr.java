@@ -1,9 +1,10 @@
 package objenome.op.cas;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Expr {
     
@@ -86,16 +87,22 @@ public abstract class Expr {
     public abstract int sign();
     
     public abstract String pretty();
-    
+
     public Expr firstAtom() {
-        if (!(this instanceof Operation)) return this;
-        return ((Operation) this).getExpr(0).firstAtom();
+        Expr result = this;
+        while (true) {
+            if (!(result instanceof Operation)) return result;
+            result = ((Operation) result).getExpr(0);
+        }
     }
-    
+
     public Expr lastAtom() {
-        if (!(this instanceof Operation)) return this;
-        ArrayList<Expr> exprs = ((Operation) this).getExprs();
-        return exprs.get(exprs.size() - 1).lastAtom();
+        Expr result = this;
+        while (true) {
+            if (!(result instanceof Operation)) return result;
+            ArrayList<Expr> exprs = ((Operation) result).getExprs();
+            result = exprs.get(exprs.size() - 1);
+        }
     }
     
     public boolean isConstant() {
@@ -279,13 +286,22 @@ public abstract class Expr {
         basePower[1] = power;
         return basePower;
     }
-    
+
     public boolean isNegated() {
-        if (this instanceof Num) return ((Num) this).val() < 0;
-        if (this instanceof Product) return ((Operation) this).getExpr(0).isNegated();
-        if (this instanceof Division) return this.toTopsBottoms()[0].get(0).isNegated();
-        
-        return false;
+        Expr other = this;
+        while (true) {
+            if (other instanceof Num) return ((Num) other).val() < 0;
+            if (other instanceof Product) {
+                other = ((Operation) other).getExpr(0);
+                continue;
+            }
+            if (other instanceof Division) {
+                other = other.toTopsBottoms()[0].get(0);
+                continue;
+            }
+
+            return false;
+        }
     }
     
     public Integer classOrder() {
@@ -301,8 +317,8 @@ public abstract class Expr {
     }
     
     public Expr copy(HashMap<Expr, Expr> subs) {
-        for (Expr expr : subs.keySet()) {
-            if (equalsExpr(expr)) return subs.get(expr).copy();
+        for (Map.Entry<Expr, Expr> exprExprEntry : subs.entrySet()) {
+            if (equalsExpr(exprExprEntry.getKey())) return exprExprEntry.getValue().copy();
         }
         return copyPass(subs);
     }
@@ -323,9 +339,9 @@ public abstract class Expr {
     
     public String dump() {
         if (this instanceof Operation) {
-            String dumpStr = "(" + this.getClass().getSimpleName();
+            String dumpStr = '(' + this.getClass().getSimpleName();
             for (Expr expr : ((Operation) this).getExprs()) dumpStr+= " " + expr;
-            return  dumpStr + ")";
+            return  dumpStr + ')';
         }
         return pretty();
     }

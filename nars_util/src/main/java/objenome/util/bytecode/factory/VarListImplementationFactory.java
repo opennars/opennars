@@ -17,14 +17,9 @@
  */
 package objenome.util.bytecode.factory;
 
+import objenome.util.bytecode.*;
+
 import java.util.List;
-import objenome.util.bytecode.SgArgument;
-import objenome.util.bytecode.SgClass;
-import objenome.util.bytecode.SgClassPool;
-import objenome.util.bytecode.SgConstructor;
-import objenome.util.bytecode.SgField;
-import objenome.util.bytecode.SgMethod;
-import objenome.util.bytecode.SgVariable;
 
 /**
  * Creates an implementation of one ore more interfaces with a predefined number
@@ -124,7 +119,7 @@ public final class VarListImplementationFactory {
                 final SgArgument constructorArg = new SgArgument(constructor, var.getModifiers(),
                         var.getType(), var.getName());
                 constructor.addArgument(constructorArg);
-                constructor.addBodyLine("this." + var.getName() + "=" + var.getName() + ";");
+                constructor.addBodyLine("this." + var.getName() + '=' + var.getName() + ';');
             }
 
             // Call user defined listener

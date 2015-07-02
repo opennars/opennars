@@ -21,11 +21,12 @@
  */
 package objenome.solver.evolve;
 
-import java.util.List;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.GenerationEvent.StartGeneration;
 import objenome.solver.evolve.event.Listener;
+
+import java.util.List;
 
 /**
  * A <code>GenerationalStrategy</code> is an evolutionary strategy with clearly

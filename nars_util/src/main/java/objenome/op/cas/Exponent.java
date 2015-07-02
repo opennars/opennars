@@ -1,6 +1,5 @@
 package objenome.op.cas;
 
-import java.lang.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -30,24 +29,27 @@ public class Exponent extends Operation {
     public static Expr makeDefined(ArrayList<? extends Expr> exprs) {
         return make(exprs);
     }
-    
+
     public Expr deriv(Var respected) {
-        if (exponent.isConstant()) {
-            ArrayList<Expr> tmp = new ArrayList<Expr>();
-            tmp.add(exponent);
-            tmp.add(Exponent.make(base, Sum.make(exponent, Num.make(-1))));
-            tmp.add(base.deriv(respected));
-            return Product.make(tmp);
+        Exponent other = this;
+        while (true) {
+            if (other.exponent.isConstant()) {
+                ArrayList<Expr> tmp = new ArrayList<Expr>();
+                tmp.add(other.exponent);
+                tmp.add(Exponent.make(other.base, Sum.make(other.exponent, Num.make(-1))));
+                tmp.add(other.base.deriv(respected));
+                return Product.make(tmp);
+            }
+            if (other.base.isConstant()) {
+                ArrayList<Expr> tmp = new ArrayList<Expr>();
+                tmp.add(Logarithm.make(new E(), other.base));
+                tmp.add(other.simplify());
+                tmp.add(other.exponent.deriv(respected));
+                return Product.make(tmp);
+            }
+            other = new Exponent(new E(), Product.make(other.exponent, Logarithm.make(new E(), other.base)));
+            // throw new UnsupportedOperationException("derivative of " + this);
         }
-        if (base.isConstant()) {
-            ArrayList<Expr> tmp = new ArrayList<Expr>();
-            tmp.add(Logarithm.make(new E(), base));
-            tmp.add(this.simplify());
-            tmp.add(exponent.deriv(respected));
-            return Product.make(tmp);
-        }
-        return new Exponent(new E(), Product.make(exponent, Logarithm.make(new E(), base))).deriv(respected);
-        // throw new UnsupportedOperationException("derivative of " + this);
     }
     
     public Integer classOrderPass() {
@@ -87,7 +89,7 @@ public class Exponent extends Operation {
     public String pretty() {
         if (exponent.equalsExpr(Num.make(0.5))) return "sqrt" + (base.functionalParens()?"(":" ") + base.pretty() + (base.functionalParens()?")":"");
         
-        String string = new String();
+        String string = "";
         
         Integer thisClassOrder = this.classOrder();
         

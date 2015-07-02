@@ -51,8 +51,6 @@
  */
 package nars.util.data.array;
 
-import org.infinispan.commons.hash.Hash;
-
 import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -1456,7 +1454,7 @@ public class IntArrays {
 
 		@Override
 		public String toString() {
-			return "Segment [offset=" + offset + ", length=" + length + ", level=" + level + "]";
+			return "Segment [offset=" + offset + ", length=" + length + ", level=" + level + ']';
 		}
 	}
 

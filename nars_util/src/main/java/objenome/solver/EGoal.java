@@ -1,9 +1,5 @@
 package objenome.solver;
 
-import objenome.op.Variable;
-
-import java.util.Map;
-
 /**
  * Civliziation evolutionary objective - characterizes a problem and its possible solutions
  *

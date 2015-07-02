@@ -21,11 +21,11 @@
  */
 package nars.obj.evolve.event.stat;
 
-import objenome.solver.evolve.event.stat.AbstractStat;
-import objenome.solver.evolve.event.stat.RunBestFitness;
 import junit.framework.TestCase;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.event.GenerationEvent;
+import objenome.solver.evolve.event.stat.AbstractStat;
+import objenome.solver.evolve.event.stat.RunBestFitness;
 
 /**
  * The <code>AbstractStatTest</code> class provides unit tests for methods of

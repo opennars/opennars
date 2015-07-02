@@ -94,12 +94,12 @@ public final class SgArgument extends SgVariable {
         final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < getAnnotations().size(); i++) {
             sb.append(getAnnotations().get(i));
-            sb.append(" ");
+            sb.append(' ');
         }
         if (getModifiers().length() == 0) {
-            sb.append(getType().getSourceName() + " " + getName());
+            sb.append(getType().getSourceName()).append(' ').append(getName());
         } else {
-            sb.append(getModifiers() + " " + getType().getSourceName() + " " + getName());
+            sb.append(getModifiers()).append(' ').append(getType().getSourceName()).append(' ').append(getName());
         }
         return sb.toString();
     }

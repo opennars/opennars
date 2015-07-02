@@ -14,15 +14,16 @@ import com.github.fge.grappa.support.Var;
 import nars.*;
 import nars.budget.Budget;
 import nars.io.Texts;
-import nars.Op;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal4.Product;
 import nars.nal.nal7.CyclesInterval;
 import nars.nal.nal7.Tense;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
+import nars.op.io.Echo;
+import nars.op.io.PauseInput;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Atom;
 import nars.term.Compound;
@@ -30,8 +31,6 @@ import nars.term.Term;
 import nars.term.Variable;
 import nars.truth.DefaultTruth;
 import nars.truth.Truth;
-import nars.op.io.Echo;
-import nars.op.io.PauseInput;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -39,8 +38,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static nars.Symbols.IMAGE_PLACE_HOLDER;
 import static nars.Op.*;
+import static nars.Symbols.IMAGE_PLACE_HOLDER;
 
 /**
  * NARese, syntax and language for interacting with a NAR in NARS.

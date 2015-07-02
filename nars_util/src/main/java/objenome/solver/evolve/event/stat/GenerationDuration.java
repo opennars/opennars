@@ -21,8 +21,9 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.concurrent.TimeUnit;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Stat that provides the duration of a generation.

@@ -1,8 +1,8 @@
 package nars.util;
 
-import nars.nar.Default;
 import nars.NAR;
 import nars.meter.NARTrace;
+import nars.nar.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

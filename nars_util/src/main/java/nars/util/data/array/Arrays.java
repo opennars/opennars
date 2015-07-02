@@ -17,8 +17,6 @@ package nars.util.data.array;
  */
 
 
-import java.util.Comparator;
-
 /** A class providing static methods and objects that do useful things with arrays.
  *
  * <p>In addition to commodity methods, this class contains {@link Swapper}-based implementations
@@ -47,8 +45,8 @@ public class Arrays {
 	 */
 	public static void ensureFromTo( final int arrayLength, final int from, final int to ) {
 		if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
-		if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ")" );
-		if ( to > arrayLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than array length (" + arrayLength + ")" );
+		if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
+		if ( to > arrayLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than array length (" + arrayLength + ')');
 	}
 
 	/** Ensures that a range given by an offset and a length fits an array of given length.
@@ -64,7 +62,7 @@ public class Arrays {
 	public static void ensureOffsetLength( final int arrayLength, final int offset, final int length ) {
 		if ( offset < 0 ) throw new ArrayIndexOutOfBoundsException( "Offset (" + offset + ") is negative" );
 		if ( length < 0 ) throw new IllegalArgumentException( "Length (" + length + ") is negative" );
-		if ( offset + length > arrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than array length (" + arrayLength + ")" );
+		if ( offset + length > arrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than array length (" + arrayLength + ')');
 	}
 
 	private static final int SMALL = 7;

@@ -18,10 +18,10 @@
 package nars.op.mental;
 
 import nars.Memory;
-import nars.task.Task;
 import nars.concept.Concept;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.task.Task;
 import nars.term.Term;
 
 import java.util.ArrayList;

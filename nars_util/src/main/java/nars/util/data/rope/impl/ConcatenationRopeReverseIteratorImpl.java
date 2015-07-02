@@ -95,7 +95,7 @@ public class ConcatenationRopeReverseIteratorImpl implements Iterator<Character>
 
     public void moveBackwards(final int amount) {
         if (!this.canMoveBackwards(amount)) {
-            throw new IllegalArgumentException("Unable to move backwards " + amount + ".");
+            throw new IllegalArgumentException("Unable to move backwards " + amount + '.');
         }
         this.currentRopePos += amount;
         this.currentAbsolutePos += amount;

@@ -5,16 +5,13 @@
  */
 package objenome;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.function.Function;
 import objenome.solver.IncompleteSolutionException;
 import objenome.solver.Solution;
 import objenome.solver.Solver;
 import org.apache.commons.math3.genetics.InvalidRepresentationException;
+
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Object Genome; represents a solved plan for being able to construct instances from a Genetainer
@@ -70,8 +67,8 @@ public class Objenome {
     /** list of applied solutions, sorted by key */
     public List<Solution> getSolutions() {
         List<Solution> l = new ArrayList(genes.size());
-        for (String s : genes.keySet()) {
-            Solution g = genes.get(s);
+        for (Map.Entry<String, Solution> stringSolutionEntry : genes.entrySet()) {
+            Solution g = stringSolutionEntry.getValue();
             l.add(g);
         }
         return l;

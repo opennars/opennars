@@ -21,15 +21,16 @@
  */
 package objenome.goal;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import objenome.op.Variable;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
-import objenome.op.Variable;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import static objenome.goal.HitsCount.EXPECTED_OUTPUTS;
 

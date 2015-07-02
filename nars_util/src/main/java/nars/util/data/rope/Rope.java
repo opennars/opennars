@@ -658,12 +658,12 @@ import java.util.regex.Pattern;
 //			out.println(r.length());
         } else if (r instanceof FlatRope) {
             out.print(SPACES.substring(0, depth * 2));
-            out.println("\"" + r + "\"");
+            out.println("\"" + r + '"');
 //			out.println(r.length());
         }
         if (r instanceof SubstringRope) {
             out.print(SPACES.substring(0, depth * 2));
-            out.println("substring " + r.length() + " \"" + r + "\"");
+            out.println("substring " + r.length() + " \"" + r + '"');
 //			this.visualize(((SubstringRope)r).getRope(), out, depth+1);
         }
         if (r instanceof ConcatenationRope) {
@@ -677,9 +677,9 @@ import java.util.regex.Pattern;
         if (r instanceof PrePostCharRope) {
             PrePostCharRope p = (PrePostCharRope) r;
             out.print(SPACES.substring(0, depth * 2));
-            out.println("\'" + p.pre + "\'");
+            out.println("\'" + p.pre + '\'');
             Rope.visualize(p.content, out, depth + 1);
-            out.println("\'" + p.post + "\'");
+            out.println("\'" + p.post + '\'');
         }
     }
 
@@ -699,7 +699,7 @@ import java.util.regex.Pattern;
                 leafNodes.add(x);
             }
         }
-        out.println("rope(length=" + r.length() + ", leaf nodes=" + leafNodes.size() + ", non-leaf nodes=" + nonLeaf + ", depth=" + depth(r) + ")");
+        out.println("rope(length=" + r.length() + ", leaf nodes=" + leafNodes.size() + ", non-leaf nodes=" + nonLeaf + ", depth=" + depth(r) + ')');
     }
 
     /**

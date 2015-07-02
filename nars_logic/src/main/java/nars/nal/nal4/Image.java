@@ -1,7 +1,7 @@
 package nars.nal.nal4;
 
-import nars.Symbols;
 import nars.Op;
+import nars.Symbols;
 import nars.term.Compound;
 import nars.term.DefaultCompound;
 import nars.term.Term;
@@ -10,9 +10,9 @@ import nars.util.utf8.ByteBuf;
 import java.io.IOException;
 import java.io.Writer;
 
-import static nars.Symbols.ARGUMENT_SEPARATOR;
 import static nars.Op.COMPOUND_TERM_CLOSER;
 import static nars.Op.COMPOUND_TERM_OPENER;
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 
 /**
  *

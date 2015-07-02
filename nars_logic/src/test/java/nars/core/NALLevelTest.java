@@ -1,10 +1,10 @@
 package nars.core;
 
 
-import nars.NAR;
 import nars.Global;
-import nars.nar.Default;
+import nars.NAR;
 import nars.io.out.TextOutput;
+import nars.nar.Default;
 import nars.testing.condition.OutputCount;
 import org.junit.Test;
 

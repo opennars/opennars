@@ -73,7 +73,7 @@ public final class SgAnnotation {
         if (packageName.length() == 0) {
             return simpleName;
         }
-        return packageName + "." + simpleName;
+        return packageName + '.' + simpleName;
     }
 
     /**
@@ -127,10 +127,10 @@ public final class SgAnnotation {
     @Override
     public final String toString() {
         final StringBuffer sb = new StringBuffer();
-        sb.append("@");
+        sb.append('@');
         sb.append(getName());
         if (arguments.size() > 0) {
-            sb.append("(");
+            sb.append('(');
             if (arguments.size() == 1) {
                 final Iterator<String> it = arguments.keySet().iterator();
                 while (it.hasNext()) {
@@ -138,7 +138,7 @@ public final class SgAnnotation {
                     final Object value = arguments.get(name);
                     if (!name.equals("value")) {
                         sb.append(name);
-                        sb.append("=");
+                        sb.append('=');
                     }
                     sb.append(value);
                 }
@@ -152,12 +152,12 @@ public final class SgAnnotation {
                         sb.append(", ");
                     }
                     sb.append(name);
-                    sb.append("=");
+                    sb.append('=');
                     sb.append(value);
                     count++;
                 }
             }
-            sb.append(")");
+            sb.append(')');
         }
         return sb.toString();
     }

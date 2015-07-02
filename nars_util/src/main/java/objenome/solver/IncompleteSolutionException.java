@@ -5,9 +5,10 @@
  */
 package objenome.solver;
 
-import java.util.Arrays;
 import objenome.Multitainer;
 import objenome.problem.Problem;
+
+import java.util.Arrays;
 
 /**
  *

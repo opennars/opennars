@@ -2,6 +2,7 @@ package objenome.op.cas;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Sin extends Function {
     
@@ -69,9 +70,9 @@ public class Sin extends Function {
         if (ofExpr.isConstant()) {
             Expr dividedBy2Pi = Division.make(ofExpr, Product.make(Num.make(2), new Pi()));
             
-            for (Expr key : values.keySet()) {
-                Expr subtracted = Sum.make(dividedBy2Pi, Division.make(key, Num.make(-2)));
-                if (subtracted instanceof Num && ((Num) subtracted).isInt()) return values.get(key);
+            for (Map.Entry<Expr, Expr> exprExprEntry : values.entrySet()) {
+                Expr subtracted = Sum.make(dividedBy2Pi, Division.make(exprExprEntry.getKey(), Num.make(-2)));
+                if (subtracted instanceof Num && ((Num) subtracted).isInt()) return exprExprEntry.getValue();
             }
         }
         

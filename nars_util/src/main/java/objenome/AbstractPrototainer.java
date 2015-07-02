@@ -5,20 +5,11 @@
  */
 package objenome;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import objenome.solution.dependency.Builder;
-import objenome.solution.dependency.ClassBuilder;
-import objenome.solution.dependency.ConfigurableBuilder;
-import objenome.solution.dependency.ConstructorDependency;
-import objenome.solution.dependency.Interceptor;
-import objenome.solution.dependency.Scope;
-import objenome.solution.dependency.SetterDependency;
+import objenome.solution.dependency.*;
 import objenome.util.InjectionUtils;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *

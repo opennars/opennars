@@ -1,21 +1,13 @@
 package objenome;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import objenome.solution.dependency.Builder;
-import objenome.solution.dependency.ClassBuilder;
-import objenome.solution.dependency.Interceptor;
-import objenome.solution.dependency.Scope;
-import objenome.solution.dependency.SetterDependency;
-import objenome.solution.dependency.SingletonBuilder;
+import objenome.solution.dependency.*;
 import objenome.util.InjectionUtils;
 import objenome.util.InjectionUtils.Provider;
 import objenome.util.bean.BeanProxyBuilder;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The deterministic implementation of of IoC container.
@@ -88,7 +80,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
                 boolean needsToCreate = false;
 
-                synchronized (this) {
+                synchronized (singletonsCache) {
 
                     if (singletonsCache.containsKey(name)) {
 
@@ -226,7 +218,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         }
     }
 
-    private final void checkInterceptable(Builder f, Object value) {
+    private static void checkInterceptable(Builder f, Object value) {
 
         if (f instanceof Interceptor) {
 
@@ -328,11 +320,11 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         if (scope == Scope.SINGLETON) {
             List<ClearableHolder> listToClear = new LinkedList<>();
             synchronized (this) {
-                for (String key : singletonsCache.keySet()) {
-                    Builder factory = builders.get(key);                    
+                for (Map.Entry<String, Object> stringObjectEntry : singletonsCache.entrySet()) {
+                    Builder factory = builders.get(stringObjectEntry.getKey());
                     if (factory instanceof Interceptor) {
                         Interceptor c = (Interceptor) factory;
-                        Object value = singletonsCache.get(key);
+                        Object value = stringObjectEntry.getValue();
                         listToClear.add(new ClearableHolder(c, value));
                     }                    
                 }
@@ -345,11 +337,11 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
         } else if (scope == Scope.THREAD) {
             List<ClearableHolder> listToClear = new LinkedList<>();
             synchronized (this) {
-                for (String key : threadLocalsCache.keySet()) {
-                    Builder factory = builders.get(key);                    
+                for (Map.Entry<String, ThreadLocal<Object>> stringThreadLocalEntry : threadLocalsCache.entrySet()) {
+                    Builder factory = builders.get(stringThreadLocalEntry.getKey());
                     if (factory instanceof Interceptor) {
                         Interceptor c = (Interceptor) factory;
-                        ThreadLocal<Object> t = threadLocalsCache.get(key);
+                        ThreadLocal<Object> t = stringThreadLocalEntry.getValue();
                         Object value = t.get();
                         // we are ONLY clearing if this thread has something in of threadlocal, in other words,
                         // if of thread has previously requested this key...
@@ -439,7 +431,7 @@ public class Container extends AbstractPrototainer implements AbstractContainer 
 
 
     @Override
-    public synchronized boolean contains(Object obj) {
+    public boolean contains(Object obj) {
         String key = InjectionUtils.getKeyName(obj);
         if (!builders.containsKey(key)) {
             return false;

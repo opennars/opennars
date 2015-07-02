@@ -380,7 +380,8 @@ public final class CuckooMap2<K, V> extends AbstractMap<K, V> {
          * going to be mucking around with the contents of the arrays and
          * otherwise have no way of tracking what values got inserted.
          */
-        Entry<K, V> values[] = entrySet().toArray(new Entry[0]);
+        EntrySet var = entrySet();
+        Entry<K, V> values[] = var.toArray(new Entry[var.size()]);
 
         /* Continuously spin, trying to add more and more values to the table.
          * If at any point we can't add something, pick new hash functions and

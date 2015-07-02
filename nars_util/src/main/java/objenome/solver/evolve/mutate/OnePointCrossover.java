@@ -21,21 +21,19 @@
  */
 package objenome.solver.evolve.mutate;
 
-import java.util.ArrayList;
-import java.util.List;
-import objenome.solver.evolve.AbstractOrganismOperator;
-import objenome.solver.evolve.GPContainer;
+import objenome.op.Node;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Organism;
-import static objenome.problem.ProblemSTGP.PROBLEM;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
 import objenome.solver.evolve.event.OperatorEvent.EndOperator;
-import objenome.op.Node;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static objenome.problem.ProblemSTGP.PROBLEM;
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
 
 /**
  * A crossover operator for <code>STGPIndividual</code>s that exchanges subtrees

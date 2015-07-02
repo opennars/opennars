@@ -462,7 +462,7 @@ public class IndexedTreeMap<K, V>
         while (e != null) {
             String l = e.left == null ? "null" : "   " + e.left.key.toString();
             String r = e.right == null ? "null" : "   " + e.right.key.toString();
-            System.out.println(e.key + ":" + l + ":" + r + ":" + e.weight);
+            System.out.println(e.key + ":" + l + ':' + r + ':' + e.weight);
             e = successor(e);
         }
     }
@@ -825,24 +825,27 @@ public class IndexedTreeMap<K, V>
     }
 
     private K getExactKey(Entry<K, V> e, int index) {
-        boolean eleftNull = e.left == null;
-        if (eleftNull) {
-            if (index == 0) {
-                return e.key;
+        while (true) {
+            boolean eleftNull = e.left == null;
+            if (eleftNull) {
+                if (index == 0) {
+                    return e.key;
+                }
+                if (e.right == null) {
+                    return e.key;
+                }
+            } else {
+                if (e.left.weight > index) {
+                    e = e.left;
+                    continue;
+                }
+                if (e.left.weight == index) {
+                    return e.key;
+                }
             }
-            if (e.right == null) {
-                return e.key;
-            }
+            e = e.right;
+            index = index - (eleftNull ? 0 : e.left.weight) - 1;
         }
-        else {
-            if (e.left.weight > index) {
-                return getExactKey(e.left, index);
-            }
-            if (e.left.weight == index) {
-                return e.key;
-            }
-        }
-        return getExactKey(e.right, index - (eleftNull ? 0 : e.left.weight) - 1);
     }
 
     @Override

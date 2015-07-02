@@ -3,13 +3,13 @@ package nars.util.graph;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import nars.concept.Concept;
-import nars.task.Sentence;
-import nars.task.Task;
-import nars.term.Termed;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Termed;
 import nars.util.data.CuckooMap;
 import nars.util.data.id.Named;
 

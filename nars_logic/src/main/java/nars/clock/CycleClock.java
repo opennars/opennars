@@ -1,8 +1,6 @@
 package nars.clock;
 
 
-import nars.Memory;
-
 /**
  * internal, subjective time (1 cycle = 1 time step)
  */

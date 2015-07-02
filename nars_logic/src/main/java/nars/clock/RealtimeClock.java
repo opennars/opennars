@@ -1,6 +1,5 @@
 package nars.clock;
 
-import jdk.nashorn.internal.runtime.Timing;
 import nars.Events;
 import nars.Memory;
 

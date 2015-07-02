@@ -5,7 +5,6 @@
  */
 package objenome;
 
-import objenome.Container;
 import objenome.util.bean.util.DefaultPropertyChangeEventProvider;
 import org.junit.Test;
 

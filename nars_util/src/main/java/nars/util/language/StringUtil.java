@@ -16,7 +16,7 @@ public class StringUtil {
                     readthusfar = "";
                 }
                 
-                splited.add("" + readChar);
+                splited.add(String.valueOf(readChar));
                 
                 continue;
             }

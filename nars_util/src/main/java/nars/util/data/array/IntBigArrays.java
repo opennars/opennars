@@ -55,8 +55,6 @@
  */
 package nars.util.data.array;
 
-import org.infinispan.commons.hash.Hash;
-
 import java.util.Arrays;
 
 import static nars.util.data.array.BigArrays.*;

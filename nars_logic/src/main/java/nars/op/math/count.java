@@ -20,8 +20,8 @@ package nars.op.math;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.TermFunction;
-import nars.term.Term;
 import nars.op.mental.Mental;
+import nars.term.Term;
 
 /**
  * Count the number of elements in a set

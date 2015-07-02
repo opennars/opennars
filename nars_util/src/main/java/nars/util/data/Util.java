@@ -16,7 +16,6 @@ package nars.util.data;
 
 import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
-import nars.util.utf8.Utf8;
 
 import java.util.Base64;
 import java.util.Collection;
@@ -38,7 +37,7 @@ public final class Util {
     final static int PRIME2 = 92821;
     final static int PRIME1 = 31;
 
-    public String UUIDbase64() {
+    public static String UUIDbase64() {
         long low = UUID.randomUUID().getLeastSignificantBits();
         long high = UUID.randomUUID().getMostSignificantBits();
         return new String(Base64.getEncoder().encode(
@@ -201,7 +200,7 @@ public final class Util {
                     } else if (escaping)
                         sb.append("\\}");
                     else
-                        sb.append("}");
+                        sb.append('}');
                     escaping = false;
                     break;
                 case ',':
@@ -210,7 +209,7 @@ public final class Util {
                     } else if (escaping)
                         sb.append("\\,");
                     else
-                        sb.append(",");
+                        sb.append(',');
                     break;
                 default:
                     escaping = false;
@@ -245,7 +244,7 @@ public final class Util {
     {*/
 
 
-    public long RSHash(String str) {
+    public static long RSHash(String str) {
         int b = 378551;
         int a = 63689;
         long hash = 0;
@@ -260,7 +259,7 @@ public final class Util {
    /* End Of RS Hash Function */
 
 
-    public long JSHash(String str) {
+    public static long JSHash(String str) {
         long hash = 1315423911;
 
         for (int i = 0; i < str.length(); i++) {
@@ -272,7 +271,7 @@ public final class Util {
    /* End Of JS Hash Function */
 
 
-    public long PJWHash(String str) {
+    public static long PJWHash(String str) {
         long BitsInUnsignedInt = (long) (4 * 8);
         long ThreeQuarters = (long) ((BitsInUnsignedInt * 3) / 4);
         long OneEighth = (long) (BitsInUnsignedInt / 8);
@@ -293,7 +292,7 @@ public final class Util {
    /* End Of  P. J. Weinberger Hash Function */
 
 
-    public long ELFHash(String str) {
+    public static long ELFHash(String str) {
         long hash = 0;
         long x = 0;
 
@@ -338,7 +337,7 @@ public final class Util {
 
 
 
-        public long BKDRHash(String str)
+        public static long BKDRHash(String str)
         {
             long seed = 131; // 31 131 1313 13131 131313 etc..
             long hash = 0;
@@ -353,7 +352,7 @@ public final class Util {
    /* End Of BKDR Hash Function */
 
 
-        public long SDBMHash(String str)
+        public static long SDBMHash(String str)
         {
             long hash = 0;
 
@@ -367,7 +366,7 @@ public final class Util {
    /* End Of SDBM Hash Function */
 
 
-        public long DJBHash(String str)
+        public static long DJBHash(String str)
         {
             long hash = 5381;
 
@@ -381,7 +380,7 @@ public final class Util {
    /* End Of DJB Hash Function */
 
 
-        public long DEKHash(String str)
+        public static long DEKHash(String str)
         {
             long hash = str.length();
 
@@ -395,7 +394,7 @@ public final class Util {
    /* End Of DEK Hash Function */
 
 
-        public long BPHash(String str)
+        public static long BPHash(String str)
         {
             long hash = 0;
 
@@ -409,7 +408,7 @@ public final class Util {
    /* End Of BP Hash Function */
 
 
-        public long FNVHash(String str)
+        public static long FNVHash(String str)
         {
             long fnv_prime = 0x811C9DC5;
             long hash = 0;
@@ -425,7 +424,7 @@ public final class Util {
    /* End Of FNV Hash Function */
 
 
-        public long APHash(String str)
+        public static long APHash(String str)
         {
             long hash = 0xAAAAAAAA;
 

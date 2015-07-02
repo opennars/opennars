@@ -1,9 +1,9 @@
 package objenome.util.bean.util;
 
-import java.lang.reflect.Method;
-
 import objenome.util.bean.anno.GenericBeanMethod;
 import objenome.util.bean.anno.GenericBeanMethod.Type;
+
+import java.lang.reflect.Method;
 
 public final class GenericBeanMapper {
 

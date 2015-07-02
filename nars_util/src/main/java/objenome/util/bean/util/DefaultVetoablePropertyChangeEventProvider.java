@@ -1,11 +1,11 @@
 package objenome.util.bean.util;
 
-import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.ADD_VETO_LISTENER;
-import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.REMOVE_VETO_LISTENER;
+import objenome.util.bean.anno.PropertyChangeEventMethod;
 
 import java.beans.VetoableChangeListener;
 
-import objenome.util.bean.anno.PropertyChangeEventMethod;
+import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.ADD_VETO_LISTENER;
+import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.REMOVE_VETO_LISTENER;
 
 /**
  * Beans (interfaces) implementing this interface support VetoablePropertyChangeEvents. (each setter

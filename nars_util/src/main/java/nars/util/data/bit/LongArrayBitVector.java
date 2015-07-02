@@ -431,7 +431,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 
 	public LongArrayBitVector append( long value, int width ) {
 		if ( width == 0 ) return this;
-		if ( CHECKS && width < Long.SIZE && ( value & -1L << width ) != 0 ) throw new IllegalArgumentException( "The specified value (" + value + ") is larger than the maximum value for the given width (" + width + ")" );
+		if ( CHECKS && width < Long.SIZE && ( value & -1L << width ) != 0 ) throw new IllegalArgumentException( "The specified value (" + value + ") is larger than the maximum value for the given width (" + width + ')');
 		final long length = this.length;
 		final int startWord = word( length );
 		final int startBit = bit( length );
@@ -584,7 +584,7 @@ public class LongArrayBitVector extends AbstractBitVector implements Cloneable, 
 	 * @return a bit vector of size <code>size</code> using <code>array</code> as backing array.
 	 */
 	public static LongArrayBitVector wrap( final long[] array, final long size ) {
-		if ( size > (long)array.length << LOG2_BITS_PER_WORD ) throw new IllegalArgumentException( "The provided array is too short (" + array.length + " elements) for the given size (" + size + ")" );
+		if ( size > (long)array.length << LOG2_BITS_PER_WORD ) throw new IllegalArgumentException( "The provided array is too short (" + array.length + " elements) for the given size (" + size + ')');
 		final LongArrayBitVector result = new LongArrayBitVector( 0 );
 		result.length = size;
 		result.bits = array;

@@ -21,14 +21,14 @@
 package nars.budget;
 
 import nars.Memory;
-import nars.nal.*;
 import nars.concept.Concept;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.nal.UtilityFunctions;
 import nars.process.ConceptProcess;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 import nars.term.Term;
 import nars.truth.Truth;
 

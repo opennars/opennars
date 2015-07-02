@@ -51,7 +51,7 @@ public class ConstructorDependency {
 
     @Override
     public String toString() {
-        return "[ConstructorDependency: sourceFromContainer=" + sourceType + ";" + sourceFromContainer +  ";" + containerKey + "]";
+        return "[ConstructorDependency: sourceFromContainer=" + sourceType + ';' + sourceFromContainer + ';' + containerKey + ']';
     }
 
     public void setContainerKey(Object sourceFromContainer) {

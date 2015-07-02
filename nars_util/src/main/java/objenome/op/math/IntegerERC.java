@@ -21,9 +21,9 @@
  */
 package objenome.op.math;
 
-import objenome.solver.evolve.RandomSequence;
 import objenome.op.Literal;
 import objenome.op.bool.BooleanERC;
+import objenome.solver.evolve.RandomSequence;
 
 /**
  * Defines an integer ephemeral random constant (ERC). An ERC is a literal with

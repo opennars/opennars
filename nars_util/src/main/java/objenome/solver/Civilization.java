@@ -23,6 +23,7 @@ package objenome.solver;
 
 import com.gs.collections.api.map.primitive.MutableObjectDoubleMap;
 import com.gs.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
+import nars.util.data.random.MersenneTwisterFast;
 import objenome.goal.DoubleFitness;
 import objenome.op.Node;
 import objenome.op.Variable;
@@ -35,7 +36,6 @@ import objenome.solver.evolve.mutate.PointMutation;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
 import objenome.solver.evolve.selection.TournamentSelector;
-import nars.util.data.random.MersenneTwisterFast;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.ArrayList;
@@ -84,8 +84,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         the(RandomSequence.RANDOM_SEQUENCE, random);
         the(TypedOrganism.RETURN_TYPE, Double.class);
 
-        final ArrayList<Node> syntax = new ArrayList();
-        syntax.addAll( getOperators(random) );
+        final ArrayList<Node> syntax = new ArrayList(getOperators(random));
         the(TypedOrganism.SYNTAX, syntax.toArray(new Node[syntax.size()]));
 
 
@@ -288,7 +287,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
         }
 
         if (cycle % 64 == 0)
-            System.err.println( "\n" + population.size() + " organisms between " + getCostStatistics().getMin() + ":min .. max:" + getCostStatistics().getMax() + "\n" );
+            System.err.println( "\n" + population.size() + " organisms between " + getCostStatistics().getMin() + ":min .. max:" + getCostStatistics().getMax() + '\n');
 
         cycle++;
     }
@@ -337,7 +336,7 @@ abstract public class Civilization<I extends AbstractOrganism> extends GPContain
 
         @Override
         public String toString() {
-            return i.toString() + " [" + age + ", " + (totalCost) + "]";
+            return i.toString() + " [" + age + ", " + (totalCost) + ']';
         }
 
         /** rate: cost/time */

@@ -21,7 +21,6 @@
  */
 package objenome.op.bool;
 
-import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.util.TypeUtil;
 

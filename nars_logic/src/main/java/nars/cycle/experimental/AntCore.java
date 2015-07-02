@@ -5,19 +5,19 @@
 package nars.cycle.experimental;
 
 import javolution.context.ConcurrentContext;
-import nars.Memory;
 import nars.Global;
+import nars.Memory;
 import nars.budget.Budget;
 import nars.budget.Item;
-import nars.process.TaskProcess;
-import nars.task.Sentence;
-import nars.task.Task;
-import nars.term.Termed;
 import nars.concept.Concept;
 import nars.link.TLink;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.process.TaskProcess;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
+import nars.term.Termed;
 
 import java.util.*;
 

@@ -19,8 +19,8 @@
 
 package nars.io.in;
 
-import nars.task.Task;
 import nars.nal.nal8.ImmediateOperation;
+import nars.task.Task;
 import nars.util.data.buffer.Source;
 
 import java.util.ArrayDeque;

@@ -22,9 +22,9 @@ package nars.nal.nal5;
 
 import nars.Op;
 import nars.nal.nal7.AbstractInterval;
+import nars.nal.nal7.TemporalRules;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.nal.nal7.TemporalRules;
 
 import java.util.Arrays;
 

@@ -904,7 +904,7 @@ public class ClassUtils {
         try {
             Class<?> clazz;
             if (abbreviationMap.containsKey(className)) {
-                final String clsName = "[" + abbreviationMap.get(className);
+                final String clsName = '[' + abbreviationMap.get(className);
                 clazz = Class.forName(clsName, initialize, classLoader).getComponentType();
             } else {
                 clazz = Class.forName(toCanonicalName(className), initialize, classLoader);
@@ -1008,8 +1008,7 @@ public class ClassUtils {
             return declaredMethod;
         }
 
-        final List<Class<?>> candidateClasses = new ArrayList<Class<?>>();
-        candidateClasses.addAll(getAllInterfaces(cls));
+        final List<Class<?>> candidateClasses = new ArrayList<Class<?>>(getAllInterfaces(cls));
         candidateClasses.addAll(getAllSuperclasses(cls));
 
         for (final Class<?> candidateClass : candidateClasses) {
@@ -1028,7 +1027,7 @@ public class ClassUtils {
         }
 
         throw new NoSuchMethodException("Can't find a public method for " +
-                methodName + " " + ArrayUtils.toString(parameterTypes));
+                methodName + ' ' + ArrayUtils.toString(parameterTypes));
     }
 
     // ----------------------------------------------------------------------
@@ -1046,13 +1045,13 @@ public class ClassUtils {
             final StringBuilder classNameBuffer = new StringBuilder();
             while (className.endsWith("[]")) {
                 className = className.substring(0, className.length() - 2);
-                classNameBuffer.append("[");
+                classNameBuffer.append('[');
             }
             final String abbreviation = abbreviationMap.get(className);
             if (abbreviation != null) {
                 classNameBuffer.append(abbreviation);
             } else {
-                classNameBuffer.append("L").append(className).append(";");
+                classNameBuffer.append('L').append(className).append(';');
             }
             className = classNameBuffer.toString();
         }

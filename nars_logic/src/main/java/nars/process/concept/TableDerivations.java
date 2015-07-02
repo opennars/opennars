@@ -1,6 +1,8 @@
 package nars.process.concept;
 
-import nars.nal.*;
+import nars.link.TaskLink;
+import nars.link.TermLink;
+import nars.nal.RuleTables;
 import nars.nal.nal1.Negation;
 import nars.nal.nal5.Equivalence;
 import nars.nal.nal5.Implication;
@@ -11,8 +13,6 @@ import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Statement;
 import nars.term.Term;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 import nars.term.Variables;
 
 import static nars.Symbols.VAR_INDEPENDENT;

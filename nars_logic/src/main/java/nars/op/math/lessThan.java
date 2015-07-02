@@ -1,10 +1,10 @@
 package nars.op.math;
 
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
+import nars.nal.nal8.operator.TermPredicate;
 import nars.term.Atom;
 import nars.term.Term;
-import nars.nal.nal8.operator.TermPredicate;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import static nars.io.Texts.f;
 

@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 package objenome;
+
 import objenome.solver.Behaviors;
+import org.apache.commons.math3.genetics.GeneticAlgorithm;
+
 import static objenome.solver.Behaviors.Behavior.DO;
 import static objenome.solver.Behaviors.Behavior.DONT;
-import org.apache.commons.math3.genetics.GeneticAlgorithm;
 
 /**
  *

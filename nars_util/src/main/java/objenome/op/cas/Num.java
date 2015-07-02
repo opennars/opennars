@@ -1,8 +1,9 @@
 package objenome.op.cas;
 
-import java.util.regex.*;
-import java.util.HashMap;
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Num extends Constant implements Comparable<Num> {
     
@@ -31,7 +32,7 @@ public class Num extends Constant implements Comparable<Num> {
     public static Expr make(double val) {
         if (allowedVal(val)) return new Num(val);
         
-        BigDecimal valBD = new BigDecimal(new Double(val).toString());
+        BigDecimal valBD = new BigDecimal(Double.toString(val));
         // if (debug) System.err.println("Number.make: big: " + valBD);
         
         double numerator= valBD.scaleByPowerOfTen(valBD.scale()).doubleValue();

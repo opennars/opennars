@@ -1,10 +1,10 @@
 package objenome.util.bean;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 import objenome.util.bean.anno.Initializer;
 import objenome.util.bean.anno.InitializerMethod;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class BeanInitializer {
 

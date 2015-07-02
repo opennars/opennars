@@ -173,8 +173,8 @@ public class BigArrays {
 	 */
 	public static void ensureFromTo( final long bigArrayLength, final long from, final long to ) {
 		if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
-		if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ")" );
-		if ( to > bigArrayLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than big-array length (" + bigArrayLength + ")" );
+		if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
+		if ( to > bigArrayLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than big-array length (" + bigArrayLength + ')');
 	}
 
 	/** Ensures that a range given by an offset and a length fits a big array of given length.
@@ -190,7 +190,7 @@ public class BigArrays {
 	public static void ensureOffsetLength( final long bigArrayLength, final long offset, final long length ) {
 		if ( offset < 0 ) throw new ArrayIndexOutOfBoundsException( "Offset (" + offset + ") is negative" );
 		if ( length < 0 ) throw new IllegalArgumentException( "Length (" + length + ") is negative" );
-		if ( offset + length > bigArrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than big-array length (" + bigArrayLength + ")" );
+		if ( offset + length > bigArrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than big-array length (" + bigArrayLength + ')');
 	}
 
 	

@@ -5,17 +5,14 @@
  */
 package objenome.solver;
 
-import java.util.Map;
 import objenome.Multitainer;
 import objenome.goal.DecideNumericValue;
 import objenome.goal.DevelopMethod;
 import objenome.problem.Problem;
-import objenome.solution.SetMethodsGPEvolved;
-import objenome.solution.SetBooleanValue;
-import objenome.solution.SetDoubleValue;
-import objenome.solution.SetImplementationClass;
-import objenome.solution.SetIntegerValue;
+import objenome.solution.*;
 import objenome.solution.dependency.DecideImplementationClass;
+
+import java.util.Map;
 
 /**
  *

@@ -30,7 +30,7 @@ public interface SortedIndex<T> extends Collection<T> {
                 s = Float.toString(((Item)t).getPriority());
             else*/
                 s = t.toString();
-            System.out.print(s + ",");
+            System.out.print(s + ',');
         }
         System.out.println();
     }

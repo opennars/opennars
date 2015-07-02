@@ -21,16 +21,13 @@
  */
 package objenome.solver.evolve.grammar;
 
+import objenome.solver.evolve.GPContainer.GPKey;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import objenome.solver.evolve.GPContainer.GPKey;
+import java.util.*;
 
 /**
  * A grammar object is constructed from a context-free language grammar. In the
@@ -309,7 +306,7 @@ public class Grammar {
                         buffer.append(ch);
 
                         if (!buffer.toString().equals("::=")) {
-                            throw new MalformedGrammarException("Expected '::=' " + "but found: " + buffer.toString());
+                            throw new MalformedGrammarException("Expected '::=' " + "but found: " + buffer);
                         }
                         // Clear the buffer.
                         buffer = new StringBuilder();

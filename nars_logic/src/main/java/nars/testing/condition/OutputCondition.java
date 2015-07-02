@@ -9,10 +9,10 @@ import nars.NAR;
 import nars.event.NARReaction;
 import nars.io.Texts;
 import nars.io.out.TextOutput;
+import nars.narsese.InvalidInputException;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.stamp.Stamp;
-import nars.narsese.InvalidInputException;
 
 import java.io.Serializable;
 import java.util.ArrayList;

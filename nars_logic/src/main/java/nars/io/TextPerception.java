@@ -3,11 +3,11 @@ package nars.io;
 import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
-import nars.task.Task;
 import nars.narsese.NarseseParser;
 import nars.op.io.Echo;
 import nars.op.io.Reset;
 import nars.op.io.SetVolume;
+import nars.task.Task;
 
 import java.util.ArrayList;
 import java.util.List;

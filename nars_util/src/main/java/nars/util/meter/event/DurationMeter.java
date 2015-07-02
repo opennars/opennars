@@ -32,7 +32,7 @@ public class DurationMeter extends DoubleMeter {
     public boolean isStarted() { return !Double.isNaN(startTime); }
 
     /** returns the stored start time of the event */
-    public synchronized double start() {
+    public double start() {
         if (strict && isStarted()) {
             startTime = Double.NaN;
             throw new RuntimeException(this + " already started");            
@@ -42,7 +42,7 @@ public class DurationMeter extends DoubleMeter {
     }
 
     /** returns the value which it stores (duration time, or frequency) */
-    public synchronized double stop() {
+    public double stop() {
         if (strict && !isStarted())
             throw new RuntimeException(this + " not previously started");
         double duration = sinceStart();

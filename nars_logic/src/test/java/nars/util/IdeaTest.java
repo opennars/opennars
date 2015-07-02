@@ -4,9 +4,9 @@
  */
 package nars.util;
 
-import nars.nar.Default;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
+import nars.nar.Default;
 import nars.util.graph.experimental.Idea.IdeaSet;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,6 +1,5 @@
 package nars.budget;
 
-import nars.budget.Budget;
 import nars.util.data.id.Named;
 
 /**

@@ -1,15 +1,15 @@
 package nars.util.graph;
 
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.budget.Budget;
-import nars.concept.Concept;
-import nars.util.data.id.Named;
-import nars.term.Termed;
 import nars.budget.Budget.Budgetable;
+import nars.concept.Concept;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.term.Term;
+import nars.term.Termed;
+import nars.util.data.id.Named;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;

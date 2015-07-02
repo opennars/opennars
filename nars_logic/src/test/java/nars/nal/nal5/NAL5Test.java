@@ -4,12 +4,12 @@ import nars.Events;
 import nars.NAR;
 import nars.NARSeed;
 import nars.event.NARReaction;
+import nars.nal.JavaNALTest;
 import nars.nar.Curve;
 import nars.nar.Default;
 import nars.nar.DefaultMicro;
-import nars.nal.JavaNALTest;
-import nars.task.Task;
 import nars.narsese.InvalidInputException;
+import nars.task.Task;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

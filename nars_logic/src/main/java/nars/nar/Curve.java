@@ -5,16 +5,16 @@ import nars.bag.Bag;
 import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.FairPriorityProbabilityCurve;
 import nars.budget.Budget;
-import nars.process.CycleProcess;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.term.Compound;
-import nars.term.Term;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.process.CycleProcess;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Compound;
+import nars.term.Term;
 
 
 public class Curve extends Default {

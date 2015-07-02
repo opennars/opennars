@@ -5,8 +5,6 @@
  */
 package objenome.goal.numeric;
 
-import java.util.List;
-import java.util.function.Function;
 import objenome.Objenome;
 import objenome.solution.SetNumericValue;
 import objenome.solver.NumericSolver;
@@ -16,7 +14,6 @@ import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
-import static org.apache.commons.math3.optim.nonlinear.scalar.GoalType.MAXIMIZE;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultiStartMultivariateOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
@@ -25,6 +22,11 @@ import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.UncorrelatedRandomVectorGenerator;
 import org.apache.commons.math3.random.UniformRandomGenerator;
+
+import java.util.List;
+import java.util.function.Function;
+
+import static org.apache.commons.math3.optim.nonlinear.scalar.GoalType.MAXIMIZE;
 
 /**
  * Multivariate Optmization with Multistart which uses different starting points 

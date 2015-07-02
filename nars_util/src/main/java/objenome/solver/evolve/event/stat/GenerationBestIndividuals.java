@@ -21,11 +21,12 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.ArrayList;
-import java.util.List;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Stat that provides the best individuals of a generation.

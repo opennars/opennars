@@ -21,10 +21,11 @@
  */
 package objenome.op.compute;
 
-import javax.script.Invocable;
-import javax.script.ScriptException;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
+
+import javax.script.Invocable;
+import javax.script.ScriptException;
 
 /**
  * A <code>RubyInterpreter</code> provides the facility to evaluate individual
@@ -170,7 +171,7 @@ public class RubyInterpreter<T extends Organism> extends ScriptingInterpreter<Ob
         code.append(")\n");
 
         code.append(program);
-        code.append("\n");
+        code.append('\n');
         code.append("end\n");
 
         return code.toString();

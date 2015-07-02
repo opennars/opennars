@@ -1,8 +1,8 @@
 package objenome.util;
 
-import nars.util.data.id.UTF8Identifier;
 import nars.util.data.id.DynamicUTF8Identifier;
 import nars.util.data.id.LiteralUTF8Identifier;
+import nars.util.data.id.UTF8Identifier;
 import nars.util.utf8.ByteBuf;
 import org.junit.Test;
 

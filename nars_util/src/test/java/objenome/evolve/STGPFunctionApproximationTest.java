@@ -1,15 +1,15 @@
 package objenome.evolve;
 
 import com.google.common.collect.Lists;
-
-import java.util.List;
-import objenome.solver.evolve.TypedOrganism;
-import objenome.solver.evolve.Population;
 import junit.framework.TestCase;
 import objenome.goal.Observation;
 import objenome.problem.STGPFunctionApproximation;
 import objenome.solver.evolve.Organism;
+import objenome.solver.evolve.Population;
+import objenome.solver.evolve.TypedOrganism;
 import org.junit.Test;
+
+import java.util.List;
 
 public class STGPFunctionApproximationTest extends TestCase {
 

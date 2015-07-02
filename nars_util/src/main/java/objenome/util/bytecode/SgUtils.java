@@ -174,7 +174,7 @@ public final class SgUtils {
         // Abstract and final check
         if (Modifier.isAbstract(modifiers) && Modifier.isFinal(modifiers)) {
             throw new IllegalArgumentException(CLASS_ABSTRACT_AND_FINAL_ERROR + " ["
-                    + Modifier.toString(modifiers) + "]");
+                    + Modifier.toString(modifiers) + ']');
         }
 
     }
@@ -194,7 +194,7 @@ public final class SgUtils {
         // Check final and volatile
         if (Modifier.isFinal(modifiers) && Modifier.isVolatile(modifiers)) {
             throw new IllegalArgumentException(FIELD_FINAL_VOLATILE_ERROR + " ["
-                    + Modifier.toString(modifiers) + "]");
+                    + Modifier.toString(modifiers) + ']');
         }
 
     }
@@ -216,19 +216,19 @@ public final class SgUtils {
         if (Modifier.isPrivate(modifiers)) {
             if (Modifier.isProtected(modifiers) || Modifier.isPublic(modifiers)) {
                 throw new IllegalArgumentException(METHOD_ACCESS_MODIFIER_ERROR + " ["
-                        + Modifier.toString(modifiers) + "]");
+                        + Modifier.toString(modifiers) + ']');
             }
         }
         if (Modifier.isProtected(modifiers)) {
             if (Modifier.isPrivate(modifiers) || Modifier.isPublic(modifiers)) {
                 throw new IllegalArgumentException(METHOD_ACCESS_MODIFIER_ERROR + " ["
-                        + Modifier.toString(modifiers) + "]");
+                        + Modifier.toString(modifiers) + ']');
             }
         }
         if (Modifier.isPublic(modifiers)) {
             if (Modifier.isPrivate(modifiers) || Modifier.isProtected(modifiers)) {
                 throw new IllegalArgumentException(METHOD_ACCESS_MODIFIER_ERROR + " ["
-                        + Modifier.toString(modifiers) + "]");
+                        + Modifier.toString(modifiers) + ']');
             }
         }
 
@@ -238,14 +238,14 @@ public final class SgUtils {
                     || Modifier.isFinal(modifiers) || Modifier.isNative(modifiers)
                     || Modifier.isStrict(modifiers) || Modifier.isSynchronized(modifiers)) {
                 throw new IllegalArgumentException(METHOD_ILLEGAL_ABSTRACT_MODIFIERS_ERROR + " ["
-                        + Modifier.toString(modifiers) + "]");
+                        + Modifier.toString(modifiers) + ']');
             }
         }
 
         // Check native and strictfp
         if (Modifier.isNative(modifiers) && Modifier.isStrict(modifiers)) {
             throw new IllegalArgumentException(METHOD_NATIVE_STRICTFP_ERROR + " ["
-                    + Modifier.toString(modifiers) + "]");
+                    + Modifier.toString(modifiers) + ']');
         }
 
     }
@@ -283,7 +283,7 @@ public final class SgUtils {
             final char ch = str.charAt(i);
             if (Character.isUpperCase(ch)) {
                 if (i > 0) {
-                    sb.append("_");
+                    sb.append('_');
                 }
                 sb.append(Character.toLowerCase(ch));
             } else {
@@ -310,7 +310,7 @@ public final class SgUtils {
             return str;
         }
         if (str.length() == 1) {
-            return "" + Character.toUpperCase(str.charAt(0));
+            return String.valueOf(Character.toUpperCase(str.charAt(0)));
         }
         return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
@@ -337,7 +337,7 @@ public final class SgUtils {
             if ((package2 == null) || (package2.length() == 0)) {
                 return package1;
             } else {
-                return package1 + "." + package2;
+                return package1 + '.' + package2;
             }
         }
     }
@@ -547,14 +547,14 @@ public final class SgUtils {
     public static String createTypeSignature(final String methodName, final Class<?>[] paramTypes) {
         final StringBuffer sb = new StringBuffer();
         sb.append(methodName);
-        sb.append("(");
+        sb.append('(');
         for (int i = 0; i < paramTypes.length; i++) {
             if (i > 0) {
                 sb.append(", ");
             }
             sb.append(paramTypes[i].getSimpleName());
         }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 

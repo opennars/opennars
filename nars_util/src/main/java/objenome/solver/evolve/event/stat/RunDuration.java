@@ -21,8 +21,9 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.concurrent.TimeUnit;
 import objenome.solver.evolve.event.RunEvent.EndRun;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract class that provices the duration of the run.

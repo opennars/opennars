@@ -813,9 +813,9 @@ public class Byt {
         for (int index=0; index< expected.length; index++) {
             if (expected[index]!= got[index]) {
                 //TODO fix this
-                throw new RuntimeException(Arrays.toString( new String[] { "value at index did not match index", index+"", "expected value",
-                        "" + expected[index],
-                        "but got", "" + got[index] } ));
+                throw new RuntimeException(Arrays.toString( new String[] { "value at index did not match index", String.valueOf(index), "expected value",
+                        String.valueOf(expected[index]),
+                        "but got", String.valueOf(got[index])} ));
 
             }
         }

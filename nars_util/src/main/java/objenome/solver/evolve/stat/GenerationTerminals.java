@@ -21,12 +21,13 @@
  */
 package objenome.solver.evolve.stat;
 
-import java.util.Arrays;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.TypedOrganism;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.stat.AbstractStat;
+
+import java.util.Arrays;
 
 /**
  * A stat that returns the number of terminals in all program trees in the

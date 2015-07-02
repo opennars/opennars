@@ -6,10 +6,11 @@
 package objenome.solution;
 
 import com.google.common.collect.Sets;
-import java.util.Set;
 import objenome.Phenotainer;
 import objenome.goal.DevelopMethod;
 import objenome.solver.Solution;
+
+import java.util.Set;
 
 /**
  * Uses a dynamically generated expression to complete an abstract or interface method
@@ -37,7 +38,7 @@ public class SetMethodsGPEvolved implements Solution {
 
     @Override
     public String key() {
-        return "implement(" + methods.toString() + ")";
+        return "implement(" + methods.toString() + ')';
     }
 
     

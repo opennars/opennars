@@ -2,9 +2,9 @@ package nars.nal.nal8;
 
 
 import nars.NARSeed;
+import nars.nal.ScriptNALTest;
 import nars.nar.Classic;
 import nars.nar.Default;
-import nars.nal.ScriptNALTest;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;

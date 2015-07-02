@@ -1,15 +1,16 @@
 package nars.core;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import nars.NAR;
 import nars.NARSeed;
 import nars.analyze.meter.CountOutputEvents;
 import nars.bag.impl.CacheBag;
 import nars.budget.Budget;
-import nars.io.out.TextOutput;
-import nars.cycle.DefaultCycle;
-import nars.nar.Default;
 import nars.concept.Concept;
+import nars.cycle.DefaultCycle;
+import nars.io.out.TextOutput;
+import nars.nar.Default;
 import nars.term.Term;
 import org.junit.Test;
 
@@ -40,24 +41,26 @@ public class CacheBagTest {
 
         assertEquals(0, active.size());
 
-        n.input("<b --> c>.");
+        n.input("<<a --> b> --> c>.");
         n.frame(); //input TaskProcess
         n.frame(); //next cycle: Conceputalization
 
-        assertEquals(3, active.size());
+        assertEquals(5, active.size());
 
-        n.frame();
+        //this activates downstream attached concepts:
+        // [<<a --> b> --> c>, a, b, c, <a --> b>]
         n.frame();
 
-        assertTrue("active input has activated forgotten knowledge",
-                3 < ((DefaultCycle) n.memory.cycle).size());
+        assertTrue("active input has activated forgotten knowledge"
+                        //+ Iterables.toString(n.memory.cycle)
+                ,5 <= n.memory.cycle.size());
 
         assertTrue(all.size() >= active.size());
 
         //System.out.println(Iterators.toString(active.iterator()));
         //System.out.println(Iterators.toString(all.iterator()));
 
-        n.frame(10);
+        //n.frame(10);
     }
 
     @Test public void testPriorityConservation() {
@@ -79,7 +82,7 @@ public class CacheBagTest {
 
         CountOutputEvents counts = new CountOutputEvents(n);
 
-        TextOutput.out(n);
+        //TextOutput.out(n);
 
         n.input("$" + p + "$ <a --> b>.");
         n.input("$" + p + "$ <b --> a>.");
@@ -142,7 +145,7 @@ public class CacheBagTest {
         int c = n.memory.numConcepts(true, false);
         double p = n.memory.cycle.getPrioritySum(true, true, true);
         double pc = p / c;
-        System.out.println("priority @ " + n.time() + ": " + p + " (" + pc + " / " + c + " concepts)");
+        //System.out.println("priority @ " + n.time() + ": " + p + " (" + pc + " / " + c + " concepts)");
         //assertTrue( min <= p );
         //assertTrue( max >= p );
         return p;

@@ -21,11 +21,7 @@ package nars.util.data.bit;
  */
 
 
-import java.io.DataInput;
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 
 /** A class providing static methods and objects that do useful things with bit vectors.
@@ -40,8 +36,8 @@ public class BitVectors {
 
     public static void ensureFromTo( final long bitVectorLength, final long from, final long to ) {
         if ( from < 0 ) throw new ArrayIndexOutOfBoundsException( "Start index (" + from + ") is negative" );
-        if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ")" );
-        if ( to > bitVectorLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than bit vector length (" + bitVectorLength + ")" );
+        if ( from > to ) throw new IllegalArgumentException( "Start index (" + from + ") is greater than end index (" + to + ')');
+        if ( to > bitVectorLength ) throw new ArrayIndexOutOfBoundsException( "End index (" + to + ") is greater than bit vector length (" + bitVectorLength + ')');
     }
  	
 	/** An immutable, singleton empty bit vector. */ 

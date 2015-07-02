@@ -1,9 +1,9 @@
 package objenome.op.cas;
 
+import objenome.op.cas.util.ArrayLists;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import objenome.op.cas.util.ArrayLists;
 
 public class Piecewise extends Operation {
     
@@ -20,27 +20,31 @@ public class Piecewise extends Operation {
     public static Expr makeDefined(ArrayList<? extends Expr> exprs) {
         return new Piecewise((ArrayList<Expr>) exprs).simplify();
     }
-    
+
     public Expr simplify() {
-        if (possibilities.isEmpty()) return new Undef();
-        if (possibilities.size() == 1) return possibilities.get(0);
-        for (int i = 0; i < possibilities.size(); i++) {
-            Expr onExpr = possibilities.get(i);
-            if (onExpr instanceof Undef) {
-                possibilities.remove(i);
-                return this.simplify();
+        Piecewise other = this;
+        simplify:
+        while (true) {
+            if (other.possibilities.isEmpty()) return new Undef();
+            if (other.possibilities.size() == 1) return other.possibilities.get(0);
+            for (int i = 0; i < other.possibilities.size(); i++) {
+                Expr onExpr = other.possibilities.get(i);
+                if (onExpr instanceof Undef) {
+                    other.possibilities.remove(i);
+                    other = other;
+                    continue simplify;
+                } else if (!(onExpr instanceof Conditional)) {
+                    return onExpr;
+                }
             }
-            else if (!(onExpr instanceof Conditional)) {
-                return onExpr;
-            }
+
+            return other;
         }
-        
-        return this;
     }
     
     public String pretty() {
         
-        String string = new String();
+        String string = "";
         Integer classOrder = this.classOrder();
         
         for (int i = 0; i < possibilities.size(); i++) {

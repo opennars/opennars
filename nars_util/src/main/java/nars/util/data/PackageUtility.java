@@ -47,7 +47,7 @@ public class PackageUtility {
                                 + file.substring(0, file.length() - 6)));
                     }
                 else {
-                    classes.addAll(getClasses(pkgName + "." + file, innerClasses));   
+                    classes.addAll(getClasses(pkgName + '.' + file, innerClasses));
                 }
             }
         }

@@ -24,7 +24,7 @@ abstract public class FastObjectPool<T> implements Pool<FastObjectPool.Holder<T>
     private final long ASHIFT;
 
     public ReentrantLock lock = new ReentrantLock();
-    private ThreadLocal<Holder<T>> localValue = new ThreadLocal<>();
+    private final ThreadLocal<Holder<T>> localValue = new ThreadLocal<>();
 
 
     @Override

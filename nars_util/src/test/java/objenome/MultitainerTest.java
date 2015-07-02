@@ -4,16 +4,19 @@
  * and open of template in of editor.
  */
 package objenome;
-import java.util.List;
+
 import objenome.goal.Between;
 import objenome.solution.SetImplementationClass;
 import objenome.solution.SetIntegerValue;
 import objenome.solution.SetNumericValue;
+import objenome.solver.Solution;
+import org.junit.Test;
+
+import java.util.List;
+
 import static objenome.solution.dependency.Builder.of;
 import static objenome.solution.dependency.Builder.the;
-import objenome.solver.Solution;
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
 /**
  *

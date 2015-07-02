@@ -1,26 +1,16 @@
 package objenome.util.bean;
 
-import static objenome.util.bean.Annotations.isAnnotated;
-import static objenome.util.bean.anno.GenericBeanMethod.Type.GENERIC_GET;
-import static objenome.util.bean.anno.GenericBeanMethod.Type.GENERIC_SET;
-import static objenome.util.bean.anno.GenericBeanMethod.Type.IS_SET;
-import static objenome.util.bean.anno.GenericBeanMethod.Type.KEYS;
+import objenome.util.bean.anno.GenericBeanKeyMethod;
+import objenome.util.bean.anno.GenericBeanKeyProvider;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import objenome.util.bean.anno.GenericBeanKeyMethod;
-import objenome.util.bean.anno.GenericBeanKeyProvider;
+import static objenome.util.bean.Annotations.isAnnotated;
+import static objenome.util.bean.anno.GenericBeanMethod.Type.*;
 
 public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
 
@@ -46,7 +36,7 @@ public class ProxyInvocationHandlerGenericSupport implements InvocationHandler {
         this.keys = Collections.unmodifiableSet(determineKeys(localGetters, localSetters));
     }
 
-    private Set<Object> determineKeys(final Map<Object, Method> gm, final Map<Object, Method> sm) {
+    private static Set<Object> determineKeys(final Map<Object, Method> gm, final Map<Object, Method> sm) {
         final Set<Object> result = new HashSet<Object>(gm.keySet().size() + sm.keySet().size());
         result.addAll(gm.keySet());
         result.addAll(sm.keySet());

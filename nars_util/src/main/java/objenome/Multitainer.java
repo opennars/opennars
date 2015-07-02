@@ -6,16 +6,6 @@
 package objenome;
 
 import com.google.common.collect.Lists;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import static java.util.stream.Collectors.toList;
 import objenome.goal.DecideNumericValue.DecideBooleanValue;
 import objenome.goal.DecideNumericValue.DecideDoubleValue;
 import objenome.goal.DecideNumericValue.DecideIntegerValue;
@@ -30,6 +20,13 @@ import objenome.solver.IncompleteSolutionException;
 import objenome.solver.RandomSolver;
 import objenome.solver.Solution;
 import objenome.solver.Solver;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Dependency-injection Multainer which can be parametrically searched to 
@@ -105,7 +102,7 @@ public class Multitainer extends AbstractPrototainer implements AbstractMultitai
                         problems.add(new DecideBooleanValue(p, nextPath) );    
                     }
                     else {
-                        throw new RuntimeException("primitive Parameter " + nextPath + " " + p + " not yet supported");
+                        throw new RuntimeException("primitive Parameter " + nextPath + ' ' + p + " not yet supported");
                     }
                 }
             }

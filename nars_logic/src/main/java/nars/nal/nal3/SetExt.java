@@ -1,9 +1,9 @@
 package nars.nal.nal3;
 
 import nars.Op;
-import nars.term.Terms;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 
 import java.io.IOException;
 import java.io.Writer;

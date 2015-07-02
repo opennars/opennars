@@ -1,9 +1,9 @@
 package objenome.op.cas;
 
-import java.text.ParseException;
-
 import objenome.op.cas.util.Token;
 import objenome.op.cas.util.TokenParser;
+
+import java.text.ParseException;
 
 public class SExprTokenParser extends TokenParser {
 

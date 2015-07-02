@@ -3,9 +3,9 @@ package nars.bag;
 import nars.NAR;
 import nars.bag.impl.CacheBag;
 import nars.bag.impl.InfiniCacheBag;
+import nars.concept.Concept;
 import nars.io.out.TextOutput;
 import nars.nar.Default;
-import nars.concept.Concept;
 import nars.term.Term;
 
 /**

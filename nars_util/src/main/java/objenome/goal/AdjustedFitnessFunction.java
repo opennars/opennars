@@ -21,13 +21,9 @@
  */
 package objenome.goal;
 
-import objenome.solver.evolve.AbstractFitnessFunction;
-import objenome.solver.evolve.Fitness;
-import objenome.solver.evolve.GPContainer;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Organism;
-import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 
@@ -170,7 +166,7 @@ public class AdjustedFitnessFunction extends AbstractFitnessFunction implements 
      * @return a double which is the adjusted fitness score between 0.0 and 1.0,
      * where 1.0 is more fit than 0.0
      */
-    protected double adjustedFitness(double standardised) {
+    protected static double adjustedFitness(double standardised) {
         if (standardised < 0.0) {
             throw new IllegalArgumentException("Standardised fitness must be 0.0 or greater");
         }

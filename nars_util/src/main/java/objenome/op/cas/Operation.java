@@ -1,8 +1,8 @@
 package objenome.op.cas;
 
-import java.util.ArrayList;
-
 import objenome.op.cas.util.ArrayLists;
+
+import java.util.ArrayList;
 
 public abstract class Operation extends Expr {
     

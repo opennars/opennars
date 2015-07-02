@@ -1,8 +1,10 @@
 package objenome.util.bean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import objenome.util.bean.anno.GenericBeanKeyMethod;
+import objenome.util.bean.anno.GenericBeanKeyProvider;
+import objenome.util.bean.anno.GenericBeanMethod;
+import objenome.util.bean.anno.GenericBeanMethod.Type;
+import org.junit.Test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,13 +13,8 @@ import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import objenome.util.bean.anno.GenericBeanKeyMethod;
-import objenome.util.bean.anno.GenericBeanKeyProvider;
-import objenome.util.bean.anno.GenericBeanMethod;
-import objenome.util.bean.anno.GenericBeanMethod.Type;
 
-
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class GetGenericTest {
 

@@ -58,8 +58,6 @@
 package nars.util.data.array;
 
 
-import org.infinispan.commons.hash.Hash;
-
 /**
  * A class providing static methods and objects that do useful things with type-specific arrays.
  * <p>

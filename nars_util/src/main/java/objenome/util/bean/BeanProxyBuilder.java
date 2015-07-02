@@ -1,5 +1,9 @@
 package objenome.util.bean;
 
+import objenome.util.bean.anno.GenericBeanKeyProvider;
+import objenome.util.bean.anno.Initializer;
+import objenome.util.bean.anno.PropertyChangeEventMethod;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -9,10 +13,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
-
-import objenome.util.bean.anno.GenericBeanKeyProvider;
-import objenome.util.bean.anno.Initializer;
-import objenome.util.bean.anno.PropertyChangeEventMethod;
 
 /**
  * Builder for proxied JavaBeans.

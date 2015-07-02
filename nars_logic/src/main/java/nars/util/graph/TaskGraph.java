@@ -1,8 +1,8 @@
 package nars.util.graph;
 
 import nars.NAR;
-import nars.event.MemoryReaction;
 import nars.concept.Concept;
+import nars.event.MemoryReaction;
 import nars.task.Task;
 import nars.util.data.CuckooMap;
 import org.jgrapht.graph.DefaultEdge;

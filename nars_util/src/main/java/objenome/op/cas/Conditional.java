@@ -42,7 +42,7 @@ public class Conditional extends Operation {
     }
     
     public String pretty() {
-        String string = new String();
+        String string = "";
         
         Integer thisClassOrder = this.classOrder();
         

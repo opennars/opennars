@@ -16,7 +16,7 @@ public class MemoryUseTracker extends DoubleMeter {
         super(id);
     }
 
-    public long getMemoryUsed() {
+    public static long getMemoryUsed() {
         return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
     }
 

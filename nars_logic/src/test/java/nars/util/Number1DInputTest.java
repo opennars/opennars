@@ -17,11 +17,11 @@
 
 package nars.util;
 
-import nars.nar.Curve;
-import nars.nar.Default;
 import nars.NAR;
 import nars.io.out.TextOutput;
 import nars.io.signal.Number1DInput;
+import nars.nar.Curve;
+import nars.nar.Default;
 import org.junit.Assert;
 import org.junit.Test;
 

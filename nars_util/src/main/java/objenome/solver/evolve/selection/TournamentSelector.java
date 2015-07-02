@@ -21,8 +21,8 @@
  */
 package objenome.solver.evolve.selection;
 
-import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.IndividualSelector;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 
 /**

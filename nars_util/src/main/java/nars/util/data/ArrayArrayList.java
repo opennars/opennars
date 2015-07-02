@@ -1,12 +1,12 @@
 package nars.util.data;
 
-import objenome.op.cas.util.ArrayLists;
 import org.apache.commons.lang3.ArrayUtils;
-import org.infinispan.cdi.util.Arrays2;
 
 import java.io.Serializable;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.AbstractList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.RandomAccess;
 
 /* High-performance Circular (Ring) Buffer. Not thread safe, and sacrifices safety for speed in other ways. */
 public class ArrayArrayList<E> extends AbstractList<E> implements RandomAccess, Deque<E>, Serializable {

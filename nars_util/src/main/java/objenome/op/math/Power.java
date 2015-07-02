@@ -22,8 +22,6 @@
 package objenome.op.math;
 
 import objenome.op.Node;
-import objenome.op.Numeric1d;
-import objenome.util.NumericUtils;
 import objenome.util.TypeUtil;
 
 /**

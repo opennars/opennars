@@ -21,21 +21,19 @@
  */
 package objenome.solver.evolve.mutate;
 
-import java.util.ArrayList;
-import java.util.List;
-import objenome.solver.evolve.AbstractOrganismOperator;
-import objenome.solver.evolve.GPContainer;
+import objenome.op.Node;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Organism;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.TypedOrganism;
-import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
 import objenome.solver.evolve.event.OperatorEvent.EndOperator;
-import objenome.op.Node;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
+import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
 
 /**
  * A crossover operator for <code>STGPIndividual</code>s that exchanges subtrees
@@ -219,7 +217,7 @@ public class SubtreeCrossover extends AbstractOrganismOperator implements Listen
      * at 'root' that have a data-type that equals the 'type' argument. The
      * 'indexes' list is filled with the index of each of those nodes.
      */
-    private int nodesOfType(Node root, Class<?> type, int current, List<Node> matching, List<Integer> indexes) {
+    private static int nodesOfType(Node root, Class<?> type, int current, List<Node> matching, List<Integer> indexes) {
         if (root.dataType() == type) {
             matching.add(root);
             indexes.add(current);

@@ -1,15 +1,16 @@
 package objenome.util.bean;
 
 
+import objenome.util.bean.anno.PropertyChangeEventMethod;
+import org.junit.Test;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import objenome.util.bean.anno.PropertyChangeEventMethod;
+
 import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.ADD_LISTENER;
 import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.REMOVE_LISTENER;
 import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
 public class OwnPropertyChangeProviderTest {
 

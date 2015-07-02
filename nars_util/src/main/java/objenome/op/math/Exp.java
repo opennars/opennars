@@ -22,9 +22,8 @@
 package objenome.op.math;
 
 import objenome.op.Node;
-import objenome.util.NumericUtils;
-import objenome.util.TypeUtil;
 import objenome.op.Numeric1d;
+import objenome.util.TypeUtil;
 
 /**
  * A node which performs the mathematical exponential function <code>e^x</code>

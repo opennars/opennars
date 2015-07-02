@@ -1,8 +1,8 @@
 package nars.io;
 
 import nars.Events;
-import nars.NAR;
 import nars.Global;
+import nars.NAR;
 import nars.io.out.Output;
 import nars.io.out.TextOutput;
 import nars.task.Task;

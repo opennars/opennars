@@ -21,20 +21,20 @@
 package nars.nal.nal8;
 
 import nars.Memory;
+import nars.Op;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.Op;
-import nars.task.Task;
-import nars.truth.Truth;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetExt1;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.eval;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
+import nars.truth.Truth;
 import nars.util.utf8.ByteBuf;
 
 import java.io.IOException;

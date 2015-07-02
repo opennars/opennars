@@ -21,18 +21,19 @@
  */
 package objenome.solver.evolve;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import objenome.Container;
+import objenome.op.Node;
+import objenome.op.Variable;
+import objenome.op.VariableNode;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Event;
 import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.stat.AbstractStat;
-import objenome.op.Node;
-import objenome.op.Variable;
-import objenome.op.VariableNode;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Provides a centralised store for configuration parameters. It uses a

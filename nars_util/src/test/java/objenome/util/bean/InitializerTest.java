@@ -1,6 +1,5 @@
 package objenome.util.bean;
 
-import objenome.util.bean.BeanProxyBuilder;
 import objenome.util.bean.anno.Initializer;
 import objenome.util.bean.anno.InitializerMethod;
 import org.junit.Test;

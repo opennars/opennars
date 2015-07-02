@@ -62,7 +62,7 @@ public class Sum extends Operation {
         
         if (exprs.size() == 1) return exprs.get(0).pretty();
         
-        String string = new String();
+        String string = "";
         Integer classOrder = this.classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {
@@ -156,9 +156,7 @@ public class Sum extends Operation {
                 if (expr1OtherThing.equalsExpr(expr2OtherThing)) {
                     Expr newElem = Product.make(Sum.make(expr1mult, expr2mult), expr1OtherThing);
                     
-                    if (debug) System.err.println("Sum.simplify: combining " + expr1mult + "*" + expr1OtherThing + ""
-                                                                       + " + " + expr2mult + "*" + expr2OtherThing + ""
-                                                                       + " = " + newElem);
+                    if (debug) System.err.println("Sum.simplify: combining " + expr1mult + '*' + expr1OtherThing + " + " + expr2mult + "*" + expr2OtherThing + " = " + newElem);
                     
                     exprs.remove(j);
                     
@@ -266,9 +264,7 @@ public class Sum extends Operation {
                     } else if (constant1OtherThing.equalsExpr(constant2OtherThing) && !constant1OtherThing.equalsExpr(Num.make(1))) {
                         Expr newElem = Product.make(Sum.make(constant1Mult, constant2Mult), constant1OtherThing);
                     
-                        if (debug) System.err.println("Sum.simplify: combining " + constant1Mult + "*" + constant1OtherThing + ""
-                                                                           + " + " + constant2Mult + "*" + constant2OtherThing + ""
-                                                                           + " = " + newElem);
+                        if (debug) System.err.println("Sum.simplify: combining " + constant1Mult + '*' + constant1OtherThing + " + " + constant2Mult + "*" + constant2OtherThing + " = " + newElem);
                         
                         constants.set(i, newElem);
                         combined = true;

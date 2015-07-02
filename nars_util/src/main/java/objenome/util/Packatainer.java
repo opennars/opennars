@@ -8,11 +8,6 @@ package objenome.util;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.reflect.ClassPath;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import static java.util.stream.Collectors.toSet;
 import objenome.AbstractPrototainer;
 import objenome.solution.dependency.Builder;
 import objenome.solution.dependency.DecideImplementationClass;
@@ -21,6 +16,13 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ConfigurationBuilder;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Package container - contains classes from entire (cloass loader) packages - Type graph analsys

@@ -21,22 +21,19 @@
  */
 package objenome.solver.evolve.mutate;
 
-import objenome.solver.evolve.AbstractOrganismOperator;
-import objenome.solver.evolve.GPContainer;
-import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Organism;
+import objenome.op.Node;
 import objenome.problem.ProblemSTGP;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.TypedOrganism;
-import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.TypedOrganism.SYNTAX;
+import objenome.solver.evolve.*;
+import objenome.solver.evolve.GPContainer.GPKey;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
 import objenome.solver.evolve.event.OperatorEvent.EndOperator;
 import objenome.solver.evolve.init.Grow;
-import objenome.op.Node;
+
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
+import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
+import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 
 /**
  * A mutation operator for <code>STGPIndividual</code>s that replaces a subtree
@@ -186,22 +183,28 @@ public class SubtreeMutation extends AbstractOrganismOperator implements Listene
      * Finds what depth a node with a given index is at. Returns -1 if the index
      * is not found.
      */
-    private int nodeDepth(Node root, int currentIndex, int targetIndex, int currentDepth) {
-        // TODO This should be in a utilities class
-        if (currentIndex == targetIndex) {
-            return currentDepth;
-        }
-
-        for (int i = 0; i < root.getArity(); i++) {
-            Node subtree = root.getChild(i);
-            int subtreeLength = subtree.length();
-            if (targetIndex <= currentIndex + subtreeLength) {
-                // Target is in this subtree
-                return nodeDepth(subtree, currentIndex + 1, targetIndex, currentDepth + 1);
+    private static int nodeDepth(Node root, int currentIndex, int targetIndex, int currentDepth) {
+        nodeDepth:
+        while (true) {
+            // TODO This should be in a utilities class
+            if (currentIndex == targetIndex) {
+                return currentDepth;
             }
-            currentIndex += subtreeLength;
+
+            for (int i = 0; i < root.getArity(); i++) {
+                Node subtree = root.getChild(i);
+                int subtreeLength = subtree.length();
+                if (targetIndex <= currentIndex + subtreeLength) {
+                    // Target is in this subtree
+                    root = subtree;
+                    currentIndex = currentIndex + 1;
+                    currentDepth = currentDepth + 1;
+                    continue nodeDepth;
+                }
+                currentIndex += subtreeLength;
+            }
+            return -1;
         }
-        return -1;
     }
 
     /**

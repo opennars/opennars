@@ -1,10 +1,10 @@
 package nars.process.concept;
 
 import nars.Memory;
-import nars.process.ConceptProcess;
-import nars.task.Task;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.process.ConceptProcess;
+import nars.task.Task;
 
 /**
  * Created by me on 6/1/15.

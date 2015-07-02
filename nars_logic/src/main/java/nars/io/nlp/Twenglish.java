@@ -17,18 +17,18 @@
 package nars.io.nlp;
 
 import nars.Memory;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.nal.nal2.Instance;
 import nars.nal.nal2.Property;
 import nars.nal.nal4.Product;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal7.TemporalRules;
+import nars.narsese.InvalidInputException;
+import nars.narsese.NarseseParser;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.narsese.InvalidInputException;
-import nars.narsese.NarseseParser;
 import nars.util.language.Twokenize;
 import nars.util.language.Twokenize.Span;
 

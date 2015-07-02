@@ -5,18 +5,18 @@ import nars.Global;
 import nars.Memory;
 import nars.NAR;
 import nars.event.NARReaction;
+import nars.nal.nal7.TemporalRules;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.nal.nal7.TemporalRules;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 import static nars.nal.nal7.TemporalRules.containsMentalOperator;
+import static nars.term.Terms.equalSubTermsInRespectToImageAndProduct;
 
 /**
  * Short-term memory Event Induction.  Empties task buffer when plugin is (re)started.

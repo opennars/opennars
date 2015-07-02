@@ -21,8 +21,6 @@
  */
 package objenome.op;
 
-import objenome.solver.evolve.TypedOrganism;
-
 import java.util.ArrayList;
 import java.util.List;
 

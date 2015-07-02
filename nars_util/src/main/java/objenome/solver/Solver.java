@@ -5,9 +5,10 @@
  */
 package objenome.solver;
 
-import java.util.Map;
 import objenome.Multitainer;
 import objenome.problem.Problem;
+
+import java.util.Map;
 
 /**
  *

@@ -22,11 +22,11 @@
 
 package objenome.evolve;
 
-import objenome.solver.evolve.Population;
-import objenome.solver.evolve.GPContainer;
 import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import junit.framework.TestCase;
+import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPKey;
+import objenome.solver.evolve.Population;
 
 
 /**

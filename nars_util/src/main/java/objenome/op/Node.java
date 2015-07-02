@@ -200,26 +200,32 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * Recursive helper for the public setNode(int, Node)
      */
     private Node setNode(int n, Node newNode, int current) {
-        int arity = getArity();
-        for (int i = 0; i < arity; i++) {
-            if (current + 1 == n) {
-                Node old = getChild(i);
-                setChild(i, (X)newNode);
-                return old;
+        Node result = this;
+        setNode:
+        while (true) {
+            int arity = result.getArity();
+            for (int i = 0; i < arity; i++) {
+                if (current + 1 == n) {
+                    Node old = result.getChild(i);
+                    result.setChild(i, (X) newNode);
+                    return old;
+                }
+
+                Node child = result.getChild(i);
+                int childLength = child.length();
+
+                // Only look at the subtree if it contains the right range of nodes
+                if (n <= childLength + current) {
+                    current = current + 1;
+                    result = child;
+                    continue setNode;
+                }
+
+                current += childLength;
             }
 
-            Node child = getChild(i);
-            int childLength = child.length();
-
-            // Only look at the subtree if it contains the right range of nodes
-            if (n <= childLength + current) {
-                return child.setNode(n, newNode, current + 1);
-            }
-
-            current += childLength;
+            throw new IndexOutOfBoundsException("attempt to set node at index >= length");
         }
-
-        throw new IndexOutOfBoundsException("attempt to set node at index >= length");
     }
 
     /**
@@ -247,7 +253,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
     /*
      * Recursive helper function for nthNonTerminalIndex
      */
-    private int nthNonTerminalIndex(int n, int functionCount, int nodeCount, Node current) {
+    private static int nthNonTerminalIndex(int n, int functionCount, int nodeCount, Node current) {
         if (current.isNonTerminal() && (n == functionCount)) {
             return nodeCount;
         }
@@ -548,7 +554,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * A private helper function for depth() which recurses down the node
      * tree to determine the deepest node's depth
      */
-    private int depth(Node rootNode, int currentDepth, int depth) {
+    private static int depth(Node rootNode, int currentDepth, int depth) {
         if (currentDepth > depth) {
             depth = currentDepth;
         }
@@ -579,7 +585,7 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
      * A private recursive helper function for length() which traverses the
      * the node tree counting the number of nodes
      */
-    private int length(Node rootNode, int length) {
+    private static int length(Node rootNode, int length) {
         length++;
 
         int arity = rootNode.getArity();
@@ -820,26 +826,30 @@ public abstract class Node<X extends Node, Y extends Object> implements Cloneabl
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /** allows a node to apply reduction or simplification after is has been created.
-      * by default returns itself
-      */
+    /**
+     * allows a node to apply reduction or simplification after is has been created.
+     * by default returns itself
+     */
     public Node normalize() {
-        //continue with newChildren null, allocating a new Node[] only until necessary
-        boolean changed = false;
-        Node[] newChildren = null;
-        for (int i = 0; i < children.length; i++) {
-            Node c = children[i];
-            Node x = c.normalize();
-            if (c!=x) {
-                if (newChildren == null)
-                    newChildren = Arrays.copyOf(children, children.length);
-                newChildren[i] = x;
-                changed = true;
+        Node result = this;
+        while (true) {
+            //continue with newChildren null, allocating a new Node[] only until necessary
+            boolean changed = false;
+            Node[] newChildren = null;
+            for (int i = 0; i < result.children.length; i++) {
+                Node c = result.children[i];
+                Node x = c.normalize();
+                if (c != x) {
+                    if (newChildren == null)
+                        newChildren = Arrays.copyOf(result.children, result.children.length);
+                    newChildren[i] = x;
+                    changed = true;
+                }
             }
-        }
-        if (!changed) return this;
+            if (!changed) return result;
 
-        return this.newInstance(newChildren).normalize();
+            result = result.newInstance(newChildren);
+        }
     }
 
 

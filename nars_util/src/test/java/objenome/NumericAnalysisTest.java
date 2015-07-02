@@ -4,15 +4,18 @@
  * and open the template in the editor.
  */
 package objenome;
-import java.util.function.Function;
+
 import objenome.goal.Between;
-import objenome.solver.IncompleteSolutionException;
 import objenome.goal.numeric.FindZeros;
 import objenome.goal.numeric.OptimizeMultivariate;
+import objenome.solver.IncompleteSolutionException;
 import org.apache.commons.math3.random.JDKRandomGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+
+import java.util.function.Function;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

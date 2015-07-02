@@ -1,6 +1,5 @@
 package objenome.util.bean;
 
-import objenome.util.bean.BeanProxyBuilder;
 import objenome.util.bean.util.DefaultPropertyChangeEventProvider;
 import objenome.util.bean.util.DefaultVetoablePropertyChangeEventProvider;
 import org.junit.Test;

@@ -88,7 +88,7 @@ public class Derivative extends Function {
             botOfExpr = ((Operation) botOfExpr).getExprs().get(0);
         }
         boolean parens = botOfExpr.functionalParens();
-        return "d" + (order > 1 ? "^" + order : "") + ((botOfExpr instanceof Var)?botOfExpr:"") + "/d" + respected + (order > 1 ? "^" + order : "") + ((botOfExpr instanceof Var)?"":(parens?"(":"") + botOfExpr + (parens?")":""));
+        return 'd' + (order > 1 ? "^" + order : "") + ((botOfExpr instanceof Var)?botOfExpr:"") + "/d" + respected + (order > 1 ? "^" + order : "") + ((botOfExpr instanceof Var)?"":(parens?"(":"") + botOfExpr + (parens?")":""));
     }
     
     public Expr copyPass(HashMap<Expr, Expr> subs) {

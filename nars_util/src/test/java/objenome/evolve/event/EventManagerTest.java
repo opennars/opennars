@@ -21,10 +21,10 @@
  */
 package nars.obj.evolve.event;
 
+import junit.framework.TestCase;
 import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.RunEvent;
-import junit.framework.TestCase;
 
 /**
  * The <code>EventManagerTest</code> class provides unit tests for methods of

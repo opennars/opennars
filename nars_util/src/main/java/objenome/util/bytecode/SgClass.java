@@ -17,6 +17,8 @@
  */
 package objenome.util.bytecode;
 
+import javassist.CtMethod;
+
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -27,7 +29,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javassist.CtMethod;
 
 /**
  * A class. TODO Add annotation handling
@@ -375,9 +376,9 @@ public final class SgClass {
             }
         }
         if (enclosingClass == null) {
-            return packageName + "." + simpleName;
+            return packageName + '.' + simpleName;
         } else {
-            return packageName + "." + getEnclosingSimpleNames(innerDivider) + simpleName;
+            return packageName + '.' + getEnclosingSimpleNames(innerDivider) + simpleName;
         }
     }
 
@@ -548,7 +549,7 @@ public final class SgClass {
         String key = em.getLongName();
         for (int i = 0; i < methods.size(); i++) {
             final SgMethod method = methods.get(i);
-            String key2 = getName() + "." + method.getTypeSignature();
+            String key2 = getName() + '.' + method.getTypeSignature();
             //System.out.println(key + "  " + key2);
             if ( key2.equals(key)) {
                 return method;
@@ -584,7 +585,7 @@ public final class SgClass {
                 sb.append("package ");
                 sb.append(packageName);
                 sb.append(";\n");
-                sb.append("\n");
+                sb.append('\n');
             }
         }
     }
@@ -593,15 +594,15 @@ public final class SgClass {
         if (showAnnotations && (getAnnotations().size() > 0)) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
-                    sb.append(" ");
+                    sb.append(' ');
                 }
                 sb.append(getAnnotations().get(i));
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         if (modifiers.length() > 0) {
             sb.append(modifiers);
-            sb.append(" ");
+            sb.append(' ');
         }
         if (isinterface) {
             sb.append("interface ");
@@ -629,30 +630,30 @@ public final class SgClass {
 
     private void addFields(final StringBuffer sb) {
         for (int i = 0; i < getFields().size(); i++) {
-            sb.append(getFields().get(i) + "\n");
-            sb.append("\n");
+            sb.append(getFields().get(i)).append("\n");
+            sb.append('\n');
         }
-        sb.append("\n");
+        sb.append('\n');
     }
 
     private void addConstructors(final StringBuffer sb) {
         for (int i = 0; i < constructors.size(); i++) {
-            sb.append(constructors.get(i) + "\n");
-            sb.append("\n");
+            sb.append(constructors.get(i)).append("\n");
+            sb.append('\n');
         }
-        sb.append("\n");
+        sb.append('\n');
     }
 
     private void addMethods(final StringBuffer sb) {
         for (int i = 0; i < methods.size(); i++) {
-            sb.append(methods.get(i) + "\n");
-            sb.append("\n");
+            sb.append(methods.get(i)).append("\n");
+            sb.append('\n');
         }
     }
 
     private void addInnerClasses(final StringBuffer sb) {
         for (int i = 0; i < classes.size(); i++) {
-            sb.append(classes.get(i) + "\n");
+            sb.append(classes.get(i)).append("\n");
         }
         sb.append("}\n");
     }

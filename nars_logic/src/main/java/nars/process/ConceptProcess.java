@@ -7,12 +7,12 @@ package nars.process;
 import nars.Events;
 import nars.Param;
 import nars.bag.Bag;
-import nars.nal.Premise;
 import nars.concept.Concept;
-import nars.term.Term;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.nal.Premise;
+import nars.term.Term;
 
 import java.util.Random;
 

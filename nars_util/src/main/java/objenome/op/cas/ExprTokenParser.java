@@ -1,10 +1,11 @@
 package objenome.op.cas;
 
-import java.util.regex.*;
-import java.text.ParseException;
-
 import objenome.op.cas.util.Token;
 import objenome.op.cas.util.TokenParser;
+
+import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExprTokenParser extends TokenParser {
 

@@ -4,8 +4,6 @@
  */
 package nars.core;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  *
  * @author me

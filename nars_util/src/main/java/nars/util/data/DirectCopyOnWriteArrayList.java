@@ -1,7 +1,5 @@
 package nars.util.data;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
-
 import java.util.*;
 
 //NOT WORKING ENTIRELY YET
@@ -103,7 +101,7 @@ public class DirectCopyOnWriteArrayList<E> implements List<E> {
     }
 
 
-    protected final <T> T[] createArray(Class<T> type, int size) {
+    protected static <T> T[] createArray(Class<T> type, int size) {
         return (T[])java.lang.reflect.Array.newInstance(type, size);
     }
 

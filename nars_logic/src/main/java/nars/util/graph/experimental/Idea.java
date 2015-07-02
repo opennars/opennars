@@ -7,17 +7,17 @@ package nars.util.graph.experimental;
 import com.google.common.base.Objects;
 import nars.*;
 import nars.Events.ConceptForget;
+import nars.concept.Concept;
+import nars.nal.nal4.Image;
 import nars.process.TaskProcess;
 import nars.task.Task;
+import nars.term.Compound;
+import nars.term.Term;
+import nars.term.Termed;
 import nars.term.Terms;
 import nars.truth.Truthed;
 import nars.util.event.EventEmitter;
 import nars.util.event.Reaction;
-import nars.concept.Concept;
-import nars.nal.nal4.Image;
-import nars.term.Compound;
-import nars.term.Term;
-import nars.term.Termed;
 
 import java.util.*;
 

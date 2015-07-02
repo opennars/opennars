@@ -28,7 +28,10 @@ import nars.task.Task;
 import nars.term.Term;
 import nars.term.Termed;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Reference to a Task.

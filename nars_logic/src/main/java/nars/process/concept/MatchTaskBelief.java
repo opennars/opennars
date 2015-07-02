@@ -1,14 +1,14 @@
 package nars.process.concept;
 
 import nars.Symbols;
-import nars.process.ConceptProcess;
-import nars.process.NAL;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal7.TemporalRules;
+import nars.process.ConceptProcess;
+import nars.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Term;
 import nars.term.Variables;
 

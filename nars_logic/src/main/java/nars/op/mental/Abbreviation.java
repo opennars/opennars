@@ -7,11 +7,11 @@ import nars.Memory;
 import nars.NAR;
 import nars.Symbols;
 import nars.event.NARReaction;
-import nars.task.Task;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.Operation;
 import nars.process.TaskProcess;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 

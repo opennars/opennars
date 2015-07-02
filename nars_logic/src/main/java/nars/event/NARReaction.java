@@ -4,7 +4,6 @@ import nars.Memory;
 import nars.NAR;
 import nars.util.event.AbstractReaction;
 import nars.util.event.EventEmitter;
-import nars.util.event.Reaction;
 
 /**
  * Class whch manages the registration and unregistration of event handlers

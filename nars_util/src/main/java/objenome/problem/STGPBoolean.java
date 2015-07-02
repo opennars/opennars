@@ -21,6 +21,9 @@
  */
 package objenome.problem;
 
+import nars.util.data.random.MersenneTwisterFast;
+import objenome.goal.HitsCount;
+import objenome.goal.HitsCountAndMinified;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
@@ -29,13 +32,10 @@ import objenome.op.bool.Not;
 import objenome.op.bool.Or;
 import objenome.op.lang.If;
 import objenome.solver.evolve.*;
-import objenome.goal.HitsCount;
-import objenome.goal.HitsCountAndMinified;
 import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
 import objenome.solver.evolve.selection.TournamentSelector;
-import nars.util.data.random.MersenneTwisterFast;
 
 import java.util.ArrayList;
 import java.util.List;

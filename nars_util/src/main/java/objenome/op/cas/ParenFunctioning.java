@@ -1,13 +1,13 @@
 package objenome.op.cas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.text.ParseException;
-
 import objenome.op.cas.util.AfterLevelPopHandler;
 import objenome.op.cas.util.LevelParser;
 import objenome.op.cas.util.Token;
 import objenome.op.cas.util.TokenList;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParenFunctioning implements AfterLevelPopHandler {
     

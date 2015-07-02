@@ -2,12 +2,12 @@ package nars.analyze;
 
 
 import nars.NARSeed;
+import nars.io.TraceWriter;
 import nars.io.in.LibraryInput;
 import nars.io.out.TextOutput;
-import nars.io.TraceWriter;
+import nars.nal.AbstractNALTest;
 import nars.nar.Curve;
 import nars.nar.Default;
-import nars.nal.AbstractNALTest;
 import nars.testing.TestNAR;
 import nars.testing.condition.OutputCondition;
 import org.junit.Ignore;

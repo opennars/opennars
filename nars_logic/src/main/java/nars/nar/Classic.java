@@ -4,15 +4,15 @@ import nars.Memory;
 import nars.bag.Bag;
 import nars.bag.impl.LevelBag;
 import nars.budget.Budget;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.term.Compound;
-import nars.term.Term;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.task.Sentence;
+import nars.task.Task;
+import nars.term.Compound;
+import nars.term.Term;
 
 import static nars.bag.impl.LevelBag.NextNonEmptyLevelMode.Fast;
 

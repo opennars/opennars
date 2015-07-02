@@ -21,10 +21,10 @@
  */
 package objenome.solver.evolve.stat;
 
+import objenome.goal.DoubleFitness;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
 import objenome.solver.evolve.event.stat.AbstractStat;
-import objenome.goal.DoubleFitness;
 
 /**
  * Stat that provides the average fitness error of the population at the end of

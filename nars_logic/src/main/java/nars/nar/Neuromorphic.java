@@ -6,15 +6,15 @@ import nars.bag.Bag;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
 import nars.budget.Budget;
-import nars.process.CycleProcess;
-import nars.cycle.experimental.AntCore;
-import nars.task.Sentence;
 import nars.concept.Concept;
 import nars.concept.DefaultConcept;
-import nars.term.Term;
+import nars.cycle.experimental.AntCore;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.link.TermLinkKey;
+import nars.process.CycleProcess;
+import nars.task.Sentence;
+import nars.term.Term;
 
 /**
  *

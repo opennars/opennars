@@ -63,7 +63,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
     * @param data
     * @return 
     */
-    public double[] getBounds(Iterable<SignalData> data) {
+    public static double[] getBounds(Iterable<SignalData> data) {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
     
@@ -210,7 +210,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         
     }
     
-    private RowKey nextRowKey = null;
+    private RowKey nextRowKey = null; //TODO use AtomicReference
     
     /** the columns of the table */
     private final List<Meter<?>> meters = new ArrayList<>();
@@ -448,7 +448,7 @@ public class Metrics<RowKey,Cell> implements Iterable<Object[]> {
         return null;
     }*/
     
-    public Iterator<Object> iterateSignal(int column, boolean reverse) {
+    public static Iterator<Object> iterateSignal(int column, boolean reverse) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

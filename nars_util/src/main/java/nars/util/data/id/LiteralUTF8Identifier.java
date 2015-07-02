@@ -1,16 +1,11 @@
 package nars.util.data.id;
 
-import com.google.common.hash.Hashing;
-import com.google.common.primitives.Bytes;
-import nars.util.data.Hash2;
 import nars.util.data.Util;
 import nars.util.utf8.FastByteComparisons;
 import nars.util.utf8.Utf8;
-import org.infinispan.commons.hash.Hash;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Arrays;
 
 /**
  * Constant-value UTF8 identifier, populated by String or byte[] on construction

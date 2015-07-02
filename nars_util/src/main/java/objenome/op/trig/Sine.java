@@ -21,7 +21,6 @@
  */
 package objenome.op.trig;
 
-import objenome.op.Literal;
 import objenome.op.Node;
 import objenome.op.Numeric1d;
 

@@ -1,9 +1,9 @@
 package objenome.op.cas;
 
+import objenome.op.cas.util.ArrayLists;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import objenome.op.cas.util.ArrayLists;
 
 public class Or extends Operation {
     
@@ -94,7 +94,7 @@ public class Or extends Operation {
     }
     
     public String pretty() {
-        String string = new String();
+        String string = "";
         Integer classOrder = this.classOrder();
         
         for (int i = 0; i < exprs.size(); i++) {

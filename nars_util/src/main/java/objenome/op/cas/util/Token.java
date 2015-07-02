@@ -32,9 +32,9 @@ public class Token<T> {
     }
     
     public String toString() {
-        return "([" + tokenValue + "]"
+        return "([" + tokenValue + ']'
                 + (fromStr != null && fromStrBegin != null && fromStrEnd != null
-                 ? "\"" + fromStr.substring(fromStrBegin, fromStrEnd) + "\"" : "") + ")";
+                 ? '"' + fromStr.substring(fromStrBegin, fromStrEnd) + '"' : "") + ')';
     }
     
     public static <T> ArrayList<T> getValues(ArrayList<Token<T>> tokens) {

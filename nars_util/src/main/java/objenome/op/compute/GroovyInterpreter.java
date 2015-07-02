@@ -21,10 +21,11 @@
  */
 package objenome.op.compute;
 
-import javax.script.Invocable;
-import javax.script.ScriptException;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
+
+import javax.script.Invocable;
+import javax.script.ScriptException;
 
 /**
  * A GroovyInterpreter provides the facility to evaluate individual Groovy
@@ -148,7 +149,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
         code.append(expression);
         code.append(';');
 
-        code.append("}");
+        code.append('}');
 
         return code.toString();
     }
@@ -172,7 +173,7 @@ public class GroovyInterpreter<T extends Organism> extends ScriptingInterpreter<
 
         code.append(program);
 
-        code.append("}");
+        code.append('}');
 
         return code.toString();
     }

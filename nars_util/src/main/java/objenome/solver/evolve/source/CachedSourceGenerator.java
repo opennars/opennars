@@ -21,9 +21,10 @@
  */
 package objenome.solver.evolve.source;
 
+import objenome.solver.evolve.Organism;
+
 import java.util.HashMap;
 import java.util.Map;
-import objenome.solver.evolve.Organism;
 
 /**
  *

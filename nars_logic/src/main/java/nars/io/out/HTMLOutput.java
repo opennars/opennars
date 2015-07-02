@@ -2,11 +2,11 @@ package nars.io.out;
 
 import nars.Events;
 import nars.NAR;
+import nars.concept.Concept;
+import nars.op.io.Echo;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.truth.Truth;
-import nars.concept.Concept;
-import nars.op.io.Echo;
 
 /**
  NOT FULLY IMPLEMENTED AND TESTED YET

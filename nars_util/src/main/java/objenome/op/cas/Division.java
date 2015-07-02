@@ -2,7 +2,6 @@ package objenome.op.cas;
 
 import objenome.op.cas.util.ArrayLists;
 
-import java.lang.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -66,107 +65,118 @@ public class Division extends Operation {
         arrayList.add(denom);
         return arrayList;
     }
-    
+
     public Expr simplify() {
-        Expr conditioned = conditioned();
-        if (conditioned != null) return conditioned;
-        
-        if (denom instanceof Num && ((Num) denom).val() == 1) return numerator; // divide by 1
-        if (denom instanceof Num && ((Num) denom).val() == 0) return new Undef();
-        if (numerator instanceof Num && ((Num) numerator).val() == 0 && denom.isConstant()) return Num.make(); // zero over a non-zero constant
-        if (numerator instanceof Num && denom instanceof Num
-         && ((Num) numerator).val() / (((Num) numerator).val() / ((Num) denom).val()) == ((Num) denom).val()
-         && (Num.allowedVal(((Num) numerator).val() / ((Num) denom).val()) || !((Num) numerator).isInt() || !((Num) denom).isInt())) { // dividing integers doesn't result in a non-integer
-            return Num.make(((Num) numerator).val() / ((Num) denom).val()); // divide the Numbers
-        }
-        if (numerator.equalsExpr(denom)) return Num.make(1); // x/x
-        
-        if (denom instanceof Division) return makeDefined(Product.make(numerator, ((Operation) denom).getExpr(1)), ((Operation) denom).getExpr(0)); // flip up denominators in the denominator
-        if (numerator instanceof Division) return makeDefined(((Operation) numerator).getExpr(0), Product.make(((Operation) numerator).getExpr(1), denom)); // bring down denominators in the numerator
-        // subtract exponents when bases are equal
-        if (numerator instanceof Exponent && denom instanceof Exponent && ((Operation) numerator).getExpr(0).equalsExpr(((Operation) denom).getExpr(0))) return Exponent.make(((Operation) numerator).getExpr(0), Sum.make(((Operation) numerator).getExpr(1), Product.negative(((Operation) denom).getExpr(1))));
-        if (numerator instanceof Exponent && ((Operation) numerator).getExpr(0).equalsExpr(denom)) return Exponent.make(denom, Sum.make(((Operation) numerator).getExpr(1), Num.make(-1))); // subtract 1 from exponent when denominator exponent is 1
-        if (denom instanceof Exponent && ((Operation) denom).getExpr(0).equalsExpr(numerator)) return Exponent.make(numerator, Sum.make(Num.make(1), Product.negative(((Operation) denom).getExpr(1)))); // exponent = 1 - (denominator exponent)
-        //if (numerator instanceof Number && denom instanceof Exponent) return Product.make(numerator, Exponent.make(denom, Number.make(-1))); // flip up with negative exponent when numerator is Number
-        
-        if (numerator instanceof Num && denom instanceof Num) {
-            Num gcd = ((Num) numerator).gcd((Num) denom);
-            // if (debug && !gcd.equalsExpr(Number.make(1))) System.err.println("gcd of (" + numerator + ", " + denom + ") = " + gcd);
-            numerator = Division.makeDefined(numerator, gcd);
-            denom = Division.makeDefined(denom, gcd);
-        }
-        
-        //if (debug) System.err.println("Division simplify: " + dump());
-    
-        ArrayList<Expr> numeratorExprs = new ArrayList<Expr>();
-        if (numerator instanceof Product) numeratorExprs = ((Operation) numerator).getExprs();
-        else numeratorExprs.add(numerator);
-        ArrayList<Expr> denomExprs = new ArrayList<Expr>();
-        if (denom instanceof Product) denomExprs = ((Operation) denom).getExprs();
-        else denomExprs.add(denom);
-        
-        for (int i = 0; i < numeratorExprs.size(); i++) {
-            if (numeratorExprs.get(i) instanceof Exponent) {
-                Exponent exponent = (Exponent) numeratorExprs.get(i);
-                // if (debug) System.err.println("yep: " + exponent);
-                Expr exponentExp = exponent.getExpr(1);
-                if ((exponentExp instanceof Num && ((Num) exponentExp).val() < 0) || (exponentExp instanceof Product && ((Operation) exponentExp).getExpr(0) instanceof Num && ((Num) ((Operation) exponentExp).getExpr(0)).val() < 0)) {
-                    // if (debug) System.err.println("yep");
-                    denomExprs.add(Exponent.make(numeratorExprs.remove(i), Num.make(-1)));
-                    i--;
-                }
+        Division other = this;
+        simplify:
+        while (true) {
+            Expr conditioned = other.conditioned();
+            if (conditioned != null) return conditioned;
+
+            if (other.denom instanceof Num && ((Num) other.denom).val() == 1) return other.numerator; // divide by 1
+            if (other.denom instanceof Num && ((Num) other.denom).val() == 0) return new Undef();
+            if (other.numerator instanceof Num && ((Num) other.numerator).val() == 0 && other.denom.isConstant())
+                return Num.make(); // zero over a non-zero constant
+            if (other.numerator instanceof Num && other.denom instanceof Num
+                    && ((Num) other.numerator).val() / (((Num) other.numerator).val() / ((Num) other.denom).val()) == ((Num) other.denom).val()
+                    && (Num.allowedVal(((Num) other.numerator).val() / ((Num) other.denom).val()) || !((Num) other.numerator).isInt() || !((Num) other.denom).isInt())) { // dividing integers doesn't result in a non-integer
+                return Num.make(((Num) other.numerator).val() / ((Num) other.denom).val()); // divide the Numbers
             }
-        }
-        for (int i = 0; i < denomExprs.size(); i++) {
-            if (denomExprs.get(i) instanceof Exponent) {
-                Exponent exponent = (Exponent) denomExprs.get(i);
-                // if (debug) System.err.println("yep: " + exponent);
-                Expr exponentExp = exponent.getExpr(1);
-                if ((exponentExp instanceof Num && ((Num) exponentExp).val() < 0) || (exponentExp instanceof Product && ((Operation) exponentExp).getExpr(0) instanceof Num && ((Num) ((Operation) exponentExp).getExpr(0)).val() < 0)) {
-                    // if (debug) System.err.println("yep");
-                    numeratorExprs.add(Exponent.make(denomExprs.remove(i), Num.make(-1)));
-                    i--;
-                }
+            if (other.numerator.equalsExpr(other.denom)) return Num.make(1); // x/x
+
+            if (other.denom instanceof Division)
+                return other.makeDefined(Product.make(numerator, ((Operation) denom).getExpr(1)), ((Operation) denom).getExpr(0)); // flip up denominators in the denominator
+            if (other.numerator instanceof Division)
+                return other.makeDefined(((Operation) numerator).getExpr(0), Product.make(((Operation) numerator).getExpr(1), denom)); // bring down denominators in the numerator
+            // subtract exponents when bases are equal
+            if (other.numerator instanceof Exponent && other.denom instanceof Exponent && ((Operation) other.numerator).getExpr(0).equalsExpr(((Operation) other.denom).getExpr(0)))
+                return Exponent.make(((Operation) other.numerator).getExpr(0), Sum.make(((Operation) other.numerator).getExpr(1), Product.negative(((Operation) other.denom).getExpr(1))));
+            if (other.numerator instanceof Exponent && ((Operation) other.numerator).getExpr(0).equalsExpr(other.denom))
+                return Exponent.make(other.denom, Sum.make(((Operation) other.numerator).getExpr(1), Num.make(-1))); // subtract 1 from exponent when denominator exponent is 1
+            if (other.denom instanceof Exponent && ((Operation) other.denom).getExpr(0).equalsExpr(other.numerator))
+                return Exponent.make(other.numerator, Sum.make(Num.make(1), Product.negative(((Operation) other.denom).getExpr(1)))); // exponent = 1 - (denominator exponent)
+            //if (numerator instanceof Number && denom instanceof Exponent) return Product.make(numerator, Exponent.make(denom, Number.make(-1))); // flip up with negative exponent when numerator is Number
+
+            if (other.numerator instanceof Num && other.denom instanceof Num) {
+                Num gcd = ((Num) other.numerator).gcd((Num) other.denom);
+                // if (debug && !gcd.equalsExpr(Number.make(1))) System.err.println("gcd of (" + numerator + ", " + denom + ") = " + gcd);
+                other.numerator = Division.makeDefined(other.numerator, gcd);
+                other.denom = Division.makeDefined(other.denom, gcd);
             }
-        }
-        
-        if (numerator instanceof Product || denom instanceof Product) {
-        
+
+            //if (debug) System.err.println("Division simplify: " + dump());
+
+            ArrayList<Expr> numeratorExprs = new ArrayList<Expr>();
+            if (other.numerator instanceof Product) numeratorExprs = ((Operation) other.numerator).getExprs();
+            else numeratorExprs.add(other.numerator);
+            ArrayList<Expr> denomExprs = new ArrayList<Expr>();
+            if (other.denom instanceof Product) denomExprs = ((Operation) other.denom).getExprs();
+            else denomExprs.add(other.denom);
+
             for (int i = 0; i < numeratorExprs.size(); i++) {
-                Expr numeratorExpr = numeratorExprs.get(i);
-                for (int j = 0; j < denomExprs.size(); j++) {
-                    Expr denomExpr = denomExprs.get(j);
-                    // if (debug) System.err.println("Division simplify: dividing (" + numeratorExpr + ")/(" + denomExpr + ")");
-                    Expr divided = Division.makeDefined(numeratorExpr, denomExpr);
-                    // if (debug) System.err.println("Division simplify: divided: " + divided);
-                    if (!(divided instanceof Division)) {
-                        numeratorExprs.set(i, divided);
-                        denomExprs.remove(j);
-                        Division newProduct = new Division(ArrayLists.productArrToExpr(numeratorExprs), ArrayLists.productArrToExpr(denomExprs));
-                        if (debug) System.err.println("Division.simplify: " + dump() + " divided to " + newProduct);
-                        return newProduct.simplify();
-                    }
-                    else if (!((Operation) divided).getExprs().get(0).equals(numeratorExpr)) {
-                        numeratorExprs.set(i, ((Operation) divided).getExprs().get(0));
-                        numerator = (numeratorExprs.size() == 1) ? numeratorExprs.get(0) : Product.make(numeratorExprs);
-                        denomExprs.set(j, ((Operation) divided).getExprs().get(1));
-                        denom = (denomExprs.size() == 1) ? denomExprs.get(0) : Product.make(denomExprs);
-                        if (debug) System.err.println("Division.simplify: divided to: " + dump());
-                        return simplify();
+                if (numeratorExprs.get(i) instanceof Exponent) {
+                    Exponent exponent = (Exponent) numeratorExprs.get(i);
+                    // if (debug) System.err.println("yep: " + exponent);
+                    Expr exponentExp = exponent.getExpr(1);
+                    if ((exponentExp instanceof Num && ((Num) exponentExp).val() < 0) || (exponentExp instanceof Product && ((Operation) exponentExp).getExpr(0) instanceof Num && ((Num) ((Operation) exponentExp).getExpr(0)).val() < 0)) {
+                        // if (debug) System.err.println("yep");
+                        denomExprs.add(Exponent.make(numeratorExprs.remove(i), Num.make(-1)));
+                        i--;
                     }
                 }
             }
+            for (int i = 0; i < denomExprs.size(); i++) {
+                if (denomExprs.get(i) instanceof Exponent) {
+                    Exponent exponent = (Exponent) denomExprs.get(i);
+                    // if (debug) System.err.println("yep: " + exponent);
+                    Expr exponentExp = exponent.getExpr(1);
+                    if ((exponentExp instanceof Num && ((Num) exponentExp).val() < 0) || (exponentExp instanceof Product && ((Operation) exponentExp).getExpr(0) instanceof Num && ((Num) ((Operation) exponentExp).getExpr(0)).val() < 0)) {
+                        // if (debug) System.err.println("yep");
+                        numeratorExprs.add(Exponent.make(denomExprs.remove(i), Num.make(-1)));
+                        i--;
+                    }
+                }
+            }
+
+            if (other.numerator instanceof Product || other.denom instanceof Product) {
+
+                for (int i = 0; i < numeratorExprs.size(); i++) {
+                    Expr numeratorExpr = numeratorExprs.get(i);
+                    for (int j = 0; j < denomExprs.size(); j++) {
+                        Expr denomExpr = denomExprs.get(j);
+                        // if (debug) System.err.println("Division simplify: dividing (" + numeratorExpr + ")/(" + denomExpr + ")");
+                        Expr divided = Division.makeDefined(numeratorExpr, denomExpr);
+                        // if (debug) System.err.println("Division simplify: divided: " + divided);
+                        if (!(divided instanceof Division)) {
+                            numeratorExprs.set(i, divided);
+                            denomExprs.remove(j);
+                            Division newProduct = new Division(ArrayLists.productArrToExpr(numeratorExprs), ArrayLists.productArrToExpr(denomExprs));
+                            if (other.debug)
+                                System.err.println("Division.simplify: " + other.dump() + " divided to " + newProduct);
+                            other = newProduct;
+                            continue simplify;
+                        } else if (!((Operation) divided).getExprs().get(0).equals(numeratorExpr)) {
+                            numeratorExprs.set(i, ((Operation) divided).getExprs().get(0));
+                            other.numerator = (numeratorExprs.size() == 1) ? numeratorExprs.get(0) : Product.make(numeratorExprs);
+                            denomExprs.set(j, ((Operation) divided).getExprs().get(1));
+                            other.denom = (denomExprs.size() == 1) ? denomExprs.get(0) : Product.make(denomExprs);
+                            if (other.debug) System.err.println("Division.simplify: divided to: " + other.dump());
+                            continue simplify;
+                        }
+                    }
+                }
+            }
+
+            other.numerator = (numeratorExprs.size() == 1) ? numeratorExprs.get(0) : Product.make(numeratorExprs);
+            other.denom = (denomExprs.size() == 1) ? denomExprs.get(0) : Product.make(denomExprs);
+
+            if (other.denom.isNegated()) {
+                other.numerator = Product.negative(other.numerator);
+                other.denom = Product.negative(other.denom);
+            }
+
+            return other;
         }
-        
-        numerator = (numeratorExprs.size() == 1) ? numeratorExprs.get(0) : Product.make(numeratorExprs);
-        denom = (denomExprs.size() == 1) ? denomExprs.get(0) : Product.make(denomExprs);
-        
-        if (denom.isNegated()) {
-            numerator = Product.negative(numerator);
-            denom = Product.negative(denom);
-        }
-        
-        return this;
     }
     
     public Integer classOrderPass() {
@@ -313,7 +323,7 @@ public class Division extends Operation {
         if (isSec()) return "sec" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
         if (isCsc()) return "csc" + (((Operation) denom).getExpr(0).functionalParens()?"(":" ") + ((Operation) denom).getExpr(0).pretty() + (((Operation) denom).getExpr(0).functionalParens()?")":"");
         
-        String string = new String();
+        String string = "";
         
         Integer thisClassOrder = this.classOrder();
         

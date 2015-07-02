@@ -4,6 +4,7 @@ import nars.Global;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.concept.Concept;
+import nars.link.TaskLink;
 import nars.process.ConceptProcess;
 import nars.process.TaskProcess;
 import nars.task.Sentence;
@@ -11,9 +12,10 @@ import nars.task.Task;
 import nars.task.TaskComparator;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.link.TaskLink;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 /**
  * The original deterministic memory cycle implementation that is currently used as a standard

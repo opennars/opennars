@@ -31,14 +31,14 @@ public class Product extends Operation {
     }
     
     public static Expr make(Expr expr1, Expr expr2, boolean simplify) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>();
+        ArrayList<Expr> tmp1 = new ArrayList<Expr>(2);
         tmp1.add(expr1);
         tmp1.add(expr2);
         return make(tmp1, simplify);
     }
     
     public static Expr negative(Expr expr) {
-        ArrayList<Expr> tmp1 = new ArrayList<Expr>();
+        ArrayList<Expr> tmp1 = new ArrayList<Expr>(2);
         tmp1.add(Num.make(-1));
         tmp1.add(expr);
         return make(tmp1);
@@ -59,134 +59,139 @@ public class Product extends Operation {
     public ArrayList<Expr> getExprs() {
         return (ArrayList<Expr>) exprs.clone();
     }
-    
+
     public Expr simplify() {
-        Expr conditioned = conditioned();
-        if (conditioned != null) return conditioned;
-        
-        ArrayList<Expr> bottoms = new ArrayList<Expr>();
-        for (int i = 0; i < exprs.size(); i++) {
-            Expr expr = exprs.get(i);
-            if (expr instanceof Division) {
-                bottoms.add(((Operation) expr).getExpr(1));
-                exprs.set(i, ((Operation) expr).getExpr(0));
-            }
-        }
-        if (!bottoms.isEmpty()) return Division.make(Product.make(exprs), Product.make(bottoms));
-        
-        
-        ArrayList<Double> numbers = new ArrayList<Double>();
-        ArrayList<Expr> constants = new ArrayList<Expr>();
-        for (int i = 0; i < exprs.size(); i++) {
-            Expr expr = exprs.get(i);
-            // if (debug) System.err.println("simplify: on expr: " + expr);
-            if (/*interpolate &&*/ expr instanceof Product) {
-                exprs.remove(i);
-                exprs.addAll(i, ((Product) expr).getExprs());
-                i--;
-            } else if (expr instanceof Num) {
-                if (((Num) expr).val() == 0) {
-                    exprs.clear();
-                    return Num.make();
-                }
-                
-                exprs.remove(i);
-                i--;
-                
-                numbers.add(((Num) expr).val());
-            } else if (expr.isConstant()) {
-                constants.add(exprs.remove(i));
-                i--;
-            }
-        }
-        
-        exprs.addAll(0, constants);
-        
-        for (int i = 0; i < numbers.size(); i++) {
-            for (int j = i + 1; j < numbers.size(); j++) {
-                if (numbers.get(i) * numbers.get(j) / numbers.get(i) / numbers.get(j) == 1 && numbers.get(j) * numbers.get(i) / numbers.get(j) / numbers.get(i) == 1) {
-                    numbers.set(i, numbers.get(i) * numbers.remove(j));
-                    j = numbers.size();
-                    i = -1;
+        Product other = this;
+        simplify:
+        while (true) {
+            Expr conditioned = other.conditioned();
+            if (conditioned != null) return conditioned;
+
+            ArrayList<Expr> bottoms = new ArrayList<Expr>();
+            for (int i = 0; i < other.exprs.size(); i++) {
+                Expr expr = other.exprs.get(i);
+                if (expr instanceof Division) {
+                    bottoms.add(((Operation) expr).getExpr(1));
+                    other.exprs.set(i, ((Operation) expr).getExpr(0));
                 }
             }
-        }
-        
-        while (numbers.remove(1d)) {}
-        if (numbers.isEmpty()) numbers.add(1d);
-        
-        if (exprs.isEmpty() && numbers.size() == 1) return Num.make(numbers.get(0));
-        
-        if (!(numbers.size() == 1 && numbers.get(0) == 1)) {
-            ArrayList<Expr> tmp = new ArrayList<Expr>();
-            for (Double number : numbers) {
-                tmp.add(Num.make(number));
+            if (!bottoms.isEmpty()) return Division.make(Product.make(other.exprs), Product.make(bottoms));
+
+
+            ArrayList<Double> numbers = new ArrayList<Double>();
+            ArrayList<Expr> constants = new ArrayList<Expr>();
+            for (int i = 0; i < other.exprs.size(); i++) {
+                Expr expr = other.exprs.get(i);
+                // if (debug) System.err.println("simplify: on expr: " + expr);
+                if (/*interpolate &&*/ expr instanceof Product) {
+                    other.exprs.remove(i);
+                    other.exprs.addAll(i, ((Product) expr).getExprs());
+                    i--;
+                } else if (expr instanceof Num) {
+                    if (((Num) expr).val() == 0) {
+                        other.exprs.clear();
+                        return Num.make();
+                    }
+
+                    other.exprs.remove(i);
+                    i--;
+
+                    numbers.add(((Num) expr).val());
+                } else if (expr.isConstant()) {
+                    constants.add(other.exprs.remove(i));
+                    i--;
+                }
             }
-            exprs.addAll(0, tmp);
-        }
-        
-        if (exprs.size() == 1) return exprs.get(0);
-        
-        // if (debug) System.err.println("Product simplify: " + dump());
-        for (int i = 0; i < exprs.size(); i++) {
-            Expr expr = exprs.get(i);
-            for (int j = 0; j < exprs.size(); j++) {
-                if (i != j) {
-                    Expr expr2 = exprs.get(j);
-                    if (expr2 instanceof Division) {
-                        // if (debug) System.err.println("Product simplify: expr2: " + expr2);
-                        ArrayList<Expr> divExprs = ((Division) expr2).getExprs();
-                        // if (debug) System.err.println("Product simplify: dividing (" + expr + ")/(" + divExprs.get(1) + ")");
-                        Expr divided = Division.make(expr, divExprs.get(1));
-                        // if (debug) System.err.println("Product simplify: divided: " + divided);
-                        if (!(divided instanceof Division)) {
-                            exprs.set(i, divided);
-                            exprs.set(j, divExprs.get(0));
-                            if (debug) System.err.println("Product.simplify: divided to: " + dump());
-                            return simplify();
-                        }
-                        if (!((Operation) divided).getExprs().get(0).equals(expr)) {
-                            exprs.remove(i);
-                            exprs.set(exprs.indexOf(expr2), Division.make(Product.make(expr, divExprs.get(0)), divExprs.get(1)));
-                            if (debug) System.err.println("Product.simplify: divided to: " + dump());
-                            return simplify();
-                        }
-                    }
-                    if (expr.equalsExpr(expr2)) {
-                        exprs.set(j, Exponent.make(expr, Num.make(2)));
-                        exprs.remove(i);
-                        return simplify();
-                    }
-                    if (expr instanceof Exponent && expr2.equalsExpr(((Operation) expr).getExpr(0))) {
-                        exprs.set(j, Exponent.make(expr2, Sum.make(((Operation) expr).getExpr(1), Num.make(1))));
-                        exprs.remove(i);
-                        return simplify();
-                    }
-                    if (expr instanceof Exponent && expr2 instanceof Exponent && ((Operation) expr).getExpr(0).equalsExpr(((Operation) expr2).getExpr(0))) {
-                        exprs.set(j, Exponent.make(((Operation) expr).getExpr(0), Sum.make(((Operation) expr).getExpr(1), ((Operation) expr2).getExpr(1))));
-                        exprs.remove(i);
-                        return simplify();
-                    }
-                    if (!(expr instanceof Operation) && expr2 instanceof Sum) {
-                        ArrayList<Expr> products = new ArrayList<Expr>();
-                        for (Expr addend : ((Operation) expr2).getExprs()) {
-                            products.add(Product.make(expr, addend));
-                        }
-                        exprs.set(j, Sum.make(products));
-                        exprs.remove(i);
-                        return simplify();
+
+            other.exprs.addAll(0, constants);
+
+            for (int i = 0; i < numbers.size(); i++) {
+                for (int j = i + 1; j < numbers.size(); j++) {
+                    if (numbers.get(i) * numbers.get(j) / numbers.get(i) / numbers.get(j) == 1 && numbers.get(j) * numbers.get(i) / numbers.get(j) / numbers.get(i) == 1) {
+                        numbers.set(i, numbers.get(i) * numbers.remove(j));
+                        j = numbers.size();
+                        i = -1;
                     }
                 }
             }
+
+            while (numbers.remove(1d)) {
+            }
+            if (numbers.isEmpty()) numbers.add(1d);
+
+            if (other.exprs.isEmpty() && numbers.size() == 1) return Num.make(numbers.get(0));
+
+            if (!(numbers.size() == 1 && numbers.get(0) == 1)) {
+                ArrayList<Expr> tmp = new ArrayList<Expr>();
+                for (Double number : numbers) {
+                    tmp.add(Num.make(number));
+                }
+                other.exprs.addAll(0, tmp);
+            }
+
+            if (other.exprs.size() == 1) return other.exprs.get(0);
+
+            // if (debug) System.err.println("Product simplify: " + dump());
+            for (int i = 0; i < other.exprs.size(); i++) {
+                Expr expr = other.exprs.get(i);
+                for (int j = 0; j < other.exprs.size(); j++) {
+                    if (i != j) {
+                        Expr expr2 = other.exprs.get(j);
+                        if (expr2 instanceof Division) {
+                            // if (debug) System.err.println("Product simplify: expr2: " + expr2);
+                            ArrayList<Expr> divExprs = ((Division) expr2).getExprs();
+                            // if (debug) System.err.println("Product simplify: dividing (" + expr + ")/(" + divExprs.get(1) + ")");
+                            Expr divided = Division.make(expr, divExprs.get(1));
+                            // if (debug) System.err.println("Product simplify: divided: " + divided);
+                            if (!(divided instanceof Division)) {
+                                other.exprs.set(i, divided);
+                                other.exprs.set(j, divExprs.get(0));
+                                if (other.debug) System.err.println("Product.simplify: divided to: " + other.dump());
+                                continue simplify;
+                            }
+                            if (!((Operation) divided).getExprs().get(0).equals(expr)) {
+                                other.exprs.remove(i);
+                                other.exprs.set(other.exprs.indexOf(expr2), Division.make(Product.make(expr, divExprs.get(0)), divExprs.get(1)));
+                                if (other.debug) System.err.println("Product.simplify: divided to: " + other.dump());
+                                continue simplify;
+                            }
+                        }
+                        if (expr.equalsExpr(expr2)) {
+                            other.exprs.set(j, Exponent.make(expr, Num.make(2)));
+                            other.exprs.remove(i);
+                            continue simplify;
+                        }
+                        if (expr instanceof Exponent && expr2.equalsExpr(((Operation) expr).getExpr(0))) {
+                            other.exprs.set(j, Exponent.make(expr2, Sum.make(((Operation) expr).getExpr(1), Num.make(1))));
+                            other.exprs.remove(i);
+                            continue simplify;
+                        }
+                        if (expr instanceof Exponent && expr2 instanceof Exponent && ((Operation) expr).getExpr(0).equalsExpr(((Operation) expr2).getExpr(0))) {
+                            other.exprs.set(j, Exponent.make(((Operation) expr).getExpr(0), Sum.make(((Operation) expr).getExpr(1), ((Operation) expr2).getExpr(1))));
+                            other.exprs.remove(i);
+                            continue simplify;
+                        }
+                        if (!(expr instanceof Operation) && expr2 instanceof Sum) {
+                            ArrayList<Expr> products = new ArrayList<Expr>();
+                            for (Expr addend : ((Operation) expr2).getExprs()) {
+                                products.add(Product.make(expr, addend));
+                            }
+                            other.exprs.set(j, Sum.make(products));
+                            other.exprs.remove(i);
+                            continue simplify;
+                        }
+                    }
+                }
+            }
+
+            return other;
         }
-        
-        return this;
     }
     
     public String pretty() {
         if (exprs.size() == 1) return exprs.get(0).pretty();
         
-        String string = new String();
+        String string = "";
         Integer classOrder = this.classOrder();
         boolean lastMinus;
         boolean nowMinus = false;

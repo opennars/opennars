@@ -29,10 +29,10 @@ import nars.nal.nal2.Similarity;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.TemporalRules;
 import nars.process.NAL;
-import nars.task.stamp.Stamp;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.truth.AbstractTruth;
 import nars.truth.Truth;
@@ -40,8 +40,8 @@ import nars.truth.TruthFunctions;
 
 import java.util.Random;
 
-import static nars.term.Terms.reduceComponents;
 import static nars.nal.nal7.TemporalRules.*;
+import static nars.term.Terms.reduceComponents;
 
 
 /**

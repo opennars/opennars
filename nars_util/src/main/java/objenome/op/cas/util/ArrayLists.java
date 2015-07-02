@@ -1,9 +1,9 @@
 package objenome.op.cas.util;
 
 import com.google.common.collect.Lists;
-import objenome.op.cas.*;
 import objenome.op.cas.Expr;
 import objenome.op.cas.Num;
+import objenome.op.cas.Product;
 
 import java.util.ArrayList;
 import java.util.HashMap;

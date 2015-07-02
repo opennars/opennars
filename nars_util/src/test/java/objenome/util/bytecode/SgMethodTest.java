@@ -1,7 +1,6 @@
 // CHECKSTYLE:OFF
 package objenome.util.bytecode;
 
-import objenome.util.bytecode.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

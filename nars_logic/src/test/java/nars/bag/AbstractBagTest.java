@@ -2,8 +2,8 @@ package nars.bag;
 
 import nars.analyze.experimental.BagPerf;
 import nars.bag.impl.CurveBag;
-import nars.util.data.sorted.SortedIndex;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.data.sorted.SortedIndex;
 
 import java.util.Random;
 

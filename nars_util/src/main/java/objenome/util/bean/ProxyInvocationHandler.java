@@ -65,7 +65,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
 
         // toString
         if ("toString".equals(methodName) && paramCount == 0 && "java.lang.String".equals(returnTypeName)) { //$NON-NLS-1$ //$NON-NLS-2$
-            return "BeanProxy@" + System.identityHashCode(this) + " " + this.data.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+            return "BeanProxy@" + System.identityHashCode(this) + ' ' + this.data.toString(); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // clone
@@ -97,7 +97,7 @@ public class ProxyInvocationHandler implements InvocationHandler, Serializable, 
             }
         }
 
-        throw new IllegalArgumentException("Method " + method.getReturnType() + " " + method.getName() + "(" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        throw new IllegalArgumentException("Method " + method.getReturnType() + ' ' + method.getName() + '(' //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 + Arrays.toString(method.getParameterTypes()) + ") not supported"); //$NON-NLS-1$
     }
 

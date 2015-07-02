@@ -21,14 +21,15 @@
  */
 package objenome.op.compute;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 import objenome.util.Utils;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The ScriptingInterpreter provides a generic interpreter for any language

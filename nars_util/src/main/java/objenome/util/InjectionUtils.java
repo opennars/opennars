@@ -3,11 +3,7 @@ package objenome.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InjectionUtils {
 
@@ -22,9 +18,9 @@ public class InjectionUtils {
 
     public static final char PREFIX_SEPARATOR = '.';
 
-    private static Map<Class<?>, Map<String, Object>> settersMaps = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Object>> settersMaps = new HashMap<>();
 
-    private static Map<Class<?>, Map<String, Object>> fieldsMaps = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Object>> fieldsMaps = new HashMap<>();
 
     public static void prepareForInjection(Class<?> klass, Map<String, Object> setters, Map<String, Object> fields) {
 
@@ -464,7 +460,7 @@ public class InjectionUtils {
 
                 try {
 
-                    m = target.getMethod(methodName, new Class[]{primitive});
+                    m = target.getMethod(methodName, primitive);
 
                 } catch (Exception e) {
                 }
@@ -538,7 +534,7 @@ public class InjectionUtils {
 
             try {
 
-                m.invoke(target, new Object[]{value});
+                m.invoke(target, value);
 
                 return true;
 
@@ -634,7 +630,7 @@ public class InjectionUtils {
                 if (name.length() > 3 && name.startsWith("get") && !name.equals("getClass") && method.getParameterTypes().length == 0) {
 
                     method.setAccessible(true);
-                    Object value = method.invoke(bean, new Object[0]);
+                    Object value = method.invoke(bean);
                     map.put(name, value.toString());
                 }
             }

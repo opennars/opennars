@@ -1,9 +1,9 @@
 package objenome.evolve;
 
-import objenome.solver.evolve.TypedOrganism;
-import objenome.solver.evolve.Population;
 import junit.framework.TestCase;
 import objenome.problem.STGPBoolean;
+import objenome.solver.evolve.Population;
+import objenome.solver.evolve.TypedOrganism;
 import objenome.util.BenchmarkSolutions;
 import org.junit.Test;
 

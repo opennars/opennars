@@ -27,7 +27,6 @@ import objenome.solver.evolve.GPContainer.GPKey;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A <code>Population</code> is an ordered collection of {@link Organism}s.

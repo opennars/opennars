@@ -1,8 +1,9 @@
 package objenome.op.cas.util;
 
-import java.util.regex.*;
 import java.lang.reflect.Array;
 import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Tokenizer {
     
@@ -16,7 +17,7 @@ public class Tokenizer {
     }
     
     public TokenList<Object> tokenize(String string) throws ParseException {
-        if (debug) System.err.println("tokenizing \"" + string + "\"");
+        if (debug) System.err.println("tokenizing \"" + string + '"');
         String string2 = string;
         TokenList<Object> tokened = new TokenList<Object>(0);
         int indexAt = 0;
@@ -27,7 +28,7 @@ public class Tokenizer {
             boolean keepGoing = true;
             
             while (keepGoing && tokenOnIndex < Array.getLength(tokens)) {
-                Pattern pattern = Pattern.compile("^"+tokens[tokenOnIndex][0]);
+                Pattern pattern = Pattern.compile('^' +tokens[tokenOnIndex][0]);
                 Matcher matcher = pattern.matcher(string2);
                 
                 if (matcher.find()) {

@@ -1,11 +1,11 @@
 package nars.op.meta;
 
 import nars.Memory;
-import nars.task.Task;
+import nars.link.TermLink;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.task.Task;
 import nars.term.Term;
-import nars.link.TermLink;
 import nars.util.graph.TermLinkGraph;
 import org.jgrapht.alg.ConnectivityInspector;
 

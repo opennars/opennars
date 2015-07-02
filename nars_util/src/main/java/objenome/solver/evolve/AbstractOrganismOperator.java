@@ -160,7 +160,7 @@ public abstract class AbstractOrganismOperator implements OrganismOperator {
      *
      * @return a (deep) clone copy of the specified array of individuals.
      */
-    private Organism[] clone(Organism[] individuals) {
+    private static Organism[] clone(Organism[] individuals) {
         Organism[] clone = new Organism[individuals.length];
 
         for (int i = 0; i < clone.length; i++) {

@@ -21,8 +21,9 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.concurrent.TimeUnit;
 import objenome.solver.evolve.event.ElitismEvent.EndElitism;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Abstract class that provices the duration of the elitism process.

@@ -23,9 +23,9 @@ package nars.task.stamp;
 import nars.Global;
 import nars.Memory;
 import nars.Symbols;
-import nars.task.Sentence;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal7.Tense;
+import nars.task.Sentence;
 
 import java.io.Serializable;
 import java.util.Arrays;

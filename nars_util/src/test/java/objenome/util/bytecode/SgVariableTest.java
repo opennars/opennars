@@ -1,9 +1,6 @@
 // CHECKSTYLE:OFF
 package objenome.util.bytecode;
 
-import objenome.util.bytecode.SgAnnotation;
-import objenome.util.bytecode.SgClass;
-import objenome.util.bytecode.SgField;
 import org.junit.Assert;
 import org.junit.Test;
 

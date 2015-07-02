@@ -1031,8 +1031,13 @@ public class DefaultConcept extends Item<Term> implements Concept {
         activateTermLink(termLinkBuilder.setIncoming(false));  // this concept termLink to that concept
         otherConcept.activateTermLink(termLinkBuilder.setIncoming(true)); // that concept termLink to this concept
 
+        Budget termlinkBudget = termLinkBuilder.getBudgetRef();
+
         if (otherTerm instanceof Compound) {
-            otherConcept.linkTerms(termLinkBuilder.getBudgetRef(), false);
+            otherConcept.linkTerms(termlinkBudget, false);
+        }
+        else {
+
         }
 
         //spent

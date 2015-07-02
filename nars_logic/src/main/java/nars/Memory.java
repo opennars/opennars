@@ -29,11 +29,11 @@ import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.budget.Itemized;
 import nars.clock.Clock;
-import nars.meter.EmotionMeter;
-import nars.meter.LogicMetrics;
-import nars.nal.*;
 import nars.concept.Concept;
 import nars.concept.ConceptBuilder;
+import nars.meter.EmotionMeter;
+import nars.meter.LogicMetrics;
+import nars.nal.LogicPolicy;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.Negation;
 import nars.nal.nal2.Instance;
@@ -54,10 +54,10 @@ import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
 import nars.process.CycleProcess;
 import nars.process.NAL;
-import nars.task.stamp.AbstractStamper;
-import nars.task.stamp.Stamp;
 import nars.task.Task;
 import nars.task.TaskSeed;
+import nars.task.stamp.AbstractStamper;
+import nars.task.stamp.Stamp;
 import nars.term.*;
 import nars.util.data.buffer.Perception;
 import nars.util.event.EventEmitter;
@@ -571,11 +571,7 @@ public class Memory implements Serializable, AbstractStamper {
         if ((term = term.normalized()) == null)
             return null;
 
-        Concept c = cycle.conceptualize(budget, term, true);
-        if (c == null)
-            return null;
-
-        return c;
+        return cycle.conceptualize(budget, term, true);
     }
 
     private boolean validConceptTerm(Term term) {

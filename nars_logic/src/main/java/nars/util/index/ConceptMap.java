@@ -2,8 +2,8 @@ package nars.util.index;
 
 import nars.Events;
 import nars.NAR;
-import nars.event.NARReaction;
 import nars.concept.Concept;
+import nars.event.NARReaction;
 
 /**
  * Created by me on 4/16/15.

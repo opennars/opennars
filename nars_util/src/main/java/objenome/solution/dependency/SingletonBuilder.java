@@ -1,8 +1,9 @@
 package objenome.solution.dependency;
 
-import java.util.Collection;
 import objenome.Prototainer;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;
+
+import java.util.Collection;
 
 public class SingletonBuilder implements Builder {
 

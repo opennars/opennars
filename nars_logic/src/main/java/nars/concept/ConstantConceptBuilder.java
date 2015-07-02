@@ -2,9 +2,9 @@ package nars.concept;
 
 import nars.Memory;
 import nars.budget.Budget;
-import nars.truth.Truth;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.Truth;
 
 /** creates a new concept using the default concept builder and inserts a default belief of a given truth */
 abstract public class ConstantConceptBuilder implements ConceptBuilder {

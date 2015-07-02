@@ -22,25 +22,23 @@
 package objenome.solver.evolve.mutate;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import objenome.op.Literal;
-import objenome.solver.evolve.AbstractOrganismOperator;
-import objenome.solver.evolve.GPContainer;
+import objenome.op.Node;
+import objenome.op.math.DoubleERC;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.Organism;
-import static objenome.problem.ProblemSTGP.PROBLEM;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.TypedOrganism;
-import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
 import objenome.solver.evolve.event.OperatorEvent;
 import objenome.solver.evolve.event.OperatorEvent.EndOperator;
-import objenome.op.Node;
-import objenome.op.math.DoubleERC;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static objenome.problem.ProblemSTGP.PROBLEM;
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
+import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 
 /**
  * A mutation operator for <code>STGPIndividual</code>s that replaces nodes at
@@ -251,7 +249,7 @@ public class PointMutation extends AbstractOrganismOperator implements Listener<
      * equals() method because we don't want to compare children if it's a
      * non-terminal node.
      */
-    private boolean nodesEqual(final Node nodeA, final Node nodeB) {
+    private static boolean nodesEqual(final Node nodeA, final Node nodeB) {
         boolean equal = false;
         if (nodeA.getClass().equals(nodeB.getClass())) {
             if (nodeA.getArity() > 0) {

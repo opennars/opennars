@@ -21,27 +21,23 @@
  */
 package objenome.solver.evolve.init;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import objenome.solver.evolve.GPContainer;
+import objenome.op.Node;
+import objenome.solver.evolve.*;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.GPContainer.GPKey;
-import objenome.solver.evolve.OrganismBuilder;
-import objenome.solver.evolve.Population;
-import static objenome.solver.evolve.Population.SIZE;
-import static objenome.problem.ProblemSTGP.PROBLEM;
-import objenome.solver.evolve.RandomSequence;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
-import objenome.solver.evolve.TypedOrganism;
-import static objenome.solver.evolve.TypedOrganism.MAXIMUM_DEPTH;
-import static objenome.solver.evolve.TypedOrganism.RETURN_TYPE;
-import static objenome.solver.evolve.TypedOrganism.SYNTAX;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.InitialisationEvent;
 import objenome.solver.evolve.event.Listener;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+
+import static objenome.problem.ProblemSTGP.PROBLEM;
+import static objenome.solver.evolve.Population.SIZE;
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
+import static objenome.solver.evolve.TypedOrganism.*;
 import static objenome.solver.evolve.init.RampedHalfAndHalf.Method.FULL;
 import static objenome.solver.evolve.init.RampedHalfAndHalf.Method.GROW;
-import objenome.op.Node;
 
 /**
  * Initialisation method which produces <code>STGPIndividual</code>s with

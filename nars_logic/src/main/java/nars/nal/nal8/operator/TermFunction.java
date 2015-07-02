@@ -5,10 +5,6 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.io.Texts;
-import nars.truth.DefaultTruth;
-import nars.process.TaskProcess;
-import nars.task.Task;
-import nars.truth.Truth;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.ImageExt;
@@ -16,10 +12,14 @@ import nars.nal.nal4.Product;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
 import nars.nal.nal8.Operation;
+import nars.process.TaskProcess;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variable;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import java.util.ArrayList;
 

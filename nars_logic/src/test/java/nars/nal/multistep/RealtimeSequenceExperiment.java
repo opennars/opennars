@@ -1,7 +1,7 @@
 package nars.nal.multistep;
 
-import nars.nar.Default;
 import nars.NAR;
+import nars.nar.Default;
 
 
 

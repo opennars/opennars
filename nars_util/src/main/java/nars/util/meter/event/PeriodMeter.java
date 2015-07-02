@@ -38,7 +38,7 @@ public class PeriodMeter extends FunctionMeter<Double> {
     
      public static double now(boolean nanoSeconds /* TODO use a Resolution enum */) {
         if (nanoSeconds) {
-            return (double)System.nanoTime();
+            return System.nanoTime();
         }
         else {
             return System.currentTimeMillis() * 1.0E6;

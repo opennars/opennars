@@ -1,7 +1,6 @@
 package nars.util.data.buffer;
 
 import com.google.common.collect.Iterators;
-import nars.util.data.buffer.Source;
 
 import java.util.Iterator;
 import java.util.Queue;

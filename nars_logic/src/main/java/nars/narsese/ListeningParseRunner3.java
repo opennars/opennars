@@ -27,14 +27,9 @@ import com.github.fge.grappa.run.MatchHandler;
 import com.github.fge.grappa.run.ParseRunnerListener;
 import com.github.fge.grappa.run.ParsingResult;
 import com.github.fge.grappa.run.context.MatcherContext;
-import com.github.fge.grappa.run.events.*;
 import com.github.fge.grappa.stack.DefaultValueStack;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionContext;
-import com.google.common.eventbus.SubscriberExceptionHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 /**
  * Even more efficient

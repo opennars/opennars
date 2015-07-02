@@ -1,6 +1,5 @@
 package nars.analyze.experimental;
 
-import objenome.op.DoubleVariable;
 import objenome.op.Variable;
 
 import java.lang.reflect.Field;

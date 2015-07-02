@@ -21,8 +21,8 @@
 package nars.term;
 
 
-import nars.Symbols;
 import nars.Op;
+import nars.Symbols;
 
 import static nars.Symbols.*;
 

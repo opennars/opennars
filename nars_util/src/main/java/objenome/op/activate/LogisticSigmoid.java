@@ -5,8 +5,8 @@
  */
 package objenome.op.activate;
 
-import objenome.op.Scalar;
 import objenome.op.DiffableFunction;
+import objenome.op.Scalar;
 
 /**
  *

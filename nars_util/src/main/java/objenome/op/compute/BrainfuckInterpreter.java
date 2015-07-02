@@ -21,9 +21,10 @@
  */
 package objenome.op.compute;
 
-import java.util.Arrays;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
+
+import java.util.Arrays;
 
 /**
  * A BrainfuckInterpreter provides the facility to execute programs in the

@@ -19,9 +19,9 @@ package nars.op.mental;
 import nars.Global;
 import nars.Memory;
 import nars.budget.Budget;
-import nars.task.Task;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
 

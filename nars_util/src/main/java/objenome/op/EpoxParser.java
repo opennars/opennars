@@ -21,63 +21,18 @@
  */
 package objenome.op;
 
+import objenome.op.bool.*;
+import objenome.op.compute.MalformedProgramException;
+import objenome.op.lang.If;
+import objenome.op.lang.Seq2;
+import objenome.op.lang.Seq3;
+import objenome.op.math.*;
+import objenome.op.trig.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import objenome.op.compute.MalformedProgramException;
-import objenome.op.bool.And;
-import objenome.op.bool.IfAndOnlyIf;
-import objenome.op.bool.Nand;
-import objenome.op.bool.Nor;
-import objenome.op.bool.Not;
-import objenome.op.bool.Or;
-import objenome.op.bool.Xor;
-import objenome.op.lang.If;
-import objenome.op.lang.Seq2;
-import objenome.op.lang.Seq3;
-import objenome.op.math.Absolute;
-import objenome.op.math.Add;
-import objenome.op.math.CoefficientPower;
-import objenome.op.math.Cube;
-import objenome.op.math.CubeRoot;
-import objenome.op.math.DivisionProtected;
-import objenome.op.math.Exp;
-import objenome.op.math.Factorial;
-import objenome.op.math.GreaterThan;
-import objenome.op.math.InvertProtected;
-import objenome.op.math.LessThan;
-import objenome.op.math.Log10;
-import objenome.op.math.LogNatural;
-import objenome.op.math.Max2;
-import objenome.op.math.Max3;
-import objenome.op.math.Min2;
-import objenome.op.math.Min3;
-import objenome.op.math.ModuloProtected;
-import objenome.op.math.Multiply;
-import objenome.op.math.Power;
-import objenome.op.math.Signum;
-import objenome.op.math.Sqrt;
-import objenome.op.math.Square;
-import objenome.op.math.Subtract;
-import objenome.op.trig.ArcCosecant;
-import objenome.op.trig.ArcCosine;
-import objenome.op.trig.ArcCotangent;
-import objenome.op.trig.ArcSecant;
-import objenome.op.trig.ArcSine;
-import objenome.op.trig.ArcTangent;
-import objenome.op.trig.AreaHyperbolicCosine;
-import objenome.op.trig.AreaHyperbolicSine;
-import objenome.op.trig.AreaHyperbolicTangent;
-import objenome.op.trig.Cosecant;
-import objenome.op.trig.Cosine;
-import objenome.op.trig.Cotangent;
-import objenome.op.trig.HyperbolicCosine;
-import objenome.op.trig.HyperbolicSine;
-import objenome.op.trig.HyperbolicTangent;
-import objenome.op.trig.Secant;
-import objenome.op.trig.Sine;
-import objenome.op.trig.Tangent;
 
 /**
  * This parser is for parsing valid Epox programs into a node tree. It is only
@@ -159,7 +114,7 @@ public class EpoxParser {
             throw new MalformedProgramException("unknown node type: " + identifier);
         } else if (node.getArity() != args.size()) {
             throw new MalformedProgramException("unexpected arity for node: " + identifier + "(expected: "
-                    + node.getArity() + ", found: " + args.size() + ")");
+                    + node.getArity() + ", found: " + args.size() + ')');
         } else {
             node = node.newInstance();
 
@@ -210,7 +165,7 @@ public class EpoxParser {
      * arguments - this method splits just the top level of arguments so that
      * they can themselves be parsed individually.
      */
-    private List<String> splitArguments(String argStr) {
+    private static List<String> splitArguments(String argStr) {
         int depth = 0;
 
         List<String> args = new ArrayList<>(5);

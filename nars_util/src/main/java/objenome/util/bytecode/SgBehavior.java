@@ -93,7 +93,7 @@ public abstract class SgBehavior {
         final StringBuffer sb = new StringBuffer();
         for (int i = 0; i < args.size(); i++) {
             if (i > 0) {
-                sb.append(",");
+                sb.append(',');
             }
             sb.append(args.get(i).getName());
         }
@@ -136,7 +136,7 @@ public abstract class SgBehavior {
     public final List<SgArgument> getArguments(final int less) {
         if (less >= 0) {
             throw new IllegalArgumentException("Only negative values are allowed! [" + less
-                    + "]");
+                    + ']');
         }
         final int count = arguments.size() + less;
         if (count < 0) {

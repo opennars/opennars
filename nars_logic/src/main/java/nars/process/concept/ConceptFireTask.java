@@ -1,7 +1,7 @@
 package nars.process.concept;
 
-import nars.nal.LogicRule;
 import nars.link.TaskLink;
+import nars.nal.LogicRule;
 import nars.process.ConceptProcess;
 
 /**

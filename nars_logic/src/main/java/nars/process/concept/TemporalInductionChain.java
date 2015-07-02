@@ -1,21 +1,21 @@
 package nars.process.concept;
 
 import com.google.common.collect.Lists;
-import nars.Memory;
 import nars.Global;
-import nars.budget.Budget;
+import nars.Memory;
 import nars.Symbols;
+import nars.budget.Budget;
 import nars.budget.BudgetFunctions;
 import nars.concept.Concept;
-import nars.process.ConceptProcess;
-import nars.process.NAL;
-import nars.task.Sentence;
-import nars.task.Task;
 import nars.link.TaskLink;
 import nars.link.TermLink;
 import nars.nal.nal5.Conjunction;
 import nars.nal.nal5.Implication;
 import nars.nal.nal7.TemporalRules;
+import nars.process.ConceptProcess;
+import nars.process.NAL;
+import nars.task.Sentence;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
 import nars.term.Variables;

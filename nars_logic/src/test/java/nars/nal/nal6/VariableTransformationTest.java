@@ -1,12 +1,12 @@
 package nars.nal.nal6;
 
 import nars.NAR;
-import nars.nar.Default;
 import nars.nal.nal5.Conjunction;
+import nars.nar.Default;
 import nars.term.Compound;
 import nars.term.Term;
-import nars.term.transform.TermVisitor;
 import nars.term.Variable;
+import nars.term.transform.TermVisitor;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;

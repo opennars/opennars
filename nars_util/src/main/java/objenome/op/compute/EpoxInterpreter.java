@@ -21,11 +21,11 @@
  */
 package objenome.op.compute;
 
-import objenome.solver.evolve.Organism;
 import objenome.op.EpoxParser;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
+import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.source.SourceGenerator;
 
 /**

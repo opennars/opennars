@@ -21,9 +21,10 @@
  */
 package objenome.op.compute;
 
-import java.util.function.Function;
-import objenome.solver.evolve.Organism;
 import objenome.op.compute.Computer.ComputerInput;
+import objenome.solver.evolve.Organism;
+
+import java.util.function.Function;
 
 /**
  * Computers provide a mechanism for executing program source code that is

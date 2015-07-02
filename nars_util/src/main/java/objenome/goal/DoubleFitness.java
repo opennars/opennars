@@ -21,8 +21,9 @@
  */
 package objenome.goal;
 
-import java.util.Comparator;
 import objenome.solver.evolve.Fitness;
+
+import java.util.Comparator;
 
 /**
  * Represents a <code>Fitness</code> score as a <code>double</code> value. The

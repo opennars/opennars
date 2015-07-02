@@ -32,6 +32,7 @@ import nars.budget.Budget;
 import nars.io.in.Input;
 import nars.nal.nal8.ImmediateOperation;
 import nars.nal.nal8.Operation;
+import nars.op.mental.InternalExperience;
 import nars.task.stamp.Stamp;
 import nars.task.stamp.StampEvidence;
 import nars.term.Compound;
@@ -39,7 +40,6 @@ import nars.term.Termed;
 import nars.truth.Truth;
 import nars.truth.TruthFunctions;
 import nars.truth.Truthed;
-import nars.op.mental.InternalExperience;
 
 import java.io.IOException;
 import java.io.Serializable;

@@ -21,12 +21,13 @@
  */
 package objenome.goal;
 
-import java.util.HashMap;
-import java.util.Map;
 import objenome.solver.evolve.AbstractFitnessFunction;
 import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A fitness function which caches fitness scores and delegates fitness

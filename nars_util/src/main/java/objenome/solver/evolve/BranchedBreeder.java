@@ -21,11 +21,13 @@
  */
 package objenome.solver.evolve;
 
-import java.util.List;
 import objenome.solver.evolve.GPContainer.GPKey;
-import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
 import objenome.solver.evolve.event.ConfigEvent;
 import objenome.solver.evolve.event.Listener;
+
+import java.util.List;
+
+import static objenome.solver.evolve.RandomSequence.RANDOM_SEQUENCE;
 
 /**
  * A <code>BranchedBreeder</code> produces a new <code>Population</code> by

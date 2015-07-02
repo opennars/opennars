@@ -5,8 +5,8 @@
 package nars.core;
 
 import nars.NAR;
-import nars.nar.Default;
 import nars.io.qa.Answered;
+import nars.nar.Default;
 import nars.narsese.InvalidInputException;
 import nars.task.Sentence;
 import nars.task.Task;

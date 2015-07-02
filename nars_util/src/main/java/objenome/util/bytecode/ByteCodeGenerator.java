@@ -17,20 +17,12 @@
  */
 package objenome.util.bytecode;
 
+import javassist.*;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.ProtectionDomain;
 import java.util.List;
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.CtNewConstructor;
-import javassist.CtNewMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
 
 /**
  * Creates the byte code for a model class and has some more helper methods.
@@ -186,7 +178,7 @@ public final class ByteCodeGenerator {
         }
     }
 
-    private void addFields(final SgClass modelClass, final CtClass clasz)
+    private static void addFields(final SgClass modelClass, final CtClass clasz)
             throws CannotCompileException {
         final List<SgField> fields = modelClass.getFields();
         for (int i = 0; i < fields.size(); i++) {
@@ -246,7 +238,7 @@ public final class ByteCodeGenerator {
      * @return Class (if it already exists) or null if it's unknown.
      */
     @SuppressWarnings("unchecked")
-    public Class loadClass(final SgClass modelClass) {
+    public static Class loadClass(final SgClass modelClass) {
         Class implClass;
         try {
             implClass = Class.forName(modelClass.getName());

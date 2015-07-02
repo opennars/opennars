@@ -23,9 +23,10 @@ package objenome.problem;
 
 import objenome.goal.DefaultProblemSTGP;
 import objenome.goal.Observation;
-import objenome.op.Variable;
-import objenome.solver.evolve.*;
 import objenome.goal.SumOfError;
+import objenome.op.Variable;
+import objenome.solver.evolve.FitnessFunction;
+import objenome.solver.evolve.TypedOrganism;
 
 import java.util.Collections;
 import java.util.Deque;

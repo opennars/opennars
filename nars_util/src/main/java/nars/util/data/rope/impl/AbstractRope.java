@@ -275,7 +275,7 @@ public abstract class AbstractRope implements Rope {
         } else if (dstOffset == this.length()) {
             return this.append(r);
         } else if (dstOffset < 0 || dstOffset > this.length()) {
-            throw new IndexOutOfBoundsException(dstOffset + " is out of insert range [" + 0 + ":" + this.length() + "]");
+            throw new IndexOutOfBoundsException(dstOffset + " is out of insert range [" + 0 + ':' + this.length() + ']');
         }
         return this.subSequence(0, dstOffset).append(r).append(this.subSequence(dstOffset, this.length()));
     }

@@ -4,14 +4,15 @@
  * and open the template in the editor.
  */
 package objenome;
-import java.util.List;
-import objenome.solution.SetMethodsGPEvolved;
+
 import objenome.solution.SetDoubleValue;
+import objenome.solution.SetMethodsGPEvolved;
 import objenome.solver.Solution;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  *

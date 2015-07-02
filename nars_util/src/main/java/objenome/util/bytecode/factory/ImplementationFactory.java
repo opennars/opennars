@@ -17,16 +17,13 @@
  */
 package objenome.util.bytecode.factory;
 
+import objenome.util.bytecode.*;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import objenome.util.bytecode.SgArgument;
-import objenome.util.bytecode.SgClass;
-import objenome.util.bytecode.SgClassPool;
-import objenome.util.bytecode.SgMethod;
-import objenome.util.bytecode.SgUtils;
 
 /**
  * Creates an implementation of an interface.
@@ -214,24 +211,24 @@ public class ImplementationFactory {
 
     }
 
-    private void assureNotNull(final String name, final Object value) {
+    private static void assureNotNull(final String name, final Object value) {
         if (value == null) {
             throw new IllegalArgumentException("The argument '" + name + "' cannot be null!");
         }
     }
 
-    private void assureNotEmpty(final String name, final Object[] value) {
+    private static void assureNotEmpty(final String name, final Object[] value) {
         if (value.length == 0) {
             throw new IllegalArgumentException("The argument '" + name
                     + "' cannot be an empty array!");
         }
     }
 
-    private void assureAllInterfaces(final Class<?>... intf) {
+    private static void assureAllInterfaces(final Class<?>... intf) {
         for (int i = 0; i < intf.length; i++) {
             if (!intf[i].isInterface()) {
                 throw new IllegalArgumentException("Expected an interface: " + intf[i].getName()
-                        + " [" + i + "]");
+                        + " [" + i + ']');
             }
         }
     }

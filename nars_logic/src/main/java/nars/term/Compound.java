@@ -39,9 +39,9 @@ import java.io.Writer;
 import java.util.*;
 
 import static java.util.Arrays.copyOf;
-import static nars.Symbols.ARGUMENT_SEPARATOR;
 import static nars.Op.COMPOUND_TERM_CLOSER;
 import static nars.Op.COMPOUND_TERM_OPENER;
+import static nars.Symbols.ARGUMENT_SEPARATOR;
 
 /**
  * a compound term

@@ -1,10 +1,11 @@
 package objenome;
 
-import java.util.Set;
 import objenome.solution.dependency.Builder;
 import objenome.solution.dependency.ConfigurableBuilder;
 import objenome.solution.dependency.ConstructorDependency;
 import objenome.solution.dependency.Scope;
+
+import java.util.Set;
 
 /**
  * first; anterior; relating to a precursor + from Latin tenere 'to hold.’"

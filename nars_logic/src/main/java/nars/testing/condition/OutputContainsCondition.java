@@ -7,9 +7,9 @@ package nars.testing.condition;
 import nars.Events;
 import nars.NAR;
 import nars.io.Texts;
+import nars.nal.nal8.ExecutionResult;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.nal.nal8.ExecutionResult;
 
 import java.io.Serializable;
 import java.util.ArrayList;

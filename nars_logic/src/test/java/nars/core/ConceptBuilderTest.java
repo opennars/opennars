@@ -2,12 +2,12 @@ package nars.core;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nar.Default;
-import nars.truth.DefaultTruth;
-import nars.truth.Truth;
 import nars.concept.ConstantConceptBuilder;
 import nars.concept.StringPatternConceptBuilder;
+import nars.nar.Default;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 import org.junit.Ignore;
 import org.junit.Test;
 

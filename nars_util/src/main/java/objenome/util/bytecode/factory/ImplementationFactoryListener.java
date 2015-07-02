@@ -17,9 +17,10 @@
  */
 package objenome.util.bytecode.factory;
 
-import java.util.List;
 import objenome.util.bytecode.SgClass;
 import objenome.util.bytecode.SgMethod;
+
+import java.util.List;
 
 /**
  * Creates the source code for the method implementations.

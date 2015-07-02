@@ -9,8 +9,8 @@ import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
 import nars.bag.impl.HeapBag;
 import nars.bag.impl.LevelBag;
-import nars.nar.Default;
 import nars.budget.Item;
+import nars.nar.Default;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

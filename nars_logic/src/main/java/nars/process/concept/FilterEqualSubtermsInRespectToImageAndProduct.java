@@ -1,11 +1,11 @@
 package nars.process.concept;
 
-import nars.task.Task;
-import nars.term.Terms;
 import nars.concept.Concept;
-import nars.process.ConceptProcess;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.process.ConceptProcess;
+import nars.task.Task;
+import nars.term.Terms;
 
 public class FilterEqualSubtermsInRespectToImageAndProduct extends ConceptFireTaskTerm {
 

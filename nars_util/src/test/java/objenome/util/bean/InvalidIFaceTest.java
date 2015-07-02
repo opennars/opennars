@@ -1,6 +1,5 @@
 package objenome.util.bean;
 
-import objenome.util.bean.BeanProxyBuilder;
 import org.junit.Test;
 
 import static org.junit.Assert.fail;

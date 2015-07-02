@@ -1,9 +1,9 @@
 package nars.nal.nal3;
 
 import nars.Global;
-import nars.term.Terms;
 import nars.term.DefaultCompound;
 import nars.term.Term;
+import nars.term.Terms;
 
 /**
  * Base class for SetInt (intensional set) and SetExt (extensional set), where N>1

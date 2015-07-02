@@ -3,9 +3,9 @@ package nars.nal.nal7;
 
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
+import nars.nar.Classic;
 import nars.nar.Curve;
 import nars.nar.Default;
-import nars.nar.Classic;
 import nars.nar.DefaultMicro;
 import org.junit.runners.Parameterized;
 

@@ -1,17 +1,17 @@
 package nars.bag;
 
-import nars.analyze.experimental.BagPerf.NullItem;
-import nars.bag.impl.CurveBag;
-import nars.bag.impl.LevelBag;
-import nars.nar.Default;
+import nars.Global;
 import nars.NAR;
 import nars.Param;
-import nars.Global;
-import nars.budget.Item;
+import nars.analyze.experimental.BagPerf.NullItem;
+import nars.bag.impl.CurveBag;
 import nars.bag.impl.CurveBag.BagCurve;
-import nars.util.sort.ArraySortedIndex;
-import nars.util.data.sorted.SortedIndex;
+import nars.bag.impl.LevelBag;
+import nars.budget.Item;
+import nars.nar.Default;
 import nars.util.data.random.XORShiftRandom;
+import nars.util.data.sorted.SortedIndex;
+import nars.util.sort.ArraySortedIndex;
 import org.junit.Test;
 
 import java.util.Random;

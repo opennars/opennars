@@ -18,19 +18,15 @@ package nars.core;
 
 import nars.Global;
 import nars.NAR;
-import nars.nar.Default;
 import nars.Op;
-import nars.task.Task;
-import nars.term.Terms;
 import nars.concept.Concept;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.*;
 import nars.nal.nal8.Operation;
-import nars.term.Atom;
-import nars.term.Compound;
-import nars.term.Statement;
-import nars.term.Term;
+import nars.nar.Default;
 import nars.narsese.InvalidInputException;
+import nars.task.Task;
+import nars.term.*;
 import org.junit.Test;
 
 import java.util.TreeSet;

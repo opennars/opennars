@@ -21,25 +21,9 @@
  */
 package objenome.problem;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import objenome.solver.evolve.BranchedBreeder;
-import objenome.solver.evolve.Breeder;
-import objenome.solver.evolve.EvolutionaryStrategy;
-import objenome.solver.evolve.FitnessEvaluator;
-import objenome.solver.evolve.GenerationalStrategy;
-import objenome.solver.evolve.Initialiser;
-import objenome.solver.evolve.MaximumGenerations;
-import objenome.solver.evolve.OrganismOperator;
-import objenome.solver.evolve.Population;
-import objenome.solver.evolve.RandomSequence;
-import objenome.solver.evolve.TypedOrganism;
-import objenome.solver.evolve.PopulationTermination;
-import objenome.solver.evolve.TerminationFitness;
+import nars.util.data.random.MersenneTwisterFast;
 import objenome.goal.DoubleFitness;
 import objenome.goal.HitsCount;
-import objenome.solver.evolve.init.Full;
 import objenome.op.Node;
 import objenome.op.Variable;
 import objenome.op.VariableNode;
@@ -47,10 +31,15 @@ import objenome.op.math.Add;
 import objenome.op.math.DivisionProtected;
 import objenome.op.math.Multiply;
 import objenome.op.math.Subtract;
+import objenome.solver.evolve.*;
+import objenome.solver.evolve.init.Full;
 import objenome.solver.evolve.mutate.SubtreeCrossover;
 import objenome.solver.evolve.mutate.SubtreeMutation;
-import nars.util.data.random.MersenneTwisterFast;
 import objenome.solver.evolve.selection.TournamentSelector;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * This template sets up EpochX to run the cubic regression benchmark with the

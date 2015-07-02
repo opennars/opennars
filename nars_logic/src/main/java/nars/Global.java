@@ -26,7 +26,6 @@ import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import nars.task.Task;
 
-
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.Collection;

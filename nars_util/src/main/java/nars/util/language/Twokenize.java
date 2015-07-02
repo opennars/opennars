@@ -72,11 +72,11 @@ public class Twokenize {
             + "nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|"
             + "sl|sm|sn|so|sr|ss|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|"
             + "va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|za|zm|zw)";    //TODO: remove obscure country domains?
-    static String urlStart2 = "\\b(?:[A-Za-z\\d-])+(?:\\.[A-Za-z0-9]+){0,3}\\." + "(?:" + commonTLDs + "|" + ccTLDs + ")" + "(?:\\." + ccTLDs + ")?(?=\\W|$)";
+    static String urlStart2 = "\\b(?:[A-Za-z\\d-])+(?:\\.[A-Za-z0-9]+){0,3}\\." + "(?:" + commonTLDs + '|' + ccTLDs + ')' + "(?:\\." + ccTLDs + ")?(?=\\W|$)";
     static String urlBody = "(?:[^\\.\\s<>][^\\s<>]*?)?";
-    static String urlExtraCrapBeforeEnd = "(?:" + punctChars + "|" + entity + ")+?";
+    static String urlExtraCrapBeforeEnd = "(?:" + punctChars + '|' + entity + ")+?";
     static String urlEnd = "(?:\\.\\.+|[<>]|\\s|$)";
-    public static String url = "(?:" + urlStart1 + "|" + urlStart2 + ")" + urlBody + "(?=(?:" + urlExtraCrapBeforeEnd + ")?" + urlEnd + ")";
+    public static String url = "(?:" + urlStart1 + '|' + urlStart2 + ')' + urlBody + "(?=(?:" + urlExtraCrapBeforeEnd + ")?" + urlEnd + ')';
 
     // Numeric
     static String timeLike = "\\d+(?::\\d+){1,2}";
@@ -85,11 +85,11 @@ public class Twokenize {
     static String numComb = "\\p{Sc}?\\d+(?:\\.\\d+)+%?";
 
     // Abbreviations
-    static String boundaryNotDot = "(?:$|\\s|[“\\u0022?!,:;]|" + entity + ")";
-    static String aa1 = "(?:[A-Za-z]\\.){2,}(?=" + boundaryNotDot + ")";
-    static String aa2 = "[^A-Za-z](?:[A-Za-z]\\.){1,}[A-Za-z](?=" + boundaryNotDot + ")";
+    static String boundaryNotDot = "(?:$|\\s|[“\\u0022?!,:;]|" + entity + ')';
+    static String aa1 = "(?:[A-Za-z]\\.){2,}(?=" + boundaryNotDot + ')';
+    static String aa2 = "[^A-Za-z](?:[A-Za-z]\\.){1,}[A-Za-z](?=" + boundaryNotDot + ')';
     static String standardAbbreviations = "\\b(?:[Mm]r|[Mm]rs|[Mm]s|[Dd]r|[Ss]r|[Jj]r|[Rr]ep|[Ss]en|[Ss]t)\\.";
-    static String arbitraryAbbrev = "(?:" + aa1 + "|" + aa2 + "|" + standardAbbreviations + ")";
+    static String arbitraryAbbrev = "(?:" + aa1 + '|' + aa2 + '|' + standardAbbreviations + ')';
     static String separators = "(?:--+|―|—|~|–|=)";
     static String decorations = "(?:[♫♪]+|[★☆]+|[♥❤♡]+|[\\u2639-\\u263b]+|[\\ue001-\\uebbb]+)";
     static String thingsThatSplitWords = "[^\\s\\.,?\"]";
@@ -103,7 +103,7 @@ public class Twokenize {
             prefix = "|";
             sb.append(s);
         }
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
     }
 
@@ -125,12 +125,12 @@ public class Twokenize {
     static String s3 = "(?:--['\"])";
     static String s4 = "(?:<|&lt;|>|&gt;)[\\._-]+(?:<|&lt;|>|&gt;)";
     static String s5 = "(?:[.][_]+[.])";
-    static String basicface = "(?:(?i)" + bfLeft + bfCenter + bfRight + ")|" + s3 + "|" + s4 + "|" + s5;
+    static String basicface = "(?:(?i)" + bfLeft + bfCenter + bfRight + ")|" + s3 + '|' + s4 + '|' + s5;
 
     static String eeLeft = "[＼\\\\ƪԄ\\(（<>;ヽ\\-=~\\*]+";
     static String eeRight = "[\\-=\\);'\\u0022<>ʃ）/／ノﾉ丿╯σっµ~\\*]+";
     static String eeSymbol = "[^A-Za-z0-9\\s\\(\\)\\*:=-]";
-    static String eastEmote = eeLeft + "(?:" + basicface + "|" + eeSymbol + ")+" + eeRight;
+    static String eastEmote = eeLeft + "(?:" + basicface + '|' + eeSymbol + ")+" + eeRight;
 
     public static String emoticon = OR(
             // Standard version  :) :( :] :D :P
@@ -166,7 +166,7 @@ public class Twokenize {
     // but seems ok in sample of 5800: 7 changes all email fixes
     // http://www.regular-expressions.info/email.html
     static String Bound = "(?:\\W|^|$)";
-    public static String Email = "(?<=" + Bound + ")[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}(?=" + Bound + ")";
+    public static String Email = "(?<=" + Bound + ")[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}(?=" + Bound + ')';
 
     public static String word = "[\\p{Alpha}]+";
 
@@ -214,11 +214,11 @@ public class Twokenize {
     // I remember it causing lots of trouble in the past as well.  Would be good to revisit or eliminate.
     // Note the 'smart quotes' (http://en.wikipedia.org/wiki/Smart_quotes)
     static String edgePunctChars = "'\"“”‘’«»{}\\(\\)\\[\\]\\*&"; //add \\p{So}? (symbols)
-    static String edgePunct = "[" + edgePunctChars + "]";
+    static String edgePunct = '[' + edgePunctChars + ']';
     static String notEdgePunct = "[a-zA-Z0-9]"; // content characters
     static String offEdge = "(^|$|:|;|\\s|\\.|,)";  // colon here gets "(hello):" ==> "( hello ):"
-    static Pattern EdgePunctLeft = compile(offEdge + "(" + edgePunct + "+)(" + notEdgePunct + ")");
-    static Pattern EdgePunctRight = compile("(" + notEdgePunct + ")(" + edgePunct + "+)" + offEdge);
+    static Pattern EdgePunctLeft = compile(offEdge + '(' + edgePunct + "+)(" + notEdgePunct + ')');
+    static Pattern EdgePunctRight = compile('(' + notEdgePunct + ")(" + edgePunct + "+)" + offEdge);
 
     public static String splitEdgePunct(String input) {
         Matcher m1 = EdgePunctLeft.matcher(input);
@@ -240,7 +240,7 @@ public class Twokenize {
 
         @Override
         public String toString() {
-            return "(" + first + "," + second + ")";
+            return "(" + first + ',' + second + ')';
         }
 
     }
@@ -272,7 +272,7 @@ public class Twokenize {
 
         @Override
         public String toString() {
-            return "(" + content + "," + pattern + ")";
+            return '(' + content + ',' + pattern + ')';
         }
 
         private boolean contains(Span b) {

@@ -21,9 +21,10 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.Arrays;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.event.ElitismEvent.EndElitism;
+
+import java.util.Arrays;
 
 /**
  * Stat that provides the information about the elitist individuals.

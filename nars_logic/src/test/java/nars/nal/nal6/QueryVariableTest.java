@@ -1,10 +1,10 @@
 package nars.nal.nal6;
 
+import nars.NARSeed;
+import nars.nal.JavaNALTest;
 import nars.nar.Curve;
 import nars.nar.Default;
-import nars.NARSeed;
 import nars.narsese.InvalidInputException;
-import nars.nal.JavaNALTest;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

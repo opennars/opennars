@@ -3,12 +3,15 @@ package nars.meter;
 import nars.Events;
 import nars.Events.InferenceEvent;
 import nars.NAR;
-import nars.event.MemoryReaction;
 import nars.concept.Concept;
+import nars.event.MemoryReaction;
 import nars.task.Task;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 
 /**

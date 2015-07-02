@@ -22,6 +22,9 @@ package nars.nal;
 
 import nars.Global;
 import nars.Symbols;
+import nars.link.TLink;
+import nars.link.TaskLink;
+import nars.link.TermLink;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal1.LocalRules;
 import nars.nal.nal1.Negation;
@@ -34,9 +37,6 @@ import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
 import nars.term.*;
-import nars.link.TLink;
-import nars.link.TaskLink;
-import nars.link.TermLink;
 
 import java.util.Random;
 

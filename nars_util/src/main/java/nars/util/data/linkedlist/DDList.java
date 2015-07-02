@@ -178,7 +178,7 @@ public class DDList<E> implements Iterable<E> {
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (E item : this)
-            s.append(item).append(" ");
+            s.append(item).append(' ');
         return s.toString();
     }
 

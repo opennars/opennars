@@ -4,10 +4,10 @@
  */
 package nars.task.filter;
 
+import nars.nal.nal8.Operation;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.nal.nal8.Operation;
 import nars.task.TaskSeed;
 import nars.term.Compound;
 

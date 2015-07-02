@@ -1,7 +1,7 @@
 package nars.util.graph;
 
-import nars.nar.Default;
 import nars.NAR;
+import nars.nar.Default;
 import org.junit.Ignore;
 import org.junit.Test;
 

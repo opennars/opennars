@@ -1,10 +1,10 @@
 package nars.analyze.experimental;
 
-import nars.nar.Curve;
-import nars.nar.Default;
 import nars.NAR;
 import nars.io.in.LibraryInput;
 import nars.nal.NALTest;
+import nars.nar.Curve;
+import nars.nar.Default;
 
 import java.util.Collection;
 

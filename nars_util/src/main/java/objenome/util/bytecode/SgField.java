@@ -94,16 +94,16 @@ public final class SgField extends SgVariable {
         if (getAnnotations().size() > 0) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
-                    sb.append(" ");
+                    sb.append(' ');
                 }
                 sb.append(getAnnotations().get(i));
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         if (getModifiers().length() == 0) {
-            sb.append(getType().getSourceName() + " " + getName());
+            sb.append(getType().getSourceName()).append(' ').append(getName());
         } else {
-            sb.append(getModifiers() + " " + getType().getSourceName() + " " + getName());
+            sb.append(getModifiers()).append(' ').append(getType().getSourceName()).append(' ').append(getName());
         }
         if (initializer == null) {
             sb.append(" /** No initializer source available */ ");

@@ -21,9 +21,10 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.HashSet;
 import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
+
+import java.util.HashSet;
 
 /**
  * Stats representing the number of different fitness values in a generation.

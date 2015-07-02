@@ -1,9 +1,9 @@
 package nars;
 
+import nars.concept.Concept;
 import nars.process.ConceptProcess;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.concept.Concept;
 import nars.util.event.Reaction;
 
 import java.util.Arrays;

@@ -21,11 +21,12 @@
  */
 package nars.util.data.random;
 
+import objenome.solver.evolve.RandomSequence;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import objenome.solver.evolve.RandomSequence;
 
 /**
  * The Mersenne twister is a pseudorandom number generator developed in 1997 by

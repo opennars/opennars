@@ -5,11 +5,12 @@
  */
 package objenome.util;
 
-import java.lang.reflect.Array;
-import java.util.Collection;
 import objenome.op.DiffableFunction;
 import objenome.op.Scalar;
 import org.apache.commons.math3.linear.ArrayRealVector;
+
+import java.lang.reflect.Array;
+import java.util.Collection;
 
 /**
  *
@@ -23,9 +24,7 @@ public class Utils {
 
     public static double[] join(double[] state, double action) {
         double[] xs = new double[state.length + 1];
-        for (int i = 0; i < state.length; ++i) {
-            xs[i] = state[i];
-        }
+        System.arraycopy(state, 0, xs, 0, state.length);
         xs[xs.length - 1] = action;
         return xs;
     }

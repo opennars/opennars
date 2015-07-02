@@ -19,14 +19,14 @@ package nars.op.mental;
 import com.google.common.collect.Lists;
 import nars.Global;
 import nars.Memory;
-import nars.truth.DefaultTruth;
-import nars.task.Task;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetExt;
 import nars.nal.nal3.SetInt;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.task.Task;
 import nars.term.Atom;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
 
 import java.util.ArrayList;
 

@@ -1,7 +1,7 @@
 package objenome.op.cas.util;
 
-import java.util.ArrayList;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 public class LevelsParser {
     
@@ -58,12 +58,12 @@ public class LevelsParser {
             int direction = direction(tokenOn);
             
             if (direction == 1) {
-                if (debug) System.err.println("pushing level on " + tokenValueOn + "…");
+                if (debug) System.err.println("pushing level on " + tokenValueOn);
                 parenContextStack.add(new TokenList<Object>(tokenOn.fromStrBegin));
                 parenStack.add(tokenOn);
             }
             else if (direction == -1) {
-                if (debug) System.err.println("popping level on " + tokenValueOn + "…");
+                if (debug) System.err.println("popping level on " + tokenValueOn);
                 
                 Token[] tokenPair = new Token[2];
                 tokenPair[0] = parenStack.get(parenStack.size() - 1);

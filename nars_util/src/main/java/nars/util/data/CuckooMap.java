@@ -46,15 +46,15 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
 
     public int size;
 
-    public K[] keyTable;
-    public V[] valueTable;
-    int capacity, stashSize;
+    private K[] keyTable;
+    private V[] valueTable;
+    private int capacity, stashSize;
 
     private float loadFactor;
     private int hashShift, mask, threshold;
     private int stashCapacity;
     private int pushIterations;
-    static final int stashCapacityFactor = 2; //originally = 2
+    static final int stashCapacityFactor = 2;
 
     public CuckooMap() {
         this(newDefaultRNG());
@@ -419,26 +419,28 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         int index = hashCode & mask;
         K kk = keyTable[index];
         if (kk!=null && key.equals(kk)) {
-            return removeTableEntry(keyTable, valueTable[index], index);
+            return removeTableEntry(index);
         }
 
         index = hash2(hashCode);
         kk = keyTable[index];
         if (kk!=null && key.equals(kk)) {
-            return removeTableEntry(keyTable, valueTable[index], index);
+            return removeTableEntry(index);
         }
 
         index = hash3(hashCode);
         kk = keyTable[index];
         if (kk!=null && key.equals(kk)) {
-            return removeTableEntry(keyTable, valueTable[index], index);
+            return removeTableEntry(index);
         }
 
         return removeStash((K)key);
     }
 
-    private V removeTableEntry(final K[] keyTable, final V v, int index) {
+    private V removeTableEntry(int index) {
         keyTable[index] = null;
+        final V v = valueTable[index];
+        valueTable[index] = null;
         //V oldValue = v;
         //v = null;
         size--;
@@ -609,7 +611,12 @@ public class CuckooMap<K, V> implements Map<K,V>, Serializable {
         if (sizeNeeded >= threshold) resize(nextPowerOfTwo((int)(sizeNeeded / loadFactor)));
     }
 
-    private synchronized void resize (int newSize) {
+    private void resize (int newSize) {
+
+        synchronized (random) {
+            if (size == newSize) return;
+        }
+
         int oldEndIndex = capacity + stashSize;
 
         capacity = newSize;

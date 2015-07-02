@@ -1,8 +1,9 @@
 package objenome.solution.dependency;
 
-import java.util.Collection;
 import objenome.AbstractContainer;
 import objenome.solution.dependency.ClassBuilder.DependencyKey;
+
+import java.util.Collection;
 
 /**
  * An IoC factory that knows how to create instances.

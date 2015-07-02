@@ -1,8 +1,8 @@
 package nars.nal.nal3;
 
 
-import nars.Symbols;
 import nars.Op;
+import nars.Symbols;
 import nars.term.Term;
 import nars.util.utf8.ByteBuf;
 

@@ -6,13 +6,7 @@
 package objenome.problem;
 
 import com.google.common.collect.Lists;
-import objenome.solver.evolve.BranchedBreeder;
-import objenome.solver.evolve.FitnessEvaluator;
-import objenome.solver.evolve.GPContainer;
-import objenome.solver.evolve.GenerationalStrategy;
-import objenome.solver.evolve.Initialiser;
-import objenome.solver.evolve.PopulationProcess;
-import objenome.solver.evolve.TypedOrganism;
+import objenome.solver.evolve.*;
 
 /**
  * Static-typed Problem solvable by Evolution

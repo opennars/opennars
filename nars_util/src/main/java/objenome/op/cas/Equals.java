@@ -37,7 +37,7 @@ public class Equals extends Comparison {
     }
     
     public String pretty() {
-        String string = new String();
+        String string = "";
         
         Integer thisClassOrder = this.classOrder();
         

@@ -21,15 +21,17 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import objenome.solver.evolve.GPContainer;
 import objenome.solver.evolve.GPContainer.GPContainerAware;
 import objenome.solver.evolve.event.Event;
 import objenome.solver.evolve.event.EventManager;
 import objenome.solver.evolve.event.Listener;
+
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The <code>AbstractStat</code> represent the base class for classes that
@@ -93,7 +95,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      */
     @SuppressWarnings("unchecked")
     public AbstractStat(Class<? extends AbstractStat<?>> dependency) {
-        this(Arrays.<Class<? extends AbstractStat<?>>>asList(dependency));
+        this(Collections.<Class<? extends AbstractStat<?>>>singletonList(dependency));
     }
 
     /**
@@ -125,7 +127,7 @@ public abstract class AbstractStat<T extends Event> implements GPContainerAware 
      */
     @SuppressWarnings("unchecked")
     public <E extends Event> AbstractStat(Class<T> clearOn, Class<? extends AbstractStat<?>> dependency) {
-        this(clearOn, Arrays.<Class<? extends AbstractStat<?>>>asList(dependency));
+        this(clearOn, Collections.<Class<? extends AbstractStat<?>>>singletonList(dependency));
     }
 
     /**

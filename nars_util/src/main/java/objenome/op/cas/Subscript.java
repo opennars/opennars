@@ -13,7 +13,7 @@ public class Subscript {
     }
     
     public String toString() {
-        return "subscript(" + expr + ")";
+        return "subscript(" + expr + ')';
     }
     
 }

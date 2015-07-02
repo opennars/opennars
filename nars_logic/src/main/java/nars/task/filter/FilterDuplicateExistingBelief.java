@@ -1,12 +1,12 @@
 package nars.task.filter;
 
+import nars.concept.Concept;
 import nars.process.NAL;
 import nars.task.Sentence;
 import nars.task.Task;
-import nars.truth.Truth;
-import nars.concept.Concept;
 import nars.task.TaskSeed;
 import nars.term.Compound;
+import nars.truth.Truth;
 
 import java.util.Arrays;
 

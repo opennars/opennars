@@ -2,8 +2,8 @@ package nars.util.index;
 
 import nars.NAR;
 import nars.budget.Budget;
-import nars.event.ConceptReaction;
 import nars.concept.Concept;
+import nars.event.ConceptReaction;
 import nars.term.Term;
 
 /**

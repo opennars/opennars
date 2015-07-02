@@ -166,7 +166,7 @@ public class MutableInteger extends Number implements Comparable, Mutable {
    * 
    * @return true if infinite
    */
-  public boolean isInfinite() {
+  public static boolean isInfinite() {
     return false;
   }
 

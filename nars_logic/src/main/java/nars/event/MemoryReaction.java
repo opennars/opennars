@@ -5,7 +5,6 @@ import nars.Events.CycleEnd;
 import nars.Events.CycleStart;
 import nars.Memory;
 import nars.NAR;
-import nars.event.NARReaction;
 import nars.concept.Concept;
 import nars.process.TaskProcess;
 import nars.task.Task;

@@ -1,11 +1,11 @@
 package objenome.util.bean.util;
 
-import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.ADD_LISTENER;
-import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.REMOVE_LISTENER;
+import objenome.util.bean.anno.PropertyChangeEventMethod;
 
 import java.beans.PropertyChangeListener;
 
-import objenome.util.bean.anno.PropertyChangeEventMethod;
+import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.ADD_LISTENER;
+import static objenome.util.bean.anno.PropertyChangeEventMethod.Type.REMOVE_LISTENER;
 
 /**
  * Beans (interfaces) implementing this interface support PropertyChangeEvents (each setter call

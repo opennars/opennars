@@ -2,10 +2,10 @@ package nars.core;
 
 import nars.Memory;
 import nars.NAR;
-import nars.nar.Default;
 import nars.nal.nal7.AbstractInterval;
 import nars.nal.nal7.Interval;
 import nars.nal.nal7.Interval.AtomicDuration;
+import nars.nar.Default;
 import org.junit.Test;
 
 import java.util.List;

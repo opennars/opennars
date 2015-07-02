@@ -1,8 +1,6 @@
 package nars.util.utf8;
 
 import com.google.common.primitives.Chars;
-import nars.util.data.rope.StringHack;
-import objenome.op.cas.util.ArraySearch;
 import sun.nio.cs.ThreadLocalCoders;
 
 import java.nio.ByteBuffer;

@@ -2,8 +2,8 @@ package nars.core;
 
 import nars.NAR;
 import nars.nar.Default;
-import nars.term.Compound;
 import nars.task.Task;
+import nars.term.Compound;
 import nars.term.Variable;
 import org.junit.Test;
 

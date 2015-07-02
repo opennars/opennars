@@ -22,9 +22,9 @@ package nars.nal.nal5;
 
 import nars.Global;
 import nars.Op;
-import nars.term.Terms;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.term.Terms;
 
 import java.util.Collections;
 import java.util.List;

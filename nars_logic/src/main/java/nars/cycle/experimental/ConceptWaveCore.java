@@ -7,9 +7,9 @@ package nars.cycle.experimental;
 import nars.Memory;
 import nars.bag.impl.experimental.DelayBag;
 import nars.bag.impl.experimental.FairDelayBag;
-import nars.process.CycleProcess;
-import nars.concept.ConceptActivator;
 import nars.concept.Concept;
+import nars.concept.ConceptActivator;
+import nars.process.CycleProcess;
 import nars.term.Term;
 
 import java.util.ArrayList;

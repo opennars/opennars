@@ -8,13 +8,13 @@ import nars.Memory;
 import nars.NAR;
 import nars.io.JSONOutput;
 import nars.io.Texts;
-import nars.truth.DefaultTruth;
-import nars.task.Task;
-import nars.truth.Truth;
 import nars.nal.nal7.Tense;
+import nars.narsese.InvalidInputException;
+import nars.task.Task;
 import nars.task.stamp.Stamp;
 import nars.term.Term;
-import nars.narsese.InvalidInputException;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import java.io.Serializable;
 import java.util.*;

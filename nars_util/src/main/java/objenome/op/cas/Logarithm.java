@@ -74,7 +74,7 @@ public class Logarithm extends Function {
         else {
             string = "log";
             if (!(base instanceof Num) || ((Num) base).val() != 10) {
-                string = string.concat("[" + base.pretty() + "]");
+                string = string.concat('[' + base.pretty() + ']');
             }
         }
         if (!parens) string = string.concat(" ");

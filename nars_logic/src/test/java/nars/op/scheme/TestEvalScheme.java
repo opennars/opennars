@@ -1,10 +1,10 @@
 package nars.op.scheme;
 
 
-import nars.nar.Default;
 import nars.NARSeed;
-import nars.testing.condition.OutputContainsCondition;
 import nars.nal.JavaNALTest;
+import nars.nar.Default;
+import nars.testing.condition.OutputContainsCondition;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 

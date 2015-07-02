@@ -31,7 +31,7 @@ public class LessThanOrEqual extends Comparison {
     }
     
     public String pretty() {
-        String string = new String();
+        String string = "";
         
         Integer thisClassOrder = this.classOrder();
         

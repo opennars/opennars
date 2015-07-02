@@ -21,9 +21,9 @@
 
 package nars.nal.nal2;
 
-import nars.term.Term;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal3.SetInt;
+import nars.term.Term;
 
 /**
  * A Statement about a Property relation, which is used only in Narsese for I/O, 

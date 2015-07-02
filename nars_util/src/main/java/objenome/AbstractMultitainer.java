@@ -6,11 +6,12 @@
 package objenome;
 
 import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Set;
 import objenome.solution.dependency.Builder;
 import objenome.solution.dependency.DecideImplementationClass;
 import objenome.solution.dependency.Scope;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Non-determinate "Multi" Container

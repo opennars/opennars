@@ -3,12 +3,12 @@ package nars.cycle;
 import nars.Memory;
 import nars.bag.Bag;
 import nars.budget.Budget;
-import nars.process.CycleProcess;
 import nars.concept.Concept;
 import nars.concept.ConceptActivator;
-import nars.process.ConceptProcess;
-import nars.term.Term;
 import nars.link.TaskLink;
+import nars.process.ConceptProcess;
+import nars.process.CycleProcess;
+import nars.term.Term;
 
 import java.util.ArrayList;
 import java.util.Iterator;

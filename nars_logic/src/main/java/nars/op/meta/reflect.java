@@ -4,13 +4,13 @@
  */
 package nars.op.meta;
 
-import nars.term.Statement;
 import nars.nal.nal1.Inheritance;
 import nars.nal.nal2.Similarity;
 import nars.nal.nal4.Product;
 import nars.nal.nal8.operator.TermFunction;
 import nars.term.Atom;
 import nars.term.Compound;
+import nars.term.Statement;
 import nars.term.Term;
 
 /**

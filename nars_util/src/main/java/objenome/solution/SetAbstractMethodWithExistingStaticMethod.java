@@ -5,7 +5,6 @@
  */
 package objenome.solution;
 
-import java.lang.reflect.Modifier;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -13,6 +12,8 @@ import javassist.NotFoundException;
 import objenome.util.bytecode.SgClass;
 import objenome.util.bytecode.SgClassPool;
 import objenome.util.bytecode.SgMethod;
+
+import java.lang.reflect.Modifier;
 
 /**
  * Uses another class's static method (with same return type) to implement an abstract or interface method

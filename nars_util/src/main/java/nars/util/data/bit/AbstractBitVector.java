@@ -52,12 +52,12 @@ public abstract class AbstractBitVector implements BitVector {
 	
     protected void ensureRestrictedIndex( final long index ) {
         if ( index < 0 )  throw new IndexOutOfBoundsException( "Index (" + index + ") is negative" );
-        if ( index >= length() ) throw new IndexOutOfBoundsException( "Index (" + index + ") is greater than or equal to length (" + ( length() ) + ")" );
+        if ( index >= length() ) throw new IndexOutOfBoundsException( "Index (" + index + ") is greater than or equal to length (" + ( length() ) + ')');
     }
 	
     protected void ensureIndex( final long index ) {
         if ( index < 0 )  throw new IndexOutOfBoundsException( "Index (" + index + ") is negative" );
-        if ( index > length() ) throw new IndexOutOfBoundsException( "Index (" + index + ") is greater than length (" + ( length() ) + ")" );
+        if ( index > length() ) throw new IndexOutOfBoundsException( "Index (" + index + ") is greater than length (" + ( length() ) + ')');
     }
 
     public void set( final int index ) { set( index, true ); }
@@ -78,7 +78,7 @@ public abstract class AbstractBitVector implements BitVector {
 
 	public int getInt( final long index ) { return getBoolean( index ) ? 1 : 0; }
 	public long getLong( final long from, final long to ) {
-		if ( to - from > 64 ) throw new IllegalArgumentException( "Range too large for a long: [" + from + ".." + to + ")" );
+		if ( to - from > 64 ) throw new IllegalArgumentException( "Range too large for a long: [" + from + ".." + to + ')');
 		long result = 0;
 		for( long i = from; i < to; i++ ) if ( getBoolean( i ) ) result |= 1L << i - from;
 		return result;

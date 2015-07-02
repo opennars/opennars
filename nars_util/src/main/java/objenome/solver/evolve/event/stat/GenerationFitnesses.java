@@ -21,11 +21,12 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.Arrays;
 import objenome.solver.evolve.Fitness;
 import objenome.solver.evolve.Organism;
 import objenome.solver.evolve.Population;
 import objenome.solver.evolve.event.GenerationEvent.EndGeneration;
+
+import java.util.Arrays;
 
 /**
  * Stat that provides the fitness values of a generation.

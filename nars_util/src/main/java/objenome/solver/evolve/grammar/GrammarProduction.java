@@ -21,11 +21,7 @@
  */
 package objenome.solver.evolve.grammar;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * One of potentially multiple options that a <code>GrammarRule</code> can
@@ -277,13 +273,13 @@ public class GrammarProduction implements Cloneable {
             buffer.append("<?");
             Set<String> keys = attributes.keySet();
             int i = 0;
-            for (String k : keys) {
+            for (Map.Entry<String, Object> stringObjectEntry : attributes.entrySet()) {
                 if (i != 0) {
                     buffer.append(';');
                 }
-                buffer.append(k);
+                buffer.append(stringObjectEntry.getKey());
                 buffer.append('=');
-                buffer.append(attributes.get(k));
+                buffer.append(stringObjectEntry.getValue());
                 i++;
             }
             buffer.append("?>");

@@ -4,26 +4,20 @@
  * and open of template in of editor.
  */
 package objenome;
-import java.util.HashSet;
-import java.util.Set;
-import objenome.MultitainerTest.Machine;
-import objenome.MultitainerTest.Part;
-import objenome.MultitainerTest.Part0;
-import objenome.MultitainerTest.Part1;
-import objenome.MultitainerTest.PartN;
-import objenome.MultitainerTest.PartWithSubPart;
-import objenome.MultitainerTest.SubPart0;
-import objenome.MultitainerTest.SubPart1;
+
+import objenome.MultitainerTest.*;
 import objenome.solution.SetImplementationClass;
 import objenome.solution.SetIntegerValue;
 import objenome.solution.dependency.Builder;
-import static objenome.solution.dependency.Builder.of;
 import objenome.solution.dependency.ClassBuilder;
 import objenome.solution.dependency.DecideImplementationClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static objenome.solution.dependency.Builder.of;
+import static org.junit.Assert.*;
 
 /**
  *

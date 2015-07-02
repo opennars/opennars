@@ -1,13 +1,10 @@
 package objenome.util;
 
+import objenome.solution.SetMethodsGPEvolved;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import objenome.solution.SetMethodsGPEvolved;
+import java.util.*;
 
 /**
  * Find constructor with polymorphism! Class.getConstructor only finds an exact
@@ -55,7 +52,12 @@ public class FindConstructor {
             super(s);
             this.possibleConstructors = partiallyApplicableMethods;
         }
-        
+
+        @Override
+        public synchronized Throwable fillInStackTrace() {
+            //no stack trace
+            return this;
+        }
     }
     
     /**

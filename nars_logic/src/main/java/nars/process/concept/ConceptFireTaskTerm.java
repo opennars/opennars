@@ -1,8 +1,8 @@
 package nars.process.concept;
 
-import nars.nal.LogicRule;
 import nars.link.TaskLink;
 import nars.link.TermLink;
+import nars.nal.LogicRule;
 import nars.process.ConceptProcess;
 
 /** when a concept fires a tasklink that fires a termlink */

@@ -21,15 +21,12 @@
  */
 package objenome.solver.evolve;
 
-import objenome.op.DoubleVariable;
 import objenome.op.Node;
 import objenome.op.Variable;
-import objenome.op.VariableNode;
 import objenome.solver.evolve.GPContainer.GPKey;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * An TypedOrganism is a candidate solution which uses a strongly

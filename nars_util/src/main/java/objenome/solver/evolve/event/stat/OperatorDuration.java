@@ -21,8 +21,9 @@
  */
 package objenome.solver.evolve.event.stat;
 
-import java.util.concurrent.TimeUnit;
 import objenome.solver.evolve.event.OperatorEvent.EndOperator;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Stat that provides the duration of a genetic operator.

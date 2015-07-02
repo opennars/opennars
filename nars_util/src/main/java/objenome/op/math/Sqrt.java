@@ -22,6 +22,7 @@
 package objenome.op.math;
 
 import objenome.op.Numeric1d;
+
 import static java.lang.Math.sqrt;
 
 /**

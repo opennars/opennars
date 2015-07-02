@@ -22,13 +22,13 @@ import nars.Global;
 import nars.Memory;
 import nars.Symbols;
 import nars.budget.Budget;
-import nars.truth.DefaultTruth;
-import nars.task.Task;
-import nars.truth.Truth;
 import nars.nal.nal8.Operation;
 import nars.nal.nal8.operator.SynchOperator;
+import nars.task.Task;
 import nars.term.Compound;
 import nars.term.Term;
+import nars.truth.DefaultTruth;
+import nars.truth.Truth;
 
 import java.util.ArrayList;
 

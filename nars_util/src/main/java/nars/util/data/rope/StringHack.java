@@ -1,7 +1,5 @@
 package nars.util.data.rope;
 
-import sun.misc.Unsafe;
-
 import java.lang.reflect.Field;
 
 /**

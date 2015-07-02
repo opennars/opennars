@@ -1,19 +1,5 @@
 package objenome.solution.dependency;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import objenome.AbstractContainer;
 import objenome.Phenotainer;
 import objenome.Prototainer;
@@ -21,6 +7,11 @@ import objenome.util.FindConstructor;
 import objenome.util.FindConstructor.NoDeterministicConstruction;
 import objenome.util.FindMethod;
 import objenome.util.InjectionUtils;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.*;
 
 
 /**
@@ -160,7 +151,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         return addInitValue(value, primitive);
     }
 
-    private List<Class<?>> convertToPrimitives(List<Class<?>> list) {
+    private static List<Class<?>> convertToPrimitives(List<Class<?>> list) {
 
         if (list == null) {
             return null;
@@ -282,7 +273,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
                         try {
 
-                            m = klass.getMethod(methodName, new Class[]{primitive});
+                            m = klass.getMethod(methodName, primitive);
 
                         } catch (Exception ex) {
                             // not found!
@@ -307,7 +298,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
             if (m != null) {
 
-                m.invoke(bean, new Object[]{value});
+                m.invoke(bean, value);
             }
 
         } catch (Exception e) {
@@ -372,7 +363,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
         Object[] values = null;
 
-        synchronized (this) {
+        synchronized (container) {
             
             Map<Parameter,Object> specificParameters = getParameters(context);
 
@@ -478,15 +469,15 @@ public class ClassBuilder implements ConfigurableBuilder {
         if (props != null && props.size() > 0) {
 
             //TODO use entrySet
-            for (String name : props.keySet()) {
-                Object value = props.get(name);
+            for (Map.Entry<String, Object> stringObjectEntry : props.entrySet()) {
+                Object value = stringObjectEntry.getValue();
 
                 if (value instanceof DependencyKey) {
                     DependencyKey dk = (DependencyKey) value;
                     value = ((AbstractContainer)context).get(dk.getKey());
                 }
 
-                setValue(obj, name, value);
+                setValue(obj, stringObjectEntry.getKey(), value);
             }
         }
 
@@ -572,7 +563,7 @@ public class ClassBuilder implements ConfigurableBuilder {
 
                     // matched this one, so remove...
                     System.out.println(c);
-                    System.out.println(pc + " " + provided + " " + providedInitTypes + " " + providedInitValues);
+                    System.out.println(pc + " " + provided + ' ' + providedInitTypes + ' ' + providedInitValues);
                     
                     newInitTypes.add(providedInitTypes.removeFirst()); 
                     newInitValues.add(providedInitValues.removeFirst());
@@ -701,7 +692,7 @@ public class ClassBuilder implements ConfigurableBuilder {
         @Override
         public String toString() {
             if (param!=null)
-                return param + " (" + key + ")";
+                return param + " (" + key + ')';
             else
                 return key;
         }

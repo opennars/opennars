@@ -88,22 +88,22 @@ public final class SgConstructor extends SgBehavior {
         final StringBuffer sb = new StringBuffer();
         if (getModifiers().length() > 0) {
             sb.append(getModifiers());
-            sb.append(" ");
+            sb.append(' ');
         }
         sb.append(getOwner().getSimpleName());
-        sb.append("(");
+        sb.append('(');
         for (int i = 0; i < getArguments().size(); i++) {
             if (i > 0) {
                 sb.append(", ");
             }
             sb.append(getArguments().get(i));
         }
-        sb.append(")");
+        sb.append(')');
         if (getExceptions().size() > 0) {
             sb.append(" throws ");
             for (int i = 0; i < getExceptions().size(); i++) {
                 if (i > 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
                 sb.append(getExceptions().get(i).getName());
             }
@@ -120,15 +120,15 @@ public final class SgConstructor extends SgBehavior {
         if (getAnnotations().size() > 0) {
             for (int i = 0; i < getAnnotations().size(); i++) {
                 if (i > 0) {
-                    sb.append(" ");
+                    sb.append(' ');
                 }
                 sb.append(getAnnotations().get(i));
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         sb.append(getSignature());
         if (getOwner().isInterface()) {
-            sb.append(";");
+            sb.append(';');
         } else {
             sb.append("{\n");
             if (body.size() == 0) {
@@ -136,7 +136,7 @@ public final class SgConstructor extends SgBehavior {
             } else {
                 for (int i = 0; i < body.size(); i++) {
                     sb.append(body.get(i));
-                    sb.append("\n");
+                    sb.append('\n');
                 }
             }
             sb.append("}\n");

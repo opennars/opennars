@@ -21,8 +21,9 @@
  */
 package objenome.solver.evolve;
 
-import java.util.List;
 import objenome.solver.evolve.GPContainer.GPKey;
+
+import java.util.List;
 
 /**
  * An <code>EvolutionaryStrategy</code> is a component that is responsible for

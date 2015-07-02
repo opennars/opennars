@@ -1,10 +1,10 @@
 package nars.nal.nal4;
 
 
-import nars.nar.Curve;
-import nars.nar.Default;
 import nars.NARSeed;
 import nars.nal.ScriptNALTest;
+import nars.nar.Curve;
+import nars.nar.Default;
 import org.junit.runners.Parameterized;
 
 import java.util.Collection;
